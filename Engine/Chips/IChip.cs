@@ -8,13 +8,16 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using PixelVisionSDK.Engine.Chips.IO.File;
 
 namespace PixelVisionSDK.Engine.Chips
 {
+
     /// <summary>
     ///     The Interface for the chip class. It handles Activating, configuring and
     ///     deactivating the chip as part of its life-cycle. This Interface also
@@ -23,6 +26,7 @@ namespace PixelVisionSDK.Engine.Chips
     /// </summary>
     public interface IChip : ISave, ILoad
     {
+
         /// <summary>
         ///     <see cref="Activate" /> is the beginning of the chip's life cycle.
         ///     This allows the chip to gain a reference to the engine itself. This
@@ -47,5 +51,7 @@ namespace PixelVisionSDK.Engine.Chips
         ///     ChipManager.
         /// </summary>
         void Configure();
+
     }
+
 }

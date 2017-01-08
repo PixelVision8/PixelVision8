@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using PixelVisionSDK.Engine.Chips.Audio;
@@ -20,12 +22,14 @@ using PixelVisionSDK.Engine.Chips.IO.Controller;
 
 namespace PixelVisionSDK.Engine.Chips
 {
+
     /// <summary>
     ///     The <see cref="IEngineChips" /> internal represents
     ///     all of the core chips the engine needs to run.
     /// </summary>
     public interface IEngineChips
     {
+
         /// <summary>
         ///     The Chip Manager class is responsible for registering and
         ///     deactivating chips. This property offers direct access to it.
@@ -107,5 +111,7 @@ namespace PixelVisionSDK.Engine.Chips
         ///     sound data for songs.
         /// </summary>
         MusicChip musicChip { get; set; }
+
     }
+
 }

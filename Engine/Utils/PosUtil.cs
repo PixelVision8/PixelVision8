@@ -8,17 +8,21 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 namespace PixelVisionSDK.Engine.Utils
 {
+
     /// <summary>
     ///     This utility offers helper methods for quickly calculating a position in
     ///     a 1D array as if it was a 2D array.
     /// </summary>
     public class PosUtil
     {
+
         /// <summary>
         ///     This calculates the <paramref name="index" /> of a 1D array based on
         ///     the x,y position and the <paramref name="width" /> of the array.
@@ -29,7 +33,7 @@ namespace PixelVisionSDK.Engine.Utils
         /// <param name="index">The returned value of the index.</param>
         public static void CalculateIndex(int x, int y, int width, out int index)
         {
-            index = x + y*width;
+            index = x + y * width;
         }
 
         /// <summary>
@@ -46,8 +50,10 @@ namespace PixelVisionSDK.Engine.Utils
         /// </param>
         public static void CalculatePosition(int index, int width, out int x, out int y)
         {
-            x = index%width;
-            y = index/width;
+            x = index % width;
+            y = index / width;
         }
+
     }
+
 }

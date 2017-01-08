@@ -8,13 +8,16 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System.Collections.Generic;
 
 namespace PixelVisionSDK.Engine.Chips.IO.File
 {
+
     /// <summary>
     ///     The ILoad interface allows a standard
     ///     API when loading de-serialized data into a class. It works on the concept
@@ -23,6 +26,7 @@ namespace PixelVisionSDK.Engine.Chips.IO.File
     /// </summary>
     public interface ILoad
     {
+
         /// <summary>
         ///     The DeserializeData method allows you to pass in a
         ///     Dictionary with a string as the key and a generic object for the
@@ -35,5 +39,7 @@ namespace PixelVisionSDK.Engine.Chips.IO.File
         ///     value.
         /// </param>
         void DeserializeData(Dictionary<string, object> data);
+
     }
+
 }

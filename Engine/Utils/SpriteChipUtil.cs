@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -17,11 +19,13 @@ using PixelVisionSDK.Engine.Chips.Data;
 
 namespace PixelVisionSDK.Engine.Utils
 {
+
     public class SpriteChipUtil
     {
+
         private static int[] pixels = new int[0];
 
-        public static int[] tmpPixelData = new int[8*8];
+        public static int[] tmpPixelData = new int[8 * 8];
 
         public static void ClearTextureData(ref TextureData textureData, int colorRef = -1)
         {
@@ -38,9 +42,9 @@ namespace PixelVisionSDK.Engine.Utils
         public static int CalcualteTotalSprites(int width, int height, int spriteWidth, int spriteHeight)
         {
             //TODO this needs to be double checked at different size sprites
-            var cols = MathUtil.FloorToInt(width/spriteWidth);
-            var rows = MathUtil.FloorToInt(height/spriteHeight);
-            return cols*rows;
+            var cols = MathUtil.FloorToInt(width / spriteWidth);
+            var rows = MathUtil.FloorToInt(height / spriteHeight);
+            return cols * rows;
         }
 
         public static void CutOutSpriteFromTextureData(int index, TextureData textureData, int spriteWidth,
@@ -72,10 +76,10 @@ namespace PixelVisionSDK.Engine.Utils
             // Make sure we stay in bounds
             index = index.Clamp(0, totalSprites - 1);
 
-            var w = width/spriteWidth;
+            var w = width / spriteWidth;
 
-            x = index%w*spriteWidth;
-            y = index/w*spriteHeight;
+            x = index % w * spriteWidth;
+            y = index / w * spriteHeight;
 
             if (flipY)
                 y = height - y - spriteHeight;
@@ -83,13 +87,13 @@ namespace PixelVisionSDK.Engine.Utils
 
         public static void CalculatePixelPos(int index, int width, int height, out int x, out int y)
         {
-            var totalPixels = width*height;
+            var totalPixels = width * height;
 
             // Make sure we stay in bounds
             index = index.Clamp(0, totalPixels - 1);
 
-            x = index%width;
-            y = index/height;
+            x = index % width;
+            y = index / height;
 
             y = height - 1 - y;
         }
@@ -116,7 +120,7 @@ namespace PixelVisionSDK.Engine.Utils
                     var newY = iy;
                     if (flipH) newx = sWidth - 1 - ix;
                     if (flipV) newY = sHeight - 1 - iy;
-                    pixelData[ix + iy*sWidth] = pixels[newx + newY*sWidth];
+                    pixelData[ix + iy * sWidth] = pixels[newx + newY * sWidth];
                 }
             }
         }
@@ -131,23 +135,25 @@ namespace PixelVisionSDK.Engine.Utils
 
             Array.Copy(pixelData, oldData, oldSize);
 
-            var newSpriteWidth = sWidth*scale;
-            var newSpriteHeight = sHeight*scale;
+            var newSpriteWidth = sWidth * scale;
+            var newSpriteHeight = sHeight * scale;
 
-            var newSize = newSpriteWidth*newSpriteHeight;
+            var newSize = newSpriteWidth * newSpriteHeight;
 
             Array.Resize(ref pixelData, newSize);
             for (var i = 0; i < newSize; i++)
             {
                 int x, y, oldIndex;
+
                 // Calculate the nex x,y pos
                 PosUtil.CalculatePosition(i, newSpriteWidth, out x, out y);
 
                 // Convert to the old index
-                PosUtil.CalculateIndex(x/scale, y/scale, 8, out oldIndex);
+                PosUtil.CalculateIndex(x / scale, y / scale, 8, out oldIndex);
 
                 pixelData[i] = oldData[oldIndex];
             }
+
             //Debug.Log("Old Size "+ oldSize + " new size "+newSize +" new size "+ newSpriteWidth+"x"+ newSpriteHeight);
         }
 
@@ -184,32 +190,36 @@ namespace PixelVisionSDK.Engine.Utils
 
 
             //TODO need to allow flipping and match the draw sprite API
-            var realHeight = spriteHeight*MathUtil.CeilToInt(spriteIDs.Length/width);
-            var realWidth = spriteWidth*width;
+            var realHeight = spriteHeight * MathUtil.CeilToInt(spriteIDs.Length / width);
+            var realWidth = spriteWidth * width;
 
             var data = new TextureData(realWidth, realHeight);
 
             //Debug.Log("Draw "+ids.Length + " sprites.");
 
             var total = spriteIDs.Length;
-            var spriteData = new int[8*8];
+            var spriteData = new int[8 * 8];
             for (var i = 0; i < total; i++)
             {
                 var id = spriteIDs[i];
                 if (id > -1)
                 {
-                    var newX = MathUtil.FloorToInt(i%width)*spriteWidth;
-                    var newY = MathUtil.FloorToInt(i/width)*spriteWidth;
+                    var newX = MathUtil.FloorToInt(i % width) * spriteWidth;
+                    var newY = MathUtil.FloorToInt(i / width) * spriteWidth;
                     newY = realHeight - spriteHeight - newY;
                     spriteChip.ReadSpriteAt(id, spriteData);
                     data.SetPixels(newX, newY, spriteWidth, spriteHeight, spriteData);
+
                     //DrawSprite(id, newX, newY);
                 }
             }
 
             data.CopyPixels(pixelData);
+
             //var pixelData = data.GetPixels();
             //return pixelData;
         }
+
     }
+
 }

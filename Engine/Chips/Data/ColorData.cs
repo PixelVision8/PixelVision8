@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -17,6 +19,7 @@ using System.Text.RegularExpressions;
 
 namespace PixelVisionSDK.Engine.Chips.Data
 {
+
     /// <summary>
     ///     The ColorData class is a wraper for color data in the engine.
     ///     It provides a simple interface for storing RBG color data as
@@ -24,6 +27,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
     /// </summary>
     public class ColorData : AbstractData
     {
+
         protected float _b;
         protected float _g;
 
@@ -104,8 +108,8 @@ namespace PixelVisionSDK.Engine.Chips.Data
         /// <returns></returns>
         public static string ColorToHex(float r, float g, float b)
         {
-            var hex = "#" + ((int) (r*255)).ToString("X2") + ((int) (g*255)).ToString("X2") +
-                      ((int) (b*255)).ToString("X2");
+            var hex = "#" + ((int) (r * 255)).ToString("X2") + ((int) (g * 255)).ToString("X2") +
+                      ((int) (b * 255)).ToString("X2");
             return hex;
         }
 
@@ -126,9 +130,9 @@ namespace PixelVisionSDK.Engine.Chips.Data
             if (hex[0] == '#')
                 hex = hex.Substring(1);
 
-            r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber)/(float) byte.MaxValue;
-            g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber)/(float) byte.MaxValue;
-            b = byte.Parse(hex.Substring(4, 2), NumberStyles.HexNumber)/(float) byte.MaxValue;
+            r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber) / (float) byte.MaxValue;
+            g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber) / (float) byte.MaxValue;
+            b = byte.Parse(hex.Substring(4, 2), NumberStyles.HexNumber) / (float) byte.MaxValue;
         }
 
         /// <summary>
@@ -141,9 +145,9 @@ namespace PixelVisionSDK.Engine.Chips.Data
         public static float Brightness(float r, float g, float b)
         {
             return (float) Math.Sqrt(
-                r*r*.241 +
-                g*g*.691 +
-                b*b*.068);
+                r * r * .241 +
+                g * g * .691 +
+                b * b * .068);
         }
 
         /// <summary>
@@ -158,5 +162,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
             var match = regex.Match(color);
             return match.Success;
         }
+
     }
+
 }

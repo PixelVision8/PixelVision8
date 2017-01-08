@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System.Collections.Generic;
@@ -20,6 +22,7 @@ using PixelVisionSDK.Engine.Utils;
 
 namespace PixelVisionSDK.Engine.Chips.Game
 {
+
     /// <summary>
     ///     The <see cref="GameChip" /> represents the foundation of a game class
     ///     with all the logic it needs to work correctly in the PixelVisionEngine.
@@ -29,6 +32,7 @@ namespace PixelVisionSDK.Engine.Chips.Game
     /// </summary>
     public class GameChip : AbstractChip, IGame, IUpdate, IDraw
     {
+
         private string _name = "Untitle_Game";
         protected int _saveSlots;
 
@@ -94,6 +98,7 @@ namespace PixelVisionSDK.Engine.Chips.Game
                 savedData[key] = value;
                 return;
             }
+
             savedData.Add(key, value);
         }
 
@@ -238,5 +243,7 @@ namespace PixelVisionSDK.Engine.Chips.Game
                 }
             }
         }
+
     }
+
 }

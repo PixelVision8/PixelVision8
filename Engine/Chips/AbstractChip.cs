@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -17,6 +19,7 @@ using System.Text;
 
 namespace PixelVisionSDK.Engine.Chips
 {
+
     /// <summary>
     ///     The AbstractChip represents plug-in that adds new functionality to the
     ///     PixelVisionEngine. Simply extend this abstract class and override the
@@ -42,6 +45,7 @@ namespace PixelVisionSDK.Engine.Chips
     /// </example>
     public class AbstractChip : IChip
     {
+
         protected PixelVisionEngine engine;
 
         /// <summary>
@@ -144,5 +148,7 @@ namespace PixelVisionSDK.Engine.Chips
         public virtual void Reset()
         {
         }
+
     }
+
 }

@@ -8,13 +8,17 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 namespace PixelVisionSDK.Engine.Chips.Data
 {
+
     public interface IInvalidate
     {
+
         /// <summary>
         ///     The invalid flag allows you to quickly see if data has been changed
         ///     on the AbstractData instance. This is used in conjunction with the
@@ -41,5 +45,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
         ///     done changing.
         /// </summary>
         void ResetValidation();
+
     }
+
 }

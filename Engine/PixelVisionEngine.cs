@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -24,6 +26,7 @@ using PixelVisionSDK.Engine.Chips.IO.Controller;
 
 namespace PixelVisionSDK.Engine
 {
+
     /// <summary>
     ///     This is the default engine class for Pixel Vision 8. It manages the
     ///     state of all chips, the game itself and helps with communication between
@@ -31,6 +34,7 @@ namespace PixelVisionSDK.Engine
     /// </summary>
     public class PixelVisionEngine : IEngine
     {
+
         protected string[] defaultChips;
 
         protected Dictionary<string, string> metaData = new Dictionary<string, string>
@@ -275,5 +279,7 @@ namespace PixelVisionSDK.Engine
         {
             chipManager.DeserializeData(data);
         }
+
     }
+
 }

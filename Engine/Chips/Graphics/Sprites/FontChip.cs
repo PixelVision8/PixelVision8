@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -19,6 +21,7 @@ using PixelVisionSDK.Engine.Chips.Data;
 
 namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
 {
+
     /// <summary>
     ///     The font chip allows you to render text to the display. It is built on
     ///     top of the same APIs as the <see cref="SpriteChip" /> but has custom
@@ -26,6 +29,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
     /// </summary>
     public class FontChip : AbstractChip
     {
+
         protected const string _newline = "\r\n";
 
         protected Dictionary<string, int[]> fonts = new Dictionary<string, int[]>();
@@ -179,8 +183,8 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
                 tWidth = Math.Max(tWidth, result[i].Length);
             }
 
-            var realWidth = (cWidth + letterSpacing)*tWidth;
-            var realHeight = cHeight*tHeight;
+            var realWidth = (cWidth + letterSpacing) * tWidth;
+            var realHeight = cHeight * tHeight;
 
             if (textureData.width != realWidth || textureData.height != realHeight)
             {
@@ -193,7 +197,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
 
             var offset = 32;
 
-            var tmpData = new int[spriteChip.width*spriteChip.height];
+            var tmpData = new int[spriteChip.width * spriteChip.height];
             for (var i = 0; i < totalLines; i++)
             {
                 var line = result[i];
@@ -206,7 +210,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
                     //Debug.Log("Char " + character + " " + spriteID);
                     spriteChip.ReadSpriteAt(fontMap[spriteID], tmpData);
 
-                    textureData.MergePixels(j*(cWidth + letterSpacing), i*cHeight, cWidth, cHeight, tmpData);
+                    textureData.MergePixels(j * (cWidth + letterSpacing), i * cHeight, cWidth, cHeight, tmpData);
                 }
             }
         }
@@ -275,11 +279,14 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
             var i = max - 1;
             while (i >= 0 && !char.IsWhiteSpace(text[pos + i]))
                 i--;
+
             if (i < 0)
                 return max; // No whitespace found; break at maximum length
+
             // Find start of whitespace
             while (i >= 0 && char.IsWhiteSpace(text[pos + i]))
                 i--;
+
             // Return length of text before whitespace
             return i + 1;
         }
@@ -287,10 +294,12 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
         public static string Split(string str, int chunkSize)
         {
             var total = (double) str.Length;
-            var split = Enumerable.Range(0, (int) Math.Ceiling(total/chunkSize))
-                .Select(i => str.Substring(i*chunkSize, chunkSize)).ToArray();
+            var split = Enumerable.Range(0, (int) Math.Ceiling(total / chunkSize))
+                .Select(i => str.Substring(i * chunkSize, chunkSize)).ToArray();
 
             return string.Join("\n", split);
         }
+
     }
+
 }

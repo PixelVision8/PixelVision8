@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using PixelVisionSDK.Engine.Chips;
@@ -17,6 +19,7 @@ using PixelVisionSDK.Engine.Chips.IO.File;
 
 namespace PixelVisionSDK.Engine
 {
+
     /// <summary>
     ///     The <see cref="IEngine" /> internal represents the
     ///     core API for the Engine class. Implement this
@@ -24,6 +27,7 @@ namespace PixelVisionSDK.Engine
     /// </summary>
     public interface IEngine : IEngineChips, IGameLoop, ISave, ILoad
     {
+
         /// <summary>
         ///     A flag for if the engine is <see cref="running" />
         /// </summary>
@@ -45,5 +49,7 @@ namespace PixelVisionSDK.Engine
         /// <summary>
         /// </summary>
         void Shutdown();
+
     }
+
 }

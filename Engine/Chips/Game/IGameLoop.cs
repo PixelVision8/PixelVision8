@@ -8,15 +8,19 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 namespace PixelVisionSDK.Engine.Chips.Game
 {
+
     /// <summary>
     /// </summary>
     public interface IGameLoop : IUpdate, IDraw
     {
+
         /// <summary>
         ///     The Init() method for the game's live-cycle. This is the first
         ///     method called on a game when it is run.
@@ -29,5 +33,7 @@ namespace PixelVisionSDK.Engine.Chips.Game
         ///     you want to execute when a game is started/restarted.
         /// </summary>
         void Reset();
+
     }
+
 }

@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -18,6 +20,7 @@ using PixelVisionSDK.Engine.Utils;
 
 namespace PixelVisionSDK.Engine.Chips.Data
 {
+
     /// <summary>
     ///     A track is a collection of ISoundData that is played
     ///     back in a specific sequence. The track uses notes to
@@ -25,6 +28,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
     /// </summary>
     public class TrackData : AbstractData
     {
+
         /// <summary>
         ///     Total number of notes in a single track.
         /// </summary>
@@ -116,5 +120,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
                 notes[i] = 0;
             }
         }
+
     }
+
 }

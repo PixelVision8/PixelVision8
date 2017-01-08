@@ -8,13 +8,16 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System.Text;
 
 namespace PixelVisionSDK.Engine.Chips.IO.File
 {
+
     /// <summary>
     ///     The ISave internal provides the API for
     ///     serializing data into a string from a class that implements the
@@ -25,6 +28,7 @@ namespace PixelVisionSDK.Engine.Chips.IO.File
     /// </summary>
     public interface ISave
     {
+
         /// <summary>
         ///     Use this method to create a new StringBuilder instance and wrap any
         ///     custom serialized data by leveraging the CustomSerializedData()
@@ -43,5 +47,7 @@ namespace PixelVisionSDK.Engine.Chips.IO.File
         ///     SerializedData() method.
         /// </param>
         void CustomSerializedData(StringBuilder sb);
+
     }
+
 }

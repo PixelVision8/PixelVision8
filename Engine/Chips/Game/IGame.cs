@@ -8,19 +8,23 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System.Collections.Generic;
 
 namespace PixelVisionSDK.Engine.Chips.Game
 {
+
     /// <summary>
     ///     The <see cref="IGame" /> internal contains the API
     ///     calls for a game in the PixelVisionEngine.
     /// </summary>
     public interface IGame
     {
+
         /// <summary>
         ///     Name of the game.
         /// </summary>
@@ -138,5 +142,7 @@ namespace PixelVisionSDK.Engine.Chips.Game
         ///     Accepts a Dictionary with a string for the key and value.
         /// </param>
         void LoadMetaData(Dictionary<string, object> metaData);
+
     }
+
 }

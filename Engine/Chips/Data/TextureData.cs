@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -17,6 +19,7 @@ using PixelVisionSDK.Engine.Utils;
 
 namespace PixelVisionSDK.Engine.Chips.Data
 {
+
     /// <summary>
     ///     <see cref="TextureData" /> represent a grid of pixel data in the engine.
     ///     Pixel data areint values that can be used to
@@ -28,6 +31,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
     /// </summary>
     public class TextureData : AbstractData
     {
+
         protected Rect oRect = new Rect();
         protected int[] pixels = new int[0];
         protected Rect sRect = new Rect();
@@ -100,7 +104,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
                 y = MathUtil.Repeat(y, height - 1);
             }
 
-            var index = x + width*y;
+            var index = x + width * y;
             return pixels[index];
         }
 
@@ -115,7 +119,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
         public int[] GetPixels()
         {
             //TODO depricate this for the CopyPixels method
-            var total = width*height;
+            var total = width * height;
             var copy = new int[total];
             Array.Copy(pixels, copy, total);
             return copy;
@@ -130,7 +134,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
         /// </param>
         public void CopyPixels(int[] data)
         {
-            var total = width*height;
+            var total = width * height;
 
             if (data.Length != total)
             {
@@ -166,7 +170,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
         /// </param>
         public void GetPixels(int x, int y, int blockWidth, int blockHeight, int[] data)
         {
-            tmpTotal = blockWidth*blockHeight;
+            tmpTotal = blockWidth * blockHeight;
 
             if (data.Length != tmpTotal)
                 Array.Resize(ref data, tmpTotal);
@@ -224,7 +228,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
                     return;
             }
 
-            var index = x + width*y;
+            var index = x + width * y;
 
             if (index < 0)
                 return;
@@ -263,14 +267,14 @@ namespace PixelVisionSDK.Engine.Chips.Data
         /// <param name="pixels">The pixel data to be used.</param>
         public virtual void SetPixels(int x, int y, int blockWidth, int blockHeight, int[] pixels)
         {
-            var total = blockWidth*blockHeight;
+            var total = blockWidth * blockHeight;
 
             int column, newX, newY, row = 0;
             var maxColumns = blockWidth - 1;
 
             for (var i = 0; i < total; i++)
             {
-                column = i%blockWidth;
+                column = i % blockWidth;
 
                 newX = column + x;
                 newY = row + y;
@@ -297,7 +301,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
             tRect.width = width;
             tRect.height = height;
 
-            Array.Resize(ref pixels, width*height);
+            Array.Resize(ref pixels, width * height);
             Clear();
         }
 
@@ -350,17 +354,17 @@ namespace PixelVisionSDK.Engine.Chips.Data
             int transparent = -1)
         {
             // Exit out of a merge if the data doesn't match up
-            if (srcPixels.Length != blockWidth*blockHeight)
+            if (srcPixels.Length != blockWidth * blockHeight)
                 return;
 
-            var total = blockWidth*blockHeight;
+            var total = blockWidth * blockHeight;
 
             tmpColumn = tmpX = tmpY = tmpRow = 0;
             var maxColumns = blockWidth - 1;
 
             for (var i = 0; i < total; i++)
             {
-                tmpColumn = i%blockWidth;
+                tmpColumn = i % blockWidth;
 
                 tmpX = tmpColumn + x;
                 tmpY = tmpRow + y;
@@ -398,5 +402,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
 
             sb.Append("\"spriteIDs\":[" + string.Join(",", Array.ConvertAll(pixels, x => x.ToString())) + "]");
         }
+
     }
+
 }

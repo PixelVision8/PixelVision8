@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -19,8 +21,10 @@ using PixelVisionSDK.Engine.Utils;
 
 namespace PixelVisionSDK.Engine.Chips.Graphics.Display
 {
+
     public class DisplayChip : AbstractChip, IDraw
     {
+
         protected readonly TextureData textureData = new TextureData(0, 0);
         protected int _height = 240;
         protected int _maxSpriteCount = 64;
@@ -91,6 +95,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Display
 
             // Reset the sprite counter after a draw
             currentSprites = 0;
+
             //            if (_rawImage)
             //            {
             //                //Debug.Log("Post Render");
@@ -166,7 +171,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Display
             int layerOrder = 0,
             bool masked = false)
         {
-            var drawCalls = width/engine.spriteChip.width*(height/engine.spriteChip.height);
+            var drawCalls = width / engine.spriteChip.width * (height / engine.spriteChip.height);
 
             //currentSprites += drawCalls;
 
@@ -209,7 +214,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Display
             // Resize data structures
             textureData.Resize(_width, _height);
 
-            tmpBufferData = new int[_width*_height];
+            tmpBufferData = new int[_width * _height];
         }
 
         /// <summary>
@@ -224,6 +229,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Display
         {
             //Debug.Log("Pixel Data Renderer: Configure ");
             engine.displayChip = this;
+
             // Get the target raw image from the engine
             //target = engine.renderTarget;
 
@@ -286,5 +292,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Display
             if (data.ContainsKey("maxSpriteCount"))
                 maxSpriteCount = (int) (long) data["maxSpriteCount"];
         }
+
     }
+
 }

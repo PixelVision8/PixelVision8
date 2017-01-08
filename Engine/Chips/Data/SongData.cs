@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -18,6 +20,7 @@ using PixelVisionSDK.Engine.Utils;
 
 namespace PixelVisionSDK.Engine.Chips.Data
 {
+
     /// <summary>
     ///     The SongData class represents a collection of tracks and
     ///     meta data used by the MusicChip to play back ISoundData
@@ -25,6 +28,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
     /// </summary>
     public class SongData : AbstractData
     {
+
         protected int _speedInBPM = 120;
 
         /// <summary>
@@ -153,5 +157,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
                 track.Reset(true);
             }
         }
+
     }
+
 }

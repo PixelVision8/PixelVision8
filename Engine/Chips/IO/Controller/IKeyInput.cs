@@ -8,13 +8,17 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 namespace PixelVisionSDK.Engine.Chips.IO.Controller
 {
+
     public interface IKeyInput
     {
+
         /// <summary>
         ///     <para>Returns the keyboard input entered this frame. (Read Only)</para>
         /// </summary>
@@ -40,5 +44,7 @@ namespace PixelVisionSDK.Engine.Chips.IO.Controller
         /// </summary>
         /// <param name="key"></param>
         bool GetKeyUp(int key);
+
     }
+
 }

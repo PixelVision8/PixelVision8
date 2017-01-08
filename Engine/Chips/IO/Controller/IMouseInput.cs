@@ -8,15 +8,19 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using PixelVisionSDK.Engine.Chips.Data;
 
 namespace PixelVisionSDK.Engine.Chips.IO.Controller
 {
+
     public interface IMouseInput
     {
+
         /// <summary>
         ///     <para>The current mouse position in pixel coordinates. (Read Only)</para>
         /// </summary>
@@ -49,5 +53,7 @@ namespace PixelVisionSDK.Engine.Chips.IO.Controller
         /// <returns>
         /// </returns>
         bool GetMouseButtonUp(int button);
+
     }
+
 }

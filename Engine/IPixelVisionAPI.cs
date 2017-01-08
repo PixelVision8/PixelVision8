@@ -8,13 +8,16 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using PixelVisionSDK.Engine.Chips.IO.Controller;
 
 namespace PixelVisionSDK.Engine
 {
+
     /// <summary>
     ///     This interface represents the main API for the
     ///     engine. This is exposed to games so they can interact with the sub
@@ -22,6 +25,7 @@ namespace PixelVisionSDK.Engine
     /// </summary>
     public interface IPixelVisionAPI : IKeyInput, IMouseInput
     {
+
         /// <summary>
         ///     The time difference between the last frame.
         /// </summary>
@@ -493,5 +497,7 @@ namespace PixelVisionSDK.Engine
         /// <param name="newIDs"></param>
         /// <returns></returns>
         int[] ReplaceColorIDs(int[] pixelData, int[] oldIDs, int[] newIDs);
+
     }
+
 }

@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System.Collections.Generic;
@@ -17,6 +19,7 @@ using PixelVisionSDK.Engine.Chips.IO.File;
 
 namespace PixelVisionSDK.Engine.Chips.Data
 {
+
     /// <summary>
     ///     The AbstractData class represents a standard foundation for all
     ///     data objects in the engine. It implements the ISave, ILoad and
@@ -25,6 +28,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
     /// </summary>
     public class AbstractData : ISave, ILoad, IInvalidate
     {
+
         protected bool _invalid;
 
         /// <summary>
@@ -106,5 +110,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
         {
             // override with custom serialized data
         }
+
     }
+
 }

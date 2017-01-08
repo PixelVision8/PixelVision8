@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using PixelVisionSDK.Engine;
@@ -16,6 +18,7 @@ using PixelVisionSDK.Engine.Chips;
 
 namespace PixelVisionSDK
 {
+
     /// <summary>
     ///     This internal defines the APIs for the
     ///     <see cref="IAPIBridge" /> which allows games to talk to the engine's
@@ -23,9 +26,12 @@ namespace PixelVisionSDK
     /// </summary>
     public interface IAPIBridge : IPixelVisionAPI
     {
+
         /// <summary>
         ///     A reference to the core <see cref="chips" /> in the engine.
         /// </summary>
         IEngineChips chips { get; set; }
+
     }
+
 }

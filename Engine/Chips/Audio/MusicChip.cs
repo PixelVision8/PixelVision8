@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -17,6 +19,7 @@ using PixelVisionSDK.Engine.Utils;
 
 namespace PixelVisionSDK.Engine.Chips.Audio
 {
+
     /// <summary>
     ///     The MusicChpip is a sequencer for playing back ISoundData. It
     ///     keeps track of playback time and moves through TrackData playing
@@ -26,6 +29,7 @@ namespace PixelVisionSDK.Engine.Chips.Audio
     /// </summary>
     public class MusicChip : AbstractChip, IUpdate
     {
+
         protected int currentSong;
         public bool loopSong;
         public int maxNoteNum = 127; // how many notes in these arrays below
@@ -34,7 +38,7 @@ namespace PixelVisionSDK.Engine.Chips.Audio
         protected float[] noteHZ; // a lookup table of all musical notes in Hz
         protected int notesPerTrack = 32;
         protected float[] noteStartFrequency; // same, but for sfxr frequency 0..1 range
-        protected float noteTickS = 30.0f/120.0f; // (30.0f/120.0f) = 120BPM eighth notes
+        protected float noteTickS = 30.0f / 120.0f; // (30.0f/120.0f) = 120BPM eighth notes
         protected float noteTickSEven;
         protected float noteTickSOdd;
         protected long sequencerBeatNumber;
@@ -44,6 +48,7 @@ namespace PixelVisionSDK.Engine.Chips.Audio
         protected int songLoopCount = 0;
 
         protected float swingRhythmFactor = 0.7f;
+
         //1.0f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
 
         protected float time;
@@ -111,7 +116,7 @@ namespace PixelVisionSDK.Engine.Chips.Audio
             {
                 if (time >= nextBeatTimestamp)
                 {
-                    nextBeatTimestamp = time + (sequencerBeatNumber%2 == 1 ? noteTickSOdd : noteTickSEven);
+                    nextBeatTimestamp = time + (sequencerBeatNumber % 2 == 1 ? noteTickSOdd : noteTickSEven);
                     OnBeat();
                 }
             }
@@ -123,8 +128,10 @@ namespace PixelVisionSDK.Engine.Chips.Audio
         public override void Configure()
         {
             engine.musicChip = this;
+
             //engine.chipManager.AddToUpdateList(this);
             totalLoops = 16;
+
             // Setup the sequencer values
 
             var a = 440.0f; // a is 440 hz...
@@ -137,7 +144,7 @@ namespace PixelVisionSDK.Engine.Chips.Audio
             for (var x = 0; x < maxNoteNum; ++x)
             {
                 // what Hz is a particular musical note? (eg A#)
-                hertz = a/32.0f*(float) Math.Pow(2.0f, (x - 9.0f)/12.0f);
+                hertz = a / 32.0f * (float) Math.Pow(2.0f, (x - 9.0f) / 12.0f);
                 noteHZ[x] = hertz; // this appears to be correct: C = 60 = 261.6255Hz
 
                 // derive the SFXR sine wave frequency to play this Hz
@@ -145,7 +152,8 @@ namespace PixelVisionSDK.Engine.Chips.Audio
                 // note_startFrequency[x] = Mathf.Sqrt(hertz / SR * 100.0f / 8.0f - 0.001f);
                 // maybe the algorithm assumes 1 based array etc?
                 if (x < 126) // let's just hack in one semitone lower sounds (but not overflow array)
-                    noteStartFrequency[x + 1] = (float) Math.Sqrt(hertz/SR*100.0f/8.0f - 0.001f) - 0.0018f;
+                    noteStartFrequency[x + 1] = (float) Math.Sqrt(hertz / SR * 100.0f / 8.0f - 0.001f) - 0.0018f;
+
                 // last num is a hack using my ears to "tune"
             }
         }
@@ -228,6 +236,7 @@ namespace PixelVisionSDK.Engine.Chips.Audio
                         return;
                     }
                 }
+
                 sequencerBeatNumber = 0;
 
                 // the next loop might have different instruments
@@ -238,7 +247,7 @@ namespace PixelVisionSDK.Engine.Chips.Audio
             for (var trackNum = 0; trackNum < tracksPerLoop; trackNum++)
             {
                 // what note is it?
-                var gotANote = activeSongData.tracks[trackNum].notes[sequencerBeatNumber%notesPerTrack];
+                var gotANote = activeSongData.tracks[trackNum].notes[sequencerBeatNumber % notesPerTrack];
 
                 var instrument = soundChip.ReadChannel(trackNum);
 
@@ -248,6 +257,7 @@ namespace PixelVisionSDK.Engine.Chips.Audio
                     if ((gotANote > 0) && (gotANote < maxNoteNum) && (instrument != null))
                     {
                         var frequency = noteStartFrequency[gotANote];
+
                         //$CTK midi num offset fix -1]; // -1 to account for 0 based array
                         instrument.Play(frequency);
                     }
@@ -276,9 +286,9 @@ namespace PixelVisionSDK.Engine.Chips.Audio
 
         protected void UpdateNoteTickLengths()
         {
-            noteTickS = 30.0f/activeSongData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
-            noteTickSOdd = noteTickS*swingRhythmFactor; // small beat
-            noteTickSEven = noteTickS*2 - noteTickSOdd; // long beat
+            noteTickS = 30.0f / activeSongData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
+            noteTickSOdd = noteTickS * swingRhythmFactor; // small beat
+            noteTickSEven = noteTickS * 2 - noteTickSOdd; // long beat
         }
 
         /// <summary>
@@ -323,5 +333,7 @@ namespace PixelVisionSDK.Engine.Chips.Audio
                 }
             }
         }
+
     }
+
 }

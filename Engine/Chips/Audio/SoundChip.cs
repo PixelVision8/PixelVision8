@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -17,12 +19,14 @@ using PixelVisionSDK.Engine.Utils;
 
 namespace PixelVisionSDK.Engine.Chips.Audio
 {
+
     /// <summary>
     ///     The <see cref="SoundChip" /> is responsible for playing back sound
     ///     effects in the engine. It's powered by SFxr.
     /// </summary>
     public class SoundChip : AbstractChip
     {
+
         protected int _totalSounds;
         protected ISoundData[] channels = new ISoundData[0];
 
@@ -179,5 +183,7 @@ namespace PixelVisionSDK.Engine.Chips.Audio
 
             return channels[index];
         }
+
     }
+
 }

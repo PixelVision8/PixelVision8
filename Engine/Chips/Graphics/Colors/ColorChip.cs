@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -19,6 +21,7 @@ using PixelVisionSDK.Engine.Utils;
 
 namespace PixelVisionSDK.Engine.Chips.Graphics.Colors
 {
+
     /// <summary>
     ///     The <see cref="ColorChip" /> represents the system colors of the engine.
     ///     It allows the engine to work in color indexes that the display can map
@@ -26,6 +29,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Colors
     /// </summary>
     public class ColorChip : AbstractChip, IColorChip
     {
+
         protected string[] _colors =
         {
             "#000000",
@@ -132,7 +136,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Colors
         /// <value>Int</value>
         public int total
         {
-            get { return pages*colorsPerPage; }
+            get { return pages * colorsPerPage; }
         }
 
         /// <summary>
@@ -151,11 +155,14 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Colors
                     for (var i = 0; i < t; i++)
                     {
                         colorCache[i] = new ColorData(_colors[i]);
+
                         //color.HexToColor(_colors[i]);
                         //colorCache[i] = color;
                     }
+
                     invalid = false;
                 }
+
                 return colorCache;
             }
         }
@@ -219,7 +226,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Colors
         /// <param name="total"></param>
         public void RebuildColorPages(int total)
         {
-            pages = MathUtil.CeilToInt(total/colorsPerPage);
+            pages = MathUtil.CeilToInt(total / colorsPerPage);
         }
 
         /// <summary>
@@ -294,5 +301,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Colors
                 }
             }
         }
+
     }
+
 }

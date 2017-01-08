@@ -8,21 +8,26 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
 
 namespace PixelVisionSDK.Engine.Utils
 {
+
     public static class MathUtil
     {
+
         private static readonly Random random = new Random();
 
         public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
         {
             if (val.CompareTo(min) < 0) return min;
             if (val.CompareTo(max) > 0) return max;
+
             return val;
         }
 
@@ -30,9 +35,10 @@ namespace PixelVisionSDK.Engine.Utils
         {
             if (val < 0F)
             {
-                return max + val%max;
+                return max + val % max;
             }
-            return val%max;
+
+            return val % max;
         }
 
         public static int FloorToInt(int a)
@@ -49,5 +55,7 @@ namespace PixelVisionSDK.Engine.Utils
         {
             return random.Next(min, max);
         }
+
     }
+
 }

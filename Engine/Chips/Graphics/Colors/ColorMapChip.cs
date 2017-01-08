@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -16,6 +18,7 @@ using PixelVisionSDK.Engine.Chips.Data;
 
 namespace PixelVisionSDK.Engine.Chips.Graphics.Colors
 {
+
     /// <summary>
     ///     The color map chip is used to help import sprites and tile maps into the
     ///     engine if their colors don't match the system colors. When loading
@@ -24,6 +27,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Colors
     /// </summary>
     public class ColorMapChip : AbstractChip, IColorChip
     {
+
         protected string[] _colors = new string[256];
 
         protected string transparent = "#ff00ff";
@@ -39,6 +43,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Colors
                 {
                     colorCache[i] = new ColorData(_colors[i]);
                 }
+
                 return colorCache;
             }
         }
@@ -100,5 +105,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Colors
             base.Deactivate();
             engine.colorMapChip = null;
         }
+
     }
+
 }

@@ -8,16 +8,20 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 namespace PixelVisionSDK.Engine.Chips.Data
 {
+
     /// <summary>
     ///     The Vector represents an int x and int y value for position.
     /// </summary>
     public class Vector
     {
+
         /// <summary>
         ///     X value of the Vector
         /// </summary>
@@ -39,5 +43,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
             this.x = x;
             this.y = y;
         }
+
     }
+
 }

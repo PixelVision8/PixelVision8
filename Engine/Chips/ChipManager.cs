@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -20,6 +22,7 @@ using PixelVisionSDK.Engine.Chips.IO.File;
 
 namespace PixelVisionSDK.Engine.Chips
 {
+
     /// <summary>
     ///     The <see cref="ChipManager" /> is responsible for managing all of the
     ///     chips in the engine. It allows the engine to create chips from a string
@@ -29,6 +32,7 @@ namespace PixelVisionSDK.Engine.Chips
     /// </summary>
     public class ChipManager : IGameLoop, ISave, ILoad
     {
+
         protected Dictionary<string, AbstractChip> chips = new Dictionary<string, AbstractChip>();
         protected List<IDraw> drawChips = new List<IDraw>();
         protected PixelVisionEngine engine;
@@ -336,5 +340,7 @@ namespace PixelVisionSDK.Engine.Chips
                 chips.Remove(item.Key);
             }
         }
+
     }
+
 }

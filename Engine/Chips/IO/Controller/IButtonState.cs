@@ -8,13 +8,17 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 namespace PixelVisionSDK.Engine.Chips.IO.Controller
 {
+
     public interface IButtonState
     {
+
         bool value { get; set; }
         Buttons button { get; set; }
         bool buttonReleased { get; }
@@ -24,5 +28,7 @@ namespace PixelVisionSDK.Engine.Chips.IO.Controller
         void Reset();
         void Release();
         void Update(float timeDelta);
+
     }
+
 }

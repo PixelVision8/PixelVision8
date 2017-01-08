@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -20,6 +22,7 @@ using PixelVisionSDK.Engine.Utils;
 
 namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
 {
+
     /// <summary>
     ///     The <see cref="SpriteChip" /> represents a way to store and retrieve
     ///     sprite pixel data. Internally, the pixel data is stored in a
@@ -28,6 +31,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
     /// </summary>
     public class SpriteChip : AbstractChip
     {
+
         protected int _colorsPerSprite = 8;
 
         protected int _pages = 4;
@@ -106,7 +110,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
                     return;
 
                 _pages = value.Clamp(1, 8);
-                Resize(pageWidth, pageHeight*pages);
+                Resize(pageWidth, pageHeight * pages);
             }
         }
 
@@ -115,7 +119,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
         /// </summary>
         public int spritesPerPage
         {
-            get { return pageWidth/width*(pageHeight/height); }
+            get { return pageWidth / width * (pageHeight / height); }
         }
 
         /// <summary>
@@ -123,7 +127,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
         /// </summary>
         public int totalSprites
         {
-            get { return spritesPerPage*pages; }
+            get { return spritesPerPage * pages; }
         }
 
         /// <summary>
@@ -186,6 +190,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
         public override void Configure()
         {
             engine.spriteChip = this;
+
             //_texture.wrapMode = false;
             width = 8;
             height = 8;
@@ -217,8 +222,8 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
             var minW = width;
             var minH = height;
 
-            w = Math.Max((int) Math.Ceiling((float) w/minW)*minW, minW);
-            h = Math.Max((int) Math.Ceiling((float) h/minH)*minH, minH);
+            w = Math.Max((int) Math.Ceiling((float) w / minW) * minW, minW);
+            h = Math.Max((int) Math.Ceiling((float) h / minH) * minH, minH);
 
             if (textureWidth != w || textureHeight != h)
             {
@@ -326,7 +331,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
                 pages = (int) (long) data["pages"];
             }
 
-            Resize(pageWidth, pageHeight*pages);
+            Resize(pageWidth, pageHeight * pages);
 
             if (data.ContainsKey("pixels"))
             {
@@ -416,5 +421,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
 
             _texture.SetPixels(pixelData);
         }
+
     }
+
 }

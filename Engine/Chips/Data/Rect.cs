@@ -8,19 +8,23 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
 
 namespace PixelVisionSDK.Engine.Chips.Data
 {
+
     /// <summary>
     ///     The Rect is a basic rectangle class used for determining
     ///     bounding box collision based on x, y , width and hight values.
     /// </summary>
     public class Rect
     {
+
         /// <summary>
         ///     Height of the Rect.
         /// </summary>
@@ -101,5 +105,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
 
             return false;
         }
+
     }
+
 }

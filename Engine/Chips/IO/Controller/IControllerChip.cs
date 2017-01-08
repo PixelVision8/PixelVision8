@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using PixelVisionSDK.Engine.Chips.Data;
@@ -16,8 +18,10 @@ using PixelVisionSDK.Engine.Chips.IO.File;
 
 namespace PixelVisionSDK.Engine.Chips.IO.Controller
 {
+
     public interface IControllerChip : ISave, ILoad, IUpdate
     {
+
         int totalControllers { get; }
         bool ButtonDown(int buttonID, int controller = 0);
         bool ButtonReleased(int buttonID, int controller = 0);
@@ -27,5 +31,7 @@ namespace PixelVisionSDK.Engine.Chips.IO.Controller
         Vector MousePos();
         int[] ReadControllerKeys(int controllerID = 0);
         void UpdateControllerKey(int controllerID, Buttons button, int key);
+
     }
+
 }

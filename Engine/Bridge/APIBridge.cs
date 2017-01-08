@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -20,6 +22,7 @@ using PixelVisionSDK.Engine.Utils;
 
 namespace PixelVisionSDK
 {
+
     /// <summary>
     ///     The <see cref="APIBridge" /> is the communication layer between the games
     ///     and the engine's chips. It's designed to provide a clean and safe API
@@ -32,8 +35,9 @@ namespace PixelVisionSDK
     /// </remarks>
     public class APIBridge : IAPIBridge
     {
+
         //TODO need to make sure this is correctly sized when sprite sizes change
-        private static readonly int[] tmpPixelData = new int[8*8];
+        private static readonly int[] tmpPixelData = new int[8 * 8];
         protected bool _paused;
 
         /// <summary>
@@ -169,8 +173,8 @@ namespace PixelVisionSDK
                 var id = Convert.ToInt32(ids[i]);
                 if (id > -1)
                 {
-                    var newX = MathUtil.FloorToInt(i%width)*spriteWidth + x;
-                    var newY = MathUtil.FloorToInt(i/width)*spriteWidth + y;
+                    var newX = MathUtil.FloorToInt(i % width) * spriteWidth + x;
+                    var newY = MathUtil.FloorToInt(i / width) * spriteWidth + y;
 
                     DrawSprite(id, newX, newY, flipH, flipV, aboveBG, colorOffset);
                 }
@@ -247,7 +251,7 @@ namespace PixelVisionSDK
         {
             chips.spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
 
-            DrawBufferData(tmpPixelData, column*spriteWidth, row*spriteHeight, spriteWidth, spriteHeight);
+            DrawBufferData(tmpPixelData, column * spriteWidth, row * spriteHeight, spriteWidth, spriteHeight);
         }
 
         public void DrawTilesToBuffer(int[] ids, int column, int row, int columns, int colorOffset = 0)
@@ -263,8 +267,8 @@ namespace PixelVisionSDK
                 var id = Convert.ToInt32(ids[i]);
                 if (id > -1)
                 {
-                    var newX = MathUtil.FloorToInt(i%columns) + column;
-                    var newY = MathUtil.FloorToInt(i/columns) + row;
+                    var newX = MathUtil.FloorToInt(i % columns) + column;
+                    var newY = MathUtil.FloorToInt(i / columns) + row;
 
                     DrawTileToBuffer(id, newX, newY, 0);
                 }
@@ -353,10 +357,10 @@ namespace PixelVisionSDK
             var spriteChip = chips.spriteChip;
             var spriteWidth = spriteChip.width;
             var spriteHeight = spriteChip.height;
-            var realHeight = spriteHeight*MathUtil.CeilToInt(ids.Length/width);
-            var realWidth = spriteWidth*width;
+            var realHeight = spriteHeight * MathUtil.CeilToInt(ids.Length / width);
+            var realWidth = spriteWidth * width;
 
-            var pixelData = new int[realWidth*realHeight];
+            var pixelData = new int[realWidth * realHeight];
 
             SpriteChipUtil.CovertSpritesToRawData(ref pixelData, ids, width,
                 chips);
@@ -435,5 +439,7 @@ namespace PixelVisionSDK
 
             return pixelData;
         }
+
     }
+
 }

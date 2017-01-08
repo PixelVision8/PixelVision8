@@ -8,13 +8,16 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using PixelVisionSDK.Engine.Chips.IO.File;
 
 namespace PixelVisionSDK.Engine.Chips.Data
 {
+
     /// <summary>
     ///     The ISoundData interface reprents a basic API for working
     ///     with sound objects in the PixelVisionSDK. Implement this
@@ -23,6 +26,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
     /// </summary>
     public interface ISoundData : ISave, ILoad
     {
+
         /// <summary>
         ///     Plays the sound at a specific frequency.
         /// </summary>
@@ -38,5 +42,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
         ///     Caches the sound file to improve performance
         /// </summary>
         void CacheSound();
+
     }
+
 }

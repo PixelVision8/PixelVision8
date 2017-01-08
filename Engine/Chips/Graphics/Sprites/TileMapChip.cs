@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System;
@@ -19,6 +21,7 @@ using PixelVisionSDK.Engine.Utils;
 
 namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
 {
+
     /// <summary>
     ///     The tile map chip represents a grid of sprites used to populate the background
     ///     layer of the game. These sprites are fixed and laid out in column and row
@@ -28,6 +31,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
     /// </summary>
     public class TileMapChip : AbstractChip
     {
+
         protected int[] flags = new int[0];
         protected bool[] invalid = new bool[0];
         protected int[] paletteIDs = new int[0];
@@ -39,7 +43,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
 
         protected int[] spriteIDs = new int[0];
         protected int tmpIndex;
-        protected int[] tmpPixelData = new int[8*8];
+        protected int[] tmpPixelData = new int[8 * 8];
         protected int tmpX;
         protected int tmpY;
 
@@ -54,7 +58,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
         /// </summary>
         public int total
         {
-            get { return columns*rows; }
+            get { return columns * rows; }
         }
 
         /// <summary>
@@ -131,7 +135,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
                 var f = (List<object>) data["flags"];
 
                 //Debug.Log("Deserilize Tile Map");
-                var total = columns*rows;
+                var total = columns * rows;
                 for (var i = 0; i < total; i++)
                 {
                     spriteIDs[i] = (int) (long) sIDs[i];
@@ -308,6 +312,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
         public void UpdateFlagAt(int column, int row, int flag)
         {
             PosUtil.CalculateIndex(column, row, columns, out tmpIndex);
+
             //if(tmpIndex < flags.Length)
             flags[tmpIndex] = flag.Clamp(-1, totalFlags);
         }
@@ -387,8 +392,8 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
 
             var spriteWidth = engine.spriteChip.width;
             var spriteHeight = engine.spriteChip.height;
-            var realWidth = columns*spriteWidth;
-            var realHeight = rows*spriteHeight;
+            var realWidth = columns * spriteWidth;
+            var realHeight = rows * spriteHeight;
 
             if (textureData.width != realWidth || textureData.height != realWidth)
             {
@@ -397,7 +402,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
 
             textureData.Clear(clearColor);
 
-            var total = columns*rows;
+            var total = columns * rows;
             var spriteRam = engine.spriteChip;
 
             int x, y, spriteID;
@@ -409,6 +414,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
                 if (spriteID > -1)
                 {
                     spriteRam.ReadSpriteAt(spriteID, tmpPixelData);
+
                     // TODO need to adjust for palette
 
                     PosUtil.CalculatePosition(i, columns, out x, out y);
@@ -432,6 +438,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
         {
             //ppu.tileMap = this;
             engine.tileMapChip = this;
+
             //tmpPixelData = new int[engine.spriteChip.width*engine.spriteChip.height];
             // Resize to default nes resolution
             Resize(32, 30);
@@ -442,5 +449,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
             base.Deactivate();
             engine.tileMapChip = null;
         }
+
     }
+
 }

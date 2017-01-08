@@ -8,19 +8,23 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using PixelVisionSDK.Engine.Chips.Data;
 
 namespace PixelVisionSDK.Engine.Chips.Graphics.Colors
 {
+
     /// <summary>
     ///     The <see cref="IColorChip" /> internal represents the
     ///     main APIs for the PixelVisionEngine's color system.
     /// </summary>
     public interface IColorChip
     {
+
         /// <summary>
         ///     An array of the supported <see cref="colors" /> in the chip.
         /// </summary>
@@ -73,5 +77,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Colors
         /// <param name="index"></param>
         /// <param name="color"></param>
         void UpdateColorAt(int index, string color);
+
     }
+
 }

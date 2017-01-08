@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System.Collections.Generic;
@@ -17,8 +19,10 @@ using PixelVisionSDK.Engine.Chips.IO.File;
 
 namespace PixelVisionSDK.Engine.Chips.IO.Controller
 {
+
     public class ControllerInput : ISave, ILoad
     {
+
         private readonly Dictionary<Buttons, IButtonState> buttonState = new Dictionary<Buttons, IButtonState>();
         protected float delay;
         public float inputDelay = 0.1f;
@@ -91,6 +95,7 @@ namespace PixelVisionSDK.Engine.Chips.IO.Controller
         {
             if (buttonState.ContainsKey(key))
                 return buttonState[key].value;
+
             return false;
         }
 
@@ -98,6 +103,7 @@ namespace PixelVisionSDK.Engine.Chips.IO.Controller
         {
             if (buttonState.ContainsKey(key))
                 return buttonState[key].buttonTimes;
+
             return 0;
         }
 
@@ -107,6 +113,7 @@ namespace PixelVisionSDK.Engine.Chips.IO.Controller
             {
                 return buttonState[key].buttonReleased;
             }
+
             return false;
         }
 
@@ -116,13 +123,14 @@ namespace PixelVisionSDK.Engine.Chips.IO.Controller
             return buttonState;
         }
 
-        //        }
-        //
-        //                Debug.Log("Detected key code: " + e.keyCode);
-        //            if (e.isKey)
-        //            Event e = Event.current;
-        //        {
-
         //        void OnGUI()
+        //        {
+        //            Event e = Event.current;
+        //            if (e.isKey)
+        //                Debug.Log("Detected key code: " + e.keyCode);
+        //
+
+        //        }
     }
+
 }

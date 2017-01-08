@@ -8,7 +8,9 @@
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
-// Jesse Freeman
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
 // 
 
 using System.Collections.Generic;
@@ -18,6 +20,7 @@ using PixelVisionSDK.Engine.Utils;
 
 namespace PixelVisionSDK.Engine.Chips.Graphics.Display
 {
+
     /// <summary>
     ///     The <see cref="ScreenBufferChip" /> represents the background layer of
     ///     the renderer. A TileMap can be loaded into the ScreenBuffer to allow for
@@ -28,9 +31,11 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Display
     /// </summary>
     public class ScreenBufferChip : AbstractChip
     {
+
         protected int _scrollX;
         protected int _scrollY;
         protected int[] tmpPixelData;
+
         //TODO this causes a bug in the editor where it should be 256 x 244 need to resize it somehow
         protected TextureData tmpTextureData = new TextureData(1, 1);
 
@@ -154,6 +159,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Display
         {
             if (engine.tileMapChip == null)
                 return;
+
             engine.tileMapChip.ConvertToTextureData(tmpTextureData);
             Invalidate();
         }
@@ -257,13 +263,15 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Display
             engine.screenBufferChip = this;
             tmpTextureData.wrapMode = true;
             backgroundColor = -1;
+
             //ppu.screenBlockRam = this;
             viewPortOffsetX = 0;
             viewPortOffsetY = 0;
             scrollX = 0;
             scrollY = 0;
-            tmpPixelData = new int[engine.spriteChip.width*engine.spriteChip.textureHeight];
+            tmpPixelData = new int[engine.spriteChip.width * engine.spriteChip.textureHeight];
             Clear();
+
             //backgroundColor = -1;
             // Creates a default Screen Block 
             //CreateScreenBlock();
@@ -352,5 +360,7 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Display
             base.Deactivate();
             engine.screenBufferChip = null;
         }
+
     }
+
 }
