@@ -86,7 +86,7 @@ namespace PixelVisionSDK.Engine.Chips.Game
 
         public bool ready { get; private set; }
 
-        public string description { get; set; } = "Game description goes here.";
+        public string description { get; set; }
 
         public void SaveData(string key, string value)
         {
