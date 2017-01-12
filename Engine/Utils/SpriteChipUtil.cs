@@ -14,6 +14,7 @@
 // 
 
 using System;
+using System.Linq;
 using PixelVisionSDK.Engine.Chips;
 using PixelVisionSDK.Engine.Chips.Data;
 
@@ -164,7 +165,7 @@ namespace PixelVisionSDK.Engine.Utils
         /// </returns>
         public static string SpriteDataToString(int[] data)
         {
-            return string.Join(",", Array.ConvertAll(data, x => x.ToString()));
+            return string.Join(",", data.Select(x => x.ToString()).ToArray());
         }
 
         public static void ShiftPixelData(ref int[] pixelData, int offset, int emptyColorID = -1)

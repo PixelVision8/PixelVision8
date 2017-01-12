@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using PixelVisionSDK.Engine.Chips.Data;
 using PixelVisionSDK.Engine.Utils;
@@ -97,9 +98,10 @@ namespace PixelVisionSDK.Engine.Chips.Graphics.Sprites
 
                 sb.Append(",");
 
-                sb.Append("\"spriteIDs\":[" + string.Join(",", Array.ConvertAll(spriteIDs, x => x.ToString())) + "],");
-                sb.Append("\"paletteIDs\":[" + string.Join(",", Array.ConvertAll(paletteIDs, x => x.ToString())) + "],");
-                sb.Append("\"flags\":[" + string.Join(",", Array.ConvertAll(flags, x => x.ToString())) + "]");
+                sb.Append("\"spriteIDs\":[" + string.Join(",", spriteIDs.Select(x => x.ToString()).ToArray()) + "],");
+                sb.Append("\"paletteIDs\":[" + string.Join(",", paletteIDs.Select(x => x.ToString()).ToArray()) + "],");
+                sb.Append("\"flags\":[" + string.Join(",", flags.Select(x => x.ToString()).ToArray()) + "]");
+
             }
         }
 

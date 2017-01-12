@@ -14,6 +14,7 @@
 // 
 
 using System;
+using System.Linq;
 using System.Text;
 using PixelVisionSDK.Engine.Utils;
 
@@ -228,7 +229,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
                     return;
             }
 
-            var index = x + width * y;
+            var index = (x % width) + (width * y);
 
             if (index < 0)
                 return;
@@ -400,7 +401,8 @@ namespace PixelVisionSDK.Engine.Chips.Data
             sb.Append(Convert.ToInt32(wrapMode));
             sb.Append(",");
 
-            sb.Append("\"spriteIDs\":[" + string.Join(",", Array.ConvertAll(pixels, x => x.ToString())) + "]");
+            sb.Append("\"spriteIDs\":[" + string.Join(",", pixels.Select (x => x.ToString()).ToArray()) + "]");
+
         }
 
     }

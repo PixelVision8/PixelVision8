@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using PixelVisionSDK.Engine.Utils;
 
@@ -95,7 +96,7 @@ namespace PixelVisionSDK.Engine.Chips.Data
 
             sb.Append("\"notes\":[");
 
-            sb.Append(string.Join(",", Array.ConvertAll(notes, i => i.ToString())));
+            sb.Append(string.Join(",", notes.Select(x => x.ToString()).ToArray()));
             sb.Append("]");
         }
 
