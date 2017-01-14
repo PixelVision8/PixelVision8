@@ -11,13 +11,13 @@
 // Jesse Freeman - @JesseFreeman
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
 // 
 
 using System;
-using PixelVisionSDK.Engine.Chips.Data;
-using PixelVisionSDK.Engine.Utils;
+using PixelVisionSDK.Utils;
 
-namespace PixelVisionSDK.Engine.Chips.Audio
+namespace PixelVisionSDK.Chips
 {
 
     /// <summary>

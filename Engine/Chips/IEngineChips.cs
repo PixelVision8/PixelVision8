@@ -11,16 +11,10 @@
 // Jesse Freeman - @JesseFreeman
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
 // 
 
-using PixelVisionSDK.Engine.Chips.Audio;
-using PixelVisionSDK.Engine.Chips.Game;
-using PixelVisionSDK.Engine.Chips.Graphics.Colors;
-using PixelVisionSDK.Engine.Chips.Graphics.Display;
-using PixelVisionSDK.Engine.Chips.Graphics.Sprites;
-using PixelVisionSDK.Engine.Chips.IO.Controller;
-
-namespace PixelVisionSDK.Engine.Chips
+namespace PixelVisionSDK.Chips
 {
 
     /// <summary>

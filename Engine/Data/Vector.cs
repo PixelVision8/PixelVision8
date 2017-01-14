@@ -14,26 +14,36 @@
 // Shawn Rakowski - @shwany
 // 
 
-namespace PixelVisionSDK.Chips
+namespace PixelVisionSDK
 {
 
     /// <summary>
+    ///     The Vector represents an int x and int y value for position.
     /// </summary>
-    public interface IGameLoop : IUpdate, IDraw
+    public class Vector
     {
 
         /// <summary>
-        ///     The Init() method for the game's live-cycle. This is the first
-        ///     method called on a game when it is run.
+        ///     X value of the Vector
         /// </summary>
-        void Init();
+        public int x;
 
         /// <summary>
-        ///     This is called to when the game loads up after Init() and when the
-        ///     engine is reset. Use this to store configuration logic for the game
-        ///     you want to execute when a game is started/restarted.
+        ///     Y value of the vector
         /// </summary>
-        void Reset();
+        public int y;
+
+        /// <summary>
+        ///     Create a new Vector instance by supplying an int x and int y
+        ///     value. The default values are 0.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public Vector(int x = 0, int y = 0)
+        {
+            this.x = x;
+            this.y = y;
+        }
 
     }
 

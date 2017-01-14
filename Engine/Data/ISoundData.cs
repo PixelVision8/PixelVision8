@@ -14,40 +14,33 @@
 // Shawn Rakowski - @shwany
 // 
 
-using PixelVisionSDK.Chips;
-
 namespace PixelVisionSDK
 {
 
     /// <summary>
-    ///     The <see cref="IEngine" /> internal represents the
-    ///     core API for the Engine class. Implement this
-    ///     internal to create custom engine classes.
+    ///     The ISoundData interface reprents a basic API for working
+    ///     with sound objects in the PixelVisionSDK. Implement this
+    ///     Interface with access to sound data to use it inside of
+    ///     games and the MusicChip.
     /// </summary>
-    public interface IEngine : IEngineChips, IGameLoop, ISave, ILoad
+    public interface ISoundData : ISave, ILoad
     {
 
         /// <summary>
-        ///     A flag for if the engine is <see cref="running" />
+        ///     Plays the sound at a specific frequency.
         /// </summary>
-        bool running { get; }
-
-        string name { get; set; }
-
-        /// <summary>
-        ///     This method loads a <paramref name="game" /> into memory
-        /// </summary>
-        /// <param name="game"></param>
-        void LoadGame(GameChip game);
+        /// <param name="frequency"></param>
+        void Play(float frequency = 0f);
 
         /// <summary>
-        ///     Run the game in memory
+        ///     Stops the current sound from playing
         /// </summary>
-        void RunGame();
+        void Stop();
 
         /// <summary>
+        ///     Caches the sound file to improve performance
         /// </summary>
-        void Shutdown();
+        void CacheSound();
 
     }
 

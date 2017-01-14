@@ -14,21 +14,21 @@
 // Shawn Rakowski - @shwany
 // 
 
-namespace PixelVisionSDK.Chips
+namespace PixelVisionSDK
 {
 
-    /// <summary>
-    ///     This internal is for classes that need to be part of
-    ///     the engine's Draw system.
-    /// </summary>
-    public interface IDraw
+    public interface IButtonState
     {
 
-        /// <summary>
-        ///     This Draw() method is called as part of the engine's life-cycle. Use
-        ///     this method for rendering logic. It is called once per frame.
-        /// </summary>
-        void Draw();
+        bool value { get; set; }
+        Buttons button { get; set; }
+        bool buttonReleased { get; }
+        float buttonTimes { get; }
+        bool dirty { get; set; }
+        int mapping { get; set; }
+        void Reset();
+        void Release();
+        void Update(float timeDelta);
 
     }
 

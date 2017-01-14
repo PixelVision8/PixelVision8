@@ -11,11 +11,12 @@
 // Jesse Freeman - @JesseFreeman
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
 // 
 
 using System;
 
-namespace PixelVisionSDK.Engine.Utils
+namespace PixelVisionSDK.Utils
 {
 
     public static class MathUtil

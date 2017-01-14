@@ -11,14 +11,14 @@
 // Jesse Freeman - @JesseFreeman
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
 // 
 
 using System;
 using System.Linq;
-using PixelVisionSDK.Engine.Chips;
-using PixelVisionSDK.Engine.Chips.Data;
+using PixelVisionSDK.Chips;
 
-namespace PixelVisionSDK.Engine.Utils
+namespace PixelVisionSDK.Utils
 {
 
     public class SpriteChipUtil

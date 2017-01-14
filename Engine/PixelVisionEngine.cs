@@ -11,20 +11,15 @@
 // Jesse Freeman - @JesseFreeman
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
 // 
 
 using System;
 using System.Collections.Generic;
 using System.Text;
-using PixelVisionSDK.Engine.Chips;
-using PixelVisionSDK.Engine.Chips.Audio;
-using PixelVisionSDK.Engine.Chips.Game;
-using PixelVisionSDK.Engine.Chips.Graphics.Colors;
-using PixelVisionSDK.Engine.Chips.Graphics.Display;
-using PixelVisionSDK.Engine.Chips.Graphics.Sprites;
-using PixelVisionSDK.Engine.Chips.IO.Controller;
+using PixelVisionSDK.Chips;
 
-namespace PixelVisionSDK.Engine
+namespace PixelVisionSDK
 {
 
     /// <summary>

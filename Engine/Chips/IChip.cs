@@ -11,11 +11,10 @@
 // Jesse Freeman - @JesseFreeman
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
 // 
 
-using PixelVisionSDK.Engine.Chips.IO.File;
-
-namespace PixelVisionSDK.Engine.Chips
+namespace PixelVisionSDK.Chips
 {
 
     /// <summary>

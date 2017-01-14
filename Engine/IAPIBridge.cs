@@ -14,21 +14,23 @@
 // Shawn Rakowski - @shwany
 // 
 
-namespace PixelVisionSDK.Chips
+using PixelVisionSDK.Chips;
+
+namespace PixelVisionSDK
 {
 
     /// <summary>
-    ///     This internal is for classes that need to be part of
-    ///     the engine's Draw system.
+    ///     This internal defines the APIs for the
+    ///     <see cref="IAPIBridge" /> which allows games to talk to the engine's
+    ///     chips.
     /// </summary>
-    public interface IDraw
+    public interface IAPIBridge : IPixelVisionAPI
     {
 
         /// <summary>
-        ///     This Draw() method is called as part of the engine's life-cycle. Use
-        ///     this method for rendering logic. It is called once per frame.
+        ///     A reference to the core <see cref="chips" /> in the engine.
         /// </summary>
-        void Draw();
+        IEngineChips chips { get; set; }
 
     }
 

@@ -11,16 +11,15 @@
 // Jesse Freeman - @JesseFreeman
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
 // 
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PixelVisionSDK.Engine.Chips.Game;
-using PixelVisionSDK.Engine.Chips.IO.File;
 
-namespace PixelVisionSDK.Engine.Chips
+namespace PixelVisionSDK.Chips
 {
 
     /// <summary>
