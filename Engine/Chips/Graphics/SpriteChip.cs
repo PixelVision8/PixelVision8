@@ -259,94 +259,6 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     This serializes the chip's data as JSON. It saves out the size of
-        ///     the internal TextureData, the sprite's dimensions,
-        ///     and if set to compressed mode, will save all the pixel data in the
-        ///     as well.
-        /// </summary>
-        /// <param name="sb"></param>
-        public override void CustomSerializedData(StringBuilder sb)
-        {
-            // Mode
-            sb.Append("\"spriteWidth\":");
-            sb.Append(width);
-            sb.Append(",");
-
-            sb.Append("\"spriteHeight\":");
-            sb.Append(height);
-            sb.Append(",");
-
-            sb.Append("\"pages\":");
-            sb.Append(pages);
-            sb.Append(",");
-
-            // Height
-            sb.Append("\"cps\":");
-            sb.Append(colorsPerSprite);
-            sb.Append(",");
-
-
-            //TODO this should just use the TextureData's 
-            // serializePixelData
-            sb.Append("\"serializePixelData\":");
-            sb.Append(Convert.ToInt32(serializePixelData));
-
-            if (serializePixelData)
-            {
-                sb.Append(",");
-
-                sb.Append("\"pixels\":");
-                sb.Append(_texture.SerializeData());
-            }
-        }
-
-        /// <summary>
-        ///     This will go through and attempt to deserialize any
-        ///     <paramref name="data" /> passed into it. It requires a dictionary
-        ///     with a string as the key and a generic object for the value.
-        /// </summary>
-        /// <param name="data">
-        ///     A Dictionary with a string as the key and a generic object as the
-        ///     value.
-        /// </param>
-        public override void DeserializeData(Dictionary<string, object> data)
-        {
-            if (data.ContainsKey("spriteWidth"))
-            {
-                width = (int) (long) data["spriteWidth"];
-            }
-
-            if (data.ContainsKey("spriteHeight"))
-            {
-                height = (int) (long) data["spriteHeight"];
-            }
-
-            if (data.ContainsKey("cps"))
-            {
-                colorsPerSprite = (int) (long) data["cps"];
-            }
-
-            if (data.ContainsKey("pages"))
-            {
-                pages = (int) (long) data["pages"];
-            }
-
-            Resize(pageWidth, pageHeight * pages);
-
-            if (data.ContainsKey("pixels"))
-            {
-                var pixelData = (Dictionary<string, object>) data["pixels"];
-
-                _texture.DeserializeData(pixelData);
-            }
-
-            if (data.ContainsKey("serializePixelData"))
-            {
-                serializePixelData = Convert.ToBoolean((int) (long) data["serializePixelData"]);
-            }
-        }
-
-        /// <summary>
         ///     Returns an array of ints that represent a sprite. Each
         ///     int should be mapped to a color
         ///     <paramref name="index" /> to display in the renderer.
@@ -407,7 +319,7 @@ namespace PixelVisionSDK.Chips
         ///     range of colors.
         /// </summary>
         /// <param name="offset">
-        ///     Anint to use as the offset value.
+        ///     An int to use as the offset value.
         /// </param>
         public void ShiftColorIndex(int offset)
         {

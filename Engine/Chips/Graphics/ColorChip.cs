@@ -229,78 +229,7 @@ namespace PixelVisionSDK.Chips
             pages = MathUtil.CeilToInt(total / colorsPerPage);
         }
 
-        /// <summary>
-        ///     This method converts the chip's supportedColors and defaultColors into a json object.
-        /// </summary>
-        /// <param name="sb"></param>
-        public override void CustomSerializedData(StringBuilder sb)
-        {
-            sb.Append("\"pages\":");
-            sb.Append(pages);
-            sb.Append(",");
-
-            sb.Append("\"colorsPerPage\":");
-            sb.Append(colorsPerPage);
-            sb.Append(",");
-
-            sb.Append("\"transparent\":\"");
-            sb.Append(transparent);
-            sb.Append("\",");
-
-            // Default Colors
-            sb.Append("\"colors\":[");
-
-            var total = _colors.Length;
-            for (var i = 0; i < total; i++)
-            {
-                var color = _colors[i];
-                if (color != _transparent)
-                {
-                    sb.Append("\"");
-                    sb.Append(color);
-                    sb.Append("\"");
-                    sb.Append(",");
-                }
-            }
-
-            if (sb.ToString().EndsWith(","))
-                sb.Length -= 1;
-
-            sb.Append("]");
-        }
-
-        /// <summary>
-        ///     This method reads the supplied Dictionary and attempts to set the supportedColors value and rebuild the
-        ///     defaultColors array. Once done, it calls RevertColors().
-        /// </summary>
-        /// <param name="data"></param>
-        public override void DeserializeData(Dictionary<string, object> data)
-        {
-            if (data.ContainsKey("colorsPerPage"))
-            {
-                _colorsPerPage = (int) (long) data["colrosPerPage"];
-            }
-
-            if (data.ContainsKey("transparent"))
-            {
-                _transparent = (string) data["transparent"];
-            }
-
-            // Make sure we have data to parse
-            if (data.ContainsKey("colors"))
-            {
-                // Pull out the color data
-                var colors = (List<object>) data["colors"];
-
-                var newTotal = colors.Count;
-                RebuildColorPages(newTotal);
-                Clear();
-                for (var i = 0; i < newTotal; i++)
-                {
-                    UpdateColorAt(i, (string) colors[i]);
-                }
-            }
-        }
+        
 
     }
 

@@ -246,52 +246,7 @@ namespace PixelVisionSDK.Chips
             engine.displayChip = null;
         }
 
-        public override void CustomSerializedData(StringBuilder sb)
-        {
-            // Wrap Mode Value
-            sb.Append("\"wrapMode\":");
-            sb.Append(Convert.ToInt32(wrapMode));
-            sb.Append(",");
-
-            // Width Value
-            sb.Append("\"width\":");
-            sb.Append(_width);
-            sb.Append(",");
-
-            // Height Value
-            sb.Append("\"height\":");
-            sb.Append(_height);
-            sb.Append(",");
-
-            // AutoClear Value
-            sb.Append("\"autoClear\":");
-            sb.Append(Convert.ToInt32(autoClear));
-            sb.Append(",");
-
-            // Max Sprite Count Value
-            sb.Append("\"maxSpriteCount\":");
-            sb.Append(maxSpriteCount);
-        }
-
-        public override void DeserializeData(Dictionary<string, object> data)
-        {
-            if (data.ContainsKey("wrapMode"))
-                wrapMode = Convert.ToBoolean((int) (long) data["wrapMode"]);
-
-            if (data.ContainsKey("width"))
-                _width = (int) (long) data["width"];
-
-            if (data.ContainsKey("height"))
-                _height = (int) (long) data["height"];
-
-            ResetResolution(_width, _height);
-
-            if (data.ContainsKey("autoClear"))
-                autoClear = Convert.ToBoolean((long) data["autoClear"]);
-
-            if (data.ContainsKey("maxSpriteCount"))
-                maxSpriteCount = (int) (long) data["maxSpriteCount"];
-        }
+        
 
     }
 

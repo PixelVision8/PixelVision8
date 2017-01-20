@@ -101,7 +101,7 @@ namespace PixelVisionSDK.Chips
         FontChip fontChip { get; set; }
 
         /// <summary>
-        ///     The music chip represents a squencer that can be used to play back
+        ///     The music chip represents a sequencer that can be used to play back
         ///     sound data for songs.
         /// </summary>
         MusicChip musicChip { get; set; }

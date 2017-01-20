@@ -15,9 +15,8 @@
 // 
 
 using System;
-using PixelVisionSDK.Chips;
 
-namespace PixelVisionSDK
+namespace PixelVisionSDK.Chips
 {
 
     public enum Buttons

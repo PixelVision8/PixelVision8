@@ -23,7 +23,7 @@ namespace PixelVisionSDK.Chips
     ///     implements the <see cref="ILoad" /> and <see cref="ISave" /> interfaces
     ///     for serialization.
     /// </summary>
-    public interface IChip : ISave, ILoad
+    public interface IChip
     {
 
         /// <summary>

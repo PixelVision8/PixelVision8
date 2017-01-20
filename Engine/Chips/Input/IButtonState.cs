@@ -14,6 +14,8 @@
 // Shawn Rakowski - @shwany
 // 
 
+using PixelVisionSDK.Chips;
+
 namespace PixelVisionSDK
 {
 

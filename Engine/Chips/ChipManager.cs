@@ -17,7 +17,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace PixelVisionSDK.Chips
 {
@@ -29,7 +28,7 @@ namespace PixelVisionSDK.Chips
     ///     managing the life-cycle of chips as they are created and destroy in the
     ///     engine.
     /// </summary>
-    public class ChipManager : IGameLoop, ISave, ILoad
+    public class ChipManager : IGameLoop
     {
 
         protected Dictionary<string, AbstractChip> chips = new Dictionary<string, AbstractChip>();
@@ -92,88 +91,13 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     Loops throgh all chips and calls reset on them.
+        ///     Loops through all chips and calls reset on them.
         /// </summary>
         public void Reset()
         {
             foreach (var chip in chips)
             {
                 chip.Value.Reset();
-            }
-        }
-
-        /// <summary>
-        ///     This method reads a Dictionary's properties and applies them to any
-        ///     <see cref="chips" /> registered in the manager.
-        /// </summary>
-        /// <param name="data">
-        ///     A Dictionary with a string for the key and a generic object for the
-        ///     value.
-        /// </param>
-        public void DeserializeData(Dictionary<string, object> data)
-        {
-            // Disable any active chips
-            DeactivateChips();
-
-            foreach (var entry in data)
-            {
-                var chipName = entry.Key;
-                var chipData = entry.Value as Dictionary<string, object>;
-
-                UpdateChip(chipName, chipData);
-            }
-
-            // Removed any active chips not reserialized
-            RemoveInactiveChips();
-        }
-
-        /// <summary>
-        ///     This method serializes all of the chips in the
-        ///     manager. Each chip is added to a json object allowing the
-        ///     ChipManager to be easily reserialized at run-time.
-        /// </summary>
-        /// <returns name="String">
-        ///     Returns a JSON string containing all of the chips in
-        ///     the manager.
-        /// </returns>
-        public string SerializeData()
-        {
-            // Create a new string builder instance
-            var sb = new StringBuilder();
-
-            // Start the json string
-            sb.Append("{");
-
-            CustomSerializedData(sb);
-
-            sb.Append("}");
-
-            return sb.ToString();
-        }
-
-        /// <summary>
-        ///     Loops through each of the <see cref="chips" /> flagged for export and
-        ///     adds them to the StringBuilder instance.
-        /// </summary>
-        /// <param name="sb">
-        ///     Reference of a StringBuilder used by the SerializeData() method.
-        /// </param>
-        public void CustomSerializedData(StringBuilder sb)
-        {
-            // Select the chips that are flagged to be exported
-            var chipsToSave = chips.Where(c => c.Value.export).ToArray();
-
-            // Get total number of chips to export
-            var total = chipsToSave.Length;
-
-            // Loop through all the chips to export
-            for (var i = 0; i < total; i++)
-            {
-                var item = chipsToSave.ElementAt(i);
-                sb.Append("\"" + item.Key + "\":");
-                sb.Append(item.Value.SerializeData());
-                if (i < total - 1)
-                    sb.Append(",");
             }
         }
 
@@ -227,7 +151,8 @@ namespace PixelVisionSDK.Chips
             }
 
             // TODO create a chip
-            var chipInstance = Activator.CreateInstance(Type.GetType(id)) as AbstractChip;
+            var type = Type.GetType(id);
+            var chipInstance = Activator.CreateInstance(type) as AbstractChip;
 
             ActivateChip(id, chipInstance);
 
@@ -247,10 +172,10 @@ namespace PixelVisionSDK.Chips
         ///     exist.
         /// </param>
         /// <param name="data">
-        ///     A Dictonary with a string key and generic object value. Used to pass
+        ///     A Dictionary with a string key and generic object value. Used to pass
         ///     in new properties to the chip.
         /// </param>
-        public void UpdateChip(string id, Dictionary<string, object> data)
+        public virtual void UpdateChip(string id, Dictionary<string, object> data)
         {
             var chip = GetChip(id);
 
@@ -258,7 +183,7 @@ namespace PixelVisionSDK.Chips
                 return;
 
             chip.Activate(engine);
-            chip.DeserializeData(data);
+            
         }
 
         /// <summary>

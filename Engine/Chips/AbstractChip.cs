@@ -100,47 +100,47 @@ namespace PixelVisionSDK.Chips
             active = false;
         }
 
-        /// <summary>
-        ///     This methods sets up the foundation for serializing a component as
-        ///     JSON. It automatically creates a json wrapper before calling
-        ///     CustomSerializedData().
-        /// </summary>
-        /// <returns>string</returns>
-        public virtual string SerializeData()
-        {
-            var sb = new StringBuilder();
-            sb.Append("{");
-            CustomSerializedData(sb);
-            sb.Append("}");
-            return sb.ToString();
-        }
-
-        /// <summary>
-        ///     Override this to add custom json data to the serialized string
-        ///     passed in by the StringBuilder reference.
-        /// </summary>
-        /// <param name="sb">
-        ///     A StringBuilder reference to add additional json string properties
-        ///     to.
-        /// </param>
-        public virtual void CustomSerializedData(StringBuilder sb)
-        {
-            // Override to add custom data
-        }
-
-        /// <summary>
-        ///     Override this to method to handle your own custom de-serialized
-        ///     logic. It expects a Dictionary with a string as the key and a
-        ///     generic object as the value.
-        /// </summary>
-        /// <param name="data">
-        ///     A Dictionary with a string as the key and a generic object as the
-        ///     value.
-        /// </param>
-        public virtual void DeserializeData(Dictionary<string, object> data)
-        {
-            throw new NotImplementedException();
-        }
+//        /// <summary>
+//        ///     This methods sets up the foundation for serializing a component as
+//        ///     JSON. It automatically creates a json wrapper before calling
+//        ///     CustomSerializedData().
+//        /// </summary>
+//        /// <returns>string</returns>
+//        public virtual string SerializeData()
+//        {
+//            var sb = new StringBuilder();
+//            sb.Append("{");
+//            CustomSerializedData(sb);
+//            sb.Append("}");
+//            return sb.ToString();
+//        }
+//
+//        /// <summary>
+//        ///     Override this to add custom json data to the serialized string
+//        ///     passed in by the StringBuilder reference.
+//        /// </summary>
+//        /// <param name="sb">
+//        ///     A StringBuilder reference to add additional json string properties
+//        ///     to.
+//        /// </param>
+//        public virtual void CustomSerializedData(StringBuilder sb)
+//        {
+//            // Override to add custom data
+//        }
+//
+//        /// <summary>
+//        ///     Override this to method to handle your own custom de-serialized
+//        ///     logic. It expects a Dictionary with a string as the key and a
+//        ///     generic object as the value.
+//        /// </summary>
+//        /// <param name="data">
+//        ///     A Dictionary with a string as the key and a generic object as the
+//        ///     value.
+//        /// </param>
+//        public virtual void DeserializeData(Dictionary<string, object> data)
+//        {
+//            throw new NotImplementedException();
+//        }
 
         public virtual void Init()
         {

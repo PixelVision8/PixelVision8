@@ -185,65 +185,7 @@ namespace PixelVisionSDK.Chips
             engine.currentGame = null;
         }
 
-        /// <summary>
-        ///     Converts the internal save data into JSON.
-        /// </summary>
-        /// <param name="sb"></param>
-        public override void CustomSerializedData(StringBuilder sb)
-        {
-            sb.Append("\"maxSize\":");
-            sb.Append(maxSize);
-            sb.Append(",");
-
-            sb.Append("\"saveSlots\":");
-            sb.Append(saveSlots);
-            sb.Append(",");
-
-            sb.Append("\"savedData\": {");
-            for (var i = savedData.Count - 1; i >= 0; i--)
-            {
-                var item = savedData.ElementAt(i);
-                sb.Append("\"");
-                sb.Append(item.Key);
-                sb.Append("\": \"");
-                sb.Append(item.Value);
-                sb.Append("\"");
-                if (i > 0)
-                {
-                    sb.Append(",");
-                }
-            }
-
-            sb.Append("}");
-        }
-
-        /// <summary>
-        ///     Attempts to convert a supplied Dictionary into internal saved data.
-        /// </summary>
-        /// <param name="data">A Dictionary with a string for the key and a generic object for the data.</param>
-        public override void DeserializeData(Dictionary<string, object> data)
-        {
-            // loop through all data and save it to the game's memory
-            if (data.ContainsKey("maxSize"))
-            {
-                maxSize = (int) (long) data["maxSize"];
-            }
-
-            if (data.ContainsKey("saveSlots"))
-            {
-                saveSlots = (int) (long) data["saveSlots"];
-            }
-
-            if (data.ContainsKey("savedData"))
-            {
-                foreach (var entry in data["savedData"] as Dictionary<string, object>)
-                {
-                    var name = entry.Key;
-                    var value = entry.Value as string;
-                    SaveData(name, value);
-                }
-            }
-        }
+        
 
     }
 

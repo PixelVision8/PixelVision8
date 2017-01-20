@@ -314,47 +314,6 @@ namespace PixelVisionSDK.Chips
             Invalidate();
         }
 
-        /// <summary>
-        ///     This converts the ScreenBuffer's settings into a JSON string. It
-        ///     stores the <see cref="viewPortWidth" /> and viewPortHeight.
-        /// </summary>
-        /// <param name="sb"></param>
-        public override void CustomSerializedData(StringBuilder sb)
-        {
-            sb.Append("\"backgroundColor\":");
-            sb.Append(backgroundColor);
-            sb.Append(",");
-
-            // Width Value
-            sb.Append("\"viewPortWidth\":");
-            sb.Append(viewPortWidth);
-            sb.Append(",");
-
-            // Height Value
-            sb.Append("\"viewPortHeight\":");
-            sb.Append(viewPortHeight);
-        }
-
-        /// <summary>
-        ///     This converts values from a Dictionary with a sting as the key and
-        ///     an object as the value into values the
-        ///     <see cref="ScreenBufferChip" /> can use.
-        /// </summary>
-        /// <param name="data">
-        ///     A Dictionary with a sting as the key and an object.
-        /// </param>
-        public override void DeserializeData(Dictionary<string, object> data)
-        {
-            if (data.ContainsKey("backgroundColor"))
-                backgroundColor = (int) (long) data["backgroundColor"];
-
-            if (data.ContainsKey("viewPortWidth"))
-                viewPortWidth = (int) (long) data["viewPortWidth"];
-
-            if (data.ContainsKey("viewPortHeight"))
-                viewPortHeight = (int) (long) data["viewPortHeight"];
-        }
-
         public override void Deactivate()
         {
             base.Deactivate();

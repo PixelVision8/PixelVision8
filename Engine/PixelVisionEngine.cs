@@ -166,7 +166,7 @@ namespace PixelVisionSDK
         ///     This method allows you to load a <paramref name="game" /> into the
         ///     Engine's memory. Loading a <paramref name="game" /> doesn't run it.
         ///     It simply sets it up to be run by calling the RunGame() method. This
-        ///     allows you to perform additonal tasks once a <paramref name="game" />
+        ///     allows you to perform additional tasks once a <paramref name="game" />
         ///     is loaded before it plays.
         /// </summary>
         /// <param name="game"></param>
@@ -248,31 +248,81 @@ namespace PixelVisionSDK
         {
         }
 
+//        /// <summary>
+//        /// </summary>
+//        /// <returns></returns>
+//        /// <tocexclude />
+//        public string SerializeData()
+//        {
+//            return chipManager.SerializeData();
+//        }
+//
+//        /// <summary>
+//        /// </summary>
+//        /// <param name="sb"></param>
+//        /// <tocexclude />
+//        public void CustomSerializedData(StringBuilder sb)
+//        {
+//            throw new NotImplementedException();
+//        }
+//
+//        /// <summary>
+//        /// </summary>
+//        /// <param name="data"></param>
+//        /// <tocexclude />
+//        public void DeserializeData(Dictionary<string, object> data)
+//        {
+//            chipManager.DeserializeData(data);
+//        }
+
         /// <summary>
+        /// 
         /// </summary>
+        /// <param name="key"></param>
+        /// <param name="defaultValue"></param>
         /// <returns></returns>
-        /// <tocexclude />
-        public string SerializeData()
+        public string GetMetaData(string key, string defaultValue = "")
         {
-            return chipManager.SerializeData();
+            if (!metaData.ContainsKey(key))
+            {
+                metaData.Add(key, defaultValue);
+            }
+
+            return metaData[key];
         }
 
         /// <summary>
+        /// 
         /// </summary>
-        /// <param name="sb"></param>
-        /// <tocexclude />
-        public void CustomSerializedData(StringBuilder sb)
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void SetMetaData(string key, string value)
         {
-            throw new NotImplementedException();
+            if (!metaData.ContainsKey(key))
+            {
+                metaData.Add(key, value);
+            }
+            else
+            {
+                metaData[key] = value;
+            }
+
         }
 
         /// <summary>
+        /// 
         /// </summary>
-        /// <param name="data"></param>
-        /// <tocexclude />
-        public void DeserializeData(Dictionary<string, object> data)
+        /// <param name="target"></param>
+        /// <param name="ignoreKeys"></param>
+        public void DumpMetaData(Dictionary<string, string> target, string[] ignoreKeys)
         {
-            chipManager.DeserializeData(data);
+            target.Clear();
+
+            foreach (var data in metaData)
+            {
+                if (Array.IndexOf(ignoreKeys, data.Key) == -1)
+                    target.Add(data.Key, data.Value);
+            }
         }
 
     }

@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 // 
 
+using System.Collections.Generic;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
@@ -24,7 +25,7 @@ namespace PixelVisionSDK
     ///     core API for the Engine class. Implement this
     ///     internal to create custom engine classes.
     /// </summary>
-    public interface IEngine : IEngineChips, IGameLoop, ISave, ILoad
+    public interface IEngine : IEngineChips, IGameLoop
     {
 
         /// <summary>
@@ -48,6 +49,28 @@ namespace PixelVisionSDK
         /// <summary>
         /// </summary>
         void Shutdown();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
+        string GetMetaData(string key, string defaultValue = "");
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        void SetMetaData(string key, string value);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="ignoreKeys"></param>
+        void DumpMetaData(Dictionary<string, string> target, string[] ignoreKeys);
 
     }
 

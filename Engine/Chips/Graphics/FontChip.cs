@@ -299,7 +299,7 @@ namespace PixelVisionSDK.Chips
 
             return string.Join("\n", split);
         }
-
+        
     }
 
 }
