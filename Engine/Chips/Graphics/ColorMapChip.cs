@@ -48,6 +48,17 @@ namespace PixelVisionSDK.Chips
             }
         }
 
+        public string[] hexColors { 
+            get
+            {
+                var colors = new string[total];
+
+                Array.Copy(_colors, colors, total);
+
+                return colors;
+            }
+        }
+
         public int total
         {
             get { return _colors.Length; }

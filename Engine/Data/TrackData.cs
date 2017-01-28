@@ -15,9 +15,6 @@
 // 
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
@@ -58,47 +55,12 @@ namespace PixelVisionSDK
         }
 
         /// <summary>
-        ///     Returns the total numver of notes in the track.
+        ///     Returns the total number of notes in the track.
         /// </summary>
         public int totalNotes
         {
             get { return notes.Length; }
             set { Array.Resize(ref notes, value.Clamp(0, maxNotes)); }
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="data"></param>
-        public override void DeserializeData(Dictionary<string, object> data)
-        {
-            if (data.ContainsKey("sfxID"))
-                sfxID = Convert.ToInt32((long) data["sfxID"]);
-
-            if (data.ContainsKey("notes"))
-            {
-                var noteData = (List<object>) data["notes"];
-                var total = noteData.Count;
-                notes = new int[total];
-                for (var i = 0; i < total; i++)
-                {
-                    notes[i] = (int) (long) noteData[i];
-                }
-            }
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="sb"></param>
-        public override void CustomSerializedData(StringBuilder sb)
-        {
-            sb.Append("\"sfxID\":");
-            sb.Append(sfxID);
-            sb.Append(",");
-
-            sb.Append("\"notes\":[");
-
-            sb.Append(string.Join(",", notes.Select(x => x.ToString()).ToArray()));
-            sb.Append("]");
         }
 
         /// <summary>

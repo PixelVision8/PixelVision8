@@ -58,7 +58,7 @@ namespace PixelVisionSDK.Chips
                 for (var i = 0; i < value; i++)
                 {
                     if (sounds[i] == null)
-                        sounds[i] = CreateEmptySoundData();
+                        sounds[i] = CreateEmptySoundData("Untitled" + i.ToString("D2"));
                 }
             }
         }
@@ -83,15 +83,15 @@ namespace PixelVisionSDK.Chips
         public void ClearSound(int index)
         {
             // TODO need to see if there is a better way to revert a sound
-            sounds[index] = CreateEmptySoundData();
+            sounds[index] = CreateEmptySoundData("Untitled"+index.ToString("D2"));
         }
 
         /// <summary>
-        ///     This stub methods is designed to be overriden with a Factory to
+        ///     This stub methods is designed to be overridden with a Factory to
         ///     create new sound instances that implement the ISoundData interface.
         /// </summary>
         /// <returns></returns>
-        public virtual ISoundData CreateEmptySoundData()
+        public virtual ISoundData CreateEmptySoundData(string name = "Untitled")
         {
             throw new NotImplementedException(
                 "Need to create a new ISoundData type and override SoundCollection CreateEmptySoundData method.");
@@ -182,6 +182,16 @@ namespace PixelVisionSDK.Chips
                 return null;
 
             return channels[index];
+        }
+
+        public string ReadLabel(int id)
+        {
+            return ReadSound(id).name;
+        }
+
+        public void UpdateLabel(int id, string name)
+        {
+            ReadSound(id).name = name;
         }
 
     }

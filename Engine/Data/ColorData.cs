@@ -17,6 +17,7 @@
 using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
 {
@@ -34,6 +35,24 @@ namespace PixelVisionSDK
 
         protected float _r;
 
+        public void FromHex(string hexColor)
+        {
+            float tmpR, tmpG, tmpB;
+
+            HexToColor(hexColor, out tmpR, out tmpG, out tmpB);
+
+            r = tmpR;
+            g = tmpG;
+            b = tmpB;
+        }
+
+        public void FromRGB(float r = 0f, float g = 0f, float b = 0f)
+        {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+        }
+
         /// <summary>
         ///     Use this constructor for setting the ColorData instance up
         ///     with RBG values.
@@ -43,9 +62,7 @@ namespace PixelVisionSDK
         /// <param name="b"></param>
         public ColorData(float r = 0f, float g = 0f, float b = 0f)
         {
-            this.r = r;
-            this.g = g;
-            this.b = b;
+            FromRGB(r, g, b);
         }
 
         /// <summary>
@@ -55,13 +72,7 @@ namespace PixelVisionSDK
         /// <param name="hexColor"></param>
         public ColorData(string hexColor)
         {
-            float tmpR, tmpG, tmpB;
-
-            HexToColor(hexColor, out tmpR, out tmpG, out tmpB);
-
-            r = tmpR;
-            g = tmpG;
-            b = tmpB;
+            FromHex(hexColor);
         }
 
         /// <summary>
@@ -109,9 +120,10 @@ namespace PixelVisionSDK
         /// <returns></returns>
         public static string ColorToHex(float r, float g, float b)
         {
-            var hex = "#" + ((int) (r * 255)).ToString("X2") + ((int) (g * 255)).ToString("X2") +
-                      ((int) (b * 255)).ToString("X2");
-            return hex;
+            var r1 = (byte) MathUtil.RoundToInt(r * byte.MaxValue).Clamp(0, byte.MaxValue);
+            var g1 = (byte) MathUtil.RoundToInt(g * byte.MaxValue).Clamp(0, byte.MaxValue);
+            var b1 = (byte) MathUtil.RoundToInt(b * byte.MaxValue).Clamp(0, byte.MaxValue);
+            return "#"+string.Format("{0:X2}{1:X2}{2:X2}", r1, g1, b1);
         }
 
         /// <summary>

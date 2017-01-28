@@ -203,7 +203,7 @@ namespace PixelVisionSDK
         public void RebuildScreenBuffer()
         {
             chips.screenBufferChip.RefreshScreenBlock();
-        }
+        } 
 
         public bool ButtonDown(int button, int player = 0)
         {

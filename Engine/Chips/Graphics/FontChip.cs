@@ -294,10 +294,19 @@ namespace PixelVisionSDK.Chips
         public static string Split(string str, int chunkSize)
         {
             var total = (double) str.Length;
-            var split = Enumerable.Range(0, (int) Math.Ceiling(total / chunkSize))
+            var split = Enumerable.Range(0, (int) Math.Floor(total / chunkSize))
                 .Select(i => str.Substring(i * chunkSize, chunkSize)).ToArray();
 
-            return string.Join("\n", split);
+            var text = string.Join("\n", split);
+
+            var newTotal = text.Length;
+
+            if (total > newTotal)
+            {
+                text += "\n" + str.Substring(newTotal);
+            }
+
+            return text;
         }
         
     }

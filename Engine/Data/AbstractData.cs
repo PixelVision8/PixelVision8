@@ -14,9 +14,6 @@
 // Shawn Rakowski - @shwany
 // 
 
-using System.Collections.Generic;
-using System.Text;
-
 namespace PixelVisionSDK
 {
 
@@ -26,7 +23,7 @@ namespace PixelVisionSDK
     ///     IInvalidate interfaces and provides as standard API for serializing
     ///     the data it contains via the CustomSerializeData() method.
     /// </summary>
-    public abstract class AbstractData : ISave, ILoad, IInvalidate
+    public abstract class AbstractData : IInvalidate
     {
 
         protected bool _invalid;
@@ -64,53 +61,7 @@ namespace PixelVisionSDK
         {
             _invalid = false;
         }
-
-        /// <summary>
-        ///     The DeserializeData method allows you to pass in a
-        ///     Dictionary with a string as the key and a generic object for the
-        ///     value. This can be manually parsed to convert each key/value pair
-        ///     into data used to configure the class that
-        ///     implements this interface.
-        /// </summary>
-        /// <param name="data">
-        ///     A Dictionary with a string as the key and a generic object as the
-        ///     value.
-        /// </param>
-        public virtual void DeserializeData(Dictionary<string, object> data)
-        {
-            // override with custom parsing logic
-        }
-
-        /// <summary>
-        ///     Use this method to create a new StringBuilder instance and wrap any
-        ///     custom serialized data by leveraging the CustomSerializedData()
-        ///     method.
-        /// </summary>
-        /// <returns name="String">
-        ///     A string JSON object.
-        /// </returns>
-        public virtual string SerializeData()
-        {
-            var sb = new StringBuilder();
-            sb.Append("{");
-            CustomSerializedData(sb);
-            sb.Append("}");
-            return sb.ToString();
-        }
-
-        /// <summary>
-        ///     Use this method to add additional serialized string data to the
-        ///     supplied StringBuilder instance.
-        /// </summary>
-        /// <param name="sb">
-        ///     A reference to a StringBuilder which is supplied by the
-        ///     SerializedData() method.
-        /// </param>
-        public virtual void CustomSerializedData(StringBuilder sb)
-        {
-            // override with custom serialized data
-        }
-
+        
     }
 
 }
