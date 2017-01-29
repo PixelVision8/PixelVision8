@@ -19,7 +19,7 @@ using PixelVisionSDK.Chips;
 namespace PixelVisionSDK
 {
 
-    public interface IControllerChip : ISave, ILoad, IUpdate
+    public interface IControllerChip : IUpdate
     {
 
         int totalControllers { get; }

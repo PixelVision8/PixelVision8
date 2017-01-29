@@ -34,7 +34,7 @@ namespace PixelVisionSDK.Services
         ///     This method registers the service with the service locator.
         /// </summary>
         /// <param name="locator"></param>
-        public void RegisterService(IServiceLocator locator)
+        public virtual void RegisterService(IServiceLocator locator)
         {
             this.locator = locator;
         }
@@ -45,7 +45,7 @@ namespace PixelVisionSDK.Services
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public T GetInstance<T>() where T : IService
+        public virtual T GetInstance<T>() where T : IService
         {
             throw new System.NotImplementedException();
         }
@@ -57,7 +57,7 @@ namespace PixelVisionSDK.Services
         /// <param name="data"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public bool Execute(string command, Dictionary<string, object> data)
+        public virtual bool Execute(string command, Dictionary<string, object> data)
         {
             throw new System.NotImplementedException();
         }
