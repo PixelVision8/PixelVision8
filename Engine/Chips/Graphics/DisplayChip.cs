@@ -14,9 +14,6 @@
 // Shawn Rakowski - @shwany
 // 
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
@@ -90,7 +87,7 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public void Draw()
         {
-            //TODO this should run through all the draw calls and composit them to the textureData
+            //TODO this should run through all the draw calls and composite them to the textureData
 
 
             // Reset the sprite counter after a draw

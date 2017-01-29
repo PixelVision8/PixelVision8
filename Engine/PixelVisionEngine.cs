@@ -16,7 +16,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
@@ -189,11 +188,11 @@ namespace PixelVisionSDK
             if (currentGame == null)
                 return;
 
-            // Reset the game state
-            currentGame.Reset();
+            // Make sure all chips are reset to their default values
+            chipManager.Reset();
 
-            // Run the game
-            currentGame.Init();
+            // Call init on all chips
+            chipManager.Init();
 
             running = true;
         }
@@ -247,33 +246,6 @@ namespace PixelVisionSDK
         public virtual void Shutdown()
         {
         }
-
-//        /// <summary>
-//        /// </summary>
-//        /// <returns></returns>
-//        /// <tocexclude />
-//        public string SerializeData()
-//        {
-//            return chipManager.SerializeData();
-//        }
-//
-//        /// <summary>
-//        /// </summary>
-//        /// <param name="sb"></param>
-//        /// <tocexclude />
-//        public void CustomSerializedData(StringBuilder sb)
-//        {
-//            throw new NotImplementedException();
-//        }
-//
-//        /// <summary>
-//        /// </summary>
-//        /// <param name="data"></param>
-//        /// <tocexclude />
-//        public void DeserializeData(Dictionary<string, object> data)
-//        {
-//            chipManager.DeserializeData(data);
-//        }
 
         /// <summary>
         /// 

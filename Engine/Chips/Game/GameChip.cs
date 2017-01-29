@@ -16,7 +16,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using PixelVisionSDK.Utils;
 
 //using UnityEngine;
@@ -172,6 +171,7 @@ namespace PixelVisionSDK.Chips
             //Debug.Log("Game: Configure");
             engine.currentGame = this;
 
+            //TODO this needs to be a service
             apiBridge = engine.apiBridge;
             ready = true;
         }

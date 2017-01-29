@@ -15,8 +15,6 @@
 // 
 
 using System;
-using System.Linq;
-using System.Text;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
@@ -24,7 +22,7 @@ namespace PixelVisionSDK
 
     /// <summary>
     ///     <see cref="TextureData" /> represent a grid of pixel data in the engine.
-    ///     Pixel data areint values that can be used to
+    ///     Pixel data aren't values that can be used to
     ///     reference colors in the ColorChip when rendering to a display. The
     ///     <see cref="TextureData" /> class provides a set of APIs to make it easier
     ///     to work with this data. It also allows you to perform more advanced
@@ -386,24 +384,6 @@ namespace PixelVisionSDK
                     tmpRow++;
                 }
             }
-        }
-
-        public override void CustomSerializedData(StringBuilder sb)
-        {
-            sb.Append("\"width\":");
-            sb.Append(width);
-            sb.Append(",");
-
-            sb.Append("\"height\":");
-            sb.Append(width);
-            sb.Append(",");
-
-            sb.Append("\"wrapMode\":");
-            sb.Append(Convert.ToInt32(wrapMode));
-            sb.Append(",");
-
-            sb.Append("\"spriteIDs\":[" + string.Join(",", pixels.Select(x => x.ToString()).ToArray()) + "]");
-
         }
 
     }

@@ -15,9 +15,7 @@
 // 
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
@@ -50,11 +48,6 @@ namespace PixelVisionSDK.Chips
 
         //protected Vector2 pageSize = new Vector2(128, 128);
         protected int pageWidth = 128;
-
-        /// <summary>
-        ///     A flag to toggle whether pixel data should be serialized.
-        /// </summary>
-        public bool serializePixelData;
 
         /// <summary>
         ///     The global <see cref="width" /> of sprites in the engine. By default

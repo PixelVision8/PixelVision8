@@ -28,6 +28,7 @@ namespace PixelVisionSDK.Chips
         ///     An array of the supported <see cref="colors" /> in the chip.
         /// </summary>
         ColorData[] colors { get; }
+        string[] hexColors { get; }
 
         /// <summary>
         ///     The <see cref="total" /> number of <see cref="colors" /> in the chip.

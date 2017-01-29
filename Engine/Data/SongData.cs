@@ -15,8 +15,6 @@
 // 
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
@@ -72,78 +70,17 @@ namespace PixelVisionSDK
                     {
                         if (tracks[i] == null)
                         {
-                            tracks[i] = new TrackData();
+                            tracks[i] = CreateNewTrack();
                         }
                     }
                 }
             }
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="data"></param>
-        public override void DeserializeData(Dictionary<string, object> data)
+        public virtual TrackData CreateNewTrack()
         {
-            if (data.ContainsKey("songName"))
-                songName = (string) data["songName"];
-
-            if (data.ContainsKey("speedInBPM"))
-                speedInBPM = Convert.ToInt32((long) data["speedInBPM"]);
-
-            if (data.ContainsKey("tracks"))
-            {
-                var tracksData = (List<object>) data["tracks"];
-                totalTracks = tracksData.Count;
-
-                for (var i = 0; i < totalTracks; i++)
-                {
-                    var trackData = tracksData[i];
-                    var track = tracks[i];
-                    track.DeserializeData((Dictionary<string, object>) trackData);
-                    tracks[i] = track;
-                }
-            }
+            return new TrackData();
         }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="sb"></param>
-        public override void CustomSerializedData(StringBuilder sb)
-        {
-            sb.Append("\"songName\":\"");
-            sb.Append(songName);
-            sb.Append("\",");
-
-            sb.Append("\"speedInBPM\":");
-            sb.Append(speedInBPM);
-            sb.Append(",");
-
-            sb.Append("\"tracks\":[");
-
-            var total = tracks.Length;
-            for (var i = 0; i < total; i++)
-            {
-                if (tracks[i] != null)
-                {
-                    sb.Append("{");
-
-                    if (tracks[i] != null)
-                    {
-                        tracks[i].CustomSerializedData(sb);
-                    }
-
-                    sb.Append("}");
-
-                    if (i < total - 1)
-                    {
-                        sb.Append(",");
-                    }
-                }
-            }
-
-            sb.Append("]");
-        }
-
         /// <summary>
         ///     Reset the default values of the SongData instance
         /// </summary>

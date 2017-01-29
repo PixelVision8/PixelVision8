@@ -36,12 +36,12 @@ namespace PixelVisionSDK.Chips
         public int maxTracks = 8; // max number of instruments playing notes
         public float nextBeatTimestamp;
         protected float[] noteHZ; // a lookup table of all musical notes in Hz
-        protected int notesPerTrack = 32;
-        protected float[] noteStartFrequency; // same, but for sfxr frequency 0..1 range
+        public int notesPerTrack = 32;
+        public float[] noteStartFrequency; // same, but for sfxr frequency 0..1 range
         protected float noteTickS = 30.0f / 120.0f; // (30.0f/120.0f) = 120BPM eighth notes
         protected float noteTickSEven;
         protected float noteTickSOdd;
-        protected long sequencerBeatNumber;
+        public long sequencerBeatNumber;
         protected int sequencerLoopNum;
         public bool songCurrentlyPlaying;
         protected SongData[] songDataCollection = new SongData[0];
@@ -71,11 +71,16 @@ namespace PixelVisionSDK.Chips
                     {
                         if (songDataCollection[i] == null)
                         {
-                            songDataCollection[i] = new SongData("Untitled" + i);
+                            songDataCollection[i] = CreateNewSongData("Untitled" + i);
                         }
                     }
                 }
             }
+        }
+
+        public virtual SongData CreateNewSongData(string name)
+        {
+            return new SongData(name);
         }
 
         public int totalTracks
@@ -199,7 +204,7 @@ namespace PixelVisionSDK.Chips
             //TODO not implemented yet
         }
 
-        public override void Reset()
+        public void ResetSong()
         {
             activeSongData.Reset();
             LoadInstruments(activeSongData);
@@ -267,7 +272,7 @@ namespace PixelVisionSDK.Chips
             sequencerBeatNumber++; // next beat will use array index +1
         }
 
-        protected void LoadInstruments(SongData song)
+        public void LoadInstruments(SongData song)
         {
             var trackCount = song.tracks.Length;
 
@@ -284,7 +289,7 @@ namespace PixelVisionSDK.Chips
             }
         }
 
-        protected void UpdateNoteTickLengths()
+        public void UpdateNoteTickLengths()
         {
             noteTickS = 30.0f / activeSongData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
             noteTickSOdd = noteTickS * swingRhythmFactor; // small beat
@@ -322,13 +327,17 @@ namespace PixelVisionSDK.Chips
         {
             for (var x = 0; x < notesPerTrack; x++)
             {
-                for (var y = 0; y < tracksPerLoop; y++)
+                // Need to make sure we only play tracks that exists
+                if (tracksPerLoop < activeSongData.tracks.Length)
                 {
-                    // resize invalid array from json data that's funky
-                    if (activeSongData.tracks[y].notes.Length != notesPerTrack)
+                    for (var y = 0; y < tracksPerLoop; y++)
                     {
-                        //Debug.LogWarning("Fixing incorrectly sized music notes array."); // feels like a hack FIXME
-                        Array.Resize(ref activeSongData.tracks[y].notes, notesPerTrack);
+                        // resize invalid array from json data that's funky
+                        if (activeSongData.tracks[y].notes.Length != notesPerTrack)
+                        {
+                            //Debug.LogWarning("Fixing incorrectly sized music notes array."); // feels like a hack FIXME
+                            Array.Resize(ref activeSongData.tracks[y].notes, notesPerTrack);
+                        }
                     }
                 }
             }

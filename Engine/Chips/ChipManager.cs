@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PixelVisionSDK.Services;
 
 namespace PixelVisionSDK.Chips
 {
@@ -28,7 +29,7 @@ namespace PixelVisionSDK.Chips
     ///     managing the life-cycle of chips as they are created and destroy in the
     ///     engine.
     /// </summary>
-    public class ChipManager : IGameLoop
+    public class ChipManager : IGameLoop, IServiceLocator
     {
 
         protected Dictionary<string, AbstractChip> chips = new Dictionary<string, AbstractChip>();
@@ -152,11 +153,18 @@ namespace PixelVisionSDK.Chips
 
             // TODO create a chip
             var type = Type.GetType(id);
-            var chipInstance = Activator.CreateInstance(type) as AbstractChip;
 
-            ActivateChip(id, chipInstance);
+            AbstractChip chipInstance;
 
-            //Debug.Log("Chip Manager: Create new instance of " + id);
+            try
+            {
+                chipInstance = Activator.CreateInstance(type) as AbstractChip;
+                ActivateChip(id, chipInstance);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Chip '"+id+"' could not be created.");
+            }
 
             return chipInstance;
         }
@@ -200,16 +208,16 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     This method calls the Activate method on a <paramref name="chip" />
+        ///     This method calls the Activate method on a chip
         ///     if it exists in the manager. This method can be used to register
-        ///     <see cref="chips" /> as well as register them with unique IDs. Chips
+        ///     chips as well as register them with unique IDs. Chips
         ///     registered without class names will not be restored correctly
         ///     through the serialization API.
         /// </summary>
         /// <param name="id">
         ///     The name of the chip. This should be the fully qualified class name
         ///     if you want to automatically create the instance if one doesn't
-        ///     exist. The supplied <paramref name="chip" /> will be registered to
+        ///     exist. The supplied chip will be registered to
         ///     this id.
         /// </param>
         /// <param name="chip">
@@ -219,19 +227,20 @@ namespace PixelVisionSDK.Chips
         {
             if (HasChip(id))
             {
-                //TODO do we need to dissable the old chip first
+                //TODO do we need to disable the old chip first
                 chips[id] = chip;
             }
             else
             {
+                //TODO fixed bug here but need to make sure we don't need to do this above
                 chips.Add(id, chip);
+
+                if (chip is IUpdate)
+                    updateChips.Add(chip as IUpdate);
+
+                if (chip is IDraw)
+                    drawChips.Add(chip as IDraw);
             }
-
-            if (chip is IUpdate)
-                updateChips.Add(chip as IUpdate);
-
-            if (chip is IDraw)
-                drawChips.Add(chip as IDraw);
 
             chip.Activate(engine);
         }
@@ -263,6 +272,46 @@ namespace PixelVisionSDK.Chips
             {
                 chips.Remove(item.Key);
             }
+        }
+
+        protected Dictionary<string, IService> _services = new Dictionary<string, IService>();
+
+        public Dictionary<string, IService> services
+        {
+            get { return _services; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="service"></param>
+        public void AddService(string id, IService service)
+        {
+            // Add the service to the managed list
+            if (services.ContainsKey(id))
+            {
+
+                // If the service exists, overwrite it
+                services[id] = service;
+            }
+            else
+            {
+                // If the service doesn't exist, create a new reference to it
+                services.Add(id, service);
+            }
+
+            // Add a reference of the service locator
+            service.RegisterService(this);
+        }
+
+        public IService GetService(string id)
+        {
+            if (services.ContainsKey(id))
+                return services[id];
+
+            throw new ApplicationException("The requested service '" + id + "' is not registered");
+
         }
 
     }

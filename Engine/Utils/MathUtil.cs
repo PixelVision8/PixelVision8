@@ -57,6 +57,11 @@ namespace PixelVisionSDK.Utils
             return random.Next(min, max);
         }
 
+        public static int RoundToInt(float f)
+        {
+            return (int) Math.Round(f);
+        }
+
     }
 
 }

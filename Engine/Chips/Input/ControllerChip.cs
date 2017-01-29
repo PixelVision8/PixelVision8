@@ -37,8 +37,9 @@ namespace PixelVisionSDK.Chips
     {
 
         protected ControllerInput[] controllers = new ControllerInput[2];
-        protected IKeyInput keyInput;
-        protected IMouseInput mouseInput;
+
+        protected IKeyInput keyInput { get; set; }
+        protected IMouseInput mouseInput { get; set; }
 
         public bool mouseInputActive
         {
@@ -75,7 +76,7 @@ namespace PixelVisionSDK.Chips
         {
             get
             {
-                if (keyInputActive)
+                if (!keyInputActive)
                     return "";
 
                 return keyInput.inputString;
@@ -84,7 +85,7 @@ namespace PixelVisionSDK.Chips
 
         public bool GetKeyUp(int key)
         {
-            if (keyInputActive)
+            if (!keyInputActive)
                 return false;
 
             return keyInput.GetKeyUp(key);
@@ -92,7 +93,7 @@ namespace PixelVisionSDK.Chips
 
         public bool GetKey(int key)
         {
-            if (keyInputActive)
+            if (!keyInputActive)
                 return false;
 
             return keyInput.GetKey(key);
@@ -100,7 +101,7 @@ namespace PixelVisionSDK.Chips
 
         public bool GetKeyDown(int key)
         {
-            if (keyInputActive)
+            if (!keyInputActive)
                 return false;
 
             return keyInput.GetKeyDown(key);
@@ -141,7 +142,7 @@ namespace PixelVisionSDK.Chips
             }
         }
 
-        public void Update(float timeDelta)
+        public virtual void Update(float timeDelta)
         {
             foreach (var controllerInput in controllers)
             {

@@ -15,44 +15,17 @@
 // 
 
 using System.Collections.Generic;
-using System.Text;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
 
-    public class ControllerInput : ISave, ILoad
+    public class ControllerInput
     {
 
         private readonly Dictionary<Buttons, IButtonState> buttonState = new Dictionary<Buttons, IButtonState>();
         protected float delay;
         public float inputDelay = 0.1f;
-
-        public void DeserializeData(Dictionary<string, object> data)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public string SerializeData()
-        {
-            var sb = new StringBuilder();
-            sb.Append("{");
-            CustomSerializedData(sb);
-            sb.Append("}");
-            return sb.ToString();
-        }
-
-        public void CustomSerializedData(StringBuilder sb)
-        {
-            //            sb.Append("[");
-            //            var total = buttonState.Count;
-            //            for (int i = 0; i < total; i++)
-            //            {
-            //                sb.Append("\"controller"+i+"\":" + buttonState[i].SerializeData());
-            //            }
-            //
-            //            sb.Append("]");
-        }
 
         public void Update(float timeDelta)
         {
@@ -124,14 +97,6 @@ namespace PixelVisionSDK
             return buttonState;
         }
 
-        //        void OnGUI()
-        //        {
-        //            Event e = Event.current;
-        //            if (e.isKey)
-        //                Debug.Log("Detected key code: " + e.keyCode);
-        //
-
-        //        }
     }
 
 }

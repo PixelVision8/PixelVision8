@@ -14,24 +14,19 @@
 // Shawn Rakowski - @shwany
 // 
 
-using PixelVisionSDK.Chips;
+using System.Collections.Generic;
 
-namespace PixelVisionSDK
+namespace PixelVisionSDK.Services
 {
 
-    public interface IButtonState
+
+    public interface IService
     {
 
-        bool value { get; set; }
-        Buttons button { get; set; }
-        bool buttonReleased { get; }
-        float buttonTimes { get; }
-        bool dirty { get; set; }
-        int mapping { get; set; }
-        void Reset();
-        void Release();
-        void Update(float timeDelta);
-
+        void RegisterService(IServiceLocator locator);
+        T GetInstance<T>() where T : IService;
+        bool Execute(string command, Dictionary<string, object> data);
+        
     }
 
 }

@@ -15,8 +15,6 @@
 // 
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
@@ -56,6 +54,19 @@ namespace PixelVisionSDK.Chips
         protected ColorData[] colorCache;
         private bool invalid;
         protected Vector pageSize = new Vector(8, 8);
+
+        public string[] hexColors
+        {
+            get
+            {
+                var colors = new string[total];
+
+                Array.Copy(_colors, colors, total);
+
+                return colors;
+            }
+        }
+
 
         /// <summary>
         ///     Defines the total number of colors per virtual page.
@@ -188,7 +199,7 @@ namespace PixelVisionSDK.Chips
 
         public void UpdateColorAt(int index, string color)
         {
-            if (index > _colors.Length)
+            if (index > _colors.Length || index < 0)
                 return;
 
             if (ColorData.ValidateColor(color))

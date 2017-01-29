@@ -18,19 +18,20 @@ namespace PixelVisionSDK
 {
 
     /// <summary>
-    ///     The ISoundData interface reprents a basic API for working
+    ///     The ISoundData interface represents a basic API for working
     ///     with sound objects in the PixelVisionSDK. Implement this
     ///     Interface with access to sound data to use it inside of
     ///     games and the MusicChip.
     /// </summary>
-    public interface ISoundData : ISave, ILoad
+    public interface ISoundData
     {
+        string name { get; set; }
 
         /// <summary>
         ///     Plays the sound at a specific frequency.
         /// </summary>
         /// <param name="frequency"></param>
-        void Play(float frequency = 0f);
+        void Play(float frequency = 0.1266f);
 
         /// <summary>
         ///     Stops the current sound from playing
