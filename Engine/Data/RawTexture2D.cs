@@ -24,11 +24,17 @@ namespace Assets.PixelVisionSDK.Engine.Data
     /// </summary>
     public class RawTexture2D
     {
+        protected string[] _colorIndex;
+
+        protected ColorData[] colors;
 
         protected TextureData texturedata;
 
-        protected ColorData[] colors;
-        protected string[] _colorIndex;
+        public RawTexture2D(int width, int height, string[] colorIndex)
+        {
+            texturedata = new TextureData(width, height);
+            _colorIndex = colorIndex;
+        }
 
         public int width
         {
@@ -50,13 +56,6 @@ namespace Assets.PixelVisionSDK.Engine.Data
             get { return _colorIndex; }
         }
 
-        public RawTexture2D(int width, int height, string[] colorIndex)
-        {
-
-            texturedata = new TextureData(width, height);
-            _colorIndex = colorIndex;
-        }
-
         public void SetPixels(int[] pixels)
         {
             texturedata.SetPixels(pixels);
@@ -71,6 +70,5 @@ namespace Assets.PixelVisionSDK.Engine.Data
         {
             texturedata.GetPixels(x, y, width, height, data);
         }
-        
     }
 }

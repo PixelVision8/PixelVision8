@@ -18,15 +18,10 @@ using System.Collections.Generic;
 
 namespace PixelVisionSDK.Services
 {
-
-
     public interface IService
     {
-
         void RegisterService(IServiceLocator locator);
         T GetInstance<T>() where T : IService;
         bool Execute(string command, Dictionary<string, object> data);
-        
     }
-
 }

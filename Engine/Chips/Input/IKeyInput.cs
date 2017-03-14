@@ -16,10 +16,8 @@
 
 namespace PixelVisionSDK
 {
-
     public interface IKeyInput
     {
-
         /// <summary>
         ///     <para>Returns the keyboard input entered this frame. (Read Only)</para>
         /// </summary>
@@ -45,7 +43,5 @@ namespace PixelVisionSDK
         /// </summary>
         /// <param name="key"></param>
         bool GetKeyUp(int key);
-
     }
-
 }

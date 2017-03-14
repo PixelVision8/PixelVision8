@@ -18,7 +18,6 @@ using System;
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     The AbstractChip represents plug-in that adds new functionality to the
     ///     PixelVisionEngine. Simply extend this abstract class and override the
@@ -44,7 +43,6 @@ namespace PixelVisionSDK.Chips
     /// </example>
     public class AbstractChip : IChip
     {
-
         protected PixelVisionEngine engine;
 
         /// <summary>
@@ -105,7 +103,5 @@ namespace PixelVisionSDK.Chips
         public virtual void Reset()
         {
         }
-
     }
-
 }

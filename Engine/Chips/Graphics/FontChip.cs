@@ -21,7 +21,6 @@ using System.Text;
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     The font chip allows you to render text to the display. It is built on
     ///     top of the same APIs as the <see cref="SpriteChip" /> but has custom
@@ -29,7 +28,6 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class FontChip : AbstractChip
     {
-
         protected const string _newline = "\r\n";
 
         protected Dictionary<string, int[]> fonts = new Dictionary<string, int[]>();
@@ -64,9 +62,7 @@ namespace PixelVisionSDK.Chips
             if (fonts.ContainsKey(name))
                 fonts[name] = fontMap;
             else
-            {
                 fonts.Add(name, fontMap);
-            }
         }
 
         /// <summary>
@@ -179,17 +175,13 @@ namespace PixelVisionSDK.Chips
             var tHeight = totalLines;
 
             for (var i = 0; i < totalLines; i++)
-            {
                 tWidth = Math.Max(tWidth, result[i].Length);
-            }
 
             var realWidth = (cWidth + letterSpacing) * tWidth;
             var realHeight = cHeight * tHeight;
 
             if (textureData.width != realWidth || textureData.height != realHeight)
-            {
                 textureData.Resize(realWidth, realHeight);
-            }
 
             textureData.Clear();
 
@@ -237,7 +229,6 @@ namespace PixelVisionSDK.Chips
 
                 // Copy this line of text, breaking into smaller lines as needed
                 if (eol > pos)
-                {
                     do
                     {
                         var len = eol - pos;
@@ -254,7 +245,6 @@ namespace PixelVisionSDK.Chips
                         while (pos < eol && char.IsWhiteSpace(the_string[pos]))
                             pos++;
                     } while (eol > pos);
-                }
                 else sb.Append(_newline); // Empty line
             }
 
@@ -302,10 +292,13 @@ namespace PixelVisionSDK.Chips
 
             int currentIndex;
             var lastWrap = 0;
-            var whitespace = new[] { ' ', '\r', '\n', '\t' };
+            var whitespace = new[] {' ', '\r', '\n', '\t'};
             do
             {
-                currentIndex = lastWrap + maxLineLength > text.Length ? text.Length : (text.LastIndexOfAny(new[] { ' ', ',', '.', '?', '!', ':', ';', '-', '\n', '\r', '\t' }, Math.Min(text.Length - 1, lastWrap + maxLineLength)) + 1);
+                currentIndex = lastWrap + maxLineLength > text.Length
+                    ? text.Length
+                    : text.LastIndexOfAny(new[] {' ', ',', '.', '?', '!', ':', ';', '-', '\n', '\r', '\t'},
+                          Math.Min(text.Length - 1, lastWrap + maxLineLength)) + 1;
                 if (currentIndex <= lastWrap)
                     currentIndex = Math.Min(lastWrap + maxLineLength, text.Length);
                 list.Add(text.Substring(lastWrap, currentIndex - lastWrap).Trim(whitespace));
@@ -314,7 +307,5 @@ namespace PixelVisionSDK.Chips
 
             return list.ToArray();
         }
-
     }
-
 }

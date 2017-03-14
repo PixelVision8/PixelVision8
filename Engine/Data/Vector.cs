@@ -16,13 +16,11 @@
 
 namespace PixelVisionSDK
 {
-
     /// <summary>
     ///     The Vector represents an int x and int y value for position.
     /// </summary>
     public class Vector
     {
-
         /// <summary>
         ///     X value of the Vector
         /// </summary>
@@ -44,7 +42,5 @@ namespace PixelVisionSDK
             this.x = x;
             this.y = y;
         }
-
     }
-
 }

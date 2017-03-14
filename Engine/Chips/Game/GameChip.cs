@@ -22,7 +22,6 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     The <see cref="GameChip" /> represents the foundation of a game class
     ///     with all the logic it needs to work correctly in the PixelVisionEngine.
@@ -32,7 +31,6 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class GameChip : AbstractChip, IGame, IUpdate, IDraw
     {
-
         private string _name = "Untitle_Game";
         protected int _saveSlots;
 
@@ -184,9 +182,5 @@ namespace PixelVisionSDK.Chips
             base.Deactivate();
             engine.currentGame = null;
         }
-
-        
-
     }
-
 }

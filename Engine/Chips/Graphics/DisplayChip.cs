@@ -18,10 +18,8 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
-
     public class DisplayChip : AbstractChip, IDraw
     {
-
         protected readonly TextureData textureData = new TextureData(0, 0);
         protected int _height = 240;
         protected int _maxSpriteCount = 64;
@@ -173,10 +171,7 @@ namespace PixelVisionSDK.Chips
             //currentSprites += drawCalls;
 
             if (currentSprites + drawCalls > maxSpriteCount)
-            {
-                //currentSprites -= drawCalls;
                 return;
-            }
 
             currentSprites += drawCalls;
 
@@ -242,9 +237,5 @@ namespace PixelVisionSDK.Chips
             base.Deactivate();
             engine.displayChip = null;
         }
-
-        
-
     }
-
 }

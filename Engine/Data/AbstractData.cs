@@ -16,7 +16,6 @@
 
 namespace PixelVisionSDK
 {
-
     /// <summary>
     ///     The AbstractData class represents a standard foundation for all
     ///     data objects in the engine. It implements the ISave, ILoad and
@@ -25,7 +24,6 @@ namespace PixelVisionSDK
     /// </summary>
     public abstract class AbstractData : IInvalidate
     {
-
         protected bool _invalid;
 
         /// <summary>
@@ -61,7 +59,5 @@ namespace PixelVisionSDK
         {
             _invalid = false;
         }
-        
     }
-
 }

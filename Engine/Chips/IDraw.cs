@@ -16,20 +16,16 @@
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     This internal is for classes that need to be part of
     ///     the engine's Draw system.
     /// </summary>
     public interface IDraw
     {
-
         /// <summary>
         ///     This Draw() method is called as part of the engine's life-cycle. Use
         ///     this method for rendering logic. It is called once per frame.
         /// </summary>
         void Draw();
-
     }
-
 }

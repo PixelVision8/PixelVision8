@@ -19,7 +19,6 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
 {
-
     /// <summary>
     ///     A track is a collection of ISoundData that is played
     ///     back in a specific sequence. The track uses notes to
@@ -27,7 +26,6 @@ namespace PixelVisionSDK
     /// </summary>
     public class TrackData : AbstractData
     {
-
         /// <summary>
         ///     Total number of notes in a single track.
         /// </summary>
@@ -80,11 +78,7 @@ namespace PixelVisionSDK
         public void Clear()
         {
             for (var i = 0; i < totalNotes; i++)
-            {
                 notes[i] = 0;
-            }
         }
-
     }
-
 }

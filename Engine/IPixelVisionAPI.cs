@@ -16,7 +16,6 @@
 
 namespace PixelVisionSDK
 {
-
     /// <summary>
     ///     This interface represents the main API for the
     ///     engine. This is exposed to games so they can interact with the sub
@@ -24,7 +23,6 @@ namespace PixelVisionSDK
     /// </summary>
     public interface IPixelVisionAPI : IKeyInput, IMouseInput
     {
-
         /// <summary>
         ///     A flag for whether the engine is
         ///     <see cref="IPixelVisionAPI.paused" /> or not.
@@ -500,7 +498,5 @@ namespace PixelVisionSDK
         /// <param name="newIDs"></param>
         /// <returns></returns>
         int[] ReplaceColorIDs(int[] pixelData, int[] oldIDs, int[] newIDs);
-
     }
-
 }

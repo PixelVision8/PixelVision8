@@ -16,12 +16,10 @@
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     /// </summary>
     public interface IGameLoop : IUpdate, IDraw
     {
-
         /// <summary>
         ///     The Init() method for the game's live-cycle. This is the first
         ///     method called on a game when it is run.
@@ -34,7 +32,5 @@ namespace PixelVisionSDK.Chips
         ///     you want to execute when a game is started/restarted.
         /// </summary>
         void Reset();
-
     }
-
 }

@@ -19,7 +19,6 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     The tile map chip represents a grid of sprites used to populate the background
     ///     layer of the game. These sprites are fixed and laid out in column and row
@@ -29,7 +28,6 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class TileMapChip : AbstractChip
     {
-
         protected int[] flags = new int[0];
         protected bool[] invalid = new bool[0];
         protected int[] paletteIDs = new int[0];
@@ -63,7 +61,6 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public int rows { get; private set; }
 
-        
 
         /// <summary>
         ///     Reads the current tile and output the spriteID,
@@ -318,9 +315,7 @@ namespace PixelVisionSDK.Chips
             var realHeight = rows * spriteHeight;
 
             if (textureData.width != realWidth || textureData.height != realWidth)
-            {
                 textureData.Resize(realWidth, realHeight);
-            }
 
             textureData.Clear(clearColor);
 
@@ -371,7 +366,5 @@ namespace PixelVisionSDK.Chips
             base.Deactivate();
             engine.tileMapChip = null;
         }
-
     }
-
 }

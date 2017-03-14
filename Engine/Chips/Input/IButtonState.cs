@@ -18,10 +18,8 @@ using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
-
     public interface IButtonState
     {
-
         bool value { get; set; }
         Buttons button { get; set; }
         bool buttonReleased { get; }
@@ -31,7 +29,5 @@ namespace PixelVisionSDK
         void Reset();
         void Release();
         void Update(float timeDelta);
-
     }
-
 }

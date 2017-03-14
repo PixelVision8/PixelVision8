@@ -16,11 +16,9 @@
 
 using System;
 using PixelVisionSDK.Utils;
-using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     The MusicChpip is a sequencer for playing back ISoundData. It
     ///     keeps track of playback time and moves through TrackData playing
@@ -30,6 +28,7 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class MusicChip : AbstractChip, IUpdate
     {
+        protected int _totalTracks;
 
         protected int currentSong;
         public bool loopSong;
@@ -72,13 +71,9 @@ namespace PixelVisionSDK.Chips
                     {
                         var sondData = songDataCollection[i];
                         if (sondData == null)
-                        {
                             songDataCollection[i] = CreateNewSongData("Untitled" + i, maxTracks);
-                        }
                         else
-                        {
                             sondData.totalTracks = totalTracks;
-                        }
                     }
                 }
             }
@@ -88,7 +83,8 @@ namespace PixelVisionSDK.Chips
         {
             get
             {
-                return maxNoteNum;;
+                return maxNoteNum;
+                ;
             }
             set
             {
@@ -96,36 +92,21 @@ namespace PixelVisionSDK.Chips
                     return;
 
                 var total = totalLoops;
-                for (int i = 0; i < total; i++)
-                {
+                for (var i = 0; i < total; i++)
                     songDataCollection[i].totalNotes = value;
-                }
             }
         }
-
-        public virtual SongData CreateNewSongData(string name, int tracks = 4)
-        {
-            return new SongData(name, tracks);
-        }
-
-        protected int _totalTracks = 0;
 
         public int totalTracks
         {
-            get
-            {
-                return _totalTracks;
-            }
+            get { return _totalTracks; }
             set
             {
-                value = Mathf.Clamp(value, 1, maxTracks);
+                value = value.Clamp(1, maxTracks);
 
                 var total = songDataCollection.Length;
                 for (var i = 0; i < total; i++)
-                {
                     songDataCollection[i].totalTracks = value;
-                    
-                }
 
                 _totalTracks = value;
             }
@@ -161,13 +142,16 @@ namespace PixelVisionSDK.Chips
 
             //TODO need to make sure this still actually works after removing Time.time reference
             if (songCurrentlyPlaying)
-            {
                 if (time >= nextBeatTimestamp)
                 {
                     nextBeatTimestamp = time + (sequencerBeatNumber % 2 == 1 ? noteTickSOdd : noteTickSEven);
                     OnBeat();
                 }
-            }
+        }
+
+        public virtual SongData CreateNewSongData(string name, int tracks = 4)
+        {
+            return new SongData(name, tracks);
         }
 
         /// <summary>
@@ -275,7 +259,6 @@ namespace PixelVisionSDK.Chips
 
                 sequencerLoopNum++;
                 if (sequencerLoopNum >= songLoopCount)
-                {
                     if (loopSong)
                     {
                         sequencerLoopNum = 0;
@@ -285,7 +268,6 @@ namespace PixelVisionSDK.Chips
                         songCurrentlyPlaying = false;
                         return;
                     }
-                }
 
                 sequencerBeatNumber = 0;
 
@@ -303,16 +285,13 @@ namespace PixelVisionSDK.Chips
                 var instrument = soundChip.ReadChannel(trackNum);
 
                 if (instrument != null)
-                {
-                    // now play it if possible
-                    if ((gotANote > 0) && (gotANote < maxNoteNum) && (instrument != null))
+                    if (gotANote > 0 && gotANote < maxNoteNum && instrument != null)
                     {
                         var frequency = noteStartFrequency[gotANote];
 
                         //$CTK midi num offset fix -1]; // -1 to account for 0 based array
                         instrument.Play(frequency);
                     }
-                }
             }
 
             sequencerBeatNumber++; // next beat will use array index +1
@@ -325,14 +304,12 @@ namespace PixelVisionSDK.Chips
             var channels = soundChip.totalChannels;
 
             for (var trackNum = 0; trackNum < trackCount; trackNum++)
-            {
                 if (trackNum < channels)
                 {
                     var sfxID = song.tracks[trackNum].sfxID;
 
                     soundChip.LoadSound(sfxID, trackNum);
                 }
-            }
         }
 
         public void UpdateNoteTickLengths()
@@ -372,23 +349,10 @@ namespace PixelVisionSDK.Chips
         protected void UpdateMusicNotes()
         {
             for (var x = 0; x < notesPerTrack; x++)
-            {
-                // Need to make sure we only play tracks that exists
                 if (tracksPerLoop < activeSongData.tracks.Length)
-                {
                     for (var y = 0; y < tracksPerLoop; y++)
-                    {
-                        // resize invalid array from json data that's funky
                         if (activeSongData.tracks[y].notes.Length != notesPerTrack)
-                        {
-                            //Debug.LogWarning("Fixing incorrectly sized music notes array."); // feels like a hack FIXME
                             Array.Resize(ref activeSongData.tracks[y].notes, notesPerTrack);
-                        }
-                    }
-                }
-            }
         }
-
     }
-
 }

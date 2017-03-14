@@ -14,18 +14,14 @@
 // Shawn Rakowski - @shwany
 // 
 
-using System.Collections.Generic;
-
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     The <see cref="IGame" /> internal contains the API
     ///     calls for a game in the PixelVisionEngine.
     /// </summary>
     public interface IGame
     {
-
         /// <summary>
         ///     Name of the game.
         /// </summary>
@@ -126,7 +122,5 @@ namespace PixelVisionSDK.Chips
         ///     float if it is not.
         /// </returns>
         float GetData(string key, float defaultValue);
-
     }
-
 }

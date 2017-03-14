@@ -15,28 +15,24 @@
 // 
 
 using System;
-using System.Linq;
 using System.Text;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK.Utils
 {
-
     public class SpriteChipUtil
     {
-
         private static int[] pixels = new int[0];
 
         public static int[] tmpPixelData = new int[8 * 8];
+        private static readonly StringBuilder tmpSB = new StringBuilder();
 
         public static void ClearTextureData(ref TextureData textureData, int colorRef = -1)
         {
             var pixels = textureData.GetPixels();
             var total = pixels.Length;
             for (var i = 0; i < total; i++)
-            {
                 pixels[i] = colorRef;
-            }
 
             textureData.SetPixels(pixels);
         }
@@ -115,15 +111,13 @@ namespace PixelVisionSDK.Utils
             Array.Copy(pixelData, pixels, total);
 
             for (var ix = 0; ix < sWidth; ix++)
+            for (var iy = 0; iy < sHeight; iy++)
             {
-                for (var iy = 0; iy < sHeight; iy++)
-                {
-                    var newx = ix;
-                    var newY = iy;
-                    if (flipH) newx = sWidth - 1 - ix;
-                    if (flipV) newY = sHeight - 1 - iy;
-                    pixelData[ix + iy * sWidth] = pixels[newx + newY * sWidth];
-                }
+                var newx = ix;
+                var newY = iy;
+                if (flipH) newx = sWidth - 1 - ix;
+                if (flipV) newY = sHeight - 1 - iy;
+                pixelData[ix + iy * sWidth] = pixels[newx + newY * sWidth];
             }
         }
 
@@ -158,7 +152,6 @@ namespace PixelVisionSDK.Utils
 
             //Debug.Log("Old Size "+ oldSize + " new size "+newSize +" new size "+ newSpriteWidth+"x"+ newSpriteHeight);
         }
-        private static StringBuilder tmpSB = new StringBuilder();
 
         /// <summary>
         /// </summary>
@@ -167,30 +160,23 @@ namespace PixelVisionSDK.Utils
         /// </returns>
         public static string SpriteDataToString(int[] data)
         {
-
             tmpSB.Length = 0;
             var total = data.Length;
 
-            for (int i = 0; i < total; i++)
-            {
+            for (var i = 0; i < total; i++)
                 tmpSB.Append(data[i]);
-            }
 
-            return tmpSB.ToString();//string.Join(",", data.Select(x => x.ToString()).ToArray()));
+            return tmpSB.ToString(); //string.Join(",", data.Select(x => x.ToString()).ToArray()));
         }
 
         public static void ShiftPixelData(ref int[] pixelData, int offset, int emptyColorID = -1)
         {
             var total = pixelData.Length;
             for (var i = 0; i < total; i++)
-            {
                 if (pixelData[i] > -1)
                     pixelData[i] = pixelData[i] + offset;
                 else
-                {
                     pixelData[i] = emptyColorID;
-                }
-            }
         }
 
         /// <summary>
@@ -204,13 +190,10 @@ namespace PixelVisionSDK.Utils
         /// </returns>
         public static bool IsEmpty(int[] data)
         {
-            
             var total = data.Length;
             for (var i = 0; i < total; i++)
-            {
                 if (data[i] > -1)
                     return false;
-            }
 
             return false;
         }
@@ -253,7 +236,5 @@ namespace PixelVisionSDK.Utils
             //var pixelData = data.GetPixels();
             //return pixelData;
         }
-
     }
-
 }

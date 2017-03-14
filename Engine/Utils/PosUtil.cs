@@ -16,14 +16,12 @@
 
 namespace PixelVisionSDK.Utils
 {
-
     /// <summary>
     ///     This utility offers helper methods for quickly calculating a position in
     ///     a 1D array as if it was a 2D array.
     /// </summary>
     public class PosUtil
     {
-
         /// <summary>
         ///     This calculates the <paramref name="index" /> of a 1D array based on
         ///     the x,y position and the <paramref name="width" /> of the array.
@@ -54,7 +52,5 @@ namespace PixelVisionSDK.Utils
             x = index % width;
             y = index / width;
         }
-
     }
-
 }

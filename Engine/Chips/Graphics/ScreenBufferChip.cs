@@ -14,13 +14,10 @@
 // Shawn Rakowski - @shwany
 // 
 
-using System.Collections.Generic;
-using System.Text;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     The <see cref="ScreenBufferChip" /> represents the background layer of
     ///     the renderer. A TileMap can be loaded into the ScreenBuffer to allow for
@@ -31,7 +28,6 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class ScreenBufferChip : AbstractChip
     {
-
         protected int _scrollX;
         protected int _scrollY;
         protected int[] tmpPixelData;
@@ -319,7 +315,5 @@ namespace PixelVisionSDK.Chips
             base.Deactivate();
             engine.screenBufferChip = null;
         }
-
     }
-
 }

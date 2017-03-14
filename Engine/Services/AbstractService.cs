@@ -14,20 +14,19 @@
 // Shawn Rakowski - @shwany
 // 
 
+using System;
 using System.Collections.Generic;
 
 namespace PixelVisionSDK.Services
 {
-
     /// <summary>
     ///     The AbstractService allows you to expose classes and API to the chips in
     ///     a save, decoupled way. The Service implements the IService interface
     ///     allowing each instance to take advantage of the RegisterService, getInstance
     ///     and Execute methods.
     /// </summary>
-    public abstract class AbstractService: IService
+    public abstract class AbstractService : IService
     {
-
         protected IServiceLocator locator;
 
         /// <summary>
@@ -40,14 +39,14 @@ namespace PixelVisionSDK.Services
         }
 
         /// <summary>
-        ///    This method can be used to return a type value of the service's wrapped instance.
+        ///     This method can be used to return a type value of the service's wrapped instance.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         public virtual T GetInstance<T>() where T : IService
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -59,9 +58,7 @@ namespace PixelVisionSDK.Services
         /// <exception cref="NotImplementedException"></exception>
         public virtual bool Execute(string command, Dictionary<string, object> data)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
-
     }
-
 }

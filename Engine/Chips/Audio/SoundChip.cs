@@ -19,14 +19,12 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     The <see cref="SoundChip" /> is responsible for playing back sound
     ///     effects in the engine. It's powered by SFxr.
     /// </summary>
     public class SoundChip : AbstractChip
     {
-
         protected int _totalSounds;
         protected ISoundData[] channels = new ISoundData[0];
 
@@ -56,10 +54,8 @@ namespace PixelVisionSDK.Chips
                 Array.Resize(ref sounds, value);
 
                 for (var i = 0; i < value; i++)
-                {
                     if (sounds[i] == null)
                         sounds[i] = CreateEmptySoundData("Untitled" + i.ToString("D2"));
-                }
             }
         }
 
@@ -83,7 +79,7 @@ namespace PixelVisionSDK.Chips
         public void ClearSound(int index)
         {
             // TODO need to see if there is a better way to revert a sound
-            sounds[index] = CreateEmptySoundData("Untitled"+index.ToString("D2"));
+            sounds[index] = CreateEmptySoundData("Untitled" + index.ToString("D2"));
         }
 
         /// <summary>
@@ -193,7 +189,5 @@ namespace PixelVisionSDK.Chips
         {
             ReadSound(id).name = name;
         }
-
     }
-
 }

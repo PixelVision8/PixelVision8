@@ -19,7 +19,6 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
 {
-
     /// <summary>
     ///     The SongData class represents a collection of tracks and
     ///     meta data used by the MusicChip to play back ISoundData
@@ -27,7 +26,6 @@ namespace PixelVisionSDK
     /// </summary>
     public class SongData : AbstractData
     {
-
         protected int _speedInBPM = 120;
 
         /// <summary>
@@ -40,22 +38,20 @@ namespace PixelVisionSDK
         /// </summary>
         public TrackData[] tracks = new TrackData[0];
 
+        public SongData(string name = "Untitled", int tracks = 4)
+        {
+            Reset(name);
+            totalTracks = tracks;
+        }
+
         public int totalNotes
         {
             set
             {
                 var total = tracks.Length;
                 for (var i = 0; i < total; i++)
-                {
                     tracks[i].totalNotes = value;
-                }
             }
-        }
-
-        public SongData(string name = "Untitled", int tracks = 4)
-        {
-            Reset(name);
-            totalTracks = tracks;
         }
 
         /// <summary>
@@ -80,13 +76,11 @@ namespace PixelVisionSDK
                     Array.Resize(ref tracks, value);
                     var total = tracks.Length;
                     for (var i = 0; i < total; i++)
-                    {
                         if (tracks[i] == null)
                         {
                             tracks[i] = CreateNewTrack();
                             tracks[i].sfxID = i;
                         }
-                    }
                 }
             }
         }
@@ -106,11 +100,7 @@ namespace PixelVisionSDK
             songName = name;
             totalTracks = trackCount;
             foreach (var track in tracks)
-            {
                 track.Reset(true);
-            }
         }
-
     }
-
 }

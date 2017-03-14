@@ -20,7 +20,6 @@ using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
-
     /// <summary>
     ///     This is the default engine class for Pixel Vision 8. It manages the
     ///     state of all chips, the game itself and helps with communication between
@@ -28,7 +27,6 @@ namespace PixelVisionSDK
     /// </summary>
     public class PixelVisionEngine : IEngine
     {
-
         protected string[] defaultChips;
 
         protected Dictionary<string, string> metaData = new Dictionary<string, string>
@@ -153,12 +151,8 @@ namespace PixelVisionSDK
             chipManager = new ChipManager(this);
             apiBridge = new APIBridge(this);
             if (defaultChips != null)
-            {
                 foreach (var chip in defaultChips)
-                {
                     chipManager.GetChip(chip);
-                }
-            }
         }
 
         /// <summary>
@@ -248,7 +242,6 @@ namespace PixelVisionSDK
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
@@ -256,33 +249,24 @@ namespace PixelVisionSDK
         public string GetMetaData(string key, string defaultValue = "")
         {
             if (!metaData.ContainsKey(key))
-            {
                 metaData.Add(key, defaultValue);
-            }
 
             return metaData[key];
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
         public void SetMetaData(string key, string value)
         {
             if (!metaData.ContainsKey(key))
-            {
                 metaData.Add(key, value);
-            }
             else
-            {
                 metaData[key] = value;
-            }
-
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="target"></param>
         /// <param name="ignoreKeys"></param>
@@ -291,12 +275,8 @@ namespace PixelVisionSDK
             target.Clear();
 
             foreach (var data in metaData)
-            {
                 if (Array.IndexOf(ignoreKeys, data.Key) == -1)
                     target.Add(data.Key, data.Value);
-            }
         }
-
     }
-
 }

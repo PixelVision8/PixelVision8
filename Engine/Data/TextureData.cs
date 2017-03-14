@@ -19,7 +19,6 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
 {
-
     /// <summary>
     ///     <see cref="TextureData" /> represent a grid of pixel data in the engine.
     ///     Pixel data aren't values that can be used to
@@ -31,7 +30,6 @@ namespace PixelVisionSDK
     /// </summary>
     public class TextureData : AbstractData
     {
-
         protected Rect oRect = new Rect();
         protected int[] pixels = new int[0];
         protected Rect sRect = new Rect();
@@ -137,14 +135,10 @@ namespace PixelVisionSDK
             var total = width * height;
 
             if (data.Length != total)
-            {
                 Array.Resize(ref data, total);
-            }
 
             for (var i = 0; i < total; i++)
-            {
                 data[i] = pixels[i];
-            }
         }
 
         /// <summary>
@@ -176,7 +170,6 @@ namespace PixelVisionSDK
                 Array.Resize(ref data, tmpTotal);
 
             if (!wrapMode)
-            {
                 if (x + blockWidth > width || y + blockHeight > height)
                 {
                     sRect.x = x;
@@ -190,7 +183,6 @@ namespace PixelVisionSDK
                     y = oRect.y;
                     blockWidth = oRect.width;
                 }
-            }
 
             for (var i = 0; i < tmpTotal; i++)
             {
@@ -282,9 +274,7 @@ namespace PixelVisionSDK
                 SetPixel(newX, newY, pixels[i]);
 
                 if (column == maxColumns)
-                {
                     row++;
-                }
             }
         }
 
@@ -317,9 +307,7 @@ namespace PixelVisionSDK
         {
             var total = pixels.Length;
             for (var i = 0; i < total; i++)
-            {
                 pixels[i] = colorRef;
-            }
         }
 
         /// <summary>
@@ -380,12 +368,8 @@ namespace PixelVisionSDK
                 }
 
                 if (tmpColumn == maxColumns)
-                {
                     tmpRow++;
-                }
             }
         }
-
     }
-
 }

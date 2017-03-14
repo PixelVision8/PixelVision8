@@ -16,10 +16,8 @@
 
 namespace PixelVisionSDK
 {
-
     public interface IInvalidate
     {
-
         /// <summary>
         ///     The invalid flag allows you to quickly see if data has been changed
         ///     on the AbstractData instance. This is used in conjunction with the
@@ -46,7 +44,5 @@ namespace PixelVisionSDK
         ///     done changing.
         /// </summary>
         void ResetValidation();
-
     }
-
 }

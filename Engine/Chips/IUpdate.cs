@@ -16,14 +16,12 @@
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     This internal is for classes that need to be part of
     ///     the engine's Draw system.
     /// </summary>
     public interface IUpdate
     {
-
         /// <summary>
         ///     This Update() method is called as part of the engine's life-cycle.
         ///     Use this method for business logic, calculations and detecting
@@ -31,7 +29,5 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         /// <param name="timeDelta"></param>
         void Update(float timeDelta);
-
     }
-
 }

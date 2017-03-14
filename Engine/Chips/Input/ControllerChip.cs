@@ -15,14 +15,11 @@
 // 
 
 using System;
-using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
-
     public enum Buttons
     {
-
         Up,
         Down,
         Left,
@@ -31,12 +28,10 @@ namespace PixelVisionSDK.Chips
         B,
         Select,
         Start
-
     }
 
     public class ControllerChip : AbstractChip, IUpdate, IKeyInput, IMouseInput
     {
-
         protected ControllerInput[] controllers = new ControllerInput[2];
 
         protected IKeyInput keyInput { get; set; }
@@ -61,10 +56,8 @@ namespace PixelVisionSDK.Chips
                     Array.Resize(ref controllers, value);
 
                 for (var i = 0; i < value; i++)
-                {
                     if (controllers[i] == null)
                         controllers[i] = new ControllerInput();
-                }
             }
         }
 
@@ -146,9 +139,7 @@ namespace PixelVisionSDK.Chips
         public virtual void Update(float timeDelta)
         {
             foreach (var controllerInput in controllers)
-            {
                 controllerInput.Update(timeDelta);
-            }
         }
 
         public void RegisterMouseInput(IMouseInput target)
@@ -210,18 +201,15 @@ namespace PixelVisionSDK.Chips
             {
                 var total = values.Length;
 
-                for (int i = 0; i < total; i++)
+                for (var i = 0; i < total; i++)
                 {
                     var keyCode = (int) values.GetValue(i);
                     if (keyInput.GetKey(keyCode))
                         return keyCode;
                 }
-
             }
 
             return 0;
         }
-
     }
-
 }

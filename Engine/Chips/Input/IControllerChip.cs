@@ -18,10 +18,8 @@ using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
-
     public interface IControllerChip : IUpdate
     {
-
         int totalControllers { get; }
         bool ButtonDown(int buttonID, int controller = 0);
         bool ButtonReleased(int buttonID, int controller = 0);
@@ -31,7 +29,5 @@ namespace PixelVisionSDK
         Vector MousePos();
         int[] ReadControllerKeys(int controllerID = 0);
         void UpdateControllerKey(int controllerID, Buttons button, int key);
-
     }
-
 }

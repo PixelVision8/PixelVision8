@@ -18,14 +18,12 @@ using System;
 
 namespace PixelVisionSDK
 {
-
     /// <summary>
     ///     The Rect is a basic rectangle class used for determining
     ///     bounding box collision based on x, y , width and hight values.
     /// </summary>
     public class Rect
     {
-
         /// <summary>
         ///     Height of the Rect.
         /// </summary>
@@ -106,7 +104,5 @@ namespace PixelVisionSDK
 
             return false;
         }
-
     }
-
 }

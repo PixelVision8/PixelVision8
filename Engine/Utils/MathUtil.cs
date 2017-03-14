@@ -18,10 +18,8 @@ using System;
 
 namespace PixelVisionSDK.Utils
 {
-
     public static class MathUtil
     {
-
         private static readonly Random random = new Random();
 
         public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
@@ -35,9 +33,7 @@ namespace PixelVisionSDK.Utils
         public static int Repeat(int val, int max)
         {
             if (val < 0F)
-            {
                 return max + val % max;
-            }
 
             return val % max;
         }
@@ -61,7 +57,5 @@ namespace PixelVisionSDK.Utils
         {
             return (int) Math.Round(f);
         }
-
     }
-
 }

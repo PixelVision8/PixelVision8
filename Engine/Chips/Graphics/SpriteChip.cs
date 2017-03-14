@@ -20,7 +20,6 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     The <see cref="SpriteChip" /> represents a way to store and retrieve
     ///     sprite pixel data. Internally, the pixel data is stored in a
@@ -29,7 +28,6 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class SpriteChip : AbstractChip
     {
-
         protected int _colorsPerSprite = 8;
 
         protected int _pages = 4;
@@ -153,10 +151,8 @@ namespace PixelVisionSDK.Chips
         {
             var total = data.Length;
             for (var i = 0; i < total; i++)
-            {
                 if (data[i] > -1)
                     return false;
-            }
 
             return true;
         }
@@ -295,10 +291,8 @@ namespace PixelVisionSDK.Chips
         public int FindSprite(int[] pixels, bool emptyCheck = false)
         {
             if (emptyCheck)
-            {
                 if (IsEmpty(pixels))
                     return -1;
-            }
 
             var sprite = SpriteChipUtil.SpriteDataToString(pixels);
 
@@ -320,13 +314,9 @@ namespace PixelVisionSDK.Chips
             var total = pixelData.Length;
 
             for (var i = 0; i < total; i++)
-            {
                 pixelData[i] += offset;
-            }
 
             _texture.SetPixels(pixelData);
         }
-
     }
-
 }

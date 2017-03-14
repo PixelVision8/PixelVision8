@@ -19,7 +19,6 @@ using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
-
     /// <summary>
     ///     The <see cref="IEngine" /> internal represents the
     ///     core API for the Engine class. Implement this
@@ -27,7 +26,6 @@ namespace PixelVisionSDK
     /// </summary>
     public interface IEngine : IEngineChips, IGameLoop
     {
-
         /// <summary>
         ///     A flag for if the engine is <see cref="running" />
         /// </summary>
@@ -51,7 +49,6 @@ namespace PixelVisionSDK
         void Shutdown();
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
@@ -59,19 +56,15 @@ namespace PixelVisionSDK
         string GetMetaData(string key, string defaultValue = "");
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
         void SetMetaData(string key, string value);
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="target"></param>
         /// <param name="ignoreKeys"></param>
         void DumpMetaData(Dictionary<string, string> target, string[] ignoreKeys);
-
     }
-
 }

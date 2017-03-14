@@ -18,7 +18,6 @@ using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
-
     /// <summary>
     ///     This internal defines the APIs for the
     ///     <see cref="IAPIBridge" /> which allows games to talk to the engine's
@@ -26,7 +25,6 @@ namespace PixelVisionSDK
     /// </summary>
     public interface IAPIBridge : IPixelVisionAPI
     {
-
         /// <summary>
         ///     A reference to the core <see cref="chips" /> in the engine.
         /// </summary>
@@ -34,5 +32,4 @@ namespace PixelVisionSDK
 
         int backgroundColor { get; }
     }
-
 }

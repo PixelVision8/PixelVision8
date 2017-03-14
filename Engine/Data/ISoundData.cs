@@ -16,7 +16,6 @@
 
 namespace PixelVisionSDK
 {
-
     /// <summary>
     ///     The ISoundData interface represents a basic API for working
     ///     with sound objects in the PixelVisionSDK. Implement this
@@ -42,7 +41,5 @@ namespace PixelVisionSDK
         ///     Caches the sound file to improve performance
         /// </summary>
         void CacheSound();
-
     }
-
 }

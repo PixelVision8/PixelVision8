@@ -21,7 +21,6 @@ using PixelVisionSDK.Services;
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     The <see cref="ChipManager" /> is responsible for managing all of the
     ///     chips in the engine. It allows the engine to create chips from a string
@@ -31,6 +30,7 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class ChipManager : IGameLoop, IServiceLocator
     {
+        protected Dictionary<string, IService> _services = new Dictionary<string, IService>();
 
         protected Dictionary<string, AbstractChip> chips = new Dictionary<string, AbstractChip>();
         protected List<IDraw> drawChips = new List<IDraw>();
@@ -63,9 +63,7 @@ namespace PixelVisionSDK.Chips
             var chipNames = chips.Keys.ToList();
 
             foreach (var chipName in chipNames)
-            {
                 chips[chipName].Init();
-            }
 //            foreach (var chip in chips)
 //            {
 //                chip.Value.Init();
@@ -80,9 +78,7 @@ namespace PixelVisionSDK.Chips
         public void Update(float timeDelta)
         {
             foreach (var chip in updateChips)
-            {
                 chip.Update(timeDelta);
-            }
         }
 
         /// <summary>
@@ -92,9 +88,7 @@ namespace PixelVisionSDK.Chips
         public void Draw()
         {
             foreach (var chip in drawChips)
-            {
                 chip.Draw();
-            }
         }
 
         /// <summary>
@@ -103,9 +97,36 @@ namespace PixelVisionSDK.Chips
         public void Reset()
         {
             foreach (var chip in chips)
-            {
                 chip.Value.Reset();
-            }
+        }
+
+        public Dictionary<string, IService> services
+        {
+            get { return _services; }
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="service"></param>
+        public void AddService(string id, IService service)
+        {
+            // Add the service to the managed list
+            if (services.ContainsKey(id))
+                services[id] = service;
+            else
+                services.Add(id, service);
+
+            // Add a reference of the service locator
+            service.RegisterService(this);
+        }
+
+        public IService GetService(string id)
+        {
+            if (services.ContainsKey(id))
+                return services[id];
+
+            throw new ApplicationException("The requested service '" + id + "' is not registered");
         }
 
         /// <summary>
@@ -169,7 +190,7 @@ namespace PixelVisionSDK.Chips
             }
             catch (Exception)
             {
-                throw new Exception("Chip '"+id+"' could not be created.");
+                throw new Exception("Chip '" + id + "' could not be created.");
             }
 
             return chipInstance;
@@ -197,7 +218,6 @@ namespace PixelVisionSDK.Chips
                 return;
 
             chip.Activate(engine);
-            
         }
 
         /// <summary>
@@ -208,9 +228,7 @@ namespace PixelVisionSDK.Chips
         public void DeactivateChips()
         {
             foreach (var item in chips)
-            {
                 DeactivateChip(item.Key, item.Value);
-            }
         }
 
         /// <summary>
@@ -248,7 +266,7 @@ namespace PixelVisionSDK.Chips
                     drawChips.Add(chip as IDraw);
             }
 
-            if(autoActivate)
+            if (autoActivate)
                 chip.Activate(engine);
         }
 
@@ -276,51 +294,7 @@ namespace PixelVisionSDK.Chips
         public void RemoveInactiveChips()
         {
             foreach (var item in chips.Where(c => c.Value.active == false).ToArray())
-            {
                 chips.Remove(item.Key);
-            }
         }
-
-        protected Dictionary<string, IService> _services = new Dictionary<string, IService>();
-
-        public Dictionary<string, IService> services
-        {
-            get { return _services; }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="service"></param>
-        public void AddService(string id, IService service)
-        {
-            // Add the service to the managed list
-            if (services.ContainsKey(id))
-            {
-
-                // If the service exists, overwrite it
-                services[id] = service;
-            }
-            else
-            {
-                // If the service doesn't exist, create a new reference to it
-                services.Add(id, service);
-            }
-
-            // Add a reference of the service locator
-            service.RegisterService(this);
-        }
-
-        public IService GetService(string id)
-        {
-            if (services.ContainsKey(id))
-                return services[id];
-
-            throw new ApplicationException("The requested service '" + id + "' is not registered");
-
-        }
-
     }
-
 }

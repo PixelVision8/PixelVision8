@@ -19,7 +19,6 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     The <see cref="ColorChip" /> represents the system colors of the engine.
     ///     It allows the engine to work in color indexes that the display can map
@@ -27,7 +26,6 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class ColorChip : AbstractChip, IColorChip
     {
-
         protected string[] _colors =
         {
             "#000000",
@@ -54,18 +52,6 @@ namespace PixelVisionSDK.Chips
         protected ColorData[] colorCache;
         private bool invalid;
         protected Vector pageSize = new Vector(8, 8);
-
-        public string[] hexColors
-        {
-            get
-            {
-                var colors = new string[total];
-
-                Array.Copy(_colors, colors, total);
-
-                return colors;
-            }
-        }
 
 
         /// <summary>
@@ -96,12 +82,8 @@ namespace PixelVisionSDK.Chips
                 Array.Resize(ref _colors, total);
 
                 if (oldTotal < total)
-                {
                     for (var i = oldTotal; i < total; i++)
-                    {
                         _colors[i] = transparent;
-                    }
-                }
             }
         }
 
@@ -125,17 +107,16 @@ namespace PixelVisionSDK.Chips
         /// <value>Int</value>
         public int supportedColors { get; protected set; }
 
-        public void RecalculateSupportedColors()
+        public string[] hexColors
         {
-            var count = 0;
-            var total = _colors.Length;
-            for (var i = 0; i < total; i++)
+            get
             {
-                if (_colors[i] != transparent)
-                    count ++;
-            }
+                var colors = new string[total];
 
-            supportedColors = count;
+                Array.Copy(_colors, colors, total);
+
+                return colors;
+            }
         }
 
         /// <summary>
@@ -163,12 +144,7 @@ namespace PixelVisionSDK.Chips
                     colorCache = new ColorData[t];
 
                     for (var i = 0; i < t; i++)
-                    {
                         colorCache[i] = new ColorData(_colors[i]);
-
-                        //color.HexToColor(_colors[i]);
-                        //colorCache[i] = color;
-                    }
 
                     invalid = false;
                 }
@@ -191,9 +167,7 @@ namespace PixelVisionSDK.Chips
         {
             var t = _colors.Length;
             for (var i = 0; i < t; i++)
-            {
                 UpdateColorAt(i, transparent);
-            }
         }
 
         public void UpdateColorAt(int index, string color)
@@ -205,11 +179,20 @@ namespace PixelVisionSDK.Chips
             color = color.ToUpper();
 
             if (ColorData.ValidateColor(color))
-            {
                 _colors[index] = color;
-            }
 
             invalid = true;
+        }
+
+        public void RecalculateSupportedColors()
+        {
+            var count = 0;
+            var total = _colors.Length;
+            for (var i = 0; i < total; i++)
+                if (_colors[i] != transparent)
+                    count++;
+
+            supportedColors = count;
         }
 
 
@@ -241,7 +224,5 @@ namespace PixelVisionSDK.Chips
         {
             pages = MathUtil.CeilToInt(total / colorsPerPage);
         }
-
     }
-
 }

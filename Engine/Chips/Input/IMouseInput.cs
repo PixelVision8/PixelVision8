@@ -16,10 +16,8 @@
 
 namespace PixelVisionSDK
 {
-
     public interface IMouseInput
     {
-
         /// <summary>
         ///     <para>The current mouse position in pixel coordinates. (Read Only)</para>
         /// </summary>
@@ -52,7 +50,5 @@ namespace PixelVisionSDK
         /// <returns>
         /// </returns>
         bool GetMouseButtonUp(int button);
-
     }
-
 }

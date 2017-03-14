@@ -21,7 +21,6 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
 {
-
     /// <summary>
     ///     The ColorData class is a wraper for color data in the engine.
     ///     It provides a simple interface for storing RBG color data as
@@ -29,29 +28,10 @@ namespace PixelVisionSDK
     /// </summary>
     public class ColorData : AbstractData
     {
-
         protected float _b;
         protected float _g;
 
         protected float _r;
-
-        public void FromHex(string hexColor)
-        {
-            float tmpR, tmpG, tmpB;
-
-            HexToColor(hexColor, out tmpR, out tmpG, out tmpB);
-
-            r = tmpR;
-            g = tmpG;
-            b = tmpB;
-        }
-
-        public void FromRGB(float r = 0f, float g = 0f, float b = 0f)
-        {
-            this.r = r;
-            this.g = g;
-            this.b = b;
-        }
 
         /// <summary>
         ///     Use this constructor for setting the ColorData instance up
@@ -102,6 +82,24 @@ namespace PixelVisionSDK
             set { _b = value; }
         }
 
+        public void FromHex(string hexColor)
+        {
+            float tmpR, tmpG, tmpB;
+
+            HexToColor(hexColor, out tmpR, out tmpG, out tmpB);
+
+            r = tmpR;
+            g = tmpG;
+            b = tmpB;
+        }
+
+        public void FromRGB(float r = 0f, float g = 0f, float b = 0f)
+        {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+        }
+
         /// <summary>
         ///     Returns the HEX value of the color data.
         /// </summary>
@@ -123,7 +121,7 @@ namespace PixelVisionSDK
             var r1 = (byte) MathUtil.RoundToInt(r * byte.MaxValue).Clamp(0, byte.MaxValue);
             var g1 = (byte) MathUtil.RoundToInt(g * byte.MaxValue).Clamp(0, byte.MaxValue);
             var b1 = (byte) MathUtil.RoundToInt(b * byte.MaxValue).Clamp(0, byte.MaxValue);
-            return "#"+string.Format("{0:X2}{1:X2}{2:X2}", r1, g1, b1);
+            return "#" + string.Format("{0:X2}{1:X2}{2:X2}", r1, g1, b1);
         }
 
         /// <summary>
@@ -136,9 +134,7 @@ namespace PixelVisionSDK
         public static void HexToColor(string hex, out float r, out float g, out float b)
         {
             if (hex == null)
-            {
                 hex = "FF00FF";
-            }
 
             if (hex[0] == '#')
                 hex = hex.Substring(1);
@@ -175,7 +171,5 @@ namespace PixelVisionSDK
             var match = regex.Match(color);
             return match.Success;
         }
-
     }
-
 }

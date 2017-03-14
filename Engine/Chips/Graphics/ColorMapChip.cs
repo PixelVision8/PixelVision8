@@ -18,7 +18,6 @@ using System;
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     The color map chip is used to help import sprites and tile maps into the
     ///     engine if their colors don't match the system colors. When loading
@@ -27,7 +26,6 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class ColorMapChip : AbstractChip, IColorChip
     {
-
         protected string[] _colors = new string[256];
 
         protected string transparent = "#ff00ff";
@@ -40,15 +38,14 @@ namespace PixelVisionSDK.Chips
                 var colorCache = new ColorData[t];
 
                 for (var i = 0; i < t; i++)
-                {
                     colorCache[i] = new ColorData(_colors[i]);
-                }
 
                 return colorCache;
             }
         }
 
-        public string[] hexColors { 
+        public string[] hexColors
+        {
             get
             {
                 var colors = new string[total];
@@ -73,9 +70,7 @@ namespace PixelVisionSDK.Chips
         {
             var t = _colors.Length;
             for (var i = 0; i < t; i++)
-            {
                 UpdateColorAt(i, transparent);
-            }
         }
 
         public string ReadColorAt(int index)
@@ -94,9 +89,7 @@ namespace PixelVisionSDK.Chips
                 return;
 
             if (ColorData.ValidateColor(color))
-            {
                 _colors[index] = color;
-            }
         }
 
         /// <summary>
@@ -116,7 +109,5 @@ namespace PixelVisionSDK.Chips
             base.Deactivate();
             engine.colorMapChip = null;
         }
-
     }
-
 }

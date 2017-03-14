@@ -20,7 +20,6 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
 {
-
     /// <summary>
     ///     This is the communication layer between the games
     ///     and the engine's chips. It's designed to provide a clean and safe API
@@ -33,7 +32,6 @@ namespace PixelVisionSDK
     /// </remarks>
     public class APIBridge : IAPIBridge
     {
-
         //TODO need to make sure this is correctly sized when sprite sizes change
         private static readonly int[] tmpPixelData = new int[8 * 8];
         protected bool _paused;
@@ -108,10 +106,8 @@ namespace PixelVisionSDK
         public void TogglePause(bool value)
         {
             if (_paused != value)
-            {
                 if (chips.displayChip != null)
                     chips.displayChip.paused = value;
-            }
         }
 
         public int mouseX
@@ -143,10 +139,7 @@ namespace PixelVisionSDK
             int colorOffset = 0)
         {
             if (!chips.displayChip.CanDraw())
-            {
-                //Debug.Log("Out of draw calls");
                 return;
-            }
 
             chips.spriteChip.ReadSpriteAt(id, tmpPixelData);
 
@@ -207,7 +200,7 @@ namespace PixelVisionSDK
         public void RebuildScreenBuffer()
         {
             chips.screenBufferChip.RefreshScreenBlock();
-        } 
+        }
 
         public bool ButtonDown(int button, int player = 0)
         {
@@ -417,10 +410,8 @@ namespace PixelVisionSDK
         {
             var total = pixelData.Length;
             for (var i = 0; i < total; i++)
-            {
                 if (pixelData[i] == oldID)
                     pixelData[i] = newID;
-            }
 
             return pixelData;
         }
@@ -436,17 +427,11 @@ namespace PixelVisionSDK
 
             //TODO this needs to be optimized
             for (var i = 0; i < total; i++)
-            {
-                for (var j = 0; j < colorTotal; j++)
-                {
-                    if (pixelData[i] == oldIDs[j])
-                        pixelData[i] = newIDs[j];
-                }
-            }
+            for (var j = 0; j < colorTotal; j++)
+                if (pixelData[i] == oldIDs[j])
+                    pixelData[i] = newIDs[j];
 
             return pixelData;
         }
-
     }
-
 }

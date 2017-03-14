@@ -19,10 +19,8 @@ using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
-
     public class ControllerInput
     {
-
         private readonly Dictionary<Buttons, IButtonState> buttonState = new Dictionary<Buttons, IButtonState>();
         protected float delay;
         public float inputDelay = 0.1f;
@@ -30,9 +28,7 @@ namespace PixelVisionSDK
         public void Update(float timeDelta)
         {
             foreach (var item in buttonState)
-            {
                 item.Value.Update(timeDelta);
-            }
         }
 
         /// <summary>
@@ -43,13 +39,9 @@ namespace PixelVisionSDK
         public void UpdateKeyMap(IButtonState inputState)
         {
             if (buttonState.ContainsKey(inputState.button))
-            {
                 buttonState[inputState.button] = inputState;
-            }
             else
-            {
                 buttonState.Add(inputState.button, inputState);
-            }
         }
 
         public int ReadKeyMap(Buttons key)
@@ -84,9 +76,7 @@ namespace PixelVisionSDK
         public bool KeyReleased(Buttons key)
         {
             if (buttonState.ContainsKey(key))
-            {
                 return buttonState[key].buttonReleased;
-            }
 
             return false;
         }
@@ -96,7 +86,5 @@ namespace PixelVisionSDK
             //TODO this needs to be a clone and cleaned up
             return buttonState;
         }
-
     }
-
 }

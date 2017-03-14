@@ -18,10 +18,8 @@ using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
-
     public class ButtonState : IButtonState
     {
-
         protected bool _released;
         protected float _time;
         protected bool _value;
@@ -47,20 +45,11 @@ namespace PixelVisionSDK
             set
             {
                 if (_value && !value) // If last value is true and new value is false, button was released
-                {
-                    // was released
                     Release();
-                }
                 else if (_released && !value) // if release is true and value is false reset button
-                {
-                    // was reset
                     Reset();
-                }
                 else if (!_value && value)
-                {
-                    //dirty = true;
                     _time = 0;
-                }
 
                 _value = value;
             }
@@ -83,11 +72,7 @@ namespace PixelVisionSDK
         public virtual void Update(float timeDelta)
         {
             if (_value)
-            {
                 _time += timeDelta;
-            }
         }
-
     }
-
 }
