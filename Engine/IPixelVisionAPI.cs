@@ -26,11 +26,6 @@ namespace PixelVisionSDK
     {
 
         /// <summary>
-        ///     The time difference between the last frame.
-        /// </summary>
-        float timeDelta { get; }
-
-        /// <summary>
         ///     A flag for whether the engine is
         ///     <see cref="IPixelVisionAPI.paused" /> or not.
         /// </summary>
@@ -251,6 +246,15 @@ namespace PixelVisionSDK
             bool wholeWords = false);
 
         /// <summary>
+        ///     Reformats text with word wrap.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="witdh"></param>
+        /// <param name="wholeWords"></param>
+        /// <returns></returns>
+        string FormatWordWrap(string text, int witdh, bool wholeWords = false);
+
+        /// <summary>
         ///     Draws text to the buffer to a predefined width and word wraps.
         /// </summary>
         /// <param name="text"></param>
@@ -422,7 +426,7 @@ namespace PixelVisionSDK
         void TogglePause(bool value);
 
         /// <summary>
-        ///     This enables or dissabled the display wrap which allows sprites
+        ///     This enables or disabled the display wrap which allows sprites
         ///     that go off-screen to be rendered on the opposite side.
         /// </summary>
         /// <param name="value"></param>
@@ -443,7 +447,7 @@ namespace PixelVisionSDK
         void SaveData(string key, string value);
 
         /// <summary>
-        ///     Reads saved data based on the spupplied key.
+        ///     Reads saved data based on the supplied key.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>

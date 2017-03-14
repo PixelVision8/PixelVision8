@@ -16,6 +16,7 @@
 
 using System;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -69,23 +70,65 @@ namespace PixelVisionSDK.Chips
                     var total = songDataCollection.Length;
                     for (var i = 0; i < total; i++)
                     {
-                        if (songDataCollection[i] == null)
+                        var sondData = songDataCollection[i];
+                        if (sondData == null)
                         {
-                            songDataCollection[i] = CreateNewSongData("Untitled" + i);
+                            songDataCollection[i] = CreateNewSongData("Untitled" + i, maxTracks);
+                        }
+                        else
+                        {
+                            sondData.totalTracks = totalTracks;
                         }
                     }
                 }
             }
         }
 
-        public virtual SongData CreateNewSongData(string name)
+        public int totalNotes
         {
-            return new SongData(name);
+            get
+            {
+                return maxNoteNum;;
+            }
+            set
+            {
+                if (maxNoteNum == value)
+                    return;
+
+                var total = totalLoops;
+                for (int i = 0; i < total; i++)
+                {
+                    songDataCollection[i].totalNotes = value;
+                }
+            }
         }
+
+        public virtual SongData CreateNewSongData(string name, int tracks = 4)
+        {
+            return new SongData(name, tracks);
+        }
+
+        protected int _totalTracks = 0;
 
         public int totalTracks
         {
-            get { return soundChip.totalChannels; }
+            get
+            {
+                return _totalTracks;
+            }
+            set
+            {
+                value = Mathf.Clamp(value, 1, maxTracks);
+
+                var total = songDataCollection.Length;
+                for (var i = 0; i < total; i++)
+                {
+                    songDataCollection[i].totalTracks = value;
+                    
+                }
+
+                _totalTracks = value;
+            }
         }
 
         /// <summary>
@@ -136,7 +179,8 @@ namespace PixelVisionSDK.Chips
 
             //engine.chipManager.AddToUpdateList(this);
             totalLoops = 16;
-
+            maxTracks = 4;
+            totalTracks = maxTracks;
             // Setup the sequencer values
 
             var a = 440.0f; // a is 440 hz...
@@ -174,6 +218,7 @@ namespace PixelVisionSDK.Chips
             UpdateNoteTickLengths();
             tracksPerLoop = activeSongData.tracks.Length;
             UpdateMusicNotes();
+            LoadInstruments(activeSongData);
         }
 
         /// <summary>
@@ -248,8 +293,9 @@ namespace PixelVisionSDK.Chips
                 LoadInstruments(activeSongData);
             }
 
+            var total = activeSongData.tracks.Length;
             // loop through each oldInstruments track
-            for (var trackNum = 0; trackNum < tracksPerLoop; trackNum++)
+            for (var trackNum = 0; trackNum < total; trackNum++)
             {
                 // what note is it?
                 var gotANote = activeSongData.tracks[trackNum].notes[sequencerBeatNumber % notesPerTrack];

@@ -60,10 +60,16 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public void Init()
         {
-            foreach (var chip in chips)
+            var chipNames = chips.Keys.ToList();
+
+            foreach (var chipName in chipNames)
             {
-                chip.Value.Init();
+                chips[chipName].Init();
             }
+//            foreach (var chip in chips)
+//            {
+//                chip.Value.Init();
+//            }
         }
 
         /// <summary>
@@ -223,7 +229,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="chip">
         ///     Instance to the chip that needs to be activated.
         /// </param>
-        public void ActivateChip(string id, AbstractChip chip)
+        public void ActivateChip(string id, AbstractChip chip, bool autoActivate = true)
         {
             if (HasChip(id))
             {
@@ -242,7 +248,8 @@ namespace PixelVisionSDK.Chips
                     drawChips.Add(chip as IDraw);
             }
 
-            chip.Activate(engine);
+            if(autoActivate)
+                chip.Activate(engine);
         }
 
         /// <summary>

@@ -123,20 +123,19 @@ namespace PixelVisionSDK.Chips
         ///     palette when it resizes.
         /// </summary>
         /// <value>Int</value>
-        public int supportedColors
-        {
-            get
-            {
-                var count = 0;
-                var total = _colors.Length;
-                for (var i = 0; i < total; i++)
-                {
-                    if (_colors[i] != transparent)
-                        count ++;
-                }
+        public int supportedColors { get; protected set; }
 
-                return count;
+        public void RecalculateSupportedColors()
+        {
+            var count = 0;
+            var total = _colors.Length;
+            for (var i = 0; i < total; i++)
+            {
+                if (_colors[i] != transparent)
+                    count ++;
             }
+
+            supportedColors = count;
         }
 
         /// <summary>
@@ -202,6 +201,9 @@ namespace PixelVisionSDK.Chips
             if (index > _colors.Length || index < 0)
                 return;
 
+            // Make sure that all colors are uppercase
+            color = color.ToUpper();
+
             if (ColorData.ValidateColor(color))
             {
                 _colors[index] = color;
@@ -239,8 +241,6 @@ namespace PixelVisionSDK.Chips
         {
             pages = MathUtil.CeilToInt(total / colorsPerPage);
         }
-
-        
 
     }
 

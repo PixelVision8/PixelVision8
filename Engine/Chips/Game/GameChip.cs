@@ -130,27 +130,27 @@ namespace PixelVisionSDK.Chips
             return float.Parse(GetData(key, defaultValue.ToString()));
         }
 
-        public Dictionary<string, object> GenerateMetaData()
-        {
-            var metaData = new Dictionary<string, object>();
-
-            metaData.Add("name", name);
-            metaData.Add("description", description);
-
-            return metaData;
-        }
-
-        public void LoadMetaData(Dictionary<string, object> metaData)
-        {
-            if (metaData == null)
-                return;
-
-            if (metaData.ContainsKey("name"))
-                name = metaData["name"] as string;
-
-            if (metaData.ContainsKey("description"))
-                description = metaData["description"] as string;
-        }
+//        public Dictionary<string, object> GenerateMetaData()
+//        {
+//            var metaData = new Dictionary<string, object>();
+//
+//            metaData.Add("name", name);
+//            metaData.Add("description", description);
+//
+//            return metaData;
+//        }
+//
+//        public void LoadMetaData(Dictionary<string, object> metaData)
+//        {
+//            if (metaData == null)
+//                return;
+//
+//            if (metaData.ContainsKey("name"))
+//                name = metaData["name"] as string;
+//
+//            if (metaData.ContainsKey("description"))
+//                description = metaData["description"] as string;
+//        }
 
         /// <summary>
         ///     Used for updating the game's logic.

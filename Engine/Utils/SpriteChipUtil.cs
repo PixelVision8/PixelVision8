@@ -16,6 +16,7 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK.Utils
@@ -157,6 +158,7 @@ namespace PixelVisionSDK.Utils
 
             //Debug.Log("Old Size "+ oldSize + " new size "+newSize +" new size "+ newSpriteWidth+"x"+ newSpriteHeight);
         }
+        private static StringBuilder tmpSB = new StringBuilder();
 
         /// <summary>
         /// </summary>
@@ -165,7 +167,16 @@ namespace PixelVisionSDK.Utils
         /// </returns>
         public static string SpriteDataToString(int[] data)
         {
-            return string.Join(",", data.Select(x => x.ToString()).ToArray());
+
+            tmpSB.Length = 0;
+            var total = data.Length;
+
+            for (int i = 0; i < total; i++)
+            {
+                tmpSB.Append(data[i]);
+            }
+
+            return tmpSB.ToString();//string.Join(",", data.Select(x => x.ToString()).ToArray()));
         }
 
         public static void ShiftPixelData(ref int[] pixelData, int offset, int emptyColorID = -1)
@@ -180,6 +191,28 @@ namespace PixelVisionSDK.Utils
                     pixelData[i] = emptyColorID;
                 }
             }
+        }
+
+        /// <summary>
+        ///     Tests to see if sprite <paramref name="data" /> is empty. This method
+        ///     iterates over all the ints in the supplied <paramref name="data" />
+        ///     array and looks for a value of -1. If all values are -1 then it
+        ///     returns true.
+        /// </summary>
+        /// <param name="data">An array of ints</param>
+        /// <returns>
+        /// </returns>
+        public static bool IsEmpty(int[] data)
+        {
+            
+            var total = data.Length;
+            for (var i = 0; i < total; i++)
+            {
+                if (data[i] > -1)
+                    return false;
+            }
+
+            return false;
         }
 
         public static void CovertSpritesToRawData(ref int[] pixelData, int[] spriteIDs, int width, IEngineChips chips)

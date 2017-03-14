@@ -55,10 +55,10 @@ namespace PixelVisionSDK
         ///     dimensions and an optional value for changing the wrap mode.
         /// </summary>
         /// <param name="width">
-        ///     Anint for the width of the TextureData.
+        ///     An int for the width of the TextureData.
         /// </param>
         /// <param name="height">
-        ///     Anint for the height of the TextureData.
+        ///     An int for the height of the TextureData.
         /// </param>
         /// <param name="wrapMode">
         ///     An optional value to support texture wrapping. It's set to
@@ -166,7 +166,7 @@ namespace PixelVisionSDK
         ///     copied.
         /// </param>
         /// <param name="data">
-        ///     Anint array where pixel data will be copied to.
+        ///     An int array where pixel data will be copied to.
         /// </param>
         public void GetPixels(int x, int y, int blockWidth, int blockHeight, int[] data)
         {

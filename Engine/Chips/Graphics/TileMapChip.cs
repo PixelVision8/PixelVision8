@@ -15,9 +15,6 @@
 // 
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
@@ -36,12 +33,6 @@ namespace PixelVisionSDK.Chips
         protected int[] flags = new int[0];
         protected bool[] invalid = new bool[0];
         protected int[] paletteIDs = new int[0];
-
-        /// <summary>
-        ///     A flag to toggle whether tile data should be serialized.
-        /// </summary>
-        public bool serializeTileData;
-
         protected int[] spriteIDs = new int[0];
         protected int tmpIndex;
         protected int[] tmpPixelData = new int[8 * 8];
@@ -175,7 +166,7 @@ namespace PixelVisionSDK.Chips
         ///     The row position of the tile. 0 is the top of the tile map.
         /// </param>
         /// <returns>
-        ///     Returns the colorint offset.
+        ///     Returns the color int offset.
         /// </returns>
         public int ReadPaletteAt(int column, int row)
         {
@@ -195,7 +186,7 @@ namespace PixelVisionSDK.Chips
         ///     The row position of the tile. 0 is the top of the tile map.
         /// </param>
         /// <param name="paletteID">
-        ///     A colorint offset.
+        ///     A color int offset.
         /// </param>
         public void UpdatePaletteAt(int column, int row, int paletteID)
         {
@@ -267,6 +258,8 @@ namespace PixelVisionSDK.Chips
             this.rows = rows;
 
             var size = total;
+
+            //TODO this would break the existing tilemap structure
 
             //Debug.Log("Resize Tile Map "+ size);
             if (spriteIDs.Length != size)

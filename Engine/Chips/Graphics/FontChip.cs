@@ -291,24 +291,30 @@ namespace PixelVisionSDK.Chips
             return i + 1;
         }
 
-        public static string Split(string str, int chunkSize)
+        public static string Split(string text, int maxLineLength)
         {
-            var total = (double) str.Length;
-            var split = Enumerable.Range(0, (int) Math.Floor(total / chunkSize))
-                .Select(i => str.Substring(i * chunkSize, chunkSize)).ToArray();
-
-            var text = string.Join("\n", split);
-
-            var newTotal = text.Length;
-
-            if (total > newTotal)
-            {
-                text += "\n" + str.Substring(newTotal);
-            }
-
-            return text;
+            return string.Join("\n", CalcualteSplit(text, maxLineLength));
         }
-        
+
+        public static string[] CalcualteSplit(string text, int maxLineLength)
+        {
+            var list = new List<string>();
+
+            int currentIndex;
+            var lastWrap = 0;
+            var whitespace = new[] { ' ', '\r', '\n', '\t' };
+            do
+            {
+                currentIndex = lastWrap + maxLineLength > text.Length ? text.Length : (text.LastIndexOfAny(new[] { ' ', ',', '.', '?', '!', ':', ';', '-', '\n', '\r', '\t' }, Math.Min(text.Length - 1, lastWrap + maxLineLength)) + 1);
+                if (currentIndex <= lastWrap)
+                    currentIndex = Math.Min(lastWrap + maxLineLength, text.Length);
+                list.Add(text.Substring(lastWrap, currentIndex - lastWrap).Trim(whitespace));
+                lastWrap = currentIndex;
+            } while (currentIndex < text.Length);
+
+            return list.ToArray();
+        }
+
     }
 
 }

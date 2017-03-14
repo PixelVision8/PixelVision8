@@ -127,23 +127,6 @@ namespace PixelVisionSDK.Chips
         /// </returns>
         float GetData(string key, float defaultValue);
 
-        /// <summary>
-        ///     Used to generate meta data about the game. This includes the name,
-        ///     <see cref="description" /> and more.
-        /// </summary>
-        /// <returns>
-        ///     Returns a Dictionary with a string for the key and value.
-        /// </returns>
-        Dictionary<string, object> GenerateMetaData();
-
-        /// <summary>
-        ///     Reads meta data and overrides the game's own values
-        /// </summary>
-        /// <param name="metaData">
-        ///     Accepts a Dictionary with a string for the key and value.
-        /// </param>
-        void LoadMetaData(Dictionary<string, object> metaData);
-
     }
 
 }

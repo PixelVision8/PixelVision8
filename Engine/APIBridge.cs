@@ -22,7 +22,7 @@ namespace PixelVisionSDK
 {
 
     /// <summary>
-    ///     The <see cref="APIBridge" /> is the communication layer between the games
+    ///     This is the communication layer between the games
     ///     and the engine's chips. It's designed to provide a clean and safe API
     ///     for games to use without exposing the rest of the underpinnings of the
     ///     engine.<br />
@@ -50,13 +50,6 @@ namespace PixelVisionSDK
         /// </summary>
         /// <param name="enginechips"></param>
         public IEngineChips chips { get; set; }
-
-        /// <summary>
-        /// </summary>
-        public float timeDelta
-        {
-            get { return chips.chipManager.timeDelta; }
-        }
 
         public int spriteWidth
         {
@@ -141,6 +134,11 @@ namespace PixelVisionSDK
             get { return chips.controllerChip.mousePosition; }
         }
 
+        public int backgroundColor
+        {
+            get { return chips.screenBufferChip.backgroundColor; }
+        }
+
         public void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, bool aboveBG = true,
             int colorOffset = 0)
         {
@@ -166,14 +164,20 @@ namespace PixelVisionSDK
 
             var total = ids.Length;
 
+            if (flipH || flipV)
+            {
+                var height = MathUtil.CeilToInt(total / width);
+                SpriteChipUtil.FlipSpriteData(ref ids, width, height, flipH, flipV);
+            }
+
+
             for (var i = 0; i < total; i++)
             {
-                var id = Convert.ToInt32(ids[i]);
+                var id = ids[i];
                 if (id > -1)
                 {
                     var newX = MathUtil.FloorToInt(i % width) * spriteWidth + x;
                     var newY = MathUtil.FloorToInt(i / width) * spriteWidth + y;
-
                     DrawSprite(id, newX, newY, flipH, flipV, aboveBG, colorOffset);
                 }
             }
@@ -306,9 +310,14 @@ namespace PixelVisionSDK
         public void DrawTextBox(string text, int witdh, int x, int y, string fontName = "Default", int letterSpacing = 0,
             bool wholeWords = false)
         {
-            text = wholeWords ? FontChip.WordWrap(text, witdh) : FontChip.Split(text, witdh);
+            text = FormatWordWrap(text, witdh, wholeWords);
 
             DrawFont(text, x, y, fontName, letterSpacing);
+        }
+
+        public string FormatWordWrap(string text, int witdh, bool wholeWords = false)
+        {
+            return wholeWords ? FontChip.WordWrap(text, witdh) : FontChip.Split(text, witdh);
         }
 
         public void DrawTextBoxToBuffer(string text, int witdh, int column, int row, string fontName = "Default",

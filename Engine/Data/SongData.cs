@@ -40,9 +40,22 @@ namespace PixelVisionSDK
         /// </summary>
         public TrackData[] tracks = new TrackData[0];
 
-        public SongData(string name = "Untitled")
+        public int totalNotes
+        {
+            set
+            {
+                var total = tracks.Length;
+                for (var i = 0; i < total; i++)
+                {
+                    tracks[i].totalNotes = value;
+                }
+            }
+        }
+
+        public SongData(string name = "Untitled", int tracks = 4)
         {
             Reset(name);
+            totalTracks = tracks;
         }
 
         /// <summary>
@@ -71,6 +84,7 @@ namespace PixelVisionSDK
                         if (tracks[i] == null)
                         {
                             tracks[i] = CreateNewTrack();
+                            tracks[i].sfxID = i;
                         }
                     }
                 }
@@ -81,6 +95,7 @@ namespace PixelVisionSDK
         {
             return new TrackData();
         }
+
         /// <summary>
         ///     Reset the default values of the SongData instance
         /// </summary>

@@ -32,6 +32,7 @@ namespace PixelVisionSDK
         /// </summary>
         IEngineChips chips { get; set; }
 
+        int backgroundColor { get; }
     }
 
 }

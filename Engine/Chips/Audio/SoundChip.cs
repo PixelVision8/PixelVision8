@@ -70,7 +70,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="param">
         ///     A string representing the synth properties.
         /// </param>
-        public void UpdateSound(int index, string param)
+        public virtual void UpdateSound(int index, string param)
         {
             var synth = sounds[index];
             synth.CacheSound();
@@ -99,7 +99,7 @@ namespace PixelVisionSDK.Chips
 
         /// <summary>
         ///     Configures the <see cref="SoundChip" /> by registering itself with
-        ///     the engine and setting up the deafult values for total
+        ///     the engine and setting up the default values for total
         ///     <see cref="sounds" /> and total channels.
         /// </summary>
         public override void Configure()

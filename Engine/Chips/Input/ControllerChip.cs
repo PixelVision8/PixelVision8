@@ -15,6 +15,7 @@
 // 
 
 using System;
+using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -201,6 +202,24 @@ namespace PixelVisionSDK.Chips
                 return 0;
 
             return controllers[controllerID].ReadKeyMap(button);
+        }
+
+        public int CaptureKey(int[] values)
+        {
+            if (keyInput != null)
+            {
+                var total = values.Length;
+
+                for (int i = 0; i < total; i++)
+                {
+                    var keyCode = (int) values.GetValue(i);
+                    if (keyInput.GetKey(keyCode))
+                        return keyCode;
+                }
+
+            }
+
+            return 0;
         }
 
     }
