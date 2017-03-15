@@ -83,26 +83,30 @@ namespace PixelVisionSDK
         ///     TextureData.
         /// </summary>
         /// <param name="x">
-        ///     Anint for the x position. 0 is the left side of
+        ///     An int for the x position. 0 is the left side of
         ///     the texture.
         /// </param>
         /// <param name="y">
-        ///     Anint for the y position. 0 is the top of the
+        ///     An int for the y position. 0 is the top of the
         ///     texture.
         /// </param>
         /// <returns>
-        ///     Returns anint which can be used to match up to a
+        ///     Returns an int which can be used to match up to a
         ///     color in the ColorChip.
         /// </returns>
         public int GetPixel(int x, int y)
         {
             if (wrapMode)
             {
-                x = MathUtil.Repeat(x, width - 1);
-                y = MathUtil.Repeat(y, height - 1);
+                if(x < 0 || x > width)
+                    x = MathUtil.Repeat(x, width);
+
+                if (y < 0 || y > height)
+                    y = MathUtil.Repeat(y, height);
             }
 
             var index = x + width * y;
+
             return pixels[index];
         }
 
@@ -116,7 +120,7 @@ namespace PixelVisionSDK
         /// </returns>
         public int[] GetPixels()
         {
-            //TODO depricate this for the CopyPixels method
+            //TODO deprecate this for the CopyPixels method
             var total = width * height;
             var copy = new int[total];
             Array.Copy(pixels, copy, total);
@@ -127,7 +131,7 @@ namespace PixelVisionSDK
         ///     A fast method for getting a copy of the texture's pixel data.
         /// </summary>
         /// <param name="data">
-        ///     Supply anint array to get a copy of the pixel
+        ///     Supply an int array to get a copy of the pixel
         ///     data.
         /// </param>
         public void CopyPixels(int[] data)
@@ -184,8 +188,10 @@ namespace PixelVisionSDK
                     blockWidth = oRect.width;
                 }
 
+            
             for (var i = 0; i < tmpTotal; i++)
             {
+                
                 PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
 
                 data[i] = GetPixel(tmpX + x, tmpY + y);
@@ -203,12 +209,12 @@ namespace PixelVisionSDK
         ///     The y position to set the value. 0 is the top of the texture.
         /// </param>
         /// <param name="value">
-        ///     Theint value that corresponds to a index in the
+        ///     The int value that corresponds to a index in the
         ///     ColorChip.
         /// </param>
         public virtual void SetPixel(int x, int y, int value)
         {
-            //TODO removed somce code from here to check x and y based on wrap mode. Make sure I didn't break anything
+            //TODO removed some code from here to check x and y based on wrap mode. Make sure I didn't break anything
             if (wrapMode)
             {
                 if (y < 0 || y >= height && wrapMode)
@@ -220,7 +226,7 @@ namespace PixelVisionSDK
                     return;
             }
 
-            var index = x % width + width * y;
+            var index = x + width * y;
 
             if (index < 0)
                 return;
@@ -260,21 +266,15 @@ namespace PixelVisionSDK
         public virtual void SetPixels(int x, int y, int blockWidth, int blockHeight, int[] pixels)
         {
             var total = blockWidth * blockHeight;
-
-            int column, newX, newY, row = 0;
-            var maxColumns = blockWidth - 1;
-
+            
             for (var i = 0; i < total; i++)
             {
-                column = i % blockWidth;
+                PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
 
-                newX = column + x;
-                newY = row + y;
+                tmpX += x;
+                tmpY += y;
 
-                SetPixel(newX, newY, pixels[i]);
-
-                if (column == maxColumns)
-                    row++;
+                SetPixel(tmpX, tmpY, pixels[i]);
             }
         }
 
@@ -312,8 +312,8 @@ namespace PixelVisionSDK
 
         /// <summary>
         ///     This method is used to merge pixel data from another TextureData.
-        ///     Simply supply the source's pixel dataint array
-        ///     and flag if the merge should ignore transparancy via the mask flag.
+        ///     Simply supply the source's pixel data int array
+        ///     and flag if the merge should ignore transparency via the mask flag.
         ///     If <paramref name="masked" /> is set to true, the default
         ///     <paramref name="transparent" /> color (which can also be changed)
         ///     will be ignored allowing you to overlay new pixel data on top of
@@ -347,15 +347,13 @@ namespace PixelVisionSDK
 
             var total = blockWidth * blockHeight;
 
-            tmpColumn = tmpX = tmpY = tmpRow = 0;
-            var maxColumns = blockWidth - 1;
-
             for (var i = 0; i < total; i++)
             {
-                tmpColumn = i % blockWidth;
-
-                tmpX = tmpColumn + x;
-                tmpY = tmpRow + y;
+                
+                PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
+                
+                tmpX += x;
+                tmpY += y;
 
                 if (masked)
                 {
@@ -367,8 +365,6 @@ namespace PixelVisionSDK
                     SetPixel(tmpX, tmpY, srcPixels[i]);
                 }
 
-                if (tmpColumn == maxColumns)
-                    tmpRow++;
             }
         }
     }

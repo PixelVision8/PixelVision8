@@ -72,13 +72,20 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public bool autoClear { get; set; }
 
+        int[] tmpPixels = new int[0];
+
         /// <summary>
         ///     Returns the raw pixel data that represents what the display should look
         ///     like. Use this data to render to the display.
         /// </summary>
         public int[] displayPixelData
         {
-            get { return textureData.GetPixels(); }
+            get
+            {
+                //textureData.GetPixels(0, 0, _width, _height, tmpPixels);
+
+                return textureData.GetPixels();
+            }
         }
 
         /// <summary>
@@ -177,7 +184,7 @@ namespace PixelVisionSDK.Chips
 
             //TODO need to add in layer merge logic, -1 is behind, 0 is normal, 1 is above
 
-            layerOrder = layerOrder.Clamp(-1, 1);
+            //layerOrder = layerOrder.Clamp(-1, 1);
 
             // flip y coordinate space
             if (flipY)
