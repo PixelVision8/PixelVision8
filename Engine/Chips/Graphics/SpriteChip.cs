@@ -17,6 +17,7 @@
 using System;
 using System.Linq;
 using PixelVisionSDK.Utils;
+using UnityEditor;
 
 namespace PixelVisionSDK.Chips
 {
@@ -41,6 +42,8 @@ namespace PixelVisionSDK.Chips
         ///     Internal <see cref="cache" /> for faster lookup
         /// </summary>
         protected string[] cache;
+
+        protected int[][] pixelDataCache;
 
         protected int pageHeight = 128;
 
@@ -235,6 +238,12 @@ namespace PixelVisionSDK.Chips
         private void CacheSprite(int index, int[] data)
         {
             cache[index] = SpriteChipUtil.SpriteDataToString(data);
+
+            var totalPixels = width * height;
+
+            var tmpPixels = new int[totalPixels];
+            Array.Copy(data, tmpPixels, totalPixels);
+            pixelDataCache[index] = tmpPixels;
         }
 
         /// <summary>
@@ -244,8 +253,12 @@ namespace PixelVisionSDK.Chips
         public void Clear()
         {
             cache = new string[totalSprites];
-            SpriteChipUtil.ClearTextureData(ref _texture);
+            pixelDataCache = new int[totalSprites][];
+            _texture.Clear();
         }
+
+        private int tmpX = 0;
+        private int tmpY = 0;
 
         /// <summary>
         ///     Returns an array of ints that represent a sprite. Each
@@ -256,11 +269,37 @@ namespace PixelVisionSDK.Chips
         ///     Anint representing the location in memory of the
         ///     sprite.
         /// </param>
+        /// <param name="pixelData"></param>
+        /// <param name="offset"></param>
         /// <returns>
         /// </returns>
-        public void ReadSpriteAt(int index, int[] pixelData)
+        public void ReadSpriteAt(int index, int[] pixelData, int offset = 0)
         {
-            SpriteChipUtil.CutOutSpriteFromTextureData(index, _texture, width, height, pixelData);
+            var cachedSprite = pixelDataCache[index];
+
+            var totalSpritePixels = width * height;
+
+            if (cachedSprite == null)
+            {
+                var tmpPixelData = new int[totalSpritePixels];
+
+                SpriteChipUtil.CalculateSpritePos(index, _texture.width, _texture.height, width, height, out tmpX, out tmpY);
+
+                _texture.GetPixels(tmpX, tmpY, width, height, tmpPixelData);
+
+                pixelDataCache[index] = tmpPixelData;
+                cachedSprite = pixelDataCache[index];
+            }
+
+            if (offset > 0)
+            {
+                for (var i = 0; i < totalSpritePixels; i++)
+                    cachedSprite[i] += offset;
+            }
+
+            Array.Copy(cachedSprite, pixelData, totalSpritePixels);
+
+            //SpriteChipUtil.CutOutSpriteFromTextureData(index, _texture, width, height, pixelData);
         }
 
         /// <summary>
@@ -308,15 +347,15 @@ namespace PixelVisionSDK.Chips
         /// <param name="offset">
         ///     An int to use as the offset value.
         /// </param>
-        public void ShiftColorIndex(int offset)
-        {
-            var pixelData = _texture.GetPixels();
-            var total = pixelData.Length;
-
-            for (var i = 0; i < total; i++)
-                pixelData[i] += offset;
-
-            _texture.SetPixels(pixelData);
-        }
+//        public void ShiftColorIndex(int offset)
+//        {
+//            var pixelData = _texture.GetPixels();
+//            var total = pixelData.Length;
+//
+//            for (var i = 0; i < total; i++)
+//                pixelData[i] += offset;
+//
+//            _texture.SetPixels(pixelData);
+//        }
     }
 }

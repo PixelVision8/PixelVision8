@@ -61,9 +61,9 @@ namespace Assets.PixelVisionSDK.Engine.Data
             texturedata.SetPixels(pixels);
         }
 
-        public int[] GetPixels()
+        public void GetPixels(int[] pixelData)
         {
-            return texturedata.GetPixels();
+            texturedata.CopyPixels(ref pixelData);
         }
 
         public void GetPixels(int x, int y, int width, int height, int[] data)

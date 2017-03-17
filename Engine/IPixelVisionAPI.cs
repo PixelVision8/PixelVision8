@@ -167,7 +167,8 @@ namespace PixelVisionSDK
         /// </param>
         /// <param name="fontName"></param>
         /// <param name="letterSpacing"></param>
-        void DrawFont(string text, int x, int y, string fontName = "Default", int letterSpacing = 0);
+        /// <param name="offset"></param>
+        void DrawFont(string text, int x, int y, string fontName = "Default", int letterSpacing = 0, int offset = 0);
 
         // Buffer Drawing API
         /// <summary>
@@ -227,7 +228,8 @@ namespace PixelVisionSDK
         /// </param>
         /// <param name="fontName"></param>
         /// <param name="letterSpacing"></param>
-        void DrawFontToBuffer(string text, int column, int row, string fontName = "Default", int letterSpacing = 0);
+        /// <param name="offset"></param>
+        void DrawFontToBuffer(string text, int column, int row, string fontName = "Default", int letterSpacing = 0, int offset = 0);
 
         /// <summary>
         ///     Draws text to the screen with each character being a sprite bound

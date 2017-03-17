@@ -78,12 +78,12 @@ namespace PixelVisionSDK.Chips
         /// <param name="height">The returned height of the text.</param>
         /// <param name="fontName"></param>
         /// <param name="letterSpacing"></param>
+        /// <param name="offset"></param>
         /// <param name="colorID">
         ///     The color id to use when rendering the text. This should match up
         ///     the colors in the ColorChip.
         /// </param>
-        public void ConvertTextToPixelData(string value, out int[] pixels, out int width, out int height,
-            string fontName = "Default", int letterSpacing = 0)
+        public void ConvertTextToPixelData(string value, ref int[] pixels, out int width, out int height, string fontName = "Default", int letterSpacing = 0, int offset = 0)
         {
             if (fontName == "Default")
                 fontName = fonts.Keys.First();
@@ -92,14 +92,14 @@ namespace PixelVisionSDK.Chips
             if (fonts.ContainsKey(fontName))
             {
                 var fontMap = fonts[fontName];
-                GenerateTextData(value, engine.spriteChip, fontMap, tmpTextureData, false, letterSpacing);
+                GenerateTextData(value, engine.spriteChip, fontMap, tmpTextureData, false, letterSpacing, offset);
             }
             else
             {
                 tmpTextureData.Resize(1, 1);
             }
 
-            pixels = tmpTextureData.GetPixels();
+            tmpTextureData.CopyPixels(ref pixels);
             width = tmpTextureData.width;
             height = tmpTextureData.height;
         }
@@ -114,9 +114,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="letterSpacing"></param>
-        public void ConvertTextToPixelData(string value, SpriteChip spriteChip, string fontName, out int[] pixels,
-            out int width, out int height,
-            int letterSpacing = 0)
+        public void ConvertTextToPixelData(string value, SpriteChip spriteChip, string fontName, ref int[] pixels, out int width, out int height, int letterSpacing = 0)
         {
             if (fontName == "Default")
                 fontName = fonts.Keys.First();
@@ -124,7 +122,7 @@ namespace PixelVisionSDK.Chips
             var fontMap = fonts[fontName];
 
             GenerateTextData(value, spriteChip, fontMap, tmpTextureData, false, letterSpacing);
-            pixels = tmpTextureData.GetPixels();
+            tmpTextureData.CopyPixels(ref pixels);
             width = tmpTextureData.width;
             height = tmpTextureData.height;
         }
@@ -143,6 +141,7 @@ namespace PixelVisionSDK.Chips
         ///     The string to be converted into pixel data.
         /// </param>
         /// <param name="spriteChip"></param>
+        /// <param name="fontMap"></param>
         /// <param name="textureData">
         ///     A reference to a <see cref="TextureData" /> class to store the pixel
         ///     data in.
@@ -152,8 +151,8 @@ namespace PixelVisionSDK.Chips
         ///     false.
         /// </param>
         /// <param name="letterSpacing"></param>
-        public void GenerateTextData(string value, SpriteChip spriteChip, int[] fontMap, TextureData textureData,
-            bool stripEmptyLines = false, int letterSpacing = 0)
+        /// <param name="offset"></param>
+        public void GenerateTextData(string value, SpriteChip spriteChip, int[] fontMap, TextureData textureData, bool stripEmptyLines = false, int letterSpacing = 0, int offset = 0)
         {
             // Strip out any tabs
             value = value.Replace("\t", "     ");
@@ -187,7 +186,7 @@ namespace PixelVisionSDK.Chips
 
             // convert each line into a sprite id
 
-            var offset = 32;
+            var charOffset = 32;
 
             var tmpData = new int[spriteChip.width * spriteChip.height];
             for (var i = 0; i < totalLines; i++)
@@ -197,33 +196,33 @@ namespace PixelVisionSDK.Chips
                 for (var j = 0; j < characters; j++)
                 {
                     var character = line[j];
-                    var spriteID = Convert.ToInt32(character) - offset;
+                    var spriteID = Convert.ToInt32(character) - charOffset;
 
                     //Debug.Log("Char " + character + " " + spriteID);
-                    spriteChip.ReadSpriteAt(fontMap[spriteID], tmpData);
+                    spriteChip.ReadSpriteAt(fontMap[spriteID], tmpData, offset);
 
                     textureData.MergePixels(j * (cWidth + letterSpacing), i * cHeight, cWidth, cHeight, tmpData);
                 }
             }
         }
 
-        public static string WordWrap(string the_string, int width)
+        public static string WordWrap(string text, int width)
         {
             int pos, next;
             var sb = new StringBuilder();
 
             // Lucidity check
             if (width < 1)
-                return the_string;
+                return text;
 
             // Parse each line of text
-            for (pos = 0; pos < the_string.Length; pos = next)
+            for (pos = 0; pos < text.Length; pos = next)
             {
                 // Find end of line
-                var eol = the_string.IndexOf(_newline, pos);
+                var eol = text.IndexOf(_newline, pos);
 
                 if (eol == -1)
-                    next = eol = the_string.Length;
+                    next = eol = text.Length;
                 else
                     next = eol + _newline.Length;
 
@@ -234,15 +233,15 @@ namespace PixelVisionSDK.Chips
                         var len = eol - pos;
 
                         if (len > width)
-                            len = BreakLine(the_string, pos, width);
+                            len = BreakLine(text, pos, width);
 
-                        sb.Append(the_string, pos, len);
+                        sb.Append(text, pos, len);
                         sb.Append(_newline);
 
                         // Trim whitespace following break
                         pos += len;
 
-                        while (pos < eol && char.IsWhiteSpace(the_string[pos]))
+                        while (pos < eol && char.IsWhiteSpace(text[pos]))
                             pos++;
                     } while (eol > pos);
                 else sb.Append(_newline); // Empty line

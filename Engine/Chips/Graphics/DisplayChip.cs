@@ -14,6 +14,8 @@
 // Shawn Rakowski - @shwany
 // 
 
+using System;
+using System.Diagnostics;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
@@ -26,6 +28,8 @@ namespace PixelVisionSDK.Chips
         protected int _width = 256;
         protected int currentSprites;
         protected int[] tmpBufferData;
+        protected int offscreenPaddingX = 8;
+        protected int offscreenPaddingY = 8;
 
         /// <summary>
         ///     Sets the total number of sprite draw calls for the display.
@@ -72,7 +76,7 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public bool autoClear { get; set; }
 
-        int[] tmpPixels = new int[0];
+        //int[] tmpPixels = new int[0];
 
         /// <summary>
         ///     Returns the raw pixel data that represents what the display should look
@@ -83,8 +87,16 @@ namespace PixelVisionSDK.Chips
             get
             {
                 //textureData.GetPixels(0, 0, _width, _height, tmpPixels);
+//                var total = _width * _height;
+//                if (tmpBufferData.Length != total)
+//                {
+//                    Array.Resize(ref tmpBufferData, total);
+//                    UnityEngine.Debug.Log("Resize tmpPixels");        
+//                }
+                //var copy = new int[total];
 
-                return textureData.GetPixels();
+                textureData.GetPixels(0, 0, width, height, tmpBufferData);
+                return tmpBufferData;//textureData.GetPixels();
             }
         }
 
@@ -127,14 +139,14 @@ namespace PixelVisionSDK.Chips
             if (bufferChip == null)
                 return;
 
-            if (bufferChip.invalid)
-            {
-                bufferChip.ReadScreenData(_width, _height, tmpBufferData);
+//            if (bufferChip.invalid)
+//            {
+                bufferChip.ReadScreenData(width, height, tmpBufferData);
 
-                bufferChip.ResetInvalidation();
-            }
+//                bufferChip.ResetInvalidation();
+//            }
 
-            textureData.MergePixels(0, 0, _width, _height, tmpBufferData, false, engine.screenBufferChip.backgroundColor);
+            textureData.MergePixels(0, 0, width, height, tmpBufferData, false, engine.screenBufferChip.backgroundColor);
         }
 
         /// <summary>
@@ -204,7 +216,6 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        /// <param name="updateScaler"></param>
         public void ResetResolution(int width, int height)
         {
             _width = width;

@@ -159,10 +159,6 @@ namespace PixelVisionSDK.Chips
             UpdateDataAt(Layer.Sprites, column, row, spriteID);
             UpdateDataAt(Layer.Palettes, column, row, paletteID);
             UpdateDataAt(Layer.Flags, column, row, flag);
-//
-//            layers[(int)Layer.Sprites].UpdateDataAt(column, row, spriteID);
-//            layers[(int)Layer.Palettes].UpdateDataAt(column, row, paletteID);
-//            layers[(int)Layer.Flags].UpdateDataAt(column, row, flag);
 
         }
 
@@ -383,36 +379,42 @@ namespace PixelVisionSDK.Chips
             
         }
 
+        private int[] tmpSpriteIDs = new int[0];
+        private int[] tmpPaletteIDs = new int[0];
+
         public void ReadPixelData(TextureData textureData, int startColumn, int startRow, int blockWidth, int blockHeight, int clearColor = -1)
         {
-            var spriteWidth = engine.spriteChip.width;
-            var spriteHeight = engine.spriteChip.height;
+            var spriteRam = engine.spriteChip;
+
+            var spriteWidth = spriteRam.width;
+            var spriteHeight = spriteRam.height;
+
             var realWidth = blockWidth * spriteWidth;
             var realHeight = blockHeight * spriteHeight;
             
             if (textureData.width != realWidth || textureData.height != realWidth)
                 textureData.Resize(realWidth, realHeight);
 
-            textureData.Clear(clearColor);
-
-            //var total = columns * rows;
-            int[] spriteIDs = new int[total];
-
-            layers[(int)Layer.Sprites].CopyPixels(spriteIDs);
-            
-            var spriteRam = engine.spriteChip;
+            layers[(int)Layer.Sprites].CopyPixels(ref tmpSpriteIDs);
+            layers[(int)Layer.Palettes].CopyPixels(ref tmpPaletteIDs);
 
             int x, y, spriteID;
 
             for (var i = 0; i < total; i++)
             {
-                spriteID = spriteIDs[i];
+                spriteID = tmpSpriteIDs[i];
 
                 if (spriteID > -1)
                 {
-                    spriteRam.ReadSpriteAt(spriteID, tmpPixelData);
+
+                    spriteRam.ReadSpriteAt(spriteID, tmpPixelData, tmpPaletteIDs[spriteID]);
 
                     // TODO need to adjust for palette
+                    var offset = tmpPaletteIDs[i];
+                    if (offset > 0)
+                    {
+                        
+                    }
 
                     PosUtil.CalculatePosition(i, columns, out x, out y);
 

@@ -15,6 +15,7 @@
 // 
 
 using System;
+using System.Diagnostics;
 using System.Text;
 using PixelVisionSDK.Chips;
 
@@ -27,32 +28,12 @@ namespace PixelVisionSDK.Utils
         public static int[] tmpPixelData = new int[8 * 8];
         private static readonly StringBuilder tmpSB = new StringBuilder();
 
-        public static void ClearTextureData(ref TextureData textureData, int colorRef = -1)
-        {
-            var pixels = textureData.GetPixels();
-            var total = pixels.Length;
-            for (var i = 0; i < total; i++)
-                pixels[i] = colorRef;
-
-            textureData.SetPixels(pixels);
-        }
-
         public static int CalcualteTotalSprites(int width, int height, int spriteWidth, int spriteHeight)
         {
             //TODO this needs to be double checked at different size sprites
             var cols = MathUtil.FloorToInt(width / spriteWidth);
             var rows = MathUtil.FloorToInt(height / spriteHeight);
             return cols * rows;
-        }
-
-        public static void CutOutSpriteFromTextureData(int index, TextureData textureData, int spriteWidth,
-            int spriteHeight, int[] data)
-        {
-            int x;
-            int y;
-            CalculateSpritePos(index, textureData.width, textureData.height, spriteWidth, spriteHeight, out x, out y);
-
-            textureData.GetPixels(x, y, spriteWidth, spriteHeight, data);
         }
 
         public static void AddSpriteToTextureData(int index, int[] pixels, TextureData textureData, int spriteWidth,
@@ -82,23 +63,11 @@ namespace PixelVisionSDK.Utils
             if (flipY)
                 y = height - y - spriteHeight;
         }
-
-        public static void CalculatePixelPos(int index, int width, int height, out int x, out int y)
-        {
-            var totalPixels = width * height;
-
-            // Make sure we stay in bounds
-            index = index.Clamp(0, totalPixels - 1);
-
-            x = index % width;
-            y = index / height;
-
-            y = height - 1 - y;
-        }
-
+        
         public static void CloneTextureData(TextureData source, TextureData target)
         {
-            target.SetPixels(source.GetPixels());
+            source.CopyPixels(ref tmpPixelData);
+            target.SetPixels(tmpPixelData);
         }
 
         public static void FlipSpriteData(ref int[] pixelData, int sWidth, int sHeight, bool flipH = false,
@@ -231,7 +200,7 @@ namespace PixelVisionSDK.Utils
                 }
             }
 
-            data.CopyPixels(pixelData);
+            data.CopyPixels(ref pixelData);
 
             //var pixelData = data.GetPixels();
             //return pixelData;

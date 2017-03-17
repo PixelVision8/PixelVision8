@@ -33,7 +33,8 @@ namespace PixelVisionSDK
     public class APIBridge : IAPIBridge
     {
         //TODO need to make sure this is correctly sized when sprite sizes change
-        private static readonly int[] tmpPixelData = new int[8 * 8];
+        private readonly int[] tmpSpriteData = new int[8 * 8];
+        private int[] tmpPixelData = new int[0];
         protected bool _paused;
 
         /// <summary>
@@ -141,11 +142,11 @@ namespace PixelVisionSDK
             if (!chips.displayChip.CanDraw())
                 return;
 
-            chips.spriteChip.ReadSpriteAt(id, tmpPixelData);
+            chips.spriteChip.ReadSpriteAt(id, tmpSpriteData, colorOffset);
 
             var layerOrder = aboveBG ? 1 : -1;
 
-            DrawPixelData(tmpPixelData, x, y, spriteWidth, spriteHeight, flipH, flipV, true, layerOrder);
+            DrawPixelData(tmpSpriteData, x, y, spriteWidth, spriteHeight, flipH, flipV, true, layerOrder);
         }
 
         public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
@@ -244,9 +245,9 @@ namespace PixelVisionSDK
 
         public void DrawTileToBuffer(int spriteID, int column, int row, int colorOffset = 0)
         {
-            chips.spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
+            chips.spriteChip.ReadSpriteAt(spriteID, tmpSpriteData);
 
-            DrawBufferData(tmpPixelData, column * spriteWidth, row * spriteHeight, spriteWidth, spriteHeight);
+            DrawBufferData(tmpSpriteData, column * spriteWidth, row * spriteHeight, spriteWidth, spriteHeight);
         }
 
         public void DrawTilesToBuffer(int[] ids, int column, int row, int columns, int colorOffset = 0)
@@ -270,34 +271,31 @@ namespace PixelVisionSDK
             }
         }
 
-        public void DrawFont(string text, int x, int y, string fontName = "Default", int letterSpacing = 0)
+        public void DrawFont(string text, int x, int y, string fontName = "Default", int letterSpacing = 0, int offset = 0)
         {
             if (chips.fontChip != null)
             {
-                int[] pixels;
                 int width;
                 int height;
 
-                chips.fontChip.ConvertTextToPixelData(text, out pixels, out width, out height, fontName, letterSpacing);
+                chips.fontChip.ConvertTextToPixelData(text, ref tmpPixelData, out width, out height, fontName, letterSpacing, offset);
 
-                DrawPixelData(pixels, x, y, width, height, false, false, true);
+                DrawPixelData(tmpPixelData, x, y, width, height, false, false, true);
             }
         }
 
-        public void DrawFontToBuffer(string text, int column, int row, string fontName = "Default",
-            int letterSpacing = 0)
+        public void DrawFontToBuffer(string text, int column, int row, string fontName = "Default", int letterSpacing = 0, int offset = 0)
         {
-            int[] pixels;
+            //int[] pixels;
             int width;
             int height;
 
-            chips.fontChip.ConvertTextToPixelData(text, out pixels, out width, out height
-                , fontName, letterSpacing);
+            chips.fontChip.ConvertTextToPixelData(text, ref tmpPixelData, out width, out height, fontName, letterSpacing, offset);
 
             var x = column;
             var y = row;
 
-            chips.screenBufferChip.MergePixelDataAt(x, y, width, height, pixels);
+            chips.screenBufferChip.MergePixelDataAt(x, y, width, height, tmpPixelData);
         }
 
         public void DrawTextBox(string text, int witdh, int x, int y, string fontName = "Default", int letterSpacing = 0,

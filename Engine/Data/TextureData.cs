@@ -15,6 +15,7 @@
 // 
 
 using System;
+using System.Diagnostics;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
@@ -98,35 +99,19 @@ namespace PixelVisionSDK
         {
             if (wrapMode)
             {
-                if(x < 0 || x > width)
-                    x = MathUtil.Repeat(x, width);
+                
+                if(x < 0 || x >= width)
+                    x = MathUtil.Repeat(x, width-1);
 
-                if (y < 0 || y > height)
-                    y = MathUtil.Repeat(y, height);
+                if (y < 0 || y >= height)
+                    y = MathUtil.Repeat(y, height-1);
             }
 
             var index = x + width * y;
 
             return pixels[index];
         }
-
-        /// <summary>
-        ///     Returns a clean copy of the TextureData's <see cref="pixels" />
-        ///     array.
-        /// </summary>
-        /// <returns>
-        ///     Returns anint array of pixel data to be used with
-        ///     the ColorChip.
-        /// </returns>
-        public int[] GetPixels()
-        {
-            //TODO deprecate this for the CopyPixels method
-            var total = width * height;
-            var copy = new int[total];
-            Array.Copy(pixels, copy, total);
-            return copy;
-        }
-
+        
         /// <summary>
         ///     A fast method for getting a copy of the texture's pixel data.
         /// </summary>
@@ -134,7 +119,7 @@ namespace PixelVisionSDK
         ///     Supply an int array to get a copy of the pixel
         ///     data.
         /// </param>
-        public void CopyPixels(int[] data)
+        public void CopyPixels(ref int[] data)
         {
             var total = width * height;
 
@@ -144,7 +129,7 @@ namespace PixelVisionSDK
             for (var i = 0; i < total; i++)
                 data[i] = pixels[i];
         }
-
+        
         /// <summary>
         ///     Returns a set of pixel <paramref name="data" /> from a specific
         ///     position and size. Supply anint array to get a
@@ -171,7 +156,9 @@ namespace PixelVisionSDK
             tmpTotal = blockWidth * blockHeight;
 
             if (data.Length != tmpTotal)
+            {
                 Array.Resize(ref data, tmpTotal);
+            }
 
             if (!wrapMode)
                 if (x + blockWidth > width || y + blockHeight > height)
@@ -192,7 +179,9 @@ namespace PixelVisionSDK
             for (var i = 0; i < tmpTotal; i++)
             {
                 
-                PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
+                //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
+                tmpX = i % blockWidth;
+                tmpY = i / blockWidth;
 
                 data[i] = GetPixel(tmpX + x, tmpY + y);
             }

@@ -233,7 +233,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="height">Returns the height of the pixel data.</param>
         public void ReadBlockData(int[] data, out int width, out int height)
         {
-            tmpTextureData.CopyPixels(data);
+            tmpTextureData.CopyPixels(ref data);
             width = tmpTextureData.width;
             height = tmpTextureData.height;
         }
