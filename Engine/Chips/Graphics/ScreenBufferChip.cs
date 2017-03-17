@@ -283,7 +283,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="height"></param>
         /// <param name="pixelData"></param>
         /// <param name="wrap"></param>
-        public void ReadScreenData(int width, int height, int[] pixelData, bool wrap = false)
+        public void ReadScreenData(int width, int height, ref int[] pixelData, bool wrap = false)
         {
             var tmpScrollY = tmpTextureData.height - height - scrollY;
             tmpTextureData.GetPixels(scrollX, tmpScrollY, width, height, pixelData);

@@ -15,7 +15,9 @@
 // 
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
@@ -30,6 +32,8 @@ namespace PixelVisionSDK.Chips
         protected int[] tmpBufferData;
         protected int offscreenPaddingX = 8;
         protected int offscreenPaddingY = 8;
+        protected int minLayer = -1;
+        protected int maxLayer = 1;
 
         /// <summary>
         ///     Sets the total number of sprite draw calls for the display.
@@ -70,11 +74,12 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         /// </summary>
         public bool paused { get; set; }
+        public int[] tmpDisplayData = new int[0];
 
         /// <summary>
         ///     A flag to define if the display auto clears after each frame.
         /// </summary>
-        public bool autoClear { get; set; }
+//        public bool autoClear { get; set; }
 
         //int[] tmpPixels = new int[0];
 
@@ -95,27 +100,13 @@ namespace PixelVisionSDK.Chips
 //                }
                 //var copy = new int[total];
 
-                textureData.GetPixels(0, 0, width, height, tmpBufferData);
-                return tmpBufferData;//textureData.GetPixels();
+                textureData.GetPixels(0, 0, width, height, tmpDisplayData);
+                return tmpDisplayData;//textureData.GetPixels();
             }
         }
 
-        /// <summary>
-        /// </summary>
-        public void Draw()
-        {
-            //TODO this should run through all the draw calls and composite them to the textureData
 
-
-            // Reset the sprite counter after a draw
-            currentSprites = 0;
-
-            //            if (_rawImage)
-            //            {
-            //                //Debug.Log("Post Render");
-            //                CopyBuffer();
-            //            }
-        }
+        protected bool clearFlag;
 
         /// <summary>
         ///     This clears the display. It will write a background color from the
@@ -125,28 +116,28 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public void Clear()
         {
-            // TODO this is a strange dependancy I need to look into. Throws an error on startup
-            textureData.Clear(engine.screenBufferChip != null ? engine.screenBufferChip.backgroundColor : 0);
+            clearFlag = true;
+            // TODO this is a strange dependency I need to look into. Throws an error on startup
+            //textureData.Clear(engine.screenBufferChip != null ? engine.screenBufferChip.backgroundColor : 0);
         }
 
+        protected bool copyScreenBuffer;
+
+        protected ScreenBufferChip bufferChip
+        {
+            get { return engine.screenBufferChip; }
+        }
 
         public void CopyScreenBlockBuffer()
         {
-            //TODO optimize this, it's the most expensive method in the engine
-
-            var bufferChip = engine.screenBufferChip;
-
+            
+            // If there is no buffer chip then ignore the request
             if (bufferChip == null)
                 return;
 
-//            if (bufferChip.invalid)
-//            {
-                bufferChip.ReadScreenData(width, height, tmpBufferData);
-
-//                bufferChip.ResetInvalidation();
-//            }
-
-            textureData.MergePixels(0, 0, width, height, tmpBufferData, false, engine.screenBufferChip.backgroundColor);
+            // Set the copy buffer flag
+            copyScreenBuffer = true;
+            
         }
 
         /// <summary>
@@ -207,7 +198,15 @@ namespace PixelVisionSDK.Chips
                 if (flipH || flipV)
                     SpriteChipUtil.FlipSpriteData(ref pixelData, width, height, flipH, flipV);
 
-                textureData.MergePixels(x, y, width, height, pixelData);
+                var draw = NextDrawRequest();
+                draw.x = x;
+                draw.y = y;
+                draw.width = width;
+                draw.height = height;
+                draw.pixelData = pixelData;
+                drawRequests.Add(draw);
+
+                //texturedata.MergePixels(x, y, width, height, pixelData);
             }
         }
 
@@ -225,6 +224,7 @@ namespace PixelVisionSDK.Chips
             textureData.Resize(_width, _height);
 
             tmpBufferData = new int[_width * _height];
+            tmpDisplayData = new int[_width * _height];
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace PixelVisionSDK.Chips
 
             // TODO Need to set the display from the engine
             //maxSpriteCount = 64;
-            autoClear = true;
+            //autoClear = false;
             wrapMode = true;
             ResetResolution(256, 240);
         }
@@ -255,5 +255,121 @@ namespace PixelVisionSDK.Chips
             base.Deactivate();
             engine.displayChip = null;
         }
+
+        protected List<DrawRequest> drawRequests = new List<DrawRequest>();
+        protected List<DrawRequest> drawRequestPool = new List<DrawRequest>();
+
+        /// <summary>
+        /// </summary>
+        public void Draw()
+        {
+            // At the beginning of the draw call, see if the texture should be cleared
+            if (clearFlag)
+            {
+                //UnityEngine.Debug.Log("Clear");
+
+                textureData.Clear(engine.screenBufferChip != null ? engine.screenBufferChip.backgroundColor : 0);
+                clearFlag = false;
+            }
+
+            // TODO need to render sprites under background
+
+            if (copyScreenBuffer)
+            {
+
+                if (bufferChip.invalid)
+                {
+                    bufferChip.ReadScreenData(width, height, ref tmpBufferData);
+
+                    bufferChip.ResetInvalidation();
+                }
+
+                textureData.MergePixels(0, 0, width, height, tmpBufferData, false, bufferChip.backgroundColor);
+
+                copyScreenBuffer = false;
+            }
+
+            //var draws = drawRequests; // TODO need to use linq to find the order
+
+            // TODO render sprites above the background
+            var total = drawRequests.Count;
+            for (int i = 0; i < total; i++)
+            {
+                var draw = drawRequests[i];
+                draw.MergePixelData(textureData);
+            }
+
+            ResetDrawCalls();
+        }
+
+        public void ResetDrawCalls()
+        {
+            currentSprites = 0;
+           
+            // Reset all draw requests and pools
+            while (drawRequests.Count > 0)
+            {
+                var request = drawRequests[0];
+
+                drawRequests.Remove(request);
+
+                drawRequestPool.Add(request);
+
+            }
+        }
+
+        public DrawRequest NextDrawRequest()
+        {
+            DrawRequest request;
+
+            if (drawRequestPool.Count > 0)
+            {
+                request = drawRequestPool[0];
+                drawRequestPool.Remove(request);
+            }
+            else
+            {
+                request = new DrawRequest();
+            }
+
+            return request;
+        }
+
     }
+    
+    public class DrawRequest
+    {
+        public int order;
+        
+        protected int[] _pixelData = new int[0];
+
+        public int[] pixelData
+        {
+            get { return _pixelData; }
+            set
+            {
+                var totalPixels = value.Length;
+
+                if (_pixelData.Length != totalPixels)
+                {
+                    Array.Resize(ref _pixelData, totalPixels);
+                }
+
+                Array.Copy(value, _pixelData, totalPixels);
+            }
+        }
+
+        public int x;
+        public int y;
+        public int width;
+        public int height;
+        public bool masked = true;
+        public int transparent = -1;
+
+        public virtual void MergePixelData(TextureData target)
+        {
+            target.MergePixels(x, y, width, height, pixelData, masked, transparent);
+        }
+    }
+
 }

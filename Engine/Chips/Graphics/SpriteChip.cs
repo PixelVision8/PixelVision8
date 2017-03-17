@@ -30,9 +30,9 @@ namespace PixelVisionSDK.Chips
     public class SpriteChip : AbstractChip
     {
         protected int _colorsPerSprite = 8;
-
         protected int _pages = 4;
-
+        private int tmpX;
+        private int tmpY;
         /// <summary>
         ///     Internal <see cref="TextureData" /> where sprites are stored
         /// </summary>
@@ -257,8 +257,7 @@ namespace PixelVisionSDK.Chips
             _texture.Clear();
         }
 
-        private int tmpX = 0;
-        private int tmpY = 0;
+        
 
         /// <summary>
         ///     Returns an array of ints that represent a sprite. Each
@@ -338,6 +337,11 @@ namespace PixelVisionSDK.Chips
             return Array.IndexOf(cache, sprite);
         }
 
+        public void ReadPixelData(int x, int y, int width, int height, ref int[] pixelData)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         ///     This changes the color index by the offset. This will affect all of
         ///     the sprites in memory. It is used when trying to quickly
@@ -347,15 +351,15 @@ namespace PixelVisionSDK.Chips
         /// <param name="offset">
         ///     An int to use as the offset value.
         /// </param>
-//        public void ShiftColorIndex(int offset)
-//        {
-//            var pixelData = _texture.GetPixels();
-//            var total = pixelData.Length;
-//
-//            for (var i = 0; i < total; i++)
-//                pixelData[i] += offset;
-//
-//            _texture.SetPixels(pixelData);
-//        }
+        //        public void ShiftColorIndex(int offset)
+        //        {
+        //            var pixelData = _texture.GetPixels();
+        //            var total = pixelData.Length;
+        //
+        //            for (var i = 0; i < total; i++)
+        //                pixelData[i] += offset;
+        //
+        //            _texture.SetPixels(pixelData);
+        //        }
     }
 }

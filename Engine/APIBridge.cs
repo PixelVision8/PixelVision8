@@ -139,6 +139,8 @@ namespace PixelVisionSDK
         public void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, bool aboveBG = true,
             int colorOffset = 0)
         {
+            //chips.displayChip.DrawSprite(id, x, y, flipH, flipV, aboveBG, colorOffset);
+
             if (!chips.displayChip.CanDraw())
                 return;
 
