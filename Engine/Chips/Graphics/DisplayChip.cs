@@ -34,6 +34,70 @@ namespace PixelVisionSDK.Chips
         protected int offscreenPaddingY = 8;
         protected int minLayer = -1;
         protected int maxLayer = 1;
+        protected ILayer[] backgroundLayer = new ILayer[0];
+
+        protected int _scrollX;
+        protected int _scrollY;
+
+        /// <summary>
+        ///     The width of the area to sample from in the ScreenBufferChip. If
+        ///     width of the view port is larger than the <see cref="TextureData" />
+        ///     it will wrap.
+        /// </summary>
+        public int viewPortHeight = 240;
+
+        /// <summary>
+        ///     This represents the x position on the screen where the
+        ///     ScreenBufferChip's view port should be rendered to on the display. 0
+        ///     is the left of the screen.
+        /// </summary>
+        public int viewPortOffsetX;
+
+        /// <summary>
+        ///     This represents the y position on the screen where the
+        ///     ScreenBufferChip's view port should be rendered to on the display. 0
+        ///     is the top of the screen.
+        /// </summary>
+        public int viewPortOffsetY;
+
+        /// <summary>
+        ///     The height of the area to sample from in the ScreenBufferChip. If
+        ///     width of the view port is larger than the <see cref="TextureData" />
+        ///     it will wrap.
+        /// </summary>
+        public int viewPortWidth = 256;
+
+
+
+        /// <summary>
+        ///     This value is used for horizontally scrolling the ScreenBufferChip.
+        ///     The <see cref="scrollX" /> field represents starting x position of
+        ///     the <see cref="TextureData" /> to sample from. 0 is the left of the
+        ///     screen;
+        /// </summary>
+        public int scrollX
+        {
+            get { return _scrollX; }
+            set
+            {
+                _scrollX = value;
+            }
+        }
+
+        /// <summary>
+        ///     This value is used for vertically scrolling the ScreenBufferChip.
+        ///     The <see cref="scrollY" /> field represents starting y position of
+        ///     the <see cref="TextureData" /> to sample from. 0 is the top of the
+        ///     screen;
+        /// </summary>
+        public int scrollY
+        {
+            get { return _scrollY; }
+            set
+            {
+                _scrollY = value;
+            }
+        }
 
         /// <summary>
         ///     Sets the total number of sprite draw calls for the display.
@@ -100,7 +164,7 @@ namespace PixelVisionSDK.Chips
 //                }
                 //var copy = new int[total];
 
-                textureData.GetPixels(0, 0, width, height, tmpDisplayData);
+                textureData.GetPixels(0, 0, width, height, ref tmpDisplayData);
                 return tmpDisplayData;//textureData.GetPixels();
             }
         }
@@ -126,6 +190,11 @@ namespace PixelVisionSDK.Chips
         protected ScreenBufferChip bufferChip
         {
             get { return engine.screenBufferChip; }
+        }
+
+        protected TileMapChip tilemapChip
+        {
+            get { return engine.tileMapChip; }
         }
 
         public void CopyScreenBlockBuffer()
@@ -172,9 +241,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="flipY"></param>
         /// <param name="layerOrder"></param>
         /// <param name="masked"></param>
-        public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY,
-            int layerOrder = 0,
-            bool masked = false)
+        public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layerOrder = 0, bool masked = false)
         {
             var drawCalls = width / engine.spriteChip.width * (height / engine.spriteChip.height);
 
@@ -227,6 +294,13 @@ namespace PixelVisionSDK.Chips
             tmpDisplayData = new int[_width * _height];
         }
 
+        protected bool drawTilemapFlag;
+
+        public void DrawTilemap()
+        {
+            drawTilemapFlag = true;
+        }
+
         /// <summary>
         ///     This configures the DisplayChip. It registers itself as the default
         ///     <see cref="DisplayChip" /> for the engine, gets a reference to the
@@ -248,6 +322,11 @@ namespace PixelVisionSDK.Chips
             //autoClear = false;
             wrapMode = true;
             ResetResolution(256, 240);
+
+            viewPortOffsetX = 0;
+            viewPortOffsetY = 0;
+            scrollX = 0;
+            scrollY = 0;
         }
 
         public override void Deactivate()
@@ -258,6 +337,12 @@ namespace PixelVisionSDK.Chips
 
         protected List<DrawRequest> drawRequests = new List<DrawRequest>();
         protected List<DrawRequest> drawRequestPool = new List<DrawRequest>();
+        protected int[] tmpTileData = new int[0];
+
+        protected int backgroundColor
+        {
+            get { return engine.colorChip != null ? engine.colorChip.backgroundColor : -1; }
+        }
 
         /// <summary>
         /// </summary>
@@ -268,24 +353,58 @@ namespace PixelVisionSDK.Chips
             {
                 //UnityEngine.Debug.Log("Clear");
 
-                textureData.Clear(engine.screenBufferChip != null ? engine.screenBufferChip.backgroundColor : 0);
+                textureData.Clear(backgroundColor);
                 clearFlag = false;
             }
 
             // TODO need to render sprites under background
 
+            
+
+            if (drawTilemapFlag)
+            {
+
+                tilemapChip.scrollX = scrollX;
+                tilemapChip.scrollY = scrollY;
+
+                if (tilemapChip.invalid)
+                {
+                    //UnityEngine.Debug.Log("Get new tilemap pixel data");
+
+                    tilemapChip.ReadPixelData(width, height, ref tmpTileData);
+
+
+                    tilemapChip.ResetValidation();
+                }
+
+                textureData.MergePixels(0, 0, width, height, tmpTileData, false, backgroundColor);
+
+                drawTilemapFlag = false;
+            }
+
             if (copyScreenBuffer)
             {
 
+                // Update the scroll position
+                bufferChip.scrollX = scrollX;
+                bufferChip.scrollY = scrollY;
+
+                // Test to see if the buffer chip has been invalidated
                 if (bufferChip.invalid)
                 {
-                    bufferChip.ReadScreenData(width, height, ref tmpBufferData);
 
-                    bufferChip.ResetInvalidation();
+                    // Copy out the new pixel data
+                    bufferChip.ReadPixelData(width, height, ref tmpBufferData);
+
+                    // Reset the invalidation since we got the latest pixel data
+                    bufferChip.ResetValidation();
                 }
 
-                textureData.MergePixels(0, 0, width, height, tmpBufferData, false, bufferChip.backgroundColor);
+                // Copy all the buffer pixel data over into the display's texture data.
+                textureData.MergePixels(0, 0, width, height, tmpBufferData);
 
+
+                // Reset the copy buffer flag
                 copyScreenBuffer = false;
             }
 

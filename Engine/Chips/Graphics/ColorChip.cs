@@ -52,6 +52,12 @@ namespace PixelVisionSDK.Chips
         protected ColorData[] colorCache;
         private bool invalid;
         protected Vector pageSize = new Vector(8, 8);
+        
+        /// <summary>
+        ///     The background color reference to use when rendering transparent in
+        ///     the ScreenBufferTexture.
+        /// </summary>
+        public int backgroundColor { get; set; }
 
 
         /// <summary>
@@ -206,6 +212,7 @@ namespace PixelVisionSDK.Chips
         public override void Configure()
         {
             engine.colorChip = this;
+            backgroundColor = -1;
             RebuildColorPages(16);
         }
 

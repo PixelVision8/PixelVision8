@@ -363,6 +363,8 @@ namespace PixelVisionSDK
         /// </summary>
         void DrawScreenBuffer();
 
+        void DrawTilemap(int startCol, int startRow, int columns, int rows, int offsetX = 0, int offsetY = 0);
+
         /// <summary>
         ///     Rebuilds the screen buffer from the tile map. This rendered the
         ///     entire tile map into the buffer allowing you to cache the tile map

@@ -68,7 +68,7 @@ namespace Assets.PixelVisionSDK.Engine.Data
 
         public void GetPixels(int x, int y, int width, int height, int[] data)
         {
-            texturedata.GetPixels(x, y, width, height, data);
+            texturedata.GetPixels(x, y, width, height, ref data);
         }
     }
 }

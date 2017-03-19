@@ -32,7 +32,7 @@ namespace PixelVisionSDK.Utils
 
         public static int Repeat(int val, int max)
         {
-            if (val < 0F)
+            if (val < 0)
                 return max + val % max;
 
             return val % max;

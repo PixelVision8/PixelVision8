@@ -82,21 +82,21 @@ namespace PixelVisionSDK
 
         public int scrollX
         {
-            get { return chips.screenBufferChip.scrollX; }
+            get { return chips.displayChip.scrollX; }
         }
 
         public int scrollY
         {
-            get { return chips.screenBufferChip.scrollY; }
+            get { return chips.displayChip.scrollY; }
         }
 
         public void ScrollTo(int x, int y)
         {
-            if (chips.screenBufferChip == null)
+            if (chips.displayChip == null)
                 return;
 
-            chips.screenBufferChip.scrollX = x;
-            chips.screenBufferChip.scrollY = y;
+            chips.displayChip.scrollX = x;
+            chips.displayChip.scrollY = y;
         }
 
         public bool paused
@@ -133,7 +133,7 @@ namespace PixelVisionSDK
 
         public int backgroundColor
         {
-            get { return chips.screenBufferChip.backgroundColor; }
+            get { return chips.colorChip.backgroundColor; }
         }
 
         public void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, bool aboveBG = true,
@@ -192,7 +192,7 @@ namespace PixelVisionSDK
         public void ChangeBackgroundColor(int id)
         {
             id = id.Clamp(0, chips.colorChip.total - 1);
-            chips.screenBufferChip.backgroundColor = id;
+            chips.colorChip.backgroundColor = id;
         }
 
         public void PlaySound(int id, int channel = 0)
@@ -243,6 +243,11 @@ namespace PixelVisionSDK
         public virtual void DrawScreenBuffer()
         {
             chips.displayChip.CopyScreenBlockBuffer();
+        }
+
+        public virtual void DrawTilemap(int startCol, int startRow, int columns, int rows, int offsetX = 0, int offsetY = 0)
+        {
+            chips.displayChip.DrawTilemap();
         }
 
         public void DrawTileToBuffer(int spriteID, int column, int row, int colorOffset = 0)

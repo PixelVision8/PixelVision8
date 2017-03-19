@@ -129,7 +129,7 @@ namespace PixelVisionSDK
             for (var i = 0; i < total; i++)
                 data[i] = pixels[i];
         }
-        
+
         /// <summary>
         ///     Returns a set of pixel <paramref name="data" /> from a specific
         ///     position and size. Supply anint array to get a
@@ -151,7 +151,7 @@ namespace PixelVisionSDK
         /// <param name="data">
         ///     An int array where pixel data will be copied to.
         /// </param>
-        public void GetPixels(int x, int y, int blockWidth, int blockHeight, int[] data)
+        public void GetPixels(int x, int y, int blockWidth, int blockHeight, ref int[] data)
         {
             tmpTotal = blockWidth * blockHeight;
 

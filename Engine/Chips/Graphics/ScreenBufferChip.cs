@@ -14,7 +14,9 @@
 // Shawn Rakowski - @shwany
 // 
 
+using System;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -26,43 +28,15 @@ namespace PixelVisionSDK.Chips
     ///     like UI or text that don't change often but would be too expensive to
     ///     render as sprites.
     /// </summary>
-    public class ScreenBufferChip : AbstractChip
+    public class ScreenBufferChip : AbstractChip, ILayer
     {
-        protected int _scrollX;
-        protected int _scrollY;
+        
         protected int[] tmpPixelData;
 
-        //TODO this causes a bug in the editor where it should be 256 x 244 need to resize it somehow
         protected TextureData tmpTextureData = new TextureData(1, 1);
 
-        /// <summary>
-        ///     The width of the area to sample from in the ScreenBufferChip. If
-        ///     width of the view port is larger than the <see cref="TextureData" />
-        ///     it will wrap.
-        /// </summary>
-        public int viewPortHeight = 240;
-
-        /// <summary>
-        ///     This represents the x position on the screen where the
-        ///     ScreenBufferChip's view port should be rendered to on the display. 0
-        ///     is the left of the screen.
-        /// </summary>
-        public int viewPortOffsetX;
-
-        /// <summary>
-        ///     This represents the y position on the screen where the
-        ///     ScreenBufferChip's view port should be rendered to on the display. 0
-        ///     is the top of the screen.
-        /// </summary>
-        public int viewPortOffsetY;
-
-        /// <summary>
-        ///     The height of the area to sample from in the ScreenBufferChip. If
-        ///     width of the view port is larger than the <see cref="TextureData" />
-        ///     it will wrap.
-        /// </summary>
-        public int viewPortWidth = 256;
-
+        //TODO shouldn't this be on the color class and not here?
+        
         /// <summary>
         ///     The <see cref="invalid" /> flag is set to true when
         ///     something has changed in the screen buffer. This is usually changed
@@ -72,23 +46,20 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public bool invalid { get; private set; }
 
-        /// <summary>
-        ///     This value is used for horizontally scrolling the ScreenBufferChip.
-        ///     The <see cref="scrollX" /> field represents starting x position of
-        ///     the <see cref="TextureData" /> to sample from. 0 is the left of the
-        ///     screen;
-        /// </summary>
+        protected int _scrollX;
+        protected int _scrollY;
+
         public int scrollX
         {
             get { return _scrollX; }
+
             set
             {
-                if (value > viewPortWidth)
-                    value = MathUtil.Repeat(value, tmpTextureData.width);
-
-
                 if (_scrollX == value)
                     return;
+
+                if (value > tmpTextureData.width)
+                    value = MathUtil.Repeat(value, tmpTextureData.width);
 
                 _scrollX = value;
 
@@ -96,34 +67,23 @@ namespace PixelVisionSDK.Chips
             }
         }
 
-        /// <summary>
-        ///     This value is used for vertically scrolling the ScreenBufferChip.
-        ///     The <see cref="scrollY" /> field represents starting y position of
-        ///     the <see cref="TextureData" /> to sample from. 0 is the top of the
-        ///     screen;
-        /// </summary>
         public int scrollY
         {
             get { return _scrollY; }
+
             set
             {
-                if (value > viewPortHeight)
-                    value = MathUtil.Repeat(value, tmpTextureData.height);
-
                 if (_scrollY == value)
                     return;
 
+                if (value > tmpTextureData.height)
+                    value = MathUtil.Repeat(value, tmpTextureData.height);
+
                 _scrollY = value;
+
                 Invalidate();
             }
         }
-
-        //TODO shouldn't this be on the color class and not here?
-        /// <summary>
-        ///     The background color reference to use when rendering transparent in
-        ///     the ScreenBufferTexture.
-        /// </summary>
-        public int backgroundColor { get; set; }
 
         /// <summary>
         ///     This will set the ScreenBufferData as <see cref="invalid" />
@@ -140,7 +100,7 @@ namespace PixelVisionSDK.Chips
         ///     when data has been sampled from the buffer after a previous
         ///     invalidation.
         /// </summary>
-        public void ResetInvalidation()
+        public void ResetValidation()
         {
             invalid = false;
         }
@@ -157,6 +117,7 @@ namespace PixelVisionSDK.Chips
                 return;
 
             engine.tileMapChip.ConvertToTextureData(tmpTextureData);
+
             Invalidate();
         }
 
@@ -172,12 +133,12 @@ namespace PixelVisionSDK.Chips
         /// </param>
         /// <param name="y">
         ///     The y position where to start drawing pixel data. 0 is the top of
-        ///     the sceen.
+        ///     the screen.
         /// </param>
         /// <param name="width">The width of the pixel data to draw.</param>
         /// <param name="height">The height of the pixel data to draw.</param>
         /// <param name="pixelData">
-        ///     The actual pixel data values as anint array.
+        ///     The actual pixel data values as an int array.
         /// </param>
         public void UpdatePixelDataAt(int x, int y, int width, int height, int[] pixelData)
         {
@@ -190,7 +151,7 @@ namespace PixelVisionSDK.Chips
 
         /// <summary>
         ///     This method will merge pixel data into the ScreenBufferChip's
-        ///     TextureData. Use this when you want to maintain transparancy and
+        ///     TextureData. Use this when you want to maintain transparency and
         ///     fill in the empty pixel data with data from the existing
         ///     ScreenBufferChip's TextureData.
         /// </summary>
@@ -200,12 +161,12 @@ namespace PixelVisionSDK.Chips
         /// </param>
         /// <param name="y">
         ///     The y position where to start drawing pixel data. 0 is the top of
-        ///     the sceen.
+        ///     the screen.
         /// </param>
         /// <param name="width">The width of the pixel data to draw.</param>
         /// <param name="height">The height of the pixel data to draw.</param>
         /// <param name="pixelData">
-        ///     The actual pixel data values as anint array.
+        ///     The actual pixel data values as an int array.
         /// </param>
         public void MergePixelDataAt(int x, int y, int width, int height, int[] pixelData)
         {
@@ -226,7 +187,7 @@ namespace PixelVisionSDK.Chips
         ///     ScreenBufferChip.
         /// </summary>
         /// <param name="data">
-        ///     Supply anint array to be populated with pixel
+        ///     Supply an int array to be populated with pixel
         ///     data values.
         /// </param>
         /// <param name="width">Returns the width of the pixel data.</param>
@@ -244,7 +205,7 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public void Clear()
         {
-            tmpTextureData.Clear(backgroundColor);
+            tmpTextureData.Clear(engine.colorChip != null ? engine.colorChip.backgroundColor : -1);
             Invalidate();
         }
 
@@ -258,19 +219,8 @@ namespace PixelVisionSDK.Chips
         {
             engine.screenBufferChip = this;
             tmpTextureData.wrapMode = true;
-            backgroundColor = -1;
-
-            //ppu.screenBlockRam = this;
-            viewPortOffsetX = 0;
-            viewPortOffsetY = 0;
-            scrollX = 0;
-            scrollY = 0;
-            tmpPixelData = new int[engine.spriteChip.width * engine.spriteChip.textureHeight];
+            tmpPixelData = new int[engine.spriteChip.width * engine.spriteChip.height];
             Clear();
-
-            //backgroundColor = -1;
-            // Creates a default Screen Block 
-            //CreateScreenBlock();
         }
 
         //TODO need to optimize this
@@ -282,15 +232,16 @@ namespace PixelVisionSDK.Chips
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="pixelData"></param>
-        /// <param name="wrap"></param>
-        public void ReadScreenData(int width, int height, ref int[] pixelData, bool wrap = false)
+        /// <param name="offsetX"></param>
+        /// <param name="offsetY"></param>
+        public void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0)
         {
             var tmpScrollY = tmpTextureData.height - height - scrollY;
-            tmpTextureData.GetPixels(scrollX, tmpScrollY, width, height, pixelData);
+            tmpTextureData.GetPixels(scrollX + offsetX, tmpScrollY + offsetY, width, height, ref pixelData);
         }
 
         /// <summary>
-        ///     A quick method to replace a spefic sprite from the tile map to the
+        ///     A quick method to replace a specific sprite from the tile map to the
         ///     screen buffer.
         /// </summary>
         /// <param name="column">The column of the tile in the TileMap.</param>
@@ -315,5 +266,6 @@ namespace PixelVisionSDK.Chips
             base.Deactivate();
             engine.screenBufferChip = null;
         }
+        
     }
 }

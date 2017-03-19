@@ -284,7 +284,7 @@ namespace PixelVisionSDK.Chips
 
                 SpriteChipUtil.CalculateSpritePos(index, _texture.width, _texture.height, width, height, out tmpX, out tmpY);
 
-                _texture.GetPixels(tmpX, tmpY, width, height, tmpPixelData);
+                _texture.GetPixels(tmpX, tmpY, width, height, ref tmpPixelData);
 
                 pixelDataCache[index] = tmpPixelData;
                 cachedSprite = pixelDataCache[index];
