@@ -347,6 +347,8 @@ namespace PixelVisionSDK
         /// </summary>
         void Clear();
 
+        void ClearArea(int x, int y, int width, int height, int color = -1);
+
         /// <summary>
         ///     Changes the background color.
         /// </summary>

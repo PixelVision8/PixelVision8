@@ -16,28 +16,35 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using PixelVisionSDK.Utils;
+using UnityEngine.WSA;
 
 namespace PixelVisionSDK.Chips
 {
+
     public class DisplayChip : AbstractChip, IDraw
     {
+
         protected readonly TextureData textureData = new TextureData(0, 0);
         protected int _height = 240;
         protected int _maxSpriteCount = 64;
-        protected int _width = 256;
-        protected int currentSprites;
-        protected int[] tmpBufferData;
-        protected int offscreenPaddingX = 8;
-        protected int offscreenPaddingY = 8;
-        protected int minLayer = -1;
-        protected int maxLayer = 1;
-        protected ILayer[] backgroundLayer = new ILayer[0];
-
         protected int _scrollX;
         protected int _scrollY;
+        protected int _width = 256;
+        protected ILayer[] backgroundLayer = new ILayer[0];
+        protected bool clearFlag;
+        protected bool copyScreenBuffer;
+        protected int currentSprites;
+        protected List<DrawRequest> drawRequestPool = new List<DrawRequest>();
+        protected List<DrawRequest> drawRequests = new List<DrawRequest>();
+        protected bool drawTilemapFlag;
+        protected int maxLayer = 1;
+        protected int minLayer = -1;
+        protected int offscreenPaddingX = 8;
+        protected int offscreenPaddingY = 8;
+        protected int[] tmpBufferData;
+        protected int[] tmpDisplayData = new int[0];
+        protected int[] tmpTileData = new int[0];
 
         /// <summary>
         ///     The width of the area to sample from in the ScreenBufferChip. If
@@ -68,7 +75,6 @@ namespace PixelVisionSDK.Chips
         public int viewPortWidth = 256;
 
 
-
         /// <summary>
         ///     This value is used for horizontally scrolling the ScreenBufferChip.
         ///     The <see cref="scrollX" /> field represents starting x position of
@@ -78,10 +84,7 @@ namespace PixelVisionSDK.Chips
         public int scrollX
         {
             get { return _scrollX; }
-            set
-            {
-                _scrollX = value;
-            }
+            set { _scrollX = value; }
         }
 
         /// <summary>
@@ -93,10 +96,7 @@ namespace PixelVisionSDK.Chips
         public int scrollY
         {
             get { return _scrollY; }
-            set
-            {
-                _scrollY = value;
-            }
+            set { _scrollY = value; }
         }
 
         /// <summary>
@@ -138,14 +138,6 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         /// </summary>
         public bool paused { get; set; }
-        public int[] tmpDisplayData = new int[0];
-
-        /// <summary>
-        ///     A flag to define if the display auto clears after each frame.
-        /// </summary>
-//        public bool autoClear { get; set; }
-
-        //int[] tmpPixels = new int[0];
 
         /// <summary>
         ///     Returns the raw pixel data that represents what the display should look
@@ -155,37 +147,10 @@ namespace PixelVisionSDK.Chips
         {
             get
             {
-                //textureData.GetPixels(0, 0, _width, _height, tmpPixels);
-//                var total = _width * _height;
-//                if (tmpBufferData.Length != total)
-//                {
-//                    Array.Resize(ref tmpBufferData, total);
-//                    UnityEngine.Debug.Log("Resize tmpPixels");        
-//                }
-                //var copy = new int[total];
-
                 textureData.GetPixels(0, 0, width, height, ref tmpDisplayData);
-                return tmpDisplayData;//textureData.GetPixels();
+                return tmpDisplayData; //textureData.GetPixels();
             }
         }
-
-
-        protected bool clearFlag;
-
-        /// <summary>
-        ///     This clears the display. It will write a background color from the
-        ///     <see cref="ScreenBufferChip" /> into the internal
-        ///     screenBufferData or us 0 if no <see cref="ScreenBufferChip" /> is
-        ///     found.
-        /// </summary>
-        public void Clear()
-        {
-            clearFlag = true;
-            // TODO this is a strange dependency I need to look into. Throws an error on startup
-            //textureData.Clear(engine.screenBufferChip != null ? engine.screenBufferChip.backgroundColor : 0);
-        }
-
-        protected bool copyScreenBuffer;
 
         protected ScreenBufferChip bufferChip
         {
@@ -197,16 +162,155 @@ namespace PixelVisionSDK.Chips
             get { return engine.tileMapChip; }
         }
 
+        protected int backgroundColor
+        {
+            get { return engine.colorChip != null ? engine.colorChip.backgroundColor : -1; }
+        }
+
+        /// <summary>
+        /// </summary>
+        public void Draw()
+        {
+            // TODO need to render sprites under background
+
+            // At the beginning of the draw call, see if the texture should be cleared
+            if (clearFlag)
+            {
+                if (clearDrawRequest != null)
+                {
+                    var totalPixels = width * height;
+                    var pixels = new int[totalPixels];
+
+                    var color = clearDrawRequest.transparent;
+
+                    for (int i = 0; i < totalPixels; i++)
+                    {
+                        pixels[i] = color;
+                    }
+
+                    clearDrawRequest.pixelData = pixels;
+
+                    textureData.SetPixels(clearDrawRequest.x, clearDrawRequest.y, clearDrawRequest.width, clearDrawRequest.height, pixels);
+                }
+                else
+                {
+                    textureData.Clear(backgroundColor);
+                }
+                
+                clearFlag = false;
+            }
+
+            if (copyScreenBuffer)
+            {
+
+                // Update the scroll position
+                bufferChip.scrollX = scrollX;
+                bufferChip.scrollY = scrollY;
+
+                // Test to see if the buffer chip has been invalidated
+                if (bufferChip.invalid)
+                {
+
+                    // Copy out the new pixel data
+                    bufferChip.ReadPixelData(width, height, ref tmpBufferData);
+
+                    // Reset the invalidation since we got the latest pixel data
+                    bufferChip.ResetValidation();
+                }
+
+                // Copy all the buffer pixel data over into the display's texture data.
+                textureData.MergePixels(0, 0, width, height, tmpBufferData, false, backgroundColor);
+
+
+                // Reset the copy buffer flag
+                copyScreenBuffer = false;
+            }
+
+            
+
+
+            if (drawTilemapFlag)
+            {
+
+                tilemapChip.scrollX = scrollX;
+                tilemapChip.scrollY = scrollY;
+
+                var sC = tilemapDrawRequest.x;
+                var sR = tilemapDrawRequest.y;
+                var tmpWidth = tilemapDrawRequest.width;
+                var tmpHeight = tilemapDrawRequest.height;
+
+                if (tilemapChip.invalid)
+                {
+                    tilemapChip.ReadPixelData(tmpWidth, tmpHeight, ref tmpTileData, sC, sR);
+
+
+                    tilemapChip.ResetValidation();
+                }
+
+                textureData.MergePixels(tilemapDrawRequest.offsetX, tilemapDrawRequest.offsetY, tmpWidth, tmpHeight, tmpTileData);
+
+                drawTilemapFlag = false;
+            }
+
+            
+
+            //var draws = drawRequests; // TODO need to use linq to find the order
+
+            // TODO render sprites above the background
+            var total = drawRequests.Count;
+            for (var i = 0; i < total; i++)
+            {
+                var draw = drawRequests[i];
+                draw.MergePixelData(textureData);
+            }
+
+            ResetDrawCalls();
+        }
+
+        protected DrawRequest clearDrawRequest;
+
+        /// <summary>
+        ///     This clears the display. It will write a background color from the
+        ///     <see cref="ScreenBufferChip" /> into the internal
+        ///     screenBufferData or us 0 if no <see cref="ScreenBufferChip" /> is
+        ///     found.
+        /// </summary>
+        public void Clear()
+        {
+            clearFlag = true;
+
+            // TODO this is a strange dependency I need to look into. Throws an error on startup
+            //textureData.Clear(engine.screenBufferChip != null ? engine.screenBufferChip.backgroundColor : 0);
+        }
+
+        public void ClearArea(int x, int y, int width, int height, int color = -1)
+        {
+            clearFlag = true;
+
+            // Create new clear draw request instance
+            if (clearDrawRequest == null)
+                clearDrawRequest = new DrawRequest();
+
+            // Configure the clear draw request
+            clearDrawRequest.x = x;
+            clearDrawRequest.y = _height - height - y;
+            clearDrawRequest.width = width;
+            clearDrawRequest.height = height;
+            clearDrawRequest.transparent = color == -1 ? backgroundColor : color;
+
+        }
+
         public void CopyScreenBlockBuffer()
         {
-            
+
             // If there is no buffer chip then ignore the request
             if (bufferChip == null)
                 return;
 
             // Set the copy buffer flag
             copyScreenBuffer = true;
-            
+
         }
 
         /// <summary>
@@ -294,11 +398,25 @@ namespace PixelVisionSDK.Chips
             tmpDisplayData = new int[_width * _height];
         }
 
-        protected bool drawTilemapFlag;
+        protected DrawRequest tilemapDrawRequest;
 
-        public void DrawTilemap()
+        public void DrawTilemap(int startCol, int startRow, int columns, int rows, int offsetX = 0, int offsetY = 0)
         {
             drawTilemapFlag = true;
+
+            if(tilemapDrawRequest == null)
+                tilemapDrawRequest = new DrawRequest();
+
+            var tileWidth = tilemapChip.tileWidth;
+            var tileHeight = tilemapChip.tileHeight;
+
+            tilemapDrawRequest.x = startCol * tileWidth;
+            tilemapDrawRequest.y = startRow * tileHeight;
+            tilemapDrawRequest.width = columns * tileWidth;
+            tilemapDrawRequest.height = rows * tileHeight;
+            tilemapDrawRequest.offsetX = offsetX;
+            tilemapDrawRequest.offsetY = _height - tilemapDrawRequest.height - offsetY;
+
         }
 
         /// <summary>
@@ -335,96 +453,10 @@ namespace PixelVisionSDK.Chips
             engine.displayChip = null;
         }
 
-        protected List<DrawRequest> drawRequests = new List<DrawRequest>();
-        protected List<DrawRequest> drawRequestPool = new List<DrawRequest>();
-        protected int[] tmpTileData = new int[0];
-
-        protected int backgroundColor
-        {
-            get { return engine.colorChip != null ? engine.colorChip.backgroundColor : -1; }
-        }
-
-        /// <summary>
-        /// </summary>
-        public void Draw()
-        {
-            // At the beginning of the draw call, see if the texture should be cleared
-            if (clearFlag)
-            {
-                //UnityEngine.Debug.Log("Clear");
-
-                textureData.Clear(backgroundColor);
-                clearFlag = false;
-            }
-
-            // TODO need to render sprites under background
-
-            
-
-            if (drawTilemapFlag)
-            {
-
-                tilemapChip.scrollX = scrollX;
-                tilemapChip.scrollY = scrollY;
-
-                if (tilemapChip.invalid)
-                {
-                    //UnityEngine.Debug.Log("Get new tilemap pixel data");
-
-                    tilemapChip.ReadPixelData(width, height, ref tmpTileData);
-
-
-                    tilemapChip.ResetValidation();
-                }
-
-                textureData.MergePixels(0, 0, width, height, tmpTileData, false, backgroundColor);
-
-                drawTilemapFlag = false;
-            }
-
-            if (copyScreenBuffer)
-            {
-
-                // Update the scroll position
-                bufferChip.scrollX = scrollX;
-                bufferChip.scrollY = scrollY;
-
-                // Test to see if the buffer chip has been invalidated
-                if (bufferChip.invalid)
-                {
-
-                    // Copy out the new pixel data
-                    bufferChip.ReadPixelData(width, height, ref tmpBufferData);
-
-                    // Reset the invalidation since we got the latest pixel data
-                    bufferChip.ResetValidation();
-                }
-
-                // Copy all the buffer pixel data over into the display's texture data.
-                textureData.MergePixels(0, 0, width, height, tmpBufferData);
-
-
-                // Reset the copy buffer flag
-                copyScreenBuffer = false;
-            }
-
-            //var draws = drawRequests; // TODO need to use linq to find the order
-
-            // TODO render sprites above the background
-            var total = drawRequests.Count;
-            for (int i = 0; i < total; i++)
-            {
-                var draw = drawRequests[i];
-                draw.MergePixelData(textureData);
-            }
-
-            ResetDrawCalls();
-        }
-
         public void ResetDrawCalls()
         {
             currentSprites = 0;
-           
+
             // Reset all draw requests and pools
             while (drawRequests.Count > 0)
             {
@@ -456,39 +488,4 @@ namespace PixelVisionSDK.Chips
 
     }
     
-    public class DrawRequest
-    {
-        public int order;
-        
-        protected int[] _pixelData = new int[0];
-
-        public int[] pixelData
-        {
-            get { return _pixelData; }
-            set
-            {
-                var totalPixels = value.Length;
-
-                if (_pixelData.Length != totalPixels)
-                {
-                    Array.Resize(ref _pixelData, totalPixels);
-                }
-
-                Array.Copy(value, _pixelData, totalPixels);
-            }
-        }
-
-        public int x;
-        public int y;
-        public int width;
-        public int height;
-        public bool masked = true;
-        public int transparent = -1;
-
-        public virtual void MergePixelData(TextureData target)
-        {
-            target.MergePixels(x, y, width, height, pixelData, masked, transparent);
-        }
-    }
-
 }

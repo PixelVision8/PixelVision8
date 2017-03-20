@@ -14,9 +14,7 @@
 // Shawn Rakowski - @shwany
 // 
 
-using System;
 using PixelVisionSDK.Utils;
-using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -120,7 +118,7 @@ namespace PixelVisionSDK.Chips
 
             Invalidate();
         }
-
+        
         /// <summary>
         ///     This method allows you to draw raw pixel data into the
         ///     ScreenBufferChip's TextureData. You can draw pixel data at any x,
@@ -146,7 +144,7 @@ namespace PixelVisionSDK.Chips
 
             tmpTextureData.SetPixels(x, y, width, height, pixelData);
 
-            Invalidate();
+            Invalidate(); 
         }
 
         /// <summary>
