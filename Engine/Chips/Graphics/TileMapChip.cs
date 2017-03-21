@@ -15,7 +15,6 @@
 // 
 
 using System;
-using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
@@ -30,30 +29,34 @@ namespace PixelVisionSDK.Chips
     public class TileMapChip : AbstractChip, ILayer
     {
 
+        /// <summary>
+        ///     Total number of collision flags the chip will support.
+        ///     The default value is 16.
+        /// </summary>
+        public int totalFlags = 16;
+
         protected int _columns;
         protected int _rows;
         protected int _scrollX;
         protected int _scrollY;
         protected SpriteChip _spriteChip;
         protected int _totalLayers = -1;
-
         protected TextureData[] layers;
         protected int offscreenPadding = 0;
         protected int tmpIndex;
-        private int[] tmpPaletteIDs = new int[0];
+        protected int[] tmpPaletteIDs = new int[0];
         protected int[] tmpPixelData = new int[8 * 8];
-        private int[] tmpSpriteIDs = new int[0];
-        private TextureData tmpTextureData = new TextureData(0, 0, false);
-
-        private readonly TextureData tmpViewportData = new TextureData(0, 0, false);
+        protected int[] tmpSpriteIDs = new int[0];
         protected int tmpX;
         protected int tmpY;
 
-        /// <summary>
-        ///     Total number of collision flags the chip will support.
-        ///     The default value is 16.
-        /// </summary>
-        public int totalFlags = 16;
+        protected enum Layer
+        {
+            Sprites,
+            Palettes,
+            Flags,
+            Invalid
+        }
 
         protected SpriteChip spriteChip
         {
@@ -134,133 +137,95 @@ namespace PixelVisionSDK.Chips
         }
 
 
-        public int scrollX
-        {
-            get { return _scrollX; }
+//        public int scrollX
+//        {
+//            get { return _scrollX; }
+//
+//            set
+//            {
+//                if (_scrollX == value)
+//                    return;
+//
+//                //                if (value > realWidth)
+//                //                    value = MathUtil.Repeat(value, realWidth);
+//
+//                _scrollX = MathUtil.Repeat(value, realWidth);
+//
+//                //Invalidate();
+//            }
+//        }
+//
+//        public int scrollY
+//        {
+//            get { return _scrollY; }
+//
+//            set
+//            {
+//                if (_scrollY == value)
+//                    return;
+//
+//                //                if (value > realHeight)
+//                //                    value = MathUtil.Repeat(value, realHeight);
+//
+//                _scrollY = MathUtil.Repeat(value, realHeight);
+//
+//                //Invalidate();
+//            }
+//        }
 
-            set
-            {
-                if (_scrollX == value)
-                    return;
-
-                //                if (value > realWidth)
-                //                    value = MathUtil.Repeat(value, realWidth);
-
-                _scrollX = MathUtil.Repeat(value, realWidth);
-
-                Invalidate();
-            }
-        }
-
-        public int scrollY
-        {
-            get { return _scrollY; }
-
-            set
-            {
-                if (_scrollY == value)
-                    return;
-
-                //                if (value > realHeight)
-                //                    value = MathUtil.Repeat(value, realHeight);
-
-                _scrollY = MathUtil.Repeat(value, realHeight);
-
-                Invalidate();
-            }
-        }
-
+        public TextureData cachedTileMap = new TextureData(0, 0);
+        protected int[] tiles = new int[0];
 
         public void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0)
         {
-
-            // We need to make sure we have enough pixel data to draw the tiles
-            if (tmpViewportData.width != width || tmpViewportData.height != height)
+            if (invalid)
             {
-                tmpViewportData.Resize(width, height);
-            }
-            else
-            {
-                // Since we don't need to resize the viewport data, we just clear it.
-                tmpViewportData.Clear();
-            }
+                UnityEngine.Debug.Log("Rebuild Tilemap Cache");
 
-            var scrollX = this.scrollX;
-            var scrollY = this.scrollY;
-
-            // Calculate the first column ID
-            var startCol = MathUtil.CeilToInt((float)scrollX / tileWidth) - offscreenPadding;
-            startCol += MathUtil.CeilToInt((float)offsetX / tileWidth);
-            scrollX += offsetX;
-
-            var startOffsetX = (startCol * tileWidth) - scrollX;
-            var totalCols = MathUtil.CeilToInt((float)width / tileWidth) + offscreenPadding;
-
-            //UnityEngine.Debug.Log("Scroll X " + scrollX + " startCol " + startCol + " startOffsetX " + startOffsetX + " totalCols "+ totalCols);
-
-            var startRow = MathUtil.CeilToInt((float)scrollY / tileHeight) - offscreenPadding;
-            startRow += MathUtil.CeilToInt((float)offsetY / tileHeight);
-            scrollY += offsetY;
-
-            var startOffsetY = (startRow * tileHeight) - scrollY;
-            var totalRows = MathUtil.CeilToInt((float)height / tileHeight) + offscreenPadding;
-
-            //UnityEngine.Debug.Log("Scroll Y " + scrollY + " startRow " + startRow + " startOffsetY " + startOffsetY + " totalRows " + totalRows);
-
-            var totalTiles = totalCols * totalRows;
-
-            var tiles = new int[totalTiles];
-            var offsets = new int[totalTiles];
-
-            layers[(int) Layer.Sprites].GetPixels(startCol, startRow, totalCols, totalRows, ref tiles);
-            //layers[(int) Layer.Palettes].GetPixels(startCol, startRow, totalCols, totalRows, ref offsets);
-
-
-            //            var xMin = 0;
-            //            var xMax = width + tileWidth;
-            //            var yMin = 0;
-            //            var yMax = height + tileHeight;
-            //
-            int x, y, spriteID;
-
-            for (var i = 0; i < totalTiles; i++)
-            {
-                spriteID = tiles[i];
-
-                if (spriteID > -1)
+                if (cachedTileMap.width != realWidth || cachedTileMap.height != realHeight)
                 {
-                    PosUtil.CalculatePosition(i, totalCols, out x, out y);
-                    //UnityEngine.Debug.Log("Sprite ID " + spriteID + " " + i + " " + totalTiles + " " + x +" " + y +" "+totalRows);
-
-                    x *= tileWidth;
-                    y = totalRows - 1 - y;
-                    y *= tileHeight;
-
-                    spriteChip.ReadSpriteAt(spriteID, tmpPixelData, 0);// offsets[spriteID]);
-
-                    tmpViewportData.SetPixels(x + startOffsetX, y - startOffsetY, tileWidth, tileHeight, tmpPixelData);
-
+                    cachedTileMap.Resize(realWidth, realHeight);
                 }
+
+                var startCol = 0;
+                var startRow = 0;
+                var totalCols = columns;
+                var totalRows = rows;
+
+                layers[(int)Layer.Sprites].GetPixels(startCol, startRow, totalCols, totalRows, ref tmpSpriteIDs);
+                layers[(int)Layer.Palettes].GetPixels(startCol, startRow, totalCols, totalRows, ref tmpPaletteIDs);
+
+                int x, y, spriteID;
+
+                var totalTiles = tmpSpriteIDs.Length;
+
+                for (var i = 0; i < totalTiles; i++)
+                {
+                    spriteID = tmpSpriteIDs[i];
+
+                    if (spriteID > -1)
+                    {
+
+                        spriteChip.ReadSpriteAt(spriteID, tmpPixelData, tmpPaletteIDs[spriteID]);
+
+                        //PosUtil.CalculatePosition(i, columns, out x, out y);
+                        x = i % columns;
+                        y = i / columns;
+                        x *= tileWidth;
+                        y = rows - 1 - y;
+                        y *= tileHeight;
+
+                        cachedTileMap.SetPixels(x, y, tileWidth, tileHeight, tmpPixelData);
+                    }
+                }
+                
+                ResetValidation();
             }
 
-            // 612
-            //UnityEngine.Debug.Log("Total Tiles Rendered " + tilecount);
-            //ConvertToTextureData(tmpTextureData);
-
-            tmpViewportData.CopyPixels(ref pixelData);
-
-            //            if (tmpTextureData.width != width || tmpTextureData.height != height)
-            //                tmpTextureData.Resize(width, height);
+            cachedTileMap.GetPixels(offsetX, offsetY, width, height, ref pixelData);
 
 
-            //            var columns = width / spriteWidth;
-            //            var rows = height / spriteHeight;
-            //
-            //            ReadPixelData(tmpTextureData, offsetX, offsetY, columns, rows);
-            //
-            //            tmpTextureData.CopyPixels(ref pixelData);
         }
-
 
         /// <summary>
         ///     Reads the current tile and output the spriteID,
@@ -480,8 +445,6 @@ namespace PixelVisionSDK.Chips
             this.columns = columns;
             this.rows = rows;
 
-            var size = total;
-
             // Get the total number of layers we are working with
             //var totalLayers = Enum.GetNames(typeof(Layer)).Length;
 
@@ -491,10 +454,15 @@ namespace PixelVisionSDK.Chips
 
             // Loop through each data layer and resize it
             for (var i = 0; i < totalLayers; i++)
+            {
                 if (layers[i] == null)
-                    layers[i] = new TextureData(columns, rows, true);
+                    layers[i] = new TextureData(columns, rows);
                 else
                     layers[i].Resize(columns, rows);
+            }
+
+
+            Invalidate();
 
         }
 
@@ -517,6 +485,8 @@ namespace PixelVisionSDK.Chips
                     layers[i] = new TextureData(columns, rows, false);
                 else
                     layers[i].Clear();
+
+            Invalidate();
 
         }
 
@@ -541,38 +511,8 @@ namespace PixelVisionSDK.Chips
             if (spriteChip == null)
                 return;
 
-            ReadPixelData(textureData, 0, 0, columns, rows);
-        }
-
-        protected void ReadPixelData(TextureData textureData, int startColumn, int startRow, int blockWidth, int blockHeight, int clearColor = -1)
-        {
-
-            if (textureData.width != realWidth || textureData.height != realWidth)
-                textureData.Resize(realWidth, realHeight);
-
-            layers[(int) Layer.Sprites].CopyPixels(ref tmpSpriteIDs);
-            layers[(int) Layer.Palettes].CopyPixels(ref tmpPaletteIDs);
-
-            int x, y, spriteID;
-
-            for (var i = 0; i < total; i++)
-            {
-                spriteID = tmpSpriteIDs[i];
-
-                if (spriteID > -1)
-                {
-
-                    spriteChip.ReadSpriteAt(spriteID, tmpPixelData, tmpPaletteIDs[spriteID]);
-
-                    PosUtil.CalculatePosition(i, columns, out x, out y);
-
-                    x *= tileWidth;
-                    y = rows - 1 - y;
-                    y *= tileHeight;
-
-                    textureData.SetPixels(x, y, tileWidth, tileHeight, tmpPixelData);
-                }
-            }
+            //TODO need to reconnect this so you can export tilemap
+            //ReadPixelData(textureData, 0, 0, columns, rows);
         }
 
         /// <summary>
@@ -586,7 +526,6 @@ namespace PixelVisionSDK.Chips
             //ppu.tileMap = this;
             engine.tileMapChip = this;
 
-            //tmpPixelData = new int[engine.spriteChip.width*engine.spriteChip.height];
             // Resize to default nes resolution
             Resize(32, 30);
         }
@@ -597,14 +536,7 @@ namespace PixelVisionSDK.Chips
             engine.tileMapChip = null;
         }
 
-        protected enum Layer
-        {
-
-            Sprites,
-            Palettes,
-            Flags
-
-        }
+        
 
     }
 

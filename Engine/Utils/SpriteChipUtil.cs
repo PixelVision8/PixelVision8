@@ -113,8 +113,10 @@ namespace PixelVisionSDK.Utils
                 // Calculate the nex x,y pos
                 PosUtil.CalculatePosition(i, newSpriteWidth, out x, out y);
 
+                //PosUtil.CalculateIndex(x / scale, y / scale, 8, out oldIndex);
+
                 // Convert to the old index
-                PosUtil.CalculateIndex(x / scale, y / scale, 8, out oldIndex);
+                oldIndex = (x / scale) + (y / scale) * 8;
 
                 pixelData[i] = oldData[oldIndex];
             }

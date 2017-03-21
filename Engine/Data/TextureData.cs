@@ -183,7 +183,9 @@ namespace PixelVisionSDK
                 tmpX = i % blockWidth;
                 tmpY = i / blockWidth;
 
-                data[i] = GetPixel(tmpX + x, tmpY + y);
+                var color = GetPixel(tmpX + x, tmpY + y);
+                //if(color != -1)
+                    data[i] = color;
             }
         }
 
@@ -215,7 +217,7 @@ namespace PixelVisionSDK
                     return;
             }
 
-            var index = x + width * y;
+            var index = (x % width) + (width * y);
 
             if (index < 0)
                 return;
@@ -258,7 +260,9 @@ namespace PixelVisionSDK
             
             for (var i = 0; i < total; i++)
             {
-                PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
+                //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
+                tmpX = i % blockWidth;
+                tmpY = i / blockWidth;
 
                 tmpX += x;
                 tmpY += y;
@@ -339,8 +343,11 @@ namespace PixelVisionSDK
             for (var i = 0; i < total; i++)
             {
                 
-                PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
-                
+                //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
+                tmpX = i % blockWidth;
+                tmpY = i / blockWidth;
+
+
                 tmpX += x;
                 tmpY += y;
 

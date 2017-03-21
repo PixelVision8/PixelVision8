@@ -18,8 +18,8 @@ namespace PixelVisionSDK.Chips
 
     public interface ILayer: IInvalidate
     {
-        int scrollX { get; set; }
-        int scrollY { get; set; }
+//        int scrollX { get; set; }
+//        int scrollY { get; set; }
         void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0 );
     }
 

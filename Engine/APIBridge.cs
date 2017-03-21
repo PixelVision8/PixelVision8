@@ -205,11 +205,6 @@ namespace PixelVisionSDK
             chips.soundChip.PlaySound(id, channel);
         }
 
-        public void RebuildScreenBuffer()
-        {
-            chips.screenBufferChip.RefreshScreenBlock();
-        }
-
         public bool ButtonDown(int button, int player = 0)
         {
             var totalButtons = Enum.GetNames(typeof(Buttons)).Length;
@@ -384,22 +379,38 @@ namespace PixelVisionSDK
             return pixelData;
         }
 
-        // Buffer Drawing API
-        public virtual void DrawScreenBuffer()
+        public void RebuildScreenBuffer()
         {
-            chips.displayChip.CopyScreenBlockBuffer();
+            chips.screenBufferChip.RebuildScreenBuffer();
         }
 
-        public virtual void DrawTilemap(int startCol, int startRow, int columns, int rows, int offsetX = 0, int offsetY = 0)
+        // Buffer Drawing API
+        public virtual void DrawScreenBuffer(int x = 0, int y = 0, int width = -1, int height = -1, int offsetX = 0, int offsetY = 0)
+        {
+            if (width == -1)
+            {
+                width = displayWidth;
+            }
+
+            if (height == -1)
+            {
+                height = displayHeight;
+            }
+
+            chips.displayChip.DrawScreenBuffer(x, y, width, height, offsetX, offsetY);
+            //chips.displayChip.CopyScreenBlockBuffer();
+        }
+
+        public virtual void DrawTilemap(int startCol = 0, int startRow = 0, int columns = -1, int rows = -1, int offsetX = 0, int offsetY = 0)
         {
             chips.displayChip.DrawTilemap(startCol, startRow, columns, rows, offsetX, offsetY);
         }
 
         public void DrawTileToBuffer(int spriteID, int column, int row, int colorOffset = 0)
         {
-            chips.spriteChip.ReadSpriteAt(spriteID, tmpSpriteData);
-
-            DrawBufferData(tmpSpriteData, column * spriteWidth, row * spriteHeight, spriteWidth, spriteHeight);
+//            chips.spriteChip.ReadSpriteAt(spriteID, tmpSpriteData);
+//
+//            DrawBufferData(tmpSpriteData, column * spriteWidth, row * spriteHeight, spriteWidth, spriteHeight);
         }
 
         public void DrawTilesToBuffer(int[] ids, int column, int row, int columns, int colorOffset = 0)
@@ -408,47 +419,65 @@ namespace PixelVisionSDK
 
             //Debug.Log("Draw "+ids.Length + " sprites.");
 
-            var total = ids.Length;
-
-            for (var i = 0; i < total; i++)
-            {
-                var id = Convert.ToInt32(ids[i]);
-                if (id > -1)
-                {
-                    var newX = MathUtil.FloorToInt(i % columns) + column;
-                    var newY = MathUtil.FloorToInt(i / columns) + row;
-
-                    DrawTileToBuffer(id, newX, newY, 0);
-                }
-            }
+//            var total = ids.Length;
+//
+//            for (var i = 0; i < total; i++)
+//            {
+//                var id = Convert.ToInt32(ids[i]);
+//                if (id > -1)
+//                {
+//                    var newX = MathUtil.FloorToInt(i % columns) + column;
+//                    var newY = MathUtil.FloorToInt(i / columns) + row;
+//
+//                    DrawTileToBuffer(id, newX, newY, 0);
+//                }
+//            }
         }
 
         public void DrawTextBoxToBuffer(string text, int witdh, int column, int row, string fontName = "Default",
             int letterSpacing = 0, bool wholeWords = false)
         {
-            text = wholeWords ? FontChip.WordWrap(text, witdh) : FontChip.Split(text, witdh);
-
-            DrawFontToBuffer(text, column, row, fontName, letterSpacing);
+//            text = wholeWords ? FontChip.WordWrap(text, witdh) : FontChip.Split(text, witdh);
+//
+//            DrawFontToBuffer(text, column, row, fontName, letterSpacing);
         }
 
         public void DrawBufferData(int[] pixelData, int x, int y, int width, int height)
         {
-            chips.screenBufferChip.UpdatePixelDataAt(x, y, width, height, pixelData);
+//            chips.screenBufferChip.UpdatePixelDataAt(x, y, width, height, pixelData);
         }
 
 
         public void DrawFontToBuffer(string text, int column, int row, string fontName = "Default", int letterSpacing = 0, int offset = 0)
         {
             //int[] pixels;
-            int width;
-            int height;
+//            int width;
+//            int height;
+//
+//            chips.fontChip.ConvertTextToPixelData(text, ref tmpPixelData, out width, out height, fontName, letterSpacing, offset);
+//
+//            var x = column;
+//            var y = row;
+//
+//            chips.screenBufferChip.MergePixelDataAt(x, y, width, height, tmpPixelData);
+        }
 
-            chips.fontChip.ConvertTextToPixelData(text, ref tmpPixelData, out width, out height, fontName, letterSpacing, offset);
+        public void DrawFontTiles(string text, int column, int row, string fontName = "Default", int offset = 0)
+        {
+            var spriteIDs = chips.fontChip.ConvertTextToSprites(text, fontName);
 
-            var x = column;
-            var y = row;
+            var total = spriteIDs.Length;
 
-            chips.screenBufferChip.MergePixelDataAt(x, y, width, height, tmpPixelData);
+            var tilemap = chips.tileMapChip;
+            int c, r;
+            for (int i = 0; i < total; i++)
+            {
+                c = column + i;
+                r = row;
+                tilemap.UpdateSpriteAt(c, r, spriteIDs[i]);
+                tilemap.UpdatePaletteAt(c, r, offset);
+            }
+            
         }
     }
 }

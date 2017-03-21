@@ -306,5 +306,34 @@ namespace PixelVisionSDK.Chips
 
             return list.ToArray();
         }
+
+        internal int[] ConvertTextToSprites(string text, string fontName = "Default")
+        {
+            var total = text.Length;
+
+            var spriteIDs = new int[total];
+
+            char character;
+            var charOffset = 32;
+            int spriteID, index;
+            var fontMap = fonts[fontName];
+            var totalCharacters = fontMap.Length;
+
+            for (int i = 0; i < total; i++)
+            {
+                character = text[i];
+                index = Convert.ToInt32(character) - charOffset;
+                spriteID = -1;
+
+                if (index < totalCharacters)
+                {
+                    spriteID = fontMap[index];
+                }
+
+                spriteIDs[i] = spriteID;
+            }
+
+            return spriteIDs;
+        }
     }
 }

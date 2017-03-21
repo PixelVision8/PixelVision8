@@ -16,8 +16,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using PixelVisionSDK.Utils;
-using UnityEngine.WSA;
 
 namespace PixelVisionSDK.Chips
 {
@@ -32,7 +32,15 @@ namespace PixelVisionSDK.Chips
         protected int _scrollY;
         protected int _width = 256;
         protected ILayer[] backgroundLayer = new ILayer[0];
-        protected bool clearFlag;
+        protected bool _clearFlag;
+
+        public bool autoClear;
+
+        protected bool clearFlag
+        {
+            get { return autoClear ? autoClear : clearFlag; }
+            set { _clearFlag = value; }
+        }
         protected bool copyScreenBuffer;
         protected int currentSprites;
         protected List<DrawRequest> drawRequestPool = new List<DrawRequest>();
@@ -45,6 +53,23 @@ namespace PixelVisionSDK.Chips
         protected int[] tmpBufferData;
         protected int[] tmpDisplayData = new int[0];
         protected int[] tmpTileData = new int[0];
+        protected DrawRequest tilemapDrawRequest;
+        protected DrawRequest screenBufferDrawRequest;
+
+        protected int _overscanX;
+        protected int _overscanY;
+
+        public int overscaneX
+        {
+            get { return _overscanX * 8; }
+            protected set { _overscanX = value; }
+        }
+
+        public int overscaneY
+        {
+            get { return _overscanY * 8; }
+            protected set { _overscanY = value; }
+        }
 
         /// <summary>
         ///     The width of the area to sample from in the ScreenBufferChip. If
@@ -167,103 +192,167 @@ namespace PixelVisionSDK.Chips
             get { return engine.colorChip != null ? engine.colorChip.backgroundColor : -1; }
         }
 
+        public void DrawTilemap(int startCol, int startRow, int columns, int rows, int offsetX = 0, int offsetY = 0)
+        {
+            drawTilemapFlag = true;
+
+            if (tilemapDrawRequest == null)
+                tilemapDrawRequest = new DrawRequest();
+
+            var tileWidth = tilemapChip.tileWidth;
+            var tileHeight = tilemapChip.tileHeight;
+
+            // Convert tile width and height to pixel width and height
+            tilemapDrawRequest.width = columns * tileWidth;
+            tilemapDrawRequest.height = rows * tileHeight;
+
+            tilemapDrawRequest.x = startCol * tileWidth;
+            tilemapDrawRequest.y = _height - tilemapDrawRequest.height - (startRow * tileHeight);
+
+            tilemapDrawRequest.offsetX = offsetX;
+            tilemapDrawRequest.offsetY = _height - tilemapDrawRequest.height - offsetY;
+
+        }
+
+        public int[] displayPixels = new int[0];
+        private int[] cachedTilemapPixels = new int[0];
+
         /// <summary>
         /// </summary>
         public void Draw()
         {
             // TODO need to render sprites under background
+            int x, y, index;
+            var bgColor = backgroundColor;
+            int colorID;
 
-            // At the beginning of the draw call, see if the texture should be cleared
-            if (clearFlag)
+            int mapWidth = tilemapChip.realWidth;
+            int mapHeight = tilemapChip.realHeight;
+            int width = _width;
+            int tileColor;
+            var totalMapPixels = cachedTilemapPixels.Length;
+
+            if (tilemapChip.invalid)
             {
-                if (clearDrawRequest != null)
+                UnityEngine.Debug.Log("Tilemap Invalid");
+                
+                tilemapChip.ReadPixelData(mapWidth, mapHeight, ref cachedTilemapPixels);
+            }
+
+            for (int i = 0; i < totalPixels; i++)
+            {
+               
+                // Calculate current display x,y position
+                x = (i % width) + scrollX; // TODO if we don't repeat this it draws matching pixels off by 1 on Y axis?
+                y = (i / width) + scrollY;
+
+                // Repeat X
+                x = (int) (x - Math.Floor(x / (float)mapWidth) * mapWidth);
+                y = (int) (y - Math.Floor(y / (float)mapHeight) * mapHeight);
+
+                // Calculate current tilemap index based on x,y
+                index = x + y * mapWidth;
+
+                tileColor = index > -1 && index < totalMapPixels ? cachedTilemapPixels[index] : - 1;
+
+                if (tileColor > -1)
                 {
-                    var totalPixels = width * height;
-                    var pixels = new int[totalPixels];
-
-                    var color = clearDrawRequest.transparent;
-
-                    for (int i = 0; i < totalPixels; i++)
-                    {
-                        pixels[i] = color;
-                    }
-
-                    clearDrawRequest.pixelData = pixels;
-
-                    textureData.SetPixels(clearDrawRequest.x, clearDrawRequest.y, clearDrawRequest.width, clearDrawRequest.height, pixels);
+                    colorID = tileColor;
                 }
                 else
                 {
-                    textureData.Clear(backgroundColor);
-                }
-                
-                clearFlag = false;
-            }
-
-            if (copyScreenBuffer)
-            {
-
-                // Update the scroll position
-                bufferChip.scrollX = scrollX;
-                bufferChip.scrollY = scrollY;
-
-                // Test to see if the buffer chip has been invalidated
-                if (bufferChip.invalid)
-                {
-
-                    // Copy out the new pixel data
-                    bufferChip.ReadPixelData(width, height, ref tmpBufferData);
-
-                    // Reset the invalidation since we got the latest pixel data
-                    bufferChip.ResetValidation();
+                    colorID = bgColor;
                 }
 
-                // Copy all the buffer pixel data over into the display's texture data.
-                textureData.MergePixels(0, 0, width, height, tmpBufferData, false, backgroundColor);
-
-
-                // Reset the copy buffer flag
-                copyScreenBuffer = false;
+                displayPixels[i] = colorID;
             }
 
-            
-
-
-            if (drawTilemapFlag)
-            {
-
-                tilemapChip.scrollX = scrollX;
-                tilemapChip.scrollY = scrollY;
-
-                var sC = tilemapDrawRequest.x;
-                var sR = tilemapDrawRequest.y;
-                var tmpWidth = tilemapDrawRequest.width;
-                var tmpHeight = tilemapDrawRequest.height;
-
-                if (tilemapChip.invalid)
-                {
-                    tilemapChip.ReadPixelData(tmpWidth, tmpHeight, ref tmpTileData, sC, sR);
-
-
-                    tilemapChip.ResetValidation();
-                }
-
-                textureData.MergePixels(tilemapDrawRequest.offsetX, tilemapDrawRequest.offsetY, tmpWidth, tmpHeight, tmpTileData);
-
-                drawTilemapFlag = false;
-            }
-
-            
-
-            //var draws = drawRequests; // TODO need to use linq to find the order
-
-            // TODO render sprites above the background
             var total = drawRequests.Count;
             for (var i = 0; i < total; i++)
             {
                 var draw = drawRequests[i];
-                draw.MergePixelData(textureData);
+                draw.DrawPixels(ref displayPixels, width, height);
             }
+
+            //            // At the beginning of the draw call, see if the texture should be cleared
+            //            if (clearFlag)
+            //            {
+            //                if (clearDrawRequest != null)
+            //                {
+            //
+            //                    var color = clearDrawRequest.transparent;
+            //
+            //                    for (int i = 0; i < totalPixels; i++)
+            //                    {
+            //                        displayPixels[i] = color;
+            //                    }
+            //
+            //                    clearDrawRequest.pixelData = displayPixels;
+            //
+            //                    textureData.SetPixels(clearDrawRequest.x, clearDrawRequest.y, clearDrawRequest.width, clearDrawRequest.height, displayPixels);
+            //                }
+            //                else
+            //                {
+            //                    textureData.Clear(backgroundColor);
+            //                }
+            //                
+            //                clearFlag = false;
+            //            }
+            //
+            //            // TODO adding check for screen buffer flag to not break legacy games that don't call draw tilemap
+            //            if (drawTilemapFlag || copyScreenBuffer)
+            //            {
+            //
+            //                if (tilemapDrawRequest == null)
+            //                {
+            //                    tilemapDrawRequest = new DrawRequest();
+            //                    tilemapDrawRequest.width = width;
+            //                    tilemapDrawRequest.height = height;
+            //                }
+            //
+            //                var tmpWidth = tilemapDrawRequest.width;
+            //                var tmpHeight = tilemapDrawRequest.height;
+            //
+            //                //UnityEngine.Debug.Log("scrollX " + scrollX);
+            //                tilemapChip.ReadPixelData(tmpWidth, tmpHeight, ref tmpTileData, tilemapDrawRequest.x + scrollX, tilemapDrawRequest.y + scrollY);
+            //
+            //                textureData.MergePixels(tilemapDrawRequest.offsetX, tilemapDrawRequest.offsetY, tmpWidth, tmpHeight, tmpTileData);
+            //
+            //                drawTilemapFlag = false;
+            //            }
+            //
+            //            if (copyScreenBuffer)
+            //            {
+            //                
+            //                // Update the scroll position
+            //                bufferChip.scrollX = scrollX;
+            //                bufferChip.scrollY = scrollY;
+            //
+            //                // Test to see if the buffer chip has been invalidated
+            //                if (bufferChip.invalid)
+            //                {
+            //
+            //                    // Copy out the new pixel data
+            //                    bufferChip.ReadPixelData(screenBufferDrawRequest.width, screenBufferDrawRequest.height, ref tmpBufferData, screenBufferDrawRequest.x, screenBufferDrawRequest.y);
+            //
+            //                    // Reset the invalidation since we got the latest pixel data
+            //                    bufferChip.ResetValidation();
+            //                }
+            //
+            //                // Copy all the buffer pixel data over into the display's texture data.
+            //                textureData.MergePixels(screenBufferDrawRequest.offsetX, screenBufferDrawRequest.y, width, height, tmpBufferData);
+            //
+            //                // Reset the copy buffer flag
+            //                copyScreenBuffer = false;
+            //            }
+            //
+            //            // TODO render sprites above the background
+            //            var total = drawRequests.Count;
+            //            for (var i = 0; i < total; i++)
+            //            {
+            //                var draw = drawRequests[i];
+            //                draw.MergePixelData(textureData);
+            //            }
 
             ResetDrawCalls();
         }
@@ -381,6 +470,8 @@ namespace PixelVisionSDK.Chips
             }
         }
 
+        private int totalPixels = 0;
+
         /// <summary>
         ///     Changes the resolution of the display.
         /// </summary>
@@ -391,31 +482,33 @@ namespace PixelVisionSDK.Chips
             _width = width;
             _height = height;
 
+            totalPixels = _width * _height;
+
             // Resize data structures
             textureData.Resize(_width, _height);
 
-            tmpBufferData = new int[_width * _height];
-            tmpDisplayData = new int[_width * _height];
+            tmpBufferData = new int[totalPixels];
+            tmpDisplayData = new int[totalPixels];
+
+            Array.Resize(ref displayPixels, totalPixels);
         }
 
-        protected DrawRequest tilemapDrawRequest;
+        
 
-        public void DrawTilemap(int startCol, int startRow, int columns, int rows, int offsetX = 0, int offsetY = 0)
+        
+        public void DrawScreenBuffer(int x, int y, int width, int height, int offsetX = 0, int offsetY = 0)
         {
-            drawTilemapFlag = true;
+            copyScreenBuffer = true;
 
-            if(tilemapDrawRequest == null)
-                tilemapDrawRequest = new DrawRequest();
+            if (screenBufferDrawRequest == null)
+                screenBufferDrawRequest = new DrawRequest();
 
-            var tileWidth = tilemapChip.tileWidth;
-            var tileHeight = tilemapChip.tileHeight;
-
-            tilemapDrawRequest.x = startCol * tileWidth;
-            tilemapDrawRequest.y = startRow * tileHeight;
-            tilemapDrawRequest.width = columns * tileWidth;
-            tilemapDrawRequest.height = rows * tileHeight;
-            tilemapDrawRequest.offsetX = offsetX;
-            tilemapDrawRequest.offsetY = _height - tilemapDrawRequest.height - offsetY;
+            screenBufferDrawRequest.x = x;
+            screenBufferDrawRequest.y = y;
+            screenBufferDrawRequest.width = width;
+            screenBufferDrawRequest.height = height;
+            screenBufferDrawRequest.offsetX = offsetX;
+            screenBufferDrawRequest.offsetY = _height - height - offsetY;
 
         }
 
@@ -453,8 +546,16 @@ namespace PixelVisionSDK.Chips
             engine.displayChip = null;
         }
 
+//        protected int lastSpriteCount = 0;
+
         public void ResetDrawCalls()
         {
+//            if (lastSpriteCount != currentSprites)
+//            {
+//                UnityEngine.Debug.Log("currentSprites " + currentSprites);
+//                lastSpriteCount = currentSprites;
+//            }
+
             currentSprites = 0;
 
             // Reset all draw requests and pools

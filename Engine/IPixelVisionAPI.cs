@@ -170,6 +170,8 @@ namespace PixelVisionSDK
         /// <param name="offset"></param>
         void DrawFont(string text, int x, int y, string fontName = "Default", int letterSpacing = 0, int offset = 0);
 
+        void DrawFontTiles(string text, int column, int row, string fontName = "Default", int offset = 0);
+
         // Buffer Drawing API
         /// <summary>
         ///     Draws a tile to the screen buffer. The buffer represents the
@@ -363,9 +365,9 @@ namespace PixelVisionSDK
         ///     port width and height as well as scroll x and y offsets to calculate
         ///     what is rendered.
         /// </summary>
-        void DrawScreenBuffer();
+        void DrawScreenBuffer(int x = 0, int y = 0, int width = -1, int height = -1, int offsetX = 0, int offsetY = 0);
 
-        void DrawTilemap(int startCol, int startRow, int columns, int rows, int offsetX = 0, int offsetY = 0);
+        void DrawTilemap(int startCol = 0, int startRow = 0, int columns = -1, int rows = -1, int offsetX = 0, int offsetY = 0);
 
         /// <summary>
         ///     Rebuilds the screen buffer from the tile map. This rendered the

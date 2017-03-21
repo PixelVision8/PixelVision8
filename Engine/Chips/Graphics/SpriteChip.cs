@@ -17,7 +17,6 @@
 using System;
 using System.Linq;
 using PixelVisionSDK.Utils;
-using UnityEditor;
 
 namespace PixelVisionSDK.Chips
 {

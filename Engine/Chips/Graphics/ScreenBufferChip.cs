@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 // 
 
+using System;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
@@ -28,7 +29,10 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class ScreenBufferChip : AbstractChip, ILayer
     {
-        
+
+        protected int[] tilemapData = new int[0];
+
+
         protected int[] tmpPixelData;
 
         protected TextureData tmpTextureData = new TextureData(1, 1);
@@ -109,12 +113,18 @@ namespace PixelVisionSDK.Chips
         ///     expensive method, so only call it when a game is loading or you have
         ///     a break in the action.
         /// </summary>
-        public void RefreshScreenBlock()
+        public void RebuildScreenBuffer()
         {
-            if (engine.tileMapChip == null)
-                return;
+            
+            tmpTextureData.Resize(engine.tileMapChip.realWidth, engine.tileMapChip.realHeight);
 
-            engine.tileMapChip.ConvertToTextureData(tmpTextureData);
+//            Array.Resize(ref tmpTextureData, engine.displayChip.width * engine.displayChip.height);
+//
+//
+//            if (engine.tileMapChip == null)
+//                return;
+//
+//            engine.tileMapChip.ConvertToTextureData(tmpTextureData);
 
             Invalidate();
         }
@@ -234,8 +244,19 @@ namespace PixelVisionSDK.Chips
         /// <param name="offsetY"></param>
         public void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0)
         {
+//            var tilemapChip = engine.tileMapChip;
+//
+//            if (tilemapChip.invalid)
+//            {
+//                UnityEngine.Debug.Log("Read Tilemap " + width +" x "+ height);
+//                engine.tileMapChip.ReadPixelData(width, height, ref pixelData);
+//            }
+
+            //UnityEngine.Debug.Log("Rebuild ScreenBuffer");
+
             var tmpScrollY = tmpTextureData.height - height - scrollY;
             tmpTextureData.GetPixels(scrollX + offsetX, tmpScrollY + offsetY, width, height, ref pixelData);
+
         }
 
         /// <summary>
