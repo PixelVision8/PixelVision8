@@ -23,14 +23,13 @@ namespace PixelVisionSDK
     {
 
         protected int[] _pixelData = new int[0];
-        public int height;
         public bool masked = true;
         public int order;
         public int transparent = -1;
-        public int width;
-
         public int x;
         public int y;
+        public int width;
+        public int height;
         public int offsetX;
         public int offsetY;
 
@@ -47,11 +46,11 @@ namespace PixelVisionSDK
                 Array.Copy(value, _pixelData, totalPixels);
             }
         }
-
-        public virtual void MergePixelData(TextureData target)
-        {
-            target.MergePixels(x, y, width, height, pixelData, masked, transparent);
-        }
+//
+//        public virtual void MergePixelData(TextureData target)
+//        {
+//            target.MergePixels(x, y, width, height, pixelData, masked, transparent);
+//        }
 
         public void DrawPixels(ref int[] pixelData, int destWidth, int destHeight )
         {

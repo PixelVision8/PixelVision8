@@ -38,7 +38,7 @@ namespace PixelVisionSDK.Chips
 
         protected bool clearFlag
         {
-            get { return autoClear ? autoClear : clearFlag; }
+            get { return autoClear ? autoClear : _clearFlag; }
             set { _clearFlag = value; }
         }
         protected bool copyScreenBuffer;
@@ -224,13 +224,45 @@ namespace PixelVisionSDK.Chips
             // TODO need to render sprites under background
             int x, y, index;
             var bgColor = backgroundColor;
-            int colorID;
+            int colorID = -1;
 
             int mapWidth = tilemapChip.realWidth;
             int mapHeight = tilemapChip.realHeight;
             int width = _width;
             int tileColor;
             var totalMapPixels = cachedTilemapPixels.Length;
+
+            var tmX = -1;
+            var tmY = -1;
+            var tmW = -1;
+            var tmH = -1;
+
+            if (tilemapDrawRequest != null)
+            {
+                tmX = tilemapDrawRequest.x;
+                tmY = tilemapDrawRequest.y;
+                tmW = tilemapDrawRequest.x + tilemapDrawRequest.width;
+                tmH = tilemapDrawRequest.y + tilemapDrawRequest.height;
+            }
+
+            var clX = -1;
+            var clY = -1;
+            var clW = clearFlag ? width : -1;
+            var clH = clearFlag ? height : -1;
+
+            // Reset clear flag
+            clearFlag = false;
+
+            if (clearDrawRequest != null)
+            {
+                clX = clearDrawRequest.x;
+                clY = clearDrawRequest.y;
+                clW = clearDrawRequest.x + clearDrawRequest.width;
+                clH = clearDrawRequest.y + clearDrawRequest.height;
+            }
+
+            var tilemapViewport = true;
+            var clearViewport = false;
 
             if (tilemapChip.invalid)
             {
@@ -239,12 +271,19 @@ namespace PixelVisionSDK.Chips
                 tilemapChip.ReadPixelData(mapWidth, mapHeight, ref cachedTilemapPixels);
             }
 
+            var setPixel = false;
             for (int i = 0; i < totalPixels; i++)
             {
                
                 // Calculate current display x,y position
-                x = (i % width) + scrollX; // TODO if we don't repeat this it draws matching pixels off by 1 on Y axis?
-                y = (i / width) + scrollY;
+                x = (i % width); // TODO if we don't repeat this it draws matching pixels off by 1 on Y axis?
+                y = (i / width);
+
+                tilemapViewport = (x >= tmX && x <= tmW && y >= tmY && y <= tmH);
+                clearViewport = (x >= clX && x <= clW && y >= clY && y <= clH);
+
+                x += scrollX;
+                y += scrollY;
 
                 // Repeat X
                 x = (int) (x - Math.Floor(x / (float)mapWidth) * mapWidth);
@@ -253,18 +292,39 @@ namespace PixelVisionSDK.Chips
                 // Calculate current tilemap index based on x,y
                 index = x + y * mapWidth;
 
-                tileColor = index > -1 && index < totalMapPixels ? cachedTilemapPixels[index] : - 1;
-
-                if (tileColor > -1)
+                if (clearViewport)
                 {
-                    colorID = tileColor;
+                    colorID = backgroundColor;
+                    setPixel = true;
                 }
                 else
                 {
-                    colorID = bgColor;
+                    setPixel = false;
                 }
 
-                displayPixels[i] = colorID;
+                if (tilemapViewport)
+                {
+                    tileColor = index > -1 && index < totalMapPixels ? cachedTilemapPixels[index] : -1;
+                
+                    if (tileColor > -1)
+                    {
+                        colorID = tileColor;
+                        setPixel = true;
+                    }
+                    
+                }
+//                else if (clearViewport)
+//                {
+//                    colorID = backgroundColor;
+//                    setPixel = true;
+//                }
+//                else
+//                {
+//                    setPixel = false;
+//                }
+                
+                if(setPixel)
+                    displayPixels[i] = colorID;
             }
 
             var total = drawRequests.Count;
@@ -373,6 +433,7 @@ namespace PixelVisionSDK.Chips
             //textureData.Clear(engine.screenBufferChip != null ? engine.screenBufferChip.backgroundColor : 0);
         }
 
+        
         public void ClearArea(int x, int y, int width, int height, int color = -1)
         {
             clearFlag = true;

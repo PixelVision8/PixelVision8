@@ -397,8 +397,8 @@ namespace PixelVisionSDK
                 height = displayHeight;
             }
 
-            chips.displayChip.DrawScreenBuffer(x, y, width, height, offsetX, offsetY);
-            //chips.displayChip.CopyScreenBlockBuffer();
+            chips.displayChip.Clear();
+            chips.displayChip.DrawTilemap(0, 0, MathUtil.FloorToInt((float)width / spriteWidth), MathUtil.FloorToInt((float)height / spriteHeight));
         }
 
         public virtual void DrawTilemap(int startCol = 0, int startRow = 0, int columns = -1, int rows = -1, int offsetX = 0, int offsetY = 0)
@@ -408,30 +408,28 @@ namespace PixelVisionSDK
 
         public void DrawTileToBuffer(int spriteID, int column, int row, int colorOffset = 0)
         {
-//            chips.spriteChip.ReadSpriteAt(spriteID, tmpSpriteData);
-//
-//            DrawBufferData(tmpSpriteData, column * spriteWidth, row * spriteHeight, spriteWidth, spriteHeight);
+            //TODO need to deprecate this method
+            chips.tileMapChip.UpdateSpriteAt(column, row, spriteID);
+            chips.tileMapChip.UpdatePaletteAt(column, row, colorOffset);
         }
 
         public void DrawTilesToBuffer(int[] ids, int column, int row, int columns, int colorOffset = 0)
         {
-            //TODO need to allow flipping and match the draw sprite API
+            //TODO need to deprecate this method
 
-            //Debug.Log("Draw "+ids.Length + " sprites.");
+            var total = ids.Length;
 
-//            var total = ids.Length;
-//
-//            for (var i = 0; i < total; i++)
-//            {
-//                var id = Convert.ToInt32(ids[i]);
-//                if (id > -1)
-//                {
-//                    var newX = MathUtil.FloorToInt(i % columns) + column;
-//                    var newY = MathUtil.FloorToInt(i / columns) + row;
-//
-//                    DrawTileToBuffer(id, newX, newY, 0);
-//                }
-//            }
+            for (var i = 0; i < total; i++)
+            {
+                var id = ids[i];
+                if (id > -1)
+                {
+                    var newX = MathUtil.FloorToInt(i % columns) + column;
+                    var newY = MathUtil.FloorToInt(i / columns) + row;
+
+                    DrawTileToBuffer(id, newX, newY, colorOffset);
+                }
+            }
         }
 
         public void DrawTextBoxToBuffer(string text, int witdh, int column, int row, string fontName = "Default",
