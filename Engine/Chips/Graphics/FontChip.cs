@@ -199,7 +199,7 @@ namespace PixelVisionSDK.Chips
                     var spriteID = Convert.ToInt32(character) - charOffset;
 
                     //Debug.Log("Char " + character + " " + spriteID);
-                    spriteChip.ReadSpriteAt(fontMap[spriteID], tmpData, offset);
+                    spriteChip.ReadSpriteAt(fontMap[spriteID], tmpData);
 
                     textureData.MergePixels(j * (cWidth + letterSpacing), i * cHeight, cWidth, cHeight, tmpData);
                 }

@@ -27,7 +27,7 @@ namespace PixelVisionSDK.Utils
         ///     the x,y position and the <paramref name="width" /> of the array.
         /// </summary>
         /// <param name="x">The x position as an int. 0 is the far left.</param>
-        /// <param name="y">The y poistion as an int. 0 is the top.</param>
+        /// <param name="y">The y position as an int. 0 is the top.</param>
         /// <param name="width">The width of the 1D array.</param>
         /// <param name="index">The returned value of the index.</param>
         public static void CalculateIndex(int x, int y, int width, out int index)

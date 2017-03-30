@@ -256,7 +256,6 @@ namespace PixelVisionSDK.Chips
             _texture.Clear();
         }
 
-        
 
         /// <summary>
         ///     Returns an array of ints that represent a sprite. Each
@@ -268,10 +267,9 @@ namespace PixelVisionSDK.Chips
         ///     sprite.
         /// </param>
         /// <param name="pixelData"></param>
-        /// <param name="offset"></param>
         /// <returns>
         /// </returns>
-        public void ReadSpriteAt(int index, int[] pixelData, int offset = 0)
+        public void ReadSpriteAt(int index, int[] pixelData)
         {
             var cachedSprite = pixelDataCache[index];
 
@@ -289,15 +287,8 @@ namespace PixelVisionSDK.Chips
                 cachedSprite = pixelDataCache[index];
             }
 
-            if (offset > 0)
-            {
-                for (var i = 0; i < totalSpritePixels; i++)
-                    cachedSprite[i] += offset;
-            }
-
             Array.Copy(cachedSprite, pixelData, totalSpritePixels);
 
-            //SpriteChipUtil.CutOutSpriteFromTextureData(index, _texture, width, height, pixelData);
         }
 
         /// <summary>

@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using PixelVisionSDK.Utils;
+using Debug = UnityEngine.Debug;
 
 namespace PixelVisionSDK.Chips
 {
@@ -25,36 +26,27 @@ namespace PixelVisionSDK.Chips
     public class DisplayChip : AbstractChip, IDraw
     {
 
-        protected readonly TextureData textureData = new TextureData(0, 0);
         protected int _height = 240;
         protected int _maxSpriteCount = 64;
         protected int _scrollX;
         protected int _scrollY;
         protected int _width = 256;
-        protected ILayer[] backgroundLayer = new ILayer[0];
         protected bool _clearFlag;
 
         public bool autoClear;
 
         protected bool clearFlag
         {
-            get { return autoClear ? autoClear : _clearFlag; }
+            get { return autoClear || _clearFlag; }
             set { _clearFlag = value; }
         }
+
         protected bool copyScreenBuffer;
         protected int currentSprites;
         protected List<DrawRequest> drawRequestPool = new List<DrawRequest>();
         protected List<DrawRequest> drawRequests = new List<DrawRequest>();
         protected bool drawTilemapFlag;
-        protected int maxLayer = 1;
-        protected int minLayer = -1;
-        protected int offscreenPaddingX = 8;
-        protected int offscreenPaddingY = 8;
-        protected int[] tmpBufferData;
-        protected int[] tmpDisplayData = new int[0];
-        protected int[] tmpTileData = new int[0];
         protected DrawRequest tilemapDrawRequest;
-        protected DrawRequest screenBufferDrawRequest;
 
         protected int _overscanX;
         protected int _overscanY;
@@ -138,11 +130,7 @@ namespace PixelVisionSDK.Chips
         ///     the end of the display it will appear on the opposite side. There is
         ///     a slight performance hit for this.
         /// </summary>
-        public bool wrapMode
-        {
-            get { return textureData.wrapMode; }
-            set { textureData.wrapMode = value; }
-        }
+        public bool wrapMode { get; set; }
 
         /// <summary>
         ///     Returns the display's <see cref="width" />
@@ -163,24 +151,6 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         /// </summary>
         public bool paused { get; set; }
-
-        /// <summary>
-        ///     Returns the raw pixel data that represents what the display should look
-        ///     like. Use this data to render to the display.
-        /// </summary>
-        public int[] displayPixelData
-        {
-            get
-            {
-                textureData.GetPixels(0, 0, width, height, ref tmpDisplayData);
-                return tmpDisplayData; //textureData.GetPixels();
-            }
-        }
-
-        protected ScreenBufferChip bufferChip
-        {
-            get { return engine.screenBufferChip; }
-        }
 
         protected TileMapChip tilemapChip
         {
@@ -206,24 +176,29 @@ namespace PixelVisionSDK.Chips
             tilemapDrawRequest.width = columns * tileWidth;
             tilemapDrawRequest.height = rows * tileHeight;
 
-            tilemapDrawRequest.x = startCol * tileWidth;
-            tilemapDrawRequest.y = _height - tilemapDrawRequest.height - (startRow * tileHeight);
+            tilemapDrawRequest.x = 0;//tartCol * tileWidth;
+            tilemapDrawRequest.y = 0;//_height - tilemapDrawRequest.height - (startRow * tileHeight);
 
-            tilemapDrawRequest.offsetX = offsetX;
-            tilemapDrawRequest.offsetY = _height - tilemapDrawRequest.height - offsetY;
+            tilemapDrawRequest.offsetX = 0;//ffsetX;
+            tilemapDrawRequest.offsetY = 0;//_height - tilemapDrawRequest.height - offsetY;
 
         }
 
         public int[] displayPixels = new int[0];
+        public int[] displayMask = new int[0];
         private int[] cachedTilemapPixels = new int[0];
+        
+        protected int clLeft = -1;
+        protected int clTop = -1;
+        protected int clRight = -1;
+        protected int clBottom = -1;
 
         /// <summary>
         /// </summary>
         public void Draw()
         {
             // TODO need to render sprites under background
-            int x, y, index;
-            var bgColor = backgroundColor;
+            int displayX, displayY, mapX, mapY, mapPixelIndex;
             int colorID = -1;
 
             int mapWidth = tilemapChip.realWidth;
@@ -232,6 +207,26 @@ namespace PixelVisionSDK.Chips
             int tileColor;
             var totalMapPixels = cachedTilemapPixels.Length;
 
+            // Get the current clear flag value
+            var clearViewport = clearFlag;
+
+            // Set up the clear boundaries
+            var clLeft = -1;
+            var clTop = -1;
+            var clRight = -1;
+            var clBottom = -1;
+
+            // If Clear view port is true, resize the bounds to the clear draw request
+            if (clearViewport)
+            {
+                clLeft = clearDrawRequest.x.Clamp(0, _width);
+                clTop = clearDrawRequest.y.Clamp(0, _width);
+                clRight = (clLeft + clearDrawRequest.width).Clamp(0, _width);
+                clBottom = (clTop + clearDrawRequest.height).Clamp(0, _width);
+                //Debug.Log("Clear Bounds clLeft " + clLeft + " clTop " + clTop + " clRight " + clRight + " clBottom " + clBottom);
+            }
+
+            // Set up the map position
             var tmX = -1;
             var tmY = -1;
             var tmW = -1;
@@ -241,60 +236,72 @@ namespace PixelVisionSDK.Chips
             {
                 tmX = tilemapDrawRequest.x;
                 tmY = tilemapDrawRequest.y;
-                tmW = tilemapDrawRequest.x + tilemapDrawRequest.width;
-                tmH = tilemapDrawRequest.y + tilemapDrawRequest.height;
-            }
-
-            var clX = -1;
-            var clY = -1;
-            var clW = clearFlag ? width : -1;
-            var clH = clearFlag ? height : -1;
-
-            // Reset clear flag
-            clearFlag = false;
-
-            if (clearDrawRequest != null)
-            {
-                clX = clearDrawRequest.x;
-                clY = clearDrawRequest.y;
-                clW = clearDrawRequest.x + clearDrawRequest.width;
-                clH = clearDrawRequest.y + clearDrawRequest.height;
+                tmW = tilemapDrawRequest.width;
+                tmH = tilemapDrawRequest.height;
             }
 
             var tilemapViewport = true;
-            var clearViewport = false;
 
             if (tilemapChip.invalid)
             {
-                UnityEngine.Debug.Log("Tilemap Invalid");
-                
                 tilemapChip.ReadPixelData(mapWidth, mapHeight, ref cachedTilemapPixels);
             }
+            
+            bool setPixel;
+            //var offsetY = height + scrollY;
 
-            var setPixel = false;
-            for (int i = 0; i < totalPixels; i++)
+            var total = totalPixels;
+
+            // Setup the display mask
+            if (displayMask.Length != total)
+            {
+                Array.Resize(ref displayMask, total);
+            }
+
+            //Debug.Log("Offset Y " + offsetY);
+            for (int i = 0; i < total; i++)
             {
                
                 // Calculate current display x,y position
-                x = (i % width); // TODO if we don't repeat this it draws matching pixels off by 1 on Y axis?
-                y = (i / width);
+                displayX = (i % width); // TODO if we don't repeat this it draws matching pixels off by 1 on Y axis?
+                displayY = (i / width);
 
-                tilemapViewport = (x >= tmX && x <= tmW && y >= tmY && y <= tmH);
-                clearViewport = (x >= clX && x <= clW && y >= clY && y <= clH);
+                // Calculate map position
+                mapX = displayX;
+                mapY = displayY;
 
-                x += scrollX;
-                y += scrollY;
+                // Flip Y for display to draw clear correctly
+                displayY = height - displayY - 1;
 
-                // Repeat X
-                x = (int) (x - Math.Floor(x / (float)mapWidth) * mapWidth);
-                y = (int) (y - Math.Floor(y / (float)mapHeight) * mapHeight);
+                // Calculate if x,y is within the clear boundaries
+                clearViewport = (displayX >= clLeft && displayX <= clRight && displayY >= clTop && displayY <= clBottom);
+
+                // Offset x,y position for scroll
+                //x += scrollX;
+                //
+                //y -= scrollY;//scrollY - mapHeight;// - height; // TODO need to make sure this is really working correctly
+
+                // Adjust for wrap mode
+                if (wrapMode)
+                {
+
+                    // Repeat X
+                    mapX = (int)(mapX - Math.Floor(mapX / (float)mapWidth) * mapWidth);
+
+                    // Repeat Y
+                    mapY = (int)(mapY - Math.Floor(mapY / (float)mapHeight) * mapHeight);
+
+                }
+
+                // Detect if x,y is within the tilemap
+                tilemapViewport = (displayX >= tmX && displayX <= tmW && displayY >= tmY && displayY <= tmH);
 
                 // Calculate current tilemap index based on x,y
-                index = x + y * mapWidth;
+                mapPixelIndex = mapX + mapY * mapWidth;
 
                 if (clearViewport)
                 {
-                    colorID = backgroundColor;
+                    colorID = -1;
                     setPixel = true;
                 }
                 else
@@ -304,7 +311,7 @@ namespace PixelVisionSDK.Chips
 
                 if (tilemapViewport)
                 {
-                    tileColor = index > -1 && index < totalMapPixels ? cachedTilemapPixels[index] : -1;
+                    tileColor = mapPixelIndex > -1 && mapPixelIndex < totalMapPixels ? cachedTilemapPixels[mapPixelIndex] : -1;
                 
                     if (tileColor > -1)
                     {
@@ -313,107 +320,29 @@ namespace PixelVisionSDK.Chips
                     }
                     
                 }
-//                else if (clearViewport)
-//                {
-//                    colorID = backgroundColor;
-//                    setPixel = true;
-//                }
-//                else
-//                {
-//                    setPixel = false;
-//                }
-                
-                if(setPixel)
+
+                if (setPixel)
+                {
                     displayPixels[i] = colorID;
+                }
+
+                // Always set the color to the mask. -1 will be empty pixels, everything else is ignored
+                displayMask[i] = colorID;
+
             }
 
-            var total = drawRequests.Count;
-            for (var i = 0; i < total; i++)
+            // Loop through all draw requests
+            var totalDR = drawRequests.Count;
+            for (var i = 0; i < totalDR; i++)
             {
                 var draw = drawRequests[i];
-                draw.DrawPixels(ref displayPixels, width, height);
+                draw.DrawPixels(ref displayPixels, width, height, wrapMode, displayMask);
             }
 
-            //            // At the beginning of the draw call, see if the texture should be cleared
-            //            if (clearFlag)
-            //            {
-            //                if (clearDrawRequest != null)
-            //                {
-            //
-            //                    var color = clearDrawRequest.transparent;
-            //
-            //                    for (int i = 0; i < totalPixels; i++)
-            //                    {
-            //                        displayPixels[i] = color;
-            //                    }
-            //
-            //                    clearDrawRequest.pixelData = displayPixels;
-            //
-            //                    textureData.SetPixels(clearDrawRequest.x, clearDrawRequest.y, clearDrawRequest.width, clearDrawRequest.height, displayPixels);
-            //                }
-            //                else
-            //                {
-            //                    textureData.Clear(backgroundColor);
-            //                }
-            //                
-            //                clearFlag = false;
-            //            }
-            //
-            //            // TODO adding check for screen buffer flag to not break legacy games that don't call draw tilemap
-            //            if (drawTilemapFlag || copyScreenBuffer)
-            //            {
-            //
-            //                if (tilemapDrawRequest == null)
-            //                {
-            //                    tilemapDrawRequest = new DrawRequest();
-            //                    tilemapDrawRequest.width = width;
-            //                    tilemapDrawRequest.height = height;
-            //                }
-            //
-            //                var tmpWidth = tilemapDrawRequest.width;
-            //                var tmpHeight = tilemapDrawRequest.height;
-            //
-            //                //UnityEngine.Debug.Log("scrollX " + scrollX);
-            //                tilemapChip.ReadPixelData(tmpWidth, tmpHeight, ref tmpTileData, tilemapDrawRequest.x + scrollX, tilemapDrawRequest.y + scrollY);
-            //
-            //                textureData.MergePixels(tilemapDrawRequest.offsetX, tilemapDrawRequest.offsetY, tmpWidth, tmpHeight, tmpTileData);
-            //
-            //                drawTilemapFlag = false;
-            //            }
-            //
-            //            if (copyScreenBuffer)
-            //            {
-            //                
-            //                // Update the scroll position
-            //                bufferChip.scrollX = scrollX;
-            //                bufferChip.scrollY = scrollY;
-            //
-            //                // Test to see if the buffer chip has been invalidated
-            //                if (bufferChip.invalid)
-            //                {
-            //
-            //                    // Copy out the new pixel data
-            //                    bufferChip.ReadPixelData(screenBufferDrawRequest.width, screenBufferDrawRequest.height, ref tmpBufferData, screenBufferDrawRequest.x, screenBufferDrawRequest.y);
-            //
-            //                    // Reset the invalidation since we got the latest pixel data
-            //                    bufferChip.ResetValidation();
-            //                }
-            //
-            //                // Copy all the buffer pixel data over into the display's texture data.
-            //                textureData.MergePixels(screenBufferDrawRequest.offsetX, screenBufferDrawRequest.y, width, height, tmpBufferData);
-            //
-            //                // Reset the copy buffer flag
-            //                copyScreenBuffer = false;
-            //            }
-            //
-            //            // TODO render sprites above the background
-            //            var total = drawRequests.Count;
-            //            for (var i = 0; i < total; i++)
-            //            {
-            //                var draw = drawRequests[i];
-            //                draw.MergePixelData(textureData);
-            //            }
+            // Reset clear flag
+            clearFlag = false;
 
+            // Reset Draw Requests after they have been processed
             ResetDrawCalls();
         }
 
@@ -425,18 +354,19 @@ namespace PixelVisionSDK.Chips
         ///     screenBufferData or us 0 if no <see cref="ScreenBufferChip" /> is
         ///     found.
         /// </summary>
-        public void Clear()
-        {
-            clearFlag = true;
+        //        public void Clear()
+        //        {
+        //            clearFlag = true;
+        //
+        //            // TODO this is a strange dependency I need to look into. Throws an error on startup
+        //            //textureData.Clear(engine.screenBufferChip != null ? engine.screenBufferChip.backgroundColor : 0);
+        //        }
 
-            // TODO this is a strange dependency I need to look into. Throws an error on startup
-            //textureData.Clear(engine.screenBufferChip != null ? engine.screenBufferChip.backgroundColor : 0);
-        }
-
-        
-        public void ClearArea(int x, int y, int width, int height, int color = -1)
+        /// <summary>
+        ///     This triggers the renderer to clear an area of the display.
+        /// </summary>
+        public void ClearArea(int x, int y, int blockWidth, int blockHeight, int color = -1)
         {
-            clearFlag = true;
 
             // Create new clear draw request instance
             if (clearDrawRequest == null)
@@ -444,31 +374,22 @@ namespace PixelVisionSDK.Chips
 
             // Configure the clear draw request
             clearDrawRequest.x = x;
-            clearDrawRequest.y = _height - height - y;
-            clearDrawRequest.width = width;
-            clearDrawRequest.height = height;
-            clearDrawRequest.transparent = color == -1 ? backgroundColor : color;
+            clearDrawRequest.y = y;
+            clearDrawRequest.width = blockWidth;
+            clearDrawRequest.height = blockHeight;
+            clearDrawRequest.transparent = color;
 
-        }
+            clearFlag = true;
 
-        public void CopyScreenBlockBuffer()
-        {
-
-            // If there is no buffer chip then ignore the request
-            if (bufferChip == null)
-                return;
-
-            // Set the copy buffer flag
-            copyScreenBuffer = true;
-
+            //Debug.Log("Clear Request " + clearDrawRequest.x + " "+ clearDrawRequest.y + " "+ clearDrawRequest.width + " "+ clearDrawRequest.height + " " + clearFlag);
         }
 
         /// <summary>
-        ///     Resets the display chip and clears all of the pixel data.
+        ///     Resets the display chip and calls clear for the next render pass.
         /// </summary>
         public override void Reset()
         {
-            Clear();
+            ClearArea(0, 0, width, height);
         }
 
         /// <summary>
@@ -495,7 +416,8 @@ namespace PixelVisionSDK.Chips
         /// <param name="flipY"></param>
         /// <param name="layerOrder"></param>
         /// <param name="masked"></param>
-        public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layerOrder = 0, bool masked = false)
+        /// <param name="colorOffset"></param>
+        public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layerOrder = 0, bool masked = false, int colorOffset = 0)
         {
             var drawCalls = width / engine.spriteChip.width * (height / engine.spriteChip.height);
 
@@ -525,7 +447,10 @@ namespace PixelVisionSDK.Chips
                 draw.width = width;
                 draw.height = height;
                 draw.pixelData = pixelData;
+                draw.order = layerOrder;
+                draw.colorOffset = colorOffset;
                 drawRequests.Add(draw);
+                
 
                 //texturedata.MergePixels(x, y, width, height, pixelData);
             }
@@ -545,31 +470,14 @@ namespace PixelVisionSDK.Chips
 
             totalPixels = _width * _height;
 
-            // Resize data structures
-            textureData.Resize(_width, _height);
-
-            tmpBufferData = new int[totalPixels];
-            tmpDisplayData = new int[totalPixels];
-
             Array.Resize(ref displayPixels, totalPixels);
-        }
+            Array.Resize(ref displayMask, totalPixels);
 
-        
-
-        
-        public void DrawScreenBuffer(int x, int y, int width, int height, int offsetX = 0, int offsetY = 0)
-        {
-            copyScreenBuffer = true;
-
-            if (screenBufferDrawRequest == null)
-                screenBufferDrawRequest = new DrawRequest();
-
-            screenBufferDrawRequest.x = x;
-            screenBufferDrawRequest.y = y;
-            screenBufferDrawRequest.width = width;
-            screenBufferDrawRequest.height = height;
-            screenBufferDrawRequest.offsetX = offsetX;
-            screenBufferDrawRequest.offsetY = _height - height - offsetY;
+            // Clear display mask
+            for (int i = 0; i < totalPixels; i++)
+            {
+                displayMask[i] = -1;
+            }
 
         }
 
@@ -607,15 +515,8 @@ namespace PixelVisionSDK.Chips
             engine.displayChip = null;
         }
 
-//        protected int lastSpriteCount = 0;
-
         public void ResetDrawCalls()
         {
-//            if (lastSpriteCount != currentSprites)
-//            {
-//                UnityEngine.Debug.Log("currentSprites " + currentSprites);
-//                lastSpriteCount = currentSprites;
-//            }
 
             currentSprites = 0;
 

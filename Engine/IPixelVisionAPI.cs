@@ -321,8 +321,8 @@ namespace PixelVisionSDK
         ///     Defines whether the transparent data should be ignored or filled in
         ///     with the background color.
         /// </param>
-        void DrawPixelData(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY,
-            int layerOrder = 0, bool masked = false);
+        /// <param name="colorOffset"></param>
+        void DrawPixelData(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layerOrder = 0, bool masked = false, int colorOffset = 0);
 
         /// <summary>
         ///     This draws pixel data directly to the screen buffer. It's the raw

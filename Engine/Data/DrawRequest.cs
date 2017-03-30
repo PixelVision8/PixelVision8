@@ -32,6 +32,7 @@ namespace PixelVisionSDK
         public int height;
         public int offsetX;
         public int offsetY;
+        public int colorOffset = 0;
 
         public int[] pixelData
         {
@@ -52,7 +53,7 @@ namespace PixelVisionSDK
 //            target.MergePixels(x, y, width, height, pixelData, masked, transparent);
 //        }
 
-        public void DrawPixels(ref int[] pixelData, int destWidth, int destHeight )
+        public void DrawPixels(ref int[] destPixelData, int destWidth, int destHeight, bool wrap = true, int[] mask = null)
         {
             var total = width * height;
             int srcX;
@@ -61,7 +62,7 @@ namespace PixelVisionSDK
             var tmpWidth = width;
             int destIndex;
             int colorID = -1;
-            int totalPixels = pixelData.Length;
+            int totalPixels = destPixelData.Length;
             
             for (int i = 0; i < total; i++)
             {
@@ -70,8 +71,16 @@ namespace PixelVisionSDK
                 srcY = i / tmpWidth + y;
 
                 // Wrap Pixels
-                //srcX = (int)(srcX - Math.Floor(x / (float)destWidth) * destWidth);
-                srcY = (int)(srcY - Math.Floor(y / (float)destHeight) * destHeight);
+                if (wrap)
+                {
+                    srcX = (int) (srcX - Math.Floor(x / (float) destWidth) * destWidth);
+                    srcY = (int) (srcY - Math.Floor(y / (float) destHeight) * destHeight);
+                }
+                else
+                {
+                    if (srcX > destWidth || srcX < 0 || srcY < 0 || srcY > destHeight)
+                        return;
+                }
 
                 destIndex = srcX + srcY * destWidth;
 
@@ -80,7 +89,30 @@ namespace PixelVisionSDK
                     colorID = _pixelData[i];
 
                     if (colorID > -1)
-                        pixelData[destIndex] = _pixelData[i];
+                    {
+                        if (colorOffset > 0)
+                        {
+                            colorID += colorOffset;
+                        }
+
+                        if (order > 0)
+                            destPixelData[destIndex] = colorID;
+                        else if (order == -1)
+                        {
+                            if (mask != null)
+                            {
+                                if (mask[destIndex] == -1)
+                                    destPixelData[destIndex] = colorID;
+                            }
+                            else
+                            {
+                                if (destPixelData[destIndex] == -1)
+                                    destPixelData[destIndex] = colorID;
+                            }
+                            
+                        }
+                    }
+                            
                 }
 
                 

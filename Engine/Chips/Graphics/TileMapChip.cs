@@ -29,34 +29,26 @@ namespace PixelVisionSDK.Chips
     public class TileMapChip : AbstractChip, ILayer
     {
 
-        /// <summary>
-        ///     Total number of collision flags the chip will support.
-        ///     The default value is 16.
-        /// </summary>
-        public int totalFlags = 16;
-
         protected int _columns;
         protected int _rows;
         protected int _scrollX;
         protected int _scrollY;
         protected SpriteChip _spriteChip;
         protected int _totalLayers = -1;
-        protected TextureData[] layers;
+        public TextureData cachedTileMap = new TextureData(0, 0);
+        protected int[][] layers;
         protected int offscreenPadding = 0;
+        protected int[] tiles = new int[0];
         protected int tmpIndex;
-        protected int[] tmpPaletteIDs = new int[0];
         protected int[] tmpPixelData = new int[8 * 8];
-        protected int[] tmpSpriteIDs = new int[0];
         protected int tmpX;
         protected int tmpY;
 
-        protected enum Layer
-        {
-            Sprites,
-            Palettes,
-            Flags,
-            Invalid
-        }
+        /// <summary>
+        ///     Total number of collision flags the chip will support.
+        ///     The default value is 16.
+        /// </summary>
+        public int totalFlags = 16;
 
         protected SpriteChip spriteChip
         {
@@ -134,97 +126,81 @@ namespace PixelVisionSDK.Chips
         public void ResetValidation()
         {
             invalid = false;
+            var invalidLayer = layers[(int) Layer.Invalid];
+            Array.Clear(invalidLayer, 0, total);
         }
-
-
-//        public int scrollX
-//        {
-//            get { return _scrollX; }
-//
-//            set
-//            {
-//                if (_scrollX == value)
-//                    return;
-//
-//                //                if (value > realWidth)
-//                //                    value = MathUtil.Repeat(value, realWidth);
-//
-//                _scrollX = MathUtil.Repeat(value, realWidth);
-//
-//                //Invalidate();
-//            }
-//        }
-//
-//        public int scrollY
-//        {
-//            get { return _scrollY; }
-//
-//            set
-//            {
-//                if (_scrollY == value)
-//                    return;
-//
-//                //                if (value > realHeight)
-//                //                    value = MathUtil.Repeat(value, realHeight);
-//
-//                _scrollY = MathUtil.Repeat(value, realHeight);
-//
-//                //Invalidate();
-//            }
-//        }
-
-        public TextureData cachedTileMap = new TextureData(0, 0);
-        protected int[] tiles = new int[0];
 
         public void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0)
         {
+            // Test if we need to rebuild the cached tilemap
             if (invalid)
             {
-                UnityEngine.Debug.Log("Rebuild Tilemap Cache");
 
+                // Make sure the cached tilemap is the correct width and height
                 if (cachedTileMap.width != realWidth || cachedTileMap.height != realHeight)
-                {
                     cachedTileMap.Resize(realWidth, realHeight);
-                }
 
-                var startCol = 0;
-                var startRow = 0;
-                var totalCols = columns;
-                var totalRows = rows;
+                // Get a local reference to the layers we need
+                var tmpSpriteIDs = layers[(int) Layer.Sprites];
+                var tmpPaletteIDs = layers[(int) Layer.Palettes];
+                var invalideLayer = layers[(int) Layer.Invalid];
 
-                layers[(int)Layer.Sprites].GetPixels(startCol, startRow, totalCols, totalRows, ref tmpSpriteIDs);
-                layers[(int)Layer.Palettes].GetPixels(startCol, startRow, totalCols, totalRows, ref tmpPaletteIDs);
-
+                // Create tmp variables for loop
                 int x, y, spriteID;
 
-                var totalTiles = tmpSpriteIDs.Length;
+                // Get a local reference to the total number of tiles
+                var totalTiles = total;
 
+                // Loop through all of the tiles in the tilemap
                 for (var i = 0; i < totalTiles; i++)
-                {
-                    spriteID = tmpSpriteIDs[i];
-
-                    if (spriteID > -1)
+                    if (invalideLayer[i] != 0)
                     {
+                        // Get the sprite id
+                        spriteID = tmpSpriteIDs[i];
 
-                        spriteChip.ReadSpriteAt(spriteID, tmpPixelData, tmpPaletteIDs[spriteID]);
+                        // Make sure there is a sprite
+                        if (spriteID > -1)
+                        {
 
-                        //PosUtil.CalculatePosition(i, columns, out x, out y);
-                        x = i % columns;
-                        y = i / columns;
-                        x *= tileWidth;
-                        y = rows - 1 - y;
-                        y *= tileHeight;
+                            // Read the sprite data
+                            spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
 
-                        cachedTileMap.SetPixels(x, y, tileWidth, tileHeight, tmpPixelData);
+                            // Calculate the new position of the tile;
+                            x = i % columns * tileWidth;
+                            y = i / columns;
+                            //x *= tileWidth;
+                            y = (rows - 1 - y) * tileHeight;
+                            //y *= tileHeight;
+
+                            // Draw the pixel data into the cachedTilemap
+                            cachedTileMap.SetPixels(x, y, tileWidth, tileHeight, tmpPixelData, tmpPaletteIDs[i]);
+                        }
                     }
-                }
-                
+
+                // Reset the invalidation state
                 ResetValidation();
             }
 
+            // Return the requested pixel data
             cachedTileMap.GetPixels(offsetX, offsetY, width, height, ref pixelData);
 
+        }
 
+        protected void RebuildCache()
+        {
+
+        }
+
+        public void CopyPixelData(ref int[] pixelData, int width, int height, int offsetX = 0, int offsetY = 0)
+        {
+            
+        }
+
+
+        public void Invalidate(int index)
+        {
+            Invalidate();
+            layers[(int) Layer.Invalid][index] = -1;
         }
 
         /// <summary>
@@ -264,19 +240,20 @@ namespace PixelVisionSDK.Chips
 
         protected int ReadDataAt(int id, int column, int row)
         {
-            return layers[id].GetPixel(column, row);
+            var index = column + row * columns;
+            return layers[id][index];
         }
 
         protected void UpdateDataAt(Layer name, int column, int row, int value)
         {
             UpdateDataAt((int) name, column, row, value);
-
         }
 
         protected void UpdateDataAt(int id, int column, int row, int value)
         {
-            layers[id].SetPixel(column, row, value);
-            Invalidate();
+            var index = column + row * columns;
+            layers[id][index] = value;
+            Invalidate(index);
         }
 
         /// <summary>
@@ -339,8 +316,6 @@ namespace PixelVisionSDK.Chips
         public void UpdateSpriteAt(int column, int row, int spriteID)
         {
             UpdateDataAt(Layer.Sprites, column, row, spriteID);
-
-            //layers[(int)Layer.Sprites].UpdateDataAt(column, row, spriteID);
         }
 
         /// <summary>
@@ -361,8 +336,6 @@ namespace PixelVisionSDK.Chips
         public int ReadPaletteAt(int column, int row)
         {
             return ReadDataAt(Layer.Palettes, column, row);
-
-            //return layers[(int)Layer.Palettes].GetDataAt(column, row);
         }
 
         /// <summary>
@@ -382,8 +355,6 @@ namespace PixelVisionSDK.Chips
         public void UpdatePaletteAt(int column, int row, int paletteID)
         {
             UpdateDataAt(Layer.Palettes, column, row, paletteID);
-
-            //layers[(int)Layer.Palettes].UpdateDataAt(column, row, paletteID);
         }
 
         /// <summary>
@@ -402,8 +373,6 @@ namespace PixelVisionSDK.Chips
         public int ReadFlagAt(int column, int row)
         {
             return ReadDataAt(Layer.Flags, column, row);
-
-            //return layers[(int)Layer.Flags].GetDataAt(column, row);
         }
 
         /// <summary>
@@ -421,8 +390,6 @@ namespace PixelVisionSDK.Chips
         public void UpdateFlagAt(int column, int row, int flag)
         {
             UpdateDataAt(Layer.Flags, column, row, flag);
-
-            //layers[(int)Layer.Flags].UpdateDataAt(column, row, flag);
         }
 
         /// <summary>
@@ -450,17 +417,19 @@ namespace PixelVisionSDK.Chips
 
             // Make sure we have the layers we need
             if (layers == null)
-                layers = new TextureData[totalLayers];
+                layers = new int[totalLayers][];
+
+            var totalTiles = total;
 
             // Loop through each data layer and resize it
             for (var i = 0; i < totalLayers; i++)
-            {
                 if (layers[i] == null)
-                    layers[i] = new TextureData(columns, rows);
+                    layers[i] = new int[totalTiles]; // (columns, rows);
                 else
-                    layers[i].Resize(columns, rows);
-            }
+                    Array.Resize(ref layers[i], totalTiles);
 
+            if (clear)
+                Clear();
 
             Invalidate();
 
@@ -475,16 +444,10 @@ namespace PixelVisionSDK.Chips
             // Get the total number of layers we are working with
             var totalLayers = Enum.GetNames(typeof(Layer)).Length;
 
-            // Make sure we have the layers we need
-            if (layers == null)
-                layers = new TextureData[totalLayers];
-
-            // Loop through each data layer and resize it
-            for (var i = 0; i < totalLayers; i++)
-                if (layers[i] == null)
-                    layers[i] = new TextureData(columns, rows, false);
-                else
-                    layers[i].Clear();
+            var totalTiles = total;
+            for (var i = 0; i < totalTiles; i++)
+            for (var j = 0; j < totalLayers; j++)
+                layers[j][i] = -1;
 
             Invalidate();
 
@@ -536,7 +499,15 @@ namespace PixelVisionSDK.Chips
             engine.tileMapChip = null;
         }
 
-        
+        protected enum Layer
+        {
+
+            Sprites,
+            Palettes,
+            Flags,
+            Invalid
+
+        }
 
     }
 

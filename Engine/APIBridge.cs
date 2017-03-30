@@ -144,11 +144,11 @@ namespace PixelVisionSDK
             if (!chips.displayChip.CanDraw())
                 return;
 
-            chips.spriteChip.ReadSpriteAt(id, tmpSpriteData, colorOffset);
+            chips.spriteChip.ReadSpriteAt(id, tmpSpriteData);
 
             var layerOrder = aboveBG ? 1 : -1;
 
-            DrawPixelData(tmpSpriteData, x, y, spriteWidth, spriteHeight, flipH, flipV, true, layerOrder);
+            DrawPixelData(tmpSpriteData, x, y, spriteWidth, spriteHeight, flipH, flipV, true, layerOrder, false, colorOffset);
         }
 
         public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
@@ -186,7 +186,7 @@ namespace PixelVisionSDK
 
         public void Clear()
         {
-            chips.displayChip.Clear();
+            chips.displayChip.ClearArea(0, 0, displayWidth, displayHeight);
         }
 
         public void ClearArea(int x, int y, int width, int height, int color = -1)
@@ -270,10 +270,9 @@ namespace PixelVisionSDK
         }
 
 
-        public void DrawPixelData(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV,
-            bool flipY, int layerOrder = 0, bool masked = false)
+        public void DrawPixelData(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layerOrder = 0, bool masked = false, int colorOffset = 0)
         {
-            chips.displayChip.NewDrawCall(pixelData, x, y, width, height, flipH, flipV, flipY, layerOrder, masked);
+            chips.displayChip.NewDrawCall(pixelData, x, y, width, height, flipH, flipV, flipY, layerOrder, masked, colorOffset);
         }
 
         public int ReadFlagAt(int column, int row)
@@ -397,7 +396,7 @@ namespace PixelVisionSDK
                 height = displayHeight;
             }
 
-            chips.displayChip.Clear();
+            chips.displayChip.ClearArea(0, 0, width, height);
             chips.displayChip.DrawTilemap(0, 0, MathUtil.FloorToInt((float)width / spriteWidth), MathUtil.FloorToInt((float)height / spriteHeight));
         }
 
