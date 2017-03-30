@@ -130,6 +130,21 @@ namespace PixelVisionSDK.Chips
             Array.Clear(invalidLayer, 0, total);
         }
 
+        protected int[] _cachedTilemapPixels = new int[0];
+
+        public int[] cachedTilemapPixels
+        {
+            get
+            {
+                if (invalid)
+                {
+                    ReadPixelData(realWidth, realHeight, ref _cachedTilemapPixels);
+                }
+
+                return _cachedTilemapPixels;
+            }
+        }
+
         public void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0)
         {
             // Test if we need to rebuild the cached tilemap
@@ -185,18 +200,7 @@ namespace PixelVisionSDK.Chips
             cachedTileMap.GetPixels(offsetX, offsetY, width, height, ref pixelData);
 
         }
-
-        protected void RebuildCache()
-        {
-
-        }
-
-        public void CopyPixelData(ref int[] pixelData, int width, int height, int offsetX = 0, int offsetY = 0)
-        {
-            
-        }
-
-
+        
         public void Invalidate(int index)
         {
             Invalidate();

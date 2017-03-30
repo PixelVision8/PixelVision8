@@ -402,7 +402,7 @@ namespace PixelVisionSDK
 
         public virtual void DrawTilemap(int startCol = 0, int startRow = 0, int columns = -1, int rows = -1, int offsetX = 0, int offsetY = 0)
         {
-            chips.displayChip.DrawTilemap(startCol, startRow, columns, rows, offsetX, offsetY);
+            chips.displayChip.DrawTilemap(startCol, startRow, columns, rows);
         }
 
         public void DrawTileToBuffer(int spriteID, int column, int row, int colorOffset = 0)

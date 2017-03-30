@@ -16,9 +16,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using PixelVisionSDK.Utils;
-using Debug = UnityEngine.Debug;
 
 namespace PixelVisionSDK.Chips
 {
@@ -162,13 +160,15 @@ namespace PixelVisionSDK.Chips
             get { return engine.colorChip != null ? engine.colorChip.backgroundColor : -1; }
         }
 
-        public void DrawTilemap(int startCol, int startRow, int columns, int rows, int offsetX = 0, int offsetY = 0)
+        public void DrawTilemap(int x, int y, int columns, int rows)
         {
+            // Set the draw flag to true
             drawTilemapFlag = true;
 
             if (tilemapDrawRequest == null)
                 tilemapDrawRequest = new DrawRequest();
 
+            // Get map's tile size
             var tileWidth = tilemapChip.tileWidth;
             var tileHeight = tilemapChip.tileHeight;
 
@@ -176,17 +176,15 @@ namespace PixelVisionSDK.Chips
             tilemapDrawRequest.width = columns * tileWidth;
             tilemapDrawRequest.height = rows * tileHeight;
 
-            tilemapDrawRequest.x = 0;//tartCol * tileWidth;
-            tilemapDrawRequest.y = 0;//_height - tilemapDrawRequest.height - (startRow * tileHeight);
-
-            tilemapDrawRequest.offsetX = 0;//ffsetX;
-            tilemapDrawRequest.offsetY = 0;//_height - tilemapDrawRequest.height - offsetY;
+            // save the starting x,y position to render the map on the screen
+            tilemapDrawRequest.x = x;
+            tilemapDrawRequest.y = y;
 
         }
 
         public int[] displayPixels = new int[0];
         public int[] displayMask = new int[0];
-        private int[] cachedTilemapPixels = new int[0];
+        //private int[] cachedTilemapPixels = new int[0];
         
         protected int clLeft = -1;
         protected int clTop = -1;
@@ -197,7 +195,6 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public void Draw()
         {
-            // TODO need to render sprites under background
             int displayX, displayY, mapX, mapY, mapPixelIndex;
             int colorID = -1;
 
@@ -205,7 +202,11 @@ namespace PixelVisionSDK.Chips
             int mapHeight = tilemapChip.realHeight;
             int width = _width;
             int tileColor;
-            var totalMapPixels = cachedTilemapPixels.Length;
+
+            // Get a reference to the complete tilemap's cached pixel data;
+            var cachedTilemap = tilemapChip.cachedTilemapPixels;
+
+            var totalMapPixels = cachedTilemap.Length;
 
             // Get the current clear flag value
             var clearViewport = clearFlag;
@@ -226,30 +227,28 @@ namespace PixelVisionSDK.Chips
                 //Debug.Log("Clear Bounds clLeft " + clLeft + " clTop " + clTop + " clRight " + clRight + " clBottom " + clBottom);
             }
 
-            // Set up the map position
-            var tmX = -1;
-            var tmY = -1;
-            var tmW = -1;
-            var tmH = -1;
+            // Flag to tell if we should draw the tilemap
+            var tilemapViewport = false;
 
+            // Set up the map position
+            var tmLeft = -1;
+            var tmTop = -1;
+            var tmRight = -1;
+            var tmBottom = -1;
+
+            // If tilemap draw request exists, configure the coordinates
             if (tilemapDrawRequest != null)
             {
-                tmX = tilemapDrawRequest.x;
-                tmY = tilemapDrawRequest.y;
-                tmW = tilemapDrawRequest.width;
-                tmH = tilemapDrawRequest.height;
-            }
-
-            var tilemapViewport = true;
-
-            if (tilemapChip.invalid)
-            {
-                tilemapChip.ReadPixelData(mapWidth, mapHeight, ref cachedTilemapPixels);
+                tmLeft = tilemapDrawRequest.x.Clamp(0, _width);
+                tmTop = tilemapDrawRequest.y.Clamp(0, _width);
+                tmRight = (tmLeft + tilemapDrawRequest.width).Clamp(0, _width);
+                tmBottom = (tmTop + tilemapDrawRequest.height).Clamp(0, _height);
             }
             
+            // A flag to determine if we need to draw the pixel or not
             bool setPixel;
-            //var offsetY = height + scrollY;
 
+            // Get a local reference to the total number pixels in the display
             var total = totalPixels;
 
             // Setup the display mask
@@ -258,7 +257,11 @@ namespace PixelVisionSDK.Chips
                 Array.Resize(ref displayMask, total);
             }
 
-            //Debug.Log("Offset Y " + offsetY);
+            // Create floats for these values since we use it to repeate later on
+            var mwF = (float) mapWidth;
+            var mhF = (float) mapHeight;
+
+            // Loop through each of the pixels in the display
             for (int i = 0; i < total; i++)
             {
                
@@ -267,38 +270,17 @@ namespace PixelVisionSDK.Chips
                 displayY = (i / width);
 
                 // Calculate map position
-                mapX = displayX;
-                mapY = displayY;
-
+                mapX = (displayX - tmLeft) + scrollX;
+                mapY = displayY + tmTop + (mapHeight - height) - scrollY;
+                
                 // Flip Y for display to draw clear correctly
                 displayY = height - displayY - 1;
 
                 // Calculate if x,y is within the clear boundaries
                 clearViewport = (displayX >= clLeft && displayX <= clRight && displayY >= clTop && displayY <= clBottom);
-
-                // Offset x,y position for scroll
-                //x += scrollX;
-                //
-                //y -= scrollY;//scrollY - mapHeight;// - height; // TODO need to make sure this is really working correctly
-
-                // Adjust for wrap mode
-                if (wrapMode)
-                {
-
-                    // Repeat X
-                    mapX = (int)(mapX - Math.Floor(mapX / (float)mapWidth) * mapWidth);
-
-                    // Repeat Y
-                    mapY = (int)(mapY - Math.Floor(mapY / (float)mapHeight) * mapHeight);
-
-                }
-
-                // Detect if x,y is within the tilemap
-                tilemapViewport = (displayX >= tmX && displayX <= tmW && displayY >= tmY && displayY <= tmH);
-
-                // Calculate current tilemap index based on x,y
-                mapPixelIndex = mapX + mapY * mapWidth;
-
+                tilemapViewport = (displayX >= tmLeft && displayX <= tmRight && displayY >= tmTop && displayY <= tmBottom);
+                
+                // Check to see if we need to clear the display
                 if (clearViewport)
                 {
                     colorID = -1;
@@ -309,10 +291,20 @@ namespace PixelVisionSDK.Chips
                     setPixel = false;
                 }
 
+                // Check to see if we need to draw the tilemap
                 if (tilemapViewport)
                 {
-                    tileColor = mapPixelIndex > -1 && mapPixelIndex < totalMapPixels ? cachedTilemapPixels[mapPixelIndex] : -1;
-                
+                    // Wrap the map's x,y position
+                    mapX = (int)(mapX - Math.Floor(mapX / mwF) * mwF);
+                    mapY = (int)(mapY - Math.Floor(mapY / mhF) * mhF);
+
+                    // Calculate the map pixel index
+                    mapPixelIndex = mapX + mapY * mapWidth;
+                    
+                    // Find the color for the tile's pixel
+                    tileColor = cachedTilemap[mapPixelIndex];
+                    
+                    // If there is a pixel color, set it to the colorID and flag to draw the pixel
                     if (tileColor > -1)
                     {
                         colorID = tileColor;
@@ -321,6 +313,7 @@ namespace PixelVisionSDK.Chips
                     
                 }
 
+                // If there is a pixel to draw, set it
                 if (setPixel)
                 {
                     displayPixels[i] = colorID;
@@ -333,6 +326,7 @@ namespace PixelVisionSDK.Chips
 
             // Loop through all draw requests
             var totalDR = drawRequests.Count;
+
             for (var i = 0; i < totalDR; i++)
             {
                 var draw = drawRequests[i];
