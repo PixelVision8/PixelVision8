@@ -15,6 +15,8 @@
 // 
 
 using System;
+using System.Reflection.Emit;
+using System.Security.Cryptography.X509Certificates;
 using PixelVisionSDK.Chips;
 using PixelVisionSDK.Utils;
 
@@ -240,19 +242,83 @@ namespace PixelVisionSDK
             return chips.controllerChip.GetMouseButton(id);
         }
 
-        
+        public void DrawSpriteText(string text, int x, int y, string fontName = "Default", int colorOffset = 0)
+        {
+            var width = spriteWidth;
+            var nextX = x;
+
+            var spriteIDs = chips.fontChip.ConvertTextToSprites(text, fontName);
+            var total = spriteIDs.Length;
+
+            // Draw each character
+            for (int i = 0; i < total; i++)
+            {
+                DrawSprite(spriteIDs[i], nextX, y, false, false, true, colorOffset);
+                nextX += width;
+            }
+
+        }
+
+        public void DrawTileText(string text, int column, int row, string fontName = "Default", int colorOffset = 0)
+        {
+            
+            var spriteIDs = chips.fontChip.ConvertTextToSprites(text, fontName);
+            var total = spriteIDs.Length;
+
+            // Draw each character as a tile
+            for (int i = 0; i < total; i++)
+            {
+                DrawTile(spriteIDs[i], column + i, row, colorOffset);
+            }
+        }
+
+        public void DrawTileTextBox(string text, int column, int row, int characterWidth, string fontName = "Default", int colorOffset = 0)
+        {
+            text = FontChip.WordWrap(text, characterWidth);
+            var result = text.Split(new[] { "\n", "\r\n" }, StringSplitOptions.None);
+            var total = result.Length;
+            for (int i = 0; i < total; i++)
+            {
+                DrawTileText(result[i], column, row + i, fontName, colorOffset);
+            }
+        }
+
+        public int CalculateTextBoxHeight(string text, int characterWidth)
+        {
+            return FontChip.WordWrap(text, characterWidth).Split(new[] {"\n", "\r\n"}, StringSplitOptions.None).Length;
+        }
+
+        /// <summary>
+        ///     This method allows you to quickly update a Tile's visuals (sprite & color offset) without changing,
+        ///     the flag value.
+        /// </summary>
+        /// <param name="tileID"></param>
+        /// <param name="column"></param>
+        /// <param name="row"></param>
+        /// <param name="colorOffset"></param>
+        public void DrawTile(int tileID, int column, int row, int colorOffset = 0)
+        {
+            chips.tileMapChip.UpdateSpriteAt(column, row, tileID);
+            chips.tileMapChip.UpdatePaletteAt(column, row, colorOffset);
+        }
 
         public void DrawFont(string text, int x, int y, string fontName = "Default", int letterSpacing = 0, int offset = 0)
         {
-            if (chips.fontChip != null)
-            {
-                int width;
-                int height;
-
-                chips.fontChip.ConvertTextToPixelData(text, ref tmpPixelData, out width, out height, fontName, letterSpacing, offset);
-
-                DrawPixelData(tmpPixelData, x, y, width, height, false, false, true);
-            }
+            DrawSpriteText(text, x, y, fontName, offset);
+//            if (chips.fontChip != null)
+//            {
+//                var width = spriteWidth;
+//                var nextX = x;
+//
+//                var spriteIDs = chips.fontChip.ConvertTextToSprites(text, fontName);
+//                var total = spriteIDs.Length;
+//                for (int i = 0; i < total; i++)
+//                {
+//                    DrawSprite(spriteIDs[i], nextX, y, false, false, true, offset);
+//                    nextX += width;
+//                }
+//                
+//            }
         }
 
 
@@ -263,6 +329,12 @@ namespace PixelVisionSDK
 
             DrawFont(text, x, y, fontName, letterSpacing);
         }
+
+//        public void DrawTextBoxTiles(string text, int width, int column, int row, string fontName = "Default", bool wholeWords = true)
+//        {
+//            text = FormatWordWrap(text, width, wholeWords);
+//            var spriteIDs = 
+//        }
 
         public string FormatWordWrap(string text, int witdh, bool wholeWords = false)
         {
@@ -378,10 +450,7 @@ namespace PixelVisionSDK
             return pixelData;
         }
 
-        public void RebuildScreenBuffer()
-        {
-            chips.screenBufferChip.RebuildScreenBuffer();
-        }
+        
 
         // Buffer Drawing API
         public virtual void DrawScreenBuffer(int x = 0, int y = 0, int width = -1, int height = -1, int offsetX = 0, int offsetY = 0)
@@ -403,6 +472,30 @@ namespace PixelVisionSDK
         public virtual void DrawTilemap(int startCol = 0, int startRow = 0, int columns = -1, int rows = -1, int offsetX = 0, int offsetY = 0)
         {
             chips.displayChip.DrawTilemap(startCol, startRow, columns, rows);
+        }
+
+        public void DrawFontTiles(string text, int column, int row, string fontName = "Default", int offset = 0)
+        {
+            var spriteIDs = chips.fontChip.ConvertTextToSprites(text, fontName);
+
+            var total = spriteIDs.Length;
+
+            var tilemap = chips.tileMapChip;
+            int c, r;
+            for (int i = 0; i < total; i++)
+            {
+                c = column + i;
+                r = row;
+                tilemap.UpdateSpriteAt(c, r, spriteIDs[i]);
+                tilemap.UpdatePaletteAt(c, r, offset);
+            }
+
+        }
+
+        // Deprecated Screen Buffer Calls
+        public void RebuildScreenBuffer()
+        {
+            //chips.screenBufferChip.RebuildScreenBuffer();
         }
 
         public void DrawTileToBuffer(int spriteID, int column, int row, int colorOffset = 0)
@@ -459,22 +552,6 @@ namespace PixelVisionSDK
 //            chips.screenBufferChip.MergePixelDataAt(x, y, width, height, tmpPixelData);
         }
 
-        public void DrawFontTiles(string text, int column, int row, string fontName = "Default", int offset = 0)
-        {
-            var spriteIDs = chips.fontChip.ConvertTextToSprites(text, fontName);
-
-            var total = spriteIDs.Length;
-
-            var tilemap = chips.tileMapChip;
-            int c, r;
-            for (int i = 0; i < total; i++)
-            {
-                c = column + i;
-                r = row;
-                tilemap.UpdateSpriteAt(c, r, spriteIDs[i]);
-                tilemap.UpdatePaletteAt(c, r, offset);
-            }
-            
-        }
+        
     }
 }

@@ -15,6 +15,8 @@
 // 
 
 using System;
+using System.Diagnostics;
+using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
@@ -255,7 +257,10 @@ namespace PixelVisionSDK.Chips
 
         protected void UpdateDataAt(int id, int column, int row, int value)
         {
+            if (column >= columns)
+                column = MathUtil.Repeat(column, columns);
             var index = column + row * columns;
+            
             layers[id][index] = value;
             Invalidate(index);
         }
@@ -431,7 +436,7 @@ namespace PixelVisionSDK.Chips
                     layers[i] = new int[totalTiles]; // (columns, rows);
                 else
                     Array.Resize(ref layers[i], totalTiles);
-
+            
             if (clear)
                 Clear();
 

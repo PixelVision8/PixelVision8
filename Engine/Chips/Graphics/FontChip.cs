@@ -28,7 +28,7 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class FontChip : AbstractChip
     {
-        protected const string _newline = "\r\n";
+        public static string newline = "\r\n";
 
         protected Dictionary<string, int[]> fonts = new Dictionary<string, int[]>();
         protected TextureData tmpTextureData = new TextureData(1, 1, false);
@@ -219,12 +219,12 @@ namespace PixelVisionSDK.Chips
             for (pos = 0; pos < text.Length; pos = next)
             {
                 // Find end of line
-                var eol = text.IndexOf(_newline, pos);
+                var eol = text.IndexOf(newline, pos);
 
                 if (eol == -1)
                     next = eol = text.Length;
                 else
-                    next = eol + _newline.Length;
+                    next = eol + newline.Length;
 
                 // Copy this line of text, breaking into smaller lines as needed
                 if (eol > pos)
@@ -236,7 +236,7 @@ namespace PixelVisionSDK.Chips
                             len = BreakLine(text, pos, width);
 
                         sb.Append(text, pos, len);
-                        sb.Append(_newline);
+                        sb.Append(newline);
 
                         // Trim whitespace following break
                         pos += len;
@@ -244,7 +244,7 @@ namespace PixelVisionSDK.Chips
                         while (pos < eol && char.IsWhiteSpace(text[pos]))
                             pos++;
                     } while (eol > pos);
-                else sb.Append(_newline); // Empty line
+                else sb.Append(newline); // Empty line
             }
 
             return sb.ToString();
