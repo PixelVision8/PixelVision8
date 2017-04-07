@@ -149,12 +149,14 @@ namespace PixelVisionSDK
         /// <param name="colorOffset"></param>
         void UpdateTile(int spriteID, int column, int row, int flag = -1, int colorOffset = 0);
 
-        void DrawSpriteText(string text, int x, int y, string fontName = "Default", int colorOffset = 0);
+        void DrawSpriteText(string text, int x, int y, string fontName = "Default", int colorOffset = 0, int spacing = 0);
         void DrawTileText(string text, int column, int row, string fontName = "Default", int colorOffset = 0);
         void DrawTileTextBox(string text, int column, int row, int characterWidth, string fontName = "Default", int colorOffset = 0);
         int CalculateTextBoxHeight(string text, int characterWidth);
 
         void DrawTile(int tileID, int column, int row, int colorOffset = 0);
+
+        void DrawTiles(int[] ids, int column, int row, int columns, int colorOffset = 0);
 
         /// <summary>
         ///     Draws a font to the display as sprites. This is an expensive draw

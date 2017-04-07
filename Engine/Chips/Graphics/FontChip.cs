@@ -316,6 +316,13 @@ namespace PixelVisionSDK.Chips
             char character;
             var charOffset = 32;
             int spriteID, index;
+
+            // Test to make sure font exists
+            if (!fonts.ContainsKey(fontName))
+            {
+                throw new Exception("Font '" + fontName + "' not found.");
+            }
+
             var fontMap = fonts[fontName];
             var totalCharacters = fontMap.Length;
 
@@ -334,6 +341,7 @@ namespace PixelVisionSDK.Chips
             }
 
             return spriteIDs;
+
         }
     }
 }

@@ -247,7 +247,8 @@ namespace PixelVisionSDK.Chips
         protected int ReadDataAt(int id, int column, int row)
         {
             var index = column + row * columns;
-            return layers[id][index];
+            
+            return index > layers[id].Length ? -1 : layers[id][index];
         }
 
         protected void UpdateDataAt(Layer name, int column, int row, int value)

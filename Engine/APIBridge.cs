@@ -242,7 +242,7 @@ namespace PixelVisionSDK
             return chips.controllerChip.GetMouseButton(id);
         }
 
-        public void DrawSpriteText(string text, int x, int y, string fontName = "Default", int colorOffset = 0)
+        public void DrawSpriteText(string text, int x, int y, string fontName = "Default", int colorOffset = 0, int spacing = 0)
         {
             var width = spriteWidth;
             var nextX = x;
@@ -254,7 +254,7 @@ namespace PixelVisionSDK
             for (int i = 0; i < total; i++)
             {
                 DrawSprite(spriteIDs[i], nextX, y, false, false, true, colorOffset);
-                nextX += width;
+                nextX += width + spacing;
             }
 
         }
@@ -302,6 +302,23 @@ namespace PixelVisionSDK
             chips.tileMapChip.UpdatePaletteAt(column, row, colorOffset);
         }
 
+        public void DrawTiles(int[] ids, int column, int row, int columns, int colorOffset = 0)
+        {
+            var total = ids.Length;
+
+            for (var i = 0; i < total; i++)
+            {
+                var id = ids[i];
+                if (id > -1)
+                {
+                    var newX = MathUtil.FloorToInt(i % columns) + column;
+                    var newY = MathUtil.FloorToInt(i / columns) + row;
+
+                    DrawTileToBuffer(id, newX, newY, colorOffset);
+                }
+            }
+        }
+
         public void DrawFont(string text, int x, int y, string fontName = "Default", int letterSpacing = 0, int offset = 0)
         {
             DrawSpriteText(text, x, y, fontName, offset);
@@ -320,7 +337,6 @@ namespace PixelVisionSDK
 //                
 //            }
         }
-
 
         public void DrawTextBox(string text, int witdh, int x, int y, string fontName = "Default", int letterSpacing = 0,
             bool wholeWords = false)
@@ -450,8 +466,6 @@ namespace PixelVisionSDK
             return pixelData;
         }
 
-        
-
         // Buffer Drawing API
         public virtual void DrawScreenBuffer(int x = 0, int y = 0, int width = -1, int height = -1, int offsetX = 0, int offsetY = 0)
         {
@@ -465,8 +479,8 @@ namespace PixelVisionSDK
                 height = displayHeight;
             }
 
-            chips.displayChip.ClearArea(0, 0, width, height);
-            chips.displayChip.DrawTilemap(0, 0, MathUtil.FloorToInt((float)width / spriteWidth), MathUtil.FloorToInt((float)height / spriteHeight));
+            chips.displayChip.ClearArea(offsetX, offsetY, width, height);
+            chips.displayChip.DrawTilemap(offsetX, offsetY, MathUtil.FloorToInt((float)width / spriteWidth), MathUtil.FloorToInt((float)height / spriteHeight));
         }
 
         public virtual void DrawTilemap(int startCol = 0, int startRow = 0, int columns = -1, int rows = -1, int offsetX = 0, int offsetY = 0)
