@@ -178,7 +178,7 @@ namespace PixelVisionSDK.Chips
 
         public void UpdateColorAt(int index, string color)
         {
-            if (index > _colors.Length || index < 0)
+            if (index >= _colors.Length || index < 0)
                 return;
 
             // Make sure that all colors are uppercase

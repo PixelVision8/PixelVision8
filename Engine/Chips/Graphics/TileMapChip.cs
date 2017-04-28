@@ -15,8 +15,9 @@
 // 
 
 using System;
-using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -37,7 +38,7 @@ namespace PixelVisionSDK.Chips
         protected int _scrollY;
         protected SpriteChip _spriteChip;
         protected int _totalLayers = -1;
-        public TextureData cachedTileMap = new TextureData(0, 0);
+        protected TextureData cachedTileMap = new TextureData(0, 0);
         protected int[][] layers;
         protected int offscreenPadding = 0;
         protected int[] tiles = new int[0];
@@ -125,6 +126,21 @@ namespace PixelVisionSDK.Chips
             invalid = true;
         }
 
+        public void InvalidateTileID(int id)
+        {
+            var tileLayer = layers[(int)Layer.Sprites];
+            var invalidLayer = layers[(int)Layer.Invalid];
+
+            var total = tileLayer.Length;
+            for (int i = 0; i < total; i++)
+            {
+                if (tileLayer[i] == id)
+                    invalidLayer[i] = -1;
+            }
+
+            Invalidate();
+        }
+
         public void ResetValidation()
         {
             invalid = false;
@@ -132,19 +148,42 @@ namespace PixelVisionSDK.Chips
             Array.Clear(invalidLayer, 0, total);
         }
 
-        protected int[] _cachedTilemapPixels = new int[0];
+//        protected int[] _cachedTilemapPixels = new int[0];
+//
+//        public int[] cachedTilemapPixels
+//        {
+//            get
+//            {
+//                if (invalid)
+//                {
+//                    ReadPixelData(realWidth, realHeight, ref _cachedTilemapPixels);
+//                }
+//
+//                return _cachedTilemapPixels;
+//            }
+//        }
 
-        public int[] cachedTilemapPixels
+        public void ReadCachedTilemap(ref int[] pixels)
         {
-            get
+            var total = realWidth * realHeight;
+            
+            if (pixels.Length != total)
             {
-                if (invalid)
-                {
-                    ReadPixelData(realWidth, realHeight, ref _cachedTilemapPixels);
-                }
-
-                return _cachedTilemapPixels;
+                Array.Resize(ref pixels, total);
+                Invalidate();
             }
+
+            if (invalid)
+            {
+                ReadPixelData(realWidth, realHeight, ref pixels);
+            }
+
+        }
+
+        public void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight, int colorOffset = 0)
+        {
+            cachedTileMap.SetPixels(x, y, blockWidth, blockHeight, pixels, colorOffset);
+            Invalidate();
         }
 
         public void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0)

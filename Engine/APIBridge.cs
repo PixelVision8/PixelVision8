@@ -15,8 +15,6 @@
 // 
 
 using System;
-using System.Reflection.Emit;
-using System.Security.Cryptography.X509Certificates;
 using PixelVisionSDK.Chips;
 using PixelVisionSDK.Utils;
 
@@ -38,6 +36,7 @@ namespace PixelVisionSDK
         private readonly int[] tmpSpriteData = new int[8 * 8];
         private int[] tmpPixelData = new int[0];
         protected bool _paused;
+
 
         /// <summary>
         /// </summary>
@@ -148,9 +147,11 @@ namespace PixelVisionSDK
 
             chips.spriteChip.ReadSpriteAt(id, tmpSpriteData);
 
-            var layerOrder = aboveBG ? 1 : -1;
+            
 
-            DrawPixelData(tmpSpriteData, x, y, spriteWidth, spriteHeight, flipH, flipV, true, layerOrder, false, colorOffset);
+            //chips.displayChip.NewDrawCall(tmpSpriteData, x, y, spriteWidth, spriteHeight, flipH, flipV, true, layerOrder, false, colorOffset);
+
+            DrawSpritePixelData(tmpSpriteData, x, y, spriteWidth, spriteHeight, flipH, flipV, aboveBG, colorOffset);
         }
 
         public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
@@ -167,7 +168,6 @@ namespace PixelVisionSDK
                 var height = MathUtil.CeilToInt(total / width);
                 SpriteChipUtil.FlipSpriteData(ref ids, width, height, flipH, flipV);
             }
-
 
             for (var i = 0; i < total; i++)
             {
@@ -314,29 +314,12 @@ namespace PixelVisionSDK
                     var newX = MathUtil.FloorToInt(i % columns) + column;
                     var newY = MathUtil.FloorToInt(i / columns) + row;
 
-                    DrawTileToBuffer(id, newX, newY, colorOffset);
+                    DrawTile(id, newX, newY, colorOffset);
                 }
             }
         }
 
-        public void DrawFont(string text, int x, int y, string fontName = "Default", int letterSpacing = 0, int offset = 0)
-        {
-            DrawSpriteText(text, x, y, fontName, offset);
-//            if (chips.fontChip != null)
-//            {
-//                var width = spriteWidth;
-//                var nextX = x;
-//
-//                var spriteIDs = chips.fontChip.ConvertTextToSprites(text, fontName);
-//                var total = spriteIDs.Length;
-//                for (int i = 0; i < total; i++)
-//                {
-//                    DrawSprite(spriteIDs[i], nextX, y, false, false, true, offset);
-//                    nextX += width;
-//                }
-//                
-//            }
-        }
+        
 
         public void DrawTextBox(string text, int witdh, int x, int y, string fontName = "Default", int letterSpacing = 0,
             bool wholeWords = false)
@@ -357,10 +340,20 @@ namespace PixelVisionSDK
             return wholeWords ? FontChip.WordWrap(text, witdh) : FontChip.Split(text, witdh);
         }
 
+        
 
-        public void DrawPixelData(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layerOrder = 0, bool masked = false, int colorOffset = 0)
+        public void DrawSpritePixelData(int[] pixelData, int x, int y, int width, int height, bool flipH = false, bool flipV = false, bool aboveBG = true, int colorOffset = 0)
         {
-            chips.displayChip.NewDrawCall(pixelData, x, y, width, height, flipH, flipV, flipY, layerOrder, masked, colorOffset);
+            var layerOrder = aboveBG ? 1 : -1;
+
+            y += height - chips.spriteChip.height;
+
+            chips.displayChip.NewDrawCall(pixelData, x, y, width, height, flipH, flipV, true, layerOrder, false, colorOffset);
+        }
+
+        public void DrawTilePixelData(int[] pixelData, int x, int y, int width, int height)
+        {
+            chips.tileMapChip.UpdateCachedTilemap(pixelData, x, y, width, height);
         }
 
         public int ReadFlagAt(int column, int row)
@@ -381,6 +374,24 @@ namespace PixelVisionSDK
         public bool GetKeyUp(int key)
         {
             return chips.controllerChip.GetKeyUp(key);
+        }
+
+        public int[] ReadSpriteAt(int id)
+        {
+            chips.spriteChip.ReadSpriteAt(id, tmpSpriteData);
+
+            return tmpSpriteData;
+        }
+
+        public void UpdateSpriteAt(int id, int[] pixels)
+        {
+            chips.spriteChip.UpdateSpriteAt(id, pixels);
+            chips.tileMapChip.InvalidateTileID(id);
+        }
+
+        public int ReadSpritesInRam()
+        {
+            return chips.spriteChip.spritesInRam;
         }
 
         public int[] SpritesToRawData(int[] ids, int width)
@@ -506,9 +517,17 @@ namespace PixelVisionSDK
 
         }
 
-        // Deprecated Screen Buffer Calls
+        // Deprecated These Methods
+
+        public void DrawFont(string text, int x, int y, string fontName = "Default", int letterSpacing = 0, int offset = 0)
+        {
+            DrawSpriteText(text, x, y, fontName, offset, letterSpacing);
+        }
+
         public void RebuildScreenBuffer()
         {
+            //TODO this should clear the cache completely?
+            chips.tileMapChip.Invalidate();
             //chips.screenBufferChip.RebuildScreenBuffer();
         }
 
@@ -548,13 +567,13 @@ namespace PixelVisionSDK
 
         public void DrawBufferData(int[] pixelData, int x, int y, int width, int height)
         {
+            chips.tileMapChip.UpdateCachedTilemap(pixelData, x, y, width, height);
+            //chips.tileMapChip.cachedTileMap.SetPixels(x, y, width, height, pixelData);
 //            chips.screenBufferChip.UpdatePixelDataAt(x, y, width, height, pixelData);
         }
-
-
+        
         public void DrawFontToBuffer(string text, int column, int row, string fontName = "Default", int letterSpacing = 0, int offset = 0)
         {
-            //int[] pixels;
 //            int width;
 //            int height;
 //
@@ -563,9 +582,14 @@ namespace PixelVisionSDK
 //            var x = column;
 //            var y = row;
 //
-//            chips.screenBufferChip.MergePixelDataAt(x, y, width, height, tmpPixelData);
+//            DrawBufferData(tmpPixelData, x, y, width, height);
         }
 
-        
+        //TODO deprecate this in favor of DrawSpritePixelData
+        public void DrawPixelData(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layerOrder = 0, bool masked = false, int colorOffset = 0)
+        {
+
+            //DrawSpritePixelData(pixelData, x, y, width, height, flipH, flipV, layerOrder ? 1 : 0, colorOffset: colorOffset);
+        }
     }
 }

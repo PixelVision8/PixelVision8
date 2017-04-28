@@ -271,6 +271,7 @@ namespace PixelVisionSDK.Chips
         /// </returns>
         public void ReadSpriteAt(int index, int[] pixelData)
         {
+
             var cachedSprite = pixelDataCache[index];
 
             var totalSpritePixels = width * height;

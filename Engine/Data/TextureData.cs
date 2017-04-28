@@ -274,6 +274,7 @@ namespace PixelVisionSDK
 
                 SetPixel(tmpX, tmpY, pixel);
             }
+
         }
 
         /// <summary>

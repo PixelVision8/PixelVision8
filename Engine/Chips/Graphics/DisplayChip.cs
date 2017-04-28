@@ -49,18 +49,33 @@ namespace PixelVisionSDK.Chips
         protected int _overscanX;
         protected int _overscanY;
 
-        public int overscaneX
+        public int overscanX
         {
-            get { return _overscanX * 8; }
-            protected set { _overscanX = value; }
+            get { return _overscanX; }
+            set { _overscanX = value; }
         }
 
-        public int overscaneY
+        public int overscanY
         {
-            get { return _overscanY * 8; }
-            protected set { _overscanY = value; }
+            get { return _overscanY; }
+            set { _overscanY = value; }
         }
 
+        public int overscanXPixels
+        {
+            get
+            {
+                return _overscanX * engine.spriteChip.width;
+            }
+        }
+
+        public int overscanYPixels
+        {
+            get
+            {
+                return _overscanY * engine.spriteChip.height;
+            }
+        }
         /// <summary>
         ///     The width of the area to sample from in the ScreenBufferChip. If
         ///     width of the view port is larger than the <see cref="TextureData" />
@@ -191,6 +206,8 @@ namespace PixelVisionSDK.Chips
         protected int clRight = -1;
         protected int clBottom = -1;
 
+        protected int[] cachedTilemap = new int[0];
+
         /// <summary>
         /// </summary>
         public void Draw()
@@ -204,10 +221,8 @@ namespace PixelVisionSDK.Chips
             int tileColor;
 
             // Get a reference to the complete tilemap's cached pixel data;
-            var cachedTilemap = tilemapChip.cachedTilemapPixels;
-
-            var totalMapPixels = cachedTilemap.Length;
-
+            //var cachedTilemap = tilemapChip.cachedTilemapPixels;
+            tilemapChip.ReadCachedTilemap(ref cachedTilemap);
             // Get the current clear flag value
             var clearViewport = clearFlag;
 

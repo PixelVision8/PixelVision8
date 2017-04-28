@@ -109,6 +109,16 @@ namespace PixelVisionSDK
         void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, bool aboveBG = true,
             int colorOffset = 0);
 
+        void DrawSpritePixelData(int[] pixelData, int x, int y, int width, int height, bool flipH = false, bool flipV = false, bool aboveBGs = true, int colorOffset = 0);
+
+        void DrawTilePixelData(int[] pixelData, int x, int y, int width, int height);
+
+        int[] ReadSpriteAt(int id);
+
+        void UpdateSpriteAt(int id, int[] pixels);
+
+        int ReadSpritesInRam();
+
         /// <summary>
         ///     Draws a group of sprites in a grid. This is useful when trying to
         ///     draw sprites larger than 8x8. Each sprite in the

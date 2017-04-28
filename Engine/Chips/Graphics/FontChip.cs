@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -332,9 +333,11 @@ namespace PixelVisionSDK.Chips
                 index = Convert.ToInt32(character) - charOffset;
                 spriteID = -1;
 
-                if (index < totalCharacters)
+                if (index < totalCharacters && index > -1)
                 {
+                    
                     spriteID = fontMap[index];
+                    
                 }
 
                 spriteIDs[i] = spriteID;
