@@ -140,16 +140,11 @@ namespace PixelVisionSDK
         public void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, bool aboveBG = true,
             int colorOffset = 0)
         {
-            //chips.displayChip.DrawSprite(id, x, y, flipH, flipV, aboveBG, colorOffset);
 
             if (!chips.displayChip.CanDraw())
                 return;
 
             chips.spriteChip.ReadSpriteAt(id, tmpSpriteData);
-
-            
-
-            //chips.displayChip.NewDrawCall(tmpSpriteData, x, y, spriteWidth, spriteHeight, flipH, flipV, true, layerOrder, false, colorOffset);
 
             DrawSpritePixelData(tmpSpriteData, x, y, spriteWidth, spriteHeight, flipH, flipV, aboveBG, colorOffset);
         }
@@ -269,6 +264,17 @@ namespace PixelVisionSDK
             for (int i = 0; i < total; i++)
             {
                 DrawTile(spriteIDs[i], column + i, row, colorOffset);
+            }
+        }
+
+        public void DrawSpriteTextBox(string text, int x, int y, int characterWidth, string fontName = "Default", int colorOffset = 0, int letterSpacing = 0)
+        {
+            text = FontChip.WordWrap(text, characterWidth);
+            var result = text.Split(new[] { "\n", "\r\n" }, StringSplitOptions.None);
+            var total = result.Length;
+            for (int i = 0; i < total; i++)
+            {
+                DrawSpriteText(result[i], x, y + i, fontName, colorOffset, letterSpacing);
             }
         }
 

@@ -160,7 +160,10 @@ namespace PixelVisionSDK
         void UpdateTile(int spriteID, int column, int row, int flag = -1, int colorOffset = 0);
 
         void DrawSpriteText(string text, int x, int y, string fontName = "Default", int colorOffset = 0, int spacing = 0);
+        void DrawSpriteTextBox(string text, int x, int y, int characterWidth, string fontName = "Default", int colorOffset = 0, int letterSpacing = 0);
+
         void DrawTileText(string text, int column, int row, string fontName = "Default", int colorOffset = 0);
+
         void DrawTileTextBox(string text, int column, int row, int characterWidth, string fontName = "Default", int colorOffset = 0);
         int CalculateTextBoxHeight(string text, int characterWidth);
 
