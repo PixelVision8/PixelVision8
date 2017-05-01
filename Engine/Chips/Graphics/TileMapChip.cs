@@ -50,6 +50,7 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         ///     Total number of collision flags the chip will support.
         ///     The default value is 16.
+        ///     The default value is 16.
         /// </summary>
         public int totalFlags = 16;
 
@@ -182,6 +183,9 @@ namespace PixelVisionSDK.Chips
 
         public void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight, int colorOffset = 0)
         {
+//            if (cachedTileMap.width != realWidth || cachedTileMap.height != realHeight)
+//                cachedTileMap.Resize(realWidth, realHeight);
+
             cachedTileMap.SetPixels(x, y, blockWidth, blockHeight, pixels, colorOffset);
             Invalidate();
         }
@@ -193,8 +197,8 @@ namespace PixelVisionSDK.Chips
             {
 
                 // Make sure the cached tilemap is the correct width and height
-                if (cachedTileMap.width != realWidth || cachedTileMap.height != realHeight)
-                    cachedTileMap.Resize(realWidth, realHeight);
+//                if (cachedTileMap.width != realWidth || cachedTileMap.height != realHeight)
+//                    cachedTileMap.Resize(realWidth, realHeight);
 
                 // Get a local reference to the layers we need
                 var tmpSpriteIDs = layers[(int) Layer.Sprites];
@@ -264,11 +268,22 @@ namespace PixelVisionSDK.Chips
         ///     The color offset to use when rendering the sprite.
         /// </param>
         /// <param name="flag">The flag value used for collision.</param>
-        public void ReadTileAt(int column, int row, out int spriteID, out int paletteID, out int flag)
+        public void ReadTile(int column, int row, out int spriteID, out int paletteID, out int flag)
         {
             spriteID = ReadDataAt(Layer.Sprites, column, row);
             paletteID = ReadDataAt(Layer.Palettes, column, row);
             flag = ReadDataAt(Layer.Flags, column, row);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="column"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        public int ReadTileAt(int column, int row)
+        {
+            return ReadDataAt(Layer.Sprites, column, row);
         }
 
         /// <summary>
@@ -382,7 +397,7 @@ namespace PixelVisionSDK.Chips
         /// <returns>
         ///     Returns the color int offset.
         /// </returns>
-        public int ReadPaletteAt(int column, int row)
+        public int ReadTileColorAt(int column, int row)
         {
             return ReadDataAt(Layer.Palettes, column, row);
         }
@@ -401,7 +416,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="paletteID">
         ///     A color int offset.
         /// </param>
-        public void UpdatePaletteAt(int column, int row, int paletteID)
+        public void UpdateTileColorAt(int column, int row, int paletteID)
         {
             UpdateDataAt(Layer.Palettes, column, row, paletteID);
         }
@@ -476,7 +491,9 @@ namespace PixelVisionSDK.Chips
                     layers[i] = new int[totalTiles]; // (columns, rows);
                 else
                     Array.Resize(ref layers[i], totalTiles);
-            
+
+            cachedTileMap.Resize(realWidth, realHeight);
+
             if (clear)
                 Clear();
 
@@ -497,8 +514,11 @@ namespace PixelVisionSDK.Chips
             for (var i = 0; i < totalTiles; i++)
             for (var j = 0; j < totalLayers; j++)
                 layers[j][i] = -1;
-
+            
+            cachedTileMap.Clear();
             Invalidate();
+
+
 
         }
 

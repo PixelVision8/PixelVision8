@@ -23,58 +23,22 @@ namespace PixelVisionSDK
     /// </summary>
     public interface IPixelVisionAPI : IKeyInput, IMouseInput
     {
+        
+        
+        #region Sprite APIs
         /// <summary>
-        ///     A flag for whether the engine is
-        ///     <see cref="IPixelVisionAPI.paused" /> or not.
+        /// 
         /// </summary>
-        bool paused { get; }
-
-        /// <summary>
-        ///     The width of the sprites in pixels.
-        /// </summary>
-        int spriteWidth { get; }
-
-        /// <summary>
-        ///     The height of the sprites in pixels.
-        /// </summary>
-        int spriteHeight { get; }
+        /// <param name="id"></param>
+        /// <returns></returns>
+        int[] ReadSpriteAt(int id);
 
         /// <summary>
-        ///     The width of the screen in pixels.
+        /// 
         /// </summary>
-        int displayWidth { get; }
-
-        /// <summary>
-        ///     The height of the screen in pixels.
-        /// </summary>
-        int displayHeight { get; }
-
-        bool displayWrap { get; }
-
-        /// <summary>
-        ///     Current x position of the mouse on the screen.
-        /// </summary>
-        int mouseX { get; }
-
-        /// <summary>
-        ///     Current y position of the mouse on the screen.
-        /// </summary>
-        int mouseY { get; }
-
-        // Screen Buffer
-        /// <summary>
-        ///     The horizontal scroll position of the screen buffer. 0 is the left
-        ///     side of the screen.
-        /// </summary>
-        int scrollX { get; }
-
-        /// <summary>
-        ///     The vertical scroll position of the screen buffer. 0 is the top side
-        ///     of the screen.
-        /// </summary>
-        int scrollY { get; }
-
-        // Drawing APIs
+        /// <param name="id"></param>
+        /// <param name="pixels"></param>
+        void UpdateSpriteAt(int id, int[] pixels);
 
         /// <summary>
         ///     Draws a sprite to the display.
@@ -109,16 +73,6 @@ namespace PixelVisionSDK
         void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, bool aboveBG = true,
             int colorOffset = 0);
 
-        void DrawSpritePixelData(int[] pixelData, int x, int y, int width, int height, bool flipH = false, bool flipV = false, bool aboveBGs = true, int colorOffset = 0);
-
-        void DrawTilePixelData(int[] pixelData, int x, int y, int width, int height);
-
-        int[] ReadSpriteAt(int id);
-
-        void UpdateSpriteAt(int id, int[] pixels);
-
-        int ReadSpritesInRam();
-
         /// <summary>
         ///     Draws a group of sprites in a grid. This is useful when trying to
         ///     draw sprites larger than 8x8. Each sprite in the
@@ -141,6 +95,30 @@ namespace PixelVisionSDK
         void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, bool aboveBG = true,
             int colorOffset = 0);
 
+        
+        #endregion
+
+        #region Tile APIs
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tileID"></param>
+        /// <param name="column"></param>
+        /// <param name="row"></param>
+        /// <param name="colorOffset"></param>
+        void DrawTile(int tileID, int column, int row, int colorOffset = 0);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="column"></param>
+        /// <param name="row"></param>
+        /// <param name="columns"></param>
+        /// <param name="colorOffset"></param>
+        void DrawTiles(int[] ids, int column, int row, int columns, int colorOffset = 0);
+
         /// <summary>
         ///     Draws a tile into the tile map. Tiles are simply stored in the tile
         ///     map, you need to render the tile map to the screen buffer in order
@@ -159,17 +137,432 @@ namespace PixelVisionSDK
         /// <param name="colorOffset"></param>
         void UpdateTile(int spriteID, int column, int row, int flag = -1, int colorOffset = 0);
 
+        /// <summary>
+        ///     Returns the value of a flag set in the tile map. Used mostly for
+        ///     collision detection.
+        /// </summary>
+        /// <param name="column">
+        ///     Column in the tile map to read from. 0 is the left side of the map.
+        /// </param>
+        /// <param name="row">
+        ///     Row in the tile map to read from. 0 is the top side of the map.
+        /// </param>
+        /// <returns>
+        ///     Returns a bit value based on the total number of flags set in the
+        ///     tile map chip.
+        /// </returns>
+        int ReadFlagAt(int column, int row);
+
+        void UpdateFlagAt(int flag, int column, int row);
+
+        int ReadTile(int column, int row);
+        
+        int ReadTileColorAt(int column, int row);
+        void UpdateTileColorAt(int colorOffset, int column, int row);
+
+        #endregion
+
+        #region Text APIs
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="fontName"></param>
+        /// <param name="colorOffset"></param>
+        /// <param name="spacing"></param>
         void DrawSpriteText(string text, int x, int y, string fontName = "Default", int colorOffset = 0, int spacing = 0);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="characterWidth"></param>
+        /// <param name="fontName"></param>
+        /// <param name="colorOffset"></param>
+        /// <param name="letterSpacing"></param>
         void DrawSpriteTextBox(string text, int x, int y, int characterWidth, string fontName = "Default", int colorOffset = 0, int letterSpacing = 0);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="column"></param>
+        /// <param name="row"></param>
+        /// <param name="fontName"></param>
+        /// <param name="colorOffset"></param>
         void DrawTileText(string text, int column, int row, string fontName = "Default", int colorOffset = 0);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="column"></param>
+        /// <param name="row"></param>
+        /// <param name="characterWidth"></param>
+        /// <param name="fontName"></param>
+        /// <param name="colorOffset"></param>
         void DrawTileTextBox(string text, int column, int row, int characterWidth, string fontName = "Default", int colorOffset = 0);
+
+        #endregion
+
+        #region Raw Drawing APIs
+        /// <summary>
+        ///     This draws pixel data directly to the display. It's the raw drawing
+        ///     API that most display drawing methods use.
+        /// </summary>
+        /// <param name="pixelData">
+        ///     Anint array of color data that will be converted
+        ///     into pixels.
+        /// </param>
+        /// <param name="x">
+        ///     X position to place pixel data on the screen. 0 is left side of
+        ///     screen.
+        /// </param>
+        /// <param name="y">
+        ///     Y position to place pixel data on the screen. 0 is the top of the
+        ///     screen.
+        /// </param>
+        /// <param name="width">Width of the pixel data.</param>
+        /// <param name="height">Height of the pixel data.</param>
+        /// <param name="flipH">This flips the pixel data horizontally.</param>
+        /// <param name="flipV">This flips the pixel data vertically.</param>
+        /// <param name="flipY">
+        ///     Flip the <paramref name="y" /> position. This corrects the issue
+        ///     that Y is at the bottom of the screen.
+        /// </param>
+        /// <param name="layerOrder">
+        ///     Defines if the sprite is above or below the background layer. -1 is
+        ///     below and 0 is above. It's set to 0 by default.
+        /// </param>
+        /// <param name="masked">
+        ///     Defines whether the transparent data should be ignored or filled in
+        ///     with the background color.
+        /// </param>
+        /// <param name="colorOffset"></param>
+        void DrawPixelData(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layerOrder = 0, bool masked = false, int colorOffset = 0);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pixelData"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="flipH"></param>
+        /// <param name="flipV"></param>
+        /// <param name="aboveBGs"></param>
+        /// <param name="colorOffset"></param>
+        void DrawSpritePixelData(int[] pixelData, int x, int y, int width, int height, bool flipH = false, bool flipV = false, bool aboveBGs = true, int colorOffset = 0);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pixelData"></param>
+        /// <param name="column"></param>
+        /// <param name="row"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="offsetX"></param>
+        /// <param name="offsetY"></param>
+        void DrawTilePixelData(int[] pixelData, int column, int row, int width, int height, int offsetX = 0, int offsetY = 0);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="column"></param>
+        /// <param name="row"></param>
+        /// <param name="fontName"></param>
+        /// <param name="colorOffset"></param>
+        /// <param name="letterSpacing"></param>
+        void DrawTileTextPixelData(string text, int column, int row, string fontName = "Default", int colorOffset = 0, int letterSpacing = 0);
+
+        #endregion
+
+        #region Display APIs
+
+        /// <summary>
+        ///     The width of the sprites in pixels.
+        /// </summary>
+        int ReadSpriteWidth();
+
+        /// <summary>
+        ///     The height of the sprites in pixels.
+        /// </summary>
+        int ReadSpriteHeight();
+
+        /// <summary>
+        ///     The width of the screen in pixels.
+        /// </summary>
+        int ReadDisplayWidth();
+
+        /// <summary>
+        ///     The height of the screen in pixels.
+        /// </summary>
+        int ReadDisplayHeight();
+
+        /// <summary>
+        ///     The horizontal scroll position of the screen buffer. 0 is the left
+        ///     side of the screen.
+        /// </summary>
+        int ReadScrollX();
+
+        void UpdateScrollX(int value);
+
+        /// <summary>
+        ///     The vertical scroll position of the screen buffer. 0 is the top side
+        ///     of the screen.
+        /// </summary>
+        int ReadScrollY();
+        void UpdateScrollY(int value);
+
+        /// <summary>
+        ///     Scrolls the screen buffer to a specific position.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        void ScrollTo(int x, int y);
+
+        /// <summary>
+        ///     Clears the display with the current background color.
+        /// </summary>
+        void Clear();
+
+        void ClearArea(int x, int y, int width, int height, int color = -1);
+
+        void UpdateBackgroundColor(int id);
+        int ReadBackgroundColor();
+
+        void DrawTilemap(int startCol = 0, int startRow = 0, int columns = -1, int rows = -1, int offsetX = 0, int offsetY = 0);
+
+        void ClearTilemap();
+
+        #endregion
+
+
+        #region Sound APIs
+
+        /// <summary>
+        ///     Plays a sound from the sound chip.
+        /// </summary>
+        /// <param name="id">Play sound at index in the collection.</param>
+        /// <param name="channel">
+        ///     Define which channel to play the sound on. Each system has a limit
+        ///     of number of sounds it can play at a single time.
+        /// </param>
+        void PlaySound(int id, int channel);
+
+        /// <summary>
+        ///     Loads a song into memory for playback.
+        /// </summary>
+        /// <param name="id"></param>
+        void LoadSong(int id);
+
+        /// <summary>
+        ///     Plays a song that is loaded in memory. You can chose to have
+        ///     the song loop.
+        /// </summary>
+        /// <param name="loop"></param>
+        void PlaySong(bool loop = false);
+
+        /// <summary>
+        ///     Pauses the currently playing song.
+        /// </summary>
+        void PauseSong();
+
+        /// <summary>
+        ///     Stops the current song and auto rewinding it to the beginning.
+        /// </summary>
+        /// <param name="autoRewind"></param>
+        void StopSong(bool autoRewind = true);
+
+        /// <summary>
+        ///     Rewinds a song to the beginning.
+        /// </summary>
+        void RewindSong();
+
+        #endregion
+
+        #region Input APIs
+
+        /// <summary>
+        ///     Determines if a <paramref name="button" /> is down on the current
+        ///     frame. Each <paramref name="button" /> has a unique ID.
+        /// </summary>
+        /// <param name="button">Button ID to test.</param>
+        /// <param name="player">
+        ///     Id for which player's controller to test. It's set to 0 by default
+        ///     for single player game.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        bool ButtonDown(int button, int player = 0);
+
+        /// <summary>
+        ///     Determines if a <paramref name="button" /> was just released on the
+        ///     previous frame. Each <paramref name="button" /> has a unique ID.
+        /// </summary>
+        /// <param name="button">Button ID to test.</param>
+        /// <param name="player">
+        ///     Id for which player's controller to test. It's set to 0 by default
+        ///     for single player game.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        bool ButtonReleased(int button, int player = 0);
+
+        /// <summary>
+        ///     Current x position of the mouse on the screen.
+        /// </summary>
+        int ReadMouseX();
+
+        /// <summary>
+        ///     Current y position of the mouse on the screen.
+        /// </summary>
+        int ReadMouseY();
+
+        Vector ReadMousePosition();
+
+        #endregion
+
+
+        
+
+        
+        
+
+        #region Utility APIs
+
+        /// <summary>
+        ///     Replaces a single color id in a set of PixelData to a new color
+        /// </summary>
+        /// <param name="pixelData"></param>
+        /// <param name="oldID"></param>
+        /// <param name="newID"></param>
+        /// <returns></returns>
+        int[] ReplaceColorID(int[] pixelData, int oldID, int newID);
+
+        /// <summary>
+        ///     Replaces multiples colors in a set of PixelData.
+        /// </summary>
+        /// <param name="pixelData"></param>
+        /// <param name="oldIDs"></param>
+        /// <param name="newIDs"></param>
+        /// <returns></returns>
+        int[] ReplaceColorIDs(int[] pixelData, int[] oldIDs, int[] newIDs);
+
+        /// <summary>
+        ///     This method converts a set of sprites into raw pixel data. This is
+        ///     useful when trying to draw data to the display but need to modify
+        ///     it before hand.
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="width"></param>
+        /// <returns></returns>
+        int[] SpritesToRawData(int[] ids, int width);
+
+        /// <summary>
+        ///     Saves data based on a key value pair
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        void SaveData(string key, string value);
+
+        /// <summary>
+        ///     Reads saved data based on the supplied key.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
+        string ReadData(string key, string defaultValue = "undefined");
+
+        #endregion
+
+
+        // Deprecated
+
+        #region Deprecated
+
+        /// <summary>
+        ///     A flag for whether the engine is
+        ///     <see cref="IPixelVisionAPI.paused" /> or not.
+        /// </summary>
+        bool paused { get; }
+        int spriteWidth { get; }
+        int spriteHeight { get; }
+        int displayWidth { get; }
+        int displayHeight { get; }
+        bool displayWrap { get; }
+        int mouseX { get; }
+        int mouseY { get; }
+        int scrollX { get; }
+        int scrollY { get; }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="value"></param>
+        void TogglePause(bool value);
+
+        /// <summary>
+        ///     This enables or disabled the display wrap which allows sprites
+        ///     that go off-screen to be rendered on the opposite side.
+        /// </summary>
+        /// <param name="value"></param>
+        void ToggleDisplayWrap(bool value);
+        int ReadSpritesInRam();
+        /// <summary>
+        ///     Rebuilds the screen buffer from the tile map. This rendered the
+        ///     entire tile map into the buffer allowing you to cache the tile map
+        ///     before running the game for optimization.
+        /// </summary>
+        void RebuildScreenBuffer();
+        /// <summary>
+        ///     Draws the screen buffer to the display. The buffer uses its own view
+        ///     port width and height as well as scroll x and y offsets to calculate
+        ///     what is rendered.
+        /// </summary>
+        void DrawScreenBuffer(int x = 0, int y = 0, int width = -1, int height = -1, int offsetX = 0, int offsetY = 0);
+        /// <summary>
+        ///     This draws pixel data directly to the screen buffer. It's the raw
+        ///     drawing API that most buffer drawing methods use.
+        /// </summary>
+        /// <param name="pixelData">
+        ///     Anint array of color data that will be converted
+        ///     into pixels.
+        /// </param>
+        /// <param name="x">
+        ///     X position to place pixel data on the screen buffer. 0 is left side
+        ///     of screen.
+        /// </param>
+        /// <param name="y">
+        ///     Y position to place pixel data on the screen buffer. 0 is the top of
+        ///     the screen.
+        /// </param>
+        /// <param name="width">Width of the pixel data.</param>
+        /// <param name="height">Height of the pixel data.</param>
+        void DrawBufferData(int[] pixelData, int x, int y, int width, int height);
+        /// <summary>
+        ///     Reformats text with word wrap.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="witdh"></param>
+        /// <param name="wholeWords"></param>
+        /// <returns></returns>
+        string FormatWordWrap(string text, int witdh, bool wholeWords = false);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="characterWidth"></param>
+        /// <returns></returns>
         int CalculateTextBoxHeight(string text, int characterWidth);
-
-        void DrawTile(int tileID, int column, int row, int colorOffset = 0);
-
-        void DrawTiles(int[] ids, int column, int row, int columns, int colorOffset = 0);
 
         /// <summary>
         ///     Draws a font to the display as sprites. This is an expensive draw
@@ -192,7 +585,7 @@ namespace PixelVisionSDK
         /// <param name="offset"></param>
         void DrawFont(string text, int x, int y, string fontName = "Default", int letterSpacing = 0, int offset = 0);
 
-        
+
         void DrawFontTiles(string text, int column, int row, string fontName = "Default", int offset = 0);
 
         // Buffer Drawing API
@@ -271,15 +664,6 @@ namespace PixelVisionSDK
             bool wholeWords = false);
 
         /// <summary>
-        ///     Reformats text with word wrap.
-        /// </summary>
-        /// <param name="text"></param>
-        /// <param name="witdh"></param>
-        /// <param name="wholeWords"></param>
-        /// <returns></returns>
-        string FormatWordWrap(string text, int witdh, bool wholeWords = false);
-
-        /// <summary>
         ///     Draws text to the buffer to a predefined width and word wraps.
         /// </summary>
         /// <param name="text"></param>
@@ -294,87 +678,6 @@ namespace PixelVisionSDK
             bool wholeWords = false);
 
         /// <summary>
-        ///     Returns the value of a flag set in the tile map. Used mostly for
-        ///     collision detection.
-        /// </summary>
-        /// <param name="column">
-        ///     Column in the tile map to read from. 0 is the left side of the map.
-        /// </param>
-        /// <param name="row">
-        ///     Row in the tile map to read from. 0 is the top side of the map.
-        /// </param>
-        /// <returns>
-        ///     Returns a bit value based on the total number of flags set in the
-        ///     tile map chip.
-        /// </returns>
-        int ReadFlagAt(int column, int row);
-
-        //TODO need to draw sprites to buffer
-        // Direct Drawing API
-
-        /// <summary>
-        ///     This draws pixel data directly to the display. It's the raw drawing
-        ///     API that most display drawing methods use.
-        /// </summary>
-        /// <param name="pixelData">
-        ///     Anint array of color data that will be converted
-        ///     into pixels.
-        /// </param>
-        /// <param name="x">
-        ///     X position to place pixel data on the screen. 0 is left side of
-        ///     screen.
-        /// </param>
-        /// <param name="y">
-        ///     Y position to place pixel data on the screen. 0 is the top of the
-        ///     screen.
-        /// </param>
-        /// <param name="width">Width of the pixel data.</param>
-        /// <param name="height">Height of the pixel data.</param>
-        /// <param name="flipH">This flips the pixel data horizontally.</param>
-        /// <param name="flipV">This flips the pixel data vertically.</param>
-        /// <param name="flipY">
-        ///     Flip the <paramref name="y" /> position. This corrects the issue
-        ///     that Y is at the bottom of the screen.
-        /// </param>
-        /// <param name="layerOrder">
-        ///     Defines if the sprite is above or below the background layer. -1 is
-        ///     below and 0 is above. It's set to 0 by default.
-        /// </param>
-        /// <param name="masked">
-        ///     Defines whether the transparent data should be ignored or filled in
-        ///     with the background color.
-        /// </param>
-        /// <param name="colorOffset"></param>
-        void DrawPixelData(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layerOrder = 0, bool masked = false, int colorOffset = 0);
-
-        /// <summary>
-        ///     This draws pixel data directly to the screen buffer. It's the raw
-        ///     drawing API that most buffer drawing methods use.
-        /// </summary>
-        /// <param name="pixelData">
-        ///     Anint array of color data that will be converted
-        ///     into pixels.
-        /// </param>
-        /// <param name="x">
-        ///     X position to place pixel data on the screen buffer. 0 is left side
-        ///     of screen.
-        /// </param>
-        /// <param name="y">
-        ///     Y position to place pixel data on the screen buffer. 0 is the top of
-        ///     the screen.
-        /// </param>
-        /// <param name="width">Width of the pixel data.</param>
-        /// <param name="height">Height of the pixel data.</param>
-        void DrawBufferData(int[] pixelData, int x, int y, int width, int height);
-
-        /// <summary>
-        ///     Clears the display with the current background color.
-        /// </summary>
-        void Clear();
-
-        void ClearArea(int x, int y, int width, int height, int color = -1);
-
-        /// <summary>
         ///     Changes the background color.
         /// </summary>
         /// <param name="id">
@@ -382,152 +685,7 @@ namespace PixelVisionSDK
         ///     color chip.
         /// </param>
         void ChangeBackgroundColor(int id);
+        #endregion
 
-        /// <summary>
-        ///     Draws the screen buffer to the display. The buffer uses its own view
-        ///     port width and height as well as scroll x and y offsets to calculate
-        ///     what is rendered.
-        /// </summary>
-        void DrawScreenBuffer(int x = 0, int y = 0, int width = -1, int height = -1, int offsetX = 0, int offsetY = 0);
-
-        void DrawTilemap(int startCol = 0, int startRow = 0, int columns = -1, int rows = -1, int offsetX = 0, int offsetY = 0);
-
-        /// <summary>
-        ///     Rebuilds the screen buffer from the tile map. This rendered the
-        ///     entire tile map into the buffer allowing you to cache the tile map
-        ///     before running the game for optimization.
-        /// </summary>
-        void RebuildScreenBuffer();
-
-        // Sound APIs
-
-        /// <summary>
-        ///     Plays a sound from the sound chip.
-        /// </summary>
-        /// <param name="id">Play sound at index in the collection.</param>
-        /// <param name="channel">
-        ///     Define which channel to play the sound on. Each system has a limit
-        ///     of number of sounds it can play at a single time.
-        /// </param>
-        void PlaySound(int id, int channel);
-
-        // Input APIs
-
-        /// <summary>
-        ///     Determines if a <paramref name="button" /> is down on the current
-        ///     frame. Each <paramref name="button" /> has a unique ID.
-        /// </summary>
-        /// <param name="button">Button ID to test.</param>
-        /// <param name="player">
-        ///     Id for which player's controller to test. It's set to 0 by default
-        ///     for single player game.
-        /// </param>
-        /// <returns>
-        /// </returns>
-        bool ButtonDown(int button, int player = 0);
-
-        /// <summary>
-        ///     Determines if a <paramref name="button" /> was just released on the
-        ///     previous frame. Each <paramref name="button" /> has a unique ID.
-        /// </summary>
-        /// <param name="button">Button ID to test.</param>
-        /// <param name="player">
-        ///     Id for which player's controller to test. It's set to 0 by default
-        ///     for single player game.
-        /// </param>
-        /// <returns>
-        /// </returns>
-        bool ButtonReleased(int button, int player = 0);
-
-        /// <summary>
-        ///     This method converts a set of sprites into raw pixel data. This is
-        ///     useful when trying to draw data to the display but need to modify
-        ///     it before hand.
-        /// </summary>
-        /// <param name="ids"></param>
-        /// <param name="width"></param>
-        /// <returns></returns>
-        int[] SpritesToRawData(int[] ids, int width);
-
-        /// <summary>
-        /// </summary>
-        /// <param name="value"></param>
-        void TogglePause(bool value);
-
-        /// <summary>
-        ///     This enables or disabled the display wrap which allows sprites
-        ///     that go off-screen to be rendered on the opposite side.
-        /// </summary>
-        /// <param name="value"></param>
-        void ToggleDisplayWrap(bool value);
-
-        /// <summary>
-        ///     Scrolls the screen buffer to a specific position.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        void ScrollTo(int x, int y);
-
-        /// <summary>
-        ///     Saves data based on a key value pair
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        void SaveData(string key, string value);
-
-        /// <summary>
-        ///     Reads saved data based on the supplied key.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        string ReadData(string key, string defaultValue = "undefined");
-
-        /// <summary>
-        ///     Loads a song into memory for playback.
-        /// </summary>
-        /// <param name="id"></param>
-        void LoadSong(int id);
-
-        /// <summary>
-        ///     Plays a song that is loaded in memory. You can chose to have
-        ///     the song loop.
-        /// </summary>
-        /// <param name="loop"></param>
-        void PlaySong(bool loop = false);
-
-        /// <summary>
-        ///     Pauses the currently playing song.
-        /// </summary>
-        void PauseSong();
-
-        /// <summary>
-        ///     Stops the current song and auto rewinding it to the beginning.
-        /// </summary>
-        /// <param name="autoRewind"></param>
-        void StopSong(bool autoRewind = true);
-
-        /// <summary>
-        ///     Rewinds a song to the beginning.
-        /// </summary>
-        void RewindSong();
-
-        /// <summary>
-        ///     Replaces a single color id in a set of PixelData to a new color
-        /// </summary>
-        /// <param name="pixelData"></param>
-        /// <param name="oldID"></param>
-        /// <param name="newID"></param>
-        /// <returns></returns>
-        int[] ReplaceColorID(int[] pixelData, int oldID, int newID);
-
-        /// <summary>
-        ///     Replaces multiples colors in a set of PixelData.
-        /// </summary>
-        /// <param name="pixelData"></param>
-        /// <param name="oldIDs"></param>
-        /// <param name="newIDs"></param>
-        /// <returns></returns>
-        int[] ReplaceColorIDs(int[] pixelData, int[] oldIDs, int[] newIDs);
     }
 }

@@ -271,7 +271,7 @@ namespace PixelVisionSDK.Chips
 
             var map = engine.tileMapChip;
 
-            map.ReadTileAt(column, row, out spriteID, out paletteID, out flag);
+            map.ReadTile(column, row, out spriteID, out paletteID, out flag);
 
             PosUtil.CalculateIndex(column, row, map.columns, out index);
             engine.spriteChip.ReadSpriteAt(index, tmpPixelData);

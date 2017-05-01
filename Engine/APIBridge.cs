@@ -17,6 +17,7 @@
 using System;
 using PixelVisionSDK.Chips;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionSDK
 {
@@ -37,6 +38,10 @@ namespace PixelVisionSDK
         private int[] tmpPixelData = new int[0];
         protected bool _paused;
 
+        public string inputString
+        {
+            get { return chips.controllerChip.inputString; }
+        }
 
         /// <summary>
         /// </summary>
@@ -51,87 +56,23 @@ namespace PixelVisionSDK
         /// <param name="enginechips"></param>
         public IEngineChips chips { get; set; }
 
-        public int spriteWidth
+        
+        public void UpdateScrollY(int value)
         {
-            get { return chips.spriteChip.width; }
-        }
-
-        public int spriteHeight
-        {
-            get { return chips.spriteChip.height; }
-        }
-
-        public int displayWidth
-        {
-            get { return chips.displayChip.width; }
-        }
-
-        public bool displayWrap
-        {
-            get { return chips.displayChip.wrapMode; }
-        }
-
-        public void ToggleDisplayWrap(bool value)
-        {
-            chips.displayChip.wrapMode = value;
-        }
-
-        public int displayHeight
-        {
-            get { return chips.displayChip.height; }
-        }
-
-        public int scrollX
-        {
-            get { return chips.displayChip.scrollX; }
-        }
-
-        public int scrollY
-        {
-            get { return chips.displayChip.scrollY; }
+            chips.displayChip.scrollY = value;
         }
 
         public void ScrollTo(int x, int y)
         {
-            if (chips.displayChip == null)
-                return;
-
             chips.displayChip.scrollX = x;
             chips.displayChip.scrollY = y;
         }
 
-        public bool paused
+        public Vector ReadMousePosition()
         {
-            get { return _paused; }
+            return chips.controllerChip.mousePosition;
         }
-
-        public void TogglePause(bool value)
-        {
-            if (_paused != value)
-                if (chips.displayChip != null)
-                    chips.displayChip.paused = value;
-        }
-
-        public int mouseX
-        {
-            get { return chips.controllerChip.mousePosition.x; }
-        }
-
-        public int mouseY
-        {
-            get { return chips.controllerChip.mousePosition.y; }
-        }
-
-        public string inputString
-        {
-            get { return chips.controllerChip.inputString; }
-        }
-
-        public Vector mousePosition
-        {
-            get { return chips.controllerChip.mousePosition; }
-        }
-
+        
         public int backgroundColor
         {
             get { return chips.colorChip.backgroundColor; }
@@ -191,11 +132,17 @@ namespace PixelVisionSDK
             chips.displayChip.ClearArea(x, y, width, height, color);
         }
 
-        public void ChangeBackgroundColor(int id)
+        public void UpdateBackgroundColor(int id)
         {
-            id = id.Clamp(0, chips.colorChip.total - 1);
             chips.colorChip.backgroundColor = id;
         }
+
+        public int ReadBackgroundColor()
+        {
+            return chips.colorChip.backgroundColor;
+        }
+
+        
 
         public void PlaySound(int id, int channel = 0)
         {
@@ -222,6 +169,16 @@ namespace PixelVisionSDK
             return chips.controllerChip.ButtonReleased(button, player);
         }
 
+        public int ReadMouseX()
+        {
+            return chips.controllerChip.mousePosition.x;
+        }
+
+        public int ReadMouseY()
+        {
+            return chips.controllerChip.mousePosition.y;
+        }
+
         public bool GetMouseButtonDown(int id = 0)
         {
             return chips.controllerChip.GetMouseButtonDown(id);
@@ -235,6 +192,11 @@ namespace PixelVisionSDK
         public bool GetMouseButton(int id = 0)
         {
             return chips.controllerChip.GetMouseButton(id);
+        }
+
+        public void UpdateTileColorAt(int colorOffset, int column, int row)
+        {
+            chips.tileMapChip.UpdateTileColorAt(colorOffset, column, row);
         }
 
         public void DrawSpriteText(string text, int x, int y, string fontName = "Default", int colorOffset = 0, int spacing = 0)
@@ -265,6 +227,16 @@ namespace PixelVisionSDK
             {
                 DrawTile(spriteIDs[i], column + i, row, colorOffset);
             }
+        }
+
+        public void DrawTileTextPixelData(string text, int column, int row, string fontName = "Default", int colorOffset = 0, int letterSpacing = 0)
+        {
+            int width;
+            int height;
+
+            chips.fontChip.ConvertTextToPixelData(text, ref tmpPixelData, out width, out height, fontName, letterSpacing, colorOffset);
+
+            DrawTilePixelData(tmpPixelData, column, row, width, height);
         }
 
         public void DrawSpriteTextBox(string text, int x, int y, int characterWidth, string fontName = "Default", int colorOffset = 0, int letterSpacing = 0)
@@ -305,7 +277,7 @@ namespace PixelVisionSDK
         public void DrawTile(int tileID, int column, int row, int colorOffset = 0)
         {
             chips.tileMapChip.UpdateSpriteAt(column, row, tileID);
-            chips.tileMapChip.UpdatePaletteAt(column, row, colorOffset);
+            chips.tileMapChip.UpdateTileColorAt(column, row, colorOffset);
         }
 
         public void DrawTiles(int[] ids, int column, int row, int columns, int colorOffset = 0)
@@ -325,8 +297,6 @@ namespace PixelVisionSDK
             }
         }
 
-        
-
         public void DrawTextBox(string text, int witdh, int x, int y, string fontName = "Default", int letterSpacing = 0,
             bool wholeWords = false)
         {
@@ -335,18 +305,10 @@ namespace PixelVisionSDK
             DrawFont(text, x, y, fontName, letterSpacing);
         }
 
-//        public void DrawTextBoxTiles(string text, int width, int column, int row, string fontName = "Default", bool wholeWords = true)
-//        {
-//            text = FormatWordWrap(text, width, wholeWords);
-//            var spriteIDs = 
-//        }
-
         public string FormatWordWrap(string text, int witdh, bool wholeWords = false)
         {
             return wholeWords ? FontChip.WordWrap(text, witdh) : FontChip.Split(text, witdh);
         }
-
-        
 
         public void DrawSpritePixelData(int[] pixelData, int x, int y, int width, int height, bool flipH = false, bool flipV = false, bool aboveBG = true, int colorOffset = 0)
         {
@@ -357,14 +319,70 @@ namespace PixelVisionSDK
             chips.displayChip.NewDrawCall(pixelData, x, y, width, height, flipH, flipV, true, layerOrder, false, colorOffset);
         }
 
-        public void DrawTilePixelData(int[] pixelData, int x, int y, int width, int height)
+        public void DrawTilePixelData(int[] pixelData, int column, int row, int width, int height, int offsetX = 0, int offsetY = 0)
         {
+            var x = (column * ReadSpriteWidth()) + offsetX;
+
+            row = chips.tileMapChip.rows - row - 1;
+
+            var y = (row * ReadSpriteHeight()) + offsetY;
+
             chips.tileMapChip.UpdateCachedTilemap(pixelData, x, y, width, height);
+        }
+
+        public int ReadSpriteWidth()
+        {
+            return chips.spriteChip.width;
+        }
+
+        public int ReadSpriteHeight()
+        {
+            return chips.spriteChip.height;
+        }
+
+        public int ReadDisplayWidth()
+        {
+            return chips.displayChip.width;
+        }
+
+        public int ReadDisplayHeight()
+        {
+            return chips.displayChip.height;
+        }
+
+        public int ReadScrollX()
+        {
+            return chips.displayChip.scrollX;
+        }
+
+        public void UpdateScrollX(int value)
+        {
+            chips.displayChip.scrollX = value;
+        }
+
+        public int ReadScrollY()
+        {
+            return chips.displayChip.scrollY;
         }
 
         public int ReadFlagAt(int column, int row)
         {
             return chips.tileMapChip.ReadFlagAt(column, row);
+        }
+
+        public void UpdateFlagAt(int flag, int column, int row)
+        {
+            chips.tileMapChip.UpdateFlagAt(column, row, flag);
+        }
+
+        public int ReadTile(int column, int row)
+        {
+            return chips.tileMapChip.ReadTileAt(column, row);
+        }
+
+        public int ReadTileColorAt(int column, int row)
+        {
+            return chips.tileMapChip.ReadTileColorAt(column, row);
         }
 
         public bool GetKey(int key)
@@ -425,7 +443,6 @@ namespace PixelVisionSDK
         {
             return chips.currentGame.GetData(key, defaultValue);
         }
-
 
         public void LoadSong(int id)
         {
@@ -505,6 +522,13 @@ namespace PixelVisionSDK
             chips.displayChip.DrawTilemap(startCol, startRow, columns, rows);
         }
 
+        public void ClearTilemap()
+        {
+            chips.tileMapChip.Clear();    
+        }
+
+        #region Deprecated APIs
+
         public void DrawFontTiles(string text, int column, int row, string fontName = "Default", int offset = 0)
         {
             var spriteIDs = chips.fontChip.ConvertTextToSprites(text, fontName);
@@ -518,7 +542,7 @@ namespace PixelVisionSDK
                 c = column + i;
                 r = row;
                 tilemap.UpdateSpriteAt(c, r, spriteIDs[i]);
-                tilemap.UpdatePaletteAt(c, r, offset);
+                tilemap.UpdateTileColorAt(c, r, offset);
             }
 
         }
@@ -541,7 +565,7 @@ namespace PixelVisionSDK
         {
             //TODO need to deprecate this method
             chips.tileMapChip.UpdateSpriteAt(column, row, spriteID);
-            chips.tileMapChip.UpdatePaletteAt(column, row, colorOffset);
+            chips.tileMapChip.UpdateTileColorAt(column, row, colorOffset);
         }
 
         public void DrawTilesToBuffer(int[] ids, int column, int row, int columns, int colorOffset = 0)
@@ -566,29 +590,21 @@ namespace PixelVisionSDK
         public void DrawTextBoxToBuffer(string text, int witdh, int column, int row, string fontName = "Default",
             int letterSpacing = 0, bool wholeWords = false)
         {
-//            text = wholeWords ? FontChip.WordWrap(text, witdh) : FontChip.Split(text, witdh);
-//
-//            DrawFontToBuffer(text, column, row, fontName, letterSpacing);
+            //            text = wholeWords ? FontChip.WordWrap(text, witdh) : FontChip.Split(text, witdh);
+            //
+            //            DrawFontToBuffer(text, column, row, fontName, letterSpacing);
         }
 
         public void DrawBufferData(int[] pixelData, int x, int y, int width, int height)
         {
             chips.tileMapChip.UpdateCachedTilemap(pixelData, x, y, width, height);
-            //chips.tileMapChip.cachedTileMap.SetPixels(x, y, width, height, pixelData);
-//            chips.screenBufferChip.UpdatePixelDataAt(x, y, width, height, pixelData);
         }
-        
+
+        [Obsolete]
         public void DrawFontToBuffer(string text, int column, int row, string fontName = "Default", int letterSpacing = 0, int offset = 0)
         {
-//            int width;
-//            int height;
-//
-//            chips.fontChip.ConvertTextToPixelData(text, ref tmpPixelData, out width, out height, fontName, letterSpacing, offset);
-//
-//            var x = column;
-//            var y = row;
-//
-//            DrawBufferData(tmpPixelData, x, y, width, height);
+            DrawTileTextPixelData(text, column, row, fontName, offset, letterSpacing);
+
         }
 
         //TODO deprecate this in favor of DrawSpritePixelData
@@ -597,5 +613,87 @@ namespace PixelVisionSDK
 
             //DrawSpritePixelData(pixelData, x, y, width, height, flipH, flipV, layerOrder ? 1 : 0, colorOffset: colorOffset);
         }
+
+        public bool displayWrap
+        {
+            get
+            {
+                return chips.displayChip.wrapMode;
+            }
+        }
+
+        public void ToggleDisplayWrap(bool value)
+        {
+            chips.displayChip.wrapMode = value;
+        }
+
+        public int spriteWidth
+        {
+            get { return ReadSpriteWidth(); }
+        }
+
+        public int spriteHeight
+        {
+            get { return ReadSpriteHeight(); }
+        }
+
+        public int displayWidth
+        {
+            get { return ReadDisplayWidth(); }
+        }
+
+
+        public int displayHeight
+        {
+            get { return ReadDisplayHeight(); }
+        }
+
+        public int scrollX
+        {
+            get { return ReadScrollX(); }
+        }
+
+        public int scrollY
+        {
+            get { return ReadScrollY(); }
+        }
+
+
+        public bool paused
+        {
+            get { return _paused; }
+        }
+
+
+        public void TogglePause(bool value)
+        {
+            if (_paused != value)
+                if (chips.displayChip != null)
+                    chips.displayChip.paused = value;
+        }
+
+        public int mouseX
+        {
+            get { return ReadMouseX(); }
+        }
+
+        public int mouseY
+        {
+            get { return ReadMouseY(); }
+        }
+
+        public Vector mousePosition
+        {
+            get { return chips.controllerChip.mousePosition; }
+        }
+
+        public void ChangeBackgroundColor(int id)
+        {
+            id = id.Clamp(0, chips.colorChip.total - 1);
+            chips.colorChip.backgroundColor = id;
+        }
+        #endregion
+
+
     }
 }
