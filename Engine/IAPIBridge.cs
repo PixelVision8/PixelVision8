@@ -15,21 +15,29 @@
 // 
 
 using PixelVisionSDK.Chips;
+using PixelVisionSDK.Services;
 
 namespace PixelVisionSDK
 {
     /// <summary>
-    ///     This internal defines the APIs for the
-    ///     <see cref="IAPIBridge" /> which allows games to talk to the engine's
+    ///     This class combines the Pixel Vision APIs with some additonal
+    ///     helper APIs to create a common interface to allow games to talk
+    ///     directly to the Pixel Vision Engine.
     ///     chips.
     /// </summary>
     public interface IAPIBridge : IPixelVisionAPI
     {
         /// <summary>
-        ///     A reference to the core <see cref="chips" /> in the engine.
+        ///     Returns a reference to the current game instance.
         /// </summary>
-        IEngineChips chips { get; set; }
+        IService GetService(string id);
 
-        int backgroundColor { get; }
+        // <summary>
+        ///     Offers access to the underlying service manager to expose internal
+        ///     service APIs to any class referencing the APIBridge.
+        /// </summary>
+        /// <param name="id">Name of the service.</param>
+        /// <returns>Returns an IService instance associated with the supplied ID.</returns>
+        GameChip currentGame { get; }
     }
 }

@@ -90,7 +90,7 @@ namespace PixelVisionSDK
         ///     Access to the ScreenBufferChip.
         /// </summary>
         /// <tocexclude />
-        public ScreenBufferChip screenBufferChip { get; set; }
+//        public ScreenBufferChip screenBufferChip { get; set; }
 
         /// <summary>
         ///     Access to the SoundChip.

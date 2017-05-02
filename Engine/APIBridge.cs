@@ -16,6 +16,7 @@
 
 using System;
 using PixelVisionSDK.Chips;
+using PixelVisionSDK.Services;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
@@ -32,25 +33,49 @@ namespace PixelVisionSDK
     /// </remarks>
     public class APIBridge : IAPIBridge
     {
-        //TODO need to make sure this is correctly sized when sprite sizes change
         private readonly int[] tmpSpriteData = new int[8 * 8];
         private int[] tmpPixelData = new int[0];
         protected bool _paused;
+        protected IEngineChips chips { get; set; }
 
         /// <summary>
+        ///     Returns a reference to the current game instance.
         /// </summary>
-        /// <param name="enginechips"></param>
+        public GameChip currentGame
+        {
+            get { return chips.currentGame; }
+        }
+
+        /// <summary>
+        ///     Offers access to the underlying service manager to expose internal
+        ///     service APIs to any class referencing the APIBridge.
+        /// </summary>
+        /// <param name="id">Name of the service.</param>
+        /// <returns>Returns an IService instance associated with the supplied ID.</returns>
+        public IService GetService(string id)
+        {
+            return chips.chipManager.GetService(id);
+        }
+
+        /// <summary>
+        ///     The APIBridge represents the public facing methods used to control
+        ///     the PixelVisionEngine class and run games. The goal of this class
+        ///     is to have a common interface to code against to insure that the
+        ///     core of the engine remains hidden from the game's logic.
+        /// </summary>
+        /// <param name="enginechips">Reference to all of the chips.</param>
         public APIBridge(IEngineChips enginechips)
         {
             chips = enginechips;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="enginechips"></param>
-        public IEngineChips chips { get; set; }
 
-        
+
+
+        public string inputString
+        {
+            get { return ReadInputString(); }
+        }
         public void UpdateScrollY(int value)
         {
             chips.displayChip.scrollY = value;
@@ -862,10 +887,9 @@ namespace PixelVisionSDK
             chips.colorChip.backgroundColor = id;
         }
 
-        public string inputString
-        {
-            get { return ReadInputString(); }
-        }
+        
+
+        
         #endregion
 
 

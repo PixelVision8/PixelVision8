@@ -181,7 +181,7 @@ namespace PixelVisionSDK.Chips
             // TODO create a chip
             var type = Type.GetType(id);
 
-            AbstractChip chipInstance;
+            AbstractChip chipInstance = null;
 
             try
             {
@@ -190,7 +190,7 @@ namespace PixelVisionSDK.Chips
             }
             catch (Exception)
             {
-                throw new Exception("Chip '" + id + "' could not be created.");
+                //throw new Exception("Chip '" + id + "' could not be created.");
             }
 
             return chipInstance;

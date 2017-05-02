@@ -55,12 +55,6 @@ namespace PixelVisionSDK.Chips
         DisplayChip displayChip { get; set; }
 
         /// <summary>
-        ///     The Screen Buffer Chip allows a dedicated area to pre-render tile
-        ///     map data. This property offers direct access to it.
-        /// </summary>
-        ScreenBufferChip screenBufferChip { get; set; }
-
-        /// <summary>
         ///     The Sound Chip stores and manages playback of sound effects in the
         ///     game engine. This property offers direct access to it.
         /// </summary>
