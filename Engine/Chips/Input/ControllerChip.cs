@@ -211,5 +211,55 @@ namespace PixelVisionSDK.Chips
 
             return 0;
         }
+
+        public string ReadInputString()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ReadKey(int key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ReadKeyDown(int key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ReadKeyUp(int key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Vector ReadMousePosition()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ReadMouseButton(int button)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ReadMouseButtonDown(int button)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ReadMouseButtonUp(int button)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ReadMouseX()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ReadMouseY()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

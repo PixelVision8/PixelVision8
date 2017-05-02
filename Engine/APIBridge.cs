@@ -17,7 +17,6 @@
 using System;
 using PixelVisionSDK.Chips;
 using PixelVisionSDK.Utils;
-using UnityEngine;
 
 namespace PixelVisionSDK
 {
@@ -37,11 +36,6 @@ namespace PixelVisionSDK
         private readonly int[] tmpSpriteData = new int[8 * 8];
         private int[] tmpPixelData = new int[0];
         protected bool _paused;
-
-        public string inputString
-        {
-            get { return chips.controllerChip.inputString; }
-        }
 
         /// <summary>
         /// </summary>
@@ -72,7 +66,83 @@ namespace PixelVisionSDK
         {
             return chips.controllerChip.mousePosition;
         }
-        
+
+        /// <summary>
+        ///     Determines if the mouse button is down.
+        /// </summary>
+        /// <param name="id">
+        ///     The id of the mouse button. Its set to 0 by default. 0 is the left
+        ///     mouse and 1 is the right.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public bool ReadMouseButton(int button)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     <para>Returns true during the frame the user pressed the given mouse button.</para>
+        /// </summary>
+        /// <param name="button"></param>
+        public bool ReadMouseButtonDown(int button)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     Determines if the state of the mouse button.
+        /// </summary>
+        /// <param name="id">
+        ///     The id of the mouse button. Its set to 0 by default. 0 is the left
+        ///     mouse and 1 is the right.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public bool ReadMouseButtonUp(int button)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     Returns the keyboard input entered in the this frame.
+        /// </summary>
+        /// <returns></returns>
+        public string ReadInputString()
+        {
+            return chips.controllerChip.inputString;
+        }
+
+        /// <summary>
+        ///     <para>Returns true while the user holds down the key identified by the key KeyCode enum parameter.</para>
+        /// </summary>
+        /// <param name="key"></param>
+        public bool ReadKey(int key)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     <para>
+        ///         Returns true during the frame the user starts pressing down the key identified by the key KeyCode enum
+        ///         parameter.
+        ///     </para>
+        /// </summary>
+        /// <param name="key"></param>
+        public bool ReadKeyDown(int key)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     <para>Returns true during the frame the user releases the key identified by name.</para>
+        /// </summary>
+        /// <param name="key"></param>
+        public bool ReadKeyUp(int key)
+        {
+            throw new NotImplementedException();
+        }
+
         public int backgroundColor
         {
             get { return chips.colorChip.backgroundColor; }
@@ -117,9 +187,9 @@ namespace PixelVisionSDK
             }
         }
 
-        public void UpdateTile(int spriteID, int column, int row, int flag = -1, int colorOffset = 0)
+        public void UpdateTile(int id, int column, int row, int flag = -1, int colorOffset = 0)
         {
-            chips.tileMapChip.UpdateTileAt(spriteID, column, row);
+            chips.tileMapChip.UpdateTileAt(id, column, row);
         }
 
         public void Clear()
@@ -194,9 +264,18 @@ namespace PixelVisionSDK
             return chips.controllerChip.GetMouseButton(id);
         }
 
-        public void UpdateTileColorAt(int colorOffset, int column, int row)
+        public void UpdateTileColorAt(int value, int column, int row)
         {
-            chips.tileMapChip.UpdateTileColorAt(colorOffset, column, row);
+            chips.tileMapChip.UpdateTileColorAt(value, column, row);
+        }
+
+        /// <summary>
+        ///     Reloads the default tilemap and replaces any changes made after it was loaded. Use this to 
+        ///     revert the tilemap back to it's initial values.
+        /// </summary>
+        public void RealoadTilemap()
+        {
+            throw new NotImplementedException();
         }
 
         public void DrawSpriteText(string text, int x, int y, string fontName = "Default", int colorOffset = 0, int spacing = 0)
@@ -229,14 +308,14 @@ namespace PixelVisionSDK
             }
         }
 
-        public void DrawTileTextPixelData(string text, int column, int row, string fontName = "Default", int colorOffset = 0, int letterSpacing = 0)
+        public void DrawTileTextPixelData(string text, int column, int row, string fontName = "Default", int colorOffset = 0, int spacing = 0, int offsetX = 0, int offsetY = 0)
         {
             int width;
             int height;
 
-            chips.fontChip.ConvertTextToPixelData(text, ref tmpPixelData, out width, out height, fontName, letterSpacing, colorOffset);
+            chips.fontChip.ConvertTextToPixelData(text, ref tmpPixelData, out width, out height, fontName, spacing, colorOffset);
 
-            DrawTilePixelData(tmpPixelData, column, row, width, height);
+            DrawTilePixelData(tmpPixelData, column, row, width, height, offsetX, offsetY);
         }
 
         public void DrawSpriteTextBox(string text, int x, int y, int characterWidth, string fontName = "Default", int colorOffset = 0, int letterSpacing = 0)
@@ -270,13 +349,13 @@ namespace PixelVisionSDK
         ///     This method allows you to quickly update a Tile's visuals (sprite & color offset) without changing,
         ///     the flag value.
         /// </summary>
-        /// <param name="tileID"></param>
+        /// <param name="id"></param>
         /// <param name="column"></param>
         /// <param name="row"></param>
         /// <param name="colorOffset"></param>
-        public void DrawTile(int tileID, int column, int row, int colorOffset = 0)
+        public void DrawTile(int id, int column, int row, int colorOffset = 0)
         {
-            chips.tileMapChip.UpdateSpriteAt(column, row, tileID);
+            chips.tileMapChip.UpdateSpriteAt(column, row, id);
             chips.tileMapChip.UpdateTileColorAt(column, row, colorOffset);
         }
 
@@ -400,6 +479,7 @@ namespace PixelVisionSDK
             return chips.controllerChip.GetKeyUp(key);
         }
 
+
         public int[] ReadSpriteAt(int id)
         {
             chips.spriteChip.ReadSpriteAt(id, tmpSpriteData);
@@ -432,6 +512,27 @@ namespace PixelVisionSDK
                 chips);
 
             return pixelData;
+        }
+
+        /// <summary>
+        ///     Saves data based on a key value pair
+        /// </summary>
+        /// <param name="key">The key to use when storing the data.</param>
+        /// <param name="value">The value associated with the key.</param>
+        public void UpdateGameData(string key, string value)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     Reads saved data based on the supplied key.
+        /// </summary>
+        /// <param name="key">The key to use when storing the data.</param>
+        /// <param name="defaultValue">The value associated with the key if no value is found.</param>
+        /// <returns>Returns a string value of based on the key.</returns>
+        public string ReadGameData(string key, string defaultValue = "undefined")
+        {
+            throw new NotImplementedException();
         }
 
         public void SaveData(string key, string value)
@@ -470,6 +571,74 @@ namespace PixelVisionSDK
         public void RewindSong()
         {
             chips.musicChip.RewindSong();
+        }
+
+        /// <summary>
+        ///     Determines a button's value on the current
+        ///     frame. Each button has a unique ID.
+        /// </summary>
+        /// <param name="button">Button ID to test.</param>
+        /// <param name="player">
+        ///     Id for which player's controller to test. It's set to 0 by default
+        ///     for single player game.
+        /// </param>
+        /// <returns>
+        ///     Returns true if the button is currently down.
+        /// </returns>
+        public bool ReadButton(int button, int player = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     Determines if a button is up on the current
+        ///     frame. Each button has a unique ID.
+        /// </summary>
+        /// <param name="button">Button ID to test.</param>
+        /// <param name="player">
+        ///     Id for which player's controller to test. It's set to 0 by default
+        ///     for single player game.
+        /// </param>
+        /// <returns>
+        ///     Returns true if the button is currently up.
+        /// </returns>
+        public bool ReadButtonUp(int button, int player = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     Determines if a button is down on the current
+        ///     frame. Each button has a unique ID.
+        /// </summary>
+        /// <param name="button">Button ID to test.</param>
+        /// <param name="player">
+        ///     Id for which player's controller to test. It's set to 0 by default
+        ///     for single player game.
+        /// </param>
+        /// <returns>
+        ///     Returns true if the button is currently down.
+        /// </returns>
+        public bool ReadButtonDown(int button, int player = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     Determines if a <paramref name="button" /> was just released on the
+        ///     previous frame. Each <paramref name="button" /> has a unique ID.
+        /// </summary>
+        /// <param name="button">Button ID to test.</param>
+        /// <param name="player">
+        ///     Id for which player's controller to test. It's set to 0 by default
+        ///     for single player game.
+        /// </param>
+        /// <returns>
+        ///     Returns true if the button was released in the previous frame.
+        /// </returns>
+        public bool ReadButtonReleased(int button, int player = 0)
+        {
+            throw new NotImplementedException();
         }
 
         public int[] ReplaceColorID(int[] pixelData, int oldID, int newID)
@@ -611,7 +780,7 @@ namespace PixelVisionSDK
         public void DrawPixelData(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layerOrder = 0, bool masked = false, int colorOffset = 0)
         {
 
-            //DrawSpritePixelData(pixelData, x, y, width, height, flipH, flipV, layerOrder ? 1 : 0, colorOffset: colorOffset);
+            DrawSpritePixelData(pixelData, x, y, width, height, flipH, flipV, layerOrder == 1, colorOffset);
         }
 
         public bool displayWrap
@@ -691,6 +860,11 @@ namespace PixelVisionSDK
         {
             id = id.Clamp(0, chips.colorChip.total - 1);
             chips.colorChip.backgroundColor = id;
+        }
+
+        public string inputString
+        {
+            get { return ReadInputString(); }
         }
         #endregion
 

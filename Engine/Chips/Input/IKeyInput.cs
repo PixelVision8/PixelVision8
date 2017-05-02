@@ -14,20 +14,24 @@
 // Shawn Rakowski - @shwany
 // 
 
+using System;
+
 namespace PixelVisionSDK
 {
     public interface IKeyInput
     {
+
         /// <summary>
-        ///     <para>Returns the keyboard input entered this frame. (Read Only)</para>
+        ///     Returns the keyboard input entered in the this frame.
         /// </summary>
-        string inputString { get; }
+        /// <returns></returns>
+        string ReadInputString();
 
         /// <summary>
         ///     <para>Returns true while the user holds down the key identified by the key KeyCode enum parameter.</para>
         /// </summary>
         /// <param name="key"></param>
-        bool GetKey(int key);
+        bool ReadKey(int key);
 
         /// <summary>
         ///     <para>
@@ -36,12 +40,25 @@ namespace PixelVisionSDK
         ///     </para>
         /// </summary>
         /// <param name="key"></param>
-        bool GetKeyDown(int key);
+        bool ReadKeyDown(int key);
 
         /// <summary>
         ///     <para>Returns true during the frame the user releases the key identified by name.</para>
         /// </summary>
         /// <param name="key"></param>
+        bool ReadKeyUp(int key);
+
+        #region Deprecated
+
+        [Obsolete]
+        string inputString { get; }
+        [Obsolete]
+        bool GetKey(int key);
+        [Obsolete]
+        bool GetKeyDown(int key);
+        [Obsolete]
         bool GetKeyUp(int key);
+
+        #endregion
     }
 }
