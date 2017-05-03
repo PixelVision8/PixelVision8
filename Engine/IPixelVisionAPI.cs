@@ -218,7 +218,7 @@ namespace PixelVisionSDK
         ///     Reloads the default tilemap and replaces any changes made after it was loaded. Use this to 
         ///     revert the tilemap back to it's initial values.
         /// </summary>
-        void RealoadTilemap();
+        void RebuildMap();
 
         #endregion
 
@@ -244,7 +244,7 @@ namespace PixelVisionSDK
         void DrawSpriteText(string text, int x, int y, string fontName = "Default", int colorOffset = 0, int spacing = 0);
 
         /// <summary>
-        ///     This method allows you to set individual tiles in the tilemap to a font's characters. This is useful
+        ///     This method allows you to set individual tiles in the tilemap to a font characters. This is useful
         ///     when you want to add text to the background and not use sprites. Note that you can not change the
         ///     character spacing since this method only works with single tile wide characters.
         /// </summary>

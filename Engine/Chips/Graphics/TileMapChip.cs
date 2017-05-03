@@ -138,6 +138,21 @@ namespace PixelVisionSDK.Chips
                 if (tileLayer[i] == id)
                     invalidLayer[i] = -1;
             }
+            
+            Invalidate();
+        }
+
+        public void ClearCache()
+        {
+            cachedTileMap.Clear();
+
+            var invalidLayer = layers[(int)Layer.Invalid];
+
+            var total = invalidLayer.Length;
+            for (int i = 0; i < total; i++)
+            {
+                invalidLayer[i] = -1;
+            }
 
             Invalidate();
         }
@@ -148,21 +163,6 @@ namespace PixelVisionSDK.Chips
             var invalidLayer = layers[(int) Layer.Invalid];
             Array.Clear(invalidLayer, 0, total);
         }
-
-//        protected int[] _cachedTilemapPixels = new int[0];
-//
-//        public int[] cachedTilemapPixels
-//        {
-//            get
-//            {
-//                if (invalid)
-//                {
-//                    ReadPixelData(realWidth, realHeight, ref _cachedTilemapPixels);
-//                }
-//
-//                return _cachedTilemapPixels;
-//            }
-//        }
 
         public void ReadCachedTilemap(ref int[] pixels)
         {
@@ -217,14 +217,10 @@ namespace PixelVisionSDK.Chips
                     {
                         // Get the sprite id
                         spriteID = tmpSpriteIDs[i];
-
+                        
                         // Make sure there is a sprite
                         if (spriteID > -1)
                         {
-
-                            // Read the sprite data
-                            spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
-
                             // Calculate the new position of the tile;
                             x = i % columns * tileWidth;
                             y = i / columns;
@@ -232,9 +228,13 @@ namespace PixelVisionSDK.Chips
                             y = (rows - 1 - y) * tileHeight;
                             //y *= tileHeight;
 
+                            // Read the sprite data
+                            spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
+
                             // Draw the pixel data into the cachedTilemap
                             cachedTileMap.SetPixels(x, y, tileWidth, tileHeight, tmpPixelData, tmpPaletteIDs[i]);
                         }
+                        
                     }
 
                 // Reset the invalidation state
@@ -577,6 +577,7 @@ namespace PixelVisionSDK.Chips
             Invalid
 
         }
+
 
     }
 

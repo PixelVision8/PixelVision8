@@ -298,7 +298,7 @@ namespace PixelVisionSDK
         ///     Reloads the default tilemap and replaces any changes made after it was loaded. Use this to 
         ///     revert the tilemap back to it's initial values.
         /// </summary>
-        public void RealoadTilemap()
+        public void RebuildMap()
         {
             throw new NotImplementedException();
         }
@@ -713,6 +713,16 @@ namespace PixelVisionSDK
 
         public virtual void DrawTilemap(int startCol = 0, int startRow = 0, int columns = -1, int rows = -1, int offsetX = 0, int offsetY = 0)
         {
+            if (columns == -1)
+            {
+                columns = chips.tileMapChip.columns;
+            }
+
+            if (rows == -1)
+            {
+                rows = chips.tileMapChip.rows;
+            }
+
             chips.displayChip.DrawTilemap(startCol, startRow, columns, rows);
         }
 
@@ -751,15 +761,17 @@ namespace PixelVisionSDK
         public void RebuildScreenBuffer()
         {
             //TODO this should clear the cache completely?
-            chips.tileMapChip.Invalidate();
+            chips.tileMapChip.ClearCache();
             //chips.screenBufferChip.RebuildScreenBuffer();
         }
 
         public void DrawTileToBuffer(int spriteID, int column, int row, int colorOffset = 0)
         {
-            //TODO need to deprecate this method
-            chips.tileMapChip.UpdateSpriteAt(column, row, spriteID);
-            chips.tileMapChip.UpdateTileColorAt(column, row, colorOffset);
+            var data = ReadSpriteAt(spriteID);
+
+            DrawTilePixelData(data, column, row, ReadSpriteWidth(), ReadSpriteHeight());
+//            chips.tileMapChip.UpdateSpriteAt(column, row, spriteID);
+//            chips.tileMapChip.UpdateTileColorAt(column, row, colorOffset);
         }
 
         public void DrawTilesToBuffer(int[] ids, int column, int row, int columns, int colorOffset = 0)
