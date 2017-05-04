@@ -31,13 +31,13 @@ namespace PixelVisionSDK.Chips
         protected int _width = 256;
         protected bool _clearFlag;
 
-        public bool autoClear;
+//        public bool autoClear;
 
-        protected bool clearFlag
-        {
-            get { return autoClear || _clearFlag; }
-            set { _clearFlag = value; }
-        }
+        protected bool clearFlag { get; set; }
+//        {
+//            get { return autoClear || _clearFlag; }
+//            set { _clearFlag = value; }
+//        }
 
         protected bool copyScreenBuffer;
         protected int currentSprites;
@@ -76,33 +76,33 @@ namespace PixelVisionSDK.Chips
                 return _overscanY * engine.spriteChip.height;
             }
         }
-        /// <summary>
-        ///     The width of the area to sample from in the ScreenBufferChip. If
-        ///     width of the view port is larger than the <see cref="TextureData" />
-        ///     it will wrap.
-        /// </summary>
-        public int viewPortHeight = 240;
-
-        /// <summary>
-        ///     This represents the x position on the screen where the
-        ///     ScreenBufferChip's view port should be rendered to on the display. 0
-        ///     is the left of the screen.
-        /// </summary>
-        public int viewPortOffsetX;
-
-        /// <summary>
-        ///     This represents the y position on the screen where the
-        ///     ScreenBufferChip's view port should be rendered to on the display. 0
-        ///     is the top of the screen.
-        /// </summary>
-        public int viewPortOffsetY;
-
-        /// <summary>
-        ///     The height of the area to sample from in the ScreenBufferChip. If
-        ///     width of the view port is larger than the <see cref="TextureData" />
-        ///     it will wrap.
-        /// </summary>
-        public int viewPortWidth = 256;
+//        /// <summary>
+//        ///     The width of the area to sample from in the ScreenBufferChip. If
+//        ///     width of the view port is larger than the <see cref="TextureData" />
+//        ///     it will wrap.
+//        /// </summary>
+//        public int viewPortHeight = 240;
+//
+//        /// <summary>
+//        ///     This represents the x position on the screen where the
+//        ///     ScreenBufferChip's view port should be rendered to on the display. 0
+//        ///     is the left of the screen.
+//        /// </summary>
+//        public int viewPortOffsetX;
+//
+//        /// <summary>
+//        ///     This represents the y position on the screen where the
+//        ///     ScreenBufferChip's view port should be rendered to on the display. 0
+//        ///     is the top of the screen.
+//        /// </summary>
+//        public int viewPortOffsetY;
+//
+//        /// <summary>
+//        ///     The height of the area to sample from in the ScreenBufferChip. If
+//        ///     width of the view port is larger than the <see cref="TextureData" />
+//        ///     it will wrap.
+//        /// </summary>
+//        public int viewPortWidth = 256;
 
 
         /// <summary>
@@ -374,7 +374,7 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         ///     This triggers the renderer to clear an area of the display.
         /// </summary>
-        public void ClearArea(int x, int y, int blockWidth, int blockHeight, int color = -1)
+        public void ClearArea(int x = 0, int y = 0, int blockWidth = -1, int blockHeight = -1, int color = -1)
         {
 
             // Create new clear draw request instance
@@ -384,9 +384,10 @@ namespace PixelVisionSDK.Chips
             // Configure the clear draw request
             clearDrawRequest.x = x;
             clearDrawRequest.y = y;
-            clearDrawRequest.width = blockWidth;
-            clearDrawRequest.height = blockHeight;
-            clearDrawRequest.transparent = color;
+            clearDrawRequest.width = blockWidth == -1 ? width : blockWidth;
+            clearDrawRequest.height = blockHeight == -1 ? height : blockHeight;
+
+            clearDrawRequest.transparent = color == -1 ? backgroundColor : color;
 
             clearFlag = true;
 
@@ -511,9 +512,9 @@ namespace PixelVisionSDK.Chips
             //autoClear = false;
             wrapMode = true;
             ResetResolution(256, 240);
-
-            viewPortOffsetX = 0;
-            viewPortOffsetY = 0;
+//
+//            viewPortOffsetX = 0;
+//            viewPortOffsetY = 0;
             scrollX = 0;
             scrollY = 0;
         }

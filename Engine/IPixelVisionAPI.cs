@@ -14,6 +14,8 @@
 // Shawn Rakowski - @shwany
 // 
 
+using System;
+
 namespace PixelVisionSDK
 {
     /// <summary>
@@ -30,14 +32,14 @@ namespace PixelVisionSDK
         /// </summary>
         /// <param name="id">The unique ID of the sprite to look up.</param>
         /// <returns>Returns an int array containing color IDs.</returns>
-        int[] ReadSpriteAt(int id);
+        int[] ReadSprite(int id);
 
         /// <summary>
         ///     Replaces the pixel data of a sprite.
         /// </summary>
         /// <param name="id">The unique ID of the sprite to look up.</param>
         /// <param name="pixels">An int array containing color IDs.</param>
-        void UpdateSpriteAt(int id, int[] pixels);
+        void UpdateSprite(int id, int[] pixels);
 
         /// <summary>
         ///     Draws a sprite to the display.
@@ -99,7 +101,8 @@ namespace PixelVisionSDK
         #region Tile APIs
 
         /// <summary>
-        ///     This helper method makes it easy to draw a new tile in the tilemap.
+        ///     This helper method makes it easy to draw a new tile in the tilemap without altering the
+        ///     tile's flag.
         /// </summary>
         /// <param name="id">The id of the sprite to use.</param>
         /// <param name="column">
@@ -114,7 +117,8 @@ namespace PixelVisionSDK
         void DrawTile(int id, int column, int row, int colorOffset = 0);
 
         /// <summary>
-        ///     This helper method allows you to draw multiple tiles to the tilemap in a grid.
+        ///     This helper method allows you to draw multiple tiles to the tilemap in a grid without
+        ///     altering each tile's flag.
         /// </summary>
         /// <param name="ids">The sprite ids to use for the tiles.</param>
         /// <param name="column">
@@ -159,7 +163,7 @@ namespace PixelVisionSDK
         ///     Returns a bit value based on the total number of flags set in the
         ///     tile map chip.
         /// </returns>
-        int ReadFlagAt(int column, int row);
+        int ReadFlag(int column, int row);
 
         /// <summary>
         ///     Update a tile's flag value.
@@ -171,7 +175,7 @@ namespace PixelVisionSDK
         /// <param name="row">
         ///     Row position to draw tile to. 0 is the top of the tilemap.
         /// </param>
-        void UpdateFlagAt(int flag, int column, int row);
+        void UpdateFlag(int flag, int column, int row);
 
         /// <summary>
         ///     Use this to read the sprite id of a tile.
@@ -357,66 +361,48 @@ namespace PixelVisionSDK
         #region Display APIs
 
         /// <summary>
-        ///     The width of the sprites in pixels.
+        ///     Returns a vector containing the width and height of sprites.
         /// </summary>
-        /// <returns>Returns an int.</returns>
-        int ReadSpriteWidth();
+        /// <returns>A vector where x is the width and y is the height.</returns>
+        Vector ReadSpriteSize();
 
         /// <summary>
-        ///     The height of the sprites in pixels.
+        ///     Returns a vector containing the width and height of the display.
         /// </summary>
-        /// <returns>Returns an int.</returns>
-        int ReadSpriteHeight();
+        /// <returns>A vector where x is the width and y is the height.</returns>
+        Vector ReadDisplaySize();
 
-        /// <summary>
-        ///     The width of the screen in pixels.
-        /// </summary>
-        /// <returns>Returns an int.</returns>
-        int ReadDisplayWidth();
+        Vector ReadScrollPosition();
 
-        /// <summary>
-        ///     The height of the screen in pixels.
-        /// </summary>
-        /// <returns>Returns an int.</returns>
-        int ReadDisplayHeight();
+        void UpdateScrollPosition(int x, int y);
 
-        /// <summary>
-        ///     The horizontal scroll position of the screen buffer. 0 is the left
-        ///     side of the screen.
-        /// </summary>
-        /// <returns>Returns an int.</returns>
-        int ReadScrollX();
+//        /// <summary>
+//        ///     The horizontal scroll position of the screen buffer. 0 is the left
+//        ///     side of the screen.
+//        /// </summary>
+//        /// <returns>Returns an int.</returns>
+//        int ReadScrollX();
+//
+//        /// <summary>
+//        ///     Updates the scroll x value.
+//        /// </summary>
+//        /// <param name="value">Accepts an int value.</param>
+//        void UpdateScrollX(int value);
+//
+//        /// <summary>
+//        ///     The vertical scroll position of the screen buffer. 0 is the top side
+//        ///     of the screen.
+//        /// </summary>
+//        /// <returns>Returns an int.</returns>
+//        int ReadScrollY();
+//
+//        /// <summary>
+//        ///     Updates the scroll y value.
+//        /// </summary>
+//        /// <param name="value">Accepts an int value.</param>
+//        void UpdateScrollY(int value);
 
-        /// <summary>
-        ///     Updates the scroll x value.
-        /// </summary>
-        /// <param name="value">Accepts an int value.</param>
-        void UpdateScrollX(int value);
-
-        /// <summary>
-        ///     The vertical scroll position of the screen buffer. 0 is the top side
-        ///     of the screen.
-        /// </summary>
-        /// <returns>Returns an int.</returns>
-        int ReadScrollY();
-
-        /// <summary>
-        ///     Updates the scroll y value.
-        /// </summary>
-        /// <param name="value">Accepts an int value.</param>
-        void UpdateScrollY(int value);
-
-        /// <summary>
-        ///     Scrolls the tilemap to a specific position.
-        /// </summary>
-        /// <param name="x">Accepts an int for the x value.</param>
-        /// <param name="y">Accepts an int for the y value.</param>
-        void ScrollTo(int x, int y);
-
-        /// <summary>
-        ///     Clears the display with the current background color.
-        /// </summary>
-        void Clear();
+        
 
         /// <summary>
         ///     Clears an area of the screen with a specific color.
@@ -429,8 +415,7 @@ namespace PixelVisionSDK
         /// </param>
         /// <param name="width">The width of the clear area.</param>
         /// <param name="height">The height of the clear area.</param>
-        /// <param name="color">A color to use for the clear.</param>
-        void ClearArea(int x, int y, int width, int height, int color = -1);
+        void Clear(int x = 0, int y = 0, int width = -1, int height = -1);
 
         /// <summary>
         ///     Changes the background color.
@@ -451,13 +436,16 @@ namespace PixelVisionSDK
         ///     Simply call this method without any values to redraw the entire display
         ///     with the tilemap.
         /// </summary>
-        /// <param name="startCol">The first tile column id to use. 0 is the far left side of the tilemap.</param>
-        /// <param name="startRow">The first tile row id to use. 0 is the top of the tilemap.</param>
+        /// <param name="x">
+        ///     The x position on the display to render the tilemap. 0 is the far left 
+        ///     corner of the display.</param>
+        /// <param name="y">
+        ///     The y position on the display to render the tilemap. 0 is the top of 
+        ///     the display.</param>
+        /// </param>
         /// <param name="columns">The total number of columns to draw to the display.</param>
         /// <param name="rows">The total number of rows to draw to the display.</param>
-        /// <param name="offsetX">The x offset where to render the tilemap on the display. 0 is the far left side of the display.</param>
-        /// <param name="offsetY">The y offset where to render the tilemap on the display. 0 is the top of the display.</param>
-        void DrawTilemap(int startCol = 0, int startRow = 0, int columns = -1, int rows = -1, int offsetX = 0, int offsetY = 0);
+        void DrawTilemap(int x = 0, int y = 0, int columns = -1, int rows = -1);
 
         #endregion
 
@@ -629,6 +617,14 @@ namespace PixelVisionSDK
         int scrollY { get; }
         void SaveData(string key, string value);
         string ReadData(string key, string defaultValue = "undefined");
+        void UpdateSpriteAt(int id, int[] pixels);
+        int[] ReadSpriteAt(int id);
+        /// <summary>
+        ///     Scrolls the tilemap to a specific position.
+        /// </summary>
+        /// <param name="x">Accepts an int for the x value.</param>
+        /// <param name="y">Accepts an int for the y value.</param>
+        void ScrollTo(int x, int y);
 
         /// <summary>
         ///     This draws pixel data directly to the display. It's the raw drawing
@@ -850,6 +846,9 @@ namespace PixelVisionSDK
 
         bool ButtonDown(int button, int player = 0);
         bool ButtonReleased(int button, int player = 0);
+
+        int ReadFlagAt(int column, int row);
+        void UpdateFlagAt(int flag, int column, int row);
         #endregion
 
     }

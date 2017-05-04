@@ -69,9 +69,6 @@ namespace PixelVisionSDK
             chips = enginechips;
         }
 
-
-
-
         public string inputString
         {
             get { return ReadInputString(); }
@@ -79,6 +76,16 @@ namespace PixelVisionSDK
         public void UpdateScrollY(int value)
         {
             chips.displayChip.scrollY = value;
+        }
+
+        public int[] ReadSpriteAt(int id)
+        {
+            return ReadSprite(id);
+        }
+
+        public void UpdateSpriteAt(int id, int[] pixels)
+        {
+            UpdateSprite(id, pixels);
         }
 
         public void ScrollTo(int x, int y)
@@ -217,14 +224,14 @@ namespace PixelVisionSDK
             chips.tileMapChip.UpdateTileAt(id, column, row);
         }
 
-        public void Clear()
-        {
-            chips.displayChip.ClearArea(0, 0, displayWidth, displayHeight);
-        }
+//        public void Clear()
+//        {
+//            chips.displayChip.ClearArea(0, 0, displayWidth, displayHeight);
+//        }
 
-        public void ClearArea(int x, int y, int width, int height, int color = -1)
+        public void Clear(int x = 0, int y = 0, int width = -1, int height = -1)
         {
-            chips.displayChip.ClearArea(x, y, width, height, color);
+            chips.displayChip.ClearArea(x, y, width, height);
         }
 
         public void UpdateBackgroundColor(int id)
@@ -236,8 +243,6 @@ namespace PixelVisionSDK
         {
             return chips.colorChip.backgroundColor;
         }
-
-        
 
         public void PlaySound(int id, int channel = 0)
         {
@@ -262,6 +267,16 @@ namespace PixelVisionSDK
                 return false;
 
             return chips.controllerChip.ButtonReleased(button, player);
+        }
+
+        public int ReadFlagAt(int column, int row)
+        {
+            return ReadFlag(column, row);
+        }
+
+        public void UpdateFlagAt(int flag, int column, int row)
+        {
+            UpdateFlag(flag, column, row);
         }
 
         public int ReadMouseX()
@@ -425,56 +440,78 @@ namespace PixelVisionSDK
 
         public void DrawTilePixelData(int[] pixelData, int column, int row, int width, int height, int offsetX = 0, int offsetY = 0)
         {
-            var x = (column * ReadSpriteWidth()) + offsetX;
+            var spriteSize = ReadSpriteSize();
+            var x = (column * spriteSize.x) + offsetX;
 
             row = chips.tileMapChip.rows - row - 1;
 
-            var y = (row * ReadSpriteHeight()) + offsetY;
+            var y = (row * spriteSize.y) + offsetY;
 
             chips.tileMapChip.UpdateCachedTilemap(pixelData, x, y, width, height);
         }
 
-        public int ReadSpriteWidth()
+//        public int ReadSpriteWidth()
+//        {
+//            return chips.spriteChip.width;
+//        }
+//
+//        public int ReadSpriteHeight()
+//        {
+//            return chips.spriteChip.height;
+//        }
+
+        public Vector ReadSpriteSize()
         {
-            return chips.spriteChip.width;
+            return new Vector(chips.spriteChip.width, chips.spriteChip.height);
         }
 
-        public int ReadSpriteHeight()
+//        public int ReadDisplayWidth()
+//        {
+//            return chips.displayChip.width;
+//        }
+//
+//        public int ReadDisplayHeight()
+//        {
+//            return chips.displayChip.height;
+//        }
+
+        public Vector ReadDisplaySize()
         {
-            return chips.spriteChip.height;
+            return new Vector(chips.displayChip.width, chips.displayChip.height);
         }
 
-        public int ReadDisplayWidth()
+        public Vector ReadScrollPosition()
         {
-            return chips.displayChip.width;
+            return new Vector(chips.displayChip.scrollX, chips.displayChip.scrollY);
         }
 
-        public int ReadDisplayHeight()
+        public void UpdateScrollPosition(int x, int y)
         {
-            return chips.displayChip.height;
+            chips.displayChip.scrollX = x;
+            chips.displayChip.scrollY = y;
         }
 
-        public int ReadScrollX()
-        {
-            return chips.displayChip.scrollX;
-        }
+//        public int ReadScrollX()
+//        {
+//            return chips.displayChip.scrollX;
+//        }
+//
+//        public void UpdateScrollX(int value)
+//        {
+//            chips.displayChip.scrollX = value;
+//        }
+//
+//        public int ReadScrollY()
+//        {
+//            return chips.displayChip.scrollY;
+//        }
 
-        public void UpdateScrollX(int value)
-        {
-            chips.displayChip.scrollX = value;
-        }
-
-        public int ReadScrollY()
-        {
-            return chips.displayChip.scrollY;
-        }
-
-        public int ReadFlagAt(int column, int row)
+        public int ReadFlag(int column, int row)
         {
             return chips.tileMapChip.ReadFlagAt(column, row);
         }
 
-        public void UpdateFlagAt(int flag, int column, int row)
+        public void UpdateFlag(int flag, int column, int row)
         {
             chips.tileMapChip.UpdateFlagAt(column, row, flag);
         }
@@ -505,14 +542,14 @@ namespace PixelVisionSDK
         }
 
 
-        public int[] ReadSpriteAt(int id)
+        public int[] ReadSprite(int id)
         {
             chips.spriteChip.ReadSpriteAt(id, tmpSpriteData);
 
             return tmpSpriteData;
         }
 
-        public void UpdateSpriteAt(int id, int[] pixels)
+        public void UpdateSprite(int id, int[] pixels)
         {
             chips.spriteChip.UpdateSpriteAt(id, pixels);
             chips.tileMapChip.InvalidateTileID(id);
@@ -711,7 +748,7 @@ namespace PixelVisionSDK
             chips.displayChip.DrawTilemap(offsetX, offsetY, MathUtil.FloorToInt((float)width / spriteWidth), MathUtil.FloorToInt((float)height / spriteHeight));
         }
 
-        public virtual void DrawTilemap(int startCol = 0, int startRow = 0, int columns = -1, int rows = -1, int offsetX = 0, int offsetY = 0)
+        public virtual void DrawTilemap(int x = 0, int y = 0, int columns = -1, int rows = -1)
         {
             if (columns == -1)
             {
@@ -723,7 +760,7 @@ namespace PixelVisionSDK
                 rows = chips.tileMapChip.rows;
             }
 
-            chips.displayChip.DrawTilemap(startCol, startRow, columns, rows);
+            chips.displayChip.DrawTilemap(x, y, columns, rows);
         }
 
         public void ClearTilemap()
@@ -767,9 +804,9 @@ namespace PixelVisionSDK
 
         public void DrawTileToBuffer(int spriteID, int column, int row, int colorOffset = 0)
         {
-            var data = ReadSpriteAt(spriteID);
-
-            DrawTilePixelData(data, column, row, ReadSpriteWidth(), ReadSpriteHeight());
+            var data = ReadSprite(spriteID);
+            var spriteSize = ReadSpriteSize();
+            DrawTilePixelData(data, column, row, spriteSize.x, spriteSize.y);
 //            chips.tileMapChip.UpdateSpriteAt(column, row, spriteID);
 //            chips.tileMapChip.UpdateTileColorAt(column, row, colorOffset);
         }
@@ -835,33 +872,33 @@ namespace PixelVisionSDK
 
         public int spriteWidth
         {
-            get { return ReadSpriteWidth(); }
+            get { return ReadSpriteSize().x; }
         }
 
         public int spriteHeight
         {
-            get { return ReadSpriteHeight(); }
+            get { return ReadSpriteSize().y; }
         }
 
         public int displayWidth
         {
-            get { return ReadDisplayWidth(); }
+            get { return ReadDisplaySize().x; }
         }
 
 
         public int displayHeight
         {
-            get { return ReadDisplayHeight(); }
+            get { return ReadDisplaySize().y; }
         }
 
         public int scrollX
         {
-            get { return ReadScrollX(); }
+            get { return ReadScrollPosition().x; }
         }
 
         public int scrollY
         {
-            get { return ReadScrollY(); }
+            get { return ReadScrollPosition().y; }
         }
 
 
