@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 // 
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using PixelVisionSDK.Utils;
@@ -23,13 +24,13 @@ using PixelVisionSDK.Utils;
 namespace PixelVisionSDK.Chips
 {
     /// <summary>
-    ///     The <see cref="GameChip" /> represents the foundation of a game class
+    ///     The GameChip represents the foundation of a game class
     ///     with all the logic it needs to work correctly in the PixelVisionEngine.
     ///     The Abstract class manages configuring the game when created via the
     ///     chip life-cycle, game state, the game's own life-cycle and
     ///     serialization/deserialization of the game's data.
     /// </summary>
-    public class GameChip : AbstractChip, IGame, IUpdate, IDraw
+    public class GameChip : AbstractChip, IGame, IGameAPI, IUpdate, IDraw
     {
         private string _name = "Untitle_Game";
         protected int _saveSlots;
@@ -86,6 +87,59 @@ namespace PixelVisionSDK.Chips
 
         public string description { get; set; }
 
+        public ChipManager chipManager
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public ColorChip colorChip {
+            get { return engine.colorChip; }
+        }
+        public ColorMapChip colorMapChip
+        {
+            get { return engine.colorMapChip; }
+        }
+        public ControllerChip controllerChip
+        {
+            get { return engine.controllerChip; }
+        }
+        public DisplayChip displayChip
+        {
+            get { return engine.displayChip; }
+        }
+        public SoundChip soundChip
+        {
+            get { return engine.soundChip; }
+        }
+        public SpriteChip spriteChip
+        {
+            get { return engine.spriteChip; }
+        }
+        public TilemapChip tilemapChip
+        {
+            get { return engine.tilemapChip; }
+        }
+        public FontChip fontChip
+        {
+            get { return engine.fontChip; }
+        }
+        public MusicChip musicChip
+        {
+            get { return engine.musicChip; }
+        }
+
+        // Cached values
+        protected Vector spriteSize { get; set; }
+        protected Vector displaySize { get; set; }
+
         public void SaveData(string key, string value)
         {
             if (savedData.Count > saveSlots)
@@ -128,28 +182,6 @@ namespace PixelVisionSDK.Chips
             return float.Parse(GetData(key, defaultValue.ToString()));
         }
 
-//        public Dictionary<string, object> GenerateMetaData()
-//        {
-//            var metaData = new Dictionary<string, object>();
-//
-//            metaData.Add("name", name);
-//            metaData.Add("description", description);
-//
-//            return metaData;
-//        }
-//
-//        public void LoadMetaData(Dictionary<string, object> metaData)
-//        {
-//            if (metaData == null)
-//                return;
-//
-//            if (metaData.ContainsKey("name"))
-//                name = metaData["name"] as string;
-//
-//            if (metaData.ContainsKey("description"))
-//                description = metaData["description"] as string;
-//        }
-
         /// <summary>
         ///     Used for updating the game's logic.
         /// </summary>
@@ -172,6 +204,23 @@ namespace PixelVisionSDK.Chips
             //TODO this needs to be a service
             apiBridge = engine.apiBridge;
             ready = true;
+
+            Array.Resize(ref tmpSpriteData, engine.spriteChip.width * engine.spriteChip.height);
+
+            // To speed up accessing each chip, get a reference to them
+//            colorChip = engine.colorChip;
+//            colorMapChip = engine.colorMapChip;
+//            controllerChip = engine.controllerChip;
+//            displayChip = engine.displayChip;
+//            soundChip = engine.soundChip;
+//            spriteChip = engine.spriteChip;
+//            tilemapChip = engine.tilemapChip;
+//            fontChip = engine.fontChip;
+//            musicChip = engine.musicChip;
+
+            // cache used common properties
+            spriteSize = new Vector(spriteChip.width, spriteChip.height);
+            displaySize = new Vector(displayChip.width, displayChip.height);
         }
 
         /// <summary>
@@ -182,5 +231,185 @@ namespace PixelVisionSDK.Chips
             base.Deactivate();
             engine.currentGame = null;
         }
+
+        #region Pixel Vision APIs
+
+        public void BackgroundColor(int id)
+        {
+            colorChip.backgroundColor = MathUtil.Clamp(id, 0, colorChip.total);
+        }
+
+        public bool Button(int button, int player)
+        {
+            var totalButtons = Enum.GetNames(typeof(Buttons)).Length;
+
+            if (button >= totalButtons)
+                return false;
+
+            return controllerChip.ButtonDown(button, player);
+        }
+
+        public bool ButtonReleased(int id, int player)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Clear(int x = 0, int y = 0, int width = 0, int height = 0)
+        {
+            displayChip.ClearArea(x, y, width, height);
+        }
+
+        public Vector DisplaySize()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Flag(int column, int row)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DrawPixels(int[] pixelData, int x, int y, int width, int height, int mode = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
+        {
+            switch (mode)
+            {   
+                // Mode 0 & 1 are for sprites (above/below bg)
+                case 0: case 1:
+                    var layerOrder = mode == 0 ? 1 : -1;
+
+                    y += height - spriteChip.height;
+                    
+                    displayChip.NewDrawCall(pixelData, x, y, width, height, flipH, flipV, true, layerOrder, false, colorOffset);
+
+                    break;
+            }
+            
+        }
+
+        private int[] tmpSpriteData = new int[0];
+
+        public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, bool aboveBG = true, int colorOffset = 0)
+        {
+            if (!displayChip.CanDraw())
+                return;
+
+            //TODO flipping H, V and colorOffset should all be passed into reading a sprite
+            spriteChip.ReadSpriteAt(id, tmpSpriteData);
+
+            // Mode 0 is sprite above bg and mode 1 is sprite below bg.
+            var mode = aboveBG ? 0 : 1;
+            DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, mode, flipH, flipV, colorOffset);
+
+        }
+
+        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, bool aboveBG = true, int colorOffset = 0)
+        {
+            var total = ids.Length;
+
+            if (flipH || flipV)
+            {
+                var height = MathUtil.CeilToInt(total / width);
+                SpriteChipUtil.FlipSpriteData(ref ids, width, height, flipH, flipV);
+            }
+
+            for (var i = 0; i < total; i++)
+            {
+                var id = ids[i];
+                if (id > -1)
+                {
+                    //TODO should cache the sprite size value
+                    var newX = MathUtil.FloorToInt(i % width) * spriteChip.width + x;
+                    var newY = MathUtil.FloorToInt(i / width) * spriteChip.height + y;
+                    DrawSprite(id, newX, newY, flipH, flipV, aboveBG, colorOffset);
+                }
+            }
+        }
+
+        public void DrawText(string text, int x, int y, int mode = 0, string font = "Default", int colorOffset = 0, int spacing = 0)
+        {
+            switch (mode)
+            {
+                case 0:
+
+                    var width = spriteSize.x;
+                    var nextX = x;
+
+                    var spriteIDs = fontChip.ConvertTextToSprites(text, font);
+                    var total = spriteIDs.Length;
+
+                    // Draw each character
+                    for (int i = 0; i < total; i++)
+                    {
+                        DrawSprite(spriteIDs[i], nextX, y, false, false, true, colorOffset);
+                        nextX += width + spacing;
+                    }
+
+                    break;
+            }
+        }
+
+        public void DrawTile(int id, int column, int row, int colorOffset = 0, int flag = -1)
+        {
+            tilemapChip.UpdateTileAt(id, column, row, flag, colorOffset);
+        }
+
+        public void DrawTiles(int[] ids, int column, int row, int columns, int colorOffset = 0, int flag = -1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0)
+        {
+            displayChip.DrawTilemap(x, y, columns, rows);
+        }
+
+        public string ReadData(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RebuildMap()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Scroll(int x = 0, int y = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Sfx(int id, int channel = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Song(int id, bool loop = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Vector SpriteSize()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateSprite(int[] pixelData, int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateTile(int id, int column, int row, int colorOffset = 0, int flag = -1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteData(string key, string value)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        #endregion
+
     }
 }

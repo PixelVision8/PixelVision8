@@ -165,9 +165,9 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public bool paused { get; set; }
 
-        protected TileMapChip tilemapChip
+        protected TilemapChip tilemapChip
         {
-            get { return engine.tileMapChip; }
+            get { return engine.tilemapChip; }
         }
 
         protected int backgroundColor
@@ -175,7 +175,7 @@ namespace PixelVisionSDK.Chips
             get { return engine.colorChip != null ? engine.colorChip.backgroundColor : -1; }
         }
 
-        public void DrawTilemap(int x, int y, int columns, int rows)
+        public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0)
         {
             // Set the draw flag to true
             drawTilemapFlag = true;
@@ -188,8 +188,8 @@ namespace PixelVisionSDK.Chips
             var tileHeight = tilemapChip.tileHeight;
 
             // Convert tile width and height to pixel width and height
-            tilemapDrawRequest.width = columns * tileWidth;
-            tilemapDrawRequest.height = rows * tileHeight;
+            tilemapDrawRequest.width = columns <= 0 ? width : columns * tileWidth;
+            tilemapDrawRequest.height = height <= 0 ? height : rows * tileHeight;
 
             // save the starting x,y position to render the map on the screen
             tilemapDrawRequest.x = x;
@@ -374,7 +374,7 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         ///     This triggers the renderer to clear an area of the display.
         /// </summary>
-        public void ClearArea(int x = 0, int y = 0, int blockWidth = -1, int blockHeight = -1, int color = -1)
+        public void ClearArea(int x = 0, int y = 0, int blockWidth = 0, int blockHeight = 0, int color = -1)
         {
 
             // Create new clear draw request instance
@@ -384,8 +384,8 @@ namespace PixelVisionSDK.Chips
             // Configure the clear draw request
             clearDrawRequest.x = x;
             clearDrawRequest.y = y;
-            clearDrawRequest.width = blockWidth == -1 ? width : blockWidth;
-            clearDrawRequest.height = blockHeight == -1 ? height : blockHeight;
+            clearDrawRequest.width = blockWidth <= 0 ? width : blockWidth;
+            clearDrawRequest.height = blockHeight <= 0 ? height : blockHeight;
 
             clearDrawRequest.transparent = color == -1 ? backgroundColor : color;
 

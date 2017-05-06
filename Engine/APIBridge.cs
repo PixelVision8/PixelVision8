@@ -221,7 +221,7 @@ namespace PixelVisionSDK
 
         public void UpdateTile(int id, int column, int row, int flag = -1, int colorOffset = 0)
         {
-            chips.tileMapChip.UpdateTileAt(id, column, row);
+            chips.tilemapChip.UpdateTileAt(id, column, row);
         }
 
 //        public void Clear()
@@ -306,7 +306,7 @@ namespace PixelVisionSDK
 
         public void UpdateTileColorAt(int value, int column, int row)
         {
-            chips.tileMapChip.UpdateTileColorAt(value, column, row);
+            chips.tilemapChip.UpdateTileColorAt(value, column, row);
         }
 
         /// <summary>
@@ -395,8 +395,8 @@ namespace PixelVisionSDK
         /// <param name="colorOffset"></param>
         public void DrawTile(int id, int column, int row, int colorOffset = 0)
         {
-            chips.tileMapChip.UpdateSpriteAt(column, row, id);
-            chips.tileMapChip.UpdateTileColorAt(column, row, colorOffset);
+            chips.tilemapChip.UpdateSpriteAt(column, row, id);
+            chips.tilemapChip.UpdateTileColorAt(column, row, colorOffset);
         }
 
         public void DrawTiles(int[] ids, int column, int row, int columns, int colorOffset = 0)
@@ -443,11 +443,11 @@ namespace PixelVisionSDK
             var spriteSize = ReadSpriteSize();
             var x = (column * spriteSize.x) + offsetX;
 
-            row = chips.tileMapChip.rows - row - 1;
+            row = chips.tilemapChip.rows - row - 1;
 
             var y = (row * spriteSize.y) + offsetY;
 
-            chips.tileMapChip.UpdateCachedTilemap(pixelData, x, y, width, height);
+            chips.tilemapChip.UpdateCachedTilemap(pixelData, x, y, width, height);
         }
 
 //        public int ReadSpriteWidth()
@@ -508,22 +508,22 @@ namespace PixelVisionSDK
 
         public int ReadFlag(int column, int row)
         {
-            return chips.tileMapChip.ReadFlagAt(column, row);
+            return chips.tilemapChip.ReadFlagAt(column, row);
         }
 
         public void UpdateFlag(int flag, int column, int row)
         {
-            chips.tileMapChip.UpdateFlagAt(column, row, flag);
+            chips.tilemapChip.UpdateFlagAt(column, row, flag);
         }
 
         public int ReadTile(int column, int row)
         {
-            return chips.tileMapChip.ReadTileAt(column, row);
+            return chips.tilemapChip.ReadTileAt(column, row);
         }
 
         public int ReadTileColorAt(int column, int row)
         {
-            return chips.tileMapChip.ReadTileColorAt(column, row);
+            return chips.tilemapChip.ReadTileColorAt(column, row);
         }
 
         public bool GetKey(int key)
@@ -552,7 +552,7 @@ namespace PixelVisionSDK
         public void UpdateSprite(int id, int[] pixels)
         {
             chips.spriteChip.UpdateSpriteAt(id, pixels);
-            chips.tileMapChip.InvalidateTileID(id);
+            chips.tilemapChip.InvalidateTileID(id);
         }
 
         public int ReadSpritesInRam()
@@ -752,12 +752,12 @@ namespace PixelVisionSDK
         {
             if (columns == -1)
             {
-                columns = chips.tileMapChip.columns;
+                columns = chips.tilemapChip.columns;
             }
 
             if (rows == -1)
             {
-                rows = chips.tileMapChip.rows;
+                rows = chips.tilemapChip.rows;
             }
 
             chips.displayChip.DrawTilemap(x, y, columns, rows);
@@ -765,7 +765,7 @@ namespace PixelVisionSDK
 
         public void ClearTilemap()
         {
-            chips.tileMapChip.Clear();    
+            chips.tilemapChip.Clear();    
         }
 
         #region Deprecated APIs
@@ -776,7 +776,7 @@ namespace PixelVisionSDK
 
             var total = spriteIDs.Length;
 
-            var tilemap = chips.tileMapChip;
+            var tilemap = chips.tilemapChip;
             int c, r;
             for (int i = 0; i < total; i++)
             {
@@ -798,7 +798,7 @@ namespace PixelVisionSDK
         public void RebuildScreenBuffer()
         {
             //TODO this should clear the cache completely?
-            chips.tileMapChip.ClearCache();
+            chips.tilemapChip.ClearCache();
             //chips.screenBufferChip.RebuildScreenBuffer();
         }
 
@@ -840,7 +840,7 @@ namespace PixelVisionSDK
 
         public void DrawBufferData(int[] pixelData, int x, int y, int width, int height)
         {
-            chips.tileMapChip.UpdateCachedTilemap(pixelData, x, y, width, height);
+            chips.tilemapChip.UpdateCachedTilemap(pixelData, x, y, width, height);
         }
 
         [Obsolete]

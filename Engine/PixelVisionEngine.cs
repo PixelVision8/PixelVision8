@@ -108,7 +108,7 @@ namespace PixelVisionSDK
         ///     Access to the TileMapChip.
         /// </summary>
         /// <tocexclude />
-        public TileMapChip tileMapChip { get; set; }
+        public TilemapChip tilemapChip { get; set; }
 
         /// <summary>
         ///     Access to the FontChip.

@@ -29,7 +29,7 @@ namespace PixelVisionSDK.Chips
     ///     manages flag values per tile for use in collision detection. Finally, the TileMapChip
     ///     also stores a color offset per tile to simulate palette shifting.
     /// </summary>
-    public class TileMapChip : AbstractChip, ILayer
+    public class TilemapChip : AbstractChip, ILayer
     {
 
         protected int _columns;
@@ -195,7 +195,7 @@ namespace PixelVisionSDK.Chips
             // Test if we need to rebuild the cached tilemap
             if (invalid)
             {
-
+                
                 // Make sure the cached tilemap is the correct width and height
 //                if (cachedTileMap.width != realWidth || cachedTileMap.height != realHeight)
 //                    cachedTileMap.Resize(realWidth, realHeight);
@@ -549,14 +549,14 @@ namespace PixelVisionSDK.Chips
 
         /// <summary>
         ///     Configured the TileMapChip. This method sets the
-        ///     <see cref="TileMapChip" /> as the default tile map for the engine. It
+        ///     <see cref="TilemapChip" /> as the default tile map for the engine. It
         ///     also resizes the tile map to its default size of 32 x 30 which is a
         ///     resolution of 256 x 240.
         /// </summary>
         public override void Configure()
         {
             //ppu.tileMap = this;
-            engine.tileMapChip = this;
+            engine.tilemapChip = this;
 
             // Resize to default nes resolution
             Resize(32, 30);
@@ -565,7 +565,7 @@ namespace PixelVisionSDK.Chips
         public override void Deactivate()
         {
             base.Deactivate();
-            engine.tileMapChip = null;
+            engine.tilemapChip = null;
         }
 
         protected enum Layer

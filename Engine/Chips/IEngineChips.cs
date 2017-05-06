@@ -71,7 +71,7 @@ namespace PixelVisionSDK.Chips
         ///     making it easy to create levels from sprites and handle collision
         ///     detection via flags. This property offers direct access to it.
         /// </summary>
-        TileMapChip tileMapChip { get; set; }
+        TilemapChip tilemapChip { get; set; }
 
         /// <summary>
         ///     This property offers direct access to the current game loaded into
