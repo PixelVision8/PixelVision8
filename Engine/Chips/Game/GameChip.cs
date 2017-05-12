@@ -259,9 +259,14 @@ namespace PixelVisionSDK.Chips
             displayChip.ClearArea(x, y, width, height);
         }
 
-        public Vector DisplaySize()
+        public int DisplayHeight()
         {
-            throw new NotImplementedException();
+            return displayChip.height;
+        }
+
+        public int DisplayWidth()
+        {
+            return displayChip.width;
         }
 
         public int Flag(int column, int row)
@@ -350,12 +355,27 @@ namespace PixelVisionSDK.Chips
 
         public void DrawTile(int id, int column, int row, int colorOffset = 0, int flag = -1)
         {
+            if (column < 0 || column >= tilemapChip.columns || row < 0 || row >= tilemapChip.rows)
+                return;
+
             tilemapChip.UpdateTileAt(id, column, row, flag, colorOffset);
         }
 
         public void DrawTiles(int[] ids, int column, int row, int columns, int colorOffset = 0, int flag = -1)
         {
-            throw new NotImplementedException();
+            var total = ids.Length;
+
+            for (var i = 0; i < total; i++)
+            {
+                var id = ids[i];
+                if (id > -1)
+                {
+                    //TODO should cache the sprite size value
+                    var newColumn = MathUtil.FloorToInt(i % columns + column);
+                    var newRow = MathUtil.FloorToInt(i / columns + row);
+                    DrawTile(ids[i], newColumn, newRow, colorOffset, flag);
+                }
+            }
         }
 
         public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0)
@@ -388,6 +408,26 @@ namespace PixelVisionSDK.Chips
             throw new NotImplementedException();
         }
 
+        public int SpriteHeight()
+        {
+            return spriteChip.height;
+        }
+
+        public int SpriteWidth()
+        {
+            return spriteChip.width;
+        }
+
+        public int TilemapWidth()
+        {
+            return tilemapChip.columns;
+        }
+
+        public int TilemapHeight()
+        {
+            return tilemapChip.rows;
+        }
+
         public Vector SpriteSize()
         {
             throw new NotImplementedException();
@@ -398,14 +438,26 @@ namespace PixelVisionSDK.Chips
             throw new NotImplementedException();
         }
 
-        public void UpdateTile(int id, int column, int row, int colorOffset = 0, int flag = -1)
+        public void UpdateTile(int column, int row, int id = -1, int colorOffset = -1, int flag = -1)
         {
-            throw new NotImplementedException();
+            if(id > -1)
+                tilemapChip.UpdateSpriteAt(column, row, id);
+
+            if (colorOffset > -1)
+                tilemapChip.UpdateTileColorAt(column, row, colorOffset);
+
+            if (flag > -1)
+                tilemapChip.UpdateFlagAt(column, row, flag);
         }
 
         public void WriteData(string key, string value)
         {
             throw new NotImplementedException();
+        }
+
+        public Vector TilemapSize()
+        {
+            return new Vector(tilemapChip.columns, tilemapChip.rows);
         }
 
 

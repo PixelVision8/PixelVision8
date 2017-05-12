@@ -11,7 +11,9 @@ namespace PixelVisionSDK.Chips
 
         void Clear(int x = 0, int y = 0, int width = 0, int height = 0);
         
-        Vector DisplaySize();
+        int DisplayHeight();
+
+        int DisplayWidth();
 
         int Flag(int column, int row);
 
@@ -39,11 +41,17 @@ namespace PixelVisionSDK.Chips
 
         void Song(int id, bool loop = true);
         
-        Vector SpriteSize();
+        int SpriteHeight();
+
+        int SpriteWidth();
+
+        int TilemapWidth();
+
+        int TilemapHeight();
 
         void UpdateSprite(int[] pixelData, int id);
 
-        void UpdateTile(int id, int column, int row, int colorOffset = 0, int flag = -1);
+        void UpdateTile(int column, int row, int id = -1, int colorOffset = -1, int flag = -1);
 
         void WriteData(string key, string value);
         
