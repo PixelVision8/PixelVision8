@@ -419,7 +419,6 @@ namespace PixelVisionSDK.Chips
         public void UpdateTileColorAt(int column, int row, int paletteID)
         {
             PosUtil.CalculateIndex(column, row, columns, out tmpIndex);
-            Debug.Log("Update Tile Color " + tmpIndex + " " + paletteID +" " +column+" "+row);
 
             UpdateDataAt(Layer.Palettes, column, row, paletteID);
             

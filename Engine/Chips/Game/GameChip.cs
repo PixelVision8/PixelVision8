@@ -259,14 +259,18 @@ namespace PixelVisionSDK.Chips
             displayChip.ClearArea(x, y, width, height);
         }
 
-        public int DisplayHeight()
+        public int DisplayHeight(bool visiblePixels = true)
         {
-            return displayChip.height;
+            var offset = visiblePixels ? displayChip.overscanYPixels : 0;
+
+            return displayChip.height - offset;
         }
 
-        public int DisplayWidth()
+        public int DisplayWidth(bool visiblePixels = true)
         {
-            return displayChip.width;
+            var offset = visiblePixels ? displayChip.overscanXPixels : 0;
+
+            return displayChip.width - offset;
         }
 
         public int Flag(int column, int row)
@@ -448,6 +452,11 @@ namespace PixelVisionSDK.Chips
 
             if (flag > -1)
                 tilemapChip.UpdateFlagAt(column, row, flag);
+        }
+
+        public void ChangeColor(int index, int id)
+        {
+            colorChip.UpdateColorAt(index, colorChip.ReadColorAt(id));    
         }
 
         public void WriteData(string key, string value)

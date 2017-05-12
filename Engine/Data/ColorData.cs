@@ -30,8 +30,13 @@ namespace PixelVisionSDK
     {
         protected float _b;
         protected float _g;
-
         protected float _r;
+
+        /// <summary>
+        ///     This flag is used to store extra data which can be read by
+        ///     other chips that analyze the ColorData instance.
+        /// </summary>
+        public int flag { get; set; }
 
         /// <summary>
         ///     Use this constructor for setting the ColorData instance up

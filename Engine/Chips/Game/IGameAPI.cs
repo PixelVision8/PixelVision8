@@ -11,9 +11,9 @@ namespace PixelVisionSDK.Chips
 
         void Clear(int x = 0, int y = 0, int width = 0, int height = 0);
         
-        int DisplayHeight();
+        int DisplayHeight(bool visiblePixels = true);
 
-        int DisplayWidth();
+        int DisplayWidth(bool visiblePixels = true);
 
         int Flag(int column, int row);
 
@@ -52,6 +52,8 @@ namespace PixelVisionSDK.Chips
         void UpdateSprite(int[] pixelData, int id);
 
         void UpdateTile(int column, int row, int id = -1, int colorOffset = -1, int flag = -1);
+
+        void ChangeColor(int index, int id);
 
         void WriteData(string key, string value);
         

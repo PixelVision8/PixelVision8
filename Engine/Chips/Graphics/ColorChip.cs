@@ -24,7 +24,7 @@ namespace PixelVisionSDK.Chips
     ///     It allows the engine to work in color indexes that the display can map
     ///     to actual colors in Unity via the class's set of APIs.
     /// </summary>
-    public class ColorChip : AbstractChip, IColorChip
+    public class ColorChip : AbstractChip, IColorChip, IInvalidate
     {
         protected string[] _colors =
         {
@@ -50,9 +50,10 @@ namespace PixelVisionSDK.Chips
         protected int _pages = 4;
         protected string _transparent = "#FF00FF";
         protected ColorData[] colorCache;
-        private bool invalid;
+        public bool invalid { get; protected set; }
         protected Vector pageSize = new Vector(8, 8);
-        
+        protected int[] invalidColors = new int[0];
+
         /// <summary>
         ///     The background color reference to use when rendering transparent in
         ///     the ScreenBufferTexture.
@@ -86,7 +87,7 @@ namespace PixelVisionSDK.Chips
                 var oldTotal = _colors.Length;
 
                 Array.Resize(ref _colors, total);
-
+                Array.Resize(ref invalidColors, total);
                 if (oldTotal < total)
                     for (var i = oldTotal; i < total; i++)
                         _colors[i] = transparent;
@@ -150,9 +151,13 @@ namespace PixelVisionSDK.Chips
                     colorCache = new ColorData[t];
 
                     for (var i = 0; i < t; i++)
-                        colorCache[i] = new ColorData(_colors[i]);
+                    {
+                        var color = new ColorData(_colors[i]);
+                        color.flag = invalidColors[i];
+                        colorCache[i] = color;
+                    }
 
-                    invalid = false;
+                    ResetValidation();
                 }
 
                 return colorCache;
@@ -185,9 +190,12 @@ namespace PixelVisionSDK.Chips
             color = color.ToUpper();
 
             if (ColorData.ValidateColor(color))
+            {
                 _colors[index] = color;
+                invalidColors[index] = 1;
+                Invalidate();
+            }
 
-            invalid = true;
         }
 
         public void RecalculateSupportedColors()
@@ -230,6 +238,21 @@ namespace PixelVisionSDK.Chips
         public void RebuildColorPages(int total)
         {
             pages = MathUtil.CeilToInt(total / colorsPerPage);
+        }
+
+        public void Invalidate()
+        {
+            invalid = true;
+        }
+
+        public void ResetValidation()
+        {
+            invalid = false;
+            var total = invalidColors.Length;
+            for (int i = 0; i < total; i++)
+            {
+                invalidColors[i] = 0;
+            }
         }
     }
 }
