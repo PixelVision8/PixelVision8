@@ -126,7 +126,7 @@ namespace PixelVisionSDK
         ///     Access to the APIBridge.
         /// </summary>
         /// <tocexclude />
-        public IAPIBridge apiBridge { get; set; }
+        public APIBridge apiBridge { get; set; }
 
         /// <summary>
         ///     Access to the current game in memory.

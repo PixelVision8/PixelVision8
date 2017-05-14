@@ -40,7 +40,7 @@ namespace PixelVisionSDK.Chips
         ///     access these by directly talking to the <see cref="apiBridge" />
         ///     field.
         /// </summary>
-        public IPixelVisionAPI apiBridge;
+        public APIBridge apiBridge;
 
         /// <summary>
         ///     Flag for the maximum size the game should be.
@@ -233,10 +233,15 @@ namespace PixelVisionSDK.Chips
         }
 
         #region Pixel Vision APIs
-
-        public void BackgroundColor(int id)
+        
+        public int BackgroundColor(int? id = null)
         {
-            colorChip.backgroundColor = MathUtil.Clamp(id, 0, colorChip.total);
+            if (id.HasValue)
+            {
+                colorChip.backgroundColor = MathUtil.Clamp(id.Value, 0, colorChip.total);
+            }
+
+            return colorChip.backgroundColor;
         }
 
         public bool Button(int button, int player)
@@ -249,9 +254,14 @@ namespace PixelVisionSDK.Chips
             return controllerChip.ButtonDown(button, player);
         }
 
-        public bool ButtonReleased(int id, int player)
+        public bool ButtonReleased(int button, int player)
         {
-            throw new NotImplementedException();
+            var totalButtons = Enum.GetNames(typeof(Buttons)).Length;
+
+            if (button >= totalButtons)
+                return false;
+
+            return controllerChip.ButtonReleased(button, player);
         }
 
         public void Clear(int x = 0, int y = 0, int width = 0, int height = 0)
@@ -387,9 +397,10 @@ namespace PixelVisionSDK.Chips
             displayChip.DrawTilemap(x, y, columns, rows);
         }
 
+        //TODO need to refactor GetData above
         public string ReadData(string key)
         {
-            throw new NotImplementedException();
+            return GetData(key, "undefined");
         }
 
         public void RebuildMap()
@@ -397,14 +408,25 @@ namespace PixelVisionSDK.Chips
             throw new NotImplementedException();
         }
 
-        public void Scroll(int x = 0, int y = 0)
+        public void ScrollTo(int x = 0, int y = 0)
         {
-            throw new NotImplementedException();
+            displayChip.scrollX = x;
+            displayChip.scrollY = y;
+        }
+
+        public int ScrollX()
+        {
+            return displayChip.scrollX;
+        }
+
+        public int ScrollY()
+        {
+            return displayChip.scrollY;
         }
 
         public void Sfx(int id, int channel = 0)
         {
-            throw new NotImplementedException();
+            soundChip.PlaySound(id, channel);
         }
 
         public void Song(int id, bool loop = true)
@@ -437,7 +459,7 @@ namespace PixelVisionSDK.Chips
             throw new NotImplementedException();
         }
 
-        public void UpdateSprite(int[] pixelData, int id)
+        public void UpdateSprite(int id, int[] pixelData)
         {
             throw new NotImplementedException();
         }
@@ -459,9 +481,10 @@ namespace PixelVisionSDK.Chips
             colorChip.UpdateColorAt(index, colorChip.ReadColorAt(id));    
         }
 
+        //TODO need to refactor the name of SaveData above
         public void WriteData(string key, string value)
         {
-            throw new NotImplementedException();
+            SaveData(key, value);
         }
 
         public Vector TilemapSize()
