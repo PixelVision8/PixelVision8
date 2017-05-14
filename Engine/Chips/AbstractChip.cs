@@ -57,7 +57,6 @@ namespace PixelVisionSDK.Chips
         ///     ChipManager. If marked as active it may be deleted
         ///     when the ChipManager performs its cleanup.
         /// </summary>
-        /// <value name>bool</value>
         public bool active { get; private set; }
 
         /// <summary>

@@ -15,9 +15,7 @@
 // 
 
 using System;
-using System.Security.Cryptography.X509Certificates;
 using PixelVisionSDK.Utils;
-using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
