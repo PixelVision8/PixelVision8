@@ -84,7 +84,7 @@ namespace PixelVisionSDK.Chips
         ///     chips. It's used by the game to simply access to each system of the
         ///     engine. This property offers direct access to it.
         /// </summary>
-        APIBridge apiBridge { get; set; }
+        //APIBridge apiBridge { get; set; }
 
         /// <summary>
         ///     The Fonts Chip is responsible for rendering text to the display.

@@ -126,7 +126,7 @@ namespace PixelVisionSDK
         ///     Access to the APIBridge.
         /// </summary>
         /// <tocexclude />
-        public APIBridge apiBridge { get; set; }
+        //public APIBridge apiBridge { get; set; }
 
         /// <summary>
         ///     Access to the current game in memory.
@@ -149,7 +149,7 @@ namespace PixelVisionSDK
         public virtual void Init()
         {
             chipManager = new ChipManager(this);
-            apiBridge = new APIBridge(this);
+            //apiBridge = new APIBridge(this);
             if (defaultChips != null)
                 foreach (var chip in defaultChips)
                     chipManager.GetChip(chip);

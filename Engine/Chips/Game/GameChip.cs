@@ -40,7 +40,7 @@ namespace PixelVisionSDK.Chips
         ///     access these by directly talking to the <see cref="apiBridge" />
         ///     field.
         /// </summary>
-        public APIBridge apiBridge;
+        //public APIBridge apiBridge;
 
         /// <summary>
         ///     Flag for the maximum size the game should be.
@@ -202,7 +202,7 @@ namespace PixelVisionSDK.Chips
             engine.currentGame = this;
 
             //TODO this needs to be a service
-            apiBridge = engine.apiBridge;
+            //apiBridge = engine.apiBridge;
             ready = true;
 
             Array.Resize(ref tmpSpriteData, engine.spriteChip.width * engine.spriteChip.height);
