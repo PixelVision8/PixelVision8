@@ -29,7 +29,7 @@ namespace PixelVisionSDK.Chips
     ///     manages flag values per tile for use in collision detection. Finally, the TileMapChip
     ///     also stores a color offset per tile to simulate palette shifting.
     /// </summary>
-    public class TilemapChip : AbstractChip, ILayer
+    public class TilemapChip : AbstractChip
     {
 
         protected int _columns;

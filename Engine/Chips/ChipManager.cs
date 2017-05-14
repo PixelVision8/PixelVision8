@@ -28,7 +28,7 @@ namespace PixelVisionSDK.Chips
     ///     managing the life-cycle of chips as they are created and destroy in the
     ///     engine.
     /// </summary>
-    public class ChipManager : IGameLoop, IServiceLocator
+    public class ChipManager : IServiceLocator
     {
         protected Dictionary<string, IService> _services = new Dictionary<string, IService>();
 

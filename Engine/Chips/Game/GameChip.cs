@@ -30,7 +30,7 @@ namespace PixelVisionSDK.Chips
     ///     chip life-cycle, game state, the game's own life-cycle and
     ///     serialization/deserialization of the game's data.
     /// </summary>
-    public class GameChip : AbstractChip, IGame, IGameAPI, IUpdate, IDraw
+    public class GameChip : AbstractChip, IUpdate, IDraw
     {
         private string _name = "Untitle_Game";
         protected int _saveSlots;
@@ -140,7 +140,7 @@ namespace PixelVisionSDK.Chips
         protected Vector spriteSize { get; set; }
         protected Vector displaySize { get; set; }
 
-        public void SaveData(string key, string value)
+        public void WriteData(string key, string value)
         {
             if (savedData.Count > saveSlots)
                 return;
@@ -154,33 +154,33 @@ namespace PixelVisionSDK.Chips
             savedData.Add(key, value);
         }
 
-        public void SaveData(string key, int value)
-        {
-            SaveData(key, value.ToString());
-        }
+//        public void SaveData(string key, int value)
+//        {
+//            SaveData(key, value.ToString());
+//        }
+//
+//        public void SaveData(string key, float value)
+//        {
+//            SaveData(key, value.ToString());
+//        }
 
-        public void SaveData(string key, float value)
-        {
-            SaveData(key, value.ToString());
-        }
-
-        public string GetData(string key, string defaultValue)
+        public string ReadData(string key, string defaultValue = "undefine")
         {
             if (!savedData.ContainsKey(key))
-                SaveData(key, defaultValue);
+                WriteData(key, defaultValue);
 
             return savedData[key];
         }
-
-        public int GetData(string key, int defaultValue)
-        {
-            return int.Parse(GetData(key, defaultValue.ToString()));
-        }
-
-        public float GetData(string key, float defaultValue)
-        {
-            return float.Parse(GetData(key, defaultValue.ToString()));
-        }
+//
+//        public int GetData(string key, int defaultValue)
+//        {
+//            return int.Parse(GetData(key, defaultValue.ToString()));
+//        }
+//
+//        public float GetData(string key, float defaultValue)
+//        {
+//            return float.Parse(GetData(key, defaultValue.ToString()));
+//        }
 
         /// <summary>
         ///     Used for updating the game's logic.
@@ -397,11 +397,11 @@ namespace PixelVisionSDK.Chips
             displayChip.DrawTilemap(x, y, columns, rows);
         }
 
-        //TODO need to refactor GetData above
-        public string ReadData(string key)
-        {
-            return GetData(key, "undefined");
-        }
+//        //TODO need to refactor GetData above
+//        public string ReadData(string key)
+//        {
+//            return GetData(key, "undefined");
+//        }
 
         public void RebuildMap()
         {
@@ -481,11 +481,11 @@ namespace PixelVisionSDK.Chips
             colorChip.UpdateColorAt(index, colorChip.ReadColorAt(id));    
         }
 
-        //TODO need to refactor the name of SaveData above
-        public void WriteData(string key, string value)
-        {
-            SaveData(key, value);
-        }
+//        //TODO need to refactor the name of SaveData above
+//        public void WriteData(string key, string value)
+//        {
+//            SaveData(key, value);
+//        }
 
         public Vector TilemapSize()
         {

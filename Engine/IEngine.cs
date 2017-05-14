@@ -24,7 +24,7 @@ namespace PixelVisionSDK
     ///     core API for the Engine class. Implement this
     ///     internal to create custom engine classes.
     /// </summary>
-    public interface IEngine : IEngineChips, IGameLoop
+    public interface IEngine : IEngineChips, IUpdate, IDraw
     {
         /// <summary>
         ///     A flag for if the engine is <see cref="running" />
