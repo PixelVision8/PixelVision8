@@ -239,7 +239,10 @@ namespace PixelVisionSDK.Chips
 
         public bool ReadMouseButton(int button)
         {
-            throw new NotImplementedException();
+            if (!mouseInputActive)
+                return false;
+
+            return mouseInput.GetMouseButtonDown(button);
         }
 
         public bool ReadMouseButtonDown(int button)

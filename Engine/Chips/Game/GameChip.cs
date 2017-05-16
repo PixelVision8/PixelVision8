@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 //using UnityEngine;
 
@@ -32,7 +33,7 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class GameChip : AbstractChip, IUpdate, IDraw
     {
-        private string _name = "Untitle_Game";
+        protected string _name = "Untitle_Game";
         protected int _saveSlots;
 
         /// <summary>
@@ -70,12 +71,69 @@ namespace PixelVisionSDK.Chips
             }
         }
 
+        #region Chip Lifecycle
+
+        /// <summary>
+        ///     Configures the <see cref="GameChip" /> instance by loading it into
+        ///     the engine's memory, getting a reference to the
+        ///     <see cref="APIBridge" /> and setting the <see cref="ready" /> flag to
+        ///     true.
+        /// </summary>
+        public override void Configure()
+        {
+            //Debug.Log("Game: Configure");
+            engine.currentGame = this;
+
+            //TODO this needs to be a service
+            //apiBridge = engine.apiBridge;
+            ready = true;
+
+            Array.Resize(ref tmpSpriteData, engine.spriteChip.width * engine.spriteChip.height);
+
+            // To speed up accessing each chip, get a reference to them
+            //            colorChip = engine.colorChip;
+            //            colorMapChip = engine.colorMapChip;
+            //            controllerChip = engine.controllerChip;
+            //            displayChip = engine.displayChip;
+            //            soundChip = engine.soundChip;
+            //            spriteChip = engine.spriteChip;
+            //            tilemapChip = engine.tilemapChip;
+            //            fontChip = engine.fontChip;
+            //            musicChip = engine.musicChip;
+
+            // cache used common properties
+            spriteSize = new Vector(spriteChip.width, spriteChip.height);
+            displaySize = new Vector(displayChip.width, displayChip.height);
+        }
+
+        /// <summary>
+        ///     Used for updating the game's logic.
+        /// </summary>
+        /// <param name="timeDelta"></param>
+        public virtual void Update(float timeDelta)
+        {
+            // Overwrite this method and add your own update logic.
+        }
+
         /// <summary>
         ///     Used for drawing the game to the display.
         /// </summary>
         public virtual void Draw()
         {
+            // Overwrite this method and add your own draw logic.
         }
+
+        /// <summary>
+        ///     This unloads the game from the engine.
+        /// </summary>
+        public override void Deactivate()
+        {
+            base.Deactivate();
+            engine.currentGame = null;
+        }
+
+        #endregion
+
 
         public string name
         {
@@ -87,20 +145,7 @@ namespace PixelVisionSDK.Chips
 
         public string description { get; set; }
 
-        public ChipManager chipManager
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public ColorChip colorChip {
+       public ColorChip colorChip {
             get { return engine.colorChip; }
         }
         public ColorMapChip colorMapChip
@@ -154,16 +199,6 @@ namespace PixelVisionSDK.Chips
             savedData.Add(key, value);
         }
 
-//        public void SaveData(string key, int value)
-//        {
-//            SaveData(key, value.ToString());
-//        }
-//
-//        public void SaveData(string key, float value)
-//        {
-//            SaveData(key, value.ToString());
-//        }
-
         public string ReadData(string key, string defaultValue = "undefine")
         {
             if (!savedData.ContainsKey(key))
@@ -171,69 +206,15 @@ namespace PixelVisionSDK.Chips
 
             return savedData[key];
         }
-//
-//        public int GetData(string key, int defaultValue)
-//        {
-//            return int.Parse(GetData(key, defaultValue.ToString()));
-//        }
-//
-//        public float GetData(string key, float defaultValue)
-//        {
-//            return float.Parse(GetData(key, defaultValue.ToString()));
-//        }
-
-        /// <summary>
-        ///     Used for updating the game's logic.
-        /// </summary>
-        /// <param name="timeDelta"></param>
-        public virtual void Update(float timeDelta)
-        {
-        }
-
-        /// <summary>
-        ///     Configures the <see cref="GameChip" /> instance by loading it into
-        ///     the engine's memory, getting a reference to the
-        ///     <see cref="APIBridge" /> and setting the <see cref="ready" /> flag to
-        ///     true.
-        /// </summary>
-        public override void Configure()
-        {
-            //Debug.Log("Game: Configure");
-            engine.currentGame = this;
-
-            //TODO this needs to be a service
-            //apiBridge = engine.apiBridge;
-            ready = true;
-
-            Array.Resize(ref tmpSpriteData, engine.spriteChip.width * engine.spriteChip.height);
-
-            // To speed up accessing each chip, get a reference to them
-//            colorChip = engine.colorChip;
-//            colorMapChip = engine.colorMapChip;
-//            controllerChip = engine.controllerChip;
-//            displayChip = engine.displayChip;
-//            soundChip = engine.soundChip;
-//            spriteChip = engine.spriteChip;
-//            tilemapChip = engine.tilemapChip;
-//            fontChip = engine.fontChip;
-//            musicChip = engine.musicChip;
-
-            // cache used common properties
-            spriteSize = new Vector(spriteChip.width, spriteChip.height);
-            displaySize = new Vector(displayChip.width, displayChip.height);
-        }
-
-        /// <summary>
-        ///     This unloads the game from the engine.
-        /// </summary>
-        public override void Deactivate()
-        {
-            base.Deactivate();
-            engine.currentGame = null;
-        }
 
         #region Pixel Vision APIs
-        
+
+        /// <summary>
+        ///     Allows you to read or update the background color. You can use this method to only
+        ///     return the value if you do not supply an argument.
+        /// </summary>
+        /// <param name="id">Pass in a new color ID to update the background color.</param>
+        /// <returns>Returns the current background color ID.</returns>
         public int BackgroundColor(int? id = null)
         {
             if (id.HasValue)
@@ -264,6 +245,14 @@ namespace PixelVisionSDK.Chips
             return controllerChip.ButtonReleased(button, player);
         }
 
+        /// <summary>
+        ///     Clears an area of the display using the background color. By not providing
+        ///     any values, it will automatically clear the entire display
+        /// </summary>
+        /// <param name="x">The left position on the display where the clear should start.</param>
+        /// <param name="y">The right position on the display where the clear should start.</param>
+        /// <param name="width">The width of the clear in pixels.</param>
+        /// <param name="height">The height of the clear in pixels.</param>
         public void Clear(int x = 0, int y = 0, int width = 0, int height = 0)
         {
             displayChip.ClearArea(x, y, width, height);
@@ -288,17 +277,22 @@ namespace PixelVisionSDK.Chips
             throw new NotImplementedException();
         }
 
-        public void DrawPixels(int[] pixelData, int x, int y, int width, int height, int mode = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
+        public void DrawPixels(int[] pixelData, int x, int y, int width, int height, DrawMode mode = DrawMode.Sprite, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
             switch (mode)
             {   
                 // Mode 0 & 1 are for sprites (above/below bg)
-                case 0: case 1:
+                case DrawMode.Sprite: case DrawMode.SpriteBelow:
                     var layerOrder = mode == 0 ? 1 : -1;
 
-                    y += height - spriteChip.height;
-                    
-                    displayChip.NewDrawCall(pixelData, x, y, width, height, flipH, flipV, true, layerOrder, false, colorOffset);
+                    displayChip.NewDrawCall(pixelData, x, y, width, height, flipH, !flipV, true, layerOrder, false, colorOffset);
+
+                    break;
+                case DrawMode.TilemapCache:
+
+                    y = displaySize.y - y;
+
+                    tilemapChip.UpdateCachedTilemap(pixelData, x, y, width, height);
 
                     break;
             }
@@ -316,8 +310,8 @@ namespace PixelVisionSDK.Chips
             spriteChip.ReadSpriteAt(id, tmpSpriteData);
 
             // Mode 0 is sprite above bg and mode 1 is sprite below bg.
-            var mode = aboveBG ? 0 : 1;
-            DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, mode, flipH, flipV, colorOffset);
+            var mode = aboveBG ? DrawMode.Sprite : DrawMode.SpriteBelow;
+            DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, mode, flipH, !flipV, colorOffset);
 
         }
 
@@ -344,27 +338,78 @@ namespace PixelVisionSDK.Chips
             }
         }
 
-        public void DrawText(string text, int x, int y, int mode = 0, string font = "Default", int colorOffset = 0, int spacing = 0)
+        public enum DrawMode
         {
-            switch (mode)
+            Sprite,
+            Tile,
+            TilemapCache,
+            SpriteBelow,
+        }
+
+        private int[] tmpPixelData;
+
+        public int DrawText(string text, int x, int y, DrawMode mode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0, int? width = null)
+        {
+            if (width > 1)
             {
-                case 0:
+                text = FontChip.WordWrap(text, width.Value);
+            }
+            
+            var result = text.Split(new[] { "\n", "\r\n" }, StringSplitOptions.None);
+            var lines = result.Length;
+            var charWidth = spriteSize.x;
+            var charHeight = spriteSize.y;
+            var nextX = x;
+            var nextY = y;
+            int tmpW, tmpH;
 
-                    var width = spriteSize.x;
-                    var nextX = x;
+            for (int i = 0; i < lines; i++)
+            {
+                var line = result[i];
+                var spriteIDs = fontChip.ConvertTextToSprites(line, font);
+                var total = spriteIDs.Length;
 
-                    var spriteIDs = fontChip.ConvertTextToSprites(text, font);
-                    var total = spriteIDs.Length;
-
-                    // Draw each character
-                    for (int i = 0; i < total; i++)
+                for (int j = 0; j < total; j++)
+                {
+                    if (mode == DrawMode.Tile)
                     {
-                        DrawSprite(spriteIDs[i], nextX, y, false, false, true, colorOffset);
-                        nextX += width + spacing;
+                        DrawTile(spriteIDs[j], nextX, nextY, colorOffset);
+                        nextX ++;
+                    }
+                    else if (mode == DrawMode.TilemapCache)
+                    {
+                        var pixelData = fontChip.ConvertCharacterToPixelData(line[j], font);
+                        if (pixelData != null)
+                        {
+                            Debug.Log("Draw text pixel data " + line[j] + " " + nextX + "," +nextY +" "+spacing);
+                            DrawPixels(pixelData, nextX, nextY, SpriteWidth(), SpriteHeight(), DrawMode.TilemapCache, false, false, colorOffset);
+                        }
+
+                        // Increase X even if no character was found
+                        nextX += charWidth + spacing;
+
+                    }
+                    else
+                    {
+                        DrawSprite(spriteIDs[j], nextX, nextY, false, false, true, colorOffset);
+                        nextX += charWidth + spacing;
                     }
 
-                    break;
+                }
+
+                nextX = x;
+
+                if (mode == DrawMode.Tile)
+                {
+                    nextY ++;
+                }
+                else
+                {
+                    nextY += charHeight;
+                }
             }
+
+            return lines;
         }
 
         public void DrawTile(int id, int column, int row, int colorOffset = 0, int flag = -1)
@@ -391,21 +436,43 @@ namespace PixelVisionSDK.Chips
                 }
             }
         }
-
+        
+        /// <summary>
+        ///     This draws the Tilemap Cache to the display. You can set the x and y position on the display where
+        ///     the tilemap should go as well as how many rows and columns to display. By calling this method without
+        ///     any arguments, the tilemap will be drawn in the upper left hand corner and fill the display.
+        /// </summary>
+        /// <param name="x">The left position where to draw the tilemap on the display.</param>
+        /// <param name="y">The top position where to draw the tilemap on the display.</param>
+        /// <param name="columns">How many horizontal tiles to include when drawing the map.</param>
+        /// <param name="rows">How many vertical tiles to include when drawing the map.</param>
         public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0)
         {
             displayChip.DrawTilemap(x, y, columns, rows);
         }
 
-//        //TODO need to refactor GetData above
-//        public string ReadData(string key)
-//        {
-//            return GetData(key, "undefined");
-//        }
+        public bool MouseButton(int button)
+        {
+            return controllerChip.ReadMouseButton(button);
+        }
 
+        public int MouseX()
+        {
+            return controllerChip.mousePosition.x;
+        }
+
+        public int MouseY()
+        {
+            return controllerChip.mousePosition.y;
+        }
+
+        /// <summary>
+        ///     This forces the map to redraw it's cached pixel data. Use this to clear any pixel data added
+        ///     after the map created the pixel data cache.
+        /// </summary>
         public void RebuildMap()
         {
-            throw new NotImplementedException();
+            tilemapChip.ClearCache();
         }
 
         public void ScrollTo(int x = 0, int y = 0)
@@ -464,22 +531,44 @@ namespace PixelVisionSDK.Chips
             throw new NotImplementedException();
         }
 
-        public void UpdateTile(int column, int row, int id = -1, int colorOffset = -1, int flag = -1)
+        public void UpdateTile(int column, int row, int? id = null, int? colorOffset = null, int? flag = null)
         {
-            if(id > -1)
-                tilemapChip.UpdateSpriteAt(column, row, id);
+            if(id.HasValue)
+                tilemapChip.UpdateSpriteAt(column, row, id.Value);
 
-            if (colorOffset > -1)
-                tilemapChip.UpdateTileColorAt(column, row, colorOffset);
+            if (colorOffset.HasValue)
+                tilemapChip.UpdateTileColorAt(column, row, colorOffset.Value);
 
-            if (flag > -1)
-                tilemapChip.UpdateFlagAt(column, row, flag);
+            if (flag.HasValue)
+                tilemapChip.UpdateFlagAt(column, row, flag.Value);
         }
 
-        public void ChangeColor(int index, int id)
+        public void UpdateTiles(int column, int row, int columns, int rows, int[] ids = null, int[] colorOffsets = null, int[] flags = null)
         {
-            colorChip.UpdateColorAt(index, colorChip.ReadColorAt(id));    
+            var total = columns * rows;
+
+            int? id, offset, flag;
+            
+            for (var i = 0; i < total; i++)
+            {
+                id = null;
+
+                if (ids != null)
+                {
+                    id = ids[i];
+                }
+
+                var newX = MathUtil.FloorToInt(i % columns) + column;
+                var newY = MathUtil.FloorToInt(i / (float)columns) + row;
+
+                UpdateTile(newX, newY, id);
+            }
         }
+
+//        public void ChangeColor(int index, int id)
+//        {
+//            colorChip.UpdateColorAt(index, colorChip.ReadColorAt(id));    
+//        }
 
 //        //TODO need to refactor the name of SaveData above
 //        public void WriteData(string key, string value)

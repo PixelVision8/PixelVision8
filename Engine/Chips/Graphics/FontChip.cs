@@ -307,6 +307,8 @@ namespace PixelVisionSDK.Chips
             return list.ToArray();
         }
 
+        protected static int charOffset = 32;
+
         internal int[] ConvertTextToSprites(string text, string fontName = "Default")
         {
             var total = text.Length;
@@ -314,7 +316,7 @@ namespace PixelVisionSDK.Chips
             var spriteIDs = new int[total];
 
             char character;
-            var charOffset = 32;
+//            var charOffset = 32;
             int spriteID, index;
 
             // Test to make sure font exists
@@ -344,6 +346,46 @@ namespace PixelVisionSDK.Chips
 
             return spriteIDs;
 
+        }
+
+        public int[] tmpPixels = new int[0];
+
+        public int[] ConvertCharacterToPixelData(char character, string fontName)
+        {
+            var spriteChip = engine.spriteChip;
+
+            // Test to make sure font exists
+            if (!fonts.ContainsKey(fontName))
+            {
+                throw new Exception("Font '" + fontName + "' not found.");
+            }
+
+            var index = Convert.ToInt32(character) - charOffset;
+
+            var fontMap = fonts[fontName];
+            var totalCharacters = fontMap.Length;
+            var spriteID = -1;
+
+            if (index < totalCharacters && index > -1)
+            {
+                spriteID = fontMap[index];
+            }
+
+            if (spriteID > -1)
+            {
+                var totalPixels = spriteChip.width * spriteChip.height;
+
+                if (tmpPixels.Length != totalPixels)
+                {
+                    Array.Resize(ref tmpPixels, totalPixels);
+                }
+
+                spriteChip.ReadSpriteAt(spriteID, tmpPixels);
+
+                return tmpPixels;
+            }
+
+            return null;
         }
     }
 }
