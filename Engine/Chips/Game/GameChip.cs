@@ -50,6 +50,31 @@ namespace PixelVisionSDK.Chips
 
         protected Dictionary<string, string> savedData = new Dictionary<string, string>();
 
+
+        public enum DrawMode
+        {
+            Sprite,
+            Tile,
+            TilemapCache,
+            SpriteBelow,
+        }
+
+        public enum FlipMode
+        {
+            None,
+            Horizontal,
+            Vertical,
+            Both
+        }
+
+        public enum DepthMode
+        {
+            Above,
+            Below
+        }
+
+        private int[] tmpPixelData;
+
         /// <summary>
         ///     Used to limit the amount of data the game can save.
         /// </summary>
@@ -274,7 +299,7 @@ namespace PixelVisionSDK.Chips
 
         public int Flag(int column, int row)
         {
-            throw new NotImplementedException();
+            return tilemapChip.ReadFlagAt(column, row);
         }
 
         public void DrawPixels(int[] pixelData, int x, int y, int width, int height, DrawMode mode = DrawMode.Sprite, bool flipH = false, bool flipV = false, int colorOffset = 0)
@@ -338,15 +363,6 @@ namespace PixelVisionSDK.Chips
             }
         }
 
-        public enum DrawMode
-        {
-            Sprite,
-            Tile,
-            TilemapCache,
-            SpriteBelow,
-        }
-
-        private int[] tmpPixelData;
 
         public int DrawText(string text, int x, int y, DrawMode mode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0, int? width = null)
         {
@@ -490,14 +506,33 @@ namespace PixelVisionSDK.Chips
             return displayChip.scrollY;
         }
 
-        public void Sfx(int id, int channel = 0)
+        public void Sound(int id, int channel = 0)
         {
             soundChip.PlaySound(id, channel);
         }
 
         public void Song(int id, bool loop = true)
         {
-            throw new NotImplementedException();
+            if (id == -1)
+            {
+                musicChip.StopSong();
+            }
+
+            if (musicChip.currentSongID != id)
+            {
+                musicChip.LoadSong(id);
+            }
+
+            if (musicChip.songCurrentlyPlaying)
+            {
+                musicChip.PauseSong();
+            }
+            else
+            {
+                musicChip.PlaySong(loop);
+            
+            }
+           
         }
 
         public int SpriteHeight()

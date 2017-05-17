@@ -30,7 +30,7 @@ namespace PixelVisionSDK.Chips
     {
         protected int _totalTracks;
 
-        protected int currentSong;
+        protected int currentSong = -1;
         public bool loopSong;
         public int maxNoteNum = 127; // how many notes in these arrays below
         public int maxTracks = 8; // max number of instruments playing notes
@@ -49,6 +49,10 @@ namespace PixelVisionSDK.Chips
 
         protected float swingRhythmFactor = 0.7f;
 
+        public int currentSongID
+        {
+            get { return currentSong; }
+        }
         //1.0f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
 
         protected float time;
