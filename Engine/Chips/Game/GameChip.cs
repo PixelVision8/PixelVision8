@@ -290,7 +290,7 @@ namespace PixelVisionSDK.Chips
                     break;
                 case DrawMode.TilemapCache:
 
-                    y = displaySize.y - y;
+                    //y = displaySize.y - y;
 
                     tilemapChip.UpdateCachedTilemap(pixelData, x, y, width, height);
 
@@ -381,7 +381,6 @@ namespace PixelVisionSDK.Chips
                         var pixelData = fontChip.ConvertCharacterToPixelData(line[j], font);
                         if (pixelData != null)
                         {
-                            Debug.Log("Draw text pixel data " + line[j] + " " + nextX + "," +nextY +" "+spacing);
                             DrawPixels(pixelData, nextX, nextY, SpriteWidth(), SpriteHeight(), DrawMode.TilemapCache, false, false, colorOffset);
                         }
 
@@ -565,10 +564,10 @@ namespace PixelVisionSDK.Chips
             }
         }
 
-//        public void ChangeColor(int index, int id)
-//        {
-//            colorChip.UpdateColorAt(index, colorChip.ReadColorAt(id));    
-//        }
+        public void ChangeColor(int index, int id)
+        {
+            colorChip.UpdateColorAt(index, colorChip.ReadColorAt(id));    
+        }
 
 //        //TODO need to refactor the name of SaveData above
 //        public void WriteData(string key, string value)

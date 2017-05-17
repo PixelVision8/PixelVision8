@@ -43,6 +43,7 @@ namespace PixelVisionSDK
         ///     overridden to provide additional logic when the AbstractData is
         ///     done changing.
         /// </summary>
-        void ResetValidation();
+        /// <param name="value"></param>
+        void ResetValidation(int value = 0);
     }
 }

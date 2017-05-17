@@ -245,13 +245,13 @@ namespace PixelVisionSDK.Chips
             invalid = true;
         }
 
-        public void ResetValidation()
+        public void ResetValidation(int value = 0)
         {
             invalid = false;
             var total = invalidColors.Length;
             for (int i = 0; i < total; i++)
             {
-                invalidColors[i] = 0;
+                invalidColors[i] = value;
             }
         }
     }

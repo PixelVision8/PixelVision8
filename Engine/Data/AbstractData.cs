@@ -14,6 +14,9 @@
 // Shawn Rakowski - @shwany
 // 
 
+using System;
+using PixelVisionSDK.Utils;
+
 namespace PixelVisionSDK
 {
     /// <summary>
@@ -55,9 +58,10 @@ namespace PixelVisionSDK
         ///     overridden to provide additional logic when the AbstractData is
         ///     done changing.
         /// </summary>
-        public virtual void ResetValidation()
+        /// <param name="value"></param>
+        public virtual void ResetValidation(int value = 0)
         {
-            _invalid = false;
+            _invalid = Convert.ToBoolean(MathUtil.Clamp(value, 0, 1));
         }
     }
 }

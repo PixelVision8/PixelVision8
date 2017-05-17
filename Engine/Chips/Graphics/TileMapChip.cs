@@ -183,6 +183,7 @@ namespace PixelVisionSDK.Chips
         {
 //            if (cachedTileMap.width != realWidth || cachedTileMap.height != realHeight)
 //                cachedTileMap.Resize(realWidth, realHeight);
+            y = cachedTileMap.height - y - blockHeight;
 
             cachedTileMap.SetPixels(x, y, blockWidth, blockHeight, pixels, colorOffset);
             Invalidate();
