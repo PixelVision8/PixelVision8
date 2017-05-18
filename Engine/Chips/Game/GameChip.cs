@@ -210,7 +210,7 @@ namespace PixelVisionSDK.Chips
         protected Vector spriteSize { get; set; }
         protected Vector displaySize { get; set; }
 
-        public void WriteData(string key, string value)
+        public void WriteSaveData(string key, string value)
         {
             if (savedData.Count > saveSlots)
                 return;
@@ -224,10 +224,10 @@ namespace PixelVisionSDK.Chips
             savedData.Add(key, value);
         }
 
-        public string ReadData(string key, string defaultValue = "undefine")
+        public string ReadSaveData(string key, string defaultValue = "undefine")
         {
             if (!savedData.ContainsKey(key))
-                WriteData(key, defaultValue);
+                WriteSaveData(key, defaultValue);
 
             return savedData[key];
         }
@@ -508,6 +508,12 @@ namespace PixelVisionSDK.Chips
             tilemapChip.ClearCache();
         }
 
+        public void RedrawDisplay()
+        {
+            Clear();
+            DrawTilemap();
+        }
+
         public void ScrollTo(int x = 0, int y = 0)
         {
             displayChip.scrollX = x;
@@ -524,33 +530,35 @@ namespace PixelVisionSDK.Chips
             return displayChip.scrollY;
         }
 
-        public void Sound(int id, int channel = 0)
+        public void PlaySound(int id, int channel = 0)
         {
             soundChip.PlaySound(id, channel);
         }
 
-        public void Song(int id, bool loop = true)
+        public void PlaySong(int[] trackIDs, bool loop = true)
         {
-            if (id == -1)
-            {
-                musicChip.StopSong();
-            }
+            var track = trackIDs[0];
 
-            if (musicChip.currentSongID != id)
-            {
-                musicChip.LoadSong(id);
-            }
-
-            if (musicChip.songCurrentlyPlaying)
-            {
-                musicChip.PauseSong();
-            }
-            else
-            {
-                musicChip.PlaySong(loop);
+            musicChip.LoadSong(track);
             
-            }
-           
+            musicChip.PlaySong(loop);
+            
+        }
+
+        public void PauseSong()
+        {
+            musicChip.PauseSong();
+        }
+
+        public void StopSong()
+        {
+            musicChip.StopSong();
+        }
+
+        public void RewindSong(int position = 0, int loopID = 0)
+        {
+            //TODO need to add in better support for rewinding a song across multiple loops
+            musicChip.RewindSong();
         }
 
         public int SpriteHeight()
@@ -572,12 +580,7 @@ namespace PixelVisionSDK.Chips
         {
             return tilemapChip.rows;
         }
-
-        public Vector SpriteSize()
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public void UpdateSprite(int id, int[] pixelData)
         {
             throw new NotImplementedException();
@@ -625,7 +628,7 @@ namespace PixelVisionSDK.Chips
         }
 
 //        //TODO need to refactor the name of SaveData above
-//        public void WriteData(string key, string value)
+//        public void WriteSaveData(string key, string value)
 //        {
 //            SaveData(key, value);
 //        }
