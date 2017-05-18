@@ -340,27 +340,45 @@ namespace PixelVisionSDK.Chips
 
         }
 
-        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, bool aboveBG = true, int colorOffset = 0)
+        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, bool aboveBG = true, int colorOffset = 0, bool onScreen = true)
         {
+            
+            var sW = SpriteWidth();
+            var sH = SpriteHeight();
+
+            var bounds = new Rect(-displayChip.overscanXPixels, displayChip.overscanY, DisplayWidth(), DisplayHeight());
             var total = ids.Length;
+
+            var height = MathUtil.CeilToInt(total / width);
+
+            var startX = x - ScrollX();
+            var startY = y + ScrollY();
 
             if (flipH || flipV)
             {
-                var height = MathUtil.CeilToInt(total / width);
+                //var height = MathUtil.CeilToInt(total / width);
                 SpriteChipUtil.FlipSpriteData(ref ids, width, height, flipH, flipV);
             }
 
-            for (var i = 0; i < total; i++)
+            for (int i = 0; i < total; i++)
             {
                 var id = ids[i];
                 if (id > -1)
                 {
-                    //TODO should cache the sprite size value
-                    var newX = MathUtil.FloorToInt(i % width) * spriteChip.width + x;
-                    var newY = MathUtil.FloorToInt(i / width) * spriteChip.height + y;
-                    DrawSprite(id, newX, newY, flipH, flipV, aboveBG, colorOffset);
+                    x = (MathUtil.FloorToInt(i % width) * sW) + startX;
+                    y = (MathUtil.FloorToInt(i / width) * sH) + startY;
+
+                    var render = true;
+
+                    if (onScreen)
+                        render = (x >= bounds.x && x <= bounds.width && y >= bounds.y && y <= bounds.height);
+                    
+                    if (render)
+                        DrawSprite(id, x, y, flipH, flipV, aboveBG);
+
                 }
             }
+
         }
 
 
@@ -468,7 +486,7 @@ namespace PixelVisionSDK.Chips
 
         public bool MouseButton(int button)
         {
-            return controllerChip.ReadMouseButton(button);
+            return controllerChip.GetMouseButton(button);
         }
 
         public int MouseX()
@@ -583,6 +601,8 @@ namespace PixelVisionSDK.Chips
 
             int? id, offset, flag;
             
+            //TODO need to get offset and flags working
+
             for (var i = 0; i < total; i++)
             {
                 id = null;
