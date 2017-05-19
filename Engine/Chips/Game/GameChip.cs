@@ -250,7 +250,7 @@ namespace PixelVisionSDK.Chips
             return colorChip.backgroundColor;
         }
 
-        public bool Button(int button, int player)
+        public bool Button(int button, int player = 0)
         {
             var totalButtons = Enum.GetNames(typeof(Buttons)).Length;
 
@@ -346,7 +346,7 @@ namespace PixelVisionSDK.Chips
             var sW = SpriteWidth();
             var sH = SpriteHeight();
 
-            var bounds = new Rect(-displayChip.overscanXPixels, displayChip.overscanY, DisplayWidth(), DisplayHeight());
+            var bounds = new Rect(-displayChip.overscanXPixels, -displayChip.overscanYPixels, DisplayWidth(), DisplayHeight());
             var total = ids.Length;
 
             var height = MathUtil.CeilToInt(total / width);
@@ -407,7 +407,7 @@ namespace PixelVisionSDK.Chips
                 {
                     if (mode == DrawMode.Tile)
                     {
-                        DrawTile(spriteIDs[j], nextX, nextY, colorOffset);
+                        UpdateTile(nextX, nextY, spriteIDs[j], colorOffset);
                         nextX ++;
                     }
                     else if (mode == DrawMode.TilemapCache)
