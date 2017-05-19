@@ -24,6 +24,28 @@ using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
+    public enum DrawMode
+    {
+        Sprite,
+        Tile,
+        TilemapCache,
+        SpriteBelow,
+    }
+
+    public enum FlipMode
+    {
+        None,
+        Horizontal,
+        Vertical,
+        Both
+    }
+
+    public enum DepthMode
+    {
+        Above,
+        Below
+    }
+
     /// <summary>
     ///     The GameChip represents the foundation of a game class
     ///     with all the logic it needs to work correctly in the PixelVisionEngine.
@@ -49,29 +71,6 @@ namespace PixelVisionSDK.Chips
         public int maxSize = 256;
 
         protected Dictionary<string, string> savedData = new Dictionary<string, string>();
-
-
-        public enum DrawMode
-        {
-            Sprite,
-            Tile,
-            TilemapCache,
-            SpriteBelow,
-        }
-
-        public enum FlipMode
-        {
-            None,
-            Horizontal,
-            Vertical,
-            Both
-        }
-
-        public enum DepthMode
-        {
-            Above,
-            Below
-        }
 
         private int[] tmpPixelData;
 
