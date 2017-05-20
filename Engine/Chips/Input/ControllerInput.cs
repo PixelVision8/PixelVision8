@@ -38,10 +38,10 @@ namespace PixelVisionSDK
         /// <param name="inputState"></param>
         public void UpdateKeyMap(IButtonState inputState)
         {
-            if (buttonState.ContainsKey(inputState.button))
-                buttonState[inputState.button] = inputState;
+            if (buttonState.ContainsKey(inputState.buttons))
+                buttonState[inputState.buttons] = inputState;
             else
-                buttonState.Add(inputState.button, inputState);
+                buttonState.Add(inputState.buttons, inputState);
         }
 
         public int ReadKeyMap(Buttons key)

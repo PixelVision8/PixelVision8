@@ -28,6 +28,6 @@ namespace PixelVisionSDK
         bool GetMouseButton(int id = 0);
         Vector MousePos();
         int[] ReadControllerKeys(int controllerID = 0);
-        void UpdateControllerKey(int controllerID, Buttons button, int key);
+        void UpdateControllerKey(int controllerID, Buttons buttons, int key);
     }
 }

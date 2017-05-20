@@ -21,7 +21,7 @@ namespace PixelVisionSDK
     public interface IButtonState
     {
         bool value { get; set; }
-        Buttons button { get; set; }
+        Buttons buttons { get; set; }
         bool buttonReleased { get; }
         float buttonTimes { get; }
         bool dirty { get; set; }

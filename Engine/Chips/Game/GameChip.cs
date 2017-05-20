@@ -18,9 +18,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PixelVisionSDK.Utils;
-using UnityEngine;
-
-//using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -44,6 +41,12 @@ namespace PixelVisionSDK.Chips
     {
         Above,
         Below
+    }
+
+    public enum InputState
+    {
+        Down,
+        Released
     }
 
     /// <summary>
@@ -248,26 +251,26 @@ namespace PixelVisionSDK.Chips
 
             return colorChip.backgroundColor;
         }
-
-        public bool Button(int button, int player = 0)
-        {
-            var totalButtons = Enum.GetNames(typeof(Buttons)).Length;
-
-            if (button >= totalButtons)
-                return false;
-
-            return controllerChip.ButtonDown(button, player);
-        }
-
-        public bool ButtonReleased(int button, int player)
-        {
-            var totalButtons = Enum.GetNames(typeof(Buttons)).Length;
-
-            if (button >= totalButtons)
-                return false;
-
-            return controllerChip.ButtonReleased(button, player);
-        }
+//
+//        public bool Button(int button, int player = 0)
+//        {
+//            var totalButtons = Enum.GetNames(typeof(Button)).Length;
+//
+//            if (button >= totalButtons)
+//                return false;
+//
+//            return controllerChip.ButtonDown(button, player);
+//        }
+//
+//        public bool ButtonReleased(int button, int player)
+//        {
+//            var totalButtons = Enum.GetNames(typeof(Button)).Length;
+//
+//            if (button >= totalButtons)
+//                return false;
+//
+//            return controllerChip.ButtonReleased(button, player);
+//        }
 
         /// <summary>
         ///     Clears an area of the display using the background color. By not providing
@@ -639,6 +642,77 @@ namespace PixelVisionSDK.Chips
 
 
         #endregion
+
+        
+
+        public bool Key(Key key, InputState state = InputState.Down)
+        {
+            return state == InputState.Released 
+                ? controllerChip.GetKeyUp((int)key) 
+                : controllerChip.GetKeyDown((int)key);
+        }
+
+        public bool Mouse(int button, InputState state = InputState.Down)
+        {
+            return state == InputState.Released
+                ? controllerChip.GetMouseButtonUp(button)
+                : controllerChip.GetMouseButtonDown(button);
+        }
+
+        public bool Button(Buttons buttons, InputState state = InputState.Down, int player = 0)
+        {
+            return state == InputState.Released
+                ? controllerChip.ButtonReleased((int) buttons, player)
+                : controllerChip.ButtonDown((int) buttons, player);
+        }
+
+
+        public int[] Sprite(int id, int[] data = null)
+        {
+            if (data != null)
+            {
+                spriteChip.UpdateSpriteAt(id, data);
+                tilemapChip.InvalidateTileID(id);
+
+                return data;
+            }
+
+            //TODO may need to resize this
+            spriteChip.ReadSpriteAt(id, tmpPixelData);
+
+            return tmpPixelData;
+        }
+
+        public string Color(int id, string value = null)
+        {
+            return null;
+        }
+
+        public int Tile(int id, int? spriteID)
+        {
+            return 0;
+        }
+
+        public int TileColor(int id, int? colorID)
+        {
+            return 0;
+        }
+
+        public int Flag(int id, int? flagID)
+        {
+            return 0;
+        }
+
+        public int TotalSprites()
+        {
+            return spriteChip.spritesInRam;
+        }
+
+        public int TotalColors()
+        {
+            return colorChip.total;
+        }
+        
 
     }
 }

@@ -24,7 +24,7 @@ namespace PixelVisionSDK
         protected float _time;
         protected bool _value;
         public int mapping { get; set; }
-        public Buttons button { get; set; }
+        public Buttons buttons { get; set; }
 
         public virtual bool buttonReleased
         {

@@ -187,12 +187,12 @@ namespace PixelVisionSDK.Chips
             engine.controllerChip = null;
         }
 
-        public int ReadControllerKey(int controllerID, Buttons button)
+        public int ReadControllerKey(int controllerID, Buttons buttons)
         {
             if (controllerID < 0 || controllerID > controllers.Length)
                 return 0;
 
-            return controllers[controllerID].ReadKeyMap(button);
+            return controllers[controllerID].ReadKeyMap(buttons);
         }
 
         public int CaptureKey(int[] values)
