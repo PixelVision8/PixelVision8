@@ -14,8 +14,6 @@
 // Shawn Rakowski - @shwany
 // 
 
-using System;
-
 namespace PixelVisionSDK
 {
     public interface IMouseInput
@@ -35,13 +33,7 @@ namespace PixelVisionSDK
         /// </param>
         /// <returns>
         /// </returns>
-        bool ReadMouseButton(int button);
-
-        /// <summary>
-        ///     <para>Returns true during the frame the user pressed the given mouse button.</para>
-        /// </summary>
-        /// <param name="button"></param>
-        bool ReadMouseButtonDown(int button);
+        bool GetMouseButtonDown(int button);
 
         /// <summary>
         ///     Determines if the state of the mouse button.
@@ -52,26 +44,7 @@ namespace PixelVisionSDK
         /// </param>
         /// <returns>
         /// </returns>
-        bool ReadMouseButtonUp(int button);
-
-        /// <summary>
-        ///     Current x position of the mouse on the screen.
-        /// </summary>
-        int ReadMouseX();
-
-        /// <summary>
-        ///     Current y position of the mouse on the screen.
-        /// </summary>
-        int ReadMouseY();
-
-        #region Deprecated
-
-        [Obsolete]
-        Vector mousePosition { get; }
-        bool GetMouseButton(int button);
-        bool GetMouseButtonDown(int button);
         bool GetMouseButtonUp(int button);
 
-        #endregion
     }
 }

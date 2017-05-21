@@ -66,31 +66,12 @@ namespace PixelVisionSDK.Chips
             get { return controllers.Length; }
         }
 
-        public string inputString
-        {
-            get
-            {
-                if (!keyInputActive)
-                    return "";
-
-                return keyInput.inputString;
-            }
-        }
-
         public bool GetKeyUp(int key)
         {
             if (!keyInputActive)
                 return false;
 
             return keyInput.GetKeyUp(key);
-        }
-
-        public bool GetKey(int key)
-        {
-            if (!keyInputActive)
-                return false;
-
-            return keyInput.GetKey(key);
         }
 
         public bool GetKeyDown(int key)
@@ -115,25 +96,6 @@ namespace PixelVisionSDK.Chips
                 return false;
 
             return mouseInput.GetMouseButtonUp(id);
-        }
-
-        public bool GetMouseButton(int id = 0)
-        {
-            if (!mouseInputActive)
-                return false;
-
-            return mouseInput.GetMouseButton(id);
-        }
-
-        public Vector mousePosition
-        {
-            get
-            {
-                if (!mouseInputActive)
-                    return new Vector(-1, -1);
-
-                return mouseInput.mousePosition;
-            }
         }
 
         public virtual void Update(float timeDelta)
@@ -214,55 +176,24 @@ namespace PixelVisionSDK.Chips
 
         public string ReadInputString()
         {
-            throw new NotImplementedException();
+            if (!keyInputActive)
+                return "";
+
+            return keyInput.ReadInputString();
         }
 
-        public bool ReadKey(int key)
+        public bool GetKey(int key)
         {
-            throw new NotImplementedException();
-        }
-
-        public bool ReadKeyDown(int key)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool ReadKeyUp(int key)
-        {
-            throw new NotImplementedException();
+            return keyInput.GetKey(key);
         }
 
         public Vector ReadMousePosition()
         {
-            throw new NotImplementedException();
-        }
-
-        public bool ReadMouseButton(int button)
-        {
             if (!mouseInputActive)
-                return false;
+                return new Vector(-1, -1);
 
-            return mouseInput.GetMouseButtonDown(button);
+            return mouseInput.ReadMousePosition();
         }
 
-        public bool ReadMouseButtonDown(int button)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool ReadMouseButtonUp(int button)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int ReadMouseX()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int ReadMouseY()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

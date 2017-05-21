@@ -77,7 +77,7 @@ namespace PixelVisionSDK.Chips
         ///     This property offers direct access to the current game loaded into
         ///     the engine's memory.
         /// </summary>
-        GameChip currentGame { get; set; }
+        GameChip gameChip { get; set; }
 
         /// <summary>
         ///     The API bridge is the connection between both the engine and the

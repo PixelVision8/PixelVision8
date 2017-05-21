@@ -31,7 +31,8 @@ namespace PixelVisionSDK
         ///     <para>Returns true while the user holds down the key identified by the key KeyCode enum parameter.</para>
         /// </summary>
         /// <param name="key"></param>
-        bool ReadKey(int key);
+        bool GetKey(int key);
+//        bool ReadKey(int key);
 
         /// <summary>
         ///     <para>
@@ -40,24 +41,26 @@ namespace PixelVisionSDK
         ///     </para>
         /// </summary>
         /// <param name="key"></param>
-        bool ReadKeyDown(int key);
+        bool GetKeyDown(int key);
+        /// 
+//        bool ReadKeyDown(int key);
 
         /// <summary>
         ///     <para>Returns true during the frame the user releases the key identified by name.</para>
         /// </summary>
         /// <param name="key"></param>
-        bool ReadKeyUp(int key);
+        bool GetKeyUp(int key);
+        /// 
+//        bool ReadKeyUp(int key);
 
         #region Deprecated
 
-        [Obsolete]
-        string inputString { get; }
-        [Obsolete]
-        bool GetKey(int key);
-        [Obsolete]
-        bool GetKeyDown(int key);
-        [Obsolete]
-        bool GetKeyUp(int key);
+//        [Obsolete]
+//        //string inputString { get; }
+//        [Obsolete]
+        
+//        [Obsolete]
+//        [Obsolete]
 
         #endregion
     }

@@ -1,6 +1,6 @@
 ﻿namespace PixelVisionSDK
 { 
-    public enum Key
+    public enum Keys
     {
         None = 0,
         Backspace = 8,

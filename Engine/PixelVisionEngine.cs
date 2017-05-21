@@ -132,7 +132,7 @@ namespace PixelVisionSDK
         ///     Access to the current game in memory.
         /// </summary>
         /// <tocexclude />
-        public GameChip currentGame { get; set; }
+        public GameChip gameChip { get; set; }
 
         /// <summary>
         ///     Flag if the engine is <see cref="running" /> or not.
@@ -179,7 +179,7 @@ namespace PixelVisionSDK
         /// <tocexclude />
         public virtual void RunGame()
         {
-            if (currentGame == null)
+            if (gameChip == null)
                 return;
 
             // Make sure all chips are reset to their default values

@@ -288,6 +288,11 @@ namespace PixelVisionSDK.Chips
                 cachedSprite = pixelDataCache[index];
             }
 
+            // Make sure that the pixelData array is the correct size.
+            if(pixelData.Length != cachedSprite.Length)
+                Array.Resize(ref pixelData, cachedSprite.Length);
+
+            // Copy the contents of the cached pixel data into the new array.
             Array.Copy(cachedSprite, pixelData, totalSpritePixels);
 
         }
