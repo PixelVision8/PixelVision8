@@ -145,7 +145,7 @@ namespace PixelVisionSDK.Chips
         ///     the end of the display it will appear on the opposite side. There is
         ///     a slight performance hit for this.
         /// </summary>
-        public bool wrapMode { get; set; }
+        //public bool wrapMode { get; set; }
 
         /// <summary>
         ///     Returns the display's <see cref="width" />
@@ -343,7 +343,7 @@ namespace PixelVisionSDK.Chips
             for (var i = 0; i < totalDR; i++)
             {
                 var draw = drawRequests[i];
-                draw.DrawPixels(ref displayPixels, width, height, wrapMode, displayMask);
+                draw.DrawPixels(ref displayPixels, width, height, displayMask);
             }
 
             // Reset clear flag
@@ -507,7 +507,7 @@ namespace PixelVisionSDK.Chips
             // TODO Need to set the display from the engine
             //maxSpriteCount = 64;
             //autoClear = false;
-            wrapMode = true;
+            //wrapMode = true;
             ResetResolution(256, 240);
 //
 //            viewPortOffsetX = 0;

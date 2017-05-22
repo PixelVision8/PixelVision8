@@ -47,13 +47,8 @@ namespace PixelVisionSDK
                 Array.Copy(value, _pixelData, totalPixels);
             }
         }
-//
-//        public virtual void MergePixelData(TextureData target)
-//        {
-//            target.MergePixels(x, y, width, height, pixelData, masked, transparent);
-//        }
 
-        public void DrawPixels(ref int[] destPixelData, int destWidth, int destHeight, bool wrap = true, int[] mask = null)
+        public void DrawPixels(ref int[] destPixelData, int destWidth, int destHeight, int[] mask = null)
         {
             var total = width * height;
             int srcX;
@@ -70,17 +65,8 @@ namespace PixelVisionSDK
                 srcX = i % tmpWidth + x;
                 srcY = i / tmpWidth + y;
 
-                // Wrap Pixels
-                if (wrap)
-                {
-                    srcX = (int) (srcX - Math.Floor(x / (float) destWidth) * destWidth);
-                    srcY = (int) (srcY - Math.Floor(y / (float) destHeight) * destHeight);
-                }
-                else
-                {
-                    if (srcX > destWidth || srcX < 0 || srcY < 0 || srcY > destHeight)
-                        return;
-                }
+                srcX = (int) (srcX - Math.Floor(x / (float) destWidth) * destWidth);
+                srcY = (int) (srcY - Math.Floor(y / (float) destHeight) * destHeight);
 
                 destIndex = srcX + srcY * destWidth;
 
