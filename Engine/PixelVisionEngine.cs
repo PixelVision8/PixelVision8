@@ -20,6 +20,7 @@ using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
+
     /// <summary>
     ///     This is the default engine class for Pixel Vision 8. It manages the
     ///     state of all chips, the game itself and helps with communication between
