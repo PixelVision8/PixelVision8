@@ -18,6 +18,7 @@ using System;
 
 namespace PixelVisionSDK.Chips
 {
+    //TODO need to refactor Buttons Enum to container player one and two
     public enum Buttons
     {
         Up,

@@ -54,7 +54,7 @@ namespace PixelVisionSDK.Chips
         protected Vector spriteSize { get; set; }
         protected Vector displaySize { get; set; }
 
-        private readonly Dictionary<string, int> tmpTileData = new Dictionary<string, int>
+        protected readonly Dictionary<string, int> tmpTileData = new Dictionary<string, int>
         {
             {"spriteID", -1},
             {"colorOffset", -1},
@@ -112,49 +112,100 @@ namespace PixelVisionSDK.Chips
 
 
         #region Chip References
-        public ColorChip colorChip
+        protected ColorChip colorChip
         {
             get { return engine.colorChip; }
         }
 
-        public ColorMapChip colorMapChip
+        protected ColorMapChip colorMapChip
         {
             get { return engine.colorMapChip; }
         }
 
-        public ControllerChip controllerChip
+        protected ControllerChip controllerChip
         {
             get { return engine.controllerChip; }
         }
 
-        public DisplayChip displayChip
+        protected DisplayChip displayChip
         {
             get { return engine.displayChip; }
         }
 
-        public SoundChip soundChip
+        protected SoundChip soundChip
         {
             get { return engine.soundChip; }
         }
 
-        public SpriteChip spriteChip
+        protected SpriteChip spriteChip
         {
             get { return engine.spriteChip; }
         }
 
-        public TilemapChip tilemapChip
+        protected TilemapChip tilemapChip
         {
             get { return engine.tilemapChip; }
         }
 
-        public FontChip fontChip
+        protected FontChip fontChip
         {
             get { return engine.fontChip; }
         }
 
-        public MusicChip musicChip
+        protected MusicChip musicChip
         {
             get { return engine.musicChip; }
+        }
+
+        #endregion
+
+        #region Chip Lifecycle
+
+        /// <summary>
+        ///     Configures the GameChip instance by loading it into
+        ///     the engine's memory, getting a reference to the
+        ///     APIBridge and setting the ready flag to
+        ///     true.
+        /// </summary>
+        /// 
+        public override void Configure()
+        {
+            engine.gameChip = this;
+
+            //TODO this needs to be a service
+            ready = true;
+
+            Array.Resize(ref tmpSpriteData, engine.spriteChip.width * engine.spriteChip.height);
+
+            // cache used common properties
+            spriteSize = new Vector(spriteChip.width, spriteChip.height);
+            displaySize = new Vector(displayChip.width, displayChip.height);
+        }
+
+        /// <summary>
+        ///     Used for updating the game's logic.
+        /// </summary>
+        /// <param name="timeDelta"></param>
+        public virtual void Update(float timeDelta)
+        {
+            // Overwrite this method and add your own update logic.
+        }
+
+        /// <summary>
+        ///     Used for drawing the game to the display.
+        /// </summary>
+        public virtual void Draw()
+        {
+            // Overwrite this method and add your own draw logic.
+        }
+
+        /// <summary>
+        ///     This unloads the game from the engine.
+        /// </summary>
+        public override void Deactivate()
+        {
+            base.Deactivate();
+            engine.gameChip = null;
         }
 
         #endregion
@@ -272,33 +323,58 @@ namespace PixelVisionSDK.Chips
         #region Display APIs
 
         /// <summary>
-        ///     Clears an area of the display using the background color. By not providing
-        ///     any values, it will automatically clear the entire display. You can manually defaine
-        ///     an area of the screen to clear by supplying an option x, y, witdh and height value.
-        ///     When clearing a specific area of the display, anything outside of the defined 
-        ///     boundaries will not be cleared. Use this for drawing a HUD but clearing the display 
-        ///     below for a scrolling map.
+        ///     Clearing the display removed all of the existing pixel data, replacing it with the default background 
+        ///     color. The Clear() method allows you specify what region of the display to clear. By simply calling 
+        ///     Clear(), with no arguments, it automatically clears the entire display. You can manually define an area 
+        ///     of the screen to clear by supplying option x, y, width and height arguments. When clearing a specific 
+        ///     area of the display, anything outside of the defined boundaries remains on the next draw phase. This is 
+        ///     useful for drawing a HUD but clearing the display below for a scrolling map and sprites. Clear can only 
+        ///     be used once during the draw phase.
         /// </summary>
-        /// <param name="x">The left position on the display where the clear should start.</param>
-        /// <param name="y">The right position on the display where the clear should start.</param>
-        /// <param name="width">The width of the clear in pixels.</param>
-        /// <param name="height">The height of the clear in pixels.</param>
+        /// <param name="x">
+        ///     This is an optional value that defaults to 0 and defines where the clear's X position should begin. 
+        ///     When X is 0, clear starts on the far left-hand side of the display. Values less than 0 or greater than 
+        ///     the width of the display are ignored.
+        /// </param>
+        /// <param name="y">
+        ///     This is an optional value that defaults to 0 and defines where the clear's Y position should begin. When Y 
+        ///     is 0, clear starts at the top of the display. Values less than 0 or greater than the height of the display 
+        ///     are ignored.
+        /// </param>
+        /// <param name="width">
+        ///     This is an optional value that defaults to the width of the display and defines how many horizontal pixels 
+        ///     to clear. When the width is 0, clear starts at the x position and ends at the far right-hand side of the 
+        ///     display. Values less than 0 or greater than the width are adjusted to stay within the boundaries of the 
+        ///     screen's visible pixels.
+        /// </param>
+        /// <param name="height">
+        ///     This is an optional value that defaults to the height of the display and defines how many vertical pixels 
+        ///     to clear. When the height is 0, clear starts at the Y position and ends at the bottom of the display. 
+        ///     Values less than 0 or greater than the height are adjusted to stay within the boundaries of the screen's 
+        ///     visible pixels.
+        /// </param>
         public void Clear(int x = 0, int y = 0, int width = 0, int height = 0)
         {
             displayChip.ClearArea(x, y, width, height);
         }
 
         /// <summary>
-        ///     Allows you to get the resolution of the display at run time. While you can also define 
-        ///     a new resolution by providing a width and height value, this may not work correctly at 
-        ///     runtime. You should instead define the resolution before loading the game. If you are 
-        ///     using overscane, you will need to subtract it from the width and height of the returned
-        ///     vector to find the visible pixel dimensions. 
+        ///     The display's size defines the visible area where pixel data exists on the screen. Calculating this is 
+        ///     important for knowing how to position sprites on the screen. The DisplaySize() method allows you to get 
+        ///     the resolution of the display at run time. While you can also define a new resolution by providing a 
+        ///     width and height value, this may not work correctly at runtime and is currently experimental. You should 
+        ///     instead set the resolution before loading the game. If you are using overscan, you must subtract it from 
+        ///     the width and height of the returned vector to find the "visible pixel" dimensions.
         /// </summary>
-        /// <param name="width">New width for the display.</param>
+        /// <param name="width">
+        ///     An optional value that defaults to null. Setting this argument changes the pixel width of the display. 
+        ///     Avoid using this at run-time.
+        /// </param>
         /// <param name="height">New height for the display.</param>
-        /// <returns>Returns a Vector for the display's size. The X and Y values refere to the pixel 
-        /// width and height of the display.</returns>
+        /// <returns>
+        ///     This method returns a Vector representing the display's size. The X and Y values refer to the pixel width 
+        ///     and height of the screen.
+        /// </returns>
         public Vector DisplaySize(int? width = null, int? height = null)
         {
             var size = new Vector();
@@ -331,17 +407,32 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     The overscan value allows you to define parts of the screen that will be cut off 
-        ///     based on how older CRT TVs rendered inmages. The overscan area allows you to hide
-        ///     sprites off screen so they do not wrap around the edges. Pixel Vision 8 automatically
-        ///     crops the display to refelect the overscan. So a resolution of 256x244 with an 
-        ///     overscan x and y value of 1 will only display 248x236 pixels.
+        ///     Pixel Vision 8's overscan value allows you to define parts of the screen that are not visible similar 
+        ///     to how older CRT TVs rendered images. This overscan border allows you to hide sprites off the screen 
+        ///     so they do not wrap around the edges. You can call OverscanBorder() without any arguments to return a 
+        ///     vector for the right and bottom border value. This value represents a full column and row that the 
+        ///     renderer crops from the tilemap. To get the actual pixel value of the right and bottom border, multiply 
+        ///     this value by the sprite's size. It is also important to note that Pixel Vision 8 automatically crops 
+        ///     the display to reflect the overscan. So a resolution of 256x244, with an overscan x and y value of 1, 
+        ///     actually displays 248x236 pixels. While you can change the OverscanBorder at run-time by calling 
+        ///     OverscanBorder() and supplying a new X and Y value, this should not be done while a game is running.
         /// </summary>
-        /// <param name="x">The number of columns from the right edge to use. Each column removes 8 pixels.</param>
-        /// <param name="y">The number of rows from the bottom edge to use. Each row removes 8 pixels.</param>
-        /// <returns>Returns the value of the overscan. Each value needs to be multiplied by 8 to get 
-        /// the actual pixel size of the overscan border. Use this value to create a safe location 
-        /// offscreen to hide sprites when not needed.</returns>
+        /// <param name="x">
+        ///     An optional argument that represents the number of columns from the right edge of the screen to not 
+        ///     display. Each column value removes 8 pixels. So setting X to 1 eliminates the width of a single sprite 
+        ///     from the screen's right-hand border.
+        /// </param>
+        /// <param name="y">
+        ///     An optional argument that represents the number of rows from the bottom edge of the screen to not 
+        ///     display. Each row value removes 8 pixels. So setting Y to 1 eliminates the height of a single sprite 
+        ///     from the screen's bottom border.
+        /// </param>
+        /// <returns>
+        ///     This method returns the overscan's X (right) and Y (bottom) border value as a vector. Each X and Y 
+        ///     value needs to be multiplied by 8 to get the actual pixel size of the overscan border. Use this value 
+        ///     to calculate the actual visible screen area which may be different than the display's native resolution. 
+        ///     Also useful to position sprites offscreen when not needed, so they do not wrap around the screen.
+        /// </returns>
         public Vector OverscanBorder(int? x, int? y)
         {
             var size = new Vector();
@@ -370,23 +461,50 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     This method allows you to draw pixel data directly on the display. Depending on which display 
-        ///     mode you use, the pixel data could be used as a sprite or drawn directly onto the tilemap 
-        ///     cache. Sprited drawn with this method still count against the total number the display can 
-        ///     render but you can draw iregular shaped sprites by defining a unique width and height. For 
-        ///     drawnig into the tilemap cahce directly, you can use this to change the way the tilemap looks 
-        ///     at run time. It's important to remember if you change a tile's sprite ID or color offset it 
-        ///     it will be redrawn to the cache overwritting any pixel data that was drawn over it.
+        ///     This method allows you to draw raw pixel data directly to the display. Depending on which draw mode you 
+        ///     use, the pixel data could be rendered as a sprite or drawn directly onto the tilemap cache. Sprites drawn 
+        ///     with this method still count against the total number the display can render but you can draw irregularly 
+        ///     shaped sprites by defining a custom width and height. For drawnig into the tilemap cache directly, you can 
+        ///     use this to change the way the tilemap looks at run-time without having to modify a sprite's pixel data. 
+        ///     It is important to note that when you change a tile's sprite ID or color offset, the tilemap redraws it 
+        ///     back to the cache overwriting any pixel data that was previously there.
         /// </summary>
-        /// <param name="pixelData"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="drawMode"></param>
-        /// <param name="flipH"></param>
-        /// <param name="flipV"></param>
-        /// <param name="colorOffset"></param>
+        /// <param name="pixelData">
+        ///     The pixelData argument accepts an int array representing references to color IDs. The pixelData array length 
+        ///     needs to be the same size as the supplied width and height, or it will throw an error.
+        /// </param>
+        /// <param name="x">
+        ///     The x position where to display the new pixel data. The display's horizontal 0 position is on the far left-hand side. 
+        ///     When using DrawMode.TilemapCache, the pixel data is drawn into the tilemap's cache instead of directly on 
+        ///     the display when using DrawMode.Sprite.
+        /// </param>
+        /// <param name="y">
+        ///     The Y position where to display the new pixel data. The display's vertical 0 position is on the top. When using 
+        ///     DrawMode.TilemapCache, the pixel data is drawn into the tilemap's cache instead of directly on the display 
+        ///     when using DrawMode.Sprite.
+        /// </param>
+        /// <param name="width">
+        ///     The width of the pixel data to use when rendering to the display.
+        /// </param>
+        /// <param name="height">
+        ///     The height of the pixel data to use when rendering to the display.
+        /// </param>
+        /// <param name="drawMode">
+        ///     This argument accepts the DrawMode enum. You can use Sprite, SpriteBelow, and TilemapCache to change where the 
+        ///     pixel data is drawn to. By default, this value is DrawMode.Sprite.
+        /// </param>
+        /// <param name="flipH">
+        ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips 
+        ///     the pixel data horizontally.
+        /// </param>
+        /// <param name="flipV">
+        ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips 
+        ///     the pixel data vertically.
+        /// </param>
+        /// <param name="colorOffset">
+        ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added 
+        ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
+        /// </param>
         public void DrawPixels(int[] pixelData, int x, int y, int width, int height, DrawMode drawMode = DrawMode.Sprite, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
             switch (drawMode)
@@ -410,37 +528,43 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     Draws a sprite to the display. Each sprite counts against the total amount the display is 
-        ///     able to render. IF you attempt to draw more sprites than the display can handle the call 
-        ///     will be ignored.
+        ///     Sprites represent individual collections of pixel data at a fixed size. By default, Pixel Vision 8 sprites are 
+        ///     8 x 8 pixels and have a set limit of visible colors. You can use the DrawSprite() method to render any sprite 
+        ///     stored in the Sprite Chip. The display also has a limitation on how many sprites can be on the screen at one time. 
+        ///     Each time you call DrawSprite(), the sprite counts against the total amount the display can render. If you attempt to 
+        ///     draw more sprites than the display can handle, the call is ignored. One thing to keep in mind when drawing sprites 
+        ///     is that their x and y position wraps if they reach the right or bottom border of the screen. You need to change 
+        ///     the overscan border to hide sprites offscreen.
         /// </summary>
-        /// <param name="id">The ID of the sprite in the SpriteChip.</param>
+        /// <param name="id">
+        ///     The unique ID of the sprite to use in the SpriteChip.
+        /// </param>
         ///<param name = "x" >
-        ///     X position to place sprite on the screen. 0 is left side of screen.
+        ///     An int value representing the X position to place sprite on the display. If set to 0, it renders on the far 
+        ///     left-hand side of the screen.
         /// </param>
         /// <param name="y">
-        ///     Y position to place sprite on the screen. 0 is the top of the
-        ///     screen.
+        ///     An int value representing the Y position to place sprite on the display. If set to 0, it renders on the top 
+        ///     of the screen.
         /// </param>
         /// <param name="flipH">
-        ///     <para>
-        ///         This flips the sprite horizontally. Set to false
-        ///     </para>
-        ///     <para>by default.</para>
+        ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips 
+        ///     the pixel data horizontally.
         /// </param>
         /// <param name="flipV">
-        ///     This flips the sprite vertically. Set to false by
-        ///     default.
+        ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips 
+        ///     the pixel data vertically.
         /// </param>
         /// <param name="aboveBG">
-        ///     Defines if the sprite is above or below the background layer. Set to
-        ///     true by default.
+        ///     An optional bool that defines if the sprite is above or below the tilemap. Sprites are set to render above the 
+        ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile 
+        ///     above the background color.
         /// </param>
         /// <param name="colorOffset">
-        ///     This value offsets all the color ID's of the sprite. Use this to simulate palette shifting.
+        ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added 
+        ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
         /// </param>
-        public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
-            bool aboveBG = true, int colorOffset = 0)
+        public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, bool aboveBG = true, int colorOffset = 0)
         {
             if (!displayChip.CanDraw())
                 return;
@@ -454,41 +578,52 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     Draws a group of sprites in a grid. This is useful when trying to
-        ///     draw sprites larger than 8x8. Each sprite in the ids array still counts as an 
-        ///     individual sprite so it will only render as many sprites that are remaining during the
-        ///     draw pass. This method will automatically hide sprites that go offscreen. When used 
-        ///     with overscan border, it will greatly simplify drawing larger sprites to the display.
+        ///     The DrawSprites method makes it easier to combine and draw groups of sprites to the display in a grid. This is 
+        ///     useful when trying to render 4 sprites together as a larger 16x16 pixel graphic. While there is no limit on the 
+        ///     size of the sprite group which can be rendered, it is important to note that each sprite in the array still counts 
+        ///     as an individual sprite. Sprites passed into the DrawSprites() method are visible if the display can render it. 
+        ///     Under the hood, this method uses DrawSprite but solely manages positioning the sprites out in a grid. Another 
+        ///     unique feature of his helper method is that it automatically hides sprites that go offscreen. When used with 
+        ///     overscan border, it greatly simplifies drawing larger sprites to the display.
         /// </summary>
-        ///<param name="id">The ID of the sprite in the SpriteChip.</param>
+        ///<param name="ids">
+        ///     An array of sprite IDs to display on the screen.
+        /// </param>
         ///<param name = "x" >
-        ///     X position to place sprite on the screen. 0 is left side of screen.
+        ///     An int value representing the X position to place sprite on the display. If set to 0, it renders on the far 
+        ///     left-hand side of the screen.
         /// </param>
         /// <param name="y">
-        ///     Y position to place sprite on the screen. 0 is the top of the
-        ///     screen.
+        ///     An int value representing the Y position to place sprite on the display. If set to 0, it renders on the top 
+        ///     of the screen.
         /// </param>
-        /// <param name="width">The width in sprites of the grid. A value of 2 will be 2 sprites wide.</param>
+        /// <param name="width">
+        ///     The width, in sprites, of the grid. A value of 2 renders 2 sprites wide. The DrawSprites method continues to 
+        ///     run through all of the sprites in the ID array until reaching the end. Sprite groups do not have to be perfect 
+        ///     squares since the width value is only used to wrap sprites to the next row.
+        /// </param>
         /// <param name="flipH">
-        ///     <para>
-        ///         This flips the sprite horizontally. Set to false
-        ///     </para>
-        ///     <para>by default.</para>
+        ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips 
+        ///     the pixel data horizontally.
         /// </param>
         /// <param name="flipV">
-        ///     This flips the sprite vertically. Set to false by
-        ///     default.
+        ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips 
+        ///     the pixel data vertically.
         /// </param>
         /// <param name="aboveBG">
-        ///     Defines if the sprite is above or below the background layer. Set to
-        ///     true by default.
+        ///     An optional bool that defines if the sprite is above or below the tilemap. Sprites are set to render above the 
+        ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile 
+        ///     above the background color.
         /// </param>
         /// <param name="colorOffset">
-        ///     This value offsets all the color ID's of the sprite. Use this to simulate palette shifting.
+        ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added 
+        ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
         /// </param>
-        /// <param name="onScreen">This flag defines if the sprites should be hidden when they are off 
-        /// the screen. Use this in conjuntion with overscan border. If set to false, the sprites will
-        /// wrap around the screen when they reach the edges of the display.</param>
+        /// <param name="onScreen">
+        ///     This flag defines if the sprites should not render when they are off the screen. Use this in conjunction with 
+        ///     overscan border control what happens to sprites at the edge of the display. If this value is false, the sprites 
+        ///     wrap around the screen when they reach the edges of the screen.
+        /// </param>
         public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, bool aboveBG = true, int colorOffset = 0, bool onScreen = true)
         {
             var size = SpriteSize();
@@ -528,35 +663,47 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     This allows you to draw text to the display. There are several modes allowing you to 
-        ///     specify if the text should be rendered as spirtes, tiles or drawn directly into the 
-        ///     tilemap cache. You can also define the color offset, letter spacing which only works 
-        ///     for sprite and tilemap cache rendering, and a width in characters if you want the   
-        ///     text to wrap. When rendering text as sprites, each character will count towards the 
-        ///     maximumn number of sprites the display can render.
+        ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render 
+        ///     characters as individual sprites (DrawMode.Sprite), tiles (DrawMode.Tile) or drawn directly into the tilemap 
+        ///     cache (DrawMode.TilemapCache). When drawing text as sprites, you have more flexibility over position, but each 
+        ///     character counts against the displays' maximum sprite count. When rendering text to the tilemap, more characters 
+        ///     are shown and also increase performance when rendering large amounts of text. You can also define the color offset, 
+        ///     letter spacing which only works for sprite and tilemap cache rendering, and a width in characters if you want the 
+        ///     text to wrap.
         /// </summary>
         /// <param name="text">
-        ///     String that will be rendered to the display.
+        ///     A text string to display on the screen.
         /// </param>
-        /// <param name="x">
-        ///     X position where <paramref name="text" /> starts on the screen. 0 is
-        ///     left side of screen.
+        ///<param name = "x" >
+        ///     An int value representing the X position to start the text on the display. If set to 0, it renders on the far 
+        ///     left-hand side of the screen.
         /// </param>
         /// <param name="y">
-        ///     Y position where <paramref name="text" /> starts on the screen. 0 is
-        ///     top side of screen.
+        ///     An int value representing the Y position to place sprite on the display. If set to 0, it renders on the top 
+        ///     of the screen.
         /// </param>
-        /// <param name="mode">
-        ///     This accepts the DrawMode enum. It supports drawing text as Sprite, Tilemap or TilemapCache.
+        /// <param name="drawMode">
+        ///     This argument accepts the DrawMode enum. You can use Sprite, SpriteBelow, and TilemapCache to change where the 
+        ///     pixel data is drawn to. By default, this value is DrawMode.Sprite.
         /// </param>
-        /// <param name="font">The name of the font to use. You don't need to add the font's file extension.</param>
-        /// <param name="colorOffset">Shift the color IDs by this value</param>
-        /// <param name="spacing">The number of pixels between each character. This is ignored when
-        /// rendering text as tiles.</param>
-        /// <param name="width">The width in characters before the text should wrap. Leaving this empty
-        /// will not force the text to wrap.</param>
+        /// <param name="font">
+        ///     The name of the font to use. You do not need to add the font's file extension. If the file is called default.font.png, 
+        ///     you can simply refer to it as "default" when supplying an argument value.
+        /// </param>
+        /// <param name="colorOffset">
+        ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added 
+        ///     to each color ID in the font's pixel data, allowing you to simulate palette shifting.
+        /// </param>
+        /// <param name="spacing">
+        ///     This optional argument sets the number of pixels between each character when rendering text. This value is ignored 
+        ///     when rendering text as tiles. This value can be positive or negative depending on your needs. By default, it is 0.
+        /// </param>
+        /// <param name="width">
+        ///     This optional argument allows you to wrap text. This accepts an int representing the number of characters before 
+        ///     wrapping the text. Only set a value if you want the text to wrap. By default, it is set to null and is ignored.
+        /// </param>
         /// <returns></returns>
-        public int DrawText(string text, int x, int y, DrawMode mode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0, int? width = null)
+        public int DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0, int? width = null)
         {
             if (width > 1)
                 text = FontChip.WordWrap(text, width.Value);
@@ -580,12 +727,12 @@ namespace PixelVisionSDK.Chips
                 var total = spriteIDs.Length;
 
                 for (var j = 0; j < total; j++)
-                    if (mode == DrawMode.Tile)
+                    if (drawMode == DrawMode.Tile)
                     {
                         Tile(nextX, nextY, spriteIDs[j], colorOffset);
                         nextX++;
                     }
-                    else if (mode == DrawMode.TilemapCache)
+                    else if (drawMode == DrawMode.TilemapCache)
                     {
                         var pixelData = fontChip.ConvertCharacterToPixelData(line[j], font);
                         if (pixelData != null)
@@ -603,7 +750,7 @@ namespace PixelVisionSDK.Chips
 
                 nextX = x;
 
-                if (mode == DrawMode.Tile)
+                if (drawMode == DrawMode.Tile)
                     nextY++;
                 else
                     nextY += charHeight;
@@ -613,22 +760,37 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     This draws the Tilemap Cache to the display. You can set the x and y position on the display where
-        ///     the tilemap should go as well as how many rows and columns to display. By calling this method without
-        ///     any arguments, the tilemap will be drawn in the upper left hand corner and fill the display.
+        ///     By default, the tilemap renders to the display by simply calling DrawTilemap(). This automatically fills the entire 
+        ///     display with the visible portion of the tilemap. To have more granular control over how to render the tilemap, you 
+        ///     can supply an optional X and Y position to change where it draws on the screen. You can also modify the width 
+        ///     (columns) and height (rows) that are displayed too. This is useful if you want to show a HUD or some other kind of 
+        ///     image on the screen that is not overridden by the tilemap. To scroll the tilemap, you need to call the 
+        ///     ScrollPosition() and supply a new scroll X and Y value.
         /// </summary>
-        /// <param name="x">The left position where to draw the tilemap on the display.</param>
-        /// <param name="y">The top position where to draw the tilemap on the display.</param>
-        /// <param name="columns">How many horizontal tiles to include when drawing the map.</param>
-        /// <param name="rows">How many vertical tiles to include when drawing the map.</param>
+        ///<param name = "x" >
+        ///     An optional int value representing the X position to render the tilemap on the display. If set to 0, it 
+        ///     renders on the far left-hand side of the screen.
+        /// </param>
+        /// <param name="y">
+        ///     An optional int value representing the Y position to render the tilemap on the display. If set to 0, it 
+        ///     renders on the top of the screen.
+        /// </param>
+        /// <param name="columns">
+        ///     An optional int value representing how many horizontal tiles to include when drawing the map. By default, this is 
+        ///     0 which automatically uses the full visible width of the display, while taking into account the X position offset.
+        /// </param>
+        /// <param name="rows">
+        ///     An optional int value representing how many vertical tiles to include when drawing the map. By default, this is 0 
+        ///     which automatically uses the full visible height of the display, while taking into account the Y position offset.
+        /// </param>
         public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0)
         {
             displayChip.DrawTilemap(x, y, columns, rows);
         }
 
         /// <summary>
-        ///     This is a helper method to make clearing the display and drawing the tilemap easier. Use this method 
-        ///     to call both methods at the same time.
+        ///     You can use RedrawDisplay to make clearing and drawing the tilemap easier. This is a helper method automatically 
+        ///     calls both Clear() and DrawTilemap() for you.
         /// </summary>
         public void RedrawDisplay()
         {
@@ -637,15 +799,22 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     This allows you to scroll start position (upper top left) of where the tilemap should start rendering 
-        ///     at. This allows you to scroll the tilemap. By calling the method with no arguments you can get the 
-        ///     current scroll position. If you supply an X and Y value it will update the display's scroll position. 
+        ///     You can scroll the tilemap by calling the ScrollPosition() method and supplying a new scroll X and Y position. 
+        ///     By default, calling ScrollPosition() with no arguments returns a vector with the current scroll X and Y values. 
+        ///     If you supply an X and Y value, it updates the tilemap's scroll position the next time you call the 
+        ///     DrawTilemap() method.
         /// </summary>
-        /// <param name="x">Optional argument to update the scroll x position. The x position is the far left side of 
-        /// the tilemap.</param>
-        /// <param name="y">Optional argiment to update the scorll y position. The y position is at the top side of the 
-        /// tilemap.</param>
-        /// <returns>This method returns a vector with the current scroll x and y position.</returns>
+        ///<param name = "x" >
+        ///     An optional int value representing the scroll X position of the tilemap. If set to 0, it starts on the far 
+        ///     left-hand side of the tilemap.
+        /// </param>
+        /// <param name="y">
+        ///     An optional int value representing the scroll Y position of the tilemap. If set to 0, it starts on the top of 
+        ///     the tilemap.
+        /// </param>
+        /// <returns>
+        ///     By default, this method returns a vector with the current scroll X and Y position.
+        /// </returns>
         public Vector ScrollPosition(int? x = null, int? y = null)
         {
             var pos = new Vector();
@@ -678,11 +847,14 @@ namespace PixelVisionSDK.Chips
         #region File IO APIs
 
         /// <summary>
-        ///     Allows you to save string data to the game itself. This data can then be used when restarting a 
-        ///     game for persistent data.
+        ///     Allows you to save string data to the game file itself. This data persistent even after restarting a game.
         /// </summary>
-        /// <param name="key">A string to use as the key for the data.</param>
-        /// <param name="value">A string representing the data to be saved.</param>
+        /// <param name="key">
+        ///     A string to use as the key for the data.
+        /// </param>
+        /// <param name="value">
+        ///     A string representing the data to be saved.
+        /// </param>
         public void WriteSaveData(string key, string value)
         {
             if (savedData.Count > saveSlots)
@@ -698,11 +870,17 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     Allows you to read saved data by supplying a key. If no key is provied "undefined" will be returned.
+        ///     Allows you to read saved data by supplying a key. If no matching key exists, "undefined" is returned.
         /// </summary>
-        /// <param name="key">The string key used to find the data.</param>
-        /// <param name="defaultValue">The optional string to be used if no data is found.</param>
-        /// <returns>Returns string data associated with the supplied key.</returns>
+        /// <param name="key">
+        ///     The string key used to find the data.
+        /// </param>
+        /// <param name="defaultValue">
+        ///     The optional string to use if data does not exist.
+        /// </param>
+        /// <returns>
+        ///     Returns string data associated with the supplied key.
+        /// </returns>
         public string ReadSaveData(string key, string defaultValue = "undefine")
         {
             if (!savedData.ContainsKey(key))
@@ -716,14 +894,23 @@ namespace PixelVisionSDK.Chips
         #region Input APIs
 
         /// <summary>
-        ///     Returns the current state of a key. This accepts the Keys enum or an int for a specific key. In 
-        ///     additon, you'll need to also provide the input state to check for. The InputState enum has Down 
-        ///     and Released for options. By default, Down is automatically tested. Released returns true if the 
-        ///     key was relased in the last frame.
+        ///     While the main form of input in Pixel Vision 8 comes from the controllers, you can test for keyboard 
+        ///     input by calling the Key() method. When called, this method returns the current state of a key. The 
+        ///     method accepts the Keys enum, or an int, for a specific key. In additon, you need to provide the input 
+        ///     state to check for. The InputState enum has two states, Down and Released. By default, Down is 
+        ///     automatically used which returns true when the key is being pressed in the current frame. When using 
+        ///     Released, the method returns true if the key is currently up but was down in the last frame.
         /// </summary>
-        /// <param name="key">Accepts the Keys enum or int for the key's ID.</param>
-        /// <param name="state">Optional InputState enum. Returns down state by default.</param>
-        /// <returns>Returns a bool based on the state of the button.</returns>
+        /// <param name="key">
+        ///     This argument accepts the Keys enum or an int for the key's ID.
+        /// </param>
+        /// <param name="state">
+        ///     Optional InputState enum. Returns down state by default. This argument accepts InputState.Down (0) 
+        ///     or InputState.Released (1).
+        /// </param>
+        /// <returns>
+        ///     This method returns a bool based on the state of the button.
+        /// </returns>
         public bool Key(Keys key, InputState state = InputState.Down)
         {
             return state == InputState.Released
@@ -732,14 +919,22 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     Returns the current state of the mouse's buttons (1 for left mouse and 2 for right mouse). In 
-        ///     additon, you'll need to also provide the input state to check for. The InputState enum has Down 
-        ///     and Released for options. By default, Down is automatically tested. Released returns true if the 
-        ///     key was relased in the last frame.
+        ///     Pixel Vision 8 supports mouse input. You can get the current state of the mouse's left (0) and 
+        ///     right (1) buttons by calling MouseButton(). In addition to supplying a button ID, you also need 
+        ///     to provide the InputState enum. The InputState enum contains options for testing the Down and 
+        ///     Released states of the supplied button ID. By default, Down is automatically used which returns 
+        ///     true when the key was pressed in the current frame. When using Released, the method returns true 
+        ///     if the key is currently up but was down in the last frame.
         /// </summary>
-        /// <param name="button">Accepts an int for the left (0) or right (1) mouse button.</param>
-        /// <param name="state">Optional InputState enum. Returns down state by default.</param>
-        /// <returns>Returns a bool based on the state of the button.</returns>
+        /// <param name="button">
+        ///     Accepts an int for the left (0) or right (1) mouse button.
+        /// </param>
+        /// <param name="state">
+        ///     An optional InputState enum. Uses InputState.Down default.
+        /// </param>
+        /// <returns>
+        ///     Returns a bool based on the state of the button.
+        /// </returns>
         public bool MouseButton(int button, InputState state = InputState.Down)
         {
             return state == InputState.Released
@@ -748,36 +943,53 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     Returns the current state of a controller button for a given player. This accepts the Buttons 
-        ///     enum or an int for a specific button. In additon, you'll need to also provide the input state 
-        ///     to check for as well as the player ID 1 (0) and 2 (1). The InputState enum has Down and Released 
-        ///     for options. By default, Down is automatically tested. Released returns true if the key was 
-        ///     relased in the last frame.
+        ///     The main form of input for Pixel Vision 8 is the controller's buttons. You can get the current 
+        ///     state of any button by calling the Button() method and supplying a button ID, an InputState enum, 
+        ///     and the controller ID. When called, the Button() method returns a bool for the requested button 
+        ///     and its state. The InputState enum contains options for testing the Down and Released states of 
+        ///     the supplied button ID. By default, Down is automatically used which returns true when the key 
+        ///     was pressed in the current frame. When using Released, the method returns true if the key is 
+        ///     currently up but was down in the last frame.
         /// </summary>
-        /// <param name="button">Accepts the Buttons enum or int for the button's ID.</param>
-        /// <param name="state">Optional InputState enum. Returns down state by default.</param>
-        /// <param name = "player">The player's controller 1 (0) and 2 (1).</param>
-        /// <returns>Returns a bool based on the state of the button.</returns>
-        public bool Button(Buttons button, InputState state = InputState.Down, int player = 0)
+        /// <param name="button">
+        ///     Accepts the Buttons enum or int for the button's ID.
+        /// </param>
+        /// <param name="state">
+        ///     Optional InputState enum. Returns down state by default.
+        /// </param>
+        /// <param name = "controllerID">
+        ///     An optional InputState enum. Uses InputState.Down default.
+        /// </param>
+        /// <returns>
+        ///     Returns a bool based on the state of the button.
+        /// </returns>
+        public bool Button(Buttons button, InputState state = InputState.Down, int controllerID = 0)
         {
             return state == InputState.Released
-                ? controllerChip.ButtonReleased(button, player)
-                : controllerChip.ButtonDown(button, player);
+                ? controllerChip.ButtonReleased(button, controllerID)
+                : controllerChip.ButtonDown(button, controllerID);
         }
 
         /// <summary>
-        ///     The position of the mouse on the display.
+        ///     The MousePosition() method returns a vector for the current cursor's X and Y position. 
+        ///     This value is read-only. The mouse's 0,0 position is in the upper left-hand corner of the 
+        ///     display
         /// </summary>
-        /// <returns>Returns a vector for the mouse's X and Y poisition.</returns>
+        /// <returns>
+        ///     Returns a vector for the mouse's X and Y poisition.
+        /// </returns>
         public Vector MousePosition()
         {
             return controllerChip.ReadMousePosition();
         }
 
         /// <summary>
-        ///     Returns the keyboard input entered this frame.
+        ///     The InputString() method returns the keyboard input entered this frame. This method is 
+        ///     useful for capturing keyboard text input.
         /// </summary>
-        /// <returns>A string of all the characters entered during the frame.</returns>
+        /// <returns>
+        ///     A string of all the characters entered during the frame.
+        /// </returns>
         public string InputString()
         {
             return controllerChip.ReadInputString();
@@ -788,37 +1000,59 @@ namespace PixelVisionSDK.Chips
         #region Math APIs
 
         /// <summary>
-        ///     Limits a value between a minium and maximum.
+        ///     Limits a value between a minimum and maximum.
         /// </summary>
-        /// <param name="val">The value to clamp.</param>
-        /// <param name="min">The minimum the value can be.</param>
-        /// <param name="max">The maximum the value can be.</param>
-        /// <returns></returns>
+        /// <param name="val">
+        ///     The value to clamp.
+        /// </param>
+        /// <param name="min">
+        ///     The minimum the value can be.
+        /// </param>
+        /// <param name="max">
+        ///     The maximum the value can be.
+        /// </param>
+        /// <returns>
+        ///     Returns an int within the min and max range.
+        /// </returns>
         public int Clamp(int val, int min, int max)
         {
             return val.Clamp(min, max);
         }
 
         /// <summary>
-        ///     Repeates a value based on the max. When the value is greater than the max, it will 
-        ///     become 0.
+        ///     Repeats a value based on the max. When the value is greater than the max, it starts 
+        ///     over at 0 plus the remaining value.
         /// </summary>
-        /// <param name="val">The value to repeat.</param>
-        /// <param name="max">The maximum the value can be.</param>
-        /// <returns></returns>
+        /// <param name="val">
+        ///     The value to repeat.
+        /// </param>
+        /// <param name="max">
+        ///     The maximum the value can be.
+        /// </param>
+        /// <returns>
+        ///     Returns an int that is never less than 0 or greater than the max.
+        /// </returns>
         public int Repeat(int val, int max)
         {
             return MathUtil.Repeat(val, max);
         }
 
         /// <summary>
-        ///     Converts an X and Y postion into an index. This is useful for finding positions in 1D
+        ///     Converts an X and Y position into an index. This is useful for finding positions in 1D 
         ///     arrays that represent 2D data.
         /// </summary>
-        /// <param name="x">The x position.</param>
-        /// <param name="y">The y position.</param>
-        /// <param name="width">The width of the data if it was represented as a 2D array.</param>
-        /// <returns></returns>
+        /// <param name="x">
+        ///     The x position.
+        /// </param>
+        /// <param name="y">
+        ///     The y position.
+        /// </param>
+        /// <param name="width">
+        ///     The width of the data if it was represented as a 2D array.
+        /// </param>
+        /// <returns>
+        ///     Returns an int value representing the X and Y position in a 1D array.
+        /// </returns>
         public int CalculateIndex(int x, int y, int width)
         {
             int index;
@@ -827,12 +1061,18 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     Converts an index into an X and Y position to help when working with 1D arrays that represent 
-        ///     2D data.
+        ///     Converts an index into an X and Y position to help when working with 1D arrays that 
+        ///     represent 2D data.
         /// </summary>
-        /// <param name="index">The position of the 1D array.</param>
-        /// <param name="width">The width of the data if it was a 2D array.</param>
-        /// <returns></returns>
+        /// <param name="index">
+        ///     The position of the 1D array.
+        /// </param>
+        /// <param name="width">
+        ///     The width of the data if it was a 2D array.
+        /// </param>
+        /// <returns>
+        ///     Returns a vector representing the X and Y position of an index in a 1D array.
+        /// </returns>
         public Vector CalculatePosition(int index, int width)
         {
             int x, y;
@@ -847,15 +1087,15 @@ namespace PixelVisionSDK.Chips
         #region Sound APIs
 
         /// <summary>
-        ///     This method plays back a sound on a specific channel. The SoundChip has a limit of active channels 
-        ///     so playing a sound effect while another was is playing on the same channel will cancel it out and 
-        ///     replace with the new sound.
+        ///     This method plays back a sound on a specific channel. The SoundChip has a limit of 
+        ///     active channels so playing a sound effect while another was is playing on the same 
+        ///     channel will cancel it out and replace with the new sound.
         /// </summary>
         /// <param name="id">
         ///     The ID of the sound in the SoundCollection.
         /// </param>
         /// <param name="channel">
-        ///     The channel the sound should play back on. Cannel 0 is set by default.
+        ///     The channel the sound should play back on. Channel 0 is set by default.
         /// </param>
         public void PlaySound(int id, int channel = 0)
         {
@@ -863,11 +1103,17 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     This helper method allows you to autoamtically load a set of loops as a complete song and play 
-        ///     them back. You can also define if the tracks should loop when they are done playing.
+        ///     This helper method allows you to automatically load a set of loops as a complete 
+        ///     song and plays them back. You can also define if the tracks should loop when they 
+        ///     are done playing.
         /// </summary>
-        /// <param name="trackIDs">An array of loop IDs to play back as a single song.</param>
-        /// <param name="loop">Whether the song should loop back to the first ID when its done playing.</param>
+        /// <param name="trackIDs">
+        ///     An array of loop IDs to playback as a single song.
+        /// </param>
+        /// <param name="loop">
+        ///     A bool that determines if the song should loop back to the first ID when it is 
+        ///     done playing.
+        /// </param>
         public void PlaySong(int[] trackIDs, bool loop = true)
         {
             var track = trackIDs[0];
@@ -879,7 +1125,7 @@ namespace PixelVisionSDK.Chips
 
         /// <summary>
         ///     Toggles the current playback state of the sequencer. If the song
-        ///     is playing it will pause, if it is paused it will play
+        ///     is playing it will pause, if it is paused it will play.
         /// </summary>
         public void PauseSong()
         {
@@ -895,12 +1141,16 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     Rewinds the sequencer to the beginning of the currently loaded song. You can define the position 
-        ///     in the loop and the loop where playback should begine. Calling this method without any arguments 
-        ///     will simply rewind the song to the beginning of the first loop.
+        ///     Rewinds the sequencer to the beginning of the currently loaded song. You can define 
+        ///     the position in the loop and the loop where playback should begin. Calling this method 
+        ///     without any arguments will simply rewind the song to the beginning of the first loop.
         /// </summary>
-        /// <param name="position">Position in the loop to start playing at.</param>
-        /// <param name="loopID">The loop to rewind too</param>
+        /// <param name="position">
+        ///     Position in the loop to start playing at.
+        /// </param>
+        /// <param name="loopID">
+        ///     The loop to rewind too.
+        /// </param>
         public void RewindSong(int position = 0, int loopID = 0)
         {
             //TODO need to add in better support for rewinding a song across multiple loops
@@ -914,9 +1164,15 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         ///     Returns the size of the sprite as a Vector where X and Y represent the width and height.
         /// </summary>
-        /// <param name="width">Optional argument to change the width of the sprite. Currently not enabled.</param>
-        /// <param name="height">Optional argument to change the height of the sprite. Currently not enabled.</param>
-        /// <returns></returns>
+        /// <param name="width">
+        ///     Optional argument to change the width of the sprite. Currently not enabled.
+        /// </param>
+        /// <param name="height">
+        ///     Optional argument to change the height of the sprite. Currently not enabled.
+        /// </param>
+        /// <returns>
+        ///     Returns a vector where the X and Y for the sprite's width and height.
+        /// </returns>
         public Vector SpriteSize(int? width = 8, int? height = 8)
         {
             var size = new Vector(spriteChip.width, spriteChip.height);
@@ -927,15 +1183,22 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     This allows you to return the pixel data of a sprite or overwrite it with new data. Sprite pixel data is
-        ///     an array of color reference ids. When calling the method with only an id arugment, you'll get the sprite's 
-        ///     pixel data. If you supply data, it will overwrite the sprite. It's importnat to make sure that any new 
-        ///     pixel data should be the same length of the existing sprite's pixel data. This can be cauclated by 
-        ///     multiplying the sprite's width and height. You can add transparent area to a sprite's data by using -1.
+        ///     This allows you to return the pixel data of a sprite or overwrite it with new data. Sprite 
+        ///     pixel data is an array of color reference ids. When calling the method with only an id 
+        ///     argument, you will get the sprite's pixel data. If you supply data, it will overwrite the 
+        ///     sprite. It is important to make sure that any new pixel data should be the same length of 
+        ///     the existing sprite's pixel data. This can be calculated by multiplying the sprite's width 
+        ///     and height. You can add the transparent area to a sprite's data by using -1.
         /// </summary>
-        /// <param name="id">The sprite to access.</param>
-        /// <param name="data">Optional data to write over the sprite's current pixel data.</param>
-        /// <returns>Returns an array of int data which points to color ids.</returns>
+        /// <param name="id">
+        ///     The sprite to access.
+        /// </param>
+        /// <param name="data">
+        ///     Optional data to write over the sprite's current pixel data.
+        /// </param>
+        /// <returns>
+        ///     Returns an array of int data which points to color ids.
+        /// </returns>
         public int[] Sprite(int id, int[] data = null)
         {
             if (data != null)
@@ -952,12 +1215,20 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     Returns the total number of sprites in the system. You can pass in an optional argument to get total number 
-        ///     of sprites the Sprite Chip can store by passing in false for ignoreEmpty. By default, only sprites with 
-        ///     pixel data will be included in the total returned.
+        ///     Returns the total number of sprites in the system. You can pass in an optional argument to 
+        ///     get a total number of sprites the Sprite Chip can store by passing in false for ignoreEmpty. 
+        ///     By default, only sprites with pixel data will be included in the total return.
         /// </summary>
-        /// <param name="ignoreEmpty"></param>
-        /// <returns></returns>
+        /// <param name="ignoreEmpty">
+        ///     This is an optional value that defaults to true. When set to true, the SpriteChip returns 
+        ///     the total number of sprites that are not empty (where all the pixel data is set to -1). 
+        ///     Set this value to false if you want to get all of the available color slots in the ColorChip 
+        ///     regardless if they are empty or not.
+        /// </param>
+        /// <returns>
+        ///     This method returns the total number of sprites in the color chip based on the ignoreEmpty 
+        ///     argument's value.
+        /// </returns>
         public int TotalSprites(bool ignoreEmpty = true)
         {
             return spriteChip.spritesInRam;
@@ -968,14 +1239,20 @@ namespace PixelVisionSDK.Chips
         #region Tilemap
 
         /// <summary>
-        ///     This allows you to quickly access just the flag value of a tile. This is useful when trying to 
-        ///     caluclate collision on the tilemap. By default, you can call this method and return the falg value. 
-        ///     If you supply a new value, it will be overridden on the tile. Changing a tile's flag value does not 
-        ///     force the tile to be redawn to the tilemap cache.
+        ///     This allows you to quickly access just the flag value of a tile. This is useful when trying 
+        ///     to the caluclate collision on the tilemap. By default, you can call this method and return 
+        ///     the flag value. If you supply a new value, it will be overridden on the tile. Changing a 
+        ///     tile's flag value does not force the tile to be redrawn to the tilemap cache.
         /// </summary>
-        /// <param name="column">The x position of the tile in the tilemap. The 0 position is on the far left of the tilemap.</param>
-        /// <param name="row">The y position of the tile in the tilemap. The 0 position is on the top of the tilemap.</param>
-        /// <param name="value">The new value for the flag. Setting the flag to -1 means no collision.</param>
+        /// <param name="column">
+        ///     The X position of the tile in the tilemap. The 0 position is on the far left of the tilemap.
+        /// </param>
+        /// <param name="row">
+        ///     The Y position of the tile in the tilemap. The 0 position is on the top of the tilemap.
+        /// </param>
+        /// <param name="value">
+        ///     The new value for the flag. Setting the flag to -1 means no collision.
+        /// </param>
         /// <returns></returns>
         public int Flag(int column, int row, int? value = null)
         {
@@ -986,20 +1263,31 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     This allows you to get the current sprite id, color offset and flag values associated with a given tile. 
-        ///     You can optionally supply your own if you want to change the tile's values. Changing a tile's sprite id 
-        ///     or color offset will for the tilemap to redraw it to the cache on the next frame. If you are drawing 
-        ///     raw pixel data into the tilemap cache in the same position it will be overwritten with the new tile's 
-        ///     pixel data.
+        ///     This allows you to get the current sprite id, color offset and flag values associated with 
+        ///     a given tile. You can optionally supply your own if you want to change the tile's values. 
+        ///     Changing a tile's sprite id or color offset will for the tilemap to redraw it to the cache 
+        ///     on the next frame. If you are drawing raw pixel data into the tilemap cache in the same 
+        ///     position, it will be overwritten with the new tile's pixel data.
         /// </summary>
-        /// <param name="column">The x position of the tile in the tilemap. The 0 position is on the far left of the tilemap.</param>
-        /// <param name="row">The y position of the tile in the tilemap. The 0 position is on the top of the tilemap.</param>
-        /// <param name="spriteID">The sprite id to use for the tile.</param>
-        /// <param name="colorOffset">Shift the color IDs by this value</param>
-        /// <param name="flag">An int value betwen -1 and 16 used for collision detection.</param>
-        /// <returns></returns>
-        public Dictionary<string, int> Tile(int column, int row, int? spriteID = null, int? colorOffset = null,
-            int? flag = null)
+        /// <param name="column">
+        ///     The X position of the tile in the tilemap. The 0 position is on the far left of the tilemap.
+        /// </param>
+        /// <param name="row">
+        ///     The Y position of the tile in the tilemap. The 0 position is on the top of the tilemap.
+        /// </param>
+        /// <param name="spriteID">
+        ///     The sprite id to use for the tile.
+        /// </param>
+        /// <param name="colorOffset">
+        ///     Shift the color IDs by this value.
+        /// </param>
+        /// <param name="flag">
+        ///     An int value between -1 and 16 used for collision detection.
+        /// </param>
+        /// <returns>
+        ///     Returns a dictionary containing the spriteID, colorOffset, and flag for an individual tile.    
+        /// </returns>
+        public Dictionary<string, int> Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null)
         {
             if (spriteID.HasValue)
                 tilemapChip.UpdateSpriteAt(column, row, spriteID.Value);
@@ -1033,15 +1321,21 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     This will return a vector representing the size of the tilemap in columns (x) and rows (y). To find the 
-        ///     size in pixels you'll need to multiply the returned vectors x and y values by the sprite size's x and y. 
-        ///     This method alos allows you to resize the tilemap by passing in an optional new width and height. Resizeing 
-        ///     the tile map is destructive so any changes will automatically clear the tilemap's sprite ids, color offsets 
-        ///     and flag values. 
+        ///     This will return a vector representing the size of the tilemap in columns (x) and rows (y). 
+        ///     To find the size in pixels, you will need to multiply the returned vectors x and y values by 
+        ///     the sprite size's x and y. This method also allows you to resize the tilemap by passing in an 
+        ///     optional new width and height. Resizing the tile map is destructive, so any changes will 
+        ///     automatically clear the tilemap's sprite ids, color offsets, and flag values. 
         /// </summary>
-        /// <param name="width">An optional paramitor for the width in tiles of the map.</param>
-        /// <param name="height">An option paramitor for the height in tiles of the map.</param>
-        /// <returns>Returns a vector of the tile maps size in tiles where x and y are the columns and rows of the tilemap.</returns>
+        /// <param name="width">
+        ///     An optional parameter for the width in tiles of the map.
+        /// </param>
+        /// <param name="height">
+        ///     An option parameter for the height in tiles of the map.
+        /// </param>
+        /// <returns>
+        ///     Returns a vector of the tile maps size in tiles where x and y are the columns and rows of the tilemap.
+        /// </returns>
         public Vector TilemapSize(int? width = null, int? height = null)
         {
             var size = new Vector(tilemapChip.columns, tilemapChip.rows);
@@ -1068,17 +1362,29 @@ namespace PixelVisionSDK.Chips
 
         /// <summary>
         ///     A helper method which allows you to update several tiles at once. Simply define the start column 
-        ///     and row position, the width of the area to update in tiles and supply a new int array of sprite IDs. 
-        ///     You can also modify the color offset and flag value of the tiles via the optional paramitors. This 
-        ///     helper method uses calls the Tile() method to update each tile so any changes to a tile will be 
-        ///     automatically redrawn to the tilemap's cache.
+        ///     and row position, the width of the area to update in tiles and supply a new int array of sprite 
+        ///     IDs. You can also modify the color offset and flag value of the tiles via the optional parameters. 
+        ///     This helper method uses calls the Tile() method to update each tile, so any changes to a tile 
+        ///     will be automatically redrawn to the tilemap's cache.
         /// </summary>
-        /// <param name="column">Start column of the first tile to update. The 0 column is on the far left of the tilemap.</param>
-        /// <param name="row">Start row of the first tile to update. The 0 row is on the top of the tilemap.</param>
-        /// <param name="columns">The width of the area in tiles to update.</param>
-        /// <param name="ids">An array of sprite IDs to use for each tile being updated.</param>
-        /// <param name="colorOffset">An optional color offset int value to be applied to each updated tile.</param>
-        /// <param name="flag">An optional flag int value to be applied to each updated tile.</param>
+        /// <param name="column">
+        ///     Start column of the first tile to update. The 0 column is on the far left of the tilemap.
+        /// </param>
+        /// <param name="row">
+        ///     Start row of the first tile to update. The 0 row is on the top of the tilemap.
+        /// </param>
+        /// <param name="columns">
+        ///     The width of the area in tiles to update.
+        /// </param>
+        /// <param name="ids">
+        ///     An array of sprite IDs to use for each tile being updated.
+        /// </param>
+        /// <param name="colorOffset">
+        ///     An optional color offset int value to be applied to each updated tile.
+        /// </param>
+        /// <param name="flag">
+        ///     An optional flag int value to be applied to each updated tile.
+        /// </param>
         public void UpdateTiles(int column, int row, int columns, int[] ids, int? colorOffset = null, int? flag = null)
         {
             var total = ids.Length;
@@ -1100,56 +1406,7 @@ namespace PixelVisionSDK.Chips
 
         #endregion
 
-        #region Chip Lifecycle
-
-        /// <summary>
-        ///     Configures the GameChip instance by loading it into
-        ///     the engine's memory, getting a reference to the
-        ///     APIBridge and setting the ready flag to
-        ///     true.
-        /// </summary>
-        /// 
-        public override void Configure()
-        {
-            engine.gameChip = this;
-
-            //TODO this needs to be a service
-            ready = true;
-
-            Array.Resize(ref tmpSpriteData, engine.spriteChip.width * engine.spriteChip.height);
-
-            // cache used common properties
-            spriteSize = new Vector(spriteChip.width, spriteChip.height);
-            displaySize = new Vector(displayChip.width, displayChip.height);
-        }
-
-        /// <summary>
-        ///     Used for updating the game's logic.
-        /// </summary>
-        /// <param name="timeDelta"></param>
-        public virtual void Update(float timeDelta)
-        {
-            // Overwrite this method and add your own update logic.
-        }
-
-        /// <summary>
-        ///     Used for drawing the game to the display.
-        /// </summary>
-        public virtual void Draw()
-        {
-            // Overwrite this method and add your own draw logic.
-        }
-
-        /// <summary>
-        ///     This unloads the game from the engine.
-        /// </summary>
-        public override void Deactivate()
-        {
-            base.Deactivate();
-            engine.gameChip = null;
-        }
-
-        #endregion
+        
 
     }
 }
