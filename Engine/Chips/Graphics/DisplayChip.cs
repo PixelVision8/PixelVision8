@@ -16,9 +16,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using PixelVisionSDK.Utils;
-using Debug = UnityEngine.Debug;
 
 namespace PixelVisionSDK.Chips
 {
