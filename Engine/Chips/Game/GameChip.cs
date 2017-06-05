@@ -61,6 +61,8 @@ namespace PixelVisionSDK.Chips
             {"flag", -1}
         };
 
+        
+
         #region GameChip APIs
         
         /// <summary>
