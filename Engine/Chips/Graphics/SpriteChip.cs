@@ -44,22 +44,22 @@ namespace PixelVisionSDK.Chips
 
         protected int[][] pixelDataCache;
 
-        protected int pageHeight = 128;
+        public int pageHeight = 128;
 
         //protected Vector2 pageSize = new Vector2(128, 128);
-        protected int pageWidth = 128;
+        public int pageWidth = 128;
 
         /// <summary>
         ///     The global <see cref="width" /> of sprites in the engine. By default
         ///     this is set to 8.
         /// </summary>
-        public int width { get; protected set; }
+        public int width { get; set; }
 
         /// <summary>
         ///     The global <see cref="width" /> of sprites in the engine. By default
         ///     this is set to 8.
         /// </summary>
-        public int height { get; protected set; }
+        public int height { get; set; }
 
         /// <summary>
         ///     A public getter for the internal

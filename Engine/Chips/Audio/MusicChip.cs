@@ -44,7 +44,7 @@ namespace PixelVisionSDK.Chips
         public long sequencerBeatNumber;
         protected int sequencerLoopNum;
         public bool songCurrentlyPlaying;
-        protected SongData[] songDataCollection = new SongData[0];
+        public SongData[] songDataCollection = new SongData[0];
         protected int songLoopCount = 0;
 
         protected float swingRhythmFactor = 0.7f;

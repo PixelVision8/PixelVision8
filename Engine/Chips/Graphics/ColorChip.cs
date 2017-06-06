@@ -68,6 +68,7 @@ namespace PixelVisionSDK.Chips
         public int colorsPerPage
         {
             get { return _colorsPerPage; }
+            set { _colorsPerPage = value; }
         }
 
         /// <summary>
@@ -112,7 +113,7 @@ namespace PixelVisionSDK.Chips
         ///     palette when it resizes.
         /// </summary>
         /// <value>Int</value>
-        public int supportedColors { get; protected set; }
+        public int supportedColors { get; set; }
 
         public string[] hexColors
         {
