@@ -152,8 +152,13 @@ namespace PixelVisionSDK
             chipManager = new ChipManager(this);
             //apiBridge = new APIBridge(this);
             if (defaultChips != null)
-                foreach (var chip in defaultChips)
-                    chipManager.GetChip(chip);
+                CreateChips(defaultChips);
+        }
+
+        public void CreateChips(string[] chips)
+        {
+            foreach (var chip in chips)
+                chipManager.GetChip(chip);
         }
 
         /// <summary>
