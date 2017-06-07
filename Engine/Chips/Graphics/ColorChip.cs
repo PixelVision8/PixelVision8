@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,13 +12,13 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
+
     /// <summary>
     ///     The <see cref="ColorChip" /> represents the system colors of the engine.
     ///     It allows the engine to work in color indexes that the display can map
@@ -26,6 +26,7 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class ColorChip : AbstractChip, IColorChip, IInvalidate
     {
+
         protected string[] _colors =
         {
             "#000000",
@@ -50,9 +51,8 @@ namespace PixelVisionSDK.Chips
         protected int _pages = 4;
         protected string _transparent = "#FF00FF";
         protected ColorData[] colorCache;
-        public bool invalid { get; protected set; }
-        protected Vector pageSize = new Vector(8, 8);
         protected int[] invalidColors = new int[0];
+        protected Vector pageSize = new Vector(8, 8);
 
         /// <summary>
         ///     The background color reference to use when rendering transparent in
@@ -196,7 +196,21 @@ namespace PixelVisionSDK.Chips
                 invalidColors[index] = 1;
                 Invalidate();
             }
+        }
 
+        public bool invalid { get; protected set; }
+
+        public void Invalidate()
+        {
+            invalid = true;
+        }
+
+        public void ResetValidation(int value = 0)
+        {
+            invalid = false;
+            var total = invalidColors.Length;
+            for (var i = 0; i < total; i++)
+                invalidColors[i] = value;
         }
 
         public void RecalculateSupportedColors()
@@ -241,19 +255,6 @@ namespace PixelVisionSDK.Chips
             pages = MathUtil.CeilToInt(total / colorsPerPage);
         }
 
-        public void Invalidate()
-        {
-            invalid = true;
-        }
-
-        public void ResetValidation(int value = 0)
-        {
-            invalid = false;
-            var total = invalidColors.Length;
-            for (int i = 0; i < total; i++)
-            {
-                invalidColors[i] = value;
-            }
-        }
     }
+
 }

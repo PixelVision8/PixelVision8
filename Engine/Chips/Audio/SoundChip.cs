@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,19 +12,20 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
+
     /// <summary>
     ///     The <see cref="SoundChip" /> is responsible for playing back sound
     ///     effects in the engine. It's powered by SFxr.
     /// </summary>
     public class SoundChip : AbstractChip
     {
+
         protected int _totalSounds;
         protected ISoundData[] channels = new ISoundData[0];
 
@@ -189,5 +190,7 @@ namespace PixelVisionSDK.Chips
         {
             ReadSound(id).name = name;
         }
+
     }
+
 }

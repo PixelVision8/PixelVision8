@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,17 +12,17 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
-using System.Diagnostics;
 using System.Text;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK.Utils
 {
+
     public class SpriteChipUtil
     {
+
         private static int[] pixels = new int[0];
 
         public static int[] tmpPixelData = new int[8 * 8];
@@ -63,7 +63,7 @@ namespace PixelVisionSDK.Utils
             if (flipY)
                 y = height - y - spriteHeight;
         }
-        
+
         public static void CloneTextureData(TextureData source, TextureData target)
         {
             source.CopyPixels(ref tmpPixelData);
@@ -84,8 +84,10 @@ namespace PixelVisionSDK.Utils
             {
                 var newx = ix;
                 var newY = iy;
-                if (flipH) newx = sWidth - 1 - ix;
-                if (flipV) newY = sHeight - 1 - iy;
+                if (flipH)
+                    newx = sWidth - 1 - ix;
+                if (flipV)
+                    newY = sHeight - 1 - iy;
                 pixelData[ix + iy * sWidth] = pixels[newx + newY * sWidth];
             }
         }
@@ -116,7 +118,7 @@ namespace PixelVisionSDK.Utils
                 //PosUtil.CalculateIndex(x / scale, y / scale, 8, out oldIndex);
 
                 // Convert to the old index
-                oldIndex = (x / scale) + (y / scale) * 8;
+                oldIndex = x / scale + y / scale * 8;
 
                 pixelData[i] = oldData[oldIndex];
             }
@@ -207,5 +209,7 @@ namespace PixelVisionSDK.Utils
             //var pixelData = data.GetPixels();
             //return pixelData;
         }
+
     }
+
 }

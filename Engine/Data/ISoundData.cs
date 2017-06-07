@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,10 +12,10 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 namespace PixelVisionSDK
 {
+
     /// <summary>
     ///     The ISoundData interface represents a basic API for working
     ///     with sound objects in the PixelVisionSDK. Implement this
@@ -24,6 +24,7 @@ namespace PixelVisionSDK
     /// </summary>
     public interface ISoundData
     {
+
         string name { get; set; }
 
         /// <summary>
@@ -41,5 +42,7 @@ namespace PixelVisionSDK
         ///     Caches the sound file to improve performance
         /// </summary>
         void CacheSound();
+
     }
+
 }

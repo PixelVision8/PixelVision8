@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,7 +12,6 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 using System.Linq;
@@ -20,6 +19,7 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
+
     /// <summary>
     ///     The <see cref="SpriteChip" /> represents a way to store and retrieve
     ///     sprite pixel data. Internally, the pixel data is stored in a
@@ -28,10 +28,10 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class SpriteChip : AbstractChip
     {
+
         protected int _colorsPerSprite = 8;
         protected int _pages = 4;
-        private int tmpX;
-        private int tmpY;
+
         /// <summary>
         ///     Internal <see cref="TextureData" /> where sprites are stored
         /// </summary>
@@ -42,12 +42,14 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         protected string[] cache;
 
-        protected int[][] pixelDataCache;
-
         public int pageHeight = 128;
 
         //protected Vector2 pageSize = new Vector2(128, 128);
         public int pageWidth = 128;
+
+        protected int[][] pixelDataCache;
+        private int tmpX;
+        private int tmpY;
 
         /// <summary>
         ///     The global <see cref="width" /> of sprites in the engine. By default
@@ -271,7 +273,6 @@ namespace PixelVisionSDK.Chips
         /// </returns>
         public void ReadSpriteAt(int index, int[] pixelData)
         {
-
             var cachedSprite = pixelDataCache[index];
 
             var totalSpritePixels = width * height;
@@ -289,12 +290,11 @@ namespace PixelVisionSDK.Chips
             }
 
             // Make sure that the pixelData array is the correct size.
-            if(pixelData.Length != cachedSprite.Length)
+            if (pixelData.Length != cachedSprite.Length)
                 Array.Resize(ref pixelData, cachedSprite.Length);
 
             // Copy the contents of the cached pixel data into the new array.
             Array.Copy(cachedSprite, pixelData, totalSpritePixels);
-
         }
 
         /// <summary>
@@ -338,24 +338,27 @@ namespace PixelVisionSDK.Chips
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        ///     This changes the color index by the offset. This will affect all of
-        ///     the sprites in memory. It is used when trying to quickly
-        ///     <paramref name="offset" /> all of the sprites in the chip to a new
-        ///     range of colors.
-        /// </summary>
-        /// <param name="offset">
-        ///     An int to use as the offset value.
-        /// </param>
-        //        public void ShiftColorIndex(int offset)
-        //        {
-        //            var pixelData = _texture.GetPixels();
-        //            var total = pixelData.Length;
-        //
-        //            for (var i = 0; i < total; i++)
-        //                pixelData[i] += offset;
-        //
-        //            _texture.SetPixels(pixelData);
         //        }
+        //            _texture.SetPixels(pixelData);
+        //
+        //                pixelData[i] += offset;
+        //            for (var i = 0; i < total; i++)
+        //
+        //            var total = pixelData.Length;
+        //            var pixelData = _texture.GetPixels();
+        //        {
+        //        public void ShiftColorIndex(int offset)
+        /// </param>
+        ///     An int to use as the offset value.
+        /// <param name="offset">
+        /// </summary>
+        ///     range of colors.
+        ///     <paramref name="offset" /> all of the sprites in the chip to a new
+        ///     the sprites in memory. It is used when trying to quickly
+        ///     This changes the color index by the offset. This will affect all of
+
+        /// <summary>
+
     }
+
 }

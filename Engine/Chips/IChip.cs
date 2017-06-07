@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,10 +12,10 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 namespace PixelVisionSDK.Chips
 {
+
     /// <summary>
     ///     The Interface for the chip class. It handles Activating, configuring and
     ///     deactivating the chip as part of its life-cycle. This Interface also
@@ -24,6 +24,7 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public interface IChip
     {
+
         /// <summary>
         ///     <see cref="Activate" /> is the beginning of the chip's life cycle.
         ///     This allows the chip to gain a reference to the engine itself. This
@@ -48,5 +49,7 @@ namespace PixelVisionSDK.Chips
         ///     ChipManager.
         /// </summary>
         void Configure();
+
     }
+
 }

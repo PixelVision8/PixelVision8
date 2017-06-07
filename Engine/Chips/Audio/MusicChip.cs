@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,13 +12,13 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
+
     /// <summary>
     ///     The MusicChpip is a sequencer for playing back ISoundData. It
     ///     keeps track of playback time and moves through TrackData playing
@@ -28,6 +28,7 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class MusicChip : AbstractChip, IUpdate
     {
+
         protected int _totalTracks;
 
         protected int currentSong = -1;
@@ -49,14 +50,15 @@ namespace PixelVisionSDK.Chips
 
         protected float swingRhythmFactor = 0.7f;
 
-        public int currentSongID
-        {
-            get { return currentSong; }
-        }
         //1.0f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
 
         protected float time;
         public int tracksPerLoop = 8;
+
+        public int currentSongID
+        {
+            get { return currentSong; }
+        }
 
         /// <summary>
         ///     Total number of Loop stored in the music chip. There is a maximum
@@ -88,6 +90,7 @@ namespace PixelVisionSDK.Chips
             get
             {
                 return maxNoteNum;
+
                 ;
             }
             set
@@ -169,6 +172,7 @@ namespace PixelVisionSDK.Chips
             totalLoops = 16;
             maxTracks = 4;
             totalTracks = maxTracks;
+
             // Setup the sequencer values
 
             var a = 440.0f; // a is 440 hz...
@@ -280,6 +284,7 @@ namespace PixelVisionSDK.Chips
             }
 
             var total = activeSongData.tracks.Length;
+
             // loop through each oldInstruments track
             for (var trackNum = 0; trackNum < total; trackNum++)
             {
@@ -358,5 +363,7 @@ namespace PixelVisionSDK.Chips
                         if (activeSongData.tracks[y].notes.Length != notesPerTrack)
                             Array.Resize(ref activeSongData.tracks[y].notes, notesPerTrack);
         }
+
     }
+
 }

@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,13 +12,13 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 using System.Collections.Generic;
 
 namespace PixelVisionSDK.Services
 {
+
     /// <summary>
     ///     The AbstractService allows you to expose classes and API to the chips in
     ///     a save, decoupled way. The Service implements the IService interface
@@ -27,6 +27,7 @@ namespace PixelVisionSDK.Services
     /// </summary>
     public abstract class AbstractService : IService
     {
+
         protected IServiceLocator locator;
 
         /// <summary>
@@ -60,5 +61,7 @@ namespace PixelVisionSDK.Services
         {
             throw new NotImplementedException();
         }
+
     }
+
 }

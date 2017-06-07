@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,12 +12,12 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 
 namespace PixelVisionSDK.Chips
 {
+
     /// <summary>
     ///     The AbstractChip represents plug-in that adds new functionality to the
     ///     PixelVisionEngine. Simply extend this abstract class and override the
@@ -43,6 +43,7 @@ namespace PixelVisionSDK.Chips
     /// </example>
     public class AbstractChip : IChip
     {
+
         protected PixelVisionEngine engine;
 
         /// <summary>
@@ -102,5 +103,7 @@ namespace PixelVisionSDK.Chips
         public virtual void Reset()
         {
         }
+
     }
+
 }

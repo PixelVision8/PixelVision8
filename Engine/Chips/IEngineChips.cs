@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,16 +12,17 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 namespace PixelVisionSDK.Chips
 {
+
     /// <summary>
     ///     The <see cref="IEngineChips" /> internal represents
     ///     all of the core chips the engine needs to run.
     /// </summary>
     public interface IEngineChips
     {
+
         /// <summary>
         ///     The Chip Manager class is responsible for registering and
         ///     deactivating chips. This property offers direct access to it.
@@ -85,7 +86,6 @@ namespace PixelVisionSDK.Chips
         ///     engine. This property offers direct access to it.
         /// </summary>
         //APIBridge apiBridge { get; set; }
-
         /// <summary>
         ///     The Fonts Chip is responsible for rendering text to the display.
         ///     This property offers direct access to it.
@@ -97,5 +97,7 @@ namespace PixelVisionSDK.Chips
         ///     sound data for songs.
         /// </summary>
         MusicChip musicChip { get; set; }
+
     }
+
 }

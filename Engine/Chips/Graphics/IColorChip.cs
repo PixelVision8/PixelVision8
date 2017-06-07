@@ -1,6 +1,6 @@
-//  
+//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,16 +12,17 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 namespace PixelVisionSDK.Chips
 {
+
     /// <summary>
     ///     The <see cref="IColorChip" /> internal represents the
     ///     main APIs for the PixelVisionEngine's color system.
     /// </summary>
     public interface IColorChip
     {
+
         /// <summary>
         ///     An array of the supported <see cref="colors" /> in the chip.
         /// </summary>
@@ -76,5 +77,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="index"></param>
         /// <param name="color"></param>
         void UpdateColorAt(int index, string color);
+
     }
+
 }

@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,7 +12,6 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 using System.Collections.Generic;
@@ -28,6 +27,7 @@ namespace PixelVisionSDK
     /// </summary>
     public class PixelVisionEngine : IEngine
     {
+
         protected string[] defaultChips;
 
         protected Dictionary<string, string> metaData = new Dictionary<string, string>
@@ -92,7 +92,6 @@ namespace PixelVisionSDK
         /// </summary>
         /// <tocexclude />
 //        public ScreenBufferChip screenBufferChip { get; set; }
-
         /// <summary>
         ///     Access to the SoundChip.
         /// </summary>
@@ -128,7 +127,6 @@ namespace PixelVisionSDK
         /// </summary>
         /// <tocexclude />
         //public APIBridge apiBridge { get; set; }
-
         /// <summary>
         ///     Access to the current game in memory.
         /// </summary>
@@ -140,26 +138,6 @@ namespace PixelVisionSDK
         /// </summary>
         /// <tocexclude />
         public bool running { get; private set; }
-
-        /// <summary>
-        ///     The PixelVisionEngine Init() method creates the
-        ///     <see cref="ChipManager" /> and <see cref="APIBridge" /> as well as any
-        ///     additional chips supplied in the <see cref="defaultChips" /> array.
-        /// </summary>
-        /// <tocexclude />
-        public virtual void Init()
-        {
-            chipManager = new ChipManager(this);
-            //apiBridge = new APIBridge(this);
-            if (defaultChips != null)
-                CreateChips(defaultChips);
-        }
-
-        public void CreateChips(string[] chips)
-        {
-            foreach (var chip in chips)
-                chipManager.GetChip(chip);
-        }
 
         /// <summary>
         ///     This method allows you to load a <paramref name="game" /> into the
@@ -227,19 +205,6 @@ namespace PixelVisionSDK
         }
 
         /// <summary>
-        ///     This method resets the engine. This method only executes if the
-        ///     engine is running.
-        /// </summary>
-        /// <tocexclude />
-        public virtual void Reset()
-        {
-            if (!running)
-                return;
-
-            chipManager.Reset();
-        }
-
-        /// <summary>
         ///     This method is called when shutting down the engine
         /// </summary>
         /// <tocexclude />
@@ -284,5 +249,41 @@ namespace PixelVisionSDK
                 if (Array.IndexOf(ignoreKeys, data.Key) == -1)
                     target.Add(data.Key, data.Value);
         }
+
+        /// <summary>
+        ///     The PixelVisionEngine Init() method creates the
+        ///     <see cref="ChipManager" /> and <see cref="APIBridge" /> as well as any
+        ///     additional chips supplied in the <see cref="defaultChips" /> array.
+        /// </summary>
+        /// <tocexclude />
+        public virtual void Init()
+        {
+            chipManager = new ChipManager(this);
+
+            //apiBridge = new APIBridge(this);
+            if (defaultChips != null)
+                CreateChips(defaultChips);
+        }
+
+        public void CreateChips(string[] chips)
+        {
+            foreach (var chip in chips)
+                chipManager.GetChip(chip);
+        }
+
+        /// <summary>
+        ///     This method resets the engine. This method only executes if the
+        ///     engine is running.
+        /// </summary>
+        /// <tocexclude />
+        public virtual void Reset()
+        {
+            if (!running)
+                return;
+
+            chipManager.Reset();
+        }
+
     }
+
 }

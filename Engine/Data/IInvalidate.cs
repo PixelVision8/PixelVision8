@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,12 +12,13 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 namespace PixelVisionSDK
 {
+
     public interface IInvalidate
     {
+
         /// <summary>
         ///     The invalid flag allows you to quickly see if data has been changed
         ///     on the AbstractData instance. This is used in conjunction with the
@@ -45,5 +46,7 @@ namespace PixelVisionSDK
         /// </summary>
         /// <param name="value"></param>
         void ResetValidation(int value = 0);
+
     }
+
 }

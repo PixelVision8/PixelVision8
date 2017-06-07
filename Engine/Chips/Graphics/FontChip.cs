@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,7 +12,6 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 using System.Collections.Generic;
@@ -21,6 +20,7 @@ using System.Text;
 
 namespace PixelVisionSDK.Chips
 {
+
     /// <summary>
     ///     The font chip allows you to render text to the display. It is built on
     ///     top of the same APIs as the <see cref="SpriteChip" /> but has custom
@@ -28,9 +28,14 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class FontChip : AbstractChip
     {
+
         public static string newline = "\r\n";
 
+        protected static int charOffset = 32;
+
         protected Dictionary<string, int[]> fonts = new Dictionary<string, int[]>();
+
+        public int[] tmpPixels = new int[0];
         protected TextureData tmpTextureData = new TextureData(1, 1, false);
 
         /// <summary>
@@ -243,8 +248,10 @@ namespace PixelVisionSDK.Chips
 
                         while (pos < eol && char.IsWhiteSpace(text[pos]))
                             pos++;
-                    } while (eol > pos);
-                else sb.Append(newline); // Empty line
+                    }
+                    while (eol > pos);
+                else
+                    sb.Append(newline); // Empty line
             }
 
             return sb.ToString();
@@ -302,12 +309,11 @@ namespace PixelVisionSDK.Chips
                     currentIndex = Math.Min(lastWrap + maxLineLength, text.Length);
                 list.Add(text.Substring(lastWrap, currentIndex - lastWrap).Trim(whitespace));
                 lastWrap = currentIndex;
-            } while (currentIndex < text.Length);
+            }
+            while (currentIndex < text.Length);
 
             return list.ToArray();
         }
-
-        protected static int charOffset = 32;
 
         internal int[] ConvertTextToSprites(string text, string fontName = "Default")
         {
@@ -316,39 +322,31 @@ namespace PixelVisionSDK.Chips
             var spriteIDs = new int[total];
 
             char character;
+
 //            var charOffset = 32;
             int spriteID, index;
 
             // Test to make sure font exists
             if (!fonts.ContainsKey(fontName))
-            {
                 throw new Exception("Font '" + fontName + "' not found.");
-            }
 
             var fontMap = fonts[fontName];
             var totalCharacters = fontMap.Length;
 
-            for (int i = 0; i < total; i++)
+            for (var i = 0; i < total; i++)
             {
                 character = text[i];
                 index = Convert.ToInt32(character) - charOffset;
                 spriteID = -1;
 
                 if (index < totalCharacters && index > -1)
-                {
-                    
                     spriteID = fontMap[index];
-                    
-                }
 
                 spriteIDs[i] = spriteID;
             }
 
             return spriteIDs;
-
         }
-
-        public int[] tmpPixels = new int[0];
 
         public int[] ConvertCharacterToPixelData(char character, string fontName)
         {
@@ -356,9 +354,7 @@ namespace PixelVisionSDK.Chips
 
             // Test to make sure font exists
             if (!fonts.ContainsKey(fontName))
-            {
                 throw new Exception("Font '" + fontName + "' not found.");
-            }
 
             var index = Convert.ToInt32(character) - charOffset;
 
@@ -367,18 +363,14 @@ namespace PixelVisionSDK.Chips
             var spriteID = -1;
 
             if (index < totalCharacters && index > -1)
-            {
                 spriteID = fontMap[index];
-            }
 
             if (spriteID > -1)
             {
                 var totalPixels = spriteChip.width * spriteChip.height;
 
                 if (tmpPixels.Length != totalPixels)
-                {
                     Array.Resize(ref tmpPixels, totalPixels);
-                }
 
                 spriteChip.ReadSpriteAt(spriteID, tmpPixels);
 
@@ -387,5 +379,7 @@ namespace PixelVisionSDK.Chips
 
             return null;
         }
+
     }
+
 }

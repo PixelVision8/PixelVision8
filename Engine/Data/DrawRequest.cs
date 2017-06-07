@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,7 +12,6 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 
@@ -23,16 +22,16 @@ namespace PixelVisionSDK
     {
 
         protected int[] _pixelData = new int[0];
-        public bool masked = true;
-        public int order;
-        public int transparent = -1;
-        public int x;
-        public int y;
-        public int width;
+        public int colorOffset = 0;
         public int height;
+        public bool masked = true;
         public int offsetX;
         public int offsetY;
-        public int colorOffset = 0;
+        public int order;
+        public int transparent = -1;
+        public int width;
+        public int x;
+        public int y;
 
         public int[] pixelData
         {
@@ -53,15 +52,14 @@ namespace PixelVisionSDK
             var total = width * height;
             int srcX;
             int srcY;
-            
+
             var tmpWidth = width;
             int destIndex;
-            int colorID = -1;
-            int totalPixels = destPixelData.Length;
-            
-            for (int i = 0; i < total; i++)
-            {
+            var colorID = -1;
+            var totalPixels = destPixelData.Length;
 
+            for (var i = 0; i < total; i++)
+            {
                 srcX = i % tmpWidth + x;
                 srcY = i / tmpWidth + y;
 
@@ -77,14 +75,11 @@ namespace PixelVisionSDK
                     if (colorID > -1)
                     {
                         if (colorOffset > 0)
-                        {
                             colorID += colorOffset;
-                        }
 
                         if (order > 0)
                             destPixelData[destIndex] = colorID;
                         else if (order == -1)
-                        {
                             if (mask != null)
                             {
                                 if (mask[destIndex] == -1)
@@ -95,15 +90,11 @@ namespace PixelVisionSDK
                                 if (destPixelData[destIndex] == -1)
                                     destPixelData[destIndex] = colorID;
                             }
-                            
-                        }
                     }
-                            
                 }
-
-                
             }
         }
+
     }
 
 }

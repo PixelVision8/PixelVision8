@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,15 +12,16 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 
 namespace PixelVisionSDK.Chips
 {
+
     //TODO need to refactor Buttons Enum to container player one and two
     public enum Buttons
     {
+
         Up,
         Down,
         Left,
@@ -29,10 +30,12 @@ namespace PixelVisionSDK.Chips
         B,
         Select,
         Start
+
     }
 
     public class ControllerChip : AbstractChip, IUpdate, IKeyInput, IMouseInput
     {
+
         protected ControllerInput[] controllers = new ControllerInput[2];
 
         protected IKeyInput keyInput { get; set; }
@@ -83,6 +86,19 @@ namespace PixelVisionSDK.Chips
             return keyInput.GetKeyDown(key);
         }
 
+        public string ReadInputString()
+        {
+            if (!keyInputActive)
+                return "";
+
+            return keyInput.ReadInputString();
+        }
+
+        public bool GetKey(int key)
+        {
+            return keyInput.GetKey(key);
+        }
+
         public bool GetMouseButtonDown(int id = 0)
         {
             if (!mouseInputActive)
@@ -97,6 +113,14 @@ namespace PixelVisionSDK.Chips
                 return false;
 
             return mouseInput.GetMouseButtonUp(id);
+        }
+
+        public Vector ReadMousePosition()
+        {
+            if (!mouseInputActive)
+                return new Vector(-1, -1);
+
+            return mouseInput.ReadMousePosition();
         }
 
         public virtual void Update(float timeDelta)
@@ -120,12 +144,12 @@ namespace PixelVisionSDK.Chips
             if (controllerID > controllers.Length)
                 return false;
 
-            return controllers[controllerID].GetKeyValue( buttonID);
+            return controllers[controllerID].GetKeyValue(buttonID);
         }
 
         public bool ButtonReleased(Buttons buttonID, int controllerID = 0)
         {
-            return controllers[controllerID].KeyReleased( buttonID);
+            return controllers[controllerID].KeyReleased(buttonID);
         }
 
         public void UpdateControllerKey(int controllerID, ButtonState state)
@@ -175,26 +199,6 @@ namespace PixelVisionSDK.Chips
             return 0;
         }
 
-        public string ReadInputString()
-        {
-            if (!keyInputActive)
-                return "";
-
-            return keyInput.ReadInputString();
-        }
-
-        public bool GetKey(int key)
-        {
-            return keyInput.GetKey(key);
-        }
-
-        public Vector ReadMousePosition()
-        {
-            if (!mouseInputActive)
-                return new Vector(-1, -1);
-
-            return mouseInput.ReadMousePosition();
-        }
-
     }
+
 }

@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,15 +12,16 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System.Collections.Generic;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
+
     public class ControllerInput
     {
+
         private readonly Dictionary<Buttons, IButtonState> buttonState = new Dictionary<Buttons, IButtonState>();
         protected float delay;
         public float inputDelay = 0.1f;
@@ -86,5 +87,7 @@ namespace PixelVisionSDK
             //TODO this needs to be a clone and cleaned up
             return buttonState;
         }
+
     }
+
 }

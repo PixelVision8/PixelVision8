@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,14 +12,15 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
+
     public interface IControllerChip : IUpdate
     {
+
         int totalControllers { get; }
         bool ButtonDown(int buttonID, int controller = 0);
         bool ButtonReleased(int buttonID, int controller = 0);
@@ -29,5 +30,7 @@ namespace PixelVisionSDK
         Vector MousePos();
         int[] ReadControllerKeys(int controllerID = 0);
         void UpdateControllerKey(int controllerID, Buttons buttons, int key);
+
     }
+
 }

@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,13 +12,13 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System.Collections.Generic;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
+
     /// <summary>
     ///     The <see cref="IEngine" /> internal represents the
     ///     core API for the Engine class. Implement this
@@ -26,6 +26,7 @@ namespace PixelVisionSDK
     /// </summary>
     public interface IEngine : IEngineChips, IUpdate, IDraw
     {
+
         /// <summary>
         ///     A flag for if the engine is <see cref="running" />
         /// </summary>
@@ -66,5 +67,7 @@ namespace PixelVisionSDK
         /// <param name="target"></param>
         /// <param name="ignoreKeys"></param>
         void DumpMetaData(Dictionary<string, string> target, string[] ignoreKeys);
+
     }
+
 }

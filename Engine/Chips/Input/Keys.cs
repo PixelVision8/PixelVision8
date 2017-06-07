@@ -1,7 +1,24 @@
-﻿namespace PixelVisionSDK
-{ 
+﻿//   
+// Copyright (c) Jesse Freeman. All rights reserved.  
+//  
+// Licensed under the Microsoft Public License (MS-PL) License. 
+// See LICENSE file in the project root for full license information. 
+// 
+// Contributors
+// --------------------------------------------------------
+// This is the official list of Pixel Vision 8 contributors:
+//  
+// Jesse Freeman - @JesseFreeman
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
+
+namespace PixelVisionSDK
+{
+
     public enum Keys
     {
+
         None = 0,
         Backspace = 8,
         Tab = 9,
@@ -197,7 +214,8 @@
         Joystick2Button16 = 386,
         Joystick2Button17 = 387,
         Joystick2Button18 = 388,
-        Joystick2Button19 = 389,
-        
+        Joystick2Button19 = 389
+
     }
+
 }

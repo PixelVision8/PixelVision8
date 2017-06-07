@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,14 +12,13 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
-using System.Diagnostics;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
 {
+
     /// <summary>
     ///     <see cref="TextureData" /> represent a grid of pixel data in the engine.
     ///     Pixel data aren't values that can be used to
@@ -31,6 +30,7 @@ namespace PixelVisionSDK
     /// </summary>
     public class TextureData : AbstractData
     {
+
         protected Rect oRect = new Rect();
         protected int[] pixels = new int[0];
         protected Rect sRect = new Rect();
@@ -99,19 +99,18 @@ namespace PixelVisionSDK
         {
             if (wrapMode)
             {
-                
-                if(x < 0 || x >= width)
-                    x = MathUtil.Repeat(x, width-1);
+                if (x < 0 || x >= width)
+                    x = MathUtil.Repeat(x, width - 1);
 
                 if (y < 0 || y >= height)
-                    y = MathUtil.Repeat(y, height-1);
+                    y = MathUtil.Repeat(y, height - 1);
             }
 
             var index = x + width * y;
 
             return pixels[index];
         }
-        
+
         /// <summary>
         ///     A fast method for getting a copy of the texture's pixel data.
         /// </summary>
@@ -156,9 +155,7 @@ namespace PixelVisionSDK
             tmpTotal = blockWidth * blockHeight;
 
             if (data.Length != tmpTotal)
-            {
                 Array.Resize(ref data, tmpTotal);
-            }
 
             if (!wrapMode)
                 if (x + blockWidth > width || y + blockHeight > height)
@@ -174,17 +171,17 @@ namespace PixelVisionSDK
                     y = oRect.y;
                     blockWidth = oRect.width;
                 }
-            
+
             for (var i = 0; i < tmpTotal; i++)
             {
-                
                 //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
                 tmpX = i % blockWidth;
                 tmpY = i / blockWidth;
 
                 var color = GetPixel(tmpX + x, tmpY + y);
+
                 //if(color != -1)
-                    data[i] = color;
+                data[i] = color;
             }
         }
 
@@ -216,7 +213,7 @@ namespace PixelVisionSDK
                     return;
             }
 
-            var index = (x % width) + (width * y);
+            var index = x % width + width * y;
 
             if (index < 0)
                 return;
@@ -274,7 +271,6 @@ namespace PixelVisionSDK
 
                 SetPixel(tmpX, tmpY, pixel);
             }
-
         }
 
         /// <summary>
@@ -348,7 +344,6 @@ namespace PixelVisionSDK
 
             for (var i = 0; i < total; i++)
             {
-                
                 //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
                 tmpX = i % blockWidth;
                 tmpY = i / blockWidth;
@@ -366,8 +361,9 @@ namespace PixelVisionSDK
                 {
                     SetPixel(tmpX, tmpY, srcPixels[i]);
                 }
-
             }
         }
+
     }
+
 }

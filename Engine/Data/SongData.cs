@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,13 +12,13 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
 {
+
     /// <summary>
     ///     The SongData class represents a collection of tracks and
     ///     meta data used by the MusicChip to play back ISoundData
@@ -26,6 +26,7 @@ namespace PixelVisionSDK
     /// </summary>
     public class SongData : AbstractData
     {
+
         protected int _speedInBPM = 120;
 
         /// <summary>
@@ -102,5 +103,7 @@ namespace PixelVisionSDK
             foreach (var track in tracks)
                 track.Reset(true);
         }
+
     }
+
 }

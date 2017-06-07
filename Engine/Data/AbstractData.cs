@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,13 +12,13 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
 {
+
     /// <summary>
     ///     The AbstractData class represents a standard foundation for all
     ///     data objects in the engine. It implements the ISave, ILoad and
@@ -27,6 +27,7 @@ namespace PixelVisionSDK
     /// </summary>
     public abstract class AbstractData : IInvalidate
     {
+
         protected bool _invalid;
 
         /// <summary>
@@ -61,7 +62,9 @@ namespace PixelVisionSDK
         /// <param name="value"></param>
         public virtual void ResetValidation(int value = 0)
         {
-            _invalid = Convert.ToBoolean(MathUtil.Clamp(value, 0, 1));
+            _invalid = Convert.ToBoolean(value.Clamp(0, 1));
         }
+
     }
+
 }

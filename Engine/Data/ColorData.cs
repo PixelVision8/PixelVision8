@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,7 +12,6 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 using System.Globalization;
@@ -21,6 +20,7 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
 {
+
     /// <summary>
     ///     The ColorData class is a wraper for color data in the engine.
     ///     It provides a simple interface for storing RBG color data as
@@ -28,15 +28,10 @@ namespace PixelVisionSDK
     /// </summary>
     public class ColorData : AbstractData
     {
+
         protected float _b;
         protected float _g;
         protected float _r;
-
-        /// <summary>
-        ///     This flag is used to store extra data which can be read by
-        ///     other chips that analyze the ColorData instance.
-        /// </summary>
-        public int flag { get; set; }
 
         /// <summary>
         ///     Use this constructor for setting the ColorData instance up
@@ -59,6 +54,12 @@ namespace PixelVisionSDK
         {
             FromHex(hexColor);
         }
+
+        /// <summary>
+        ///     This flag is used to store extra data which can be read by
+        ///     other chips that analyze the ColorData instance.
+        /// </summary>
+        public int flag { get; set; }
 
         /// <summary>
         ///     The red value of a color. This ranges from 0 to 255.
@@ -176,5 +177,7 @@ namespace PixelVisionSDK
             var match = regex.Match(color);
             return match.Success;
         }
+
     }
+
 }

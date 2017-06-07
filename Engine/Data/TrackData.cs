@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,13 +12,13 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
 {
+
     /// <summary>
     ///     A track is a collection of ISoundData that is played
     ///     back in a specific sequence. The track uses notes to
@@ -26,6 +26,7 @@ namespace PixelVisionSDK
     /// </summary>
     public class TrackData : AbstractData
     {
+
         /// <summary>
         ///     Total number of notes in a single track.
         /// </summary>
@@ -80,5 +81,7 @@ namespace PixelVisionSDK
             for (var i = 0; i < totalNotes; i++)
                 notes[i] = 0;
         }
+
     }
+
 }

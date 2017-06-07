@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,7 +12,6 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 using PixelVisionSDK.Utils;
@@ -127,16 +126,14 @@ namespace PixelVisionSDK.Chips
 
         public void InvalidateTileID(int id)
         {
-            var tileLayer = layers[(int)Layer.Sprites];
-            var invalidLayer = layers[(int)Layer.Invalid];
+            var tileLayer = layers[(int) Layer.Sprites];
+            var invalidLayer = layers[(int) Layer.Invalid];
 
             var total = tileLayer.Length;
-            for (int i = 0; i < total; i++)
-            {
+            for (var i = 0; i < total; i++)
                 if (tileLayer[i] == id)
                     invalidLayer[i] = -1;
-            }
-            
+
             Invalidate();
         }
 
@@ -144,13 +141,11 @@ namespace PixelVisionSDK.Chips
         {
             cachedTileMap.Clear();
 
-            var invalidLayer = layers[(int)Layer.Invalid];
+            var invalidLayer = layers[(int) Layer.Invalid];
 
             var total = invalidLayer.Length;
-            for (int i = 0; i < total; i++)
-            {
+            for (var i = 0; i < total; i++)
                 invalidLayer[i] = -1;
-            }
 
             Invalidate();
         }
@@ -165,7 +160,7 @@ namespace PixelVisionSDK.Chips
         public void ReadCachedTilemap(ref int[] pixels)
         {
             var total = realWidth * realHeight;
-            
+
             if (pixels.Length != total)
             {
                 Array.Resize(ref pixels, total);
@@ -173,10 +168,7 @@ namespace PixelVisionSDK.Chips
             }
 
             if (invalid)
-            {
                 ReadPixelData(realWidth, realHeight, ref pixels);
-            }
-
         }
 
         public void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight, int colorOffset = 0)
@@ -194,7 +186,6 @@ namespace PixelVisionSDK.Chips
             // Test if we need to rebuild the cached tilemap
             if (invalid)
             {
-                
                 // Make sure the cached tilemap is the correct width and height
 //                if (cachedTileMap.width != realWidth || cachedTileMap.height != realHeight)
 //                    cachedTileMap.Resize(realWidth, realHeight);
@@ -216,15 +207,17 @@ namespace PixelVisionSDK.Chips
                     {
                         // Get the sprite id
                         spriteID = tmpSpriteIDs[i];
-                        
+
                         // Make sure there is a sprite
                         if (spriteID > -1)
                         {
                             // Calculate the new position of the tile;
                             x = i % columns * tileWidth;
                             y = i / columns;
+
                             //x *= tileWidth;
                             y = (rows - 1 - y) * tileHeight;
+
                             //y *= tileHeight;
 
                             // Read the sprite data
@@ -233,7 +226,6 @@ namespace PixelVisionSDK.Chips
                             // Draw the pixel data into the cachedTilemap
                             cachedTileMap.SetPixels(x, y, tileWidth, tileHeight, tmpPixelData, tmpPaletteIDs[i]);
                         }
-                        
                     }
 
                 // Reset the invalidation state
@@ -242,9 +234,8 @@ namespace PixelVisionSDK.Chips
 
             // Return the requested pixel data
             cachedTileMap.GetPixels(offsetX, offsetY, width, height, ref pixelData);
-
         }
-        
+
         public void Invalidate(int index)
         {
             Invalidate();
@@ -275,7 +266,6 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="column"></param>
         /// <param name="row"></param>
@@ -300,7 +290,7 @@ namespace PixelVisionSDK.Chips
         protected int ReadDataAt(int id, int column, int row)
         {
             var index = column + row * columns;
-            
+
             return index > layers[id].Length ? -1 : layers[id][index];
         }
 
@@ -314,7 +304,7 @@ namespace PixelVisionSDK.Chips
             if (column >= columns)
                 column = MathUtil.Repeat(column, columns);
             var index = column + row * columns;
-            
+
             layers[id][index] = value;
             Invalidate(index);
         }
@@ -336,11 +326,9 @@ namespace PixelVisionSDK.Chips
         /// </param>
         public void UpdateTileAt(int spriteID, int column, int row, int flag = 0, int paletteID = 0)
         {
-
             UpdateDataAt(Layer.Sprites, column, row, spriteID);
             UpdateDataAt(Layer.Palettes, column, row, paletteID);
             UpdateDataAt(Layer.Flags, column, row, flag);
-
         }
 
         /// <summary>
@@ -420,7 +408,7 @@ namespace PixelVisionSDK.Chips
             PosUtil.CalculateIndex(column, row, columns, out tmpIndex);
 
             UpdateDataAt(Layer.Palettes, column, row, paletteID);
-            
+
             Invalidate(tmpIndex);
         }
 
@@ -501,7 +489,6 @@ namespace PixelVisionSDK.Chips
                 Clear();
 
             Invalidate();
-
         }
 
         /// <summary>
@@ -517,12 +504,9 @@ namespace PixelVisionSDK.Chips
             for (var i = 0; i < totalTiles; i++)
             for (var j = 0; j < totalLayers; j++)
                 layers[j][i] = -1;
-            
+
             cachedTileMap.Clear();
             Invalidate();
-
-
-
         }
 
         /// <summary>
@@ -580,7 +564,6 @@ namespace PixelVisionSDK.Chips
             Invalid
 
         }
-
 
     }
 

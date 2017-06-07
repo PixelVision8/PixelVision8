@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,12 +12,13 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 namespace PixelVisionSDK
 {
+
     public interface IMouseInput
     {
+
         /// <summary>
         ///     The current mouse position in pixel coordinates.
         /// </summary>
@@ -47,4 +48,5 @@ namespace PixelVisionSDK
         bool GetMouseButtonUp(int button);
 
     }
+
 }

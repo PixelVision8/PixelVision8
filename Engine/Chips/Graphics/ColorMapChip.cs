@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,12 +12,12 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 
 namespace PixelVisionSDK.Chips
 {
+
     /// <summary>
     ///     The color map chip is used to help import sprites and tile maps into the
     ///     engine if their colors don't match the system colors. When loading
@@ -26,6 +26,7 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class ColorMapChip : AbstractChip, IColorChip
     {
+
         protected string[] _colors = new string[256];
 
         protected string transparent = "#ff00ff";
@@ -109,5 +110,7 @@ namespace PixelVisionSDK.Chips
             base.Deactivate();
             engine.colorMapChip = null;
         }
+
     }
+
 }

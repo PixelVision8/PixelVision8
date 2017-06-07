@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,7 +12,6 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
 
 using System;
 using System.Collections.Generic;
@@ -21,6 +20,7 @@ using PixelVisionSDK.Services;
 
 namespace PixelVisionSDK.Chips
 {
+
     /// <summary>
     ///     The <see cref="ChipManager" /> is responsible for managing all of the
     ///     chips in the engine. It allows the engine to create chips from a string
@@ -30,6 +30,7 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class ChipManager : IServiceLocator
     {
+
         protected Dictionary<string, IService> _services = new Dictionary<string, IService>();
 
         protected Dictionary<string, AbstractChip> chips = new Dictionary<string, AbstractChip>();
@@ -55,6 +56,35 @@ namespace PixelVisionSDK.Chips
         /// <value>Float</value>
         public float timeDelta { get; private set; }
 
+        public Dictionary<string, IService> services
+        {
+            get { return _services; }
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="service"></param>
+        public void AddService(string id, IService service)
+        {
+            // Add the service to the managed list
+            if (services.ContainsKey(id))
+                services[id] = service;
+            else
+                services.Add(id, service);
+
+            // Add a reference of the service locator
+            service.RegisterService(this);
+        }
+
+        public IService GetService(string id)
+        {
+            if (services.ContainsKey(id))
+                return services[id];
+
+            throw new ApplicationException("The requested service '" + id + "' is not registered");
+        }
+
         /// <summary>
         ///     Loops through all chips and calls Init() method on them.
         /// </summary>
@@ -64,6 +94,7 @@ namespace PixelVisionSDK.Chips
 
             foreach (var chipName in chipNames)
                 chips[chipName].Init();
+
 //            foreach (var chip in chips)
 //            {
 //                chip.Value.Init();
@@ -98,35 +129,6 @@ namespace PixelVisionSDK.Chips
         {
             foreach (var chip in chips)
                 chip.Value.Reset();
-        }
-
-        public Dictionary<string, IService> services
-        {
-            get { return _services; }
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="service"></param>
-        public void AddService(string id, IService service)
-        {
-            // Add the service to the managed list
-            if (services.ContainsKey(id))
-                services[id] = service;
-            else
-                services.Add(id, service);
-
-            // Add a reference of the service locator
-            service.RegisterService(this);
-        }
-
-        public IService GetService(string id)
-        {
-            if (services.ContainsKey(id))
-                return services[id];
-
-            throw new ApplicationException("The requested service '" + id + "' is not registered");
         }
 
         /// <summary>
@@ -296,5 +298,7 @@ namespace PixelVisionSDK.Chips
             foreach (var item in chips.Where(c => c.Value.active == false).ToArray())
                 chips.Remove(item.Key);
         }
+
     }
+
 }

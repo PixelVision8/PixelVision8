@@ -1,6 +1,6 @@
-﻿//  
+﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
-// 
+//  
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,12 +12,10 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
-// 
-
-using System;
 
 namespace PixelVisionSDK
 {
+
     public interface IKeyInput
     {
 
@@ -32,6 +30,7 @@ namespace PixelVisionSDK
         /// </summary>
         /// <param name="key"></param>
         bool GetKey(int key);
+
 //        bool ReadKey(int key);
 
         /// <summary>
@@ -42,14 +41,13 @@ namespace PixelVisionSDK
         /// </summary>
         /// <param name="key"></param>
         bool GetKeyDown(int key);
-        /// 
-//        bool ReadKeyDown(int key);
 
         /// <summary>
         ///     <para>Returns true during the frame the user releases the key identified by name.</para>
         /// </summary>
         /// <param name="key"></param>
         bool GetKeyUp(int key);
+
         /// 
 //        bool ReadKeyUp(int key);
 
@@ -58,10 +56,12 @@ namespace PixelVisionSDK
 //        [Obsolete]
 //        //string inputString { get; }
 //        [Obsolete]
-        
+
 //        [Obsolete]
 //        [Obsolete]
 
         #endregion
+
     }
+
 }
