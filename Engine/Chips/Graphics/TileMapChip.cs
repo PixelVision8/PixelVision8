@@ -291,6 +291,7 @@ namespace PixelVisionSDK.Chips
         {
             var index = column + row * columns;
 
+            //TODO need to make sure this doesn't throw an error.
             return index > layers[id].Length ? -1 : layers[id][index];
         }
 
