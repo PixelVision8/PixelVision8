@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PixelVisionSDK.Utils;
+using UnityEngine.EventSystems;
 
 namespace PixelVisionSDK.Chips
 {
@@ -198,11 +199,27 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
+        ///     This is called when a game is initialized. It is only called once when the game is first loaded.
+        /// </summary>
+        public override void Init()
+        {
+            base.Init();
+        }
+
+        /// <summary>
         ///     Used for drawing the game to the display.
         /// </summary>
         public virtual void Draw()
         {
             // Overwrite this method and add your own draw logic.
+        }
+
+        /// <summary>
+        ///     This is called when a game is reset.
+        /// </summary>
+        public override void Reset()
+        {
+            base.Reset();
         }
 
         /// <summary>
