@@ -238,8 +238,19 @@ namespace PixelVisionSDK.Chips
 
         public void Invalidate(int index)
         {
+            // Get the invalid layer
+            var layer = layers[(int) Layer.Invalid];
+
+            // Make sure the index is within range
+            if (index >= layer.Length)
+                return;
+
+            // change the tile flag to -1 so we know it needs to be redrawn
+            layer[index] = -1;
+
+            // Tell the map there was a change
             Invalidate();
-            layers[(int) Layer.Invalid][index] = -1;
+
         }
 
         /// <summary>
@@ -292,7 +303,7 @@ namespace PixelVisionSDK.Chips
             var index = column + row * columns;
 
             //TODO need to make sure this doesn't throw an error.
-            return index > layers[id].Length ? -1 : layers[id][index];
+            return index >= layers[id].Length ? -1 : layers[id][index];
         }
 
         protected void UpdateDataAt(Layer name, int column, int row, int value)
