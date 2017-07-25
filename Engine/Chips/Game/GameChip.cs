@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -59,13 +60,33 @@ namespace PixelVisionSDK.Chips
         protected string _name = "Untitle_Game";
         protected int _saveSlots;
         protected Dictionary<string, string> savedData = new Dictionary<string, string>();
-        private int[] tmpPixelData;
 
+        private int[] tmpPixelData;
         private int[] tmpSpriteData = new int[0];
 
-        protected Vector spriteSize { get; set; }
-        protected Vector displaySize { get; set; }
+        protected Vector spriteSizeCached = new Vector();
+        protected Vector displaySizeCached = new Vector();
+        protected Vector overscanBorderCached = new Vector();
+        protected Rect visibleBoundsCached = new Rect();
+        protected int colorsPerSpriteCached = 0;
+        protected Vector tilemapSizeCached = new Vector();
 
+        [Flags]
+        internal enum CachedData
+        {
+
+            SpriteSize = 1,
+            DisplaySize = 2,
+            OverscanBounds = 4,
+            VisibleBounds = 8,
+            ColorsPerSprite = 16,
+            TilemapSize = 32,
+            //            TileMapFlags = 64,
+            //            Fonts = 128,
+            //            Meta = 256,
+            //            Music = 512
+
+        }
 
         #region GameChip APIs
 
@@ -184,8 +205,7 @@ namespace PixelVisionSDK.Chips
             Array.Resize(ref tmpSpriteData, engine.spriteChip.width * engine.spriteChip.height);
 
             // cache used common properties
-            spriteSize = new Vector(spriteChip.width, spriteChip.height);
-            displaySize = new Vector(displayChip.width, displayChip.height);
+            
         }
 
         /// <summary>
@@ -202,8 +222,59 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public override void Init()
         {
+            // TODO need to cache all the commonly used values
+
             base.Init();
         }
+
+        internal void Invalidate(CachedData data)
+        {
+            // Reload the sprite size
+            if ((data & CachedData.SpriteSize) == CachedData.SpriteSize)
+            {
+                spriteSizeCached.x = spriteChip.width;
+                spriteSizeCached.y = spriteChip.height;
+            }
+
+            // Reload display size
+            if ((data & CachedData.DisplaySize) == CachedData.DisplaySize)
+            {
+                displaySizeCached.x = displayChip.width;
+                displaySizeCached.y = displayChip.height;
+            }
+
+            // Reload overscan size
+            if ((data & CachedData.OverscanBounds) == CachedData.OverscanBounds)
+            {
+                overscanBorderCached.x = displayChip.overscanX;
+                overscanBorderCached.y = displayChip.overscanY;
+            }
+
+            // Reload visible bounds
+            if ((data & CachedData.VisibleBounds) == CachedData.VisibleBounds)
+            {
+                visibleBoundsCached.x = displayChip.visibleBounds.x;
+                visibleBoundsCached.y = displayChip.visibleBounds.y;
+                visibleBoundsCached.width = displayChip.visibleBounds.width;
+                visibleBoundsCached.height = displayChip.visibleBounds.height;
+            }
+
+            // Reload colors per sprite
+            if ((data & CachedData.ColorsPerSprite) == CachedData.ColorsPerSprite)
+            {
+                colorsPerSpriteCached = spriteChip.colorsPerSprite;
+            }
+
+            // Tilemap size
+            if ((data & CachedData.TilemapSize) == CachedData.TilemapSize)
+            {
+                tilemapSizeCached.x = tilemapChip.columns;
+                tilemapSizeCached.x = tilemapChip.rows;
+            }
+
+        }
+
+
 
         /// <summary>
         ///     Used for drawing the game to the display.
@@ -218,6 +289,15 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public override void Reset()
         {
+            var dataFlags = CachedData.SpriteSize;
+            dataFlags |= CachedData.DisplaySize;
+            dataFlags |= CachedData.OverscanBounds;
+            dataFlags |= CachedData.VisibleBounds;
+            dataFlags |= CachedData.ColorsPerSprite;
+            dataFlags |= CachedData.TilemapSize;
+
+            Invalidate(dataFlags);
+
             base.Reset();
         }
 
@@ -322,7 +402,8 @@ namespace PixelVisionSDK.Chips
         /// </returns>
         public int ColorsPerSprite()
         {
-            return spriteChip.colorsPerSprite;
+            // This can not be changed at run time so it will never need to be invalidated
+            return colorsPerSpriteCached;//spriteChip.colorsPerSprite;
         }
 
         /// <summary>
@@ -423,7 +504,17 @@ namespace PixelVisionSDK.Chips
             }
 
             if (resize)
+            {
                 displayChip.ResetResolution(size.x, size.y);
+
+                // Since we are changing the resolution, we need to invalidate the display size, overscan and visible bounds
+                var dataFlags = CachedData.DisplaySize;
+                dataFlags |= CachedData.OverscanBounds;
+                dataFlags |= CachedData.VisibleBounds;
+
+                Invalidate(dataFlags);
+            }
+                
 
             return size;
         }
@@ -457,29 +548,43 @@ namespace PixelVisionSDK.Chips
         /// </returns>
         public Vector OverscanBorder(int? x, int? y)
         {
-            var size = new Vector();
+            //var size = new Vector();
+            var changeBorder = false;
 
             if (x.HasValue)
             {
-                size.x = x.Value;
-                displayChip.overscanX = size.x;
+                //size.x = ;
+                displayChip.overscanX = x.Value;
+                changeBorder = true;
             }
-            else
-            {
-                size.x = displayChip.width;
-            }
+//            else
+//            {
+//                size.x = displayChip.width;
+//            }
 
             if (y.HasValue)
             {
-                size.y = y.Value;
-                displayChip.overscanY = size.y;
+                changeBorder = true;
+                //size.y = y.Value;
+                displayChip.overscanY = y.Value;
             }
-            else
+//            else
+//            {
+//                size.y = displayChip.height;
+//            }
+
+            if (changeBorder)
             {
-                size.y = displayChip.height;
+                // Since we are changing the overscan border, we need to invalidate the overscan and visible bounds
+
+                var dataFlags = CachedData.OverscanBounds;
+                dataFlags |= CachedData.VisibleBounds;
+
+                Invalidate(dataFlags);
+
             }
 
-            return size;
+            return overscanBorderCached;
         }
 
         /// <summary>
@@ -650,36 +755,57 @@ namespace PixelVisionSDK.Chips
         /// </param>
         public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, bool aboveBG = true, int colorOffset = 0, bool onScreen = true)
         {
-            var size = SpriteSize();
-            var sW = size.x;
-            var sH = size.y;
+            //var size = SpriteSize();
+            var sW = spriteSizeCached.x;
+            var sH = spriteSizeCached.y;
+//            var displaySize = DisplaySize();
+//
+//            //TODO this should be cached somewhere
+//            var bounds = new Rect(-displayChip.overscanXPixels, -displayChip.overscanYPixels, displaySize.x - displayChip.overscanXPixels, displaySize.y - displayChip.overscanYPixels);
+            var bounds = visibleBoundsCached;//displayChip.visibleBounds;
 
-            var displaySize = DisplaySize();
-
-            var bounds = new Rect(-displayChip.overscanXPixels, -displayChip.overscanYPixels, displaySize.x - displayChip.overscanXPixels, displaySize.y - displayChip.overscanYPixels);
             var total = ids.Length;
 
             var height = MathUtil.CeilToInt(total / width);
 
             var startX = x - (onScreen ? displayChip.scrollX : 0);
-            var startY = y + (onScreen ? displayChip.scrollY : 0);
+            var startY = y - (onScreen ? displayChip.scrollY : 0);
 
             if (flipH || flipV)
                 SpriteChipUtil.FlipSpriteData(ref ids, width, height, flipH, flipV);
 
+            // Store the sprite id from the ids array
+            int id;
+            bool render;
+
+            // TODO need to offset the bounds based on the scroll position before testing against it
+
             for (var i = 0; i < total; i++)
             {
-                var id = ids[i];
+                // Set the sprite id
+                id = ids[i];
+
+                // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
+                // Test to see if the sprite is within range
                 if (id > -1)
                 {
-                    x = MathUtil.FloorToInt(i % width) * sW + startX;
-                    y = MathUtil.FloorToInt(i / width) * sH + startY;
-
-                    var render = true;
-
-                    if (onScreen)
+                    x = (MathUtil.FloorToInt(i % width) * sW) + startX;
+                    y = (MathUtil.FloorToInt(i / width) * sH) + startY;
+//
+//                    var render = true;
+                    
+                    // Check to see if we need to test the bounds
+                    //if (onScreen)
+                        // This can set the render flag to true or false based on it's location
+                        //TODO need to take into account the current bounds of the screen
                         render = x >= bounds.x && x <= bounds.width && y >= bounds.y && y <= bounds.height;
+//                    else
+//                    {
+//                        // If we are not testing to see if the sprite is onscreen it will always render and wrap based on its position
+//                        render = true;
+//                    }
 
+                    // If the sprite shoudl be rendered, call DrawSprite()
                     if (render)
                         DrawSprite(id, x, y, flipH, flipV, aboveBG, colorOffset);
                 }

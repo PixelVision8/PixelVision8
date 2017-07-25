@@ -89,6 +89,14 @@ namespace PixelVisionSDK.Chips
             get { return _overscanY * engine.spriteChip.height; }
         }
 
+        public Rect visibleBounds
+        {
+            get
+            {
+                return new Rect(-overscanXPixels, -overscanYPixels, width - overscanXPixels, height - overscanYPixels);
+            }
+        }
+
 //        /// <summary>
 //        ///     The width of the area to sample from in the ScreenBufferChip. If
 //        ///     width of the view port is larger than the <see cref="TextureData" />
