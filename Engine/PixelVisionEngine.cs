@@ -168,10 +168,10 @@ namespace PixelVisionSDK
 
             // Make sure all chips are reset to their default values
             chipManager.Reset();
-
-            // Call init on all chips
+//
+//            // Call init on all chips
             chipManager.Init();
-
+//
             running = true;
         }
 

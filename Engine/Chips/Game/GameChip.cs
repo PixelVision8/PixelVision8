@@ -330,7 +330,7 @@ namespace PixelVisionSDK.Chips
         ///     This method returns the current background color ID. If no color exists, it returns -1
         ///     which is magenta (#FF00FF).
         /// </returns>
-        public int BackgroundColor(int? id = null)
+        public virtual int BackgroundColor(int? id = null)
         {
             if (id.HasValue)
                 colorChip.backgroundColor = id.Value.Clamp(0, colorChip.total);
