@@ -317,8 +317,12 @@ namespace PixelVisionSDK.Chips
                 column = MathUtil.Repeat(column, columns);
             var index = column + row * columns;
 
-            layers[id][index] = value;
-            Invalidate(index);
+            if (index < layers[id].Length)
+            {
+                layers[id][index] = value;
+                Invalidate(index);
+            }
+            
         }
 
         /// <summary>
