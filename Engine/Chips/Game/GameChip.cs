@@ -655,6 +655,11 @@ namespace PixelVisionSDK.Chips
             }
         }
 
+        public void DrawPixel(int x, int y, int colorRef, DrawMode drawMode = DrawMode.Sprite)
+        {
+            // TODO need to figure out how to make this work
+        }
+
         /// <summary>
         ///     Sprites represent individual collections of pixel data at a fixed size. By default, Pixel Vision 8 sprites are
         ///     8 x 8 pixels and have a set limit of visible colors. You can use the DrawSprite() method to render any sprite
@@ -1232,7 +1237,12 @@ namespace PixelVisionSDK.Chips
 
             return new Vector(x, y);
         }
-
+        
+        public int CalculateTextHeight(string text, int characterWidth)
+        {
+            return FontChip.WordWrap(text, characterWidth).Split(new[] {"\n", "\r\n"}, StringSplitOptions.None).Length;
+        }
+        
         #endregion
 
         #region Sound APIs
@@ -1554,7 +1564,7 @@ namespace PixelVisionSDK.Chips
                 Tile(newX, newY, id, colorOffset, flag);
             }
         }
-
+        
         #endregion
 
     }
