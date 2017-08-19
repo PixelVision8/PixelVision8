@@ -118,7 +118,6 @@ namespace PixelVisionSDK.Chips
             }
             private set
             {
-                Debug.Log("Set Columns " + value);
                 _columns = value;
             }
         }
@@ -535,7 +534,6 @@ namespace PixelVisionSDK.Chips
                 else
                     Array.Resize(ref layers[i], totalTiles);
             
-            Debug.Log("Cache Size " +realWidth + ","+realHeight);
             cachedTileMap.Resize(realWidth, realHeight);
 
             if (clear)
