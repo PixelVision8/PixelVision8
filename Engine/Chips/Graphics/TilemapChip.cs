@@ -15,6 +15,7 @@
 
 using System;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -110,7 +111,17 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         ///     The width of the tile map by tiles.
         /// </summary>
-        public int columns { get; private set; }
+        public int columns {
+            get
+            {
+                return _columns; 
+            }
+            private set
+            {
+                Debug.Log("Set Columns " + value);
+                _columns = value;
+            }
+        }
 
         /// <summary>
         ///     The height of the tile map in tiles.
@@ -148,6 +159,15 @@ namespace PixelVisionSDK.Chips
                 invalidLayer[i] = -1;
 
             Invalidate();
+        }
+
+        public override void Reset()
+        {
+            base.Reset();
+            
+            RebuildCache();
+            
+            //ResetValidation();
         }
 
         public void ResetValidation()
@@ -190,52 +210,68 @@ namespace PixelVisionSDK.Chips
 //                if (cachedTileMap.width != realWidth || cachedTileMap.height != realHeight)
 //                    cachedTileMap.Resize(realWidth, realHeight);
 
-                // Get a local reference to the layers we need
-                var tmpSpriteIDs = layers[(int) Layer.Sprites];
-                var tmpPaletteIDs = layers[(int) Layer.Palettes];
-                var invalideLayer = layers[(int) Layer.Invalid];
-
-                // Create tmp variables for loop
-                int x, y, spriteID;
-
-                // Get a local reference to the total number of tiles
-                var totalTiles = total;
-
-                // Loop through all of the tiles in the tilemap
-                for (var i = 0; i < totalTiles; i++)
-                    if (invalideLayer[i] != 0)
-                    {
-                        // Get the sprite id
-                        spriteID = tmpSpriteIDs[i];
-
-                        // Make sure there is a sprite
-                        if (spriteID > -1)
-                        {
-                            // Calculate the new position of the tile;
-                            x = i % columns * tileWidth;
-                            y = i / columns;
-
-                            //x *= tileWidth;
-                            y = (rows - 1 - y) * tileHeight;
-
-                            //y *= tileHeight;
-
-                            // Read the sprite data
-                            spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
-
-                            // Draw the pixel data into the cachedTilemap
-                            cachedTileMap.SetPixels(x, y, tileWidth, tileHeight, tmpPixelData, tmpPaletteIDs[i]);
-                        }
-                    }
-
-                // Reset the invalidation state
-                ResetValidation();
+                RebuildCache();
+                
             }
 
             // Return the requested pixel data
             cachedTileMap.GetPixels(offsetX, offsetY, width, height, ref pixelData);
         }
 
+        public void RebuildCache()
+        {
+            if (invalid != true)
+                return;
+            
+            // Get a local reference to the layers we need
+            var tmpSpriteIDs = layers[(int) Layer.Sprites];
+            var tmpPaletteIDs = layers[(int) Layer.Palettes];
+            var invalideLayer = layers[(int) Layer.Invalid];
+
+            // Create tmp variables for loop
+            int x, y, spriteID;
+
+            // Get a local reference to the total number of tiles
+            var totalTiles = total;
+
+            var totalTilesUpdated = 0;
+            
+            // Loop through all of the tiles in the tilemap
+            for (var i = 0; i < totalTiles; i++)
+            {
+                if (invalideLayer[i] != 0)
+                {
+                    // Get the sprite id
+                    spriteID = tmpSpriteIDs[i];
+
+                    // Make sure there is a sprite
+                    if (spriteID > -1)
+                    {
+                        // Calculate the new position of the tile;
+                        x = i % columns * tileWidth;
+                        y = i / columns;
+
+                        //x *= tileWidth;
+                        y = (rows - 1 - y) * tileHeight;
+
+                        //y *= tileHeight;
+
+                        // Read the sprite data
+                        spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
+
+                        // Draw the pixel data into the cachedTilemap
+                        cachedTileMap.SetPixels(x, y, tileWidth, tileHeight, tmpPixelData, tmpPaletteIDs[i]);
+
+                        totalTilesUpdated++;
+                    }
+                }
+            }
+            
+            // Reset the invalidation state
+            ResetValidation();
+            
+        }
+        
         public void Invalidate(int index)
         {
             // Get the invalid layer
@@ -498,7 +534,8 @@ namespace PixelVisionSDK.Chips
                     layers[i] = new int[totalTiles]; // (columns, rows);
                 else
                     Array.Resize(ref layers[i], totalTiles);
-
+            
+            Debug.Log("Cache Size " +realWidth + ","+realHeight);
             cachedTileMap.Resize(realWidth, realHeight);
 
             if (clear)
@@ -560,7 +597,7 @@ namespace PixelVisionSDK.Chips
         {
             //ppu.tileMap = this;
             engine.tilemapChip = this;
-
+            
             // Resize to default nes resolution
             Resize(32, 30);
         }

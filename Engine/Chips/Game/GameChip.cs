@@ -300,7 +300,7 @@ namespace PixelVisionSDK.Chips
 
             base.Reset();
         }
-
+        
         /// <summary>
         ///     This unloads the game from the engine.
         /// </summary>
@@ -891,6 +891,7 @@ namespace PixelVisionSDK.Chips
                     else if (drawMode == DrawMode.TilemapCache)
                     {
                         var pixelData = fontChip.ConvertCharacterToPixelData(line[j], font);
+                        
                         if (pixelData != null)
                             DrawPixels(pixelData, nextX, nextY, spriteSize.x, spriteSize.y, DrawMode.TilemapCache,
                                 false, false, colorOffset);
