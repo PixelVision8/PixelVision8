@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace PixelVisionSDK.Chips
 {
@@ -295,7 +296,7 @@ namespace PixelVisionSDK.Chips
         public static string[] CalcualteSplit(string text, int maxLineLength)
         {
             var list = new List<string>();
-
+            
             int currentIndex;
             var lastWrap = 0;
             var whitespace = new[] {' ', '\r', '\n', '\t'};
@@ -328,7 +329,8 @@ namespace PixelVisionSDK.Chips
 
             // Test to make sure font exists
             if (!fonts.ContainsKey(fontName))
-                throw new Exception("Font '" + fontName + "' not found.");
+                return new int[0];
+                //throw new Exception("Font '" + fontName + "' not found.");
 
             var fontMap = fonts[fontName];
             var totalCharacters = fontMap.Length;
@@ -378,6 +380,19 @@ namespace PixelVisionSDK.Chips
             }
 
             return null;
+        }
+        
+        public static string SplitCamelCase( string str )
+        {
+            return Regex.Replace( 
+                Regex.Replace( 
+                    str, 
+                    @"(\P{Ll})(\P{Ll}\p{Ll})", 
+                    "$1 $2" 
+                ), 
+                @"(\p{Ll})(\P{Ll})", 
+                "$1 $2" 
+            );
         }
 
     }

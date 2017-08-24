@@ -16,6 +16,7 @@
 using System;
 using System.Linq;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -288,10 +289,17 @@ namespace PixelVisionSDK.Chips
                 pixelDataCache[index] = tmpPixelData;
                 cachedSprite = pixelDataCache[index];
             }
-
+            
+            if(pixelData == null)
+                Debug.Log("pixelData is null");
+            
             // Make sure that the pixelData array is the correct size.
             if (pixelData.Length != cachedSprite.Length)
+            {
+                Debug.Log("pixelData " + pixelData.Length + " cachedSprite " +cachedSprite.Length);
                 Array.Resize(ref pixelData, cachedSprite.Length);
+
+            }
 
             // Copy the contents of the cached pixel data into the new array.
             Array.Copy(cachedSprite, pixelData, totalSpritePixels);

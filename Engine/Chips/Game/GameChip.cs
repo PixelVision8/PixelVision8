@@ -61,7 +61,7 @@ namespace PixelVisionSDK.Chips
         protected int _saveSlots;
         protected Dictionary<string, string> savedData = new Dictionary<string, string>();
 
-        private int[] tmpPixelData;
+        //private int[] tmpPixelData = new int[0];
         private int[] tmpSpriteData = new int[0];
 
         protected Vector spriteSizeCached = new Vector();
@@ -1371,9 +1371,9 @@ namespace PixelVisionSDK.Chips
                 return data;
             }
 
-            spriteChip.ReadSpriteAt(id, tmpPixelData);
+            spriteChip.ReadSpriteAt(id, tmpSpriteData);
 
-            return tmpPixelData;
+            return tmpSpriteData;
         }
 
         /// <summary>
