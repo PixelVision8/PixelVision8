@@ -337,8 +337,14 @@ namespace PixelVisionSDK.Chips
         {
             var index = column + row * columns;
 
+            if (index >= layers[id].Length || index < 0)
+                return -1;
+            else
+            {
+                return layers[id][index];
+            }
             //TODO need to make sure this doesn't throw an error.
-            return index >= layers[id].Length ? -1 : layers[id][index];
+            //return index >= layers[id].Length ? -1 : layers[id][index];
         }
 
         protected void UpdateDataAt(Layer name, int column, int row, int value)

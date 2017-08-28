@@ -95,6 +95,11 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public int maxSize = 256;
 
+        public bool lockSpecs = false;
+
+        public string ext = ".pv8";
+        public string version = "0.0.0";
+        
         /// <summary>
         ///     Used to limit the amount of data the game can save.
         /// </summary>
@@ -124,7 +129,7 @@ namespace PixelVisionSDK.Chips
             get { return _name ?? GetType().Name; }
             set { _name = value; }
         }
-
+        
         /// <summary>
         ///     Returns true if the game is ready to be run.
         /// </summary>
