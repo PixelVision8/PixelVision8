@@ -164,7 +164,7 @@ namespace PixelVisionSDK.Chips
         {
             base.Reset();
             
-            RebuildCache();
+            RebuildCache(cachedTileMap);
             
             //ResetValidation();
         }
@@ -209,7 +209,7 @@ namespace PixelVisionSDK.Chips
 //                if (cachedTileMap.width != realWidth || cachedTileMap.height != realHeight)
 //                    cachedTileMap.Resize(realWidth, realHeight);
 
-                RebuildCache();
+                RebuildCache(cachedTileMap);
                 
             }
 
@@ -217,7 +217,7 @@ namespace PixelVisionSDK.Chips
             cachedTileMap.GetPixels(offsetX, offsetY, width, height, ref pixelData);
         }
 
-        public void RebuildCache()
+        public void RebuildCache(TextureData targetTextureData)
         {
             if (invalid != true)
                 return;
@@ -259,7 +259,7 @@ namespace PixelVisionSDK.Chips
                         spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
 
                         // Draw the pixel data into the cachedTilemap
-                        cachedTileMap.SetPixels(x, y, tileWidth, tileHeight, tmpPixelData, tmpPaletteIDs[i]);
+                        targetTextureData.SetPixels(x, y, tileWidth, tileHeight, tmpPixelData, tmpPaletteIDs[i]);
 
                         totalTilesUpdated++;
                     }
@@ -589,6 +589,8 @@ namespace PixelVisionSDK.Chips
 
             //TODO need to reconnect this so you can export tilemap
             //ReadPixelData(textureData, 0, 0, columns, rows);
+            //cachedTileMap.GetPixels(offsetX, offsetY, width, height, ref pixelData);
+
         }
 
         /// <summary>
