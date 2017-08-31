@@ -1380,7 +1380,39 @@ namespace PixelVisionSDK.Chips
 
             return tmpSpriteData;
         }
+        
+        /// <summary>
+        ///     This allows you to get the pixel data of multiple sprites. This is a read only method but
+        ///     can be used to copy a collection of sprites into memory and draw them to the display in a
+        ///     single pass.
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="width"></param>
+        /// <returns></returns>
+        public int[] Sprites(int[] ids, int width)
+        {
+            var spriteSize = SpriteSize();
+            var realWidth = width * spriteSize.x;
+            var realHeight = ((int)Math.Ceiling((float)ids.Length/width)) * spriteSize.y;
 
+            var textureData = new TextureData(realWidth, realHeight);
+
+            int[] tmpSpriteData;
+            
+            for (int i = 0; i < width; i++)
+            {
+                tmpSpriteData = Sprite(ids[i]);
+                //TODO draw this to the textureData
+            }
+            
+            var pixelData = new int[realWidth * realHeight];
+            
+            textureData.CopyPixels(ref pixelData);
+            
+            return pixelData;
+            
+        }
+        
         /// <summary>
         ///     Returns the total number of sprites in the system. You can pass in an optional argument to
         ///     get a total number of sprites the Sprite Chip can store by passing in false for ignoreEmpty.
