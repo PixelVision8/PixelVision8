@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using PixelVisionSDK.Utils;
+using UnityEngine.SocialPlatforms;
 
 namespace PixelVisionSDK.Chips
 {
@@ -27,7 +28,7 @@ namespace PixelVisionSDK.Chips
 
         protected int _height = 240;
         protected int _maxSpriteCount = 64;
-
+        
         protected int _overscanX;
         protected int _overscanY;
         protected int _scrollX;
@@ -36,7 +37,8 @@ namespace PixelVisionSDK.Chips
 
         protected int[] cachedTilemap = new int[0];
         protected int clBottom = -1;
-
+        protected TextureData uiLayer = new TextureData(0, 0);
+        
         protected DrawRequest clearDrawRequest;
 
         //private int[] cachedTilemapPixels = new int[0];
@@ -321,6 +323,10 @@ namespace PixelVisionSDK.Chips
                 displayMask[i] = colorID;
             }
 
+            
+            // Copy the UI layer to the display
+            uiLayer.CopyPixels(ref displayPixels, true);
+            
             // Loop through all draw requests
             var totalDR = drawRequests.Count;
 
@@ -470,6 +476,10 @@ namespace PixelVisionSDK.Chips
             // Clear display mask
             for (var i = 0; i < totalPixels; i++)
                 displayMask[i] = -1;
+            
+            // Resize UI Layer
+            uiLayer.Resize(_width, _height);
+            uiLayer.Clear();
         }
 
         /// <summary>
@@ -539,6 +549,38 @@ namespace PixelVisionSDK.Chips
             return request;
         }
 
+        public void DrawToUI(int[] pixelData, int x, int y, int width, int height, bool flipH = false, bool flipV = false, int colorOffset = 0)
+        {
+            
+            // Update pixel data
+            
+            y = _height - height - y;
+
+//            if (pixelData != null)
+//            {
+            if (flipH || flipV)
+                SpriteChipUtil.FlipSpriteData(ref pixelData, width, height, flipH, flipV);
+
+            
+            
+            // TODO Need to make sure we offset colors if a new offset is set
+            if (colorOffset > 0)
+            {
+                var total = pixelData.Length;
+                for (int i = 0; i < total; i++)
+                {
+                    pixelData[i] += colorOffset;
+                }
+            }
+            
+            uiLayer.SetPixels(x, y, width, height, pixelData);
+        }
+
+        public void ClearUI(int colorID = -1)
+        {
+            uiLayer.Clear(colorID);
+        }
+        
     }
 
 }

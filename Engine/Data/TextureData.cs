@@ -118,15 +118,21 @@ namespace PixelVisionSDK
         ///     Supply an int array to get a copy of the pixel
         ///     data.
         /// </param>
-        public void CopyPixels(ref int[] data)
+        public void CopyPixels(ref int[] data, bool ignoreTransparent = false, int transparentColor = -1)
         {
             var total = width * height;
 
             if (data.Length != total)
                 Array.Resize(ref data, total);
 
+            var color = -1;
+                
             for (var i = 0; i < total; i++)
+            {
+                if (ignoreTransparent && pixels[i] != transparentColor)
                 data[i] = pixels[i];
+            }
+                
         }
 
         /// <summary>

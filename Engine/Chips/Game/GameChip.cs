@@ -28,8 +28,8 @@ namespace PixelVisionSDK.Chips
         Sprite,
         Tile,
         TilemapCache,
-        SpriteBelow
-
+        SpriteBelow,
+        UI
     }
 
     public enum InputState
@@ -657,6 +657,9 @@ namespace PixelVisionSDK.Chips
                     tilemapChip.UpdateCachedTilemap(pixelData, x, y, width, height, colorOffset);
 
                     break;
+                case DrawMode.UI:
+                    displayChip.DrawToUI(pixelData, x, y, width, height, flipH, flipV, colorOffset);
+                    break;
             }
         }
 
@@ -703,7 +706,7 @@ namespace PixelVisionSDK.Chips
         ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
         ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
         /// </param>
-        public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, bool aboveBG = true, int colorOffset = 0)
+        public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
             if (!displayChip.CanDraw())
                 return;
@@ -712,8 +715,8 @@ namespace PixelVisionSDK.Chips
             spriteChip.ReadSpriteAt(id, tmpSpriteData);
 
             // Mode 0 is sprite above bg and mode 1 is sprite below bg.
-            var mode = aboveBG ? DrawMode.Sprite : DrawMode.SpriteBelow;
-            DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, mode, flipH, !flipV, colorOffset);
+            //var mode = aboveBG ? DrawMode.Sprite : DrawMode.SpriteBelow;
+            DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, drawMode, flipH, !flipV, colorOffset);
         }
 
         /// <summary>
@@ -763,7 +766,7 @@ namespace PixelVisionSDK.Chips
         ///     overscan border control what happens to sprites at the edge of the display. If this value is false, the sprites
         ///     wrap around the screen when they reach the edges of the screen.
         /// </param>
-        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, bool aboveBG = true, int colorOffset = 0, bool onScreen = true)
+        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true)
         {
             //var size = SpriteSize();
             var sW = spriteSizeCached.x;
@@ -817,7 +820,7 @@ namespace PixelVisionSDK.Chips
 
                     // If the sprite shoudl be rendered, call DrawSprite()
                     if (render)
-                        DrawSprite(id, x, y, flipH, flipV, aboveBG, colorOffset);
+                        DrawSprite(id, x, y, flipH, flipV, drawMode, colorOffset);
                 }
             }
         }
@@ -893,20 +896,19 @@ namespace PixelVisionSDK.Chips
                         Tile(nextX, nextY, spriteIDs[j], colorOffset);
                         nextX++;
                     }
-                    else if (drawMode == DrawMode.TilemapCache)
+                    else if (drawMode == DrawMode.TilemapCache || drawMode == DrawMode.UI)
                     {
                         var pixelData = fontChip.ConvertCharacterToPixelData(line[j], font);
                         
                         if (pixelData != null)
-                            DrawPixels(pixelData, nextX, nextY, spriteSize.x, spriteSize.y, DrawMode.TilemapCache,
-                                false, false, colorOffset);
+                            DrawPixels(pixelData, nextX, nextY, spriteSize.x, spriteSize.y, drawMode, false, false, colorOffset);
 
                         // Increase X even if no character was found
                         nextX += charWidth + spacing;
                     }
                     else
                     {
-                        DrawSprite(spriteIDs[j], nextX, nextY, false, false, true, colorOffset);
+                        DrawSprite(spriteIDs[j], nextX, nextY, false, false, drawMode, colorOffset);
                         nextX += charWidth + spacing;
                     }
 
@@ -1595,7 +1597,7 @@ namespace PixelVisionSDK.Chips
             for (var i = 0; i < total; i++)
             {
                 id = ids[i];
-
+    
                 newX = MathUtil.FloorToInt(i % columns) + column;
                 newY = MathUtil.FloorToInt(i / (float) columns) + row;
 
