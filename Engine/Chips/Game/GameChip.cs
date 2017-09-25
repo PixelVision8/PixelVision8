@@ -29,7 +29,8 @@ namespace PixelVisionSDK.Chips
         Tile,
         TilemapCache,
         SpriteBelow,
-        UI
+        UI,
+        SpriteAbove
     }
 
     public enum InputState
@@ -644,9 +645,10 @@ namespace PixelVisionSDK.Chips
             {
                 // Mode 0 and 1 are for sprites (above/below bg)
                 case DrawMode.Sprite:
+                case DrawMode.SpriteAbove:
                 case DrawMode.SpriteBelow:
-                    var layerOrder = drawMode == 0 ? 1 : -1;
-
+                    var layerOrder = drawMode == DrawMode.SpriteBelow ? -1 : 1;
+                    
                     displayChip.NewDrawCall(pixelData, x, y, width, height, flipH, !flipV, true, layerOrder, false, colorOffset);
 
                     break;
@@ -808,15 +810,15 @@ namespace PixelVisionSDK.Chips
 //                    var render = true;
                     
                     // Check to see if we need to test the bounds
-                    //if (onScreen)
+                    if (onScreen)
                         // This can set the render flag to true or false based on it's location
                         //TODO need to take into account the current bounds of the screen
                         render = x >= bounds.x && x <= bounds.width && y >= bounds.y && y <= bounds.height;
-//                    else
-//                    {
-//                        // If we are not testing to see if the sprite is onscreen it will always render and wrap based on its position
-//                        render = true;
-//                    }
+                    else
+                    {
+                        // If we are not testing to see if the sprite is onscreen it will always render and wrap based on its position
+                        render = true;
+                    }
 
                     // If the sprite shoudl be rendered, call DrawSprite()
                     if (render)
