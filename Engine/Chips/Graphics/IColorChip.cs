@@ -78,6 +78,11 @@ namespace PixelVisionSDK.Chips
         /// <param name="color"></param>
         void UpdateColorAt(int index, string color);
 
+
+        int pages { get; set; }
+        int colorsPerPage { get; set; }
+        int supportedColors { get; }
+        
     }
 
 }

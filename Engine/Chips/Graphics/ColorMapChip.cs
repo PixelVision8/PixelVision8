@@ -93,6 +93,10 @@ namespace PixelVisionSDK.Chips
                 _colors[index] = color;
         }
 
+        public int pages { get; set; }
+        public int colorsPerPage { get; set; }
+        public int supportedColors { get; private set; }
+
         /// <summary>
         ///     This method registers the color map with the engine. It also marks
         ///     export to false so it is not serialized with the

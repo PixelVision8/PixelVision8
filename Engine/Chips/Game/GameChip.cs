@@ -389,9 +389,9 @@ namespace PixelVisionSDK.Chips
         ///     This method returns the total number of colors in the color chip based on the ignoreEmpty argument's
         ///     value.
         /// </returns>
-        public int TotalColors(bool ignoreEmpty = true)
+        public int TotalColors(bool ignoreEmpty = false)
         {
-            return colorChip.total;
+            return ignoreEmpty ? colorChip.supportedColors : colorChip.total;
         }
 
         /// <summary>

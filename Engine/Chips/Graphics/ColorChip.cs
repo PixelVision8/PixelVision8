@@ -82,8 +82,9 @@ namespace PixelVisionSDK.Chips
             {
                 if (_pages == value)
                     return;
-
-                _pages = value.Clamp(1, 4);
+                
+                // The max number of colors are 512 (8 pages x 64 colors per page)
+                _pages = value.Clamp(1, 8);
 
                 var oldTotal = _colors.Length;
 
@@ -92,6 +93,8 @@ namespace PixelVisionSDK.Chips
                 if (oldTotal < total)
                     for (var i = oldTotal; i < total; i++)
                         _colors[i] = transparent;
+
+                Invalidate();
             }
         }
 
@@ -113,7 +116,8 @@ namespace PixelVisionSDK.Chips
         ///     palette when it resizes.
         /// </summary>
         /// <value>Int</value>
-        public int supportedColors { get; set; }
+        // TODO need to change this to totalSet colors or something more descriptive
+        public int supportedColors { get; protected set; }
 
         public string[] hexColors
         {
@@ -254,6 +258,7 @@ namespace PixelVisionSDK.Chips
         {
             pages = MathUtil.CeilToInt(total / colorsPerPage);
         }
+       
 
     }
 
