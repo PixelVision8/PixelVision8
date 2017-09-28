@@ -48,7 +48,7 @@ namespace PixelVisionSDK.Chips
     ///     chip life-cycle. The engine manages the game's state, the game's own life-cycle and
     ///     serialization/deserialization of the game's data.
     /// </summary>
-    public class GameChip : AbstractChip, IUpdate, IDraw
+    public class GameChip : AbstractChip, IUpdate, IDraw, IGameChip
     {
 
         protected readonly Dictionary<string, int> tmpTileData = new Dictionary<string, int>
@@ -1490,6 +1490,7 @@ namespace PixelVisionSDK.Chips
         /// <returns>
         ///     Returns a dictionary containing the spriteID, colorOffset, and flag for an individual tile.
         /// </returns>
+        //TODO this should return a custom class not a Dictionary
         public Dictionary<string, int> Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null)
         {
             if (spriteID.HasValue)
