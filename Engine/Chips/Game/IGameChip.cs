@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace PixelVisionSDK.Chips
 {
@@ -628,5 +629,8 @@ namespace PixelVisionSDK.Chips
         ///     An optional flag int value to be applied to each updated tile.
         /// </param>
         void UpdateTiles(int column, int row, int columns, int[] ids, int? colorOffset = null, int? flag = null);
+
+
+        string Sound(int id, [CanBeNull] string data = null);
     }
 }

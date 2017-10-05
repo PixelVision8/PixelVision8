@@ -43,6 +43,11 @@ namespace PixelVisionSDK
         /// </summary>
         void CacheSound();
 
+        void UpdateSettings(string param);
+
+        string ReadSettings();
+
+        void Mutate(float value = 0.05f);
     }
 
 }

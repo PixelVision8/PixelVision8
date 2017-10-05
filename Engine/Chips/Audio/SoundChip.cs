@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using System;
+using PixelVisionRunner.Data;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
@@ -71,6 +72,7 @@ namespace PixelVisionSDK.Chips
         {
             var synth = sounds[index];
             synth.CacheSound();
+            synth.UpdateSettings(param);
         }
 
         /// <summary>
@@ -119,12 +121,12 @@ namespace PixelVisionSDK.Chips
         /// <param name="channel">
         ///     The channel the sound should play back on.
         /// </param>
-        public void PlaySound(int index, int channel = 0)
+        public void PlaySound(int index, int channel = 0, float frequency = 0.1266f)
         {
             if (index > sounds.Length)
                 return;
 
-            LoadSound(index, channel, true);
+            LoadSound(index, channel, frequency, true);
         }
 
         /// <summary>
@@ -133,7 +135,12 @@ namespace PixelVisionSDK.Chips
         /// <param name="index"></param>
         /// <param name="channel"></param>
         /// <param name="autoPlay"></param>
-        public void LoadSound(int index, int channel = 0, bool autoPlay = false)
+        public void LoadSound(int index, int channel = 0, float frequency = 0.1266f, bool autoPlay = false)
+        {
+            LoadSound(ReadSound(index), channel, frequency, autoPlay);
+        }
+
+        public void LoadSound(ISoundData data, int channel = 0, float frequency = 0.1266f, bool autoPlay = false)
         {
             channel = channel.Clamp(0, totalChannels - 1);
 
@@ -145,10 +152,10 @@ namespace PixelVisionSDK.Chips
 
             if (channels[channel] == null)
             {
-                channels[channel] = ReadSound(index);
+                channels[channel] = data;
 
                 if (autoPlay)
-                    channels[channel].Play();
+                    channels[channel].Play(frequency);
             }
         }
 
@@ -191,6 +198,13 @@ namespace PixelVisionSDK.Chips
             ReadSound(id).name = name;
         }
 
+        public void StopSound(int id, int channel)
+        {
+            if (channels[channel] != null)
+            {
+                channels[channel].Stop();
+            }
+        }
     }
 
 }

@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using PixelVisionSDK.Utils;
 using UnityEngine;
 
@@ -1274,6 +1275,22 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
+        ///     This method allows your read and write raw sound data on the SoundChip.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        public string Sound(int id, [CanBeNull] string data = null)
+        {
+
+            if (data != null)
+            {
+                soundChip.UpdateSound(id, data);
+            }
+            
+            return soundChip.ReadSound(id).ReadSettings();
+        }
+        
+        /// <summary>
         ///     This helper method allows you to automatically load a set of loops as a complete
         ///     song and plays them back. You can also define if the tracks should loop when they
         ///     are done playing.
@@ -1610,6 +1627,10 @@ namespace PixelVisionSDK.Chips
         
         #endregion
 
+        public void StopSound(int id, int channel = 0)
+        {
+            soundChip.StopSound(id, channel);
+        }
     }
 
 }
