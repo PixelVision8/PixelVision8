@@ -14,7 +14,6 @@
 // Shawn Rakowski - @shwany
 
 using System;
-using PixelVisionRunner.Data;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips

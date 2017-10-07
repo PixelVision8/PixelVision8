@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using JetBrains.Annotations;
 
 namespace PixelVisionSDK.Chips
 {
@@ -631,6 +630,6 @@ namespace PixelVisionSDK.Chips
         void UpdateTiles(int column, int row, int columns, int[] ids, int? colorOffset = null, int? flag = null);
 
 
-        string Sound(int id, [CanBeNull] string data = null);
+        string Sound(int id, string data = null);
     }
 }

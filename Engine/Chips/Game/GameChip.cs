@@ -16,9 +16,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using PixelVisionSDK.Utils;
-using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -1279,7 +1277,7 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         /// <param name="id"></param>
         /// <param name="data"></param>
-        public string Sound(int id, [CanBeNull] string data = null)
+        public string Sound(int id, string data = null)
         {
 
             if (data != null)
