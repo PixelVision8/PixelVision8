@@ -653,12 +653,11 @@ namespace PixelVisionSDK.Chips
                     break;
                 case DrawMode.TilemapCache:
 
-                    //y = displaySize.y - y;
-
                     tilemapChip.UpdateCachedTilemap(pixelData, x, y, width, height, colorOffset);
 
                     break;
                 case DrawMode.UI:
+                    
                     displayChip.DrawToUI(pixelData, x, y, width, height, flipH, flipV, colorOffset);
                     break;
             }
@@ -1449,7 +1448,7 @@ namespace PixelVisionSDK.Chips
         /// </returns>
         public int TotalSprites(bool ignoreEmpty = true)
         {
-            return spriteChip.spritesInRam;
+            return ignoreEmpty ? spriteChip.totalSprites : spriteChip.spritesInRam;
         }
 
         #endregion
@@ -1628,6 +1627,11 @@ namespace PixelVisionSDK.Chips
         public void StopSound(int id, int channel = 0)
         {
             soundChip.StopSound(id, channel);
+        }
+
+        public int MaxSpriteCount()
+        {
+            return displayChip.maxSpriteCount;
         }
     }
 
