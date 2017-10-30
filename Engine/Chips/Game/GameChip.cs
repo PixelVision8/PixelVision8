@@ -269,7 +269,7 @@ namespace PixelVisionSDK.Chips
             if ((data & CachedData.TilemapSize) == CachedData.TilemapSize)
             {
                 tilemapSizeCached.x = tilemapChip.columns;
-                tilemapSizeCached.x = tilemapChip.rows;
+                tilemapSizeCached.y = tilemapChip.rows;
             }
 
         }
