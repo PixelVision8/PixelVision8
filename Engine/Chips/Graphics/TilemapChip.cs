@@ -380,7 +380,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="paletteID">
         ///     The color offset to use when rendering the sprite.
         /// </param>
-        public void UpdateTileAt(int spriteID, int column, int row, int flag = 0, int paletteID = 0)
+        public void UpdateTileAt(int spriteID, int column, int row, int flag = -1, int paletteID = 0)
         {
             UpdateDataAt(Layer.Sprites, column, row, spriteID);
             UpdateDataAt(Layer.Palettes, column, row, paletteID);
@@ -540,7 +540,14 @@ namespace PixelVisionSDK.Chips
                     Array.Resize(ref layers[i], totalTiles);
             
             cachedTileMap.Resize(realWidth, realHeight);
-
+            
+            // Clear flags
+            var flagLayer = layers[(int) Layer.Flags];
+            for (int i = 0; i < flagLayer.Length; i++)
+            {
+                flagLayer[i] = -1;
+            }
+                
             if (clear)
                 Clear();
 
