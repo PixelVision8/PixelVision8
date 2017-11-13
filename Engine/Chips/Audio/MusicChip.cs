@@ -15,6 +15,7 @@
 
 using System;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -149,6 +150,7 @@ namespace PixelVisionSDK.Chips
 
             //TODO need to make sure this still actually works after removing Time.time reference
             if (songCurrentlyPlaying)
+            
                 if (time >= nextBeatTimestamp)
                 {
                     nextBeatTimestamp = time + (sequencerBeatNumber % 2 == 1 ? noteTickSOdd : noteTickSEven);
