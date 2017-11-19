@@ -53,13 +53,21 @@ namespace PixelVisionSDK.Chips
         protected ColorData[] colorCache;
         protected int[] invalidColors = new int[0];
         protected Vector pageSize = new Vector(8, 8);
-
+        protected int _maxColors = -1;
+        protected int _bgColor = 0;
+        
         /// <summary>
         ///     The background color reference to use when rendering transparent in
         ///     the ScreenBufferTexture.
         /// </summary>
-        public int backgroundColor { get; set; }
-
+        public int backgroundColor {
+            get { return _bgColor; }
+            set
+            {
+                // We make sure that the bg color is never set to a value out of the range of the color chip
+                _bgColor = value.Clamp(0, total);
+            } 
+        }
 
         /// <summary>
         ///     Defines the total number of colors per virtual page.
@@ -117,7 +125,14 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         /// <value>Int</value>
         // TODO need to change this to totalSet colors or something more descriptive
-        public int supportedColors { get; protected set; }
+        public int supportedColors { get; set; }
+        
+        //TODO need to figure out a better way to set this up?
+        public int maxColors
+        {
+            get { return _maxColors == -1 ? total : _maxColors; }
+            set { _maxColors = maxColors; }
+        }
 
         public string[] hexColors
         {

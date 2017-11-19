@@ -139,7 +139,11 @@ namespace PixelVisionSDK.Chips
         public int colorsPerSprite
         {
             get { return _colorsPerSprite; }
-            set { _colorsPerSprite = value.Clamp(2, 8); }
+            set
+            {
+                // There can only be a minimum of 2 colors and a maximum of 16 colors
+                _colorsPerSprite = value.Clamp(2, 16);
+            }
         }
 
         /// <summary>
