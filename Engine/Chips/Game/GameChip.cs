@@ -901,9 +901,7 @@ namespace PixelVisionSDK.Chips
             var charHeight = spriteSize.y;
             var nextX = x;
             var nextY = y;
-            int tmpW, tmpH;
-
-
+            
             for (var i = 0; i < lines; i++)
             {
                 var line = result[i];

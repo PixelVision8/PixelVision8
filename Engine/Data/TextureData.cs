@@ -34,9 +34,6 @@ namespace PixelVisionSDK
         protected Rect oRect = new Rect();
         protected int[] pixels = new int[0];
         protected Rect sRect = new Rect();
-        protected int tmpColumn;
-        protected int tmpMaxColumns;
-        protected int tmpRow;
         protected int tmpTotal;
         protected int tmpX;
         protected int tmpY;

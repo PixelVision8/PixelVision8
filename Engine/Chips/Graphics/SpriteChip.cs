@@ -349,26 +349,6 @@ namespace PixelVisionSDK.Chips
             throw new NotImplementedException();
         }
 
-        //        }
-        //            _texture.SetPixels(pixelData);
-        //
-        //                pixelData[i] += offset;
-        //            for (var i = 0; i < total; i++)
-        //
-        //            var total = pixelData.Length;
-        //            var pixelData = _texture.GetPixels();
-        //        {
-        //        public void ShiftColorIndex(int offset)
-        /// </param>
-        ///     An int to use as the offset value.
-        /// <param name="offset">
-        /// </summary>
-        ///     range of colors.
-        ///     <paramref name="offset" /> all of the sprites in the chip to a new
-        ///     the sprites in memory. It is used when trying to quickly
-        ///     This changes the color index by the offset. This will affect all of
-
-        /// <summary>
 
     }
 
