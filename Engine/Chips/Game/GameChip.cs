@@ -64,12 +64,12 @@ namespace PixelVisionSDK.Chips
         //private int[] tmpPixelData = new int[0];
         private int[] tmpSpriteData = new int[0];
 
-        protected Vector spriteSizeCached = new Vector();
-        protected Vector displaySizeCached = new Vector();
-        protected Vector overscanBorderCached = new Vector();
-        protected Rect visibleBoundsCached = new Rect();
-        protected int colorsPerSpriteCached = 0;
-        protected Vector tilemapSizeCached = new Vector();
+//        protected Vector spriteSizeCached = new Vector();
+//        protected Vector displaySizeCached = new Vector();
+//        protected Vector overscanBorderCached = new Vector();
+//        protected Rect visibleBoundsCached = new Rect();
+//        protected int colorsPerSpriteCached = 0;
+//        protected Vector tilemapSizeCached = new Vector();
 
 //        [Flags]
 //        internal enum CachedData
@@ -209,32 +209,32 @@ namespace PixelVisionSDK.Chips
             // Cache commonly used chip properties that don't change during runtime
             
             // Cached system properties
-            spriteSizeCached.x = spriteChip.width;
-            spriteSizeCached.y = spriteChip.height;
+//            spriteSizeCached.x = spriteChip.width;
+//            spriteSizeCached.y = spriteChip.height;
             
             // Reload display size
-            displaySizeCached.x = displayChip.width;
-            displaySizeCached.y = displayChip.height;
+//            displaySizeCached.x = displayChip.width;
+//            displaySizeCached.y = displayChip.height;
             
             // Reload overscan size
-            overscanBorderCached.x = displayChip.overscanX;
-            overscanBorderCached.y = displayChip.overscanY;
+//            overscanBorderCached.x = displayChip.overscanX;
+//            overscanBorderCached.y = displayChip.overscanY;
             
             // Reload visible bounds
-            visibleBoundsCached.x = displayChip.visibleBounds.x;
-            visibleBoundsCached.y = displayChip.visibleBounds.y;
-            visibleBoundsCached.width = displayChip.visibleBounds.width;
-            visibleBoundsCached.height = displayChip.visibleBounds.height;
+//            visibleBoundsCached.x = displayChip.visibleBounds.x;
+//            visibleBoundsCached.y = displayChip.visibleBounds.y;
+//            visibleBoundsCached.width = displayChip.visibleBounds.width;
+//            visibleBoundsCached.height = displayChip.visibleBounds.height;
 
             // Reload colors per sprite
-            colorsPerSpriteCached = spriteChip.colorsPerSprite;
+//            colorsPerSpriteCached = spriteChip.colorsPerSprite;
             
             // Tilemap size
-            tilemapSizeCached.x = tilemapChip.columns;
-            tilemapSizeCached.x = tilemapChip.rows;
+//            tilemapSizeCached.x = tilemapChip.columns;
+//            tilemapSizeCached.x = tilemapChip.rows;
             
             // Resize the tmpSpriteData so it mateches the sprite's width and height
-            Array.Resize(ref tmpSpriteData, spriteSizeCached.x * spriteSizeCached.x);
+            Array.Resize(ref tmpSpriteData, spriteChip.width * spriteChip.height);
 
             // Mark the game as ready so the engine knows when it should start running
             ready = true;
@@ -428,7 +428,7 @@ namespace PixelVisionSDK.Chips
         public int ColorsPerSprite()
         {
             // This can not be changed at run time so it will never need to be invalidated
-            return colorsPerSpriteCached;//spriteChip.colorsPerSprite;
+            return spriteChip.colorsPerSprite; //colorsPerSpriteCached;//;
         }
 
         /// <summary>
@@ -539,9 +539,9 @@ namespace PixelVisionSDK.Chips
 //
 //                Invalidate(dataFlags);
 //            }
-                
 
-            return displaySizeCached;
+
+            return new Vector(displayChip.width, displayChip.height);//displaySizeCached);
         }
 
         /// <summary>
@@ -609,7 +609,7 @@ namespace PixelVisionSDK.Chips
 //
 //            }
 
-            return overscanBorderCached;
+            return new Vector(displayChip.overscanX, displayChip.overscanY);//overscanBorderCached);
         }
 
         /// <summary>
@@ -795,7 +795,7 @@ namespace PixelVisionSDK.Chips
 //
 //            //TODO this should be cached somewhere
 //            var bounds = new Rect(-displayChip.overscanXPixels, -displayChip.overscanYPixels, displaySize.x - displayChip.overscanXPixels, displaySize.y - displayChip.overscanYPixels);
-            var bounds = visibleBoundsCached;//displayChip.visibleBounds;
+            var bounds = displayChip.visibleBounds; // visibleBoundsCached
 
             var total = ids.Length;
 
@@ -822,8 +822,8 @@ namespace PixelVisionSDK.Chips
                 // Test to see if the sprite is within range
                 if (id > -1)
                 {
-                    x = (MathUtil.FloorToInt(i % width) * spriteSizeCached.x) + startX;
-                    y = (MathUtil.FloorToInt(i / width) * spriteSizeCached.y) + startY;
+                    x = (MathUtil.FloorToInt(i % width) * spriteChip.width) + startX;
+                    y = (MathUtil.FloorToInt(i / width) * spriteChip.height) + startY;
 //
 //                    var render = true;
                     

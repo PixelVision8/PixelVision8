@@ -466,7 +466,7 @@ namespace PixelVisionSDK.Chips
         {
             _width = width;
             _height = height;
-
+            
             totalPixels = _width * _height;
 
             Array.Resize(ref displayPixels, totalPixels);
