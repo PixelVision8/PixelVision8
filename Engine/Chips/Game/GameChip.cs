@@ -528,9 +528,10 @@ namespace PixelVisionSDK.Chips
                 size.y = displayChip.height;
             }
 
-//            if (resize)
-//            {
-//                displayChip.ResetResolution(size.x, size.y);
+            if (resize)
+            {
+                displayChip.ResetResolution(size.x, size.y);
+            }
 //
 //                // Since we are changing the resolution, we need to invalidate the display size, overscan and visible bounds
 //                var dataFlags = CachedData.DisplaySize;
