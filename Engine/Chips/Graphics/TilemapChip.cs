@@ -35,7 +35,7 @@ namespace PixelVisionSDK.Chips
         protected int _scrollY;
         protected SpriteChip _spriteChip;
         protected int _totalLayers = -1;
-        protected TextureData cachedTileMap = new TextureData(0, 0);
+        public TextureData cachedTileMap = new TextureData(0, 0);
         protected int[][] layers;
         protected int offscreenPadding = 0;
         protected int[] tiles = new int[0];
