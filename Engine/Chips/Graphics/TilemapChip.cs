@@ -18,7 +18,9 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
-
+    
+    
+    
     /// <summary>
     ///     The tile map chip represents a grid of sprites used to populate the background
     ///     layer of the game. These sprites are fixed and laid out in column and row
@@ -28,7 +30,16 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class TilemapChip : AbstractChip
     {
+        public enum Layer
+        {
 
+            Sprites,
+            Palettes,
+            Flags,
+            Invalid
+
+        }
+        
         protected int _columns;
         protected int _rows;
         protected int _scrollX;
@@ -36,7 +47,7 @@ namespace PixelVisionSDK.Chips
         protected SpriteChip _spriteChip;
         protected int _totalLayers = -1;
         public TextureData cachedTileMap = new TextureData(0, 0);
-        protected int[][] layers;
+        public int[][] layers;
         protected int offscreenPadding = 0;
         protected int[] tiles = new int[0];
         protected int tmpIndex;
@@ -620,15 +631,7 @@ namespace PixelVisionSDK.Chips
             engine.tilemapChip = null;
         }
 
-        protected enum Layer
-        {
-
-            Sprites,
-            Palettes,
-            Flags,
-            Invalid
-
-        }
+        
 
     }
 
