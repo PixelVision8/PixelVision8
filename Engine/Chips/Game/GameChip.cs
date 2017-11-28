@@ -846,7 +846,62 @@ namespace PixelVisionSDK.Chips
             }
         }
 
-        /// <summary>
+        public void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0)
+        {
+
+            if (drawMode == DrawMode.Tile)
+            {
+                Tile(c, r, id, colorOffset);
+            }
+            else if (drawMode == DrawMode.TilemapCache || drawMode == DrawMode.UI)
+            {
+                c *= spriteChip.width;
+                r *= spriteChip.height;
+                
+                //TODO flipping H, V and colorOffset should all be passed into reading a sprite
+                spriteChip.ReadSpriteAt(id, tmpSpriteData);
+                
+                // Mode 0 is sprite above bg and mode 1 is sprite below bg.
+                //var mode = aboveBG ? DrawMode.Sprite : DrawMode.SpriteBelow;
+                DrawPixels(tmpSpriteData, c, r, spriteChip.width, spriteChip.height, drawMode, false, false, colorOffset);
+            }
+            
+        }
+        
+        public void DrawTiles(int[] ids, int c, int r, int width, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0)
+        {
+
+            if (drawMode == DrawMode.Tile)
+            {
+                UpdateTiles(c, r, width, ids, colorOffset);
+            }
+            else if (drawMode == DrawMode.TilemapCache || drawMode == DrawMode.UI)
+            {
+
+                var total = ids.Length;
+
+                // Store the sprite id from the ids array
+                int id;
+
+                for (var i = 0; i < total; i++)
+                {
+                    // Set the sprite id
+                    id = ids[i];
+
+                    // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
+                    // Test to see if the sprite is within range
+                    if (id > -1)
+                    {
+                        var c1 = (MathUtil.FloorToInt(i % width));
+                        var r2 = (MathUtil.FloorToInt(i / width));
+
+                        DrawTile(id, c1 + c, r2 + r, drawMode, colorOffset);
+                    }
+                }
+            }
+        }
+
+            /// <summary>
         ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render
         ///     characters as individual sprites (DrawMode.Sprite), tiles (DrawMode.Tile) or drawn directly into the tilemap
         ///     cache (DrawMode.TilemapCache). When drawing text as sprites, you have more flexibility over position, but each
