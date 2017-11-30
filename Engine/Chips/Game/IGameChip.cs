@@ -291,11 +291,7 @@ namespace PixelVisionSDK.Chips
         ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips
         ///     the pixel data vertically.
         /// </param>
-        /// <param name="aboveBG">
-        ///     An optional bool that defines if the sprite is above or below the tilemap. Sprites are set to render above the
-        ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile
-        ///     above the background color.
-        /// </param>
+        /// <param name="drawMode"></param>
         /// <param name="colorOffset">
         ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
         ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
@@ -305,7 +301,13 @@ namespace PixelVisionSDK.Chips
         ///     overscan border control what happens to sprites at the edge of the display. If this value is false, the sprites
         ///     wrap around the screen when they reach the edges of the screen.
         /// </param>
-        void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true);
+        /// <param name="useScrollPos"></param>
+        /// <param name="aboveBG">
+        ///     An optional bool that defines if the sprite is above or below the tilemap. Sprites are set to render above the
+        ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile
+        ///     above the background color.
+        /// </param>
+        void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true);
 
         /// <summary>
         ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render
