@@ -385,6 +385,12 @@ namespace PixelVisionSDK.Chips
             clearFlag = true;
         }
 
+        public void ClearUILayer()
+        {
+            // TODO this is immediate and needs to be part of the draw call stack
+            uiLayer.Clear();
+        }
+
         /// <summary>
         ///     Resets the display chip and calls clear for the next render pass.
         /// </summary>
