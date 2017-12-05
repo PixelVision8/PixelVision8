@@ -1409,20 +1409,22 @@ namespace PixelVisionSDK.Chips
         ///     song and plays them back. You can also define if the tracks should loop when they
         ///     are done playing.
         /// </summary>
-        /// <param name="trackIDs">
+        /// <param name="loopIDs">
         ///     An array of loop IDs to playback as a single song.
         /// </param>
         /// <param name="loop">
         ///     A bool that determines if the song should loop back to the first ID when it is
         ///     done playing.
         /// </param>
-        public void PlaySong(int[] trackIDs, bool loop = true)
+        public void PlaySong(int[] loopIDs, bool loop = true)
         {
-            var track = trackIDs[0];
-
-            musicChip.LoadSong(track);
-
-            musicChip.PlaySong(loop);
+//            var track = loopIDs[0];
+//
+//            musicChip.LoadSong(track);
+//
+//            musicChip.PlaySong(loop);
+//            
+            musicChip.PlaySongs(loopIDs, loop);
         }
 
         /// <summary>

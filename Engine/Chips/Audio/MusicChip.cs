@@ -15,6 +15,7 @@
 
 using System;
 using PixelVisionSDK.Utils;
+//using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -31,7 +32,7 @@ namespace PixelVisionSDK.Chips
 
         protected int _totalTracks;
 
-        protected int currentSong = -1;
+        protected int currentLoop = -1;
         public bool loopSong;
         public int maxNoteNum = 127; // how many notes in these arrays below
         public int maxTracks = 8; // max number of instruments playing notes
@@ -50,14 +51,14 @@ namespace PixelVisionSDK.Chips
 
         protected float swingRhythmFactor = 0.7f;
 
-        //1.0f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
-
         protected float time;
         public int tracksPerLoop = 8;
+        private int[] loopPlayList;
+        private int currentLoopID;
 
-        public int currentSongID
+        public int CurrentLoopId
         {
-            get { return currentSong; }
+            get { return currentLoop; }
         }
 
         /// <summary>
@@ -91,7 +92,6 @@ namespace PixelVisionSDK.Chips
             {
                 return maxNoteNum;
 
-                ;
             }
             set
             {
@@ -129,7 +129,7 @@ namespace PixelVisionSDK.Chips
                 if (songDataCollection == null)
                     return null;
 
-                return songDataCollection[currentSong];
+                return songDataCollection[currentLoop];
             }
         }
 
@@ -206,28 +206,24 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         /// <param name="id"></param>
         public void LoadSong(int id)
-        {
-            currentSong = id;
+        {   
+//            Debug.Log("Load Song " + id);
+            // Rewind the playhead
+            sequencerBeatNumber = 0;
+            
+            // Update the current loop
+            currentLoop = id;
+            
+            // Double check the loop's length
             UpdateNoteTickLengths();
+            
+            // Updates the tracks per loop
             tracksPerLoop = activeSongData.tracks.Length;
+            
+            // Update the music notes?
             UpdateMusicNotes();
-            LoadInstruments(activeSongData);
-        }
-
-        /// <summary>
-        ///     Plays back a song and allows you to pass in a value to loop
-        ///     the song or have it stop when it reaches the end.
-        /// </summary>
-        /// <param name="loop"></param>
-        public void PlaySong(bool loop = false)
-        {
-            loopSong = loop;
-            RewindSong();
-
-            if (songCurrentlyPlaying)
-                songCurrentlyPlaying = false;
-            else
-                songCurrentlyPlaying = true;
+            
+            
         }
 
         /// <summary>
@@ -237,15 +233,32 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         /// <param name="ids"></param>
         /// <param name="loop"></param>
-        public void PlaySongs(int[] ids, bool loop = false)
+        public void PlaySongs(int[] ids, bool loop = false, int startAt = 0)
         {
+
+            loopPlayList = ids;
+            
+            
+            loopSong = loop;
+            RewindSong();
+
+            //            loopPlayList = ids;
+            currentLoopID = startAt;
+//            songLoopCount = ids.Length;
+
+            LoadSong(loopPlayList[0]);
+            
+            if (songCurrentlyPlaying)
+                songCurrentlyPlaying = false;
+            else
+                songCurrentlyPlaying = true;
+            
             //TODO not implemented yet
         }
 
         public void ResetSong()
         {
             activeSongData.Reset();
-            LoadInstruments(activeSongData);
             sequencerBeatNumber = 0;
             UpdateMusicNotes();
         }
@@ -255,21 +268,18 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         protected void OnBeat()
         {
-            // just started a song?
-            if (sequencerBeatNumber == 0 && sequencerLoopNum == 0)
-            {
-                // starting a song
 
-                LoadInstruments(activeSongData);
-            }
-            else if (sequencerBeatNumber >= notesPerTrack) // at end of a loop?
+            if (sequencerBeatNumber >= notesPerTrack) // at end of a loop?
             {
                 // Finished Loop;
-
+                
+                // Increase the next loop value
                 sequencerLoopNum++;
-                if (sequencerLoopNum >= songLoopCount)
+    
+                if (sequencerLoopNum >= loopPlayList.Length)
+                {
                     if (loopSong)
-                    {
+                    {    
                         sequencerLoopNum = 0;
                     }
                     else
@@ -277,11 +287,11 @@ namespace PixelVisionSDK.Chips
                         songCurrentlyPlaying = false;
                         return;
                     }
-
-                sequencerBeatNumber = 0;
-
-                // the next loop might have different instruments
-                LoadInstruments(activeSongData);
+                }
+                
+                // Load the next song in the playlist
+                LoadSong(loopPlayList[sequencerLoopNum]);
+               
             }
 
             var total = activeSongData.tracks.Length;
@@ -289,37 +299,26 @@ namespace PixelVisionSDK.Chips
             // loop through each oldInstruments track
             for (var trackNum = 0; trackNum < total; trackNum++)
             {
+                var sfxId = activeSongData.tracks[trackNum].sfxID;
                 // what note is it?
                 var gotANote = activeSongData.tracks[trackNum].notes[sequencerBeatNumber % notesPerTrack];
 
-                var instrument = soundChip.ReadChannel(trackNum);
+//                var instrument = soundChip.ReadChannel(trackNum);
 
-                if (instrument != null)
-                    if (gotANote > 0 && gotANote < maxNoteNum && instrument != null)
-                    {
-                        var frequency = noteStartFrequency[gotANote];
+//                if (instrument != null)
+                if (gotANote > 0 && gotANote < maxNoteNum)
+                {
+                    var frequency = noteStartFrequency[gotANote];
 
-                        //$CTK midi num offset fix -1]; // -1 to account for 0 based array
-                        instrument.Play(frequency);
-                    }
+                    //$CTK midi num offset fix -1]; // -1 to account for 0 based array
+                    soundChip.PlaySound(sfxId, trackNum, frequency);
+                    //;//.Play(frequency);
+                    
+                    
+                }
             }
 
             sequencerBeatNumber++; // next beat will use array index +1
-        }
-
-        public void LoadInstruments(SongData song)
-        {
-            var trackCount = song.tracks.Length;
-
-            var channels = soundChip.totalChannels;
-
-            for (var trackNum = 0; trackNum < trackCount; trackNum++)
-                if (trackNum < channels)
-                {
-                    var sfxID = song.tracks[trackNum].sfxID;
-
-                    soundChip.LoadSound(sfxID, trackNum);
-                }
         }
 
         public void UpdateNoteTickLengths()

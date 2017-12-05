@@ -26,7 +26,6 @@ namespace PixelVisionSDK.Chips
     public class SoundChip : AbstractChip
     {
 
-        protected int _totalSounds;
         protected ISoundData[] channels = new ISoundData[0];
 
         protected ISoundData[] sounds;
@@ -120,42 +119,24 @@ namespace PixelVisionSDK.Chips
         /// <param name="channel">
         ///     The channel the sound should play back on.
         /// </param>
-        public void PlaySound(int index, int channel = 0, float frequency = 0.1266f)
+        public void PlaySound(int index, int channelID = 0, float frequency = 0.1266f)
         {
             if (index > sounds.Length)
                 return;
 
-            LoadSound(index, channel, frequency, true);
-        }
-
-        /// <summary>
-        ///     Loads a sound into a channel so it can be played.
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="channel"></param>
-        /// <param name="autoPlay"></param>
-        public void LoadSound(int index, int channel = 0, float frequency = 0.1266f, bool autoPlay = false)
-        {
-            LoadSound(ReadSound(index), channel, frequency, autoPlay);
-        }
-
-        public void LoadSound(ISoundData data, int channel = 0, float frequency = 0.1266f, bool autoPlay = false)
-        {
-            channel = channel.Clamp(0, totalChannels - 1);
-
-            if (channels[channel] != null)
+            channelID = channelID.Clamp(0, totalChannels - 1);
+            
+            var channel = channels[channelID];
+            
+            if (channel != null)
             {
-                channels[channel].Stop();
-                channels[channel] = null;
+                channel.Stop();
             }
+            
+            channel = sounds[index];
 
-            if (channels[channel] == null)
-            {
-                channels[channel] = data;
-
-                if (autoPlay)
-                    channels[channel].Play(frequency);
-            }
+            channel.Play(frequency);
+            
         }
 
         /// <summary>
