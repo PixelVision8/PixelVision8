@@ -16,6 +16,7 @@
 using System;
 using System.Linq;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -277,35 +278,49 @@ namespace PixelVisionSDK.Chips
         /// </returns>
         public void ReadSpriteAt(int index, int[] pixelData)
         {
-            var cachedSprite = pixelDataCache[index];
-
-            var totalSpritePixels = width * height;
-
-            if (cachedSprite == null)
+//            if (index > pixelDataCache.GetLength(0))
+            if (index == -1)
             {
-                var tmpPixelData = new int[totalSpritePixels];
-
-                SpriteChipUtil.CalculateSpritePos(index, _texture.width, _texture.height, width, height, out tmpX, out tmpY);
-
-                _texture.GetPixels(tmpX, tmpY, width, height, ref tmpPixelData);
-
-                pixelDataCache[index] = tmpPixelData;
-                cachedSprite = pixelDataCache[index];
+                return;
             }
+            
+//            try
+//            {
+                var cachedSprite = pixelDataCache[index];
+
+                var totalSpritePixels = width * height;
+
+                if (cachedSprite == null)
+                {
+                    var tmpPixelData = new int[totalSpritePixels];
+
+                    SpriteChipUtil.CalculateSpritePos(index, _texture.width, _texture.height, width, height, out tmpX, out tmpY);
+
+                    _texture.GetPixels(tmpX, tmpY, width, height, ref tmpPixelData);
+
+                    pixelDataCache[index] = tmpPixelData;
+                    cachedSprite = pixelDataCache[index];
+                }
             
 //            if(pixelData == null)
 //                Debug.Log("pixelData is null");
             
-            // Make sure that the pixelData array is the correct size.
-            if (pixelData.Length != cachedSprite.Length)
-            {
+                // Make sure that the pixelData array is the correct size.
+                if (pixelData.Length != cachedSprite.Length)
+                {
 //                Debug.Log("pixelData " + pixelData.Length + " cachedSprite " +cachedSprite.Length);
-                Array.Resize(ref pixelData, cachedSprite.Length);
+                    Array.Resize(ref pixelData, cachedSprite.Length);
 
-            }
+                }
 
-            // Copy the contents of the cached pixel data into the new array.
-            Array.Copy(cachedSprite, pixelData, totalSpritePixels);
+                // Copy the contents of the cached pixel data into the new array.
+                Array.Copy(cachedSprite, pixelData, totalSpritePixels);
+//            }
+//            catch (Exception e)
+//            {
+//                Debug.Log("Out of range" + pixelDataCache.GetLength(0) + " " + index);
+//            }
+            
         }
 
         /// <summary>
