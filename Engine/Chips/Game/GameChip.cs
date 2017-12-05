@@ -853,6 +853,20 @@ namespace PixelVisionSDK.Chips
             }
         }
 
+        /// <summary>
+        ///     The DrawTile method makes it easier to update the visuals of a tile on any of the map layers. By default, 
+        ///     this will modify a single tile's sprite id and color offset. You can also define the DrawMode to target a 
+        ///     specific layer. By default, DrawMode.Tile is used, but this method also accepts DrawMode.TilemapCache and 
+        ///     DrawMode.UI to target the UI layer above the tilemap. It's important to note that this method can only draw 
+        ///     a tile at a specific column and row. If you need pixel perfect drawing on the TilemapCache or UI layer, use 
+        ///     the DrawPixels method. Finally, drawing a tile into the tilemap itself will force that tile to be copied to 
+        ///     the Tilemap Cache on the next render pass just like calling the Tile() method.
+        /// </summary>
+        /// <param name="id">Sprite ID to use for the tile.</param>
+        /// <param name="c">The column in the layer.</param>
+        /// <param name="r">The row in the layer.</param>
+        /// <param name="drawMode">This accepts DrawMode.Tile, DrawMode.TilemapCache and DrawMode.UI.</param>
+        /// <param name="colorOffset">This is the color offset to use for the tile.</param>
         public void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0)
         {
 
@@ -875,6 +889,19 @@ namespace PixelVisionSDK.Chips
             
         }
         
+        /// <summary>
+        ///     The DrawTiles method makes it easier to update the visuals of multiple tiles at once by leveraging the 
+        ///     DrawTile method. Simply pass in an Array of sprite IDs, the column, row and width (in tiles) to 
+        ///     make bulk changes to a tilemap layer. You can also define the DrawMode to target a specific layer. By default, 
+        ///     DrawMode.Tile is used, but this method also accepts DrawMode.TilemapCache and DrawMode.UI to target the UI 
+        ///     layer above the tilemap.
+        /// </summary>
+        /// <param name="ids">An Array of Sprite IDs.</param>
+        /// <param name="c">The column in the layer.</param>
+        /// <param name="r">The row in the layer.</param>
+        /// <param name="width">The number of horizontal tiles in the group.</param>
+        /// <param name="drawMode">This accepts DrawMode.Tile, DrawMode.TilemapCache and DrawMode.UI.</param>
+        /// <param name="colorOffset">This is the color offset to use for the tile.</param>
         public void DrawTiles(int[] ids, int c, int r, int width, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0)
         {
 
@@ -908,7 +935,7 @@ namespace PixelVisionSDK.Chips
             }
         }
 
-            /// <summary>
+        /// <summary>
         ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render
         ///     characters as individual sprites (DrawMode.Sprite), tiles (DrawMode.Tile) or drawn directly into the tilemap
         ///     cache (DrawMode.TilemapCache). When drawing text as sprites, you have more flexibility over position, but each
@@ -1369,6 +1396,15 @@ namespace PixelVisionSDK.Chips
         }
         
         /// <summary>
+        ///     Use StopSound() to stop any sound playing on a specific channel.
+        /// </summary>
+        /// <param name="channel">The channel ID to stop a sound on.</param>
+        public void StopSound(int channel = 0)
+        {
+            soundChip.StopSound(channel);
+        }
+        
+        /// <summary>
         ///     This helper method allows you to automatically load a set of loops as a complete
         ///     song and plays them back. You can also define if the tracks should loop when they
         ///     are done playing.
@@ -1530,6 +1566,17 @@ namespace PixelVisionSDK.Chips
         public int TotalSprites(bool ignoreEmpty = true)
         {
             return ignoreEmpty ? spriteChip.totalSprites : spriteChip.spritesInRam;
+        }
+        
+        /// <summary>
+        ///     This method returns the maximum number of sprites the Display Chip can render in a single frame. Use this 
+        ///     to better understand the limitations of the hardware your game is running on. This is a read only property
+        ///     at runtime.
+        /// </summary>
+        /// <returns>Returns an int representing the total number of sprites on the screen at once.</returns>
+        public int MaxSpriteCount()
+        {
+            return displayChip.maxSpriteCount;
         }
 
         #endregion
@@ -1705,15 +1752,6 @@ namespace PixelVisionSDK.Chips
         
         #endregion
 
-        public void StopSound(int id, int channel = 0)
-        {
-            soundChip.StopSound(id, channel);
-        }
-
-        public int MaxSpriteCount()
-        {
-            return displayChip.maxSpriteCount;
-        }
     }
 
 }

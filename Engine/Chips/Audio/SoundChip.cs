@@ -197,7 +197,7 @@ namespace PixelVisionSDK.Chips
             ReadSound(id).name = name;
         }
 
-        public void StopSound(int id, int channel)
+        public void StopSound(int channel)
         {
             if (channels[channel] != null)
             {

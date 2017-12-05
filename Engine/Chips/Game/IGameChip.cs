@@ -633,5 +633,10 @@ namespace PixelVisionSDK.Chips
 
 
         string Sound(int id, string data = null);
+        void StopSound(int channel = 0);
+
+        void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0);
+        void DrawTiles(int[] ids, int c, int r, int width, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0);
+        int MaxSpriteCount();
     }
 }
