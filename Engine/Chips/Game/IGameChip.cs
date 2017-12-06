@@ -637,6 +637,6 @@ namespace PixelVisionSDK.Chips
 
         void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0);
         void DrawTiles(int[] ids, int c, int r, int width, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0);
-        int MaxSpriteCount();
+        int MaxSpriteCount(int? total);
     }
 }

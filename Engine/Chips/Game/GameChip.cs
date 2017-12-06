@@ -1569,15 +1569,21 @@ namespace PixelVisionSDK.Chips
         {
             return ignoreEmpty ? spriteChip.totalSprites : spriteChip.spritesInRam;
         }
-        
+
         /// <summary>
         ///     This method returns the maximum number of sprites the Display Chip can render in a single frame. Use this 
         ///     to better understand the limitations of the hardware your game is running on. This is a read only property
         ///     at runtime.
         /// </summary>
+        /// <param name="total"></param>
         /// <returns>Returns an int representing the total number of sprites on the screen at once.</returns>
-        public int MaxSpriteCount()
+        public int MaxSpriteCount(int? total = null)
         {
+            if (total.HasValue)
+            {
+                displayChip.maxSpriteCount = total.Value;
+            }
+            
             return displayChip.maxSpriteCount;
         }
 
