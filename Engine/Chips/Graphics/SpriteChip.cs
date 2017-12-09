@@ -16,7 +16,6 @@
 using System;
 using System.Linq;
 using PixelVisionSDK.Utils;
-using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -140,7 +139,11 @@ namespace PixelVisionSDK.Chips
         public int colorsPerSprite
         {
             get { return _colorsPerSprite; }
-            set { _colorsPerSprite = value.Clamp(2, 8); }
+            set
+            {
+                // There can only be a minimum of 2 colors and a maximum of 16 colors
+                _colorsPerSprite = value.Clamp(2, 16);
+            }
         }
 
         /// <summary>
@@ -274,35 +277,49 @@ namespace PixelVisionSDK.Chips
         /// </returns>
         public void ReadSpriteAt(int index, int[] pixelData)
         {
-            var cachedSprite = pixelDataCache[index];
-
-            var totalSpritePixels = width * height;
-
-            if (cachedSprite == null)
+//            if (index > pixelDataCache.GetLength(0))
+            if (index == -1)
             {
-                var tmpPixelData = new int[totalSpritePixels];
-
-                SpriteChipUtil.CalculateSpritePos(index, _texture.width, _texture.height, width, height, out tmpX, out tmpY);
-
-                _texture.GetPixels(tmpX, tmpY, width, height, ref tmpPixelData);
-
-                pixelDataCache[index] = tmpPixelData;
-                cachedSprite = pixelDataCache[index];
+                return;
             }
             
-            if(pixelData == null)
-                Debug.Log("pixelData is null");
+//            try
+//            {
+                var cachedSprite = pixelDataCache[index];
+
+                var totalSpritePixels = width * height;
+
+                if (cachedSprite == null)
+                {
+                    var tmpPixelData = new int[totalSpritePixels];
+
+                    SpriteChipUtil.CalculateSpritePos(index, _texture.width, _texture.height, width, height, out tmpX, out tmpY);
+
+                    _texture.GetPixels(tmpX, tmpY, width, height, ref tmpPixelData);
+
+                    pixelDataCache[index] = tmpPixelData;
+                    cachedSprite = pixelDataCache[index];
+                }
             
-            // Make sure that the pixelData array is the correct size.
-            if (pixelData.Length != cachedSprite.Length)
-            {
-                Debug.Log("pixelData " + pixelData.Length + " cachedSprite " +cachedSprite.Length);
-                Array.Resize(ref pixelData, cachedSprite.Length);
+//            if(pixelData == null)
+//                Debug.Log("pixelData is null");
+            
+                // Make sure that the pixelData array is the correct size.
+                if (pixelData.Length != cachedSprite.Length)
+                {
+//                Debug.Log("pixelData " + pixelData.Length + " cachedSprite " +cachedSprite.Length);
+                    Array.Resize(ref pixelData, cachedSprite.Length);
 
-            }
+                }
 
-            // Copy the contents of the cached pixel data into the new array.
-            Array.Copy(cachedSprite, pixelData, totalSpritePixels);
+                // Copy the contents of the cached pixel data into the new array.
+                Array.Copy(cachedSprite, pixelData, totalSpritePixels);
+//            }
+//            catch (Exception e)
+//            {
+//                Debug.Log("Out of range" + pixelDataCache.GetLength(0) + " " + index);
+//            }
+            
         }
 
         /// <summary>
@@ -346,26 +363,6 @@ namespace PixelVisionSDK.Chips
             throw new NotImplementedException();
         }
 
-        //        }
-        //            _texture.SetPixels(pixelData);
-        //
-        //                pixelData[i] += offset;
-        //            for (var i = 0; i < total; i++)
-        //
-        //            var total = pixelData.Length;
-        //            var pixelData = _texture.GetPixels();
-        //        {
-        //        public void ShiftColorIndex(int offset)
-        /// </param>
-        ///     An int to use as the offset value.
-        /// <param name="offset">
-        /// </summary>
-        ///     range of colors.
-        ///     <paramref name="offset" /> all of the sprites in the chip to a new
-        ///     the sprites in memory. It is used when trying to quickly
-        ///     This changes the color index by the offset. This will affect all of
-
-        /// <summary>
 
     }
 
