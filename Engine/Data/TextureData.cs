@@ -336,36 +336,36 @@ namespace PixelVisionSDK
         /// <param name="transparent">
         ///     The mask color id. By default this is set to -1.
         /// </param>
-        public void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] srcPixels, bool masked = true,
-            int transparent = -1)
-        {
-            // Exit out of a merge if the data doesn't match up
-            if (srcPixels.Length != blockWidth * blockHeight)
-                return;
-
-            var total = blockWidth * blockHeight;
-
-            for (var i = 0; i < total; i++)
-            {
-                //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
-                tmpX = i % blockWidth;
-                tmpY = i / blockWidth;
-
-
-                tmpX += x;
-                tmpY += y;
-
-                if (masked)
-                {
-                    if (srcPixels[i] != transparent)
-                        SetPixel(tmpX, tmpY, srcPixels[i]);
-                }
-                else
-                {
-                    SetPixel(tmpX, tmpY, srcPixels[i]);
-                }
-            }
-        }
+//        public void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] srcPixels, bool masked = true,
+//            int transparent = -1)
+//        {
+//            // Exit out of a merge if the data doesn't match up
+//            if (srcPixels.Length != blockWidth * blockHeight)
+//                return;
+//
+//            var total = blockWidth * blockHeight;
+//
+//            for (var i = 0; i < total; i++)
+//            {
+//                //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
+//                tmpX = i % blockWidth;
+//                tmpY = i / blockWidth;
+//
+//
+//                tmpX += x;
+//                tmpY += y;
+//
+//                if (masked)
+//                {
+//                    if (srcPixels[i] != transparent)
+//                        SetPixel(tmpX, tmpY, srcPixels[i]);
+//                }
+//                else
+//                {
+//                    SetPixel(tmpX, tmpY, srcPixels[i]);
+//                }
+//            }
+//        }
 
     }
 

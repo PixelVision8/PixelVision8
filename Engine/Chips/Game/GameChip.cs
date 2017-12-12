@@ -481,14 +481,14 @@ namespace PixelVisionSDK.Chips
         ///     Values less than 0 or greater than the height are adjusted to stay within the boundaries of the screen's
         ///     visible pixels.
         /// </param>
-        public void Clear(int x = 0, int y = 0, int width = 0, int height = 0)
+        public void Clear(int x = 0, int y = 0, int? width = null, int? height = null)
         {
             displayChip.ClearArea(x, y, width, height);
         }
 
-        public void ClearUILayer()
+        public void ClearUILayer(int x = 0, int y = 0, int? width = null, int? height = null)
         {
-            displayChip.ClearUILayer();
+            displayChip.ClearUILayer(x, y, width, height);
         }
 
         /// <summary>
@@ -972,15 +972,11 @@ namespace PixelVisionSDK.Chips
         ///     This optional argument sets the number of pixels between each character when rendering text. This value is ignored
         ///     when rendering text as tiles. This value can be positive or negative depending on your needs. By default, it is 0.
         /// </param>
-        /// <param name="width">
-        ///     This optional argument allows you to wrap text. This accepts an int representing the number of characters before
-        ///     wrapping the text. Only set a value if you want the text to wrap. By default, it is set to null and is ignored.
-        /// </param>
         /// <returns></returns>
-        public int DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0, int? width = null)
+        public int DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0)
         {
-            if (width > 1)
-                text = FontChip.WordWrap(text, width.Value);
+//            if (width > 1)
+//                text = FontChip.WordWrap(text, width.Value);
 
             var result = text.Split(new[] {"\n", "\r\n"}, StringSplitOptions.None);
             var lines = result.Length;
@@ -1353,12 +1349,7 @@ namespace PixelVisionSDK.Chips
 
             return new Vector(x, y);
         }
-        
-        public int CalculateTextHeight(string text, int characterWidth)
-        {
-            return FontChip.WordWrap(text, characterWidth).Split(new[] {"\n", "\r\n"}, StringSplitOptions.None).Length;
-        }
-        
+
         #endregion
 
         #region Sound APIs

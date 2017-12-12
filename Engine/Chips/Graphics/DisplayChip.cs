@@ -35,24 +35,10 @@ namespace PixelVisionSDK.Chips
         protected int _width = 256;
 
         protected int[] cachedTilemap = new int[0];
-        protected int clBottom = -1;
         protected TextureData uiLayer = new TextureData(0, 0);
         
         protected DrawRequest clearDrawRequest;
 
-        //private int[] cachedTilemapPixels = new int[0];
-
-        protected int clLeft = -1;
-        protected int clRight = -1;
-
-        protected int clTop = -1;
-
-//        {
-//            get { return autoClear || _clearFlag; }
-//            set { _clearFlag = value; }
-//        }
-
-        protected bool copyScreenBuffer;
         protected int currentSprites;
         public int[] displayMask = new int[0];
 
@@ -63,8 +49,6 @@ namespace PixelVisionSDK.Chips
         protected DrawRequest tilemapDrawRequest;
 
         private int totalPixels;
-
-//        public bool autoClear;
 
         protected bool clearFlag { get; set; }
 
@@ -97,35 +81,6 @@ namespace PixelVisionSDK.Chips
                 return new Rect(-overscanXPixels, -overscanYPixels, width - overscanXPixels, height - overscanYPixels);
             }
         }
-
-//        /// <summary>
-//        ///     The width of the area to sample from in the ScreenBufferChip. If
-//        ///     width of the view port is larger than the <see cref="TextureData" />
-//        ///     it will wrap.
-//        /// </summary>
-//        public int viewPortHeight = 240;
-//
-//        /// <summary>
-//        ///     This represents the x position on the screen where the
-//        ///     ScreenBufferChip's view port should be rendered to on the display. 0
-//        ///     is the left of the screen.
-//        /// </summary>
-//        public int viewPortOffsetX;
-//
-//        /// <summary>
-//        ///     This represents the y position on the screen where the
-//        ///     ScreenBufferChip's view port should be rendered to on the display. 0
-//        ///     is the top of the screen.
-//        /// </summary>
-//        public int viewPortOffsetY;
-//
-//        /// <summary>
-//        ///     The height of the area to sample from in the ScreenBufferChip. If
-//        ///     width of the view port is larger than the <see cref="TextureData" />
-//        ///     it will wrap.
-//        /// </summary>
-//        public int viewPortWidth = 256;
-
 
         /// <summary>
         ///     This value is used for horizontally scrolling the ScreenBufferChip.
@@ -368,7 +323,7 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         ///     This triggers the renderer to clear an area of the display.
         /// </summary>
-        public void ClearArea(int x = 0, int y = 0, int blockWidth = 0, int blockHeight = 0)
+        public void ClearArea(int x = 0, int y = 0, int? blockWidth = null, int? blockHeight = null)
         {
             // Create new clear draw request instance
             if (clearDrawRequest == null)
@@ -377,17 +332,17 @@ namespace PixelVisionSDK.Chips
             // Configure the clear draw request
             clearDrawRequest.x = x;
             clearDrawRequest.y = y;
-            clearDrawRequest.width = blockWidth <= 0 ? width - overscanXPixels : blockWidth;
-            clearDrawRequest.height = blockHeight <= 0 ? height - overscanYPixels : blockHeight;
+            clearDrawRequest.width = blockWidth.HasValue? blockWidth.Value : width - overscanXPixels;
+            clearDrawRequest.height = blockHeight.HasValue ? blockHeight.Value : height - overscanYPixels;
 
             clearDrawRequest.transparent = backgroundColor;
 
             clearFlag = true;
         }
 
-        public void ClearUILayer()
+        public void ClearUILayer(int x = 0, int y = 0, int? blockWidth = null, int? blockHeight = null)
         {
-            // TODO this is immediate and needs to be part of the draw call stack
+            // TODO this is immediate and needs to be part of the draw call stack and should clean an area
             uiLayer.Clear();
         }
 
@@ -574,7 +529,9 @@ namespace PixelVisionSDK.Chips
                 var total = pixelData.Length;
                 for (int i = 0; i < total; i++)
                 {
-                    pixelData[i] += colorOffset;
+                    // Only offset colors when there is no transparancy
+                    if(pixelData[i] > -1)
+                        pixelData[i] += colorOffset;
                 }
             }
             
