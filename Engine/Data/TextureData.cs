@@ -30,13 +30,14 @@ namespace PixelVisionSDK
     /// </summary>
     public class TextureData : AbstractData
     {
+        public int[] pixels = new int[0];
 
         protected Rect oRect = new Rect();
-        protected int[] pixels = new int[0];
         protected Rect sRect = new Rect();
         protected int tmpTotal;
         protected int tmpX;
         protected int tmpY;
+        protected int tmpWidth;
         protected Rect tRect = new Rect();
 
         /// <summary>
@@ -174,7 +175,7 @@ namespace PixelVisionSDK
                     y = oRect.y;
                     blockWidth = oRect.width;
                 }
-
+            
             for (var i = 0; i < tmpTotal; i++)
             {
                 //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
@@ -185,6 +186,7 @@ namespace PixelVisionSDK
 
                 //if(color != -1)
                 data[i] = color;
+
             }
         }
 
@@ -307,65 +309,6 @@ namespace PixelVisionSDK
             for (var i = 0; i < total; i++)
                 pixels[i] = colorRef;
         }
-
-        /// <summary>
-        ///     This method is used to merge pixel data from another TextureData.
-        ///     Simply supply the source's pixel data int array
-        ///     and flag if the merge should ignore transparency via the mask flag.
-        ///     If <paramref name="masked" /> is set to true, the default
-        ///     <paramref name="transparent" /> color (which can also be changed)
-        ///     will be ignored allowing you to overlay new pixel data on top of
-        ///     existing data.
-        /// </summary>
-        /// <param name="x">
-        ///     The x position to start at. 0 is the left of the texture.
-        /// </param>
-        /// <param name="y">
-        ///     The y position to start at. 0 is the top of the texture.
-        /// </param>
-        /// <param name="blockWidth">
-        ///     The <see cref="width" /> of the data to be merged.
-        /// </param>
-        /// <param name="blockHeight">
-        ///     The <see cref="height" /> of the data to be merged.
-        /// </param>
-        /// <param name="srcPixels">The new pixel data to be merged.</param>
-        /// <param name="masked">
-        ///     If the data should be masked when being merged.
-        /// </param>
-        /// <param name="transparent">
-        ///     The mask color id. By default this is set to -1.
-        /// </param>
-//        public void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] srcPixels, bool masked = true,
-//            int transparent = -1)
-//        {
-//            // Exit out of a merge if the data doesn't match up
-//            if (srcPixels.Length != blockWidth * blockHeight)
-//                return;
-//
-//            var total = blockWidth * blockHeight;
-//
-//            for (var i = 0; i < total; i++)
-//            {
-//                //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
-//                tmpX = i % blockWidth;
-//                tmpY = i / blockWidth;
-//
-//
-//                tmpX += x;
-//                tmpY += y;
-//
-//                if (masked)
-//                {
-//                    if (srcPixels[i] != transparent)
-//                        SetPixel(tmpX, tmpY, srcPixels[i]);
-//                }
-//                else
-//                {
-//                    SetPixel(tmpX, tmpY, srcPixels[i]);
-//                }
-//            }
-//        }
 
     }
 

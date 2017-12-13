@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using System;
+using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
@@ -27,7 +28,7 @@ namespace PixelVisionSDK
         public bool masked = true;
         public int offsetX;
         public int offsetY;
-        public int order;
+        public DrawMode drawMode;
         public int transparent = -1;
         public int width;
         public int x;
@@ -47,53 +48,50 @@ namespace PixelVisionSDK
             }
         }
 
-        public void DrawPixels(ref int[] destPixelData, int destWidth, int destHeight, int[] mask = null)
-        {
-            var total = width * height;
-            int srcX;
-            int srcY;
-
-            var tmpWidth = width;
-            int destIndex;
-            var colorID = -1;
-            var totalPixels = destPixelData.Length;
-
-            for (var i = 0; i < total; i++)
-            {
-                srcX = i % tmpWidth + x;
-                srcY = i / tmpWidth + y;
-
-                srcX = (int) (srcX - Math.Floor(x / (float) destWidth) * destWidth);
-                srcY = (int) (srcY - Math.Floor(y / (float) destHeight) * destHeight);
-
-                destIndex = srcX + srcY * destWidth;
-
-                if (destIndex < totalPixels && destIndex > -1)
-                {
-                    colorID = _pixelData[i];
-
-                    if (colorID > -1)
-                    {
-                        if (colorOffset > 0)
-                            colorID += colorOffset;
-
-                        if (order > 0)
-                            destPixelData[destIndex] = colorID;
-                        else if (order == -1)
-                            if (mask != null)
-                            {
-                                if (mask[destIndex] == -1)
-                                    destPixelData[destIndex] = colorID;
-                            }
-                            else
-                            {
-                                if (destPixelData[destIndex] == -1)
-                                    destPixelData[destIndex] = colorID;
-                            }
-                    }
-                }
-            }
-        }
+//        public void DrawPixels(ref int[] destPixelData, int destWidth, int destHeight, int[] mask = null)
+//        {
+//            var total = width * height;
+//            int srcX;
+//            int srcY;
+//
+//            var tmpWidth = width;
+//            int destIndex;
+//            var colorID = -1;
+//            var totalPixels = destPixelData.Length;
+//
+//            for (var i = 0; i < total; i++)
+//            {
+//                srcX = i % tmpWidth + x;
+//                srcY = i / tmpWidth + y;
+//
+//                destIndex = srcX + srcY * destWidth;
+//
+//                if (destIndex < totalPixels && destIndex > -1)
+//                {
+//                    colorID = _pixelData[i];
+//
+//                    if (colorID > -1)
+//                    {
+//                        if (colorOffset > 0)
+//                            colorID += colorOffset;
+//
+////                        if (drawMode > 0)
+//                            destPixelData[destIndex] = colorID;
+////                        else if (drawMode == -1)
+////                            if (mask != null)
+////                            {
+////                                if (mask[destIndex] == -1)
+////                                    destPixelData[destIndex] = colorID;
+////                            }
+////                            else
+////                            {
+////                                if (destPixelData[destIndex] == -1)
+////                                    destPixelData[destIndex] = colorID;
+////                            }
+//                    }
+//                }
+//            }
+//        }
 
     }
 

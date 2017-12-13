@@ -23,11 +23,10 @@ namespace PixelVisionSDK.Chips
 
     public enum DrawMode
     {
-
-        Sprite,
+        SpriteBelow,
         Tile,
         TilemapCache,
-        SpriteBelow,
+        Sprite,
         UI,
         SpriteAbove
     }
@@ -63,7 +62,21 @@ namespace PixelVisionSDK.Chips
 
         //private int[] tmpPixelData = new int[0];
         private int[] tmpSpriteData = new int[0];
+        
+        
+        protected int currentSprites;
 
+        
+        /// <summary>
+        ///     Returns a bool if the Display has enough draw calls left to
+        ///     render a sprite.
+        /// </summary>
+        /// <returns></returns>
+//        public bool CanDraw()
+//        {
+//            return currentSprites < displayChip.maxSpriteCount;
+//        }
+        
 //        protected Vector spriteSizeCached = new Vector();
 //        protected Vector displaySizeCached = new Vector();
 //        protected Vector overscanBorderCached = new Vector();
@@ -247,6 +260,9 @@ namespace PixelVisionSDK.Chips
         public virtual void Update(float timeDelta)
         {
             // Overwrite this method and add your own update logic.
+            
+            // Reset the current sprite count
+            currentSprites = 0;
         }
 
         /// <summary>
@@ -483,7 +499,8 @@ namespace PixelVisionSDK.Chips
         /// </param>
         public void Clear(int x = 0, int y = 0, int? width = null, int? height = null)
         {
-            displayChip.ClearArea(x, y, width, height);
+            
+            displayChip.Clear();
         }
 
         public void ClearUILayer(int x = 0, int y = 0, int? width = null, int? height = null)
@@ -672,9 +689,15 @@ namespace PixelVisionSDK.Chips
                 case DrawMode.Sprite:
                 case DrawMode.SpriteAbove:
                 case DrawMode.SpriteBelow:
-                    var layerOrder = drawMode == DrawMode.SpriteBelow ? -1 : 1;
+
+                    var drawCalls = (width / spriteChip.width) * (height / spriteChip.height);
+
+                    if (currentSprites + drawCalls > displayChip.maxSpriteCount)
+                        return;
+
+                    currentSprites += drawCalls;
                     
-                    displayChip.NewDrawCall(pixelData, x, y, width, height, flipH, !flipV, true, layerOrder, false, colorOffset);
+                    displayChip.NewDrawCall(pixelData, x, y, width, height, flipH, !flipV, true, drawMode, false, colorOffset);
 
                     break;
                 case DrawMode.TilemapCache:
@@ -685,10 +708,11 @@ namespace PixelVisionSDK.Chips
                 case DrawMode.UI:
                     
                     displayChip.DrawToUI(pixelData, x, y, width, height, flipH, flipV, colorOffset);
+                    
                     break;
             }
         }
-
+    
         public void DrawPixel(int x, int y, int colorRef, DrawMode drawMode = DrawMode.Sprite)
         {
             // TODO need to figure out how to make this work
@@ -734,7 +758,7 @@ namespace PixelVisionSDK.Chips
         /// </param>
         public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
-            if (!displayChip.CanDraw())
+            if (currentSprites > displayChip.maxSpriteCount)
                 return;
 
             //TODO flipping H, V and colorOffset should all be passed into reading a sprite
@@ -978,23 +1002,24 @@ namespace PixelVisionSDK.Chips
 //            if (width > 1)
 //                text = FontChip.WordWrap(text, width.Value);
 
-            var result = text.Split(new[] {"\n", "\r\n"}, StringSplitOptions.None);
-            var lines = result.Length;
-
+            //var result = text.Split(new[] {"\n", "\r\n"}, StringSplitOptions.None);
+//            var lines = result.Length;
+//
             var spriteSize = SpriteSize();
-
+//
             var charWidth = spriteSize.x;
-            var charHeight = spriteSize.y;
+//            var charHeight = spriteSize.y;
             var nextX = x;
             var nextY = y;
             
-            for (var i = 0; i < lines; i++)
-            {
-                var line = result[i];
-                var spriteIDs = fontChip.ConvertTextToSprites(line, font);
+//            for (var i = 0; i < lines; i++)
+//            {
+                //var line = result[i];
+                var spriteIDs = fontChip.ConvertTextToSprites(text, font);
                 var total = spriteIDs.Length;
 
                 for (var j = 0; j < total; j++)
+                {
                     if (drawMode == DrawMode.Tile)
                     {
                         Tile(nextX, nextY, spriteIDs[j], colorOffset);
@@ -1002,11 +1027,11 @@ namespace PixelVisionSDK.Chips
                     }
                     else if (drawMode == DrawMode.TilemapCache || drawMode == DrawMode.UI)
                     {
-                        var pixelData = fontChip.ConvertCharacterToPixelData(line[j], font);
-                        
+                        var pixelData = fontChip.ConvertCharacterToPixelData(text[j], font);
+    
                         if (pixelData != null)
                             DrawPixels(pixelData, nextX, nextY, spriteSize.x, spriteSize.y, drawMode, false, false, colorOffset);
-
+    
                         // Increase X even if no character was found
                         nextX += charWidth + spacing;
                     }
@@ -1015,16 +1040,16 @@ namespace PixelVisionSDK.Chips
                         DrawSprite(spriteIDs[j], nextX, nextY, false, false, drawMode, colorOffset);
                         nextX += charWidth + spacing;
                     }
+    
+//                    nextX = x;
+                }
+//                if (drawMode == DrawMode.Tile)
+//                    nextY++;
+//                else
+//                    nextY += charHeight;
+//            }
 
-                nextX = x;
-
-                if (drawMode == DrawMode.Tile)
-                    nextY++;
-                else
-                    nextY += charHeight;
-            }
-
-            return lines;
+            return 1;//lines;
         }
 
         /// <summary>
