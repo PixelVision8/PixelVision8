@@ -64,8 +64,7 @@ namespace PixelVisionSDK.Chips
         private int[] tmpSpriteData = new int[0];
         
         
-        protected int currentSprites;
-
+        public int currentSprites { get; private set; }
         
         /// <summary>
         ///     Returns a bool if the Display has enough draw calls left to
@@ -505,7 +504,7 @@ namespace PixelVisionSDK.Chips
 
         public void ClearUILayer(int x = 0, int y = 0, int? width = null, int? height = null)
         {
-            displayChip.ClearUILayer(x, y, width, height);
+            displayChip.ClearUILayer();
         }
 
         /// <summary>
@@ -876,7 +875,7 @@ namespace PixelVisionSDK.Chips
                 }
             }
         }
-
+        
         /// <summary>
         ///     The DrawTile method makes it easier to update the visuals of a tile on any of the map layers. By default, 
         ///     this will modify a single tile's sprite id and color offset. You can also define the DrawMode to target a 
@@ -1081,6 +1080,15 @@ namespace PixelVisionSDK.Chips
             displayChip.DrawTilemap(x, y, columns, rows);
         }
 
+        public void DrawRect(int x, int y, int width, int height, int color = -1, DrawMode drawMode = DrawMode.UI)
+        {
+            
+            var total = width * height;
+            
+            DrawPixels(new int[total], x, y, width, height, drawMode, false, false, color);
+
+        }
+        
         /// <summary>
         ///     You can use RedrawDisplay to make clearing and drawing the tilemap easier. This is a helper method automatically
         ///     calls both Clear() and DrawTilemap() for you.

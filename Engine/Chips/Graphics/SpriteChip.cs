@@ -32,6 +32,8 @@ namespace PixelVisionSDK.Chips
         protected int _colorsPerSprite = 8;
         protected int _pages = 4;
 
+        public bool unique = true;
+        
         /// <summary>
         ///     Internal <see cref="TextureData" /> where sprites are stored
         /// </summary>
@@ -43,7 +45,7 @@ namespace PixelVisionSDK.Chips
         protected string[] cache;
 
         public int pageHeight = 128;
-
+        
         //protected Vector2 pageSize = new Vector2(128, 128);
         public int pageWidth = 128;
 
