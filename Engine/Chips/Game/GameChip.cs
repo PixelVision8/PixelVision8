@@ -23,6 +23,7 @@ namespace PixelVisionSDK.Chips
 
     public enum DrawMode
     {
+        Background,
         SpriteBelow,
         Tile,
         TilemapCache,
@@ -60,45 +61,13 @@ namespace PixelVisionSDK.Chips
         protected int _saveSlots;
         protected Dictionary<string, string> savedData = new Dictionary<string, string>();
 
-        //private int[] tmpPixelData = new int[0];
+        protected TextureData uiLayer = new TextureData(0,0);
+        
         private int[] tmpSpriteData = new int[0];
         
         
         public int currentSprites { get; private set; }
         
-        /// <summary>
-        ///     Returns a bool if the Display has enough draw calls left to
-        ///     render a sprite.
-        /// </summary>
-        /// <returns></returns>
-//        public bool CanDraw()
-//        {
-//            return currentSprites < displayChip.maxSpriteCount;
-//        }
-        
-//        protected Vector spriteSizeCached = new Vector();
-//        protected Vector displaySizeCached = new Vector();
-//        protected Vector overscanBorderCached = new Vector();
-//        protected Rect visibleBoundsCached = new Rect();
-//        protected int colorsPerSpriteCached = 0;
-//        protected Vector tilemapSizeCached = new Vector();
-
-//        [Flags]
-//        internal enum CachedData
-//        {
-//
-//            SpriteSize = 1,
-//            DisplaySize = 2,
-//            OverscanBounds = 4,
-//            VisibleBounds = 8,
-//            ColorsPerSprite = 16,
-//            TilemapSize = 32,
-//            //            TileMapFlags = 64,
-//            //            Fonts = 128,
-//            //            Meta = 256,
-//            //            Music = 512
-//
-//        }
 
         #region GameChip APIs
 
@@ -143,11 +112,6 @@ namespace PixelVisionSDK.Chips
         }
         
         /// <summary>
-        ///     Returns true if the game is ready to be run.
-        /// </summary>
-        public bool ready { get; private set; } //TODO remove this, it's not really needed
-
-        /// <summary>
         ///     The description for the game.
         /// </summary>
         public string description { get; set; }
@@ -157,50 +121,14 @@ namespace PixelVisionSDK.Chips
 
         #region Chip References
 
-        protected ColorChip colorChip
-        {
-            get { return engine.colorChip; }
-        }
-
-        protected ColorMapChip colorMapChip
-        {
-            get { return engine.colorMapChip; }
-        }
-
-        protected ControllerChip controllerChip
-        {
-            get { return engine.controllerChip; }
-        }
-
-        protected DisplayChip displayChip
-        {
-            get { return engine.displayChip; }
-        }
-
-        protected SoundChip soundChip
-        {
-            get { return engine.soundChip; }
-        }
-
-        protected SpriteChip spriteChip
-        {
-            get { return engine.spriteChip; }
-        }
-
-        protected TilemapChip tilemapChip
-        {
-            get { return engine.tilemapChip; }
-        }
-
-        protected FontChip fontChip
-        {
-            get { return engine.fontChip; }
-        }
-
-        protected MusicChip musicChip
-        {
-            get { return engine.musicChip; }
-        }
+        protected ColorChip colorChip;
+        protected ControllerChip controllerChip;
+        protected DisplayChip displayChip;
+        protected SoundChip soundChip;
+        protected SpriteChip spriteChip;
+        protected TilemapChip tilemapChip;
+        protected FontChip fontChip;
+        protected MusicChip musicChip;
 
         #endregion
 
@@ -214,42 +142,8 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public override void Configure()
         {
-            
             // Set the engine's game to this instance
             engine.gameChip = this;
-                
-            // Cache commonly used chip properties that don't change during runtime
-            
-            // Cached system properties
-//            spriteSizeCached.x = spriteChip.width;
-//            spriteSizeCached.y = spriteChip.height;
-            
-            // Reload display size
-//            displaySizeCached.x = displayChip.width;
-//            displaySizeCached.y = displayChip.height;
-            
-            // Reload overscan size
-//            overscanBorderCached.x = displayChip.overscanX;
-//            overscanBorderCached.y = displayChip.overscanY;
-            
-            // Reload visible bounds
-//            visibleBoundsCached.x = displayChip.visibleBounds.x;
-//            visibleBoundsCached.y = displayChip.visibleBounds.y;
-//            visibleBoundsCached.width = displayChip.visibleBounds.width;
-//            visibleBoundsCached.height = displayChip.visibleBounds.height;
-
-            // Reload colors per sprite
-//            colorsPerSpriteCached = spriteChip.colorsPerSprite;
-            
-            // Tilemap size
-//            tilemapSizeCached.x = tilemapChip.columns;
-//            tilemapSizeCached.x = tilemapChip.rows;
-            
-            // Resize the tmpSpriteData so it mateches the sprite's width and height
-            Array.Resize(ref tmpSpriteData, spriteChip.width * spriteChip.height);
-
-            // Mark the game as ready so the engine knows when it should start running
-            ready = true;
         }
 
         /// <summary>
@@ -264,64 +158,6 @@ namespace PixelVisionSDK.Chips
             currentSprites = 0;
         }
 
-        /// <summary>
-        ///     This is called when a game is initialized. It is only called once when the game is first loaded.
-        /// </summary>
-        public override void Init()
-        {
-            // TODO need to cache all the commonly used values
-
-            base.Init();
-        }
-
-//        internal void Invalidate(CachedData data)
-//        {
-//            // Reload the sprite size
-//            if ((data & CachedData.SpriteSize) == CachedData.SpriteSize)
-//            {
-//                spriteSizeCached.x = spriteChip.width;
-//                spriteSizeCached.y = spriteChip.height;
-//            }
-//
-//            // Reload display size
-//            if ((data & CachedData.DisplaySize) == CachedData.DisplaySize)
-//            {
-//                displaySizeCached.x = displayChip.width;
-//                displaySizeCached.y = displayChip.height;
-//            }
-//
-//            // Reload overscan size
-//            if ((data & CachedData.OverscanBounds) == CachedData.OverscanBounds)
-//            {
-//                overscanBorderCached.x = displayChip.overscanX;
-//                overscanBorderCached.y = displayChip.overscanY;
-//            }
-//
-//            // Reload visible bounds
-//            if ((data & CachedData.VisibleBounds) == CachedData.VisibleBounds)
-//            {
-//                visibleBoundsCached.x = displayChip.visibleBounds.x;
-//                visibleBoundsCached.y = displayChip.visibleBounds.y;
-//                visibleBoundsCached.width = displayChip.visibleBounds.width;
-//                visibleBoundsCached.height = displayChip.visibleBounds.height;
-//            }
-//
-//            // Reload colors per sprite
-//            if ((data & CachedData.ColorsPerSprite) == CachedData.ColorsPerSprite)
-//            {
-//                colorsPerSpriteCached = spriteChip.colorsPerSprite;
-//            }
-//
-//            // Tilemap size
-//            if ((data & CachedData.TilemapSize) == CachedData.TilemapSize)
-//            {
-//                tilemapSizeCached.x = tilemapChip.columns;
-//                tilemapSizeCached.x = tilemapChip.rows;
-//            }
-//
-//        }
-
-
 
         /// <summary>
         ///     Used for drawing the game to the display.
@@ -334,12 +170,32 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         ///     This is called when a game is reset.
         /// </summary>
-//        public override void Reset()
-//        {
-//            
-//
-//            base.Reset();
-//        }
+        public override void Reset()
+        {
+            
+            currentSprites = 0;
+            
+            _scrollX = 0;
+            _scrollY = 0;
+            
+            // Get references to each of the chips
+            colorChip = engine.colorChip; 
+            controllerChip = engine.controllerChip;
+            displayChip = engine.displayChip;
+            soundChip = engine.soundChip;
+            spriteChip = engine.spriteChip;
+            tilemapChip = engine.tilemapChip;
+            fontChip = engine.fontChip;
+            musicChip = engine.musicChip;
+            
+            // Resize the tmpSpriteData so it mateches the sprite's width and height
+            Array.Resize(ref tmpSpriteData, spriteChip.width * spriteChip.height);
+            
+            
+            uiLayer.Resize(displayChip.width, displayChip.height);
+
+            base.Reset();
+        }
         
         /// <summary>
         ///     This unloads the game from the engine.
@@ -499,13 +355,23 @@ namespace PixelVisionSDK.Chips
         public void Clear(int x = 0, int y = 0, int? width = null, int? height = null)
         {
             
-            displayChip.Clear();
-        }
+//            displayChip.Clear();
+            
+            var w = width.HasValue ? width.Value : displayChip.width - x;
+            var h = height.HasValue ? height.Value : displayChip.height - y;
 
-        public void ClearUILayer(int x = 0, int y = 0, int? width = null, int? height = null)
-        {
-            displayChip.ClearUILayer();
+            DrawRect(x,y, w, h, colorChip.backgroundColor);
+            
         }
+//
+//        public void ClearUILayer(int x = 0, int y = 0, int? width = null, int? height = null)
+//        {
+//            var w = width.HasValue ? width.Value : displayChip.width - x;
+//            var h = height.HasValue ? height.Value : displayChip.height - y;
+//
+//            DrawRect(x, y, w, h);
+////            displayChip.ClearUILayer();
+//        }
 
         /// <summary>
         ///     The display's size defines the visible area where pixel data exists on the screen. Calculating this is
@@ -553,17 +419,10 @@ namespace PixelVisionSDK.Chips
             {
                 displayChip.ResetResolution(size.x, size.y);
             }
-//
-//                // Since we are changing the resolution, we need to invalidate the display size, overscan and visible bounds
-//                var dataFlags = CachedData.DisplaySize;
-//                dataFlags |= CachedData.OverscanBounds;
-//                dataFlags |= CachedData.VisibleBounds;
-//
-//                Invalidate(dataFlags);
-//            }
-
-
-            return new Vector(displayChip.width, displayChip.height);//displaySizeCached);
+            
+            // TODO need a flag to tell the runner to change the resolution
+            
+            return new Vector(displayChip.width, displayChip.height);
         }
 
         /// <summary>
@@ -604,10 +463,6 @@ namespace PixelVisionSDK.Chips
                 displayChip.overscanX = x.Value;
                 changeBorder = true;
             }
-//            else
-//            {
-//                size.x = displayChip.width;
-//            }
 
             if (y.HasValue)
             {
@@ -615,23 +470,8 @@ namespace PixelVisionSDK.Chips
                 //size.y = y.Value;
                 displayChip.overscanY = y.Value;
             }
-//            else
-//            {
-//                size.y = displayChip.height;
-//            }
 
-//            if (changeBorder)
-//            {
-//                // Since we are changing the overscan border, we need to invalidate the overscan and visible bounds
-//
-//                var dataFlags = CachedData.OverscanBounds;
-//                dataFlags |= CachedData.VisibleBounds;
-//
-//                Invalidate(dataFlags);
-//
-//            }
-
-            return new Vector(displayChip.overscanX, displayChip.overscanY);//overscanBorderCached);
+            return new Vector(displayChip.overscanX, displayChip.overscanY);
         }
 
         /// <summary>
@@ -684,37 +524,31 @@ namespace PixelVisionSDK.Chips
         {
             switch (drawMode)
             {
-                // Mode 0 and 1 are for sprites (above/below bg)
-                case DrawMode.Sprite:
-                case DrawMode.SpriteAbove:
-                case DrawMode.SpriteBelow:
-
-                    var drawCalls = (width / spriteChip.width) * (height / spriteChip.height);
-
-                    if (currentSprites + drawCalls > displayChip.maxSpriteCount)
-                        return;
-
-                    currentSprites += drawCalls;
-                    
-                    displayChip.NewDrawCall(pixelData, x, y, width, height, flipH, !flipV, true, drawMode, false, colorOffset);
-
-                    break;
                 case DrawMode.TilemapCache:
 
                     tilemapChip.UpdateCachedTilemap(pixelData, x, y, width, height, colorOffset);
 
                     break;
-                case DrawMode.UI:
                     
-                    displayChip.DrawToUI(pixelData, x, y, width, height, flipH, flipV, colorOffset);
+                default:
                     
+                    displayChip.NewDrawCall(pixelData, x, y, width, height, flipH, flipV, true, (int)drawMode, colorOffset);
+
                     break;
             }
         }
-    
-        public void DrawPixel(int x, int y, int colorRef, DrawMode drawMode = DrawMode.Sprite)
+        
+        protected readonly int[] singlePixel = new int[0];
+        
+        public void DrawPixel(int x, int y, int colorRef, DrawMode drawMode = DrawMode.UI)
         {
-            // TODO need to figure out how to make this work
+            // Make sure that drawing a single pixel only works in the UI layer
+            if (drawMode != DrawMode.TilemapCache)
+                return;
+            
+            // Route the single pixel call to the DrawPixels call
+            DrawPixels(singlePixel, x, y, 1, 1, drawMode, false, false, colorRef);
+            
         }
 
         /// <summary>
@@ -757,15 +591,17 @@ namespace PixelVisionSDK.Chips
         /// </param>
         public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
-            if (currentSprites > displayChip.maxSpriteCount)
+            if (spriteChip.maxSpriteCount > 0 && currentSprites > spriteChip.maxSpriteCount)
                 return;
-
+            
             //TODO flipping H, V and colorOffset should all be passed into reading a sprite
             spriteChip.ReadSpriteAt(id, tmpSpriteData);
 
             // Mode 0 is sprite above bg and mode 1 is sprite below bg.
             //var mode = aboveBG ? DrawMode.Sprite : DrawMode.SpriteBelow;
-            DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, drawMode, flipH, !flipV, colorOffset);
+            DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, drawMode, flipH, flipV, colorOffset);
+            
+            currentSprites ++;
         }
 
         /// <summary>
@@ -811,7 +647,7 @@ namespace PixelVisionSDK.Chips
         ///     overscan border control what happens to sprites at the edge of the display. If this value is false, the sprites
         ///     wrap around the screen when they reach the edges of the screen.
         /// </param>
-        /// <param name="useScrollPos"></param>
+        /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
         /// <param name="aboveBG">
         ///     An optional bool that defines if the sprite is above or below the tilemap. Sprites are set to render above the
         ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile
@@ -819,21 +655,14 @@ namespace PixelVisionSDK.Chips
         /// </param>
         public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true)
         {
-            //var size = SpriteSize();
-//            var sW = spriteSizeCached.x;
-//            var sH = spriteSizeCached.y;
-//            var displaySize = DisplaySize();
-//
-//            //TODO this should be cached somewhere
-//            var bounds = new Rect(-displayChip.overscanXPixels, -displayChip.overscanYPixels, displaySize.x - displayChip.overscanXPixels, displaySize.y - displayChip.overscanYPixels);
-            var bounds = displayChip.visibleBounds; // visibleBoundsCached
+            var bounds = displayChip.visibleBounds;
 
             var total = ids.Length;
 
             var height = MathUtil.CeilToInt(total / width);
 
-            var startX = x - (useScrollPos ? displayChip.scrollX : 0);
-            var startY = y - (useScrollPos ? displayChip.scrollY : 0);
+            var startX = x - (useScrollPos ? _scrollX : 0);
+            var startY = y - (useScrollPos ? _scrollY : 0);
 
             if (flipH || flipV)
                 SpriteChipUtil.FlipSpriteData(ref ids, width, height, flipH, flipV);
@@ -998,22 +827,13 @@ namespace PixelVisionSDK.Chips
         /// <returns></returns>
         public int DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0)
         {
-//            if (width > 1)
-//                text = FontChip.WordWrap(text, width.Value);
 
-            //var result = text.Split(new[] {"\n", "\r\n"}, StringSplitOptions.None);
-//            var lines = result.Length;
-//
             var spriteSize = SpriteSize();
-//
             var charWidth = spriteSize.x;
-//            var charHeight = spriteSize.y;
+
             var nextX = x;
             var nextY = y;
-            
-//            for (var i = 0; i < lines; i++)
-//            {
-                //var line = result[i];
+
                 var spriteIDs = fontChip.ConvertTextToSprites(text, font);
                 var total = spriteIDs.Length;
 
@@ -1040,17 +860,14 @@ namespace PixelVisionSDK.Chips
                         nextX += charWidth + spacing;
                     }
     
-//                    nextX = x;
                 }
-//                if (drawMode == DrawMode.Tile)
-//                    nextY++;
-//                else
-//                    nextY += charHeight;
-//            }
 
-            return 1;//lines;
+            return 1;
         }
-
+        
+        private int[] tmpTilemapCache = new int[0];
+        private Rect lastTilemapRequest = new Rect(-1, -1, -1, -1);
+        
         /// <summary>
         ///     By default, the tilemap renders to the display by simply calling DrawTilemap(). This automatically fills the entire
         ///     display with the visible portion of the tilemap. To have more granular control over how to render the tilemap, you
@@ -1077,16 +894,51 @@ namespace PixelVisionSDK.Chips
         /// </param>
         public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0)
         {
-            displayChip.DrawTilemap(x, y, columns, rows);
+            // First step is to make sure that the tilemap hasn't changed since the last frame
+            if (tilemapChip.invalid)
+            {
+                tilemapChip.RebuildCache(tilemapChip.cachedTileMap);
+            }
+            
+            // Make sure the new draw request is different than the last one
+            if (lastTilemapRequest.x != x || lastTilemapRequest.y != y || lastTilemapRequest.width != columns ||
+                lastTilemapRequest.height != rows)
+            {
+                
+            
+                var width = columns == 0 ? displayChip.width : columns * tilemapChip.tileWidth;
+    
+                if ((width + x) > displayChip.width)
+                {
+                    width = displayChip.width - x;
+                }
+                
+                var height = rows == 0 ? displayChip.height : rows * tilemapChip.tileHeight;
+                
+                if ((height + y) > displayChip.height)
+                {
+                    height = displayChip.height - y;
+                }
+                
+                // Flip the y scroll value
+                var sY = tilemapChip.realHeight - height - _scrollY;
+                
+                tilemapChip.cachedTileMap.GetPixels(_scrollX, sY, width, height, ref tmpTilemapCache);
+    
+                lastTilemapRequest.x = x;
+                lastTilemapRequest.y = y;
+                lastTilemapRequest.width = width;
+                lastTilemapRequest.height = height;
+            }
+            
+            // Copy over the cached pixel data from the tilemap request
+            DrawPixels(tmpTilemapCache, lastTilemapRequest.x, lastTilemapRequest.y, lastTilemapRequest.width, lastTilemapRequest.height, DrawMode.Tile);
+
         }
 
-        public void DrawRect(int x, int y, int width, int height, int color = -1, DrawMode drawMode = DrawMode.UI)
+        public void DrawRect(int x, int y, int width, int height, int color = -1, DrawMode drawMode = DrawMode.Background)
         {
-            
-            var total = width * height;
-            
-            DrawPixels(new int[total], x, y, width, height, drawMode, false, false, color);
-
+            DrawPixels(new int[width * height], x, y, width, height, drawMode, false, false, color);
         }
         
         /// <summary>
@@ -1098,7 +950,10 @@ namespace PixelVisionSDK.Chips
             Clear();
             DrawTilemap();
         }
-
+        
+        protected int _scrollX;
+        protected int _scrollY;
+        
         /// <summary>
         ///     You can scroll the tilemap by calling the ScrollPosition() method and supplying a new scroll X and Y position.
         ///     By default, calling ScrollPosition() with no arguments returns a vector with the current scroll X and Y values.
@@ -1123,21 +978,21 @@ namespace PixelVisionSDK.Chips
             if (x.HasValue)
             {
                 pos.x = x.Value;
-                displayChip.scrollX = pos.x;
+                _scrollX = pos.x;
             }
             else
             {
-                pos.x = displayChip.scrollX;
+                pos.x = _scrollX;
             }
 
             if (y.HasValue)
             {
                 pos.y = y.Value;
-                displayChip.scrollY = pos.y;
+                _scrollY = pos.y;
             }
             else
             {
-                pos.y = displayChip.scrollY;
+                pos.y = _scrollY;
             }
 
             return pos;
@@ -1442,12 +1297,6 @@ namespace PixelVisionSDK.Chips
         /// </param>
         public void PlaySong(int[] loopIDs, bool loop = true)
         {
-//            var track = loopIDs[0];
-//
-//            musicChip.LoadSong(track);
-//
-//            musicChip.PlaySong(loop);
-//            
             musicChip.PlaySongs(loopIDs, loop);
         }
 
@@ -1558,14 +1407,6 @@ namespace PixelVisionSDK.Chips
 
             var textureData = new TextureData(realWidth, realHeight);
 
-            int[] tmpSpriteData;
-            
-            for (int i = 0; i < width; i++)
-            {
-                tmpSpriteData = Sprite(ids[i]);
-                //TODO draw this to the textureData
-            }
-            
             var pixelData = new int[realWidth * realHeight];
             
             textureData.CopyPixels(ref pixelData);
@@ -1605,10 +1446,10 @@ namespace PixelVisionSDK.Chips
         {
             if (total.HasValue)
             {
-                displayChip.maxSpriteCount = total.Value;
+                spriteChip.maxSpriteCount = total.Value;
             }
             
-            return displayChip.maxSpriteCount;
+            return spriteChip.maxSpriteCount;
         }
 
         #endregion
@@ -1689,12 +1530,7 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public void RebuildTilemap(int? columns = null, int? rows = null, int[] spriteIDs = null, int[] colorOffsets = null, int[] flags = null)
         {
-            // TODO need to finish this method
-            // If columns and rows are shown resize map
-            // If sprites, colors or flags are used fill them in
-            // If offset is present fill in new values at that offset
-
-
+            // This flags the tilemap to clear the cache which will be rebuilt the next time pixel data is requested.
             tilemapChip.ClearCache();
         }
 

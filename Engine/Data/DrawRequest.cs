@@ -25,7 +25,7 @@ namespace PixelVisionSDK
         protected int[] _pixelData = new int[0];
         public int colorOffset = 0;
         public int height;
-        public DrawMode drawMode;
+        public int layer;
         public int width;
         public int x;
         public int y;

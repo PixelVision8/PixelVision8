@@ -18,9 +18,6 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
-    
-    
-    
     /// <summary>
     ///     The tile map chip represents a grid of sprites used to populate the background
     ///     layer of the game. These sprites are fixed and laid out in column and row
@@ -32,28 +29,22 @@ namespace PixelVisionSDK.Chips
     {
         public enum Layer
         {
-
             Sprites,
             Palettes,
             Flags,
             Invalid
-
         }
-        
-        protected int _columns;
-        protected int _rows;
-        protected int _scrollX;
-        protected int _scrollY;
+
         protected SpriteChip _spriteChip;
+
         protected int _totalLayers = -1;
         public TextureData cachedTileMap = new TextureData(0, 0);
+
         public int[][] layers;
-        protected int offscreenPadding = 0;
-        protected int[] tiles = new int[0];
+
         protected int tmpIndex;
+
         protected int[] tmpPixelData = new int[8 * 8];
-        protected int tmpX;
-        protected int tmpY;
 
         /// <summary>
         ///     Total number of collision flags the chip will support.
@@ -121,23 +112,14 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         ///     The width of the tile map by tiles.
         /// </summary>
-        public int columns {
-            get
-            {
-                return _columns; 
-            }
-            private set
-            {
-                _columns = value;
-            }
-        }
+        public int columns { get; protected set; }
 
         /// <summary>
         ///     The height of the tile map in tiles.
         /// </summary>
-        public int rows { get; private set; }
+        public int rows { get; protected set; }
 
-        public bool invalid { get; private set; }
+        public bool invalid { get; protected set; }
 
         public void Invalidate()
         {
@@ -173,9 +155,9 @@ namespace PixelVisionSDK.Chips
         public override void Reset()
         {
             base.Reset();
-            
+
             RebuildCache(cachedTileMap);
-            
+
             //ResetValidation();
         }
 
@@ -186,21 +168,8 @@ namespace PixelVisionSDK.Chips
             Array.Clear(invalidLayer, 0, total);
         }
 
-        public void ReadCachedTilemap(ref int[] pixels)
-        {
-            var total = realWidth * realHeight;
-
-            if (pixels.Length != total)
-            {
-                Array.Resize(ref pixels, total);
-                Invalidate();
-            }
-
-            if (invalid)
-                ReadPixelData(realWidth, realHeight, ref pixels);
-        }
-
-        public void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight, int colorOffset = 0)
+        public void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight,
+            int colorOffset = 0)
         {
 //            if (cachedTileMap.width != realWidth || cachedTileMap.height != realHeight)
 //                cachedTileMap.Resize(realWidth, realHeight);
@@ -214,14 +183,7 @@ namespace PixelVisionSDK.Chips
         {
             // Test if we need to rebuild the cached tilemap
             if (invalid)
-            {
-                // Make sure the cached tilemap is the correct width and height
-//                if (cachedTileMap.width != realWidth || cachedTileMap.height != realHeight)
-//                    cachedTileMap.Resize(realWidth, realHeight);
-
                 RebuildCache(cachedTileMap);
-                
-            }
 
             // Return the requested pixel data
             cachedTileMap.GetPixels(offsetX, offsetY, width, height, ref pixelData);
@@ -231,7 +193,7 @@ namespace PixelVisionSDK.Chips
         {
             if (invalid != true)
                 return;
-            
+
             // Get a local reference to the layers we need
             var tmpSpriteIDs = layers[(int) Layer.Sprites];
             var tmpPaletteIDs = layers[(int) Layer.Palettes];
@@ -244,10 +206,9 @@ namespace PixelVisionSDK.Chips
             var totalTiles = total;
 
             var totalTilesUpdated = 0;
-            
+
             // Loop through all of the tiles in the tilemap
             for (var i = 0; i < totalTiles; i++)
-            {
                 if (invalideLayer[i] != 0)
                 {
                     // Get the sprite id
@@ -274,13 +235,11 @@ namespace PixelVisionSDK.Chips
                         totalTilesUpdated++;
                     }
                 }
-            }
-            
+
             // Reset the invalidation state
             ResetValidation();
-            
         }
-        
+
         public void Invalidate(int index)
         {
             // Get the invalid layer
@@ -295,7 +254,6 @@ namespace PixelVisionSDK.Chips
 
             // Tell the map there was a change
             Invalidate();
-
         }
 
         /// <summary>
@@ -326,11 +284,10 @@ namespace PixelVisionSDK.Chips
         /// <param name="column"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        public int ReadTileAt(int column, int row)
-        {
-            return ReadDataAt(Layer.Sprites, column, row);
-        }
-
+//        public int ReadTileAt(int column, int row)
+//        {
+//            return ReadDataAt(Layer.Sprites, column, row);
+//        }
         /// <summary>
         ///     Returns the value in a given Tilemap layer. Accepts a layer enum and automatically converts is to a layer id.
         /// </summary>
@@ -349,10 +306,7 @@ namespace PixelVisionSDK.Chips
 
             if (index >= layers[id].Length || index < 0)
                 return -1;
-            else
-            {
-                return layers[id][index];
-            }
+            return layers[id][index];
             //TODO need to make sure this doesn't throw an error.
             //return index >= layers[id].Length ? -1 : layers[id][index];
         }
@@ -373,7 +327,6 @@ namespace PixelVisionSDK.Chips
                 layers[id][index] = value;
                 Invalidate(index);
             }
-            
         }
 
         /// <summary>
@@ -549,16 +502,14 @@ namespace PixelVisionSDK.Chips
                     layers[i] = new int[totalTiles]; // (columns, rows);
                 else
                     Array.Resize(ref layers[i], totalTiles);
-            
+
             cachedTileMap.Resize(realWidth, realHeight);
-            
+
             // Clear flags
             var flagLayer = layers[(int) Layer.Flags];
-            for (int i = 0; i < flagLayer.Length; i++)
-            {
+            for (var i = 0; i < flagLayer.Length; i++)
                 flagLayer[i] = -1;
-            }
-                
+
             if (clear)
                 Clear();
 
@@ -599,17 +550,6 @@ namespace PixelVisionSDK.Chips
         ///     The transparent color to use when a tile is set to -1. The default
         ///     value is -1 for transparent.
         /// </param>
-        public void ConvertToTextureData(TextureData textureData, int clearColor = -1)
-        {
-            if (spriteChip == null)
-                return;
-
-            //TODO need to reconnect this so you can export tilemap
-            //ReadPixelData(textureData, 0, 0, columns, rows);
-            //cachedTileMap.GetPixels(offsetX, offsetY, width, height, ref pixelData);
-
-        }
-
         /// <summary>
         ///     Configured the TileMapChip. This method sets the
         ///     <see cref="TilemapChip" /> as the default tile map for the engine. It
@@ -620,7 +560,7 @@ namespace PixelVisionSDK.Chips
         {
             //ppu.tileMap = this;
             engine.tilemapChip = this;
-            
+
             // Resize to default nes resolution
             Resize(32, 30);
         }
@@ -630,9 +570,5 @@ namespace PixelVisionSDK.Chips
             base.Deactivate();
             engine.tilemapChip = null;
         }
-
-        
-
     }
-
 }

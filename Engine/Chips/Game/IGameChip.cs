@@ -120,9 +120,6 @@ namespace PixelVisionSDK.Chips
         /// </param>
         void Clear(int x = 0, int y = 0, int? width = null, int? height = null);
 
-
-        void ClearUILayer(int x = 0, int y = 0, int? width = null, int? height = null);
-        
         /// <summary>
         ///     The display's size defines the visible area where pixel data exists on the screen. Calculating this is
         ///     important for knowing how to position sprites on the screen. The DisplaySize() method allows you to get

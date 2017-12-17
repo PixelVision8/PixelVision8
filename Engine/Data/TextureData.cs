@@ -30,14 +30,12 @@ namespace PixelVisionSDK
     /// </summary>
     public class TextureData : AbstractData
     {
-        public int[] pixels = new int[0];
-
+        protected int[] pixels = new int[0];
         protected Rect oRect = new Rect();
         protected Rect sRect = new Rect();
         protected int tmpTotal;
         protected int tmpX;
         protected int tmpY;
-        protected int tmpWidth;
         protected Rect tRect = new Rect();
 
         /// <summary>

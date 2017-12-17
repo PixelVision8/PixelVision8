@@ -1,4 +1,4 @@
-﻿//   
+﻿﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) License. 
@@ -17,49 +17,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PixelVisionSDK.Utils;
-using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
 
     public class DisplayChip : AbstractChip, IDraw
     {
-
-        protected int _height = 240;
-        protected int _maxSpriteCount = 64;
-        protected int _overscanX;
-        protected int _overscanY;
-        protected int _scrollX;
-        protected int _scrollY;
         protected int _width = 256;
-        protected TextureData uiLayer = new TextureData(0, 0);
-        private bool clearUIFlag;
+        protected int _height = 240;
+        public int overscanX { get; set; }
+        public int overscanY { get; set; }
+        
         public int[] displayPixels = new int[0];
         protected List<DrawRequest> drawRequestPool = new List<DrawRequest>();
         protected List<DrawRequest> drawRequests = new List<DrawRequest>();
         private int totalPixels;
-        protected bool clearFlag { get; set; }
 
-        public int overscanX
-        {
-            get { return _overscanX; }
-            set { _overscanX = value; }
-        }
-
-        public int overscanY
-        {
-            get { return _overscanY; }
-            set { _overscanY = value; }
-        }
+        public int layers = 1;
 
         public int overscanXPixels
         {
-            get { return _overscanX * engine.spriteChip.width; }
+            get { return overscanX * engine.spriteChip.width; }
         }
 
         public int overscanYPixels
         {
-            get { return _overscanY * engine.spriteChip.height; }
+            get { return overscanY * engine.spriteChip.height; }
         }
 
         public Rect visibleBounds
@@ -70,45 +53,6 @@ namespace PixelVisionSDK.Chips
             }
         }
 
-        /// <summary>
-        ///     This value is used for horizontally scrolling the ScreenBufferChip.
-        ///     The <see cref="scrollX" /> field represents starting x position of
-        ///     the <see cref="TextureData" /> to sample from. 0 is the left of the
-        ///     screen;
-        /// </summary>
-        public int scrollX
-        {
-            get { return _scrollX; }
-            set { _scrollX = value; }
-        }
-
-        /// <summary>
-        ///     This value is used for vertically scrolling the ScreenBufferChip.
-        ///     The <see cref="scrollY" /> field represents starting y position of
-        ///     the <see cref="TextureData" /> to sample from. 0 is the top of the
-        ///     screen;
-        /// </summary>
-        public int scrollY
-        {
-            get { return _scrollY; }
-            set { _scrollY = value; }
-        }
-
-        /// <summary>
-        ///     Sets the total number of sprite draw calls for the display.
-        /// </summary>
-        public int maxSpriteCount
-        {
-            get { return _maxSpriteCount; }
-            set { _maxSpriteCount = value; }
-        }
-
-        /// <summary>
-        ///     This toggles wrap mode on the display. If pixel data is draw past
-        ///     the end of the display it will appear on the opposite side. There is
-        ///     a slight performance hit for this.
-        /// </summary>
-        //public bool wrapMode { get; set; }
         /// <summary>
         ///     Returns the display's <see cref="width" />
         /// </summary>
@@ -125,30 +69,13 @@ namespace PixelVisionSDK.Chips
             get { return _height; }
         }
 
-        protected TilemapChip tilemapChip
-        {
-            get { return engine.tilemapChip; }
-        }
-
         /// <summary>
         /// </summary>
         public void Draw()
         {
 
-            // Create draw call for the UI layer
-            NewDrawCall(uiLayer.pixels, 0, 0, width, height, false, false, false, DrawMode.UI);
-            
-            // Go through and clear the background
-            if (clearFlag)
-            {
-                for (int i = 0; i < totalPixels; i++)
-                {
-                    displayPixels[i] = -1;
-                }
-            }
-            
             // Sort draw requests by their draw mode
-            DrawRequest[] sorted = drawRequests.OrderBy(c => (int)c.drawMode).ToArray();
+            DrawRequest[] sorted = drawRequests.OrderBy(c => c.layer).ToArray();
             
             // Loop through all draw requests
             var totalDR = sorted.Length;
@@ -161,68 +88,9 @@ namespace PixelVisionSDK.Chips
 
             }
 
-            // Reset clear flag
-            clearFlag = false;
-            clearUIFlag = false;
-            
             // Reset Draw Requests after they have been processed
             ResetDrawCalls();
             
-        }
-
-        private int[] tmpTilemapCache = new int[0];
-        
-        public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0)
-        {
- 
-            if (tilemapChip.invalid)
-            {
-                tilemapChip.RebuildCache(tilemapChip.cachedTileMap);
-            }
-            
-            var width = columns == 0 ? _width : columns * tilemapChip.tileWidth;
-
-            if ((width + x) > _width)
-            {
-                width = _width - x;
-            }
-            
-            var height = rows == 0 ? _height : rows * tilemapChip.tileHeight;
-            
-            if ((height + y) > _height)
-            {
-                height = _height - y;
-            }
-            
-            // Flip the y scroll value
-            var sY = tilemapChip.realHeight - height - scrollY;
-            
-            
-            tilemapChip.cachedTileMap.GetPixels(scrollX, sY, width, height, ref tmpTilemapCache);
-
-            y = _height - height - y;
-            
-            NewDrawCall(tmpTilemapCache, x, y, width, height, false, false, false, DrawMode.TilemapCache);
-        }
-
-        /// <summary>
-        ///     This clears the display. It will write a background color from the
-        ///     <see cref="ScreenBufferChip" /> into the internal
-        ///     screenBufferData or us 0 if no <see cref="ScreenBufferChip" /> is
-        ///     found.
-        /// </summary>
-        /// <summary>
-        ///     This triggers the renderer to clear an area of the display.
-        /// </summary>
-        public void Clear()
-        {
-            clearFlag = true;
-        }
-
-        public void ClearUILayer()
-        {
-            // TODO this is immediate and needs to be part of the draw call stack
-            uiLayer.Clear();
         }
 
         /// <summary>
@@ -237,15 +105,15 @@ namespace PixelVisionSDK.Chips
         /// <param name="flipH"></param>
         /// <param name="flipV"></param>
         /// <param name="flipY"></param>
-        /// <param name="layerOrder"></param>
-        /// <param name="masked"></param>
+        /// <param name="layer"></param>
         /// <param name="colorOffset"></param>
-        public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, DrawMode drawMode = DrawMode.Sprite, bool masked = false, int colorOffset = 0)
+        /// <param name="layerOrder"></param>
+        public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layer = 0, int colorOffset = 0)
         {
 
             // flip y coordinate space
             if (flipY)
-                y = _height - engine.spriteChip.height - y;
+                y = _height - height - y;
 
             if (pixelData != null)
             {
@@ -258,7 +126,7 @@ namespace PixelVisionSDK.Chips
                 draw.width = width;
                 draw.height = height;
                 draw.pixelData = pixelData;
-                draw.drawMode = drawMode;
+                draw.layer = layer;
                 draw.colorOffset = colorOffset;
                 drawRequests.Add(draw);
 
@@ -278,11 +146,16 @@ namespace PixelVisionSDK.Chips
             totalPixels = _width * _height;
 
             Array.Resize(ref displayPixels, totalPixels);
-            Clear();
+
+            for (int i = 0; i < totalPixels; i++)
+            {
+                displayPixels[i] = -1;
+            }
+//            Clear();
             
             // Resize UI Layer
-            uiLayer.Resize(_width, _height);
-            uiLayer.Clear();
+//            uiLayer.Resize(_width, _height);
+//            uiLayer.Clear();
         }
 
         /// <summary>
@@ -300,8 +173,6 @@ namespace PixelVisionSDK.Chips
 
             ResetResolution(256, 240);
 
-            scrollX = 0;
-            scrollY = 0;
         }
 
         public override void Deactivate()
@@ -340,20 +211,6 @@ namespace PixelVisionSDK.Chips
             return request;
         }
 
-        public void DrawToUI(int[] pixelData, int x, int y, int width, int height, bool flipH = false, bool flipV = false, int colorOffset = 0)
-        {
-            
-            // Update pixel data
-            
-            y = _height - height - y;
-
-            if (flipH || flipV)
-                SpriteChipUtil.FlipSpriteData(ref pixelData, width, height, flipH, flipV);
-
-            CopyDrawRequest(ref uiLayer.pixels, pixelData, x, y, width, height, _width, colorOffset);
-
-        }
-        
         public void CopyDrawRequest(ref int[] destPixelData, int[] pixelData, int x, int y, int width, int height, int destWidth, int colorOffset = 0)
         {
             var total = width * height;

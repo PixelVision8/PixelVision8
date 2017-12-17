@@ -19,7 +19,6 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
-
     /// <summary>
     ///     The <see cref="SpriteChip" /> represents a way to store and retrieve
     ///     sprite pixel data. Internally, the pixel data is stored in a
@@ -28,12 +27,10 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class SpriteChip : AbstractChip
     {
-
         protected int _colorsPerSprite = 8;
+        protected int _maxSpriteCount = -1;
         protected int _pages = 4;
 
-        public bool unique = true;
-        
         /// <summary>
         ///     Internal <see cref="TextureData" /> where sprites are stored
         /// </summary>
@@ -45,13 +42,25 @@ namespace PixelVisionSDK.Chips
         protected string[] cache;
 
         public int pageHeight = 128;
-        
+
         //protected Vector2 pageSize = new Vector2(128, 128);
         public int pageWidth = 128;
 
         protected int[][] pixelDataCache;
         private int tmpX;
         private int tmpY;
+
+        public bool unique = true;
+
+
+        /// <summary>
+        ///     Sets the total number of sprite draw calls for the display.
+        /// </summary>
+        public int maxSpriteCount
+        {
+            get { return _maxSpriteCount; }
+            set { _maxSpriteCount = value; }
+        }
 
         /// <summary>
         ///     The global <see cref="width" /> of sprites in the engine. By default
@@ -279,49 +288,32 @@ namespace PixelVisionSDK.Chips
         /// </returns>
         public void ReadSpriteAt(int index, int[] pixelData)
         {
-//            if (index > pixelDataCache.GetLength(0))
             if (index == -1)
-            {
                 return;
+
+            var cachedSprite = pixelDataCache[index];
+
+            var totalSpritePixels = width * height;
+
+            if (cachedSprite == null)
+            {
+                var tmpPixelData = new int[totalSpritePixels];
+
+                SpriteChipUtil.CalculateSpritePos(index, _texture.width, _texture.height, width, height, out tmpX,
+                    out tmpY);
+
+                _texture.GetPixels(tmpX, tmpY, width, height, ref tmpPixelData);
+
+                pixelDataCache[index] = tmpPixelData;
+                cachedSprite = pixelDataCache[index];
             }
-            
-//            try
-//            {
-                var cachedSprite = pixelDataCache[index];
 
-                var totalSpritePixels = width * height;
+            // Make sure that the pixelData array is the correct size.
+            if (pixelData.Length != cachedSprite.Length)
+                Array.Resize(ref pixelData, cachedSprite.Length);
 
-                if (cachedSprite == null)
-                {
-                    var tmpPixelData = new int[totalSpritePixels];
-
-                    SpriteChipUtil.CalculateSpritePos(index, _texture.width, _texture.height, width, height, out tmpX, out tmpY);
-
-                    _texture.GetPixels(tmpX, tmpY, width, height, ref tmpPixelData);
-
-                    pixelDataCache[index] = tmpPixelData;
-                    cachedSprite = pixelDataCache[index];
-                }
-            
-//            if(pixelData == null)
-//                Debug.Log("pixelData is null");
-            
-                // Make sure that the pixelData array is the correct size.
-                if (pixelData.Length != cachedSprite.Length)
-                {
-//                Debug.Log("pixelData " + pixelData.Length + " cachedSprite " +cachedSprite.Length);
-                    Array.Resize(ref pixelData, cachedSprite.Length);
-
-                }
-
-                // Copy the contents of the cached pixel data into the new array.
-                Array.Copy(cachedSprite, pixelData, totalSpritePixels);
-//            }
-//            catch (Exception e)
-//            {
-//                Debug.Log("Out of range" + pixelDataCache.GetLength(0) + " " + index);
-//            }
-            
+            // Copy the contents of the cached pixel data into the new array.
+            Array.Copy(cachedSprite, pixelData, totalSpritePixels);
         }
 
         /// <summary>
@@ -359,13 +351,5 @@ namespace PixelVisionSDK.Chips
 
             return Array.IndexOf(cache, sprite);
         }
-
-        public void ReadPixelData(int x, int y, int width, int height, ref int[] pixelData)
-        {
-            throw new NotImplementedException();
-        }
-
-
     }
-
 }
