@@ -28,7 +28,11 @@ namespace PixelVisionSDK.Chips
     public class SpriteChip : AbstractChip
     {
         protected int _colorsPerSprite = 8;
-        protected int _maxSpriteCount = -1;
+        
+        /// <summary>
+        ///     Sets the total number of sprite draw calls for the display.
+        /// </summary>
+        public int maxSpriteCount { get; set; }
         protected int _pages = 4;
 
         /// <summary>
@@ -51,16 +55,6 @@ namespace PixelVisionSDK.Chips
         private int tmpY;
 
         public bool unique = true;
-
-
-        /// <summary>
-        ///     Sets the total number of sprite draw calls for the display.
-        /// </summary>
-        public int maxSpriteCount
-        {
-            get { return _maxSpriteCount; }
-            set { _maxSpriteCount = value; }
-        }
 
         /// <summary>
         ///     The global <see cref="width" /> of sprites in the engine. By default

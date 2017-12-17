@@ -33,7 +33,7 @@ namespace PixelVisionSDK.Chips
         protected List<DrawRequest> drawRequests = new List<DrawRequest>();
         private int totalPixels;
 
-        public int layers = 1;
+        public int layers = 4;
 
         public int overscanXPixels
         {
@@ -83,7 +83,7 @@ namespace PixelVisionSDK.Chips
             for (var i = 0; i < totalDR; i++)
             {
                 var draw = sorted[i];
-
+                
                 CopyDrawRequest(ref displayPixels, draw.pixelData, draw.x, draw.y, draw.width, draw.height, _width, draw.colorOffset);
 
             }
@@ -111,6 +111,9 @@ namespace PixelVisionSDK.Chips
         public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layer = 0, int colorOffset = 0)
         {
 
+            if (layer > layers || layer < 0)
+                return;
+            
             // flip y coordinate space
             if (flipY)
                 y = _height - height - y;
@@ -172,6 +175,9 @@ namespace PixelVisionSDK.Chips
             engine.displayChip = this;
 
             ResetResolution(256, 240);
+            
+            // By default set the total layers to the DrawModes minus Tilemap Cache which isn't used for rendering
+            layers = Enum.GetNames(typeof(DrawMode)).Length - 1;
 
         }
 

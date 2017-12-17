@@ -20,13 +20,13 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
 {
-
+    
     public enum DrawMode
     {
+        TilemapCache = -1,
         Background,
         SpriteBelow,
         Tile,
-        TilemapCache,
         Sprite,
         UI,
         SpriteAbove
@@ -193,7 +193,7 @@ namespace PixelVisionSDK.Chips
             
             
             uiLayer.Resize(displayChip.width, displayChip.height);
-
+            
             base.Reset();
         }
         
@@ -540,7 +540,7 @@ namespace PixelVisionSDK.Chips
         
         protected readonly int[] singlePixel = new int[0];
         
-        public void DrawPixel(int x, int y, int colorRef, DrawMode drawMode = DrawMode.UI)
+        public void DrawPixel(int x, int y, int colorRef, DrawMode drawMode = DrawMode.TilemapCache)
         {
             // Make sure that drawing a single pixel only works in the UI layer
             if (drawMode != DrawMode.TilemapCache)
@@ -704,6 +704,55 @@ namespace PixelVisionSDK.Chips
                 }
             }
         }
+
+        
+        /// <summary>
+        ///     DrawSpriteBlock() is similar to DrawSprites except you define the first sprite (upper left corner) and the width x height (in sprites) to sample from sprite ram. This will create a larger sprite by using neighbor sprites.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="x"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="flipH"></param>
+        /// <param name="flipV"></param>
+        /// <param name="drawMode"></param>
+        /// <param name="colorOffset"></param>
+        /// <param name="onScreen"></param>
+        /// <param name="useScrollPos"></param>
+        public void DrawSpriteBlock(int id, int x, int y, int width, int height, bool flipH = false, bool flipV = false,
+            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true)
+        {
+
+            var total = width * height;
+            
+            var sprites = new int[total];
+
+            var sW = spriteChip.width;
+            
+            var startC = id % sW;
+            var tmpC = id % sW;
+            var tmpR = (int)Math.Floor(id / (double)sW);
+
+            var tmpCols = tmpC + width;
+
+            for (int i = 0; i < total; i++)
+            {
+
+                sprites[i] = tmpC + tmpR * sW;
+
+                tmpC += 1;
+
+                if (tmpC >= tmpCols)
+                {
+                    tmpC = startC;
+                    tmpR += 1;
+                }
+
+            }
+            
+            DrawSprites(sprites, x, y, width, flipH, flipV, drawMode, colorOffset, onScreen, useScrollPos);
+
+        }
         
         /// <summary>
         ///     The DrawTile method makes it easier to update the visuals of a tile on any of the map layers. By default, 
@@ -726,7 +775,7 @@ namespace PixelVisionSDK.Chips
             {
                 Tile(c, r, id, colorOffset);
             }
-            else if (drawMode == DrawMode.TilemapCache || drawMode == DrawMode.UI)
+            else if (drawMode == DrawMode.TilemapCache)
             {
                 c *= spriteChip.width;
                 r *= spriteChip.height;
@@ -761,7 +810,7 @@ namespace PixelVisionSDK.Chips
             {
                 UpdateTiles(c, r, width, ids, colorOffset);
             }
-            else if (drawMode == DrawMode.TilemapCache || drawMode == DrawMode.UI)
+            else if (drawMode == DrawMode.TilemapCache)
             {
 
                 var total = ids.Length;
@@ -844,7 +893,7 @@ namespace PixelVisionSDK.Chips
                         Tile(nextX, nextY, spriteIDs[j], colorOffset);
                         nextX++;
                     }
-                    else if (drawMode == DrawMode.TilemapCache || drawMode == DrawMode.UI)
+                    else if (drawMode == DrawMode.TilemapCache)
                     {
                         var pixelData = fontChip.ConvertCharacterToPixelData(text[j], font);
     
@@ -866,7 +915,12 @@ namespace PixelVisionSDK.Chips
         }
         
         private int[] tmpTilemapCache = new int[0];
-        private Rect lastTilemapRequest = new Rect(-1, -1, -1, -1);
+        //private Rect lastTilemapRequest = new Rect(-1, -1, -1, -1);
+
+//        private TilemapDrawRequest lastTilemapRequest;
+        
+        
+        
         
         /// <summary>
         ///     By default, the tilemap renders to the display by simply calling DrawTilemap(). This automatically fills the entire
@@ -892,19 +946,29 @@ namespace PixelVisionSDK.Chips
         ///     An optional int value representing how many vertical tiles to include when drawing the map. By default, this is 0
         ///     which automatically uses the full visible height of the display, while taking into account the Y position offset.
         /// </param>
-        public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0)
+        public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null, int? offsetY = null)
         {
             // First step is to make sure that the tilemap hasn't changed since the last frame
             if (tilemapChip.invalid)
             {
                 tilemapChip.RebuildCache(tilemapChip.cachedTileMap);
+//                lastTilemapRequest.invalid = true;
+//                Debug.Log("Rebuild Tilemap Cache");
             }
             
+            // Copy over new draw request value
+//            lastTilemapRequest.x = x;
+//            lastTilemapRequest.y = y;
+//            lastTilemapRequest.columns = columns;
+//            lastTilemapRequest.rows = rows;
+            var oX = offsetX.HasValue ? offsetX.Value : _scrollX;
+            var oY = offsetY.HasValue ? offsetY.Value : _scrollY;
+
             // Make sure the new draw request is different than the last one
-            if (lastTilemapRequest.x != x || lastTilemapRequest.y != y || lastTilemapRequest.width != columns ||
-                lastTilemapRequest.height != rows)
-            {
-                
+//            if (lastTilemapRequest.invalid)
+//            {
+
+//                Debug.Log("Rebuild tilemap draw cache");
             
                 var width = columns == 0 ? displayChip.width : columns * tilemapChip.tileWidth;
     
@@ -921,18 +985,18 @@ namespace PixelVisionSDK.Chips
                 }
                 
                 // Flip the y scroll value
-                var sY = tilemapChip.realHeight - height - _scrollY;
+                var sY = tilemapChip.realHeight - height - oY;
                 
-                tilemapChip.cachedTileMap.GetPixels(_scrollX, sY, width, height, ref tmpTilemapCache);
+                tilemapChip.cachedTileMap.GetPixels(oX, sY, width, height, ref tmpTilemapCache);
     
-                lastTilemapRequest.x = x;
-                lastTilemapRequest.y = y;
-                lastTilemapRequest.width = width;
-                lastTilemapRequest.height = height;
-            }
+//                lastTilemapRequest.width = width;
+//                lastTilemapRequest.height = height;
+//
+//                lastTilemapRequest.invalid = false;
+//            }
             
             // Copy over the cached pixel data from the tilemap request
-            DrawPixels(tmpTilemapCache, lastTilemapRequest.x, lastTilemapRequest.y, lastTilemapRequest.width, lastTilemapRequest.height, DrawMode.Tile);
+            DrawPixels(tmpTilemapCache, x, y, width, height, DrawMode.Tile);
 
         }
 
