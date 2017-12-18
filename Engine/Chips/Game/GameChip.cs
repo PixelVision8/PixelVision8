@@ -525,7 +525,7 @@ namespace PixelVisionSDK.Chips
             switch (drawMode)
             {
                 case DrawMode.TilemapCache:
-
+                    
                     tilemapChip.UpdateCachedTilemap(pixelData, x, y, width, height, colorOffset);
 
                     break;
@@ -946,15 +946,10 @@ namespace PixelVisionSDK.Chips
         ///     An optional int value representing how many vertical tiles to include when drawing the map. By default, this is 0
         ///     which automatically uses the full visible height of the display, while taking into account the Y position offset.
         /// </param>
-        public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null, int? offsetY = null)
+        public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null, int? offsetY = null, DrawMode drawMode = DrawMode.Tile)
         {
             // First step is to make sure that the tilemap hasn't changed since the last frame
-            if (tilemapChip.invalid)
-            {
-                tilemapChip.RebuildCache(tilemapChip.cachedTileMap);
-//                lastTilemapRequest.invalid = true;
-//                Debug.Log("Rebuild Tilemap Cache");
-            }
+            
             
             // Copy over new draw request value
 //            lastTilemapRequest.x = x;
@@ -987,7 +982,7 @@ namespace PixelVisionSDK.Chips
                 // Flip the y scroll value
                 var sY = tilemapChip.realHeight - height - oY;
                 
-                tilemapChip.cachedTileMap.GetPixels(oX, sY, width, height, ref tmpTilemapCache);
+                tilemapChip.GetCachedPixels(oX, sY, width, height, ref tmpTilemapCache);
     
 //                lastTilemapRequest.width = width;
 //                lastTilemapRequest.height = height;
@@ -996,7 +991,7 @@ namespace PixelVisionSDK.Chips
 //            }
             
             // Copy over the cached pixel data from the tilemap request
-            DrawPixels(tmpTilemapCache, x, y, width, height, DrawMode.Tile);
+            DrawPixels(tmpTilemapCache, x, y, width, height, drawMode);
 
         }
 
@@ -1594,6 +1589,7 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public void RebuildTilemap(int? columns = null, int? rows = null, int[] spriteIDs = null, int[] colorOffsets = null, int[] flags = null)
         {
+             // TODO need to allow the option to just rebuild parts of the tilemap
             // This flags the tilemap to clear the cache which will be rebuilt the next time pixel data is requested.
             tilemapChip.ClearCache();
         }

@@ -254,25 +254,34 @@ namespace PixelVisionSDK
         /// </param>
         /// <param name="pixels">The pixel data to be used.</param>
         /// <param name="colorOffset"></param>
-        public virtual void SetPixels(int x, int y, int blockWidth, int blockHeight, int[] pixels, int colorOffset = 0)
+        public virtual void SetPixels(int x, int y, int blockWidth, int blockHeight, int[] pixels, int colorOffset = 0, bool ignoreTransparent = false)
         {
             var total = blockWidth * blockHeight;
             int pixel;
 
             for (var i = 0; i < total; i++)
             {
-                //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
-                tmpX = i % blockWidth;
-                tmpY = i / blockWidth;
-
-                tmpX += x;
-                tmpY += y;
                 pixel = pixels[i];
 
-                if (colorOffset > 0 && pixel != -1)
-                    pixel += colorOffset;
+                if (pixel == -1 && ignoreTransparent)
+                {
 
-                SetPixel(tmpX, tmpY, pixel);
+                }
+                else
+                {
+                    if (colorOffset > 0 && pixel != -1)
+                        pixel += colorOffset;
+                
+                    //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
+                    tmpX = i % blockWidth;
+                    tmpY = i / blockWidth;
+
+                    tmpX += x;
+                    tmpY += y;
+
+                    SetPixel(tmpX, tmpY, pixel);
+                }
+                
             }
         }
 

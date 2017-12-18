@@ -28,11 +28,11 @@ namespace PixelVisionSDK.Chips
         public int overscanX { get; set; }
         public int overscanY { get; set; }
         
-        public int[] displayPixels = new int[0];
         protected List<DrawRequest> drawRequestPool = new List<DrawRequest>();
         protected List<DrawRequest> drawRequests = new List<DrawRequest>();
         private int totalPixels;
-
+        
+        public int[] displayPixels = new int[0];
         public int layers = 4;
 
         public int overscanXPixels
@@ -111,8 +111,13 @@ namespace PixelVisionSDK.Chips
         public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layer = 0, int colorOffset = 0)
         {
 
-            if (layer > layers || layer < 0)
-                return;
+            if (layer > layers)
+            {
+                layer = layers;
+            }else if(layer < 0)
+            {
+                layer = 0;
+            }
             
             // flip y coordinate space
             if (flipY)

@@ -38,7 +38,7 @@ namespace PixelVisionSDK.Chips
         protected SpriteChip _spriteChip;
 
         protected int _totalLayers = -1;
-        public TextureData cachedTileMap = new TextureData(0, 0);
+        protected TextureData cachedTileMap = new TextureData(0, 0);
 
         public int[][] layers;
 
@@ -168,15 +168,40 @@ namespace PixelVisionSDK.Chips
             Array.Clear(invalidLayer, 0, total);
         }
 
+        public void GetCachedPixels(int x, int y, int blockWidth, int blockHeight, ref int[] pixelData)
+        {
+            if (invalid)
+            {
+                RebuildCache(cachedTileMap);
+            }
+            
+            cachedTileMap.GetPixels(x, y, blockWidth, blockHeight, ref pixelData);
+        }
+        
         public void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight,
             int colorOffset = 0)
         {
-//            if (cachedTileMap.width != realWidth || cachedTileMap.height != realHeight)
-//                cachedTileMap.Resize(realWidth, realHeight);
+            
+            // Check to see if the tilemap cache is invalide before drawing to it
+            if (invalid)
+            {
+                
+                // Rebuild the tilemap cache first
+                RebuildCache(cachedTileMap);
+                
+            }
+                
+            // Flip the y axis 
             y = cachedTileMap.height - y - blockHeight;
-
-            cachedTileMap.SetPixels(x, y, blockWidth, blockHeight, pixels, colorOffset);
-            Invalidate();
+            
+            
+            // Todo need to go through and draw to the tilemap cache but ignore transparent pixels
+            
+            
+            // Set pixels on the tilemap cache
+            cachedTileMap.SetPixels(x, y, blockWidth, blockHeight, pixels, colorOffset, true);
+            
+//            Invalidate();
         }
 
         public void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0)

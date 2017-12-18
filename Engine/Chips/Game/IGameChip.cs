@@ -373,7 +373,7 @@ namespace PixelVisionSDK.Chips
         ///     An optional int value representing how many vertical tiles to include when drawing the map. By default, this is 0
         ///     which automatically uses the full visible height of the display, while taking into account the Y position offset.
         /// </param>
-        void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null, int? offsetY = null);
+        void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null, int? offsetY = null, DrawMode drawMode = DrawMode.Tile);
 
         /// <summary>
         ///     You can scroll the tilemap by calling the ScrollPosition() method and supplying a new scroll X and Y position.
