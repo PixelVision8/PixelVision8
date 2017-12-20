@@ -44,7 +44,10 @@ namespace PixelVisionSDK.Chips
         {
             get { return overscanY * engine.spriteChip.height; }
         }
-
+        
+        /// <summary>
+        ///     This returns the visble areas sprites should be displayed on. Note that x and y may be negative if overscan is set since the screen wraps.
+        /// </summary>
         public Rect visibleBounds
         {
             get
@@ -110,14 +113,9 @@ namespace PixelVisionSDK.Chips
         /// <param name="layerOrder"></param>
         public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layer = 0, int colorOffset = 0)
         {
-
+            // Only draw the layer if the display can show it.
             if (layer > layers)
-            {
-                layer = layers;
-            }else if(layer < 0)
-            {
-                layer = 0;
-            }
+                return;
             
             // flip y coordinate space
             if (flipY)

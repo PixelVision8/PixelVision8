@@ -130,7 +130,18 @@ namespace PixelVisionSDK.Chips
             foreach (var chip in chips)
                 chip.Value.Reset();
         }
-
+        
+        /// <summary>
+        ///     Loops through all chips that implement the IUpdate interface
+        ///     and calls the Update method on them.
+        /// </summary>
+        /// <param name="timeDelta"></param>
+        public void Shutdown()
+        {
+            foreach (var chip in chips)
+                chip.Value.Shutdown();
+        }
+        
         /// <summary>
         ///     This method tests to see if a chip exists in the manager.
         /// </summary>

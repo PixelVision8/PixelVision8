@@ -210,6 +210,7 @@ namespace PixelVisionSDK
         /// <tocexclude />
         public virtual void Shutdown()
         {
+            chipManager.Shutdown();
         }
 
         /// <summary>

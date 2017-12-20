@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -206,6 +207,11 @@ namespace PixelVisionSDK.Chips
             engine.gameChip = null;
         }
 
+        public override void Shutdown()
+        {
+            // Put save logic here
+        }
+        
         #endregion
 
         #region Color APIs
@@ -425,6 +431,11 @@ namespace PixelVisionSDK.Chips
             return new Vector(displayChip.width, displayChip.height);
         }
 
+        public Rect VisibleBounds()
+        {
+            return displayChip.visibleBounds;
+        }
+        
         /// <summary>
         ///     Pixel Vision 8's overscan value allows you to define parts of the screen that are not visible similar
         ///     to how older CRT TVs rendered images. This overscan border allows you to hide sprites off the screen
@@ -653,9 +664,8 @@ namespace PixelVisionSDK.Chips
         ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile
         ///     above the background color.
         /// </param>
-        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true)
+        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rect bounds = null)
         {
-            var bounds = displayChip.visibleBounds;
 
             var total = ids.Length;
 
@@ -689,9 +699,14 @@ namespace PixelVisionSDK.Chips
                     
                     // Check to see if we need to test the bounds
                     if (onScreen)
+                    {
+                        if (bounds == null)
+                            bounds = displayChip.visibleBounds;
+
                         // This can set the render flag to true or false based on it's location
                         //TODO need to take into account the current bounds of the screen
                         render = x >= bounds.x && x <= bounds.width && y >= bounds.y && y <= bounds.height;
+                    }
                     else
                     {
                         // If we are not testing to see if the sprite is onscreen it will always render and wrap based on its position
@@ -1316,7 +1331,7 @@ namespace PixelVisionSDK.Chips
         {
             soundChip.PlaySound(id, channel);
         }
-
+        
         /// <summary>
         ///     This method allows your read and write raw sound data on the SoundChip.
         /// </summary>

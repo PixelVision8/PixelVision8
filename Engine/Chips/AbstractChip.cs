@@ -104,6 +104,11 @@ namespace PixelVisionSDK.Chips
         {
         }
 
+        public virtual void Shutdown()
+        {
+            
+        }
+
     }
 
 }
