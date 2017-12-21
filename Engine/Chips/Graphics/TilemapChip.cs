@@ -271,7 +271,7 @@ namespace PixelVisionSDK.Chips
             var layer = layers[(int) Layer.Invalid];
 
             // Make sure the index is within range
-            if (index >= layer.Length)
+            if (index >= layer.Length || index < 0)
                 return;
 
             // change the tile flag to -1 so we know it needs to be redrawn
@@ -347,7 +347,7 @@ namespace PixelVisionSDK.Chips
                 column = MathUtil.Repeat(column, columns);
             var index = column + row * columns;
 
-            if (index < layers[id].Length)
+            if (index > -1 && index < layers[id].Length)
             {
                 layers[id][index] = value;
                 Invalidate(index);

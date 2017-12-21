@@ -734,7 +734,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="colorOffset"></param>
         /// <param name="onScreen"></param>
         /// <param name="useScrollPos"></param>
-        public void DrawSpriteBlock(int id, int x, int y, int width, int height, bool flipH = false, bool flipV = false,
+        public void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false, bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true)
         {
 
@@ -877,6 +877,7 @@ namespace PixelVisionSDK.Chips
         /// </param>
         /// <param name="font">
         ///     The name of the font to use. You do not need to add the font's file extension. If the file is called
+        ///     The name of the font to use. You do not need to add the font's file extension. If the file is called
         ///     default.font.png,
         ///     you can simply refer to it as "default" when supplying an argument value.
         /// </param>
@@ -898,45 +899,40 @@ namespace PixelVisionSDK.Chips
             var nextX = x;
             var nextY = y;
 
-                var spriteIDs = fontChip.ConvertTextToSprites(text, font);
-                var total = spriteIDs.Length;
+            var spriteIDs = fontChip.ConvertTextToSprites(text, font);
+            var total = spriteIDs.Length;
 
-                for (var j = 0; j < total; j++)
+            for (var j = 0; j < total; j++)
+            {
+                if (drawMode == DrawMode.Tile)
                 {
-                    if (drawMode == DrawMode.Tile)
-                    {
-                        Tile(nextX, nextY, spriteIDs[j], colorOffset);
-                        nextX++;
-                    }
-                    else if (drawMode == DrawMode.TilemapCache)
-                    {
-                        var pixelData = fontChip.ConvertCharacterToPixelData(text[j], font);
-    
-                        if (pixelData != null)
-                            DrawPixels(pixelData, nextX, nextY, spriteSize.x, spriteSize.y, drawMode, false, false, colorOffset);
-    
-                        // Increase X even if no character was found
-                        nextX += charWidth + spacing;
-                    }
-                    else
-                    {
-                        DrawSprite(spriteIDs[j], nextX, nextY, false, false, drawMode, colorOffset);
-                        nextX += charWidth + spacing;
-                    }
-    
+                    Tile(nextX, nextY, spriteIDs[j], colorOffset);
+                    nextX++;
                 }
+                else if (drawMode == DrawMode.TilemapCache || drawMode == DrawMode.UI)
+                {
+                    var pixelData = fontChip.ConvertCharacterToPixelData(text[j], font);
+                    
+                    // TODO this should combine the pixel data into a single draw call
+                    if (pixelData != null)
+                        DrawPixels(pixelData, nextX, nextY, spriteSize.x, spriteSize.y, drawMode, false, false, colorOffset);
+
+                    // Increase X even if no character was found
+                    nextX += charWidth + spacing;
+                }
+                else
+                {
+                    DrawSprite(spriteIDs[j], nextX, nextY, false, false, drawMode, colorOffset);
+                    nextX += charWidth + spacing;
+                }
+
+            }
 
             return 1;
         }
         
         private int[] tmpTilemapCache = new int[0];
-        //private Rect lastTilemapRequest = new Rect(-1, -1, -1, -1);
-
-//        private TilemapDrawRequest lastTilemapRequest;
-        
-        
-        
-        
+ 
         /// <summary>
         ///     By default, the tilemap renders to the display by simply calling DrawTilemap(). This automatically fills the entire
         ///     display with the visible portion of the tilemap. To have more granular control over how to render the tilemap, you
