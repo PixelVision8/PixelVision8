@@ -602,7 +602,7 @@ namespace PixelVisionSDK.Chips
         /// </param>
         public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
-            if (spriteChip.maxSpriteCount > 0 && currentSprites > spriteChip.maxSpriteCount)
+            if (spriteChip.maxSpriteCount > 0 && currentSprites >=     spriteChip.maxSpriteCount)
                 return;
             
             //TODO flipping H, V and colorOffset should all be passed into reading a sprite
