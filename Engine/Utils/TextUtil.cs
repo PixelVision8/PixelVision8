@@ -20,6 +20,7 @@ namespace PixelVisionSDK.Utils
 {
     public static class TextUtil
     {
+        private static string newline = "\n";
         
         // Based on https://www.codeproject.com/Articles/51488/Implementing-Word-Wrap-in-C
         
@@ -43,11 +44,11 @@ namespace PixelVisionSDK.Utils
             for (pos = 0; pos < text.Length; pos = next)
             {
                 // Find end of line
-                int eol = text.IndexOf(Environment.NewLine, pos);
+                int eol = text.IndexOf(newline, pos);
                 if (eol == -1)
                     next = eol = text.Length;
                 else
-                    next = eol + Environment.NewLine.Length;
+                    next = eol + newline.Length;
         
                 // Copy this line of text, breaking into smaller lines as needed
                 if (eol > pos)
@@ -58,7 +59,7 @@ namespace PixelVisionSDK.Utils
                         if (len > width)
                             len = BreakLine(text, pos, width);
                         sb.Append(text, pos, len);
-                        sb.Append(Environment.NewLine);
+                        sb.Append(newline);
         
                         // Trim whitespace following break
                         pos += len;
@@ -66,7 +67,7 @@ namespace PixelVisionSDK.Utils
                             pos++;
                     } while (eol > pos);
                 }
-                else sb.Append(Environment.NewLine); // Empty line
+                else sb.Append(newline); // Empty line
             }
             return sb.ToString();
         }
@@ -101,7 +102,7 @@ namespace PixelVisionSDK.Utils
         public static string[] SplitLines(string str)
         {
             string[] lines = str.Split(
-                new[] { Environment.NewLine },
+                new[] { newline },
                 StringSplitOptions.None
             );
 
