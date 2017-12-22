@@ -88,7 +88,7 @@ namespace PixelVisionSDK.Chips
         void ReplaceColor(int index, int id);
 
         /// <summary>
-        ///     Clearing the display removed all of the existing pixel data, replacing it with the default background
+        ///     Clear1ing the display removed all of the existing pixel data, replacing it with the default background
         ///     color. The Clear() method allows you specify what region of the display to clear. By simply calling
         ///     Clear(), with no arguments, it automatically clears the entire display. You can manually define an area
         ///     of the screen to clear by supplying option x, y, width and height arguments. When clearing a specific
@@ -118,7 +118,7 @@ namespace PixelVisionSDK.Chips
         ///     Values less than 0 or greater than the height are adjusted to stay within the boundaries of the screen's
         ///     visible pixels.
         /// </param>
-        void Clear(int x = 0, int y = 0, int width = 0, int height = 0);
+        void Clear(int x = 0, int y = 0, int? width = null, int? height = null);
 
         /// <summary>
         ///     The display's size defines the visible area where pixel data exists on the screen. Calculating this is
@@ -307,7 +307,7 @@ namespace PixelVisionSDK.Chips
         ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile
         ///     above the background color.
         /// </param>
-        void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true);
+        void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rect bounds = null);
 
         /// <summary>
         ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render
@@ -346,12 +346,8 @@ namespace PixelVisionSDK.Chips
         ///     This optional argument sets the number of pixels between each character when rendering text. This value is ignored
         ///     when rendering text as tiles. This value can be positive or negative depending on your needs. By default, it is 0.
         /// </param>
-        /// <param name="width">
-        ///     This optional argument allows you to wrap text. This accepts an int representing the number of characters before
-        ///     wrapping the text. Only set a value if you want the text to wrap. By default, it is set to null and is ignored.
-        /// </param>
         /// <returns></returns>
-        int DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0, int? width = null);
+        int DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0);
 
         /// <summary>
         ///     By default, the tilemap renders to the display by simply calling DrawTilemap(). This automatically fills the entire
@@ -377,7 +373,7 @@ namespace PixelVisionSDK.Chips
         ///     An optional int value representing how many vertical tiles to include when drawing the map. By default, this is 0
         ///     which automatically uses the full visible height of the display, while taking into account the Y position offset.
         /// </param>
-        void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0);
+        void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null, int? offsetY = null, DrawMode drawMode = DrawMode.Tile);
 
         /// <summary>
         ///     You can scroll the tilemap by calling the ScrollPosition() method and supplying a new scroll X and Y position.

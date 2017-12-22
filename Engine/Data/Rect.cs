@@ -106,6 +106,12 @@ namespace PixelVisionSDK
             return false;
         }
 
+        public bool Contains(int x, int y)
+        {
+            return x >= this.x && y >= this.y &&
+                   x < (this.x + width) && y < (this.y + height);
+        }
+
     }
 
 }

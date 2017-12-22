@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using System;
+using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
@@ -24,11 +25,7 @@ namespace PixelVisionSDK
         protected int[] _pixelData = new int[0];
         public int colorOffset = 0;
         public int height;
-        public bool masked = true;
-        public int offsetX;
-        public int offsetY;
-        public int order;
-        public int transparent = -1;
+        public int layer;
         public int width;
         public int x;
         public int y;
@@ -44,54 +41,6 @@ namespace PixelVisionSDK
                     Array.Resize(ref _pixelData, totalPixels);
 
                 Array.Copy(value, _pixelData, totalPixels);
-            }
-        }
-
-        public void DrawPixels(ref int[] destPixelData, int destWidth, int destHeight, int[] mask = null)
-        {
-            var total = width * height;
-            int srcX;
-            int srcY;
-
-            var tmpWidth = width;
-            int destIndex;
-            var colorID = -1;
-            var totalPixels = destPixelData.Length;
-
-            for (var i = 0; i < total; i++)
-            {
-                srcX = i % tmpWidth + x;
-                srcY = i / tmpWidth + y;
-
-                srcX = (int) (srcX - Math.Floor(x / (float) destWidth) * destWidth);
-                srcY = (int) (srcY - Math.Floor(y / (float) destHeight) * destHeight);
-
-                destIndex = srcX + srcY * destWidth;
-
-                if (destIndex < totalPixels && destIndex > -1)
-                {
-                    colorID = _pixelData[i];
-
-                    if (colorID > -1)
-                    {
-                        if (colorOffset > 0)
-                            colorID += colorOffset;
-
-                        if (order > 0)
-                            destPixelData[destIndex] = colorID;
-                        else if (order == -1)
-                            if (mask != null)
-                            {
-                                if (mask[destIndex] == -1)
-                                    destPixelData[destIndex] = colorID;
-                            }
-                            else
-                            {
-                                if (destPixelData[destIndex] == -1)
-                                    destPixelData[destIndex] = colorID;
-                            }
-                    }
-                }
             }
         }
 
