@@ -129,6 +129,7 @@ namespace PixelVisionSDK.Chips
         protected TilemapChip tilemapChip;
         protected FontChip fontChip;
         protected MusicChip musicChip;
+        private readonly int[] singlePixel = new int[0];
 
         #endregion
 
@@ -368,15 +369,6 @@ namespace PixelVisionSDK.Chips
             DrawRect(x,y, w, h, colorChip.backgroundColor);
             
         }
-//
-//        public void ClearUILayer(int x = 0, int y = 0, int? width = null, int? height = null)
-//        {
-//            var w = width.HasValue ? width.Value : displayChip.width - x;
-//            var h = height.HasValue ? height.Value : displayChip.height - y;
-//
-//            DrawRect(x, y, w, h);
-////            displayChip.ClearUILayer();
-//        }
 
         /// <summary>
         ///     The display's size defines the visible area where pixel data exists on the screen. Calculating this is
@@ -548,8 +540,27 @@ namespace PixelVisionSDK.Chips
             }
         }
         
-        protected readonly int[] singlePixel = new int[0];
-        
+        /// <summary>
+        ///     This method allows you to draw a single pixel to the Tilemap Cache. It's an expensive operation which leverages 
+        ///     DrawPixels(). This should only be used in special occasions when batching pixel data draw request aren't possible.
+        /// </summary>
+        /// <param name="x">
+        ///     The x position where to display the new pixel data. The display's horizontal 0 position is on the far left-hand
+        ///     side.
+        ///     When using DrawMode.TilemapCache, the pixel data is drawn into the tilemap's cache instead of directly on
+        ///     the display when using DrawMode.Sprite.
+        /// </param>
+        /// <param name="y">
+        ///     The Y position where to display the new pixel data. The display's vertical 0 position is on the top. When using
+        ///     DrawMode.TilemapCache, the pixel data is drawn into the tilemap's cache instead of directly on the display
+        ///     when using DrawMode.Sprite.
+        /// </param>
+        /// <param name="colorRef">
+        ///     The color ID to use when drawing the pixel.
+        /// </param>
+        /// <param name="drawMode">
+        ///     This argument only accepts the DrawMode.TilemapCache enum.
+        /// </param>
         public void DrawPixel(int x, int y, int colorRef, DrawMode drawMode = DrawMode.TilemapCache)
         {
             // Make sure that drawing a single pixel only works in the UI layer
@@ -658,11 +669,6 @@ namespace PixelVisionSDK.Chips
         ///     wrap around the screen when they reach the edges of the screen.
         /// </param>
         /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
-        /// <param name="aboveBG">
-        ///     An optional bool that defines if the sprite is above or below the tilemap. Sprites are set to render above the
-        ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile
-        ///     above the background color.
-        /// </param>
         public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rect bounds = null)
         {
 
@@ -721,20 +727,43 @@ namespace PixelVisionSDK.Chips
 
         
         /// <summary>
-        ///     DrawSpriteBlock() is similar to DrawSprites except you define the first sprite (upper left corner) and the width x height (in sprites) to sample from sprite ram. This will create a larger sprite by using neighbor sprites.
+        ///     DrawSpriteBlock() is similar to DrawSprites except you define the first sprite (upper left corner) and the width x height 
+        ///     (in sprites) to sample from sprite ram. This will create a larger sprite by using neighbor sprites.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="x"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="flipH"></param>
-        /// <param name="flipV"></param>
+        /// <param name="id">The top left sprite to start with. </param>
+        /// <param name="x">
+        ///     An int value representing the X position to place sprite on the display. If set to 0, it renders on the far
+        ///     left-hand side of the screen.
+        /// </param>
+        /// <param name="y">
+        ///     An int value representing the Y position to place sprite on the display. If set to 0, it renders on the top
+        ///     of the screen.
+        /// </param>
+        /// <param name="width">
+        ///     The width, in sprites, of the grid. A value of 2 renders 2 sprites wide. The DrawSprites method continues to
+        ///     run through all of the sprites in the ID array until reaching the end. Sprite groups do not have to be perfect
+        ///     squares since the width value is only used to wrap sprites to the next row.
+        /// </param>
+        /// <param name="flipH">
+        ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips
+        ///     the pixel data horizontally.
+        /// </param>
+        /// <param name="flipV">
+        ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips
+        ///     the pixel data vertically.
+        /// </param>
         /// <param name="drawMode"></param>
-        /// <param name="colorOffset"></param>
-        /// <param name="onScreen"></param>
-        /// <param name="useScrollPos"></param>
-        public void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false, bool flipV = false,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true)
+        /// <param name="colorOffset">
+        ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
+        ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
+        /// </param>
+        /// <param name="onScreen">
+        ///     This flag defines if the sprites should not render when they are off the screen. Use this in conjunction with
+        ///     overscan border control what happens to sprites at the edge of the display. If this value is false, the sprites
+        ///     wrap around the screen when they reach the edges of the screen.
+        /// </param>
+        /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
+        public void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true)
         {
 
             var total = width * height;
@@ -956,25 +985,23 @@ namespace PixelVisionSDK.Chips
         ///     An optional int value representing how many vertical tiles to include when drawing the map. By default, this is 0
         ///     which automatically uses the full visible height of the display, while taking into account the Y position offset.
         /// </param>
+        /// <param name="offsetX">
+        ///     An optional int value to override the scroll X position. This is useful when you need to change the left x position 
+        ///     from where to sample the tilemap data from.
+        /// </param>
+        /// <param name="offsetY">
+        ///     An optional int value to override the scroll Y position. This is useful when you need to change the top y position 
+        ///     from where to sample the tilemap data from.
+        /// </param>
+        /// <param name="DrawMode">
+        ///     This accepts DrawMode Tile and TilemapCache.
+        /// </param>
         public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null, int? offsetY = null, DrawMode drawMode = DrawMode.Tile)
         {
-            // First step is to make sure that the tilemap hasn't changed since the last frame
-            
-            
-            // Copy over new draw request value
-//            lastTilemapRequest.x = x;
-//            lastTilemapRequest.y = y;
-//            lastTilemapRequest.columns = columns;
-//            lastTilemapRequest.rows = rows;
+
             var oX = offsetX.HasValue ? offsetX.Value : _scrollX;
             var oY = offsetY.HasValue ? offsetY.Value : _scrollY;
 
-            // Make sure the new draw request is different than the last one
-//            if (lastTilemapRequest.invalid)
-//            {
-
-//                Debug.Log("Rebuild tilemap draw cache");
-            
                 var width = columns == 0 ? displayChip.width : columns * tilemapChip.tileWidth;
     
                 if ((width + x) > displayChip.width)
@@ -994,17 +1021,20 @@ namespace PixelVisionSDK.Chips
                 
                 tilemapChip.GetCachedPixels(oX, sY, width, height, ref tmpTilemapCache);
     
-//                lastTilemapRequest.width = width;
-//                lastTilemapRequest.height = height;
-//
-//                lastTilemapRequest.invalid = false;
-//            }
-            
             // Copy over the cached pixel data from the tilemap request
             DrawPixels(tmpTilemapCache, x, y, width, height, drawMode);
 
         }
-
+        
+        /// <summary>
+        ///     This method allows you to draw a rectangle with a fill color. By default, this method is used to clear the screen but you can supply a color offset to change the color value and use it to fill a rectangle area with a specific color instead.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="color"></param>
+        /// <param name="drawMode"></param>
         public void DrawRect(int x, int y, int width, int height, int color = -1, DrawMode drawMode = DrawMode.Background)
         {
             DrawPixels(new int[width * height], x, y, width, height, drawMode, false, false, color);
