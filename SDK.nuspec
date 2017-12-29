@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>PixelVision8.SDK</id>
+    <title>Pixel Vision 8 SDK</title>
+    <authors>Jesse Freeman, Pedro Medeiros, Christer Kaitila, Shawn Rakowski</authors>
+    <version>1.7.7</version>
+    <description>Pixel Vision 8's SDK is open source, allowing anyone to build authentic 8-bit C# games with it. Developers can use the SDK in any game engine that supports C# such as Unity, MonoGame or even lower-level rendering engines such as OpenTK.</description>
+    <projectUrl>http://pixelvisionsdk.com/</projectUrl>
+    <licenseUrl>https://github.com/PixelVision8/SDK/blob/master/LICENSE</licenseUrl>
+    <iconUrl>https://avatars2.githubusercontent.com/u/24598054?s=460</iconUrl>
+    <contentFiles>
+      <files include="cs/**/*.*" buildAction="Compile" />
+    </contentFiles>
+  </metadata>
+  <files>
+    <file src="Engine/**/*.cs" target="content\App_Packages\PixelVision8.SDK" />
+    <file src="Engine/**/*.cs" target="contentFiles\cs\any\App_Packages\PixelVision8.SDK" />
+</files>
+</package>
