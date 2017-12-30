@@ -137,8 +137,10 @@ namespace PixelVisionSDK.Chips
         ///     This method returns a Vector representing the display's size. The X and Y values refer to the pixel width
         ///     and height of the screen.
         /// </returns>
-        Vector DisplaySize(int? width = null, int? height = null);
+//        Vector DisplaySize(int? width = null, int? height = null);
 
+        Vector Display(bool visible = true);
+        
         /// <summary>
         ///     Pixel Vision 8's overscan value allows you to define parts of the screen that are not visible similar
         ///     to how older CRT TVs rendered images. This overscan border allows you to hide sprites off the screen
@@ -166,7 +168,7 @@ namespace PixelVisionSDK.Chips
         ///     to calculate the actual visible screen area which may be different than the display's native resolution.
         ///     Also useful to position sprites offscreen when not needed, so they do not wrap around the screen.
         /// </returns>
-        Vector OverscanBorder(int? x, int? y);
+//        Vector OverscanBorder(int? x, int? y);
 
         /// <summary>
         ///     This method allows you to draw raw pixel data directly to the display. Depending on which draw mode you

@@ -387,41 +387,61 @@ namespace PixelVisionSDK.Chips
         ///     This method returns a Vector representing the display's size. The X and Y values refer to the pixel width
         ///     and height of the screen.
         /// </returns>
-        public Vector DisplaySize(int? width = null, int? height = null)
+//        public Vector DisplaySize(int? width = null, int? height = null)
+//        {
+//            var size = new Vector();
+//            var resize = false;
+//
+//            if (width.HasValue)
+//            {
+//                size.x = width.Value;
+//                resize = true;
+//            }
+//            else
+//            {
+//                size.x = displayChip.width;
+//            }
+//
+//            if (height.HasValue)
+//            {
+//                size.y = height.Value;
+//                resize = true;
+//            }
+//            else
+//            {
+//                size.y = displayChip.height;
+//            }
+//
+//            if (resize)
+//            {
+//                displayChip.ResetResolution(size.x, size.y);
+//            }
+//            
+//            // TODO need a flag to tell the runner to change the resolution
+//            
+//            return new Vector(displayChip.width, displayChip.height);
+//        }
+
+        protected Vector display = new Vector();
+        
+        /// <summary>
+        ///     The display's size defines the visible area where pixel data exists on the screen. Calculating this is
+        ///     important for knowing how to position sprites on the screen. The Display() method allows you to get
+        ///     the resolution of the display at run time. By default, this will return the visble screen area based on
+        ///     the overscan value set on the display chip. To calculate the exact overscan in pixels, you must subtract
+        ///     the full size from the visible size. Simply supply false as an argument to get the full display dimensions.
+        /// </summary>
+        public Vector Display(bool visible = true)
         {
-            var size = new Vector();
-            var resize = false;
+            var offsetX = visible ? displayChip.overscanXPixels : 0;
+            var offsetY = visible ? displayChip.overscanYPixels : 0;
 
-            if (width.HasValue)
-            {
-                size.x = width.Value;
-                resize = true;
-            }
-            else
-            {
-                size.x = displayChip.width;
-            }
+            display.x = displayChip.width - offsetX;
+            display.y = displayChip.height - offsetY;
 
-            if (height.HasValue)
-            {
-                size.y = height.Value;
-                resize = true;
-            }
-            else
-            {
-                size.y = displayChip.height;
-            }
-
-            if (resize)
-            {
-                displayChip.ResetResolution(size.x, size.y);
-            }
-            
-            // TODO need a flag to tell the runner to change the resolution
-            
-            return new Vector(displayChip.width, displayChip.height);
+            return display;
         }
-
+        
         public Rect VisibleBounds()
         {
             return displayChip.visibleBounds;
@@ -454,27 +474,27 @@ namespace PixelVisionSDK.Chips
         ///     to calculate the actual visible screen area which may be different than the display's native resolution.
         ///     Also useful to position sprites offscreen when not needed, so they do not wrap around the screen.
         /// </returns>
-        public Vector OverscanBorder(int? x, int? y)
-        {
-            //var size = new Vector();
-            var changeBorder = false;
-
-            if (x.HasValue)
-            {
-                //size.x = ;
-                displayChip.overscanX = x.Value;
-                changeBorder = true;
-            }
-
-            if (y.HasValue)
-            {
-                changeBorder = true;
-                //size.y = y.Value;
-                displayChip.overscanY = y.Value;
-            }
-
-            return new Vector(displayChip.overscanX, displayChip.overscanY);
-        }
+//        public Vector OverscanBorder(int? x, int? y)
+//        {
+//            //var size = new Vector();
+//            var changeBorder = false;
+//
+//            if (x.HasValue)
+//            {
+//                //size.x = ;
+//                displayChip.overscanX = x.Value;
+//                changeBorder = true;
+//            }
+//
+//            if (y.HasValue)
+//            {
+//                changeBorder = true;
+//                //size.y = y.Value;
+//                displayChip.overscanY = y.Value;
+//            }
+//
+//            return new Vector(displayChip.overscanX, displayChip.overscanY);
+//        }
 
         /// <summary>
         ///     This method allows you to draw raw pixel data directly to the display. Depending on which draw mode you
@@ -1311,7 +1331,7 @@ namespace PixelVisionSDK.Chips
         public int CalculateIndex(int x, int y, int width)
         {
             int index;
-            PosUtil.CalculateIndex(x, y, width, out index);
+            index = x + y * width;
             return index;
         }
 
@@ -1332,7 +1352,8 @@ namespace PixelVisionSDK.Chips
         {
             int x, y;
 
-            PosUtil.CalculatePosition(index, width, out x, out y);
+            x = index % width;
+            y = index / width;
 
             return new Vector(x, y);
         }
