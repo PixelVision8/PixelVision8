@@ -35,16 +35,11 @@ namespace PixelVisionSDK.Chips
             Invalid
         }
 
-        protected SpriteChip _spriteChip;
-
-        protected int _totalLayers = -1;
-        protected TextureData cachedTileMap = new TextureData(0, 0);
+        protected readonly int totalLayers = Enum.GetNames(typeof(Layer)).Length;
 
         public int[][] layers;
 
         protected int tmpIndex;
-
-        protected int[] tmpPixelData = new int[8 * 8];
 
         /// <summary>
         ///     Total number of collision flags the chip will support.
@@ -52,54 +47,6 @@ namespace PixelVisionSDK.Chips
         ///     The default value is 16.
         /// </summary>
         public int totalFlags = 16;
-
-        protected SpriteChip spriteChip
-        {
-            get
-            {
-                if (_spriteChip == null)
-                    _spriteChip = engine.spriteChip;
-
-                return _spriteChip;
-            }
-        }
-
-        public int tileWidth
-        {
-            get { return spriteChip == null ? 8 : engine.spriteChip.width; }
-        }
-
-        public int tileHeight
-        {
-            get { return spriteChip == null ? 8 : engine.spriteChip.height; }
-        }
-
-        public int realWidth
-        {
-            get { return tileWidth * columns; }
-        }
-
-        public int realHeight
-        {
-            get { return tileHeight * rows; }
-        }
-
-        /// <summary>
-        ///     Returns the total number of data layers stored in the Tilemap. It uses the Layer enum and
-        ///     caches the value the first time it is called.
-        /// </summary>
-        public int totalLayers
-        {
-            get
-            {
-                // Let's check to see if the value has been cached yet?
-                if (_totalLayers == -1)
-                    _totalLayers = Enum.GetNames(typeof(Layer)).Length;
-
-                // Return the cached value
-                return _totalLayers;
-            }
-        }
 
         /// <summary>
         ///     The total tiles in the chip.
@@ -141,7 +88,7 @@ namespace PixelVisionSDK.Chips
 
         public void ClearCache()
         {
-            cachedTileMap.Clear();
+//            cachedTileMap.Clear();
 
             var invalidLayer = layers[(int) Layer.Invalid];
 
@@ -152,117 +99,11 @@ namespace PixelVisionSDK.Chips
             Invalidate();
         }
 
-        public override void Reset()
-        {
-            base.Reset();
-
-            RebuildCache(cachedTileMap);
-
-            //ResetValidation();
-        }
-
         public void ResetValidation()
         {
             invalid = false;
             var invalidLayer = layers[(int) Layer.Invalid];
             Array.Clear(invalidLayer, 0, total);
-        }
-
-        public void GetCachedPixels(int x, int y, int blockWidth, int blockHeight, ref int[] pixelData)
-        {
-            if (invalid)
-            {
-                RebuildCache(cachedTileMap);
-            }
-            
-            cachedTileMap.GetPixels(x, y, blockWidth, blockHeight, ref pixelData);
-        }
-        
-        public void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight,
-            int colorOffset = 0)
-        {
-            
-            // Check to see if the tilemap cache is invalide before drawing to it
-            if (invalid)
-            {
-                
-                // Rebuild the tilemap cache first
-                RebuildCache(cachedTileMap);
-                
-            }
-                
-            // Flip the y axis 
-            y = cachedTileMap.height - y - blockHeight;
-            
-            
-            // Todo need to go through and draw to the tilemap cache but ignore transparent pixels
-            
-            
-            // Set pixels on the tilemap cache
-            cachedTileMap.SetPixels(x, y, blockWidth, blockHeight, pixels, colorOffset, true);
-            
-//            Invalidate();
-        }
-
-        public void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0)
-        {
-            // Test if we need to rebuild the cached tilemap
-            if (invalid)
-                RebuildCache(cachedTileMap);
-
-            // Return the requested pixel data
-            cachedTileMap.GetPixels(offsetX, offsetY, width, height, ref pixelData);
-        }
-
-        public void RebuildCache(TextureData targetTextureData)
-        {
-            if (invalid != true)
-                return;
-
-            // Get a local reference to the layers we need
-            var tmpSpriteIDs = layers[(int) Layer.Sprites];
-            var tmpPaletteIDs = layers[(int) Layer.Palettes];
-            var invalideLayer = layers[(int) Layer.Invalid];
-
-            // Create tmp variables for loop
-            int x, y, spriteID;
-
-            // Get a local reference to the total number of tiles
-            var totalTiles = total;
-
-            var totalTilesUpdated = 0;
-
-            // Loop through all of the tiles in the tilemap
-            for (var i = 0; i < totalTiles; i++)
-                if (invalideLayer[i] != 0)
-                {
-                    // Get the sprite id
-                    spriteID = tmpSpriteIDs[i];
-
-                    // Make sure there is a sprite
-                    if (spriteID > -1)
-                    {
-                        // Calculate the new position of the tile;
-                        x = i % columns * tileWidth;
-                        y = i / columns;
-
-                        //x *= tileWidth;
-                        y = (rows - 1 - y) * tileHeight;
-
-                        //y *= tileHeight;
-
-                        // Read the sprite data
-                        spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
-
-                        // Draw the pixel data into the cachedTilemap
-                        targetTextureData.SetPixels(x, y, tileWidth, tileHeight, tmpPixelData, tmpPaletteIDs[i]);
-
-                        totalTilesUpdated++;
-                    }
-                }
-
-            // Reset the invalidation state
-            ResetValidation();
         }
 
         public void Invalidate(int index)
@@ -305,15 +146,6 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        /// </summary>
-        /// <param name="column"></param>
-        /// <param name="row"></param>
-        /// <returns></returns>
-//        public int ReadTileAt(int column, int row)
-//        {
-//            return ReadDataAt(Layer.Sprites, column, row);
-//        }
-        /// <summary>
         ///     Returns the value in a given Tilemap layer. Accepts a layer enum and automatically converts is to a layer id.
         /// </summary>
         /// <param name="name"></param>
@@ -332,8 +164,7 @@ namespace PixelVisionSDK.Chips
             if (index >= layers[id].Length || index < 0)
                 return -1;
             return layers[id][index];
-            //TODO need to make sure this doesn't throw an error.
-            //return index >= layers[id].Length ? -1 : layers[id][index];
+            
         }
 
         protected void UpdateDataAt(Layer name, int column, int row, int value)
@@ -529,7 +360,7 @@ namespace PixelVisionSDK.Chips
                 else
                     Array.Resize(ref layers[i], totalTiles);
 
-            cachedTileMap.Resize(realWidth, realHeight);
+//            cachedTileMap.Resize(realWidth, realHeight);
 
             // Clear flags
             var flagLayer = layers[(int) Layer.Flags];
@@ -556,26 +387,10 @@ namespace PixelVisionSDK.Chips
             for (var j = 0; j < totalLayers; j++)
                 layers[j][i] = -1;
 
-            cachedTileMap.Clear();
+//            cachedTileMap.Clear();
             Invalidate();
         }
 
-        /// <summary>
-        ///     This method converts the tile map into pixel data that can be
-        ///     rendered by the engine. It's an expensive operation and should only
-        ///     be called when the game or level is loading up. This data can be
-        ///     passed into the ScreenBufferChip to allow cached rendering of the
-        ///     tile map as well as scrolling of the tile map if it is larger then
-        ///     the screen's resolution.
-        /// </summary>
-        /// <param name="textureData">
-        ///     A reference to a <see cref="TextureData" /> class to populate with
-        ///     tile map pixel data.
-        /// </param>
-        /// <param name="clearColor">
-        ///     The transparent color to use when a tile is set to -1. The default
-        ///     value is -1 for transparent.
-        /// </param>
         /// <summary>
         ///     Configured the TileMapChip. This method sets the
         ///     <see cref="TilemapChip" /> as the default tile map for the engine. It

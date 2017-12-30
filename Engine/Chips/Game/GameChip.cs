@@ -49,6 +49,7 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class GameChip : AbstractChip, IUpdate, IDraw, IGameChip
     {
+        protected TextureData cachedTileMap = new TextureData(0, 0);
 
         protected readonly Dictionary<string, int> tmpTileData = new Dictionary<string, int>
         {
@@ -61,7 +62,7 @@ namespace PixelVisionSDK.Chips
         protected int _saveSlots;
         protected Dictionary<string, string> savedData = new Dictionary<string, string>();
 
-        protected TextureData uiLayer = new TextureData(0,0);
+//        protected TextureData uiLayer = new TextureData(0,0);
         
         private int[] tmpSpriteData = new int[0];
         
@@ -189,14 +190,23 @@ namespace PixelVisionSDK.Chips
             fontChip = engine.fontChip;
             musicChip = engine.musicChip;
             
+            // Set the tile size on the tilemap
+//            tilemapChip.tileWidth = spriteChip.width;
+//            tilemapChip.tileHeight = spriteChip.height;
+            
+            // Build tilemap cache
+            RebuildCache(cachedTileMap);
+            
             // Resize the tmpSpriteData so it mateches the sprite's width and height
             Array.Resize(ref tmpSpriteData, spriteChip.width * spriteChip.height);
             
             
-            uiLayer.Resize(displayChip.width, displayChip.height);
+//            uiLayer.Resize(displayChip.width, displayChip.height);
             
             base.Reset();
         }
+        
+        
         
         /// <summary>
         ///     This unloads the game from the engine.
@@ -548,7 +558,7 @@ namespace PixelVisionSDK.Chips
             {
                 case DrawMode.TilemapCache:
                     
-                    tilemapChip.UpdateCachedTilemap(pixelData, x, y, width, height, colorOffset);
+                    UpdateCachedTilemap(pixelData, x, y, width, height, colorOffset);
 
                     break;
                     
@@ -632,7 +642,7 @@ namespace PixelVisionSDK.Chips
         /// </param>
         public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
-            if (spriteChip.maxSpriteCount > 0 && currentSprites >=     spriteChip.maxSpriteCount)
+            if (spriteChip.maxSpriteCount > 0 && currentSprites >= spriteChip.maxSpriteCount)
                 return;
             
             //TODO flipping H, V and colorOffset should all be passed into reading a sprite
@@ -1022,24 +1032,24 @@ namespace PixelVisionSDK.Chips
             var oX = offsetX.HasValue ? offsetX.Value : _scrollX;
             var oY = offsetY.HasValue ? offsetY.Value : _scrollY;
 
-                var width = columns == 0 ? displayChip.width : columns * tilemapChip.tileWidth;
-    
-                if ((width + x) > displayChip.width)
-                {
-                    width = displayChip.width - x;
-                }
-                
-                var height = rows == 0 ? displayChip.height : rows * tilemapChip.tileHeight;
-                
-                if ((height + y) > displayChip.height)
-                {
-                    height = displayChip.height - y;
-                }
-                
-                // Flip the y scroll value
-                var sY = tilemapChip.realHeight - height - oY;
-                
-                tilemapChip.GetCachedPixels(oX, sY, width, height, ref tmpTilemapCache);
+            var width = columns == 0 ? displayChip.width : columns * spriteChip.width;
+
+            if ((width + x) > displayChip.width)
+            {
+                width = displayChip.width - x;
+            }
+            
+            var height = rows == 0 ? displayChip.height : rows * spriteChip.height;
+            
+            if ((height + y) > displayChip.height)
+            {
+                height = displayChip.height - y;
+            }
+            
+            // Flip the y scroll value
+            var sY = realHeight - height - oY;
+            
+            GetCachedPixels(oX, sY, width, height, ref tmpTilemapCache);
     
             // Copy over the cached pixel data from the tilemap request
             DrawPixels(tmpTilemapCache, x, y, width, height, drawMode);
@@ -1652,6 +1662,9 @@ namespace PixelVisionSDK.Chips
         {
              // TODO need to allow the option to just rebuild parts of the tilemap
             // This flags the tilemap to clear the cache which will be rebuilt the next time pixel data is requested.
+            
+            cachedTileMap.Clear();
+            
             tilemapChip.ClearCache();
         }
 
@@ -1741,6 +1754,142 @@ namespace PixelVisionSDK.Chips
         
         #endregion
 
+
+        #region tilemap cache APIs
+        
+        protected int[] tmpPixelData = new int[8 * 8];
+        
+        public int realWidth
+        {
+            get { return spriteChip.width * tilemapChip.columns; }
+        }
+
+        public int realHeight
+        {
+            get { return spriteChip.height * tilemapChip.rows; }
+        }
+        
+        /// <summary>
+        ///     This method converts the tile map into pixel data that can be
+        ///     rendered by the engine. It's an expensive operation and should only
+        ///     be called when the game or level is loading up. This data can be
+        ///     passed into the ScreenBufferChip to allow cached rendering of the
+        ///     tile map as well as scrolling of the tile map if it is larger then
+        ///     the screen's resolution.
+        /// </summary>
+        /// <param name="textureData">
+        ///     A reference to a <see cref="TextureData" /> class to populate with
+        ///     tile map pixel data.
+        /// </param>
+        /// <param name="clearColor">
+        ///     The transparent color to use when a tile is set to -1. The default
+        ///     value is -1 for transparent.
+        /// </param>
+        protected void RebuildCache(TextureData targetTextureData)
+        {
+            if (tilemapChip.invalid != true)
+                return;
+
+            if (realWidth != cachedTileMap.width || realHeight != cachedTileMap.height)
+            {
+                cachedTileMap.Resize(realWidth, realHeight);
+            }
+
+            var tileSize = SpriteSize();
+            
+            // Get a local reference to the layers we need
+            var tmpSpriteIDs = tilemapChip.layers[(int) TilemapChip.Layer.Sprites];
+            var tmpPaletteIDs = tilemapChip.layers[(int) TilemapChip.Layer.Palettes];
+            var invalideLayer = tilemapChip.layers[(int) TilemapChip.Layer.Invalid];
+
+            // Create tmp variables for loop
+            int x, y, spriteID;
+
+            // Get a local reference to the total number of tiles
+            var totalTiles = tilemapChip.total;
+
+            var totalTilesUpdated = 0;
+
+            // Loop through all of the tiles in the tilemap
+            for (var i = 0; i < totalTiles; i++)
+                if (invalideLayer[i] != 0)
+                {
+                    // Get the sprite id
+                    spriteID = tmpSpriteIDs[i];
+
+                    // Make sure there is a sprite
+                    if (spriteID > -1)
+                    {
+                        // Calculate the new position of the tile;
+                        x = i % tilemapChip.columns * tileSize.x;
+                        y = i / tilemapChip.columns;
+
+                        //x *= tileWidth;
+                        y = (tilemapChip.rows - 1 - y) * tileSize.y;
+
+                        //y *= tileHeight;
+
+                        // Read the sprite data
+                        spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
+
+                        // Draw the pixel data into the cachedTilemap
+                        targetTextureData.SetPixels(x, y, tileSize.x, tileSize.y, tmpPixelData, tmpPaletteIDs[i]);
+
+                        totalTilesUpdated++;
+                    }
+                }
+
+            // Reset the invalidation state
+            tilemapChip.ResetValidation();
+        }
+
+        public void GetCachedPixels(int x, int y, int blockWidth, int blockHeight, ref int[] pixelData)
+        {
+            if (tilemapChip.invalid)
+            {
+                RebuildCache(cachedTileMap);
+            }
+            
+            cachedTileMap.GetPixels(x, y, blockWidth, blockHeight, ref pixelData);
+        }
+        
+        public void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight,
+            int colorOffset = 0)
+        {
+            
+            // Check to see if the tilemap cache is invalide before drawing to it
+            if (tilemapChip.invalid)
+            {
+                
+                // Rebuild the tilemap cache first
+                RebuildCache(cachedTileMap);
+                
+            }
+                
+            // Flip the y axis 
+            y = cachedTileMap.height - y - blockHeight;
+            
+            
+            // Todo need to go through and draw to the tilemap cache but ignore transparent pixels
+            
+            
+            // Set pixels on the tilemap cache
+            cachedTileMap.SetPixels(x, y, blockWidth, blockHeight, pixels, colorOffset, true);
+            
+//            Invalidate();
+        }
+
+        public void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0)
+        {
+            // Test if we need to rebuild the cached tilemap
+            if (tilemapChip.invalid)
+                RebuildCache(cachedTileMap);
+
+            // Return the requested pixel data
+            cachedTileMap.GetPixels(offsetX, offsetY, width, height, ref pixelData);
+        }
+
+        #endregion
     }
 
 }
