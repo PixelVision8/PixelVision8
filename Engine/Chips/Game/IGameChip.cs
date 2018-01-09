@@ -4,6 +4,9 @@ namespace PixelVisionSDK.Chips
 {
     public interface IGameChip
     {
+
+        #region Color APIs
+
         /// <summary>
         ///     The background color is used to fill the screen when clearing the display. You can use
         ///     this method to read or update the background color at any point during the GameChip's
@@ -34,7 +37,7 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         /// <param name="id">
         ///     The ID of the color you want to access.
-        /// </param>9
+        /// </param>
         /// <param name="value">
         ///     This argument is optional. It accepts a hex as a string and updates the supplied color ID's value.
         /// </param>
@@ -87,8 +90,12 @@ namespace PixelVisionSDK.Chips
         /// <param name="id">The ID of the color you want to replace it with.</param>
         void ReplaceColor(int index, int id);
 
+        #endregion
+
+        #region Display APIs
+
         /// <summary>
-        ///     Clear1ing the display removed all of the existing pixel data, replacing it with the default background
+        ///     Clearing the display removed all of the existing pixel data, replacing it with the default background
         ///     color. The Clear() method allows you specify what region of the display to clear. By simply calling
         ///     Clear(), with no arguments, it automatically clears the entire display. You can manually define an area
         ///     of the screen to clear by supplying option x, y, width and height arguments. When clearing a specific
@@ -122,53 +129,18 @@ namespace PixelVisionSDK.Chips
 
         /// <summary>
         ///     The display's size defines the visible area where pixel data exists on the screen. Calculating this is
-        ///     important for knowing how to position sprites on the screen. The DisplaySize() method allows you to get
-        ///     the resolution of the display at run time. While you can also define a new resolution by providing a
-        ///     width and height value, this may not work correctly at runtime and is currently experimental. You should
-        ///     instead set the resolution before loading the game. If you are using overscan, you must subtract it from
-        ///     the width and height of the returned vector to find the "visible pixel" dimensions.
+        ///     important for knowing how to position sprites on the screen. The Display() method allows you to get
+        ///     the resolution of the display at run time. By default, this will return the visble screen area based on
+        ///     the overscan value set on the display chip. To calculate the exact overscan in pixels, you must subtract
+        ///     the full size from the visible size. Simply supply false as an argument to get the full display dimensions.
         /// </summary>
-        /// <param name="width">
-        ///     An optional value that defaults to null. Setting this argument changes the pixel width of the display.
-        ///     Avoid using this at run-time.
-        /// </param>
-        /// <param name="height">New height for the display.</param>
-        /// <returns>
-        ///     This method returns a Vector representing the display's size. The X and Y values refer to the pixel width
-        ///     and height of the screen.
-        /// </returns>
-//        Vector DisplaySize(int? width = null, int? height = null);
-
         Vector Display(bool visible = true);
         
         /// <summary>
-        ///     Pixel Vision 8's overscan value allows you to define parts of the screen that are not visible similar
-        ///     to how older CRT TVs rendered images. This overscan border allows you to hide sprites off the screen
-        ///     so they do not wrap around the edges. You can call OverscanBorder() without any arguments to return a
-        ///     vector for the right and bottom border value. This value represents a full column and row that the
-        ///     renderer crops from the tilemap. To get the actual pixel value of the right and bottom border, multiply
-        ///     this value by the sprite's size. It is also important to note that Pixel Vision 8 automatically crops
-        ///     the display to reflect the overscan. So a resolution of 256x244, with an overscan x and y value of 1,
-        ///     actually displays 248x236 pixels. While you can change the OverscanBorder at run-time by calling
-        ///     OverscanBorder() and supplying a new X and Y value, this should not be done while a game is running.
+        /// 
         /// </summary>
-        /// <param name="x">
-        ///     An optional argument that represents the number of columns from the right edge of the screen to not
-        ///     display. Each column value removes 8 pixels. So setting X to 1 eliminates the width of a single sprite
-        ///     from the screen's right-hand border.
-        /// </param>
-        /// <param name="y">
-        ///     An optional argument that represents the number of rows from the bottom edge of the screen to not
-        ///     display. Each row value removes 8 pixels. So setting Y to 1 eliminates the height of a single sprite
-        ///     from the screen's bottom border.
-        /// </param>
-        /// <returns>
-        ///     This method returns the overscan's X (right) and Y (bottom) border value as a vector. Each X and Y
-        ///     value needs to be multiplied by 8 to get the actual pixel size of the overscan border. Use this value
-        ///     to calculate the actual visible screen area which may be different than the display's native resolution.
-        ///     Also useful to position sprites offscreen when not needed, so they do not wrap around the screen.
-        /// </returns>
-//        Vector OverscanBorder(int? x, int? y);
+        /// <returns></returns>
+        Rect VisibleBounds();
 
         /// <summary>
         ///     This method allows you to draw raw pixel data directly to the display. Depending on which draw mode you
@@ -218,7 +190,28 @@ namespace PixelVisionSDK.Chips
         /// </param>
         void DrawPixels(int[] pixelData, int x, int y, int width, int height, DrawMode drawMode = DrawMode.Sprite, bool flipH = false, bool flipV = false, int colorOffset = 0);
 
-        void DrawPixel(int x, int y, int colorRef, DrawMode drawMode = DrawMode.Sprite);
+        /// <summary>
+        ///     This method allows you to draw a single pixel to the Tilemap Cache. It's an expensive operation which leverages 
+        ///     DrawPixels(). This should only be used in special occasions when batching pixel data draw request aren't possible.
+        /// </summary>
+        /// <param name="x">
+        ///     The x position where to display the new pixel data. The display's horizontal 0 position is on the far left-hand
+        ///     side.
+        ///     When using DrawMode.TilemapCache, the pixel data is drawn into the tilemap's cache instead of directly on
+        ///     the display when using DrawMode.Sprite.
+        /// </param>
+        /// <param name="y">
+        ///     The Y position where to display the new pixel data. The display's vertical 0 position is on the top. When using
+        ///     DrawMode.TilemapCache, the pixel data is drawn into the tilemap's cache instead of directly on the display
+        ///     when using DrawMode.Sprite.
+        /// </param>
+        /// <param name="colorRef">
+        ///     The color ID to use when drawing the pixel.
+        /// </param>
+        /// <param name="drawMode">
+        ///     This argument only accepts the DrawMode.TilemapCache enum.
+        /// </param>
+        void DrawPixel(int x, int y, int colorRef, DrawMode drawMode = DrawMode.TilemapCache);
 
         /// <summary>
         ///     Sprites represent individual collections of pixel data at a fixed size. By default, Pixel Vision 8 sprites are
@@ -303,13 +296,78 @@ namespace PixelVisionSDK.Chips
         ///     overscan border control what happens to sprites at the edge of the display. If this value is false, the sprites
         ///     wrap around the screen when they reach the edges of the screen.
         /// </param>
-        /// <param name="useScrollPos"></param>
-        /// <param name="aboveBG">
-        ///     An optional bool that defines if the sprite is above or below the tilemap. Sprites are set to render above the
-        ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile
-        ///     above the background color.
-        /// </param>
+        /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
         void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rect bounds = null);
+
+        /// <summary>
+        ///     DrawSpriteBlock() is similar to DrawSprites except you define the first sprite (upper left corner) and the width x height 
+        ///     (in sprites) to sample from sprite ram. This will create a larger sprite by using neighbor sprites.
+        /// </summary>
+        /// <param name="id">The top left sprite to start with. </param>
+        /// <param name="x">
+        ///     An int value representing the X position to place sprite on the display. If set to 0, it renders on the far
+        ///     left-hand side of the screen.
+        /// </param>
+        /// <param name="y">
+        ///     An int value representing the Y position to place sprite on the display. If set to 0, it renders on the top
+        ///     of the screen.
+        /// </param>
+        /// <param name="width">
+        ///     The width, in sprites, of the grid. A value of 2 renders 2 sprites wide. The DrawSprites method continues to
+        ///     run through all of the sprites in the ID array until reaching the end. Sprite groups do not have to be perfect
+        ///     squares since the width value is only used to wrap sprites to the next row.
+        /// </param>
+        /// <param name="flipH">
+        ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips
+        ///     the pixel data horizontally.
+        /// </param>
+        /// <param name="flipV">
+        ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips
+        ///     the pixel data vertically.
+        /// </param>
+        /// <param name="drawMode"></param>
+        /// <param name="colorOffset">
+        ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
+        ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
+        /// </param>
+        /// <param name="onScreen">
+        ///     This flag defines if the sprites should not render when they are off the screen. Use this in conjunction with
+        ///     overscan border control what happens to sprites at the edge of the display. If this value is false, the sprites
+        ///     wrap around the screen when they reach the edges of the screen.
+        /// </param>
+        /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
+        void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true);
+
+        /// <summary>
+        ///     The DrawTile method makes it easier to update the visuals of a tile on any of the map layers. By default, 
+        ///     this will modify a single tile's sprite id and color offset. You can also define the DrawMode to target a 
+        ///     specific layer. By default, DrawMode.Tile is used, but this method also accepts DrawMode.TilemapCache and 
+        ///     DrawMode.UI to target the UI layer above the tilemap. It's important to note that this method can only draw 
+        ///     a tile at a specific column and row. If you need pixel perfect drawing on the TilemapCache or UI layer, use 
+        ///     the DrawPixels method. Finally, drawing a tile into the tilemap itself will force that tile to be copied to 
+        ///     the Tilemap Cache on the next render pass just like calling the Tile() method.
+        /// </summary>
+        /// <param name="id">Sprite ID to use for the tile.</param>
+        /// <param name="c">The column in the layer.</param>
+        /// <param name="r">The row in the layer.</param>
+        /// <param name="drawMode">This accepts DrawMode.Tile, DrawMode.TilemapCache and DrawMode.UI.</param>
+        /// <param name="colorOffset">This is the color offset to use for the tile.</param>
+        void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0);
+
+        /// <summary>
+        ///     The DrawTiles method makes it easier to update the visuals of multiple tiles at once by leveraging the 
+        ///     DrawTile method. Simply pass in an Array of sprite IDs, the column, row and width (in tiles) to 
+        ///     make bulk changes to a tilemap layer. You can also define the DrawMode to target a specific layer. By default, 
+        ///     DrawMode.Tile is used, but this method also accepts DrawMode.TilemapCache and DrawMode.UI to target the UI 
+        ///     layer above the tilemap.
+        /// </summary>
+        /// <param name="ids">An Array of Sprite IDs.</param>
+        /// <param name="c">The column in the layer.</param>
+        /// <param name="r">The row in the layer.</param>
+        /// <param name="width">The number of horizontal tiles in the group.</param>
+        /// <param name="drawMode">This accepts DrawMode.Tile, DrawMode.TilemapCache and DrawMode.UI.</param>
+        /// <param name="colorOffset">This is the color offset to use for the tile.</param>
+        void DrawTiles(int[] ids, int c, int r, int width, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0);
 
         /// <summary>
         ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render
@@ -336,6 +394,7 @@ namespace PixelVisionSDK.Chips
         ///     pixel data is drawn to. By default, this value is DrawMode.Sprite.
         /// </param>
         /// <param name="font">
+        ///     The name of the font to use. You do not need to add the font's file extension. If the file is called
         ///     The name of the font to use. You do not need to add the font's file extension. If the file is called
         ///     default.font.png,
         ///     you can simply refer to it as "default" when supplying an argument value.
@@ -375,7 +434,35 @@ namespace PixelVisionSDK.Chips
         ///     An optional int value representing how many vertical tiles to include when drawing the map. By default, this is 0
         ///     which automatically uses the full visible height of the display, while taking into account the Y position offset.
         /// </param>
+        /// <param name="offsetX">
+        ///     An optional int value to override the scroll X position. This is useful when you need to change the left x position 
+        ///     from where to sample the tilemap data from.
+        /// </param>
+        /// <param name="offsetY">
+        ///     An optional int value to override the scroll Y position. This is useful when you need to change the top y position 
+        ///     from where to sample the tilemap data from.
+        /// </param>
+        /// <param name="DrawMode">
+        ///     This accepts DrawMode Tile and TilemapCache.
+        /// </param>
         void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null, int? offsetY = null, DrawMode drawMode = DrawMode.Tile);
+
+        /// <summary>
+        ///     This method allows you to draw a rectangle with a fill color. By default, this method is used to clear the screen but you can supply a color offset to change the color value and use it to fill a rectangle area with a specific color instead.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="color"></param>
+        /// <param name="drawMode"></param>
+        void DrawRect(int x, int y, int width, int height, int color = -1, DrawMode drawMode = DrawMode.Background);
+
+        /// <summary>
+        ///     You can use RedrawDisplay to make clearing and drawing the tilemap easier. This is a helper method automatically
+        ///     calls both Clear() and DrawTilemap() for you.
+        /// </summary>
+        void RedrawDisplay();
 
         /// <summary>
         ///     You can scroll the tilemap by calling the ScrollPosition() method and supplying a new scroll X and Y position.
@@ -395,6 +482,10 @@ namespace PixelVisionSDK.Chips
         ///     By default, this method returns a vector with the current scroll X and Y position.
         /// </returns>
         Vector ScrollPosition(int? x = null, int? y = null);
+
+        #endregion
+
+        #region File IO APIs
 
         /// <summary>
         ///     Allows you to save string data to the game file itself. This data persistent even after restarting a game.
@@ -421,6 +512,164 @@ namespace PixelVisionSDK.Chips
         /// </returns>
         string ReadSaveData(string key, string defaultValue = "undefine");
 
+        #endregion
+
+        #region Input APIs
+
+        /// <summary>
+        ///     While the main form of input in Pixel Vision 8 comes from the controllers, you can test for keyboard
+        ///     input by calling the Key() method. When called, this method returns the current state of a key. The
+        ///     method accepts the Keys enum, or an int, for a specific key. In additon, you need to provide the input
+        ///     state to check for. The InputState enum has two states, Down and Released. By default, Down is
+        ///     automatically used which returns true when the key is being pressed in the current frame. When using
+        ///     Released, the method returns true if the key is currently up but was down in the last frame.
+        /// </summary>
+        /// <param name="key">
+        ///     This argument accepts the Keys enum or an int for the key's ID.
+        /// </param>
+        /// <param name="state">
+        ///     Optional InputState enum. Returns down state by default. This argument accepts InputState.Down (0)
+        ///     or InputState.Released (1).
+        /// </param>
+        /// <returns>
+        ///     This method returns a bool based on the state of the button.
+        /// </returns>
+        bool Key(Keys key, InputState state = InputState.Down);
+
+        /// <summary>
+        ///     Pixel Vision 8 supports mouse input. You can get the current state of the mouse's left (0) and
+        ///     right (1) buttons by calling MouseButton(). In addition to supplying a button ID, you also need
+        ///     to provide the InputState enum. The InputState enum contains options for testing the Down and
+        ///     Released states of the supplied button ID. By default, Down is automatically used which returns
+        ///     true when the key was pressed in the current frame. When using Released, the method returns true
+        ///     if the key is currently up but was down in the last frame.
+        /// </summary>
+        /// <param name="button">
+        ///     Accepts an int for the left (0) or right (1) mouse button.
+        /// </param>
+        /// <param name="state">
+        ///     An optional InputState enum. Uses InputState.Down default.
+        /// </param>
+        /// <returns>
+        ///     Returns a bool based on the state of the button.
+        /// </returns>
+        bool MouseButton(int button, InputState state = InputState.Down);
+
+        /// <summary>
+        ///     The main form of input for Pixel Vision 8 is the controller's buttons. You can get the current
+        ///     state of any button by calling the Button() method and supplying a button ID, an InputState enum,
+        ///     and the controller ID. When called, the Button() method returns a bool for the requested button
+        ///     and its state. The InputState enum contains options for testing the Down and Released states of
+        ///     the supplied button ID. By default, Down is automatically used which returns true when the key
+        ///     was pressed in the current frame. When using Released, the method returns true if the key is
+        ///     currently up but was down in the last frame.
+        /// </summary>
+        /// <param name="button">
+        ///     Accepts the Buttons enum or int for the button's ID.
+        /// </param>
+        /// <param name="state">
+        ///     Optional InputState enum. Returns down state by default.
+        /// </param>
+        /// <param name="controllerID">
+        ///     An optional InputState enum. Uses InputState.Down default.
+        /// </param>
+        /// <returns>
+        ///     Returns a bool based on the state of the button.
+        /// </returns>
+        bool Button(Buttons button, InputState state = InputState.Down, int controllerID = 0);
+
+        /// <summary>
+        ///     The MousePosition() method returns a vector for the current cursor's X and Y position.
+        ///     This value is read-only. The mouse's 0,0 position is in the upper left-hand corner of the
+        ///     display
+        /// </summary>
+        /// <returns>
+        ///     Returns a vector for the mouse's X and Y poisition.
+        /// </returns>
+        Vector MousePosition();
+
+        /// <summary>
+        ///     The InputString() method returns the keyboard input entered this frame. This method is
+        ///     useful for capturing keyboard text input.
+        /// </summary>
+        /// <returns>
+        ///     A string of all the characters entered during the frame.
+        /// </returns>
+        string InputString();
+
+        #endregion
+
+        #region Math APIs
+
+        /// <summary>
+        ///     Limits a value between a minimum and maximum.
+        /// </summary>
+        /// <param name="val">
+        ///     The value to clamp.
+        /// </param>
+        /// <param name="min">
+        ///     The minimum the value can be.
+        /// </param>
+        /// <param name="max">
+        ///     The maximum the value can be.
+        /// </param>
+        /// <returns>
+        ///     Returns an int within the min and max range.
+        /// </returns>
+        int Clamp(int val, int min, int max);
+
+        /// <summary>
+        ///     Repeats a value based on the max. When the value is greater than the max, it starts
+        ///     over at 0 plus the remaining value.
+        /// </summary>
+        /// <param name="val">
+        ///     The value to repeat.
+        /// </param>
+        /// <param name="max">
+        ///     The maximum the value can be.
+        /// </param>
+        /// <returns>
+        ///     Returns an int that is never less than 0 or greater than the max.
+        /// </returns>
+        int Repeat(int val, int max);
+
+        /// <summary>
+        ///     Converts an X and Y position into an index. This is useful for finding positions in 1D
+        ///     arrays that represent 2D data.
+        /// </summary>
+        /// <param name="x">
+        ///     The x position.
+        /// </param>
+        /// <param name="y">
+        ///     The y position.
+        /// </param>
+        /// <param name="width">
+        ///     The width of the data if it was represented as a 2D array.
+        /// </param>
+        /// <returns>
+        ///     Returns an int value representing the X and Y position in a 1D array.
+        /// </returns>
+        int CalculateIndex(int x, int y, int width);
+
+        /// <summary>
+        ///     Converts an index into an X and Y position to help when working with 1D arrays that
+        ///     represent 2D data.
+        /// </summary>
+        /// <param name="index">
+        ///     The position of the 1D array.
+        /// </param>
+        /// <param name="width">
+        ///     The width of the data if it was a 2D array.
+        /// </param>
+        /// <returns>
+        ///     Returns a vector representing the X and Y position of an index in a 1D array.
+        /// </returns>
+        Vector CalculatePosition(int index, int width);
+
+        #endregion
+
+        #region Sound APIs
+
         /// <summary>
         ///     This method plays back a sound on a specific channel. The SoundChip has a limit of
         ///     active channels so playing a sound effect while another was is playing on the same
@@ -433,6 +682,19 @@ namespace PixelVisionSDK.Chips
         ///     The channel the sound should play back on. Channel 0 is set by default.
         /// </param>
         void PlaySound(int id, int channel = 0);
+
+        /// <summary>
+        ///     This method allows your read and write raw sound data on the SoundChip.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        string Sound(int id, string data = null);
+
+        /// <summary>
+        ///     Use StopSound() to stop any sound playing on a specific channel.
+        /// </summary>
+        /// <param name="channel">The channel ID to stop a sound on.</param>
+        void StopSound(int channel = 0);
 
         /// <summary>
         ///     This helper method allows you to automatically load a set of loops as a complete
@@ -471,6 +733,9 @@ namespace PixelVisionSDK.Chips
         ///     The loop to rewind too.
         /// </param>
         void RewindSong(int position = 0, int loopID = 0);
+        #endregion
+
+        #region Sprite APIs
 
         /// <summary>
         ///     Returns the size of the sprite as a Vector where X and Y represent the width and height.
@@ -533,6 +798,19 @@ namespace PixelVisionSDK.Chips
         int TotalSprites(bool ignoreEmpty = true);
 
         /// <summary>
+        ///     This method returns the maximum number of sprites the Display Chip can render in a single frame. Use this 
+        ///     to better understand the limitations of the hardware your game is running on. This is a read only property
+        ///     at runtime.
+        /// </summary>
+        /// <param name="total"></param>
+        /// <returns>Returns an int representing the total number of sprites on the screen at once.</returns>
+        int MaxSpriteCount(int? total = null);
+
+        #endregion
+
+        #region Tilemap
+
+        /// <summary>
         ///     This allows you to quickly access just the flag value of a tile. This is useful when trying
         ///     to the caluclate collision on the tilemap. By default, you can call this method and return
         ///     the flag value. If you supply a new value, it will be overridden on the tile. Changing a
@@ -575,7 +853,7 @@ namespace PixelVisionSDK.Chips
         /// <returns>
         ///     Returns a dictionary containing the spriteID, colorOffset, and flag for an individual tile.
         /// </returns>
-        // TODO should this realy return a Dictionary?
+        //TODO this should return a custom class not a Dictionary
         Dictionary<string, int> Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null);
 
         /// <summary>
@@ -583,6 +861,7 @@ namespace PixelVisionSDK.Chips
         ///     after the map created the pixel data cache.
         /// </summary>
         void RebuildTilemap(int? columns = null, int? rows = null, int[] spriteIDs = null, int[] colorOffsets = null, int[] flags = null);
+
 
         /// <summary>
         ///     This will return a vector representing the size of the tilemap in columns (x) and rows (y).
@@ -628,13 +907,7 @@ namespace PixelVisionSDK.Chips
         ///     An optional flag int value to be applied to each updated tile.
         /// </param>
         void UpdateTiles(int column, int row, int columns, int[] ids, int? colorOffset = null, int? flag = null);
-
-
-        string Sound(int id, string data = null);
-        void StopSound(int channel = 0);
-
-        void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0);
-        void DrawTiles(int[] ids, int c, int r, int width, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0);
-        int MaxSpriteCount(int? total);
+        
+        #endregion
     }
 }
