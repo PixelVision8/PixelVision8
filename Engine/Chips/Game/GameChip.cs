@@ -62,15 +62,13 @@ namespace PixelVisionSDK.Chips
         protected int _saveSlots;
         protected Dictionary<string, string> savedData = new Dictionary<string, string>();
 
-//        protected TextureData uiLayer = new TextureData(0,0);
-        
         private int[] tmpSpriteData = new int[0];
         
         
         public int currentSprites { get; private set; }
         
 
-        #region GameChip APIs
+        #region GameChip Properties
 
         /// <summary>
         ///     Flag for the maximum size the game should be.
@@ -134,14 +132,9 @@ namespace PixelVisionSDK.Chips
 
         #endregion
 
-        #region Chip Lifecycle
+        #region Lifecycle
 
-        /// <summary>
-        ///     Configures the GameChip instance by loading it into
-        ///     the engine's memory, getting a reference to the
-        ///     APIBridge and setting the ready flag to
-        ///     true.
-        /// </summary>
+        
         public override void Configure()
         {
             // Set the engine's game to this instance
@@ -149,9 +142,13 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     Used for updating the game's logic.
+        ///     Update() is called once per frame at the beginning of the game loop. This is where you should put all
+        ///     non-visual game logic such as character position calculations, detecting input and performing updates to
+        ///     your animation system. The time delta is provided on each frame so you can calculate the difference in
+        ///     milliseconds since the last render took place.
         /// </summary>
-        /// <param name="timeDelta"></param>
+        /// <param name="timeDelta">A float value representing the time in milliseconds since the last Draw() call was completed.</param>
+        
         public virtual void Update(float timeDelta)
         {
             // Overwrite this method and add your own update logic.
@@ -162,7 +159,9 @@ namespace PixelVisionSDK.Chips
 
 
         /// <summary>
-        ///     Used for drawing the game to the display.
+        ///     Draw() is called once per frame after the Update() has completed. This is where all visual updates to
+        ///     your game should take place such as clearing the display, drawing sprites, and pushing raw pixel data
+        ///     into the display.
         /// </summary>
         public virtual void Draw()
         {
@@ -170,7 +169,9 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     This is called when a game is reset.
+        ///     Reset() is called when a game is restarted. This is usually called instead of reloading the entire game.
+        ///     It allows you to perform additional configuration that would not be able to happen if the Init() method
+        ///     is not called. This is mostly ignored in the Runner and is mainly used in the Game Creator.
         /// </summary>
         public override void Reset()
         {
@@ -190,33 +191,26 @@ namespace PixelVisionSDK.Chips
             fontChip = engine.fontChip;
             musicChip = engine.musicChip;
             
-            // Set the tile size on the tilemap
-//            tilemapChip.tileWidth = spriteChip.width;
-//            tilemapChip.tileHeight = spriteChip.height;
-            
             // Build tilemap cache
             RebuildCache(cachedTileMap);
             
             // Resize the tmpSpriteData so it mateches the sprite's width and height
             Array.Resize(ref tmpSpriteData, spriteChip.width * spriteChip.height);
             
-            
-//            uiLayer.Resize(displayChip.width, displayChip.height);
-            
             base.Reset();
         }
         
-        
-        
-        /// <summary>
-        ///     This unloads the game from the engine.
-        /// </summary>
         public override void Deactivate()
         {
             base.Deactivate();
             engine.gameChip = null;
         }
-
+        
+        /// <summary>
+        ///     Shutdown() is called when quitting a game or shutting down the Runner/Game Creator. This hook allows you
+        ///     to perform any last minute changes to the game's data such as saving or removing any temp files that
+        ///     will not be needed.
+        /// </summary>
         public override void Shutdown()
         {
             // Put save logic here
@@ -224,7 +218,7 @@ namespace PixelVisionSDK.Chips
         
         #endregion
 
-        #region Color APIs
+        #region Color
 
         /// <summary>
         ///     The background color is used to fill the screen when clearing the display. You can use
@@ -335,7 +329,7 @@ namespace PixelVisionSDK.Chips
 
         #endregion
 
-        #region Display APIs
+        #region Display
 
         /// <summary>
         ///     Clearing the display removed all of the existing pixel data, replacing it with the default background
@@ -380,58 +374,6 @@ namespace PixelVisionSDK.Chips
             
         }
 
-        /// <summary>
-        ///     The display's size defines the visible area where pixel data exists on the screen. Calculating this is
-        ///     important for knowing how to position sprites on the screen. The DisplaySize() method allows you to get
-        ///     the resolution of the display at run time. While you can also define a new resolution by providing a
-        ///     width and height value, this may not work correctly at runtime and is currently experimental. You should
-        ///     instead set the resolution before loading the game. If you are using overscan, you must subtract it from
-        ///     the width and height of the returned vector to find the "visible pixel" dimensions.
-        /// </summary>
-        /// <param name="width">
-        ///     An optional value that defaults to null. Setting this argument changes the pixel width of the display.
-        ///     Avoid using this at run-time.
-        /// </param>
-        /// <param name="height">New height for the display.</param>
-        /// <returns>
-        ///     This method returns a Vector representing the display's size. The X and Y values refer to the pixel width
-        ///     and height of the screen.
-        /// </returns>
-//        public Vector DisplaySize(int? width = null, int? height = null)
-//        {
-//            var size = new Vector();
-//            var resize = false;
-//
-//            if (width.HasValue)
-//            {
-//                size.x = width.Value;
-//                resize = true;
-//            }
-//            else
-//            {
-//                size.x = displayChip.width;
-//            }
-//
-//            if (height.HasValue)
-//            {
-//                size.y = height.Value;
-//                resize = true;
-//            }
-//            else
-//            {
-//                size.y = displayChip.height;
-//            }
-//
-//            if (resize)
-//            {
-//                displayChip.ResetResolution(size.x, size.y);
-//            }
-//            
-//            // TODO need a flag to tell the runner to change the resolution
-//            
-//            return new Vector(displayChip.width, displayChip.height);
-//        }
-
         protected Vector display = new Vector();
         
         /// <summary>
@@ -456,55 +398,6 @@ namespace PixelVisionSDK.Chips
         {
             return displayChip.visibleBounds;
         }
-        
-        /// <summary>
-        ///     Pixel Vision 8's overscan value allows you to define parts of the screen that are not visible similar
-        ///     to how older CRT TVs rendered images. This overscan border allows you to hide sprites off the screen
-        ///     so they do not wrap around the edges. You can call OverscanBorder() without any arguments to return a
-        ///     vector for the right and bottom border value. This value represents a full column and row that the
-        ///     renderer crops from the tilemap. To get the actual pixel value of the right and bottom border, multiply
-        ///     this value by the sprite's size. It is also important to note that Pixel Vision 8 automatically crops
-        ///     the display to reflect the overscan. So a resolution of 256x244, with an overscan x and y value of 1,
-        ///     actually displays 248x236 pixels. While you can change the OverscanBorder at run-time by calling
-        ///     OverscanBorder() and supplying a new X and Y value, this should not be done while a game is running.
-        /// </summary>
-        /// <param name="x">
-        ///     An optional argument that represents the number of columns from the right edge of the screen to not
-        ///     display. Each column value removes 8 pixels. So setting X to 1 eliminates the width of a single sprite
-        ///     from the screen's right-hand border.
-        /// </param>
-        /// <param name="y">
-        ///     An optional argument that represents the number of rows from the bottom edge of the screen to not
-        ///     display. Each row value removes 8 pixels. So setting Y to 1 eliminates the height of a single sprite
-        ///     from the screen's bottom border.
-        /// </param>
-        /// <returns>
-        ///     This method returns the overscan's X (right) and Y (bottom) border value as a vector. Each X and Y
-        ///     value needs to be multiplied by 8 to get the actual pixel size of the overscan border. Use this value
-        ///     to calculate the actual visible screen area which may be different than the display's native resolution.
-        ///     Also useful to position sprites offscreen when not needed, so they do not wrap around the screen.
-        /// </returns>
-//        public Vector OverscanBorder(int? x, int? y)
-//        {
-//            //var size = new Vector();
-//            var changeBorder = false;
-//
-//            if (x.HasValue)
-//            {
-//                //size.x = ;
-//                displayChip.overscanX = x.Value;
-//                changeBorder = true;
-//            }
-//
-//            if (y.HasValue)
-//            {
-//                changeBorder = true;
-//                //size.y = y.Value;
-//                displayChip.overscanY = y.Value;
-//            }
-//
-//            return new Vector(displayChip.overscanX, displayChip.overscanY);
-//        }
 
         /// <summary>
         ///     This method allows you to draw raw pixel data directly to the display. Depending on which draw mode you
@@ -1129,7 +1022,7 @@ namespace PixelVisionSDK.Chips
 
         #endregion
 
-        #region File IO APIs
+        #region File IO
 
         /// <summary>
         ///     Allows you to save string data to the game file itself. This data persistent even after restarting a game.
@@ -1176,7 +1069,7 @@ namespace PixelVisionSDK.Chips
 
         #endregion
 
-        #region Input APIs
+        #region Input
 
         /// <summary>
         ///     While the main form of input in Pixel Vision 8 comes from the controllers, you can test for keyboard
@@ -1282,95 +1175,7 @@ namespace PixelVisionSDK.Chips
 
         #endregion
 
-        #region Math APIs
-
-        /// <summary>
-        ///     Limits a value between a minimum and maximum.
-        /// </summary>
-        /// <param name="val">
-        ///     The value to clamp.
-        /// </param>
-        /// <param name="min">
-        ///     The minimum the value can be.
-        /// </param>
-        /// <param name="max">
-        ///     The maximum the value can be.
-        /// </param>
-        /// <returns>
-        ///     Returns an int within the min and max range.
-        /// </returns>
-        public int Clamp(int val, int min, int max)
-        {
-            return val.Clamp(min, max);
-        }
-
-        /// <summary>
-        ///     Repeats a value based on the max. When the value is greater than the max, it starts
-        ///     over at 0 plus the remaining value.
-        /// </summary>
-        /// <param name="val">
-        ///     The value to repeat.
-        /// </param>
-        /// <param name="max">
-        ///     The maximum the value can be.
-        /// </param>
-        /// <returns>
-        ///     Returns an int that is never less than 0 or greater than the max.
-        /// </returns>
-        public int Repeat(int val, int max)
-        {
-            return MathUtil.Repeat(val, max);
-        }
-
-        /// <summary>
-        ///     Converts an X and Y position into an index. This is useful for finding positions in 1D
-        ///     arrays that represent 2D data.
-        /// </summary>
-        /// <param name="x">
-        ///     The x position.
-        /// </param>
-        /// <param name="y">
-        ///     The y position.
-        /// </param>
-        /// <param name="width">
-        ///     The width of the data if it was represented as a 2D array.
-        /// </param>
-        /// <returns>
-        ///     Returns an int value representing the X and Y position in a 1D array.
-        /// </returns>
-        public int CalculateIndex(int x, int y, int width)
-        {
-            int index;
-            index = x + y * width;
-            return index;
-        }
-
-        /// <summary>
-        ///     Converts an index into an X and Y position to help when working with 1D arrays that
-        ///     represent 2D data.
-        /// </summary>
-        /// <param name="index">
-        ///     The position of the 1D array.
-        /// </param>
-        /// <param name="width">
-        ///     The width of the data if it was a 2D array.
-        /// </param>
-        /// <returns>
-        ///     Returns a vector representing the X and Y position of an index in a 1D array.
-        /// </returns>
-        public Vector CalculatePosition(int index, int width)
-        {
-            int x, y;
-
-            x = index % width;
-            y = index / width;
-
-            return new Vector(x, y);
-        }
-
-        #endregion
-
-        #region Sound APIs
+        #region Sound
 
         /// <summary>
         ///     This method plays back a sound on a specific channel. The SoundChip has a limit of
@@ -1466,7 +1271,7 @@ namespace PixelVisionSDK.Chips
 
         #endregion
 
-        #region Sprite APIs
+        #region Sprite
 
         /// <summary>
         ///     Returns the size of the sprite as a Vector where X and Y represent the width and height.
@@ -1755,7 +1560,7 @@ namespace PixelVisionSDK.Chips
         #endregion
 
 
-        #region tilemap cache APIs
+        #region Tilemap Cache
         
         protected int[] tmpPixelData = new int[8 * 8];
         
@@ -1785,6 +1590,7 @@ namespace PixelVisionSDK.Chips
         ///     The transparent color to use when a tile is set to -1. The default
         ///     value is -1 for transparent.
         /// </param>
+        /// <ignore/>
         protected void RebuildCache(TextureData targetTextureData)
         {
             if (tilemapChip.invalid != true)
@@ -1853,7 +1659,7 @@ namespace PixelVisionSDK.Chips
             cachedTileMap.GetPixels(x, y, blockWidth, blockHeight, ref pixelData);
         }
         
-        public void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight,
+        protected void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight,
             int colorOffset = 0)
         {
             
