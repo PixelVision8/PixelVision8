@@ -88,6 +88,22 @@ namespace PixelVisionSDK.Utils
         {
             return (int) Math.Round(value);
         }
+        
+        /// <summary>
+        ///     Calculates the distance between two points.
+        /// </summary>
+        /// <param name="x0"></param>
+        /// <param name="y0"></param>
+        /// <param name="x1"></param>
+        /// <param name="y1"></param>
+        /// <returns></returns>
+        public static int CalcualteDistance(int x0, int y0, int x1, int y1)
+        {
+            var dx = x1 - x0; 
+            var dy = y1 - y0;
+            var distance = Math.Sqrt((dx * dx) + (dy * dy));
+            return (int)distance;
+        }
 
     }
 

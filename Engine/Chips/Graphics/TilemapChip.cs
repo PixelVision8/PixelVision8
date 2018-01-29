@@ -175,7 +175,11 @@ namespace PixelVisionSDK.Chips
         protected void UpdateDataAt(int id, int column, int row, int value)
         {
             if (column >= columns)
-                column = MathUtil.Repeat(column, columns);
+            {
+                int max = columns;
+                column = (int) (column - Math.Floor(column / (float) max) * max);
+            }
+
             var index = column + row * columns;
 
             if (index > -1 && index < layers[id].Length)

@@ -96,10 +96,16 @@ namespace PixelVisionSDK
             if (wrapMode)
             {
                 if (x < 0 || x >= width)
-                    x = MathUtil.Repeat(x, width - 1);
+                {
+                    int max = width - 1;
+                    x = (int) (x - Math.Floor(x / (float) max) * max);
+                }
 
                 if (y < 0 || y >= height)
-                    y = MathUtil.Repeat(y, height - 1);
+                {
+                    int max = height - 1;
+                    y = (int) (y - Math.Floor(y / (float) max) * max);
+                }
             }
 
             var index = x + width * y;
@@ -208,7 +214,10 @@ namespace PixelVisionSDK
             if (wrapMode)
             {
                 if (y < 0 || y >= height && wrapMode)
-                    y = MathUtil.Repeat(y, height);
+                {
+                    int max = height;
+                    y = (int) (y - Math.Floor(y / (float) max) * max);
+                }
             }
             else
             {
