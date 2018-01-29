@@ -123,9 +123,6 @@ namespace PixelVisionSDK.Chips
 
             if (pixelData != null)
             {
-                if (flipH || flipV)
-                    SpriteChipUtil.FlipSpriteData(ref pixelData, width, height, flipH, flipV);
-
                 var draw = NextDrawRequest();
                 draw.x = x;
                 draw.y = y;

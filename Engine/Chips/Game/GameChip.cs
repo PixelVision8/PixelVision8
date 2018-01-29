@@ -128,7 +128,7 @@ namespace PixelVisionSDK.Chips
         protected TilemapChip tilemapChip;
         protected FontChip fontChip;
         protected MusicChip musicChip;
-        private readonly int[] singlePixel = new int[0];
+        private readonly int[] singlePixel = new int[]{0};
 
         #endregion
 
@@ -447,6 +447,9 @@ namespace PixelVisionSDK.Chips
         /// </param>
         public void DrawPixels(int[] pixelData, int x, int y, int width, int height, DrawMode drawMode = DrawMode.Sprite, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
+            if (flipH || flipV)
+                SpriteChipUtil.FlipSpriteData(ref pixelData, width, height, flipH, flipV);
+
             switch (drawMode)
             {
                 case DrawMode.TilemapCache:
@@ -489,9 +492,11 @@ namespace PixelVisionSDK.Chips
             // Make sure that drawing a single pixel only works in the UI layer
             if (drawMode != DrawMode.TilemapCache)
                 return;
+
+            singlePixel[0] = colorRef;
             
             // Route the single pixel call to the DrawPixels call
-            DrawPixels(singlePixel, x, y, 1, 1, drawMode, false, false, colorRef);
+            DrawPixels(singlePixel, x, y, 1, 1, drawMode);
             
         }
 
