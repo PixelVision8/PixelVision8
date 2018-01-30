@@ -61,7 +61,7 @@ namespace PixelVisionSDK
         /// </param>
         public TextureData(int width, int height, bool wrapMode = true)
         {
-            this.wrapMode = wrapMode;
+//            this.wrapMode = wrapMode;
             Resize(width, height);
         }
 
@@ -93,24 +93,12 @@ namespace PixelVisionSDK
         /// </returns>
         public int GetPixel(int x, int y)
         {
-            if (wrapMode)
-            {
-                if (x < 0 || x >= width)
-                {
-                    int max = width - 1;
-                    x = (int) (x - Math.Floor(x / (float) max) * max);
-                }
 
-                if (y < 0 || y >= height)
-                {
-                    int max = height - 1;
-                    y = (int) (y - Math.Floor(y / (float) max) * max);
-                }
-            }
+            x = (int) (x - Math.Floor(x / (float) width) * width);
 
-            var index = x + width * y;
-
-            return pixels[index];
+            y = (int) (y - Math.Floor(y / (float) height) * height);
+            
+            return pixels[x + width * y];
         }
 
         /// <summary>
@@ -210,28 +198,35 @@ namespace PixelVisionSDK
         /// </param>
         public virtual void SetPixel(int x, int y, int value)
         {
+            x = x % width;
+            y = y % height;
+            
+            var index = x + width * y;
+            
+            pixels[index] = value;
+            
             //TODO removed some code from here to check x and y based on wrap mode. Make sure I didn't break anything
-            if (wrapMode)
-            {
-                if (y < 0 || y >= height && wrapMode)
-                {
-                    int max = height;
-                    y = (int) (y - Math.Floor(y / (float) max) * max);
-                }
-            }
-            else
-            {
-                if (x < 0 || x >= width)
-                    return;
-            }
-
-            var index = x % width + width * y;
-
-            if (index < 0)
-                return;
-
-            if (index < pixels.Length)
-                pixels[index] = value;
+//            if (wrapMode)
+//            {
+//                if (y < 0 || y >= height && wrapMode)
+//                {
+//                    int max = height;
+//                    y = (int) (y - Math.Floor(y / (float) max) * max);
+//                }
+//            }
+//            else
+//            {
+//                if (x < 0 || x >= width)
+//                    return;
+//            }
+//
+//            var index = x % width + width * y;
+//
+//            if (index < 0)
+//                return;
+//
+//            if (index < pixels.Length)
+//                pixels[index] = value;
         }
 
         /// <summary>

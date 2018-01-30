@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -33,6 +34,7 @@ namespace PixelVisionSDK.Chips
         private int totalPixels;
         
         public int[] displayPixels = new int[0];
+        
         public int layers = 4;
 
         public int overscanXPixels
@@ -87,7 +89,7 @@ namespace PixelVisionSDK.Chips
             {
                 var draw = sorted[i];
                 
-                CopyDrawRequest(ref displayPixels, draw.pixelData, draw.x, draw.y, draw.width, draw.height, _width, draw.colorOffset);
+                CopyDrawRequest(draw.pixelData, draw.x, draw.y, draw.width, draw.height, draw.colorOffset);
 
             }
 
@@ -217,17 +219,12 @@ namespace PixelVisionSDK.Chips
             return request;
         }
 
-        public void CopyDrawRequest(ref int[] destPixelData, int[] pixelData, int x, int y, int width, int height, int destWidth, int colorOffset = 0)
+        public void CopyDrawRequest(int[] pixelData, int x, int y, int width, int height, int colorOffset = 0)
         {
+            
             var total = width * height;
-            int srcX = x;
-            int srcY = y;
-
-            var tmpWidth = x + width;
-            int destIndex;
-            var colorID = -1;
-            var totalPixels = destPixelData.Length;
-
+            int srcX, srcY, destIndex, colorID;
+            
             for (var i = 0; i < total; i++)
             {
                 
@@ -238,23 +235,16 @@ namespace PixelVisionSDK.Chips
                     if (colorOffset > 0)
                         colorID += colorOffset;
 
+                    srcX = ((i % width) + x) % _width;
+                    srcY = ((i / width) + y) % _height; 
+
+                    destIndex = srcX + srcY * _width;
                     
-                    destIndex = srcX + srcY * destWidth;
+                    if(destIndex > -1 && destIndex < totalPixels)
+                        displayPixels[destIndex] = colorID;
 
-                    if (destIndex < totalPixels && destIndex > -1)
-                    {
-                    destPixelData[destIndex] = colorID;
-
-                    }
                 }
                 
-                srcX ++;
-                if (srcX >= tmpWidth)
-                {
-                    srcX = x;
-                    srcY++;
-                }
-
             }
         }
         
