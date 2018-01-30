@@ -38,7 +38,7 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         ///     Internal <see cref="TextureData" /> where sprites are stored
         /// </summary>
-        protected TextureData _texture = new TextureData(128, 128, false);
+        protected TextureData _texture = new TextureData(128, 128);
 
         /// <summary>
         ///     Internal <see cref="cache" /> for faster lookup
@@ -296,7 +296,7 @@ namespace PixelVisionSDK.Chips
                 SpriteChipUtil.CalculateSpritePos(index, _texture.width, _texture.height, width, height, out tmpX,
                     out tmpY);
 
-                _texture.GetPixels(tmpX, tmpY, width, height, ref tmpPixelData);
+                _texture.CopyPixels(ref tmpPixelData, tmpX, tmpY, width, height);
 
                 pixelDataCache[index] = tmpPixelData;
                 cachedSprite = pixelDataCache[index];

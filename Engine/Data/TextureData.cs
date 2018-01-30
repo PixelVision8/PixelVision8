@@ -28,22 +28,12 @@ namespace PixelVisionSDK
     ///     operations around getting and setting pixel data including support for
     ///     wrapping.
     /// </summary>
-    public class TextureData : AbstractData
+    public class TextureData : Pattern
     {
-        protected int[] pixels = new int[0];
-        protected Rect oRect = new Rect();
-        protected Rect sRect = new Rect();
+
         protected int tmpTotal;
         protected int tmpX;
         protected int tmpY;
-        protected Rect tRect = new Rect();
-
-        /// <summary>
-        ///     A flag to set whether the pixel data should wrap if trying to sample
-        ///     larger than the texture's <see cref="width" /> and height. Set to
-        ///     true by default.
-        /// </summary>
-        public bool wrapMode = true;
 
         /// <summary>
         ///     The constructor for a new TextureData class. It requires new
@@ -55,50 +45,8 @@ namespace PixelVisionSDK
         /// <param name="height">
         ///     An int for the height of the TextureData.
         /// </param>
-        /// <param name="wrapMode">
-        ///     An optional value to support texture wrapping. It's set to
-        ///     true by default.
-        /// </param>
-        public TextureData(int width, int height, bool wrapMode = true)
+        public TextureData(int width, int height) : base(width, height)
         {
-//            this.wrapMode = wrapMode;
-            Resize(width, height);
-        }
-
-        /// <summary>
-        ///     The <see cref="width" /> of the TextureData.
-        /// </summary>
-        public int width { get; private set; }
-
-        /// <summary>
-        ///     The <see cref="height" /> of the TextureData.
-        /// </summary>
-        public int height { get; private set; }
-
-        /// <summary>
-        ///     Returns a specific pixel at a given x,y position inside of the
-        ///     TextureData.
-        /// </summary>
-        /// <param name="x">
-        ///     An int for the x position. 0 is the left side of
-        ///     the texture.
-        /// </param>
-        /// <param name="y">
-        ///     An int for the y position. 0 is the top of the
-        ///     texture.
-        /// </param>
-        /// <returns>
-        ///     Returns an int which can be used to match up to a
-        ///     color in the ColorChip.
-        /// </returns>
-        public int GetPixel(int x, int y)
-        {
-
-            x = (int) (x - Math.Floor(x / (float) width) * width);
-
-            y = (int) (y - Math.Floor(y / (float) height) * height);
-            
-            return pixels[x + width * y];
         }
 
         /// <summary>
@@ -130,6 +78,9 @@ namespace PixelVisionSDK
         ///     position and size. Supply anint array to get a
         ///     copy of the pixel <paramref name="data" /> back
         /// </summary>
+        /// <param name="data">
+        ///     An int array where pixel data will be copied to.
+        /// </param>
         /// <param name="x">
         ///     The x position to start the copy at. 0 is the left of the texture.
         /// </param>
@@ -143,31 +94,13 @@ namespace PixelVisionSDK
         ///     The <see cref="height" /> of the <paramref name="data" /> to be
         ///     copied.
         /// </param>
-        /// <param name="data">
-        ///     An int array where pixel data will be copied to.
-        /// </param>
-        public void GetPixels(int x, int y, int blockWidth, int blockHeight, ref int[] data)
+        public void CopyPixels(ref int[] data, int x, int y, int blockWidth, int blockHeight)
         {
             tmpTotal = blockWidth * blockHeight;
 
             if (data.Length != tmpTotal)
                 Array.Resize(ref data, tmpTotal);
 
-            if (!wrapMode)
-                if (x + blockWidth > width || y + blockHeight > height)
-                {
-                    sRect.x = x;
-                    sRect.y = y;
-                    sRect.width = blockWidth;
-                    sRect.height = blockHeight;
-
-                    tRect.Intersect(sRect, ref oRect);
-
-                    x = oRect.x;
-                    y = oRect.y;
-                    blockWidth = oRect.width;
-                }
-            
             for (var i = 0; i < tmpTotal; i++)
             {
                 //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
@@ -180,65 +113,6 @@ namespace PixelVisionSDK
                 data[i] = color;
 
             }
-        }
-
-        /// <summary>
-        ///     Sets a pixel data <paramref name="value" /> in the
-        ///     <see cref="pixels" /> array at a specific x,y position.
-        /// </summary>
-        /// <param name="x">
-        ///     The x position to set the value. 0 is the left of the texture.
-        /// </param>
-        /// <param name="y">
-        ///     The y position to set the value. 0 is the top of the texture.
-        /// </param>
-        /// <param name="value">
-        ///     The int value that corresponds to a index in the
-        ///     ColorChip.
-        /// </param>
-        public virtual void SetPixel(int x, int y, int value)
-        {
-            x = x % width;
-            y = y % height;
-            
-            var index = x + width * y;
-            
-            pixels[index] = value;
-            
-            //TODO removed some code from here to check x and y based on wrap mode. Make sure I didn't break anything
-//            if (wrapMode)
-//            {
-//                if (y < 0 || y >= height && wrapMode)
-//                {
-//                    int max = height;
-//                    y = (int) (y - Math.Floor(y / (float) max) * max);
-//                }
-//            }
-//            else
-//            {
-//                if (x < 0 || x >= width)
-//                    return;
-//            }
-//
-//            var index = x % width + width * y;
-//
-//            if (index < 0)
-//                return;
-//
-//            if (index < pixels.Length)
-//                pixels[index] = value;
-        }
-
-        /// <summary>
-        ///     This replaces all the pixels in the TextureData with the supplied
-        ///     values.
-        /// </summary>
-        /// <param name="pixels">
-        ///     Anint array of pixel data values.
-        /// </param>
-        public virtual void SetPixels(int[] pixels)
-        {
-            Array.Copy(pixels, this.pixels, pixels.Length);
         }
 
         /// <summary>
@@ -276,49 +150,11 @@ namespace PixelVisionSDK
                     if (colorOffset > 0 && pixel != -1)
                         pixel += colorOffset;
                 
-                    //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
-                    tmpX = i % blockWidth;
-                    tmpY = i / blockWidth;
+                    SetPixel((i % blockWidth) + x, (i / blockWidth) + y, pixel);                
 
-                    tmpX += x;
-                    tmpY += y;
-
-                    SetPixel(tmpX, tmpY, pixel);
                 }
                 
             }
-        }
-
-        /// <summary>
-        ///     This resizes the TextureData. Calling this will clear the pixel data
-        ///     when resized.
-        /// </summary>
-        /// <param name="width">The new width of the TextureData.</param>
-        /// <param name="height">The new height of the TextureData.</param>
-        public void Resize(int width, int height)
-        {
-            this.width = width;
-            this.height = height;
-            tRect.width = width;
-            tRect.height = height;
-
-            Array.Resize(ref pixels, width * height);
-            Clear();
-        }
-
-        /// <summary>
-        ///     Clears the pixel data. The default empty value is -1 since the
-        ///     ColorChip starts at 0. You can also use the Clear() method to
-        ///     replace all the color in the TextureData at once.
-        /// </summary>
-        /// <param name="colorRef">
-        ///     Optional clear value. This is set to -1 by default.
-        /// </param>
-        public void Clear(int colorRef = -1)
-        {
-            var total = pixels.Length;
-            for (var i = 0; i < total; i++)
-                pixels[i] = colorRef;
         }
 
     }

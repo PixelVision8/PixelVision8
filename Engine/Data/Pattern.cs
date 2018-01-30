@@ -19,9 +19,18 @@ namespace PixelVisionSDK
 {
     public class Pattern : AbstractData
     {
-        protected int[] pixels;
-        public int width;
-        public int height;
+        protected int[] pixels = new int[0];
+        
+        /// <summary>
+        ///     The <see cref="width" /> of the Pattern.
+        /// </summary>
+        public int width { get; protected set; }
+
+        /// <summary>
+        ///     The <see cref="height" /> of the Pattern.
+        /// </summary>
+        public int height { get; protected set; }
+
         
         public Pattern(int width, int height)
         {
@@ -40,13 +49,18 @@ namespace PixelVisionSDK
         /// <returns></returns>
         public virtual int GetPixel(int x, int y)
         {
-
-            x = x % width;
-            y = y % height;
-
-            var index = x + width * y;
             
-            return pixels[index];
+            // Wrap x,y values so they don't go out of bounds
+//            x = x % width;
+//            y = y % height;
+//
+//            return pixels[x + width * y];
+            
+            x = (int) (x - Math.Floor(x / (float) width) * width);
+
+            y = (int) (y - Math.Floor(y / (float) height) * height);
+            
+            return pixels[x + width * y];
             
         }
         
@@ -85,9 +99,12 @@ namespace PixelVisionSDK
         }
         
         /// <summary>
-        ///     Attemps to replace the current pixels with new pixels.
+        ///     This replaces all the pixels in the TextureData with the supplied
+        ///     values.
         /// </summary>
-        /// <param name="pixels"></param>
+        /// <param name="pixels">
+        ///     Anint array of pixel data values.
+        /// </param>
         public virtual void SetPixels(int[] pixels)
         {
             var total = Math.Min(pixels.Length, width * height);
@@ -126,22 +143,26 @@ namespace PixelVisionSDK
             this.width = width;
             this.height = height;
             
-            pixels = new int[width * height];
+            Array.Resize(ref pixels, width * height);
             
             Clear();
         }
         
         /// <summary>
-        ///     Clears all of the pixels with the supplied value or -1.
+        ///     Clears the pixel data. The default empty value is -1 since the
+        ///     ColorChip starts at 0. You can also use the Clear() method to
+        ///     replace all the color in the TextureData at once.
         /// </summary>
-        /// <param name="value"></param>
-        public virtual void Clear(int value = -1)
+        /// <param name="colorRef">
+        ///     Optional clear value. This is set to -1 by default.
+        /// </param>
+        public virtual void Clear(int colorRef = -1)
         {
-            var total = width * height;
+            var total = pixels.Length;
             
             for (int i = 0; i < total; i++)
             {
-                pixels[i] = -1;
+                pixels[i] = colorRef;
             }
             
             Invalidate();

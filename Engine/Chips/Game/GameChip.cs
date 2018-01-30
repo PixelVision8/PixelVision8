@@ -1661,7 +1661,7 @@ namespace PixelVisionSDK.Chips
                 RebuildCache(cachedTileMap);
             }
             
-            cachedTileMap.GetPixels(x, y, blockWidth, blockHeight, ref pixelData);
+            cachedTileMap.CopyPixels(ref pixelData, x, y, blockWidth, blockHeight);
         }
         
         protected void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight,
@@ -1697,7 +1697,7 @@ namespace PixelVisionSDK.Chips
                 RebuildCache(cachedTileMap);
 
             // Return the requested pixel data
-            cachedTileMap.GetPixels(offsetX, offsetY, width, height, ref pixelData);
+            cachedTileMap.CopyPixels(ref pixelData, offsetX, offsetY, width, height);
         }
 
         #endregion
