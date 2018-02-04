@@ -840,5 +840,9 @@ namespace PixelVisionSDK.Chips
         void UpdateTiles(int column, int row, int columns, int[] ids, int? colorOffset = null, int? flag = null);
         
         #endregion
+
+        int[] ConvertTextToSprites(string text, string fontName = "default");
+
+        int[] ConvertCharacterToPixelData(char character, string fontName);
     }
 }

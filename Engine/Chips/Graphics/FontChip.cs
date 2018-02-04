@@ -25,7 +25,7 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class FontChip : AbstractChip
     {
-        protected static int charOffset = 32;
+        
 
         protected Dictionary<string, int[]> fonts = new Dictionary<string, int[]>();
 
@@ -63,68 +63,16 @@ namespace PixelVisionSDK.Chips
                 fonts.Add(name, fontMap);
         }
 
-        internal int[] ConvertTextToSprites(string text, string fontName = "Default")
+        public int[] ReadFont(string name)
         {
-            var total = text.Length;
-
-            var spriteIDs = new int[total];
-
-            char character;
-
-            int spriteID, index;
-
-            // Test to make sure font exists
-            if (!fonts.ContainsKey(fontName))
-                throw new Exception("Font '" + fontName + "' not found.");
-
-            var fontMap = fonts[fontName];
-            var totalCharacters = fontMap.Length;
-
-            for (var i = 0; i < total; i++)
+            if (fonts.ContainsKey(name))
             {
-                character = text[i];
-                index = Convert.ToInt32(character) - charOffset;
-                spriteID = -1;
-
-                if (index < totalCharacters && index > -1)
-                    spriteID = fontMap[index];
-
-                spriteIDs[i] = spriteID;
+                return fonts[name];
             }
-
-            return spriteIDs;
-        }
-
-        public int[] ConvertCharacterToPixelData(char character, string fontName)
-        {
-            var spriteChip = engine.spriteChip;
-
-            // Test to make sure font exists
-            if (!fonts.ContainsKey(fontName))
-                throw new Exception("Font '" + fontName + "' not found.");
-
-            var index = Convert.ToInt32(character) - charOffset;
-
-            var fontMap = fonts[fontName];
-            var totalCharacters = fontMap.Length;
-            var spriteID = -1;
-
-            if (index < totalCharacters && index > -1)
-                spriteID = fontMap[index];
-
-            if (spriteID > -1)
-            {
-                var totalPixels = spriteChip.width * spriteChip.height;
-
-                if (tmpPixels.Length != totalPixels)
-                    Array.Resize(ref tmpPixels, totalPixels);
-
-                spriteChip.ReadSpriteAt(spriteID, tmpPixels);
-
-                return tmpPixels;
-            }
-
+            
             return null;
         }
+
+        
     }
 }

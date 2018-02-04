@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PixelVisionSDK.Utils;
+using UnityEngine.UI;
 
 namespace PixelVisionSDK.Chips
 {
@@ -855,7 +856,7 @@ namespace PixelVisionSDK.Chips
             var nextX = x;
             var nextY = y;
 
-            var spriteIDs = fontChip.ConvertTextToSprites(text, font);
+            var spriteIDs = ConvertTextToSprites(text, font);
             var total = spriteIDs.Length;
 
             for (var j = 0; j < total; j++)
@@ -867,7 +868,7 @@ namespace PixelVisionSDK.Chips
                 }
                 else if (drawMode == DrawMode.TilemapCache || drawMode == DrawMode.UI)
                 {
-                    var pixelData = fontChip.ConvertCharacterToPixelData(text[j], font);
+                    var pixelData = ConvertCharacterToPixelData(text[j], font);
                     
                     // TODO this should combine the pixel data into a single draw call
                     if (pixelData != null)
@@ -886,6 +887,8 @@ namespace PixelVisionSDK.Chips
 
             return 1;
         }
+
+        
         
         private int[] tmpTilemapCache = new int[0];
  
@@ -1026,7 +1029,81 @@ namespace PixelVisionSDK.Chips
         }
 
         #endregion
+        
+        #region Pixel Data
+        
+        protected static int charOffset = 32;
+        
+        public int[] ConvertTextToSprites(string text, string fontName = "default")
+        {
+            var total = text.Length;
 
+            var spriteIDs = new int[total];
+
+            char character;
+
+            int spriteID, index;
+            
+            var fontMap = fontChip.ReadFont(fontName);
+            
+            // Test to make sure font exists
+            if (fontMap == null)
+                throw new Exception("Font '" + fontName + "' not found.");
+
+//            var fontMap = fonts[fontName];
+            var totalCharacters = fontMap.Length;
+
+            for (var i = 0; i < total; i++)
+            {
+                character = text[i];
+                index = Convert.ToInt32(character) - charOffset;
+                spriteID = -1;
+
+                if (index < totalCharacters && index > -1)
+                    spriteID = fontMap[index];
+
+                spriteIDs[i] = spriteID;
+            }
+
+            return spriteIDs;
+        }
+
+        public int[] ConvertCharacterToPixelData(char character, string fontName)
+        {
+            var spriteChip = engine.spriteChip;
+
+            var fontMap = fontChip.ReadFont(fontName);
+            
+            // Test to make sure font exists
+            if (fontMap == null)
+                throw new Exception("Font '" + fontName + "' not found.");
+
+            var index = Convert.ToInt32(character) - charOffset;
+
+//            var fontMap = fonts[fontName];
+            var totalCharacters = fontMap.Length;
+            var spriteID = -1;
+
+            if (index < totalCharacters && index > -1)
+                spriteID = fontMap[index];
+
+            if (spriteID > -1)
+            {
+                var totalPixels = spriteChip.width * spriteChip.height;
+
+                if (tmpPixelData.Length != totalPixels)
+                    Array.Resize(ref tmpPixelData, totalPixels);
+
+                spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
+
+                return tmpPixelData;
+            }
+
+            return null;
+        }
+        
+        #endregion
+        
         #region File IO
 
         /// <summary>

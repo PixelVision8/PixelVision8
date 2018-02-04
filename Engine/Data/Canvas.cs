@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using PixelVisionSDK.Chips;
 using PixelVisionSDK.Utils;
 
@@ -26,6 +27,7 @@ namespace PixelVisionSDK
         private Pattern stroke;
         private Pattern pattern;
         private IGameChip gameChip;
+        private Vector spriteSize;
         
         public void SetStroke(int[] pixels, int width, int height)
         {
@@ -59,6 +61,8 @@ namespace PixelVisionSDK
             
             stroke = new Pattern(1, 1);
             stroke.SetPixel(0,0, 0);
+
+            spriteSize = gameChip.SpriteSize();
         }
     
         /// <summary>
@@ -70,11 +74,25 @@ namespace PixelVisionSDK
             gameChip.DrawPixels(GetPixels(), 0, 0, width, height, drawMode, false, true);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="value"></param>
         public void SetStrokePixel(int x, int y, int value)
         {
             SetPixels(x, y, stroke.width, stroke.height, stroke.GetPixels());
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x0"></param>
+        /// <param name="y0"></param>
+        /// <param name="x1"></param>
+        /// <param name="y1"></param>
+        /// <param name="color"></param>
         public void DrawLine(int x0, int y0, int x1, int y1, int color = 0)
         {
             int dx = Math.Abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
@@ -89,6 +107,15 @@ namespace PixelVisionSDK
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x0"></param>
+        /// <param name="y0"></param>
+        /// <param name="x1"></param>
+        /// <param name="y1"></param>
+        /// <param name="color"></param>
+        /// <param name="fill"></param>
         public void DrawSquare(int x0, int y0, int x1, int y1, int color = 0, bool fill = false)
         {
             
@@ -124,6 +151,15 @@ namespace PixelVisionSDK
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x0"></param>
+        /// <param name="y0"></param>
+        /// <param name="x1"></param>
+        /// <param name="y1"></param>
+        /// <param name="color"></param>
+        /// <param name="fill"></param>
         public void DrawCircle(int x0, int y0, int x1, int y1, int color = 0, bool fill = false)
         {
             var radius = MathUtil.CalcualteDistance(x0, y0, x1, y1);
@@ -163,7 +199,64 @@ namespace PixelVisionSDK
                     FloodFill(x0, y0);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="colorOffset"></param>
+        public void DrawSprite(int id, int x, int y, int colorOffset = 0)
+        {
+            var pixelData = gameChip.Sprite(id);
+
+            if (colorOffset > 0)
+            {
+                var total = pixelData.Length;
+
+                for (int i = 0; i < total; i++)
+                {
+                    pixelData[i] = pixelData[i] + colorOffset;
+                }
+            }
+            
+            // Canvas is reversed, so flip the pixel data
+            SpriteChipUtil.FlipSpriteData(ref pixelData, spriteSize.x, spriteSize.y, false, true);
+            
+            SetPixels(x, y, spriteSize.x, spriteSize.y, pixelData);
+        }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="font"></param>
+        /// <param name="colorOffset"></param>
+        /// <param name="spacing"></param>
+        public void DrawText(string text, int x, int y, string font = "default", int colorOffset = 0, int spacing = 0)
+        {
+            var ids = gameChip.ConvertTextToSprites(text);
+            var total = ids.Length;
+            var nextX = x;
+            var nextY = y;
+            
+            for (var i = 0; i < total; i++)
+            {
+
+                DrawSprite(ids[i], nextX, nextY, colorOffset);
+                nextX += spriteSize.x + spacing;
+
+            }
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public void FloodFill(int x, int y)
         {
 
