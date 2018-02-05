@@ -50,7 +50,7 @@ namespace PixelVisionSDK.Chips
     /// </summary>
     public class GameChip : AbstractChip, IUpdate, IDraw, IGameChip
     {
-        protected TextureData cachedTileMap = new TextureData(0, 0);
+        protected Canvas cachedTileMap;
 
         protected readonly Dictionary<string, int> tmpTileData = new Dictionary<string, int>
         {
@@ -191,6 +191,10 @@ namespace PixelVisionSDK.Chips
             tilemapChip = engine.tilemapChip;
             fontChip = engine.fontChip;
             musicChip = engine.musicChip;
+            
+            // Create a new canvas for the tilemap cache
+            if(cachedTileMap == null)
+                cachedTileMap = new Canvas(this, 0, 0);
             
             // Build tilemap cache
             RebuildCache(cachedTileMap);
@@ -1673,7 +1677,7 @@ namespace PixelVisionSDK.Chips
         ///     value is -1 for transparent.
         /// </param>
         /// <ignore/>
-        protected void RebuildCache(TextureData targetTextureData)
+        protected void RebuildCache(Canvas targetTextureData)
         {
             if (tilemapChip.invalid != true)
                 return;
@@ -1721,7 +1725,7 @@ namespace PixelVisionSDK.Chips
                         spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
 
                         // Draw the pixel data into the cachedTilemap
-                        targetTextureData.SetPixels(x, y, tileSize.x, tileSize.y, tmpPixelData, tmpPaletteIDs[i]);
+                        targetTextureData.MergePixels(x, y, tileSize.x, tileSize.y, tmpPixelData, tmpPaletteIDs[i]);
 
                         totalTilesUpdated++;
                     }
@@ -1762,7 +1766,7 @@ namespace PixelVisionSDK.Chips
             
             
             // Set pixels on the tilemap cache
-            cachedTileMap.SetPixels(x, y, blockWidth, blockHeight, pixels, colorOffset, true);
+            cachedTileMap.MergePixels(x, y, blockWidth, blockHeight, pixels, colorOffset, true);
             
 //            Invalidate();
         }

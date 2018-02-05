@@ -168,5 +168,47 @@ namespace PixelVisionSDK
             Invalidate();
         }
         
+        /// <summary>
+        ///     This replaces all the pixels in a specific area of the TextureData.
+        /// </summary>
+        /// <param name="x">
+        ///     The x position to start at. 0 is the left of the texture.
+        /// </param>
+        /// <param name="y">
+        ///     The y position to start at. 0 is the top of the texture.
+        /// </param>
+        /// <param name="blockWidth">
+        ///     The <see cref="width" /> of the area to replace.
+        /// </param>
+        /// <param name="blockHeight">
+        ///     The <see cref="height" /> of the area to replace.
+        /// </param>
+        /// <param name="pixels">The pixel data to be used.</param>
+        /// <param name="colorOffset"></param>
+        public virtual void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels, int colorOffset = 0, bool ignoreTransparent = false)
+        {
+            var total = blockWidth * blockHeight;
+            int pixel;
+
+            for (var i = 0; i < total; i++)
+            {
+                pixel = pixels[i];
+
+                if (pixel == -1 && ignoreTransparent)
+                {
+
+                }
+                else
+                {
+                    if (colorOffset > 0 && pixel != -1)
+                        pixel += colorOffset;
+                
+                    SetPixel((i % blockWidth) + x, (i / blockWidth) + y, pixel);                
+
+                }
+                
+            }
+        }
+        
     }
 }

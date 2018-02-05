@@ -22,7 +22,7 @@ using PixelVisionSDK.Utils;
 namespace PixelVisionSDK
 {
     
-    public class Canvas : Pattern
+    public class Canvas : TextureData
     {
         private Pattern stroke;
         private Pattern pattern;
@@ -63,43 +63,40 @@ namespace PixelVisionSDK
             stroke.SetPixel(0,0, 0);
 
             spriteSize = gameChip.SpriteSize();
+            
         }
     
         /// <summary>
         ///     Fast blit to the display through the draw request API
         /// </summary>
         /// <param name="drawMode"></param>
-        public void DrawPixels(DrawMode drawMode = DrawMode.TilemapCache)
+        public void DrawPixels(int x = 0, int y = 0, DrawMode drawMode = DrawMode.TilemapCache)
         {
-            gameChip.DrawPixels(GetPixels(), 0, 0, width, height, drawMode, false, true);
+            gameChip.DrawPixels(GetPixels(), x, y, width, height, drawMode, false, true);
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        /// <param name="value"></param>
-        public void SetStrokePixel(int x, int y, int value)
+        public void SetStrokePixel(int x, int y)
         {
             SetPixels(x, y, stroke.width, stroke.height, stroke.GetPixels());
         }
-        
+
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="x0"></param>
         /// <param name="y0"></param>
         /// <param name="x1"></param>
         /// <param name="y1"></param>
-        /// <param name="color"></param>
-        public void DrawLine(int x0, int y0, int x1, int y1, int color = 0)
+        public void DrawLine(int x0, int y0, int x1, int y1)
         {
             int dx = Math.Abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
             int dy = Math.Abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
             int err = (dx > dy ? dx : -dy) / 2, e2;
             for(;;) {
-                SetStrokePixel(x0, y0, color);
+                SetStrokePixel(x0, y0);
                 if (x0 == x1 && y0 == y1) break;
                 e2 = err;
                 if (e2 > -dx) { err -= dy; x0 += sx; }
@@ -108,28 +105,26 @@ namespace PixelVisionSDK
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="x0"></param>
         /// <param name="y0"></param>
         /// <param name="x1"></param>
         /// <param name="y1"></param>
-        /// <param name="color"></param>
         /// <param name="fill"></param>
-        public void DrawSquare(int x0, int y0, int x1, int y1, int color = 0, bool fill = false)
+        public void DrawSquare(int x0, int y0, int x1, int y1, bool fill = false)
         {
             
             // Top
-            DrawLine(x0, y0, x1, y0, color);
+            DrawLine(x0, y0, x1, y0);
 
             // Left
-            DrawLine(x0, y0, x0, y1, color);
+            DrawLine(x0, y0, x0, y1);
 
             // Right
-            DrawLine(x1, y0, x1, y1, color);
+            DrawLine(x1, y0, x1, y1);
 
             // Bottom
-            DrawLine(x0, y1, x1, y1, color);
+            DrawLine(x0, y1, x1, y1);
 
             if (fill)
             {
@@ -152,15 +147,13 @@ namespace PixelVisionSDK
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="x0"></param>
         /// <param name="y0"></param>
         /// <param name="x1"></param>
         /// <param name="y1"></param>
-        /// <param name="color"></param>
         /// <param name="fill"></param>
-        public void DrawCircle(int x0, int y0, int x1, int y1, int color = 0, bool fill = false)
+        public void DrawCircle(int x0, int y0, int x1, int y1, bool fill = false)
         {
             var radius = MathUtil.CalcualteDistance(x0, y0, x1, y1);
             
@@ -172,14 +165,14 @@ namespace PixelVisionSDK
             {
                 // ensure index is in range before setting (depends on your image implementation)
                 // in this case we check if the pixel location is within the bounds of the image before setting the pixel
-                if (x0 + x >= 0 && x0 + x <= width - 1 && y0 + y >= 0 && y0 + y <= height - 1) SetStrokePixel(x0 + x, y0 + y, color);
-                if (x0 + x >= 0 && x0 + x <= width - 1 && y0 - y >= 0 && y0 - y <= height - 1) SetStrokePixel(x0 + x, y0 - y, color);
-                if (x0 - x >= 0 && x0 - x <= width - 1 && y0 + y >= 0 && y0 + y <= height - 1) SetStrokePixel(x0 - x, y0 + y, color);
-                if (x0 - x >= 0 && x0 - x <= width - 1 && y0 - y >= 0 && y0 - y <= height - 1) SetStrokePixel(x0 - x, y0 - y, color);
-                if (x0 + y >= 0 && x0 + y <= width - 1 && y0 + x >= 0 && y0 + x <= height - 1) SetStrokePixel(x0 + y, y0 + x, color);
-                if (x0 + y >= 0 && x0 + y <= width - 1 && y0 - x >= 0 && y0 - x <= height - 1) SetStrokePixel(x0 + y, y0 - x, color);
-                if (x0 - y >= 0 && x0 - y <= width - 1 && y0 + x >= 0 && y0 + x <= height - 1) SetStrokePixel(x0 - y, y0 + x, color);
-                if (x0 - y >= 0 && x0 - y <= width - 1 && y0 - x >= 0 && y0 - x <= height - 1) SetStrokePixel(x0 - y, y0 - x, color);
+                if (x0 + x >= 0 && x0 + x <= width - 1 && y0 + y >= 0 && y0 + y <= height - 1) SetStrokePixel(x0 + x, y0 + y);
+                if (x0 + x >= 0 && x0 + x <= width - 1 && y0 - y >= 0 && y0 - y <= height - 1) SetStrokePixel(x0 + x, y0 - y);
+                if (x0 - x >= 0 && x0 - x <= width - 1 && y0 + y >= 0 && y0 + y <= height - 1) SetStrokePixel(x0 - x, y0 + y);
+                if (x0 - x >= 0 && x0 - x <= width - 1 && y0 - y >= 0 && y0 - y <= height - 1) SetStrokePixel(x0 - x, y0 - y);
+                if (x0 + y >= 0 && x0 + y <= width - 1 && y0 + x >= 0 && y0 + x <= height - 1) SetStrokePixel(x0 + y, y0 + x);
+                if (x0 + y >= 0 && x0 + y <= width - 1 && y0 - x >= 0 && y0 - x <= height - 1) SetStrokePixel(x0 + y, y0 - x);
+                if (x0 - y >= 0 && x0 - y <= width - 1 && y0 + x >= 0 && y0 + x <= height - 1) SetStrokePixel(x0 - y, y0 + x);
+                if (x0 - y >= 0 && x0 - y <= width - 1 && y0 - x >= 0 && y0 - x <= height - 1) SetStrokePixel(x0 - y, y0 - x);
                 
                 if (d < 0)
                 {
@@ -238,7 +231,7 @@ namespace PixelVisionSDK
         /// <param name="spacing"></param>
         public void DrawText(string text, int x, int y, string font = "default", int colorOffset = 0, int spacing = 0)
         {
-            var ids = gameChip.ConvertTextToSprites(text);
+            var ids = gameChip.ConvertTextToSprites(text, font);
             var total = ids.Length;
             var nextX = x;
             var nextY = y;
@@ -309,6 +302,15 @@ namespace PixelVisionSDK
  
             }
                     
+        }
+    
+        /// <summary>
+        ///     Allows you to merge the pixel data of another canvas into this one without compleatly overwritting it.
+        /// </summary>
+        /// <param name="canvas"></param>
+        public void Merge(Canvas canvas, int colorOffset = 0, bool ignoreTransparent = false)
+        {
+            MergePixels(0, 0, canvas.width, canvas.height, canvas.GetPixels(), colorOffset, ignoreTransparent);
         }
 
     }
