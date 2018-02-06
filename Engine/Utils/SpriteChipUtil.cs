@@ -28,7 +28,7 @@ namespace PixelVisionSDK.Utils
         public static int[] tmpPixelData = new int[8 * 8];
         private static readonly StringBuilder tmpSB = new StringBuilder();
 
-        public static int CalcualteTotalSprites(int width, int height, int spriteWidth, int spriteHeight)
+        public static int CalculateTotalSprites(int width, int height, int spriteWidth, int spriteHeight)
         {
             //TODO this needs to be double checked at different size sprites
             var cols = MathUtil.FloorToInt(width / spriteWidth);
@@ -50,7 +50,7 @@ namespace PixelVisionSDK.Utils
             out int x, out int y,
             bool flipY = true)
         {
-            var totalSprites = CalcualteTotalSprites(width, height, spriteWidth, spriteHeight);
+            var totalSprites = CalculateTotalSprites(width, height, spriteWidth, spriteHeight);
 
             // Make sure we stay in bounds
             index = index.Clamp(0, totalSprites - 1);
