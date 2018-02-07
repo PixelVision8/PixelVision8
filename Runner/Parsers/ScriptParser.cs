@@ -13,7 +13,6 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using PixelVisionRunner.Chips;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionRunner.Parsers

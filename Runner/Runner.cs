@@ -13,17 +13,10 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using PixelVisionRunner.Chips;
 using PixelVisionRunner.Services;
-using PixelVisionRunner.Utils;
 using PixelVisionSDK;
-using PixelVisionSDK.Chips;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
 
 namespace PixelVisionRunner
 {
