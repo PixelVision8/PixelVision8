@@ -301,5 +301,30 @@ namespace PixelVisionRunner.Services
         {
             return File.ReadAllText(path);
         }
+        
+        public void ImportFilesFromDir(string path, ref Dictionary<string, byte[]> files, string[] extFilter = null)
+        {
+            var paths = GetFiles(path);
+
+            foreach (var filePath in paths)
+            {
+                var fileType = GetExtension(filePath);
+
+                if (extFilter == null || (Array.IndexOf(extFilter, fileType) != -1))
+                {
+                    var fileName = GetFileName(filePath);
+                    var data = ReadAllBytes(filePath);
+
+                    if (files.ContainsKey(fileName))
+                    {
+                        files[fileName] = data;
+                    }
+                    else
+                    {
+                        files.Add(fileName, data);
+                    }
+                }
+            }
+        }
     }
 }

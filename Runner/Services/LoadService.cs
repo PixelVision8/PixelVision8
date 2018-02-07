@@ -18,7 +18,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using PixelVisionRunner.Chips;
 using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
 using PixelVisionSDK.Services;
@@ -28,7 +27,14 @@ namespace PixelVisionRunner.Services
 
     public class LoadService : AbstractService
     {
-
+        
+        public List<string> textExtensions = new List<string>()
+        {
+            ".txt",
+            ".json",
+            ".lua"
+        };
+        
         private readonly List<AbstractParser> parsers = new List<AbstractParser>();
 
         private int currentParserID;
@@ -79,10 +85,9 @@ namespace PixelVisionRunner.Services
             // Step 2 (optional). Load up the Lua script
             if ((saveFlags & SaveFlags.Code) == SaveFlags.Code)
             {
-                var scriptExtension = ".lua";
-
-                var paths = files.Keys.Where(s => s.EndsWith(scriptExtension)).ToList();
-
+                //var scriptExtension = ".lua";
+                    
+                var paths = files.Keys.Where(s => textExtensions.Any(x => s.EndsWith(x))).ToList();
 
                 foreach (var fileName in paths)
                 {
@@ -342,7 +347,7 @@ namespace PixelVisionRunner.Services
         {
             
             var script = Encoding.UTF8.GetString(data);
-            var scriptParser = new ScriptParser(fileName, script, targetEngine.gameChip as LuaGameChip);
+            var scriptParser = new ScriptParser(fileName, script, targetEngine.gameChip);
 
             return scriptParser;
 

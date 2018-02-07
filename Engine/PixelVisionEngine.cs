@@ -15,6 +15,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using MonoGameRunner;
+using PixelVisionRunner;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
@@ -29,7 +32,9 @@ namespace PixelVisionSDK
     {
 
         protected string[] defaultChips;
-
+        protected IDisplayTarget displayTarget;
+        protected IInputFactory inputFactory;
+        
         protected Dictionary<string, string> metaData = new Dictionary<string, string>
         {
             {"name", "untitled"}
@@ -39,11 +44,17 @@ namespace PixelVisionSDK
         ///     The PixelVisionEngine constructor requires a render target and an
         ///     optional list of <paramref name="chips" /> to be properly configured.
         /// </summary>
+        /// <param name="displayTarget"></param>
+        /// <param name="inputFactory1"></param>
         /// <param name="chips"></param>
         /// <param name="name"></param>
         /// <tocexclude />
-        public PixelVisionEngine(string[] chips = null, string name = "Engine")
+        public PixelVisionEngine(IDisplayTarget displayTarget, IInputFactory inputFactory, string[] chips = null,
+            string name = "Engine")
         {
+            this.displayTarget = displayTarget;
+            this.inputFactory = inputFactory;
+            
             if (chips != null)
                 defaultChips = chips;
 
@@ -172,6 +183,16 @@ namespace PixelVisionSDK
 //            // Call init on all chips
             chipManager.Init();
 //
+            ConfigureInput();
+            
+
+            if (displayTarget != null)
+            {
+                displayTarget.ResetResolution(displayChip.width, displayChip.height);
+            
+                displayTarget.CacheColors();  
+            }
+            
             running = true;
         }
 
@@ -202,6 +223,11 @@ namespace PixelVisionSDK
                 return;
 
             chipManager.Draw();
+
+            if (displayTarget != null)
+            {
+                displayTarget.Render();
+            }
         }
 
         /// <summary>
@@ -283,6 +309,24 @@ namespace PixelVisionSDK
                 return;
 
             chipManager.Reset();
+        }
+        
+        protected virtual void ConfigureInput()
+        {
+            if (inputFactory == null)
+                return;
+
+            controllerChip.RegisterKeyInput(inputFactory.CreateKeyInput());
+
+            var buttons = Enum.GetValues(typeof(Buttons)).Cast<Buttons>();
+            foreach (var button in buttons)
+            {
+                controllerChip.UpdateControllerKey(0, inputFactory.CreateButtonBinding(0, button));
+                controllerChip.UpdateControllerKey(1, inputFactory.CreateButtonBinding(1, button));
+            }
+
+            controllerChip.RegisterMouseInput(inputFactory.CreateMouseInput());
+
         }
 
     }

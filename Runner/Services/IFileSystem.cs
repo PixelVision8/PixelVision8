@@ -164,6 +164,8 @@ namespace PixelVisionRunner.Services
         void CopyAll(string source, string target);
             string ReadAllText(string path);
 
+            void ImportFilesFromDir(string path, ref Dictionary<string, byte[]> files, string[] extFilter = null);
+
     }
 
 }

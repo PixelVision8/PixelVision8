@@ -163,7 +163,7 @@ namespace PixelVisionSDK.Chips
         public override void Configure()
         {
             engine.controllerChip = this;
-
+            
             // Setup controllers
             maxControllers = 2;
         }

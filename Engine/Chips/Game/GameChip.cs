@@ -51,7 +51,28 @@ namespace PixelVisionSDK.Chips
     public class GameChip : AbstractChip, IUpdate, IDraw, IGameChip
     {
         protected Canvas cachedTileMap;
-
+        public Dictionary<string, string> textFiles = new Dictionary<string, string>();
+        
+        /// <summary>
+        ///     This allows you to add your Lua scripts at runtime to a game from a string. This could be useful for
+        ///     dynamically generating code such as level data or other custom Lua objects in memory. Simply give the
+        ///     script a name and pass in a string with valid Lua code. If a script with the same name exists, this will
+        ///     override it. Make sure to call LoadScript() after to parse it.
+        /// </summary>
+        /// <param name="name">Name of the script. This should contain the .lua extension.</param>
+        /// <param name="file">The string text representing the Lua script data.</param>
+        public void AddTextFile(string name, string file)
+        {
+            if (textFiles.ContainsKey(name))
+            {
+                textFiles[name] = file;
+            }
+            else
+            {
+                textFiles.Add(name, file);
+            }
+        }
+        
         protected readonly Dictionary<string, int> tmpTileData = new Dictionary<string, int>
         {
             {"spriteID", -1},

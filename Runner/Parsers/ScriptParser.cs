@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using PixelVisionRunner.Chips;
+using PixelVisionSDK.Chips;
 
 namespace PixelVisionRunner.Parsers
 {
@@ -23,9 +24,9 @@ namespace PixelVisionRunner.Parsers
 
         private readonly string name;
         private readonly string script;
-        private readonly LuaGameChip target;
+        private readonly GameChip target;
 
-        public ScriptParser(string name, string script, LuaGameChip target)
+        public ScriptParser(string name, string script, GameChip target)
         {
             //Debug.Log("New Script Parser");
             this.name = name;
@@ -43,7 +44,7 @@ namespace PixelVisionRunner.Parsers
 
         protected void LoadScript()
         {
-            target.AddScript(name, script);
+            target.AddTextFile(name, script);
             currentStep++;
         }
 
