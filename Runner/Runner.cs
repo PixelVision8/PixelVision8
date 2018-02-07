@@ -112,7 +112,7 @@ namespace PixelVisionRunner
                 .Select(c => colorFactory.Create(c.r, c.g, c.b))
                 .ToArray();
 
-            displayTarget.Render(pixelMap, backgroundColor);//pixelColors);
+//            displayTarget.Render(pixelMap, backgroundColor);//pixelColors);
         }
 
         private Unit LoadGame(Stream gameContent)
