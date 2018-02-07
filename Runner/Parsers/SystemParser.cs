@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+
 using PixelVisionSDK;
 
 namespace PixelVisionRunner.Parsers
@@ -212,8 +213,50 @@ namespace PixelVisionRunner.Parsers
 
                 for (var i = 0; i < total; i++)
                 {
-                    var song = new SfxrSongData();
-                    song.DeserializeData(songData[i] as Dictionary<string, object>);
+                    var song = musicChip.CreateNewSongData("untitled");//new SfxrSongData());
+//                    song.DeserializeData(songData[i] as Dictionary<string, object>);
+
+                    var sngData = songData[i] as Dictionary<string, object>;
+                    
+                    if (sngData.ContainsKey("songName"))
+                        song.songName = (string) sngData["songName"];
+
+                    if (sngData.ContainsKey("speedInBPM"))
+                        song.speedInBPM = Convert.ToInt32((long) sngData["speedInBPM"]);
+
+                    if (sngData.ContainsKey("tracks"))
+                    {
+                        var tracksData = (List<object>) sngData["tracks"];
+                        song.totalTracks = tracksData.Count;
+
+                        for (var j = 0; j < song.totalTracks; j++)
+                        {
+                            var trackData = tracksData[j] as Dictionary<string, object>;
+                            
+                            var track = song.tracks[j];
+                            
+                            if (track != null && trackData != null)
+                            {
+//                                track.DeserializeData(trackData);
+                                
+                                if (trackData.ContainsKey("sfxID"))
+                                    track.sfxID = Convert.ToInt32((long) trackData["sfxID"]);
+
+                                if (trackData.ContainsKey("notes"))
+                                {
+                                    var noteData = (List<object>) trackData["notes"];
+                                    var totalNotes = noteData.Count;
+                                    track.notes = new int[totalNotes];
+                                    for (var k = 0; k < totalNotes; k++)
+                                        track.notes[k] = (int) (long) noteData[k];
+                                }
+                                
+//                                song.tracks[j] = track;
+                            }
+                        }
+                    }
+                    
+                    
                     musicChip.songDataCollection[i] = song;
                 }
             }
@@ -248,9 +291,20 @@ namespace PixelVisionRunner.Parsers
                 soundChip.totalSounds = total;
                 for (var i = 0; i < total; i++)
                 {
-                    var soundData = soundChip.ReadSound(i) as SfxrSoundData;
+                    var soundData = soundChip.ReadSound(i);// as SfxrSoundData;
                     if (soundData != null)
-                        soundData.DeserializeData(sounds[i] as Dictionary<string, object>);
+                    {
+//                        soundData.DeserializeData();
+
+                        var sndData = sounds[i] as Dictionary<string, object>;
+                        
+                        if (sndData.ContainsKey("name"))
+                            soundData.name = sndData["name"] as string;
+
+                        if (sndData.ContainsKey("settings"))
+                            soundData.UpdateSettings(sndData["settings"] as string);
+                    }
+                        
                 }
             }
         }
