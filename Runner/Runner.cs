@@ -98,19 +98,19 @@ namespace PixelVisionRunner
 
             engine.Draw();
 
-            var pixelMap = engine.displayChip.displayPixels;
-
-            var colors = engine.colorChip.colors;
-
-            var backgroundColor = engine.colorChip.backgroundColor;
-
-            var pixelColors = pixelMap.Select(p =>
-                (p < 0 || p >= colors.Length)
-                    ? colors[backgroundColor]
-                    : colors[p]
-                )
-                .Select(c => colorFactory.Create(c.r, c.g, c.b))
-                .ToArray();
+//            var pixelMap = engine.displayChip.displayPixels;
+//
+//            var colors = engine.colorChip.colors;
+//
+//            var backgroundColor = engine.colorChip.backgroundColor;
+//
+//            var pixelColors = pixelMap.Select(p =>
+//                (p < 0 || p >= colors.Length)
+//                    ? colors[backgroundColor]
+//                    : colors[p]
+//                )
+//                .Select(c => colorFactory.Create(c.r, c.g, c.b))
+//                .ToArray();
 
 //            displayTarget.Render(pixelMap, backgroundColor);//pixelColors);
         }

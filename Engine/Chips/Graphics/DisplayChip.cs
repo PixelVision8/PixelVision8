@@ -238,6 +238,7 @@ namespace PixelVisionSDK.Chips
 
                     destIndex = srcX + srcY * _width;
                     
+                    // TODO this is a code smell, it should always be in range of the display pixel array
                     if(destIndex > -1 && destIndex < totalPixels)
                         displayPixels[destIndex] = colorID;
 
