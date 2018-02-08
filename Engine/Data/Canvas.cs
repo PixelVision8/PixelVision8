@@ -128,8 +128,14 @@ namespace PixelVisionSDK
 
             if (fill)
             {
-                var w = MathUtil.CalcualteDistance(x0, y0, x1, y0);
-                var h = MathUtil.CalcualteDistance(x0, y0, x0, y1);
+                var dx = x1 - x0; 
+                var dy = y0 - y0;
+                var distance = Math.Sqrt((dx * dx) + (dy * dy));
+                var w = (int)distance;
+                var dx1 = x0 - x0; 
+                var dy1 = y1 - y0;
+                var distance1 = Math.Sqrt((dx1 * dx1) + (dy1 * dy1));
+                var h = (int)distance1;
                 
                 // TODO this needs to take into account the thickness of the border
                 if (w > 2 && h > 2)
@@ -155,7 +161,10 @@ namespace PixelVisionSDK
         /// <param name="fill"></param>
         public void DrawCircle(int x0, int y0, int x1, int y1, bool fill = false)
         {
-            var radius = MathUtil.CalcualteDistance(x0, y0, x1, y1);
+            var dx = x1 - x0; 
+            var dy = y1 - y0;
+            var distance = Math.Sqrt((dx * dx) + (dy * dy));
+            var radius = (int)distance;
             
             int d = (5 - radius * 4) / 4;
             int x = 0;
