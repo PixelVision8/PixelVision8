@@ -622,6 +622,8 @@ namespace PixelVisionSDK.Chips
             currentSprites ++;
         }
 
+        protected int[] tmpIDs = new int[0];
+        
         /// <summary>
         ///     The DrawSprites method makes it easier to combine and draw groups of sprites to the display in a grid. This is
         ///     useful when trying to render 4 sprites together as a larger 16x16 pixel graphic. While there is no limit on the
@@ -668,16 +670,22 @@ namespace PixelVisionSDK.Chips
         /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
         public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rect bounds = null)
         {
-
+            
             var total = ids.Length;
+            
+            // TODO added this so C# code isn't corrupted, need to check performance impact
+            if(tmpIDs.Length != total)
+                Array.Resize(ref tmpIDs, total);
 
+            Array.Copy(ids, tmpIDs, total);
+            
             var height = MathUtil.CeilToInt(total / width);
 
             var startX = x - (useScrollPos ? _scrollX : 0);
             var startY = y - (useScrollPos ? _scrollY : 0);
 
             if (flipH || flipV)
-                SpriteChipUtil.FlipSpriteData(ref ids, width, height, flipH, flipV);
+                SpriteChipUtil.FlipSpriteData(ref tmpIDs, width, height, flipH, flipV);
 
             // Store the sprite id from the ids array
             int id;
@@ -688,7 +696,7 @@ namespace PixelVisionSDK.Chips
             for (var i = 0; i < total; i++)
             {
                 // Set the sprite id
-                id = ids[i];
+                id = tmpIDs[i];
 
                 // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
                 // Test to see if the sprite is within range
