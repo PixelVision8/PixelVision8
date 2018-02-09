@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PixelVisionSDK.Chips;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionSDK
 {
@@ -28,6 +29,24 @@ namespace PixelVisionSDK
         private Pattern pattern;
         private IGameChip gameChip;
         private Vector spriteSize;
+        private bool drawCentered = false;
+        private Vector linePattern = new Vector(1);
+        
+        public void LinePattern(int a, int b)
+        {
+            linePattern.x = a;
+            linePattern.y = b;
+        }
+        
+        public bool DrawCentered(bool? newValue = null)
+        {
+            if (newValue.HasValue)
+            {
+                drawCentered = newValue.Value;
+            }
+
+            return drawCentered;
+        }
         
         public void SetStroke(int[] pixels, int width, int height)
         {
@@ -81,7 +100,8 @@ namespace PixelVisionSDK
         /// <param name="y"></param>
         public void SetStrokePixel(int x, int y)
         {
-            SetPixels(x, y, stroke.width, stroke.height, stroke.GetPixels());
+            if(x >= 0 && x <= width - stroke.width && y >= 0 && y <= height - stroke.height)
+                SetPixels(x, y, stroke.width, stroke.height, stroke.GetPixels());
         }
 
         /// <summary>
@@ -92,11 +112,18 @@ namespace PixelVisionSDK
         /// <param name="y1"></param>
         public void DrawLine(int x0, int y0, int x1, int y1)
         {
+            var counter = 0;
+            
             int dx = Math.Abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
             int dy = Math.Abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
             int err = (dx > dy ? dx : -dy) / 2, e2;
             for(;;) {
-                SetStrokePixel(x0, y0);
+                if (counter % linePattern.x == linePattern.y)
+                {
+                    SetStrokePixel(x0, y0);
+                }
+
+                counter++;
                 if (x0 == x1 && y0 == y1) break;
                 e2 = err;
                 if (e2 > -dx) { err -= dy; x0 += sx; }
@@ -113,34 +140,50 @@ namespace PixelVisionSDK
         /// <param name="fill"></param>
         public void DrawSquare(int x0, int y0, int x1, int y1, bool fill = false)
         {
+
+            var w = x1 - x0;
+            var h = y1 - y0;
+
+            var tl = new Vector(x0, y0);
+            var tr = new Vector(x0 + w, y0);
+            var br = new Vector(x0 + w, y0 + h);
+            var bl = new Vector(x0, y0 + h);
+
+            if (drawCentered)
+            {
+                tl.x -= w;
+                tl.y -= h;
+                tr.y -= h;
+                bl.x -= w;
+            }
             
             // Top
-            DrawLine(x0, y0, x1, y0);
+            DrawLine(tl.x, tl.y, tr.x , tr.y);
 
             // Left
-            DrawLine(x0, y0, x0, y1);
+            DrawLine(tl.x, tl.y, bl.x, bl.y);
 
             // Right
-            DrawLine(x1, y0, x1, y1);
+            DrawLine(tr.x, tr.y, br.x, br.y);
 
             // Bottom
-            DrawLine(x0, y1, x1, y1);
-
+            DrawLine(bl.x, bl.y, br.x, br.y);
+ 
             if (fill)
             {
-                var dx = x1 - x0; 
-                var dy = y0 - y0;
-                var distance = Math.Sqrt((dx * dx) + (dy * dy));
-                var w = (int)distance;
-                var dx1 = x0 - x0; 
-                var dy1 = y1 - y0;
-                var distance1 = Math.Sqrt((dx1 * dx1) + (dy1 * dy1));
-                var h = (int)distance1;
+//                var dx = x1 - x0; 
+//                var dy = y0 - y0;
+//                var distance = Math.Sqrt((dx * dx) + (dy * dy));
+//                w = (int)distance;
+//                var dx1 = x0 - x0; 
+//                var dy1 = y1 - y0;
+//                var distance1 = Math.Sqrt((dx1 * dx1) + (dy1 * dy1));
+//                h = (int)distance1;
                 
                 // TODO this needs to take into account the thickness of the border
                 if (w > 2 && h > 2)
                 {
-                    // Figure out the top left position
+//                    // Figure out the top left position
                     var tlX = Math.Min(x0, x1) + 1; // This will need to take into account the stroke of the line
                     var tlY = Math.Min(y0, y1) + 1;
                     
@@ -161,27 +204,52 @@ namespace PixelVisionSDK
         /// <param name="fill"></param>
         public void DrawCircle(int x0, int y0, int x1, int y1, bool fill = false)
         {
+            
             var dx = x1 - x0; 
             var dy = y1 - y0;
-            var distance = Math.Sqrt((dx * dx) + (dy * dy));
-            var radius = (int)distance;
+            var radius = (int)Math.Sqrt((dx * dx) + (dy * dy));
             
             int d = (5 - radius * 4) / 4;
             int x = 0;
             int y = radius;
- 
+
             do
             {
                 // ensure index is in range before setting (depends on your image implementation)
                 // in this case we check if the pixel location is within the bounds of the image before setting the pixel
-                if (x0 + x >= 0 && x0 + x <= width - 1 && y0 + y >= 0 && y0 + y <= height - 1) SetStrokePixel(x0 + x, y0 + y);
-                if (x0 + x >= 0 && x0 + x <= width - 1 && y0 - y >= 0 && y0 - y <= height - 1) SetStrokePixel(x0 + x, y0 - y);
-                if (x0 - x >= 0 && x0 - x <= width - 1 && y0 + y >= 0 && y0 + y <= height - 1) SetStrokePixel(x0 - x, y0 + y);
-                if (x0 - x >= 0 && x0 - x <= width - 1 && y0 - y >= 0 && y0 - y <= height - 1) SetStrokePixel(x0 - x, y0 - y);
-                if (x0 + y >= 0 && x0 + y <= width - 1 && y0 + x >= 0 && y0 + x <= height - 1) SetStrokePixel(x0 + y, y0 + x);
-                if (x0 + y >= 0 && x0 + y <= width - 1 && y0 - x >= 0 && y0 - x <= height - 1) SetStrokePixel(x0 + y, y0 - x);
-                if (x0 - y >= 0 && x0 - y <= width - 1 && y0 + x >= 0 && y0 + x <= height - 1) SetStrokePixel(x0 - y, y0 + x);
-                if (x0 - y >= 0 && x0 - y <= width - 1 && y0 - x >= 0 && y0 - x <= height - 1) SetStrokePixel(x0 - y, y0 - x);
+                
+                
+                // 5 O'Clock
+                //if (x0 + x >= 0 && x0 + x <= width - 1 && y0 + y >= 0 && y0 + y <= height - 1) 
+                    SetStrokePixel(x0 + x, y0 + y);
+                
+                // 1 O'Clock
+                //if (x0 + x >= 0 && x0 + x <= width - 1 && y0 - y >= 0 && y0 - y <= height - 1) 
+                    SetStrokePixel(x0 + x, y0 - y);
+                
+                // 7 O'Clock
+                //if (x0 - x >= 0 && x0 - x <= width - 1 && y0 + y >= 0 && y0 + y <= height - 1) 
+                    SetStrokePixel(x0 - x, y0 + y);
+                
+                // 11 O'Clock
+//                if (x0 - x >= 0 && x0 - x <= width - 1 && y0 - y >= 0 && y0 - y <= height - 1)
+                 SetStrokePixel(x0 - x, y0 - y);
+
+                // 4 O' Clock
+//                if (x0 + y >= 0 && x0 + y <= width - 1 && y0 + x >= 0 && y0 + x <= height - 1)
+                 SetStrokePixel(x0 + y, y0 + x);
+                
+                // 3 O'Clock
+//                if (x0 + y >= 0 && x0 + y <= width - 1 && y0 - x >= 0 && y0 - x <= height - 1)
+                 SetStrokePixel(x0 + y, y0 - x);
+                
+                // 8 O'Clock
+//                if (x0 - y >= 0 && x0 - y <= width - 1 && y0 + x >= 0 && y0 + x <= height - 1)
+                 SetStrokePixel(x0 - y, y0 + x);
+                
+                // 10 O'Clock
+//                if (x0 - y >= 0 && x0 - y <= width - 1 && y0 - x >= 0 && y0 - x <= height - 1)
+                 SetStrokePixel(x0 - y, y0 - x);
                 
                 if (d < 0)
                 {

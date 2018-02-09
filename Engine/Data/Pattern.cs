@@ -19,7 +19,7 @@ namespace PixelVisionSDK
 {
     public class Pattern : AbstractData
     {
-        protected int[] pixels = new int[0];
+        public int[] pixels = new int[0];
         
         /// <summary>
         ///     The <see cref="width" /> of the Pattern.
@@ -32,7 +32,7 @@ namespace PixelVisionSDK
         public int height { get; protected set; }
 
         
-        public Pattern(int width, int height)
+        public Pattern(int width = 1, int height = 1)
         {
             this.width = width;
             this.height = height;
@@ -75,12 +75,17 @@ namespace PixelVisionSDK
 //            if (color == -1)
 //                return;
             
-            x = x % width;
-            y = y % height;
+            x = (int) (x - Math.Floor(x / (float) width) * width);
+
+            y = (int) (y - Math.Floor(y / (float) height) * height);
             
             var index = x + width * y;
             
+            // TODO this should never be out of range
+//            if(index > -1 && index < pixels.Length)
             pixels[index] = color;
+//            else
+//                Debug.Log("index "+ index + " "+x+ "," + y);
             
             Invalidate();
         }

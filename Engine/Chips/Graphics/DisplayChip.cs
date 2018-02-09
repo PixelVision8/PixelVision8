@@ -31,7 +31,7 @@ namespace PixelVisionSDK.Chips
         protected List<DrawRequest> drawRequests = new List<DrawRequest>();
         private int totalPixels;
         
-        public int[] displayPixels = new int[0];
+        public Pattern displayPixels = new Pattern();
         
         public int layers = 4;
 
@@ -147,13 +147,15 @@ namespace PixelVisionSDK.Chips
             _height = height;
             
             totalPixels = _width * _height;
+            
+            displayPixels.Resize(_width, _height);
+            
+//            Array.Resize(ref displayPixels, totalPixels);
 
-            Array.Resize(ref displayPixels, totalPixels);
-
-            for (int i = 0; i < totalPixels; i++)
-            {
-                displayPixels[i] = -1;
-            }
+//            for (int i = 0; i < totalPixels; i++)
+//            {
+//                displayPixels[i] = -1;
+//            }
 //            Clear();
             
             // Resize UI Layer
@@ -232,15 +234,20 @@ namespace PixelVisionSDK.Chips
                 {
                     if (colorOffset > 0)
                         colorID += colorOffset;
-
-                    srcX = ((i % width) + x) % _width;
-                    srcY = ((i / width) + y) % _height; 
-
-                    destIndex = srcX + srcY * _width;
                     
-                    // TODO this is a code smell, it should always be in range of the display pixel array
-                    if(destIndex > -1 && destIndex < totalPixels)
-                        displayPixels[destIndex] = colorID;
+                    srcX = ((i % width) + x);// % _width;
+                    srcY = ((i / width) + y);// % _height; 
+                    
+                    displayPixels.SetPixel(srcX, srcY, colorID);
+
+//                    x = x - (int) (Math.Floor(x / w) * w);
+//                    y = y - (int) (Math.Floor(y / w) * w);
+//                    
+//                    destIndex = srcX + srcY * _width;
+//                    
+//                    // TODO this is a code smell, it should always be in range of the display pixel array
+//                    if(destIndex > -1 && destIndex < totalPixels)
+//                        displayPixels[destIndex] = colorID;
 
                 }
                 
