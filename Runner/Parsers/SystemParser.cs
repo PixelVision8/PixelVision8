@@ -203,6 +203,9 @@ namespace PixelVisionRunner.Parsers
         {
             var musicChip = target.musicChip;
 
+            if (musicChip == null)
+                return;
+            
             if (data.ContainsKey("songs"))
             {
                 var songData = data["songs"] as List<object>;
@@ -274,7 +277,10 @@ namespace PixelVisionRunner.Parsers
         public void ConfigureSoundChip(Dictionary<string, object> data)
         {
             var soundChip = target.soundChip;
-
+            
+            if (soundChip == null)
+                return;
+            
             if (data.ContainsKey("totalChannels"))
                 soundChip.totalChannels = (int) (long) data["totalChannels"];
 
