@@ -54,6 +54,40 @@ namespace PixelVisionSDK.Chips
         protected Canvas cachedTileMap;
         public Dictionary<string, string> textFiles = new Dictionary<string, string>();
         
+        protected double frameCount;
+        protected double dt;
+        protected double updateRate = 4.0;  // 4 updates per sec
+
+        
+        public int fps
+        {
+            get; private set;
+        }
+
+        #region Debug
+        
+        /// <summary>
+        ///     This returns the averaged FPS that is calculated by the Game Creator on each frame. This is not always
+        ///     accurate and should only be used as the best guest estimate into the real framerate of your game.
+        /// </summary>
+        /// <returns>Returns an int with the current FPS out of a maximum of 60.</returns>
+        public int ReadFPS()
+        {
+            return fps;
+        }
+        
+        /// <summary>
+        ///     Returns the total number of sprites on the display in the current frame. Call this at the end of the
+        ///     Draw() method to get an accurate count of sprite draw calls.
+        /// </summary>
+        /// <returns>Returns an int for the total number of sprite draw calls at the current point in time.</returns>
+        public int ReadTotalSprites()
+        {
+            return currentSprites;
+        }
+        
+        #endregion
+        
         /// <summary>
         ///     This allows you to add your Lua scripts at runtime to a game from a string. This could be useful for
         ///     dynamically generating code such as level data or other custom Lua objects in memory. Simply give the
@@ -151,7 +185,8 @@ namespace PixelVisionSDK.Chips
         protected TilemapChip tilemapChip;
         protected FontChip fontChip;
         protected MusicChip musicChip;
-        private readonly int[] singlePixel = new int[]{0};
+        
+        private readonly int[] singlePixel = {0};
 
         #endregion
 
@@ -174,12 +209,19 @@ namespace PixelVisionSDK.Chips
         
         public virtual void Update(float timeDelta)
         {
-            // Overwrite this method and add your own update logic.
+            // Calculate framerate
+            frameCount++;
+            dt += timeDelta;
+            if (dt > 1.0 / updateRate)
+            {
+                fps = (int)(frameCount / dt);
+                frameCount = 0;
+                dt -= 1.0 / updateRate;
+            }
             
             // Reset the current sprite count
             currentSprites = 0;
         }
-
 
         /// <summary>
         ///     Draw() is called once per frame after the Update() has completed. This is where all visual updates to
@@ -1058,7 +1100,7 @@ namespace PixelVisionSDK.Chips
         
         #region Pixel Data
         
-        protected static int charOffset = 32;
+        protected  int charOffset = 32;
         
         public int[] ConvertTextToSprites(string text, string fontName = "default")
         {
@@ -1076,7 +1118,6 @@ namespace PixelVisionSDK.Chips
             if (fontMap == null)
                 throw new Exception("Font '" + fontName + "' not found.");
 
-//            var fontMap = fonts[fontName];
             var totalCharacters = fontMap.Length;
 
             for (var i = 0; i < total; i++)
@@ -1096,7 +1137,6 @@ namespace PixelVisionSDK.Chips
 
         public int[] ConvertCharacterToPixelData(char character, string fontName)
         {
-            var spriteChip = engine.spriteChip;
 
             var fontMap = fontChip.ReadFont(fontName);
             
@@ -1106,7 +1146,6 @@ namespace PixelVisionSDK.Chips
 
             var index = Convert.ToInt32(character) - charOffset;
 
-//            var fontMap = fonts[fontName];
             var totalCharacters = fontMap.Length;
             var spriteID = -1;
 
@@ -1115,14 +1154,7 @@ namespace PixelVisionSDK.Chips
 
             if (spriteID > -1)
             {
-                var totalPixels = spriteChip.width * spriteChip.height;
-
-                if (tmpPixelData.Length != totalPixels)
-                    Array.Resize(ref tmpPixelData, totalPixels);
-
-                spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
-
-                return tmpPixelData;
+                return Sprite(spriteID);
             }
 
             return null;
