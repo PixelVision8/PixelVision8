@@ -106,24 +106,21 @@ namespace PixelVisionSDK.Chips
         /// <param name="y"></param>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        /// <param name="flipH"></param>
-        /// <param name="flipV"></param>
-        /// <param name="flipY"></param>
         /// <param name="layer"></param>
         /// <param name="colorOffset"></param>
         /// <param name="layerOrder"></param>
-        public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, bool flipH, bool flipV, bool flipY, int layer = 0, int colorOffset = 0)
+        public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, int layer = 0, int colorOffset = 0)
         {
             // Only draw the layer if the display can show it.
-            if (layer > layers)
-                return;
+//            if (layer > layers)
+//                return;
             
             // flip y coordinate space
-            if (flipY)
-                y = _height - height - y;
+//            if (flipY)
+//                y = _height - height - y;
 
-            if (pixelData != null)
-            {
+//            if (pixelData != null)
+//            {
                 var draw = NextDrawRequest();
                 draw.x = x;
                 draw.y = y;
@@ -134,7 +131,7 @@ namespace PixelVisionSDK.Chips
                 draw.colorOffset = colorOffset;
                 drawRequests.Add(draw);
 
-            }
+//            }
         }
 
         /// <summary>
@@ -220,13 +217,20 @@ namespace PixelVisionSDK.Chips
             return request;
         }
 
+        private int total;
+        private int srcX;
+        private int srcY;
+        private int colorID;
+        private int i;
+        private int index;
+        
         public void CopyDrawRequest(int[] pixelData, int x, int y, int width, int height, int colorOffset = 0)
         {
             
-            var total = width * height;
-            int srcX, srcY, colorID;
+            total = width * height;
+//            int srcX, srcY, colorID;
             
-            for (var i = 0; i < total; i++)
+            for (i = 0; i < total; i++)
             {
                 
                 colorID = pixelData[i];
@@ -236,36 +240,20 @@ namespace PixelVisionSDK.Chips
                     if (colorOffset > 0)
                         colorID += colorOffset;
                     
-                    srcX = ((i % width) + x);// % _width;
-                    srcY = ((i / width) + y);// % _height; 
-
-//                    int x1 = srcX;
-//                    int y1 = srcY;
-                    //            if (color == -1)
-//                return;
-            
+                    srcX = (i % width) + x;
+                    srcY = (i / width) + y; 
+                    
+                    // Make sure x & y are wrapped around the display
                     srcX = (int) (srcX - Math.Floor(srcX / (float) _width) * _width);
 
                     srcY = (int) (srcY - Math.Floor(srcY / (float) _height) * _height);
-            
-                    var index = srcX + _width * srcY;
-            
-                    // TODO this should never be out of range
-//            if(index > -1 && index < pixels.Length)
+                    
+                    // Find the index
+                    index = srcX + _width * srcY;
+                    
+                    // Set the pixel
                     pixels[index] = colorID;
-//            else
-//                Debug.Log("index "+ index + " "+x+ "," + y);
 
-//                    displayPixels.Invalidate();
-
-//                    x = x - (int) (Math.Floor(x / w) * w);
-//                    y = y - (int) (Math.Floor(y / w) * w);
-//                    
-//                    destIndex = srcX + srcY * _width;
-//                    
-//                    // TODO this is a code smell, it should always be in range of the display pixel array
-//                    if(destIndex > -1 && destIndex < totalPixels)
-//                        displayPixels[destIndex] = colorID;
 
                 }
                 

@@ -58,6 +58,7 @@ namespace PixelVisionSDK.Chips
         protected double dt;
         protected double updateRate = 4.0;  // 4 updates per sec
 
+        private int i;
         
         public int fps
         {
@@ -149,7 +150,7 @@ namespace PixelVisionSDK.Chips
                 _saveSlots = value;
 
                 // resize dictionary?
-                for (var i = savedData.Count - 1; i >= 0; i--)
+                for (i = savedData.Count - 1; i >= 0; i--)
                 {
                     var item = savedData.ElementAt(i);
                     if (i > value)
@@ -400,6 +401,9 @@ namespace PixelVisionSDK.Chips
 
         #region Display
 
+        private int w;
+        private int h;
+        
         /// <summary>
         ///     Clearing the display removed all of the existing pixel data, replacing it with the default background
         ///     color. The Clear() method allows you specify what region of the display to clear. By simply calling
@@ -436,14 +440,16 @@ namespace PixelVisionSDK.Chips
             
 //            displayChip.Clear();
             
-            var w = width.HasValue ? width.Value : displayChip.width - x;
-            var h = height.HasValue ? height.Value : displayChip.height - y;
+            w = width.HasValue ? width.Value : displayChip.width - x;
+            h = height.HasValue ? height.Value : displayChip.height - y;
 
-            DrawRect(x,y, w, h, colorChip.backgroundColor);
+            DrawRect(x, y, w, h, colorChip.backgroundColor);
             
         }
 
         protected Vector display = new Vector();
+        private int offsetX;
+        private int offsetY;
         
         /// <summary>
         ///     The display's size defines the visible area where pixel data exists on the screen. Calculating this is
@@ -454,8 +460,8 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public Vector Display(bool visible = true)
         {
-            var offsetX = visible ? displayChip.overscanXPixels : 0;
-            var offsetY = visible ? displayChip.overscanYPixels : 0;
+            offsetX = visible ? displayChip.overscanXPixels : 0;
+            offsetY = visible ? displayChip.overscanYPixels : 0;
 
             display.x = displayChip.width - offsetX;
             display.y = displayChip.height - offsetY;
@@ -529,7 +535,10 @@ namespace PixelVisionSDK.Chips
                     
                 default:
                     
-                    displayChip.NewDrawCall(pixelData, x, y, width, height, flipH, flipV, true, (int)drawMode, colorOffset);
+                    // Need to flip the y position to draw correctly
+                    y = displayChip.height - height - y;
+                    
+                    displayChip.NewDrawCall(pixelData, x, y, width, height, layer: (int)drawMode, colorOffset: colorOffset);
 
                     break;
             }
@@ -612,6 +621,8 @@ namespace PixelVisionSDK.Chips
             if (spriteChip.maxSpriteCount > 0 && currentSprites >= spriteChip.maxSpriteCount)
                 return;
             
+            // TODO this should be condensed into a single call?
+            
             //TODO flipping H, V and colorOffset should all be passed into reading a sprite
             spriteChip.ReadSpriteAt(id, tmpSpriteData);
 
@@ -623,7 +634,13 @@ namespace PixelVisionSDK.Chips
         }
 
         protected int[] tmpIDs = new int[0];
+        private int total;
         
+        private int height;
+        private int startX;
+        private int startY;
+        private int id;
+        private bool render;
         /// <summary>
         ///     The DrawSprites method makes it easier to combine and draw groups of sprites to the display in a grid. This is
         ///     useful when trying to render 4 sprites together as a larger 16x16 pixel graphic. While there is no limit on the
@@ -671,7 +688,7 @@ namespace PixelVisionSDK.Chips
         public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rect bounds = null)
         {
             
-            var total = ids.Length;
+            total = ids.Length;
             
             // TODO added this so C# code isn't corrupted, need to check performance impact
             if(tmpIDs.Length != total)
@@ -679,21 +696,21 @@ namespace PixelVisionSDK.Chips
 
             Array.Copy(ids, tmpIDs, total);
             
-            var height = MathUtil.CeilToInt(total / width);
+            height = MathUtil.CeilToInt(total / width);
 
-            var startX = x - (useScrollPos ? _scrollX : 0);
-            var startY = y - (useScrollPos ? _scrollY : 0);
+            startX = x - (useScrollPos ? _scrollX : 0);
+            startY = y - (useScrollPos ? _scrollY : 0);
 
             if (flipH || flipV)
                 SpriteChipUtil.FlipSpriteData(ref tmpIDs, width, height, flipH, flipV);
 
             // Store the sprite id from the ids array
-            int id;
-            bool render;
+//            int id;
+//            bool render;
 
             // TODO need to offset the bounds based on the scroll position before testing against it
 
-            for (var i = 0; i < total; i++)
+            for (i = 0; i < total; i++)
             {
                 // Set the sprite id
                 id = tmpIDs[i];
@@ -771,7 +788,7 @@ namespace PixelVisionSDK.Chips
         public void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true)
         {
 
-            var total = width * height;
+            total = width * height;
             
             var sprites = new int[total];
 
@@ -783,7 +800,7 @@ namespace PixelVisionSDK.Chips
 
             var tmpCols = tmpC + width;
 
-            for (int i = 0; i < total; i++)
+            for (i = 0; i < total; i++)
             {
 
                 sprites[i] = tmpC + tmpR * sW;
@@ -861,12 +878,12 @@ namespace PixelVisionSDK.Chips
             else if (drawMode == DrawMode.TilemapCache)
             {
 
-                var total = ids.Length;
+                total = ids.Length;
 
                 // Store the sprite id from the ids array
                 int id;
 
-                for (var i = 0; i < total; i++)
+                for (i = 0; i < total; i++)
                 {
                     // Set the sprite id
                     id = ids[i];
@@ -884,6 +901,14 @@ namespace PixelVisionSDK.Chips
             }
         }
 
+        private Vector spriteSize;
+        private int charWidth;
+        private int nextX;
+        private int nextY;
+        private int[] spriteIDs;
+        private int j;
+        private int[] pixelData;
+        
         /// <summary>
         ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render
         ///     characters as individual sprites (DrawMode.Sprite), tiles (DrawMode.Tile) or drawn directly into the tilemap
@@ -926,16 +951,16 @@ namespace PixelVisionSDK.Chips
         public int DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0)
         {
 
-            var spriteSize = SpriteSize();
-            var charWidth = spriteSize.x;
+            spriteSize = SpriteSize();
+            charWidth = spriteSize.x;
 
-            var nextX = x;
-            var nextY = y;
+            nextX = x;
+            nextY = y;
 
-            var spriteIDs = ConvertTextToSprites(text, font);
-            var total = spriteIDs.Length;
+            spriteIDs = ConvertTextToSprites(text, font);
+            total = spriteIDs.Length;
 
-            for (var j = 0; j < total; j++)
+            for (j = 0; j < total; j++)
             {
                 if (drawMode == DrawMode.Tile)
                 {
@@ -944,7 +969,7 @@ namespace PixelVisionSDK.Chips
                 }
                 else if (drawMode == DrawMode.TilemapCache || drawMode == DrawMode.UI)
                 {
-                    var pixelData = ConvertCharacterToPixelData(text[j], font);
+                    pixelData = ConvertCharacterToPixelData(text[j], font);
                     
                     // TODO this should combine the pixel data into a single draw call
                     if (pixelData != null)
@@ -967,7 +992,11 @@ namespace PixelVisionSDK.Chips
         
         
         private int[] tmpTilemapCache = new int[0];
- 
+        private int oX;
+        private int oY;
+        private int width;
+        private int sY;
+        
         /// <summary>
         ///     By default, the tilemap renders to the display by simply calling DrawTilemap(). This automatically fills the entire
         ///     display with the visible portion of the tilemap. To have more granular control over how to render the tilemap, you
@@ -1006,17 +1035,17 @@ namespace PixelVisionSDK.Chips
         public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null, int? offsetY = null, DrawMode drawMode = DrawMode.Tile)
         {
 
-            var oX = offsetX.HasValue ? offsetX.Value : _scrollX;
-            var oY = offsetY.HasValue ? offsetY.Value : _scrollY;
+            oX = offsetX.HasValue ? offsetX.Value : _scrollX;
+            oY = offsetY.HasValue ? offsetY.Value : _scrollY;
 
-            var width = columns == 0 ? displayChip.width : columns * spriteChip.width;
+            width = columns == 0 ? displayChip.width : columns * spriteChip.width;
 
             if ((width + x) > displayChip.width)
             {
                 width = displayChip.width - x;
             }
             
-            var height = rows == 0 ? displayChip.height : rows * spriteChip.height;
+            height = rows == 0 ? displayChip.height : rows * spriteChip.height;
             
             if ((height + y) > displayChip.height)
             {
@@ -1024,7 +1053,7 @@ namespace PixelVisionSDK.Chips
             }
             
             // Flip the y scroll value
-            var sY = realHeight - height - oY;
+            sY = realHeight - height - oY;
             
             GetCachedPixels(oX, sY, width, height, ref tmpTilemapCache);
     
@@ -1044,6 +1073,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="drawMode"></param>
         public void DrawRect(int x, int y, int width, int height, int color = -1, DrawMode drawMode = DrawMode.Background)
         {
+            // TODO is there a faster way to do this?
             DrawPixels(new int[width * height], x, y, width, height, drawMode, false, false, color);
         }
         
@@ -1059,6 +1089,8 @@ namespace PixelVisionSDK.Chips
         
         protected int _scrollX;
         protected int _scrollY;
+        
+        Vector pos = new Vector();
         
         /// <summary>
         ///     You can scroll the tilemap by calling the ScrollPosition() method and supplying a new scroll X and Y position.
@@ -1079,7 +1111,7 @@ namespace PixelVisionSDK.Chips
         /// </returns>
         public Vector ScrollPosition(int? x = null, int? y = null)
         {
-            var pos = new Vector();
+//            var pos = new Vector();
 
             if (x.HasValue)
             {
@@ -1107,18 +1139,22 @@ namespace PixelVisionSDK.Chips
         #endregion
         
         #region Pixel Data
+
+        private int index;
+        private int spriteID;
+        private char character;
         
         protected  int charOffset = 32;
         
         public int[] ConvertTextToSprites(string text, string fontName = "default")
         {
-            var total = text.Length;
+            total = text.Length;
 
-            var spriteIDs = new int[total];
+            spriteIDs = new int[total];
 
-            char character;
+//            char character;
 
-            int spriteID, index;
+//            int spriteID, index;
             
             var fontMap = fontChip.ReadFont(fontName);
             
@@ -1128,7 +1164,7 @@ namespace PixelVisionSDK.Chips
 
             var totalCharacters = fontMap.Length;
 
-            for (var i = 0; i < total; i++)
+            for (i = 0; i < total; i++)
             {
                 character = text[i];
                 index = Convert.ToInt32(character) - charOffset;
@@ -1694,7 +1730,7 @@ namespace PixelVisionSDK.Chips
 
             //TODO need to get offset and flags working
 
-            for (var i = 0; i < total; i++)
+            for (i = 0; i < total; i++)
             {
                 id = ids[i];
     
@@ -1765,7 +1801,7 @@ namespace PixelVisionSDK.Chips
             var totalTilesUpdated = 0;
 
             // Loop through all of the tiles in the tilemap
-            for (var i = 0; i < totalTiles; i++)
+            for (i = 0; i < totalTiles; i++)
                 if (invalideLayer[i] != 0)
                 {
                     // Get the sprite id
@@ -2047,7 +2083,7 @@ namespace PixelVisionSDK.Chips
         private int BreakLine(string text, int pos, int max)
         {
             // Find last whitespace in line
-            int i = max;
+            i = max;
             while (i >= 0 && !Char.IsWhiteSpace(text[pos + i]))
                 i--;
         

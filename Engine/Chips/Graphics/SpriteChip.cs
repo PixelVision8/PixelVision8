@@ -267,7 +267,10 @@ namespace PixelVisionSDK.Chips
             _texture.Clear();
         }
 
-
+        private int[] cachedSprite;
+        private int totalSpritePixels;
+        private int[] tmpPixelData;
+        
         /// <summary>
         ///     Returns an array of ints that represent a sprite. Each
         ///     int should be mapped to a color
@@ -285,13 +288,13 @@ namespace PixelVisionSDK.Chips
             if (index == -1)
                 return;
 
-            var cachedSprite = pixelDataCache[index];
+            cachedSprite = pixelDataCache[index];
 
-            var totalSpritePixels = width * height;
+            totalSpritePixels = width * height;
 
             if (cachedSprite == null)
             {
-                var tmpPixelData = new int[totalSpritePixels];
+                tmpPixelData = new int[totalSpritePixels];
 
                 SpriteChipUtil.CalculateSpritePos(index, _texture.width, _texture.height, width, height, out tmpX,
                     out tmpY);

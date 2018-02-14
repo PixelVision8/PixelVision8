@@ -31,7 +31,7 @@ namespace PixelVisionSDK
     public class TextureData : Pattern
     {
 
-        protected int tmpTotal;
+//        protected int tmpTotal;
         protected int tmpX;
         protected int tmpY;
 
@@ -58,12 +58,12 @@ namespace PixelVisionSDK
         /// </param>
         public void CopyPixels(ref int[] data, bool ignoreTransparent = false, int transparentColor = -1)
         {
-            var total = width * height;
+            total = width * height;
 
             if (data.Length != total)
                 Array.Resize(ref data, total);
 
-            var color = -1;
+            color = -1;
                 
             for (var i = 0; i < total; i++)
             {
@@ -73,6 +73,8 @@ namespace PixelVisionSDK
                 
         }
 
+        private int color;
+        
         /// <summary>
         ///     Returns a set of pixel <paramref name="data" /> from a specific
         ///     position and size. Supply anint array to get a
@@ -96,21 +98,18 @@ namespace PixelVisionSDK
         /// </param>
         public void CopyPixels(ref int[] data, int x, int y, int blockWidth, int blockHeight)
         {
-            tmpTotal = blockWidth * blockHeight;
+            total = blockWidth * blockHeight;
 
-            if (data.Length != tmpTotal)
-                Array.Resize(ref data, tmpTotal);
+            if (data.Length != total)
+                Array.Resize(ref data, total);
 
-            for (var i = 0; i < tmpTotal; i++)
+            for (var i = 0; i < total; i++)
             {
                 //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
                 tmpX = i % blockWidth;
                 tmpY = i / blockWidth;
 
-                var color = GetPixel(tmpX + x, tmpY + y);
-
-                //if(color != -1)
-                data[i] = color;
+                data[i] = GetPixel(tmpX + x, tmpY + y);
 
             }
         }

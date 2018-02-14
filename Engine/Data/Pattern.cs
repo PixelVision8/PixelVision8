@@ -20,6 +20,7 @@ namespace PixelVisionSDK
     public class Pattern : AbstractData
     {
         public int[] pixels = new int[0];
+        private int i;
         
         /// <summary>
         ///     The <see cref="width" /> of the Pattern.
@@ -63,6 +64,8 @@ namespace PixelVisionSDK
             return pixels[x + width * y];
             
         }
+
+        private int index;
         
         /// <summary>
         ///     This will set a single pixel. If x or y is out of bounds it will wrap.
@@ -79,7 +82,7 @@ namespace PixelVisionSDK
 
             y = (int) (y - Math.Floor(y / (float) height) * height);
             
-            var index = x + width * y;
+            index = x + width * y;
             
             // TODO this should never be out of range
 //            if(index > -1 && index < pixels.Length)
@@ -89,6 +92,8 @@ namespace PixelVisionSDK
             
             Invalidate();
         }
+
+        private int[] tmpPixels;
         
         /// <summary>
         ///     Return a copy of the pixel data.
@@ -96,12 +101,14 @@ namespace PixelVisionSDK
         /// <returns></returns>
         public virtual int[] GetPixels()
         {
-            var tmpPixels = new int[pixels.Length];
+            tmpPixels = new int[pixels.Length];
             
             Array.Copy(pixels, tmpPixels, pixels.Length);
             
             return tmpPixels;
         }
+
+        protected int total;
         
         /// <summary>
         ///     This replaces all the pixels in the TextureData with the supplied
@@ -112,7 +119,7 @@ namespace PixelVisionSDK
         /// </param>
         public virtual void SetPixels(int[] pixels)
         {
-            var total = Math.Min(pixels.Length, width * height);
+            total = Math.Min(pixels.Length, width * height);
             
             Array.Copy(pixels, this.pixels, total);
             
@@ -129,9 +136,9 @@ namespace PixelVisionSDK
         /// <param name="pixels"></param>
         public virtual void SetPixels(int x, int y, int blockWidth, int blockHeight, int[] pixels)
         {
-            var total = blockWidth * blockHeight;
+            total = blockWidth * blockHeight;
 
-            for (var i = 0; i < total; i++)
+            for (i = 0; i < total; i++)
             {
                 SetPixel((i % blockWidth) + x, (i / blockWidth) + y, pixels[i]);                
             }
@@ -163,7 +170,7 @@ namespace PixelVisionSDK
         /// </param>
         public virtual void Clear(int colorRef = -1)
         {
-            var total = pixels.Length;
+            total = pixels.Length;
             
             for (int i = 0; i < total; i++)
             {
@@ -172,6 +179,8 @@ namespace PixelVisionSDK
             
             Invalidate();
         }
+
+        private int pixel;
         
         /// <summary>
         ///     This replaces all the pixels in a specific area of the TextureData.
@@ -192,10 +201,10 @@ namespace PixelVisionSDK
         /// <param name="colorOffset"></param>
         public virtual void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels, int colorOffset = 0, bool ignoreTransparent = false)
         {
-            var total = blockWidth * blockHeight;
-            int pixel;
+            total = blockWidth * blockHeight;
+//            int pixel;
 
-            for (var i = 0; i < total; i++)
+            for (i = 0; i < total; i++)
             {
                 pixel = pixels[i];
 
