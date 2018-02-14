@@ -140,7 +140,8 @@ namespace PixelVisionSDK
         /// <param name="fill"></param>
         public void DrawSquare(int x0, int y0, int x1, int y1, bool fill = false)
         {
-
+            
+            // TODO if fixedSize is set, make the width and heght the same based on the x,y distance
             var w = x1 - x0;
             var h = y1 - y0;
 
@@ -148,13 +149,22 @@ namespace PixelVisionSDK
             var tr = new Vector(x0 + w, y0);
             var br = new Vector(x0 + w, y0 + h);
             var bl = new Vector(x0, y0 + h);
-
+            var center = new Vector();
+            
             if (drawCentered)
             {
                 tl.x -= w;
                 tl.y -= h;
                 tr.y -= h;
                 bl.x -= w;
+                center.x = tl.x + w;
+                center.y = tl.y + h;
+                
+            }
+            else
+            {
+                center.x = tl.x + w / 2;
+                center.y = tl.y + h / 2;
             }
             
             // Top
@@ -171,24 +181,12 @@ namespace PixelVisionSDK
  
             if (fill)
             {
-//                var dx = x1 - x0; 
-//                var dy = y0 - y0;
-//                var distance = Math.Sqrt((dx * dx) + (dy * dy));
-//                w = (int)distance;
-//                var dx1 = x0 - x0; 
-//                var dy1 = y1 - y0;
-//                var distance1 = Math.Sqrt((dx1 * dx1) + (dy1 * dy1));
-//                h = (int)distance1;
-                
+
                 // TODO this needs to take into account the thickness of the border
-                if (w > 2 && h > 2)
+                if (Math.Abs(w) > stroke.width && Math.Abs(h) > stroke.height)
                 {
-//                    // Figure out the top left position
-                    var tlX = Math.Min(x0, x1) + 1; // This will need to take into account the stroke of the line
-                    var tlY = Math.Min(y0, y1) + 1;
-                    
                     // Fill the square
-                    FloodFill(tlX, tlY);
+                    FloodFill(center.x, center.y);
 
                 }
             }
@@ -205,52 +203,76 @@ namespace PixelVisionSDK
         public void DrawCircle(int x0, int y0, int x1, int y1, bool fill = false)
         {
             
-            var dx = x1 - x0; 
-            var dy = y1 - y0;
-            var radius = (int)Math.Sqrt((dx * dx) + (dy * dy));
+            // Create a box to draw the circle inside of
             
+            var w = x1 - x0;
+            var h = y1 - y0;
+
+            var tl = new Vector(x0, y0);
+            var tr = new Vector(x0 + w, y0);
+            var br = new Vector(x0 + w, y0 + h);
+            var bl = new Vector(x0, y0 + h);
+            
+            var center = new Vector();
+            var radius = (int)Math.Sqrt((w * w) + (h * h));
+            if (drawCentered)
+            {
+                tl.x -= w;
+                tl.y -= h;
+                tr.y -= h;
+                bl.x -= w;
+
+                center.x = tl.x + w;
+                center.y = tl.y + h;
+                
+            }
+            else
+            {
+                center.x = tl.x + w / 2;
+                center.y = tl.y + h / 2;
+                radius = radius / 2;
+            }
+            
+//            SetStrokePixel(center.x, center.y);
+//            
+//            SetStrokePixel(tl.x, tl.y);
+
+            x0 = center.x;
+            y0 = center.y;
+            
+            SetStrokePixel(tr.x, tr.y);
+            SetStrokePixel(br.x, br.y);
+            SetStrokePixel(bl.x, bl.y);
+
             int d = (5 - radius * 4) / 4;
             int x = 0;
             int y = radius;
 
             do
             {
-                // ensure index is in range before setting (depends on your image implementation)
-                // in this case we check if the pixel location is within the bounds of the image before setting the pixel
+                // 1 O'Clock
+                SetStrokePixel(x0 + x, y0 - y);
+//                 3 O'Clock
+                SetStrokePixel(x0 + y, y0 - x);
                 
+                // 4 O' Clock
+                SetStrokePixel(x0 + y, y0 + x);
                 
                 // 5 O'Clock
-                //if (x0 + x >= 0 && x0 + x <= width - 1 && y0 + y >= 0 && y0 + y <= height - 1) 
-                    SetStrokePixel(x0 + x, y0 + y);
-                
-                // 1 O'Clock
-                //if (x0 + x >= 0 && x0 + x <= width - 1 && y0 - y >= 0 && y0 - y <= height - 1) 
-                    SetStrokePixel(x0 + x, y0 - y);
+                SetStrokePixel(x0 + x, y0 + y);
                 
                 // 7 O'Clock
-                //if (x0 - x >= 0 && x0 - x <= width - 1 && y0 + y >= 0 && y0 + y <= height - 1) 
-                    SetStrokePixel(x0 - x, y0 + y);
-                
-                // 11 O'Clock
-//                if (x0 - x >= 0 && x0 - x <= width - 1 && y0 - y >= 0 && y0 - y <= height - 1)
-                 SetStrokePixel(x0 - x, y0 - y);
-
-                // 4 O' Clock
-//                if (x0 + y >= 0 && x0 + y <= width - 1 && y0 + x >= 0 && y0 + x <= height - 1)
-                 SetStrokePixel(x0 + y, y0 + x);
-                
-                // 3 O'Clock
-//                if (x0 + y >= 0 && x0 + y <= width - 1 && y0 - x >= 0 && y0 - x <= height - 1)
-                 SetStrokePixel(x0 + y, y0 - x);
+                SetStrokePixel(x0 - x, y0 + y);
                 
                 // 8 O'Clock
-//                if (x0 - y >= 0 && x0 - y <= width - 1 && y0 + x >= 0 && y0 + x <= height - 1)
-                 SetStrokePixel(x0 - y, y0 + x);
+                SetStrokePixel(x0 - y, y0 + x);
                 
                 // 10 O'Clock
-//                if (x0 - y >= 0 && x0 - y <= width - 1 && y0 - x >= 0 && y0 - x <= height - 1)
-                 SetStrokePixel(x0 - y, y0 - x);
+                SetStrokePixel(x0 - y, y0 - x);
                 
+                // 11 O'Clock
+                SetStrokePixel(x0 - x, y0 - y);
+
                 if (d < 0)
                 {
                     d += 2 * x + 1;
@@ -266,7 +288,7 @@ namespace PixelVisionSDK
             if (fill)
             {
                 if(radius > 4)
-                    FloodFill(x0, y0);
+                    FloodFill(center.x, center.y);
             }
         }
 

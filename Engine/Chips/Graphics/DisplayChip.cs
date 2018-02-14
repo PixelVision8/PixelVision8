@@ -29,9 +29,10 @@ namespace PixelVisionSDK.Chips
         
         protected List<DrawRequest> drawRequestPool = new List<DrawRequest>();
         protected List<DrawRequest> drawRequests = new List<DrawRequest>();
-        private int totalPixels;
+        public int totalPixels;
+        public int[] pixels = new int[0];
         
-        public Pattern displayPixels = new Pattern();
+//        public Pattern displayPixels = new Pattern();
         
         public int layers = 4;
 
@@ -148,9 +149,9 @@ namespace PixelVisionSDK.Chips
             
             totalPixels = _width * _height;
             
-            displayPixels.Resize(_width, _height);
+//            displayPixels.Resize(_width, _height);
             
-//            Array.Resize(ref displayPixels, totalPixels);
+            Array.Resize(ref pixels, totalPixels);
 
 //            for (int i = 0; i < totalPixels; i++)
 //            {
@@ -223,7 +224,7 @@ namespace PixelVisionSDK.Chips
         {
             
             var total = width * height;
-            int srcX, srcY, destIndex, colorID;
+            int srcX, srcY, colorID;
             
             for (var i = 0; i < total; i++)
             {
@@ -237,8 +238,25 @@ namespace PixelVisionSDK.Chips
                     
                     srcX = ((i % width) + x);// % _width;
                     srcY = ((i / width) + y);// % _height; 
-                    
-                    displayPixels.SetPixel(srcX, srcY, colorID);
+
+//                    int x1 = srcX;
+//                    int y1 = srcY;
+                    //            if (color == -1)
+//                return;
+            
+                    srcX = (int) (srcX - Math.Floor(srcX / (float) _width) * _width);
+
+                    srcY = (int) (srcY - Math.Floor(srcY / (float) _height) * _height);
+            
+                    var index = srcX + _width * srcY;
+            
+                    // TODO this should never be out of range
+//            if(index > -1 && index < pixels.Length)
+                    pixels[index] = colorID;
+//            else
+//                Debug.Log("index "+ index + " "+x+ "," + y);
+
+//                    displayPixels.Invalidate();
 
 //                    x = x - (int) (Math.Floor(x / w) * w);
 //                    y = y - (int) (Math.Floor(y / w) * w);
