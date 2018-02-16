@@ -408,7 +408,8 @@ namespace PixelVisionSDK.Chips
         ///     when rendering text as tiles. This value can be positive or negative depending on your needs. By default, it is 0.
         /// </param>
         /// <returns></returns>
-        int DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0);
+        void DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default",
+            int colorOffset = 0, int spacing = 0);
 
         /// <summary>
         ///     By default, the tilemap renders to the display by simply calling DrawTilemap(). This automatically fills the entire

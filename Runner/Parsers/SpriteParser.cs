@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using PixelVisionRunner.Unity;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 using PixelVisionSDK.Utils;
@@ -51,6 +52,7 @@ namespace PixelVisionRunner.Parsers
         public SpriteParser(ITexture2D tex, IEngineChips chips, IColorFactory colorFactory, bool unique = true)
         {
             this.tex = tex;
+            ((Texture2DAdapter)tex).FlipTexture();
 //            this.unique = unique;
             this.chips = chips;
             spriteChip = chips.spriteChip;
@@ -195,7 +197,7 @@ namespace PixelVisionRunner.Parsers
             y = index / width * sHeight;
 
             // Flip Y position
-            y = tex.height - y - sHeight;
+//            y = tex.height - y - sHeight;
 
             tmpPixels = tex.GetPixels(x, y, sWidth, sHeight);
 

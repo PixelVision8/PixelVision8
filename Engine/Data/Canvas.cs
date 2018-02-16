@@ -31,6 +31,7 @@ namespace PixelVisionSDK
         private Vector spriteSize;
         private bool drawCentered = false;
         private Vector linePattern = new Vector(1);
+        public bool wrap = false;
         
         public void LinePattern(int a, int b)
         {
@@ -94,13 +95,17 @@ namespace PixelVisionSDK
             gameChip.DrawPixels(GetPixels(), x, y, width, height, drawMode, false, true);
         }
 
+        private bool canDraw = false;
+        
         /// <summary>
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         public void SetStrokePixel(int x, int y)
         {
-            if(x >= 0 && x <= width - stroke.width && y >= 0 && y <= height - stroke.height)
+            canDraw = wrap || x >= 0 && x <= width - stroke.width && y >= 0 && y <= height - stroke.height;
+//            
+            if(canDraw)
                 SetPixels(x, y, stroke.width, stroke.height, stroke.GetPixels());
         }
 

@@ -50,7 +50,7 @@ namespace PixelVisionSDK.Chips
         //protected Vector2 pageSize = new Vector2(128, 128);
         public int pageWidth = 128;
 
-        protected int[][] pixelDataCache;
+//        protected int[][] pixelDataCache;
         private int tmpX;
         private int tmpY;
 
@@ -205,7 +205,8 @@ namespace PixelVisionSDK.Chips
             base.Deactivate();
             engine.spriteChip = null;
         }
-
+        
+        int totalSprites1;
         /// <summary>
         ///     This resizes the <see cref="Sprite" /> Ram's
         ///     internal TextureData. This will destroy all
@@ -232,6 +233,11 @@ namespace PixelVisionSDK.Chips
                 texture.Resize(w, h);
                 Clear();
             }
+
+            //TODO this needs to be double checked at different size sprites
+            var cols = MathUtil.FloorToInt(textureWidth / width);
+            var rows = MathUtil.FloorToInt(textureHeight / height);
+            totalSprites1 = cols * rows;
         }
 
         /// <summary>
@@ -253,7 +259,7 @@ namespace PixelVisionSDK.Chips
 
             var tmpPixels = new int[totalPixels];
             Array.Copy(data, tmpPixels, totalPixels);
-            pixelDataCache[index] = tmpPixels;
+//            pixelDataCache[index] = tmpPixels;
         }
 
         /// <summary>
@@ -263,13 +269,17 @@ namespace PixelVisionSDK.Chips
         public void Clear()
         {
             cache = new string[totalSprites];
-            pixelDataCache = new int[totalSprites][];
+//            pixelDataCache = new int[totalSprites][];
             _texture.Clear();
         }
 
-        private int[] cachedSprite;
+//        private int[] cachedSprite;
         private int totalSpritePixels;
-        private int[] tmpPixelData;
+//        private int[] tmpPixelData;
+
+        private int width1;
+        private int height1;
+        private int w;
         
         /// <summary>
         ///     Returns an array of ints that represent a sprite. Each
@@ -288,31 +298,24 @@ namespace PixelVisionSDK.Chips
             if (index == -1)
                 return;
 
-            cachedSprite = pixelDataCache[index];
+            width1 = _texture.width;
+            height1 = _texture.height;
 
-            totalSpritePixels = width * height;
+            w = width1 / width;
 
-            if (cachedSprite == null)
-            {
-                tmpPixelData = new int[totalSpritePixels];
+            tmpX = index % w * width;
+            tmpY = index / w * height;
+            
+            // Flip y for Unity
+//            tmpY = height1 - tmpY - height;
 
-                SpriteChipUtil.CalculateSpritePos(index, _texture.width, _texture.height, width, height, out tmpX,
-                    out tmpY);
+            _texture.CopyPixels(ref pixelData, tmpX, tmpY, width, height);
 
-                _texture.CopyPixels(ref tmpPixelData, tmpX, tmpY, width, height);
-
-                pixelDataCache[index] = tmpPixelData;
-                cachedSprite = pixelDataCache[index];
-            }
-
-            // Make sure that the pixelData array is the correct size.
-            if (pixelData.Length != cachedSprite.Length)
-                Array.Resize(ref pixelData, cachedSprite.Length);
-
-            // Copy the contents of the cached pixel data into the new array.
-            Array.Copy(cachedSprite, pixelData, totalSpritePixels);
         }
 
+        private int x;
+        private int y;
+        
         /// <summary>
         ///     Updates the sprite data at a given position in the
         ///     <see cref="texture" /> data.
@@ -324,7 +327,28 @@ namespace PixelVisionSDK.Chips
             if (index < 0)
                 return;
 
-            SpriteChipUtil.AddSpriteToTextureData(index, pixels, _texture, width, height);
+//            int spriteWidth = width;
+//            int spriteHeight = height;
+//            int x;
+//            int y;
+//            int index1 = index;
+//            int width2 = _texture.width;
+//            int height2 = _texture.height;
+//            var totalSprites2 = SpriteChipUtil.CalculateTotalSprites(width2, height2, spriteWidth, spriteHeight);
+
+            // Make sure we stay in bounds
+            index = index.Clamp(0, totalSprites1 - 1);
+
+            var w1 = _texture.width / width;
+
+            x = index % w1 * width;
+            y = index / w1 * height;
+
+//            if (true)
+//                y = _texture.height - y - height;
+
+            _texture.SetPixels(x, y, width, height, pixels);
+            
             CacheSprite(index, pixels);
         }
 

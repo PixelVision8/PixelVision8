@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionSDK.Chips
 {
@@ -536,7 +537,7 @@ namespace PixelVisionSDK.Chips
                 default:
                     
                     // Need to flip the y position to draw correctly
-                    y = displayChip.height - height - y;
+//                    y = displayChip.height - height - y;
                     
                     displayChip.NewDrawCall(pixelData, x, y, width, height, layer: (int)drawMode, colorOffset: colorOffset);
 
@@ -701,6 +702,8 @@ namespace PixelVisionSDK.Chips
             startX = x - (useScrollPos ? _scrollX : 0);
             startY = y - (useScrollPos ? _scrollY : 0);
 
+//            startY = displayChip.height - height - startY;
+            
             if (flipH || flipV)
                 SpriteChipUtil.FlipSpriteData(ref tmpIDs, width, height, flipH, flipV);
 
@@ -908,7 +911,7 @@ namespace PixelVisionSDK.Chips
         private int[] spriteIDs;
         private int j;
         private int[] pixelData;
-        
+
         /// <summary>
         ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render
         ///     characters as individual sprites (DrawMode.Sprite), tiles (DrawMode.Tile) or drawn directly into the tilemap
@@ -948,7 +951,8 @@ namespace PixelVisionSDK.Chips
         ///     when rendering text as tiles. This value can be positive or negative depending on your needs. By default, it is 0.
         /// </param>
         /// <returns></returns>
-        public int DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0)
+        public void DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default",
+            int colorOffset = 0, int spacing = 0)
         {
 
             spriteSize = SpriteSize();
@@ -986,7 +990,6 @@ namespace PixelVisionSDK.Chips
 
             }
 
-            return 1;
         }
 
         
@@ -1034,33 +1037,21 @@ namespace PixelVisionSDK.Chips
         /// </param>
         public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null, int? offsetY = null, DrawMode drawMode = DrawMode.Tile)
         {
-
-            oX = offsetX.HasValue ? offsetX.Value : _scrollX;
-            oY = offsetY.HasValue ? offsetY.Value : _scrollY;
-
-            width = columns == 0 ? displayChip.width : columns * spriteChip.width;
-
-            if ((width + x) > displayChip.width)
-            {
-                width = displayChip.width - x;
-            }
             
-            height = rows == 0 ? displayChip.height : rows * spriteChip.height;
+            viewPort.x = offsetX ?? _scrollX;
+            viewPort.y = offsetY ?? _scrollY;
+            viewPort.width = columns == 0 ? displayChip.width : columns * spriteChip.width;
+            viewPort.height = rows == 0 ? displayChip.height : rows * spriteChip.height;
             
-            if ((height + y) > displayChip.height)
-            {
-                height = displayChip.height - y;
-            }
-            
-            // Flip the y scroll value
-            sY = realHeight - height - oY;
-            
-            GetCachedPixels(oX, sY, width, height, ref tmpTilemapCache);
+            // Grab the correct cached pixel data
+            GetCachedPixels(viewPort.x, viewPort.y, viewPort.width, viewPort.height, ref tmpTilemapCache);
     
             // Copy over the cached pixel data from the tilemap request
-            DrawPixels(tmpTilemapCache, x, y, width, height, drawMode);
+            DrawPixels(tmpTilemapCache, x, y, viewPort.width, viewPort.height, drawMode);
 
         }
+        
+        private Rect viewPort = new Rect();
         
         /// <summary>
         ///     This method allows you to draw a rectangle with a fill color. By default, this method is used to clear the screen but you can supply a color offset to change the color value and use it to fill a rectangle area with a specific color instead.
@@ -1133,6 +1124,7 @@ namespace PixelVisionSDK.Chips
                 pos.y = _scrollY;
             }
 
+//            pos.y = realHeight - 1 - pos.y;
             return pos;
         }
 
@@ -1812,10 +1804,10 @@ namespace PixelVisionSDK.Chips
                     {
                         // Calculate the new position of the tile;
                         x = i % tilemapChip.columns * tileSize.x;
-                        y = i / tilemapChip.columns;
+                        y = i / tilemapChip.columns * tileSize.y;
 
                         //x *= tileWidth;
-                        y = (tilemapChip.rows - 1 - y) * tileSize.y;
+//                        y = (tilemapChip.rows - 1 - y) * tileSize.y;
 
                         //y *= tileHeight;
 
@@ -1857,7 +1849,7 @@ namespace PixelVisionSDK.Chips
             }
                 
             // Flip the y axis 
-            y = cachedTileMap.height - y - blockHeight;
+//            y = cachedTileMap.height - y - blockHeight;
             
             
             // Todo need to go through and draw to the tilemap cache but ignore transparent pixels

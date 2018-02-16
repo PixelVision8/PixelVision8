@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using System.Collections.Generic;
+using PixelVisionRunner.Unity;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 
@@ -40,6 +41,7 @@ namespace PixelVisionRunner.Parsers
         public ColorParser(ITexture2D tex, IEngineChips chips, IColor magenta, bool unique = false, bool ignoreTransparent = true)
         {
             this.tex = tex;
+            ((Texture2DAdapter) this.tex).FlipTexture();
             colorChip = chips.colorChip;
             this.unique = unique;
             this.magenta = magenta;
@@ -84,7 +86,7 @@ namespace PixelVisionRunner.Parsers
                 x = i % width;
                 y = i / width;
 
-                y = height - y - 1;
+//                y = height - y - 1;
 
                 // Get the current color
                 tmpColor = tex.GetPixel(x, y); //pixels[i]);
