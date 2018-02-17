@@ -30,12 +30,14 @@ namespace PixelVisionSDK
         public int x;
         public int y;
 
+        private int totalPixels;
+        
         public int[] pixelData
         {
             get { return _pixelData; }
             set
             {
-                var totalPixels = value.Length;
+                totalPixels = value.Length;
 
                 if (_pixelData.Length != totalPixels)
                     Array.Resize(ref _pixelData, totalPixels);

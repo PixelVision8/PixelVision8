@@ -32,8 +32,6 @@ namespace PixelVisionSDK.Chips
         public int totalPixels;
         public int[] pixels = new int[0];
         
-//        public Pattern displayPixels = new Pattern();
-        
         public int layers = 4;
 
         public int overscanXPixels
@@ -97,6 +95,8 @@ namespace PixelVisionSDK.Chips
             
         }
 
+        private DrawRequest draw;
+        
         /// <summary>
         ///     Creates a new draw by copying the supplied pixel data over
         ///     to the Display's TextureData.
@@ -111,17 +111,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="layerOrder"></param>
         public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, int layer = 0, int colorOffset = 0)
         {
-            // Only draw the layer if the display can show it.
-//            if (layer > layers)
-//                return;
-            
-            // flip y coordinate space
-//            if (flipY)
-//                y = _height - height - y;
-
-//            if (pixelData != null)
-//            {
-                var draw = NextDrawRequest();
+                draw = NextDrawRequest();
                 draw.x = x;
                 draw.y = y;
                 draw.width = width;
@@ -130,8 +120,6 @@ namespace PixelVisionSDK.Chips
                 draw.layer = layer;
                 draw.colorOffset = colorOffset;
                 drawRequests.Add(draw);
-
-//            }
         }
 
         /// <summary>
@@ -146,19 +134,8 @@ namespace PixelVisionSDK.Chips
             
             totalPixels = _width * _height;
             
-//            displayPixels.Resize(_width, _height);
-            
             Array.Resize(ref pixels, totalPixels);
 
-//            for (int i = 0; i < totalPixels; i++)
-//            {
-//                displayPixels[i] = -1;
-//            }
-//            Clear();
-            
-            // Resize UI Layer
-//            uiLayer.Resize(_width, _height);
-//            uiLayer.Clear();
         }
 
         /// <summary>
@@ -228,8 +205,7 @@ namespace PixelVisionSDK.Chips
         {
             
             total = width * height;
-//            int srcX, srcY, colorID;
-            
+
             for (i = 0; i < total; i++)
             {
                 
