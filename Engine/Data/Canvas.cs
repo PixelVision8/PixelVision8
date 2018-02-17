@@ -92,7 +92,7 @@ namespace PixelVisionSDK
         /// <param name="drawMode"></param>
         public void DrawPixels(int x = 0, int y = 0, DrawMode drawMode = DrawMode.TilemapCache)
         {
-            gameChip.DrawPixels(GetPixels(), x, y, width, height, drawMode, false, true);
+            gameChip.DrawPixels(GetPixels(), x, y, width, height, drawMode);
         }
 
         private bool canDraw = false;
@@ -319,7 +319,7 @@ namespace PixelVisionSDK
             }
             
             // Canvas is reversed, so flip the pixel data
-            SpriteChipUtil.FlipSpriteData(ref pixelData, spriteSize.x, spriteSize.y, false, true);
+            SpriteChipUtil.FlipSpriteData(ref pixelData, spriteSize.x, spriteSize.y);
             
             SetPixels(x, y, spriteSize.x, spriteSize.y, pixelData);
         }
