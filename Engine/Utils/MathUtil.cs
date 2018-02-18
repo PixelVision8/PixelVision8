@@ -21,7 +21,7 @@ namespace PixelVisionSDK.Utils
     public static class MathUtil
     {
 
-        private static readonly Random random = new Random();
+        private static readonly Random random = new Random(DateTime.Now.Millisecond);
 
         /// <summary>
         /// </summary>
@@ -87,6 +87,16 @@ namespace PixelVisionSDK.Utils
         public static int RoundToInt(float value)
         {
             return (int) Math.Round(value);
+        }
+
+        public static int RandomRange(int min, int max)
+        {
+            return random.Next(min, max);
+        }
+        
+        public static float RandomValue()
+        {
+            return random.Next(0, 100)/100f;
         }
     }
 
