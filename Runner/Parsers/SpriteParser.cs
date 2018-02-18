@@ -109,7 +109,7 @@ namespace PixelVisionRunner.Parsers
         {
             //Debug.Log("Prepare Sprites");
 
-            tex.UsePointFiltering();
+//            tex.UsePointFiltering();
 
             sWidth = spriteChip.width;
             sHeight = spriteChip.height;

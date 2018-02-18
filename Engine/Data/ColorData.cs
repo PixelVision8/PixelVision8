@@ -16,6 +16,7 @@
 using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using PixelVisionRunner;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
@@ -26,7 +27,7 @@ namespace PixelVisionSDK
     ///     It provides a simple interface for storing RBG color data as
     ///     well as converting that data in Hex or vise versa.
     /// </summary>
-    public class ColorData : AbstractData
+    public class ColorData : AbstractData, IColor
     {
 
         protected float _b;
@@ -60,6 +61,15 @@ namespace PixelVisionSDK
         ///     other chips that analyze the ColorData instance.
         /// </summary>
         public int flag { get; set; }
+
+        public float a
+        {
+            get { return 1;}
+            set
+            {
+                // Do nothing, value should always be 1
+            } 
+        }
 
         /// <summary>
         ///     The red value of a color. This ranges from 0 to 255.

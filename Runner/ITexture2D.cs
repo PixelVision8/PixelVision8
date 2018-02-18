@@ -13,6 +13,8 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
+using PixelVisionSDK;
+
 namespace PixelVisionRunner
 {
     public interface ITexture2D
@@ -25,7 +27,10 @@ namespace PixelVisionRunner
         IColor32[] GetPixels32();
         void Resize(int width, int height);
         void SetPixels(int x, int y, int width, int height, IColor[] pixelData);
-        void UsePointFiltering(); // set filterPoint in unity
+        void SetPixels(IColor[] colorData);
         void LoadImage(byte[] data);
+        byte[] EncodeToPNG();
+        void LoadTextureData(TextureData textureData, ColorData[] colors, string transColor = "#ff00ff");
+        void Apply();
     }
 }

@@ -45,8 +45,8 @@ namespace PixelVisionRunner.Services
         protected IEngine targetEngine;
         private int totalParsers;
 
-        private ITextureFactory textureFactory;
-        private IColorFactory colorFactory;
+        public ITextureFactory textureFactory;
+        public IColorFactory colorFactory;
 
         public bool completed
         {
