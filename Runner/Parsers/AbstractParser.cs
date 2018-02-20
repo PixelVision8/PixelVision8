@@ -18,7 +18,7 @@ using System.Collections.Generic;
 
 namespace PixelVisionRunner.Parsers
 {
-    public abstract class AbstractParser
+    public abstract class AbstractParser : IAbstractParser
     {
         protected List<Action> steps = new List<Action>();
 

@@ -160,7 +160,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="data">An array of ints</param>
         /// <returns>
         /// </returns>
-        public static bool IsEmpty(int[] data)
+        public bool IsEmpty(int[] data)
         {
             var total = data.Length;
             for (var i = 0; i < total; i++)

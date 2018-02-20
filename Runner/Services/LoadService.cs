@@ -35,7 +35,7 @@ namespace PixelVisionRunner.Services
             ".lua"
         };
         
-        private readonly List<AbstractParser> parsers = new List<AbstractParser>();
+        private readonly List<IAbstractParser> parsers = new List<IAbstractParser>();
 
         private int currentParserID;
 
