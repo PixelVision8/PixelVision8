@@ -119,7 +119,7 @@ namespace PixelVisionSDK.Chips
 
         protected string _name = "Untitle_Game";
         protected int _saveSlots;
-        protected Dictionary<string, string> savedData = new Dictionary<string, string>();
+        public Dictionary<string, string> savedData = new Dictionary<string, string>();
 
         private int[] tmpSpriteData = new int[0];
         

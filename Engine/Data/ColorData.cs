@@ -33,7 +33,8 @@ namespace PixelVisionSDK
         protected float _b;
         protected float _g;
         protected float _r;
-
+        protected float _a;
+        
         /// <summary>
         ///     Use this constructor for setting the ColorData instance up
         ///     with RBG values.
@@ -62,13 +63,13 @@ namespace PixelVisionSDK
         /// </summary>
         public int flag { get; set; }
 
+        /// <summary>
+        ///     Alpha can be used as a masking flag. It accepts 0 for off or 1 for on.
+        /// </summary>
         public float a
         {
-            get { return 1;}
-            set
-            {
-                // Do nothing, value should always be 1
-            } 
+            get { return _a;}
+            set { _a = value < 1 ? 0 : 1; } 
         }
 
         /// <summary>
