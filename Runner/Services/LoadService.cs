@@ -39,7 +39,7 @@ namespace PixelVisionRunner.Services
 
         private int currentParserID;
 
-        protected bool microSteps = false;
+        protected bool microSteps = true;
         protected AbstractParser parser;
 
         protected IEngine targetEngine;
@@ -47,7 +47,8 @@ namespace PixelVisionRunner.Services
 
         public ITextureFactory textureFactory;
         public IColorFactory colorFactory;
-
+        private int currentStep;
+        
         public bool completed
         {
             get { return currentParserID >= totalParsers; }
@@ -55,9 +56,28 @@ namespace PixelVisionRunner.Services
 
         public float percent
         {
-            get { return currentParserID / (float) totalParsers; }
+            get
+            {
+                if (microSteps)
+                {
+                    return currentStep / (float) totalSteps;
+                }
+                else
+                {
+                    return currentParserID / (float) totalParsers;
+                }
+                
+            }
         }
 
+        public void Reset()
+        {
+            parsers.Clear();
+            currentParserID = 0;
+            totalSteps = 0;
+            currentStep = 0;
+        }
+        
         /// <summary>
         ///     This can be used to display a message while preloading
         /// </summary>
@@ -71,7 +91,7 @@ namespace PixelVisionRunner.Services
 
         public void ParseFiles(Dictionary<string, byte[]> files, IEngine engine, SaveFlags saveFlags)
         {
-            parsers.Clear();
+            Reset();
     
             var watch = Stopwatch.StartNew();
             
@@ -92,7 +112,7 @@ namespace PixelVisionRunner.Services
                 foreach (var fileName in paths)
                 {
                     parser = LoadScript(fileName, files[fileName]);
-                    parsers.Add(parser);
+                    AddParser(parser);
                 }
             }
 
@@ -101,7 +121,7 @@ namespace PixelVisionRunner.Services
             {
                 parser = LoadColors(files);
                 if (parser != null)
-                    parsers.Add(parser);
+                    AddParser(parser);
             }
 
             // Step 4 (optional). Look for color map for sprites and tile map
@@ -109,7 +129,7 @@ namespace PixelVisionRunner.Services
             {
                 parser = LoadColorMap(files);
                 if (parser != null)
-                    parsers.Add(parser);
+                    AddParser(parser);
             }
 
             // Step 5 (optional). Look for new sprites
@@ -117,7 +137,7 @@ namespace PixelVisionRunner.Services
             {
                 parser = LoadSprites(files);
                 if (parser != null)
-                    parsers.Add(parser);
+                    AddParser(parser);
             }
 
             // Step 6 (optional). Look for tile map to load
@@ -125,7 +145,7 @@ namespace PixelVisionRunner.Services
             {
                 parser = LoadTilemap(files);
                 if (parser != null)
-                    parsers.Add(parser);
+                    AddParser(parser);
             }
 
             // Step 7 (optional). Look for fonts to load
@@ -141,7 +161,7 @@ namespace PixelVisionRunner.Services
 
                     parser = LoadFont(fontName, files[fileName]);
                     if (parser != null)
-                        parsers.Add(parser);
+                        AddParser(parser);
                 }
             }
 
@@ -150,7 +170,7 @@ namespace PixelVisionRunner.Services
             {
                 parser = LoadMetaData(files);
                 if (parser != null)
-                    parsers.Add(parser);
+                    AddParser(parser);
             }
             
             // Step 9 (optional). Look for meta data and override the game
@@ -158,7 +178,7 @@ namespace PixelVisionRunner.Services
             {
                 LoadSounds(files);
 //                if (parser != null)
-//                    parsers.Add(parser);
+//                    AddParser(parser);
             }
             
             // Step 10 (optional). Look for meta data and override the game
@@ -166,7 +186,7 @@ namespace PixelVisionRunner.Services
             {
                 LoadMusic(files);
 //                if (parser != null)
-//                    parsers.Add(parser);
+//                    AddParser(parser);
             }
             
             // Step 11 (optional). Look for meta data and override the game
@@ -174,7 +194,7 @@ namespace PixelVisionRunner.Services
             {
                 LoadSaveData(files);
 //                if (parser != null)
-//                    parsers.Add(parser);
+//                    AddParser(parser);
             }
 
             totalParsers = parsers.Count;
@@ -185,6 +205,15 @@ namespace PixelVisionRunner.Services
 //            UnityEngine.Debug.Log("Parser Setup Time - " + watch.ElapsedMilliseconds);
         }
 
+        private int totalSteps;
+        
+        public void AddParser(IAbstractParser parser)
+        {
+            parsers.Add(parser);
+
+            totalSteps += parser.totalSteps;
+        }
+        
         public void LoadAll()
         {
             while (completed == false)
