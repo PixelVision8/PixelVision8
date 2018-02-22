@@ -15,11 +15,8 @@
 
 namespace PixelVisionRunner
 {
-    public interface IColor32
+    public interface IAudioClipFactory
     {
-        byte a { get; }
-        byte r { get; }
-        byte g { get; }
-        byte b { get; }
+        IAudioClip NewAudioClip(string name, int lengthSamples, int channels, int frequency, bool stream);
     }
 }

@@ -15,11 +15,12 @@
 
 namespace PixelVisionRunner
 {
-    public interface IColor32
+    public interface IAudioClip
     {
-        byte a { get; }
-        byte r { get; }
-        byte g { get; }
-        byte b { get; }
+        bool SetData(float[] data, int offsetSamples);
+        int samples { get;}
+        int channels { get;}
+        bool GetData(float[] data, int offsetSamples);
+        int frequency { get;}
     }
 }
