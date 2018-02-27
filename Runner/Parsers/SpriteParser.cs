@@ -15,9 +15,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionRunner.Parsers
 {
@@ -78,14 +80,14 @@ namespace PixelVisionRunner.Parsers
             //Debug.Log("Read Colors");
 
             colorData = chips.colorMapChip != null ? chips.colorMapChip.colors : chips.colorChip.colors;
-
             currentStep++;
         }
 
         public void ConvertColors()
         {
             //Debug.Log("Convert  Colors");
-
+            
+            // TODO need to figure out how we can remove the need for the ColorFactory here
             var total = colorData.Length;
             colors = colorFactory.CreateArray(total);
 

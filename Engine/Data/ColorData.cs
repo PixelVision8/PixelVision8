@@ -33,7 +33,7 @@ namespace PixelVisionSDK
         protected float _b;
         protected float _g;
         protected float _r;
-        protected float _a;
+        protected float _a = 1;
         
         /// <summary>
         ///     Use this constructor for setting the ColorData instance up
