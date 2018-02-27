@@ -24,7 +24,7 @@ namespace PixelVisionRunner
         IColor[] GetPixels();
         IColor[] GetPixels(int x, int y, int blockWidth, int blockHeight);
         IColor GetPixel(int x, int y);
-        IColor32[] GetPixels32();
+//        IColor32[] GetPixels32();
         void Resize(int width, int height);
         void SetPixels(int x, int y, int width, int height, IColor[] pixelData);
         void SetPixels(IColor[] colorData);

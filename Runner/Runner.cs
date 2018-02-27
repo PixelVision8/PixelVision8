@@ -26,9 +26,9 @@ namespace PixelVisionRunner
         protected IFileSystem fileSystem;
         public LoadService loadService;
 
-        public Runner(ITextureFactory textureFactory, IColorFactory colorFactory)
+        public Runner(ITextureFactory textureFactory)
         {
-            loadService = new LoadService(textureFactory, colorFactory);
+            loadService = new LoadService(textureFactory);
         }
 
         public void ActivateEngine(IEngine engine)

@@ -44,9 +44,9 @@ namespace PixelVisionRunner.Services
 
         protected IEngine targetEngine;
         private int totalParsers;
-
+        protected IColor maskColor = new ColorData("#ff00ff");
         public ITextureFactory textureFactory;
-        public IColorFactory colorFactory;
+//        public IColorFactory colorFactory;
         private int currentStep;
         
         public bool completed
@@ -83,10 +83,10 @@ namespace PixelVisionRunner.Services
         /// </summary>
         public string message { get; protected set; }
 
-        public LoadService(ITextureFactory textureFactory, IColorFactory colorFactory)
+        public LoadService(ITextureFactory textureFactory)
         {
             this.textureFactory = textureFactory;
-            this.colorFactory = colorFactory;
+//            this.colorFactory = colorFactory;
         }
 
         public void ParseFiles(Dictionary<string, byte[]> files, IEngine engine, SaveFlags saveFlags)
@@ -271,7 +271,7 @@ namespace PixelVisionRunner.Services
             //var fontName = fileSystem.GetFileNameWithoutExtension(file);
             //fontName = fontName.Substring(0, fontName.Length - 5);
 
-            return new FontParser(tex, targetEngine, colorFactory, fontName);
+            return new FontParser(tex, targetEngine, fontName);
         }
 
         private AbstractParser LoadTilemap(Dictionary<string, byte[]> files)
@@ -310,7 +310,7 @@ namespace PixelVisionRunner.Services
                     colorTex = ReadTexture(files[colorFile]);
                 }
                 
-                return new TilemapParser(tex, flagTex, colorTex, targetEngine, colorFactory);
+                return new TilemapParser(tex, flagTex, colorTex, targetEngine);
             }
 
             return null;
@@ -338,7 +338,7 @@ namespace PixelVisionRunner.Services
                 
                 var tex = ReadTexture(files[fileName]);
 
-                return new SpriteParser(tex, targetEngine, colorFactory);
+                return new SpriteParser(tex, targetEngine);
             }
 
             return null;
@@ -352,7 +352,7 @@ namespace PixelVisionRunner.Services
             {
                 var tex = ReadTexture(files[fileName]);
 
-                return new ColorMapParser(tex, targetEngine, colorFactory.magenta);
+                return new ColorMapParser(tex, targetEngine, maskColor);
             }
 
             return null;
@@ -366,7 +366,7 @@ namespace PixelVisionRunner.Services
             {
                 var tex = ReadTexture(files[fileName]);
 
-                return new ColorParser(tex, targetEngine, colorFactory.magenta);
+                return new ColorParser(tex, targetEngine, maskColor);
             }
 
             return null;

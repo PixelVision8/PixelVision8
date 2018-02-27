@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using System;
+using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionRunner.Parsers
@@ -31,13 +32,17 @@ namespace PixelVisionRunner.Parsers
         private int flag;
         private int offset;
 
-        public TilemapParser(ITexture2D tex, ITexture2D flagTex, ITexture2D colorTex, IEngineChips chips, IColorFactory colorFactory, bool autoImport = false) : base(tex, chips, colorFactory)
+        public TilemapParser(ITexture2D tex, ITexture2D flagTex, ITexture2D colorTex, IEngineChips chips, bool autoImport = false) : base(tex, chips)
         {
             tilemapChip = chips.tilemapChip;
             this.flagTex = flagTex;
             this.autoImport = autoImport;
             this.colorTex = colorTex;
-            this.clear = colorFactory.clear;
+            
+            clear = new ColorData("#ff00ff");
+            clear.a = 0;
+            
+//            this.clear = colorFactory.clear;
             
             CalculateSteps();
         }
@@ -48,7 +53,7 @@ namespace PixelVisionRunner.Parsers
             var realHeight = spriteChip.height * tilemapChip.rows;
 
             // Test to see if the tilemap image is larger than the tilemap chip can allow
-            if (tex.GetPixels32().Length > (realWidth * realHeight))
+            if (tex.GetPixels().Length > (realWidth * realHeight))
             {
                 var newWidth = Math.Min(tex.width, realWidth);
                 var newHeight = Math.Min(tex.width, realHeight);

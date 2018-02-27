@@ -15,7 +15,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Emit;
+using PixelVisionRunner.Unity;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 using PixelVisionSDK.Utils;
@@ -45,12 +47,12 @@ namespace PixelVisionRunner.Parsers
         protected int totalColors;
         protected int totalPixels;
         protected int totalSprites;
-        protected IColorFactory colorFactory;
+//        protected IColorFactory colorFactory;
 
 //        protected bool unique;
         protected int x, y, width, height;
 
-        public SpriteParser(ITexture2D tex, IEngineChips chips, IColorFactory colorFactory, bool unique = true)
+        public SpriteParser(ITexture2D tex, IEngineChips chips, bool unique = true)
         {
             this.tex = tex;
             
@@ -60,7 +62,7 @@ namespace PixelVisionRunner.Parsers
 //            this.unique = unique;
             this.chips = chips;
             spriteChip = chips.spriteChip;
-            this.colorFactory = colorFactory;
+//            this.colorFactory = colorFactory;
 //            Debug.Log("Unique " + spriteChip.unique);
 
             CalculateSteps();
@@ -89,19 +91,20 @@ namespace PixelVisionRunner.Parsers
             
             // TODO need to figure out how we can remove the need for the ColorFactory here
             var total = colorData.Length;
-            colors = colorFactory.CreateArray(total);
+            
+            colors = new IColor[total].ToArray();//colorFactory.CreateArray(total);
 
             for (var i = 0; i < total; i++)
             {
-                var c1 = colors[i];
+//                var c1 = colors[i];
                 var c2 = colorData[i];
 
-                c1.r = c2.r;
-                c1.g = c2.g;
-                c1.b = c2.b;
-                c1.a = 1;
+//                c1.r = c2.r;
+//                c1.g = c2.g;
+//                c1.b = c2.b;
+//                c1.a = 1;
 
-                colors[i] = c1;
+                colors[i] = new ColorData(c2.r, c2.g, c2.b) {a = c2.a};
             }
 
             currentStep++;

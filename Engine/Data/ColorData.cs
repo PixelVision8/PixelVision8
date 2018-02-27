@@ -46,6 +46,14 @@ namespace PixelVisionSDK
         {
             FromRGB(r, g, b);
         }
+        
+//        public ColorData(float r = 0f, float g = 0f, float b = 0f, float a = 0f)
+//        {
+//            FromRGB(r, g, b);
+//
+//            // Clamp alpha if it's being used.
+//            a = a < 1 ? 0 : 1;
+//        }
 
         /// <summary>
         ///     Use this constructor for setting the ColorData instance up
@@ -187,6 +195,14 @@ namespace PixelVisionSDK
             var regex = new Regex(@"^#(?:[0-9a-fA-F]{3}){1,2}$");
             var match = regex.Match(color);
             return match.Success;
+        }
+        
+        public override bool Equals(object other)
+        {
+            if (!(other is ColorData))
+                return false;
+            ColorData color = (ColorData) other;
+            return this.r.Equals(color.r) && this.g.Equals(color.g) && this.b.Equals(color.b) && this.a.Equals(color.a);
         }
 
     }
