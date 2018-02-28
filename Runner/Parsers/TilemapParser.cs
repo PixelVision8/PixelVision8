@@ -16,6 +16,7 @@
 using System;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
+using UnityEngine;
 
 namespace PixelVisionRunner.Parsers
 {
@@ -44,7 +45,7 @@ namespace PixelVisionRunner.Parsers
             
 //            this.clear = colorFactory.clear;
             
-            CalculateSteps();
+//            CalculateSteps();
         }
 
         public override void PrepareSprites()
@@ -76,6 +77,21 @@ namespace PixelVisionRunner.Parsers
         {
             base.CutOutSpriteFromTexture2D();
             
+            //TODO there is a race condition here where this may fail.
+
+//            x = index % width * sWidth;
+//            y = index / width * sHeight;
+//
+//            // Flip Y position
+////            y = tex.height - y - sHeight;
+//
+////            if (x + sWidth < tex.width && y + sHeight > tex.height)
+////            {
+////                Debug.Log("index " + index + " out of range");
+////            }
+////            
+//            tmpPixels = tex.GetPixels(x, y, sWidth, sHeight);
+
             // Calculate flag value
             var color = flagTex != null ? flagTex.GetPixel(x, y) : clear;
 

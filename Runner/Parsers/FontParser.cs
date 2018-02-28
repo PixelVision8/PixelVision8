@@ -32,7 +32,7 @@ namespace PixelVisionRunner.Parsers
             fontChip = chips.fontChip;
             if (fontChip == null)
             {
-                // Create a new color map chip to store data
+                // Create a new font chip to store data
                 fontChip = new FontChip();
                 chips.chipManager.ActivateChip(fontChip.GetType().FullName, fontChip);
             }
@@ -40,14 +40,26 @@ namespace PixelVisionRunner.Parsers
             this.name = name;
         }
 
-        public override void CutOutSprites()
+        public override void PreCutOutSprites()
         {
             fontMap = new int[totalSprites];
-
-            base.CutOutSprites();
-
-            fontChip.AddFont(name, fontMap);
+            base.PreCutOutSprites();
         }
+
+        protected override void PostCutOutSprites()
+        {
+            fontChip.AddFont(name, fontMap);
+            base.PostCutOutSprites();
+        }
+
+//        public override void CutOutSprites()
+//        {
+//            
+//
+//            base.CutOutSprites();
+//
+//            
+//        }
 
         public override bool IsEmpty(IColor[] pixels)
         {

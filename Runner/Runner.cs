@@ -79,9 +79,13 @@ namespace PixelVisionRunner
         }
 
         private IEngine tmpEngine;
+
+        protected bool displayProgress;
         
         public virtual void ProcessFiles(IEngine tmpEngine, Dictionary<string, byte[]> files, bool displayProgress = false)
         {
+            this.displayProgress = displayProgress;
+            
             this.tmpEngine = tmpEngine;
             
             ParseFiles(files);
@@ -93,7 +97,7 @@ namespace PixelVisionRunner
             }
         }
         
-        public bool PreloaderNextStep()
+        public virtual bool PreloaderNextStep()
         {
 
             var timeElapsed = 0L;
@@ -112,7 +116,7 @@ namespace PixelVisionRunner
                 batchedSteps++;
             }
 
-            if (loadService.completed)
+            if (loadService.completed && !displayProgress)
             {
                 PreloaderComplete();
                 return true;

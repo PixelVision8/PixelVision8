@@ -15,11 +15,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 using PixelVisionSDK.Utils;
-
 
 namespace PixelVisionRunner.Parsers
 {
@@ -29,8 +27,7 @@ namespace PixelVisionRunner.Parsers
 
         protected IEngineChips chips;
         protected ColorData[] colorData;
-        protected IColor[] colors;
-        protected string emptySpriteData;
+        protected int cps;
         protected int index;
         protected int maxSprites;
         protected int sHeight;
@@ -40,18 +37,15 @@ namespace PixelVisionRunner.Parsers
         protected int sWidth;
 
         protected ITexture2D tex;
-        protected IColor tmpColor;
         protected IColor[] tmpPixels;
-        protected int totalColors;
         protected int totalPixels;
         protected int totalSprites;
-//        protected IColorFactory colorFactory;
-
-//        protected bool unique;
         protected int x, y, width, height;
 
         public SpriteParser(ITexture2D tex, IEngineChips chips, bool unique = true)
         {
+//            Debug.Log(this.GetType().Name + "Parse Sprites");
+            
             this.tex = tex;
             
             // Flip texture
@@ -66,56 +60,13 @@ namespace PixelVisionRunner.Parsers
             CalculateSteps();
         }
 
+        protected int maxPerLoop = 100;
+        
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-            steps.Add(ReadColors);
-            steps.Add(ConvertColors);
-            steps.Add(PrepareSprites);
-            steps.Add(CutOutSprites);
-        }
-
-        public void ReadColors()
-        {
-            //Debug.Log("Read Colors");
-
-            colorData = chips.colorMapChip != null ? chips.colorMapChip.colors : chips.colorChip.colors;
-            currentStep++;
-        }
-
-        public void ConvertColors()
-        {
-            //Debug.Log("Convert  Colors");
             
-            // TODO need to figure out how we can remove the need for the ColorFactory here
-            var total = colorData.Length;
-            
-            colors = new IColor[total].ToArray();//colorFactory.CreateArray(total);
-
-            for (var i = 0; i < total; i++)
-            {
-//                var c1 = colors[i];
-                var c2 = colorData[i];
-
-//                c1.r = c2.r;
-//                c1.g = c2.g;
-//                c1.b = c2.b;
-//                c1.a = 1;
-
-                colors[i] = new ColorData(c2.r, c2.g, c2.b) {a = c2.a};
-            }
-
-            currentStep++;
-        }
-
-        //TextureData tmpData = new TextureData(1,1,false);
-
-        public virtual void PrepareSprites()
-        {
-            //Debug.Log("Prepare Sprites");
-
-//            tex.UsePointFiltering();
-
+            cps = spriteChip.colorsPerSprite;
             sWidth = spriteChip.width;
             sHeight = spriteChip.height;
 
@@ -123,6 +74,29 @@ namespace PixelVisionRunner.Parsers
             width = MathUtil.CeilToInt(tex.width / sWidth);
             height = MathUtil.CeilToInt(tex.height / sHeight);
             totalSprites = width * height;
+            
+//            Debug.Log("Stats w " + width + " h " + height + " " + totalSprites);
+//            steps.Add(ConvertColors);
+            steps.Add(PrepareSprites);
+            
+            steps.Add(PreCutOutSprites);
+
+            var loops = MathUtil.CeilToInt((float) totalSprites / maxPerLoop);
+            
+//            Debug.Log("Loops " + loops + " " + totalSprites +"/"+maxPerLoop);
+            
+            for (int i = 0; i < loops; i++)
+            {
+                steps.Add(CutOutSprites);
+            }
+            
+            steps.Add(PostCutOutSprites);
+        }
+
+        public virtual void PrepareSprites()
+        {
+            
+            colorData = chips.colorMapChip != null ? chips.colorMapChip.colors : chips.colorChip.colors;
 
             maxSprites = SpriteChipUtil.CalculateTotalSprites(spriteChip.textureWidth, spriteChip.textureHeight, sWidth, sHeight);
 
@@ -137,15 +111,22 @@ namespace PixelVisionRunner.Parsers
             currentStep++;
         }
 
+
+        public virtual void PreCutOutSprites()
+        {
+            // Add custom logic
+            currentStep++;
+        }
+        
         public virtual void CutOutSprites()
         {
-            //Debug.Log("Cut Out Sprites");
+//            Debug.Log(this.GetType().Name + " Current Loop " + currentLoop);
 
             // Loop through all the potential sprites and import them
-            index = 0;
-            var cps = spriteChip.colorsPerSprite;
+//            index = 0;
+            
 
-            for (index = 0; index < totalSprites; index++)
+            for (var i = 0; i < maxPerLoop; i++)
             {
                 // Cut out the sprite from the texture
                 CutOutSpriteFromTexture2D();
@@ -157,11 +138,27 @@ namespace PixelVisionRunner.Parsers
 
                     ProcessSpriteData();
                 }
+
+                index++;
+
+                if (index >= totalSprites)
+                {
+                    break;
+                }
+                
+//                Debug.Log("Index " + index + "/" + totalSprites);
             }
 
             currentStep++;
+
         }
 
+        protected virtual void PostCutOutSprites()
+        {
+            // Add custom logic
+            currentStep++;
+        }
+        
         protected virtual void ProcessSpriteData()
         {
             
@@ -231,7 +228,7 @@ namespace PixelVisionRunner.Parsers
                 tmpColor = tmpPixels[i];
 
                 // if color is transparent set to -1, if not try to look up in the ref colors array
-                tmpRefID = Array.IndexOf(colors, tmpColor);
+                tmpRefID = Array.IndexOf(colorData, tmpColor);
 
                 // Look to see if color is not transparent
                 if (tmpRefID > -1)

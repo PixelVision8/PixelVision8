@@ -234,6 +234,7 @@ namespace PixelVisionRunner.Services
             {
                 parser.NextStep();
 
+                currentStep++;
                 if (parser.completed)
                     currentParserID++;
             }
