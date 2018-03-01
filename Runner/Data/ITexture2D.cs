@@ -32,6 +32,6 @@ namespace PixelVisionRunner
         byte[] EncodeToPNG();
         void LoadTextureData(TextureData textureData, ColorData[] colors, string transColor = "#ff00ff");
         void Apply();
-        void FlipTexture();
+//        void FlipTexture();
     }
 }

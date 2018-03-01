@@ -49,7 +49,7 @@ namespace PixelVisionRunner.Parsers
             this.tex = tex;
             
             // Flip texture
-            tex.FlipTexture();
+//            tex.FlipTexture();
             
 //            this.unique = unique;
             this.chips = chips;

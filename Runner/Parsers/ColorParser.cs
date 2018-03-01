@@ -22,38 +22,35 @@ namespace PixelVisionRunner.Parsers
 
     public class ColorParser : AbstractParser
     {
-
-        private readonly ColorChip colorChip;
-
-        private readonly List<IColor> colors = new List<IColor>();
-
-        //private readonly bool ignoreTransparent;
-
-        private readonly ITexture2D tex;
-        private readonly bool unique;
-        private IColor tmpColor;
-        private int totalColors;
-        private int totalPixels;
-        private int x, y, width, height;
-        private IColor magenta;
-
+        protected IEngineChips chips;
+        
+        protected IColorChip colorChip;
+        protected readonly List<IColor> colors = new List<IColor>();
+        protected readonly ITexture2D tex;
+        protected readonly bool unique;
+        protected IColor tmpColor;
+        protected int totalColors;
+        protected int totalPixels;
+        protected int x, y, width, height;
+        protected IColor magenta;
+        protected readonly bool ignoreTransparent;
+        
         public ColorParser(ITexture2D tex, IEngineChips chips, IColor magenta, bool unique = false, bool ignoreTransparent = true)
         {
             this.tex = tex;
-            
-            this.tex.FlipTexture();
-            
-            colorChip = chips.colorChip;
+            this.chips = chips;
             this.unique = unique;
             this.magenta = magenta;
 
-            //this.ignoreTransparent = ignoreTransparent;
+            this.ignoreTransparent = ignoreTransparent;
 
             CalculateSteps();
         }
 
         public override void CalculateSteps()
         {
+            colorChip = chips.colorChip;
+            
             base.CalculateSteps();
             steps.Add(IndexColors);
             steps.Add(ReadColors);
@@ -63,7 +60,7 @@ namespace PixelVisionRunner.Parsers
         }
 
 
-        public void IndexColors()
+        public virtual void IndexColors()
         {
             //Debug.Log("Index Colors");
             // Get the total pixels from the texture
@@ -76,18 +73,14 @@ namespace PixelVisionRunner.Parsers
             currentStep++;
         }
 
-        public void ReadColors()
+        public virtual void ReadColors()
         {
-            //Debug.Log("Read Colors");
-
             // Loop through each color and find the unique ones
             for (var i = 0; i < totalPixels; i++)
             {
                 //PosUtil.CalculatePosition(i, width, out x, out y);
                 x = i % width;
                 y = i / width;
-
-//                y = height - y - 1;
 
                 // Get the current color
                 tmpColor = tex.GetPixel(x, y); //pixels[i]);
@@ -109,22 +102,14 @@ namespace PixelVisionRunner.Parsers
 
         public void ResetColorChip()
         {
-            //Debug.Log("Reset Color Chip");
-
-            ////Debug.Log("Total Colors Imported "+ total);
             // Clear the colors first
             colorChip.Clear();
-
-            // Update the color chip to support the number of colors found
-//            colorChip.RebuildColorPages(colors.Count);
 
             currentStep++;
         }
 
         public void UpdateColors()
         {
-            //Debug.Log("Update Colors");
-
             for (var i = 0; i < totalColors; i++)
             {
                 var tmpColor = colors[i];
@@ -138,8 +123,6 @@ namespace PixelVisionRunner.Parsers
 
         public void RecalculateColors()
         {
-            //Debug.Log("Recalculate Colors");
-
             // Update supported colors based on what was imported
             colorChip.RecalculateSupportedColors();
 

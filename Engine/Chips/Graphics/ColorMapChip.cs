@@ -96,6 +96,15 @@ namespace PixelVisionSDK.Chips
         public int pages { get; set; }
         public int colorsPerPage { get; set; }
         public int supportedColors { get; private set; }
+        public void RecalculateSupportedColors()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RebuildColorPages(int totalColors)
+        {
+            total = totalColors;
+        }
 
         /// <summary>
         ///     This method registers the color map with the engine. It also marks
