@@ -786,7 +786,7 @@ namespace PixelVisionSDK.Chips
         ///     Returns a dictionary containing the spriteID, colorOffset, and flag for an individual tile.
         /// </returns>
         //TODO this should return a custom class not a Dictionary
-        Dictionary<string, int> Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null);
+        TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null);
 
         /// <summary>
         ///     This forces the map to redraw its cached pixel data. Use this to clear any pixel data added

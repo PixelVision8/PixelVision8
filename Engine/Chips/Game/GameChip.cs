@@ -1616,7 +1616,7 @@ namespace PixelVisionSDK.Chips
         ///     Returns a dictionary containing the spriteID, colorOffset, and flag for an individual tile.
         /// </returns>
         //TODO this should return a custom class not a Dictionary
-        public Dictionary<string, int> Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null)
+        public TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null)
         {
             if (spriteID.HasValue)
                 tilemapChip.UpdateSpriteAt(column, row, spriteID.Value);
@@ -1626,12 +1626,14 @@ namespace PixelVisionSDK.Chips
 
             if (flag.HasValue)
                 tilemapChip.UpdateFlagAt(column, row, flag.Value);
+            
+//            
+//            
+//            tmpTileData["spriteID"] = tilemapChip.ReadSpriteAt(column, row);
+//            tmpTileData["colorOffset"] = tilemapChip.ReadTileColorAt(column, row);
+//            tmpTileData["flag"] = tilemapChip.ReadFlagAt(column, row);
 
-            tmpTileData["spriteID"] = tilemapChip.ReadSpriteAt(column, row);
-            tmpTileData["colorOffset"] = tilemapChip.ReadTileColorAt(column, row);
-            tmpTileData["flag"] = tilemapChip.ReadFlagAt(column, row);
-
-            return tmpTileData;
+            return new TileData(tilemapChip.ReadSpriteAt(column, row), tilemapChip.ReadTileColorAt(column, row), tilemapChip.ReadFlagAt(column, row));
         }
 
         /// <summary>
