@@ -138,12 +138,12 @@ namespace PixelVisionSDK.Chips
         ///     The color offset to use when rendering the sprite.
         /// </param>
         /// <param name="flag">The flag value used for collision.</param>
-        public void ReadTile(int column, int row, out int spriteID, out int paletteID, out int flag)
-        {
-            spriteID = ReadDataAt(Layer.Sprites, column, row);
-            paletteID = ReadDataAt(Layer.Palettes, column, row);
-            flag = ReadDataAt(Layer.Flags, column, row);
-        }
+//        public void ReadTile(int column, int row, out int spriteID, out int paletteID, out int flag)
+//        {
+//            spriteID = ReadDataAt(Layer.Sprites, column, row);
+//            paletteID = ReadDataAt(Layer.Palettes, column, row);
+//            flag = ReadDataAt(Layer.Flags, column, row);
+//        }
 
         /// <summary>
         ///     Returns the value in a given Tilemap layer. Accepts a layer enum and automatically converts is to a layer id.
@@ -389,7 +389,7 @@ namespace PixelVisionSDK.Chips
             var totalTiles = total;
             for (var i = 0; i < totalTiles; i++)
             for (var j = 0; j < totalLayers; j++)
-                layers[j][i] = -1;
+                layers[j][i] = j == (int)Layer.Palettes ? 0 : -1;
 
 //            cachedTileMap.Clear();
             Invalidate();
