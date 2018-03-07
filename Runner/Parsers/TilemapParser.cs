@@ -16,7 +16,6 @@
 using System;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
-using UnityEngine;
 
 namespace PixelVisionRunner.Parsers
 {
