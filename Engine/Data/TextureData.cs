@@ -14,7 +14,6 @@
 // Shawn Rakowski - @shwany
 
 using System;
-using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
 {
