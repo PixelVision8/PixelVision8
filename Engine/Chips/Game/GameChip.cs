@@ -628,7 +628,7 @@ namespace PixelVisionSDK.Chips
             {
                 spriteChip.ReadSpriteAt(id, tmpSpriteData);
                 
-                DrawPixels(tmpSpriteData, x, y, spriteSize.x, spriteSize.y, drawMode, flipH, flipV, colorOffset);
+                DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, drawMode, flipH, flipV, colorOffset);
             }
             else
             {
@@ -638,7 +638,7 @@ namespace PixelVisionSDK.Chips
                 //TODO flipping H, V and colorOffset should all be passed into reading a sprite
                 spriteChip.ReadSpriteAt(id, tmpSpriteData);
 
-                DrawPixels(tmpSpriteData, x, y, spriteSize.x, spriteSize.y, drawMode, flipH, flipV, colorOffset);
+                DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, drawMode, flipH, flipV, colorOffset);
                 
                 currentSprites ++;
             }
