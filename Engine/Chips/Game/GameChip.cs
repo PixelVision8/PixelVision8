@@ -734,6 +734,14 @@ namespace PixelVisionSDK.Chips
             startX = x - (useScrollPos ? _scrollX : 0);
             startY = y - (useScrollPos ? _scrollY : 0);
 
+            var paddingW = spriteChip.width;
+            var paddingH = spriteChip.height;
+
+            if (drawMode == DrawMode.Tile)
+            {
+                paddingW = 1;
+                paddingH = 1;
+            }
 //            startY = displayChip.height - height - startY;
             
             if (flipH || flipV)
@@ -754,8 +762,8 @@ namespace PixelVisionSDK.Chips
                 // Test to see if the sprite is within range
                 if (id > -1)
                 {
-                    x = (MathUtil.FloorToInt(i % width) * spriteChip.width) + startX;
-                    y = (MathUtil.FloorToInt(i / width) * spriteChip.height) + startY;
+                    x = (MathUtil.FloorToInt(i % width) * paddingW) + startX;
+                    y = (MathUtil.FloorToInt(i / width) * paddingH) + startY;
 //
 //                    var render = true;
                     
