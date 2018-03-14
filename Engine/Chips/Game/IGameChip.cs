@@ -792,7 +792,7 @@ namespace PixelVisionSDK.Chips
         ///     This forces the map to redraw its cached pixel data. Use this to clear any pixel data added
         ///     after the map created the pixel data cache.
         /// </summary>
-        void RebuildTilemap(int? columns = null, int? rows = null, int[] spriteIDs = null, int[] colorOffsets = null, int[] flags = null);
+        void RebuildTilemap();
 
 
         /// <summary>

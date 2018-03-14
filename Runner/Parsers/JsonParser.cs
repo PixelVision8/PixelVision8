@@ -31,7 +31,7 @@ namespace PixelVisionRunner.Parsers
             //Debug.Log("New Json Parser");
             this.jsonString = jsonString;
 
-            CalculateSteps();
+//            CalculateSteps();
         }
 
         public override void CalculateSteps()

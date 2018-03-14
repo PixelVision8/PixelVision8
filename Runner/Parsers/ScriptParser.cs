@@ -31,7 +31,7 @@ namespace PixelVisionRunner.Parsers
             this.name = name;
             this.script = script;
             this.target = target;
-            CalculateSteps();
+//            CalculateSteps();
         }
 
         public override void CalculateSteps()

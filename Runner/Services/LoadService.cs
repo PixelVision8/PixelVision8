@@ -209,6 +209,8 @@ namespace PixelVisionRunner.Services
         
         public void AddParser(IAbstractParser parser)
         {
+            parser.CalculateSteps();
+            
             parsers.Add(parser);
 
             totalSteps += parser.totalSteps;
@@ -304,7 +306,7 @@ namespace PixelVisionRunner.Services
                     flagTex = ReadTexture(files[flagFile]);
                 }
                 
-                var colorFile = "tilemap-colors.png";
+                var colorFile = "tile-color-offsets.png";
 
                 if (files.ContainsKey(colorFile))
                 {
@@ -392,6 +394,9 @@ namespace PixelVisionRunner.Services
                 var fileContents = Encoding.UTF8.GetString(files[fileName]);
 
                 var jsonParser = new SystemParser(fileContents, targetEngine);
+                
+                jsonParser.CalculateSteps();
+                
                 while (jsonParser.completed == false)
                     jsonParser.NextStep();
             }
@@ -422,6 +427,8 @@ namespace PixelVisionRunner.Services
                 var fileContents = Encoding.UTF8.GetString(files[fileName]);
 
                 var jsonParser = new SystemParser(fileContents, targetEngine);
+                jsonParser.CalculateSteps();
+                
                 while (jsonParser.completed == false)
                     jsonParser.NextStep();
             }
@@ -437,6 +444,8 @@ namespace PixelVisionRunner.Services
                 var fileContents = Encoding.UTF8.GetString(files[fileName]);
 
                 var jsonParser = new SystemParser(fileContents, targetEngine);
+                jsonParser.CalculateSteps();
+                
                 while (jsonParser.completed == false)
                     jsonParser.NextStep();
             }
@@ -450,7 +459,10 @@ namespace PixelVisionRunner.Services
             if (files.ContainsKey(fileName))
             {
                 var fileContents = Encoding.UTF8.GetString(files[fileName]);
+                
                 var jsonParser = new SystemParser(fileContents, targetEngine);
+                jsonParser.CalculateSteps();
+                
                 while (jsonParser.completed == false)
                     jsonParser.NextStep();
             }

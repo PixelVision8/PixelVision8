@@ -57,7 +57,7 @@ namespace PixelVisionRunner.Parsers
 //            this.colorFactory = colorFactory;
 //            Debug.Log("Unique " + spriteChip.unique);
 
-            CalculateSteps();
+//            CalculateSteps();
         }
 
         protected int maxPerLoop = 100;
@@ -93,13 +93,18 @@ namespace PixelVisionRunner.Parsers
             steps.Add(PostCutOutSprites);
         }
 
+        private IColor maskColor;
+        private IColor clear;
+        
         public virtual void PrepareSprites()
         {
             
             colorData = chips.colorMapChip != null ? chips.colorMapChip.colors : chips.colorChip.colors;
-
+            maskColor = new ColorData(chips.colorChip.transparent);
             maxSprites = SpriteChipUtil.CalculateTotalSprites(spriteChip.textureWidth, spriteChip.textureHeight, sWidth, sHeight);
 
+            clear = new ColorData {a = 0};
+            
             // Create tmp arrays for color and reference data
             totalPixels = spriteChip.width * spriteChip.height;
             tmpPixels = new IColor[totalPixels];
@@ -200,8 +205,15 @@ namespace PixelVisionRunner.Parsers
 
             // Flip Y position
 //            y = tex.height - y - sHeight;
-
+            
+            
             tmpPixels = tex.GetPixels(x, y, sWidth, sHeight);
+
+//            for (int i = 0; i < tmpPixels.Length; i++)
+//            {
+//                if (Equals(tmpPixels[i], maskColor))
+//                    tmpPixels[i] = clear;
+//            }
 
         }
 

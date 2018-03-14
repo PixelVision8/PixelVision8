@@ -44,7 +44,7 @@ namespace PixelVisionRunner.Parsers
 
             this.ignoreTransparent = ignoreTransparent;
 
-            CalculateSteps();
+//            CalculateSteps();
         }
 
         public override void CalculateSteps()

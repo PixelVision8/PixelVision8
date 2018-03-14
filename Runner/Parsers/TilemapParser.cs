@@ -28,7 +28,8 @@ namespace PixelVisionRunner.Parsers
         private ITexture2D flagTex;
         private ITexture2D colorTex;
         private IColor clear;
-
+        private IColor mask;
+        
         private int flag;
         private int offset;
 
@@ -39,11 +40,11 @@ namespace PixelVisionRunner.Parsers
             this.autoImport = autoImport;
             this.colorTex = colorTex;
             
-            clear = new ColorData("#ff00ff");
-            clear.a = 0;
-            
+            clear = new ColorData{a = 0};
+            mask = new ColorData("ff00ff");
+
 //            this.clear = colorFactory.clear;
-            
+
 //            CalculateSteps();
         }
 
@@ -94,6 +95,9 @@ namespace PixelVisionRunner.Parsers
             // Calculate flag value
             var color = flagTex != null ? flagTex.GetPixel(x, y) : clear;
 
+            if (Equals(color, mask))
+                color = clear;
+            
             flag = color.a == 1 ? (int) (color.r * 256) / tilemapChip.totalFlags : -1;
             
             color = colorTex != null ? colorTex.GetPixel(x, y) : clear;
