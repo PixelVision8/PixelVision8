@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using System;
+using PixelVisionRunner;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
@@ -162,7 +163,7 @@ namespace PixelVisionSDK.Chips
         ///     Returns a list of color data to be used for rendering.
         /// </summary>
         /// <value>ColorData[]</value>
-        public ColorData[] colors
+        public IColor[] colors
         {
             get
             {

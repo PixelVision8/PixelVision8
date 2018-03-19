@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using System;
+using PixelVisionRunner;
 
 namespace PixelVisionSDK.Chips
 {
@@ -34,7 +35,7 @@ namespace PixelVisionSDK.Chips
         // This is ignored in this class
         public bool debugMode { get; set; }
         
-        public ColorData[] colors
+        public IColor[] colors
         {
             get
             {
@@ -99,6 +100,7 @@ namespace PixelVisionSDK.Chips
         public int pages { get; set; }
         public int colorsPerPage { get; set; }
         public int supportedColors { get; private set; }
+        
         public void RecalculateSupportedColors()
         {
             throw new NotImplementedException();

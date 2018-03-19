@@ -26,7 +26,7 @@ namespace PixelVisionRunner.Parsers
     {
 
         protected IEngineChips chips;
-        protected ColorData[] colorData;
+        protected IColor[] colorData;
         protected int cps;
         protected int index;
         protected int maxSprites;

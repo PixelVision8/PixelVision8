@@ -13,6 +13,8 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
+using PixelVisionRunner;
+
 namespace PixelVisionSDK.Chips
 {
 
@@ -26,7 +28,7 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         ///     An array of the supported <see cref="colors" /> in the chip.
         /// </summary>
-        ColorData[] colors { get; }
+        IColor[] colors { get; }
 
         string[] hexColors { get; }
 
