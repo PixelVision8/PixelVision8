@@ -30,7 +30,10 @@ namespace PixelVisionSDK.Chips
         protected string[] _colors = new string[256];
 
         protected string transparent = "#ff00ff";
-
+        
+        // This is ignored in this class
+        public bool debugMode { get; set; }
+        
         public ColorData[] colors
         {
             get

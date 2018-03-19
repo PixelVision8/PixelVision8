@@ -88,6 +88,7 @@ namespace PixelVisionSDK.Utils
                     newx = sWidth - 1 - ix;
                 if (flipV)
                     newY = sHeight - 1 - iy;
+                
                 pixelData[ix + iy * sWidth] = pixels[newx + newY * sWidth];
             }
         }

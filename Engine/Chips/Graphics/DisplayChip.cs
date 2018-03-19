@@ -43,6 +43,8 @@ namespace PixelVisionSDK.Chips
         {
             get { return overscanY * engine.spriteChip.height; }
         }
+
+        public bool displayMaskColor;
         
         /// <summary>
         ///     This returns the visble areas sprites should be displayed on. Note that x and y may be negative if overscan is set since the screen wraps.

@@ -127,6 +127,9 @@ namespace PixelVisionRunner.Parsers
 
             if (data.ContainsKey("backgroundColor"))
                 colorChip.backgroundColor = (int) (long) data["backgroundColor"];
+            
+            if (data.ContainsKey("debug"))
+                colorChip.debugMode = Convert.ToBoolean(data["debug"]);
         }
 
         public void ConfigureControllerChip(Dictionary<string, object> data)
@@ -154,7 +157,7 @@ namespace PixelVisionRunner.Parsers
             
             if (data.ContainsKey("layers"))
                 displayChip.layers = (int) (long) data["layers"];
-
+            
             displayChip.ResetResolution(_width, _height);
         }
 

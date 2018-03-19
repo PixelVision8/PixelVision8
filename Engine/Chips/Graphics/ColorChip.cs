@@ -66,6 +66,7 @@ namespace PixelVisionSDK.Chips
             {
                 // We make sure that the bg color is never set to a value out of the range of the color chip
                 _bgColor = value.Clamp(0, total);
+                Invalidate();
             } 
         }
 
@@ -172,8 +173,14 @@ namespace PixelVisionSDK.Chips
 
                     for (var i = 0; i < t; i++)
                     {
-                        var color = new ColorData(_colors[i]);
-                        color.flag = invalidColors[i];
+
+                        var colorHex = _colors[i];
+                        if (colorHex == _transparent && debugMode == false)
+                        {
+                            colorHex = _colors[backgroundColor];
+                        }
+
+                        var color = new ColorData(colorHex) {flag = invalidColors[i]};
                         colorCache[i] = color;
                     }
 
@@ -218,6 +225,19 @@ namespace PixelVisionSDK.Chips
         }
 
         public bool invalid { get; protected set; }
+
+        private bool _debugMode;
+        
+        // Setting this to true will use the mask color for empty colors instead of replacing them with the bg color
+        public bool debugMode
+        {
+            get { return _debugMode; }
+            set
+            {
+                _debugMode = true;
+                Invalidate();
+            }
+        }
 
         public void Invalidate()
         {

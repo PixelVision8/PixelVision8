@@ -84,6 +84,7 @@ namespace PixelVisionSDK.Chips
         int supportedColors { get; }
         void RecalculateSupportedColors();
         void RebuildColorPages(int totalColors);
+        bool debugMode { get; set; }
     }
 
 }
