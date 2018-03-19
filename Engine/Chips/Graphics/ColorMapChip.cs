@@ -14,6 +14,8 @@
 // Shawn Rakowski - @shwany
 
 using System;
+using System.Text.RegularExpressions;
+using GameCreator.Utils;
 using PixelVisionRunner;
 
 namespace PixelVisionSDK.Chips
@@ -30,7 +32,17 @@ namespace PixelVisionSDK.Chips
 
         protected string[] _colors = new string[256];
 
-        protected string transparent = "#ff00ff";
+        protected string _maskColor = "#ff00ff";
+
+        public string maskColor
+        {
+            get { return _maskColor; }
+            set
+            {
+                if(ValidateHexColor(value))
+                    _maskColor = value;
+            }
+        }
         
         // This is ignored in this class
         public bool debugMode { get; set; }
@@ -75,12 +87,12 @@ namespace PixelVisionSDK.Chips
         {
             var t = _colors.Length;
             for (var i = 0; i < t; i++)
-                UpdateColorAt(i, transparent);
+                UpdateColorAt(i, maskColor);
         }
 
         public string ReadColorAt(int index)
         {
-            return index < 0 || index > _colors.Length - 1 ? transparent : _colors[index];
+            return index < 0 || index > _colors.Length - 1 ? maskColor : _colors[index];
         }
 
         public int FindColorID(string color)
@@ -127,6 +139,11 @@ namespace PixelVisionSDK.Chips
         {
             base.Deactivate();
             engine.colorMapChip = null;
+        }
+        
+        public bool ValidateHexColor(string inputColor)
+        {
+            return (Regex.Match(inputColor, "^#(?:[0-9a-fA-F]{3}){1,2}$").Success);
         }
 
     }
