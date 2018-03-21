@@ -61,6 +61,12 @@ namespace PixelVisionRunner.Parsers
         }
 
         protected int maxPerLoop = 100;
+
+        protected virtual void CalculateBounds()
+        {
+            width = MathUtil.CeilToInt(tex.width / sWidth);
+            height = MathUtil.CeilToInt(tex.height / sHeight);
+        }
         
         public override void CalculateSteps()
         {
@@ -70,10 +76,15 @@ namespace PixelVisionRunner.Parsers
             sWidth = spriteChip.width;
             sHeight = spriteChip.height;
 
-            // Calculate values needed to cut out sprites
-            width = MathUtil.CeilToInt(tex.width / sWidth);
-            height = MathUtil.CeilToInt(tex.height / sHeight);
+            CalculateBounds();
+            
+            // Find the total from the width and height
             totalSprites = width * height;
+            
+            // Calculate values needed to cut out sprites
+//            width = MathUtil.CeilToInt(tex.width / sWidth);
+//            height = MathUtil.CeilToInt(tex.height / sHeight);
+//            totalSprites = width * height;
             
 //            Debug.Log("Stats w " + width + " h " + height + " " + totalSprites);
 //            steps.Add(ConvertColors);
@@ -100,7 +111,7 @@ namespace PixelVisionRunner.Parsers
         {
             
             colorData = chips.colorMapChip != null ? chips.colorMapChip.colors : chips.colorChip.colors;
-            maskColor = new ColorData(chips.colorChip.transparent);
+            maskColor = new ColorData(chips.colorChip.maskColor);
             maxSprites = SpriteChipUtil.CalculateTotalSprites(spriteChip.textureWidth, spriteChip.textureHeight, sWidth, sHeight);
 
             clear = new ColorData {a = 0};
@@ -206,7 +217,7 @@ namespace PixelVisionRunner.Parsers
             // Flip Y position
 //            y = tex.height - y - sHeight;
             
-            
+//            if((x + sWidth) < tex.width || (y + sHeight) < tex.height)
             tmpPixels = tex.GetPixels(x, y, sWidth, sHeight);
 
 //            for (int i = 0; i < tmpPixels.Length; i++)

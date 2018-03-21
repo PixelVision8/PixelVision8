@@ -259,7 +259,7 @@ namespace PixelVisionSDK.Chips
             
             // Create a new canvas for the tilemap cache
             if(cachedTileMap == null)
-                cachedTileMap = new Canvas(this, 0, 0);
+                cachedTileMap = new Canvas(0, 0, this);
             
             // Build tilemap cache
             RebuildCache(cachedTileMap);
@@ -1941,7 +1941,7 @@ namespace PixelVisionSDK.Chips
         /// <returns></returns>
         public Canvas NewCanvas(int width, int height)
         {
-            return new Canvas(this, width, height);
+            return new Canvas(width, height, this);
         }
 
         #endregion

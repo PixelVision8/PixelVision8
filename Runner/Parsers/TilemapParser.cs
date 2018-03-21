@@ -16,6 +16,8 @@
 using System;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
+using PixelVisionSDK.Utils;
+using UnityEngine;
 
 namespace PixelVisionRunner.Parsers
 {
@@ -48,11 +50,25 @@ namespace PixelVisionRunner.Parsers
 //            CalculateSteps();
         }
 
+
+        protected override void CalculateBounds()
+        {
+            
+            // Calculate the texture's bounds
+            base.CalculateBounds();
+            
+            
+            // Need to calculate the tilemap chip's bounds not the texture
+            width = Math.Min(width, tilemapChip.columns);
+            height = Math.Min(height, tilemapChip.rows);
+            
+        }
+
         public override void PrepareSprites()
         {
-            var realWidth = spriteChip.width * tilemapChip.columns;
+            var realWidth = spriteChip.width * width;
             var realHeight = spriteChip.height * tilemapChip.rows;
-
+            
             // Test to see if the tilemap image is larger than the tilemap chip can allow
             if (tex.GetPixels().Length > (realWidth * realHeight))
             {

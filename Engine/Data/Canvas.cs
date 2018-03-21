@@ -27,7 +27,7 @@ namespace PixelVisionSDK
         private Pattern pattern;
         private IGameChip gameChip;
         private Vector spriteSize;
-        private bool drawCentered = false;
+        private bool drawCentered;
         private Vector linePattern = new Vector(1);
         public bool wrap = false;
         
@@ -71,7 +71,7 @@ namespace PixelVisionSDK
             pattern.SetPixels(pixels);
         }
 
-        public Canvas(IGameChip gameChip, int width, int height) : base(width, height)
+        public Canvas(int width, int height, IGameChip gameChip = null) : base(width, height)
         {
             this.gameChip = gameChip;
             pattern = new Pattern(1, 1);
@@ -90,6 +90,10 @@ namespace PixelVisionSDK
         /// <param name="drawMode"></param>
         public void DrawPixels(int x = 0, int y = 0, DrawMode drawMode = DrawMode.TilemapCache)
         {
+            // This only works when the canvas has a reference to the gameChip
+            if (gameChip == null)
+                return;
+            
             gameChip.DrawPixels(GetPixels(), x, y, width, height, drawMode);
         }
 
@@ -304,6 +308,10 @@ namespace PixelVisionSDK
         /// <param name="colorOffset"></param>
         public void DrawSprite(int id, int x, int y, int colorOffset = 0)
         {
+            // This only works when the canvas has a reference to the gameChip
+            if (gameChip == null)
+                return;
+            
             var pixelData = gameChip.Sprite(id);
 
             if (colorOffset > 0)
@@ -333,6 +341,10 @@ namespace PixelVisionSDK
         /// <param name="spacing"></param>
         public void DrawText(string text, int x, int y, string font = "default", int colorOffset = 0, int spacing = 0)
         {
+            // This only works when the canvas has a reference to the gameChip
+            if (gameChip == null)
+                return;
+            
             var ids = gameChip.ConvertTextToSprites(text, font);
             var total = ids.Length;
             var nextX = x;

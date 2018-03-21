@@ -102,8 +102,8 @@ namespace PixelVisionRunner.Parsers
             if (data.ContainsKey("colorsPerPage"))
                 colorChip.colorsPerPage = (int) (long) data["colorsPerPage"];
 
-            if (data.ContainsKey("transparent"))
-                colorChip.transparent = (string) data["transparent"];
+            if (data.ContainsKey("maskColor"))
+                colorChip.maskColor = (string) data["maskColor"];
 
             if (data.ContainsKey("supportedColors"))
                 colorChip.supportedColors = (int) (long) data["supportedColors"];

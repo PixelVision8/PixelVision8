@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using System;
+using System.Text.RegularExpressions;
 using PixelVisionRunner;
 using PixelVisionSDK.Utils;
 
@@ -50,7 +51,7 @@ namespace PixelVisionSDK.Chips
 
         protected int _colorsPerPage = 64;
         protected int _pages = 4;
-        protected string _transparent = "#FF00FF";
+//        protected string _transparent = "#FF00FF";
         protected ColorData[] colorCache;
         protected int[] invalidColors = new int[0];
         protected Vector pageSize = new Vector(8, 8);
@@ -70,7 +71,19 @@ namespace PixelVisionSDK.Chips
                 Invalidate();
             } 
         }
+        
+        protected string _maskColor = "#ff00ff";
 
+        public string maskColor
+        {
+            get { return _maskColor; }
+            set
+            {
+                if(ValidateHexColor(value))
+                    _maskColor = value;
+            }
+        }
+        
         /// <summary>
         ///     Defines the total number of colors per virtual page.
         /// </summary>
@@ -102,7 +115,7 @@ namespace PixelVisionSDK.Chips
                 Array.Resize(ref invalidColors, total);
                 if (oldTotal < total)
                     for (var i = oldTotal; i < total; i++)
-                        _colors[i] = transparent;
+                        _colors[i] = maskColor;
 
                 Invalidate();
             }
@@ -113,12 +126,12 @@ namespace PixelVisionSDK.Chips
         ///     engine.
         /// </summary>
         /// <value>String</value>
-        public string transparent
-        {
-            get { return _transparent; }
-
-            set { _transparent = value; }
-        }
+//        public string transparent
+//        {
+//            get { return maskColor; }
+//
+//            set { maskColor = value; }
+//        }
 
         /// <summary>
         ///     Get and Set the <see cref="supportedColors" /> number of <see cref="colors" />
@@ -176,7 +189,7 @@ namespace PixelVisionSDK.Chips
                     {
 
                         var colorHex = _colors[i];
-                        if (colorHex == _transparent && debugMode == false)
+                        if (colorHex == maskColor && debugMode == false)
                         {
                             colorHex = _colors[backgroundColor];
                         }
@@ -194,7 +207,7 @@ namespace PixelVisionSDK.Chips
 
         public string ReadColorAt(int index)
         {
-            return index < 0 || index > _colors.Length - 1 ? transparent : _colors[index];
+            return index < 0 || index > _colors.Length - 1 ? maskColor : _colors[index];
         }
 
         public int FindColorID(string color)
@@ -206,7 +219,7 @@ namespace PixelVisionSDK.Chips
         {
             var t = _colors.Length;
             for (var i = 0; i < t; i++)
-                UpdateColorAt(i, transparent);
+                UpdateColorAt(i, maskColor);
         }
 
         public void UpdateColorAt(int index, string color)
@@ -258,7 +271,7 @@ namespace PixelVisionSDK.Chips
             var count = 0;
             var total = _colors.Length;
             for (var i = 0; i < total; i++)
-                if (_colors[i] != transparent)
+                if (_colors[i] != maskColor)
                     count++;
 
             supportedColors = count;
@@ -295,6 +308,10 @@ namespace PixelVisionSDK.Chips
             pages = MathUtil.CeilToInt(total / colorsPerPage);
         }
        
+        public bool ValidateHexColor(string inputColor)
+        {
+            return (Regex.Match(inputColor, "^#(?:[0-9a-fA-F]{3}){1,2}$").Success);
+        }
 
     }
 
