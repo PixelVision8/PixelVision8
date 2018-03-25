@@ -27,11 +27,9 @@ namespace PixelVisionRunner.Parsers
 
         public ScriptParser(string name, string script, GameChip target)
         {
-            //Debug.Log("New Script Parser");
             this.name = name;
             this.script = script;
             this.target = target;
-//            CalculateSteps();
         }
 
         public override void CalculateSteps()

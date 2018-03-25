@@ -37,28 +37,28 @@ namespace PixelVisionRunner.Parsers
 
 		public virtual void ConfigureTilemap()
 		{
-			// TODO need to parse the json data
 
 			var tilemapChip = target.tilemapChip;
 
 			if (data.ContainsKey("layers"))
 			{
-//				Debug.Log("Parse tilemap json data");
 
 				var layers = data["layers"] as List<object>;
-
+				var tileSets = data["tilesets"] as List<object>;
+				
 				var total = layers.Count;
 
 				for (int i = 0; i < total; i++)
 				{
 
 					var layer = layers[i] as Dictionary<string, object>;
-
+					var tileSet = tileSets[i] as Dictionary<string, object>;
+					
 					try
 					{
 						var layerType = (TilemapChip.Layer) Enum.Parse(typeof(TilemapChip.Layer), ((string)layer["name"]));
 
-						var offset = layerType == TilemapChip.Layer.Sprites ? 1 : target.spriteChip.totalSprites + 1;
+						var offset = (int) (long) tileSet["firstgid"];
 						
 						var columns = (int) (long) layer["width"];
 						var rows = (int) (long) layer["height"];
@@ -93,13 +93,7 @@ namespace PixelVisionRunner.Parsers
 
 				}
 				
-//				if (data.ContainsKey("width"))
-//				{
-//				}
-				
 			}
-			
-			
 			
 			currentStep++;
 

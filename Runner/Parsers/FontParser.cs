@@ -52,15 +52,6 @@ namespace PixelVisionRunner.Parsers
             base.PostCutOutSprites();
         }
 
-//        public override void CutOutSprites()
-//        {
-//            
-//
-//            base.CutOutSprites();
-//
-//            
-//        }
-
         public override bool IsEmpty(IColor[] pixels)
         {
             // Hack to make sure if the space is empty we still save it

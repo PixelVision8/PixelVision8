@@ -37,13 +37,10 @@ namespace PixelVisionRunner.Parsers
 
         public virtual void ApplySettings()
         {
-            //TODO need to loop through and pull out each chip (without pack
-            //Debug.Log("Applying Settings");
+            
             if (target != null)
             {
                 var chipManager = target.chipManager;
-
-                //chipManager.DeactivateChips();
 
                 foreach (var entry in data)
                 {
@@ -90,8 +87,6 @@ namespace PixelVisionRunner.Parsers
                 chipManager.RemoveInactiveChips();
             }
 
-
-            //target.DeserializeData(data);
             currentStep++;
         }
 
@@ -220,7 +215,6 @@ namespace PixelVisionRunner.Parsers
                 for (var i = 0; i < total; i++)
                 {
                     var song = musicChip.CreateNewSongData("untitled");//new SfxrSongData());
-//                    song.DeserializeData(songData[i] as Dictionary<string, object>);
 
                     var sngData = songData[i] as Dictionary<string, object>;
                     
@@ -243,8 +237,7 @@ namespace PixelVisionRunner.Parsers
                             
                             if (track != null && trackData != null)
                             {
-//                                track.DeserializeData(trackData);
-                                
+
                                 if (trackData.ContainsKey("sfxID"))
                                     track.sfxID = Convert.ToInt32((long) trackData["sfxID"]);
 
@@ -256,8 +249,7 @@ namespace PixelVisionRunner.Parsers
                                     for (var k = 0; k < totalNotes; k++)
                                         track.notes[k] = (int) (long) noteData[k];
                                 }
-                                
-//                                song.tracks[j] = track;
+
                             }
                         }
                     }
@@ -300,10 +292,9 @@ namespace PixelVisionRunner.Parsers
                 soundChip.totalSounds = total;
                 for (var i = 0; i < total; i++)
                 {
-                    var soundData = soundChip.ReadSound(i);// as SfxrSoundData;
+                    var soundData = soundChip.ReadSound(i);
                     if (soundData != null)
                     {
-//                        soundData.DeserializeData();
 
                         var sndData = sounds[i] as Dictionary<string, object>;
                         

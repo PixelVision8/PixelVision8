@@ -41,11 +41,8 @@ namespace PixelVisionRunner.Parsers
             this.colorTex = colorTex;
             
             clear = new ColorData{a = 0};
-            mask = new ColorData("ff00ff");
+            mask = new ColorData(chips.colorChip.maskColor);
 
-//            this.clear = colorFactory.clear;
-
-//            CalculateSteps();
         }
 
 
@@ -91,21 +88,6 @@ namespace PixelVisionRunner.Parsers
         {
             base.CutOutSpriteFromTexture2D();
             
-            //TODO there is a race condition here where this may fail.
-
-//            x = index % width * sWidth;
-//            y = index / width * sHeight;
-//
-//            // Flip Y position
-////            y = tex.height - y - sHeight;
-//
-////            if (x + sWidth < tex.width && y + sHeight > tex.height)
-////            {
-////                Debug.Log("index " + index + " out of range");
-////            }
-////            
-//            tmpPixels = tex.GetPixels(x, y, sWidth, sHeight);
-
             // Calculate flag value
             var color = flagTex != null ? flagTex.GetPixel(x, y) : clear;
 

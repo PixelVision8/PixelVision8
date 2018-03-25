@@ -31,9 +31,8 @@ namespace PixelVisionRunner.Parsers
         protected IColor tmpColor;
         protected int totalColors;
         protected int totalPixels;
-        protected int x, y, width, height;
+        protected int x, y, width;
         protected IColor magenta;
-        protected readonly bool ignoreTransparent;
         
         public ColorParser(ITexture2D tex, IEngineChips chips, IColor magenta, bool unique = false, bool ignoreTransparent = true)
         {
@@ -42,9 +41,6 @@ namespace PixelVisionRunner.Parsers
             this.unique = unique;
             this.magenta = magenta;
 
-            this.ignoreTransparent = ignoreTransparent;
-
-//            CalculateSteps();
         }
 
         public override void CalculateSteps()
@@ -68,7 +64,6 @@ namespace PixelVisionRunner.Parsers
             totalPixels = pixels.Length;
 
             width = tex.width;
-            height = tex.height;
 
             currentStep++;
         }

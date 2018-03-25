@@ -41,26 +41,19 @@ namespace PixelVisionRunner.Parsers
         protected int totalPixels;
         protected int totalSprites;
         protected int x, y, width, height;
-
+        protected IColor maskColor;
+        protected int maxPerLoop = 100;
+        
         public SpriteParser(ITexture2D tex, IEngineChips chips, bool unique = true)
         {
-//            Debug.Log(this.GetType().Name + "Parse Sprites");
-            
+ 
             this.tex = tex;
-            
-            // Flip texture
-//            tex.FlipTexture();
-            
-//            this.unique = unique;
+           
             this.chips = chips;
             spriteChip = chips.spriteChip;
-//            this.colorFactory = colorFactory;
-//            Debug.Log("Unique " + spriteChip.unique);
 
-//            CalculateSteps();
         }
 
-        protected int maxPerLoop = 100;
 
         protected virtual void CalculateBounds()
         {
@@ -81,20 +74,11 @@ namespace PixelVisionRunner.Parsers
             // Find the total from the width and height
             totalSprites = width * height;
             
-            // Calculate values needed to cut out sprites
-//            width = MathUtil.CeilToInt(tex.width / sWidth);
-//            height = MathUtil.CeilToInt(tex.height / sHeight);
-//            totalSprites = width * height;
-            
-//            Debug.Log("Stats w " + width + " h " + height + " " + totalSprites);
-//            steps.Add(ConvertColors);
             steps.Add(PrepareSprites);
             
             steps.Add(PreCutOutSprites);
 
             var loops = MathUtil.CeilToInt((float) totalSprites / maxPerLoop);
-            
-//            Debug.Log("Loops " + loops + " " + totalSprites +"/"+maxPerLoop);
             
             for (int i = 0; i < loops; i++)
             {
@@ -104,9 +88,7 @@ namespace PixelVisionRunner.Parsers
             steps.Add(PostCutOutSprites);
         }
 
-        private IColor maskColor;
-        private IColor clear;
-        
+
         public virtual void PrepareSprites()
         {
             
@@ -114,8 +96,6 @@ namespace PixelVisionRunner.Parsers
             maskColor = new ColorData(chips.colorChip.maskColor);
             maxSprites = SpriteChipUtil.CalculateTotalSprites(spriteChip.textureWidth, spriteChip.textureHeight, sWidth, sHeight);
 
-            clear = new ColorData {a = 0};
-            
             // Create tmp arrays for color and reference data
             totalPixels = spriteChip.width * spriteChip.height;
             tmpPixels = new IColor[totalPixels];
@@ -136,11 +116,6 @@ namespace PixelVisionRunner.Parsers
         
         public virtual void CutOutSprites()
         {
-//            Debug.Log(this.GetType().Name + " Current Loop " + currentLoop);
-
-            // Loop through all the potential sprites and import them
-//            index = 0;
-            
 
             for (var i = 0; i < maxPerLoop; i++)
             {
@@ -162,7 +137,6 @@ namespace PixelVisionRunner.Parsers
                     break;
                 }
                 
-//                Debug.Log("Index " + index + "/" + totalSprites);
             }
 
             currentStep++;
@@ -214,17 +188,7 @@ namespace PixelVisionRunner.Parsers
             x = index % width * sWidth;
             y = index / width * sHeight;
 
-            // Flip Y position
-//            y = tex.height - y - sHeight;
-            
-//            if((x + sWidth) < tex.width || (y + sHeight) < tex.height)
             tmpPixels = tex.GetPixels(x, y, sWidth, sHeight);
-
-//            for (int i = 0; i < tmpPixels.Length; i++)
-//            {
-//                if (Equals(tmpPixels[i], maskColor))
-//                    tmpPixels[i] = clear;
-//            }
 
         }
 
@@ -250,8 +214,7 @@ namespace PixelVisionRunner.Parsers
                 // Find the current color in the loop
                 tmpColor = tmpPixels[i];
 
-                // if color is transparent set to -1, if not try to look up in the ref colors array
-                tmpRefID = Array.IndexOf(colorData, tmpColor);
+                tmpRefID = Equals(tmpColor, maskColor) ? -1 : Array.IndexOf(colorData, tmpColor);
 
                 // Look to see if color is not transparent
                 if (tmpRefID > -1)
