@@ -65,7 +65,7 @@ namespace PixelVisionRunner.Parsers
         {
             base.CalculateSteps();
             
-            cps = spriteChip.colorsPerSprite;
+            
             sWidth = spriteChip.width;
             sHeight = spriteChip.height;
 
@@ -91,7 +91,7 @@ namespace PixelVisionRunner.Parsers
 
         public virtual void PrepareSprites()
         {
-            
+            cps = spriteChip.colorsPerSprite;
             colorData = chips.colorMapChip != null ? chips.colorMapChip.colors : chips.colorChip.colors;
             maskColor = new ColorData(chips.colorChip.maskColor);
             maxSprites = SpriteChipUtil.CalculateTotalSprites(spriteChip.textureWidth, spriteChip.textureHeight, sWidth, sHeight);
