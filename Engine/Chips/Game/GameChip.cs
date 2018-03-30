@@ -1804,7 +1804,7 @@ namespace PixelVisionSDK.Chips
             
             // Get a local reference to the layers we need
             var tmpSpriteIDs = tilemapChip.layers[(int) TilemapChip.Layer.Sprites];
-            var tmpPaletteIDs = tilemapChip.layers[(int) TilemapChip.Layer.Palettes];
+            var tmpPaletteIDs = tilemapChip.layers[(int) TilemapChip.Layer.Colors];
             var invalideLayer = tilemapChip.layers[(int) TilemapChip.Layer.Invalid];
 
             // Create tmp variables for loop

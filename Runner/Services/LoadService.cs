@@ -143,9 +143,10 @@ namespace PixelVisionRunner.Services
             // Step 6 (optional). Look for tile map to load
             if ((saveFlags & SaveFlags.Tilemap) == SaveFlags.Tilemap)
             {
-                parser = LoadTilemap(files);
-                if (parser != null)
-                    AddParser(parser);
+//                parser = LoadTilemap(files);
+//                if (parser != null)
+//                    AddParser(parser);
+                LoadTilemap(files);
             }
 
             // Step 7 (optional). Look for fonts to load
@@ -277,10 +278,13 @@ namespace PixelVisionRunner.Services
             return new FontParser(tex, targetEngine, fontName);
         }
 
-        private AbstractParser LoadTilemap(Dictionary<string, byte[]> files)
+        private void LoadTilemap(Dictionary<string, byte[]> files)
         {
             var tilemapFile = "tilemap.png";
             var tilemapJsonFile = "tilemap.json";
+            var colorOffsetFile = "tile-color-offsets.json";
+
+            var tilemapExists = false;
             
             // If a tilemap json file exists, try to load that
             if (files.ContainsKey(tilemapJsonFile))
@@ -289,12 +293,13 @@ namespace PixelVisionRunner.Services
 
                 var jsonParser = new TilemapJsonParser(fileContents, targetEngine);
                 
-                return jsonParser;
+                AddParser(jsonParser);
+
+                tilemapExists = true;
             }
-            
-            // If a tilemap file exists, load that instead
             else if (files.ContainsKey(tilemapFile))
             {
+                // If a tilemap file exists, load that instead
                 var tex = ReadTexture(files[tilemapFile]);
                 ITexture2D flagTex = null;
                 ITexture2D colorTex = null;
@@ -306,17 +311,27 @@ namespace PixelVisionRunner.Services
                     flagTex = ReadTexture(files[flagFile]);
                 }
                 
-                var colorFile = "tile-color-offsets.png";
-
-                if (files.ContainsKey(colorFile))
-                {
-                    colorTex = ReadTexture(files[colorFile]);
-                }
+                AddParser(new TilemapParser(tex, flagTex, colorTex, targetEngine));
                 
-                return new TilemapParser(tex, flagTex, colorTex, targetEngine);
+//                var colorFile = "tile-color-offsets.json";
+//
+//                if (files.ContainsKey(colorFile))
+//                {
+//                    colorTex = ReadTexture(files[colorFile]);
+//                }
+                tilemapExists = true;
+                
+            }
+            
+            // Always load the color offset parser
+            if (files.ContainsKey(colorOffsetFile) && tilemapExists)
+            {
+                var fileContents = Encoding.UTF8.GetString(files[colorOffsetFile]);
+                
+                AddParser(new TileColorOffsetJson(fileContents, targetEngine));
             }
 
-            return null;
+//            return null;
         }
 
         private AbstractParser LoadSprites(Dictionary<string, byte[]> files)

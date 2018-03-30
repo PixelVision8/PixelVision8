@@ -30,7 +30,7 @@ namespace PixelVisionSDK.Chips
         public enum Layer
         {
             Sprites,
-            Palettes,
+            Colors,
             Flags,
             Invalid
         }
@@ -207,7 +207,7 @@ namespace PixelVisionSDK.Chips
         public void UpdateTileAt(int spriteID, int column, int row, int flag = -1, int paletteID = 0)
         {
             UpdateDataAt(Layer.Sprites, column, row, spriteID);
-            UpdateDataAt(Layer.Palettes, column, row, paletteID);
+            UpdateDataAt(Layer.Colors, column, row, paletteID);
             UpdateDataAt(Layer.Flags, column, row, flag);
         }
 
@@ -266,7 +266,7 @@ namespace PixelVisionSDK.Chips
         /// </returns>
         public int ReadTileColorAt(int column, int row)
         {
-            return ReadDataAt(Layer.Palettes, column, row);
+            return ReadDataAt(Layer.Colors, column, row);
         }
 
         /// <summary>
@@ -288,7 +288,7 @@ namespace PixelVisionSDK.Chips
             int width = columns;
             tmpIndex = column + row * width;
 
-            UpdateDataAt(Layer.Palettes, column, row, paletteID);
+            UpdateDataAt(Layer.Colors, column, row, paletteID);
 
             Invalidate(tmpIndex);
         }
@@ -389,7 +389,7 @@ namespace PixelVisionSDK.Chips
             var totalTiles = total;
             for (var i = 0; i < totalTiles; i++)
             for (var j = 0; j < totalLayers; j++)
-                layers[j][i] = j == (int)Layer.Palettes ? 0 : -1;
+                layers[j][i] = j == (int)Layer.Colors ? 0 : -1;
 
 //            cachedTileMap.Clear();
             Invalidate();
