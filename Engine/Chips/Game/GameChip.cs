@@ -543,7 +543,7 @@ namespace PixelVisionSDK.Chips
                     break;
             }
         }
-        
+
         /// <summary>
         ///     This method allows you to draw a single pixel to the Tilemap Cache. It's an expensive operation which leverages 
         ///     DrawPixels(). This should only be used in special occasions when batching pixel data draw request aren't possible.
@@ -562,19 +562,13 @@ namespace PixelVisionSDK.Chips
         /// <param name="colorRef">
         ///     The color ID to use when drawing the pixel.
         /// </param>
-        /// <param name="drawMode">
-        ///     This argument only accepts the DrawMode.TilemapCache enum.
-        /// </param>
-        public void DrawPixel(int x, int y, int colorRef, DrawMode drawMode = DrawMode.TilemapCache)
+        public void DrawPixel(int x, int y, int colorRef)
         {
-            // Make sure that drawing a single pixel only works in the UI layer
-            if (drawMode != DrawMode.TilemapCache)
-                return;
 
             singlePixel[0] = colorRef;
             
             // Route the single pixel call to the DrawPixels call
-            DrawPixels(singlePixel, x, y, 1, 1, drawMode);
+            DrawPixels(singlePixel, x, y, 1, 1, DrawMode.TilemapCache);
             
         }
 
@@ -1763,15 +1757,15 @@ namespace PixelVisionSDK.Chips
         
         protected int[] tmpPixelData = new int[8 * 8];
         
-        public int realWidth
-        {
-            get { return spriteChip.width * tilemapChip.columns; }
-        }
-
-        public int realHeight
-        {
-            get { return spriteChip.height * tilemapChip.rows; }
-        }
+//        public int realWidth
+//        {
+//            get { return spriteChip.width * tilemapChip.columns; }
+//        }
+//
+//        public int realHeight
+//        {
+//            get { return spriteChip.height * tilemapChip.rows; }
+//        }
         
         /// <summary>
         ///     This method converts the tile map into pixel data that can be
@@ -1795,6 +1789,9 @@ namespace PixelVisionSDK.Chips
             if (tilemapChip.invalid != true)
                 return;
 
+            var realWidth = spriteChip.width * tilemapChip.columns;
+            var realHeight = spriteChip.height * tilemapChip.rows;
+            
             if (realWidth != cachedTileMap.width || realHeight != cachedTileMap.height)
             {
                 cachedTileMap.Resize(realWidth, realHeight);
