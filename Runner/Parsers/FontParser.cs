@@ -40,10 +40,12 @@ namespace PixelVisionRunner.Parsers
             this.name = name;
         }
 
-        public override void PreCutOutSprites()
+        protected override void CalculateBounds()
         {
+            base.CalculateBounds();
+            
             fontMap = new int[totalSprites];
-            base.PreCutOutSprites();
+//            base.PreCutOutSprites();
         }
 
         protected override void PostCutOutSprites()

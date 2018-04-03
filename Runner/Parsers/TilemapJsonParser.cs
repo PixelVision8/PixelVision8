@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
+using UnityEngine;
 
 namespace PixelVisionRunner.Parsers
 {
@@ -67,13 +68,58 @@ namespace PixelVisionRunner.Parsers
 						
 						int[] dataValues = rawLayerData.ConvertAll(x => ((int) (long)x) - offset < -1 ? -1 : ((int) (long)x) - offset).ToArray();
 						
-						if (tilemapChip.columns != columns || tilemapChip.rows != rows)
+						if (columns != tilemapChip.columns || rows > tilemapChip.rows)
 						{
-							var tmpPixelData = new TextureData(columns, rows);
-							tmpPixelData.SetPixels(0, 0, columns, rows, dataValues);
 							
-							Array.Resize(ref dataValues, tilemapChip.total);
+							// Create texture data that matches the memory of the tilemap chip
+							var tmpPixelData = new TextureData(tilemapChip.columns, tilemapChip.rows);
+							tmpPixelData.Clear();
 							
+							var jsonData = new TextureData(columns, rows);
+							jsonData.Clear();
+							jsonData.SetPixels(0, 0, columns, rows, dataValues);
+
+							var tmpCol = columns > tilemapChip.columns ? tilemapChip.columns : columns;
+							var tmpRow = rows > tilemapChip.rows ? tilemapChip.rows : rows;
+
+							if (tmpCol > columns)
+								tmpCol = columns;
+
+							if (tmpRow > rows)
+								tmpRow = rows;
+
+							var tmpData = new int[tmpCol * tmpRow];
+							
+							jsonData.CopyPixels(ref tmpData, 0, 0, tmpCol, tmpRow);
+							
+							tmpPixelData.SetPixels(0, 0, tmpCol, tmpRow, tmpData);
+							
+							tmpPixelData.CopyPixels(ref dataValues, 0, 0, tmpPixelData.width, tmpPixelData.height);
+							
+//							var jsonMap = new TextureData(columns, rows);
+//							jsonMap.SetPixels(0, 0, columns, rows, dataValues);
+//							
+//							
+//							Debug.Log("Resize " + tilemapChip.columns +"x"+tilemapChip.rows + " " + columns + "x"+rows);
+//							
+//							var tmpPixelData = new TextureData(columns, rows);
+//							tmpPixelData.Clear();
+//
+//							var totalData = dataValues.Length;
+//							
+//							for (int j = 0; j < totalData; j++)
+//							{
+//								var pos = target.gameChip.CalculatePosition(j, columns);
+//								
+//								
+//								
+//								
+//								
+//							}
+//							tmpPixelData.SetPixels(0, 0, columns, rows, dataValues);
+//							
+//							Array.Resize(ref dataValues, tilemapChip.total);
+//							
 							tmpPixelData.CopyPixels(ref dataValues, 0, 0, tilemapChip.columns, tilemapChip.rows);
 						}
 						

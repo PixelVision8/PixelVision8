@@ -13,7 +13,6 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using System;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 
@@ -32,7 +31,9 @@ namespace PixelVisionRunner.Parsers
         
         private int flag;
         private int offset;
-
+        private int realWidth;
+        private int realHeight;
+        
         public TilemapParser(ITexture2D tex, ITexture2D flagTex, ITexture2D colorTex, IEngineChips chips, bool autoImport = false) : base(tex, chips)
         {
             tilemapChip = chips.tilemapChip;
@@ -45,36 +46,38 @@ namespace PixelVisionRunner.Parsers
 
         }
 
-
         protected override void CalculateBounds()
         {
             
             // Calculate the texture's bounds
             base.CalculateBounds();
             
+            width = width > tilemapChip.columns ? tilemapChip.columns : width;
             
-            // Need to calculate the tilemap chip's bounds not the texture
-            width = Math.Min(width, tilemapChip.columns);
-            height = Math.Min(height, tilemapChip.rows);
+            height = height > tilemapChip.rows ? tilemapChip.rows : height;
+
+            realWidth = sWidth * width;
+            realHeight = sHeight * height;
             
+            // Recalculate total sprites
+            totalSprites = width * height;
+
         }
 
         public override void PrepareSprites()
         {
-            var realWidth = spriteChip.width * width;
-            var realHeight = spriteChip.height * tilemapChip.rows;
             
             // Test to see if the tilemap image is larger than the tilemap chip can allow
-            if (tex.GetPixels().Length > (realWidth * realHeight))
+            if (tex.GetPixels().Length != (realWidth * realHeight))
             {
-                var newWidth = Math.Min(tex.width, realWidth);
-                var newHeight = Math.Min(tex.width, realHeight);
-                
+                var newWidth = tex.width >= realWidth ? realWidth : tex.width;//Math.Min(tex.width, realWidth);
+                var newHeight = tex.height >= realHeight ? realHeight : tex.height;// Math.Min(tex.width, realHeight);
+//              
                 // Need to resize the texture so we only parse what can fit into the tilemap chip's memory
-                var pixelData = tex.GetPixels(0, 0, newWidth, Math.Min(tex.width, newHeight));
+                var pixelData = tex.GetPixels(0, 0, newWidth, newHeight);
                 
                 // Resize the texture
-                tex.Resize(realWidth, realHeight);
+                tex.Resize(newWidth, newHeight);
                 
                 // Set the pixels back into the texture
                 tex.SetPixels(0, 0, newWidth, newHeight, pixelData);

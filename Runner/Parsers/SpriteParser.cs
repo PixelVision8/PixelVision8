@@ -59,6 +59,9 @@ namespace PixelVisionRunner.Parsers
         {
             width = MathUtil.CeilToInt(tex.width / sWidth);
             height = MathUtil.CeilToInt(tex.height / sHeight);
+            
+            // Find the total from the width and height
+            totalSprites = width * height;
         }
         
         public override void CalculateSteps()
@@ -71,12 +74,11 @@ namespace PixelVisionRunner.Parsers
 
             CalculateBounds();
             
-            // Find the total from the width and height
-            totalSprites = width * height;
+            
             
             steps.Add(PrepareSprites);
             
-            steps.Add(PreCutOutSprites);
+//            steps.Add(PreCutOutSprites);
 
             var loops = MathUtil.CeilToInt((float) totalSprites / maxPerLoop);
             
@@ -108,11 +110,11 @@ namespace PixelVisionRunner.Parsers
         }
 
 
-        public virtual void PreCutOutSprites()
-        {
-            // Add custom logic
-            currentStep++;
-        }
+//        public virtual void PreCutOutSprites()
+//        {
+//            // Add custom logic
+//            currentStep++;
+//        }
         
         public virtual void CutOutSprites()
         {

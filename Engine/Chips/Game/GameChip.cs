@@ -538,7 +538,7 @@ namespace PixelVisionSDK.Chips
                     // Need to flip the y position to draw correctly
 //                    y = displayChip.height - height - y;
                     
-                    displayChip.NewDrawCall(pixelData, x, y, width, height, layer: (int)drawMode, colorOffset: colorOffset);
+                    displayChip.NewDrawCall(pixelData, x, y, width, height, (int)drawMode, colorOffset);
 
                     break;
             }

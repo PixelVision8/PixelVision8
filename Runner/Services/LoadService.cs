@@ -408,13 +408,13 @@ namespace PixelVisionRunner.Services
             {
                 var fileContents = Encoding.UTF8.GetString(files[fileName]);
 
-                AddParser(new SystemParser(fileContents, targetEngine));
-//                var jsonParser = new SystemParser(fileContents, targetEngine);
-//                
-//                jsonParser.CalculateSteps();
-//                
-//                while (jsonParser.completed == false)
-//                    jsonParser.NextStep();
+//                AddParser(new SystemParser(fileContents, targetEngine));
+                var jsonParser = new SystemParser(fileContents, targetEngine);
+                
+                jsonParser.CalculateSteps();
+                
+                while (jsonParser.completed == false)
+                    jsonParser.NextStep();
             }
             else
             {
