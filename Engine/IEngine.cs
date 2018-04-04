@@ -66,7 +66,7 @@ namespace PixelVisionSDK
         /// </summary>
         /// <param name="target"></param>
         /// <param name="ignoreKeys"></param>
-        void DumpMetaData(Dictionary<string, string> target, string[] ignoreKeys);
+        void DumpMetaData(Dictionary<string, string> target, string[] ignoreKeys = null);
 
     }
 

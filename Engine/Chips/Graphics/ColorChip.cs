@@ -72,7 +72,7 @@ namespace PixelVisionSDK.Chips
             } 
         }
         
-        protected string _maskColor = "#ff00ff";
+        protected string _maskColor = "#FF00FF";
 
         public string maskColor
         {
@@ -80,7 +80,7 @@ namespace PixelVisionSDK.Chips
             set
             {
                 if(ValidateHexColor(value))
-                    _maskColor = value;
+                    _maskColor = value.ToUpper();
             }
         }
         
@@ -189,6 +189,7 @@ namespace PixelVisionSDK.Chips
                     {
 
                         var colorHex = _colors[i];
+                        
                         if (colorHex == maskColor && debugMode == false)
                         {
                             colorHex = _colors[backgroundColor];
