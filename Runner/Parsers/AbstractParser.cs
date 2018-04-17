@@ -24,6 +24,8 @@ namespace PixelVisionRunner.Parsers
 
         public int currentStep { get; protected set; }
 
+        public byte[] bytes { get; set; }
+        
         public int totalSteps
         {
             get { return steps.Count; }
