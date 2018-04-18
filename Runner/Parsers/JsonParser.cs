@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using System.Collections.Generic;
+using System.Text;
 using MiniJSON;
 
 namespace PixelVisionRunner.Parsers
@@ -24,9 +25,18 @@ namespace PixelVisionRunner.Parsers
 
         protected Dictionary<string, object> data;
 
-        protected readonly string jsonString;
+        public override byte[] bytes
+        {
+            get { return Encoding.ASCII.GetBytes(jsonString); }
+            set
+            {
+                jsonString = Encoding.UTF8.GetString(value);
+            }
+        }
+        
+        protected string jsonString;
 
-        public JsonParser(string jsonString)
+        public JsonParser(string jsonString = "")
         {
             this.jsonString = jsonString;
         }

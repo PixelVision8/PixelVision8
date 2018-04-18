@@ -24,7 +24,7 @@ namespace PixelVisionRunner.Parsers
     {
         protected IEngine target;
 
-        public SystemParser(string jsonString, IEngine target) : base(jsonString)
+        public SystemParser(IEngine target, string jsonString = "") : base(jsonString)
         {
             this.target = target;
         }
