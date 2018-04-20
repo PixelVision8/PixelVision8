@@ -204,10 +204,15 @@ namespace PixelVisionRunner.Exporters
             JsonUtil.GetLineBreak(sb, 1);
                 
             // Rebuild calculated colors value
-            colorChip.RecalculateSupportedColors();
+//            colorChip.RecalculateSupportedColors();
             
             sb.Append("\"supportedColors\":");
             sb.Append(colorChip.supportedColors);
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+            
+            sb.Append("\"maxColors\":");
+            sb.Append(colorChip.maxColors);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 

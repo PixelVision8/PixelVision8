@@ -52,7 +52,7 @@ namespace PixelVisionRunner.Parsers
             steps.Add(ReadColors);
             steps.Add(ResetColorChip);
             steps.Add(UpdateColors);
-            steps.Add(RecalculateColors);
+//            steps.Add(RecalculateColors);
         }
 
 
@@ -116,13 +116,13 @@ namespace PixelVisionRunner.Parsers
             currentStep++;
         }
 
-        public void RecalculateColors()
-        {
-            // Update supported colors based on what was imported
-            colorChip.RecalculateSupportedColors();
-
-            currentStep++;
-        }
+//        public void RecalculateColors()
+//        {
+//            // Update supported colors based on what was imported
+//            colorChip.RecalculateSupportedColors();
+//
+//            currentStep++;
+//        }
 
     }
 

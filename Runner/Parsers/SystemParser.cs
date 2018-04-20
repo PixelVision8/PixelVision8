@@ -100,8 +100,8 @@ namespace PixelVisionRunner.Parsers
             if (data.ContainsKey("maskColor"))
                 colorChip.maskColor = (string) data["maskColor"];
 
-            if (data.ContainsKey("supportedColors"))
-                colorChip.supportedColors = (int) (long) data["supportedColors"];
+            if (data.ContainsKey("maxColors"))
+                colorChip.maxColors = (int) (long) data["maxColors"];
 
             // Make sure we have data to parse
             if (data.ContainsKey("colors"))

@@ -14,6 +14,8 @@
 // Shawn Rakowski - @shwany
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using PixelVisionRunner;
 using PixelVisionSDK.Utils;
@@ -140,13 +142,19 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         /// <value>Int</value>
         // TODO need to change this to totalSet colors or something more descriptive
-        public int supportedColors { get; set; }
-        
+        public int supportedColors
+        {
+            get
+            {
+                return hexColors.Length - hexColors.ToList().RemoveAll(c => c == maskColor);
+            }
+        }
+
         //TODO need to figure out a better way to set this up?
         public int maxColors
         {
             get { return _maxColors == -1 ? total : _maxColors; }
-            set { _maxColors = maxColors; }
+            set { _maxColors = value; }
         }
 
         public string[] hexColors
@@ -267,16 +275,16 @@ namespace PixelVisionSDK.Chips
                 invalidColors[i] = value;
         }
 
-        public void RecalculateSupportedColors()
-        {
-            var count = 0;
-            var total = _colors.Length;
-            for (var i = 0; i < total; i++)
-                if (_colors[i] != maskColor)
-                    count++;
-
-            supportedColors = count;
-        }
+//        public void RecalculateSupportedColors()
+//        {
+//            var count = 0;
+//            var total = _colors.Length;
+//            for (var i = 0; i < total; i++)
+//                if (_colors[i] != maskColor)
+//                    count++;
+//
+//            supportedColors = count;
+//        }
 
 
         /// <summary>
