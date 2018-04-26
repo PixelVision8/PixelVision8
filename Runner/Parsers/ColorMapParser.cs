@@ -22,7 +22,7 @@ namespace PixelVisionRunner.Parsers
     public class ColorMapParser : ColorParser
     {
 
-        public ColorMapParser(ITexture2D tex, IEngineChips chips, IColor magenta, bool unique = false, bool ignoreTransparent = true) : base(tex, chips, magenta, unique, ignoreTransparent)
+        public ColorMapParser(ITexture2D tex, IColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true) : base(tex, colorChip, magenta, unique, ignoreTransparent)
         {
             
         }
@@ -30,10 +30,8 @@ namespace PixelVisionRunner.Parsers
         public override void CalculateSteps()
         {
             
-            var colorMapChip = new ColorMapChip();
-            chips.chipManager.ActivateChip(colorMapChip.GetType().FullName, colorMapChip);
-            
-            colorChip = colorMapChip;
+           
+//            colorChip = colorMapChip;
             
             currentStep = 0;
 

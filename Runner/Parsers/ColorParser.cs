@@ -22,7 +22,7 @@ namespace PixelVisionRunner.Parsers
 
     public class ColorParser : AbstractParser
     {
-        protected IEngineChips chips;
+//        protected IEngineChips chips;
         
         protected IColorChip colorChip;
         protected readonly List<IColor> colors = new List<IColor>();
@@ -34,10 +34,10 @@ namespace PixelVisionRunner.Parsers
         protected int x, y, width;
         protected IColor magenta;
         
-        public ColorParser(ITexture2D tex, IEngineChips chips, IColor magenta, bool unique = false, bool ignoreTransparent = true)
+        public ColorParser(ITexture2D tex, IColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true)
         {
             this.tex = tex;
-            this.chips = chips;
+            this.colorChip = colorChip;
             this.unique = unique;
             this.magenta = magenta;
 
@@ -45,7 +45,7 @@ namespace PixelVisionRunner.Parsers
 
         public override void CalculateSteps()
         {
-            colorChip = chips.colorChip;
+            
             
             base.CalculateSteps();
             steps.Add(IndexColors);

@@ -125,6 +125,10 @@ namespace PixelVisionRunner.Parsers
             
             if (data.ContainsKey("debug"))
                 colorChip.debugMode = Convert.ToBoolean(data["debug"]);
+            
+            if (data.ContainsKey("unique"))
+                colorChip.unique = Convert.ToBoolean(data["unique"]);
+
         }
 
         public void ConfigureControllerChip(Dictionary<string, object> data)
@@ -350,6 +354,9 @@ namespace PixelVisionRunner.Parsers
 
             if (data.ContainsKey("totalFlags"))
                 tilemapChip.totalFlags = (int) (long) data["totalFlags"];
+            
+            if (data.ContainsKey("autoImport"))
+                tilemapChip.autoImport = Convert.ToBoolean(data["autoImport"]);
 
             tilemapChip.Resize(columns, rows);
         }

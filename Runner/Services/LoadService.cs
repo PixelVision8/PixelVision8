@@ -20,6 +20,7 @@ using System.Linq;
 using System.Text;
 using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
+using PixelVisionSDK.Chips;
 using PixelVisionSDK.Services;
 
 namespace PixelVisionRunner.Services
@@ -283,7 +284,8 @@ namespace PixelVisionRunner.Services
             var tilemapFile = "tilemap.png";
             var tilemapJsonFile = "tilemap.json";
             var colorOffsetFile = "tile-color-offsets.json";
-
+            
+            
             var tilemapExists = false;
             
             // If a tilemap json file exists, try to load that
@@ -301,17 +303,23 @@ namespace PixelVisionRunner.Services
             {
                 // If a tilemap file exists, load that instead
                 var tex = ReadTexture(files[tilemapFile]);
+                ITexture2D tileFlagTex = null;
                 ITexture2D flagTex = null;
-                ITexture2D colorTex = null;
                 
-                var flagFile = "tilemap-flags.png";
-
-                if (files.ContainsKey(flagFile))
+                var tileFlags = "tilemap-flags.png";
+                var flags = "flags.png";
+                
+                if (files.ContainsKey(tileFlags))
                 {
-                    flagTex = ReadTexture(files[flagFile]);
+                    tileFlagTex = ReadTexture(files[tileFlags]);
+                }
+
+                if (files.ContainsKey(flags))
+                {
+                    flagTex = ReadTexture(files[flags]);
                 }
                 
-                AddParser(new TilemapParser(tex, flagTex, colorTex, targetEngine));
+                AddParser(new TilemapParser(tex, tileFlagTex, targetEngine, flagTex));
                 
 //                var colorFile = "tile-color-offsets.json";
 //
@@ -369,8 +377,15 @@ namespace PixelVisionRunner.Services
             if (files.ContainsKey(fileName))
             {
                 var tex = ReadTexture(files[fileName]);
+                
+                // Create new color map chip
+                var colorMapChip = new ColorMapChip();
+                
+                // Add the chip to the engine
+                targetEngine.chipManager.ActivateChip(colorMapChip.GetType().FullName, colorMapChip);
 
-                return new ColorMapParser(tex, targetEngine, maskColor);
+                // Pass the chip to the new parser
+                return new ColorMapParser(tex, targetEngine.colorMapChip, maskColor);
             }
 
             return null;
@@ -384,7 +399,7 @@ namespace PixelVisionRunner.Services
             {
                 var tex = ReadTexture(files[fileName]);
 
-                return new ColorParser(tex, targetEngine, maskColor);
+                return new ColorParser(tex, targetEngine.colorChip, maskColor);
             }
 
             return null;

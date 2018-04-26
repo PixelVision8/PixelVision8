@@ -14,7 +14,9 @@
 // Shawn Rakowski - @shwany
 
 using System.Linq;
+using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
+using PixelVisionSDK.Chips;
 
 namespace PixelVisionRunner.Exporters
 {
@@ -34,10 +36,12 @@ namespace PixelVisionRunner.Exporters
             var totalColors = 16;
             colors = new ColorData[totalColors];
 
+            var flagColors = ((IColorChip) engine.chipManager.GetChip(TilemapParser.flagColorChipName, false)).colors;
+            
             for (int i = 0; i < totalColors; i++)
             {
                 // TODO remved util but so now the convert flag methd is on the FlagTileExporter
-                colors[i] = FlagTileExporter.ConvertFlagColor(i, totalColors);
+                colors[i] = flagColors[i];//FlagTileExporter.ConvertFlagColor(i, totalColors);
             }
         }
 

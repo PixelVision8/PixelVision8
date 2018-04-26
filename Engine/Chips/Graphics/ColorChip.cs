@@ -250,7 +250,8 @@ namespace PixelVisionSDK.Chips
         public bool invalid { get; protected set; }
 
         private bool _debugMode;
-        
+        public bool unique;
+
         // Setting this to true will use the mask color for empty colors instead of replacing them with the bg color
         public bool debugMode
         {

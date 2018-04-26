@@ -48,6 +48,8 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public int totalFlags = 16;
 
+        public bool autoImport;
+
         /// <summary>
         ///     The total tiles in the chip.
         /// </summary>

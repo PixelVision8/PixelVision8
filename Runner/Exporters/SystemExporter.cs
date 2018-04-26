@@ -224,7 +224,17 @@ namespace PixelVisionRunner.Exporters
             sb.Append("\"maskColor\":\"");
             sb.Append(colorChip.maskColor);
             sb.Append("\"");
-
+            
+            sb.Append("\"unique\":");
+            sb.Append(colorChip.unique.ToString().ToLower());
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+            
+            sb.Append("\"debug\":");
+            sb.Append(colorChip.debugMode.ToString().ToLower());
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+            
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
             sb.Append(",");
@@ -483,7 +493,12 @@ namespace PixelVisionRunner.Exporters
             // Total Flags
             sb.Append("\"totalFlags\":");
             sb.Append(tilemapChip.totalFlags);
-
+        
+            sb.Append("\"autoImport\":");
+            sb.Append(tilemapChip.autoImport.ToString().ToLower());
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+            
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
             sb.Append(",");

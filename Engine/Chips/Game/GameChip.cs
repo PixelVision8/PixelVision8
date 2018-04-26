@@ -1767,6 +1767,8 @@ namespace PixelVisionSDK.Chips
 //            get { return spriteChip.height * tilemapChip.rows; }
 //        }
         
+        
+        
         /// <summary>
         ///     This method converts the tile map into pixel data that can be
         ///     rendered by the engine. It's an expensive operation and should only
@@ -1819,26 +1821,17 @@ namespace PixelVisionSDK.Chips
                     // Get the sprite id
                     spriteID = tmpSpriteIDs[i];
 
-                    // Make sure there is a sprite
-                    if (spriteID > -1)
-                    {
-                        // Calculate the new position of the tile;
-                        x = i % tilemapChip.columns * tileSize.x;
-                        y = i / tilemapChip.columns * tileSize.y;
+                    // Calculate the new position of the tile;
+                    x = i % tilemapChip.columns * tileSize.x;
+                    y = i / tilemapChip.columns * tileSize.y;
 
-                        //x *= tileWidth;
-//                        y = (tilemapChip.rows - 1 - y) * tileSize.y;
+                    spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
 
-                        //y *= tileHeight;
+                    // Draw the pixel data into the cachedTilemap
+                    targetTextureData.MergePixels(x, y, tileSize.x, tileSize.y, tmpPixelData, tmpPaletteIDs[i]);
 
-                        // Read the sprite data
-                        spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
-
-                        // Draw the pixel data into the cachedTilemap
-                        targetTextureData.MergePixels(x, y, tileSize.x, tileSize.y, tmpPixelData, tmpPaletteIDs[i]);
-
-                        totalTilesUpdated++;
-                    }
+                    totalTilesUpdated++;
+                    
                 }
 
             // Reset the invalidation state

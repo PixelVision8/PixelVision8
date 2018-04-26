@@ -108,13 +108,6 @@ namespace PixelVisionRunner.Parsers
 
             currentStep++;
         }
-
-
-//        public virtual void PreCutOutSprites()
-//        {
-//            // Add custom logic
-//            currentStep++;
-//        }
         
         public virtual void CutOutSprites()
         {

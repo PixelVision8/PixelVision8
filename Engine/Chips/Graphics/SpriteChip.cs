@@ -196,6 +196,8 @@ namespace PixelVisionSDK.Chips
             //_texture.wrapMode = false;
             width = 8;
             height = 8;
+            
+            
 
             Clear();
         }
@@ -274,12 +276,16 @@ namespace PixelVisionSDK.Chips
         }
 
 //        private int[] cachedSprite;
-        private int totalSpritePixels;
+//        private int totalSpritePixels;
 //        private int[] tmpPixelData;
 
         private int width1;
         private int height1;
         private int w;
+        
+        // TODO these are hard coded assuming the sprites are always 8x8
+        private readonly int[] emptySpriteData = Enumerable.Repeat(-1, 64).ToArray();
+        private readonly int totalSpritePixels = 64;
         
         /// <summary>
         ///     Returns an array of ints that represent a sprite. Each
@@ -296,21 +302,31 @@ namespace PixelVisionSDK.Chips
         public void ReadSpriteAt(int index, int[] pixelData)
         {
             if (index == -1)
-                return;
-
-            width1 = _texture.width;
-            height1 = _texture.height;
-
-            w = width1 / width;
-
-            tmpX = index % w * width;
-            tmpY = index / w * height;
-            
-            // Flip y for Unity
-//            tmpY = height1 - tmpY - height;
-
-            _texture.CopyPixels(ref pixelData, tmpX, tmpY, width, height);
-
+            {
+                var size = width * height;
+                
+                if (pixelData.Length != size)
+                {
+                    Array.Resize(ref pixelData, size);
+                }
+                
+                Array.Copy(emptySpriteData, pixelData, size);
+            }
+            else
+            {
+                width1 = _texture.width;
+//                height1 = _texture.height;
+    
+                w = width1 / width;
+    
+                tmpX = index % w * width;
+                tmpY = index / w * height;
+                
+                // Flip y for Unity
+    //            tmpY = height1 - tmpY - height;
+    
+                _texture.CopyPixels(ref pixelData, tmpX, tmpY, width, height);
+            }
         }
 
         private int x;
@@ -369,7 +385,7 @@ namespace PixelVisionSDK.Chips
                     return -1;
 
             var sprite = SpriteChipUtil.SpriteDataToString(pixels);
-
+            
             return Array.IndexOf(cache, sprite);
         }
     }

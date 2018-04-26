@@ -13,6 +13,7 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
+using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 using PixelVisionSDK.Utils;
@@ -22,18 +23,17 @@ namespace PixelVisionRunner.Exporters
     public class FlagTileExporter : IAbstractExporter
     {
         
-        public static IColor ConvertFlagColor(int flagValue, int totalFlags)
-        {
-            var colorValue = CalcualteFlagColor(flagValue, totalFlags);
-                
-            return new ColorData(colorValue, colorValue, colorValue);
-        }
-
-        public static float CalcualteFlagColor(int flagValue, int totalFlags)
-        {
-            return ((float)(flagValue * totalFlags) / 256);
-
-        }
+//        public static IColor ConvertFlagColor(int flagValue, int totalFlags)
+//        {
+//            var colorValue = CalcualteFlagColor(flagValue, totalFlags);
+//                
+//            return new ColorData(colorValue, colorValue, colorValue);
+//        }
+//
+//        public static float CalcualteFlagColor(int flagValue, int totalFlags)
+//        {
+//            return (flagValue * totalFlags) / 256f;
+//        }
         
         private string fullFileName;
         private ITextureFactory textureFactory;
@@ -41,6 +41,7 @@ namespace PixelVisionRunner.Exporters
         private Vector tileSize;
         private int totalFlags;
         private GameChip gameChip;
+        private IColorChip flagColorChip;
         
         public FlagTileExporter(string fileName, IEngineChips engineChips, ITextureFactory textureFactory)
         {
@@ -51,6 +52,8 @@ namespace PixelVisionRunner.Exporters
             totalFlags = engineChips.tilemapChip.totalFlags;
 
             gameChip = engineChips.gameChip;
+
+            flagColorChip = engineChips.chipManager.GetChip(TilemapParser.flagColorChipName, false) as IColorChip;
             
             tileSize = gameChip.SpriteSize();
             
@@ -91,10 +94,12 @@ namespace PixelVisionRunner.Exporters
             var brush = new int[totalPixels];
 
             IColor[] colors = new IColor[totalFlags];
+
+            var flagColors = flagColorChip.colors;
             
             for (int i = 0; i < totalFlags; i++)
             {
-                colors[i] = ConvertFlagColor(i, totalFlags);
+                colors[i] = flagColors[i];
                 
                 var pos = gameChip.CalculatePosition(i, w);
 
