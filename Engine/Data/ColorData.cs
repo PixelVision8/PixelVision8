@@ -199,9 +199,9 @@ namespace PixelVisionSDK
         
         public override bool Equals(object other)
         {
-            if (!(other is ColorData))
+            if (!(other is IColor))
                 return false;
-            ColorData color = (ColorData) other;
+            var color = (IColor)other;
             return this.r.Equals(color.r) && this.g.Equals(color.g) && this.b.Equals(color.b) && this.a.Equals(color.a);
         }
 
