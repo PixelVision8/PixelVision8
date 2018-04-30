@@ -140,13 +140,17 @@ namespace PixelVisionRunner.Services
                 if (parser != null)
                     AddParser(parser);
             }
-
+            
+            
+            // Step 6 (optional). Look for tile map to load
+            if ((saveFlags & SaveFlags.FlagColors) == SaveFlags.FlagColors)
+            {
+                LoadFlagColors(files);
+            }
+            
             // Step 6 (optional). Look for tile map to load
             if ((saveFlags & SaveFlags.Tilemap) == SaveFlags.Tilemap)
             {
-//                parser = LoadTilemap(files);
-//                if (parser != null)
-//                    AddParser(parser);
                 LoadTilemap(files);
             }
 
@@ -279,12 +283,32 @@ namespace PixelVisionRunner.Services
             return new FontParser(tex, targetEngine, fontName);
         }
 
+        private void LoadFlagColors(Dictionary<string, byte[]> files)
+        {
+            
+            // First thing we do is check for any custom tilemap flag colors
+            ITexture2D flagTex = null;
+            var flags = "flags.png";
+            
+            if (files.ContainsKey(flags))
+            {
+                UnityEngine.Debug.Log("Has custom flags");
+                flagTex = ReadTexture(files[flags]);
+            }
+            
+            // This will also create the custom flag color chip we need for parsing the tilemap later on
+            AddParser(new FlagColorParser(flagTex, targetEngine));
+
+        }
+        
         private void LoadTilemap(Dictionary<string, byte[]> files)
         {
             var tilemapFile = "tilemap.png";
             var tilemapJsonFile = "tilemap.json";
             var colorOffsetFile = "tile-color-offsets.json";
-            
+
+            // Make sure we have the flag color chip
+            LoadFlagColors(files);
             
             var tilemapExists = false;
             
@@ -304,22 +328,19 @@ namespace PixelVisionRunner.Services
                 // If a tilemap file exists, load that instead
                 var tex = ReadTexture(files[tilemapFile]);
                 ITexture2D tileFlagTex = null;
-                ITexture2D flagTex = null;
+                
                 
                 var tileFlags = "tilemap-flags.png";
-                var flags = "flags.png";
+                
                 
                 if (files.ContainsKey(tileFlags))
                 {
                     tileFlagTex = ReadTexture(files[tileFlags]);
                 }
 
-                if (files.ContainsKey(flags))
-                {
-                    flagTex = ReadTexture(files[flags]);
-                }
                 
-                AddParser(new TilemapParser(tex, tileFlagTex, targetEngine, flagTex));
+                
+                AddParser(new TilemapParser(tex, tileFlagTex, targetEngine));
                 
 //                var colorFile = "tile-color-offsets.json";
 //
@@ -338,6 +359,9 @@ namespace PixelVisionRunner.Services
                 
                 AddParser(new TileColorOffsetJson(fileContents, targetEngine));
             }
+            
+            
+
 
 //            return null;
         }

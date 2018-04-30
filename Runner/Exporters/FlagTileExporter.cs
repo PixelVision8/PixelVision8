@@ -53,7 +53,7 @@ namespace PixelVisionRunner.Exporters
 
             gameChip = engineChips.gameChip;
 
-            flagColorChip = engineChips.chipManager.GetChip(TilemapParser.flagColorChipName, false) as IColorChip;
+            flagColorChip = engineChips.chipManager.GetChip(FlagColorParser.flagColorChipName, false) as IColorChip;
             
             tileSize = gameChip.SpriteSize();
             

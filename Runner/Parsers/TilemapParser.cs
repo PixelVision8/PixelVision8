@@ -17,124 +17,42 @@ using System.Collections.Generic;
 using System.Linq;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
+using UnityEngine;
 
 namespace PixelVisionRunner.Parsers
 {
 
     public class TilemapParser : SpriteParser
     {
-        
-        public static string flagColorChipName = "PixelVisionSDK.Chips.FlagColorChip";
 
-        public static string[] flagColors = new string[]
-        {
-            "#000000",
-            "#101010",
-            "#202020",
-            "#303030",
-            "#404040",
-            "#505050",
-            "#606060",
-            "#707070",
-            "#808080",
-            "#8F8F8F",
-            "#9F9F9F",
-            "#AFAFAF",
-            "#BFBFBF",
-            "#CFCFCF",
-            "#DFDFDF",
-            "#EFEFEF",
-        };
-        
         private readonly bool autoImport;
         private readonly TilemapChip tilemapChip;
         private ITexture2D tileFlagTex;
-//        private ITexture2D colorTex;
         private IColor clear;
-//        private IColor mask;
         
         private int flag;
         private int offset;
         private int realWidth;
         private int realHeight;
-        
 
         private ColorChip flagColorChip;
-        
-        private ITexture2D flagTex;
-        
-        public TilemapParser(ITexture2D tex, ITexture2D tileFlagTex, IEngineChips chips, ITexture2D flagTex = null) : base(tex, chips)
+ 
+        public TilemapParser(ITexture2D tex, ITexture2D tileFlagTex, IEngineChips chips) : base(tex, chips)
         {
+            Debug.Log("Parse Tilemap");
+            
             tilemapChip = chips.tilemapChip;
             this.tileFlagTex = tileFlagTex;
             autoImport = tilemapChip.autoImport;
-//            this.colorTex = colorTex;
+            
+            flagColorChip = chips.chipManager.GetChip(FlagColorParser.flagColorChipName, false) as ColorChip;
+
             
             clear = new ColorData{a = 0};
             maskColor = new ColorData(chips.colorChip.maskColor);
-            this.flagTex = flagTex;
             
         }
 
-        public override void CalculateSteps()
-        {
-//            if(flagTex != null)
-            steps.Add(ParseFlagColors);
-            
-            base.CalculateSteps();
-
-        }
-
-        
-        public void ParseFlagColors()
-        {
-            
-            flagColorChip = new ColorChip();
-            
-            chips.chipManager.ActivateChip(flagColorChipName, flagColorChip, false);
-            
-            var newFlagColors = new List<string>();
-            
-            if (flagTex == null)
-            {
-                newFlagColors = flagColors.ToList();
-            }
-            else
-            {
-                UnityEngine.Debug.Log("Create custom flag colors");
-                
-                var pixels = flagTex.GetPixels();
-    
-                var total = pixels.Length;
-    
-                for (int i = 0; i < total; i++)
-                {
-                    var color = pixels[i];
-                    var hex = ColorData.ColorToHex(color.r, color.g, color.b);
-
-                    if (color.a == 1f && !Equals(color, maskColor))
-                    {
-                        if (newFlagColors.IndexOf(hex) == -1)
-                        {
-                            newFlagColors.Add(hex);
-                        
-//                            UnityEngine.Debug.Log("Flag " + newFlagColors.Count + " " + hex);
-                        }
-                    }
-                    
-                }
-            }
-
-            flagColorChip.RebuildColorPages(newFlagColors.Count);
-            
-            for (int i = 0; i < newFlagColors.Count; i++)
-            {
-                flagColorChip.UpdateColorAt(i, newFlagColors[i]);
-            }
-            
-            currentStep++;
-        }
-        
         protected override void CalculateBounds()
         {
             
