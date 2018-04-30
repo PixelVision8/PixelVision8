@@ -30,21 +30,21 @@ namespace PixelVisionRunner.Parsers
         public static string[] flagColors = new string[]
         {
             "#000000",
-            "#101010",
-            "#202020",
-            "#303030",
-            "#404040",
-            "#505050",
-            "#606060",
-            "#707070",
-            "#808080",
-            "#8F8F8F",
-            "#9F9F9F",
-            "#AFAFAF",
-            "#BFBFBF",
-            "#CFCFCF",
-            "#DFDFDF",
-            "#EFEFEF",
+            "#5E0104",
+            "#FB061B",
+            "#FFFFFF",
+            "#FC8029",
+            "#FEFF48",
+            "#858926",
+            "#33470D",
+            "#2EFF41",
+            "#1B8431",
+            "#36FFFE",
+            "#827FF9",
+            "#1A00E3",
+            "#7102D0",
+            "#FC6EC4",
+            "#A53E5A",
         };
         
         protected IColor maskColor;
@@ -85,13 +85,10 @@ namespace PixelVisionRunner.Parsers
             
             if (flagTex == null)
             {
-                Debug.Log("Use built in flag colors");
                 newFlagColors = flagColors.ToList();
             }
             else
             {
-                Debug.Log("Create custom flag colors");
-                
                 var pixels = flagTex.GetPixels();
     
                 var total = pixels.Length;
@@ -107,8 +104,6 @@ namespace PixelVisionRunner.Parsers
                     {
                         if (newFlagColors.IndexOf(hex) == -1)
                         {
-                            
-                            Debug.Log("Color "+ i + " " + hex);
                             
                             newFlagColors.Add(hex);
                         

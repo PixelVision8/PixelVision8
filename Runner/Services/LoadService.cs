@@ -292,7 +292,6 @@ namespace PixelVisionRunner.Services
             
             if (files.ContainsKey(flags))
             {
-                UnityEngine.Debug.Log("Has custom flags");
                 flagTex = ReadTexture(files[flags]);
             }
             
