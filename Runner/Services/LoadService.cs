@@ -305,7 +305,8 @@ namespace PixelVisionRunner.Services
             var tilemapFile = "tilemap.png";
             var tilemapJsonFile = "tilemap.json";
             var colorOffsetFile = "tile-color-offsets.json";
-
+            
+            // TODO should this be manually called?
             // Make sure we have the flag color chip
             LoadFlagColors(files);
             
@@ -399,6 +400,9 @@ namespace PixelVisionRunner.Services
 
             if (files.ContainsKey(fileName))
             {
+                
+//                UnityEngine.Debug.Log("Create color map");
+                
                 var tex = ReadTexture(files[fileName]);
                 
                 // Create new color map chip
