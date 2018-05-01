@@ -24,7 +24,7 @@ namespace PixelVisionRunner.Parsers
     {
 //        protected IEngineChips chips;
         
-        protected IColorChip colorChip;
+        protected ColorChip colorChip;
         protected readonly List<IColor> colors = new List<IColor>();
         protected readonly ITexture2D tex;
         protected readonly bool unique;
@@ -34,7 +34,7 @@ namespace PixelVisionRunner.Parsers
         protected int x, y, width;
         protected IColor magenta;
         
-        public ColorParser(ITexture2D tex, IColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true)
+        public ColorParser(ITexture2D tex, ColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true)
         {
             this.tex = tex;
             this.colorChip = colorChip;

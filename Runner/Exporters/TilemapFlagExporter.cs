@@ -36,7 +36,7 @@ namespace PixelVisionRunner.Exporters
             var totalColors = 16;
             colors = new ColorData[totalColors];
 
-            var flagColors = ((IColorChip) engine.chipManager.GetChip(FlagColorParser.flagColorChipName, false)).colors;
+            var flagColors = ((ColorChip) engine.chipManager.GetChip(FlagColorParser.flagColorChipName, false)).colors;
             
             for (int i = 0; i < totalColors; i++)
             {

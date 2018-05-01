@@ -24,9 +24,9 @@ namespace PixelVisionRunner.Exporters
         private string fullFileName;
         private ITextureFactory textureFactory;
         private PixelDataExporter exporter;
-        private IColorChip colorChip { get; set; }
+        private ColorChip colorChip { get; set; }
         
-        public ColorPaletteExporter(string fileName, IColorChip colorChip, ITextureFactory textureFactory)
+        public ColorPaletteExporter(string fileName, ColorChip colorChip, ITextureFactory textureFactory)
         {
             fullFileName = fileName;
 

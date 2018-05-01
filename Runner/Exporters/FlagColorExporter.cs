@@ -20,7 +20,7 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionRunner.Exporters
 {
-    public class FlagTileExporter : IAbstractExporter
+    public class FlagColorExporter : IAbstractExporter
     {
         
 //        public static IColor ConvertFlagColor(int flagValue, int totalFlags)
@@ -41,9 +41,9 @@ namespace PixelVisionRunner.Exporters
         private Vector tileSize;
         private int totalFlags;
         private GameChip gameChip;
-        private IColorChip flagColorChip;
+        private ColorChip flagColorChip;
         
-        public FlagTileExporter(string fileName, IEngineChips engineChips, ITextureFactory textureFactory)
+        public FlagColorExporter(string fileName, IEngineChips engineChips, ITextureFactory textureFactory)
         {
             fullFileName = fileName;
 
@@ -53,7 +53,7 @@ namespace PixelVisionRunner.Exporters
 
             gameChip = engineChips.gameChip;
 
-            flagColorChip = engineChips.chipManager.GetChip(FlagColorParser.flagColorChipName, false) as IColorChip;
+            flagColorChip = engineChips.chipManager.GetChip(FlagColorParser.flagColorChipName, false) as ColorChip;
             
             tileSize = gameChip.SpriteSize();
             

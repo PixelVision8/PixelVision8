@@ -21,8 +21,9 @@ namespace PixelVisionRunner.Parsers
 
     public class ColorMapParser : ColorParser
     {
+        public static string chipName = "PixelVisionSDK.Chips.ColorMapChip";
 
-        public ColorMapParser(ITexture2D tex, IColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true) : base(tex, colorChip, magenta, unique, ignoreTransparent)
+        public ColorMapParser(ITexture2D tex, ColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true) : base(tex, colorChip, magenta, unique, ignoreTransparent)
         {
             
         }
