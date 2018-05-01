@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PixelVisionRunner;
+using PixelVisionRunner.Parsers;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
@@ -83,7 +84,16 @@ namespace PixelVisionSDK
         ///     Access to the ColorMapChip.
         /// </summary>
         /// <tocexclude />
-        public ColorMapChip colorMapChip { get; set; }
+        public ColorChip colorMapChip { //get; set; }
+            get
+            {
+                return chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
+            }
+            set
+            {
+                //
+            }
+        }
 
         /// <summary>
         ///     Access to the ControllerChip.

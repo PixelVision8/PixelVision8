@@ -41,7 +41,7 @@ namespace PixelVisionSDK.Chips
         ///     into the engine at run time. This property offers direct access to
         ///     it.
         /// </summary>
-        ColorMapChip colorMapChip { get; set; }
+        ColorChip colorMapChip { get; set; }
 
         /// <summary>
         ///     The controller chip handles all input to the engine. This property

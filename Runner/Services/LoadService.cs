@@ -406,13 +406,15 @@ namespace PixelVisionRunner.Services
                 var tex = ReadTexture(files[fileName]);
                 
                 // Create new color map chip
-                var colorMapChip = new ColorMapChip();
+                var colorMapChip = new ColorChip();
                 
                 // Add the chip to the engine
-                targetEngine.chipManager.ActivateChip(colorMapChip.GetType().FullName, colorMapChip);
-
+                targetEngine.chipManager.ActivateChip(ColorMapParser.chipName, colorMapChip, false);
+                
+                targetEngine.colorMapChip = colorMapChip;
+                
                 // Pass the chip to the new parser
-                return new ColorMapParser(tex, targetEngine.colorMapChip, maskColor);
+                return new ColorMapParser(tex, colorMapChip, maskColor);
             }
 
             return null;
