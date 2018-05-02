@@ -15,6 +15,7 @@
 
 using System;
 using System.Linq;
+using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 
@@ -43,7 +44,11 @@ namespace PixelVisionRunner.Exporters
             tilemapChip = engine.tilemapChip;
             totalTiles = tilemapChip.total;
             gameChip = engine.gameChip;
-            colors = engine.colorMapChip == null ? engine.colorChip.colors : engine.colorMapChip.colors;
+            
+            var colorMapChip = engine.chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
+
+            colors = colorMapChip == null ? engine.colorChip.colors : colorMapChip.colors;
+            
             var spriteChip = engine.spriteChip;
             
             width = spriteChip.width * tilemapChip.columns;

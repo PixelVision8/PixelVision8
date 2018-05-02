@@ -84,16 +84,16 @@ namespace PixelVisionSDK
         ///     Access to the ColorMapChip.
         /// </summary>
         /// <tocexclude />
-        public ColorChip colorMapChip { //get; set; }
-            get
-            {
-                return chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
-            }
-            set
-            {
-                //
-            }
-        }
+//        public ColorChip colorMapChip { //get; set; }
+//            get
+//            {
+//                return chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
+//            }
+//            set
+//            {
+//                //
+//            }
+//        }
 
         /// <summary>
         ///     Access to the ControllerChip.

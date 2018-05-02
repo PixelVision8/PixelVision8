@@ -411,7 +411,7 @@ namespace PixelVisionRunner.Services
                 // Add the chip to the engine
                 targetEngine.chipManager.ActivateChip(ColorMapParser.chipName, colorMapChip, false);
                 
-                targetEngine.colorMapChip = colorMapChip;
+//                targetEngine.colorMapChip = colorMapChip;
                 
                 // Pass the chip to the new parser
                 return new ColorMapParser(tex, colorMapChip, maskColor);

@@ -14,7 +14,9 @@
 // Shawn Rakowski - @shwany
 
 using System;
+using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
+using PixelVisionSDK.Chips;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionRunner.Exporters
@@ -79,7 +81,9 @@ namespace PixelVisionRunner.Exporters
             
             SpriteChipUtil.FlipSpriteData(ref pixelData, width, height, false, true);
             
-            var colors = engine.colorMapChip == null ? engine.colorChip.colors : engine.colorMapChip.colors;
+            var colorMapChip = engine.chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
+
+            var colors = colorMapChip == null ? engine.colorChip.colors : colorMapChip.colors;
             
             exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, textureFactory);
             
