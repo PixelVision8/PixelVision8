@@ -74,7 +74,11 @@ namespace PixelVisionSDK.Chips
         {
             invalid = true;
         }
-
+        
+        /// <summary>
+        ///     This goes flags all tiles with a given sprite ID that it has changed and should be redrawn
+        /// </summary>
+        /// <param name="id"></param>
         public void InvalidateTileID(int id)
         {
             var tileLayer = layers[(int) Layer.Sprites];
@@ -88,37 +92,36 @@ namespace PixelVisionSDK.Chips
             Invalidate();
         }
 
-        public void ClearCache()
+        public void InvalidateAll()
         {
 //            cachedTileMap.Clear();
 
-            var invalidLayer = layers[(int) Layer.Invalid];
-
-            var total = invalidLayer.Length;
-            for (var i = 0; i < total; i++)
-                invalidLayer[i] = -1;
-
+            for (int i = 0; i < total; i++)
+            {
+                layers[(int) Layer.Invalid][i] = -1;
+            }
+            
             Invalidate();
         }
 
         public void ResetValidation()
         {
             invalid = false;
-            var invalidLayer = layers[(int) Layer.Invalid];
-            Array.Clear(invalidLayer, 0, total);
+            Array.Clear(layers[(int) Layer.Invalid], 0, total);
+
         }
 
         public void Invalidate(int index)
         {
             // Get the invalid layer
-            var layer = layers[(int) Layer.Invalid];
-
-            // Make sure the index is within range
-            if (index >= layer.Length || index < 0)
-                return;
+//            var layer = layers[(int) Layer.Invalid];
+//
+//            // Make sure the index is within range
+//            if (index >= layer.Length || index < 0)
+//                return;
 
             // change the tile flag to -1 so we know it needs to be redrawn
-            layer[index] = -1;
+            layers[(int) Layer.Invalid][index] = -1;
 
             // Tell the map there was a change
             Invalidate();
@@ -161,10 +164,17 @@ namespace PixelVisionSDK.Chips
 
         protected int ReadDataAt(int id, int column, int row)
         {
-            var index = column + row * columns;
+            
+            column = (int) (column - Math.Floor(column / (float) columns) * columns);
 
-            if (index >= layers[id].Length || index < 0)
-                return -1;
+            row = (int) (row - Math.Floor(row / (float) rows) * rows);
+            
+            var index = column + columns * row;
+            
+//            var index = column + row * columns;
+
+//            if (index >= layers[id].Length || index < 0)
+//                return -1;
             return layers[id][index];
             
         }
@@ -174,21 +184,41 @@ namespace PixelVisionSDK.Chips
             UpdateDataAt((int) name, column, row, value);
         }
 
+        private int index;
+        
         protected void UpdateDataAt(int id, int column, int row, int value)
         {
-            if (column >= columns)
-            {
-                int max = columns;
-                column = (int) (column - Math.Floor(column / (float) max) * max);
-            }
+            
+            // Wrap column
+            column = (int) (column - Math.Floor(column / (float) columns) * columns);
+            
+            // Wrap row
+            row = (int) (row - Math.Floor(row / (float) rows) * rows);
+            
+            // Calculate the index
+            index = column + columns * row;
+            
+//            column = (int) (column - Math.Floor(column / (float) columns) * columns);
+            
+//            if (column >= columns)
+//            {
+//                int max = columns;
+//                column = (int) (column - Math.Floor(column / (float) max) * max);
+//            }
 
-            var index = column + row * columns;
+//            var index = column + row * columns;
 
-            if (index > -1 && index < layers[id].Length)
+//            if (index > -1 && index < layers[id].Length)
+//            {
+            
+            // If the layer value is not equil to the new value, update it and invalidate it
+            if (layers[id][index] != value)
             {
                 layers[id][index] = value;
                 Invalidate(index);
             }
+                
+//            }
         }
 
         /// <summary>
@@ -292,7 +322,7 @@ namespace PixelVisionSDK.Chips
 
             UpdateDataAt(Layer.Colors, column, row, paletteID);
 
-            Invalidate(tmpIndex);
+            
         }
 
         /// <summary>

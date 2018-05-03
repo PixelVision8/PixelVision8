@@ -1663,7 +1663,7 @@ namespace PixelVisionSDK.Chips
 
             cachedTileMap.Clear();
             
-            tilemapChip.ClearCache();
+            tilemapChip.InvalidateAll();
         }
 
         /// <summary>
