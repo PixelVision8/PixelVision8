@@ -238,67 +238,81 @@ namespace PixelVisionSDK
                 center.x = tl.x + w / 2;
                 center.y = tl.y + h / 2;
                 radius = radius / 2;
+                w = w / 2;
+                h = h / 2;
+            }
+
+            if (y1 < y0)
+            {
+                w *= -1;
+                h *= -1;
             }
             
-//            SetStrokePixel(center.x, center.y);
-//            
-//            SetStrokePixel(tl.x, tl.y);
-
-            x0 = center.x;
-            y0 = center.y;
+            int xc = center.x;
+            int yc = center.y;
+            int rx = w;
+            int ry = h;
             
-            SetStrokePixel(tr.x, tr.y);
-            SetStrokePixel(br.x, br.y);
-            SetStrokePixel(bl.x, bl.y);
-
-            int d = (5 - radius * 4) / 4;
-            int x = 0;
-            int y = radius;
-
-            do
+            int x, y, p;
+            
+            x=0;
+            y=ry;
+            p=(ry*ry)-(rx*rx*ry)+((rx*rx)/4);
+            while((2*x*ry*ry)<(2*y*rx*rx))
             {
-                // 1 O'Clock
-                SetStrokePixel(x0 + x, y0 - y);
-//                 3 O'Clock
-                SetStrokePixel(x0 + y, y0 - x);
-                
-                // 4 O' Clock
-                SetStrokePixel(x0 + y, y0 + x);
-                
-                // 5 O'Clock
-                SetStrokePixel(x0 + x, y0 + y);
-                
-                // 7 O'Clock
-                SetStrokePixel(x0 - x, y0 + y);
-                
-                // 8 O'Clock
-                SetStrokePixel(x0 - y, y0 + x);
-                
-                // 10 O'Clock
-                SetStrokePixel(x0 - y, y0 - x);
-                
-                // 11 O'Clock
-                SetStrokePixel(x0 - x, y0 - y);
+                SetStrokePixel(xc+x,yc-y);
+                SetStrokePixel(xc-x,yc+y);
+                SetStrokePixel(xc+x,yc+y);
+                SetStrokePixel(xc-x,yc-y);
 
-                if (d < 0)
+                if(p<0)
                 {
-                    d += 2 * x + 1;
+                    x=x+1;
+                    p=p+(2*ry*ry*x)+(ry*ry);
                 }
                 else
                 {
-                    d += 2 * (x - y) + 1;
-                    y--;
+                    x=x+1;
+                    y=y-1;
+                    p=p+(2*ry*ry*x+ry*ry)-(2*rx*rx*y);
                 }
-                x++;
-            } while (x <= y);
+            }
+            p=(int) ((x+0.5)*(x+0.5)*ry*ry+(y-1)*(y-1)*rx*rx-rx*rx*ry*ry);
+
+            while(y>=0)
+            {
+                SetStrokePixel(xc+x,yc-y);
+                SetStrokePixel(xc-x,yc+y);
+                SetStrokePixel(xc+x,yc+y);
+                SetStrokePixel(xc-x,yc-y);
+
+                if(p>0)
+                {
+                    y=y-1;
+                    p=p-(2*rx*rx*y)+(rx*rx);
+
+                }
+                else
+                {
+                    y=y-1;
+                    x=x+1;
+                    p=p+(2*ry*ry*x)-(2*rx*rx*y)-(rx*rx);
+                }
+            }
             
             if (fill)
             {
-                if(radius > 4)
+
+                // TODO this needs to take into account the thickness of the border
+                if (Math.Abs(w) > stroke.width && Math.Abs(h) > stroke.height)
+                {
+                    // Fill the square
                     FloodFill(center.x, center.y);
+
+                }
             }
         }
-
+        
         /// <summary>
         /// 
         /// </summary>
