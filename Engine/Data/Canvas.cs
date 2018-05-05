@@ -238,6 +238,98 @@ namespace PixelVisionSDK
                 center.x = tl.x + w / 2;
                 center.y = tl.y + h / 2;
                 radius = radius / 2;
+            }
+            
+//            SetStrokePixel(center.x, center.y);
+//            
+//            SetStrokePixel(tl.x, tl.y);
+
+            x0 = center.x;
+            y0 = center.y;
+            
+            SetStrokePixel(tr.x, tr.y);
+            SetStrokePixel(br.x, br.y);
+            SetStrokePixel(bl.x, bl.y);
+
+            int d = (5 - radius * 4) / 4;
+            int x = 0;
+            int y = radius;
+
+            do
+            {
+                // 1 O'Clock
+                SetStrokePixel(x0 + x, y0 - y);
+//                 3 O'Clock
+                SetStrokePixel(x0 + y, y0 - x);
+                
+                // 4 O' Clock
+                SetStrokePixel(x0 + y, y0 + x);
+                
+                // 5 O'Clock
+                SetStrokePixel(x0 + x, y0 + y);
+                
+                // 7 O'Clock
+                SetStrokePixel(x0 - x, y0 + y);
+                
+                // 8 O'Clock
+                SetStrokePixel(x0 - y, y0 + x);
+                
+                // 10 O'Clock
+                SetStrokePixel(x0 - y, y0 - x);
+                
+                // 11 O'Clock
+                SetStrokePixel(x0 - x, y0 - y);
+
+                if (d < 0)
+                {
+                    d += 2 * x + 1;
+                }
+                else
+                {
+                    d += 2 * (x - y) + 1;
+                    y--;
+                }
+                x++;
+            } while (x <= y);
+            
+            if (fill)
+            {
+                if(radius > 4)
+                    FloodFill(center.x, center.y);
+            }
+        }
+        
+        public void DrawEllipse(int x0, int y0, int x1, int y1, bool fill = false)
+        {
+            
+            // Create a box to draw the circle inside of
+            
+            var w = x1 - x0;
+            var h = y1 - y0;
+
+            var tl = new Vector(x0, y0);
+            var tr = new Vector(x0 + w, y0);
+            var br = new Vector(x0 + w, y0 + h);
+            var bl = new Vector(x0, y0 + h);
+            
+            var center = new Vector();
+            var radius = (int)Math.Sqrt((w * w) + (h * h));
+            if (drawCentered)
+            {
+                tl.x -= w;
+                tl.y -= h;
+                tr.y -= h;
+                bl.x -= w;
+
+                center.x = tl.x + w;
+                center.y = tl.y + h;
+                
+            }
+            else
+            {
+                center.x = tl.x + w / 2;
+                center.y = tl.y + h / 2;
+                radius = radius / 2;
                 w = w / 2;
                 h = h / 2;
             }
