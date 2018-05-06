@@ -212,11 +212,11 @@ namespace PixelVisionSDK.Chips
 //            {
             
             // If the layer value is not equil to the new value, update it and invalidate it
-            if (layers[id][index] != value)
-            {
+//            if (layers[id][index] != value)
+//            {
                 layers[id][index] = value;
                 Invalidate(index);
-            }
+//            }
                 
 //            }
         }
