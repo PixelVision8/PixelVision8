@@ -224,6 +224,8 @@ namespace PixelVisionRunner.Exporters
             sb.Append("\"maskColor\":\"");
             sb.Append(colorChip.maskColor);
             sb.Append("\"");
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
             
             sb.Append("\"unique\":");
             sb.Append(colorChip.unique.ToString().ToLower());

@@ -110,18 +110,6 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     The default <see cref="transparent" /> color to be used in the
-        ///     engine.
-        /// </summary>
-        /// <value>String</value>
-//        public string transparent
-//        {
-//            get { return maskColor; }
-//
-//            set { maskColor = value; }
-//        }
-
-        /// <summary>
         ///     Get and Set the <see cref="supportedColors" /> number of <see cref="colors" />
         ///     in the palette. Changing the <see cref="supportedColors" /> will clear the
         ///     palette when it resizes.
@@ -227,6 +215,14 @@ namespace PixelVisionSDK.Chips
 
             if (ColorData.ValidateColor(color))
             {
+
+                if (unique)
+                {
+                    if (FindColorID(color) != -1)
+                    {
+                        return;
+                    }
+                }
                 _colors[index] = color;
                 invalidColors[index] = 1;
                 Invalidate();
@@ -244,7 +240,7 @@ namespace PixelVisionSDK.Chips
             get { return _debugMode; }
             set
             {
-                _debugMode = true;
+                _debugMode = value;
                 Invalidate();
             }
         }
