@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Linq;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
-using UnityEngine;
 
 namespace PixelVisionRunner.Parsers
 {
@@ -39,7 +38,7 @@ namespace PixelVisionRunner.Parsers
  
         public TilemapParser(ITexture2D tex, ITexture2D tileFlagTex, IEngineChips chips) : base(tex, chips)
         {
-            Debug.Log("Parse Tilemap");
+            //Debug.Log("Parse Tilemap");
             
             tilemapChip = chips.tilemapChip;
             this.tileFlagTex = tileFlagTex;
