@@ -244,7 +244,7 @@ namespace PixelVisionRunner.Exporters
             currentStep++;
         }
 
-        private void SerializeControllerChip(ControllerChip controllerChip)
+        private void SerializeControllerChip(IControllerChip controllerChip)
         {
             if (controllerChip.export == false)
                 return;

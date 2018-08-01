@@ -18,19 +18,30 @@ using PixelVisionSDK.Chips;
 namespace PixelVisionSDK
 {
 
-    public interface IControllerChip : IUpdate
+    public interface IControllerChip : IUpdate, IKeyInput, IMouseInput
     {
+        bool export { get; set; }
+        bool ButtonReleased(Buttons buttonID, int controllerID = 0);
+        bool ButtonDown(Buttons buttonID, int controllerID = 0);
 
-        int totalControllers { get; }
-        bool ButtonDown(int buttonID, int controller = 0);
-        bool ButtonReleased(int buttonID, int controller = 0);
-        bool MouseButtonDown(int id = 0);
-        bool MouseButtonUp(int id = 0);
-        bool GetMouseButton(int id = 0);
-        Vector MousePos();
-        int[] ReadControllerKeys(int controllerID = 0);
-        void UpdateControllerKey(int controllerID, Buttons buttons, int key);
-
+        void RegisterKeyInput(IKeyInput target);
+        void RegisterMouseInput(IMouseInput target);
+        void UpdateControllerKey(int controllerID, ButtonState state);
+        void RegisterControllers(IKeyInput[] createControllerInput);
     }
+//    public interface IControllerChip : IUpdate
+//    {
+//
+//        int totalControllers { get; }
+//        bool ButtonDown(int buttonID, int controller = 0);
+//        bool ButtonReleased(int buttonID, int controller = 0);
+//        bool MouseButtonDown(int id = 0);
+//        bool MouseButtonUp(int id = 0);
+//        bool GetMouseButton(int id = 0);
+//        Vector MousePos();
+//        int[] ReadControllerKeys(int controllerID = 0);
+//        void UpdateControllerKey(int controllerID, Buttons buttons, int key);
+//
+//    }
 
 }

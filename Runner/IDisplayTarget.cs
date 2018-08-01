@@ -17,7 +17,7 @@ namespace PixelVisionRunner
 {
     public interface IDisplayTarget
     {
-        void ResetResolution(int width, int height);
+        void ResetResolution(int width, int height, int overScanX = 0, int overScanY = 0);
         void Render();
         void CacheColors();
     }

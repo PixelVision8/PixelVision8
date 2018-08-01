@@ -22,7 +22,7 @@ using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
 {
-
+    
     /// <summary>
     ///     This is the default engine class for Pixel Vision 8. It manages the
     ///     state of all chips, the game itself and helps with communication between
@@ -99,7 +99,7 @@ namespace PixelVisionSDK
         ///     Access to the ControllerChip.
         /// </summary>
         /// <tocexclude />
-        public ControllerChip controllerChip { get; set; }
+        public IControllerChip controllerChip { get; set; }
 
         /// <summary>
         ///     Access to the DisplayChip.
@@ -193,11 +193,10 @@ namespace PixelVisionSDK
             chipManager.Init();
 //
             ConfigureInput();
-            
 
             if (displayTarget != null)
             {
-                displayTarget.ResetResolution(displayChip.width, displayChip.height);
+                displayTarget.ResetResolution(displayChip.width, displayChip.height, displayChip.overscanXPixels, displayChip.overscanYPixels);
             
                 displayTarget.CacheColors();  
             }
@@ -336,6 +335,7 @@ namespace PixelVisionSDK
 
             controllerChip.RegisterMouseInput(inputFactory.CreateMouseInput());
 
+            controllerChip.RegisterControllers(inputFactory.CreateControllerInput());
         }
 
     }

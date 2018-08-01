@@ -82,7 +82,7 @@ namespace PixelVisionSDK.Chips
             if (services.ContainsKey(id))
                 return services[id];
 
-            throw new ApplicationException("The requested service '" + id + "' is not registered");
+            throw new Exception("The requested service '" + id + "' is not registered");
         }
 
         /// <summary>

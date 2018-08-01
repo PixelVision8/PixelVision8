@@ -336,7 +336,7 @@ namespace PixelVisionRunner.Exporters
                 var layerEnum = (TilemapChip.Layer) Enum.Parse(typeof(TilemapChip.Layer), layerName);
                     
                 // Need to join the layer array and add 1 to the sprite ID since tiled isn't 
-                sb.Append(string.Join(",", Array.ConvertAll(tilemapChip.layers[(int)layerEnum], x => (x == -1 ? 0 : x + idOffset).ToString())));
+                sb.Append(string.Join(",", tilemapChip.layers[(int)layerEnum].Select(x => (x == -1 ? 0 : x + idOffset).ToString())));
                 
                 // tilesets end
                 JsonUtil.GetLineBreak(sb, 3);

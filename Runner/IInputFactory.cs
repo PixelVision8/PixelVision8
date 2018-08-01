@@ -23,5 +23,6 @@ namespace PixelVisionRunner
         ButtonState CreateButtonBinding(int playerIdx, Buttons button);
         IKeyInput CreateKeyInput();
         IMouseInput CreateMouseInput();
+        IKeyInput[] CreateControllerInput();
     }
 }

@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using PixelVisionRunner.Utils;
 using PixelVisionSDK;
@@ -91,8 +92,9 @@ namespace PixelVisionRunner.Exporters
                 var layerEnum = (TilemapChip.Layer) Enum.Parse(typeof(TilemapChip.Layer), layerName);
                     
                 // Need to join the layer array and add 1 to the sprite ID since tiled isn't 
-                sb.Append(string.Join(",", Array.ConvertAll(tilemapChip.layers[(int)layerEnum], x => (x == -1 ? 0 : x ).ToString())));
-                
+//                sb.Append(string.Join(",", Array.ConvertAll(tilemapChip.layers[(int)layerEnum], x => (x == -1 ? 0 : x ).ToString())));
+                sb.Append(string.Join(",", tilemapChip.layers[(int)layerEnum].Select(x => (x == -1 ? 0 : x)).ToString()));
+
                 // tilesets end
                 JsonUtil.GetLineBreak(sb, 1);
                 sb.Append("]");

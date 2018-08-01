@@ -179,7 +179,7 @@ namespace PixelVisionSDK.Chips
         #region Chip References
 
         protected ColorChip colorChip;
-        protected ControllerChip controllerChip;
+        protected IControllerChip controllerChip;
         protected DisplayChip displayChip;
         protected SoundChip soundChip;
         protected SpriteChip spriteChip;
@@ -2137,7 +2137,8 @@ namespace PixelVisionSDK.Chips
 
             var intArray = new int[bits.Length];
             
-            bits.CopyTo(intArray, 0);
+//            bits.CopyTo(intArray, 0);
+            ((ICollection)bits).CopyTo(intArray, 0);
 
             return intArray;
         }

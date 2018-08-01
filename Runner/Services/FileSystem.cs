@@ -20,7 +20,7 @@ using System.Linq;
 
 namespace PixelVisionRunner.Services
 {
-    public class FileSystemService : IFileSystem
+    public class FileSystemService : IWorkspace
     {
         public virtual void CreateDirectory(string path)
         {

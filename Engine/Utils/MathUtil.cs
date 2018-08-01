@@ -21,7 +21,7 @@ namespace PixelVisionSDK.Utils
     public static class MathUtil
     {
 
-        private static readonly Random random = new Random(DateTime.Now.Millisecond);
+        public static readonly Random random = new Random();
 
         /// <summary>
         /// </summary>

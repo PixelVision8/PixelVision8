@@ -13,10 +13,12 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
+using PixelVisionSDK.Chips;
+
 namespace PixelVisionSDK
 {
 
-    public interface IKeyInput
+    public interface IKeyInput : IUpdate
     {
 
         /// <summary>
@@ -61,7 +63,8 @@ namespace PixelVisionSDK
 //        [Obsolete]
 
         #endregion
-
+//
+//        void Update();
     }
 
 }

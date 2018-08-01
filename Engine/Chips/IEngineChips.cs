@@ -47,7 +47,7 @@ namespace PixelVisionSDK.Chips
         ///     The controller chip handles all input to the engine. This property
         ///     offers direct access to it.
         /// </summary>
-        ControllerChip controllerChip { get; set; }
+        IControllerChip controllerChip { get; set; }
 
         /// <summary>
         ///     The Display Chip handles all rendering for the engine. This property

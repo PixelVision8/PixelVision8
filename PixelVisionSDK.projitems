@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>482EE1AB-A778-4E5F-94F7-C5B05A57601E</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>PixelVisionSDK</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\AbstractChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\MusicChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\SoundChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\ChipManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Game\GameChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Game\IGameChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Graphics\ColorChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Graphics\DisplayChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Graphics\FontChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Graphics\SpriteChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Graphics\TilemapChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\IChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\IDraw.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\IEngineChips.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\ButtonState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\ControllerChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\ControllerInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\IButtonState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\IControllerChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\IKeyInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\IMouseInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\Keys.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\IUpdate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\AbstractData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Canvas.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\ColorData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\DrawRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\IInvalidate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\ISoundData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Pattern.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Rect.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\SongData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\TextureData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\TileData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\TrackData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Vector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\IEngine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\PixelVisionEngine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Services\AbstractService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Services\IService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Services\IServiceLocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Utils\MathUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Utils\SpriteChipUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\IAudioClip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\IAudioClipFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\IColor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\ITexture2D.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\ITextureFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\SpriteExportData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\AbstractExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\ColorPaletteExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\FlagColorExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\IAbstractExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\ImageExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\MetaDataExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\PixelDataExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SpriteBuilderExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SpriteExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SystemExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\TileColorOffsetExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\TilemapExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\TilemapFlagExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\TilemapJsonExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\IDisplayTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\IInputFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\AbstractParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ColorMapParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ColorParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\FlagColorParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\FontParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\IAbstractParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\JsonParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\MetaDataParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ScriptParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\SpriteParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\SystemParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TileColorOffsetJsonParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TilemapJsonParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TilemapParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Runner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\FileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\IWorkspace.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LoadService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SaveFlags.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\JsonUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\MiniJSON.cs" />
+  </ItemGroup>
+</Project>

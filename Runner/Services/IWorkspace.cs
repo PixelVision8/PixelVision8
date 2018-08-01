@@ -20,7 +20,7 @@ using System.IO;
 namespace PixelVisionRunner.Services
 {
 
-    public interface IFileSystem
+    public interface IWorkspace
     {
 
 //        string clipboard { get; set; }

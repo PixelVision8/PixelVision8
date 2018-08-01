@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 
@@ -49,7 +50,7 @@ namespace PixelVisionRunner.Parsers
 
 				var rawLayerData = data["data"] as List<object>;
 						
-				int[] dataValues = rawLayerData.ConvertAll(x => ((int) (long)x) < -1 ? -1 : ((int) (long)x)).ToArray();
+				int[] dataValues = rawLayerData.Select(x => ((int) (long)x) < -1 ? -1 : ((int) (long)x)).ToArray();
 						
 				if (tilemapChip.columns != columns || tilemapChip.rows != rows)
 				{

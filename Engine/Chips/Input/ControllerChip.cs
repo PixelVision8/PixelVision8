@@ -33,7 +33,7 @@ namespace PixelVisionSDK.Chips
 
     }
 
-    public class ControllerChip : AbstractChip, IUpdate, IKeyInput, IMouseInput
+    public class ControllerChip : AbstractChip, IControllerChip
     {
 
         protected ControllerInput[] controllers = new ControllerInput[2];
@@ -77,6 +77,11 @@ namespace PixelVisionSDK.Chips
 
             return keyInput.GetKeyUp(key);
         }
+//
+//        public void Update()
+//        {
+//            // Does nothing
+//        }
 
         public bool GetKeyDown(int key)
         {
@@ -125,8 +130,16 @@ namespace PixelVisionSDK.Chips
 
         public virtual void Update(float timeDelta)
         {
+            // At the beginning of the frame clear the key buffer
+            if (keyInput != null)
+            {
+                keyInput.Update(timeDelta);
+            }
+            
             foreach (var controllerInput in controllers)
                 controllerInput.Update(timeDelta);
+
+            
         }
 
         public void RegisterMouseInput(IMouseInput target)
@@ -146,6 +159,8 @@ namespace PixelVisionSDK.Chips
 
             return controllers[controllerID].GetKeyValue(buttonID);
         }
+
+        public bool export { get; set; }
 
         public bool ButtonReleased(Buttons buttonID, int controllerID = 0)
         {
@@ -199,6 +214,13 @@ namespace PixelVisionSDK.Chips
             return 0;
         }
 
+
+        private IKeyInput[] controllerInputs;
+        
+        public void RegisterControllers(IKeyInput[] createControllerInput)
+        {
+            controllerInputs = createControllerInput;
+        }
     }
 
 }
