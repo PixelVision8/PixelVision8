@@ -32,7 +32,7 @@ namespace PixelVisionSDK
     {
 
         protected string[] defaultChips;
-        protected IDisplayTarget displayTarget;
+        public IDisplayTarget displayTarget { get; }
         protected IInputFactory inputFactory;
         
         protected Dictionary<string, string> metaData = new Dictionary<string, string>

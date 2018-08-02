@@ -22,7 +22,7 @@ namespace PixelVisionSDK
     {
         bool export { get; set; }
         bool ButtonReleased(Buttons buttonID, int controllerID = 0);
-        bool ButtonDown(Buttons buttonID, int controllerID = 0);
+        bool ButtonDown(Buttons button, int controllerID = 0);
 
         void RegisterKeyInput(IKeyInput target);
         void RegisterMouseInput(IMouseInput target);

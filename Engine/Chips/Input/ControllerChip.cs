@@ -152,12 +152,12 @@ namespace PixelVisionSDK.Chips
             keyInput = target;
         }
 
-        public bool ButtonDown(Buttons buttonID, int controllerID = 0)
+        public bool ButtonDown(Buttons button, int controllerID = 0)
         {
             if (controllerID > controllers.Length)
                 return false;
 
-            return controllers[controllerID].GetKeyValue(buttonID);
+            return controllers[controllerID].GetKeyValue(button);
         }
 
         public bool export { get; set; }

@@ -13,6 +13,8 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
+using PixelVisionSDK;
+
 namespace PixelVisionRunner
 {
     public interface IDisplayTarget
@@ -20,5 +22,6 @@ namespace PixelVisionRunner
         void ResetResolution(int width, int height, int overScanX = 0, int overScanY = 0);
         void Render();
         void CacheColors();
+        void ConvertMousePosition(Vector pos);
     }
 }
