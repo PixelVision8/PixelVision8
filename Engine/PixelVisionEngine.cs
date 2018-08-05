@@ -35,6 +35,7 @@ namespace PixelVisionSDK
         public IDisplayTarget displayTarget { get; }
         protected IInputFactory inputFactory;
         
+            
         protected Dictionary<string, string> metaData = new Dictionary<string, string>
         {
             {"name", "untitled"}
@@ -50,7 +51,7 @@ namespace PixelVisionSDK
         /// <param name="name"></param>
         /// <tocexclude />
         public PixelVisionEngine(IDisplayTarget displayTarget, IInputFactory inputFactory, string[] chips = null,
-            string name = "Engine")
+            string name = "Engine", bool readOnly = true)
         {
             this.displayTarget = displayTarget;
             this.inputFactory = inputFactory;
@@ -60,6 +61,8 @@ namespace PixelVisionSDK
 
             this.name = name;
 
+            this.canWrite = readOnly;
+            
             Init();
         }
 
@@ -68,6 +71,8 @@ namespace PixelVisionSDK
         /// <tocexclude />
         public string name { get; set; }
 
+        public bool canWrite { get; set; }
+        
         /// <summary>
         ///     Access to the ChipManager.
         ///     <tocexclude />
