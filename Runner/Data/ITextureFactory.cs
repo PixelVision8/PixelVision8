@@ -13,11 +13,14 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
+using PixelVisionSDK;
+
 namespace PixelVisionRunner
 {
     public interface ITextureFactory
     {
         ITexture2D NewTexture2D(int width, int height);
         bool flip { get; set; }
+        IColor maskColor { get; set; }
     }
 }

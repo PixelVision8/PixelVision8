@@ -79,7 +79,8 @@ namespace PixelVisionRunner.Exporters
             
             spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
             
-            SpriteChipUtil.FlipSpriteData(ref pixelData, width, height, false, true);
+            if(textureFactory.flip)
+                SpriteChipUtil.FlipSpriteData(ref pixelData, width, height, false, true);
             
             var colorMapChip = engine.chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
 

@@ -54,10 +54,10 @@ namespace PixelVisionRunner.Exporters
             }
             
             // Serialize Controller
-            if (engine.controllerChip != null)
-            {
-                steps.Add(delegate { SerializeControllerChip(engine.controllerChip); });
-            }
+//            if (engine.controllerChip != null)
+//            {
+//                steps.Add(delegate { SerializeControllerChip(engine.controllerChip); });
+//            }
             
             // Serialize Font
             if (engine.fontChip != null)
