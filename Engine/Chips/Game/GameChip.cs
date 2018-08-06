@@ -18,6 +18,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework.Input;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
@@ -40,6 +41,19 @@ namespace PixelVisionSDK.Chips
         Down,
         Released
 
+    }
+    
+    public enum Buttons
+    {
+
+        Up,
+        Down,
+        Left,
+        Right,
+        A,
+        B,
+        Select,
+        Start
     }
 
     /// <summary>
