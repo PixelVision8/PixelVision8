@@ -13,7 +13,9 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
+using Microsoft.Xna.Framework.Input;
 using PixelVisionSDK.Chips;
+using Buttons = PixelVisionSDK.Chips.Buttons;
 
 namespace PixelVisionSDK
 {
@@ -27,8 +29,8 @@ namespace PixelVisionSDK
         string ReadInputString();
         bool GetMouseButtonUp(int button);
         bool GetMouseButtonDown(int button);
-        bool GetKeyUp(int key);
-        bool GetKeyDown(int key);
+        bool GetKeyUp(Keys key);
+        bool GetKeyDown(Keys key);
     }
 
 }

@@ -22,10 +22,10 @@ using System.Text;
 namespace MiniJSON
 {
 
-    public class ToJson : Attribute
-    {
-
-    }
+//    public class ToJson : Attribute
+//    {
+//
+//    }
 
 
     // Example usage:

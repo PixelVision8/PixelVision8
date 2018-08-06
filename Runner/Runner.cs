@@ -23,7 +23,7 @@ namespace PixelVisionRunner
     public class Runner
     {
         public IEngine activeEngine;
-        protected IWorkspace fileSystem;
+//        protected IWorkspace fileSystem;
         public LoadService loadService;
 
         public Runner(ITextureFactory textureFactory)

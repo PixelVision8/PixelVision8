@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\AbstractChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\IVolumeManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\MusicChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\SoundChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\ChipManager.cs" />
@@ -23,14 +24,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\IChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\IDraw.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\IEngineChips.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\ButtonState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\ControllerChip.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\ControllerInput.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\IButtonState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\IControllerChip.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\IKeyInput.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\IMouseInput.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\Keys.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\IUpdate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\AbstractData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Canvas.cs" />
@@ -73,7 +68,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\TilemapFlagExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\TilemapJsonExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\IDisplayTarget.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\IInputFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\AbstractParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ColorMapParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ColorParser.cs" />
@@ -89,8 +83,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TilemapJsonParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TilemapParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Runner.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\FileSystem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\IWorkspace.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LoadService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SaveFlags.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\JsonUtil.cs" />

@@ -1299,8 +1299,8 @@ namespace PixelVisionSDK.Chips
         public bool Key(Keys key, InputState state = InputState.Down)
         {
             return state == InputState.Released
-                ? controllerChip.GetKeyUp((int) key)
-                : controllerChip.GetKeyDown((int) key);
+                ? controllerChip.GetKeyUp(key)
+                : controllerChip.GetKeyDown(key);
         }
 
         /// <summary>

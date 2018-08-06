@@ -116,7 +116,7 @@ namespace PixelVisionRunner.Exporters
 
         protected virtual void ConvertTexture()
         {
-            texture2D.Apply();
+//            texture2D.Apply();
             bytes = texture2D.EncodeToPNG();
             currentStep++;
         }
