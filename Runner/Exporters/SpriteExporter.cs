@@ -90,10 +90,10 @@ namespace PixelVisionRunner.Exporters
             
         }
         
-        public int currentStep
-        {
-            get { return exporter.currentStep; }
-        }
+//        public int currentStep
+//        {
+//            get { return exporter.currentStep; }
+//        }
 
         public int totalSteps
         {
