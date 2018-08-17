@@ -68,16 +68,16 @@ namespace PixelVisionSDK.Chips
         protected Canvas cachedTileMap;
         public Dictionary<string, string> textFiles = new Dictionary<string, string>();
         
-        protected double frameCount;
-        protected double dt;
-        protected double updateRate = 4.0;  // 4 updates per sec
-
-//        private int i;
-        
-        public int fps
-        {
-            get; private set;
-        }
+//        protected double frameCount;
+//        protected double dt;
+//        protected double updateRate = 4.0;  // 4 updates per sec
+//
+////        private int i;
+//        
+//        public int fps
+//        {
+//            get; private set;
+//        }
 
         #region Debug
         
@@ -86,10 +86,10 @@ namespace PixelVisionSDK.Chips
         ///     accurate and should only be used as the best guest estimate into the real framerate of your game.
         /// </summary>
         /// <returns>Returns an int with the current FPS out of a maximum of 60.</returns>
-        public int ReadFPS()
-        {
-            return fps;
-        }
+//        public int ReadFPS()
+//        {
+//            return fps;
+//        }
         
         /// <summary>
         ///     Returns the total number of sprites on the display in the current frame. Call this at the end of the
@@ -224,15 +224,15 @@ namespace PixelVisionSDK.Chips
         
         public virtual void Update(float timeDelta)
         {
-            // Calculate framerate
-            frameCount++;
-            dt += timeDelta;
-            if (dt > 1.0 / updateRate)
-            {
-                fps = (int)(frameCount / dt);
-                frameCount = 0;
-                dt -= 1.0 / updateRate;
-            }
+//            // Calculate framerate
+//            frameCount++;
+//            dt += timeDelta;
+//            if (dt > 1.0 / updateRate)
+//            {
+//                fps = (int)(frameCount / dt);
+//                frameCount = 0;
+//                dt -= 1.0 / updateRate;
+//            }
             
             // Reset the current sprite count
             currentSprites = 0;
