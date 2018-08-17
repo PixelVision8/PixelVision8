@@ -205,6 +205,10 @@ namespace PixelVisionSDK
             return this.r.Equals(color.r) && this.g.Equals(color.g) && this.b.Equals(color.b) && this.a.Equals(color.a);
         }
 
+        public override string ToString()
+        {
+            return ToHex();
+        }
     }
 
 }

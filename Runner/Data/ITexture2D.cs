@@ -30,6 +30,7 @@ namespace PixelVisionRunner
         void SetPixels(IColor[] colorData);
         void LoadImage(byte[] data);
         byte[] EncodeToPNG();
+        void Clear(IColor fillColor = null);
 //        void LoadTextureData(TextureData textureData, ColorData[] colors, string transColor = "#ff00ff");
 //        void Apply();
 //        void FlipTexture();

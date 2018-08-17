@@ -68,6 +68,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\TilemapFlagExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\TilemapJsonExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\IDisplayTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\IRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\AbstractParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ColorMapParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ColorParser.cs" />
