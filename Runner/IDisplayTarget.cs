@@ -19,9 +19,9 @@ namespace PixelVisionRunner
 {
     public interface IDisplayTarget
     {
-        void ResetResolution(int width, int height, int overScanX = 0, int overScanY = 0);
-        void Render();
-        void CacheColors();
+        void ResetResolution(IEngine engine, int width, int height, int overScanX = 0, int overScanY = 0);
+        void Render(IEngine engine);
+        void CacheColors(IEngine engine);
         void ConvertMousePosition(Vector pos);
     }
 }

@@ -199,9 +199,9 @@ namespace PixelVisionSDK
 
             if (displayTarget != null)
             {
-                displayTarget.ResetResolution(displayChip.width, displayChip.height, displayChip.overscanXPixels, displayChip.overscanYPixels);
+                displayTarget.ResetResolution(this, displayChip.width, displayChip.height, displayChip.overscanXPixels, displayChip.overscanYPixels);
             
-                displayTarget.CacheColors();  
+                displayTarget.CacheColors(this);  
             }
             
             running = true;
@@ -237,7 +237,7 @@ namespace PixelVisionSDK
 
             if (displayTarget != null)
             {
-                displayTarget.Render();
+                displayTarget.Render(this);
             }
         }
 
