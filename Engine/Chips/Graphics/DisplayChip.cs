@@ -77,7 +77,8 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public void Draw()
         {
-
+            
+            // TODO need to add back in support for turning layers on and off
             // Sort draw requests by their draw mode
             DrawRequest[] sorted = drawRequests.OrderBy(c => c.layer).ToArray();
             
