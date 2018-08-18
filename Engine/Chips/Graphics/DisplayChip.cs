@@ -22,15 +22,15 @@ namespace PixelVisionSDK.Chips
 
     public class DisplayChip : AbstractChip, IDraw
     {
-        protected int _width = 256;
-        protected int _height = 240;
         public int overscanX { get; set; }
         public int overscanY { get; set; }
-        
-        protected List<DrawRequest> drawRequestPool = new List<DrawRequest>();
-        protected List<DrawRequest> drawRequests = new List<DrawRequest>();
         public int totalPixels;
         public int[] pixels = new int[0];
+        
+        protected int _width = 256;
+        protected int _height = 240;
+        protected List<DrawRequest> drawRequestPool = new List<DrawRequest>();
+        protected List<DrawRequest> drawRequests = new List<DrawRequest>();
         
         public int layers = 4;
 

@@ -32,7 +32,6 @@ namespace PixelVisionSDK
     {
 
         protected string[] defaultChips;
-        public IDisplayTarget displayTarget { get; }
         
             
         protected Dictionary<string, string> metaData = new Dictionary<string, string>
@@ -49,11 +48,8 @@ namespace PixelVisionSDK
         /// <param name="chips"></param>
         /// <param name="name"></param>
         /// <tocexclude />
-        public PixelVisionEngine(IDisplayTarget displayTarget, string[] chips = null,
-            string name = "Engine", bool readOnly = true)
+        public PixelVisionEngine(string[] chips = null, string name = "Engine", bool readOnly = true)
         {
-            this.displayTarget = displayTarget;
-            
             if (chips != null)
                 defaultChips = chips;
 
@@ -197,12 +193,12 @@ namespace PixelVisionSDK
 //
 //            ConfigureInput();
 
-            if (displayTarget != null)
-            {
-                displayTarget.ResetResolution(this, displayChip.width, displayChip.height, displayChip.overscanXPixels, displayChip.overscanYPixels);
-            
-                displayTarget.CacheColors(this);  
-            }
+//            if (displayTarget != null)
+//            {
+//                displayTarget.ResetResolution(this, displayChip.width, displayChip.height, displayChip.overscanXPixels, displayChip.overscanYPixels);
+//            
+//                displayTarget.CacheColors(this);  
+//            }
             
             running = true;
         }
@@ -235,10 +231,10 @@ namespace PixelVisionSDK
 
             chipManager.Draw();
 
-            if (displayTarget != null)
-            {
-                displayTarget.Render(this);
-            }
+//            if (displayTarget != null)
+//            {
+//                displayTarget.Render(this);
+//            }
         }
 
         /// <summary>

@@ -1367,7 +1367,7 @@ namespace PixelVisionSDK.Chips
         {
             var pos = controllerChip.ReadMousePosition();
             
-            engine.displayTarget.ConvertMousePosition(pos);
+//            engine.displayTarget.ConvertMousePosition(pos);
             
             return pos;
         }
