@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace PixelVisionSDK.Chips
@@ -270,20 +271,14 @@ namespace PixelVisionSDK.Chips
             }
             return false;
         }
-        private bool IsPressed(MouseState state, MouseInput input)
+        private bool IsPressed(MouseState state, int input)
         {
             switch (input)
             {
-                case MouseInput.LeftButton:
+                case 0:
                     return state.LeftButton == ButtonState.Pressed;
-                case MouseInput.MiddleButton:
-                    return state.MiddleButton == ButtonState.Pressed;
-                case MouseInput.RightButton:
+                case 1:
                     return state.RightButton == ButtonState.Pressed;
-                case MouseInput.Button1:
-                    return state.XButton1 == ButtonState.Pressed;
-                case MouseInput.Button2:
-                    return state.XButton2 == ButtonState.Pressed;
             }
             return false;
         }
@@ -893,20 +888,62 @@ namespace PixelVisionSDK.Chips
 
         public bool GetMouseButtonDown(int id = 0)
         {
-            return IsPressed(currentMouseState, (MouseInput)id) && IsPressed(previousMouseState, (MouseInput)id);
+            return IsPressed(currentMouseState, id) && IsPressed(previousMouseState, id);
         }
 
         public bool GetMouseButtonUp(int id = 0)
         {
 
-            return !IsPressed(currentMouseState, (MouseInput) id) && IsPressed(previousMouseState, (MouseInput) id);
+            return !IsPressed(currentMouseState, id) && IsPressed(previousMouseState, id);
 
         }
 
         public Vector ReadMousePosition()
         {
-            var pos = currentMouseState.Position;
+            var pos = PointToScreen(currentMouseState.Position);
             return new Vector(pos.X, pos.Y);
+        }
+        
+        
+//        public void ConvertMousePosition(Vector pos)
+//        {
+//           
+////            var state = InputStates.CurrMouseState;
+//            var newPoint = PointToScreen(new Point(pos.x, pos.y));
+//            pos.x = newPoint.X;
+//            pos.y = newPoint.Y;
+//            
+////            return new Vector(pos.X, pos.Y);
+//        }
+
+        private Matrix scaleMatrix = Matrix.CreateScale(1, 1, 1);
+        
+        public void MouseScale(float x, float y)
+        {
+            scaleMatrix = Matrix.CreateScale(x, y, 1.0f);
+        }
+        
+//        public Matrix GetScaleMatrix()
+//        {
+////            var scaleX = (float)GraphicsDeviceManager.DefaultBackBufferWidth / (engine.displayChip.width - engine.displayChip.overscanXPixels);
+////            var scaleY = (float)GraphicsDeviceManager.DefaultBackBufferHeight/ (engine.displayChip.height - engine.displayChip.overscanYPixels);
+//            return ;
+//        }
+
+        public Point PointToScreen(Point point)
+        {
+            return PointToScreen(point.X, point.Y);
+        }
+
+        public Point PointToScreen(int x, int y)
+        {
+            
+//            var viewport = GraphicsDevice.Viewport;
+            var vx = x;// - viewport.X;
+            var vy = y;// - viewport.Y;
+//            var scaleMatrix = GetScaleMatrix();
+            var invertedMatrix = Matrix.Invert(scaleMatrix);
+            return Vector2.Transform(new Vector2(vx, vy), invertedMatrix).ToPoint();
         }
         
 //        private IMouseInput mouseInput;
