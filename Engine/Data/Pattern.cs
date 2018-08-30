@@ -50,23 +50,21 @@ namespace PixelVisionSDK
         /// <returns></returns>
         public virtual int GetPixel(int x, int y)
         {
-            
+
             // Wrap x,y values so they don't go out of bounds
 //            x = x % width;
 //            y = y % height;
 //
 //            return pixels[x + width * y];
-            
-            x = (int) (x - Math.Floor(x / (float) width) * width);
 
-            y = (int) (y - Math.Floor(y / (float) height) * height);
-            
+            // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
+            x = ((x % width) + width) % width;
+            y = ((y % height) + height) % height;
+
             return pixels[x + width * y];
             
         }
 
-        private int index;
-        
         /// <summary>
         ///     This will set a single pixel. If x or y is out of bounds it will wrap.
         /// </summary>
@@ -77,12 +75,12 @@ namespace PixelVisionSDK
         {
 //            if (color == -1)
 //                return;
-            
-            x = (int) (x - Math.Floor(x / (float) width) * width);
 
-            y = (int) (y - Math.Floor(y / (float) height) * height);
+            // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
+            x = ((x % width) + width) % width;
+            y = ((y % height) + height) % height;
             
-            index = x + width * y;
+            var index = x + width * y;
             
             // TODO this should never be out of range
 //            if(index > -1 && index < pixels.Length)
@@ -206,7 +204,7 @@ namespace PixelVisionSDK
 
             for (i = 0; i < total; i++)
             {
-                pixel = pixels[i];
+                pixel = pixels == null ? 0 : pixels[i];
 
                 if (pixel == -1 && ignoreTransparent)
                 {

@@ -19,27 +19,42 @@ using PixelVisionSDK.Chips;
 namespace PixelVisionSDK
 {
 
-    public class DrawRequest
+    public struct DrawRequest
     {
 
-        protected int[] _pixelData = new int[0];
-        public int colorOffset = 0;
+        private int[] _pixelData;
+        public int colorOffset;
         public int height;
-        public int layer;
         public int width;
         public int x;
         public int y;
 
         private int totalPixels;
+
+        public bool isRectangle => totalPixels < 0;
         
         public int[] pixelData
         {
             get { return _pixelData; }
             set
             {
-                totalPixels = value.Length;
+                totalPixels = value?.Length ?? -1;
 
-                if (_pixelData.Length != totalPixels)
+                // If the DrawRequest is fresh and we're assigning it a new array, use it
+                // This should only occur in DisplayChip.NextDrawRequest
+                if (_pixelData == null)
+                {
+                    _pixelData = value;
+                    return;
+                }
+
+                // ... except we set it to null to draw a solid rectangle
+                if (value == null)
+                {
+                    return;
+                }
+
+                if (_pixelData.Length < totalPixels)
                     Array.Resize(ref _pixelData, totalPixels);
 
                 Array.Copy(value, _pixelData, totalPixels);

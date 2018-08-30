@@ -164,10 +164,10 @@ namespace PixelVisionSDK.Chips
 
         protected int ReadDataAt(int id, int column, int row)
         {
-            
-            column = (int) (column - Math.Floor(column / (float) columns) * columns);
 
-            row = (int) (row - Math.Floor(row / (float) rows) * rows);
+            // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
+            column = ((column % columns) + columns) % columns;
+            row = ((row % rows) + rows) % rows;
             
             var index = column + columns * row;
             
@@ -184,19 +184,15 @@ namespace PixelVisionSDK.Chips
             UpdateDataAt((int) name, column, row, value);
         }
 
-        private int index;
-        
         protected void UpdateDataAt(int id, int column, int row, int value)
         {
-            
-            // Wrap column
-            column = (int) (column - Math.Floor(column / (float) columns) * columns);
-            
-            // Wrap row
-            row = (int) (row - Math.Floor(row / (float) rows) * rows);
-            
+
+            // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
+            column = ((column % columns) + columns) % columns;
+            row = ((row % rows) + rows) % rows;
+
             // Calculate the index
-            index = column + columns * row;
+            var index = column + columns * row;
             
 //            column = (int) (column - Math.Floor(column / (float) columns) * columns);
             
