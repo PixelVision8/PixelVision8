@@ -214,16 +214,15 @@ namespace PixelVisionSDK.Chips
             return request;
         }
 
-        private int total;
-        private int srcX;
-        private int srcY;
-        private int colorID;
-        private int i;
-        private int index;
-        
         public void CopyDrawRequest(int[] pixelData, int x, int y, int width, int height, int colorOffset = 0)
         {
-            
+            int total;
+            int srcX;
+            int srcY;
+            int colorID;
+            int i;
+            int index;
+
             total = width * height;
 
             for (i = 0; i < total; i++)
@@ -237,12 +236,12 @@ namespace PixelVisionSDK.Chips
                         colorID += colorOffset;
                     
                     srcX = (i % width) + x;
-                    srcY = (i / width) + y; 
-                    
-                    // Make sure x & y are wrapped around the display
-                    srcX = (int) (srcX - Math.Floor(srcX / (float) _width) * _width);
+                    srcY = (i / width) + y;
 
-                    srcY = (int) (srcY - Math.Floor(srcY / (float) _height) * _height);
+                    // Make sure x & y are wrapped around the display
+                    // Note: + size and the second modulo operation are required to get values from - to +
+                    srcX = ((srcX % _width) + _width) % _width;
+                    srcY = ((srcY % _height) + _height) % _height;
                     
                     // Find the index
                     index = srcX + _width * srcY;
