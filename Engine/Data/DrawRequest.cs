@@ -19,13 +19,12 @@ using PixelVisionSDK.Chips;
 namespace PixelVisionSDK
 {
 
-    public class DrawRequest
+    public struct DrawRequest
     {
 
-        protected int[] _pixelData = new int[0];
-        public int colorOffset = 0;
+        private int[] _pixelData;
+        public int colorOffset;
         public int height;
-        public int layer;
         public int width;
         public int x;
         public int y;
@@ -39,7 +38,15 @@ namespace PixelVisionSDK
             {
                 totalPixels = value.Length;
 
-                if (_pixelData.Length != totalPixels)
+                // If the DrawRequest is fresh and we're assigning it a new array, use it
+                // This should only occur in DisplayChip.NextDrawRequest
+                if (_pixelData == null)
+                {
+                    _pixelData = value;
+                    return;
+                }
+
+                if (_pixelData.Length < totalPixels)
                     Array.Resize(ref _pixelData, totalPixels);
 
                 Array.Copy(value, _pixelData, totalPixels);

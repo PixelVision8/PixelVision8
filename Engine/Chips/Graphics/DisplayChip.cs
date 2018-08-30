@@ -29,10 +29,25 @@ namespace PixelVisionSDK.Chips
         
         protected int _width = 256;
         protected int _height = 240;
-        protected List<DrawRequest> drawRequestPool = new List<DrawRequest>();
-        protected List<DrawRequest> drawRequests = new List<DrawRequest>();
+        protected Stack<int[]> drawRequestPixelDataPool = new Stack<int[]>();
+        protected List<DrawRequest>[] drawRequestLayers = new List<DrawRequest>[0];
         
-        public int layers = 4;
+        public int layers
+        {
+            get { return drawRequestLayers.Length; }
+            set
+            {
+                Array.Resize(ref drawRequestLayers, value);
+                for (var i = value - 1; i > -1; i--)
+                {
+                    var requests = drawRequestLayers[i];
+                    if (requests == null)
+                        drawRequestLayers[i] = new List<DrawRequest>();
+                    else
+                        requests.Clear();
+                }
+            }
+        }
 
         public int overscanXPixels
         {
@@ -77,20 +92,20 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public void Draw()
         {
-            
-            // TODO need to add back in support for turning layers on and off
-            // Sort draw requests by their draw mode
-            DrawRequest[] sorted = drawRequests.OrderBy(c => c.layer).ToArray();
-            
             // Loop through all draw requests
-            var totalDR = sorted.Length;
-
-            for (var i = 0; i < totalDR; i++)
+            for (var layer = 0; layer < drawRequestLayers.Length; layer++)
             {
-                var draw = sorted[i];
-                
-                CopyDrawRequest(draw.pixelData, draw.x, draw.y, draw.width, draw.height, draw.colorOffset);
+                // TODO need to add back in support for turning layers on and off
 
+                var drawRequests = drawRequestLayers[layer];
+                var totalDR = drawRequests.Count;
+                for (var i = 0; i < totalDR; i++)
+                {
+                    var draw = drawRequests[i];
+
+                    CopyDrawRequest(draw.pixelData, draw.x, draw.y, draw.width, draw.height, draw.colorOffset);
+
+                }
             }
 
             // Reset Draw Requests after they have been processed
@@ -120,9 +135,8 @@ namespace PixelVisionSDK.Chips
                 draw.width = width;
                 draw.height = height;
                 draw.pixelData = pixelData;
-                draw.layer = layer;
                 draw.colorOffset = colorOffset;
-                drawRequests.Add(draw);
+                drawRequestLayers[layer].Add(draw);
         }
 
         /// <summary>
@@ -169,29 +183,32 @@ namespace PixelVisionSDK.Chips
 
         public void ResetDrawCalls()
         {
-            // Reset all draw requests and pools
-            while (drawRequests.Count > 0)
+            // Reset all draw requests
+            for (var layer = drawRequestLayers.Length - 1; layer > -1; layer--)
             {
-                var request = drawRequests[0];
+                var drawRequests = drawRequestLayers[layer];
 
-                drawRequests.Remove(request);
+                for (var i = drawRequests.Count - 1; i > -1; i--)
+                {
+                    var request = drawRequests[i];
+                    drawRequestPixelDataPool.Push(request.pixelData);
+                }
 
-                drawRequestPool.Add(request);
+                drawRequests.Clear();
             }
         }
 
         public DrawRequest NextDrawRequest()
         {
-            DrawRequest request;
+            var request = new DrawRequest();
 
-            if (drawRequestPool.Count > 0)
+            if (drawRequestPixelDataPool.Count > 0)
             {
-                request = drawRequestPool[0];
-                drawRequestPool.Remove(request);
+                request.pixelData = drawRequestPixelDataPool.Pop();
             }
             else
             {
-                request = new DrawRequest();
+                request.pixelData = new int[0];
             }
 
             return request;
