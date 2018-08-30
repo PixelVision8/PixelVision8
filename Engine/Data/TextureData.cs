@@ -66,8 +66,8 @@ namespace PixelVisionSDK
                 
             for (var i = 0; i < total; i++)
             {
-                if (ignoreTransparent && pixels[i] != transparentColor)
-                data[i] = pixels[i];
+                if (!ignoreTransparent || pixels[i] != transparentColor)
+                    data[i] = pixels[i];
             }
                 
         }
