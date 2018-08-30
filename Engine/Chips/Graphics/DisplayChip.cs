@@ -129,14 +129,26 @@ namespace PixelVisionSDK.Chips
         /// <param name="layerOrder"></param>
         public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, int layer = 0, int colorOffset = 0)
         {
-                draw = NextDrawRequest();
-                draw.x = x;
-                draw.y = y;
-                draw.width = width;
-                draw.height = height;
-                draw.pixelData = pixelData;
-                draw.colorOffset = colorOffset;
-                drawRequestLayers[layer].Add(draw);
+            if (layer >= layers)
+            {
+                // This can happen as the old system wasn't very strict.
+                // TODO: Handle "out of bounds" layer accesses properly!
+                var sizeOld = layers;
+                Array.Resize(ref drawRequestLayers, layer + 1);
+                for (var i = layers - 1; i >= sizeOld; i--)
+                {
+                    drawRequestLayers[i] = new List<DrawRequest>();
+                }
+            }
+
+            draw = NextDrawRequest();
+            draw.x = x;
+            draw.y = y;
+            draw.width = width;
+            draw.height = height;
+            draw.pixelData = pixelData;
+            draw.colorOffset = colorOffset;
+            drawRequestLayers[layer].Add(draw);
         }
 
         /// <summary>
