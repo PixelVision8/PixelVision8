@@ -30,10 +30,6 @@ namespace PixelVisionSDK
     public class TextureData : Pattern
     {
 
-//        protected int tmpTotal;
-        protected int tmpX;
-        protected int tmpY;
-
         /// <summary>
         ///     The constructor for a new TextureData class. It requires new
         ///     dimensions and an optional value for changing the wrap mode.
@@ -62,17 +58,23 @@ namespace PixelVisionSDK
             if (data.Length != total)
                 Array.Resize(ref data, total);
 
-            color = -1;
-                
-            for (var i = 0; i < total; i++)
+            int color;
+
+            if (!ignoreTransparent)
             {
-                if (!ignoreTransparent || pixels[i] != transparentColor)
-                    data[i] = pixels[i];
+                Array.Copy(pixels, data, total);
+            }
+            else
+            {
+                for (var i = 0; i < total; i++)
+                {
+                    color = pixels[i];
+                    if (color != transparentColor)
+                        data[i] = color;
+                }
             }
                 
         }
-
-        private int color;
         
         /// <summary>
         ///     Returns a set of pixel <paramref name="data" /> from a specific
@@ -102,6 +104,7 @@ namespace PixelVisionSDK
             if (data.Length != total)
                 Array.Resize(ref data, total);
 
+            int tmpX, tmpY;
             for (var i = 0; i < total; i++)
             {
                 //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
