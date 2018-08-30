@@ -103,7 +103,7 @@ namespace PixelVisionSDK.Chips
                 {
                     var draw = drawRequests[i];
 
-                    CopyDrawRequest(draw.pixelData, draw.x, draw.y, draw.width, draw.height, draw.colorOffset);
+                    CopyDrawRequest(draw.isRectangle ? null : draw.pixelData, draw.x, draw.y, draw.width, draw.height, draw.colorOffset);
 
                 }
             }
@@ -228,7 +228,7 @@ namespace PixelVisionSDK.Chips
             for (i = 0; i < total; i++)
             {
                 
-                colorID = pixelData[i];
+                colorID = pixelData == null ? 0 : pixelData[i];
 
                 if (colorID > -1)
                 {
@@ -239,7 +239,7 @@ namespace PixelVisionSDK.Chips
                     srcY = (i / width) + y;
 
                     // Make sure x & y are wrapped around the display
-                    // Note: + size and the second modulo operation are required to get values from - to +
+                    // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
                     srcX = ((srcX % _width) + _width) % _width;
                     srcY = ((srcY % _height) + _height) % _height;
                     

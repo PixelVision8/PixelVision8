@@ -1096,7 +1096,7 @@ namespace PixelVisionSDK.Chips
         public void DrawRect(int x, int y, int width, int height, int color = -1, DrawMode drawMode = DrawMode.Background)
         {
             // TODO is there a faster way to do this?
-            DrawPixels(new int[width * height], x, y, width, height, drawMode, false, false, color);
+            DrawPixels(null, x, y, width, height, drawMode, false, false, color);
         }
         
         /// <summary>
