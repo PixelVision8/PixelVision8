@@ -104,16 +104,34 @@ namespace PixelVisionSDK
             if (data.Length != total)
                 Array.Resize(ref data, total);
 
-            int tmpX, tmpY;
-            for (var i = 0; i < total; i++)
+            int srcY;
+            for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
             {
-                //PosUtil.CalculatePosition(i, blockWidth, out tmpX, out tmpY);
-                tmpX = i % blockWidth;
-                tmpY = i / blockWidth;
+                // Vertical wrapping is not an issue. Horizontal wrapping requires splitting the copy into two operations.
 
-                data[i] = GetPixel(tmpX + x, tmpY + y);
+                // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
+                int size = _height;
+                srcY = (((y + tmpY) % size) + size) % size;
+                size = _width;
+                int offsetStart = ((x % size) + size) % size;
+                int offsetEnd = offsetStart + blockWidth;
+                if (offsetEnd <= size)
+                {
+                    // Copy the entire line at once.
+                    Array.Copy(pixels, offsetStart + srcY * size, data, tmpY * blockWidth, blockWidth);
+                }
+                else
+                {
+                    // Copy the non-wrapping section and the wrapped section separately.
+                    int wrap = offsetEnd % size;
+                    Array.Copy(pixels, offsetStart + srcY * size, data, tmpY * blockWidth, blockWidth - wrap);
+                    Array.Copy(pixels, srcY * size, data, (blockWidth - wrap) + tmpY * blockWidth, wrap);
+                }
+
 
             }
+
+            /**/
         }
 
         
