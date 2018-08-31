@@ -105,7 +105,7 @@ namespace PixelVisionSDK
         /// <param name="y"></param>
         public void SetStrokePixel(int x, int y)
         {
-            canDraw = wrap || x >= 0 && x <= width - stroke.width && y >= 0 && y <= height - stroke.height;
+            canDraw = wrap || x >= 0 && x <= _width - stroke.width && y >= 0 && y <= _height - stroke.height;
 //            
             if(canDraw)
                 SetPixels(x, y, stroke.width, stroke.height, stroke.GetPixels());
@@ -495,7 +495,7 @@ namespace PixelVisionSDK
         public void FloodFill(int x, int y)
         {
 
-            if (x < 0 || y < 0 || x > width || y > height)
+            if (x < 0 || y < 0 || x > _width || y > _height)
                 return;
             
             // Get the color at the point where we are trying to fill and use that to match all the color inside the shape
@@ -516,7 +516,7 @@ namespace PixelVisionSDK
                 y1++;
                 bool spanLeft = false;
                 bool spanRight = false;
-                while (y1 < height && GetPixel(temp.x, y1) == targetColor)
+                while (y1 < _height && GetPixel(temp.x, y1) == targetColor)
                 {
                    
                     SetPixel(temp.x, y1, pattern.GetPixel(temp.x, y1));
@@ -530,12 +530,12 @@ namespace PixelVisionSDK
                     {
                         spanLeft = false;
                     }
-                    if (!spanRight && temp.x < width - 1 && GetPixel(temp.x + 1, y1) == targetColor)
+                    if (!spanRight && temp.x < _width - 1 && GetPixel(temp.x + 1, y1) == targetColor)
                     {
                         pixels.Push(new Vector(temp.x + 1, y1));
                         spanRight = true;
                     }
-                    else if (spanRight && temp.x < width - 1 && GetPixel(temp.x + 1, y1) != targetColor)
+                    else if (spanRight && temp.x < _width - 1 && GetPixel(temp.x + 1, y1) != targetColor)
                     {
                         spanRight = false;
                     } 

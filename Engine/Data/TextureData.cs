@@ -53,7 +53,7 @@ namespace PixelVisionSDK
         /// </param>
         public void CopyPixels(ref int[] data, bool ignoreTransparent = false, int transparentColor = -1)
         {
-            total = width * height;
+            total = _width * _height;
 
             if (data.Length != total)
                 Array.Resize(ref data, total);

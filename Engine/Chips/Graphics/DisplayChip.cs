@@ -252,11 +252,14 @@ namespace PixelVisionSDK.Chips
 
                     // Make sure x & y are wrapped around the display
                     // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                    srcX = ((srcX % _width) + _width) % _width;
-                    srcY = ((srcY % _height) + _height) % _height;
-                    
+                    int size = _height;
+                    srcY = ((srcY % size) + size) % size;
+                    size = _width;
+                    srcX = ((srcX % size) + size) % size;
+                    // size is still == _width from the previous operation - let's reuse the local
+
                     // Find the index
-                    index = srcX + _width * srcY;
+                    index = srcX + size * srcY;
                     
                     // Set the pixel
                     pixels[index] = colorID;

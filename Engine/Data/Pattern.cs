@@ -20,25 +20,30 @@ namespace PixelVisionSDK
     public class Pattern : AbstractData
     {
         public int[] pixels = new int[0];
-        private int i;
-        
+
+        // Those are accessed internally very often,
+        // and field accesses (ldfld, stfld) are much faster than
+        // property accesses (call / callvirt get_ / set_)
+        protected int _width;
+        protected int _height;
+
         /// <summary>
         ///     The <see cref="width" /> of the Pattern.
         /// </summary>
-        public int width { get; protected set; }
+        public int width => _width;
 
         /// <summary>
         ///     The <see cref="height" /> of the Pattern.
         /// </summary>
-        public int height { get; protected set; }
+        public int height => _height;
 
         
         public Pattern(int width = 1, int height = 1)
         {
-            this.width = width;
-            this.height = height;
+            this._width = width;
+            this._height = height;
             
-            Resize(this.width, this.height);
+            Resize(width, height);
             
         }
         
@@ -58,10 +63,13 @@ namespace PixelVisionSDK
 //            return pixels[x + width * y];
 
             // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-            x = ((x % width) + width) % width;
-            y = ((y % height) + height) % height;
+            int size = _height;
+            y = ((y % size) + size) % size;
+            size = _width;
+            x = ((x % size) + size) % size;
+            // size is still == _width from the previous operation - let's reuse the local
 
-            return pixels[x + width * y];
+            return pixels[x + size * y];
             
         }
 
@@ -77,10 +85,13 @@ namespace PixelVisionSDK
 //                return;
 
             // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-            x = ((x % width) + width) % width;
-            y = ((y % height) + height) % height;
-            
-            var index = x + width * y;
+            int size = _height;
+            y = ((y % size) + size) % size;
+            size = _width;
+            x = ((x % size) + size) % size;
+            // size is still == _width from the previous operation - let's reuse the local
+
+            var index = x + size * y;
             
             // TODO this should never be out of range
 //            if(index > -1 && index < pixels.Length)
@@ -136,7 +147,7 @@ namespace PixelVisionSDK
         {
             total = blockWidth * blockHeight;
 
-            for (i = 0; i < total; i++)
+            for (var i = 0; i < total; i++)
             {
                 SetPixel((i % blockWidth) + x, (i / blockWidth) + y, pixels[i]);                
             }
@@ -150,8 +161,8 @@ namespace PixelVisionSDK
         /// <param name="height"></param>
         public virtual void Resize(int width, int height)
         {
-            this.width = width;
-            this.height = height;
+            this._width = width;
+            this._height = height;
             
             Array.Resize(ref pixels, width * height);
             
@@ -202,7 +213,7 @@ namespace PixelVisionSDK
             total = blockWidth * blockHeight;
 //            int pixel;
 
-            for (i = 0; i < total; i++)
+            for (var i = 0; i < total; i++)
             {
                 pixel = pixels == null ? 0 : pixels[i];
 
