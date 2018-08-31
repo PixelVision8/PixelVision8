@@ -120,9 +120,31 @@ namespace PixelVisionSDK
         public void DrawLine(int x0, int y0, int x1, int y1)
         {
             var counter = 0;
-            
-            int dx = Math.Abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
-            int dy = Math.Abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+
+            int dx = x1 - x0;
+            int sx;
+            if (dx < 0)
+            {
+                dx = -dx;
+                sx = -1;
+            }
+            else
+            {
+                sx = 1;
+            }
+
+            int dy = y1 - y0;
+            int sy;
+            if (dy < 0)
+            {
+                dy = -dy;
+                sy = -1;
+            }
+            else
+            {
+                sy = 1;
+            }
+
             int err = (dx > dy ? dx : -dy) / 2, e2;
             for(;;) {
                 if (counter % linePattern.x == linePattern.y)
