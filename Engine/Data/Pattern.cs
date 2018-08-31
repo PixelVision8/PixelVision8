@@ -128,7 +128,7 @@ namespace PixelVisionSDK
         /// </param>
         public virtual void SetPixels(int[] pixels)
         {
-            total = Math.Min(pixels.Length, width * height);
+            total = Math.Min(pixels.Length, _width * _height);
             
             Array.Copy(pixels, this.pixels, total);
             

@@ -115,7 +115,7 @@ namespace PixelVisionRunner.Exporters
 
             }
             
-            exporter = new PixelDataExporter(fullFileName, canvas.GetPixels(), w, h, colors, textureFactory);
+            exporter = new PixelDataExporter(fullFileName, canvas.pixels, w, h, colors, textureFactory);
             
             exporter.CalculateSteps();
         }

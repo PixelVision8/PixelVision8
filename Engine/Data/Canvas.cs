@@ -94,7 +94,7 @@ namespace PixelVisionSDK
             if (gameChip == null)
                 return;
             
-            gameChip.DrawPixels(GetPixels(), x, y, width, height, drawMode);
+            gameChip.DrawPixels(pixels, x, y, _width, _height, drawMode);
         }
 
         private bool canDraw = false;
@@ -108,7 +108,7 @@ namespace PixelVisionSDK
             canDraw = wrap || x >= 0 && x <= _width - stroke.width && y >= 0 && y <= _height - stroke.height;
 //            
             if(canDraw)
-                SetPixels(x, y, stroke.width, stroke.height, stroke.GetPixels());
+                SetPixels(x, y, stroke.width, stroke.height, stroke.pixels);
         }
 
         /// <summary>
@@ -552,7 +552,7 @@ namespace PixelVisionSDK
         /// <param name="canvas"></param>
         public void Merge(Canvas canvas, int colorOffset = 0, bool ignoreTransparent = false)
         {
-            MergePixels(0, 0, canvas.width, canvas.height, canvas.GetPixels(), colorOffset, ignoreTransparent);
+            MergePixels(0, 0, canvas.width, canvas.height, canvas.pixels, colorOffset, ignoreTransparent);
         }
 
     }
