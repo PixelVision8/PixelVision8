@@ -64,7 +64,7 @@ namespace PixelVisionSDK.Utils
             bool flipV = false)
         {
             var total = pixelData.Length;
-            if (pixels.Length != total)
+            if (pixels.Length < total)
                 Array.Resize(ref pixels, total);
 
             Array.Copy(pixelData, pixels, total);

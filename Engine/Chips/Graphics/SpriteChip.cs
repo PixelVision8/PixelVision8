@@ -305,7 +305,7 @@ namespace PixelVisionSDK.Chips
             {
                 var size = width * height;
                 
-                if (pixelData.Length != size)
+                if (pixelData.Length < size)
                 {
                     Array.Resize(ref pixelData, size);
                 }

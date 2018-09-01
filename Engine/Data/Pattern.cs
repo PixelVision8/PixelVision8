@@ -111,7 +111,7 @@ namespace PixelVisionSDK
         public virtual int[] GetPixels()
         {
             tmpPixels = new int[pixels.Length];
-            
+
             Array.Copy(pixels, tmpPixels, pixels.Length);
             
             return tmpPixels;
@@ -129,9 +129,9 @@ namespace PixelVisionSDK
         public virtual void SetPixels(int[] pixels)
         {
             total = Math.Min(pixels.Length, _width * _height);
-            
+
             Array.Copy(pixels, this.pixels, total);
-            
+
             Invalidate();
         }
 
@@ -147,11 +147,39 @@ namespace PixelVisionSDK
         {
             total = blockWidth * blockHeight;
 
-            for (var i = 0; i < total; i++)
+            // Per-line copy, as there is no special per-pixel logic required.
+
+            // Vertical wrapping is not an issue. Horizontal wrapping requires splitting the copy into two operations.
+            // Keep important data in local variables.
+            int dstY;
+            int[] dst = this.pixels;
+            int width = _width;
+            int height = _height;
+            int offsetStart = ((x % width) + width) % width;
+            int offsetEnd = offsetStart + blockWidth;
+            if (offsetEnd <= width)
             {
-                SetPixel((i % blockWidth) + x, (i / blockWidth) + y, pixels[i]);                
+                // Copy each entire line at once.
+                for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
+                {
+                    // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
+                    dstY = (((y + tmpY) % height) + height) % height;
+                    Array.Copy(pixels, tmpY * blockWidth, dst, offsetStart + dstY * width, blockWidth);
+                }
             }
-            
+            else
+            {
+                // Copy each non-wrapping section and each wrapped section separately.
+                int wrap = offsetEnd % width;
+                for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
+                {
+                    // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
+                    dstY = (((y + tmpY) % height) + height) % height;
+                    Array.Copy(pixels, tmpY * blockWidth, dst, offsetStart + dstY * width, blockWidth - wrap);
+                    Array.Copy(pixels, (blockWidth - wrap) + tmpY * blockWidth, dst, dstY * width, wrap);
+                }
+            }
+
         }
         
         /// <summary>
@@ -189,8 +217,6 @@ namespace PixelVisionSDK
             Invalidate();
         }
 
-        private int pixel;
-        
         /// <summary>
         ///     This replaces all the pixels in a specific area of the TextureData.
         /// </summary>
@@ -211,25 +237,58 @@ namespace PixelVisionSDK
         public virtual void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels, int colorOffset = 0, bool ignoreTransparent = false)
         {
             total = blockWidth * blockHeight;
-//            int pixel;
 
-            for (var i = 0; i < total; i++)
+            if (!ignoreTransparent && colorOffset == 0)
             {
-                pixel = pixels == null ? 0 : pixels[i];
+                // Per-line copy, as there is no special per-pixel logic required.
 
-                if (pixel == -1 && ignoreTransparent)
+                // Vertical wrapping is not an issue. Horizontal wrapping requires splitting the copy into two operations.
+                // Keep important data in local variables.
+                int dstY;
+                int[] dst = this.pixels;
+                int width = _width;
+                int height = _height;
+                int offsetStart = ((x % width) + width) % width;
+                int offsetEnd = offsetStart + blockWidth;
+                if (offsetEnd <= width)
                 {
-
+                    // Copy each entire line at once.
+                    for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
+                    {
+                        // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
+                        dstY = (((y + tmpY) % height) + height) % height;
+                        Array.Copy(pixels, tmpY * blockWidth, dst, offsetStart + dstY * width, blockWidth);
+                    }
                 }
                 else
                 {
-                    if (colorOffset > 0 && pixel != -1)
-                        pixel += colorOffset;
-                
-                    SetPixel((i % blockWidth) + x, (i / blockWidth) + y, pixel);                
-
+                    // Copy each non-wrapping section and each wrapped section separately.
+                    int wrap = offsetEnd % width;
+                    for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
+                    {
+                        // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
+                        dstY = (((y + tmpY) % height) + height) % height;
+                        Array.Copy(pixels, tmpY * blockWidth, dst, offsetStart + dstY * width, blockWidth - wrap);
+                        Array.Copy(pixels, (blockWidth - wrap) + tmpY * blockWidth, dst, dstY * width, wrap);
+                    }
                 }
-                
+            }
+            else
+            {
+                // Per-pixel copy.
+                int pixel;
+                for (var i = 0; i < total; i++)
+                {
+                    pixel = pixels == null ? 0 : pixels[i];
+
+                    if (pixel != -1 || !ignoreTransparent)
+                    {
+                        if (colorOffset > 0 && pixel != -1)
+                            pixel += colorOffset;
+
+                        SetPixel((i % blockWidth) + x, (i / blockWidth) + y, pixel);
+                    }
+                }
             }
         }
         
