@@ -32,6 +32,8 @@ namespace PixelVisionSDK
         bool GetKeyUp(Keys key);
         bool GetKeyDown(Keys key);
         void MouseScale(float x, float y);
+        void RegisterKeyInput();
+        void RegisterControllers();
     }
 
 }

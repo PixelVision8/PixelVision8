@@ -1887,7 +1887,7 @@ namespace PixelVisionSDK.Chips
             
             
             // Set pixels on the tilemap cache
-            cachedTileMap.MergePixels(x, y, blockWidth, blockHeight, pixels, colorOffset, true);
+            cachedTileMap.MergePixels(x, y, blockWidth, blockHeight, pixels, colorOffset);
             
 //            Invalidate();
         }

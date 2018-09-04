@@ -234,54 +234,18 @@ namespace PixelVisionSDK
         /// </param>
         /// <param name="pixels">The pixel data to be used.</param>
         /// <param name="colorOffset"></param>
-        public virtual void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels, int colorOffset = 0, bool ignoreTransparent = false)
+        public virtual void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels,
+            int colorOffset = 0)
         {
             total = blockWidth * blockHeight;
 
-            if (!ignoreTransparent && colorOffset == 0)
-            {
-                // Per-line copy, as there is no special per-pixel logic required.
-
-                // Vertical wrapping is not an issue. Horizontal wrapping requires splitting the copy into two operations.
-                // Keep important data in local variables.
-                int dstY;
-                int[] dst = this.pixels;
-                int width = _width;
-                int height = _height;
-                int offsetStart = ((x % width) + width) % width;
-                int offsetEnd = offsetStart + blockWidth;
-                if (offsetEnd <= width)
-                {
-                    // Copy each entire line at once.
-                    for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
-                    {
-                        // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                        dstY = (((y + tmpY) % height) + height) % height;
-                        Array.Copy(pixels, tmpY * blockWidth, dst, offsetStart + dstY * width, blockWidth);
-                    }
-                }
-                else
-                {
-                    // Copy each non-wrapping section and each wrapped section separately.
-                    int wrap = offsetEnd % width;
-                    for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
-                    {
-                        // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                        dstY = (((y + tmpY) % height) + height) % height;
-                        Array.Copy(pixels, tmpY * blockWidth, dst, offsetStart + dstY * width, blockWidth - wrap);
-                        Array.Copy(pixels, (blockWidth - wrap) + tmpY * blockWidth, dst, dstY * width, wrap);
-                    }
-                }
-            }
-            else
-            {
                 // Per-pixel copy.
                 int pixel;
                 for (var i = 0; i < total; i++)
                 {
                     pixel = pixels == null ? 0 : pixels[i];
 
-                    if (pixel != -1 || !ignoreTransparent)
+                    if (pixel != -1)
                     {
                         if (colorOffset > 0 && pixel != -1)
                             pixel += colorOffset;
@@ -289,7 +253,7 @@ namespace PixelVisionSDK
                         SetPixel((i % blockWidth) + x, (i / blockWidth) + y, pixel);
                     }
                 }
-            }
+
         }
         
     }

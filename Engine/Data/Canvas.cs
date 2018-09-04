@@ -46,7 +46,7 @@ namespace PixelVisionSDK
 
             return drawCentered;
         }
-        
+
         public void SetStroke(int[] pixels, int width, int height)
         {
 //            var total = width * height;
@@ -216,7 +216,6 @@ namespace PixelVisionSDK
                 {
                     // Fill the square
                     FloodFill(center.x, center.y);
-
                 }
             }
 
@@ -440,22 +439,8 @@ namespace PixelVisionSDK
             if (gameChip == null)
                 return;
             
-            var pixelData = gameChip.Sprite(id);
-
-            if (colorOffset > 0)
-            {
-                var total = pixelData.Length;
-
-                for (int i = 0; i < total; i++)
-                {
-                    pixelData[i] = pixelData[i] + colorOffset;
-                }
-            }
+            MergePixels(x, y, spriteSize.x, spriteSize.y, gameChip.Sprite(id), colorOffset);
             
-            // Canvas is reversed, so flip the pixel data
-            SpriteChipUtil.FlipSpriteData(ref pixelData, spriteSize.x, spriteSize.y);
-            
-            SetPixels(x, y, spriteSize.x, spriteSize.y, pixelData);
         }
         
         /// <summary>
@@ -494,7 +479,7 @@ namespace PixelVisionSDK
         /// <param name="y"></param>
         public void FloodFill(int x, int y)
         {
-
+            
             if (x < 0 || y < 0 || x > _width || y > _height)
                 return;
             
@@ -518,12 +503,16 @@ namespace PixelVisionSDK
                 bool spanRight = false;
                 while (y1 < _height && GetPixel(temp.x, y1) == targetColor)
                 {
-                   
+
                     SetPixel(temp.x, y1, pattern.GetPixel(temp.x, y1));
  
                     if (!spanLeft && temp.x > 0 && GetPixel(temp.x - 1, y1) == targetColor)
                     {
-                        pixels.Push(new Vector(temp.x - 1, y1));
+                        if (GetPixel(temp.x - 1, y1) != pattern.GetPixel(temp.x, y1))
+                        {
+                            pixels.Push(new Vector(temp.x - 1, y1));
+                        }
+
                         spanLeft = true;
                     }
                     else if(spanLeft && temp.x - 1 == 0 && GetPixel(temp.x - 1, y1) != targetColor)
@@ -532,7 +521,11 @@ namespace PixelVisionSDK
                     }
                     if (!spanRight && temp.x < _width - 1 && GetPixel(temp.x + 1, y1) == targetColor)
                     {
-                        pixels.Push(new Vector(temp.x + 1, y1));
+                        
+                        if(GetPixel(temp.x + 1, y1) != pattern.GetPixel(temp.x, y1))
+                        {
+                            pixels.Push(new Vector(temp.x + 1, y1));
+                        }
                         spanRight = true;
                     }
                     else if (spanRight && temp.x < _width - 1 && GetPixel(temp.x + 1, y1) != targetColor)
@@ -546,13 +539,14 @@ namespace PixelVisionSDK
                     
         }
     
-        /// <summary>
+        
+    /// <summary>
         ///     Allows you to merge the pixel data of another canvas into this one without compleatly overwritting it.
         /// </summary>
         /// <param name="canvas"></param>
         public void Merge(Canvas canvas, int colorOffset = 0, bool ignoreTransparent = false)
         {
-            MergePixels(0, 0, canvas.width, canvas.height, canvas.pixels, colorOffset, ignoreTransparent);
+            MergePixels(0, 0, canvas.width, canvas.height, canvas.pixels, colorOffset);
         }
 
     }

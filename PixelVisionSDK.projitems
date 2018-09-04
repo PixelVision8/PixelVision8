@@ -33,6 +33,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\DrawRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\IInvalidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\ISoundData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Keys.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Pattern.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Rect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\SongData.cs" />

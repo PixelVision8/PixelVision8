@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,6 +17,41 @@ namespace PixelVisionSDK.Chips
         Button1,
         Button2,
         None,
+    }
+    
+    public enum InputMap  {
+        Player1UpKey,
+        Player1DownKey,
+        Player1RightKey,
+        Player1LeftKey,
+        Player1SelectKey,
+        Player1StartKey,
+        Player1AKey,
+        Player1BKey,
+        Player1UpButton,
+        Player1DownButton,
+        Player1RightButton,
+        Player1LeftButton,
+        Player1SelectButton,
+        Player1StartButton,
+        Player1AButton,
+        Player1BButton,
+        Player2UpKey,
+        Player2DownKey,
+        Player2RightKey,
+        Player2LeftKey,
+        Player2SelectKey,
+        Player2StartKey,
+        Player2AKey,
+        Player2BKey,
+        Player2UpButton,
+        Player2DownButton,
+        Player2RightButton,
+        Player2LeftButton,
+        Player2SelectButton,
+        Player2StartButton,
+        Player2AButton,
+        Player2BButton,
     }
 
     public class ControllerChip : AbstractChip, IControllerChip
@@ -64,8 +100,8 @@ namespace PixelVisionSDK.Chips
             currentMouseState = Mouse.GetState();
             previousMouseState = currentMouseState;
             
-            RegisterKeyInput();
-            RegisterControllers();
+//            RegisterKeyInput();
+//            RegisterControllers();
 //            FindNewGamepads();
         }
         
@@ -90,7 +126,7 @@ namespace PixelVisionSDK.Chips
             // Save the one and only (if available) mousestate 
             previousMouseState = currentMouseState;
             currentMouseState = Mouse.GetState();
-
+            
             for (int i = players.Count - 1; i >= 0; i--)
             {
                 var player = players[i];
@@ -117,7 +153,7 @@ namespace PixelVisionSDK.Chips
                     downSince = DateTime.Now;
                     repChar = key;
                 
-                    BuildInputStreang(key);
+                    BuildInputString(key);
 //                        KeyPressed(null, new KeyEventArgs(key), keyState);
 //                    }
                 }
@@ -134,7 +170,8 @@ namespace PixelVisionSDK.Chips
 //                    }
                 }
 
-                if (repChar != null && repChar == key && currentKeyboardState.IsKeyDown(key))
+                var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
+                if (repChar != null && repChar == key && currentKeyboardState.IsKeyDown(tmpKey))
                 {
                     DateTime now = DateTime.Now;
                     TimeSpan downFor = now.Subtract(downSince);
@@ -148,7 +185,7 @@ namespace PixelVisionSDK.Chips
 //                            if (KeyPressed != null)
 //                            {
                             lastRep = now;
-                            BuildInputStreang(key);
+                            BuildInputString(key);
 //                                KeyPressed(null, new KeyEventArgs(key), keyState);
 //                            }
                         }
@@ -163,9 +200,9 @@ namespace PixelVisionSDK.Chips
 //            base.Update(gameTime);
         }
 
-        private void BuildInputStreang(Keys key)
+        private void BuildInputString(Keys key)
         {
-            inputStringBuilder.Append(GetChar(key, currentKeyboardState.CapsLock, currentKeyboardState.NumLock, currentKeyboardState.IsKeyDown(Keys.LeftShift) || currentKeyboardState.IsKeyDown(Keys.RightShift)));
+            inputStringBuilder.Append(GetChar(key, currentKeyboardState.CapsLock, currentKeyboardState.NumLock, currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) || currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift)));
         }
         
         private Controller getPlayer(int index)
@@ -327,7 +364,9 @@ namespace PixelVisionSDK.Chips
 
         public bool JustPressed(Keys key)
         {
-            return currentKeyboardState.IsKeyDown(key) && !previousKeyboardState.IsKeyDown(key);
+            var tmpKey = (Microsoft.Xna.Framework.Input.Keys) ((int) key);
+
+            return currentKeyboardState.IsKeyDown(tmpKey) && !previousKeyboardState.IsKeyDown(tmpKey);
         }
 //        public bool JustPressed(MouseInput input)
 //        {
@@ -625,49 +664,49 @@ namespace PixelVisionSDK.Chips
             {
                 case Keys.Space:
                     return " ";
-                case Keys.OemTilde:
+                case Keys.Tilde:
                     return (shift) ? "~" : "`";
-                case Keys.D1:
+                case Keys.Alpha1:
                     return (shift) ? "!" : "1";
-                case Keys.D2:
+                case Keys.Alpha2:
                     return (shift) ? "@" : "2";
-                case Keys.D3:
+                case Keys.Alpha3:
                     return (shift) ? "#" : "3";
-                case Keys.D4:
+                case Keys.Alpha4:
                     return (shift) ? "$" : "4";
-                case Keys.D5:
+                case Keys.Alpha5:
                     return (shift) ? "%" : "5";
-                case Keys.D6:
+                case Keys.Alpha6:
                     return (shift) ? "^" : "6";
-                case Keys.D7:
+                case Keys.Alpha7:
                     return (shift) ? "&" : "7";
-                case Keys.D8:
+                case Keys.Alpha8:
                     return (shift) ? "*" : "8";
-                case Keys.D9:
+                case Keys.Alpha9:
                     return (shift) ? "(" : "9";
-                case Keys.D0:
+                case Keys.Alpha0:
                     return (shift) ? ")" : "0";
-                case Keys.OemMinus:
+                case Keys.Minus:
                     return (shift) ? "_" : "-";
-                case Keys.OemPlus:
+                case Keys.Plus:
                     return (shift) ? "+" : "=";
-                case Keys.OemOpenBrackets:
+                case Keys.OpenBrackets:
                     return (shift) ? "{" : "[";
-                case Keys.OemCloseBrackets:
+                case Keys.CloseBrackets:
                     return (shift) ? "}" : "]";
-                case Keys.OemSemicolon:
+                case Keys.Semicolon:
                     return (shift) ? ":" : ";";
-                case Keys.OemPipe:
+                case Keys.Pipe:
                     return (shift) ? "|" : "\\";
-                case Keys.OemQuotes:
+                case Keys.Quotes:
                     return (shift) ? "\"" : "'";
-                case Keys.OemBackslash:
+                case Keys.Backslash:
                     return (shift) ? "|" : "\\";
-                case Keys.OemComma:
+                case Keys.Comma:
                     return (shift) ? "<" : ",";
-                case Keys.OemPeriod:
+                case Keys.Period:
                     return (shift) ? ">" : ".";
-                case Keys.OemQuestion:
+                case Keys.Question:
                     return (shift) ? "?" : "/";
                 case Keys.NumPad0:
                     return (num) ? "0" : "";
@@ -874,12 +913,16 @@ namespace PixelVisionSDK.Chips
         
         public bool GetKeyDown(Keys key)
         {
-            return currentKeyboardState.IsKeyDown(key) && previousKeyboardState.IsKeyDown(key);
+            var tmpKey = (Microsoft.Xna.Framework.Input.Keys) ((int) key);
+
+            return currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey);
         }
 
         public bool GetKeyUp(Keys key)
         {
-            return !currentKeyboardState.IsKeyDown(key) && previousKeyboardState.IsKeyDown(key);
+            var tmpKey = (Microsoft.Xna.Framework.Input.Keys) ((int) key);
+
+            return !currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey);
         }
 
         #region Mouse APIs
@@ -975,8 +1018,10 @@ namespace PixelVisionSDK.Chips
             {
                 Keys key = player.KeyboardMap.TryGetValue(button, out key) ? key : default(Keys);
 
+                var tmpKey = (Microsoft.Xna.Framework.Input.Keys) ((int) key);
+
                 // Test the keyboard or the controller
-                value = (!currentKeyboardState.IsKeyDown(key) && previousKeyboardState.IsKeyDown(key)) || !IsPressed(player.CurrentState, button) && IsPressed(player.PreviousState, button);
+                value = (!currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey)) || !IsPressed(player.CurrentState, button) && IsPressed(player.PreviousState, button);
             }
             
             return value;
@@ -992,46 +1037,75 @@ namespace PixelVisionSDK.Chips
             {
                 Keys key = player.KeyboardMap.TryGetValue(button, out key) ? key : default(Keys);
 
+                var tmpKey = (Microsoft.Xna.Framework.Input.Keys) ((int) key);
+
                 // Test the keyboard or the controller
-                value = (currentKeyboardState.IsKeyDown(key) && previousKeyboardState.IsKeyDown(key)) || IsPressed(player.CurrentState, button) && IsPressed(player.PreviousState, button);
+                value = (currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey)) || IsPressed(player.CurrentState, button) && IsPressed(player.PreviousState, button);
             }
             
             return value;
         }
 
+        
         public void RegisterKeyInput()
         {
             currentKeyboardState = Keyboard.GetState();
             previousKeyboardState = currentKeyboardState;
             
             var player1 = getPlayer(0);
+
+            var test = engine.GetMetaData(InputMap.Player1UpKey.ToString() as string);
+            Console.WriteLine("Key test up - "+test + " - " + InputMap.Player1UpKey.ToString());
+            //(Keys) Enum.Parse(typeof(Keys), 
 //            player1.GamePadIndex = KEYBOARD_INDEX;
             player1.KeyboardMap = new Dictionary<Buttons, Keys>
             {
-                { Buttons.Up, Keys.Up },
-                { Buttons.Left, Keys.Left },
-                { Buttons.Right, Keys.Right },
-                { Buttons.Down, Keys.Down },
-                { Buttons.Start, Keys.A },
-                { Buttons.A, Keys.X},
-                { Buttons.B, Keys.C}
+                { Buttons.Up, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1UpKey.ToString()))},
+                { Buttons.Left, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1LeftKey.ToString())) },
+                { Buttons.Right, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1RightKey.ToString())) },
+                { Buttons.Down, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1DownKey.ToString())) },
+                { Buttons.Select, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1SelectKey.ToString())) },
+                { Buttons.Start, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1StartKey.ToString())) },
+                { Buttons.A, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1AKey.ToString())) },
+                { Buttons.B, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1BKey.ToString())) },
             };
             
             var player2 = getPlayer(1);
 //            player2.GamePadIndex = KEYBOARD_INDEX;
             player2.KeyboardMap = new Dictionary<Buttons, Keys>
             {
-                { Buttons.Up, Keys.I },
-                { Buttons.Left, Keys.J },
-                { Buttons.Right, Keys.L },
-                { Buttons.Down, Keys.K },
-                { Buttons.Start, Keys.OemSemicolon },
-                { Buttons.A, Keys.Enter},
-                { Buttons.B, Keys.RightShift}
+                { Buttons.Up, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2UpKey.ToString()))},
+                { Buttons.Left, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2LeftKey.ToString())) },
+                { Buttons.Right, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2RightKey.ToString())) },
+                { Buttons.Down, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2DownKey.ToString())) },
+                { Buttons.Select, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2SelectKey.ToString())) },
+                { Buttons.Start, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2StartKey.ToString())) },
+                { Buttons.A, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2AKey.ToString())) },
+                { Buttons.B, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2BKey.ToString())) },
             };
 
         }
 
+        public void InputMapping(string key, string value = null)
+        {
+            // TODO need to parse the type
+
+            // Remove player
+            key = key.Remove(0, "Player".Length);
+            
+            var player = key.Substring(0, "Player2".Length);
+            
+//            getPlayer(0).KeyboardMap
+
+        }
+
+        public override void Shutdown()
+        {
+            Console.WriteLine("Save keys");
+            
+            // TODO loop through all the keys and save them back to the bios
+            base.Shutdown();
+        }
 //        public void UpdateControllerKey(int controllerID, PixelVisionSDK.ButtonState state)
 //        {
 //            
