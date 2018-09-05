@@ -135,6 +135,7 @@ namespace PixelVisionSDK.Chips
         public Dictionary<string, string> savedData = new Dictionary<string, string>();
 
         private int[] tmpSpriteData = new int[0];
+        private int tmpSpriteDataID = -1;
         
         
         public int currentSprites { get; private set; }
@@ -536,14 +537,11 @@ namespace PixelVisionSDK.Chips
         /// </param>
         public void DrawPixels(int[] pixelData, int x, int y, int width, int height, DrawMode drawMode = DrawMode.Sprite, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
-            if (flipH || flipV)
-                SpriteChipUtil.FlipSpriteData(ref pixelData, width, height, flipH, flipV);
-
             switch (drawMode)
             {
                 case DrawMode.TilemapCache:
                     
-                    UpdateCachedTilemap(pixelData, x, y, width, height, colorOffset);
+                    UpdateCachedTilemap(pixelData, x, y, width, height, flipH, flipV, colorOffset);
 
                     break;
                     
@@ -552,7 +550,7 @@ namespace PixelVisionSDK.Chips
                     // Need to flip the y position to draw correctly
 //                    y = displayChip.height - height - y;
                     
-                    displayChip.NewDrawCall(pixelData, x, y, width, height, (int)drawMode, colorOffset);
+                    displayChip.NewDrawCall(pixelData, x, y, width, height, (int)drawMode, flipH, flipV, colorOffset);
 
                     break;
             }
@@ -634,7 +632,11 @@ namespace PixelVisionSDK.Chips
             }
             else if (drawMode == DrawMode.TilemapCache || drawMode == DrawMode.UI)
             {
-                spriteChip.ReadSpriteAt(id, tmpSpriteData);
+                if (id != tmpSpriteDataID)
+                {
+                    spriteChip.ReadSpriteAt(id, tmpSpriteData);
+                    tmpSpriteDataID = id;
+                }
                 
                 DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, drawMode, flipH, flipV, colorOffset);
             }
@@ -644,7 +646,11 @@ namespace PixelVisionSDK.Chips
                     return;
             
                 //TODO flipping H, V and colorOffset should all be passed into reading a sprite
-                spriteChip.ReadSpriteAt(id, tmpSpriteData);
+                if (id != tmpSpriteDataID)
+                {
+                    spriteChip.ReadSpriteAt(id, tmpSpriteData);
+                    tmpSpriteDataID = id;
+                }
 
                 DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, drawMode, flipH, flipV, colorOffset);
                 
@@ -1867,7 +1873,7 @@ namespace PixelVisionSDK.Chips
         }
         
         protected void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight,
-            int colorOffset = 0)
+            bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
             
             // Check to see if the tilemap cache is invalide before drawing to it
@@ -1887,7 +1893,7 @@ namespace PixelVisionSDK.Chips
             
             
             // Set pixels on the tilemap cache
-            cachedTileMap.MergePixels(x, y, blockWidth, blockHeight, pixels, colorOffset);
+            cachedTileMap.MergePixels(x, y, blockWidth, blockHeight, pixels, flipH, flipV, colorOffset);
             
 //            Invalidate();
         }

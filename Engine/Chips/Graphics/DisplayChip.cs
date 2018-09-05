@@ -103,7 +103,7 @@ namespace PixelVisionSDK.Chips
                 {
                     var draw = drawRequests[i];
 
-                    CopyDrawRequest(draw.isRectangle ? null : draw.pixelData, draw.x, draw.y, draw.width, draw.height, draw.colorOffset);
+                    CopyDrawRequest(draw.isRectangle ? null : draw.pixelData, draw.x, draw.y, draw.width, draw.height, draw.flipH, draw.flipV, draw.colorOffset);
 
                 }
             }
@@ -114,7 +114,7 @@ namespace PixelVisionSDK.Chips
         }
 
         private DrawRequest draw;
-        
+
         /// <summary>
         ///     Creates a new draw by copying the supplied pixel data over
         ///     to the Display's TextureData.
@@ -125,9 +125,17 @@ namespace PixelVisionSDK.Chips
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="layer"></param>
+        /// <param name="flipH">
+        ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips
+        ///     the pixel data horizontally.
+        /// </param>
+        /// <param name="flipV">
+        ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips
+        ///     the pixel data vertically.
+        /// </param>
         /// <param name="colorOffset"></param>
         /// <param name="layerOrder"></param>
-        public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, int layer = 0, int colorOffset = 0)
+        public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, int layer = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
             if (layer >= layers)
             {
@@ -147,6 +155,8 @@ namespace PixelVisionSDK.Chips
             draw.width = width;
             draw.height = height;
             draw.pixelData = pixelData;
+            draw.flipH = flipH;
+            draw.flipV = flipV;
             draw.colorOffset = colorOffset;
             drawRequestLayers[layer].Add(draw);
         }
@@ -226,7 +236,7 @@ namespace PixelVisionSDK.Chips
             return request;
         }
 
-        public void CopyDrawRequest(int[] pixelData, int x, int y, int width, int height, int colorOffset = 0)
+        public void CopyDrawRequest(int[] pixelData, int x, int y, int width, int height, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
             int total;
             int srcX;
@@ -239,16 +249,23 @@ namespace PixelVisionSDK.Chips
 
             for (i = 0; i < total; i++)
             {
-                
                 colorID = pixelData == null ? 0 : pixelData[i];
 
                 if (colorID > -1)
                 {
                     if (colorOffset > 0)
                         colorID += colorOffset;
-                    
-                    srcX = (i % width) + x;
-                    srcY = (i / width) + y;
+
+                    srcX = i % width;
+                    srcY = i / width;
+
+                    if (flipH)
+                        srcX = width - 1 - srcX;
+                    if (flipV)
+                        srcY = height - 1 - srcY;
+
+                    srcX += x;
+                    srcY += y;
 
                     // Make sure x & y are wrapped around the display
                     // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
@@ -263,8 +280,6 @@ namespace PixelVisionSDK.Chips
                     
                     // Set the pixel
                     pixels[index] = colorID;
-
-
                 }
                 
             }

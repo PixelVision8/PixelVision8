@@ -23,6 +23,8 @@ namespace PixelVisionSDK
     {
 
         private int[] _pixelData;
+        public bool flipH;
+        public bool flipV;
         public int colorOffset;
         public int height;
         public int width;

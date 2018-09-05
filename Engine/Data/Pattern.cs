@@ -209,7 +209,7 @@ namespace PixelVisionSDK
         {
             total = pixels.Length;
             
-            for (int i = 0; i < total; i++)
+            for (int i = total - 1; i > -1; i--)
             {
                 pixels[i] = colorRef;
             }
@@ -234,25 +234,65 @@ namespace PixelVisionSDK
         /// </param>
         /// <param name="pixels">The pixel data to be used.</param>
         /// <param name="colorOffset"></param>
-        public virtual void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels,
+        public void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels,
             int colorOffset = 0)
+        {
+            MergePixels(x, y, blockWidth, blockHeight, pixels, false, false, colorOffset);
+        }
+
+        /// <summary>
+        ///     This replaces all the pixels in a specific area of the TextureData.
+        /// </summary>
+        /// <param name="x">
+        ///     The x position to start at. 0 is the left of the texture.
+        /// </param>
+        /// <param name="y">
+        ///     The y position to start at. 0 is the top of the texture.
+        /// </param>
+        /// <param name="blockWidth">
+        ///     The <see cref="width" /> of the area to replace.
+        /// </param>
+        /// <param name="blockHeight">
+        ///     The <see cref="height" /> of the area to replace.
+        /// </param>
+        /// <param name="pixels">The pixel data to be used.</param>
+        /// <param name="flipH">
+        ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips
+        ///     the pixel data horizontally.
+        /// </param>
+        /// <param name="flipV">
+        ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips
+        ///     the pixel data vertically.
+        /// </param>
+        /// <param name="colorOffset"></param>
+        public virtual void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels,
+            bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
             total = blockWidth * blockHeight;
 
-                // Per-pixel copy.
-                int pixel;
-                for (var i = 0; i < total; i++)
+            // Per-pixel copy.
+            int pixel;
+            int srcX, srcY;
+            for (var i = total - 1; i > -1; i--)
+            {
+                pixel = pixels == null ? 0 : pixels[i];
+
+                if (pixel != -1)
                 {
-                    pixel = pixels == null ? 0 : pixels[i];
+                    if (colorOffset > 0 && pixel != -1)
+                        pixel += colorOffset;
 
-                    if (pixel != -1)
-                    {
-                        if (colorOffset > 0 && pixel != -1)
-                            pixel += colorOffset;
+                    srcX = i % blockWidth;
+                    srcY = i / blockWidth;
 
-                        SetPixel((i % blockWidth) + x, (i / blockWidth) + y, pixel);
-                    }
+                    if (flipH)
+                        srcX = blockWidth - 1 - srcX;
+                    if (flipV)
+                        srcY = blockWidth - 1 - srcY;
+
+                    SetPixel(srcX + x, srcY + y, pixel);
                 }
+            }
 
         }
         
