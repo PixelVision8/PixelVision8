@@ -139,6 +139,11 @@ namespace PixelVisionSDK.Chips
             
         }
 
+        public bool IsChannelPlaying(int channelID)
+        {
+            return channels[channelID] != null && channels[channelID].playing;
+        }
+
         /// <summary>
         ///     Returns a Sfxr Synth to be played back at run time by the SoundChip.
         /// </summary>

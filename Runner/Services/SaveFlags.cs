@@ -37,7 +37,8 @@ namespace PixelVisionRunner
         TilemapCache = 4096,
         SaveData = 8192,
         TileColorOffset = 16384,
-        FlagColors = 32768
+        FlagColors = 32768,
+//        SystemColors = 65536
 
     }
 

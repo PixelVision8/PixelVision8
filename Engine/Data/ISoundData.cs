@@ -26,6 +26,7 @@ namespace PixelVisionSDK
     {
 
         string name { get; set; }
+        bool playing { get;}
 
         /// <summary>
         ///     Plays the sound at a specific frequency.

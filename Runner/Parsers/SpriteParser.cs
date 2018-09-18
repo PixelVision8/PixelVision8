@@ -95,7 +95,14 @@ namespace PixelVisionRunner.Parsers
         {
             cps = spriteChip.colorsPerSprite;
             
-            var colorMapChip = chips.chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
+            var colorMapChip = chips.chipManager.GetChip(ColorPaletteParser.chipName, false) as ColorChip;
+            
+            // TODO This should be the only test once the colorMap is deprecated
+            if (colorMapChip == null)
+            {
+                colorMapChip = chips.chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
+            }
+            
             colorData = colorMapChip != null ? colorMapChip.colors : chips.colorChip.colors;
             maskColor = new ColorData(chips.colorChip.maskColor);
             maxSprites = SpriteChipUtil.CalculateTotalSprites(spriteChip.textureWidth, spriteChip.textureHeight, sWidth, sHeight);

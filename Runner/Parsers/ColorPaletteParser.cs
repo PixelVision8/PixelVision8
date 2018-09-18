@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) License. 
@@ -19,11 +19,11 @@ using PixelVisionSDK.Chips;
 namespace PixelVisionRunner.Parsers
 {
 
-    public class ColorMapParser : ColorParser
+    public class ColorPaletteParser : ColorParser
     {
-        public static string chipName = "PixelVisionSDK.Chips.ColorMapChip";
+        public static string chipName = "PixelVisionSDK.Chips.ColorPaletteChip";
 
-        public ColorMapParser(ITexture2D tex, ColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true) : base(tex, colorChip, magenta, unique, ignoreTransparent)
+        public ColorPaletteParser(ITexture2D tex, ColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true) : base(tex, colorChip, magenta, unique, ignoreTransparent)
         {
             
         }

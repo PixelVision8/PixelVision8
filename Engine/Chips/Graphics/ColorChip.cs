@@ -36,15 +36,15 @@ namespace PixelVisionSDK.Chips
             "#000000",
             "#FFFFFF",
         };
-
+        
         protected int _colorsPerPage = 64;
         protected int _pages = 4;
-//        protected string _transparent = "#FF00FF";
         protected ColorData[] colorCache;
         protected int[] invalidColors = new int[0];
-        protected Vector pageSize = new Vector(8, 8);
         protected int _maxColors = -1;
         protected int _bgColor = 0;
+        protected bool _paletteMode = false;
+        protected int _colorsPerPalette = -1;
         
         /// <summary>
         ///     The background color reference to use when rendering transparent in
@@ -95,7 +95,7 @@ namespace PixelVisionSDK.Chips
                     return;
                 
                 // The max number of colors are 512 (8 pages x 64 colors per page)
-                _pages = value.Clamp(1, 8);
+                _pages = value;//.Clamp(1, 8);
 
                 var oldTotal = _colors.Length;
 
@@ -116,7 +116,7 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         /// <value>Int</value>
         // TODO need to change this to totalSet colors or something more descriptive
-        public int supportedColors
+        public int totalUsedColors
         {
             get
             {
@@ -188,6 +188,96 @@ namespace PixelVisionSDK.Chips
             }
         }
 
+        #region Supported Color APIs
+
+        
+
+        
+        protected List<string> _supportedColors;
+
+        public int totalSupportedColors => _supportedColors.Count;
+        
+        public string[] supportedColors => _supportedColors.ToArray();
+
+        public bool AddSupportedColor(string color)
+        {
+            var success = false;
+            
+            color = color.ToUpper();
+            
+            if (ColorData.ValidateColor(color))
+            {
+
+                // Exit if the color is the same as the mask
+                if (color == maskColor)
+                    return false;
+                
+                // Create a new supported colors list if one doesn't exist
+                if(_supportedColors == null)
+                    _supportedColors = new List<string>();
+    
+                // Check to see if the color exits first
+                if (_supportedColors.IndexOf(color) == -1)
+                {
+                    
+                    // If the color is not part of the current list, add it
+                    success = true;
+                    _supportedColors.Add(color);
+                }
+            }
+
+            return success;
+        }
+
+        public bool RemoveSupportedColor(string color)
+        {
+
+            // Do nothing if there are no supported colors
+            if (_supportedColors == null)
+                return false;
+            
+            var success = false;
+            
+            color = color.ToUpper();
+            
+            if (ColorData.ValidateColor(color))
+            {
+                // Exit if the color is the same as the mask
+                if (color == maskColor)
+                    return false;
+                
+                success = _supportedColors.Remove(color);
+            }
+
+            return success;
+        }
+
+        public bool UpdateSupportedColorAt(int id, string color)
+        {
+            var success = false;
+            
+            if (id >= 0 || id > _supportedColors.Count)
+            {
+                
+                color = color.ToUpper();
+                
+                if (ColorData.ValidateColor(color))
+                {
+                    // Exit if the color is the same as the mask
+                    if (color == maskColor)
+                        return false;
+                    
+                    _supportedColors[id] = color;
+                    success = true;
+                }
+                
+            }
+            
+            return success;
+        }
+        
+        #endregion
+        
         public string ReadColorAt(int index)
         {
             return index < 0 || index > _colors.Length - 1 ? maskColor : _colors[index];
@@ -205,7 +295,7 @@ namespace PixelVisionSDK.Chips
                 UpdateColorAt(i, maskColor);
         }
 
-        public void UpdateColorAt(int index, string color)
+        public virtual void UpdateColorAt(int index, string color)
         {
             if (index >= _colors.Length || index < 0)
                 return;
@@ -215,7 +305,14 @@ namespace PixelVisionSDK.Chips
 
             if (ColorData.ValidateColor(color))
             {
-
+                // Check for supported colors
+                if (_supportedColors != null)
+                {
+                    // If the color is not in the supported colors list, exit
+                    if (_supportedColors.IndexOf(color) == -1 && color != maskColor)
+                        return;
+                }
+                
                 if (unique)
                 {
                     if (FindColorID(color) != -1)
@@ -258,18 +355,6 @@ namespace PixelVisionSDK.Chips
                 invalidColors[i] = value;
         }
 
-//        public void RecalculateSupportedColors()
-//        {
-//            var count = 0;
-//            var total = _colors.Length;
-//            for (var i = 0; i < total; i++)
-//                if (_colors[i] != maskColor)
-//                    count++;
-//
-//            supportedColors = count;
-//        }
-
-
         /// <summary>
         ///     This method configures the chip. It registers itself with the
         ///     engine as the default ColorChip, it sets the supported
@@ -304,6 +389,7 @@ namespace PixelVisionSDK.Chips
         {
             return (Regex.Match(inputColor, "^#(?:[0-9a-fA-F]{3}){1,2}$").Success);
         }
+        
 
     }
 

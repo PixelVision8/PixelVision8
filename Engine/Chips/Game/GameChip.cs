@@ -376,7 +376,8 @@ namespace PixelVisionSDK.Chips
         /// </returns>
         public int TotalColors(bool ignoreEmpty = false)
         {
-            return ignoreEmpty ? colorChip.supportedColors : colorChip.total;
+            // TODO this shouldn't use the supported colors
+            return ignoreEmpty ? colorChip.totalUsedColors : colorChip.total;
         }
 
         /// <summary>
@@ -1435,6 +1436,11 @@ namespace PixelVisionSDK.Chips
             soundChip.StopSound(channel);
         }
         
+        public bool IsChannelPlaying(int channel)
+        {
+            return soundChip.IsChannelPlaying(channel);
+        }
+        
         /// <summary>
         ///     This helper method allows you to automatically load a set of loops as a complete
         ///     song and plays them back. You can also define if the tracks should loop when they
@@ -2168,6 +2174,8 @@ namespace PixelVisionSDK.Chips
         }
         
         #endregion
+
+        
     }
 
 }

@@ -186,6 +186,8 @@ namespace PixelVisionRunner.Exporters
             if (colorChip.export == false)
                 return;
             
+            // TODO this needs to be moved into the chip so it can be correctly overriden
+            
             JsonUtil.GetLineBreak(sb);
             sb.Append("\"ColorChip\":");
 
@@ -206,10 +208,10 @@ namespace PixelVisionRunner.Exporters
             // Rebuild calculated colors value
 //            colorChip.RecalculateSupportedColors();
             
-            sb.Append("\"supportedColors\":");
-            sb.Append(colorChip.supportedColors);
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
+//            sb.Append("\"totalSupportedColors\":");
+//            sb.Append(colorChip.totalSupportedColors);
+//            sb.Append(",");
+//            JsonUtil.GetLineBreak(sb, 1);
             
             sb.Append("\"maxColors\":");
             sb.Append(colorChip.maxColors);

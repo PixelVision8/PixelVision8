@@ -45,14 +45,11 @@ namespace PixelVisionRunner.Parsers
 
         public override void CalculateSteps()
         {
-            
-            
             base.CalculateSteps();
             steps.Add(IndexColors);
             steps.Add(ReadColors);
             steps.Add(ResetColorChip);
             steps.Add(UpdateColors);
-//            steps.Add(RecalculateColors);
         }
 
 
@@ -115,14 +112,6 @@ namespace PixelVisionRunner.Parsers
 
             currentStep++;
         }
-
-//        public void RecalculateColors()
-//        {
-//            // Update supported colors based on what was imported
-//            colorChip.RecalculateSupportedColors();
-//
-//            currentStep++;
-//        }
 
     }
 
