@@ -1273,7 +1273,7 @@ namespace PixelVisionSDK.Chips
         /// <returns>
         ///     Returns string data associated with the supplied key.
         /// </returns>
-        public string ReadSaveData(string key, string defaultValue = "undefine")
+        public string ReadSaveData(string key, string defaultValue = "undefined")
         {
             if (!savedData.ContainsKey(key))
                 WriteSaveData(key, defaultValue);
