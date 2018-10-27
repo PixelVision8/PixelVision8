@@ -98,7 +98,7 @@ namespace PixelVisionSDK.Utils
 
             return tmpSB.ToString(); //string.Join(",", data.Select(x => x.ToString()).ToArray()));
         }
-
+        
     }
 
 }

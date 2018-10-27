@@ -83,20 +83,65 @@ namespace PixelVisionSDK
             spriteSize = gameChip.SpriteSize();
             
         }
-    
+        
+        int[] tmpPixelData = new int[0];
+        
         /// <summary>
         ///     Fast blit to the display through the draw request API
         /// </summary>
         /// <param name="drawMode"></param>
-        public void DrawPixels(int x = 0, int y = 0, DrawMode drawMode = DrawMode.TilemapCache)
+        public void DrawPixels(int x = 0, int y = 0, DrawMode drawMode = DrawMode.TilemapCache, int scale = 1)
         {
             // This only works when the canvas has a reference to the gameChip
             if (gameChip == null)
                 return;
             
-            gameChip.DrawPixels(pixels, x, y, _width, _height, drawMode);
-        }
+            // TODO need to rescale the pixel data if scale is larger than 1
+            if (scale != 1)
+            {
 
+                var oldSize = pixels.Length;
+    
+                var oldData = new int[oldSize];
+    
+                Array.Copy(pixels, oldData, oldSize);
+    
+                var newSpriteWidth = _width * scale;
+                var newSpriteHeight = _height * scale;
+    
+                var newSize = newSpriteWidth * newSpriteHeight;
+                
+                Array.Resize(ref tmpPixelData, newSize);
+
+                for (int i = 0; i < newSize; i++)
+                {
+                    
+                    int tmpX, tmpY, oldIndex;
+
+                    // Calculate the next x,y position
+                    tmpX = i % newSpriteWidth;
+                    tmpY = i / newSpriteWidth;
+    
+                    // Convert to the old index
+                    oldIndex = tmpX / scale + tmpY / scale * 8;
+
+                    // Copy over the pixel data
+                    tmpPixelData[i] = pixels[oldIndex];
+                }
+                
+                gameChip.DrawPixels(tmpPixelData, x, y, newSpriteWidth, newSpriteHeight, drawMode);
+
+            }
+            else
+            {
+                gameChip.DrawPixels(pixels, x, y, _width, _height, drawMode);
+            }
+            
+            
+            
+        }
+    
+        
         private bool canDraw = false;
         
         /// <summary>
@@ -442,6 +487,67 @@ namespace PixelVisionSDK
             MergePixels(x, y, spriteSize.x, spriteSize.y, gameChip.Sprite(id), colorOffset);
             
         }
+    
+        protected int[] tmpIDs = new int[0];
+        
+        public void DrawSprites(int[] ids, int x, int y, int width, int colorOffset = 0)
+        {
+            
+            var total = ids.Length;
+            
+            // TODO added this so C# code isn't corrupted, need to check performance impact
+            if(tmpIDs.Length != total)
+                Array.Resize(ref tmpIDs, total);
+
+            Array.Copy(ids, tmpIDs, total);
+            
+            var height = MathUtil.CeilToInt(total / width);
+
+            var startX = x;
+            var startY = y;
+
+            var paddingW = spriteSize.x;
+            var paddingH = spriteSize.y;
+
+//            if (drawMode == DrawMode.Tile)
+//            {
+//                paddingW = 1;
+//                paddingH = 1;
+//            }
+//            startY = displayChip.height - height - startY;
+            
+//            if (flipH || flipV)
+//                SpriteChipUtil.FlipSpriteData(ref tmpIDs, width, height, flipH, flipV);
+
+            // Store the sprite id from the ids array
+//            int id;
+//            bool render;
+
+            // TODO need to offset the bounds based on the scroll position before testing against it
+
+            for (var i = 0; i < total; i++)
+            {
+                // Set the sprite id
+                var id = tmpIDs[i];
+
+                // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
+                // Test to see if the sprite is within range
+                if (id > -1)
+                {
+                    x = (MathUtil.FloorToInt(i % width) * paddingW) + startX;
+                    y = (MathUtil.FloorToInt(i / width) * paddingH) + startY;
+//
+//                    var render = true;
+                    
+                    // Check to see if we need to test the bounds
+                    
+                        DrawSprite(id, x, y, colorOffset);
+                }
+            }
+            
+            
+            
+        }
         
         /// <summary>
         /// 
@@ -547,6 +653,21 @@ namespace PixelVisionSDK
         public void Merge(Canvas canvas, int colorOffset = 0, bool ignoreTransparent = false)
         {
             MergePixels(0, 0, canvas.width, canvas.height, canvas.pixels, colorOffset);
+        }
+
+        public int ReadPixelAt(int x, int y)
+        {
+            
+            // Calculate the index
+            var index = x + y * _width;
+
+            if (index > pixels.Length)
+            {
+                return -1;
+            }
+
+            return pixels[index];
+
         }
 
     }
