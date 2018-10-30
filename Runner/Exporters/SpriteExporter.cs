@@ -44,7 +44,7 @@ namespace PixelVisionRunner.Exporters
         {
             var spriteChip = engine.spriteChip;
 
-            var totalSprite = spriteChip.totalSprites - 1;
+            var totalSprites = spriteChip.totalSprites;
             
             var width = spriteChip.textureWidth;
             var height = spriteChip.textureHeight;
@@ -54,9 +54,11 @@ namespace PixelVisionRunner.Exporters
             var emptyCount = 0;
             var tmpData = new int[sWidth * sHeight];
             var cols = (int)Math.Floor((float) width / sWidth);
-            
-            for (int i = totalSprite; i > -1; i--)
+            var rows = 1;
+
+            for (int i = 0; i < totalSprites; i++)
             {
+                
                 spriteChip.ReadSpriteAt(i, tmpData);
                 
                 if (spriteChip.IsEmpty(tmpData))
@@ -66,11 +68,15 @@ namespace PixelVisionRunner.Exporters
                 
                 if (i % cols == 0)
                 {
-                    if (emptyCount == cols)
+                    
+                    if (emptyCount < cols)
                     {
-                        height -= sHeight;
+                        // If we find a sprite in a row we need to reset the height since sprites can be on any row
+                        height = rows * sHeight;
                     }
-
+                    
+                    rows++;
+                    
                     emptyCount = 0;
                 }
             }

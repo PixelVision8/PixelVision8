@@ -33,7 +33,7 @@ namespace PixelVisionRunner
         Meta = 256,
         Music = 512,
         Sounds = 1024,
-        SpriteCache = 2048,
+//        SpriteCache = 2048,
         TilemapCache = 4096,
         SaveData = 8192,
         TileColorOffset = 16384,

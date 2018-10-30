@@ -387,6 +387,8 @@ namespace PixelVisionRunner.Services
         {
             // TODO need to tell if the cache should be ignore, important when in tools
             var srcFile = "sprites.png";
+            
+            // TODO this in here to support legacy games but can be removed in future releases
             var cacheFile = "sprites.cache.png";
 
             string fileName = null;
