@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 
 using PixelVisionSDK;
+using PixelVisionSDK.Utils;
 
 namespace PixelVisionRunner.Parsers
 {
@@ -214,7 +215,7 @@ namespace PixelVisionRunner.Parsers
 
                 var total = songData.Count;
 
-                musicChip.totalLoops = total;
+//                musicChip.totalLoops = total;
 
                 for (var i = 0; i < total; i++)
                 {
@@ -231,9 +232,11 @@ namespace PixelVisionRunner.Parsers
                     if (sngData.ContainsKey("tracks"))
                     {
                         var tracksData = (List<object>) sngData["tracks"];
-                        song.totalTracks = tracksData.Count;
+//                        song.totalTracks = tracksData.Count;
 
-                        for (var j = 0; j < song.totalTracks; j++)
+                        var trackCount = tracksData.Count.Clamp(0, song.totalTracks);
+                        
+                        for (var j = 0; j < trackCount; j++)
                         {
                             var trackData = tracksData[j] as Dictionary<string, object>;
                             
@@ -285,15 +288,15 @@ namespace PixelVisionRunner.Parsers
 
             if (data.ContainsKey("totalSounds"))
                 soundChip.totalSounds = (int) (long) data["totalSounds"];
-
+            
+            
             // Disabled this for now as I break out into individual files
             if (data.ContainsKey("sounds"))
             {
                 var sounds = (List<object>) data["sounds"];
 
-                var total = sounds.Count;
-
-                soundChip.totalSounds = total;
+                var total = sounds.Count.Clamp(0, soundChip.totalSounds);
+                
                 for (var i = 0; i < total; i++)
                 {
                     var soundData = soundChip.ReadSound(i);

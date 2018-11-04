@@ -54,7 +54,6 @@ namespace PixelVisionRunner.Parsers
 
         }
 
-
         protected virtual void CalculateBounds()
         {
             width = MathUtil.CeilToInt(tex.width / sWidth);

@@ -1055,7 +1055,7 @@ namespace PixelVisionSDK.Chips
             var player1 = getPlayer(0);
 
             var test = engine.GetMetaData(InputMap.Player1UpKey.ToString() as string);
-            Console.WriteLine("Key test up - "+test + " - " + InputMap.Player1UpKey.ToString());
+//            Console.WriteLine("Key test up - "+test + " - " + InputMap.Player1UpKey.ToString());
             //(Keys) Enum.Parse(typeof(Keys), 
 //            player1.GamePadIndex = KEYBOARD_INDEX;
             player1.KeyboardMap = new Dictionary<Buttons, Keys>
@@ -1101,7 +1101,7 @@ namespace PixelVisionSDK.Chips
 
         public override void Shutdown()
         {
-            Console.WriteLine("Save keys");
+//            Console.WriteLine("Save keys");
             
             // TODO loop through all the keys and save them back to the bios
             base.Shutdown();

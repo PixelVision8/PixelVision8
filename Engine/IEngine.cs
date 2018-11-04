@@ -33,7 +33,7 @@ namespace PixelVisionSDK
         bool running { get; }
 
         string name { get; set; }
-        bool canWrite { get; set; }
+//        bool canWrite { get; set; }
 
         /// <summary>
         ///     This method loads a <paramref name="game" /> into memory

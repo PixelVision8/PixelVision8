@@ -34,11 +34,12 @@ namespace PixelVisionRunner
         Music = 512,
         Sounds = 1024,
 //        SpriteCache = 2048,
-        TilemapCache = 4096,
-        SaveData = 8192,
-        TileColorOffset = 16384,
-        FlagColors = 32768,
-//        SystemColors = 65536
+        TilemapCache = 2048,
+        SaveData = 4096,
+        TileColorOffset = 8192,
+        FlagColors = 16384,
+//        SystemColors = 32768
+        //65536
 
     }
 

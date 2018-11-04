@@ -1914,6 +1914,21 @@ namespace PixelVisionSDK.Chips
             cachedTileMap.CopyPixels(ref pixelData, offsetX, offsetY, width, height);
         }
 
+        private int[] tilemapCachePixels; 
+        
+        public void SaveTilemapCache()
+        {
+            tilemapCachePixels = cachedTileMap.GetPixels();
+        }
+
+        public void RestoreTilemapCache()
+        {
+            if (tilemapCachePixels == null)
+                return;
+            
+            cachedTileMap.SetPixels(tilemapCachePixels);
+        }
+
         #endregion
         
         #region Geometry
