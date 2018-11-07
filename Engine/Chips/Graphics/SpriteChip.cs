@@ -388,5 +388,6 @@ namespace PixelVisionSDK.Chips
             
             return Array.IndexOf(cache, sprite);
         }
+        
     }
 }
