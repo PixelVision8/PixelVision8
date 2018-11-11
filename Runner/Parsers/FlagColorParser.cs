@@ -56,15 +56,24 @@ namespace PixelVisionRunner.Parsers
         private ColorChip flagColorChip;
         
         private ITexture2D flagTex;
+        protected ITextureFactory textureFactory;
+        protected byte[] bytes;
         
-        public FlagColorParser(ITexture2D tex, IEngineChips chips)
+        public FlagColorParser(ITextureFactory textureFactory, byte[] bytes, IEngineChips chips)
         {
+            this.textureFactory = textureFactory;
+            
             flagColorChip = new ColorChip();
             
             chips.chipManager.ActivateChip(flagColorChipName, flagColorChip, false);
             
             maskColor = new ColorData(chips.colorChip.maskColor);
-            flagTex = tex;
+
+            if (bytes != null)
+            {
+                flagTex = this.textureFactory.NewTexture2D(1, 1);
+                flagTex.LoadImage(bytes);
+            }
             
         }
 

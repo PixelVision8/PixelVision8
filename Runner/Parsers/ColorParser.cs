@@ -26,17 +26,22 @@ namespace PixelVisionRunner.Parsers
         
         protected ColorChip colorChip;
         protected readonly List<IColor> colors = new List<IColor>();
-        protected readonly ITexture2D tex;
+        protected ITexture2D tex;
         protected readonly bool unique;
         protected IColor tmpColor;
         protected int totalColors;
         protected int totalPixels;
         protected int x, y, width;
         protected IColor magenta;
+
+        protected ITextureFactory textureFactory;
+        protected byte[] data;
         
-        public ColorParser(ITexture2D tex, ColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true)
+        public ColorParser(ITextureFactory textureFactory, byte[] data, ColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true)
         {
-            this.tex = tex;
+            this.textureFactory = textureFactory;
+            this.data = data;
+            
             this.colorChip = colorChip;
             this.unique = unique;
             this.magenta = magenta;
@@ -46,12 +51,21 @@ namespace PixelVisionRunner.Parsers
         public override void CalculateSteps()
         {
             base.CalculateSteps();
+            steps.Add(ParseImageData);
             steps.Add(IndexColors);
             steps.Add(ReadColors);
             steps.Add(ResetColorChip);
             steps.Add(UpdateColors);
         }
 
+        public virtual void ParseImageData()
+        {
+            tex = textureFactory.NewTexture2D(1, 1);
+            // Load bytes into texture
+            tex.LoadImage(data);
+            
+            currentStep++;
+        }
 
         public virtual void IndexColors()
         {

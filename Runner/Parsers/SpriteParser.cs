@@ -44,13 +44,24 @@ namespace PixelVisionRunner.Parsers
         protected IColor maskColor;
         protected int maxPerLoop = 100;
         
-        public SpriteParser(ITexture2D tex, IEngineChips chips, bool unique = true)
+        protected ITextureFactory textureFactory;
+        protected byte[] data;
+        
+        public SpriteParser(ITextureFactory textureFactory, byte[] data, IEngineChips chips, bool unique = true)
         {
  
-            this.tex = tex;
+            this.textureFactory = textureFactory;
+            
+            tex = textureFactory.NewTexture2D(1, 1);
+
+            // Load bytes into texture
+            tex.LoadImage(data);
            
             this.chips = chips;
             spriteChip = chips.spriteChip;
+            
+            sWidth = spriteChip.width;
+            sHeight = spriteChip.height;
 
         }
 
@@ -66,14 +77,8 @@ namespace PixelVisionRunner.Parsers
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-            
-            
-            sWidth = spriteChip.width;
-            sHeight = spriteChip.height;
 
             CalculateBounds();
-            
-            
             
             steps.Add(PrepareSprites);
             

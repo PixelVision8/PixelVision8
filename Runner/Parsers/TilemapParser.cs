@@ -35,19 +35,28 @@ namespace PixelVisionRunner.Parsers
         private int realHeight;
 
         private ColorChip flagColorChip;
- 
-        public TilemapParser(ITexture2D tex, ITexture2D tileFlagTex, IEngineChips chips) : base(tex, chips)
+
+        public TilemapParser(ITextureFactory textureFactory, byte[] data, byte[] tileFlagData, IEngineChips chips) :
+            base(textureFactory, data, chips)
         {
             //Debug.Log("Parse Tilemap");
-            
+
             tilemapChip = chips.tilemapChip;
-            this.tileFlagTex = tileFlagTex;
-            autoImport = tilemapChip.autoImport;
+
+
+            if (tileFlagData != null)
+            {
+                tileFlagTex = textureFactory.NewTexture2D(1, 1);
+    
+                tileFlagTex.LoadImage(tileFlagData);
+            }
+
+        autoImport = tilemapChip.autoImport;
             
             flagColorChip = chips.chipManager.GetChip(FlagColorParser.flagColorChipName, false) as ColorChip;
 
             
-            clear = new ColorData{a = 0};
+            clear = new ColorData(0f){a = 0f};
             maskColor = new ColorData(chips.colorChip.maskColor);
             
         }

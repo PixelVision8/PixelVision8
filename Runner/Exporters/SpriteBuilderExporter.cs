@@ -35,7 +35,7 @@ namespace PixelVisionRunner.Exporters
         public int[] ids;
         public int totalSpritesInTexture;
         
-        public SpriteDataParser(ITexture2D tex, IEngineChips chips, bool unique = true) : base(tex, chips, unique)
+        public SpriteDataParser(ITextureFactory textureFactory, byte[] data, IEngineChips chips, bool unique = true) : base(textureFactory, data, chips, unique)
         {
         }
 
@@ -160,31 +160,31 @@ namespace PixelVisionRunner.Exporters
         private void ParseSpriteData()
         {
             
-            for (var i = 0; i < maxTilesPerLoop; i++)
-            {
-                var spriteData = sprites[currentTile];
-
-                var texture = spriteData.src;
-                
-//                Debug.Log("Parse " + currentTile + "/ " +totalTiles + " - " + spriteData.fileName);
-                
-                var spriteParser = new SpriteDataParser(texture, engine);
-                
-                spriteParser.CalculateSteps();
-                
-                while (spriteParser.completed == false)
-                    spriteParser.NextStep();
-
-
-                Array.Copy(spriteParser.ids, spriteData.ids, spriteParser.ids.Length);
-
-                currentTile++;
-
-                if (currentTile >= totalTiles)
-                    break;
-            }
-            
-            currentStep++;
+//            for (var i = 0; i < maxTilesPerLoop; i++)
+//            {
+//                var spriteData = sprites[currentTile];
+//
+//                var texture = spriteData.src;
+//                
+////                Debug.Log("Parse " + currentTile + "/ " +totalTiles + " - " + spriteData.fileName);
+//                
+//                var spriteParser = new SpriteDataParser(texture, engine);
+//                
+//                spriteParser.CalculateSteps();
+//                
+//                while (spriteParser.completed == false)
+//                    spriteParser.NextStep();
+//
+//
+//                Array.Copy(spriteParser.ids, spriteData.ids, spriteParser.ids.Length);
+//
+//                currentTile++;
+//
+//                if (currentTile >= totalTiles)
+//                    break;
+//            }
+//            
+//            currentStep++;
         }
         
 

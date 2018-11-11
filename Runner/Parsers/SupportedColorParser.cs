@@ -9,7 +9,7 @@ namespace PixelVisionRunner.Parsers
     /// </summary>
     public class SupportedColorParser: ColorParser
     {
-        public SupportedColorParser(ITexture2D tex, ColorChip colorChip, IColor magenta) : base(tex, colorChip, magenta, true)
+        public SupportedColorParser(ITextureFactory textureFactory, byte[] data, ColorChip colorChip, IColor magenta) : base(textureFactory, data, colorChip, magenta, true)
         {
             
         }
@@ -18,7 +18,7 @@ namespace PixelVisionRunner.Parsers
         {
             
             currentStep = 0;
-
+            steps.Add(ParseImageData);
             steps.Add(IndexColors);
             steps.Add(ReadColors);
             steps.Add(ResetColorChip);
