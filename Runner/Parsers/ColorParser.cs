@@ -34,8 +34,8 @@ namespace PixelVisionRunner.Parsers
 
         protected IColor magenta;
 
-        public ColorParser(ITextureFactory textureFactory, byte[] bytes, ColorChip colorChip, IColor magenta,
-            bool unique = false):base(textureFactory, bytes)
+        public ColorParser(byte[] bytes, ColorChip colorChip, IColor magenta,
+            bool unique = false):base(bytes)
         {
 
             this.colorChip = colorChip;

@@ -13,11 +13,6 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGameRunner.Data;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 
@@ -39,8 +34,8 @@ namespace PixelVisionRunner.Parsers
 
         private ColorChip flagColorChip;
 
-        public TilemapParser(ITextureFactory textureFactory, byte[] bytes, byte[] tileFlagData, IEngineChips chips) :
-            base(textureFactory, bytes, chips)
+        public TilemapParser(byte[] bytes, byte[] tileFlagData, IEngineChips chips) :
+            base(bytes, chips)
         {
             //Debug.Log("Parse Tilemap");
 
@@ -56,7 +51,7 @@ namespace PixelVisionRunner.Parsers
             
 //            Console.WriteLine("Graphic " + graphic != null);
             
-                Texture2D tmpTexture;
+//                Texture2D tmpTexture;
 //            var graphicsDevice = texture.GraphicsDevice;
             
 //            if (!texture.IsDisposed) texture.Dispose();

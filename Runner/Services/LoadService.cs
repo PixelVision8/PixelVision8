@@ -35,20 +35,20 @@ namespace PixelVisionRunner.Services
             ".json",
             ".lua"
         };
-        
-        public enum FileType
-        {
-            System,
-            Colors,
-            SystemColors,
-            Palettes,
-            ColorMap,
-            Sprites,
-            Tilemap,
-            Sounds,
-            Music
-            
-        }
+//        
+//        public enum FileType
+//        {
+//            System,
+//            Colors,
+//            SystemColors,
+//            Palettes,
+//            ColorMap,
+//            Sprites,
+//            Tilemap,
+//            Sounds,
+//            Music
+//            
+//        }
         
         private readonly List<IAbstractParser> parsers = new List<IAbstractParser>();
 
@@ -60,7 +60,7 @@ namespace PixelVisionRunner.Services
         protected IEngine targetEngine;
         private int totalParsers;
         protected IColor maskColor = new ColorData("#ff00ff");
-        public ITextureFactory textureFactory;
+//        public ITextureFactory textureFactory;
 //        public IColorFactory colorFactory;
         public int currentStep;
         public int totalSteps;
@@ -99,13 +99,13 @@ namespace PixelVisionRunner.Services
         /// </summary>
         public string message { get; protected set; }
 
-        public LoadService(ITextureFactory textureFactory)
-        {
-            this.textureFactory = textureFactory;
-//            this.colorFactory = colorFactory;
-        }
+//        public LoadService()
+//        {
+////            this.textureFactory = textureFactory;
+////            this.colorFactory = colorFactory;
+//        }
 
-        public void ParseFiles(Dictionary<string, byte[]> files, IEngine engine, SaveFlags saveFlags, Dictionary<FileType, string> fileMap = null)
+        public void ParseFiles(Dictionary<string, byte[]> files, IEngine engine, SaveFlags saveFlags)
         {
             Reset();
     
@@ -258,67 +258,26 @@ namespace PixelVisionRunner.Services
         {
             while (completed == false)
             {
-//                if (completed)
-//                    return;
-
-                var parser = parsers[currentParserID];
-
-//            var watch = Stopwatch.StartNew();
-
-//            if (microSteps)
-//            {
-                parser.NextStep();
-
-                currentStep++;
-        
-                if (parser.completed)
-                    currentParserID++;
-//            }
+                NextParser();
             }
-//                NextParser();
         }
 
 
         public void NextParser()
         {
             
-            Console.WriteLine("Parser " + currentParserID + " of " + parsers.Count);
             if (completed)
                 return;
-//
-            try
-            {
-                var parser = parsers[currentParserID];
-//
-////            var watch = Stopwatch.StartNew();
-//
-////            if (microSteps)
-////            {
-                parser.NextStep();
-//
-//            currentStep++;
-//        
-                if (parser.completed)
-                    currentParserID++;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+
+            var parser = parsers[currentParserID];
+
+            parser.NextStep();
+
+            currentStep++;
             
-//            }
-//            else
-//            {
-//                while (parser.completed == false)
-//                    parser.NextStep();
-//
-//                currentParserID++;
-//            }
-
-//            watch.Stop();
-
-//            UnityEngine.Debug.Log("Parser " + currentParserID + " Done " + watch.ElapsedMilliseconds);
+            if (parser.completed)
+                currentParserID++;
+            
         }
 
         private AbstractParser LoadMetaData(Dictionary<string, byte[]> files)
@@ -342,7 +301,7 @@ namespace PixelVisionRunner.Services
             //var fontName = fileSystem.GetFileNameWithoutExtension(file);
             //fontName = fontName.Substring(0, fontName.Length - 5);
 
-            return new FontParser(textureFactory, data, targetEngine, fontName);
+            return new FontParser(data, targetEngine, fontName);
         }
 
         private void LoadFlagColors(Dictionary<string, byte[]> files)
@@ -358,7 +317,7 @@ namespace PixelVisionRunner.Services
             }
             
             // This will also create the custom flag color chip we need for parsing the tilemap later on
-            AddParser(new FlagColorParser(textureFactory, flagTex, targetEngine));
+            AddParser(new FlagColorParser(flagTex, targetEngine));
 
         }
         
@@ -402,7 +361,7 @@ namespace PixelVisionRunner.Services
 
                 
                 
-                AddParser(new TilemapParser(textureFactory, files[tilemapFile], tileFlagTex, targetEngine));
+                AddParser(new TilemapParser(files[tilemapFile], tileFlagTex, targetEngine));
                 
 //                var colorFile = "tile-color-offsets.json";
 //
@@ -452,7 +411,7 @@ namespace PixelVisionRunner.Services
                 
 //                var tex = ReadTexture(files[fileName]);
 
-                return new SpriteParser(textureFactory, files[fileName], targetEngine);
+                return new SpriteParser(files[fileName], targetEngine);
             }
 
             return null;
@@ -478,7 +437,7 @@ namespace PixelVisionRunner.Services
 //                targetEngine.colorMapChip = colorMapChip;
                 
                 // Pass the chip to the new parser
-                return new ColorMapParser(textureFactory, files[fileName], colorMapChip, maskColor);
+                return new ColorMapParser(files[fileName], colorMapChip, maskColor);
             }
 
             return null;
@@ -504,7 +463,7 @@ namespace PixelVisionRunner.Services
 //                targetEngine.colorMapChip = colorMapChip;
                 
                 // Pass the chip to the new parser
-                return new ColorPaletteParser(textureFactory, files[fileName], colorMapChip, maskColor);
+                return new ColorPaletteParser(files[fileName], colorMapChip, maskColor);
             }
 
             return null;
@@ -530,7 +489,7 @@ namespace PixelVisionRunner.Services
 //                targetEngine.colorMapChip = colorMapChip;
                 
                 // Pass the chip to the new parser
-                return new SupportedColorParser(textureFactory, files[fileName], targetEngine.colorChip, maskColor);
+                return new SupportedColorParser(files[fileName], targetEngine.colorChip, maskColor);
             }
 
             return null;
@@ -544,7 +503,7 @@ namespace PixelVisionRunner.Services
             {
 //                var tex = ReadTexture(files[fileName]);
 
-                return new ColorParser(textureFactory, files[fileName], targetEngine.colorChip, maskColor, targetEngine.colorChip.unique);
+                return new ColorParser(files[fileName], targetEngine.colorChip, maskColor, targetEngine.colorChip.unique);
             }
 
             return null;

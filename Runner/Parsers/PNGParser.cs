@@ -31,7 +31,7 @@ namespace PixelVisionRunner.Parsers
         protected int[] colorRefs;
         protected int[] pixels;
 
-        public PNGParser(ITextureFactory textureFactory, byte[] bytes)
+        public PNGParser(byte[] bytes)
         {
 //            this.textureFactory = textureFactory;
             this.bytes = bytes;

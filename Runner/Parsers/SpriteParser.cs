@@ -49,7 +49,7 @@ namespace PixelVisionRunner.Parsers
 //        protected ITextureFactory textureFactory;
 //        protected byte[] data;
         
-        public SpriteParser(ITextureFactory textureFactory, byte[] bytes, IEngineChips chips, bool unique = true):base(textureFactory, bytes)
+        public SpriteParser(byte[] bytes, IEngineChips chips, bool unique = true):base(bytes)
         {
  
 //            this.textureFactory = textureFactory;

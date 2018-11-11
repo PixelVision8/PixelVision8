@@ -54,7 +54,7 @@ namespace PixelVisionRunner.Parsers
 
         private ColorChip flagColorChip;
         
-        public FlagColorParser(ITextureFactory textureFactory, byte[] bytes, IEngineChips chips) : base(textureFactory, bytes)
+        public FlagColorParser(byte[] bytes, IEngineChips chips) : base(bytes)
         {
 
             flagColorChip = new ColorChip();
