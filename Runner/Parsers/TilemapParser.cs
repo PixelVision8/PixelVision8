@@ -62,7 +62,7 @@ namespace PixelVisionRunner.Parsers
 //            if (!texture.IsDisposed) texture.Dispose();
                 using (var stream = new MemoryStream(tileFlagData))
                 {
-                    tmpTexture = Read(stream, graphic);
+                    tmpTexture = ReadStream();
                     //FlipTexture();
                 }
             

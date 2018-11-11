@@ -15,7 +15,24 @@ namespace PixelVisionRunner.Parsers
     {
         protected ITextureFactory textureFactory;
         protected ITexture2D tex;
-        
+        protected Stream inputStream;
+        protected int imageWidth;
+        protected int imageHeight;
+        protected int bitsPerSample;
+        protected int bytesPerSample;
+        protected int bytesPerPixel;
+        protected int bytesPerScanline;
+        protected IList<PngChunk> chunks;
+        protected IList<PngChunk> dataChunks;
+        protected ColorType colorType;
+        protected Palette palette;
+//        protected Texture2D texture;
+        protected Color[] data;
+        protected IColor[] pixels;
+        protected TextureData textureData;
+        protected IList<IColor> colorPalette;
+        protected int[] colorRefs;
+
         public PNGParser(ITextureFactory textureFactory, byte[] bytes)
         {
             this.textureFactory = textureFactory;
@@ -23,6 +40,17 @@ namespace PixelVisionRunner.Parsers
             
             chunks = new List<PngChunk>();
             dataChunks = new List<PngChunk>();
+            colorPalette = new List<IColor>();
+            
+            if (bytes != null)
+            {
+                inputStream = new MemoryStream(bytes);
+                
+                if (!IsPngImage(inputStream))
+                    throw new Exception("File does not have PNG signature.");
+                
+                ReadHeader(inputStream);
+            }
         }
         
         public override void CalculateSteps()
@@ -36,16 +64,7 @@ namespace PixelVisionRunner.Parsers
             if (bytes != null)
             {
             
-                var graphic = ((TextureFactory) textureFactory).graphicsDevice;
-                
-                Texture2D tmpTexture;
-    
-                using (var stream = new MemoryStream(bytes))
-                {
-                    tmpTexture = Read(stream, graphic);
-                }
-                
-                tex = new Texture2DAdapter(tmpTexture, new ColorData("#FF00FF"));
+                tex = new Texture2DAdapter(ReadStream(), new ColorData("#FF00FF"));
             
             }
             
@@ -54,23 +73,26 @@ namespace PixelVisionRunner.Parsers
 
         #region PNG Reader API
     
-        protected int width;
-        protected int height;
-        protected int bitsPerSample;
-        protected int bytesPerSample;
-        protected int bytesPerPixel;
-        protected int bytesPerScanline;
-        protected IList<PngChunk> chunks;
-        protected IList<PngChunk> dataChunks;
-        protected ColorType colorType;
-        protected Palette palette;
-        protected Texture2D texture;
-        protected Color[] data;
         
-        public Texture2D Read(Stream inputStream, GraphicsDevice graphicsDevice)
+        public Texture2D ReadStream()
         {
             if (!IsPngImage(inputStream))
                 throw new Exception("File does not have PNG signature.");
+                
+            UnpackDataChunks();
+            
+            var graphicsDevice = ((TextureFactory) textureFactory).graphicsDevice;
+            
+            var texture = new Texture2D(graphicsDevice, imageWidth, imageHeight, false, SurfaceFormat.Color);
+            texture.SetData(data);
+            
+            textureData = new TextureData(imageWidth, imageHeight);
+//            textureData.SetPixels(pixels);
+            return texture;
+        }
+
+        public void ReadHeader(Stream inputStream)
+        {
             inputStream.Position = 8L;
             while (inputStream.Position != inputStream.Length)
             {
@@ -82,10 +104,6 @@ namespace PixelVisionRunner.Parsers
                 inputStream.Read(numArray2, 0, 12 + (int) num);
                 ProcessChunk(numArray2);
             }
-            UnpackDataChunks();
-            texture = new Texture2D(graphicsDevice, width, height, false, SurfaceFormat.Color);
-            texture.SetData(data);
-            return texture;
         }
 
         public bool IsPngImage(Stream stream)
@@ -132,8 +150,8 @@ namespace PixelVisionRunner.Parsers
             {
                 HeaderChunk headerChunk = new HeaderChunk();
                 headerChunk.Decode(chunkBytes);
-                width = (int) headerChunk.Width;
-                height = (int) headerChunk.Height;
+                imageWidth = (int) headerChunk.Width;
+                imageHeight = (int) headerChunk.Height;
                 bitsPerSample = headerChunk.BitDepth;
                 colorType = headerChunk.ColorType;
                 chunks.Add(headerChunk);
@@ -166,7 +184,7 @@ namespace PixelVisionRunner.Parsers
         {
             bytesPerPixel = CalculateBytesPerPixel();
             bytesPerSample = bitsPerSample / 8;
-            bytesPerScanline = bytesPerPixel * width + 1;
+            bytesPerScanline = bytesPerPixel * imageWidth + 1;
             int length = pixelData.Length / bytesPerScanline;
             if (pixelData.Length % bytesPerScanline != 0)
                 throw new Exception("Malformed pixel data - total length of pixel data not multiple of ((bytesPerPixel * width) + 1)");
@@ -182,9 +200,11 @@ namespace PixelVisionRunner.Parsers
 
         private void DecodePixelData(byte[][] pixelData)
         {
-            data = new Color[width * height];
+            data = new Color[imageWidth * imageHeight];
+            pixels = new IColor[imageWidth * imageHeight];
+            
             byte[] previousScanline = new byte[bytesPerScanline];
-            for (int y = 0; y < height; ++y)
+            for (int y = 0; y < imageHeight; ++y)
             {
                 byte[] scanline = pixelData[y];
                 byte[] defilteredScanline;
@@ -217,66 +237,102 @@ namespace PixelVisionRunner.Parsers
         {
             switch (colorType)
             {
-                case ColorType.Grayscale:
-                    for (int index1 = 0; index1 < width; ++index1)
-                    {
-                        int index2 = 1 + index1 * bytesPerPixel;
-                        byte num = defilteredScanline[index2];
-                        data[y * width + index1] = new Color(num, num, num);
-                    }
-                    break;
+//                case ColorType.Grayscale:
+//                    for (int index1 = 0; index1 < imageWidth; ++index1)
+//                    {
+//                        int index2 = 1 + index1 * bytesPerPixel;
+//                        byte num = defilteredScanline[index2];
+//                        data[y * imageWidth + index1] = new Color(num, num, num);
+//                    }
+//                    break;
                 case ColorType.Rgb:
-                    for (int index1 = 0; index1 < width; ++index1)
+                    for (int index1 = 0; index1 < imageWidth; ++index1)
                     {
                         int index2 = 1 + index1 * bytesPerPixel;
                         int r = defilteredScanline[index2];
                         int g = defilteredScanline[index2 + bytesPerSample];
                         int b = defilteredScanline[index2 + 2 * bytesPerSample];
-                        data[y * width + index1] = new Color(r, g, b);
+                        data[y * imageWidth + index1] = new Color(r, g, b);
+                        
+                        var color = new ColorData(r, g, b);
+                        pixels[y * imageWidth + index1] = color;
+
+                        IndexColor(color);
+
+
+
                     }
                     break;
                 case ColorType.Palette:
-                    for (int index = 0; index < width; ++index)
+                    for (int index = 0; index < imageWidth; ++index)
                     {
                         Color color = palette[defilteredScanline[index + 1]];
-                        data[y * width + index] = color;
+                        data[y * imageWidth + index] = color;
+                        
+                        var colorData = new ColorData(color.R, color.G, color.B, color.A);
+                        pixels[y * imageWidth + index] = colorData;
+                        
+                        IndexColor(colorData);
                     }
                     break;
-                case ColorType.GrayscaleWithAlpha:
-                    for (int index1 = 0; index1 < width; ++index1)
-                    {
-                        int index2 = 1 + index1 * bytesPerPixel;
-                        byte num = defilteredScanline[index2];
-                        byte alpha = defilteredScanline[index2 + bytesPerSample];
-                        data[y * width + index1] = new Color(num, num, num, alpha);
-                    }
-                    break;
+//                case ColorType.GrayscaleWithAlpha:
+//                    for (int index1 = 0; index1 < imageWidth; ++index1)
+//                    {
+//                        int index2 = 1 + index1 * bytesPerPixel;
+//                        byte num = defilteredScanline[index2];
+//                        byte alpha = defilteredScanline[index2 + bytesPerSample];
+//                        data[y * imageWidth + index1] = new Color(num, num, num, alpha);
+//                        pixels[y * imageWidth + index1] = new ColorData(num, num, num, alpha);
+//                    }
+//                    break;
                 case ColorType.RgbWithAlpha:
-                    for (int index1 = 0; index1 < width; ++index1)
+                    for (int index1 = 0; index1 < imageWidth; ++index1)
                     {
                         int index2 = 1 + index1 * bytesPerPixel;
                         int r = defilteredScanline[index2];
                         int g = defilteredScanline[index2 + bytesPerSample];
                         int b = defilteredScanline[index2 + 2 * bytesPerSample];
                         int alpha = defilteredScanline[index2 + 3 * bytesPerSample];
-                        data[y * width + index1] = new Color(r, g, b, alpha);
+                        data[y * imageWidth + index1] = new Color(r, g, b, alpha);
+//                        pixels[y * imageWidth + index1] = new ColorData(r, g, b){a=alpha};
+                        
+                        var color = new ColorData(r, g, b);
+                        pixels[y * imageWidth + index1] = color;
+
+                        IndexColor(color);
+                        
                     }
                     break;
             }
         }
 
+        private int IndexColor(IColor color)
+        {
+            var id = colorPalette.IndexOf(color);
+            // Add color to unique color
+            if (id == -1)
+            {
+                id = colorPalette.Count;
+                colorPalette.Add(color);
+                            
+//                Console.WriteLine("New Color " + id + " " + color.r + " " + color.g + " " + color.b + " " + color.a);
+            }
+
+            return id;
+        }
+        
         private int CalculateBytesPerPixel()
         {
             switch (colorType)
             {
-                case ColorType.Grayscale:
-                    return bitsPerSample / 8;
+//                case ColorType.Grayscale:
+//                    return bitsPerSample / 8;
                 case ColorType.Rgb:
                     return 3 * bitsPerSample / 8;
                 case ColorType.Palette:
                     return bitsPerSample / 8;
-                case ColorType.GrayscaleWithAlpha:
-                    return 2 * bitsPerSample / 8;
+//                case ColorType.GrayscaleWithAlpha:
+//                    return 2 * bitsPerSample / 8;
                 case ColorType.RgbWithAlpha:
                     return 4 * bitsPerSample / 8;
                 default:

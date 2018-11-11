@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using System.Collections.Generic;
+using System.Linq;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 
@@ -22,22 +23,18 @@ namespace PixelVisionRunner.Parsers
 
     public class ColorParser : PNGParser
     {
-//        protected IEngineChips chips;
-        
+
         protected ColorChip colorChip;
         protected readonly List<IColor> colors = new List<IColor>();
         
         protected readonly bool unique;
         protected IColor tmpColor;
         protected int totalColors;
-        protected int totalPixels;
-        protected int x, y, width;
+
         protected IColor magenta;
 
-//        protected ITextureFactory textureFactory;
-//        protected byte[] data;
-//        
-        public ColorParser(ITextureFactory textureFactory, byte[] bytes, ColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true):base(textureFactory, bytes)
+        public ColorParser(ITextureFactory textureFactory, byte[] bytes, ColorChip colorChip, IColor magenta,
+            bool unique = false):base(textureFactory, bytes)
         {
 
             this.colorChip = colorChip;
@@ -49,59 +46,43 @@ namespace PixelVisionRunner.Parsers
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-//            steps.Add(ParseImageData);
-            steps.Add(IndexColors);
+
+//            steps.Add(IndexColors);
             steps.Add(ReadColors);
-            steps.Add(ResetColorChip);
+//            steps.Add(ResetColorChip);
             steps.Add(UpdateColors);
-        }
-
-        public virtual void IndexColors()
-        {
-            //Debug.Log("Index Colors");
-            // Get the total pixels from the texture
-            var pixels = tex.GetPixels();
-            totalPixels = pixels.Length;
-
-            width = tex.width;
-
-            currentStep++;
         }
 
         public virtual void ReadColors()
         {
-            // Loop through each color and find the unique ones
-            for (var i = 0; i < totalPixels; i++)
-            {
-                //PosUtil.CalculatePosition(i, width, out x, out y);
-                x = i % width;
-                y = i / width;
+            
+            var srcColors = unique ? colorPalette.ToArray() : tex.GetPixels();
+            var total = srcColors.Length;
+            
+                // Loop through each color and find the unique ones
+                for (var i = 0; i < total; i++)
+                {
+                    // Get the current color
+                    tmpColor = srcColors[i]; //pixels[i]);
 
-                // Get the current color
-                tmpColor = tex.GetPixel(x, y); //pixels[i]);
+                    if (tmpColor.a < 1) // && !ignoreTransparent)
+                        tmpColor = magenta;
 
-                if (tmpColor.a < 1) // && !ignoreTransparent)
-                    tmpColor = magenta;
-
-                // Look to see if the color is already in the list
-                if (!colors.Contains(tmpColor) && unique)
                     colors.Add(tmpColor);
-                else if (unique == false)
-                    colors.Add(tmpColor);
-            }
+                }
 
             totalColors = colors.Count;
 
             currentStep++;
         }
-
-        public void ResetColorChip()
-        {
-            // Clear the colors first
-            colorChip.Clear();
-
-            currentStep++;
-        }
+//
+//        public void ResetColorChip()
+//        {
+//            // Clear the colors first
+////            colorChip.Clear();
+//
+//            currentStep++;
+//        }
 
         public void UpdateColors()
         {

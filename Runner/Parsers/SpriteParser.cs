@@ -64,8 +64,8 @@ namespace PixelVisionRunner.Parsers
 
         protected virtual void CalculateBounds()
         {
-            width = MathUtil.CeilToInt(tex.width / sWidth);
-            height = MathUtil.CeilToInt(tex.height / sHeight);
+            width = MathUtil.CeilToInt(imageWidth / sWidth);
+            height = MathUtil.CeilToInt(imageHeight / sHeight);
             
             // Find the total from the width and height
             totalSprites = width * height;
@@ -73,22 +73,13 @@ namespace PixelVisionRunner.Parsers
         
         public override void CalculateSteps()
         {
-            ParseImageData();
-//            
-//            tex = textureFactory.NewTexture2D(1, 1);
-//
-//            // Load bytes into texture
-//            tex.LoadImage(data);
-//            
-            
-            currentStep = 0;
+
+            base.CalculateSteps();
             
             CalculateBounds();
             
             steps.Add(PrepareSprites);
             
-//            steps.Add(PreCutOutSprites);
-
             var loops = MathUtil.CeilToInt((float) totalSprites / maxPerLoop);
             
             for (int i = 0; i < loops; i++)

@@ -19,9 +19,9 @@ namespace PixelVisionRunner.Parsers
             
             currentStep = 0;
             steps.Add(ParseImageData);
-            steps.Add(IndexColors);
+//            steps.Add(IndexColors);
             steps.Add(ReadColors);
-            steps.Add(ResetColorChip);
+//            steps.Add(ResetColorChip);
             steps.Add(AddSupportedColors);
             steps.Add(UpdateColors);
             

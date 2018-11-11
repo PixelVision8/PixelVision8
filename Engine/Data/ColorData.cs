@@ -47,12 +47,12 @@ namespace PixelVisionSDK
             FromRGB(r, g, b);
         }
 
-        public ColorData(byte r = 0, byte g = 0, byte b = 0)
+        public ColorData(byte r = 0, byte g = 0, byte b = 0, byte a = byte.MaxValue)
         {
             _r = (float) r / (float) byte.MaxValue;
             _g = (float) g / (float) byte.MaxValue;
             _b = (float) b / (float) byte.MaxValue;
-                //, (float) this.A / (float) byte.MaxValue);
+            _a = (float) a / (float) byte.MaxValue;
 
         }
         

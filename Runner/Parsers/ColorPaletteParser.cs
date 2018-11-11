@@ -23,7 +23,7 @@ namespace PixelVisionRunner.Parsers
     {
         public static string chipName = "PixelVisionSDK.Chips.ColorPaletteChip";
 
-        public ColorPaletteParser(ITextureFactory textureFactory, byte[] bytes, ColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true) : base(textureFactory, bytes, colorChip, magenta, unique, ignoreTransparent)
+        public ColorPaletteParser(ITextureFactory textureFactory, byte[] bytes, ColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true) : base(textureFactory, bytes, colorChip, magenta, unique)
         {
             
         }
@@ -32,7 +32,7 @@ namespace PixelVisionRunner.Parsers
         {
             currentStep = 0;
             steps.Add(ParseImageData);
-            steps.Add(IndexColors);
+//            steps.Add(IndexColors);
             steps.Add(ReadColors);
             steps.Add(BuildColorMap);
         }
