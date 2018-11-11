@@ -20,13 +20,13 @@ using PixelVisionSDK.Chips;
 namespace PixelVisionRunner.Parsers
 {
 
-    public class ColorParser : AbstractParser
+    public class ColorParser : PNGParser
     {
 //        protected IEngineChips chips;
         
         protected ColorChip colorChip;
         protected readonly List<IColor> colors = new List<IColor>();
-        protected ITexture2D tex;
+        
         protected readonly bool unique;
         protected IColor tmpColor;
         protected int totalColors;
@@ -34,14 +34,12 @@ namespace PixelVisionRunner.Parsers
         protected int x, y, width;
         protected IColor magenta;
 
-        protected ITextureFactory textureFactory;
-        protected byte[] data;
-        
-        public ColorParser(ITextureFactory textureFactory, byte[] data, ColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true)
+//        protected ITextureFactory textureFactory;
+//        protected byte[] data;
+//        
+        public ColorParser(ITextureFactory textureFactory, byte[] bytes, ColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true):base(textureFactory, bytes)
         {
-            this.textureFactory = textureFactory;
-            this.data = data;
-            
+
             this.colorChip = colorChip;
             this.unique = unique;
             this.magenta = magenta;
@@ -51,20 +49,11 @@ namespace PixelVisionRunner.Parsers
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-            steps.Add(ParseImageData);
+//            steps.Add(ParseImageData);
             steps.Add(IndexColors);
             steps.Add(ReadColors);
             steps.Add(ResetColorChip);
             steps.Add(UpdateColors);
-        }
-
-        public virtual void ParseImageData()
-        {
-            tex = textureFactory.NewTexture2D(1, 1);
-            // Load bytes into texture
-            tex.LoadImage(data);
-            
-            currentStep++;
         }
 
         public virtual void IndexColors()

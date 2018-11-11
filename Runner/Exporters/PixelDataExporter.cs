@@ -18,7 +18,7 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionRunner.Exporters
 {
-    public class PixelDataExporter : ImageExporter
+    public class PixelDataExporter : PNGExporter
     {
 
         public PixelDataExporter(string fileName, int[] pixelData, int width, int height, IColor[] colors, ITextureFactory textureFactory) : base(fileName, textureFactory, colors)

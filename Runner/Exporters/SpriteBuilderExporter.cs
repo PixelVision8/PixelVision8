@@ -35,7 +35,7 @@ namespace PixelVisionRunner.Exporters
         public int[] ids;
         public int totalSpritesInTexture;
         
-        public SpriteDataParser(ITextureFactory textureFactory, byte[] data, IEngineChips chips, bool unique = true) : base(textureFactory, data, chips, unique)
+        public SpriteDataParser(ITextureFactory textureFactory, byte[] bytes, IEngineChips chips, bool unique = true) : base(textureFactory, bytes, chips, unique)
         {
         }
 
@@ -122,30 +122,30 @@ namespace PixelVisionRunner.Exporters
             
             foreach (var file in files)
             {
-                tmpTexture = textureFactory.NewTexture2D(1, 1);
-                tmpTexture.LoadImage(file.Value);
-
-                // Create sprite data
-                tmpSpriteData = new SpriteExportData(file.Key);
-                tmpSpriteData.src = tmpTexture;
-                
-                // Calculate size
-                tmpSpriteData.width = (int)Math.Ceiling((float) tmpTexture.width / spriteSize.x);
-                tmpSpriteData.height = (int)Math.Ceiling((float) tmpTexture.height / spriteSize.y);
-
-                var totalIDs = tmpSpriteData.width * tmpSpriteData.height;
-                
-                // Setup sprite id containers based on size
-                tmpSpriteData.ids = new int[totalIDs];
-                
-                // Clear all sprite IDs
-                for (int i = 0; i < totalIDs; i++)
-                {
-                    tmpSpriteData.ids[i] = -1;
-                }
-                
-                // Add the sprite data to the list
-                sprites.Add(tmpSpriteData);
+//                tmpTexture = textureFactory.NewTexture2D(1, 1);
+//                tmpTexture.LoadImage(file.Value);
+//
+//                // Create sprite data
+//                tmpSpriteData = new SpriteExportData(file.Key);
+//                tmpSpriteData.src = tmpTexture;
+//                
+//                // Calculate size
+//                tmpSpriteData.width = (int)Math.Ceiling((float) tmpTexture.width / spriteSize.x);
+//                tmpSpriteData.height = (int)Math.Ceiling((float) tmpTexture.height / spriteSize.y);
+//
+//                var totalIDs = tmpSpriteData.width * tmpSpriteData.height;
+//                
+//                // Setup sprite id containers based on size
+//                tmpSpriteData.ids = new int[totalIDs];
+//                
+//                // Clear all sprite IDs
+//                for (int i = 0; i < totalIDs; i++)
+//                {
+//                    tmpSpriteData.ids[i] = -1;
+//                }
+//                
+//                // Add the sprite data to the list
+//                sprites.Add(tmpSpriteData);
                                 
             }
             

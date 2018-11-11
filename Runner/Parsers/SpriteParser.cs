@@ -22,7 +22,7 @@ using PixelVisionSDK.Utils;
 namespace PixelVisionRunner.Parsers
 {
 
-    public class SpriteParser : AbstractParser
+    public class SpriteParser : PNGParser
     {
 
         protected IEngineChips chips;
@@ -36,7 +36,7 @@ namespace PixelVisionRunner.Parsers
         protected int spritesAdded;
         protected int sWidth;
 
-        protected ITexture2D tex;
+//        protected ITexture2D tex;
         protected IColor[] tmpPixels;
         protected int totalPixels;
         protected int totalSprites;
@@ -44,18 +44,15 @@ namespace PixelVisionRunner.Parsers
         protected IColor maskColor;
         protected int maxPerLoop = 100;
         
-        protected ITextureFactory textureFactory;
-        protected byte[] data;
+//        protected ITextureFactory textureFactory;
+//        protected byte[] data;
         
-        public SpriteParser(ITextureFactory textureFactory, byte[] data, IEngineChips chips, bool unique = true)
+        public SpriteParser(ITextureFactory textureFactory, byte[] bytes, IEngineChips chips, bool unique = true):base(textureFactory, bytes)
         {
  
-            this.textureFactory = textureFactory;
+//            this.textureFactory = textureFactory;
             
-            tex = textureFactory.NewTexture2D(1, 1);
-
-            // Load bytes into texture
-            tex.LoadImage(data);
+            
            
             this.chips = chips;
             spriteChip = chips.spriteChip;
@@ -76,8 +73,16 @@ namespace PixelVisionRunner.Parsers
         
         public override void CalculateSteps()
         {
-            base.CalculateSteps();
-
+            ParseImageData();
+//            
+//            tex = textureFactory.NewTexture2D(1, 1);
+//
+//            // Load bytes into texture
+//            tex.LoadImage(data);
+//            
+            
+            currentStep = 0;
+            
             CalculateBounds();
             
             steps.Add(PrepareSprites);

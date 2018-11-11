@@ -23,7 +23,7 @@ namespace PixelVisionRunner.Parsers
     {
         public static string chipName = "PixelVisionSDK.Chips.ColorPaletteChip";
 
-        public ColorPaletteParser(ITextureFactory textureFactory, byte[] data, ColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true) : base(textureFactory, data, colorChip, magenta, unique, ignoreTransparent)
+        public ColorPaletteParser(ITextureFactory textureFactory, byte[] bytes, ColorChip colorChip, IColor magenta, bool unique = false, bool ignoreTransparent = true) : base(textureFactory, bytes, colorChip, magenta, unique, ignoreTransparent)
         {
             
         }

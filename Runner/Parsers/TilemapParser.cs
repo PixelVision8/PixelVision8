@@ -14,7 +14,10 @@
 // Shawn Rakowski - @shwany
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Microsoft.Xna.Framework.Graphics;
+using MonoGameRunner.Data;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 
@@ -36,8 +39,8 @@ namespace PixelVisionRunner.Parsers
 
         private ColorChip flagColorChip;
 
-        public TilemapParser(ITextureFactory textureFactory, byte[] data, byte[] tileFlagData, IEngineChips chips) :
-            base(textureFactory, data, chips)
+        public TilemapParser(ITextureFactory textureFactory, byte[] bytes, byte[] tileFlagData, IEngineChips chips) :
+            base(textureFactory, bytes, chips)
         {
             //Debug.Log("Parse Tilemap");
 
@@ -46,9 +49,26 @@ namespace PixelVisionRunner.Parsers
 
             if (tileFlagData != null)
             {
-                tileFlagTex = textureFactory.NewTexture2D(1, 1);
-    
-                tileFlagTex.LoadImage(tileFlagData);
+//                tileFlagTex = textureFactory.NewTexture2D(1, 1);
+//    
+//                tileFlagTex.LoadImage(tileFlagData);
+                var graphic = ((TextureFactory) textureFactory).graphicsDevice;
+            
+//            Console.WriteLine("Graphic " + graphic != null);
+            
+                Texture2D tmpTexture;
+//            var graphicsDevice = texture.GraphicsDevice;
+            
+//            if (!texture.IsDisposed) texture.Dispose();
+                using (var stream = new MemoryStream(tileFlagData))
+                {
+                    tmpTexture = Read(stream, graphic);
+                    //FlipTexture();
+                }
+            
+                tileFlagTex = new Texture2DAdapter(tmpTexture, new ColorData("#FF00FF"));
+
+                
             }
 
         autoImport = tilemapChip.autoImport;

@@ -21,7 +21,7 @@ using PixelVisionSDK.Chips;
 namespace PixelVisionRunner.Parsers
 {
 
-    public class FlagColorParser : AbstractParser
+    public class FlagColorParser : PNGParser
     {
         
         public static string flagColorChipName = "PixelVisionSDK.Chips.FlagColorChip";
@@ -51,53 +51,42 @@ namespace PixelVisionRunner.Parsers
         private int offset;
         private int realWidth;
         private int realHeight;
-        
 
         private ColorChip flagColorChip;
         
-        private ITexture2D flagTex;
-        protected ITextureFactory textureFactory;
-        protected byte[] bytes;
-        
-        public FlagColorParser(ITextureFactory textureFactory, byte[] bytes, IEngineChips chips)
+        public FlagColorParser(ITextureFactory textureFactory, byte[] bytes, IEngineChips chips) : base(textureFactory, bytes)
         {
-            this.textureFactory = textureFactory;
-            
+
             flagColorChip = new ColorChip();
             
             chips.chipManager.ActivateChip(flagColorChipName, flagColorChip, false);
             
             maskColor = new ColorData(chips.colorChip.maskColor);
 
-            if (bytes != null)
-            {
-                flagTex = this.textureFactory.NewTexture2D(1, 1);
-                flagTex.LoadImage(bytes);
-            }
             
         }
 
         public override void CalculateSteps()
         {
-            steps.Add(ParseFlagColors);
             
             base.CalculateSteps();
+            
+            steps.Add(ParseFlagColors);
 
         }
-
         
         public void ParseFlagColors()
         {
         
             var newFlagColors = new List<string>();
             
-            if (flagTex == null)
+            if (tex == null)
             {
                 newFlagColors = flagColors.ToList();
             }
             else
             {
-                var pixels = flagTex.GetPixels();
+                var pixels = tex.GetPixels();
     
                 var total = pixels.Length;
     

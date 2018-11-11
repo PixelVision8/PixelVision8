@@ -18,8 +18,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Desktop.Data;
-using MonoGameRunner.Data;
 using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;

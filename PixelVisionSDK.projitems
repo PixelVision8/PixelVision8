@@ -58,7 +58,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\ColorPaletteExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\FlagColorExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\IAbstractExporter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\ImageExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\PNGExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\MetaDataExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\PixelDataExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SpriteBuilderExporter.cs" />
@@ -77,6 +77,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\FlagColorParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\FontParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\IAbstractParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\PNGParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\JsonParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\MetaDataParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ScriptParser.cs" />

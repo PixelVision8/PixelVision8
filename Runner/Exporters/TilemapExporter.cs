@@ -21,7 +21,7 @@ using PixelVisionSDK.Chips;
 
 namespace PixelVisionRunner.Exporters
 {
-    public class TilemapExporter : ImageExporter
+    public class TilemapExporter : PNGExporter
     {
         
         protected int currentTile;
