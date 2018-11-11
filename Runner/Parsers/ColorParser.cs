@@ -15,6 +15,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using MonoGameRunner.Data;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 
@@ -56,7 +57,7 @@ namespace PixelVisionRunner.Parsers
         public virtual void ReadColors()
         {
             
-            var srcColors = unique ? colorPalette.ToArray() : tex.GetPixels();
+            var srcColors = unique ? colorPalette.ToArray() : data.Select(c => new ColorAdapter(c) as IColor).ToArray();
             var total = srcColors.Length;
             
                 // Loop through each color and find the unique ones

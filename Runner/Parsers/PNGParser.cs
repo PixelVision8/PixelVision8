@@ -4,20 +4,18 @@ using System.IO;
 using System.Linq;
 using Desktop.Util;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Utilities;
-using MonoGameRunner.Data;
 using PixelVisionSDK;
 
 namespace PixelVisionRunner.Parsers
 {
     public class PNGParser: AbstractParser
     {
-        protected ITextureFactory textureFactory;
-        protected ITexture2D tex;
+//        protected ITextureFactory textureFactory;
+//        protected ITexture2D tex;
         protected Stream inputStream;
-        protected int imageWidth;
-        protected int imageHeight;
+        public int imageWidth;
+        public int imageHeight;
         protected int bitsPerSample;
         protected int bytesPerSample;
         protected int bytesPerPixel;
@@ -28,14 +26,14 @@ namespace PixelVisionRunner.Parsers
         protected Palette palette;
 //        protected Texture2D texture;
         protected Color[] data;
-        protected IColor[] pixels;
-        protected TextureData textureData;
+        protected IColor[] colorPixels;
         protected IList<IColor> colorPalette;
         protected int[] colorRefs;
+        protected int[] pixels;
 
         public PNGParser(ITextureFactory textureFactory, byte[] bytes)
         {
-            this.textureFactory = textureFactory;
+//            this.textureFactory = textureFactory;
             this.bytes = bytes;
             
             chunks = new List<PngChunk>();
@@ -63,9 +61,9 @@ namespace PixelVisionRunner.Parsers
         {
             if (bytes != null)
             {
-            
-                tex = new Texture2DAdapter(ReadStream(), new ColorData("#FF00FF"));
-            
+                ReadStream();
+//                tex = new Texture2DAdapter(ReadStream(), new ColorData("#FF00FF"));
+
             }
             
             currentStep++;
@@ -74,21 +72,22 @@ namespace PixelVisionRunner.Parsers
         #region PNG Reader API
     
         
-        public Texture2D ReadStream()
+        public void ReadStream()
         {
             if (!IsPngImage(inputStream))
                 throw new Exception("File does not have PNG signature.");
                 
             UnpackDataChunks();
             
-            var graphicsDevice = ((TextureFactory) textureFactory).graphicsDevice;
+//            var graphicsDevice = ((TextureFactory) textureFactory).graphicsDevice;
             
-            var texture = new Texture2D(graphicsDevice, imageWidth, imageHeight, false, SurfaceFormat.Color);
-            texture.SetData(data);
+//            var texture = new Texture2D(graphicsDevice, imageWidth, imageHeight, false, SurfaceFormat.Color);
+//            texture.SetData(data);
+
             
-            textureData = new TextureData(imageWidth, imageHeight);
+            
 //            textureData.SetPixels(pixels);
-            return texture;
+//            return texture;
         }
 
         public void ReadHeader(Stream inputStream)
@@ -152,6 +151,7 @@ namespace PixelVisionRunner.Parsers
                 headerChunk.Decode(chunkBytes);
                 imageWidth = (int) headerChunk.Width;
                 imageHeight = (int) headerChunk.Height;
+                
                 bitsPerSample = headerChunk.BitDepth;
                 colorType = headerChunk.ColorType;
                 chunks.Add(headerChunk);
@@ -201,7 +201,8 @@ namespace PixelVisionRunner.Parsers
         private void DecodePixelData(byte[][] pixelData)
         {
             data = new Color[imageWidth * imageHeight];
-            pixels = new IColor[imageWidth * imageHeight];
+            colorPixels = new IColor[imageWidth * imageHeight];
+            pixels = new int[imageWidth * imageHeight];
             
             byte[] previousScanline = new byte[bytesPerScanline];
             for (int y = 0; y < imageHeight; ++y)
@@ -255,9 +256,9 @@ namespace PixelVisionRunner.Parsers
                         data[y * imageWidth + index1] = new Color(r, g, b);
                         
                         var color = new ColorData(r, g, b);
-                        pixels[y * imageWidth + index1] = color;
+                        colorPixels[y * imageWidth + index1] = color;
 
-                        IndexColor(color);
+                        pixels[y * imageWidth + index1] = IndexColor(color);
 
 
 
@@ -270,9 +271,11 @@ namespace PixelVisionRunner.Parsers
                         data[y * imageWidth + index] = color;
                         
                         var colorData = new ColorData(color.R, color.G, color.B, color.A);
-                        pixels[y * imageWidth + index] = colorData;
+                        colorPixels[y * imageWidth + index] = colorData;
                         
-                        IndexColor(colorData);
+                        pixels[y * imageWidth + index] = IndexColor(colorData);
+                        
+//                        IndexColor(colorData);
                     }
                     break;
 //                case ColorType.GrayscaleWithAlpha:
@@ -297,9 +300,9 @@ namespace PixelVisionRunner.Parsers
 //                        pixels[y * imageWidth + index1] = new ColorData(r, g, b){a=alpha};
                         
                         var color = new ColorData(r, g, b);
-                        pixels[y * imageWidth + index1] = color;
-
-                        IndexColor(color);
+                        colorPixels[y * imageWidth + index1] = color;
+                        pixels[y * imageWidth + index1] = IndexColor(color);
+//                        IndexColor(color);
                         
                     }
                     break;

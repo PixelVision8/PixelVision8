@@ -15,6 +15,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using MonoGameRunner.Data;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 using PixelVisionSDK.Utils;
@@ -30,17 +32,17 @@ namespace PixelVisionRunner.Parsers
         protected int cps;
         protected int index;
         protected int maxSprites;
-        protected int sHeight;
+        protected int spriteHeight;
         protected SpriteChip spriteChip;
         protected int[] spriteData;
         protected int spritesAdded;
-        protected int sWidth;
+        protected int spriteWidth;
 
 //        protected ITexture2D tex;
         protected IColor[] tmpPixels;
         protected int totalPixels;
         protected int totalSprites;
-        protected int x, y, width, height;
+        protected int x, y, columns, rows;
         protected IColor maskColor;
         protected int maxPerLoop = 100;
         
@@ -57,18 +59,18 @@ namespace PixelVisionRunner.Parsers
             this.chips = chips;
             spriteChip = chips.spriteChip;
             
-            sWidth = spriteChip.width;
-            sHeight = spriteChip.height;
+            spriteWidth = spriteChip.width;
+            spriteHeight = spriteChip.height;
 
         }
 
         protected virtual void CalculateBounds()
         {
-            width = MathUtil.CeilToInt(imageWidth / sWidth);
-            height = MathUtil.CeilToInt(imageHeight / sHeight);
+            columns = MathUtil.CeilToInt(imageWidth / spriteWidth);
+            rows = MathUtil.CeilToInt(imageHeight / spriteHeight);
             
             // Find the total from the width and height
-            totalSprites = width * height;
+            totalSprites = columns * rows;
         }
         
         public override void CalculateSteps()
@@ -90,7 +92,8 @@ namespace PixelVisionRunner.Parsers
             steps.Add(PostCutOutSprites);
         }
 
-
+        protected IColor[] srcColors;
+        
         public virtual void PrepareSprites()
         {
             cps = spriteChip.colorsPerSprite;
@@ -105,7 +108,7 @@ namespace PixelVisionRunner.Parsers
             
             colorData = colorMapChip != null ? colorMapChip.colors : chips.colorChip.colors;
             maskColor = new ColorData(chips.colorChip.maskColor);
-            maxSprites = SpriteChipUtil.CalculateTotalSprites(spriteChip.textureWidth, spriteChip.textureHeight, sWidth, sHeight);
+            maxSprites = SpriteChipUtil.CalculateTotalSprites(spriteChip.textureWidth, spriteChip.textureHeight, spriteWidth, spriteHeight);
 
             // Create tmp arrays for color and reference data
             totalPixels = spriteChip.width * spriteChip.height;
@@ -115,6 +118,9 @@ namespace PixelVisionRunner.Parsers
             // Keep track of number of sprites added
             spritesAdded = 0;
 
+            //TODO this should be set by the parser
+            srcColors = data.Select(c => new ColorAdapter(c) as IColor).ToArray();
+            
             currentStep++;
         }
         
@@ -189,12 +195,57 @@ namespace PixelVisionRunner.Parsers
         
         public virtual void CutOutSpriteFromTexture2D()
         {
-            x = index % width * sWidth;
-            y = index / width * sHeight;
+            x = index % columns * spriteWidth;
+            y = index / columns * spriteHeight;
 
-            tmpPixels = tex.GetPixels(x, y, sWidth, sHeight);
+            tmpPixels = GetPixels(x, y, spriteWidth, spriteHeight);
 
         }
+        
+        public IColor[] GetPixels(int x, int y, int blockWidth, int blockHeight)
+        {
+            
+            var total = blockWidth * blockHeight;
+            var data = new IColor[total];
+            
+            if (data.Length < total)
+                Array.Resize(ref data, total);
+
+            // Per-line copy, as there is no special per-pixel logic required.
+
+            // Vertical wrapping is not an issue. Horizontal wrapping requires splitting the copy into two operations.
+            // Keep important data in local variables.
+            int srcY;
+            
+            int offsetStart = ((x % imageWidth) + imageWidth) % imageWidth;
+            int offsetEnd = offsetStart + blockWidth;
+            if (offsetEnd <= imageWidth)
+            {
+                // Copy each entire line at once.
+                for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
+                {
+                    // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
+                    srcY = (((y + tmpY) % imageHeight) + imageHeight) % imageHeight;
+                    Array.Copy(srcColors, offsetStart + srcY * imageWidth, data, tmpY * blockWidth, blockWidth);
+                }
+            }
+            else
+            {
+                // Copy each non-wrapping section and each wrapped section separately.
+                int wrap = offsetEnd % imageWidth;
+                for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
+                {
+                    // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
+                    srcY = (((y + tmpY) % imageHeight) + imageHeight) % imageHeight;
+                    Array.Copy(srcColors, offsetStart + srcY * columns, data, tmpY * blockWidth, blockWidth - wrap);
+                    Array.Copy(srcColors, srcY * imageWidth, data, (blockWidth - wrap) + tmpY * blockWidth, wrap);
+                }
+            }
+
+            return data;
+
+        }
+        
 
         public void ConvertColorsToIndexes(int totalColors)
         {

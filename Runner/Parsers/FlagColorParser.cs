@@ -80,34 +80,43 @@ namespace PixelVisionRunner.Parsers
         
             var newFlagColors = new List<string>();
             
-            if (tex == null)
+            if (bytes == null)
             {
                 newFlagColors = flagColors.ToList();
             }
             else
             {
-                var pixels = tex.GetPixels();
-    
-                var total = pixels.Length;
-    
+                // TODO This is broken?
+                
+                var total = colorPalette.Count;
+
                 for (int i = 0; i < total; i++)
                 {
-                    var color = pixels[i];
-                    var hex = ColorData.ColorToHex(color.r, color.g, color.b);
-                    
-                    
-                    
-                    if (color.a == 1f && !Equals(color, maskColor))
-                    {
-                        if (newFlagColors.IndexOf(hex) == -1)
-                        {
-                            
-                            newFlagColors.Add(hex);
-                        
-                        }
-                    }
-                    
+                    newFlagColors.Add(((ColorData)colorPalette[i]).ToHex());
                 }
+                
+//                var pixels = tex.GetPixels();
+//    
+//                var total = pixels.Length;
+//    
+//                for (int i = 0; i < total; i++)
+//                {
+//                    var color = pixels[i];
+//                    var hex = ColorData.ColorToHex(color.r, color.g, color.b);
+//                    
+//                    
+//                    
+//                    if (color.a == 1f && !Equals(color, maskColor))
+//                    {
+//                        if (newFlagColors.IndexOf(hex) == -1)
+//                        {
+//                            
+//                            newFlagColors.Add(hex);
+//                        
+//                        }
+//                    }
+//                    
+//                }
             }
 
             flagColorChip.RebuildColorPages(newFlagColors.Count);

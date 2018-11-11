@@ -42,7 +42,7 @@ namespace PixelVisionRunner.Exporters
         public override void PrepareSprites()
         {
             // Get the total number of sprites
-            totalSpritesInTexture = SpriteChipUtil.CalculateTotalSprites(tex.width, tex.height, spriteChip.width, spriteChip.height);
+            totalSpritesInTexture = SpriteChipUtil.CalculateTotalSprites(imageWidth, imageHeight, spriteChip.width, spriteChip.height);
 
             ids = Enumerable.Repeat(-1, totalSpritesInTexture).ToArray();
             
