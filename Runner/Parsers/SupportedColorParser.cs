@@ -9,7 +9,7 @@ namespace PixelVisionRunner.Parsers
     /// </summary>
     public class SupportedColorParser: ColorParser
     {
-        public SupportedColorParser(byte[] bytes, ColorChip colorChip, IColor magenta) : base(bytes, colorChip, magenta, true)
+        public SupportedColorParser(IImageParser imageParser, ColorChip colorChip, IColor magenta) : base(imageParser, colorChip, magenta, true)
         {
             
         }

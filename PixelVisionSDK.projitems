@@ -77,7 +77,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\FlagColorParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\FontParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\IAbstractParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\PNGParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\IImageParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ImageParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\JsonParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\MetaDataParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ScriptParser.cs" />
@@ -92,7 +93,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SaveFlags.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\JsonUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\MiniJSON.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\PNGUtils.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\ZLibStream\ZlibStream.cs" />
   </ItemGroup>
 </Project>

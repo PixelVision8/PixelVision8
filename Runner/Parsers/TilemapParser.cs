@@ -34,8 +34,8 @@ namespace PixelVisionRunner.Parsers
 
         private ColorChip flagColorChip;
 
-        public TilemapParser(byte[] bytes, byte[] tileFlagData, IEngineChips chips) :
-            base(bytes, chips)
+        public TilemapParser(IImageParser imageParser, byte[] tileFlagData, IEngineChips chips) :
+            base(imageParser, chips)
         {
             //Debug.Log("Parse Tilemap");
 

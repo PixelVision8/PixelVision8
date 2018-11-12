@@ -22,7 +22,7 @@ using PixelVisionSDK.Chips;
 namespace PixelVisionRunner.Parsers
 {
 
-    public class ColorParser : PNGParser
+    public class ColorParser : ImageParser
     {
 
         protected ColorChip colorChip;
@@ -34,8 +34,8 @@ namespace PixelVisionRunner.Parsers
 
         protected IColor magenta;
 
-        public ColorParser(byte[] bytes, ColorChip colorChip, IColor magenta,
-            bool unique = false):base(bytes)
+        public ColorParser(IImageParser imageParser, ColorChip colorChip, IColor magenta,
+            bool unique = false):base(imageParser)
         {
 
             this.colorChip = colorChip;
@@ -57,7 +57,7 @@ namespace PixelVisionRunner.Parsers
         public virtual void ReadColors()
         {
 
-            var srcColors = unique ? colorPalette.ToArray() : colorPixels;//data.Select(c => new ColorAdapter(c) as IColor).ToArray();
+            var srcColors = unique ? imageParser.colorPalette.ToArray() : imageParser.colorPixels;//data.Select(c => new ColorAdapter(c) as IColor).ToArray();
             var total = srcColors.Length;
             
                 // Loop through each color and find the unique ones

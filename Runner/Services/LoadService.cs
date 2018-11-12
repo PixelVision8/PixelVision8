@@ -13,11 +13,11 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using GameCreator.Importers;
 using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
@@ -300,8 +300,10 @@ namespace PixelVisionRunner.Services
 
             //var fontName = fileSystem.GetFileNameWithoutExtension(file);
             //fontName = fontName.Substring(0, fontName.Length - 5);
+    
+            var imageParser = new PNGReader(data, targetEngine.colorChip.maskColor);
 
-            return new FontParser(data, targetEngine, fontName);
+            return new FontParser(imageParser, targetEngine, fontName);
         }
 
         private void LoadFlagColors(Dictionary<string, byte[]> files)
@@ -316,8 +318,11 @@ namespace PixelVisionRunner.Services
                 flagTex = files[flags];
             }
             
+            var imageParser = new PNGReader(flagTex, targetEngine.colorChip.maskColor);
+
+            
             // This will also create the custom flag color chip we need for parsing the tilemap later on
-            AddParser(new FlagColorParser(flagTex, targetEngine));
+            AddParser(new FlagColorParser(imageParser, targetEngine));
 
         }
         
@@ -360,8 +365,8 @@ namespace PixelVisionRunner.Services
                 }
 
                 
-                
-                AddParser(new TilemapParser(files[tilemapFile], tileFlagTex, targetEngine));
+                var imageParser = new PNGReader(files[tilemapFile], targetEngine.colorChip.maskColor);
+                AddParser(new TilemapParser(imageParser, tileFlagTex, targetEngine));
                 
 //                var colorFile = "tile-color-offsets.json";
 //
@@ -410,8 +415,9 @@ namespace PixelVisionRunner.Services
             {
                 
 //                var tex = ReadTexture(files[fileName]);
+                var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
 
-                return new SpriteParser(files[fileName], targetEngine);
+                return new SpriteParser(imageParser, targetEngine);
             }
 
             return null;
@@ -436,8 +442,10 @@ namespace PixelVisionRunner.Services
                 
 //                targetEngine.colorMapChip = colorMapChip;
                 
+                var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
+
                 // Pass the chip to the new parser
-                return new ColorMapParser(files[fileName], colorMapChip, maskColor);
+                return new ColorMapParser(imageParser, colorMapChip, maskColor);
             }
 
             return null;
@@ -462,8 +470,11 @@ namespace PixelVisionRunner.Services
                 
 //                targetEngine.colorMapChip = colorMapChip;
                 
+                var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
+
+                
                 // Pass the chip to the new parser
-                return new ColorPaletteParser(files[fileName], colorMapChip, maskColor);
+                return new ColorPaletteParser(imageParser, colorMapChip, maskColor);
             }
 
             return null;
@@ -488,8 +499,11 @@ namespace PixelVisionRunner.Services
 //                
 //                targetEngine.colorMapChip = colorMapChip;
                 
+                var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
+
+                
                 // Pass the chip to the new parser
-                return new SupportedColorParser(files[fileName], targetEngine.colorChip, maskColor);
+                return new SupportedColorParser(imageParser, targetEngine.colorChip, maskColor);
             }
 
             return null;
@@ -502,8 +516,9 @@ namespace PixelVisionRunner.Services
             if (files.ContainsKey(fileName))
             {
 //                var tex = ReadTexture(files[fileName]);
+                var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
 
-                return new ColorParser(files[fileName], targetEngine.colorChip, maskColor, targetEngine.colorChip.unique);
+                return new ColorParser(imageParser, targetEngine.colorChip, maskColor, targetEngine.colorChip.unique);
             }
 
             return null;

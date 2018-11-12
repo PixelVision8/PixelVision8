@@ -24,7 +24,7 @@ using PixelVisionSDK.Utils;
 namespace PixelVisionRunner.Parsers
 {
 
-    public class SpriteParser : PNGParser
+    public class SpriteParser : ImageParser
     {
 
         protected IEngineChips chips;
@@ -49,7 +49,7 @@ namespace PixelVisionRunner.Parsers
 //        protected ITextureFactory textureFactory;
 //        protected byte[] data;
         
-        public SpriteParser(byte[] bytes, IEngineChips chips, bool unique = true):base(bytes)
+        public SpriteParser(IImageParser imageParser, IEngineChips chips, bool unique = true):base(imageParser)
         {
  
 //            this.textureFactory = textureFactory;
@@ -66,8 +66,8 @@ namespace PixelVisionRunner.Parsers
 
         protected virtual void CalculateBounds()
         {
-            columns = MathUtil.CeilToInt(imageWidth / spriteWidth);
-            rows = MathUtil.CeilToInt(imageHeight / spriteHeight);
+            columns = MathUtil.CeilToInt(imageParser.width / spriteWidth);
+            rows = MathUtil.CeilToInt(imageParser.height / spriteHeight);
             
             // Find the total from the width and height
             totalSprites = columns * rows;
@@ -119,7 +119,7 @@ namespace PixelVisionRunner.Parsers
             spritesAdded = 0;
 
             //TODO this should be set by the parser
-            srcColors = colorPixels;//data.Select(c => new ColorAdapter(c) as IColor).ToArray();
+            srcColors = imageParser.colorPixels;//data.Select(c => new ColorAdapter(c) as IColor).ToArray();
             
             currentStep++;
         }
@@ -217,28 +217,28 @@ namespace PixelVisionRunner.Parsers
             // Keep important data in local variables.
             int srcY;
             
-            int offsetStart = ((x % imageWidth) + imageWidth) % imageWidth;
+            int offsetStart = ((x % imageParser.width) + imageParser.width) % imageParser.width;
             int offsetEnd = offsetStart + blockWidth;
-            if (offsetEnd <= imageWidth)
+            if (offsetEnd <= imageParser.width)
             {
                 // Copy each entire line at once.
                 for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
                 {
                     // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                    srcY = (((y + tmpY) % imageHeight) + imageHeight) % imageHeight;
-                    Array.Copy(srcColors, offsetStart + srcY * imageWidth, data, tmpY * blockWidth, blockWidth);
+                    srcY = (((y + tmpY) % imageParser.height) + imageParser.height) % imageParser.height;
+                    Array.Copy(srcColors, offsetStart + srcY * imageParser.width, data, tmpY * blockWidth, blockWidth);
                 }
             }
             else
             {
                 // Copy each non-wrapping section and each wrapped section separately.
-                int wrap = offsetEnd % imageWidth;
+                int wrap = offsetEnd % imageParser.width;
                 for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
                 {
                     // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                    srcY = (((y + tmpY) % imageHeight) + imageHeight) % imageHeight;
+                    srcY = (((y + tmpY) % imageParser.height) + imageParser.height) % imageParser.height;
                     Array.Copy(srcColors, offsetStart + srcY * columns, data, tmpY * blockWidth, blockWidth - wrap);
-                    Array.Copy(srcColors, srcY * imageWidth, data, (blockWidth - wrap) + tmpY * blockWidth, wrap);
+                    Array.Copy(srcColors, srcY * imageParser.width, data, (blockWidth - wrap) + tmpY * blockWidth, wrap);
                 }
             }
 

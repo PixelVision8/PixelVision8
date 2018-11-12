@@ -21,7 +21,7 @@ using PixelVisionSDK.Chips;
 namespace PixelVisionRunner.Parsers
 {
 
-    public class FlagColorParser : PNGParser
+    public class FlagColorParser : ImageParser
     {
         
         public static string flagColorChipName = "PixelVisionSDK.Chips.FlagColorChip";
@@ -54,7 +54,7 @@ namespace PixelVisionRunner.Parsers
 
         private ColorChip flagColorChip;
         
-        public FlagColorParser(byte[] bytes, IEngineChips chips) : base(bytes)
+        public FlagColorParser(IImageParser imageParser, IEngineChips chips) : base(imageParser)
         {
 
             flagColorChip = new ColorChip();
@@ -88,11 +88,11 @@ namespace PixelVisionRunner.Parsers
             {
                 // TODO This is broken?
                 
-                var total = colorPalette.Count;
+                var total = imageParser.colorPalette.Count;
 
                 for (int i = 0; i < total; i++)
                 {
-                    newFlagColors.Add(((ColorData)colorPalette[i]).ToHex());
+                    newFlagColors.Add(((ColorData)imageParser.colorPalette[i]).ToHex());
                 }
                 
 //                var pixels = tex.GetPixels();

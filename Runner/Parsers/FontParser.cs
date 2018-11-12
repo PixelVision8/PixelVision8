@@ -27,7 +27,7 @@ namespace PixelVisionRunner.Parsers
         private int[] fontMap;
         private readonly string name;
 
-        public FontParser(byte[] bytes, IEngineChips chips, string name = "Default", bool autoImport = true) : base(bytes, chips)
+        public FontParser(IImageParser imageParser, IEngineChips chips, string name = "Default", bool autoImport = true) : base(imageParser, chips)
         {
             fontChip = chips.fontChip;
             if (fontChip == null)

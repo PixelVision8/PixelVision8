@@ -35,7 +35,7 @@ namespace PixelVisionRunner.Exporters
         public int[] ids;
         public int totalSpritesInTexture;
         
-        public SpriteDataParser(ITextureFactory textureFactory, byte[] bytes, IEngineChips chips, bool unique = true) : base(bytes, chips, unique)
+        public SpriteDataParser(ITextureFactory textureFactory, IImageParser imageParser, IEngineChips chips, bool unique = true) : base(imageParser, chips, unique)
         {
         }
 
