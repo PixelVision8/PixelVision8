@@ -26,7 +26,7 @@ namespace PixelVisionRunner.Parsers
 //        protected Color[] data;
         protected IColor[] colorPixels;
         protected IList<IColor> colorPalette;
-        protected int[] colorRefs;
+//        protected int[] colorRefs;
         protected int[] pixels;
         protected string maskHex;
         
