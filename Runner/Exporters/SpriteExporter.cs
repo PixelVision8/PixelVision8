@@ -14,10 +14,10 @@
 // Shawn Rakowski - @shwany
 
 using System;
+using GameCreator.Exporters;
 using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
-using PixelVisionSDK.Utils;
 
 namespace PixelVisionRunner.Exporters
 {
@@ -25,14 +25,12 @@ namespace PixelVisionRunner.Exporters
     {
         private string fullFileName;
         private IEngine engine;
-        private ITextureFactory textureFactory;
         private PixelDataExporter exporter;
         
-        public SpriteExporter(string fileName, IEngine engine, ITextureFactory textureFactory)
+        public SpriteExporter(string fileName, IEngine engine)
         {
             fullFileName = fileName;
             this.engine = engine;
-            this.textureFactory = textureFactory;
             
             ConfigurePixelData();
             
@@ -85,14 +83,16 @@ namespace PixelVisionRunner.Exporters
             
             spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
             
-            if(textureFactory.flip)
-                SpriteChipUtil.FlipSpriteData(ref pixelData, width, height, false, true);
+//            if(textureFactory.flip)
+//                SpriteChipUtil.FlipSpriteData(ref pixelData, width, height, false, true);
             
             var colorMapChip = engine.chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
 
             var colors = colorMapChip == null ? engine.colorChip.colors : colorMapChip.colors;
             
-            exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, textureFactory);
+            var imageExporter = new PNGWriter();
+            
+            exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, imageExporter);
             
         }
         

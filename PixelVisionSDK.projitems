@@ -58,6 +58,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\ColorPaletteExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\FlagColorExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\IAbstractExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\IImageExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\PNGExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\MetaDataExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\PixelDataExporter.cs" />

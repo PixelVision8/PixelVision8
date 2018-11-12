@@ -13,6 +13,7 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
+using GameCreator.Exporters;
 using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
@@ -114,8 +115,9 @@ namespace PixelVisionRunner.Exporters
                 canvas.SetPixels(pos.x, pos.y, tileSize.x, tileSize.y, brush);
 
             }
-            
-            exporter = new PixelDataExporter(fullFileName, canvas.pixels, w, h, colors, textureFactory);
+            var imageExporter = new PNGWriter();
+
+            exporter = new PixelDataExporter(fullFileName, canvas.pixels, w, h, colors, imageExporter);
             
             exporter.CalculateSteps();
         }

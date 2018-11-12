@@ -23,7 +23,7 @@ namespace PixelVisionRunner.Exporters
     public class TilemapFlagExporter : TilemapExporter
     {
         
-        public TilemapFlagExporter(string fileName, IEngine engine, ITextureFactory textureFactory) : base(fileName, engine, textureFactory)
+        public TilemapFlagExporter(string fileName, IEngine engine, IImageExporter imageExporter) : base(fileName, engine, imageExporter)
         {
             
         }

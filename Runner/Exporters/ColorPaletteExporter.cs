@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using System;
+using GameCreator.Exporters;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionRunner.Exporters
@@ -78,7 +79,10 @@ namespace PixelVisionRunner.Exporters
                 
             }
             
-            exporter = new PixelDataExporter(fullFileName, pixels, width, height, colors, textureFactory);
+            var imageExporter = new PNGWriter();
+
+            
+            exporter = new PixelDataExporter(fullFileName, pixels, width, height, colors, imageExporter);
             
             // Reset color chip value
             colorChip.debugMode = false;

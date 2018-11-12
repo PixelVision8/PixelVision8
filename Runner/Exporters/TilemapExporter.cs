@@ -34,7 +34,7 @@ namespace PixelVisionRunner.Exporters
         protected int totalPixels;
         protected IEngine engine;
         
-        public TilemapExporter(string fileName, IEngine engine, ITextureFactory textureFactory) : base(fileName, textureFactory)
+        public TilemapExporter(string fileName, IEngine engine, IImageExporter imageExporter) : base(fileName, imageExporter)
         {
             this.engine = engine;
         }
@@ -62,9 +62,16 @@ namespace PixelVisionRunner.Exporters
             loops = (int) Math.Ceiling((float) totalTiles / maxTilesPerLoop);
             
             base.CalculateSteps();
+            
+            CalculateProcessingSteps();
+        }
+        
+        protected virtual void CalculateProcessingSteps()
+        {
+            for (var i = 0; i < loops; i++) steps.Add(ProcessPixelData);
         }
 
-        protected override void ProcessPixelData()
+        protected void ProcessPixelData()
         {
             // TODO i may need to be reset to 0 on each loop. Double check this
             for (var i = 0; i < maxTilesPerLoop; i++)
@@ -74,7 +81,9 @@ namespace PixelVisionRunner.Exporters
                 var tileData = gameChip.Tile(pos.x, pos.y);
                 var spriteData = GetPixelData(tileData);
                 
-                tmpTextureData.SetPixels(pos.x * spriteSize.x, pos.y * spriteSize.y, spriteSize.x, spriteSize.y, spriteData);
+                
+                // TODO need to redo this
+//                tmpTextureData.SetPixels(pos.x * spriteSize.x, pos.y * spriteSize.y, spriteSize.x, spriteSize.y, spriteData);
                 
 
                 currentTile++;
@@ -85,7 +94,7 @@ namespace PixelVisionRunner.Exporters
                 // TODO go through the tiles and copy them over to the TextureData
             }
 
-            base.ProcessPixelData();
+//            base.ProcessPixelData();
         }
         
         public virtual int[] GetPixelData(TileData tileData)

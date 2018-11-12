@@ -13,16 +13,19 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using PixelVisionSDK.Utils;
+using PixelVisionSDK;
 
 
 namespace PixelVisionRunner.Exporters
 {
     public class PixelDataExporter : PNGExporter
     {
-
-        public PixelDataExporter(string fileName, int[] pixelData, int width, int height, IColor[] colors, ITextureFactory textureFactory) : base(fileName, textureFactory, colors)
+        protected int[] pixelData;
+        protected IColor[] paletteColors;
+        
+        public PixelDataExporter(string fileName, int[] pixelData, int width, int height, IColor[] paletteColors, IImageExporter imageExporter) : base(fileName, imageExporter, null)
         {
+            this.paletteColors = paletteColors;
             this.pixelData = pixelData;
             this.width = width;
             this.height = height;
@@ -32,22 +35,32 @@ namespace PixelVisionRunner.Exporters
         {
 
             currentStep = 0;
-            
-            steps.Add(CreateTexture);
-            
-            if(textureFactory.flip)
-                steps.Add(FlipPixels);
-            
+
             steps.Add(CopyPixels);
-            steps.Add(ConvertTexture);
+            
+            steps.Add(WriteBytes);
             
         }
-
-        protected override void FlipPixels()
+        
+        protected virtual void CopyPixels()
         {
-            // TODO maybe the base class should just expect to have the pixel data so this doens't need to override it
-            SpriteChipUtil.FlipSpriteData(ref pixelData, width, height, false, true);
-            currentStep ++;
+            var total = width * height;
+
+            colors = new IColor[total];
+     
+                for (var i = 0; i < total; i++)
+                {
+                    var refID = pixelData[i];
+
+                    if (refID > -1 && refID < total)
+                        colors[i] = paletteColors[refID];
+                    else
+                    {
+                        colors[i] = new ColorData("#FF00FF");
+                    }
+                }
+            
+            currentStep++;
         }
 
     }
