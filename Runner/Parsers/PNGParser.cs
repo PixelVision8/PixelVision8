@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Desktop.Util;
-using Microsoft.Xna.Framework;
-using MonoGame.Utilities;
+using PixelVisionRunner.Utils;
 using PixelVisionSDK;
 
 namespace PixelVisionRunner.Parsers
@@ -25,14 +23,18 @@ namespace PixelVisionRunner.Parsers
         protected ColorType colorType;
         protected Palette palette;
 //        protected Texture2D texture;
-        protected Color[] data;
+//        protected Color[] data;
         protected IColor[] colorPixels;
         protected IList<IColor> colorPalette;
         protected int[] colorRefs;
         protected int[] pixels;
-
-        public PNGParser(byte[] bytes)
+        protected string maskHex;
+        
+        public PNGParser(byte[] bytes, string maskHex = "#FF00FF")
         {
+
+            this.maskHex = maskHex;
+            
 //            this.textureFactory = textureFactory;
             this.bytes = bytes;
             
@@ -200,7 +202,7 @@ namespace PixelVisionRunner.Parsers
 
         private void DecodePixelData(byte[][] pixelData)
         {
-            data = new Color[imageWidth * imageHeight];
+//            data = new Color[imageWidth * imageHeight];
             colorPixels = new IColor[imageWidth * imageHeight];
             pixels = new int[imageWidth * imageHeight];
             
@@ -250,10 +252,15 @@ namespace PixelVisionRunner.Parsers
                     for (int index1 = 0; index1 < imageWidth; ++index1)
                     {
                         int index2 = 1 + index1 * bytesPerPixel;
-                        int r = defilteredScanline[index2];
-                        int g = defilteredScanline[index2 + bytesPerSample];
-                        int b = defilteredScanline[index2 + 2 * bytesPerSample];
-                        data[y * imageWidth + index1] = new Color(r, g, b);
+                        float r = defilteredScanline[index2] / (float)byte.MaxValue;
+                        float g = defilteredScanline[index2 + bytesPerSample] / (float)byte.MaxValue;
+                        float b = defilteredScanline[index2 + 2 * bytesPerSample] / (float)byte.MaxValue;
+//                        data[y * imageWidth + index1] = new Color(r, g, b);
+
+
+//                        var tmpColor = new Color(r, g, b);
+//                        var colorVector = new Vector3((float) r / (float) byte.MaxValue, (float) g / (float) byte.MaxValue, (float) b / (float) byte.MaxValue);
+
                         
                         var color = new ColorData(r, g, b);
                         colorPixels[y * imageWidth + index1] = color;
@@ -267,10 +274,10 @@ namespace PixelVisionRunner.Parsers
                 case ColorType.Palette:
                     for (int index = 0; index < imageWidth; ++index)
                     {
-                        Color color = palette[defilteredScanline[index + 1]];
-                        data[y * imageWidth + index] = color;
+//                        Color color = palette[defilteredScanline[index + 1]];
+//                        data[y * imageWidth + index] = color;
                         
-                        var colorData = new ColorData(color.R, color.G, color.B, color.A);
+                        var colorData = palette[defilteredScanline[index + 1]];
                         colorPixels[y * imageWidth + index] = colorData;
                         
                         pixels[y * imageWidth + index] = IndexColor(colorData);
@@ -292,14 +299,20 @@ namespace PixelVisionRunner.Parsers
                     for (int index1 = 0; index1 < imageWidth; ++index1)
                     {
                         int index2 = 1 + index1 * bytesPerPixel;
-                        int r = defilteredScanline[index2];
-                        int g = defilteredScanline[index2 + bytesPerSample];
-                        int b = defilteredScanline[index2 + 2 * bytesPerSample];
-                        int alpha = defilteredScanline[index2 + 3 * bytesPerSample];
-                        data[y * imageWidth + index1] = new Color(r, g, b, alpha);
+                        float r = defilteredScanline[index2] / (float)byte.MaxValue;
+                        float g = (defilteredScanline[index2 + bytesPerSample]) / (float)byte.MaxValue;
+                        float b = (defilteredScanline[index2 + 2 * bytesPerSample]) / (float)byte.MaxValue;
+                        float alpha = (defilteredScanline[index2 + 3 * bytesPerSample]) / (float)byte.MaxValue;
+//                        data[y * imageWidth + index1] = new Color(r, g, b, alpha);
 //                        pixels[y * imageWidth + index1] = new ColorData(r, g, b){a=alpha};
                         
-                        var color = new ColorData(r, g, b);
+//                        var tmpColor = new Color(r, g, b);
+//                        var colorVector = tmpColor.ToVector4();
+//                        
+                        
+                        var color = alpha < 1 ? new ColorData(maskHex) : new ColorData(r, g, b);
+                        
+//                        var color = new ColorData(r, g, b);
                         colorPixels[y * imageWidth + index1] = color;
                         pixels[y * imageWidth + index1] = IndexColor(color);
 //                        IndexColor(color);

@@ -92,5 +92,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SaveFlags.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\JsonUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\MiniJSON.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\PNGUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\ZLibStream\ZlibStream.cs" />
   </ItemGroup>
 </Project>

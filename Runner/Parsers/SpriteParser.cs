@@ -119,7 +119,7 @@ namespace PixelVisionRunner.Parsers
             spritesAdded = 0;
 
             //TODO this should be set by the parser
-            srcColors = data.Select(c => new ColorAdapter(c) as IColor).ToArray();
+            srcColors = colorPixels;//data.Select(c => new ColorAdapter(c) as IColor).ToArray();
             
             currentStep++;
         }

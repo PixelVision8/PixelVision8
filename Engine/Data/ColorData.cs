@@ -49,10 +49,10 @@ namespace PixelVisionSDK
 
         public ColorData(byte r = 0, byte g = 0, byte b = 0, byte a = byte.MaxValue)
         {
-            _r = (float) r / (float) byte.MaxValue;
-            _g = (float) g / (float) byte.MaxValue;
-            _b = (float) b / (float) byte.MaxValue;
-            _a = (float) a / (float) byte.MaxValue;
+            _r = r / (float) byte.MaxValue;
+            _g = g / (float) byte.MaxValue;
+            _b = b / (float) byte.MaxValue;
+            _a = a / (float) byte.MaxValue;
 
         }
         
