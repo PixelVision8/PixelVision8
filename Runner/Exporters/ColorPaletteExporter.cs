@@ -22,50 +22,46 @@ namespace PixelVisionRunner.Exporters
     public class ColorPaletteExporter : IAbstractExporter
     {
         
-        private string fullFileName;
-        private ITextureFactory textureFactory;
-        private PixelDataExporter exporter;
-        private ColorChip colorChip { get; set; }
-        
-        public ColorPaletteExporter(string fileName, ColorChip colorChip, ITextureFactory textureFactory)
+        protected string fullFileName;
+        protected PixelDataExporter exporter;
+        protected ColorChip colorChip { get; set; }
+        protected IImageExporter imageExporter;
+        protected IColor[] colors;
+        protected int width;
+        protected int height;
+        protected int total;
+        protected int[] pixels;
+
+        public ColorPaletteExporter(string fileName, ColorChip colorChip, IImageExporter imageExporter)
         {
+        
             fullFileName = fileName;
 
             this.colorChip = colorChip;
-            this.textureFactory = textureFactory;
-        
-        }
-        
-        public int currentStep
-        {
-            get { return exporter.currentStep; }
-        }
 
-        public int totalSteps
-        {
-            get { return exporter.totalSteps; }
-
-        }
-
-        public bool completed
-        {
-            get { return exporter.completed; }
-
-        }
-        public void CalculateSteps()
-        {
-            // Force the color chip to not replace empty colors with background value
-            colorChip.debugMode = true;
+            this.imageExporter = imageExporter;
             
-            var colors = colorChip.colors;
-            var total = colors.Length;
+        }
+        
+        public int totalSteps => exporter.totalSteps;
 
-            var width = 8;
-            var height = (int) Math.Ceiling(total / (float) width);
+        public bool completed => exporter.completed;
 
+        public virtual void ConfigureColors()
+        {
+            colors = colorChip.colors;
+            total = colors.Length;
+
+            width = 8;
+            height = (int) Math.Ceiling(total / (float) width);
+            
+        }
+
+        public virtual void BuildPixelData()
+        {
             var totalPixels = width * height;
             
-            var pixels = new int[totalPixels];
+            pixels = new int[totalPixels];
             for (int i = 0; i < totalPixels; i++)
             {
                 if (i < total)
@@ -78,15 +74,24 @@ namespace PixelVisionRunner.Exporters
                 }
                 
             }
-            
-            var imageExporter = new PNGWriter();
+        }
 
-            
-            exporter = new PixelDataExporter(fullFileName, pixels, width, height, colors, imageExporter);
+        public void CalculateSteps()
+        {
+            // Force the color chip to not replace empty colors with background value
+            colorChip.debugMode = true;
+
+            ConfigureColors();
             
             // Reset color chip value
             colorChip.debugMode = false;
+
+            BuildPixelData();
+
+            // Create Pixel Data Exporter
+            exporter = new PixelDataExporter(fullFileName, pixels, width, height, colors, imageExporter);
             
+            // calculate steps for exporter
             exporter.CalculateSteps();
         }
 
@@ -95,16 +100,8 @@ namespace PixelVisionRunner.Exporters
             exporter.NextStep();
         }
 
-        public byte[] bytes
-        {
-            get { return exporter.bytes; }
-            set { throw new NotImplementedException(); }
-        }
+        public byte[] bytes => exporter.bytes;
 
-        public string fileName
-        {
-            get { return exporter.fileName; }
-        }
-        
+        public string fileName => exporter.fileName;
     }
 }

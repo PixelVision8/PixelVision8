@@ -64,6 +64,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\PixelDataExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SpriteBuilderExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SpriteExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SystemColorExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SystemExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\TileColorOffsetExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\TilemapExporter.cs" />

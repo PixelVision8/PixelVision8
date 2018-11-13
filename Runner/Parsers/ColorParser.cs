@@ -57,6 +57,22 @@ namespace PixelVisionRunner.Parsers
         public virtual void ReadColors()
         {
 
+            // TODO this should be removed in future releases, it's only here to support legacy games
+            
+            // If we are loading a legacy game and no system colors are defined, used the image parser's palette
+
+//            if (colorChip.supportedColors == null)
+//            {
+//                string[] systemColors = imageParser.colorPalette.Select(c => ((ColorData) c).ToHex()).ToArray();
+////
+//                for (int i = 0; i < systemColors.Length; i++)
+//                {
+//                    colorChip.AddSupportedColor(systemColors[i]);
+//                }
+//            }
+            
+            // Parse colors as normal
+            
             var srcColors = unique ? imageParser.colorPalette.ToArray() : imageParser.colorPixels;//data.Select(c => new ColorAdapter(c) as IColor).ToArray();
             var total = srcColors.Length;
             

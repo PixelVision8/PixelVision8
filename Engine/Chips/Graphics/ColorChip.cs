@@ -43,9 +43,10 @@ namespace PixelVisionSDK.Chips
         protected int[] invalidColors = new int[0];
         protected int _maxColors = -1;
         protected int _bgColor = 0;
-        protected bool _paletteMode = false;
-        protected int _colorsPerPalette = -1;
         
+        // A flag to let the game chip know the last 128  colors are reserved for palettes
+        public bool paletteMode;
+
         /// <summary>
         ///     The background color reference to use when rendering transparent in
         ///     the ScreenBufferTexture.
@@ -188,95 +189,104 @@ namespace PixelVisionSDK.Chips
             }
         }
 
-        #region Supported Color APIs
-
-        
-
-        
-        protected List<string> _supportedColors;
-
-        public int totalSupportedColors => _supportedColors.Count;
-        
-        public string[] supportedColors => _supportedColors.ToArray();
-
-        public bool AddSupportedColor(string color)
-        {
-            var success = false;
-            
-            color = color.ToUpper();
-            
-            if (ColorData.ValidateColor(color))
-            {
-
-                // Exit if the color is the same as the mask
-                if (color == maskColor)
-                    return false;
-                
-                // Create a new supported colors list if one doesn't exist
-                if(_supportedColors == null)
-                    _supportedColors = new List<string>();
-    
-                // Check to see if the color exits first
-                if (_supportedColors.IndexOf(color) == -1)
-                {
-                    
-                    // If the color is not part of the current list, add it
-                    success = true;
-                    _supportedColors.Add(color);
-                }
-            }
-
-            return success;
-        }
-
-        public bool RemoveSupportedColor(string color)
-        {
-
-            // Do nothing if there are no supported colors
-            if (_supportedColors == null)
-                return false;
-            
-            var success = false;
-            
-            color = color.ToUpper();
-            
-            if (ColorData.ValidateColor(color))
-            {
-                // Exit if the color is the same as the mask
-                if (color == maskColor)
-                    return false;
-                
-                success = _supportedColors.Remove(color);
-            }
-
-            return success;
-        }
-
-        public bool UpdateSupportedColorAt(int id, string color)
-        {
-            var success = false;
-            
-            if (id >= 0 || id > _supportedColors.Count)
-            {
-                
-                color = color.ToUpper();
-                
-                if (ColorData.ValidateColor(color))
-                {
-                    // Exit if the color is the same as the mask
-                    if (color == maskColor)
-                        return false;
-                    
-                    _supportedColors[id] = color;
-                    success = true;
-                }
-                
-            }
-            
-            return success;
-        }
-        
-        #endregion
+//        #region Supported Color APIs
+//
+//        
+//
+//        
+//        protected List<string> _supportedColors;
+//
+//        public int totalSupportedColors => _supportedColors.Count;
+//
+//        public string[] supportedColors
+//        {
+//            get
+//            {
+//                if (_supportedColors == null)
+//                    return null;
+//
+//                return _supportedColors.ToArray();
+//            }
+//        }
+//
+//        public bool AddSupportedColor(string color)
+//        {
+//            var success = false;
+//            
+//            color = color.ToUpper();
+//            
+//            if (ColorData.ValidateColor(color))
+//            {
+//
+//                // Exit if the color is the same as the mask
+//                if (color == maskColor)
+//                    return false;
+//                
+//                // Create a new supported colors list if one doesn't exist
+//                if(_supportedColors == null)
+//                    _supportedColors = new List<string>();
+//    
+//                // Check to see if the color exits first
+//                if (_supportedColors.IndexOf(color) == -1)
+//                {
+//                    
+//                    // If the color is not part of the current list, add it
+//                    success = true;
+//                    _supportedColors.Add(color);
+//                }
+//            }
+//
+//            return success;
+//        }
+//
+//        public bool RemoveSupportedColor(string color)
+//        {
+//
+//            // Do nothing if there are no supported colors
+//            if (_supportedColors == null)
+//                return false;
+//            
+//            var success = false;
+//            
+//            color = color.ToUpper();
+//            
+//            if (ColorData.ValidateColor(color))
+//            {
+//                // Exit if the color is the same as the mask
+//                if (color == maskColor)
+//                    return false;
+//                
+//                success = _supportedColors.Remove(color);
+//            }
+//
+//            return success;
+//        }
+//
+//        public bool UpdateSupportedColorAt(int id, string color)
+//        {
+//            var success = false;
+//            
+//            if (id >= 0 || id > _supportedColors.Count)
+//            {
+//                
+//                color = color.ToUpper();
+//                
+//                if (ColorData.ValidateColor(color))
+//                {
+//                    // Exit if the color is the same as the mask
+//                    if (color == maskColor)
+//                        return false;
+//                    
+//                    _supportedColors[id] = color;
+//                    success = true;
+//                }
+//                
+//            }
+//            
+//            return success;
+//        }
+//        
+//        #endregion
         
         public string ReadColorAt(int index)
         {
@@ -305,13 +315,13 @@ namespace PixelVisionSDK.Chips
 
             if (ColorData.ValidateColor(color))
             {
-                // Check for supported colors
-                if (_supportedColors != null)
-                {
-                    // If the color is not in the supported colors list, exit
-                    if (_supportedColors.IndexOf(color) == -1 && color != maskColor)
-                        return;
-                }
+//                // Check for supported colors
+//                if (_supportedColors != null)
+//                {
+//                    // If the color is not in the supported colors list, exit
+//                    if (_supportedColors.IndexOf(color) == -1 && color != maskColor)
+//                        return;
+//                }
                 
                 if (unique)
                 {

@@ -136,9 +136,9 @@ namespace PixelVisionRunner.Services
             if ((saveFlags & SaveFlags.Colors) == SaveFlags.Colors)
             {
 
-                parser = LoadSystemColors(files);
-                if (parser != null)
-                    AddParser(parser);
+//                parser = LoadSystemColors(files);
+//                if (parser != null)
+//                    AddParser(parser);
 
                 // Add the color parser
                 parser = LoadColors(files);
@@ -480,34 +480,34 @@ namespace PixelVisionRunner.Services
             return null;
         }
         
-        private AbstractParser LoadSystemColors(Dictionary<string, byte[]> files)
-        {
-            var fileName = "system-colors.png";
-
-            if (files.ContainsKey(fileName))
-            {
-                
-//                UnityEngine.Debug.Log("Create color map");
-                
-//                var tex = ReadTexture(files[fileName]);
-                
-                // Create new color map chip
-//                var systemColorChip = new ColorChip();
+//        private AbstractParser LoadSystemColors(Dictionary<string, byte[]> files)
+//        {
+//            var fileName = "system-colors.png";
+//
+//            if (files.ContainsKey(fileName))
+//            {
 //                
-//                // Add the chip to the engine
-//                targetEngine.chipManager.ActivateChip("PixelVisionSDK.Chips.SystemColorChip", systemColorChip, false);
+////                UnityEngine.Debug.Log("Create color map");
 //                
-//                targetEngine.colorMapChip = colorMapChip;
-                
-                var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
-
-                
-                // Pass the chip to the new parser
-                return new SupportedColorParser(imageParser, targetEngine.colorChip, maskColor);
-            }
-
-            return null;
-        }
+////                var tex = ReadTexture(files[fileName]);
+//                
+//                // Create new color map chip
+////                var systemColorChip = new ColorChip();
+////                
+////                // Add the chip to the engine
+////                targetEngine.chipManager.ActivateChip("PixelVisionSDK.Chips.SystemColorChip", systemColorChip, false);
+////                
+////                targetEngine.colorMapChip = colorMapChip;
+//                
+//                var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
+//
+//                
+//                // Pass the chip to the new parser
+//                return new SupportedColorParser(imageParser, targetEngine.colorChip, maskColor);
+//            }
+//
+//            return null;
+//        }
 
         private AbstractParser LoadColors(Dictionary<string, byte[]> files)
         {

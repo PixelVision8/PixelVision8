@@ -129,6 +129,9 @@ namespace PixelVisionRunner.Parsers
             
             if (data.ContainsKey("unique"))
                 colorChip.unique = Convert.ToBoolean(data["unique"]);
+            
+            if (data.ContainsKey("paletteMode"))
+                colorChip.paletteMode = Convert.ToBoolean(data["paletteMode"]);
 
         }
 
