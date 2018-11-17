@@ -2193,6 +2193,18 @@ namespace PixelVisionSDK.Chips
 
         #region Experimental APIs
 
+    
+        /// <summary>
+        ///     This method will automatically calculate the start color offset for palettes in the color chip.
+        /// </summary>
+        /// <param name="value">The palette number, 1 - 8</param>
+        /// <returns></returns>
+        public int PaletteOffset(int value)
+        {
+            // TODO this is hardcoded right now but there are 8 palettes with a max of 16 colors each
+            return 128 + (value.Clamp(0, 7) * 16);
+        }
+        
         public struct MetaSpriteData
         {
             public int id;
@@ -2200,7 +2212,7 @@ namespace PixelVisionSDK.Chips
             public bool flipV;
             public int colorOffset;
             
-            public MetaSpriteData(int id, bool flipH, bool flipV, int colorOffset)
+            public MetaSpriteData(int id, bool flipH = false, bool flipV = false, int colorOffset = 0)
             {
                 this.id = id;
                 this.flipH = flipH;
@@ -2224,7 +2236,7 @@ namespace PixelVisionSDK.Chips
             }
         }
             
-        private Dictionary<string, MetaSprite> metaSprites = new Dictionary<string, MetaSprite>();
+        protected Dictionary<string, MetaSprite> metaSprites = new Dictionary<string, MetaSprite>();
         
         public void RegisterMetaSprite(string name, int width, MetaSpriteData[] sprites)
         {
