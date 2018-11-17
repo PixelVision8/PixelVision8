@@ -40,7 +40,10 @@ namespace PixelVisionSDK.Chips
         protected int _colorsPerPage = 64;
         protected int _pages = 4;
         protected ColorData[] colorCache;
-        protected int[] invalidColors = new int[0];
+        
+        // By default, there are only 2 colors so we need 2 flags
+        protected int[] invalidColors = new int[2];
+        
         protected int _maxColors = -1;
         protected int _bgColor = 0;
         
@@ -300,6 +303,7 @@ namespace PixelVisionSDK.Chips
 
         public void Clear()
         {
+            
             var t = _colors.Length;
             for (var i = 0; i < t; i++)
                 UpdateColorAt(i, maskColor);
@@ -323,13 +327,13 @@ namespace PixelVisionSDK.Chips
 //                        return;
 //                }
                 
-                if (unique)
-                {
-                    if (FindColorID(color) != -1)
-                    {
-                        return;
-                    }
-                }
+//                if (unique)
+//                {
+//                    if (FindColorID(color) != -1)
+//                    {
+//                        return;
+//                    }
+//                }
                 _colors[index] = color;
                 invalidColors[index] = 1;
                 Invalidate();
@@ -392,7 +396,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="total"></param>
         public void RebuildColorPages(int total)
         {
-            pages = MathUtil.CeilToInt(total / colorsPerPage);
+            pages = (int)Math.Ceiling(total / (float)colorsPerPage);
         }
        
         public bool ValidateHexColor(string inputColor)

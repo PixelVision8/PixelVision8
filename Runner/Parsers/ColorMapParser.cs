@@ -23,8 +23,7 @@ namespace PixelVisionRunner.Parsers
     {
         public static string chipName = "PixelVisionSDK.Chips.ColorMapChip";
 
-        public ColorMapParser(IImageParser imageParser, ColorChip colorChip, IColor magenta, bool unique = false,
-            bool ignoreTransparent = true) : base(imageParser, colorChip, magenta, unique)
+        public ColorMapParser(IImageParser imageParser, ColorChip colorChip, IColor magenta, bool unique = false) : base(imageParser, colorChip, magenta, unique)
         {
             
         }

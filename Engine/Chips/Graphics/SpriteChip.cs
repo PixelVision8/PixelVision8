@@ -54,7 +54,7 @@ namespace PixelVisionSDK.Chips
         private int tmpX;
         private int tmpY;
 
-        public bool unique = true;
+        public bool unique = false;
 
         /// <summary>
         ///     The global <see cref="width" /> of sprites in the engine. By default
