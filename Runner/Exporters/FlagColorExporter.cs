@@ -37,14 +37,14 @@ namespace PixelVisionRunner.Exporters
 //        }
         
         private string fullFileName;
-        private ITextureFactory textureFactory;
+//        private ITextureFactory textureFactory;
         private PixelDataExporter exporter;
         private Vector tileSize;
         private int totalFlags;
         private GameChip gameChip;
         private ColorChip flagColorChip;
         
-        public FlagColorExporter(string fileName, IEngineChips engineChips, ITextureFactory textureFactory)
+        public FlagColorExporter(string fileName, IEngineChips engineChips)
         {
             fullFileName = fileName;
 
@@ -58,7 +58,7 @@ namespace PixelVisionRunner.Exporters
             
             tileSize = gameChip.SpriteSize();
             
-            this.textureFactory = textureFactory;
+//            this.textureFactory = textureFactory;
         
         }
         

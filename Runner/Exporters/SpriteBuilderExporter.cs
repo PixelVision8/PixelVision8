@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GameCreator.Importers;
 using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
@@ -30,12 +31,11 @@ namespace PixelVisionRunner.Exporters
     /// </summary>
     internal class SpriteDataParser : SpriteParser
     {
-//        public List<int[]> pixelData = new List<int[]>();
-        
+
         public int[] ids;
         public int totalSpritesInTexture;
         
-        public SpriteDataParser(ITextureFactory textureFactory, IImageParser imageParser, IEngineChips chips, bool unique = true) : base(imageParser, chips, unique)
+        public SpriteDataParser(IImageParser imageParser, IEngineChips chips, bool unique = true) : base(imageParser, chips, unique)
         {
         }
 
@@ -52,12 +52,8 @@ namespace PixelVisionRunner.Exporters
 
         protected override void ProcessSpriteData()
         {
-            
-
             // Save the index to the ids array
             ids[index] = spriteChip.FindSprite(spriteData, true);
-            
-//            Debug.Log("Sprite Data " + ids[index] + " - " +string.Join(",", spriteData.Select(element => element.ToString()).ToArray()));
             
         }
     }
@@ -68,23 +64,18 @@ namespace PixelVisionRunner.Exporters
 
         private readonly string startComment = "-- spritelib-start";
         
-        private readonly ITextureFactory textureFactory;
         private IEngine engine;
         
         private Dictionary<string, byte[]> files;
-//        private IColorFactory colorFactory;
+
         public int spriteCount;
         
-        public SpriteBuilderExporter(string fileName, IEngine engine, Dictionary<string, byte[]> files,
-            ITextureFactory textureFactory) : base(fileName)
+        public SpriteBuilderExporter(string fileName, IEngine engine, Dictionary<string, byte[]> files) : base(fileName)
         {
-            this.textureFactory = textureFactory;
+
             this.files = files;
             this.engine = engine;
-//            this.colorFactory = colorFactory;
-//            this.fileSystem = fileSystem;
 
-//            CalculateSteps();
         }
 
         public override void CalculateSteps()
@@ -115,38 +106,12 @@ namespace PixelVisionRunner.Exporters
         private void ConvertFilesToTextures()
         {
 
-            var spriteSize = engine.gameChip.SpriteSize();
-            
-            ITexture2D tmpTexture;
-            SpriteExportData tmpSpriteData;
-            
             foreach (var file in files)
             {
-//                tmpTexture = textureFactory.NewTexture2D(1, 1);
-//                tmpTexture.LoadImage(file.Value);
-//
-//                // Create sprite data
-//                tmpSpriteData = new SpriteExportData(file.Key);
-//                tmpSpriteData.src = tmpTexture;
-//                
-//                // Calculate size
-//                tmpSpriteData.width = (int)Math.Ceiling((float) tmpTexture.width / spriteSize.x);
-//                tmpSpriteData.height = (int)Math.Ceiling((float) tmpTexture.height / spriteSize.y);
-//
-//                var totalIDs = tmpSpriteData.width * tmpSpriteData.height;
-//                
-//                // Setup sprite id containers based on size
-//                tmpSpriteData.ids = new int[totalIDs];
-//                
-//                // Clear all sprite IDs
-//                for (int i = 0; i < totalIDs; i++)
-//                {
-//                    tmpSpriteData.ids[i] = -1;
-//                }
-//                
-//                // Add the sprite data to the list
-//                sprites.Add(tmpSpriteData);
-                                
+
+                // Add the sprite data to the list
+                sprites.Add(new SpriteExportData(file.Key, file.Value));
+
             }
             
             currentStep++;
@@ -160,31 +125,27 @@ namespace PixelVisionRunner.Exporters
         private void ParseSpriteData()
         {
             
-//            for (var i = 0; i < maxTilesPerLoop; i++)
-//            {
-//                var spriteData = sprites[currentTile];
-//
-//                var texture = spriteData.src;
-//                
-////                Debug.Log("Parse " + currentTile + "/ " +totalTiles + " - " + spriteData.fileName);
-//                
-//                var spriteParser = new SpriteDataParser(texture, engine);
-//                
-//                spriteParser.CalculateSteps();
-//                
-//                while (spriteParser.completed == false)
-//                    spriteParser.NextStep();
-//
-//
-//                Array.Copy(spriteParser.ids, spriteData.ids, spriteParser.ids.Length);
-//
-//                currentTile++;
-//
-//                if (currentTile >= totalTiles)
-//                    break;
-//            }
-//            
-//            currentStep++;
+            for (var i = 0; i < maxTilesPerLoop; i++)
+            {
+                var spriteData = sprites[currentTile];
+
+                var spriteParser = new SpriteDataParser(spriteData.imageParser, engine);
+                
+                spriteParser.CalculateSteps();
+                
+                while (spriteParser.completed == false)
+                    spriteParser.NextStep();
+
+
+                Array.Copy(spriteParser.ids, spriteData.ids, spriteParser.ids.Length);
+
+                currentTile++;
+
+                if (currentTile >= totalTiles)
+                    break;
+            }
+            
+            currentStep++;
         }
         
 

@@ -51,8 +51,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\IAudioClip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\IAudioClipFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\IColor.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\ITexture2D.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\ITextureFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\SpriteExportData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\AbstractExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\ColorPaletteExporter.cs" />
