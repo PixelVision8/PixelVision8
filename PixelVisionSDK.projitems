@@ -71,7 +71,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\IRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\AbstractParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ColorMapParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ColorPaletteParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ColorParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\FlagColorParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\FontParser.cs" />
@@ -82,7 +81,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\MetaDataParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ScriptParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\SpriteParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\SupportedColorParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\SystemParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TileColorOffsetJsonParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TilemapJsonParser.cs" />

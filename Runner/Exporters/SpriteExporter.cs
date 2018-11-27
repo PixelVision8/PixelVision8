@@ -13,7 +13,6 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using System;
 using GameCreator.Exporters;
 using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
@@ -42,49 +41,12 @@ namespace PixelVisionRunner.Exporters
         {
             var spriteChip = engine.spriteChip;
 
-            var totalSprites = spriteChip.totalSprites;
-            
             var width = spriteChip.textureWidth;
             var height = spriteChip.textureHeight;
-            var sWidth = spriteChip.width;
-            var sHeight = spriteChip.height;
-            
-            var emptyCount = 0;
-            var tmpData = new int[sWidth * sHeight];
-            var cols = (int)Math.Floor((float) width / sWidth);
-            var rows = 1;
-
-            for (int i = 0; i < totalSprites; i++)
-            {
-                
-                spriteChip.ReadSpriteAt(i, tmpData);
-                
-                if (spriteChip.IsEmpty(tmpData))
-                {
-                    emptyCount++;
-                }
-                
-                if (i % cols == 0)
-                {
-                    
-                    if (emptyCount < cols)
-                    {
-                        // If we find a sprite in a row we need to reset the height since sprites can be on any row
-                        height = rows * sHeight;
-                    }
-                    
-                    rows++;
-                    
-                    emptyCount = 0;
-                }
-            }
             
             var pixelData = new int[width * height];
             
             spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
-            
-//            if(textureFactory.flip)
-//                SpriteChipUtil.FlipSpriteData(ref pixelData, width, height, false, true);
             
             var colorMapChip = engine.chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
 
@@ -96,11 +58,6 @@ namespace PixelVisionRunner.Exporters
             
         }
         
-//        public int currentStep
-//        {
-//            get { return exporter.currentStep; }
-//        }
-
         public int totalSteps
         {
             get { return exporter.totalSteps; }

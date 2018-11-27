@@ -154,10 +154,10 @@ namespace PixelVisionRunner.Services
                 if (parser != null)
                     AddParser(parser);
 
-                // This will be the new parser moving forward
-                parser = LoadColorPalette(files);
-                if(parser != null)
-                    AddParser(parser);
+//                // This will be the new parser moving forward
+//                parser = LoadColorPalette(files);
+//                if(parser != null)
+//                    AddParser(parser);
                 
                 // TODO need to rename SaveFlags.ColorMap to SaveFlags.ColorPalette
                 
@@ -451,34 +451,34 @@ namespace PixelVisionRunner.Services
             return null;
         }
         
-        private AbstractParser LoadColorPalette(Dictionary<string, byte[]> files)
-        {
-            var fileName = "color-palette.png";
-
-            if (files.ContainsKey(fileName))
-            {
-                
-//                UnityEngine.Debug.Log("Create color map");
-                
-//                var tex = ReadTexture(files[fileName]);
-                
-                // Create new color map chip
-                var colorMapChip = new ColorChip();
-                
-                // Add the chip to the engine
-                targetEngine.chipManager.ActivateChip(ColorPaletteParser.chipName, colorMapChip, false);
-                
-//                targetEngine.colorMapChip = colorMapChip;
-                
-                var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
-
-                
-                // Pass the chip to the new parser
-                return new ColorPaletteParser(imageParser, colorMapChip, maskColor);
-            }
-
-            return null;
-        }
+//        private AbstractParser LoadColorPalette(Dictionary<string, byte[]> files)
+//        {
+//            var fileName = "color-palette.png";
+//
+//            if (files.ContainsKey(fileName))
+//            {
+//                
+////                UnityEngine.Debug.Log("Create color map");
+//                
+////                var tex = ReadTexture(files[fileName]);
+//                
+//                // Create new color map chip
+//                var colorMapChip = new ColorChip();
+//                
+//                // Add the chip to the engine
+//                targetEngine.chipManager.ActivateChip(ColorPaletteParser.chipName, colorMapChip, false);
+//                
+////                targetEngine.colorMapChip = colorMapChip;
+//                
+//                var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
+//
+//                
+//                // Pass the chip to the new parser
+//                return new ColorPaletteParser(imageParser, colorMapChip, maskColor);
+//            }
+//
+//            return null;
+//        }
         
 //        private AbstractParser LoadSystemColors(Dictionary<string, byte[]> files)
 //        {
