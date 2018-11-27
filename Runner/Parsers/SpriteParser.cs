@@ -159,6 +159,7 @@ namespace PixelVisionRunner.Parsers
             
             if (spritesAdded < maxSprites)
             {
+                // TODO need to deprecate this since the sprite file should load up exactly how it is read
                 if (spriteChip.unique)
                 {
                     if (spriteChip.FindSprite(spriteData) == -1)
