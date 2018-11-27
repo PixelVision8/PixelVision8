@@ -1373,9 +1373,21 @@ namespace PixelVisionSDK.Chips
         public Vector MousePosition()
         {
             var pos = controllerChip.ReadMousePosition();
+
+            var bounds = displayChip.visibleBounds;
             
-//            engine.displayTarget.ConvertMousePosition(pos);
-            
+            // Make sure that the mouse x position is inside of the display width
+            if (pos.x < 0 || pos.x > bounds.width)
+            {
+                pos.x = -1;
+            }
+    
+            // Make sure that the mouse y position is inside of the display height
+            if (pos.y < 0 || pos.y > bounds.height)
+            {
+                pos.y = -1;
+            }
+
             return pos;
         }
 
