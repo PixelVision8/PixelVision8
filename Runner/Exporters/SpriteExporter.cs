@@ -22,9 +22,9 @@ namespace PixelVisionRunner.Exporters
 {
     public class SpriteExporter : IAbstractExporter
     {
-        private string fullFileName;
-        private IEngine engine;
-        private PixelDataExporter exporter;
+        protected string fullFileName;
+        protected IEngine engine;
+        protected PixelDataExporter exporter;
         
         public SpriteExporter(string fileName, IEngine engine)
         {
@@ -37,7 +37,7 @@ namespace PixelVisionRunner.Exporters
         }
         
         // TODO this should be a step in the exporter
-        public void ConfigurePixelData()
+        public virtual void ConfigurePixelData()
         {
             var spriteChip = engine.spriteChip;
 

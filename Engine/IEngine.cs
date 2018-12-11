@@ -33,6 +33,8 @@ namespace PixelVisionSDK
         bool running { get; }
 
         string name { get; set; }
+
+        Dictionary<string, string> metaData { get; }
 //        bool canWrite { get; set; }
 
         /// <summary>

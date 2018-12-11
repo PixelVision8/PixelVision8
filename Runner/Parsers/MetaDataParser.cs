@@ -40,13 +40,13 @@ namespace PixelVisionRunner.Parsers
             {
                 engine.SetMetaData(d.Key, d.Value as string);
 
-                if (d.Key == "name")
-                {
-                    engine.gameChip.name = d.Value as string;
-                }else if (d.Key == "ext")
-                {
-                    engine.gameChip.ext = d.Value as string;
-                }
+//                if (d.Key == "name" || d.Key == "gameName")
+//                {
+//                    engine.gameChip.name = d.Value as string;
+//                }else if (d.Key == "ext" || d.Key == "gameExt")
+//                {
+//                    engine.gameChip.ext = d.Value as string;
+//                }
             }
 
             currentStep++;

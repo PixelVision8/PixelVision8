@@ -27,7 +27,7 @@ namespace PixelVisionRunner.Parsers
         private int[] fontMap;
         private readonly string name;
 
-        public FontParser(IImageParser imageParser, IEngineChips chips, string name = "Default", bool autoImport = true) : base(imageParser, chips)
+        public FontParser(IImageParser imageParser, IEngineChips chips, string name = "Default") : base(imageParser, chips)
         {
             fontChip = chips.fontChip;
             if (fontChip == null)
@@ -65,14 +65,25 @@ namespace PixelVisionRunner.Parsers
 
         protected override void ProcessSpriteData()
         {
-            var id = spriteChip.FindSprite(spriteData);
 
-            if (id == -1 && autoImport)
+            var id = -1;
+            
+            // If the sprite chip has unique sprites, try to find an existing sprite first
+            if (spriteChip.unique)
+            {
+                id = spriteChip.FindSprite(spriteData);
+            }
+            
+            // If the sprite ID is -1 look for an empty sprite
+            if (id == -1)
             {
                 id = spriteChip.NextEmptyID();
-                spriteChip.UpdateSpriteAt(id, spriteData);
             }
-
+    
+            // Add the font character sprite data
+            spriteChip.UpdateSpriteAt(id, spriteData);
+            
+            // Set the id to the font map
             fontMap[index] = id;
         }
 

@@ -297,37 +297,37 @@ namespace PixelVisionRunner.Exporters
             JsonUtil.GetLineBreak(sb, 1);
             
             // Name
-            sb.Append("\"name\":");
-            sb.Append("\"");
-            sb.Append(gameChip.name);
-            sb.Append("\"");
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
-            
-            // Description
-            sb.Append("\"description\":");
-            sb.Append("\"");
-            sb.Append(gameChip.description);
-            sb.Append("\"");
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
-            
-            // Version
-            sb.Append("\"version\":");
-            sb.Append("\"");
-            sb.Append(gameChip.version);
-            sb.Append("\"");
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
-            
-            
-            // ext
-            sb.Append("\"ext\":");
-            sb.Append("\"");
-            sb.Append(gameChip.ext);
-            sb.Append("\"");
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
+//            sb.Append("\"name\":");
+//            sb.Append("\"");
+//            sb.Append(gameChip.name);
+//            sb.Append("\"");
+//            sb.Append(",");
+//            JsonUtil.GetLineBreak(sb, 1);
+//            
+//            // Description
+//            sb.Append("\"description\":");
+//            sb.Append("\"");
+//            sb.Append(gameChip.description);
+//            sb.Append("\"");
+//            sb.Append(",");
+//            JsonUtil.GetLineBreak(sb, 1);
+//            
+//            // Version
+//            sb.Append("\"version\":");
+//            sb.Append("\"");
+//            sb.Append(gameChip.version);
+//            sb.Append("\"");
+//            sb.Append(",");
+//            JsonUtil.GetLineBreak(sb, 1);
+//            
+//            
+//            // ext
+//            sb.Append("\"ext\":");
+//            sb.Append("\"");
+//            sb.Append(gameChip.ext);
+//            sb.Append("\"");
+//            sb.Append(",");
+//            JsonUtil.GetLineBreak(sb, 1);
             
             // Lock Specs
             sb.Append("\"lockSpecs\":");

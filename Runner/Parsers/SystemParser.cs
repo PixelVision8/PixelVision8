@@ -174,17 +174,17 @@ namespace PixelVisionRunner.Parsers
 
             // loop through all data and save it to the game's memory
 
-            if (data.ContainsKey("name"))
-                gameChip.name = (string) data["name"];
-
-            if (data.ContainsKey("description"))
-                gameChip.description = (string) data["description"];
-
-            if (data.ContainsKey("version"))
-                gameChip.version = (string) data["version"];
-
-            if (data.ContainsKey("ext"))
-                gameChip.ext = (string) data["ext"];
+//            if (data.ContainsKey("name"))
+//                gameChip.name = (string) data["name"];
+//
+//            if (data.ContainsKey("description"))
+//                gameChip.description = (string) data["description"];
+//
+//            if (data.ContainsKey("version"))
+//                gameChip.version = (string) data["version"];
+//
+//            if (data.ContainsKey("ext"))
+//                gameChip.ext = (string) data["ext"];
 
             if (data.ContainsKey("maxSize"))
                 gameChip.maxSize = (int) (long) data["maxSize"];

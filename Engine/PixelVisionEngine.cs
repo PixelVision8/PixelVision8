@@ -32,9 +32,11 @@ namespace PixelVisionSDK
     {
 
         protected string[] defaultChips;
-        
-            
-        protected Dictionary<string, string> metaData = new Dictionary<string, string>
+
+
+        public Dictionary<string, string> metaData => _metaData;
+
+        protected Dictionary<string, string> _metaData = new Dictionary<string, string>
         {
             {"name", "untitled"}
         };
@@ -253,10 +255,10 @@ namespace PixelVisionSDK
         /// <returns></returns>
         public string GetMetaData(string key, string defaultValue = "")
         {
-            if (!metaData.ContainsKey(key))
-                metaData.Add(key, defaultValue);
+            if (!_metaData.ContainsKey(key))
+                _metaData.Add(key, defaultValue);
 
-            return metaData[key];
+            return _metaData[key];
         }
 
         /// <summary>
@@ -265,10 +267,10 @@ namespace PixelVisionSDK
         /// <param name="value"></param>
         public void SetMetaData(string key, string value)
         {
-            if (!metaData.ContainsKey(key))
-                metaData.Add(key, value);
+            if (!_metaData.ContainsKey(key))
+                _metaData.Add(key, value);
             else
-                metaData[key] = value;
+                _metaData[key] = value;
         }
 
         /// <summary>
@@ -279,7 +281,7 @@ namespace PixelVisionSDK
         {
             target.Clear();
 
-            foreach (var data in metaData)
+            foreach (var data in _metaData)
                 if (Array.IndexOf(ignoreKeys, data.Key) == -1)
                     target.Add(data.Key, data.Value);
         }

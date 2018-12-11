@@ -130,7 +130,7 @@ namespace PixelVisionSDK.Chips
             {"flag", -1}
         };
 
-        protected string _name = "Untitle_Game";
+//        protected string _name = "Untitle_Game";
         protected int _saveSlots;
         public Dictionary<string, string> savedData = new Dictionary<string, string>();
 
@@ -150,9 +150,9 @@ namespace PixelVisionSDK.Chips
 
         public bool lockSpecs = false;
 
-        public string ext = ".pv8";
-        public string version = "0.0.0";
-        
+//        public string ext = ".pv8";
+//        public string version = "0.0.0";
+//        
         /// <summary>
         ///     Used to limit the amount of data the game can save.
         /// </summary>
@@ -177,16 +177,16 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         ///     Name of the game.
         /// </summary>
-        public string name
-        {
-            get { return _name ?? GetType().Name; }
-            set { _name = value; }
-        }
-        
-        /// <summary>
-        ///     The description for the game.
-        /// </summary>
-        public string description { get; set; }
+//        public string name
+//        {
+//            get { return _name ?? GetType().Name; }
+//            set { _name = value; }
+//        }
+//        
+//        /// <summary>
+//        ///     The description for the game.
+//        /// </summary>
+//        public string description { get; set; }
 
         #endregion
 
