@@ -40,7 +40,8 @@ namespace PixelVisionRunner.Parsers
 		{
 
 			var tilemapChip = target.tilemapChip;
-
+			
+			
 			if (data.ContainsKey("layers"))
 			{
 
@@ -51,51 +52,57 @@ namespace PixelVisionRunner.Parsers
 
 				for (int i = 0; i < total; i++)
 				{
-
-					var layer = layers[i] as Dictionary<string, object>;
-					var tileSet = tileSets[i] as Dictionary<string, object>;
-					
 					try
 					{
-						var layerType = (TilemapChip.Layer) Enum.Parse(typeof(TilemapChip.Layer), ((string)layer["name"]));
+						var layer = layers[i] as Dictionary<string, object>;
+						
+	
+						var layerType = (string)layer["type"];
 
-						var offset = (int) (long) tileSet["firstgid"];
-						
-						var columns = (int) (long) layer["width"];
-						var rows = (int) (long) layer["height"];
-
-						var rawLayerData = layer["data"] as List<object>;
-						
-						int[] dataValues = rawLayerData.Select(x => ((int) (long)x) - offset < -1 ? -1 : ((int) (long)x) - offset).ToArray();
-						
-						if (columns != tilemapChip.columns || rows > tilemapChip.rows)
+						if (layerType == "tilelayer")
 						{
-							
-							// Create texture data that matches the memory of the tilemap chip
-							var tmpPixelData = new TextureData(tilemapChip.columns, tilemapChip.rows);
-							tmpPixelData.Clear();
-							
-							var jsonData = new TextureData(columns, rows);
-							jsonData.Clear();
-							jsonData.SetPixels(0, 0, columns, rows, dataValues);
 
-							var tmpCol = columns > tilemapChip.columns ? tilemapChip.columns : columns;
-							var tmpRow = rows > tilemapChip.rows ? tilemapChip.rows : rows;
+							var tileSet = tileSets[i] as Dictionary<string, object>;
 
-							if (tmpCol > columns)
-								tmpCol = columns;
 
-							if (tmpRow > rows)
-								tmpRow = rows;
+							var offset = (int) (long) tileSet["firstgid"];
 
-							var tmpData = new int[tmpCol * tmpRow];
-							
-							jsonData.CopyPixels(ref tmpData, 0, 0, tmpCol, tmpRow);
-							
-							tmpPixelData.SetPixels(0, 0, tmpCol, tmpRow, tmpData);
-							
-							tmpPixelData.CopyPixels(ref dataValues, 0, 0, tmpPixelData.width, tmpPixelData.height);
-							
+							var columns = (int) (long) layer["width"];
+							var rows = (int) (long) layer["height"];
+
+							var rawLayerData = layer["data"] as List<object>;
+
+							int[] dataValues = rawLayerData
+								.Select(x => ((int) (long) x) - offset < -1 ? -1 : ((int) (long) x) - offset).ToArray();
+
+							if (columns != tilemapChip.columns || rows > tilemapChip.rows)
+							{
+
+								// Create texture data that matches the memory of the tilemap chip
+								var tmpPixelData = new TextureData(tilemapChip.columns, tilemapChip.rows);
+								tmpPixelData.Clear();
+
+								var jsonData = new TextureData(columns, rows);
+								jsonData.Clear();
+								jsonData.SetPixels(0, 0, columns, rows, dataValues);
+
+								var tmpCol = columns > tilemapChip.columns ? tilemapChip.columns : columns;
+								var tmpRow = rows > tilemapChip.rows ? tilemapChip.rows : rows;
+
+								if (tmpCol > columns)
+									tmpCol = columns;
+
+								if (tmpRow > rows)
+									tmpRow = rows;
+
+								var tmpData = new int[tmpCol * tmpRow];
+
+								jsonData.CopyPixels(ref tmpData, 0, 0, tmpCol, tmpRow);
+
+								tmpPixelData.SetPixels(0, 0, tmpCol, tmpRow, tmpData);
+
+								tmpPixelData.CopyPixels(ref dataValues, 0, 0, tmpPixelData.width, tmpPixelData.height);
+
 //							var jsonMap = new TextureData(columns, rows);
 //							jsonMap.SetPixels(0, 0, columns, rows, dataValues);
 //							
@@ -120,11 +127,64 @@ namespace PixelVisionRunner.Parsers
 //							
 //							Array.Resize(ref dataValues, tilemapChip.total);
 //							
-							tmpPixelData.CopyPixels(ref dataValues, 0, 0, tilemapChip.columns, tilemapChip.rows);
+								tmpPixelData.CopyPixels(ref dataValues, 0, 0, tilemapChip.columns, tilemapChip.rows);
+							}
+
+							var layerName =
+								(TilemapChip.Layer) Enum.Parse(typeof(TilemapChip.Layer), ((string) layer["name"]));
+
+							Array.Copy(dataValues, tilemapChip.layers[(int) layerName], dataValues.Length);
+
 						}
-						
-						Array.Copy(dataValues, tilemapChip.layers[(int)layerType], dataValues.Length); 
-						
+						else if (layerType == "objectgroup")
+						{
+							var tiles = layer["objects"] as List<object>;
+
+							var totalTiles = tiles.Count;
+
+							for (int j = 0; j < totalTiles; j++)
+							{
+								var tileData = tiles[j] as Dictionary<string, object>;
+								
+								var column = (int)Math.Floor(((float)(long) tileData["x"])/8);
+								var row = (int)Math.Floor(((float)(long) tileData["y"])/8) - 1;
+
+								var spriteID = Convert.ToInt32((string)tileData["type"]);
+
+								var gID = (int) (long) tileData["gid"];
+								
+								
+								
+									byte[] intBytes = BitConverter.GetBytes(gID);
+
+								var hFlip = Convert.ToBoolean(intBytes[0]);
+								var vFlip = Convert.ToBoolean(intBytes[1]);
+								
+								Console.WriteLine(j + " Flip " + hFlip + " " +vFlip);
+								
+								var properties = tileData["properties"] as List<object>;
+
+								int flagID = -1;
+								int colorOffset = 0;
+								
+								for (int k = 0; k < properties.Count; k++)
+								{
+									var prop = properties[i] as Dictionary<string, object>;
+
+									var propName = (string)prop["name"];
+									
+									if (propName  == "flagID")
+									{
+										flagID = (int) (long) prop["value"];
+									}else if (propName == "colorOffset")
+									{
+										colorOffset = (int) (long) prop["value"];
+									}
+								}
+								
+								tilemapChip.UpdateTileAt(spriteID, column, row, flagID, colorOffset);
+							}
+						}
 						// TODO need to make sure that the layer is the same size as the display chip
 
 						// TODO copy the tilemap data over to layer correctly

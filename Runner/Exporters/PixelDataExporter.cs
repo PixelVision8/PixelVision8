@@ -1,4 +1,4 @@
-﻿//
+﻿﻿//
 // Copyright (c) Jesse Freeman. All rights reserved.  
 //
 // Licensed under the Microsoft Public License (MS-PL) License. 
@@ -18,7 +18,7 @@ using PixelVisionSDK;
 
 namespace PixelVisionRunner.Exporters
 {
-    public class PixelDataExporter : PNGExporter
+    public class PixelDataExporter : ImageExporter
     {
         protected int[] pixelData;
         protected IColor[] paletteColors;

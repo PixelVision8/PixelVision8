@@ -1,4 +1,4 @@
-﻿//
+﻿﻿//
 // Copyright (c) Jesse Freeman. All rights reserved.  
 //
 // Licensed under the Microsoft Public License (MS-PL) License. 
@@ -25,34 +25,35 @@ namespace PixelVisionRunner.Exporters
         protected string fullFileName;
         protected IEngine engine;
         protected PixelDataExporter exporter;
-        
-        public SpriteExporter(string fileName, IEngine engine)
+        protected IImageExporter imageExporter;
+        protected SpriteChip spriteChip;
+        protected IColor[] colors;
+
+
+        public SpriteExporter(string fileName, IEngine engine, IImageExporter imageExporter)
         {
             fullFileName = fileName;
             this.engine = engine;
+            this.imageExporter = imageExporter;
             
-            ConfigurePixelData();
+            spriteChip = engine.spriteChip;
             
-            CalculateSteps();
+            var colorMapChip = engine.chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
+
+            colors = colorMapChip == null ? engine.colorChip.colors : colorMapChip.colors;
+
         }
+
         
         // TODO this should be a step in the exporter
         public virtual void ConfigurePixelData()
         {
-            var spriteChip = engine.spriteChip;
-
+            
             var width = spriteChip.textureWidth;
             var height = spriteChip.textureHeight;
-            
             var pixelData = new int[width * height];
             
             spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
-            
-            var colorMapChip = engine.chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
-
-            var colors = colorMapChip == null ? engine.colorChip.colors : colorMapChip.colors;
-            
-            var imageExporter = new PNGWriter();
             
             exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, imageExporter);
             
@@ -69,8 +70,10 @@ namespace PixelVisionRunner.Exporters
             get { return exporter.completed; }
 
         }
-        public void CalculateSteps()
+        public virtual void CalculateSteps()
         {
+            ConfigurePixelData();
+            
             exporter.CalculateSteps();
         }
 

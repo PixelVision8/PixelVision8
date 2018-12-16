@@ -24,7 +24,7 @@ namespace PixelVisionRunner.Utils
         public static int indentLevel = 0;
         public static string lineBreak = "\n";
         public static string indentChar = "    ";
-
+        
         public static bool compressJson { get; set; }
 
         public static void GetLineBreak(StringBuilder sb, int indent = 0)

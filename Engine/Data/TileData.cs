@@ -17,12 +17,14 @@ namespace PixelVisionSDK
 {
     public class TileData : AbstractData
     {
+        public int index;
         public int spriteID;
         public int colorOffset;
         public int flag;
 
-        public TileData(int spriteID, int colorOffset = 0, int flag = -1)
+        public TileData(int index, int spriteID, int colorOffset = 0, int flag = -1)
         {
+            this.index = index;
             this.spriteID = spriteID;
             this.colorOffset = colorOffset;
             this.flag = flag;

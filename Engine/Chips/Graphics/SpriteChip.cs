@@ -280,12 +280,12 @@ namespace PixelVisionSDK.Chips
 //        private int[] tmpPixelData;
 
         private int width1;
-        private int height1;
+//        private int height1;
         private int w;
         
         // TODO these are hard coded assuming the sprites are always 8x8
         private readonly int[] emptySpriteData = Enumerable.Repeat(-1, 64).ToArray();
-        private readonly int totalSpritePixels = 64;
+//        private readonly int totalSpritePixels = 64;
         
         /// <summary>
         ///     Returns an array of ints that represent a sprite. Each

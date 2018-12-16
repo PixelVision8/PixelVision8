@@ -47,10 +47,10 @@ namespace PixelVisionRunner.Parsers
         };
         
         protected IColor maskColor;
-        private int flag;
-        private int offset;
-        private int realWidth;
-        private int realHeight;
+//        private int flag;
+//        private int offset;
+//        private int realWidth;
+//        private int realHeight;
 
         private ColorChip flagColorChip;
         

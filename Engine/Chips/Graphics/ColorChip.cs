@@ -59,7 +59,7 @@ namespace PixelVisionSDK.Chips
             set
             {
                 // We make sure that the bg color is never set to a value out of the range of the color chip
-                _bgColor = value.Clamp(0, total);
+                _bgColor = value.Clamp(-1, total);
                 Invalidate();
             } 
         }

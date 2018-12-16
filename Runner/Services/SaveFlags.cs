@@ -25,21 +25,21 @@ namespace PixelVisionRunner
         System = 1,
         Code = 2,
         Colors = 4,
-        ColorMap = 8,
         Sprites = 16,
         Tilemap = 32,
-        TilemapFlags = 64,
         Fonts = 128,
         Meta = 256,
         Music = 512,
         Sounds = 1024,
-//        SpriteCache = 2048,
-        TilemapCache = 2048,
         SaveData = 4096,
+        
+        // TODO deprecated, need to remove these
+        TilemapCache = 2048,
         TileColorOffset = 8192,
+        TilemapFlags = 64,
+        ColorMap = 8,
         FlagColors = 16384,
-//        SystemColors = 32768
-        //65536
+
 
     }
 

@@ -62,7 +62,7 @@ namespace PixelVisionSDK.Chips
             public GamePadState CurrentState;
             public GamePadState PreviousState;
             public Dictionary<Buttons, Keys> KeyboardMap;
-            public Dictionary<Buttons, MouseInput> MouseMap;
+//            public Dictionary<Buttons, MouseInput> MouseMap;
             public bool IsConnected()
             {
                 return CurrentState.IsConnected;

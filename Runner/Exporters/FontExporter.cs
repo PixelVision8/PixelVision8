@@ -9,7 +9,7 @@ namespace PixelVisionRunner.Exporters
     public class FontExporter : SpriteExporter
     {
 
-        public FontExporter(string fileName, IEngine engine): base(fileName, engine)
+        public FontExporter(string fileName, IEngine engine, IImageExporter imageExporter): base(fileName, engine, imageExporter)
         {
             
         }

@@ -20,7 +20,7 @@ namespace PixelVisionRunner
     public interface IDisplayTarget
     {
         void ResetResolution(IEngine activeEngine, bool fullscreen, bool matchResolution, bool stretch);
-        void Render(IEngine engine);
+        void Render(IEngine engine, bool ignoreTransparent = false);
         void CacheColors(IEngine engine);
 //        void ConvertMousePosition(Vector pos);
     }

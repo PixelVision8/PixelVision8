@@ -22,7 +22,7 @@ namespace PixelVisionRunner.Exporters
 
         public string fileName { get; protected set; }
 
-        public byte[] bytes { get; protected set; }
+//        public byte[] bytes { get; protected set; }
 
         public AbstractExporter(string fileName)
         {

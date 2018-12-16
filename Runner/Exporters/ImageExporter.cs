@@ -18,7 +18,7 @@ using System.IO;
 
 namespace PixelVisionRunner.Exporters
 {
-    public class PNGExporter : AbstractExporter
+    public class ImageExporter : AbstractExporter
     {
 
         protected  IColor[] colors;
@@ -27,7 +27,7 @@ namespace PixelVisionRunner.Exporters
         protected int loops;
         protected IImageExporter imageExporter;
         
-        public PNGExporter(string fileName, IImageExporter imageExporter, IColor[] colors = null) : base(fileName)
+        public ImageExporter(string fileName, IImageExporter imageExporter, IColor[] colors = null) : base(fileName)
         {
 
             this.imageExporter = imageExporter;

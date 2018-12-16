@@ -965,7 +965,7 @@ namespace PixelVisionSDK.Chips
         private int nextY;
         private int[] spriteIDs;
 //        private int j;
-        private int[] pixelData;
+//        private int[] pixelData;
 
         /// <summary>
         ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render
@@ -1033,10 +1033,10 @@ namespace PixelVisionSDK.Chips
         
         
         private int[] tmpTilemapCache = new int[0];
-        private int oX;
-        private int oY;
+//        private int oX;
+//        private int oY;
         private int width;
-        private int sY;
+//        private int sY;
         
         /// <summary>
         ///     By default, the tilemap renders to the display by simply calling DrawTilemap(). This automatically fills the entire
@@ -1693,7 +1693,7 @@ namespace PixelVisionSDK.Chips
 //            tmpTileData["colorOffset"] = tilemapChip.ReadTileColorAt(column, row);
 //            tmpTileData["flag"] = tilemapChip.ReadFlagAt(column, row);
 
-            return new TileData(tilemapChip.ReadSpriteAt(column, row), tilemapChip.ReadTileColorAt(column, row), tilemapChip.ReadFlagAt(column, row));
+            return new TileData(CalculateIndex(column, row, tilemapChip.columns), tilemapChip.ReadSpriteAt(column, row), tilemapChip.ReadTileColorAt(column, row), tilemapChip.ReadFlagAt(column, row));
         }
 
         /// <summary>

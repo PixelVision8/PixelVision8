@@ -1,4 +1,4 @@
-﻿//
+﻿﻿//
 // Copyright (c) Jesse Freeman. All rights reserved.  
 //
 // Licensed under the Microsoft Public License (MS-PL) License. 
@@ -68,6 +68,9 @@ namespace PixelVisionRunner.Exporters
             var spriteChip = targetEngine.spriteChip;
             var tilemapChip = targetEngine.tilemapChip;
             var colorChip = targetEngine.colorChip;
+            var gameChip = targetEngine.gameChip;
+
+            var spriteSize = gameChip.SpriteSize();
             
             // Width
             sb.Append("\"width\":");
@@ -107,13 +110,13 @@ namespace PixelVisionRunner.Exporters
             
             // tilewidth
             sb.Append("\"tilewidth\":");
-            sb.Append(spriteChip.width);
+            sb.Append(spriteSize.x);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1); 
             
             // tileheight
             sb.Append("\"tileheight\":");
-            sb.Append(spriteChip.height);
+            sb.Append(spriteSize.y);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1); 
             
@@ -142,8 +145,8 @@ namespace PixelVisionRunner.Exporters
             
             var sheets = new Dictionary<string, SpriteVector>()
             {
-                {"sprites.cache.png", new SpriteVector(spriteChip.texture.width, spriteChip.texture.height, spriteChip.totalSprites)},
-                {"flags.png", new SpriteVector(8, MathUtil.CeilToInt((float) tilemapChip.totalFlags / 8), tilemapChip.totalFlags)}
+                {"sprites.png", new SpriteVector(spriteChip.texture.width, spriteChip.texture.height, spriteChip.totalSprites)},
+//                {"flags.png", new SpriteVector(8, MathUtil.CeilToInt((float) tilemapChip.totalFlags / 8), tilemapChip.totalFlags)}
             };
             
             var totalSheets = sheets.Count;
@@ -158,7 +161,7 @@ namespace PixelVisionRunner.Exporters
                 
                 // columns
                 sb.Append("\"columns\":");
-                sb.Append(spriteChip.texture.width / spriteChip.width);
+                sb.Append(spriteChip.texture.width / spriteSize.x);
                 sb.Append(",");
                 JsonUtil.GetLineBreak(sb, 2);
                 
@@ -207,13 +210,13 @@ namespace PixelVisionRunner.Exporters
                 
                 // tilewidth
                 sb.Append("\"tilewidth\":");
-                sb.Append(spriteChip.width);
+                sb.Append(spriteSize.x);
                 sb.Append(",");
                 JsonUtil.GetLineBreak(sb, 2);
                 
                 // tileheight
                 sb.Append("\"tileheight\":");
-                sb.Append(spriteChip.height);
+                sb.Append(spriteSize.y);
                 sb.Append(",");
                 JsonUtil.GetLineBreak(sb, 2);
                 
@@ -254,52 +257,52 @@ namespace PixelVisionRunner.Exporters
             // TODO need to do this as a loop
 
 
-            var list = new List<string>
-            {
-                TilemapChip.Layer.Sprites.ToString(),
-                TilemapChip.Layer.Flags.ToString(),
-//                Layer.Palettes.ToString()
-            };
+//            var list = new List<string>
+//            {
+//                TilemapChip.Layer.Sprites.ToString(),
+////                TilemapChip.Layer.Flags.ToString(),
+////                Layer.Palettes.ToString()
+//            };
 
-            var totalLayers = list.Count;
+//            var totalLayers = list.Count;
             
-            for (int i = 0; i < totalLayers; i++)
-            {
+//            for (int i = 0; i < totalLayers; i++)
+//            {
 
-                var layerName = list[i];
+//                var layerName = list[i];
 
-                var idOffset = 1;
-
-                if (i == 1)
-                {
-                    idOffset += spriteChip.totalSprites;
-                }
+                var idOffset = 1 + spriteChip.totalSprites;
                 
                 // Layer start
                 sb.Append("{");
                 JsonUtil.GetLineBreak(sb, 3);
                 
                 // name
+                sb.Append("\"draworder\":");
+                sb.Append("\"topdown\"");
+                sb.Append(",");
+                JsonUtil.GetLineBreak(sb, 3); 
+                
                 sb.Append("\"name\":");
-                sb.Append("\""+layerName+"\"");
+                sb.Append("\"Tilemap\"");
                 sb.Append(",");
                 JsonUtil.GetLineBreak(sb, 3);
                 
                 // width
-                sb.Append("\"width\":");
-                sb.Append(tilemapChip.columns);
+                sb.Append("\"id\":");
+                sb.Append(1);
                 sb.Append(",");
                 JsonUtil.GetLineBreak(sb, 3);
                 
                 // height
-                sb.Append("\"height\":");
-                sb.Append(tilemapChip.rows);
-                sb.Append(",");
-                JsonUtil.GetLineBreak(sb, 3);
+//                sb.Append("\"height\":");
+//                sb.Append(tilemapChip.rows);
+//                sb.Append(",");
+//                JsonUtil.GetLineBreak(sb, 3);
                 
                 // type
                 sb.Append("\"type\":");
-                sb.Append("\"tilelayer\"");
+                sb.Append("\"objectgroup\"");
                 sb.Append(",");
                 JsonUtil.GetLineBreak(sb, 3);
                 
@@ -328,15 +331,165 @@ namespace PixelVisionRunner.Exporters
                 JsonUtil.GetLineBreak(sb, 3);
                 
                 // layers start
-                sb.Append("\"data\": [");
+                sb.Append("\"objects\": [");
                 JsonUtil.GetLineBreak(sb, 4);
+            
+            
+
+
+            var total = tilemapChip.total;
+            var cols = tilemapChip.columns;
+            var tileCounter = 0;
+            
+            for (int i = 0; i < total; i++)
+            {
+
+                var pos = gameChip.CalculatePosition(i, cols);
                 
+                var tile = gameChip.Tile(pos.x, pos.y);
+                
+                // Only save a tile if it exists
+                if (tile.spriteID > -1)
+                {
+                    sb.Append("{");
+                    JsonUtil.GetLineBreak(sb, 5);
+                
+                    sb.Append("\"id\":");
+                    sb.Append(tileCounter);
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 5);
+                    
+                    sb.Append("\"name\":");
+                    sb.Append("\"Tile:"+pos.x+","+pos.y+"\"");
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 5);
+                    
+                    sb.Append("\"type\":");
+                    sb.Append("\""+tile.spriteID+"\"");
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 5);
+                    
+                    // TODO need to add in flip values to this sprite ID
+                    sb.Append("\"gid\":");
+                    sb.Append(tile.spriteID + 1);
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 5);
+                    
+                    sb.Append("\"width\":");
+                    sb.Append(spriteSize.x);
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 5);
+                    
+                    sb.Append("\"height\":");
+                    sb.Append(spriteSize.y);
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 5);
+                    
+                    
+                    sb.Append("\"x\":");
+                    sb.Append(pos.x * spriteSize.x);
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 5);
+                    
+                    sb.Append("\"y\":");
+                    sb.Append((pos.y + 1) * spriteSize.y);  // Tiled Y pos is 1 based, so offset the x position by 1 tile
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 5);
+                    
+                    sb.Append("\"rotation\":");
+                    sb.Append(0);
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 5);
+                    
+                    // visible
+                    sb.Append("\"visible\":");
+                    sb.Append("true");
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 5);
+                    
+                    // layers start
+                    sb.Append("\"properties\": [");
+                    JsonUtil.GetLineBreak(sb, 6);
+                    
+                    // Save flag id
+                    
+                    // 
+                    JsonUtil.GetLineBreak(sb, 7);
+                    sb.Append("{");
+                    
+                    sb.Append("\"name\":");
+                    sb.Append("\"flagID\"");
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 7);
+                    
+                    sb.Append("\"type\":");
+                    sb.Append("\"int\"");
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 7);
+                    
+                    sb.Append("\"value\":");
+                    sb.Append(tile.flag);
+                    
+                    // property end
+                    JsonUtil.GetLineBreak(sb, 6);
+                    sb.Append("},");
+                    
+                    
+                    // Save flag id
+                    
+                    // 
+                    JsonUtil.GetLineBreak(sb, 7);
+                    sb.Append("{");
+                    
+                    sb.Append("\"name\":");
+                    sb.Append("\"colorOffset\"");
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 7);
+                    
+                    sb.Append("\"type\":");
+                    sb.Append("\"int\"");
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 7);
+                    
+                    sb.Append("\"value\":");
+                    sb.Append(tile.colorOffset);
+                    
+                    // property end
+                    JsonUtil.GetLineBreak(sb, 6);
+                    sb.Append("}");
+                    
+                    
+                    
+                    
+                    JsonUtil.GetLineBreak(sb, 5);
+                    sb.Append("]");
+                    JsonUtil.GetLineBreak(sb, 4);
+                    
+                    sb.Append("}");
+
+                    Console.WriteLine(i + " Add Comma " + total + " " + tileCounter);
+                    
+                    if (i < total-1)
+                    {
+                        sb.Append(",");
+                    }
+                    
+                    JsonUtil.GetLineBreak(sb, 4);
+                    
+                    tileCounter++;
+                }
+                
+            }
+            
+            
+            
+            
     //            sb.Append(String.Join("", new List<int>(layers[(int)Layer.Sprites]).ConvertAll(i => i.ToString()).ToArray()));
 
-                var layerEnum = (TilemapChip.Layer) Enum.Parse(typeof(TilemapChip.Layer), layerName);
-                    
-                // Need to join the layer array and add 1 to the sprite ID since tiled isn't 
-                sb.Append(string.Join(",", tilemapChip.layers[(int)layerEnum].Select(x => (x == -1 ? 0 : x + idOffset).ToString())));
+//                var layerEnum = (TilemapChip.Layer) Enum.Parse(typeof(TilemapChip.Layer), layerName);
+//                    
+//                // Need to join the layer array and add 1 to the sprite ID since tiled isn't 
+//                sb.Append(string.Join(",", tilemapChip.layers[(int)layerEnum].Select(x => (x == -1 ? 0 : x + idOffset).ToString())));
                 
                 // tilesets end
                 JsonUtil.GetLineBreak(sb, 3);
@@ -346,12 +499,12 @@ namespace PixelVisionRunner.Exporters
                 JsonUtil.GetLineBreak(sb, 2);
                 sb.Append("}");
                 
-                if (i < totalLayers - 1 && totalLayers > 1)
-                {
-                    sb.Append(",");
-                }
+//                if (i < totalLayers - 1 && totalLayers > 1)
+//                {
+//                    sb.Append(",");
+//                }
                 
-            }
+//            }
             
             // layers end
             JsonUtil.GetLineBreak(sb, 1);

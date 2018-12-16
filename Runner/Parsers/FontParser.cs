@@ -36,7 +36,7 @@ namespace PixelVisionRunner.Parsers
                 fontChip = new FontChip();
                 chips.chipManager.ActivateChip(fontChip.GetType().FullName, fontChip);
             }
-            this.autoImport = autoImport;
+//            this.autoImport = autoImport;
             this.name = name;
         }
 
