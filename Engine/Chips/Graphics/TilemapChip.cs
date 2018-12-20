@@ -32,6 +32,8 @@ namespace PixelVisionSDK.Chips
             Sprites,
             Colors,
             Flags,
+            FlipH,
+            FlipV,
             Invalid
         }
 
@@ -128,29 +130,6 @@ namespace PixelVisionSDK.Chips
         }
 
         /// <summary>
-        ///     Reads the current tile and output the spriteID,
-        ///     <paramref name="paletteID" /> and <paramref name="flag" /> value. Use
-        ///     this to get access to the underlying tile map data structure.
-        /// </summary>
-        /// <param name="column">
-        ///     The column position of the tile. 0 is the left of the tile map.
-        /// </param>
-        /// <param name="row">
-        ///     The row position of the tile. 0 is the top of the tile map.
-        /// </param>
-        /// <param name="spriteID">The id of the sprite to use.</param>
-        /// <param name="paletteID">
-        ///     The color offset to use when rendering the sprite.
-        /// </param>
-        /// <param name="flag">The flag value used for collision.</param>
-//        public void ReadTile(int column, int row, out int spriteID, out int paletteID, out int flag)
-//        {
-//            spriteID = ReadDataAt(Layer.Sprites, column, row);
-//            paletteID = ReadDataAt(Layer.Palettes, column, row);
-//            flag = ReadDataAt(Layer.Flags, column, row);
-//        }
-
-        /// <summary>
         ///     Returns the value in a given Tilemap layer. Accepts a layer enum and automatically converts is to a layer id.
         /// </summary>
         /// <param name="name"></param>
@@ -236,11 +215,16 @@ namespace PixelVisionSDK.Chips
         /// <param name="paletteID">
         ///     The color offset to use when rendering the sprite.
         /// </param>
-        public void UpdateTileAt(int spriteID, int column, int row, int flag = -1, int paletteID = 0)
+        /// <param name="flipH"></param>
+        /// <param name="flipV"></param>
+        public void UpdateTileAt(int spriteID, int column, int row, int flag = -1, int paletteID = 0,
+            bool flipH = false, bool flipV = false)
         {
             UpdateDataAt(Layer.Sprites, column, row, spriteID);
             UpdateDataAt(Layer.Colors, column, row, paletteID);
             UpdateDataAt(Layer.Flags, column, row, flag);
+//            UpdateDataAt(Layer.FlipH, column, row, Convert.ToInt32(flipH));
+//            UpdateDataAt(Layer.FlipV, column, row, Convert.ToInt32(flipV));
         }
 
         /// <summary>
@@ -447,5 +431,12 @@ namespace PixelVisionSDK.Chips
             base.Deactivate();
             engine.tilemapChip = null;
         }
+
+        #region Tile APIs
+
+        
+        
+
+        #endregion
     }
 }

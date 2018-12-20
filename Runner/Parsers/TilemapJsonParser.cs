@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PixelVisionRunner.Utils;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 
@@ -149,18 +150,15 @@ namespace PixelVisionRunner.Parsers
 								var column = (int)Math.Floor(((float)(long) tileData["x"])/8);
 								var row = (int)Math.Floor(((float)(long) tileData["y"])/8) - 1;
 
-								var spriteID = Convert.ToInt32((string)tileData["type"]);
+								var gID = (uint) (long) tileData["gid"];
 
-								var gID = (int) (long) tileData["gid"];
-								
-								
-								
-									byte[] intBytes = BitConverter.GetBytes(gID);
+								int spriteID = -1;
+								var flipH = false;
+								var flipV = false;
 
-								var hFlip = Convert.ToBoolean(intBytes[0]);
-								var vFlip = Convert.ToBoolean(intBytes[1]);
+								ReadGID(gID, out spriteID, out flipH, out flipV);
 								
-								Console.WriteLine(j + " Flip " + hFlip + " " +vFlip);
+//								Console.WriteLine(j + " Sprite "+spriteID+" Flip " + flipH + " " +flipV);
 								
 								var properties = tileData["properties"] as List<object>;
 
@@ -182,7 +180,7 @@ namespace PixelVisionRunner.Parsers
 									}
 								}
 								
-								tilemapChip.UpdateTileAt(spriteID, column, row, flagID, colorOffset);
+								tilemapChip.UpdateTileAt((spriteID - 1), column, row, flagID, colorOffset, flipH, flipV);
 							}
 						}
 						// TODO need to make sure that the layer is the same size as the display chip
@@ -203,6 +201,27 @@ namespace PixelVisionRunner.Parsers
 			
 			currentStep++;
 
+		}
+		
+		public void ReadGID(uint gid, out int id, out bool flipH, out bool flipV)
+		{
+        
+			// Starts with 0, 31 in a uint
+        
+			// Create mask by subtracting the bits you don't want
+
+			var idMask = (1 << 30) - 1;
+
+			id = (int)(gid & idMask);
+
+			var hMask = 1 << 31;
+
+			flipH = (hMask & gid) != 0;
+        
+			var vMask = 1 << 30;
+
+			flipV = (vMask & gid) != 0;
+        
 		}
 	}
 }

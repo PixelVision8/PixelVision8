@@ -65,6 +65,8 @@ namespace PixelVisionRunner.Exporters
         
         private void SaveGameData()
         {
+            JsonUtil.compressJson = true;
+            
             var spriteChip = targetEngine.spriteChip;
             var tilemapChip = targetEngine.tilemapChip;
             var colorChip = targetEngine.colorChip;
@@ -371,7 +373,7 @@ namespace PixelVisionRunner.Exporters
                     
                     // TODO need to add in flip values to this sprite ID
                     sb.Append("\"gid\":");
-                    sb.Append(tile.spriteID + 1);
+                    sb.Append(CreateGID(tile.spriteID + 1, tile.flipH, tile.flipV));
                     sb.Append(",");
                     JsonUtil.GetLineBreak(sb, 5);
                     
@@ -536,6 +538,22 @@ namespace PixelVisionRunner.Exporters
             bytes = Encoding.UTF8.GetBytes(sb.ToString());
             
             currentStep++;
+        }
+        
+        public uint CreateGID(int id, bool flipH, bool flipV){
+		
+		
+            var gid = (uint)id;
+		
+            if(flipH)
+                gid |= 1U<<31;
+		
+            if(flipV)
+                gid |= 1U<<30;
+		
+		
+            return gid;
+		
         }
     }
 }

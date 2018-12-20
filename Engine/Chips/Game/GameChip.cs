@@ -1,4 +1,4 @@
-﻿//   
+﻿﻿//   
 // Copyright (c) Jesse Freeman. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) License. 
@@ -1847,7 +1847,9 @@ namespace PixelVisionSDK.Chips
             var tmpSpriteIDs = tilemapChip.layers[(int) TilemapChip.Layer.Sprites];
             var tmpPaletteIDs = tilemapChip.layers[(int) TilemapChip.Layer.Colors];
             var invalideLayer = tilemapChip.layers[(int) TilemapChip.Layer.Invalid];
-
+            var flipHLayer = tilemapChip.layers[(int) TilemapChip.Layer.FlipH];
+            var flipVLayer = tilemapChip.layers[(int) TilemapChip.Layer.FlipV];
+            
             // Create tmp variables for loop
             int x, y, spriteID;
 
@@ -1869,6 +1871,16 @@ namespace PixelVisionSDK.Chips
 
                     spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
 
+                    // TODO need to see if the tile is flipped
+                    var flipH = flipHLayer[i] == 1;
+                    var flipV = flipVLayer[i] == 1;
+
+                    if (flipH || flipV)
+                    {
+                        SpriteChipUtil.FlipSpriteData(ref tmpPixelData, spriteChip.width, spriteChip.height, flipH, flipV);
+                    }
+                    
+//                    targetTextureData.DrawSprite(spriteID, x, y);
                     // Draw the pixel data into the cachedTilemap
                     targetTextureData.MergePixels(x, y, tileSize.x, tileSize.y, tmpPixelData, tmpPaletteIDs[i]);
 
