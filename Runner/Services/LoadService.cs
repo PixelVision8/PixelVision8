@@ -379,12 +379,12 @@ namespace PixelVisionRunner.Services
             }
             
             // Always load the color offset parser
-            if (files.ContainsKey(colorOffsetFile) && tilemapExists)
-            {
-                var fileContents = Encoding.UTF8.GetString(files[colorOffsetFile]);
-                
-                AddParser(new TileColorOffsetJson(fileContents, targetEngine));
-            }
+//            if (files.ContainsKey(colorOffsetFile) && tilemapExists)
+//            {
+//                var fileContents = Encoding.UTF8.GetString(files[colorOffsetFile]);
+//                
+//                AddParser(new TileColorOffsetJson(fileContents, targetEngine));
+//            }
             
             
 

@@ -17,14 +17,67 @@ namespace PixelVisionSDK
 {
     public class TileData : AbstractData
     {
+        private int _spriteID;
+        private int _colorOffset;
+        private int _flag;
+        private bool _flipH;
+        private bool _flipV;
+        
         public int index;
-        public int spriteID;
-        public int colorOffset;
-        public int flag;
-        public bool flipH;
-        public bool flipV;
 
-        public TileData(int index, int spriteID, int colorOffset = 0, int flag = -1, bool flipH = false, bool flipV = false)
+        public int spriteID
+        {
+            get { return _spriteID; }
+            set
+            {
+                _spriteID = value;
+                Invalidate();
+            }
+        }
+
+        public int colorOffset
+        {
+            get { return _colorOffset; }
+            set
+            {
+                _colorOffset = value;
+                Invalidate();
+            }
+        }
+
+        public int flag
+        {
+            get { return _flag; }
+            set
+            {
+                _flag = value;
+                Invalidate();
+            }
+        }
+        
+        public bool flipH
+        {
+            get { return _flipH; }
+            set
+            {
+                _flipH = value;
+                Invalidate();
+            }
+        }
+
+        
+        public bool flipV
+        {
+            get { return _flipV; }
+            set
+            {
+                _flipV = value;
+                Invalidate();
+            }
+        }
+        
+        
+        public TileData(int index, int spriteID = -1, int colorOffset = 0, int flag = -1, bool flipH = false, bool flipV = false)
         {
             this.index = index;
             this.spriteID = spriteID;
@@ -33,7 +86,22 @@ namespace PixelVisionSDK
 
             this.flipH = flipH;
             this.flipV = flipV;
+            Invalidate();
         }
+
+        public void Clear()
+        {
+            spriteID = -1;
+            colorOffset = 0;
+            flag = -1;
+
+            flipH = false;
+            flipV = false;
+            
+            Invalidate();
+
+        }
+        
     }
 }
 

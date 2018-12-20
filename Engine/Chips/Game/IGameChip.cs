@@ -350,7 +350,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="r">The row in the layer.</param>
         /// <param name="drawMode">This accepts DrawMode.Tile, DrawMode.TilemapCache and DrawMode.UI.</param>
         /// <param name="colorOffset">This is the color offset to use for the tile.</param>
-        void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0);
+        void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0, bool flipH = false, bool flipV = false);
 
         /// <summary>
         ///     The DrawTiles method makes it easier to update the visuals of multiple tiles at once by leveraging the 
@@ -784,7 +784,7 @@ namespace PixelVisionSDK.Chips
         ///     Returns a dictionary containing the spriteID, colorOffset, and flag for an individual tile.
         /// </returns>
         //TODO this should return a custom class not a Dictionary
-        TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null);
+        TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null, bool? flipH = null, bool? flipV = null);
 
         /// <summary>
         ///     This forces the map to redraw its cached pixel data. Use this to clear any pixel data added

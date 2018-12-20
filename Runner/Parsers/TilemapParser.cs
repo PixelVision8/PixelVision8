@@ -32,7 +32,7 @@ namespace PixelVisionRunner.Parsers
 //        private int realWidth;
 //        private int realHeight;
 
-        private ColorChip flagColorChip;
+//        private ColorChip flagColorChip;
 
         public TilemapParser(IImageParser imageParser, byte[] tileFlagData, IEngineChips chips) :
             base(imageParser, chips)
@@ -70,7 +70,7 @@ namespace PixelVisionRunner.Parsers
 
         autoImport = tilemapChip.autoImport;
             
-            flagColorChip = chips.chipManager.GetChip(FlagColorParser.flagColorChipName, false) as ColorChip;
+//            flagColorChip = chips.chipManager.GetChip(FlagColorParser.flagColorChipName, false) as ColorChip;
 
             
             clear = new ColorData(0f){a = 0f};
@@ -161,9 +161,15 @@ namespace PixelVisionRunner.Parsers
 
             x = index % columns;
             y = index / columns;
+
+            var tile = tilemapChip.GetTile(x, y);
+
+            tile.spriteID = id;
+            tile.flag = flag;
+            tile.colorOffset = offset;
             
             // Update the tile data in the map
-            tilemapChip.UpdateTileAt(id, x, y, flag, offset);
+//            tilemapChip.UpdateTileAt(id, x, y, flag, offset);
 
         }
 

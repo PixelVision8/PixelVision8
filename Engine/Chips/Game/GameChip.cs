@@ -123,12 +123,12 @@ namespace PixelVisionSDK.Chips
             }
         }
         
-        protected readonly Dictionary<string, int> tmpTileData = new Dictionary<string, int>
-        {
-            {"spriteID", -1},
-            {"colorOffset", -1},
-            {"flag", -1}
-        };
+//        protected readonly Dictionary<string, int> tmpTileData = new Dictionary<string, int>
+//        {
+//            {"spriteID", -1},
+//            {"colorOffset", -1},
+//            {"flag", -1}
+//        };
 
 //        protected string _name = "Untitle_Game";
         protected int _saveSlots;
@@ -891,7 +891,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="r">The row in the layer.</param>
         /// <param name="drawMode">This accepts DrawMode.Tile, DrawMode.TilemapCache and DrawMode.UI.</param>
         /// <param name="colorOffset">This is the color offset to use for the tile.</param>
-        public void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0)
+        public void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0, bool flipH = false, bool flipV = false)
         {
 
             if (drawMode == DrawMode.Tile)
@@ -908,7 +908,7 @@ namespace PixelVisionSDK.Chips
                 
                 // Mode 0 is sprite above bg and mode 1 is sprite below bg.
                 //var mode = aboveBG ? DrawMode.Sprite : DrawMode.SpriteBelow;
-                DrawPixels(tmpSpriteData, c, r, spriteChip.width, spriteChip.height, drawMode, false, false, colorOffset);
+                DrawPixels(tmpSpriteData, c, r, spriteChip.width, spriteChip.height, drawMode, flipH, flipV, colorOffset);
             }
             
         }
@@ -1551,6 +1551,7 @@ namespace PixelVisionSDK.Chips
             if (data != null)
             {
                 spriteChip.UpdateSpriteAt(id, data);
+                
                 tilemapChip.InvalidateTileID(id);
 
                 return data;
@@ -1644,12 +1645,16 @@ namespace PixelVisionSDK.Chips
         /// <returns></returns>
         public int Flag(int column, int row, int? value = null)
         {
-            if (value.HasValue)
-                tilemapChip.UpdateFlagAt(column, row, value.Value);
+            var tile = tilemapChip.GetTile(column, row);
 
-            return tilemapChip.ReadFlagAt(column, row);
+            if (value.HasValue)
+                tile.flag = value.Value;
+
+            return tile.flag;
         }
 
+        
+        
         /// <summary>
         ///     This allows you to get the current sprite id, color offset and flag values associated with
         ///     a given tile. You can optionally supply your own if you want to change the tile's values.
@@ -1676,24 +1681,49 @@ namespace PixelVisionSDK.Chips
         ///     Returns a dictionary containing the spriteID, colorOffset, and flag for an individual tile.
         /// </returns>
         //TODO this should return a custom class not a Dictionary
-        public TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null)
+        public TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null, bool? flipH = null, bool? flipV = null)
         {
+    
+            var invalidateTileMap = false;
+        
+            var tile = tilemapChip.GetTile(column, row);
+
             if (spriteID.HasValue)
-                tilemapChip.UpdateSpriteAt(column, row, spriteID.Value);
+            {
+                tile.spriteID = spriteID.Value;
+                invalidateTileMap = true;
+            }
 
             if (colorOffset.HasValue)
-                tilemapChip.UpdateTileColorAt(column, row, colorOffset.Value);
+            {
+                tile.colorOffset = colorOffset.Value;
+                invalidateTileMap = true;
+            }
 
             if (flag.HasValue)
-                tilemapChip.UpdateFlagAt(column, row, flag.Value);
+            {
+                tile.flag = flag.Value;
+                invalidateTileMap = true;
+            }
             
-//            
-//            
-//            tmpTileData["spriteID"] = tilemapChip.ReadSpriteAt(column, row);
-//            tmpTileData["colorOffset"] = tilemapChip.ReadTileColorAt(column, row);
-//            tmpTileData["flag"] = tilemapChip.ReadFlagAt(column, row);
+            if (flipH.HasValue)
+            {
+                tile.flipH = flipH.Value;
+                invalidateTileMap = true;
+            }
+                
+            
+            if (flipV.HasValue)
+            {
+                tile.flipV = flipV.Value;
+                invalidateTileMap = true;
+            }
 
-            return new TileData(CalculateIndex(column, row, tilemapChip.columns), tilemapChip.ReadSpriteAt(column, row), tilemapChip.ReadTileColorAt(column, row), tilemapChip.ReadFlagAt(column, row));
+            if(invalidateTileMap)
+                tilemapChip.Invalidate();
+        
+            return tile;
+//            return new TileData(CalculateIndex(column, row, tilemapChip.columns), tilemapChip.ReadSpriteAt(column, row), tilemapChip.ReadTileColorAt(column, row), tilemapChip.ReadFlagAt(column, row));
         }
 
         /// <summary>
@@ -1833,6 +1863,8 @@ namespace PixelVisionSDK.Chips
             if (tilemapChip.invalid != true)
                 return;
 
+            Console.WriteLine("Rebuild Tilemap Cache");
+            
             var realWidth = spriteChip.width * tilemapChip.columns;
             var realHeight = spriteChip.height * tilemapChip.rows;
             
@@ -1844,11 +1876,11 @@ namespace PixelVisionSDK.Chips
             var tileSize = SpriteSize();
             
             // Get a local reference to the layers we need
-            var tmpSpriteIDs = tilemapChip.layers[(int) TilemapChip.Layer.Sprites];
-            var tmpPaletteIDs = tilemapChip.layers[(int) TilemapChip.Layer.Colors];
-            var invalideLayer = tilemapChip.layers[(int) TilemapChip.Layer.Invalid];
-            var flipHLayer = tilemapChip.layers[(int) TilemapChip.Layer.FlipH];
-            var flipVLayer = tilemapChip.layers[(int) TilemapChip.Layer.FlipV];
+//            var tmpSpriteIDs = tilemapChip.layers[(int) TilemapChip.Layer.Sprites];
+//            var tmpPaletteIDs = tilemapChip.layers[(int) TilemapChip.Layer.Colors];
+//            var invalideLayer = tilemapChip.layers[(int) TilemapChip.Layer.Invalid];
+//            var flipHLayer = tilemapChip.layers[(int) TilemapChip.Layer.FlipH];
+//            var flipVLayer = tilemapChip.layers[(int) TilemapChip.Layer.FlipV];
             
             // Create tmp variables for loop
             int x, y, spriteID;
@@ -1860,10 +1892,13 @@ namespace PixelVisionSDK.Chips
 
             // Loop through all of the tiles in the tilemap
             for (var i = 0; i < totalTiles; i++)
-                if (invalideLayer[i] != 0)
+            {
+                var tile = tilemapChip.tiles[i];
+                
+                if (tile.invalid)
                 {
                     // Get the sprite id
-                    spriteID = tmpSpriteIDs[i];
+                    spriteID = tile.spriteID;
 
                     // Calculate the new position of the tile;
                     x = i % tilemapChip.columns * tileSize.x;
@@ -1872,21 +1907,23 @@ namespace PixelVisionSDK.Chips
                     spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
 
                     // TODO need to see if the tile is flipped
-                    var flipH = flipHLayer[i] == 1;
-                    var flipV = flipVLayer[i] == 1;
+//                    var flipH = tile.flipH;
+//                    var flipV = flipVLayer[i] == 1;
 
-                    if (flipH || flipV)
+                    if (tile.flipH || tile.flipV)
                     {
-                        SpriteChipUtil.FlipSpriteData(ref tmpPixelData, spriteChip.width, spriteChip.height, flipH, flipV);
+                        SpriteChipUtil.FlipSpriteData(ref tmpPixelData, spriteChip.width, spriteChip.height, tile.flipH,
+                            tile.flipH);
                     }
-                    
+
 //                    targetTextureData.DrawSprite(spriteID, x, y);
                     // Draw the pixel data into the cachedTilemap
-                    targetTextureData.MergePixels(x, y, tileSize.x, tileSize.y, tmpPixelData, tmpPaletteIDs[i]);
+                    targetTextureData.MergePixels(x, y, tileSize.x, tileSize.y, tmpPixelData, tile.colorOffset);
 
                     totalTilesUpdated++;
-                    
+
                 }
+            }
 
             // Reset the invalidation state
             tilemapChip.ResetValidation();
