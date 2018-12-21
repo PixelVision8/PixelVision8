@@ -161,13 +161,15 @@ namespace PixelVisionRunner.Parsers
 								
 								for (int k = 0; k < properties.Count; k++)
 								{
-									var prop = properties[i] as Dictionary<string, object>;
+									var prop = properties[k] as Dictionary<string, object>;
 
 									var propName = (string)prop["name"];
 									
 									if (propName  == "flagID")
 									{
 										tile.flag = (int) (long) prop["value"];
+										Console.WriteLine(j + " flag "+ tile.flag);
+										
 									}else if (propName == "colorOffset")
 									{
 										tile.colorOffset = (int) (long) prop["value"];
