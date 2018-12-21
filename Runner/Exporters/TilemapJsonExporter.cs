@@ -356,20 +356,20 @@ namespace PixelVisionRunner.Exporters
                     sb.Append("{");
                     JsonUtil.GetLineBreak(sb, 5);
                 
-                    sb.Append("\"id\":");
-                    sb.Append(tileCounter);
-                    sb.Append(",");
-                    JsonUtil.GetLineBreak(sb, 5);
+//                    sb.Append("\"id\":");
+//                    sb.Append(tileCounter);
+//                    sb.Append(",");
+//                    JsonUtil.GetLineBreak(sb, 5);
                     
                     sb.Append("\"name\":");
                     sb.Append("\"Tile:"+pos.x+","+pos.y+"\"");
                     sb.Append(",");
                     JsonUtil.GetLineBreak(sb, 5);
                     
-                    sb.Append("\"type\":");
-                    sb.Append("\""+tile.spriteID+"\"");
-                    sb.Append(",");
-                    JsonUtil.GetLineBreak(sb, 5);
+//                    sb.Append("\"type\":");
+//                    sb.Append("\""+tile.spriteID+"\"");
+//                    sb.Append(",");
+//                    JsonUtil.GetLineBreak(sb, 5);
                     
                     // TODO need to add in flip values to this sprite ID
                     sb.Append("\"gid\":");
@@ -398,16 +398,16 @@ namespace PixelVisionRunner.Exporters
                     sb.Append(",");
                     JsonUtil.GetLineBreak(sb, 5);
                     
-                    sb.Append("\"rotation\":");
-                    sb.Append(0);
-                    sb.Append(",");
-                    JsonUtil.GetLineBreak(sb, 5);
-                    
-                    // visible
-                    sb.Append("\"visible\":");
-                    sb.Append("true");
-                    sb.Append(",");
-                    JsonUtil.GetLineBreak(sb, 5);
+//                    sb.Append("\"rotation\":");
+//                    sb.Append(0);
+//                    sb.Append(",");
+//                    JsonUtil.GetLineBreak(sb, 5);
+//                    
+//                    // visible
+//                    sb.Append("\"visible\":");
+//                    sb.Append("true");
+//                    sb.Append(",");
+//                    JsonUtil.GetLineBreak(sb, 5);
                     
                     // layers start
                     sb.Append("\"properties\": [");
@@ -469,19 +469,22 @@ namespace PixelVisionRunner.Exporters
                     
                     sb.Append("}");
 
-                    Console.WriteLine(i + " Add Comma " + total + " " + tileCounter);
+//                    Console.WriteLine(i + " Add Comma " + total + " " + tileCounter);
                     
-                    if (i < total-1)
-                    {
+//                    if (i < total-2)
+//                    {
                         sb.Append(",");
-                    }
+//                    }
                     
-                    JsonUtil.GetLineBreak(sb, 4);
+//                    JsonUtil.GetLineBreak(sb, 4);
                     
                     tileCounter++;
                 }
                 
             }
+            
+            // Remove the last comma
+            sb.Length--;
             
             
             

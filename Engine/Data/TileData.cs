@@ -19,7 +19,7 @@ namespace PixelVisionSDK
     {
         private int _spriteID;
         private int _colorOffset;
-        private int _flag;
+        private int _flag = -1;
         private bool _flipH;
         private bool _flipV;
         

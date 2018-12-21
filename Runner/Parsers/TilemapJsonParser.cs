@@ -156,8 +156,8 @@ namespace PixelVisionRunner.Parsers
 								
 								var properties = tileObject["properties"] as List<object>;
 
-								int flagID = -1;
-								int colorOffset = 0;
+//								int flagID = -1;
+//								int colorOffset = 0;
 								
 								for (int k = 0; k < properties.Count; k++)
 								{

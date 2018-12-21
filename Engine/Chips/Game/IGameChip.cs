@@ -350,7 +350,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="r">The row in the layer.</param>
         /// <param name="drawMode">This accepts DrawMode.Tile, DrawMode.TilemapCache and DrawMode.UI.</param>
         /// <param name="colorOffset">This is the color offset to use for the tile.</param>
-        void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0, bool flipH = false, bool flipV = false);
+//        void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0, bool flipH = false, bool flipV = false);
 
         /// <summary>
         ///     The DrawTiles method makes it easier to update the visuals of multiple tiles at once by leveraging the 
@@ -365,7 +365,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="width">The number of horizontal tiles in the group.</param>
         /// <param name="drawMode">This accepts DrawMode.Tile, DrawMode.TilemapCache and DrawMode.UI.</param>
         /// <param name="colorOffset">This is the color offset to use for the tile.</param>
-        void DrawTiles(int[] ids, int c, int r, int width, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0);
+//        void DrawTiles(int[] ids, int c, int r, int width, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0);
 
         /// <summary>
         ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render

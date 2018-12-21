@@ -898,7 +898,8 @@ namespace PixelVisionSDK.Chips
             {
                 Tile(c, r, id, colorOffset);
             }
-            else if (drawMode == DrawMode.TilemapCache)
+            else 
+            if (drawMode == DrawMode.TilemapCache)
             {
                 c *= spriteChip.width;
                 r *= spriteChip.height;
