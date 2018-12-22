@@ -575,15 +575,15 @@ namespace PixelVisionSDK.Chips
         /// <param name="colorRef">
         ///     The color ID to use when drawing the pixel.
         /// </param>
-        public void DrawPixel(int x, int y, int colorRef)
-        {
-
-            singlePixel[0] = colorRef;
-            
-            // Route the single pixel call to the DrawPixels call
-            DrawPixels(singlePixel, x, y, 1, 1, DrawMode.TilemapCache);
-            
-        }
+//        public void DrawPixel(int x, int y, int colorRef)
+//        {
+//
+//            singlePixel[0] = colorRef;
+//            
+//            // Route the single pixel call to the DrawPixels call
+//            DrawPixels(singlePixel, x, y, 1, 1, DrawMode.TilemapCache);
+//            
+//        }
 
         /// <summary>
         ///     Sprites represent individual collections of pixel data at a fixed size. By default, Pixel Vision 8 sprites are
@@ -891,28 +891,28 @@ namespace PixelVisionSDK.Chips
         /// <param name="r">The row in the layer.</param>
         /// <param name="drawMode">This accepts DrawMode.Tile, DrawMode.TilemapCache and DrawMode.UI.</param>
         /// <param name="colorOffset">This is the color offset to use for the tile.</param>
-        public void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0, bool flipH = false, bool flipV = false)
-        {
-
-            if (drawMode == DrawMode.Tile)
-            {
-                Tile(c, r, id, colorOffset);
-            }
-            else 
-            if (drawMode == DrawMode.TilemapCache)
-            {
-                c *= spriteChip.width;
-                r *= spriteChip.height;
-                
-                //TODO flipping H, V and colorOffset should all be passed into reading a sprite
-                spriteChip.ReadSpriteAt(id, tmpSpriteData);
-                
-                // Mode 0 is sprite above bg and mode 1 is sprite below bg.
-                //var mode = aboveBG ? DrawMode.Sprite : DrawMode.SpriteBelow;
-                DrawPixels(tmpSpriteData, c, r, spriteChip.width, spriteChip.height, drawMode, flipH, flipV, colorOffset);
-            }
-            
-        }
+//        public void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0, bool flipH = false, bool flipV = false)
+//        {
+//
+//            if (drawMode == DrawMode.Tile)
+//            {
+//                Tile(c, r, id, colorOffset);
+//            }
+//            else 
+//            if (drawMode == DrawMode.TilemapCache)
+//            {
+//                c *= spriteChip.width;
+//                r *= spriteChip.height;
+//                
+//                //TODO flipping H, V and colorOffset should all be passed into reading a sprite
+//                spriteChip.ReadSpriteAt(id, tmpSpriteData);
+//                
+//                // Mode 0 is sprite above bg and mode 1 is sprite below bg.
+//                //var mode = aboveBG ? DrawMode.Sprite : DrawMode.SpriteBelow;
+//                DrawPixels(tmpSpriteData, c, r, spriteChip.width, spriteChip.height, drawMode, flipH, flipV, colorOffset);
+//            }
+//            
+//        }
         
         /// <summary>
         ///     The DrawTiles method makes it easier to update the visuals of multiple tiles at once by leveraging the 
@@ -927,38 +927,38 @@ namespace PixelVisionSDK.Chips
         /// <param name="width">The number of horizontal tiles in the group.</param>
         /// <param name="drawMode">This accepts DrawMode.Tile, DrawMode.TilemapCache and DrawMode.UI.</param>
         /// <param name="colorOffset">This is the color offset to use for the tile.</param>
-        public void DrawTiles(int[] ids, int c, int r, int width, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0)
-        {
-
-            if (drawMode == DrawMode.Tile)
-            {
-                UpdateTiles(c, r, width, ids, colorOffset);
-            }
-            else if (drawMode == DrawMode.TilemapCache)
-            {
-
-                total = ids.Length;
-
-                // Store the sprite id from the ids array
-                int id;
-
-                for (var i = 0; i < total; i++)
-                {
-                    // Set the sprite id
-                    id = ids[i];
-
-                    // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
-                    // Test to see if the sprite is within range
-                    if (id > -1)
-                    {
-                        var c1 = (MathUtil.FloorToInt(i % width));
-                        var r2 = (MathUtil.FloorToInt(i / width));
-
-                        DrawTile(id, c1 + c, r2 + r, drawMode, colorOffset);
-                    }
-                }
-            }
-        }
+//        public void DrawTiles(int[] ids, int c, int r, int width, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0)
+//        {
+//
+//            if (drawMode == DrawMode.Tile)
+//            {
+//                UpdateTiles(c, r, width, ids, colorOffset);
+//            }
+//            else if (drawMode == DrawMode.TilemapCache)
+//            {
+//
+//                total = ids.Length;
+//
+//                // Store the sprite id from the ids array
+//                int id;
+//
+//                for (var i = 0; i < total; i++)
+//                {
+//                    // Set the sprite id
+//                    id = ids[i];
+//
+//                    // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
+//                    // Test to see if the sprite is within range
+//                    if (id > -1)
+//                    {
+//                        var c1 = (MathUtil.FloorToInt(i % width));
+//                        var r2 = (MathUtil.FloorToInt(i / width));
+//
+//                        DrawTile(id, c1 + c, r2 + r, drawMode, colorOffset);
+//                    }
+//                }
+//            }
+//        }
 
         private Vector spriteSize;
         private int charWidth;
@@ -1916,10 +1916,10 @@ namespace PixelVisionSDK.Chips
                         SpriteChipUtil.FlipSpriteData(ref tmpPixelData, spriteChip.width, spriteChip.height, tile.flipH,
                             tile.flipH);
                     }
-
+            
 //                    targetTextureData.DrawSprite(spriteID, x, y);
                     // Draw the pixel data into the cachedTilemap
-                    targetTextureData.MergePixels(x, y, tileSize.x, tileSize.y, tmpPixelData, tile.colorOffset);
+                    targetTextureData.MergePixels(x, y, tileSize.x, tileSize.y, tmpPixelData, tile.colorOffset, false);
 
                     totalTilesUpdated++;
 
@@ -2229,7 +2229,7 @@ namespace PixelVisionSDK.Chips
         }
         
         //TODO need to write a commment for this
-        public int CalcualteDistance(int x0, int y0, int x1, int y1)
+        public int CalculateDistance(int x0, int y0, int x1, int y1)
         {
             var dx = x1 - x0; 
             var dy = y1 - y0;

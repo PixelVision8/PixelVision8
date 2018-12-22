@@ -234,10 +234,11 @@ namespace PixelVisionSDK
         /// </param>
         /// <param name="pixels">The pixel data to be used.</param>
         /// <param name="colorOffset"></param>
+        /// <param name="ignoreTransparent"></param>
         public void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels,
-            int colorOffset = 0)
+            int colorOffset = 0, bool ignoreTransparent = true)
         {
-            MergePixels(x, y, blockWidth, blockHeight, pixels, false, false, colorOffset);
+            MergePixels(x, y, blockWidth, blockHeight, pixels, false, false, colorOffset, ignoreTransparent);
         }
 
         /// <summary>
@@ -266,7 +267,7 @@ namespace PixelVisionSDK
         /// </param>
         /// <param name="colorOffset"></param>
         public virtual void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels,
-            bool flipH = false, bool flipV = false, int colorOffset = 0)
+            bool flipH = false, bool flipV = false, int colorOffset = 0, bool ignoreTransparent = true)
         {
             total = blockWidth * blockHeight;
 
@@ -274,10 +275,10 @@ namespace PixelVisionSDK
             int pixel;
             int srcX, srcY;
             for (var i = total - 1; i > -1; i--)
-            {
-                pixel = pixels == null ? 0 : pixels[i];
+            {    
+                pixel = pixels?[i] ?? 0;
 
-                if (pixel != -1)
+                if (pixel != -1 || ignoreTransparent != true)
                 {
                     if (colorOffset > 0 && pixel != -1)
                         pixel += colorOffset;
@@ -292,6 +293,13 @@ namespace PixelVisionSDK
 
                     SetPixel(srcX + x, srcY + y, pixel);
                 }
+                
+
+//                
+//                if (pixel != -1 && ignoreTransparent == false)
+//                {
+//                    
+//                }
             }
 
         }

@@ -209,7 +209,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="colorRef">
         ///     The color ID to use when drawing the pixel.
         /// </param>
-        void DrawPixel(int x, int y, int colorRef);
+//        void DrawPixel(int x, int y, int colorRef);
 
         /// <summary>
         ///     Sprites represent individual collections of pixel data at a fixed size. By default, Pixel Vision 8 sprites are
