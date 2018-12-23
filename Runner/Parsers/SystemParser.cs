@@ -70,7 +70,7 @@ namespace PixelVisionRunner.Parsers
                             ConfigureGameChip(chipData);
                             break;
                         case "MusicChip":
-                            ConfigurMusicChip(chipData);
+                            ConfigureMusicChip(chipData);
                             break;
                         case "SoundChip":
                             ConfigureSoundChip(chipData);
@@ -205,16 +205,35 @@ namespace PixelVisionRunner.Parsers
                 }
         }
 
-        public void ConfigurMusicChip(Dictionary<string, object> data)
+        public void ConfigureMusicChip(Dictionary<string, object> data)
         {
             var musicChip = target.musicChip;
 
             if (musicChip == null)
                 return;
+
+            var patternKey = "songs";
+            var patternNameKey = "songName";
             
-            if (data.ContainsKey("songs"))
+            if (data.ContainsKey("version") && (string)data["version"] == "v2")
+
             {
-                var songData = data["songs"] as List<object>;
+                Console.WriteLine("Loading music v2");
+                
+                patternKey = "patterns";
+                patternNameKey = "patternName";
+                
+                
+                // TODO build song playlist
+            }
+//            else
+//            {
+
+
+
+            if (data.ContainsKey(patternKey))
+            {
+                var songData = data[patternKey] as List<object>;
 
                 var total = songData.Count;
 
@@ -222,12 +241,12 @@ namespace PixelVisionRunner.Parsers
 
                 for (var i = 0; i < total; i++)
                 {
-                    var song = musicChip.CreateNewSongData("untitled");//new SfxrSongData());
+                    var song = musicChip.CreateNewTrackerData("untitled"); //new SfxrSongData());
 
                     var sngData = songData[i] as Dictionary<string, object>;
-                    
-                    if (sngData.ContainsKey("songName"))
-                        song.songName = (string) sngData["songName"];
+
+                    if (sngData.ContainsKey(patternNameKey))
+                        song.songName = (string) sngData[patternNameKey];
 
                     if (sngData.ContainsKey("speedInBPM"))
                         song.speedInBPM = Convert.ToInt32((long) sngData["speedInBPM"]);
@@ -238,13 +257,13 @@ namespace PixelVisionRunner.Parsers
 //                        song.totalTracks = tracksData.Count;
 
                         var trackCount = tracksData.Count.Clamp(0, song.totalTracks);
-                        
+
                         for (var j = 0; j < trackCount; j++)
                         {
                             var trackData = tracksData[j] as Dictionary<string, object>;
-                            
+
                             var track = song.tracks[j];
-                            
+
                             if (track != null && trackData != null)
                             {
 
@@ -263,11 +282,12 @@ namespace PixelVisionRunner.Parsers
                             }
                         }
                     }
-                    
-                    
-                    musicChip.songDataCollection[i] = song;
+
+
+                    musicChip.trackerDataCollection[i] = song;
                 }
             }
+//            }
 
             if (data.ContainsKey("totalTracks"))
                 musicChip.totalTracks = Convert.ToInt32((long) data["totalTracks"]);

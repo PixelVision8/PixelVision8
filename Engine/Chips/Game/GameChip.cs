@@ -1468,7 +1468,7 @@ namespace PixelVisionSDK.Chips
         /// </param>
         public void PlaySong(int[] loopIDs, bool loop = true)
         {
-            musicChip.PlaySongs(loopIDs, loop);
+            musicChip.PlayPatterns(loopIDs, loop);
         }
 
         /// <summary>
@@ -1864,8 +1864,6 @@ namespace PixelVisionSDK.Chips
             if (tilemapChip.invalid != true)
                 return;
 
-            Console.WriteLine("Rebuild Tilemap Cache");
-            
             var realWidth = spriteChip.width * tilemapChip.columns;
             var realHeight = spriteChip.height * tilemapChip.rows;
             

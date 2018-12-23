@@ -1,109 +1,88 @@
-﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
-//  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
-// 
-// Contributors
-// --------------------------------------------------------
-// This is the official list of Pixel Vision 8 contributors:
-//  
-// Jesse Freeman - @JesseFreeman
-// Christer Kaitila - @McFunkypants
-// Pedro Medeiros - @saint11
-// Shawn Rakowski - @shwany
-
-using System;
+using System.Collections.Generic;
+using System.Text;
+using PixelVisionRunner.Utils;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
 {
-
-    /// <summary>
-    ///     The SongData class represents a collection of tracks and
-    ///     meta data used by the MusicChip to play back ISoundData
-    ///     in a sequence.
-    /// </summary>
     public class SongData : AbstractData
     {
+        public string name = "Untitled";
+        public List<int> patterns = new List<int>();
+        public int start = 0;
+        public int end => patterns.Count;
+        public int currentPos = -1;
 
-        protected int _speedInBPM = 120;
-
-        /// <summary>
-        ///     The song title
-        /// </summary>
-        public string songName = "Untitled";
-
-        /// <summary>
-        ///     All the tracks used in this loop
-        /// </summary>
-        public TrackData[] tracks = new TrackData[0];
-
-        public SongData(string name = "Untitled", int tracks = 4)
+        public int NextPattern()
         {
-            Reset(name);
-            totalTracks = tracks;
+            currentPos++;
+
+            if (currentPos > patterns.Count)
+                currentPos = 0;
+
+            return patterns[currentPos];
         }
 
-        public int totalNotes
+        public int Rewind()
         {
-            set
+            currentPos = -1;
+
+            return NextPattern();
+        }
+
+        public int SeekTo(int index)
+        {
+            currentPos = index.Clamp(0, patterns.Count - 1);
+            
+            return NextPattern();
+        }
+        
+        public void AddPattern(int id, int? index = null)
+        {
+            if (index.HasValue)
             {
-                var total = tracks.Length;
-                for (var i = 0; i < total; i++)
-                    tracks[i].totalNotes = value;
+                var pos = index.Value.Clamp(0, patterns.Count);
+                
+                patterns.Insert(pos, id);
+            }
+            else
+            {
+                patterns.Add(id);
             }
         }
 
-        /// <summary>
-        ///     How many beats per minute (eg 120).
-        /// </summary>
-        public int speedInBPM
+        public void RemovePatternAt(int index)
         {
-            get { return _speedInBPM; }
-            set { _speedInBPM = value.Clamp(60, 480); }
+            patterns.RemoveAt(index);
         }
-
-        /// <summary>
-        ///     Total number of tracks in the song.
-        /// </summary>
-        public int totalTracks
+        
+        public string SerializeData()
         {
-            get { return tracks.Length; }
-            set
-            {
-                if (tracks.Length != value)
-                {
-                    Array.Resize(ref tracks, value);
-                    var total = tracks.Length;
-                    for (var i = 0; i < total; i++)
-                        if (tracks[i] == null)
-                        {
-                            tracks[i] = CreateNewTrack();
-                            tracks[i].sfxID = i;
-                        }
-                }
-            }
-        }
+            var sb = new StringBuilder();
+            JsonUtil.GetLineBreak(sb);
+            sb.Append("{");
+            JsonUtil.GetLineBreak(sb, 1);
 
-        public virtual TrackData CreateNewTrack()
-        {
-            return new TrackData();
-        }
+            sb.Append("\"patternName\":\"");
+            sb.Append(name);
+            sb.Append("\",");
+            JsonUtil.GetLineBreak(sb, 1);
+            
+            sb.Append("\"patterns\":");
+            JsonUtil.GetLineBreak(sb, 1);
+            sb.Append("[");
+            JsonUtil.indentLevel++;
+            sb.Append(string.Join(",", patterns));
 
-        /// <summary>
-        ///     Reset the default values of the SongData instance
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="trackCount"></param>
-        public void Reset(string name = "Untitled", int trackCount = 4)
-        {
-            songName = name;
-            totalTracks = trackCount;
-            foreach (var track in tracks)
-                track.Reset(true);
-        }
+            JsonUtil.indentLevel--;
+            JsonUtil.GetLineBreak(sb, 1);
+            sb.Append("]");
 
+            JsonUtil.GetLineBreak(sb);
+            
+            sb.Append("}");
+
+            return sb.ToString();
+        }
     }
-
 }

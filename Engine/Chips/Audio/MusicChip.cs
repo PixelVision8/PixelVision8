@@ -46,7 +46,7 @@ namespace PixelVisionSDK.Chips
         public long sequencerBeatNumber;
         protected int sequencerLoopNum;
         public bool songCurrentlyPlaying;
-        public SongData[] songDataCollection = new SongData[0];
+        public TrackerData[] trackerDataCollection = new TrackerData[0];
         protected int songLoopCount = 0;
 
         protected float swingRhythmFactor = 0.7f;
@@ -55,6 +55,8 @@ namespace PixelVisionSDK.Chips
         public int tracksPerLoop = 8;
         private int[] loopPlayList;
         private int currentLoopID;
+        
+        public SongData[] songDataCollection = new SongData[0];
 
         public int CurrentLoopId
         {
@@ -67,18 +69,18 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         public int totalLoops
         {
-            get { return songDataCollection.Length; }
+            get { return trackerDataCollection.Length; }
             set
             {
-                if (songDataCollection.Length != value)
+                if (trackerDataCollection.Length != value)
                 {
-                    Array.Resize(ref songDataCollection, value.Clamp(1, 96));
-                    var total = songDataCollection.Length;
+                    Array.Resize(ref trackerDataCollection, value.Clamp(1, 96));
+                    var total = trackerDataCollection.Length;
                     for (var i = 0; i < total; i++)
                     {
-                        var sondData = songDataCollection[i];
+                        var sondData = trackerDataCollection[i];
                         if (sondData == null)
-                            songDataCollection[i] = CreateNewSongData("Untitled" + i, maxTracks);
+                            trackerDataCollection[i] = CreateNewTrackerData("Untitled" + i, maxTracks);
                         else
                             sondData.totalTracks = totalTracks;
                     }
@@ -100,7 +102,7 @@ namespace PixelVisionSDK.Chips
 
                 var total = totalLoops;
                 for (var i = 0; i < total; i++)
-                    songDataCollection[i].totalNotes = value;
+                    trackerDataCollection[i].totalNotes = value;
             }
         }
 
@@ -111,9 +113,9 @@ namespace PixelVisionSDK.Chips
             {
                 value = value.Clamp(1, maxTracks);
 
-                var total = songDataCollection.Length;
+                var total = trackerDataCollection.Length;
                 for (var i = 0; i < total; i++)
-                    songDataCollection[i].totalTracks = value;
+                    trackerDataCollection[i].totalTracks = value;
 
                 _totalTracks = value;
             }
@@ -122,14 +124,14 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         ///     The active song's data that was loaded into memory.
         /// </summary>
-        public SongData activeSongData
+        public TrackerData activeTrackerData
         {
             get
             {
-                if (songDataCollection == null)
+                if (trackerDataCollection == null)
                     return null;
 
-                return songDataCollection[currentLoop];
+                return trackerDataCollection[currentLoop];
             }
         }
 
@@ -157,9 +159,9 @@ namespace PixelVisionSDK.Chips
                 }
         }
 
-        public virtual SongData CreateNewSongData(string name, int tracks = 4)
+        public virtual TrackerData CreateNewTrackerData(string name, int tracks = 4)
         {
-            return new SongData(name, tracks);
+            return new TrackerData(name, tracks);
         }
 
         /// <summary>
@@ -205,7 +207,7 @@ namespace PixelVisionSDK.Chips
         ///     play back a song or it will fail.
         /// </summary>
         /// <param name="id"></param>
-        public void LoadSong(int id)
+        public void LoadPattern(int id)
         {   
 //            Debug.Log("Load Song " + id);
             // Rewind the playhead
@@ -218,7 +220,7 @@ namespace PixelVisionSDK.Chips
             UpdateNoteTickLengths();
             
             // Updates the tracks per loop
-            tracksPerLoop = activeSongData.tracks.Length;
+            tracksPerLoop = activeTrackerData.tracks.Length;
             
             // Update the music notes?
             UpdateMusicNotes();
@@ -233,7 +235,7 @@ namespace PixelVisionSDK.Chips
         /// </summary>
         /// <param name="ids"></param>
         /// <param name="loop"></param>
-        public void PlaySongs(int[] ids, bool loop = false, int startAt = 0)
+        public void PlayPatterns(int[] ids, bool loop = false, int startAt = 0)
         {
 
             loopPlayList = ids;
@@ -246,7 +248,7 @@ namespace PixelVisionSDK.Chips
             currentLoopID = startAt;
 //            songLoopCount = ids.Length;
 
-            LoadSong(loopPlayList[0]);
+            LoadPattern(loopPlayList[0]);
             
             if (songCurrentlyPlaying)
                 songCurrentlyPlaying = false;
@@ -256,9 +258,9 @@ namespace PixelVisionSDK.Chips
             //TODO not implemented yet
         }
 
-        public void ResetSong()
+        public void ResetTracker()
         {
-            activeSongData.Reset();
+            activeTrackerData.Reset();
             sequencerBeatNumber = 0;
             UpdateMusicNotes();
         }
@@ -290,18 +292,18 @@ namespace PixelVisionSDK.Chips
                 }
                 
                 // Load the next song in the playlist
-                LoadSong(loopPlayList[sequencerLoopNum]);
+                LoadPattern(loopPlayList[sequencerLoopNum]);
                
             }
 
-            var total = activeSongData.tracks.Length;
+            var total = activeTrackerData.tracks.Length;
 
             // loop through each oldInstruments track
             for (var trackNum = 0; trackNum < total; trackNum++)
             {
-                var sfxId = activeSongData.tracks[trackNum].sfxID;
+                var sfxId = activeTrackerData.tracks[trackNum].sfxID;
                 // what note is it?
-                var gotANote = activeSongData.tracks[trackNum].notes[sequencerBeatNumber % notesPerTrack];
+                var gotANote = activeTrackerData.tracks[trackNum].notes[sequencerBeatNumber % notesPerTrack];
 
 //                var instrument = soundChip.ReadChannel(trackNum);
 
@@ -323,7 +325,7 @@ namespace PixelVisionSDK.Chips
 
         public void UpdateNoteTickLengths()
         {
-            noteTickS = 30.0f / activeSongData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
+            noteTickS = 30.0f / activeTrackerData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
             noteTickSOdd = noteTickS * swingRhythmFactor; // small beat
             noteTickSEven = noteTickS * 2 - noteTickSOdd; // long beat
         }
@@ -358,10 +360,10 @@ namespace PixelVisionSDK.Chips
         protected void UpdateMusicNotes()
         {
             for (var x = 0; x < notesPerTrack; x++)
-                if (tracksPerLoop < activeSongData.tracks.Length)
+                if (tracksPerLoop < activeTrackerData.tracks.Length)
                     for (var y = 0; y < tracksPerLoop; y++)
-                        if (activeSongData.tracks[y].notes.Length != notesPerTrack)
-                            Array.Resize(ref activeSongData.tracks[y].notes, notesPerTrack);
+                        if (activeTrackerData.tracks[y].notes.Length != notesPerTrack)
+                            Array.Resize(ref activeTrackerData.tracks[y].notes, notesPerTrack);
         }
 
     }
