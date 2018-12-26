@@ -94,7 +94,10 @@ namespace PixelVisionRunner.Parsers
         public void ConfigureColorChip(Dictionary<string, object> data)
         {
             var colorChip = target.colorChip;
-
+            
+            // Flag chip to export
+            colorChip.export = true;
+            
             if (data.ContainsKey("colorsPerPage"))
                 colorChip.colorsPerPage = (int) (long) data["colorsPerPage"];
 
@@ -137,12 +140,16 @@ namespace PixelVisionRunner.Parsers
 
         public void ConfigureControllerChip(Dictionary<string, object> data)
         {
+            // TODO does this chip need to be configured?
         }
 
         public void ConfigureDisplayChip(Dictionary<string, object> data)
         {
             var displayChip = target.displayChip;
-
+    
+            // Flag chip to export
+            displayChip.export = true;
+            
             var _width = displayChip.width;
             var _height = displayChip.height;
 
@@ -166,12 +173,16 @@ namespace PixelVisionRunner.Parsers
 
         public void ConfigureFontChip(Dictionary<string, object> data)
         {
+            // TODO does this chip need to be parsed?
         }
 
         public void ConfigureGameChip(Dictionary<string, object> data)
         {
             var gameChip = target.gameChip;
-
+    
+            // Flag chip to export
+            gameChip.export = true;
+            
             // loop through all data and save it to the game's memory
 
 //            if (data.ContainsKey("name"))
@@ -208,9 +219,12 @@ namespace PixelVisionRunner.Parsers
         public void ConfigureMusicChip(Dictionary<string, object> data)
         {
             var musicChip = target.musicChip;
-
+            
             if (musicChip == null)
                 return;
+            
+            // Flag chip to export
+            musicChip.export = true;
 
             var patternKey = "songs";
             var patternNameKey = "songName";
@@ -306,6 +320,9 @@ namespace PixelVisionRunner.Parsers
             if (soundChip == null)
                 return;
             
+            // Flag chip to export
+            soundChip.export = true;
+            
             if (data.ContainsKey("totalChannels"))
                 soundChip.totalChannels = (int) (long) data["totalChannels"];
 
@@ -342,6 +359,9 @@ namespace PixelVisionRunner.Parsers
         public void ConfigureSpriteChip(Dictionary<string, object> data)
         {
             var spriteChip = target.spriteChip;
+            
+            // Flag chip to export
+            spriteChip.export = true;
 
             if (data.ContainsKey("maxSpriteCount"))
                 spriteChip.maxSpriteCount = (int) (long) data["maxSpriteCount"];
@@ -368,7 +388,10 @@ namespace PixelVisionRunner.Parsers
         public void ConfigureTilemapChip(Dictionary<string, object> data)
         {
             var tilemapChip = target.tilemapChip;
-
+    
+            // Flag chip to export
+            tilemapChip.export = true;
+            
             var columns = tilemapChip.columns;
             var rows = tilemapChip.rows;
 

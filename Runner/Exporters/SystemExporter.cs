@@ -42,55 +42,55 @@ namespace PixelVisionRunner.Exporters
             steps.Add(CreateStringBuilder);
             
             // Serialize Color Chip
-            if (engine.colorChip != null)
+            if (engine.colorChip != null && engine.colorChip.export)
             {
                 steps.Add(delegate { SerializeColorChip(engine.colorChip); });
             }
             
             // Serialize Display
-            if (engine.displayChip != null)
+            if (engine.displayChip != null && engine.displayChip.export)
             {
                 steps.Add(delegate { SerializeDisplay(engine.displayChip); });
             }
             
-            // Serialize Controller
-//            if (engine.controllerChip != null)
-//            {
-//                steps.Add(delegate { SerializeControllerChip(engine.controllerChip); });
-//            }
+//             Serialize Controller
+            if (engine.controllerChip != null && engine.controllerChip.export)
+            {
+                steps.Add(delegate { SerializeControllerChip(engine.controllerChip); });
+            }
             
             // Serialize Font
-            if (engine.fontChip != null)
+            if (engine.fontChip != null && engine.fontChip.export)
             {
                 steps.Add(delegate { SerializeFontChip(engine.fontChip); });
             }
             
             // Serialize Game
-            if (engine.gameChip != null)
+            if (engine.gameChip != null && engine.gameChip.export)
             {
                 steps.Add(delegate { SerializeGameChip(engine.gameChip); });
             }
             
             // Serialize Music
-            if (engine.musicChip != null)
+            if (engine.musicChip != null && engine.musicChip.export)
             {
                 steps.Add(delegate { SerializeMusicChip(engine.musicChip); });
             }
             
             // Serialize Sound
-            if (engine.soundChip != null)
+            if (engine.soundChip != null && engine.soundChip.export)
             {
                 steps.Add(delegate { SerializeSoundChip(engine.soundChip); });
             }
             
             // Serialize Sprite
-            if (engine.spriteChip != null)
+            if (engine.spriteChip != null && engine.spriteChip.export)
             {
                 steps.Add(delegate { SerializeSpriteChip(engine.spriteChip); });
             }
             
             // Serialize Tilemap
-            if (engine.tilemapChip != null)
+            if (engine.tilemapChip != null && engine.tilemapChip.export)
             {
                 steps.Add(delegate { SerializeTilemapChip(engine.tilemapChip); });
             }
