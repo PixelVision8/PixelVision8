@@ -168,7 +168,7 @@ namespace PixelVisionRunner.Parsers
 									if (propName  == "flagID")
 									{
 										tile.flag = (int) (long) prop["value"];
-										Console.WriteLine(j + " flag "+ tile.flag);
+//										Console.WriteLine(j + " flag "+ tile.flag);
 										
 									}else if (propName == "colorOffset")
 									{

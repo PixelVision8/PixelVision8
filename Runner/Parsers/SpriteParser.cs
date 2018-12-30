@@ -170,8 +170,13 @@ namespace PixelVisionRunner.Parsers
                 }
                 else
                 {
-                    spriteChip.UpdateSpriteAt(index, spriteData);
-                    spritesAdded++;
+
+                    if (spriteChip.IsEmpty(spriteData) == false)
+                    {
+                        spriteChip.UpdateSpriteAt(index, spriteData);
+                        spritesAdded++;    
+                    }
+                    
                 }
             }
                 

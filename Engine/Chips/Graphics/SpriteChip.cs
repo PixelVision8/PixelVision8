@@ -255,6 +255,7 @@ namespace PixelVisionSDK.Chips
         /// </param>
         private void CacheSprite(int index, int[] data)
         {
+            
             cache[index] = SpriteChipUtil.SpriteDataToString(data);
 
             var totalPixels = width * height;

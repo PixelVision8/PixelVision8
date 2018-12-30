@@ -232,7 +232,7 @@ namespace PixelVisionRunner.Parsers
             if (data.ContainsKey("version") && (string)data["version"] == "v2")
 
             {
-                Console.WriteLine("Loading music v2");
+//                Console.WriteLine("Loading music v2");
                 
                 patternKey = "patterns";
                 patternNameKey = "patternName";
