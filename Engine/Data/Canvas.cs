@@ -129,12 +129,12 @@ namespace PixelVisionSDK
                     tmpPixelData[i] = pixels[oldIndex];
                 }
                 
-                gameChip.DrawPixels(tmpPixelData, x, y, newSpriteWidth, newSpriteHeight, drawMode);
+                gameChip.DrawPixels(tmpPixelData, x, y, newSpriteWidth, newSpriteHeight, false, false, drawMode);
 
             }
             else
             {
-                gameChip.DrawPixels(pixels, x, y, _width, _height, drawMode);
+                gameChip.DrawPixels(pixels, x, y, _width, _height, false, false, drawMode);
             }
             
             

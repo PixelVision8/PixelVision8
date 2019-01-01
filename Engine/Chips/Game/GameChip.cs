@@ -536,7 +536,7 @@ namespace PixelVisionSDK.Chips
         ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
         ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
         /// </param>
-        public void DrawPixels(int[] pixelData, int x, int y, int width, int height, DrawMode drawMode = DrawMode.Sprite, bool flipH = false, bool flipV = false, int colorOffset = 0)
+        public void DrawPixels(int[] pixelData, int x, int y, int width, int height, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
             switch (drawMode)
             {
@@ -639,7 +639,7 @@ namespace PixelVisionSDK.Chips
                     tmpSpriteDataID = id;
                 }
                 
-                DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, drawMode, flipH, flipV, colorOffset);
+                DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, flipH, flipV, drawMode, colorOffset);
             }
             else
             {
@@ -653,7 +653,7 @@ namespace PixelVisionSDK.Chips
                     tmpSpriteDataID = id;
                 }
 
-                DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, drawMode, flipH, flipV, colorOffset);
+                DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, flipH, flipV, drawMode, colorOffset);
                 
                 currentSprites ++;
             }
@@ -1086,7 +1086,7 @@ namespace PixelVisionSDK.Chips
             GetCachedPixels(viewPort.x, viewPort.y, viewPort.width, viewPort.height, ref tmpTilemapCache);
     
             // Copy over the cached pixel data from the tilemap request
-            DrawPixels(tmpTilemapCache, x, y, viewPort.width, viewPort.height, drawMode);
+            DrawPixels(tmpTilemapCache, x, y, viewPort.width, viewPort.height, false, false, drawMode);
 
         }
         
@@ -1104,7 +1104,7 @@ namespace PixelVisionSDK.Chips
         public void DrawRect(int x, int y, int width, int height, int color = -1, DrawMode drawMode = DrawMode.Background)
         {
             // TODO is there a faster way to do this?
-            DrawPixels(null, x, y, width, height, drawMode, false, false, color);
+            DrawPixels(null, x, y, width, height, false, false, drawMode, color);
         }
         
         /// <summary>

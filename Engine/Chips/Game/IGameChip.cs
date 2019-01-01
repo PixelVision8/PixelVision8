@@ -189,7 +189,7 @@ namespace PixelVisionSDK.Chips
         ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
         ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
         /// </param>
-        void DrawPixels(int[] pixelData, int x, int y, int width, int height, DrawMode drawMode = DrawMode.Sprite, bool flipH = false, bool flipV = false, int colorOffset = 0);
+        void DrawPixels(int[] pixelData, int x, int y, int width, int height, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0);
 
         /// <summary>
         ///     This method allows you to draw a single pixel to the Tilemap Cache. It's an expensive operation which leverages 
