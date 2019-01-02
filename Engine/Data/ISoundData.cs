@@ -32,7 +32,7 @@ namespace PixelVisionSDK
         ///     Plays the sound at a specific frequency.
         /// </summary>
         /// <param name="frequency"></param>
-        void Play(float frequency = 0.1266f);
+        void Play(float? frequency = null);
 
         /// <summary>
         ///     Stops the current sound from playing

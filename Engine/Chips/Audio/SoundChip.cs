@@ -119,7 +119,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="channel">
         ///     The channel the sound should play back on.
         /// </param>
-        public void PlaySound(int index, int channelID = 0, float frequency = 0.1266f)
+        public void PlaySound(int index, int channelID = 0, float? frequency = null)
         {
             if (index > sounds.Length)
                 return;

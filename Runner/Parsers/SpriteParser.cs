@@ -271,7 +271,7 @@ namespace PixelVisionRunner.Parsers
                 tmpColor = tmpPixels[i];
 
                 tmpRefID = Equals(tmpColor, maskColor) ? -1 : Array.IndexOf(colorData, tmpColor);
-
+                
                 // Look to see if color is not transparent
                 if (tmpRefID > -1)
                 {
