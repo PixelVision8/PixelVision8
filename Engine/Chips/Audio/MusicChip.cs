@@ -38,7 +38,7 @@ namespace PixelVisionSDK.Chips
         public int maxTracks = 8; // max number of instruments playing notes
         public float nextBeatTimestamp;
         protected float[] noteHZ; // a lookup table of all musical notes in Hz
-        public int notesPerTrack = 32;
+        
         public float[] noteStartFrequency; // same, but for sfxr frequency 0..1 range
         protected float noteTickS = 30.0f / 120.0f; // (30.0f/120.0f) = 120BPM eighth notes
         protected float noteTickSEven;
@@ -55,6 +55,25 @@ namespace PixelVisionSDK.Chips
         public int tracksPerLoop = 8;
         private int[] loopPlayList;
         private int currentLoopID;
+        
+        public int _notesPerTrack = 32;
+
+        public int notesPerTrack
+        {
+            get { return _notesPerTrack; }
+            set
+            {
+                _notesPerTrack = value.Clamp(4, 32);
+
+                for (int i = 0; i < totalTracks; i++)
+                {
+                   activeTrackerData.tracks[i].totalNotes = _notesPerTrack;
+                }
+                
+                
+                // TODO Need to go through and remove any notes past the new total?
+            }
+        }
         
         public SongData[] songDataCollection = new SongData[0];
 
@@ -301,14 +320,16 @@ namespace PixelVisionSDK.Chips
             // loop through each oldInstruments track
             for (var trackNum = 0; trackNum < total; trackNum++)
             {
-                var sfxId = activeTrackerData.tracks[trackNum].sfxID;
+                var tmpTrack = activeTrackerData.tracks[trackNum];
+                
+                var sfxId = tmpTrack.sfxID;
                 // what note is it?
-                var gotANote = activeTrackerData.tracks[trackNum].notes[sequencerBeatNumber % notesPerTrack];
+                var gotANote = tmpTrack.notes[sequencerBeatNumber % notesPerTrack];
 
 //                var instrument = soundChip.ReadChannel(trackNum);
 
 //                if (instrument != null)
-                if (gotANote > 0 && gotANote < maxNoteNum)
+                if (gotANote > 0 && gotANote < maxNoteNum && tmpTrack.mute == false)
                 {
                     var frequency = noteStartFrequency[gotANote];
 

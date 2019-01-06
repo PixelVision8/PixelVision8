@@ -42,6 +42,8 @@ namespace PixelVisionSDK
         /// </summary>
         public int sfxID;
 
+        public bool mute;
+
         /// <summary>
         ///     Create a new TrackData instance by supplying the
         ///     number of notes. The default value is 32.
