@@ -74,10 +74,7 @@ namespace PixelVisionSDK.Chips
 //
 ////        private int i;
 //        
-//        public int fps
-//        {
-//            get; private set;
-//        }
+        public int fps;
 
         #region Debug
         
@@ -86,10 +83,10 @@ namespace PixelVisionSDK.Chips
         ///     accurate and should only be used as the best guest estimate into the real framerate of your game.
         /// </summary>
         /// <returns>Returns an int with the current FPS out of a maximum of 60.</returns>
-//        public int ReadFPS()
-//        {
-//            return fps;
-//        }
+        public int ReadFPS()
+        {
+            return fps;
+        }
         
         /// <summary>
         ///     Returns the total number of sprites on the display in the current frame. Call this at the end of the
