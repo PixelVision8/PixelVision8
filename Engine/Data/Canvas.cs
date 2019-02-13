@@ -668,6 +668,17 @@ namespace PixelVisionSDK
             return pixels[index];
 
         }
+
+        public int[] SamplePixels(int x, int y, int width, int height)
+        {
+            // TODO this should be optimized if we are going to us it moving forward
+            var totalPixels = width * height;
+            var pixelData = new int[totalPixels];
+            
+            CopyPixels(ref pixelData, x, y, width, height);
+
+            return pixelData;
+        }
         
 
     }
