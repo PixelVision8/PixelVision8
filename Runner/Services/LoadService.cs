@@ -330,13 +330,13 @@ namespace PixelVisionRunner.Services
         {
             var tilemapFile = "tilemap.png";
             var tilemapJsonFile = "tilemap.json";
-            var colorOffsetFile = "tile-color-offsets.json";
+//            var colorOffsetFile = "tile-color-offsets.json";
             
             // TODO should this be manually called?
             // Make sure we have the flag color chip
             LoadFlagColors(files);
             
-            var tilemapExists = false;
+//            var tilemapExists = false;
             
             // If a tilemap json file exists, try to load that
             if (files.ContainsKey(tilemapJsonFile))
@@ -347,7 +347,7 @@ namespace PixelVisionRunner.Services
                 
                 AddParser(jsonParser);
 
-                tilemapExists = true;
+//                tilemapExists = true;
             }
             else if (files.ContainsKey(tilemapFile))
             {
@@ -374,7 +374,7 @@ namespace PixelVisionRunner.Services
 //                {
 //                    colorTex = ReadTexture(files[colorFile]);
 //                }
-                tilemapExists = true;
+//                tilemapExists = true;
                 
             }
             

@@ -21,7 +21,6 @@ using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK
 {
-
     /// <summary>
     ///     The ColorData class is a wraper for color data in the engine.
     ///     It provides a simple interface for storing RBG color data as

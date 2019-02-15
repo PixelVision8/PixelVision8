@@ -76,17 +76,17 @@ namespace PixelVisionRunner.Parsers
             var srcColors = unique ? imageParser.colorPalette.ToArray() : imageParser.colorPixels;//data.Select(c => new ColorAdapter(c) as IColor).ToArray();
             var total = srcColors.Length;
             
-                // Loop through each color and find the unique ones
-                for (var i = 0; i < total; i++)
-                {
-                    // Get the current color
-                    tmpColor = srcColors[i]; //pixels[i]);
+            // Loop through each color and find the unique ones
+            for (var i = 0; i < total; i++)
+            {
+                // Get the current color
+                tmpColor = srcColors[i]; //pixels[i]);
 
-                    if (tmpColor.a < 1) // && !ignoreTransparent)
-                        tmpColor = magenta;
+                if (tmpColor.a < 1) // && !ignoreTransparent)
+                    tmpColor = magenta;
 
-                    colors.Add(tmpColor);
-                }
+                colors.Add(tmpColor);
+            }
 
             totalColors = colors.Count;
 

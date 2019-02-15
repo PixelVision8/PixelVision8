@@ -645,7 +645,7 @@ namespace PixelVisionSDK
                     
         }
         
-    /// <summary>
+        /// <summary>
         ///     Allows you to merge the pixel data of another canvas into this one without compleatly overwritting it.
         /// </summary>
         /// <param name="canvas"></param>

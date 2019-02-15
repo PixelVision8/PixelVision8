@@ -187,9 +187,9 @@ namespace PixelVisionRunner.Parsers
 						// TODO copy the tilemap data over to layer correctly
 
 					}
-					catch (Exception e)
+					catch
 					{
-						// Just igonre any layers that don't exist
+						// Just ignore any layers that don't exist
 						throw new Exception("Unable to parse 'tilemap.json' file. It may be corrupt. Try deleting it and creating a new one.");
 					}
 					

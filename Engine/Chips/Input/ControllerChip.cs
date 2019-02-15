@@ -481,7 +481,7 @@ namespace PixelVisionSDK.Chips
 
         
 
-        public bool export { get; set; }
+        public new bool export { get; set; }
 
         public bool ButtonReleased(Buttons button, int controllerID = 0)
         {

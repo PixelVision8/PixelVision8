@@ -239,10 +239,10 @@ namespace PixelVisionRunner.Exporters
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
             
-            sb.Append("\"paletteMode\":");
-            sb.Append(colorChip.paletteMode.ToString().ToLower());
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
+//            sb.Append("\"paletteMode\":");
+//            sb.Append(colorChip.paletteMode.ToString().ToLower());
+//            sb.Append(",");
+//            JsonUtil.GetLineBreak(sb, 1);
             
             
             JsonUtil.GetLineBreak(sb);
