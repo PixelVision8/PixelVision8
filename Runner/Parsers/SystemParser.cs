@@ -242,8 +242,15 @@ namespace PixelVisionRunner.Parsers
             }
 //            else
 //            {
+    
+            if (data.ContainsKey("totalTracks"))
+                musicChip.totalTracks = Convert.ToInt32((long) data["totalTracks"]);
 
+            if (data.ContainsKey("notesPerTrack"))
+                musicChip.maxNoteNum = Convert.ToInt32((long) data["notesPerTrack"]);
 
+            if (data.ContainsKey("totalLoop"))
+                musicChip.totalLoops = Convert.ToInt32((long) data["totalLoop"]);
 
             if (data.ContainsKey(patternKey))
             {
@@ -303,14 +310,7 @@ namespace PixelVisionRunner.Parsers
             }
 //            }
 
-            if (data.ContainsKey("totalTracks"))
-                musicChip.totalTracks = Convert.ToInt32((long) data["totalTracks"]);
-
-            if (data.ContainsKey("notesPerTrack"))
-                musicChip.maxNoteNum = Convert.ToInt32((long) data["notesPerTrack"]);
-
-            if (data.ContainsKey("totalLoop"))
-                musicChip.totalLoops = Convert.ToInt32((long) data["totalLoop"]);
+            
         }
 
         public void ConfigureSoundChip(Dictionary<string, object> data)

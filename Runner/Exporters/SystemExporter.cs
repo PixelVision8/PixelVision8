@@ -503,7 +503,9 @@ namespace PixelVisionRunner.Exporters
             // Total Flags
             sb.Append("\"totalFlags\":");
             sb.Append(tilemapChip.totalFlags);
-        
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+            
             sb.Append("\"autoImport\":");
             sb.Append(tilemapChip.autoImport.ToString().ToLower());
             sb.Append(",");
