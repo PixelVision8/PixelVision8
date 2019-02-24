@@ -21,7 +21,7 @@ namespace PixelVisionRunner.Parsers
     public class FontParser : SpriteParser
     {
 
-        private readonly bool autoImport;
+//        private readonly bool autoImport;
 
         private readonly FontChip fontChip;
         private int[] fontMap;
