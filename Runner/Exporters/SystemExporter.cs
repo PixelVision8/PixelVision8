@@ -194,16 +194,21 @@ namespace PixelVisionRunner.Exporters
             JsonUtil.GetLineBreak(sb);
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
-
-            sb.Append("\"pages\":");
-            sb.Append(colorChip.pages);
+    
+            sb.Append("\"total\":");
+            sb.Append(colorChip.total);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
-
-            sb.Append("\"colorsPerPage\":");
-            sb.Append(colorChip.colorsPerPage);
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
+            
+//            sb.Append("\"pages\":");
+//            sb.Append(colorChip.pages);
+//            sb.Append(",");
+//            JsonUtil.GetLineBreak(sb, 1);
+//
+//            sb.Append("\"colorsPerPage\":");
+//            sb.Append(colorChip.colorsPerPage);
+//            sb.Append(",");
+//            JsonUtil.GetLineBreak(sb, 1);
                 
             // Rebuild calculated colors value
 //            colorChip.RecalculateSupportedColors();

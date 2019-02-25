@@ -98,8 +98,11 @@ namespace PixelVisionRunner.Parsers
             // Flag chip to export
             colorChip.export = true;
             
-            if (data.ContainsKey("colorsPerPage"))
-                colorChip.colorsPerPage = (int) (long) data["colorsPerPage"];
+            // Force the color chip to clear itself
+            colorChip.Clear();
+            
+//            if (data.ContainsKey("colorsPerPage"))
+//                colorChip.colorsPerPage = (int) (long) data["colorsPerPage"];
 
             if (data.ContainsKey("maskColor"))
                 colorChip.maskColor = (string) data["maskColor"];
@@ -114,15 +117,21 @@ namespace PixelVisionRunner.Parsers
                 var colors = (List<object>) data["colors"];
 
                 var newTotal = colors.Count;
-                colorChip.RebuildColorPages(newTotal);
+                colorChip. total = newTotal;
                 colorChip.Clear();
                 for (var i = 0; i < newTotal; i++)
                     colorChip.UpdateColorAt(i, (string) colors[i]);
             }
-
+            
+            
+            
+            // TODO this is deprecated and only in for legacy support
             // If the data has a page count, resize the pages to match that value, even though there may be less colors than pages
             if (data.ContainsKey("pages"))
-                colorChip.pages = (int) (long) data["pages"];
+                colorChip.total = ((int) (long) data["pages"]) * 64;
+            
+            if (data.ContainsKey("total"))
+                colorChip.total = (int) (long) data["total"];
 
             if (data.ContainsKey("backgroundColor"))
                 colorChip.backgroundColor = (int) (long) data["backgroundColor"];

@@ -158,7 +158,7 @@ namespace PixelVisionSDK.Chips
             get { return _saveSlots; }
             set
             {
-                value = value.Clamp(8, 96);
+                value = value.Clamp(2, 8);
                 _saveSlots = value;
 
                 // resize dictionary?

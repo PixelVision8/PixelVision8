@@ -33,16 +33,30 @@ namespace PixelVisionSDK.Chips
 
         protected string[] _colors =
         {
-            "#000000",
-            "#FFFFFF",
+            "#2d1b2e",
+            "#218a91",
+            "#3cc2fa",
+            "#9af6fd",
+            "#4a247c",
+            "#574b67",
+            "#937ac5",
+            "#8ae25d",
+            "#8e2b45",
+            "#f04156",
+            "#f272ce",
+            "#d3c0a8",
+            "#c5754a",
+            "#f2a759",
+            "#f7db53",
+            "#f9f4ea"
         };
         
-        protected int _colorsPerPage = 64;
-        protected int _pages = 4;
+//        protected int _colorsPerPage = 64;
+//        protected int _pages = 4;
         protected ColorData[] colorCache;
         
         // By default, there are only 2 colors so we need 2 flags
-        protected int[] invalidColors = new int[2];
+        protected int[] invalidColors = new int[16];
         
         protected int _maxColors = -1;
         protected int _bgColor = 0;
@@ -68,7 +82,7 @@ namespace PixelVisionSDK.Chips
 
         public string maskColor
         {
-            get { return _maskColor; }
+            get => _maskColor;
             set
             {
                 if(ValidateHexColor(value))
@@ -80,38 +94,38 @@ namespace PixelVisionSDK.Chips
         ///     Defines the total number of colors per virtual page.
         /// </summary>
         /// <value>Int</value>
-        public int colorsPerPage
-        {
-            get { return _colorsPerPage; }
-            set { _colorsPerPage = value; }
-        }
+//        public int colorsPerPage
+//        {
+//            get { return _colorsPerPage; }
+//            set { _colorsPerPage = value; }
+//        }
 
         /// <summary>
         ///     Returns the total virtual pages of colors.
         /// </summary>
         /// <value>Int</value>
-        public int pages
-        {
-            get { return _pages; }
-            set
-            {
-                if (_pages == value)
-                    return;
-                
-                // The max number of colors are 512 (8 pages x 64 colors per page)
-                _pages = value;//.Clamp(1, 8);
-
-                var oldTotal = _colors.Length;
-
-                Array.Resize(ref _colors, total);
-                Array.Resize(ref invalidColors, total);
-                if (oldTotal < total)
-                    for (var i = oldTotal; i < total; i++)
-                        _colors[i] = maskColor;
-
-                Invalidate();
-            }
-        }
+//        public int pages
+//        {
+//            get { return _pages; }
+//            set
+//            {
+//                if (_pages == value)
+//                    return;
+//                
+//                // The max number of colors are 512 (8 pages x 64 colors per page)
+//                _pages = value;//.Clamp(1, 8);
+//
+//                var oldTotal = _colors.Length;
+//
+//                Array.Resize(ref _colors, total);
+//                Array.Resize(ref invalidColors, total);
+//                if (oldTotal < total)
+//                    for (var i = oldTotal; i < total; i++)
+//                        _colors[i] = maskColor;
+//
+//                Invalidate();
+//            }
+//        }
 
         /// <summary>
         ///     Get and Set the <see cref="supportedColors" /> number of <see cref="colors" />
@@ -155,7 +169,19 @@ namespace PixelVisionSDK.Chips
         /// <value>Int</value>
         public int total
         {
-            get { return pages * colorsPerPage; }
+            get => _colors.Length;
+            set
+            {
+                var oldTotal = _colors.Length;
+
+                Array.Resize(ref _colors, value);
+                Array.Resize(ref invalidColors, value);
+                if (oldTotal < value)
+                    for (var i = oldTotal; i < value; i++)
+                        _colors[i] = maskColor;
+
+                Invalidate();
+            }
         }
 
         /// <summary>
@@ -266,7 +292,8 @@ namespace PixelVisionSDK.Chips
         {
             engine.colorChip = this;
             backgroundColor = -1;
-            RebuildColorPages(16);
+            
+//            RebuildColorPages(16);
         }
 
         public override void Deactivate()
@@ -280,10 +307,10 @@ namespace PixelVisionSDK.Chips
         ///     number of colors.
         /// </summary>
         /// <param name="total"></param>
-        public void RebuildColorPages(int total)
-        {
-            pages = (int)Math.Ceiling(total / (float)colorsPerPage);
-        }
+//        public void RebuildColorPages(int total)
+//        {
+//            pages = (int)Math.Ceiling(total / (float)colorsPerPage);
+//        }
        
         public bool ValidateHexColor(string inputColor)
         {

@@ -41,10 +41,10 @@ namespace PixelVisionRunner.Parsers
         {
            
             // Force the Color Map Chip to load all of the colors into a single page
-            colorChip.colorsPerPage = totalColors;
+            colorChip.total = totalColors;
             
             
-            colorChip.RebuildColorPages(totalColors);
+//            colorChip.RebuildColorPages(totalColors);
 
             for (var i = 0; i < totalColors; i++)
             {
