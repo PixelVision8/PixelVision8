@@ -373,12 +373,23 @@ namespace PixelVisionRunner.Exporters
             sb.Append(musicChip.totalTracks);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
-
+    
+            sb.Append("\"totalSongs\":");
+            sb.Append(musicChip.totalSongs);
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+            
             sb.Append("\"notesPerTrack\":");
             sb.Append(musicChip.maxNoteNum);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
-
+    
+            sb.Append("\"totalPatterns\":");
+            sb.Append(musicChip.totalLoops);
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+            
+            // TODO legacy property
             sb.Append("\"totalLoop\":");
             sb.Append(musicChip.totalLoops);
 

@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using System;
+using System.Collections.Generic;
 using PixelVisionSDK.Utils;
 //using UnityEngine;
 
@@ -55,6 +56,31 @@ namespace PixelVisionSDK.Chips
         public int tracksPerLoop = 8;
         private int[] loopPlayList;
         private int currentLoopID;
+        
+        public SongData[] songs = new SongData[1];
+
+        public int totalSongs
+        {
+            get { return songs.Length; }
+            set
+            {
+                if (songs.Length != value)
+                {
+                    Array.Resize(ref songs, value.Clamp(1, 96));
+                    var total = songs.Length;
+                    for (var i = 0; i < total; i++)
+                    {
+                        var song = songs[i];
+                        if (song == null)
+                        {
+                            songs[i] = new SongData();
+                        }
+                            
+                        
+                    }
+                }
+            }
+        }
         
         public int _notesPerTrack = 32;
 
@@ -194,6 +220,7 @@ namespace PixelVisionSDK.Chips
             totalLoops = 16;
             maxTracks = 4;
             totalTracks = maxTracks;
+            totalSongs = 16;
 
             // Setup the sequencer values
 

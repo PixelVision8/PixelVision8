@@ -8,16 +8,31 @@ namespace PixelVisionSDK
     public class SongData : AbstractData
     {
         public string name = "Untitled";
-        public List<int> patterns = new List<int>();
+        public int[] patterns = new int[100];
+        
         public int start = 0;
-        public int end => patterns.Count;
+
+        private int _end;
+
+        public int end
+        {
+            get => _end;
+            set
+            {
+                // TODO need to make sure end is not before start
+                _end = value;
+            }
+        }
+        
+        
         public int currentPos = -1;
+        public int totalPatternsPerSong = 100;
 
         public int NextPattern()
         {
             currentPos++;
 
-            if (currentPos > patterns.Count)
+            if (currentPos > end)
                 currentPos = 0;
 
             return patterns[currentPos];
@@ -32,30 +47,16 @@ namespace PixelVisionSDK
 
         public int SeekTo(int index)
         {
-            currentPos = index.Clamp(0, patterns.Count - 1);
+            currentPos = index.Clamp(0, patterns.Length - 1);
             
             return NextPattern();
         }
         
-        public void AddPattern(int id, int? index = null)
+        public void UpdatePatternAt(int index, int id)
         {
-            if (index.HasValue)
-            {
-                var pos = index.Value.Clamp(0, patterns.Count);
-                
-                patterns.Insert(pos, id);
-            }
-            else
-            {
-                patterns.Add(id);
-            }
+            patterns[index] = id;
         }
 
-        public void RemovePatternAt(int index)
-        {
-            patterns.RemoveAt(index);
-        }
-        
         public string SerializeData()
         {
             var sb = new StringBuilder();
@@ -63,19 +64,27 @@ namespace PixelVisionSDK
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-            sb.Append("\"patternName\":\"");
+            sb.Append("\"songName\":\"");
             sb.Append(name);
             sb.Append("\",");
+            JsonUtil.GetLineBreak(sb, 1);
+            
+            sb.Append("\"start\":");
+            sb.Append(start);
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+            
+            sb.Append("\"end\":");
+            sb.Append(end);
+            sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
             
             sb.Append("\"patterns\":");
             JsonUtil.GetLineBreak(sb, 1);
             sb.Append("[");
-            JsonUtil.indentLevel++;
+            
             sb.Append(string.Join(",", patterns));
 
-            JsonUtil.indentLevel--;
-            JsonUtil.GetLineBreak(sb, 1);
             sb.Append("]");
 
             JsonUtil.GetLineBreak(sb);

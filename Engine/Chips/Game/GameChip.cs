@@ -158,7 +158,7 @@ namespace PixelVisionSDK.Chips
             get { return _saveSlots; }
             set
             {
-                value = value.Clamp(2, 8);
+                value = value.Clamp(2, 16);
                 _saveSlots = value;
 
                 // resize dictionary?
@@ -1463,7 +1463,7 @@ namespace PixelVisionSDK.Chips
         ///     A bool that determines if the song should loop back to the first ID when it is
         ///     done playing.
         /// </param>
-        public void PlaySong(int[] loopIDs, bool loop = true)
+        public void PlayPatterns(int[] loopIDs, bool loop = true)
         {
             musicChip.PlayPatterns(loopIDs, loop);
         }

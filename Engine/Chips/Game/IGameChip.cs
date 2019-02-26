@@ -638,7 +638,7 @@ namespace PixelVisionSDK.Chips
         ///     A bool that determines if the song should loop back to the first ID when it is
         ///     done playing.
         /// </param>
-        void PlaySong(int[] loopIDs, bool loop = true);
+        void PlayPatterns(int[] loopIDs, bool loop = true);
 
         /// <summary>
         ///     Toggles the current playback state of the sequencer. If the song

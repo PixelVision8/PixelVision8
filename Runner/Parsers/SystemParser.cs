@@ -257,7 +257,14 @@ namespace PixelVisionRunner.Parsers
 
             if (data.ContainsKey("notesPerTrack"))
                 musicChip.maxNoteNum = Convert.ToInt32((long) data["notesPerTrack"]);
-
+    
+            if (data.ContainsKey("totalSongs"))
+                musicChip.totalSongs = Convert.ToInt32((long) data["totalSongs"]);
+            
+            if (data.ContainsKey("totalPatterns"))
+                musicChip.totalLoops = Convert.ToInt32((long) data["totalPatterns"]);
+            
+            // TODO remove legacy property
             if (data.ContainsKey("totalLoop"))
                 musicChip.totalLoops = Convert.ToInt32((long) data["totalLoop"]);
 
