@@ -13,6 +13,7 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
+using Microsoft.Xna.Framework;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 
@@ -23,7 +24,7 @@ namespace PixelVisionRunner.Parsers
     {
         public static string chipName = "PixelVisionSDK.Chips.ColorMapChip";
 
-        public ColorMapParser(IImageParser imageParser, ColorChip colorChip, IColor magenta, bool unique = false) : base(imageParser, colorChip, magenta, unique)
+        public ColorMapParser(IImageParser imageParser, ColorChip colorChip, Color magenta, bool unique = false) : base(imageParser, colorChip, magenta, unique)
         {
             
         }
@@ -49,7 +50,7 @@ namespace PixelVisionRunner.Parsers
             for (var i = 0; i < totalColors; i++)
             {
                 var tmpColor = colors[i];
-                var hex = ColorData.ColorToHex(tmpColor.r, tmpColor.g, tmpColor.b);
+                var hex = PixelVisionSDK.Utils.ColorUtils.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B);
 
                 colorChip.UpdateColorAt(i, hex);
             }

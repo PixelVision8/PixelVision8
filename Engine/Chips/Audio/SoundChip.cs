@@ -49,7 +49,7 @@ namespace PixelVisionSDK.Chips
             set
             {
                 // TODO need to copy over existing sounds
-                value = value.Clamp(1, 96);
+                value = MathUtil.Clamp(value, 1, 96);
 
                 Array.Resize(ref sounds, value);
 
@@ -124,7 +124,7 @@ namespace PixelVisionSDK.Chips
             if (index > sounds.Length)
                 return;
 
-            channelID = channelID.Clamp(0, totalChannels - 1);
+            channelID = MathUtil.Clamp(channelID, 0, totalChannels - 1);
             
             var channel = channels[channelID];
             

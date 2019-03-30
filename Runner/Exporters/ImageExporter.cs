@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using System.IO;
+using Microsoft.Xna.Framework;
 
 
 namespace PixelVisionRunner.Exporters
@@ -21,13 +22,13 @@ namespace PixelVisionRunner.Exporters
     public class ImageExporter : AbstractExporter
     {
 
-        protected  IColor[] colors;
+        protected  Color[] colors;
         protected  int height;
         protected  int width;
         protected int loops;
         protected IImageExporter imageExporter;
         
-        public ImageExporter(string fileName, IImageExporter imageExporter, IColor[] colors = null) : base(fileName)
+        public ImageExporter(string fileName, IImageExporter imageExporter, Color[] colors = null) : base(fileName)
         {
 
             this.imageExporter = imageExporter;

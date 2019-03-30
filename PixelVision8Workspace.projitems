@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>D30AC84B-3012-4A7B-A329-3BDE09F9022F</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>PixelVisionWorkspace</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\DirectoryItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\DesktopRunner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\BiosService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\DiskDriveService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\Collections\EnumerableCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\Collections\InverseComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\Collections\TypeCombinationDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\Collections\TypeDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\Directory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\EntityCopiers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\EntityMovers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\Extensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\File.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\FileSystemEntity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\FileSystemExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\FileSystemPath.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\FileSystems\FileSystemMounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\FileSystems\FileSystemWrapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\FileSystems\MemoryFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\FileSystems\MergedFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\FileSystems\PhysicalFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\FileSystems\ReadOnlyFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\FileSystems\SealedFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\FileSystems\SeamlessArchiveFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\FileSystems\SubFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\IEntityCopier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\IEntityMover.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\IFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\IO\BoundStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\IO\BranchStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\IO\CircularBuffer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\IO\CleanCloseStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\IO\ConcatStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\IO\EmptyStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\IO\NonClosableStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\IO\ProducerConsumerStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\IO\ReadOnlyStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\IO\StreamExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\ITypeDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\ParseException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\PhysicalEntityMover.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\StandardEntityCopier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\StandardEntityMover.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\WorkspaceService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\ZipFileSystem.cs" />
+  </ItemGroup>
+</Project>

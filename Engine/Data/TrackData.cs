@@ -61,7 +61,7 @@ namespace PixelVisionSDK
         public int totalNotes
         {
             get { return notes.Length; }
-            set { Array.Resize(ref notes, value.Clamp(0, maxNotes)); }
+            set { Array.Resize(ref notes, MathUtil.Clamp(value, 0, maxNotes)); }
         }
 
         /// <summary>

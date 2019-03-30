@@ -109,7 +109,7 @@ namespace PixelVisionSDK.Chips
                 if (_pages == value)
                     return;
 
-                _pages = value.Clamp(1, 8);
+                _pages = MathUtil.Clamp(value, 1, 8);
                 Resize(pageWidth, pageHeight * pages);
             }
         }
@@ -147,7 +147,7 @@ namespace PixelVisionSDK.Chips
             set
             {
                 // There can only be a minimum of 2 colors and a maximum of 16 colors
-                _colorsPerSprite = value.Clamp(2, 16);
+                _colorsPerSprite = MathUtil.Clamp(value, 2, 16);
             }
         }
 
@@ -255,6 +255,8 @@ namespace PixelVisionSDK.Chips
         /// </param>
         private void CacheSprite(int index, int[] data)
         {
+            if (index < 0 || index >= cache.Length)
+                return;
             
             cache[index] = SpriteChipUtil.SpriteDataToString(data);
 
@@ -354,7 +356,7 @@ namespace PixelVisionSDK.Chips
 //            var totalSprites2 = SpriteChipUtil.CalculateTotalSprites(width2, height2, spriteWidth, spriteHeight);
 
             // Make sure we stay in bounds
-            index = index.Clamp(0, totalSprites1 - 1);
+            index = MathUtil.Clamp(index, 0, totalSprites1 - 1);
 
             var w1 = _texture.width / width;
 

@@ -16,8 +16,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PixelVisionRunner;
-using PixelVisionRunner.Parsers;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionSDK
@@ -28,18 +26,31 @@ namespace PixelVisionSDK
     ///     state of all chips, the game itself and helps with communication between
     ///     the two.
     /// </summary>
-    public class PixelVisionEngine : IEngine
+    public class PixelVisionEngine : IEngine, PixelVisionSDK.Services.IServiceLocator
     {
 
         protected string[] defaultChips;
+        protected Dictionary<string, PixelVisionSDK.Services.IService> _services = new Dictionary<string, PixelVisionSDK.Services.IService>();
 
+        protected Dictionary<string, AbstractChip> chips = new Dictionary<string, AbstractChip>();
+        protected List<IDraw> drawChips = new List<IDraw>();
+//        protected PixelVisionEngine engine;
+        protected List<IUpdate> updateChips = new List<IUpdate>();
 
+        
+        public Dictionary<string, PixelVisionSDK.Services.IService> services
+        {
+            get { return _services; }
+        }
+        
         public Dictionary<string, string> metaData => _metaData;
 
         protected Dictionary<string, string> _metaData = new Dictionary<string, string>
         {
             {"name", "untitled"}
         };
+        
+        public Dictionary<string, byte[]> files = new Dictionary<string, byte[]>();
 
         /// <summary>
         ///     The PixelVisionEngine constructor requires a render target and an
@@ -57,7 +68,7 @@ namespace PixelVisionSDK
 
             this.name = name;
 
-            this.canWrite = readOnly;
+            //this.canWrite = readOnly;
             
             Init();
         }
@@ -67,34 +78,19 @@ namespace PixelVisionSDK
         /// <tocexclude />
         public string name { get; set; }
 
-        public bool canWrite { get; set; }
-        
+        //public bool canWrite { get; set; }
+
         /// <summary>
         ///     Access to the ChipManager.
         ///     <tocexclude />
         /// </summary>
-        public ChipManager chipManager { get; set; }
+//        public ChipManager chipManager => this;
 
         /// <summary>
         ///     Access to the ColorChip.
         /// </summary>
         /// <tocexclude />
         public ColorChip colorChip { get; set; }
-
-        /// <summary>
-        ///     Access to the ColorMapChip.
-        /// </summary>
-        /// <tocexclude />
-//        public ColorChip colorMapChip { //get; set; }
-//            get
-//            {
-//                return chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
-//            }
-//            set
-//            {
-//                //
-//            }
-//        }
 
         /// <summary>
         ///     Access to the ControllerChip.
@@ -108,11 +104,6 @@ namespace PixelVisionSDK
         /// <tocexclude />
         public DisplayChip displayChip { get; set; }
 
-        /// <summary>
-        ///     Access to the ScreenBufferChip.
-        /// </summary>
-        /// <tocexclude />
-//        public ScreenBufferChip screenBufferChip { get; set; }
         /// <summary>
         ///     Access to the SoundChip.
         /// </summary>
@@ -144,11 +135,6 @@ namespace PixelVisionSDK
         public MusicChip musicChip { get; set; }
 
         /// <summary>
-        ///     Access to the APIBridge.
-        /// </summary>
-        /// <tocexclude />
-        //public APIBridge apiBridge { get; set; }
-        /// <summary>
         ///     Access to the current game in memory.
         /// </summary>
         /// <tocexclude />
@@ -158,7 +144,7 @@ namespace PixelVisionSDK
         ///     Flag if the engine is <see cref="running" /> or not.
         /// </summary>
         /// <tocexclude />
-        public bool running { get; private set; }
+//        public bool running { get; private set; }
 
         /// <summary>
         ///     This method allows you to load a <paramref name="game" /> into the
@@ -169,11 +155,11 @@ namespace PixelVisionSDK
         /// </summary>
         /// <param name="game"></param>
         /// <tocexclude />
-        public virtual void LoadGame(GameChip game)
-        {
-            running = false;
-            chipManager.ActivateChip(game.GetType().FullName, game);
-        }
+//        public virtual void LoadGame(GameChip game)
+//        {
+////            running = false;
+//            chipManager.ActivateChip(game.GetType().FullName, game);
+//        }
 
         /// <summary>
         ///     Attempts to run a game that has been loaded into memory via the
@@ -188,21 +174,18 @@ namespace PixelVisionSDK
                 return;
 
             // Make sure all chips are reset to their default values
-            chipManager.Reset();
-//
-//            // Call init on all chips
-            chipManager.Init();
-//
-//            ConfigureInput();
+//            chipManager.Reset();
+            foreach (var chip in chips)
+                chip.Value.Reset();
 
-//            if (displayTarget != null)
-//            {
-//                displayTarget.ResetResolution(this, displayChip.width, displayChip.height, displayChip.overscanXPixels, displayChip.overscanYPixels);
-//            
-//                displayTarget.CacheColors(this);  
-//            }
-            
-            running = true;
+            // Call init on all chips
+//            chipManager.Init();
+            var chipNames = chips.Keys.ToList();
+
+            foreach (var chipName in chipNames)
+                chips[chipName].Init();
+
+//            running = true;
         }
 
         /// <summary>
@@ -214,10 +197,13 @@ namespace PixelVisionSDK
         /// <tocexclude />
         public virtual void Update(float timeDelta)
         {
-            if (!running)
-                return;
+//            if (!running)
+//                return;
 
-            chipManager.Update(timeDelta);
+            foreach (var chip in updateChips)
+                chip.Update(timeDelta);
+            
+//            chipManager.Update(timeDelta);
         }
 
         /// <summary>
@@ -228,15 +214,12 @@ namespace PixelVisionSDK
         /// <tocexclude />
         public virtual void Draw()
         {
-            if (!running)
-                return;
+//            if (!running)
+//                return;
 
-            chipManager.Draw();
-
-//            if (displayTarget != null)
-//            {
-//                displayTarget.Render(this);
-//            }
+//            chipManager.Draw();
+            foreach (var chip in drawChips)
+                chip.Draw();
         }
 
         /// <summary>
@@ -245,7 +228,8 @@ namespace PixelVisionSDK
         /// <tocexclude />
         public virtual void Shutdown()
         {
-            chipManager.Shutdown();
+            foreach (var chip in chips)
+                chip.Value.Shutdown();
         }
 
         /// <summary>
@@ -294,7 +278,7 @@ namespace PixelVisionSDK
         /// <tocexclude />
         public virtual void Init()
         {
-            chipManager = new ChipManager(this);
+//            chipManager = new ChipManager(this);
 
             //apiBridge = new APIBridge(this);
             if (defaultChips != null)
@@ -304,40 +288,111 @@ namespace PixelVisionSDK
         public void CreateChips(string[] chips)
         {
             foreach (var chip in chips)
-                chipManager.GetChip(chip);
+                GetChip(chip);
         }
 
-        /// <summary>
-        ///     This method resets the engine. This method only executes if the
-        ///     engine is running.
-        /// </summary>
-        /// <tocexclude />
-        public virtual void Reset()
-        {
-            if (!running)
-                return;
+        #region Chip Manager
 
-            chipManager.Reset();
+        public void AddService(string id, PixelVisionSDK.Services.IService service)
+        {
+            // Add the service to the managed list
+            if (services.ContainsKey(id))
+                services[id] = service;
+            else
+                services.Add(id, service);
+
+            // Add a reference of the service locator
+            service.RegisterService(this);
+        }
+
+        public PixelVisionSDK.Services.IService GetService(string id)
+        {
+            if (services.ContainsKey(id))
+                return services[id];
+
+            throw new Exception("The requested service '" + id + "' is not registered");
         }
         
-//        protected virtual void ConfigureInput()
-//        {
-//            if (inputFactory == null)
-//                return;
-//
-//            controllerChip.RegisterKeyInput(inputFactory.CreateKeyInput());
-//
-//            var buttons = Enum.GetValues(typeof(Buttons)).Cast<Buttons>();
-//            foreach (var button in buttons)
-//            {
-//                controllerChip.UpdateControllerKey(0, inputFactory.CreateButtonBinding(0, button));
-//                controllerChip.UpdateControllerKey(1, inputFactory.CreateButtonBinding(1, button));
-//            }
-//
-//            controllerChip.RegisterMouseInput(inputFactory.CreateMouseInput());
-//
-//            controllerChip.RegisterControllers(inputFactory.CreateControllerInput());
-//        }
+        public bool HasChip(string id)
+        {
+            return chips.ContainsKey(id);
+        }
+        
+        public AbstractChip GetChip(string id, bool activeOnCreate = true)
+        {
+            //Debug.Log("Chip Manager: Get Chip " + id);
+
+            if (HasChip(id))
+            {
+                var chip = chips[id];
+
+                if (activeOnCreate)
+                    ActivateChip(id, chip);
+
+                return chip;
+            }
+
+            // TODO create a chip
+            var type = Type.GetType(id);
+
+            AbstractChip chipInstance = null;
+
+            try
+            {
+                chipInstance = Activator.CreateInstance(type) as AbstractChip;
+                ActivateChip(id, chipInstance);
+            }
+            catch (Exception)
+            {
+                //throw new Exception("Chip '" + id + "' could not be created.");
+            }
+
+            return chipInstance;
+        }
+        
+        public void ActivateChip(string id, AbstractChip chip, bool autoActivate = true)
+        {
+            if (HasChip(id))
+            {
+                //TODO do we need to disable the old chip first
+                chips[id] = chip;
+            }
+            else
+            {
+                //TODO fixed bug here but need to make sure we don't need to do this above
+                chips.Add(id, chip);
+
+                if (chip is IUpdate)
+                    updateChips.Add(chip as IUpdate);
+
+                if (chip is IDraw)
+                    drawChips.Add(chip as IDraw);
+            }
+
+            if (autoActivate)
+                chip.Activate(this);
+        }
+        
+        public void DeactivateChip(string id, AbstractChip chip)
+        {
+            chip.Deactivate();
+
+            if (chip is IUpdate)
+                updateChips.Remove(chip as IUpdate);
+
+            if (chip is IDraw)
+                drawChips.Remove(chip as IDraw);
+
+            chips.Remove(id);
+        }
+        
+        public void RemoveInactiveChips()
+        {
+            foreach (var item in chips.Where(c => c.Value.active == false).ToArray())
+                chips.Remove(item.Key);
+        }
+
+        #endregion
 
     }
 

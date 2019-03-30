@@ -14,10 +14,9 @@
 // Shawn Rakowski - @shwany
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using PixelVisionRunner;
+using Microsoft.Xna.Framework;
 using PixelVisionSDK.Utils;
 
 namespace PixelVisionSDK.Chips
@@ -53,7 +52,7 @@ namespace PixelVisionSDK.Chips
         
 //        protected int _colorsPerPage = 64;
 //        protected int _pages = 4;
-        protected ColorData[] colorCache;
+        protected Color[] colorCache;
         
         // By default, there are only 2 colors so we need 2 flags
         protected int[] invalidColors = new int[16];
@@ -73,7 +72,7 @@ namespace PixelVisionSDK.Chips
             set
             {
                 // We make sure that the bg color is never set to a value out of the range of the color chip
-                _bgColor = value.Clamp(0, total);
+                _bgColor = MathUtil.Clamp(value, 0, total);
                 Invalidate();
             } 
         }
@@ -90,43 +89,6 @@ namespace PixelVisionSDK.Chips
             }
         }
         
-        /// <summary>
-        ///     Defines the total number of colors per virtual page.
-        /// </summary>
-        /// <value>Int</value>
-//        public int colorsPerPage
-//        {
-//            get { return _colorsPerPage; }
-//            set { _colorsPerPage = value; }
-//        }
-
-        /// <summary>
-        ///     Returns the total virtual pages of colors.
-        /// </summary>
-        /// <value>Int</value>
-//        public int pages
-//        {
-//            get { return _pages; }
-//            set
-//            {
-//                if (_pages == value)
-//                    return;
-//                
-//                // The max number of colors are 512 (8 pages x 64 colors per page)
-//                _pages = value;//.Clamp(1, 8);
-//
-//                var oldTotal = _colors.Length;
-//
-//                Array.Resize(ref _colors, total);
-//                Array.Resize(ref invalidColors, total);
-//                if (oldTotal < total)
-//                    for (var i = oldTotal; i < total; i++)
-//                        _colors[i] = maskColor;
-//
-//                Invalidate();
-//            }
-//        }
-
         /// <summary>
         ///     Get and Set the <see cref="supportedColors" /> number of <see cref="colors" />
         ///     in the palette. Changing the <see cref="supportedColors" /> will clear the
@@ -188,14 +150,14 @@ namespace PixelVisionSDK.Chips
         ///     Returns a list of color data to be used for rendering.
         /// </summary>
         /// <value>ColorData[]</value>
-        public IColor[] colors
+        public Color[] colors
         {
             get
             {
                 if (invalid)
                 {
                     var t = total;
-                    colorCache = new ColorData[t];
+                    colorCache = new Color[t];
 
                     for (var i = 0; i < t; i++)
                     {
@@ -207,7 +169,7 @@ namespace PixelVisionSDK.Chips
                             colorHex = _colors[backgroundColor];
                         }
 
-                        var color = new ColorData(colorHex) {flag = invalidColors[i]};
+                        var color = ColorUtils.HexToColor(colorHex);// {flag = invalidColors[i]};
                         colorCache[i] = color;
                     }
 
@@ -244,7 +206,7 @@ namespace PixelVisionSDK.Chips
             // Make sure that all colors are uppercase
             color = color.ToUpper();
 
-            if (ColorData.ValidateColor(color))
+            if (ColorUtils.ValidateHexColor(color))
             {
                 _colors[index] = color;
                 invalidColors[index] = 1;
@@ -302,16 +264,6 @@ namespace PixelVisionSDK.Chips
             engine.colorChip = null;
         }
 
-        /// <summary>
-        ///     Recalculates the total number of pages based on the new total
-        ///     number of colors.
-        /// </summary>
-        /// <param name="total"></param>
-//        public void RebuildColorPages(int total)
-//        {
-//            pages = (int)Math.Ceiling(total / (float)colorsPerPage);
-//        }
-       
         public bool ValidateHexColor(string inputColor)
         {
             return (Regex.Match(inputColor, "^#(?:[0-9a-fA-F]{3}){1,2}$").Success);

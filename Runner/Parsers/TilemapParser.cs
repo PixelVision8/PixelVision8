@@ -39,7 +39,7 @@ namespace PixelVisionRunner.Parsers
         autoImport = tilemapChip.autoImport;
             
 //            clear = new ColorData(0f){a = 0f};
-            maskColor = new ColorData(chips.colorChip.maskColor);
+            maskColor = PixelVisionSDK.Utils.ColorUtils.HexToColor(chips.colorChip.maskColor);
             
         }
 

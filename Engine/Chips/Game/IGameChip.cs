@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
 
 namespace PixelVisionSDK.Chips
 {
@@ -135,13 +134,13 @@ namespace PixelVisionSDK.Chips
         ///     the overscan value set on the display chip. To calculate the exact overscan in pixels, you must subtract
         ///     the full size from the visible size. Simply supply false as an argument to get the full display dimensions.
         /// </summary>
-        Vector Display(bool visible = true);
+        Point Display(bool visible = true);
         
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        Rect VisibleBounds();
+        Rectangle VisibleBounds();
 
         /// <summary>
         ///     This method allows you to draw raw pixel data directly to the display. Depending on which draw mode you
@@ -295,7 +294,7 @@ namespace PixelVisionSDK.Chips
         ///     wrap around the screen when they reach the edges of the screen.
         /// </param>
         /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
-        void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rect bounds = null);
+        void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rectangle? bounds = null);
 
         /// <summary>
         ///     DrawSpriteBlock() is similar to DrawSprites except you define the first sprite (upper left corner) and the width x height 
@@ -334,7 +333,7 @@ namespace PixelVisionSDK.Chips
         ///     wrap around the screen when they reach the edges of the screen.
         /// </param>
         /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
-        void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rect bounds = null);
+        void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rectangle? bounds = null);
 
         /// <summary>
         ///     The DrawTile method makes it easier to update the visuals of a tile on any of the map layers. By default, 
@@ -480,7 +479,7 @@ namespace PixelVisionSDK.Chips
         /// <returns>
         ///     By default, this method returns a vector with the current scroll X and Y position.
         /// </returns>
-        Vector ScrollPosition(int? x = null, int? y = null);
+        Point ScrollPosition(int? x = null, int? y = null);
 
         #endregion
 
@@ -585,7 +584,7 @@ namespace PixelVisionSDK.Chips
         /// <returns>
         ///     Returns a vector for the mouse's X and Y poisition.
         /// </returns>
-        Vector MousePosition();
+        Point MousePosition();
 
         /// <summary>
         ///     The InputString() method returns the keyboard input entered this frame. This method is
@@ -679,7 +678,7 @@ namespace PixelVisionSDK.Chips
         /// <returns>
         ///     Returns a vector where the X and Y for the sprite's width and height.
         /// </returns>
-        Vector SpriteSize(int? width = 8, int? height = 8);
+        Point SpriteSize(int? width = 8, int? height = 8);
 
         /// <summary>
         ///     This allows you to return the pixel data of a sprite or overwrite it with new data. Sprite
@@ -809,7 +808,7 @@ namespace PixelVisionSDK.Chips
         /// <returns>
         ///     Returns a vector of the tile maps size in tiles where x and y are the columns and rows of the tilemap.
         /// </returns>
-        Vector TilemapSize(int? width = null, int? height = null);
+        Point TilemapSize(int? width = null, int? height = null);
 
         /// <summary>
         ///     A helper method which allows you to update several tiles at once. Simply define the start column

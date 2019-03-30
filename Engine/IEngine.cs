@@ -30,7 +30,7 @@ namespace PixelVisionSDK
         /// <summary>
         ///     A flag for if the engine is <see cref="running" />
         /// </summary>
-        bool running { get; }
+//        bool running { get; }
 
         string name { get; set; }
 
@@ -41,7 +41,7 @@ namespace PixelVisionSDK
         ///     This method loads a <paramref name="game" /> into memory
         /// </summary>
         /// <param name="game"></param>
-        void LoadGame(GameChip game);
+//        void LoadGame();
 
         /// <summary>
         ///     Run the game in memory

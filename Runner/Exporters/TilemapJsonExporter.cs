@@ -112,13 +112,13 @@ namespace PixelVisionRunner.Exporters
             
             // tilewidth
             sb.Append("\"tilewidth\":");
-            sb.Append(spriteSize.x);
+            sb.Append(spriteSize.X);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1); 
             
             // tileheight
             sb.Append("\"tileheight\":");
-            sb.Append(spriteSize.y);
+            sb.Append(spriteSize.Y);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1); 
             
@@ -163,7 +163,7 @@ namespace PixelVisionRunner.Exporters
                 
                 // columns
                 sb.Append("\"columns\":");
-                sb.Append(spriteChip.texture.width / spriteSize.x);
+                sb.Append(spriteChip.texture.width / spriteSize.X);
                 sb.Append(",");
                 JsonUtil.GetLineBreak(sb, 2);
                 
@@ -212,13 +212,13 @@ namespace PixelVisionRunner.Exporters
                 
                 // tilewidth
                 sb.Append("\"tilewidth\":");
-                sb.Append(spriteSize.x);
+                sb.Append(spriteSize.X);
                 sb.Append(",");
                 JsonUtil.GetLineBreak(sb, 2);
                 
                 // tileheight
                 sb.Append("\"tileheight\":");
-                sb.Append(spriteSize.y);
+                sb.Append(spriteSize.Y);
                 sb.Append(",");
                 JsonUtil.GetLineBreak(sb, 2);
                 
@@ -348,7 +348,7 @@ namespace PixelVisionRunner.Exporters
 
                 var pos = gameChip.CalculatePosition(i, cols);
                 
-                var tile = gameChip.Tile(pos.x, pos.y);
+                var tile = gameChip.Tile(pos.X, pos.Y);
                 
                 // Only save a tile if it exists
                 if (tile.spriteID > -1)
@@ -362,7 +362,7 @@ namespace PixelVisionRunner.Exporters
 //                    JsonUtil.GetLineBreak(sb, 5);
                     
                     sb.Append("\"name\":");
-                    sb.Append("\"Tile:"+pos.x+","+pos.y+"\"");
+                    sb.Append("\"Tile:"+pos.X+","+pos.Y+"\"");
                     sb.Append(",");
                     JsonUtil.GetLineBreak(sb, 5);
                     
@@ -378,23 +378,23 @@ namespace PixelVisionRunner.Exporters
                     JsonUtil.GetLineBreak(sb, 5);
                     
                     sb.Append("\"width\":");
-                    sb.Append(spriteSize.x);
+                    sb.Append(spriteSize.X);
                     sb.Append(",");
                     JsonUtil.GetLineBreak(sb, 5);
                     
                     sb.Append("\"height\":");
-                    sb.Append(spriteSize.y);
+                    sb.Append(spriteSize.Y);
                     sb.Append(",");
                     JsonUtil.GetLineBreak(sb, 5);
                     
                     
                     sb.Append("\"x\":");
-                    sb.Append(pos.x * spriteSize.x);
+                    sb.Append(pos.X * spriteSize.X);
                     sb.Append(",");
                     JsonUtil.GetLineBreak(sb, 5);
                     
                     sb.Append("\"y\":");
-                    sb.Append((pos.y + 1) * spriteSize.y);  // Tiled Y pos is 1 based, so offset the x position by 1 tile
+                    sb.Append((pos.Y + 1) * spriteSize.Y);  // Tiled Y pos is 1 based, so offset the x position by 1 tile
                     sb.Append(",");
                     JsonUtil.GetLineBreak(sb, 5);
                     

@@ -41,7 +41,7 @@ namespace PixelVisionRunner.Parsers
             
             if (target != null)
             {
-                var chipManager = target.chipManager;
+                var chipManager = target;
 
                 foreach (var entry in data)
                 {
@@ -241,16 +241,52 @@ namespace PixelVisionRunner.Parsers
             if (data.ContainsKey("version") && (string)data["version"] == "v2")
 
             {
-//                Console.WriteLine("Loading music v2");
-                
+
                 patternKey = "patterns";
                 patternNameKey = "patternName";
                 
                 
                 // TODO build song playlist
+                
+                // Look for songs
+                if (data.ContainsKey("songs"))
+                {
+                    
+                    // Get the list of song data
+                    var songsData = data["songs"] as List<object>;
+                    var total = songsData.Count;
+
+                    // Change the total songs to match the songs in the data
+                    musicChip.totalSongs = total;
+                    
+                    // Loop through each of teh 
+                    for (int i = 0; i < total; i++)
+                    {
+                        var songData = songsData[i] as Dictionary<string, object>;
+                        var song = musicChip.songs[i];
+                        
+                        if (songData.ContainsKey("songName"))
+                            song.name = songData["songName"] as string;
+                        
+                        if (songData.ContainsKey("patterns"))
+                        {
+                            var patternData = (List<object>) songData["patterns"];
+                            var totalPatterns = patternData.Count;
+                            song.patterns = new int[totalPatterns];
+                            for (var j = 0; j < totalPatterns; j++)
+                                song.patterns[j] = (int) (long) patternData[j];
+                        }
+                        
+                        if (songData.ContainsKey("start"))
+                            song.start = Convert.ToInt32((long) songData["start"]);
+                        
+                        if (songData.ContainsKey("end"))
+                            song.end = Convert.ToInt32((long) songData["end"]);
+
+                    }
+                }
+                
             }
-//            else
-//            {
     
             if (data.ContainsKey("totalTracks"))
                 musicChip.totalTracks = Convert.ToInt32((long) data["totalTracks"]);
@@ -267,12 +303,13 @@ namespace PixelVisionRunner.Parsers
             // TODO remove legacy property
             if (data.ContainsKey("totalLoop"))
                 musicChip.totalLoops = Convert.ToInt32((long) data["totalLoop"]);
+            
 
             if (data.ContainsKey(patternKey))
             {
-                var songData = data[patternKey] as List<object>;
+                var patternData = data[patternKey] as List<object>;
 
-                var total = songData.Count;
+                var total = patternData.Count;
 
 //                musicChip.totalLoops = total;
 
@@ -280,7 +317,7 @@ namespace PixelVisionRunner.Parsers
                 {
                     var song = musicChip.CreateNewTrackerData("untitled"); //new SfxrSongData());
 
-                    var sngData = songData[i] as Dictionary<string, object>;
+                    var sngData = patternData[i] as Dictionary<string, object>;
 
                     if (sngData.ContainsKey(patternNameKey))
                         song.songName = (string) sngData[patternNameKey];
@@ -293,7 +330,7 @@ namespace PixelVisionRunner.Parsers
                         var tracksData = (List<object>) sngData["tracks"];
 //                        song.totalTracks = tracksData.Count;
 
-                        var trackCount = tracksData.Count.Clamp(0, song.totalTracks);
+                        var trackCount = MathUtil.Clamp(tracksData.Count, 0, song.totalTracks);
 
                         for (var j = 0; j < trackCount; j++)
                         {
@@ -351,7 +388,7 @@ namespace PixelVisionRunner.Parsers
             {
                 var sounds = (List<object>) data["sounds"];
 
-                var total = sounds.Count.Clamp(0, soundChip.totalSounds);
+                var total = MathUtil.Clamp(sounds.Count, 0, soundChip.totalSounds);
                 
                 for (var i = 0; i < total; i++)
                 {

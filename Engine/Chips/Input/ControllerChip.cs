@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+//using Microsoft.Xna.Framework.Input;
+//using Keys = PixelVisionSDK.Keys;
+
 namespace PixelVisionSDK.Chips
 {
 
@@ -417,10 +420,10 @@ namespace PixelVisionSDK.Chips
 
         }
 
-        public Vector ReadMousePosition()
+        public Point ReadMousePosition()
         {
             var pos = PointToScreen(currentMouseState.Position);
-            return new Vector(pos.X, pos.Y);
+            return new Point(pos.X, pos.Y);
         }
         
         
@@ -449,12 +452,12 @@ namespace PixelVisionSDK.Chips
 //            return ;
 //        }
 
-        public Point PointToScreen(Point point)
+        public Microsoft.Xna.Framework.Point PointToScreen(Microsoft.Xna.Framework.Point point)
         {
             return PointToScreen(point.X, point.Y);
         }
 
-        public Point PointToScreen(int x, int y)
+        public Microsoft.Xna.Framework.Point PointToScreen(int x, int y)
         {
             
 //            var viewport = GraphicsDevice.Viewport;
@@ -534,7 +537,10 @@ namespace PixelVisionSDK.Chips
 //            Console.WriteLine("Key test up - "+test + " - " + InputMap.Player1UpKey.ToString());
             //(Keys) Enum.Parse(typeof(Keys), 
 //            player1.GamePadIndex = KEYBOARD_INDEX;
-            player1.KeyboardMap = new Dictionary<Buttons, Keys>
+
+            try
+            {
+                player1.KeyboardMap = new Dictionary<Buttons, Keys>
             {
                 { Buttons.Up, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1UpKey.ToString()))},
                 { Buttons.Left, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1LeftKey.ToString())) },
@@ -559,6 +565,12 @@ namespace PixelVisionSDK.Chips
                 { Buttons.A, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2AKey.ToString())) },
                 { Buttons.B, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2BKey.ToString())) },
             };
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
 
         }
 
@@ -591,7 +603,6 @@ namespace PixelVisionSDK.Chips
         public void RegisterControllers()
         {
 
-            
             var state = GamePad.GetState(0, gamePadDeadZone);
             if (state.IsConnected)
             {

@@ -13,6 +13,7 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
+using Microsoft.Xna.Framework;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionRunner.Parsers
@@ -34,7 +35,7 @@ namespace PixelVisionRunner.Parsers
             {
                 // Create a new font chip to store data
                 fontChip = new FontChip();
-                chips.chipManager.ActivateChip(fontChip.GetType().FullName, fontChip);
+                chips.ActivateChip(fontChip.GetType().FullName, fontChip);
             }
 //            this.autoImport = autoImport;
             this.name = name;
@@ -54,7 +55,7 @@ namespace PixelVisionRunner.Parsers
             base.PostCutOutSprites();
         }
 
-        public override bool IsEmpty(IColor[] pixels)
+        public override bool IsEmpty(Color[] pixels)
         {
             // Hack to make sure if the space is empty we still save it
             if (index == 0)

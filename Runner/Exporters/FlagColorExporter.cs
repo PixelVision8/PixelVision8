@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using GameCreator.Exporters;
+using Microsoft.Xna.Framework;
 using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
@@ -24,7 +25,7 @@ namespace PixelVisionRunner.Exporters
     public class FlagColorExporter : IAbstractExporter
     {
         
-//        public static IColor ConvertFlagColor(int flagValue, int totalFlags)
+//        public static Color ConvertFlagColor(int flagValue, int totalFlags)
 //        {
 //            var colorValue = CalcualteFlagColor(flagValue, totalFlags);
 //                
@@ -39,7 +40,7 @@ namespace PixelVisionRunner.Exporters
         private string fullFileName;
 //        private ITextureFactory textureFactory;
         private PixelDataExporter exporter;
-        private Vector tileSize;
+        private Point tileSize;
         private int totalFlags;
         private GameChip gameChip;
         private ColorChip flagColorChip;
@@ -54,7 +55,7 @@ namespace PixelVisionRunner.Exporters
 
             gameChip = engineChips.gameChip;
 
-            flagColorChip = engineChips.chipManager.GetChip(FlagColorParser.flagColorChipName, false) as ColorChip;
+            flagColorChip = engineChips.GetChip(FlagColorParser.flagColorChipName, false) as ColorChip;
             
             tileSize = gameChip.SpriteSize();
             
@@ -84,17 +85,17 @@ namespace PixelVisionRunner.Exporters
             var cols = 16;
             var rows = MathUtil.CeilToInt(totalFlags / (float) cols);
 
-            var w = cols * tileSize.x;
-            var h = rows * tileSize.y;
+            var w = cols * tileSize.X;
+            var h = rows * tileSize.Y;
 
             var canvas = new Pattern(w, h);
             canvas.Clear();
 
-            var totalPixels = tileSize.x * tileSize.y;
+            var totalPixels = tileSize.X * tileSize.Y;
             
             var brush = new int[totalPixels];
 
-            IColor[] colors = new IColor[totalFlags];
+            Color[] colors = new Color[totalFlags];
 
             var flagColors = flagColorChip.colors;
             
@@ -104,15 +105,15 @@ namespace PixelVisionRunner.Exporters
                 
                 var pos = gameChip.CalculatePosition(i, w);
 
-                pos.x *= tileSize.x;
-                pos.y *= tileSize.y;
+                pos.X *= tileSize.X;
+                pos.Y *= tileSize.Y;
                 // Update the brush
                 for (int j = 0; j < totalPixels; j++)
                 {
                     brush[j] = i;
                 }
                 
-                canvas.SetPixels(pos.x, pos.y, tileSize.x, tileSize.y, brush);
+                canvas.SetPixels(pos.X, pos.Y, tileSize.X, tileSize.Y, brush);
 
             }
             var imageExporter = new PNGWriter();

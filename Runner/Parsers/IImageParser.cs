@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace PixelVisionRunner.Parsers
 {
@@ -8,8 +9,8 @@ namespace PixelVisionRunner.Parsers
         void ReadHeader();
         int width { get; }
         int height { get; }
-        IColor[] colorPixels { get;}
-        List<IColor> colorPalette { get; }
+        Color[] colorPixels { get;}
+        List<Color> colorPalette { get; }
         void ReadStream();
         void ReadBytes(byte[] bytes);
     }

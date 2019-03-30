@@ -15,6 +15,7 @@
 
 using System;
 using GameCreator.Importers;
+using Microsoft.Xna.Framework;
 using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
 
@@ -33,7 +34,7 @@ namespace PixelVisionRunner
         public byte[] bytes;
         
         // TODO this is hardcoded
-        private Vector spriteSize = new Vector(8, 8);
+        private Point spriteSize = new Point(8, 8);
         
         public SpriteExportData(string fileName, byte[] bytes)
         {
@@ -43,8 +44,8 @@ namespace PixelVisionRunner
             // TODO This is hard coded and should be injected in
             imageParser = new PNGReader(this.bytes);
             
-            width = (int)Math.Ceiling((float) imageParser.width / spriteSize.x);
-            height = (int)Math.Ceiling((float) imageParser.height / spriteSize.y);
+            width = (int)Math.Ceiling((float) imageParser.width / spriteSize.X);
+            height = (int)Math.Ceiling((float) imageParser.height / spriteSize.Y);
             
             var totalIDs = width * height;
                 

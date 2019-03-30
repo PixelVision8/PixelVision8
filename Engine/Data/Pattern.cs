@@ -147,6 +147,9 @@ namespace PixelVisionSDK
         {
             total = blockWidth * blockHeight;
 
+            if (total == 0)
+                return;
+            
             // Per-line copy, as there is no special per-pixel logic required.
 
             // Vertical wrapping is not an issue. Horizontal wrapping requires splitting the copy into two operations.
@@ -205,14 +208,43 @@ namespace PixelVisionSDK
         /// <param name="colorRef">
         ///     Optional clear value. This is set to -1 by default.
         /// </param>
-        public virtual void Clear(int colorRef = -1)
+        public virtual void Clear(int colorRef = -1, int x = 0, int y = 0, int? width = null, int? height = null)
         {
-            total = pixels.Length;
             
-            for (int i = total - 1; i > -1; i--)
-            {
-                pixels[i] = colorRef;
-            }
+
+            int[] tmpPixels = null;
+
+            var tmpWidth = width ?? this.width;
+            var tmpHeight = height ?? this.height;
+            
+//            if (colorRef == -1)
+//            {
+                
+                var total = tmpWidth * tmpHeight;
+
+                tmpPixels = new int[total];
+                
+                for (int i = 0; i < total; i++)
+                {
+                    tmpPixels[i] = colorRef;
+                }
+                 
+//            }
+
+            
+                SetPixels(x, y, tmpWidth, tmpHeight, tmpPixels);
+
+//            
+//            MergePixels(x, y, width ?? this.width, height ?? this.height, tmpPixels,
+//                false, false, 0, false);
+            
+            
+//            total = pixels.Length;
+//            
+//            for (int i = total - 1; i > -1; i--)
+//            {
+//                pixels[i] = colorRef;
+//            }
             
             Invalidate();
         }
@@ -235,11 +267,11 @@ namespace PixelVisionSDK
         /// <param name="pixels">The pixel data to be used.</param>
         /// <param name="colorOffset"></param>
         /// <param name="ignoreTransparent"></param>
-        public void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels,
-            int colorOffset = 0, bool ignoreTransparent = true)
-        {
-            MergePixels(x, y, blockWidth, blockHeight, pixels, false, false, colorOffset, ignoreTransparent);
-        }
+//        public void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels,
+//            int colorOffset = 0, bool ignoreTransparent = true)
+//        {
+//            MergePixels(x, y, blockWidth, blockHeight, pixels, false, false, colorOffset, ignoreTransparent);
+//        }
 
         /// <summary>
         ///     This replaces all the pixels in a specific area of the TextureData.
@@ -276,7 +308,7 @@ namespace PixelVisionSDK
             int srcX, srcY;
             for (var i = total - 1; i > -1; i--)
             {    
-                pixel = pixels?[i] ?? 0;
+                pixel = pixels?[i] ?? -1;
 
                 if (pixel != -1 || ignoreTransparent != true)
                 {
@@ -301,6 +333,8 @@ namespace PixelVisionSDK
 //                    
 //                }
             }
+            
+            Invalidate();
 
         }
         

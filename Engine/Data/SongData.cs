@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using PixelVisionRunner.Utils;
@@ -8,8 +9,33 @@ namespace PixelVisionSDK
     public class SongData : AbstractData
     {
         public string name = "Untitled";
-        public int[] patterns = new int[100];
+        private int[] _patterns = new int[100];
         
+        public int[] patterns
+        {
+            get => _patterns;
+            set
+            {
+                if (value.Length > totalPatternsPerSong)
+                {
+                    // TODO need to trim
+                    
+                    Array.Resize(ref value, totalPatternsPerSong);
+                }
+                
+                _patterns = value;
+                
+                // TODO need to change start
+
+                end = _patterns.Length;
+                
+                // TODO end should match up with the length of the song before it is resized or the end if it is bigger
+                
+                // TODO should we make a copy of the value?
+                
+                
+            }
+        }
         public int start = 0;
 
         private int _end;
@@ -28,33 +54,48 @@ namespace PixelVisionSDK
         public int currentPos = -1;
         public int totalPatternsPerSong = 100;
 
+//        public SongData(int[] patterns, int start, int end, bool loops = true)
+//        {
+//            
+//        }
+        
         public int NextPattern()
         {
             currentPos++;
 
-            if (currentPos > end)
+            if (AtEnd())
                 currentPos = 0;
-
-            return patterns[currentPos];
+    
+//            Console.WriteLine("Load pattern " + currentPos);
+            return _patterns[currentPos];
         }
 
-        public int Rewind()
+        public bool AtEnd()
         {
+            
+//            Console.WriteLine("End "+ end + " " + currentPos);
+            
+            return currentPos >= end;
+        }
+
+        public void Rewind()
+        {
+           
             currentPos = -1;
 
-            return NextPattern();
+//            return NextPattern();
         }
 
         public int SeekTo(int index)
         {
-            currentPos = index.Clamp(0, patterns.Length - 1);
+            currentPos = MathUtil.Clamp(index, -1, _patterns.Length - 1);
             
-            return NextPattern();
+            return currentPos;
         }
         
         public void UpdatePatternAt(int index, int id)
         {
-            patterns[index] = id;
+            _patterns[index] = id;
         }
 
         public string SerializeData()
@@ -83,7 +124,7 @@ namespace PixelVisionSDK
             JsonUtil.GetLineBreak(sb, 1);
             sb.Append("[");
             
-            sb.Append(string.Join(",", patterns));
+            sb.Append(string.Join(",", _patterns));
 
             sb.Append("]");
 

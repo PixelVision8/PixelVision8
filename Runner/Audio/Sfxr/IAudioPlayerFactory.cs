@@ -1,6 +1,6 @@
-﻿//   
+﻿//  
 // Copyright (c) Jesse Freeman. All rights reserved.  
-//  
+// 
 // Licensed under the Microsoft Public License (MS-PL) License. 
 // See LICENSE file in the project root for full license information. 
 // 
@@ -12,14 +12,12 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+// 
 
-namespace PixelVisionRunner
+namespace PixelVisionRunner.Chips.Sfxr
 {
-    public interface IColor
+    public interface IAudioPlayerFactory
     {
-        float a { get; set; }
-        float r { get; set; }
-        float g { get; set; }
-        float b { get; set; }
+        IAudioPlayer Create(ISfxrSynth synth);
     }
 }

@@ -44,11 +44,11 @@ namespace PixelVisionRunner.Exporters
 
                 spriteChip.ReadSpriteAt(i, tmpPixelData);
                 
-                textureData.SetPixels(pos.x * spriteChip.width, pos.y * spriteChip.height, spriteChip.width, spriteChip.height, tmpPixelData);
+                textureData.SetPixels(pos.X * spriteChip.width, pos.Y * spriteChip.height, spriteChip.width, spriteChip.height, tmpPixelData);
 
             }
             
-            var colorMapChip = engine.chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
+            var colorMapChip = engine.GetChip(ColorMapParser.chipName, false) as ColorChip;
 
             var colors = colorMapChip == null ? engine.colorChip.colors : colorMapChip.colors;
             

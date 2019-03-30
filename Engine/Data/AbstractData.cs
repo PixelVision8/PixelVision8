@@ -62,7 +62,7 @@ namespace PixelVisionSDK
         /// <param name="value"></param>
         public virtual void ResetValidation(int value = 0)
         {
-            _invalid = Convert.ToBoolean(value.Clamp(0, 1));
+            _invalid = Convert.ToBoolean(MathUtil.Clamp(value, 0, 1));
         }
 
     }

@@ -43,7 +43,7 @@ namespace PixelVisionSDK.Utils
             var totalSprites = CalculateTotalSprites(width, height, spriteWidth, spriteHeight);
 
             // Make sure we stay in bounds
-            index = index.Clamp(0, totalSprites - 1);
+            index = MathUtil.Clamp(index, 0, totalSprites - 1);
 
             var w = width / spriteWidth;
 

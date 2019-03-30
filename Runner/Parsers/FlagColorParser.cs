@@ -15,6 +15,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
 
@@ -46,7 +47,7 @@ namespace PixelVisionRunner.Parsers
             "#A53E5A",
         };
         
-        protected IColor maskColor;
+        protected Color maskColor;
 //        private int flag;
 //        private int offset;
 //        private int realWidth;
@@ -59,10 +60,9 @@ namespace PixelVisionRunner.Parsers
 
             flagColorChip = new ColorChip();
             
-            chips.chipManager.ActivateChip(flagColorChipName, flagColorChip, false);
+            chips.ActivateChip(flagColorChipName, flagColorChip, false);
             
-            maskColor = new ColorData(chips.colorChip.maskColor);
-
+            maskColor = PixelVisionSDK.Utils.ColorUtils.HexToColor(chips.colorChip.maskColor);
             
         }
 
@@ -92,7 +92,8 @@ namespace PixelVisionRunner.Parsers
 
                 for (int i = 0; i < total; i++)
                 {
-                    newFlagColors.Add(((ColorData)imageParser.colorPalette[i]).ToHex());
+                    var tmpColor = imageParser.colorPalette[i];
+                    newFlagColors.Add(PixelVisionSDK.Utils.ColorUtils.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B));
                 }
                 
 //                var pixels = tex.GetPixels();

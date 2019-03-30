@@ -14,10 +14,13 @@
 // Shawn Rakowski - @shwany
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using GameCreator.Importers;
+using Microsoft.Xna.Framework;
+using MonoGameRunner;
 using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
@@ -28,6 +31,7 @@ namespace PixelVisionRunner.Services
 
     public class LoadService : AbstractService
     {
+        private BackgroundWorker loadingWorker;
         
         public List<string> textExtensions = new List<string>()
         {
@@ -59,9 +63,9 @@ namespace PixelVisionRunner.Services
 
         protected IEngine targetEngine;
         private int totalParsers;
-        protected IColor maskColor = new ColorData("#ff00ff");
+        protected Color maskColor = PixelVisionSDK.Utils.ColorUtils.HexToColor("#ff00ff"); // TODO this shouldn't be hard coded 
 //        public ITextureFactory textureFactory;
-//        public IColorFactory colorFactory;
+//        public ColorFactory colorFactory;
         public int currentStep;
         public int totalSteps;
         
@@ -261,8 +265,7 @@ namespace PixelVisionRunner.Services
                 NextParser();
             }
         }
-
-
+    
         public void NextParser()
         {
             
@@ -277,6 +280,53 @@ namespace PixelVisionRunner.Services
             
             if (parser.completed)
                 currentParserID++;
+            
+        }
+        
+        public void StartLoading()
+        {
+//            loadService.LoadAll();
+            
+            loadingWorker = new BackgroundWorker();
+            
+            // TODO need a way to of locking this.
+            
+            loadingWorker.WorkerSupportsCancellation = true;
+            loadingWorker.WorkerReportsProgress = true;
+            
+            
+//            DisplayWarning("Start worker " +  loadService.totalSteps + " steps");
+            
+            loadingWorker.DoWork += WorkerLoaderSteps;
+//            bgw.ProgressChanged += WorkerLoaderProgressChanged;
+            loadingWorker.RunWorkerCompleted += WorkerLoaderCompleted;
+//            bgw.WorkerReportsProgress = true;
+            loadingWorker.RunWorkerAsync();
+        }
+
+        void WorkerLoaderSteps(object sender, DoWorkEventArgs e)
+        {
+//            var result = e.Result;
+            
+//            int total = loadService.totalSteps; //some number (this is your variable to change)!!
+
+            for (int i = 0; i <= totalSteps; i++) //some number (total)
+            {
+                NextParser();
+                System.Threading.Thread.Sleep(1);
+                loadingWorker.ReportProgress((int)(percent * 100), i);
+            }
+        }
+
+        void WorkerLoaderCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            
+            // TODO need a way to tell if this failed
+
+            if (e.Error != null)
+            {
+//                DisplayError(RunnerGame.ErrorCode.Exception, new Dictionary<string, string>(){{"@{error}","There was a error while loading. See the log for more information."}}, e.Error);
+            }
             
         }
 
@@ -438,7 +488,7 @@ namespace PixelVisionRunner.Services
                 var colorMapChip = new ColorChip();
                 
                 // Add the chip to the engine
-                targetEngine.chipManager.ActivateChip(ColorMapParser.chipName, colorMapChip, false);
+                targetEngine.ActivateChip(ColorMapParser.chipName, colorMapChip, false);
                 
 //                targetEngine.colorMapChip = colorMapChip;
                 

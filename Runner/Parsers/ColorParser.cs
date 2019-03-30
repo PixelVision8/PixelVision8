@@ -15,6 +15,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using MonoGameRunner.Data;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
@@ -26,15 +27,15 @@ namespace PixelVisionRunner.Parsers
     {
 
         protected ColorChip colorChip;
-        protected readonly List<IColor> colors = new List<IColor>();
+        protected readonly List<Color> colors = new List<Color>();
         
         protected readonly bool unique;
-        protected IColor tmpColor;
+        protected Color tmpColor;
         protected int totalColors;
 
-        protected IColor magenta;
+        protected Color magenta;
 
-        public ColorParser(IImageParser imageParser, ColorChip colorChip, IColor magenta,
+        public ColorParser(IImageParser imageParser, ColorChip colorChip, Color magenta,
             bool unique = false):base(imageParser)
         {
 
@@ -73,7 +74,7 @@ namespace PixelVisionRunner.Parsers
             
             // Parse colors as normal
             
-            var srcColors = unique ? imageParser.colorPalette.ToArray() : imageParser.colorPixels;//data.Select(c => new ColorAdapter(c) as IColor).ToArray();
+            var srcColors = unique ? imageParser.colorPalette.ToArray() : imageParser.colorPixels;//data.Select(c => new ColorAdapter(c) as Color).ToArray();
             var total = srcColors.Length;
             
             // Loop through each color and find the unique ones
@@ -82,7 +83,7 @@ namespace PixelVisionRunner.Parsers
                 // Get the current color
                 tmpColor = srcColors[i]; //pixels[i]);
 
-                if (tmpColor.a < 1) // && !ignoreTransparent)
+                if (tmpColor.A < 1) // && !ignoreTransparent)
                     tmpColor = magenta;
 
                 colors.Add(tmpColor);
@@ -106,7 +107,7 @@ namespace PixelVisionRunner.Parsers
             for (var i = 0; i < totalColors; i++)
             {
                 var tmpColor = colors[i];
-                var hex = ColorData.ColorToHex(tmpColor.r, tmpColor.g, tmpColor.b);
+                var hex = PixelVisionSDK.Utils.ColorUtils.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B);
 
                 colorChip.UpdateColorAt(i, hex);
             }

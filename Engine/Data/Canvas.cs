@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using PixelVisionSDK.Chips;
 using PixelVisionSDK.Utils;
 
@@ -26,15 +27,15 @@ namespace PixelVisionSDK
         private Pattern stroke;
         private Pattern pattern;
         private IGameChip gameChip;
-        private Vector spriteSize;
+        private Point spriteSize;
         private bool drawCentered;
-        private Vector linePattern = new Vector(1);
+        private Point linePattern = new Point(1, 0);
         public bool wrap = false;
         
         public void LinePattern(int a, int b)
         {
-            linePattern.x = a;
-            linePattern.y = b;
+            linePattern.X = a;
+            linePattern.Y = b;
         }
         
         public bool DrawCentered(bool? newValue = null)
@@ -192,7 +193,7 @@ namespace PixelVisionSDK
 
             int err = (dx > dy ? dx : -dy) / 2, e2;
             for(;;) {
-                if (counter % linePattern.x == linePattern.y)
+                if (counter % linePattern.X == linePattern.Y)
                 {
                     SetStrokePixel(x0, y0);
                 }
@@ -219,39 +220,39 @@ namespace PixelVisionSDK
             var w = x1 - x0;
             var h = y1 - y0;
 
-            var tl = new Vector(x0, y0);
-            var tr = new Vector(x0 + w, y0);
-            var br = new Vector(x0 + w, y0 + h);
-            var bl = new Vector(x0, y0 + h);
-            var center = new Vector();
+            var tl = new Point(x0, y0);
+            var tr = new Point(x0 + w, y0);
+            var br = new Point(x0 + w, y0 + h);
+            var bl = new Point(x0, y0 + h);
+            var center = new Point();
             
             if (drawCentered)
             {
-                tl.x -= w;
-                tl.y -= h;
-                tr.y -= h;
-                bl.x -= w;
-                center.x = tl.x + w;
-                center.y = tl.y + h;
+                tl.X -= w;
+                tl.Y -= h;
+                tr.Y -= h;
+                bl.X -= w;
+                center.X = tl.X + w;
+                center.Y = tl.Y + h;
                 
             }
             else
             {
-                center.x = tl.x + w / 2;
-                center.y = tl.y + h / 2;
+                center.X = tl.X + w / 2;
+                center.Y = tl.Y + h / 2;
             }
             
             // Top
-            DrawLine(tl.x, tl.y, tr.x , tr.y);
+            DrawLine(tl.X, tl.Y, tr.X , tr.Y);
 
             // Left
-            DrawLine(tl.x, tl.y, bl.x, bl.y);
+            DrawLine(tl.X, tl.Y, bl.X, bl.Y);
 
             // Right
-            DrawLine(tr.x, tr.y, br.x, br.y);
+            DrawLine(tr.X, tr.Y, br.X, br.Y);
 
             // Bottom
-            DrawLine(bl.x, bl.y, br.x, br.y);
+            DrawLine(bl.X, bl.Y, br.X, br.Y);
  
             if (fill)
             {
@@ -260,7 +261,7 @@ namespace PixelVisionSDK
                 if (Math.Abs(w) > stroke.width && Math.Abs(h) > stroke.height)
                 {
                     // Fill the square
-                    FloodFill(center.x, center.y);
+                    FloodFill(center.X, center.Y);
                 }
             }
 
@@ -281,28 +282,28 @@ namespace PixelVisionSDK
             var w = x1 - x0;
             var h = y1 - y0;
 
-            var tl = new Vector(x0, y0);
-            var tr = new Vector(x0 + w, y0);
-            var br = new Vector(x0 + w, y0 + h);
-            var bl = new Vector(x0, y0 + h);
+            var tl = new Point(x0, y0);
+            var tr = new Point(x0 + w, y0);
+            var br = new Point(x0 + w, y0 + h);
+            var bl = new Point(x0, y0 + h);
             
-            var center = new Vector();
+            var center = new Point();
             var radius = (int)Math.Sqrt((w * w) + (h * h));
             if (drawCentered)
             {
-                tl.x -= w;
-                tl.y -= h;
-                tr.y -= h;
-                bl.x -= w;
+                tl.X -= w;
+                tl.Y -= h;
+                tr.Y -= h;
+                bl.X -= w;
 
-                center.x = tl.x + w;
-                center.y = tl.y + h;
+                center.X = tl.X + w;
+                center.Y = tl.Y + h;
                 
             }
             else
             {
-                center.x = tl.x + w / 2;
-                center.y = tl.y + h / 2;
+                center.X = tl.X + w / 2;
+                center.Y = tl.Y + h / 2;
                 radius = radius / 2;
             }
             
@@ -310,12 +311,12 @@ namespace PixelVisionSDK
 //            
 //            SetStrokePixel(tl.x, tl.y);
 
-            x0 = center.x;
-            y0 = center.y;
+            x0 = center.X;
+            y0 = center.Y;
             
-            SetStrokePixel(tr.x, tr.y);
-            SetStrokePixel(br.x, br.y);
-            SetStrokePixel(bl.x, bl.y);
+            SetStrokePixel(tr.X, tr.Y);
+            SetStrokePixel(br.X, br.Y);
+            SetStrokePixel(bl.X, bl.Y);
 
             int d = (5 - radius * 4) / 4;
             int x = 0;
@@ -361,7 +362,7 @@ namespace PixelVisionSDK
             if (fill)
             {
                 if(radius > 4)
-                    FloodFill(center.x, center.y);
+                    FloodFill(center.X, center.Y);
             }
         }
         
@@ -373,28 +374,28 @@ namespace PixelVisionSDK
             var w = x1 - x0;
             var h = y1 - y0;
 
-            var tl = new Vector(x0, y0);
-            var tr = new Vector(x0 + w, y0);
-            var br = new Vector(x0 + w, y0 + h);
-            var bl = new Vector(x0, y0 + h);
+            var tl = new Point(x0, y0);
+            var tr = new Point(x0 + w, y0);
+            var br = new Point(x0 + w, y0 + h);
+            var bl = new Point(x0, y0 + h);
             
-            var center = new Vector();
+            var center = new Point();
             var radius = (int)Math.Sqrt((w * w) + (h * h));
             if (drawCentered)
             {
-                tl.x -= w;
-                tl.y -= h;
-                tr.y -= h;
-                bl.x -= w;
+                tl.X -= w;
+                tl.Y -= h;
+                tr.Y -= h;
+                bl.X -= w;
 
-                center.x = tl.x + w;
-                center.y = tl.y + h;
+                center.X = tl.X + w;
+                center.Y = tl.Y + h;
                 
             }
             else
             {
-                center.x = tl.x + w / 2;
-                center.y = tl.y + h / 2;
+                center.X = tl.X + w / 2;
+                center.Y = tl.Y + h / 2;
                 radius = radius / 2;
                 w = w / 2;
                 h = h / 2;
@@ -406,8 +407,8 @@ namespace PixelVisionSDK
                 h *= -1;
             }
             
-            int xc = center.x;
-            int yc = center.y;
+            int xc = center.X;
+            int yc = center.Y;
             int rx = w;
             int ry = h;
             
@@ -465,7 +466,7 @@ namespace PixelVisionSDK
                 if (Math.Abs(w) > stroke.width && Math.Abs(h) > stroke.height)
                 {
                     // Fill the square
-                    FloodFill(center.x, center.y);
+                    FloodFill(center.X, center.Y);
 
                 }
             }
@@ -478,19 +479,20 @@ namespace PixelVisionSDK
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="colorOffset"></param>
-        public void DrawSprite(int id, int x, int y, int colorOffset = 0)
+        public void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
             // This only works when the canvas has a reference to the gameChip
             if (gameChip == null)
                 return;
             
-            MergePixels(x, y, spriteSize.x, spriteSize.y, gameChip.Sprite(id), colorOffset);
+            // TODO need to add flip to DrawSprite method
+            MergePixels(x, y, spriteSize.X, spriteSize.Y, gameChip.Sprite(id), flipH, flipV, colorOffset);
             
         }
     
         protected int[] tmpIDs = new int[0];
         
-        public void DrawSprites(int[] ids, int x, int y, int width, int colorOffset = 0)
+        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
             
             var total = ids.Length;
@@ -506,8 +508,8 @@ namespace PixelVisionSDK
             var startX = x;
             var startY = y;
 
-            var paddingW = spriteSize.x;
-            var paddingH = spriteSize.y;
+            var paddingW = spriteSize.X;
+            var paddingH = spriteSize.Y;
 
 //            if (drawMode == DrawMode.Tile)
 //            {
@@ -541,7 +543,7 @@ namespace PixelVisionSDK
                     
                     // Check to see if we need to test the bounds
                     
-                        DrawSprite(id, x, y, colorOffset);
+                        DrawSprite(id, x, y, flipH, flipV, colorOffset);
                 }
             }
             
@@ -572,8 +574,8 @@ namespace PixelVisionSDK
             for (var i = 0; i < total; i++)
             {
 
-                DrawSprite(ids[i], nextX, nextY, colorOffset);
-                nextX += spriteSize.x + spacing;
+                DrawSprite(ids[i], nextX, nextY, false, false, colorOffset);
+                nextX += spriteSize.X + spacing;
 
             }
         }
@@ -592,49 +594,49 @@ namespace PixelVisionSDK
             // Get the color at the point where we are trying to fill and use that to match all the color inside the shape
             var targetColor = GetPixel(x, y);
 
-            Stack<Vector> pixels = new Stack<Vector>();
+            Stack<Point> pixels = new Stack<Point>();
              
-            pixels.Push(new Vector(x, y));
+            pixels.Push(new Point(x, y));
             
             while (pixels.Count != 0)
             {
-                Vector temp = pixels.Pop();
-                int y1 = temp.y;
-                while (y1 >= 0 && GetPixel(temp.x, y1) == targetColor)
+                Point temp = pixels.Pop();
+                int y1 = temp.Y;
+                while (y1 >= 0 && GetPixel(temp.X, y1) == targetColor)
                 {
                     y1--;
                 }
                 y1++;
                 bool spanLeft = false;
                 bool spanRight = false;
-                while (y1 < _height && GetPixel(temp.x, y1) == targetColor)
+                while (y1 < _height && GetPixel(temp.X, y1) == targetColor)
                 {
 
-                    SetPixel(temp.x, y1, pattern.GetPixel(temp.x, y1));
+                    SetPixel(temp.X, y1, pattern.GetPixel(temp.X, y1));
  
-                    if (!spanLeft && temp.x > 0 && GetPixel(temp.x - 1, y1) == targetColor)
+                    if (!spanLeft && temp.X > 0 && GetPixel(temp.X - 1, y1) == targetColor)
                     {
-                        if (GetPixel(temp.x - 1, y1) != pattern.GetPixel(temp.x, y1))
+                        if (GetPixel(temp.X - 1, y1) != pattern.GetPixel(temp.X, y1))
                         {
-                            pixels.Push(new Vector(temp.x - 1, y1));
+                            pixels.Push(new Point(temp.X - 1, y1));
                         }
 
                         spanLeft = true;
                     }
-                    else if(spanLeft && temp.x - 1 == 0 && GetPixel(temp.x - 1, y1) != targetColor)
+                    else if(spanLeft && temp.X - 1 == 0 && GetPixel(temp.X - 1, y1) != targetColor)
                     {
                         spanLeft = false;
                     }
-                    if (!spanRight && temp.x < _width - 1 && GetPixel(temp.x + 1, y1) == targetColor)
+                    if (!spanRight && temp.X < _width - 1 && GetPixel(temp.X + 1, y1) == targetColor)
                     {
                         
-                        if(GetPixel(temp.x + 1, y1) != pattern.GetPixel(temp.x, y1))
+                        if(GetPixel(temp.X + 1, y1) != pattern.GetPixel(temp.X, y1))
                         {
-                            pixels.Push(new Vector(temp.x + 1, y1));
+                            pixels.Push(new Point(temp.X + 1, y1));
                         }
                         spanRight = true;
                     }
-                    else if (spanRight && temp.x < _width - 1 && GetPixel(temp.x + 1, y1) != targetColor)
+                    else if (spanRight && temp.X < _width - 1 && GetPixel(temp.X + 1, y1) != targetColor)
                     {
                         spanRight = false;
                     } 
@@ -649,9 +651,9 @@ namespace PixelVisionSDK
         ///     Allows you to merge the pixel data of another canvas into this one without compleatly overwritting it.
         /// </summary>
         /// <param name="canvas"></param>
-        public void Merge(Canvas canvas, int colorOffset = 0, bool ignoreTransparent = false)
+        public void MergeCanvas(Canvas canvas, int colorOffset = 0, bool ignoreTransparent = false)
         {
-            MergePixels(0, 0, canvas.width, canvas.height, canvas.pixels, colorOffset);
+            MergePixels(0, 0, canvas.width, canvas.height, canvas.pixels, false, false, colorOffset);
         }
 
         public int ReadPixelAt(int x, int y)

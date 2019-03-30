@@ -16,8 +16,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
 
-namespace PixelVisionSDK.Chips
+ namespace PixelVisionSDK.Chips
 {
 
     public class DisplayChip : AbstractChip, IDraw
@@ -25,7 +26,7 @@ namespace PixelVisionSDK.Chips
         public int overscanX { get; set; }
         public int overscanY { get; set; }
         public int totalPixels;
-        public int[] pixels = new int[0];
+        public Color[] pixels = new Color[0];
         
         protected int _width = 256;
         protected int _height = 240;
@@ -64,11 +65,11 @@ namespace PixelVisionSDK.Chips
         /// <summary>
         ///     This returns the visble areas sprites should be displayed on. Note that x and y may be negative if overscan is set since the screen wraps.
         /// </summary>
-        public Rect visibleBounds
+        public Rectangle visibleBounds
         {
             get
             {
-                return new Rect(-overscanXPixels, -overscanYPixels, width - overscanXPixels, height - overscanYPixels);
+                return new Rectangle(-overscanXPixels, -overscanYPixels, width - overscanXPixels, height - overscanYPixels);
             }
         }
 
@@ -88,10 +89,14 @@ namespace PixelVisionSDK.Chips
             get { return _height; }
         }
 
+        private Color[] cachedColors;
+        
         /// <summary>
         /// </summary>
         public void Draw()
         {
+            cachedColors = engine.colorChip.colors;
+            
             // Loop through all draw requests
             for (var layer = 0; layer < drawRequestLayers.Length; layer++)
             {
@@ -249,7 +254,7 @@ namespace PixelVisionSDK.Chips
 
             for (i = 0; i < total; i++)
             {
-                colorID = pixelData == null ? 0 : pixelData[i];
+                colorID = pixelData?[i] ?? 0;
 
                 if (colorID > -1)
                 {
@@ -279,7 +284,7 @@ namespace PixelVisionSDK.Chips
                     index = srcX + size * srcY;
                     
                     // Set the pixel
-                    pixels[index] = colorID;
+                    pixels[index] = cachedColors[colorID];
                 }
                 
             }

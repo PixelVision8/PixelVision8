@@ -61,7 +61,7 @@ namespace PixelVisionSDK
         public int speedInBPM
         {
             get { return _speedInBPM; }
-            set { _speedInBPM = value.Clamp(60, 480); }
+            set { _speedInBPM = MathUtil.Clamp(value, 60, 480); }
         }
 
         /// <summary>

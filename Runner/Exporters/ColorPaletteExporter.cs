@@ -15,6 +15,8 @@
 
 using System;
 using GameCreator.Exporters;
+using Microsoft.Xna.Framework;
+//using Chips;
 using PixelVisionSDK.Chips;
 
 namespace PixelVisionRunner.Exporters
@@ -26,7 +28,7 @@ namespace PixelVisionRunner.Exporters
         protected PixelDataExporter exporter;
         protected ColorChip colorChip { get; set; }
         protected IImageExporter imageExporter;
-        protected IColor[] colors;
+        protected Color[] colors;
         protected int width;
         protected int height;
         protected int total;

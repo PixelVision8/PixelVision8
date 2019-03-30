@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using MonoGameRunner.Data;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
@@ -28,7 +29,7 @@ namespace PixelVisionRunner.Parsers
     {
 
         protected IEngineChips chips;
-        protected IColor[] colorData;
+        protected Color[] colorData;
         protected int cps;
         protected int index;
         protected int maxSprites;
@@ -39,11 +40,11 @@ namespace PixelVisionRunner.Parsers
         protected int spriteWidth;
 
 //        protected ITexture2D tex;
-        protected IColor[] tmpPixels;
+        protected Color[] tmpPixels;
         protected int totalPixels;
         protected int totalSprites;
         protected int x, y, columns, rows;
-        protected IColor maskColor;
+        protected Color maskColor;
         protected int maxPerLoop = 100;
         
 //        protected ITextureFactory textureFactory;
@@ -92,29 +93,29 @@ namespace PixelVisionRunner.Parsers
             steps.Add(PostCutOutSprites);
         }
 
-        protected IColor[] srcColors;
+        protected Color[] srcColors;
         
         public virtual void PrepareSprites()
         {
             cps = spriteChip.colorsPerSprite;
             
-            var colorMapChip = chips.chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
+            var colorMapChip = chips.GetChip(ColorMapParser.chipName, false) as ColorChip;
             
             colorData = colorMapChip != null ? colorMapChip.colors : chips.colorChip.colors;
             
-            maskColor = new ColorData(chips.colorChip.maskColor);
+            maskColor = ColorUtils.HexToColor(chips.colorChip.maskColor);
             maxSprites = SpriteChipUtil.CalculateTotalSprites(spriteChip.textureWidth, spriteChip.textureHeight, spriteWidth, spriteHeight);
 
             // Create tmp arrays for color and reference data
             totalPixels = spriteChip.width * spriteChip.height;
-            tmpPixels = new IColor[totalPixels];
+            tmpPixels = new Color[totalPixels];
             spriteData = new int[totalPixels];
 
             // Keep track of number of sprites added
             spritesAdded = 0;
 
             //TODO this should be set by the parser
-            srcColors = imageParser.colorPixels;//data.Select(c => new ColorAdapter(c) as IColor).ToArray();
+            srcColors = imageParser.colorPixels;//data.Select(c => new ColorAdapter(c) as Color).ToArray();
             
             currentStep++;
         }
@@ -182,13 +183,13 @@ namespace PixelVisionRunner.Parsers
                 
         }
 
-        public virtual bool IsEmpty(IColor[] pixels)
+        public virtual bool IsEmpty(Color[] pixels)
         {
             var total = pixels.Length;
             var transPixels = 0;
 
             for (var i = 0; i < total; i++)
-                if (pixels[i].a < 1)
+                if (pixels[i].A < 1)
                     transPixels++;
 
             return transPixels == total;
@@ -203,11 +204,11 @@ namespace PixelVisionRunner.Parsers
 
         }
         
-        public IColor[] GetPixels(int x, int y, int blockWidth, int blockHeight)
+        public Color[] GetPixels(int x, int y, int blockWidth, int blockHeight)
         {
             
             var total = blockWidth * blockHeight;
-            var data = new IColor[total];
+            var data = new Color[total];
             
             if (data.Length < total)
                 Array.Resize(ref data, total);
@@ -259,7 +260,7 @@ namespace PixelVisionRunner.Parsers
                 Array.Resize(ref spriteData, total);
 
             // Create a tmp color for the loop
-            IColor tmpColor;
+            Color tmpColor;
             int tmpRefID;
 
             var colorIndex = new List<int>();

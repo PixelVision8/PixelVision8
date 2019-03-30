@@ -13,7 +13,8 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using PixelVisionSDK;
+ using Microsoft.Xna.Framework;
+ using PixelVisionSDK;
 
 
 namespace PixelVisionRunner.Exporters
@@ -21,9 +22,9 @@ namespace PixelVisionRunner.Exporters
     public class PixelDataExporter : ImageExporter
     {
         protected int[] pixelData;
-        protected IColor[] paletteColors;
+        protected Color[] paletteColors;
         
-        public PixelDataExporter(string fileName, int[] pixelData, int width, int height, IColor[] paletteColors, IImageExporter imageExporter) : base(fileName, imageExporter, null)
+        public PixelDataExporter(string fileName, int[] pixelData, int width, int height, Color[] paletteColors, IImageExporter imageExporter) : base(fileName, imageExporter, null)
         {
             this.paletteColors = paletteColors;
             this.pixelData = pixelData;
@@ -46,7 +47,7 @@ namespace PixelVisionRunner.Exporters
         {
             var total = width * height;
 
-            colors = new IColor[total];
+            colors = new Color[total];
      
                 for (var i = 0; i < total; i++)
                 {
@@ -56,7 +57,7 @@ namespace PixelVisionRunner.Exporters
                         colors[i] = paletteColors[refID];
                     else
                     {
-                        colors[i] = new ColorData("#FF00FF");
+                        colors[i] = PixelVisionSDK.Utils.ColorUtils.HexToColor("#FF00FF");
                     }
                 }
             

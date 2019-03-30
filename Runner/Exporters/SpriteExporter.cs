@@ -14,6 +14,7 @@
 // Shawn Rakowski - @shwany
 
 using GameCreator.Exporters;
+using Microsoft.Xna.Framework;
 using PixelVisionRunner.Parsers;
 using PixelVisionSDK;
 using PixelVisionSDK.Chips;
@@ -27,7 +28,7 @@ namespace PixelVisionRunner.Exporters
         protected PixelDataExporter exporter;
         protected IImageExporter imageExporter;
         protected SpriteChip spriteChip;
-        protected IColor[] colors;
+        protected Color[] colors;
 
 
         public SpriteExporter(string fileName, IEngine engine, IImageExporter imageExporter)
@@ -38,7 +39,7 @@ namespace PixelVisionRunner.Exporters
             
             spriteChip = engine.spriteChip;
             
-            var colorMapChip = engine.chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
+            var colorMapChip = engine.GetChip(ColorMapParser.chipName, false) as ColorChip;
 
             colors = colorMapChip == null ? engine.colorChip.colors : colorMapChip.colors;
 

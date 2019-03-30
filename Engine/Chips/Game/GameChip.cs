@@ -18,6 +18,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using PixelVisionSDK.Utils;
 
@@ -158,7 +159,7 @@ namespace PixelVisionSDK.Chips
             get { return _saveSlots; }
             set
             {
-                value = value.Clamp(2, 16);
+                value = MathUtil.Clamp(value, 2, 16);
                 _saveSlots = value;
 
                 // resize dictionary?
@@ -460,7 +461,7 @@ namespace PixelVisionSDK.Chips
             
         }
 
-        protected Vector display = new Vector();
+        protected Point display = new Point();
         private int offsetX;
         private int offsetY;
         
@@ -471,18 +472,18 @@ namespace PixelVisionSDK.Chips
         ///     the overscan value set on the display chip. To calculate the exact overscan in pixels, you must subtract
         ///     the full size from the visible size. Simply supply false as an argument to get the full display dimensions.
         /// </summary>
-        public Vector Display(bool visible = true)
+        public Point Display(bool visible = true)
         {
             offsetX = visible ? displayChip.overscanXPixels : 0;
             offsetY = visible ? displayChip.overscanYPixels : 0;
 
-            display.x = displayChip.width - offsetX;
-            display.y = displayChip.height - offsetY;
+            display.X = displayChip.width - offsetX;
+            display.Y = displayChip.height - offsetY;
 
             return display;
         }
         
-        public Rect VisibleBounds()
+        public Rectangle VisibleBounds()
         {
             return displayChip.visibleBounds;
         }
@@ -730,7 +731,7 @@ namespace PixelVisionSDK.Chips
         ///     wrap around the screen when they reach the edges of the screen.
         /// </param>
         /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
-        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rect bounds = null)
+        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rectangle? bounds = null)
         {
             
             total = ids.Length;
@@ -782,12 +783,14 @@ namespace PixelVisionSDK.Chips
                     // Check to see if we need to test the bounds
                     if (onScreen)
                     {
-                        if (bounds == null)
-                            bounds = displayChip.visibleBounds;
+                        var tmpBounds = bounds ?? displayChip.visibleBounds;
+                        
+//                        if (bounds == null)
+//                            bounds = displayChip.visibleBounds;
 
                         // This can set the render flag to true or false based on it's location
                         //TODO need to take into account the current bounds of the screen
-                        render = x >= bounds.x && x <= bounds.width && y >= bounds.y && y <= bounds.height;
+                        render = x >= tmpBounds.X && x <= tmpBounds.Width && y >= tmpBounds.Y && y <= tmpBounds.Height;
                     }
                     else
                     {
@@ -840,7 +843,7 @@ namespace PixelVisionSDK.Chips
         ///     wrap around the screen when they reach the edges of the screen.
         /// </param>
         /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
-        public void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rect bounds = null)
+        public void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rectangle? bounds = null)
         {
 
             total = width * height;
@@ -957,7 +960,7 @@ namespace PixelVisionSDK.Chips
 //            }
 //        }
 
-        private Vector spriteSize;
+        private Point spriteSize;
         private int charWidth;
         private int nextX;
         private int nextY;
@@ -1008,7 +1011,7 @@ namespace PixelVisionSDK.Chips
         {
             // TODO this should use DrawSprites() API
             spriteSize = SpriteSize();
-            charWidth = spriteSize.x;
+            charWidth = spriteSize.X;
 
             nextX = x;
             nextY = y;
@@ -1074,20 +1077,20 @@ namespace PixelVisionSDK.Chips
         public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null, int? offsetY = null, DrawMode drawMode = DrawMode.Tile)
         {
             
-            viewPort.x = offsetX ?? _scrollX;
-            viewPort.y = offsetY ?? _scrollY;
-            viewPort.width = columns == 0 ? displayChip.width : columns * spriteChip.width;
-            viewPort.height = rows == 0 ? displayChip.height : rows * spriteChip.height;
+            viewPort.X = offsetX ?? _scrollX;
+            viewPort.Y = offsetY ?? _scrollY;
+            viewPort.Width = columns == 0 ? displayChip.width : columns * spriteChip.width;
+            viewPort.Height = rows == 0 ? displayChip.height : rows * spriteChip.height;
             
             // Grab the correct cached pixel data
-            GetCachedPixels(viewPort.x, viewPort.y, viewPort.width, viewPort.height, ref tmpTilemapCache);
+            GetCachedPixels(viewPort.X, viewPort.Y, viewPort.Width, viewPort.Height, ref tmpTilemapCache);
     
             // Copy over the cached pixel data from the tilemap request
-            DrawPixels(tmpTilemapCache, x, y, viewPort.width, viewPort.height, false, false, drawMode);
+            DrawPixels(tmpTilemapCache, x, y, viewPort.Width, viewPort.Height, false, false, drawMode);
 
         }
         
-        private Rect viewPort = new Rect();
+        private Rectangle viewPort = new Rectangle();
         
         /// <summary>
         ///     This method allows you to draw a rectangle with a fill color. By default, this method is used to clear the screen but you can supply a color offset to change the color value and use it to fill a rectangle area with a specific color instead.
@@ -1100,6 +1103,7 @@ namespace PixelVisionSDK.Chips
         /// <param name="drawMode"></param>
         public void DrawRect(int x, int y, int width, int height, int color = -1, DrawMode drawMode = DrawMode.Background)
         {
+            
             // TODO is there a faster way to do this?
             DrawPixels(null, x, y, width, height, false, false, drawMode, color);
         }
@@ -1118,7 +1122,7 @@ namespace PixelVisionSDK.Chips
         protected int _scrollY;
         
 //        Vector pos = new Vector();
-        
+
         /// <summary>
         ///     You can scroll the tilemap by calling the ScrollPosition() method and supplying a new scroll X and Y position.
         ///     By default, calling ScrollPosition() with no arguments returns a vector with the current scroll X and Y values.
@@ -1136,28 +1140,28 @@ namespace PixelVisionSDK.Chips
         /// <returns>
         ///     By default, this method returns a vector with the current scroll X and Y position.
         /// </returns>
-        public Vector ScrollPosition(int? x = null, int? y = null)
+        public Point ScrollPosition(int? x = null, int? y = null)
         {
-            var pos = new Vector();
+            var pos = new Point();
 
             if (x.HasValue)
             {
-                pos.x = x.Value;
-                _scrollX = pos.x;
+                pos.X = x.Value;
+                _scrollX = pos.X;
             }
             else
             {
-                pos.x = _scrollX;
+                pos.X = _scrollX;
             }
 
             if (y.HasValue)
             {
-                pos.y = y.Value;
-                _scrollY = pos.y;
+                pos.Y = y.Value;
+                _scrollY = pos.Y;
             }
             else
             {
-                pos.y = _scrollY;
+                pos.Y = _scrollY;
             }
 
 //            pos.y = realHeight - 1 - pos.y;
@@ -1368,22 +1372,22 @@ namespace PixelVisionSDK.Chips
         /// <returns>
         ///     Returns a vector for the mouse's X and Y poisition.
         /// </returns>
-        public Vector MousePosition()
+        public Point MousePosition()
         {
             var pos = controllerChip.ReadMousePosition();
 
             var bounds = displayChip.visibleBounds;
             
             // Make sure that the mouse x position is inside of the display width
-            if (pos.x < 0 || pos.x > bounds.width)
+            if (pos.X < 0 || pos.X > bounds.Width)
             {
-                pos.x = -1;
+                pos.X = -1;
             }
     
             // Make sure that the mouse y position is inside of the display height
-            if (pos.y < 0 || pos.y > bounds.height)
+            if (pos.Y < 0 || pos.Y > bounds.Height)
             {
-                pos.y = -1;
+                pos.Y = -1;
             }
 
             return pos;
@@ -1449,6 +1453,28 @@ namespace PixelVisionSDK.Chips
         public bool IsChannelPlaying(int channel)
         {
             return soundChip.IsChannelPlaying(channel);
+        }
+
+        public void PlaySong(int id, bool loop = false, int startAt = 0)
+        {
+            musicChip.PlaySong(id, loop, startAt);
+        }
+        
+        /// <summary>
+        ///     This helper method allows you to automatically load a set of loops as a complete
+        ///     song and plays them back. You can also define if the tracks should loop when they
+        ///     are done playing.
+        /// </summary>
+        /// <param name="loopIDs">
+        ///     An array of loop IDs to playback as a single song.
+        /// </param>
+        /// <param name="loop">
+        ///     A bool that determines if the song should loop back to the first ID when it is
+        ///     done playing.
+        /// </param>
+        public void PlayPattern(int id, bool loop = true)
+        {
+            musicChip.PlayPatterns(new int[]{id}, loop);
         }
         
         /// <summary>
@@ -1518,9 +1544,9 @@ namespace PixelVisionSDK.Chips
         /// <returns>
         ///     Returns a vector where the X and Y for the sprite's width and height.
         /// </returns>
-        public Vector SpriteSize(int? width = 8, int? height = 8)
+        public Point SpriteSize(int? width = 8, int? height = 8)
         {
-            var size = new Vector(spriteChip.width, spriteChip.height);
+            var size = new Point(spriteChip.width, spriteChip.height);
 
             // TODO you can't resize sprites at runtime
 
@@ -1571,8 +1597,8 @@ namespace PixelVisionSDK.Chips
         public int[] Sprites(int[] ids, int width)
         {
             var spriteSize = SpriteSize();
-            var realWidth = width * spriteSize.x;
-            var realHeight = ((int)Math.Ceiling((float)ids.Length/width)) * spriteSize.y;
+            var realWidth = width * spriteSize.X;
+            var realHeight = ((int)Math.Ceiling((float)ids.Length/width)) * spriteSize.Y;
 
             var textureData = new TextureData(realWidth, realHeight);
 
@@ -1752,26 +1778,26 @@ namespace PixelVisionSDK.Chips
         /// <returns>
         ///     Returns a vector of the tile maps size in tiles where x and y are the columns and rows of the tilemap.
         /// </returns>
-        public Vector TilemapSize(int? width = null, int? height = null)
+        public Point TilemapSize(int? width = null, int? height = null)
         {
-            var size = new Vector(tilemapChip.columns, tilemapChip.rows);
+            var size = new Point(tilemapChip.columns, tilemapChip.rows);
 
             var resize = false;
 
             if (width.HasValue)
             {
-                size.x = width.Value;
+                size.X = width.Value;
                 resize = true;
             }
 
             if (height.HasValue)
             {
-                size.y = height.Value;
+                size.Y = height.Value;
                 resize = true;
             }
 
             if (resize)
-                tilemapChip.Resize(size.x, size.y);
+                tilemapChip.Resize(size.X, size.Y);
 
             return size;
         }
@@ -1897,8 +1923,8 @@ namespace PixelVisionSDK.Chips
                     spriteID = tile.spriteID;
 
                     // Calculate the new position of the tile;
-                    x = i % tilemapChip.columns * tileSize.x;
-                    y = i / tilemapChip.columns * tileSize.y;
+                    x = i % tilemapChip.columns * tileSize.X;
+                    y = i / tilemapChip.columns * tileSize.Y;
 
                     spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
 
@@ -1914,7 +1940,7 @@ namespace PixelVisionSDK.Chips
             
 //                    targetTextureData.DrawSprite(spriteID, x, y);
                     // Draw the pixel data into the cachedTilemap
-                    targetTextureData.MergePixels(x, y, tileSize.x, tileSize.y, tmpPixelData, tile.colorOffset, false);
+                    targetTextureData.MergePixels(x, y, tileSize.X, tileSize.Y, tmpPixelData, false, false, tile.colorOffset, false);
 
                     totalTilesUpdated++;
 
@@ -1953,8 +1979,9 @@ namespace PixelVisionSDK.Chips
             
             
             // Todo need to go through and draw to the tilemap cache but ignore transparent pixels
-            
-            
+            if(pixels == null)
+            cachedTileMap.Clear(colorOffset, x, y, blockWidth, blockHeight);
+            else
             // Set pixels on the tilemap cache
             cachedTileMap.MergePixels(x, y, blockWidth, blockHeight, pixels, flipH, flipV, colorOffset);
             
@@ -2000,9 +2027,9 @@ namespace PixelVisionSDK.Chips
         /// <param name="w">The width value of the rect as an int.</param>
         /// <param name="h">The height value of the rect as an int.</param>
         /// <returns>Returns a new instance of a Rect to be used as a Lua object.</returns>
-        public Rect NewRect(int x = 0, int y = 0, int w = 0, int h = 0)
+        public Rectangle NewRect(int x = 0, int y = 0, int w = 0, int h = 0)
         {
-            return new Rect(x, y, w, h);
+            return new Rectangle(x, y, w, h);
         }
         
         /// <summary>
@@ -2011,9 +2038,9 @@ namespace PixelVisionSDK.Chips
         /// <param name="x">The x position of the Vector as an int.</param>
         /// <param name="y">The y position of the Vector as an int.</param>
         /// <returns>Returns a new instance of a Vector to be used as a Lua object.</returns>
-        public Vector NewVector(int x = 0, int y = 0)
+        public Point NewPoint(int x = 0, int y = 0)
         {
-            return new Vector(x, y);
+            return new Point(x, y);
         }
 
 //        public TextureData NewTextureData(int width, int height, bool wrapMode = true)
@@ -2057,7 +2084,7 @@ namespace PixelVisionSDK.Chips
         /// </returns>
         public int Clamp(int val, int min, int max)
         {
-            return val.Clamp(min, max);
+            return MathUtil.Clamp(val, min, max);
         }
 
         /// <summary>
@@ -2114,14 +2141,14 @@ namespace PixelVisionSDK.Chips
         /// <returns>
         ///     Returns a vector representing the X and Y position of an index in a 1D array.
         /// </returns>
-        public Vector CalculatePosition(int index, int width)
+        public Point CalculatePosition(int index, int width)
         {
             int x, y;
 
             x = index % width;
             y = index / width;
 
-            return new Vector(x, y);
+            return new Point(x, y);
         }
 
         #endregion
@@ -2259,7 +2286,7 @@ namespace PixelVisionSDK.Chips
         public int PaletteOffset(int value)
         {
             // TODO this is hardcoded right now but there are 8 palettes with a max of 16 colors each
-            return 128 + (value.Clamp(0, 7) * 16);
+            return 128 + (Clamp(value, 0, 7) * 16);
         }
         
         public struct MetaSpriteData
@@ -2323,7 +2350,7 @@ namespace PixelVisionSDK.Chips
             metaSprites.Remove(name);
         }
 
-        public void DrawMetaSprite(string name, int x, int y, bool flipH, bool flipV, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rect bounds = null)
+        public void DrawMetaSprite(string name, int x, int y, bool flipH, bool flipV, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rectangle? bounds = null)
         {
 
             // Make sure that the meta sprite exits
@@ -2353,9 +2380,11 @@ namespace PixelVisionSDK.Chips
             width = metaSpriteData.width;
             height = MathUtil.CeilToInt(total / width);
             
+            var tmpBounds = bounds ?? displayChip.visibleBounds;
+            
             // Get the bounds of the screen
-            if (bounds == null)
-                bounds = displayChip.visibleBounds;
+//            if (bounds == null)
+//                bounds = displayChip.visibleBounds;
 
             startX = x - (useScrollPos ? _scrollX : 0);
             startY = y - (useScrollPos ? _scrollY : 0);
@@ -2394,7 +2423,7 @@ namespace PixelVisionSDK.Chips
                     {
                         // This can set the render flag to true or false based on it's location
                         //TODO need to take into account the current bounds of the screen
-                        render = x >= bounds.x && x <= bounds.width && y >= bounds.y && y <= bounds.height;
+                        render = x >= tmpBounds.X && x <= tmpBounds.Width && y >= tmpBounds.Y && y <= tmpBounds.Height;
                     }
                     else
                     {

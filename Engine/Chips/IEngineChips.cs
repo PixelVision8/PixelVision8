@@ -27,7 +27,7 @@ namespace PixelVisionSDK.Chips
         ///     The Chip Manager class is responsible for registering and
         ///     deactivating chips. This property offers direct access to it.
         /// </summary>
-        ChipManager chipManager { get; set; }
+//        ChipManager chipManager { get; set; }
 
         /// <summary>
         ///     The color chips stores colors for the engine. It's used by several
@@ -97,6 +97,27 @@ namespace PixelVisionSDK.Chips
         ///     sound data for songs.
         /// </summary>
         MusicChip musicChip { get; set; }
+
+        AbstractChip GetChip(string id, bool activeOnCreate = true);
+        
+        void AddService(string id, PixelVisionSDK.Services.IService service);
+
+
+        PixelVisionSDK.Services.IService GetService(string id);
+
+
+        bool HasChip(string id);
+
+
+
+
+        void ActivateChip(string id, AbstractChip chip, bool autoActivate = true);
+
+
+        void DeactivateChip(string id, AbstractChip chip);
+
+        void RemoveInactiveChips();
+
 
     }
 
