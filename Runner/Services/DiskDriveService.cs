@@ -1,12 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.IO.Compression;
 using System.Linq;
 using PixelVision8.Runner.Data;
 using SharpFileSystem;
 using SharpFileSystem.FileSystems;
 
-namespace Desktop.Services
+namespace PixelVision8.Runner.Services
 {
     public class DiskDriveService
     {

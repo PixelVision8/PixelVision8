@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace PixelVisionSDK.Chips
+namespace PixelVision8.Engine.Chips
 {
     public interface IGameChip
     {

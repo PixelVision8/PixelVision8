@@ -14,13 +14,11 @@
 // Shawn Rakowski - @shwany
 
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using MonoGameRunner.Data;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 
-namespace PixelVisionRunner.Parsers
+namespace PixelVision8.Runner.Parsers
 {
 
     public class ColorParser : ImageParser
@@ -107,7 +105,7 @@ namespace PixelVisionRunner.Parsers
             for (var i = 0; i < totalColors; i++)
             {
                 var tmpColor = colors[i];
-                var hex = PixelVisionSDK.Utils.ColorUtils.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B);
+                var hex = ColorUtils.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B);
 
                 colorChip.UpdateColorAt(i, hex);
             }

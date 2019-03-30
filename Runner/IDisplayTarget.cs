@@ -13,9 +13,9 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using PixelVisionSDK;
+using PixelVision8.Engine;
 
-namespace PixelVisionRunner
+namespace PixelVision8.Runner
 {
     public interface IDisplayTarget
     {

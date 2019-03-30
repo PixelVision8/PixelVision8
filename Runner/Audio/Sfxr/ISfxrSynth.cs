@@ -1,4 +1,4 @@
-﻿namespace PixelVisionRunner.Chips.Sfxr
+﻿namespace PixelVision8.Runner.Chips.Sfxr
 {
     public interface ISfxrSynth
     {

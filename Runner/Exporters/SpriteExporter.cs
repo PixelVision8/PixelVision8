@@ -13,13 +13,13 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using GameCreator.Exporters;
 using Microsoft.Xna.Framework;
-using PixelVisionRunner.Parsers;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
+using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Runner.Parsers;
 
-namespace PixelVisionRunner.Exporters
+
+ namespace PixelVision8.Runner.Exporters
 {
     public class SpriteExporter : IAbstractExporter
     {

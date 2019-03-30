@@ -13,7 +13,7 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-namespace PixelVisionRunner
+namespace PixelVision8.Runner.Data
 {
     public interface IAudioClip
     {

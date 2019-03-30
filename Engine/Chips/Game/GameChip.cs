@@ -19,10 +19,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using PixelVisionSDK.Utils;
+using PixelVision8.Engine.Utils;
 
-namespace PixelVisionSDK.Chips
+ namespace PixelVision8.Engine.Chips
 {
     
     public enum DrawMode

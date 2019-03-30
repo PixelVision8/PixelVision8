@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GameCreator.Services;
-using MonoGameRunner;
-using PixelVision8.Runner.Services;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
+using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
 using SharpFileSystem;
 using SharpFileSystem.IO;
 
-namespace PixelVisionPlus.Services
+namespace PixelVision8.Runner.Services
 {
     public class WorkspaceServicePlus : WorkspaceService
     {

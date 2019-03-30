@@ -2,12 +2,12 @@
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using MonoGameRunner;
-using PixelVisionRunner.Chips;
-using PixelVisionRunner.Services;
-using PixelVisionSDK;
 
-namespace PixelVisionLua
+using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Runner.Services;
+
+namespace PixelVision8.Runner
 {
     public class LuaRunner : RunnerGame
     {

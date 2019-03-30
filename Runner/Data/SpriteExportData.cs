@@ -14,12 +14,11 @@
 // Shawn Rakowski - @shwany
 
 using System;
-using GameCreator.Importers;
 using Microsoft.Xna.Framework;
-using PixelVisionRunner.Parsers;
-using PixelVisionSDK;
+using PixelVision8.Runner.Importers;
+using PixelVision8.Runner.Parsers;
 
-namespace PixelVisionRunner
+namespace PixelVision8.Runner.Data
 {
     
     public class SpriteExportData

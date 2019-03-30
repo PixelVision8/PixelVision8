@@ -13,7 +13,9 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-namespace PixelVisionSDK.Chips
+using PixelVision8.Engine.Services;
+
+namespace PixelVision8.Engine.Chips
 {
 
     /// <summary>
@@ -100,10 +102,10 @@ namespace PixelVisionSDK.Chips
 
         AbstractChip GetChip(string id, bool activeOnCreate = true);
         
-        void AddService(string id, PixelVisionSDK.Services.IService service);
+        void AddService(string id, IService service);
 
 
-        PixelVisionSDK.Services.IService GetService(string id);
+        IService GetService(string id);
 
 
         bool HasChip(string id);

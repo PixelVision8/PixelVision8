@@ -15,15 +15,12 @@
 
 using System.Text.RegularExpressions;
 using MoonSharp.Interpreter;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
 using System;
 using Microsoft.Xna.Framework;
-using PixelVisionRunner.Services;
-using Buttons = PixelVisionSDK.Chips.Buttons;
-using Keys = PixelVisionSDK.Keys;
+using PixelVision8.Runner;
+using PixelVision8.Runner.Services;
 
-namespace PixelVisionRunner.Chips
+namespace PixelVision8.Engine.Chips
 {
 
     public class LuaGameChip : GameChip

@@ -1,4 +1,4 @@
-namespace PixelVisionSDK
+namespace PixelVision8.Engine
 {
   /// <summary>Defines the keys on a keyboard.</summary>
   public enum Keys

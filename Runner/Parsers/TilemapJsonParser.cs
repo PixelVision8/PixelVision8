@@ -16,11 +16,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PixelVisionRunner.Utils;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
+using PixelVision8.Engine;
 
-namespace PixelVisionRunner.Parsers
+namespace PixelVision8.Runner.Parsers
 {
     public class TilemapJsonParser : JsonParser
 	{

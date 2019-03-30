@@ -14,11 +14,11 @@
 // Shawn Rakowski - @shwany
 
 using System.Text;
-using PixelVisionRunner.Utils;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
+using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Runner.Utils;
 
-namespace PixelVisionRunner.Exporters
+namespace PixelVision8.Runner.Exporters
 {
     public class SystemExporter : AbstractExporter
     {

@@ -13,11 +13,9 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using PixelVisionRunner.Data;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
+using PixelVision8.Runner.Data;
 
-namespace PixelVisionRunner.Chips
+namespace PixelVision8.Engine.Chips
 {
 
     public class SfxrSoundChip : SoundChip

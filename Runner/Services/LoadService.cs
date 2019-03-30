@@ -18,15 +18,16 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using GameCreator.Importers;
 using Microsoft.Xna.Framework;
-using MonoGameRunner;
-using PixelVisionRunner.Parsers;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
-using PixelVisionSDK.Services;
+using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Services;
+using PixelVision8.Engine.Utils;
+using PixelVision8.Runner.Importers;
+using PixelVision8.Runner.Parsers;
 
-namespace PixelVisionRunner.Services
+
+namespace PixelVision8.Runner.Services
 {
 
     public class LoadService : AbstractService
@@ -63,7 +64,7 @@ namespace PixelVisionRunner.Services
 
         protected IEngine targetEngine;
         private int totalParsers;
-        protected Color maskColor = PixelVisionSDK.Utils.ColorUtils.HexToColor("#ff00ff"); // TODO this shouldn't be hard coded 
+        protected Color maskColor = ColorUtils.HexToColor("#ff00ff"); // TODO this shouldn't be hard coded 
 //        public ITextureFactory textureFactory;
 //        public ColorFactory colorFactory;
         public int currentStep;

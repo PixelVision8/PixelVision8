@@ -13,10 +13,9 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using System;
 using System.Collections.Generic;
 
-namespace PixelVisionSDK.Chips
+namespace PixelVision8.Engine.Chips
 {
     /// <summary>
     ///     The font chip allows you to render text to the display. It is built on

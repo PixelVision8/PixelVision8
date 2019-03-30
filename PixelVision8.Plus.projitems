@@ -29,9 +29,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SpriteBuilderExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SpriteExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SystemExporter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\TileColorOffsetExporter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\TilemapExporter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\TilemapFlagExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\TilemapJsonExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\ExportService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LoadServicePlus.cs" />

@@ -15,9 +15,9 @@
 
 using System.Collections.Generic;
 using System.Text;
-using MiniJSON;
+using PixelVision8.Runner.Utils;
 
-namespace PixelVisionRunner.Parsers
+namespace PixelVision8.Runner.Parsers
 {
 
     public class JsonParser : AbstractParser

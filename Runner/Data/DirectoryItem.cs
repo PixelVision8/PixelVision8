@@ -16,7 +16,7 @@
 using System.Linq;
 using SharpFileSystem;
 
-namespace GameCreator
+namespace PixelVision8.Runner.Data
 {
     public class DirectoryItem
     {

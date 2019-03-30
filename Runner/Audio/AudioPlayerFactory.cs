@@ -14,11 +14,11 @@
 // Shawn Rakowski - @shwany
 // 
 
-using MonoGameRunner.Audio;
-using PixelVisionRunner.Chips.Sfxr;
-using PixelVisionSDK.Chips;
 
-namespace MonoGameRunner
+using PixelVision8.Engine.Chips;
+using PixelVision8.Runner.Chips.Sfxr;
+
+namespace PixelVision8.Runner.Audio
 {
     public class AudioPlayerFactory : IAudioPlayerFactory, IVolumeManager
     {

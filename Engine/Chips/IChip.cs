@@ -13,7 +13,7 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-namespace PixelVisionSDK.Chips
+namespace PixelVision8.Engine.Chips
 {
 
     /// <summary>

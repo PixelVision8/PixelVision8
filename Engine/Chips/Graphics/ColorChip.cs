@@ -17,9 +17,9 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
-using PixelVisionSDK.Utils;
+using PixelVision8.Engine.Utils;
 
-namespace PixelVisionSDK.Chips
+namespace PixelVision8.Engine.Chips
 {
 
     /// <summary>

@@ -16,10 +16,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 
-namespace PixelVisionRunner.Parsers
+namespace PixelVision8.Runner.Parsers
 {
 
     public class FlagColorParser : ImageParser
@@ -62,7 +62,7 @@ namespace PixelVisionRunner.Parsers
             
             chips.ActivateChip(flagColorChipName, flagColorChip, false);
             
-            maskColor = PixelVisionSDK.Utils.ColorUtils.HexToColor(chips.colorChip.maskColor);
+            maskColor = ColorUtils.HexToColor(chips.colorChip.maskColor);
             
         }
 
@@ -93,7 +93,7 @@ namespace PixelVisionRunner.Parsers
                 for (int i = 0; i < total; i++)
                 {
                     var tmpColor = imageParser.colorPalette[i];
-                    newFlagColors.Add(PixelVisionSDK.Utils.ColorUtils.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B));
+                    newFlagColors.Add(ColorUtils.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B));
                 }
                 
 //                var pixels = tex.GetPixels();

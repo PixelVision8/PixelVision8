@@ -15,9 +15,9 @@
 
 using System;
 using System.Linq;
-using PixelVisionSDK.Utils;
+using PixelVision8.Engine.Utils;
 
-namespace PixelVisionSDK.Chips
+namespace PixelVision8.Engine.Chips
 {
     /// <summary>
     ///     The <see cref="SpriteChip" /> represents a way to store and retrieve

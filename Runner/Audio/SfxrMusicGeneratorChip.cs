@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using PixelVisionRunner.Chips;
-using PixelVisionRunner.Data;
-using PixelVisionSDK;
-using PixelVisionSDK.Utils;
+using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
+using PixelVision8.Runner.Data;
 
-namespace PixelVisionPlus.Chips
+namespace PixelVision8.Runner.Chips
 {
     public enum InstrumentType
     {

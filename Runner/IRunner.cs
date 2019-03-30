@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using PixelVisionSDK;
+using PixelVision8.Engine;
 
-namespace PixelVisionRunner
+
+namespace PixelVision8.Runner
 {
     public interface IRunner
     {

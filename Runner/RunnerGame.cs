@@ -2,19 +2,16 @@
 using System.Collections.Generic;
  using System.Globalization;
  using Microsoft.Xna.Framework;
-using MonoGameRunner.Data;
- using PixelVisionRunner;
-using PixelVisionRunner.Chips;
-using PixelVisionRunner.Chips.Sfxr;
-using PixelVisionRunner.Services;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
-using PixelVisionSDK.Utils;
-using Buttons = PixelVisionSDK.Chips.Buttons;
- using Color = Microsoft.Xna.Framework.Color;
- using Keys = PixelVisionSDK.Keys;
+ using PixelVision8.Engine;
+ using PixelVision8.Engine.Chips;
+ using PixelVision8.Engine.Utils;
+ using PixelVision8.Runner.Audio;
+ using PixelVision8.Runner.Chips.Sfxr;
+ using PixelVision8.Runner.Data;
+ using PixelVision8.Runner.Services;
 
-namespace MonoGameRunner
+
+ namespace PixelVision8.Runner
 {
     public class RunnerGame : Game, IRunner
     {

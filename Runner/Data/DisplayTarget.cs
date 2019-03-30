@@ -2,12 +2,11 @@
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using PixelVisionRunner;
-using PixelVisionSDK;
-using PixelVisionSDK.Utils;
+using PixelVision8.Engine;
+using PixelVision8.Engine.Utils;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
-namespace MonoGameRunner.Data
+namespace PixelVision8.Runner.Data
 {
     public class DisplayTarget : IDisplayTarget
     {

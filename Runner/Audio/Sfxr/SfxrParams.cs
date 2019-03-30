@@ -21,7 +21,7 @@
 //  
 //  @author Zeh Fernando
 
-namespace PixelVisionRunner.Chips.Sfxr
+namespace PixelVision8.Runner.Chips.Sfxr
 {
     using System;
 

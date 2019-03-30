@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using GameCreator.Exporters;
-using PixelVision8.Runner.Services;
-using PixelVisionRunner;
-using PixelVisionRunner.Exporters;
-using PixelVisionSDK;
-using PixelVisionSDK.Services;
+using PixelVision8.Engine;
+using PixelVision8.Engine.Services;
 using SharpFileSystem;
 
-namespace Desktop.Services
+namespace PixelVision8.Runner.Services
 {
     public class ScreenshotService :AbstractService
     {

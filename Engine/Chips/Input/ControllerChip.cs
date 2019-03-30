@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 //using Microsoft.Xna.Framework.Input;
 //using Keys = PixelVisionSDK.Keys;
 
-namespace PixelVisionSDK.Chips
+namespace PixelVision8.Engine.Chips
 {
 
     public enum MouseInput

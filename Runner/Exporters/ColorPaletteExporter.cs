@@ -14,12 +14,10 @@
 // Shawn Rakowski - @shwany
 
 using System;
-using GameCreator.Exporters;
 using Microsoft.Xna.Framework;
-//using Chips;
-using PixelVisionSDK.Chips;
+using PixelVision8.Engine.Chips;
 
-namespace PixelVisionRunner.Exporters
+namespace PixelVision8.Runner.Exporters
 {
     public class ColorPaletteExporter : IAbstractExporter
     {

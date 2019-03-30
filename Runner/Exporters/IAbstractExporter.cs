@@ -13,9 +13,9 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using PixelVisionRunner.Parsers;
+using PixelVision8.Runner.Parsers;
 
-namespace PixelVisionRunner.Exporters
+namespace PixelVision8.Runner.Exporters
 {
     public interface IAbstractExporter : IAbstractParser
     {

@@ -16,9 +16,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PixelVisionSDK.Chips;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Services;
 
-namespace PixelVisionSDK
+namespace PixelVision8.Engine
 {
     
     /// <summary>
@@ -26,11 +27,11 @@ namespace PixelVisionSDK
     ///     state of all chips, the game itself and helps with communication between
     ///     the two.
     /// </summary>
-    public class PixelVisionEngine : IEngine, PixelVisionSDK.Services.IServiceLocator
+    public class PixelVisionEngine : IEngine, IServiceLocator
     {
 
         protected string[] defaultChips;
-        protected Dictionary<string, PixelVisionSDK.Services.IService> _services = new Dictionary<string, PixelVisionSDK.Services.IService>();
+        protected Dictionary<string, IService> _services = new Dictionary<string, IService>();
 
         protected Dictionary<string, AbstractChip> chips = new Dictionary<string, AbstractChip>();
         protected List<IDraw> drawChips = new List<IDraw>();
@@ -38,7 +39,7 @@ namespace PixelVisionSDK
         protected List<IUpdate> updateChips = new List<IUpdate>();
 
         
-        public Dictionary<string, PixelVisionSDK.Services.IService> services
+        public Dictionary<string, IService> services
         {
             get { return _services; }
         }
@@ -293,7 +294,7 @@ namespace PixelVisionSDK
 
         #region Chip Manager
 
-        public void AddService(string id, PixelVisionSDK.Services.IService service)
+        public void AddService(string id, IService service)
         {
             // Add the service to the managed list
             if (services.ContainsKey(id))
@@ -305,7 +306,7 @@ namespace PixelVisionSDK
             service.RegisterService(this);
         }
 
-        public PixelVisionSDK.Services.IService GetService(string id)
+        public IService GetService(string id)
         {
             if (services.ContainsKey(id))
                 return services[id];

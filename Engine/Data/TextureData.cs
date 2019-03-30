@@ -15,7 +15,7 @@
 
 using System;
 
-namespace PixelVisionSDK
+namespace PixelVision8.Engine
 {
 
     /// <summary>

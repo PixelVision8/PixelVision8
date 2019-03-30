@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using PixelVisionRunner;
-using PixelVisionRunner.Parsers;
+using PixelVision8.Engine.Utils;
+using PixelVision8.Runner.Parsers;
+using PixelVision8.Runner.Utils;
 using PixelVisionRunner.Utils;
-using PixelVisionSDK;
 
-namespace GameCreator.Importers
+
+namespace PixelVision8.Runner.Importers
 {
     public class PNGReader : IImageParser
     {
@@ -297,7 +298,7 @@ namespace GameCreator.Importers
 //                        var colorVector = tmpColor.ToVector4();
 //                        
                         
-                        var color = alpha < 1 ? PixelVisionSDK.Utils.ColorUtils.HexToColor(maskHex) : new Color(r, g, b);
+                        var color = alpha < 1 ? ColorUtils.HexToColor(maskHex) : new Color(r, g, b);
                         
 //                        var color = new ColorData(r, g, b);
                         _colors[y * _width + index1] = color;

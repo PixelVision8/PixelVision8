@@ -13,10 +13,7 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using System;
-using PixelVisionSDK.Utils;
-
-namespace PixelVisionSDK.Chips
+namespace PixelVision8.Engine.Chips
 {
     /// <summary>
     ///     The tile map chip represents a grid of sprites used to populate the background

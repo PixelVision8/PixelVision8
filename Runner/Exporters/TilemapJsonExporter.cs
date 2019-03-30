@@ -13,16 +13,13 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PixelVisionRunner.Utils;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
-using PixelVisionSDK.Utils;
+using PixelVision8.Engine;
+using PixelVision8.Runner.Utils;
 
-namespace PixelVisionRunner.Exporters
+ namespace PixelVision8.Runner.Exporters
 {
     internal class SpriteVector
     {

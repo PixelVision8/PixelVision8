@@ -14,11 +14,11 @@
 // Shawn Rakowski - @shwany
 
 using System;
-using PixelVisionSDK.Utils;
+using PixelVision8.Engine.Utils;
 
 //using UnityEngine;
 
-namespace PixelVisionSDK.Chips
+namespace PixelVision8.Engine.Chips
 {
 
     /// <summary>

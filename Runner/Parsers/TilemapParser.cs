@@ -13,10 +13,10 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 
-namespace PixelVisionRunner.Parsers
+namespace PixelVision8.Runner.Parsers
 {
 
     public class TilemapParser : SpriteParser
@@ -39,7 +39,7 @@ namespace PixelVisionRunner.Parsers
         autoImport = tilemapChip.autoImport;
             
 //            clear = new ColorData(0f){a = 0f};
-            maskColor = PixelVisionSDK.Utils.ColorUtils.HexToColor(chips.colorChip.maskColor);
+            maskColor = ColorUtils.HexToColor(chips.colorChip.maskColor);
             
         }
 

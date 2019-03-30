@@ -17,26 +17,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GameCreator.Exporters;
-using GameCreator.Importers;
 using Microsoft.Xna.Framework;
-using MonoGameRunner;
+using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
+using PixelVision8.Runner.Chips;
+using PixelVision8.Runner.Chips.Sfxr;
+using PixelVision8.Runner.Exporters;
+using PixelVision8.Runner.Importers;
+using PixelVision8.Runner.Parsers;
 using PixelVision8.Runner.Services;
-using PixelVisionRunner;
-using PixelVisionRunner.Chips;
-using PixelVisionRunner.Chips.Sfxr;
-using PixelVisionRunner.Exporters;
-using PixelVisionRunner.Parsers;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
-using PixelVisionSDK.Utils;
 using SharpFileSystem;
-using PixelVisionPlus.Chips;
-using PixelVisionPlus.Services;
-using Buttons = PixelVisionSDK.Chips.Buttons;
-using Keys = PixelVisionSDK.Keys;
 
-namespace PixelVisionPlus.Editors
+namespace PixelVision8.Runner.Editors
 {
 
 

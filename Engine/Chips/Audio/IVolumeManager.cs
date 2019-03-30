@@ -1,4 +1,4 @@
-﻿namespace PixelVisionSDK.Chips
+﻿namespace PixelVision8.Engine.Chips
 {
     public interface IVolumeManager
     {

@@ -1,5 +1,5 @@
 
-namespace PixelVisionRunner.Parsers
+namespace PixelVision8.Runner.Parsers
 {
     public class ImageParser: AbstractParser
     {

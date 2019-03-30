@@ -15,11 +15,11 @@
 // 
 
 using Microsoft.Xna.Framework.Audio;
-using PixelVisionRunner.Chips.Sfxr;
 using System.IO;
-using PixelVisionSDK.Chips;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Runner.Chips.Sfxr;
 
-namespace MonoGameRunner.Audio
+namespace PixelVision8.Runner.Audio
 {
     class AudioPlayer : IAudioPlayer
     {

@@ -13,14 +13,13 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using GameCreator.Exporters;
 using Microsoft.Xna.Framework;
-using PixelVisionRunner.Parsers;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
-using PixelVisionSDK.Utils;
+using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
+using PixelVision8.Runner.Parsers;
 
-namespace PixelVisionRunner.Exporters
+namespace PixelVision8.Runner.Exporters
 {
     public class FlagColorExporter : IAbstractExporter
     {

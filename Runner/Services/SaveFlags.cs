@@ -15,7 +15,7 @@
 
 using System;
 
-namespace PixelVisionRunner
+namespace PixelVision8.Runner
 {
 
     [Flags]

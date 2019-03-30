@@ -4,19 +4,15 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using GameCreator;
-using GameCreator.Exporters;
-using GameCreator.Services;
-using MonoGameRunner;
 using MoonSharp.Interpreter;
-using PixelVision8.Runner.Services;
-using PixelVisionPlus.Editors;
-using PixelVisionRunner.Exporters;
-using PixelVisionRunner.Services;
-using PixelVisionSDK;
+using PixelVision8.Engine;
+using PixelVision8.Engine.Utils;
+using PixelVision8.Runner.Data;
+using PixelVision8.Runner.Editors;
+using PixelVision8.Runner.Exporters;
 using SharpFileSystem;
 
-namespace PixelVisionPlus.Services
+namespace PixelVision8.Runner.Services
 {
     public class LuaServicePlus : LuaService
     {
@@ -814,9 +810,9 @@ namespace PixelVisionPlus.Services
                             textureData.height, new[]
                             {
                                 // TODO why is this hard coded here?
-                                PixelVisionSDK.Utils.ColorUtils.HexToColor("#ff00ff"),
-                                PixelVisionSDK.Utils.ColorUtils.HexToColor("#000000"),
-                                PixelVisionSDK.Utils.ColorUtils.HexToColor("#ffffff"),
+                                ColorUtils.HexToColor("#ff00ff"),
+                                ColorUtils.HexToColor("#000000"),
+                                ColorUtils.HexToColor("#ffffff"),
                             }, new PNGWriter());
                     
                         exporter.CalculateSteps();

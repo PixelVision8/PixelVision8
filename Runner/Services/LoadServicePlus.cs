@@ -1,7 +1,5 @@
-using PixelVisionRunner.Services;
-using PixelVisionSDK.Services;
 
-namespace PixelVision8Runner.Runner.Services
+namespace PixelVision8.Runner.Services
 {
     public class LoadServicePlus: LoadService
     {

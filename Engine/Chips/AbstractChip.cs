@@ -15,7 +15,7 @@
 
 using System;
 
-namespace PixelVisionSDK.Chips
+namespace PixelVision8.Engine.Chips
 {
 
     /// <summary>

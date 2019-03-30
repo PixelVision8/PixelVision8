@@ -15,14 +15,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using MonoGameRunner.Data;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
-using PixelVisionSDK.Utils;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 
-namespace PixelVisionRunner.Parsers
+
+namespace PixelVision8.Runner.Parsers
 {
 
     public class SpriteParser : ImageParser

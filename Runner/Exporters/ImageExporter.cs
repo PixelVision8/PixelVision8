@@ -17,7 +17,7 @@ using System.IO;
 using Microsoft.Xna.Framework;
 
 
-namespace PixelVisionRunner.Exporters
+namespace PixelVision8.Runner.Exporters
 {
     public class ImageExporter : AbstractExporter
     {

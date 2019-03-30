@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace MiniJSON
+namespace PixelVision8.Runner.Utils
 {
 
 //    public class ToJson : Attribute

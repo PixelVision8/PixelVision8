@@ -16,10 +16,10 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using PixelVisionSDK.Chips;
-using PixelVisionSDK.Utils;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 
-namespace PixelVisionSDK
+namespace PixelVision8.Engine
 {
     
     public class Canvas : TextureData

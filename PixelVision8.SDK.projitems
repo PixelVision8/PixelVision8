@@ -82,7 +82,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ScriptParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\SpriteParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\SystemParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TileColorOffsetJsonParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TilemapJsonParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TilemapParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\RunnerGame.cs" />

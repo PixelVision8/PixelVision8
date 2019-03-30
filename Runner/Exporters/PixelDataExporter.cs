@@ -14,10 +14,10 @@
 // Shawn Rakowski - @shwany
 
  using Microsoft.Xna.Framework;
- using PixelVisionSDK;
+ using PixelVision8.Engine.Utils;
 
 
-namespace PixelVisionRunner.Exporters
+ namespace PixelVision8.Runner.Exporters
 {
     public class PixelDataExporter : ImageExporter
     {
@@ -57,7 +57,7 @@ namespace PixelVisionRunner.Exporters
                         colors[i] = paletteColors[refID];
                     else
                     {
-                        colors[i] = PixelVisionSDK.Utils.ColorUtils.HexToColor("#FF00FF");
+                        colors[i] = ColorUtils.HexToColor("#FF00FF");
                     }
                 }
             

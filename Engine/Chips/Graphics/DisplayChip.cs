@@ -15,10 +15,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 
- namespace PixelVisionSDK.Chips
+ namespace PixelVision8.Engine.Chips
 {
 
     public class DisplayChip : AbstractChip, IDraw

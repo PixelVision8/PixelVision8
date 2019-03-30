@@ -13,7 +13,7 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-namespace PixelVisionSDK
+namespace PixelVision8.Engine
 {
     public class TileData : AbstractData
     {

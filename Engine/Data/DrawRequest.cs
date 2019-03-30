@@ -14,9 +14,8 @@
 // Shawn Rakowski - @shwany
 
 using System;
-using PixelVisionSDK.Chips;
 
-namespace PixelVisionSDK
+namespace PixelVision8.Engine
 {
 
     public struct DrawRequest

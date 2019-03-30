@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
-using PixelVisionRunner;
-using PixelVisionRunner.Exporters;
+using PixelVision8.Runner.Utils;
 using PixelVisionRunner.Utils;
 
-namespace GameCreator.Exporters
+namespace PixelVision8.Runner.Exporters
 {
     public class PNGWriter : IImageExporter
     {

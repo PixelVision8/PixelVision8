@@ -15,9 +15,8 @@
 
 using System;
 using System.Text;
-using PixelVisionSDK.Chips;
 
-namespace PixelVisionSDK.Utils
+namespace PixelVision8.Engine.Utils
 {
 
     public class SpriteChipUtil

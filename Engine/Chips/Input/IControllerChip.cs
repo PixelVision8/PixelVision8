@@ -14,11 +14,9 @@
 // Shawn Rakowski - @shwany
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using PixelVisionSDK.Chips;
-using Buttons = PixelVisionSDK.Chips.Buttons;
+using PixelVision8.Engine.Chips;
 
-namespace PixelVisionSDK
+namespace PixelVision8.Engine
 {
 
     public interface IControllerChip : IUpdate

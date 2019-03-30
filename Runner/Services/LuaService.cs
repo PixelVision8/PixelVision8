@@ -15,9 +15,9 @@
 
 using System;
 using MoonSharp.Interpreter;
-using PixelVisionSDK.Services;
+using PixelVision8.Engine.Services;
 
-namespace PixelVisionRunner.Services
+namespace PixelVision8.Runner.Services
 {
     public class LuaService : AbstractService
     {

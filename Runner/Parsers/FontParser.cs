@@ -14,9 +14,9 @@
 // Shawn Rakowski - @shwany
 
 using Microsoft.Xna.Framework;
-using PixelVisionSDK.Chips;
+using PixelVision8.Engine.Chips;
 
-namespace PixelVisionRunner.Parsers
+namespace PixelVision8.Runner.Parsers
 {
 
     public class FontParser : SpriteParser

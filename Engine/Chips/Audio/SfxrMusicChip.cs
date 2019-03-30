@@ -1,8 +1,6 @@
-﻿using GameCreator;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
+﻿using PixelVision8.Runner.Data;
 
-namespace PixelVisionRunner.Chips
+namespace PixelVision8.Engine.Chips
 {
 
     public class SfxrMusicChip : MusicChip

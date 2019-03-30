@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
 
-namespace PixelVisionSDK.Utils
+namespace PixelVision8.Engine.Utils
 {
     public class ColorUtils
     {

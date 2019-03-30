@@ -4,19 +4,17 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
-using MonoGameRunner.Data;
-using PixelVision8.Runner;
+using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
+using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Services;
-using PixelVisionRunner;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
-using PixelVisionSDK.Utils;
 using SharpFileSystem;
 using SharpFileSystem.FileSystems;
 using Directory = System.IO.Directory;
 using File = System.IO.File;
 
-namespace MonoGameRunner
+namespace PixelVision8.Runner
 {
     /// <summary>
     /// This is the main type for your game.

@@ -13,9 +13,9 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using PixelVisionSDK.Chips;
+using PixelVision8.Engine.Chips;
 
-namespace PixelVisionRunner.Parsers
+namespace PixelVision8.Runner.Parsers
 {
 
     public class ScriptParser : AbstractParser

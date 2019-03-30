@@ -15,7 +15,7 @@
 
 using System;
 
-namespace PixelVisionSDK.Utils
+namespace PixelVision8.Engine.Utils
 {
 
     public static class MathUtil

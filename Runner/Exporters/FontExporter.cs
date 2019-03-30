@@ -1,10 +1,9 @@
-using GameCreator.Exporters;
-using PixelVisionRunner.Parsers;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
-using PixelVisionSDK.Utils;
 
-namespace PixelVisionRunner.Exporters
+using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Runner.Parsers;
+
+namespace PixelVision8.Runner.Exporters
 {
     public class FontExporter : SpriteExporter
     {

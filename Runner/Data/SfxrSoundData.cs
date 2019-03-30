@@ -13,10 +13,10 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 
-using PixelVisionRunner.Chips.Sfxr;
-using PixelVisionSDK;
+using PixelVision8.Engine;
+using PixelVision8.Runner.Chips.Sfxr;
 
-namespace PixelVisionRunner.Data
+namespace PixelVision8.Runner.Data
 {
 
     public class SfxrSoundData : ISoundData

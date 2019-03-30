@@ -14,9 +14,9 @@
 // Shawn Rakowski - @shwany
 
 using System.Collections.Generic;
-using PixelVisionSDK.Chips;
+using PixelVision8.Engine.Chips;
 
-namespace PixelVisionSDK
+namespace PixelVision8.Engine
 {
 
     /// <summary>

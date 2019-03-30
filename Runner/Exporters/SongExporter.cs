@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
-using PixelVisionRunner;
-using PixelVisionRunner.Chips.Sfxr;
-using PixelVisionRunner.Exporters;
-using PixelVisionSDK;
-using PixelVisionSDK.Chips;
+using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Runner.Chips.Sfxr;
+using PixelVision8.Runner.Data;
 
-namespace GameCreator.Exporters
+
+namespace PixelVision8.Runner.Exporters
 {
 	public class AudioClip : IAudioClip
 	{
