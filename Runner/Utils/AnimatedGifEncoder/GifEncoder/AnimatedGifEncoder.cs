@@ -1,10 +1,9 @@
-using System;
-using System.IO;
+
+
 //using UnityEngine;
 
 namespace GifEncoder
 {
-    
     // TODO this uses the old Unity code, need to update with raw data directly from the display
 //	public class AnimatedGifEncoder
 //	{
@@ -313,5 +312,4 @@ namespace GifEncoder
 //			}
 //		}
 //	}
-
 }

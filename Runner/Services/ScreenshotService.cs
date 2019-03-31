@@ -1,15 +1,43 @@
-﻿using System;
+﻿//   
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
+//  
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
+// 
+// Contributors
+// --------------------------------------------------------
+// This is the official list of Pixel Vision 8 contributors:
+//  
+// Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
+//
+
+using System;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Services;
 using SharpFileSystem;
 
 namespace PixelVision8.Runner.Services
 {
-    public class ScreenshotService :AbstractService
+    public class ScreenshotService : AbstractService
     {
+        private bool active;
+
 //        private ITextureFactory textureFactory;
-        private WorkspaceService workspace;
-        private bool active = false;
+        private readonly WorkspaceService workspace;
+
+        public ScreenshotService(WorkspaceService workspace)
+        {
+            // TODO this needs to get teh workspace through the service
+//            this.textureFactory = textureFactory;
+            this.workspace = workspace;
+        }
 
         private FileSystemPath screenshotDir
         {
@@ -25,59 +53,39 @@ namespace PixelVision8.Runner.Services
                     try
                     {
                         if (fileSystem.Exists(FileSystemPath.Root.AppendDirectory("Workspace")))
-                        {
                             path = FileSystemPath.Root.AppendDirectory("Workspace")
                                 .AppendDirectory(directoryName);
-                        }
                     }
                     catch
                     {
 //                        Console.WriteLine("Screenshot Error: No workspace found.");
                     }
-                
+
                     // Check to see if a screenshot directory exits
-                    if (!fileSystem.Exists(path))
-                    {
-                        // Create a new screenshot directory
-                        fileSystem.CreateDirectoryRecursive(path);
-                    }
+                    if (!fileSystem.Exists(path)) fileSystem.CreateDirectoryRecursive(path);
 
                     active = true;
-                    
-                    return path;
 
+                    return path;
                 }
                 catch
                 {
 //                    Console.WriteLine("Save Screenshot Error:\n"+e.Message);
-                
                 }
 
                 return FileSystemPath.Root;
-
             }
-        }
-        
-        public ScreenshotService(WorkspaceService workspace)
-        {
-            
-            // TODO this needs to get teh workspace through the service
-//            this.textureFactory = textureFactory;
-            this.workspace = workspace;
-            
         }
 
         public FileSystemPath GenerateScreenshotName()
         {
-
             return workspace.UniqueFilePath(screenshotDir.AppendFile("screenshot.png"));
-            
         }
-        
+
         public bool TakeScreenshot(IEngine engine)
         {
             throw new NotImplementedException();
-            
+
 //            var fileName = GenerateScreenshotName().Path;
 //            
 //            if (active == false)
@@ -121,7 +129,6 @@ namespace PixelVision8.Runner.Services
 //                // TODO throw some kind of error?
 //                return false;
 //            }
-            
         }
     }
 }

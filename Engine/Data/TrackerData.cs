@@ -1,24 +1,28 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System;
 using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine
 {
-
     /// <summary>
     ///     The SongData class represents a collection of tracks and
     ///     meta data used by the MusicChip to play back ISoundData
@@ -26,7 +30,6 @@ namespace PixelVision8.Engine
     /// </summary>
     public class TrackerData : AbstractData
     {
-
         protected int _speedInBPM = 120;
 
         /// <summary>
@@ -60,8 +63,8 @@ namespace PixelVision8.Engine
         /// </summary>
         public int speedInBPM
         {
-            get { return _speedInBPM; }
-            set { _speedInBPM = MathUtil.Clamp(value, 60, 480); }
+            get => _speedInBPM;
+            set => _speedInBPM = value.Clamp(60, 480);
         }
 
         /// <summary>
@@ -69,7 +72,7 @@ namespace PixelVision8.Engine
         /// </summary>
         public int totalTracks
         {
-            get { return tracks.Length; }
+            get => tracks.Length;
             set
             {
                 if (tracks.Length != value)
@@ -103,7 +106,5 @@ namespace PixelVision8.Engine
             foreach (var track in tracks)
                 track.Reset(true);
         }
-
     }
-
 }

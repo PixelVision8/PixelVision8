@@ -1,31 +1,34 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System;
 using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine.Chips
 {
-
     /// <summary>
     ///     The <see cref="SoundChip" /> is responsible for playing back sound
     ///     effects in the engine. It's powered by SFxr.
     /// </summary>
     public class SoundChip : AbstractChip
     {
-
         protected ISoundData[] channels = new ISoundData[0];
 
         protected ISoundData[] sounds;
@@ -36,8 +39,8 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public int totalChannels
         {
-            get { return channels.Length; }
-            set { Array.Resize(ref channels, value); }
+            get => channels.Length;
+            set => Array.Resize(ref channels, value);
         }
 
         /// <summary>
@@ -45,11 +48,11 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public int totalSounds
         {
-            get { return sounds.Length; }
+            get => sounds.Length;
             set
             {
                 // TODO need to copy over existing sounds
-                value = MathUtil.Clamp(value, 1, 96);
+                value = value.Clamp(1, 96);
 
                 Array.Resize(ref sounds, value);
 
@@ -124,19 +127,15 @@ namespace PixelVision8.Engine.Chips
             if (index > sounds.Length)
                 return;
 
-            channelID = MathUtil.Clamp(channelID, 0, totalChannels - 1);
-            
+            channelID = channelID.Clamp(0, totalChannels - 1);
+
             var channel = channels[channelID];
-            
-            if (channel != null)
-            {
-                channel.Stop();
-            }
-            
+
+            if (channel != null) channel.Stop();
+
             channel = sounds[index];
 
             channel.Play(frequency);
-            
         }
 
         public bool IsChannelPlaying(int channelID)
@@ -185,11 +184,7 @@ namespace PixelVision8.Engine.Chips
 
         public void StopSound(int channel)
         {
-            if (channels[channel] != null)
-            {
-                channels[channel].Stop();
-            }
+            if (channels[channel] != null) channels[channel].Stop();
         }
     }
-
 }

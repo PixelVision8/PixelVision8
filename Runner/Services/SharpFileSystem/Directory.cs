@@ -12,7 +12,7 @@ namespace SharpFileSystem
 
         public bool Equals(Directory other)
         {
-            return ((IEquatable<FileSystemEntity>)this).Equals(other);
+            return ((IEquatable<FileSystemEntity>) this).Equals(other);
         }
     }
 }

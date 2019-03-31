@@ -1,17 +1,22 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System;
 using System.Linq;
@@ -21,7 +26,6 @@ using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine.Chips
 {
-
     /// <summary>
     ///     The <see cref="ColorChip" /> represents the system colors of the engine.
     ///     It allows the engine to work in color indexes that the display can map
@@ -29,6 +33,7 @@ namespace PixelVision8.Engine.Chips
     /// </summary>
     public class ColorChip : AbstractChip, IInvalidate
     {
+        protected int _bgColor;
 
         protected string[] _colors =
         {
@@ -49,17 +54,21 @@ namespace PixelVision8.Engine.Chips
             "#f7db53",
             "#f9f4ea"
         };
-        
+
+        private bool _debugMode;
+
+        protected string _maskColor = "#FF00FF";
+
+        protected int _maxColors = -1;
+
 //        protected int _colorsPerPage = 64;
 //        protected int _pages = 4;
         protected Color[] colorCache;
-        
+
         // By default, there are only 2 colors so we need 2 flags
         protected int[] invalidColors = new int[16];
-        
-        protected int _maxColors = -1;
-        protected int _bgColor = 0;
-        
+        public bool unique;
+
         // A flag to let the game chip know the last 128  colors are reserved for palettes
 //        public bool paletteMode;
 
@@ -67,28 +76,27 @@ namespace PixelVision8.Engine.Chips
         ///     The background color reference to use when rendering transparent in
         ///     the ScreenBufferTexture.
         /// </summary>
-        public int backgroundColor {
-            get { return _bgColor; }
+        public int backgroundColor
+        {
+            get => _bgColor;
             set
             {
                 // We make sure that the bg color is never set to a value out of the range of the color chip
-                _bgColor = MathUtil.Clamp(value, 0, total);
+                _bgColor = value.Clamp(0, total);
                 Invalidate();
-            } 
+            }
         }
-        
-        protected string _maskColor = "#FF00FF";
 
         public string maskColor
         {
             get => _maskColor;
             set
             {
-                if(ValidateHexColor(value))
+                if (ValidateHexColor(value))
                     _maskColor = value.ToUpper();
             }
         }
-        
+
         /// <summary>
         ///     Get and Set the <see cref="supportedColors" /> number of <see cref="colors" />
         ///     in the palette. Changing the <see cref="supportedColors" /> will clear the
@@ -98,17 +106,14 @@ namespace PixelVision8.Engine.Chips
         // TODO need to change this to totalSet colors or something more descriptive
         public int totalUsedColors
         {
-            get
-            {
-                return hexColors.Length - hexColors.ToList().RemoveAll(c => c == maskColor);
-            }
+            get { return hexColors.Length - hexColors.ToList().RemoveAll(c => c == maskColor); }
         }
 
         //TODO need to figure out a better way to set this up?
         public int maxColors
         {
-            get { return _maxColors == -1 ? total : _maxColors; }
-            set { _maxColors = value; }
+            get => _maxColors == -1 ? total : _maxColors;
+            set => _maxColors = value;
         }
 
         public string[] hexColors
@@ -161,15 +166,11 @@ namespace PixelVision8.Engine.Chips
 
                     for (var i = 0; i < t; i++)
                     {
-
                         var colorHex = _colors[i];
-                        
-                        if (colorHex == maskColor && debugMode == false)
-                        {
-                            colorHex = _colors[backgroundColor];
-                        }
 
-                        var color = ColorUtils.HexToColor(colorHex);// {flag = invalidColors[i]};
+                        if (colorHex == maskColor && debugMode == false) colorHex = _colors[backgroundColor];
+
+                        var color = ColorUtils.HexToColor(colorHex); // {flag = invalidColors[i]};
                         colorCache[i] = color;
                     }
 
@@ -178,6 +179,32 @@ namespace PixelVision8.Engine.Chips
 
                 return colorCache;
             }
+        }
+
+        // Setting this to true will use the mask color for empty colors instead of replacing them with the bg color
+        public bool debugMode
+        {
+            get => _debugMode;
+            set
+            {
+                _debugMode = value;
+                Invalidate();
+            }
+        }
+
+        public bool invalid { get; protected set; }
+
+        public void Invalidate()
+        {
+            invalid = true;
+        }
+
+        public void ResetValidation(int value = 0)
+        {
+            invalid = false;
+            var total = invalidColors.Length;
+            for (var i = 0; i < total; i++)
+                invalidColors[i] = value;
         }
 
         public string ReadColorAt(int index)
@@ -192,7 +219,6 @@ namespace PixelVision8.Engine.Chips
 
         public void Clear()
         {
-            
             var t = _colors.Length;
             for (var i = 0; i < t; i++)
                 UpdateColorAt(i, maskColor);
@@ -214,35 +240,6 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
-        public bool invalid { get; protected set; }
-
-        private bool _debugMode;
-        public bool unique;
-
-        // Setting this to true will use the mask color for empty colors instead of replacing them with the bg color
-        public bool debugMode
-        {
-            get { return _debugMode; }
-            set
-            {
-                _debugMode = value;
-                Invalidate();
-            }
-        }
-
-        public void Invalidate()
-        {
-            invalid = true;
-        }
-
-        public void ResetValidation(int value = 0)
-        {
-            invalid = false;
-            var total = invalidColors.Length;
-            for (var i = 0; i < total; i++)
-                invalidColors[i] = value;
-        }
-
         /// <summary>
         ///     This method configures the chip. It registers itself with the
         ///     engine as the default ColorChip, it sets the supported
@@ -254,7 +251,7 @@ namespace PixelVision8.Engine.Chips
         {
             engine.colorChip = this;
             backgroundColor = -1;
-            
+
 //            RebuildColorPages(16);
         }
 
@@ -266,10 +263,7 @@ namespace PixelVision8.Engine.Chips
 
         public bool ValidateHexColor(string inputColor)
         {
-            return (Regex.Match(inputColor, "^#(?:[0-9a-fA-F]{3}){1,2}$").Success);
+            return Regex.Match(inputColor, "^#(?:[0-9a-fA-F]{3}){1,2}$").Success;
         }
-        
-
     }
-
 }

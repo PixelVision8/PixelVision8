@@ -1,24 +1,28 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System.Collections.Generic;
 using PixelVision8.Engine.Chips;
 
 namespace PixelVision8.Engine
 {
-
     /// <summary>
     ///     The <see cref="IEngine" /> internal represents the
     ///     core API for the Engine class. Implement this
@@ -26,7 +30,6 @@ namespace PixelVision8.Engine
     /// </summary>
     public interface IEngine : IEngineChips, IUpdate, IDraw
     {
-
         /// <summary>
         ///     A flag for if the engine is <see cref="running" />
         /// </summary>
@@ -70,7 +73,5 @@ namespace PixelVision8.Engine
         /// <param name="target"></param>
         /// <param name="ignoreKeys"></param>
         void DumpMetaData(Dictionary<string, string> target, string[] ignoreKeys = null);
-
     }
-
 }

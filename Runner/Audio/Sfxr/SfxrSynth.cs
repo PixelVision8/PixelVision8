@@ -21,152 +21,245 @@
 //  
 //  @author Zeh Fernando
 
+using System;
+
 namespace PixelVision8.Runner.Chips.Sfxr
 {
-    using System;
-
     public class SfxrSynth : ISfxrSynth
     {
         private const int LO_RES_NOISE_PERIOD = 8; // Should be < 32
 
-        private enum Endian
-        {
-            BIG_ENDIAN,
-            LITTLE_ENDIAN
-        }
-
-        private SfxrParams _params = new SfxrParams();      // Params instance
-
-        public static IAudioPlayerFactory AudioPlayerFactory { get; set; }
-
         private IAudioPlayer _audioPlayer;
+
+        private float _bitcrushFreq; // Inversely proportional to the number of samples to skip
+        private float _bitcrushFreqSweep; // Change of the above
+        private float _bitcrushLast; // Last sample value
+        private float _bitcrushPhase; // Samples when this > 1
 
 
         // Sound properties
-        private float[] _cachedWave;                // Cached wave data from a cacheSound() call
-        private uint _cachedWavePos;                // Equivalent to _cachedWave.position in the old code
-        private bool _cachingNormal;                // If the synth is caching a normal sound
+        private float[] _cachedWave; // Cached wave data from a cacheSound() call
+        private uint _cachedWavePos; // Equivalent to _cachedWave.position in the old code
 
-        private bool _cachingAsync;                 // If the synth is currently caching asynchronously
+        private bool _cachingAsync; // If the synth is currently caching asynchronously
+        private bool _cachingNormal; // If the synth is caching a normal sound
 
-        private float[] _waveData;                  // Full wave, read out in chuncks by the onSampleData method
-        private uint _waveDataPos;                  // Current position in the waveData
+        private float _changeAmount; // Amount to change the note by
 
-        private SfxrParams _original;               // Copied properties for mutation base
-
-        // Synth properies
-        private bool _finished;                     // If the sound has finished
-
-        private float _masterVolume;                // masterVolume * masterVolume (for quick calculations)
-
-        private uint _waveType;                     // Shape of wave to generate (see enum WaveType)
-
-        private float _envelopeVolume;              // Current volume of the envelope
-        private int _envelopeStage;                 // Current stage of the envelope (attack, sustain, decay, end)
-        private float _envelopeTime;                // Current time through current enelope stage
-        private float _envelopeLength;              // Length of the current envelope stage
-        private float _envelopeLength0;             // Length of the attack stage
-        private float _envelopeLength1;             // Length of the sustain stage
-        private float _envelopeLength2;             // Length of the decay stage
-        private float _envelopeOverLength0;         // 1 / _envelopeLength0 (for quick calculations)
-        private float _envelopeOverLength1;         // 1 / _envelopeLength1 (for quick calculations)
-        private float _envelopeOverLength2;         // 1 / _envelopeLength2 (for quick calculations)
-        private uint _envelopeFullLength;           // Full length of the volume envelop (and therefore sound)
-
-        private float _sustainPunch;                // The punch factor (louder at begining of sustain)
-
-        private int _phase;                         // Phase through the wave
-        private float _pos;                         // Phase expresed as a Number from 0-1, used for fast sin approx
-        private float _period;                      // Period of the wave
-        private float _periodTemp;                  // Period modified by vibrato
-        private int _periodTempInt;                 // Period modified by vibrato (as an Int)
-        private float _maxPeriod;                   // Maximum period before sound stops (from minFrequency)
-
-        private float _slide;                       // Note slide
-        private float _deltaSlide;                  // Change in slide
-        private float _minFrequency;                // Minimum frequency before stopping
-
-        private float _vibratoPhase;                // Phase through the vibrato sine wave
-        private float _vibratoSpeed;                // Speed at which the vibrato phase moves
-        private float _vibratoAmplitude;            // Amount to change the period of the wave by at the peak of the vibrato wave
-
-        private float _changeAmount;                // Amount to change the note by
-        private int _changeTime;                    // Counter for the note change
-        private int _changeLimit;                   // Once the time reaches this limit, the note changes
-
-        private float _squareDuty;                  // Offset of center switching point in the square wave
-        private float _dutySweep;                   // Amount to change the duty by
-
-        private int _repeatTime;                    // Counter for the repeats
-        private int _repeatLimit;                   // Once the time reaches this limit, some of the variables are reset
-
-        private bool _phaser;                       // If the phaser is active
-        private float _phaserOffset;                // Phase offset for phaser effect
-        private float _phaserDeltaOffset;           // Change in phase offset
-        private int _phaserInt;                     // Integer phaser offset, for bit maths
-        private int _phaserPos;                     // Position through the phaser buffer
-        private float[] _phaserBuffer;              // Buffer of wave values used to create the out of phase second wave
-
-        private bool _filters;                      // If the filters are active
-        private float _lpFilterPos;                 // Adjusted wave position after low-pass filter
-        private float _lpFilterOldPos;              // Previous low-pass wave position
-        private float _lpFilterDeltaPos;            // Change in low-pass wave position, as allowed by the cutoff and damping
-        private float _lpFilterCutoff;              // Cutoff multiplier which adjusts the amount the wave position can move
-        private float _lpFilterDeltaCutoff;         // Speed of the low-pass cutoff multiplier
-        private float _lpFilterDamping;             // Damping muliplier which restricts how fast the wave position can move
-        private bool _lpFilterOn;                   // If the low pass filter is active
-
-        private float _hpFilterPos;                 // Adjusted wave position after high-pass filter
-        private float _hpFilterCutoff;              // Cutoff multiplier which adjusts the amount the wave position can move
-        private float _hpFilterDeltaCutoff;         // Speed of the high-pass cutoff multiplier
+        private float _changeAmount2; // Amount to change the note by
+        private int _changeLimit; // Once the time reaches this limit, the note changes
+        private int _changeLimit2; // Once the time reaches this limit, the note changes
 
         // From BFXR
         private float _changePeriod;
         private int _changePeriodTime;
 
         private bool _changeReached;
-
-        private float _changeAmount2;               // Amount to change the note by
-        private int _changeTime2;                   // Counter for the note change
-        private int _changeLimit2;                  // Once the time reaches this limit, the note changes
         private bool _changeReached2;
-
-        private int _overtones;                     // Minimum frequency before stopping
-        private float _overtoneFalloff;             // Minimum frequency before stopping
-
-        private float _bitcrushFreq;                // Inversely proportional to the number of samples to skip
-        private float _bitcrushFreqSweep;           // Change of the above
-        private float _bitcrushPhase;               // Samples when this > 1
-        private float _bitcrushLast;                // Last sample value
+        private int _changeTime; // Counter for the note change
+        private int _changeTime2; // Counter for the note change
 
         private float _compressionFactor;
+        private float _deltaSlide; // Change in slide
+        private float _dutySweep; // Amount to change the duty by
+        private uint _envelopeFullLength; // Full length of the volume envelop (and therefore sound)
+        private float _envelopeLength; // Length of the current envelope stage
+        private float _envelopeLength0; // Length of the attack stage
+        private float _envelopeLength1; // Length of the sustain stage
+        private float _envelopeLength2; // Length of the decay stage
+        private float _envelopeOverLength0; // 1 / _envelopeLength0 (for quick calculations)
+        private float _envelopeOverLength1; // 1 / _envelopeLength1 (for quick calculations)
+        private float _envelopeOverLength2; // 1 / _envelopeLength2 (for quick calculations)
+        private int _envelopeStage; // Current stage of the envelope (attack, sustain, decay, end)
+        private float _envelopeTime; // Current time through current enelope stage
+
+        private float _envelopeVolume; // Current volume of the envelope
+
+        private bool _filters; // If the filters are active
+
+        // Synth properies
+        private bool _finished; // If the sound has finished
+        private float _hpFilterCutoff; // Cutoff multiplier which adjusts the amount the wave position can move
+        private float _hpFilterDeltaCutoff; // Speed of the high-pass cutoff multiplier
+
+        private float _hpFilterPos; // Adjusted wave position after high-pass filter
+        private float[] _loResNoiseBuffer; // Buffer of random values used to generate Tan waveform
+        private float _lpFilterCutoff; // Cutoff multiplier which adjusts the amount the wave position can move
+        private float _lpFilterDamping; // Damping muliplier which restricts how fast the wave position can move
+        private float _lpFilterDeltaCutoff; // Speed of the low-pass cutoff multiplier
+        private float _lpFilterDeltaPos; // Change in low-pass wave position, as allowed by the cutoff and damping
+        private float _lpFilterOldPos; // Previous low-pass wave position
+        private bool _lpFilterOn; // If the low pass filter is active
+        private float _lpFilterPos; // Adjusted wave position after low-pass filter
+
+        private float _masterVolume; // masterVolume * masterVolume (for quick calculations)
+        private float _maxPeriod; // Maximum period before sound stops (from minFrequency)
+        private float _minFrequency; // Minimum frequency before stopping
 
         // Pre-calculated data
-        private float[] _noiseBuffer;               // Buffer of random values used to generate noise
-        private float[] _pinkNoiseBuffer;           // Buffer of random values used to generate pink noise
-        private PinkNumber _pinkNumber;             // Used to generate pink noise
-        private float[] _loResNoiseBuffer;          // Buffer of random values used to generate Tan waveform
+        private float[] _noiseBuffer; // Buffer of random values used to generate noise
+
+        private SfxrParams _original; // Copied properties for mutation base
+        private float _overtoneFalloff; // Minimum frequency before stopping
+
+        private int _overtones; // Minimum frequency before stopping
+
+        private SfxrParams _params = new SfxrParams(); // Params instance
+        private float _period; // Period of the wave
+        private float _periodTemp; // Period modified by vibrato
+        private int _periodTempInt; // Period modified by vibrato (as an Int)
+
+        private int _phase; // Phase through the wave
+
+        private bool _phaser; // If the phaser is active
+        private float[] _phaserBuffer; // Buffer of wave values used to create the out of phase second wave
+        private float _phaserDeltaOffset; // Change in phase offset
+        private int _phaserInt; // Integer phaser offset, for bit maths
+        private float _phaserOffset; // Phase offset for phaser effect
+        private int _phaserPos; // Position through the phaser buffer
+        private float[] _pinkNoiseBuffer; // Buffer of random values used to generate pink noise
+        private PinkNumber _pinkNumber; // Used to generate pink noise
+        private float _pos; // Phase expresed as a Number from 0-1, used for fast sin approx
+
+        private readonly Random _random = new Random();
+        private int _repeatLimit; // Once the time reaches this limit, some of the variables are reset
+
+        private int _repeatTime; // Counter for the repeats
+        private float _sample; // Sub-sample calculated 8 times per actual sample, averaged out to get the super sample
+        private float _sample2; // Used in other calculations
+
+        private float _slide; // Note slide
+
+        private float _squareDuty; // Offset of center switching point in the square wave
 
         // Temp
-        private float _superSample;                 // Actual sample writen to the wave
-        private float _sample;                      // Sub-sample calculated 8 times per actual sample, averaged out to get the super sample
-        private float _sample2;                     // Used in other calculations
-        private float amp;                          // Used in other calculations
+        private float _superSample; // Actual sample writen to the wave
 
-        private Random _random = new System.Random();
+        private float _sustainPunch; // The punch factor (louder at begining of sustain)
+        private float _vibratoAmplitude; // Amount to change the period of the wave by at the peak of the vibrato wave
+
+        private float _vibratoPhase; // Phase through the vibrato sine wave
+        private float _vibratoSpeed; // Speed at which the vibrato phase moves
+
+        private float[] _waveData; // Full wave, read out in chuncks by the onSampleData method
+        private uint _waveDataPos; // Current position in the waveData
+
+        private uint _waveType; // Shape of wave to generate (see enum WaveType)
+        private float amp; // Used in other calculations
+
+        public static IAudioPlayerFactory AudioPlayerFactory { get; set; }
 
         /// <summary>
-        /// Sound parameters
+        ///     Sound parameters
         /// </summary>
         public SfxrParams parameters
         {
-            get { return _params; }
-            set { _params = value; _params.paramsDirty = true; }
+            get => _params;
+            set
+            {
+                _params = value;
+                _params.paramsDirty = true;
+            }
         }
 
-        public bool playing
+        public bool playing => _audioPlayer.playing;
+
+        /// <summary>
+        ///     Returns a ByteArray of the wave in the form of a .wav file, ready to be saved out
+        /// </summary>
+        /// <param name="__sampleRate">Sample rate to generate the .wav data at (44100 or 22050, default 44100)</param>
+        /// <param name="__bitDepth">Bit depth to generate the .wav at (8 or 16, default 16)</param>
+        /// <returns>Wave data (in .wav format) as a byte array</returns>
+        public byte[] GenerateWav(uint __sampleRate = 44100, uint __bitDepth = 16)
         {
-            get { return _audioPlayer.playing; }
+            Stop();
+
+            Reset(true);
+
+            if (__sampleRate != 44100) __sampleRate = 22050;
+            if (__bitDepth != 16) __bitDepth = 8;
+
+            var soundLength = _envelopeFullLength;
+            if (__bitDepth == 16) soundLength *= 2;
+            if (__sampleRate == 22050) soundLength /= 2;
+
+            var fileSize = 36 + soundLength;
+            var blockAlign = __bitDepth / 8;
+            var bytesPerSec = __sampleRate * blockAlign;
+
+            // The file size is actually 8 bytes more than the fileSize
+            var wav = new byte[fileSize + 8];
+
+            var bytePos = 0;
+
+            // Header
+
+            // Chunk ID "RIFF"
+            writeUintToBytes(wav, ref bytePos, 0x52494646, Endian.BIG_ENDIAN);
+
+            // Chunck Data Size
+            writeUintToBytes(wav, ref bytePos, fileSize, Endian.LITTLE_ENDIAN);
+
+            // RIFF Type "WAVE"
+            writeUintToBytes(wav, ref bytePos, 0x57415645, Endian.BIG_ENDIAN);
+
+            // Format Chunk
+
+            // Chunk ID "fmt "
+            writeUintToBytes(wav, ref bytePos, 0x666D7420, Endian.BIG_ENDIAN);
+
+            // Chunk Data Size
+            writeUintToBytes(wav, ref bytePos, 16, Endian.LITTLE_ENDIAN);
+
+            // Compression Code PCM
+            writeShortToBytes(wav, ref bytePos, 1, Endian.LITTLE_ENDIAN);
+            // Number of channels
+            writeShortToBytes(wav, ref bytePos, 1, Endian.LITTLE_ENDIAN);
+            // Sample rate
+            writeUintToBytes(wav, ref bytePos, __sampleRate, Endian.LITTLE_ENDIAN);
+            // Average bytes per second
+            writeUintToBytes(wav, ref bytePos, bytesPerSec, Endian.LITTLE_ENDIAN);
+            // Block align
+            writeShortToBytes(wav, ref bytePos, (short) blockAlign, Endian.LITTLE_ENDIAN);
+            // Significant bits per sample
+            writeShortToBytes(wav, ref bytePos, (short) __bitDepth, Endian.LITTLE_ENDIAN);
+
+            // Data Chunk
+
+            // Chunk ID "data"
+            writeUintToBytes(wav, ref bytePos, 0x64617461, Endian.BIG_ENDIAN);
+            // Chunk Data Size
+            writeUintToBytes(wav, ref bytePos, soundLength, Endian.LITTLE_ENDIAN);
+
+            // Generate normal synth data
+            var audioData = new float[_envelopeFullLength];
+            SynthWave(audioData, 0, _envelopeFullLength);
+
+            // Write data as bytes
+            var sampleCount = 0;
+            var bufferSample = 0f;
+            for (var i = 0; i < audioData.Length; i++)
+            {
+                bufferSample += audioData[i];
+                sampleCount++;
+
+                if (__sampleRate == 44100 || sampleCount == 2)
+                {
+                    bufferSample /= sampleCount;
+                    sampleCount = 0;
+
+                    if (__bitDepth == 16)
+                        writeShortToBytes(wav, ref bytePos, (short) Math.Round(32000f * bufferSample),
+                            Endian.LITTLE_ENDIAN);
+                    else
+                        writeBytes(wav, ref bytePos, new[] {(byte) (Math.Round(bufferSample * 127f) + 128)},
+                            Endian.LITTLE_ENDIAN);
+
+                    bufferSample = 0f;
+                }
+            }
+
+            return wav;
         }
 
         /// <summary>
@@ -200,7 +293,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Stops the currently playing sound
+        ///     Stops the currently playing sound
         /// </summary>
         public void Stop()
         {
@@ -219,24 +312,22 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         // ?
-        private int WriteSamples(float[] __originSamples, int __originPos, float[] __targetSamples, int __targetChannels)
+        private int WriteSamples(float[] __originSamples, int __originPos, float[] __targetSamples,
+            int __targetChannels)
         {
             // Writes raw samples to Unity's format and return number of samples actually written
-            int samplesToWrite = __targetSamples.Length / __targetChannels;
+            var samplesToWrite = __targetSamples.Length / __targetChannels;
 
-            if (__originPos + samplesToWrite > __originSamples.Length) samplesToWrite = __originSamples.Length - __originPos;
+            if (__originPos + samplesToWrite > __originSamples.Length)
+                samplesToWrite = __originSamples.Length - __originPos;
 
             if (samplesToWrite > 0)
             {
                 // Interlaced filling of sample datas (faster?)
                 int i, j;
                 for (i = 0; i < __targetChannels; i++)
-                {
-                    for (j = 0; j < samplesToWrite; j++)
-                    {
-                        __targetSamples[(j * __targetChannels) + i] = __originSamples[j + __originPos];
-                    }
-                }
+                for (j = 0; j < samplesToWrite; j++)
+                    __targetSamples[j * __targetChannels + i] = __originSamples[j + __originPos];
             }
 
             return samplesToWrite;
@@ -251,12 +342,12 @@ namespace PixelVision8.Runner.Chips.Sfxr
          */
         private bool GenerateAudioFilterData(float[] __data, int __channels)
         {
-            bool endOfSamples = false;
+            var endOfSamples = false;
 
             if (_waveData != null)
             {
-                int samplesWritten = WriteSamples(_waveData, (int)_waveDataPos, __data, __channels);
-                _waveDataPos += (uint)samplesWritten;
+                var samplesWritten = WriteSamples(_waveData, (int) _waveDataPos, __data, __channels);
+                _waveDataPos += (uint) samplesWritten;
                 if (samplesWritten == 0) endOfSamples = true;
             }
             else
@@ -265,19 +356,20 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 {
                     _waveDataPos = _cachedWavePos;
 
-                    int samplesNeeded = (int)Mathf.Min((__data.Length / __channels), _cachedWave.Length - _cachedWavePos);
+                    var samplesNeeded =
+                        (int) Mathf.Min(__data.Length / __channels, _cachedWave.Length - _cachedWavePos);
 
-                    if (SynthWave(_cachedWave, (int)_cachedWavePos, (uint)samplesNeeded) || samplesNeeded == 0)
+                    if (SynthWave(_cachedWave, (int) _cachedWavePos, (uint) samplesNeeded) || samplesNeeded == 0)
                     {
                         _cachingNormal = false;
                         endOfSamples = true;
                     }
                     else
                     {
-                        _cachedWavePos += (uint)samplesNeeded;
+                        _cachedWavePos += (uint) samplesNeeded;
                     }
 
-                    WriteSamples(_cachedWave, (int)_waveDataPos, __data, __channels);
+                    WriteSamples(_cachedWave, (int) _waveDataPos, __data, __channels);
                 }
             }
 
@@ -326,106 +418,6 @@ namespace PixelVision8.Runner.Chips.Sfxr
             }
         }
 
-        /// <summary>
-        /// Returns a ByteArray of the wave in the form of a .wav file, ready to be saved out
-        /// </summary>
-        /// <param name="__sampleRate">Sample rate to generate the .wav data at (44100 or 22050, default 44100)</param>
-        /// <param name="__bitDepth">Bit depth to generate the .wav at (8 or 16, default 16)</param>
-        /// <returns>Wave data (in .wav format) as a byte array</returns>
-        public byte[] GenerateWav(uint __sampleRate = 44100, uint __bitDepth = 16)
-        {
-            Stop();
-
-            Reset(true);
-
-            if (__sampleRate != 44100) __sampleRate = 22050;
-            if (__bitDepth != 16) __bitDepth = 8;
-
-            uint soundLength = _envelopeFullLength;
-            if (__bitDepth == 16) soundLength *= 2;
-            if (__sampleRate == 22050) soundLength /= 2;
-
-            uint fileSize = 36 + soundLength;
-            uint blockAlign = __bitDepth / 8;
-            uint bytesPerSec = __sampleRate * blockAlign;
-
-            // The file size is actually 8 bytes more than the fileSize
-            byte[] wav = new byte[fileSize + 8];
-
-            int bytePos = 0;
-
-            // Header
-
-            // Chunk ID "RIFF"
-            writeUintToBytes(wav, ref bytePos, 0x52494646, Endian.BIG_ENDIAN);
-
-            // Chunck Data Size
-            writeUintToBytes(wav, ref bytePos, fileSize, Endian.LITTLE_ENDIAN);
-
-            // RIFF Type "WAVE"
-            writeUintToBytes(wav, ref bytePos, 0x57415645, Endian.BIG_ENDIAN);
-
-            // Format Chunk
-
-            // Chunk ID "fmt "
-            writeUintToBytes(wav, ref bytePos, 0x666D7420, Endian.BIG_ENDIAN);
-
-            // Chunk Data Size
-            writeUintToBytes(wav, ref bytePos, 16, Endian.LITTLE_ENDIAN);
-
-            // Compression Code PCM
-            writeShortToBytes(wav, ref bytePos, 1, Endian.LITTLE_ENDIAN);
-            // Number of channels
-            writeShortToBytes(wav, ref bytePos, 1, Endian.LITTLE_ENDIAN);
-            // Sample rate
-            writeUintToBytes(wav, ref bytePos, __sampleRate, Endian.LITTLE_ENDIAN);
-            // Average bytes per second
-            writeUintToBytes(wav, ref bytePos, bytesPerSec, Endian.LITTLE_ENDIAN);
-            // Block align
-            writeShortToBytes(wav, ref bytePos, (short)blockAlign, Endian.LITTLE_ENDIAN);
-            // Significant bits per sample
-            writeShortToBytes(wav, ref bytePos, (short)__bitDepth, Endian.LITTLE_ENDIAN);
-
-            // Data Chunk
-
-            // Chunk ID "data"
-            writeUintToBytes(wav, ref bytePos, 0x64617461, Endian.BIG_ENDIAN);
-            // Chunk Data Size
-            writeUintToBytes(wav, ref bytePos, soundLength, Endian.LITTLE_ENDIAN);
-
-            // Generate normal synth data
-            float[] audioData = new float[_envelopeFullLength];
-            SynthWave(audioData, 0, _envelopeFullLength);
-
-            // Write data as bytes
-            int sampleCount = 0;
-            float bufferSample = 0f;
-            for (int i = 0; i < audioData.Length; i++)
-            {
-                bufferSample += audioData[i];
-                sampleCount++;
-
-                if (__sampleRate == 44100 || sampleCount == 2)
-                {
-                    bufferSample /= sampleCount;
-                    sampleCount = 0;
-
-                    if (__bitDepth == 16)
-                    {
-                        writeShortToBytes(wav, ref bytePos, (short)Math.Round(32000f * bufferSample), Endian.LITTLE_ENDIAN);
-                    }
-                    else
-                    {
-                        writeBytes(wav, ref bytePos, new byte[] { (byte)(Math.Round(bufferSample * 127f) + 128) }, Endian.LITTLE_ENDIAN);
-                    }
-
-                    bufferSample = 0f;
-                }
-            }
-
-            return wav;
-        }
-
         /**
          * Resets the runing variables from the params
          * Used once at the start (total reset) and for the repeat effect (partial reset)
@@ -434,7 +426,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
         private void Reset(bool __totalReset)
         {
             // Shorter reference
-            SfxrParams p = _params;
+            var p = _params;
 
             _period = 100.0f / (p.startFrequency * p.startFrequency + 0.001f);
             _maxPeriod = 100.0f / (p.minFrequency * p.minFrequency + 0.001f);
@@ -448,53 +440,37 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 _dutySweep = -p.dutySweep * 0.00005f;
             }
 
-            _changePeriod = (((1f - p.changeRepeat) + 0.1f) / 1.1f) * 20000f + 32f;
+            _changePeriod = (1f - p.changeRepeat + 0.1f) / 1.1f * 20000f + 32f;
             _changePeriodTime = 0;
 
             if (p.changeAmount > 0.0)
-            {
                 _changeAmount = 1.0f - p.changeAmount * p.changeAmount * 0.9f;
-            }
             else
-            {
                 _changeAmount = 1.0f + p.changeAmount * p.changeAmount * 10.0f;
-            }
 
             _changeTime = 0;
             _changeReached = false;
 
             if (p.changeSpeed == 1.0f)
-            {
                 _changeLimit = 0;
-            }
             else
-            {
-                _changeLimit = (int)((1f - p.changeSpeed) * (1f - p.changeSpeed) * 20000f + 32f);
-            }
+                _changeLimit = (int) ((1f - p.changeSpeed) * (1f - p.changeSpeed) * 20000f + 32f);
 
             if (p.changeAmount2 > 0f)
-            {
                 _changeAmount2 = 1f - p.changeAmount2 * p.changeAmount2 * 0.9f;
-            }
             else
-            {
                 _changeAmount2 = 1f + p.changeAmount2 * p.changeAmount2 * 10f;
-            }
 
             _changeTime2 = 0;
             _changeReached2 = false;
 
             if (p.changeSpeed2 == 1.0f)
-            {
                 _changeLimit2 = 0;
-            }
             else
-            {
-                _changeLimit2 = (int)((1f - p.changeSpeed2) * (1f - p.changeSpeed2) * 20000f + 32f);
-            }
+                _changeLimit2 = (int) ((1f - p.changeSpeed2) * (1f - p.changeSpeed2) * 20000f + 32f);
 
-            _changeLimit = (int)(_changeLimit * ((1f - p.changeRepeat + 0.1f) / 1.1f));
-            _changeLimit2 = (int)(_changeLimit2 * ((1f - p.changeRepeat + 0.1f) / 1.1f));
+            _changeLimit = (int) (_changeLimit * ((1f - p.changeRepeat + 0.1f) / 1.1f));
+            _changeLimit2 = (int) (_changeLimit2 * ((1f - p.changeRepeat + 0.1f) / 1.1f));
 
             if (__totalReset)
             {
@@ -506,10 +482,10 @@ namespace PixelVision8.Runner.Chips.Sfxr
 
                 if (p.sustainTime < 0.01) p.sustainTime = 0.01f;
 
-                float totalTime = p.attackTime + p.sustainTime + p.decayTime;
+                var totalTime = p.attackTime + p.sustainTime + p.decayTime;
                 if (totalTime < 0.18f)
                 {
-                    float multiplier = 0.18f / totalTime;
+                    var multiplier = 0.18f / totalTime;
                     p.attackTime *= multiplier;
                     p.sustainTime *= multiplier;
                     p.decayTime *= multiplier;
@@ -519,7 +495,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
 
                 _phase = 0;
 
-                _overtones = (int)(p.overtones * 10f);
+                _overtones = (int) (p.overtones * 10f);
                 _overtoneFalloff = p.overtoneFalloff;
 
                 _minFrequency = p.minFrequency;
@@ -537,7 +513,8 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 _lpFilterDeltaPos = 0.0f;
                 _lpFilterCutoff = p.lpFilterCutoff * p.lpFilterCutoff * p.lpFilterCutoff * 0.1f;
                 _lpFilterDeltaCutoff = 1.0f + p.lpFilterCutoffSweep * 0.0001f;
-                _lpFilterDamping = 5.0f / (1.0f + p.lpFilterResonance * p.lpFilterResonance * 20.0f) * (0.01f + _lpFilterCutoff);
+                _lpFilterDamping = 5.0f / (1.0f + p.lpFilterResonance * p.lpFilterResonance * 20.0f) *
+                                   (0.01f + _lpFilterCutoff);
                 if (_lpFilterDamping > 0.8f) _lpFilterDamping = 0.8f;
                 _lpFilterDamping = 1.0f - _lpFilterDamping;
                 _lpFilterOn = p.lpFilterCutoff != 1.0f;
@@ -557,7 +534,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 _envelopeLength1 = p.sustainTime * p.sustainTime * 100000.0f;
                 _envelopeLength2 = p.decayTime * p.decayTime * 100000.0f + 10f;
                 _envelopeLength = _envelopeLength0;
-                _envelopeFullLength = (uint)(_envelopeLength0 + _envelopeLength1 + _envelopeLength2);
+                _envelopeFullLength = (uint) (_envelopeLength0 + _envelopeLength1 + _envelopeLength2);
 
                 _envelopeOverLength0 = 1.0f / _envelopeLength0;
                 _envelopeOverLength1 = 1.0f / _envelopeLength1;
@@ -580,18 +557,17 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 for (i = 0; i < 1024; i++) _phaserBuffer[i] = 0.0f;
                 for (i = 0; i < 32; i++) _noiseBuffer[i] = getRandom() * 2.0f - 1.0f;
                 for (i = 0; i < 32; i++) _pinkNoiseBuffer[i] = _pinkNumber.getNextValue();
-                for (i = 0; i < 32; i++) _loResNoiseBuffer[i] = ((i % LO_RES_NOISE_PERIOD) == 0) ? getRandom() * 2.0f - 1.0f : _loResNoiseBuffer[i - 1];
+                for (i = 0; i < 32; i++)
+                    _loResNoiseBuffer[i] = i % LO_RES_NOISE_PERIOD == 0
+                        ? getRandom() * 2.0f - 1.0f
+                        : _loResNoiseBuffer[i - 1];
 
                 _repeatTime = 0;
 
                 if (p.repeatSpeed == 0.0)
-                {
                     _repeatLimit = 0;
-                }
                 else
-                {
-                    _repeatLimit = (int)((1.0 - p.repeatSpeed) * (1.0 - p.repeatSpeed) * 20000) + 32;
-                }
+                    _repeatLimit = (int) ((1.0 - p.repeatSpeed) * (1.0 - p.repeatSpeed) * 20000) + 32;
             }
         }
 
@@ -606,7 +582,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             _finished = false;
 
             int i, j, n, k;
-            int l = (int)__length;
+            var l = (int) __length;
             float overtoneStrength, tempPhase, sampleTotal;
 
             for (i = 0; i < l; i++)
@@ -615,13 +591,11 @@ namespace PixelVision8.Runner.Chips.Sfxr
 
                 // Repeats every _repeatLimit times, partially resetting the sound parameters
                 if (_repeatLimit != 0)
-                {
                     if (++_repeatTime >= _repeatLimit)
                     {
                         _repeatTime = 0;
                         Reset(false);
                     }
-                }
 
                 _changePeriodTime++;
                 if (_changePeriodTime >= _changePeriod)
@@ -634,6 +608,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
                         _period /= _changeAmount;
                         _changeReached = false;
                     }
+
                     if (_changeReached2)
                     {
                         _period /= _changeAmount2;
@@ -643,23 +618,19 @@ namespace PixelVision8.Runner.Chips.Sfxr
 
                 // If _changeLimit is reached, shifts the pitch
                 if (!_changeReached)
-                {
                     if (++_changeTime >= _changeLimit)
                     {
                         _changeReached = true;
                         _period *= _changeAmount;
                     }
-                }
 
                 // If _changeLimit is reached, shifts the pitch
                 if (!_changeReached2)
-                {
                     if (++_changeTime2 >= _changeLimit2)
                     {
                         _changeReached2 = true;
                         _period *= _changeAmount2;
                     }
-                }
 
                 // Acccelerate and apply slide
                 _slide += _deltaSlide;
@@ -681,7 +652,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
                     _periodTemp = _period * (1.0f + Mathf.Sin(_vibratoPhase) * _vibratoAmplitude);
                 }
 
-                _periodTempInt = (int)_periodTemp;
+                _periodTempInt = (int) _periodTemp;
                 if (_periodTemp < 8) _periodTemp = _periodTempInt = 8;
 
                 // Sweeps the square duty
@@ -689,13 +660,8 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 {
                     _squareDuty += _dutySweep;
                     if (_squareDuty < 0.0)
-                    {
                         _squareDuty = 0.0f;
-                    }
-                    else if (_squareDuty > 0.5)
-                    {
-                        _squareDuty = 0.5f;
-                    }
+                    else if (_squareDuty > 0.5) _squareDuty = 0.5f;
                 }
 
                 // Moves through the different stages of the volume envelope
@@ -705,33 +671,41 @@ namespace PixelVision8.Runner.Chips.Sfxr
 
                     switch (++_envelopeStage)
                     {
-                        case 1: _envelopeLength = _envelopeLength1; break;
-                        case 2: _envelopeLength = _envelopeLength2; break;
+                        case 1:
+                            _envelopeLength = _envelopeLength1;
+                            break;
+                        case 2:
+                            _envelopeLength = _envelopeLength2;
+                            break;
                     }
                 }
 
                 // Sets the volume based on the position in the envelope
                 switch (_envelopeStage)
                 {
-                    case 0: _envelopeVolume = _envelopeTime * _envelopeOverLength0; break;
-                    case 1: _envelopeVolume = 1.0f + (1.0f - _envelopeTime * _envelopeOverLength1) * 2.0f * _sustainPunch; break;
-                    case 2: _envelopeVolume = 1.0f - _envelopeTime * _envelopeOverLength2; break;
-                    case 3: _envelopeVolume = 0.0f; _finished = true; break;
+                    case 0:
+                        _envelopeVolume = _envelopeTime * _envelopeOverLength0;
+                        break;
+                    case 1:
+                        _envelopeVolume = 1.0f + (1.0f - _envelopeTime * _envelopeOverLength1) * 2.0f * _sustainPunch;
+                        break;
+                    case 2:
+                        _envelopeVolume = 1.0f - _envelopeTime * _envelopeOverLength2;
+                        break;
+                    case 3:
+                        _envelopeVolume = 0.0f;
+                        _finished = true;
+                        break;
                 }
 
                 // Moves the phaser offset
                 if (_phaser)
                 {
                     _phaserOffset += _phaserDeltaOffset;
-                    _phaserInt = (int)_phaserOffset;
+                    _phaserInt = (int) _phaserOffset;
                     if (_phaserInt < 0)
-                    {
                         _phaserInt = -_phaserInt;
-                    }
-                    else if (_phaserInt > 1023)
-                    {
-                        _phaserInt = 1023;
-                    }
+                    else if (_phaserInt > 1023) _phaserInt = 1023;
                 }
 
                 // Moves the high-pass filter cutoff
@@ -739,13 +713,8 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 {
                     _hpFilterCutoff *= _hpFilterDeltaCutoff;
                     if (_hpFilterCutoff < 0.00001f)
-                    {
                         _hpFilterCutoff = 0.00001f;
-                    }
-                    else if (_hpFilterCutoff > 0.1f)
-                    {
-                        _hpFilterCutoff = 0.1f;
-                    }
+                    else if (_hpFilterCutoff > 0.1f) _hpFilterCutoff = 0.1f;
                 }
 
                 _superSample = 0;
@@ -759,20 +728,16 @@ namespace PixelVision8.Runner.Chips.Sfxr
 
                         // Generates new random noise for this period
                         if (_waveType == 3)
-                        {
-                            // Noise
-                            for (n = 0; n < 32; n++) _noiseBuffer[n] = getRandom() * 2.0f - 1.0f;
-                        }
+                            for (n = 0; n < 32; n++)
+                                _noiseBuffer[n] = getRandom() * 2.0f - 1.0f;
                         else if (_waveType == 5)
-                        {
-                            // Pink noise
-                            for (n = 0; n < 32; n++) _pinkNoiseBuffer[n] = _pinkNumber.getNextValue();
-                        }
+                            for (n = 0; n < 32; n++)
+                                _pinkNoiseBuffer[n] = _pinkNumber.getNextValue();
                         else if (_waveType == 6)
-                        {
-                            // Tan
-                            for (n = 0; n < 32; n++) _loResNoiseBuffer[n] = ((n % LO_RES_NOISE_PERIOD) == 0) ? getRandom() * 2.0f - 1.0f : _loResNoiseBuffer[n - 1];
-                        }
+                            for (n = 0; n < 32; n++)
+                                _loResNoiseBuffer[n] = n % LO_RES_NOISE_PERIOD == 0
+                                    ? getRandom() * 2.0f - 1.0f
+                                    : _loResNoiseBuffer[n - 1];
                     }
 
                     _sample = 0;
@@ -781,54 +746,66 @@ namespace PixelVision8.Runner.Chips.Sfxr
 
                     for (k = 0; k <= _overtones; k++)
                     {
-                        tempPhase = (float)((_phase * (k + 1))) % _periodTemp;
+                        tempPhase = _phase * (k + 1) % _periodTemp;
 
                         // Gets the sample from the oscillator
                         switch (_waveType)
                         {
                             case 0:
                                 // Square
-                                _sample = ((tempPhase / _periodTemp) < _squareDuty) ? 0.5f : -0.5f;
+                                _sample = tempPhase / _periodTemp < _squareDuty ? 0.5f : -0.5f;
                                 break;
                             case 1:
                                 // Sawtooth
-                                _sample = 1.0f - (tempPhase / _periodTemp) * 2.0f;
+                                _sample = 1.0f - tempPhase / _periodTemp * 2.0f;
                                 break;
                             case 2:
                                 // Sine: fast and accurate approx
                                 _pos = tempPhase / _periodTemp;
                                 _pos = _pos > 0.5f ? (_pos - 1.0f) * 6.28318531f : _pos * 6.28318531f;
-                                _sample = _pos < 0 ? 1.27323954f * _pos + 0.405284735f * _pos * _pos : 1.27323954f * _pos - 0.405284735f * _pos * _pos;
-                                _sample = _sample < 0 ? 0.225f * (_sample * -_sample - _sample) + _sample : 0.225f * (_sample * _sample - _sample) + _sample;
+                                _sample = _pos < 0
+                                    ? 1.27323954f * _pos + 0.405284735f * _pos * _pos
+                                    : 1.27323954f * _pos - 0.405284735f * _pos * _pos;
+                                _sample = _sample < 0
+                                    ? 0.225f * (_sample * -_sample - _sample) + _sample
+                                    : 0.225f * (_sample * _sample - _sample) + _sample;
                                 break;
                             case 3:
                                 // Noise
-                                _sample = _noiseBuffer[(uint)(tempPhase * 32f / _periodTempInt) % 32];
+                                _sample = _noiseBuffer[(uint) (tempPhase * 32f / _periodTempInt) % 32];
                                 break;
                             case 4:
                                 // Triangle
-                                _sample = Math.Abs(1f - (tempPhase / _periodTemp) * 2f) - 1f;
+                                _sample = Math.Abs(1f - tempPhase / _periodTemp * 2f) - 1f;
                                 break;
                             case 5:
                                 // Pink noise
-                                _sample = _pinkNoiseBuffer[(uint)(tempPhase * 32f / _periodTempInt) % 32];
+                                _sample = _pinkNoiseBuffer[(uint) (tempPhase * 32f / _periodTempInt) % 32];
                                 break;
                             case 6:
                                 // Tan
-                                _sample = (float)Math.Tan(Math.PI * tempPhase / _periodTemp);
+                                _sample = (float) Math.Tan(Math.PI * tempPhase / _periodTemp);
                                 break;
                             case 7:
                                 // Whistle
                                 // Sine wave code
                                 _pos = tempPhase / _periodTemp;
                                 _pos = _pos > 0.5f ? (_pos - 1.0f) * 6.28318531f : _pos * 6.28318531f;
-                                _sample = _pos < 0 ? 1.27323954f * _pos + 0.405284735f * _pos * _pos : 1.27323954f * _pos - 0.405284735f * _pos * _pos;
-                                _sample = 0.75f * (_sample < 0 ? 0.225f * (_sample * -_sample - _sample) + _sample : 0.225f * (_sample * _sample - _sample) + _sample);
+                                _sample = _pos < 0
+                                    ? 1.27323954f * _pos + 0.405284735f * _pos * _pos
+                                    : 1.27323954f * _pos - 0.405284735f * _pos * _pos;
+                                _sample = 0.75f * (_sample < 0
+                                              ? 0.225f * (_sample * -_sample - _sample) + _sample
+                                              : 0.225f * (_sample * _sample - _sample) + _sample);
                                 // Then whistle (essentially an overtone with frequencyx20 and amplitude0.25
-                                _pos = ((tempPhase * 20f) % _periodTemp) / _periodTemp;
+                                _pos = tempPhase * 20f % _periodTemp / _periodTemp;
                                 _pos = _pos > 0.5f ? (_pos - 1.0f) * 6.28318531f : _pos * 6.28318531f;
-                                _sample2 = _pos < 0 ? 1.27323954f * _pos + .405284735f * _pos * _pos : 1.27323954f * _pos - 0.405284735f * _pos * _pos;
-                                _sample += 0.25f * (_sample2 < 0 ? .225f * (_sample2 * -_sample2 - _sample2) + _sample2 : .225f * (_sample2 * _sample2 - _sample2) + _sample2);
+                                _sample2 = _pos < 0
+                                    ? 1.27323954f * _pos + .405284735f * _pos * _pos
+                                    : 1.27323954f * _pos - 0.405284735f * _pos * _pos;
+                                _sample += 0.25f * (_sample2 < 0
+                                               ? .225f * (_sample2 * -_sample2 - _sample2) + _sample2
+                                               : .225f * (_sample2 * _sample2 - _sample2) + _sample2);
                                 break;
                             case 8:
                                 // Breaker
@@ -838,7 +815,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
                         }
 
                         sampleTotal += overtoneStrength * _sample;
-                        overtoneStrength *= (1f - _overtoneFalloff);
+                        overtoneStrength *= 1f - _overtoneFalloff;
                     }
 
                     _sample = sampleTotal;
@@ -849,13 +826,8 @@ namespace PixelVision8.Runner.Chips.Sfxr
                         _lpFilterOldPos = _lpFilterPos;
                         _lpFilterCutoff *= _lpFilterDeltaCutoff;
                         if (_lpFilterCutoff < 0.0)
-                        {
                             _lpFilterCutoff = 0.0f;
-                        }
-                        else if (_lpFilterCutoff > 0.1)
-                        {
-                            _lpFilterCutoff = 0.1f;
-                        }
+                        else if (_lpFilterCutoff > 0.1) _lpFilterCutoff = 0.1f;
 
                         if (_lpFilterOn)
                         {
@@ -896,29 +868,21 @@ namespace PixelVision8.Runner.Chips.Sfxr
                     _bitcrushPhase = 0;
                     _bitcrushLast = _superSample;
                 }
+
                 _bitcrushFreq = Mathf.Max(Mathf.Min(_bitcrushFreq + _bitcrushFreqSweep, 1f), 0f);
 
                 _superSample = _bitcrushLast;
 
                 // Compressor
                 if (_superSample > 0f)
-                {
                     _superSample = Mathf.Pow(_superSample, _compressionFactor);
-                }
                 else
-                {
                     _superSample = -Mathf.Pow(-_superSample, _compressionFactor);
-                }
 
                 // Clipping if too loud
                 if (_superSample < -1f)
-                {
                     _superSample = -1f;
-                }
-                else if (_superSample > 1f)
-                {
-                    _superSample = 1f;
-                }
+                else if (_superSample > 1f) _superSample = 1f;
 
                 // Writes value to list, ignoring left/right sound channels (this is applied when filtering the audio later)
                 __buffer[i + __bufferPos] = _superSample;
@@ -928,18 +892,18 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Returns a random value: 0 <= n < 1
+        ///     Returns a random value: 0 <= n < 1
         /// </summary>
         /// <returns></returns>
         private float getRandom()
         {
             // We can't use Unity's Random.value because it cannot be called from a separate thread
             // (We get the error "get_value can only be called from the main thread" when this is called to generate the sound data)
-            return (float)(_random.NextDouble() % 1);
+            return (float) (_random.NextDouble() % 1);
         }
 
         /// <summary>
-        /// Returns the number of samples actually used by the wave
+        ///     Returns the number of samples actually used by the wave
         /// </summary>
         /// <returns></returns>
         private uint getNumSamples()
@@ -948,8 +912,8 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Writes a short (Int16) to a byte array.
-        /// This is an aux function used when creating the WAV data.
+        ///     Writes a short (Int16) to a byte array.
+        ///     This is an aux function used when creating the WAV data.
         /// </summary>
         /// <param name="__bytes"></param>
         /// <param name="__position"></param>
@@ -957,12 +921,13 @@ namespace PixelVision8.Runner.Chips.Sfxr
         /// <param name="__endian"></param>
         private void writeShortToBytes(byte[] __bytes, ref int __position, short __newShort, Endian __endian)
         {
-            writeBytes(__bytes, ref __position, new byte[2] { (byte)((__newShort >> 8) & 0xff), (byte)(__newShort & 0xff) }, __endian);
+            writeBytes(__bytes, ref __position,
+                new byte[2] {(byte) ((__newShort >> 8) & 0xff), (byte) (__newShort & 0xff)}, __endian);
         }
 
         /// <summary>
-        /// Writes a uint (UInt32) to a byte array.
-        /// This is an aux function used when creating the WAV data.
+        ///     Writes a uint (UInt32) to a byte array.
+        ///     This is an aux function used when creating the WAV data.
         /// </summary>
         /// <param name="__bytes"></param>
         /// <param name="__position"></param>
@@ -970,12 +935,18 @@ namespace PixelVision8.Runner.Chips.Sfxr
         /// <param name="__endian"></param>
         private void writeUintToBytes(byte[] __bytes, ref int __position, uint __newUint, Endian __endian)
         {
-            writeBytes(__bytes, ref __position, new byte[4] { (byte)((__newUint >> 24) & 0xff), (byte)((__newUint >> 16) & 0xff), (byte)((__newUint >> 8) & 0xff), (byte)(__newUint & 0xff) }, __endian);
+            writeBytes(__bytes, ref __position,
+                new byte[4]
+                {
+                    (byte) ((__newUint >> 24) & 0xff), (byte) ((__newUint >> 16) & 0xff),
+                    (byte) ((__newUint >> 8) & 0xff), (byte) (__newUint & 0xff)
+                }, __endian);
         }
 
         /// <summary>
-        /// Writes any number of bytes into a byte array, at a given position.
-        /// This is an aux function used when creating the WAV data.</summary>
+        ///     Writes any number of bytes into a byte array, at a given position.
+        ///     This is an aux function used when creating the WAV data.
+        /// </summary>
         /// <param name="__bytes"></param>
         /// <param name="__position"></param>
         /// <param name="__newBytes"></param>
@@ -983,43 +954,49 @@ namespace PixelVision8.Runner.Chips.Sfxr
         private void writeBytes(byte[] __bytes, ref int __position, byte[] __newBytes, Endian __endian)
         {
             // Writes __newBytes to __bytes at position __position, increasing the position depending on the length of __newBytes
-            for (int i = 0; i < __newBytes.Length; i++)
+            for (var i = 0; i < __newBytes.Length; i++)
             {
                 __bytes[__position] = __newBytes[__endian == Endian.BIG_ENDIAN ? i : __newBytes.Length - i - 1];
                 __position++;
             }
         }
+
+        private enum Endian
+        {
+            BIG_ENDIAN,
+            LITTLE_ENDIAN
+        }
     }
 
     /// <summary>
-    /// Pink Number
-    /// -----------
-    /// From BFXR
-    /// Class taken from http://www.firstpr.com.au/dsp/pink-noise/#Filtering
+    ///     Pink Number
+    ///     -----------
+    ///     From BFXR
+    ///     Class taken from http://www.firstpr.com.au/dsp/pink-noise/#Filtering
     /// </summary>
     internal class PinkNumber
     {
-        private int max_key;
-        private int key;
-        private uint[] white_values;
-        private uint range;
-        private System.Random randomGenerator;
-
-        private float rangeBy5;
-        private int last_key;
-        private uint sum;
         private int diff;
         private int i;
+        private int key;
+        private int last_key;
+        private readonly int max_key;
+        private readonly Random randomGenerator;
+        private readonly uint range;
+
+        private readonly float rangeBy5;
+        private uint sum;
+        private readonly uint[] white_values;
 
         public PinkNumber()
         {
             max_key = 0x1f; // Five bits set
             range = 128;
-            rangeBy5 = (float)range / 5f;
+            rangeBy5 = range / 5f;
             key = 0;
             white_values = new uint[5];
-            randomGenerator = new System.Random();
-            for (i = 0; i < 5; i++) white_values[i] = (uint)((randomGenerator.NextDouble() % 1) * rangeBy5);
+            randomGenerator = new Random();
+            for (i = 0; i < 5; i++) white_values[i] = (uint) (randomGenerator.NextDouble() % 1 * rangeBy5);
         }
 
         public float getNextValue()
@@ -1039,10 +1016,12 @@ namespace PixelVision8.Runner.Chips.Sfxr
             {
                 // If bit changed get new random number for corresponding
                 // white_value
-                if ((diff & (1 << i)) > 0) white_values[i] = (uint)((randomGenerator.NextDouble() % 1) * rangeBy5); ;
+                if ((diff & (1 << i)) > 0) white_values[i] = (uint) (randomGenerator.NextDouble() % 1 * rangeBy5);
+                ;
                 sum += white_values[i];
             }
-            return (float)sum / 64f - 1f;
+
+            return sum / 64f - 1f;
         }
     }
 }

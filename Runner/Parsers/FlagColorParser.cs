@@ -1,17 +1,22 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System.Collections.Generic;
 using System.Linq;
@@ -21,13 +26,11 @@ using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Runner.Parsers
 {
-
     public class FlagColorParser : ImageParser
     {
-        
         public static string flagColorChipName = "PixelVisionSDK.Chips.FlagColorChip";
 
-        public static string[] flagColors = new string[]
+        public static string[] flagColors =
         {
             "#000000",
             "#5E0104",
@@ -44,42 +47,37 @@ namespace PixelVision8.Runner.Parsers
             "#1A00E3",
             "#7102D0",
             "#FC6EC4",
-            "#A53E5A",
+            "#A53E5A"
         };
-        
-        protected Color maskColor;
 //        private int flag;
 //        private int offset;
 //        private int realWidth;
 //        private int realHeight;
 
-        private ColorChip flagColorChip;
-        
+        private readonly ColorChip flagColorChip;
+
+        protected Color maskColor;
+
         public FlagColorParser(IImageParser imageParser, IEngineChips chips) : base(imageParser)
         {
-
             flagColorChip = new ColorChip();
-            
+
             chips.ActivateChip(flagColorChipName, flagColorChip, false);
-            
+
             maskColor = ColorUtils.HexToColor(chips.colorChip.maskColor);
-            
         }
 
         public override void CalculateSteps()
         {
-            
             base.CalculateSteps();
-            
-            steps.Add(ParseFlagColors);
 
+            steps.Add(ParseFlagColors);
         }
-        
+
         public void ParseFlagColors()
         {
-        
             var newFlagColors = new List<string>();
-            
+
             if (bytes == null)
             {
                 newFlagColors = flagColors.ToList();
@@ -87,15 +85,15 @@ namespace PixelVision8.Runner.Parsers
             else
             {
                 // TODO This is broken?
-                
+
                 var total = imageParser.colorPalette.Count;
 
-                for (int i = 0; i < total; i++)
+                for (var i = 0; i < total; i++)
                 {
                     var tmpColor = imageParser.colorPalette[i];
                     newFlagColors.Add(ColorUtils.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B));
                 }
-                
+
 //                var pixels = tex.GetPixels();
 //    
 //                var total = pixels.Length;
@@ -121,15 +119,10 @@ namespace PixelVision8.Runner.Parsers
             }
 
             flagColorChip.total = newFlagColors.Count;
-            
-            for (int i = 0; i < newFlagColors.Count; i++)
-            {
-                flagColorChip.UpdateColorAt(i, newFlagColors[i]);
-            }
-            
+
+            for (var i = 0; i < newFlagColors.Count; i++) flagColorChip.UpdateColorAt(i, newFlagColors[i]);
+
             currentStep++;
         }
-        
     }
-
 }

@@ -6,40 +6,34 @@ namespace SharpFileSystem.IO
 {
     public class ProducerConsumerStream : Stream
     {
-        public override bool CanRead
-        {
-            get { return true; }
-        }
+        private readonly CircularBuffer<byte> _buffer = new CircularBuffer<byte>(4096);
+        private bool _closed;
+        private bool _isWritingStalled;
 
-        public override bool CanSeek
-        {
-            get { return false; }
-        }
 
-        public override bool CanWrite
-        {
-            get { return true; }
-        }
+        private readonly object _readLocker = new object();
+        private readonly object _writeLocker = new object();
 
-        public override void Flush()
-        {
-        }
+        public override bool CanRead => true;
 
-        public override long Length
-        {
-            get { throw new NotSupportedException(); }
-        }
+        public override bool CanSeek => false;
+
+        public override bool CanWrite => true;
+
+        public override long Length => throw new NotSupportedException();
 
         public override long Position
         {
-            get
-            {
-                throw new NotSupportedException();
-            }
-            set
-            {
-                throw new NotSupportedException();
-            }
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
+        }
+
+        private bool IsWriteable => WriteableCount > 0;
+
+        private long WriteableCount => _buffer.Capacity - _buffer.Size;
+
+        public override void Flush()
+        {
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -52,29 +46,6 @@ namespace SharpFileSystem.IO
             throw new NotSupportedException();
         }
 
-
-
-        object _readLocker = new object();
-        object _writeLocker = new object();
-        bool _closed = false;
-        bool _isWritingStalled = false;
-
-        private CircularBuffer<byte> _buffer = new CircularBuffer<byte>(4096);
-
-        bool IsWriteable
-        {
-            get { return WriteableCount > 0; }
-        }
-
-        long WriteableCount
-        {
-            get { return _buffer.Capacity - _buffer.Size; }
-        }
-
-        public ProducerConsumerStream()
-        {
-        }
-
         public override void Close()
         {
             _closed = true;
@@ -82,20 +53,21 @@ namespace SharpFileSystem.IO
             {
                 Monitor.Pulse(_readLocker);
             }
+
             lock (_writeLocker)
             {
                 Monitor.Pulse(_writeLocker);
             }
+
             base.Close();
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
             while (true)
-            {
                 lock (_readLocker)
                 {
-                    int readCount = _buffer.Get(buffer, offset, count);
+                    var readCount = _buffer.Get(buffer, offset, count);
                     if (readCount == 0)
                     {
                         if (_closed)
@@ -105,22 +77,20 @@ namespace SharpFileSystem.IO
                     }
 
                     if (_isWritingStalled)
-                    {
                         lock (_writeLocker)
                         {
                             Monitor.Pulse(_writeLocker);
                         }
-                    }
+
                     return readCount;
                 }
-            }
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            lock(_readLocker)
+            lock (_readLocker)
             {
-                int writeCount = Math.Min((int)WriteableCount, count - offset);
+                var writeCount = Math.Min((int) WriteableCount, count - offset);
                 while (offset < count)
                 {
                     if (!IsWriteable)
@@ -132,13 +102,15 @@ namespace SharpFileSystem.IO
                             Monitor.Wait(_writeLocker);
                             Monitor.Enter(_readLocker);
                         }
+
                         _isWritingStalled = false;
                         if (_closed)
                             break;
                     }
+
                     _buffer.Put(buffer, offset, writeCount);
                     offset += writeCount;
-                    writeCount = Math.Min((int)WriteableCount, count - offset);
+                    writeCount = Math.Min((int) WriteableCount, count - offset);
 
                     Monitor.Pulse(_readLocker);
                 }

@@ -1,17 +1,22 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System.Collections.Generic;
 
@@ -24,10 +29,8 @@ namespace PixelVision8.Engine.Chips
     /// </summary>
     public class FontChip : AbstractChip
     {
-        
-
         public Dictionary<string, int[]> fonts = new Dictionary<string, int[]>();
-    
+
 //        public int[] tmpPixels = new int[0];
 
         /// <summary>
@@ -64,13 +67,9 @@ namespace PixelVision8.Engine.Chips
 
         public int[] ReadFont(string name)
         {
-            if (fonts.ContainsKey(name))
-            {
-                return fonts[name];
-            }
-            
+            if (fonts.ContainsKey(name)) return fonts[name];
+
             return null;
         }
-        
     }
 }

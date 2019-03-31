@@ -1,62 +1,88 @@
-﻿using System;
+﻿//   
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
+//  
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
+// 
+// Contributors
+// --------------------------------------------------------
+// This is the official list of Pixel Vision 8 contributors:
+//  
+// Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
+//
+
+using System;
 using System.IO;
+using System.Text;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Chips.Sfxr;
 using PixelVision8.Runner.Data;
 
-
 namespace PixelVision8.Runner.Exporters
 {
-	public class AudioClip : IAudioClip
-	{
-		private readonly string name;
+    public class AudioClip : IAudioClip
+    {
+        private readonly string name;
 
-		public AudioClip(string name, int samples, int channels, int frequency)
-		{
-			this.name = name;
-			this.samples = samples;
-			this.channels = channels;
-			this.frequency = frequency;
-		}
+        public AudioClip(string name, int samples, int channels, int frequency)
+        {
+            this.name = name;
+            this.samples = samples;
+            this.channels = channels;
+            this.frequency = frequency;
+        }
 
-		public bool SetData(float[] data, int offsetSamples)
-		{
-			throw new NotImplementedException();
-		}
+        public bool SetData(float[] data, int offsetSamples)
+        {
+            throw new NotImplementedException();
+        }
 
-		public int samples { get;  set;}
-		public int channels { get;  set;}
-		public bool GetData(float[] data, int offsetSamples)
-		{
-			throw new NotImplementedException();
-		}
+        public int samples { get; set; }
+        public int channels { get; set; }
 
-		public int frequency { get; set; }
-	}
-	
+        public bool GetData(float[] data, int offsetSamples)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int frequency { get; set; }
+    }
+
     public class SongExporter : AbstractExporter
     {
         private readonly IAudioClipFactory audioClipFactory;
+
 //        private IEngine engine;
         private readonly int MAX_NOTE_NUM = 127; // how many notes in these arrays below
 
-        public float mixdownTrackVolume = 0.6f; // to avoid clipping, all tracks are a bit quieter since we ADD values - set to 1f for full mix
-
         private readonly MusicChip musicChip;
+        private readonly SoundChip soundChip;
+
+        public float
+            mixdownTrackVolume =
+                0.6f; // to avoid clipping, all tracks are a bit quieter since we ADD values - set to 1f for full mix
+
         public float[] note_hz;
 
         // TODO this is not set yet
         public float[] note_startFrequency; // = new float[MAX_NOTE_NUM]; // same, but for sfxr frequency 0..1 range
         public float note_tick_s = 30.0f / 120.0f; // (30.0f/120.0f) = 120BPM eighth notes
         public float note_tick_s_even;
+
         public float note_tick_s_odd;
 //        private bool pcg_currently_exporting = false; // for multi-export to wait till we're done
 
         // optimization: precache silent playback to ram
         public int preRenderBitrate = 44100; //48000; // should be 44100; FIXME TODO EXPERIMENTING W BUGFIX
         private IAudioClip result;
-        private readonly SoundChip soundChip;
 
         public float
             swing_rhythm_factor = 0.7f; //1.0f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
@@ -225,7 +251,7 @@ namespace PixelVision8.Runner.Exporters
                         // grab the sample data - this data is not in the same fmt as unity's internal?
                         // sounds pitch-shifted and faster - a different bitrate?
                         // WORKS GREAT IF WE RUN CACHESOUND() FIRST
-						// TODO need to figure out why we can't access the cachedWave
+                        // TODO need to figure out why we can't access the cachedWave
 //                        notebuffer = instrument[tracknum].cachedWave; // the wave data for the current note
 
                         // this SHOULD be the solution. but outputs all 0's
@@ -260,7 +286,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void CreateSongByteData()
         {
-	        //TODO need to break this process up in to steps so it doesn't block the runner
+            //TODO need to break this process up in to steps so it doesn't block the runner
             bytes = Save(fileName, result);
             currentStep++;
         }
@@ -273,7 +299,7 @@ namespace PixelVision8.Runner.Exporters
             note_tick_s_even = note_tick_s * 2 - note_tick_s_odd; // long beat
 #if DEBUGMUSIC
 		Debug.Log("updateNoteTickLengths: speedInBPM is " + SongData.speedInBPM + " so note_tick_s_odd=" + note_tick_s_odd);
-		#endif
+#endif
         }
 
         // pre-rendered waveforms - OPTIMIZATION - SLOW SLOW SLOW - FIXME
@@ -331,119 +357,120 @@ namespace PixelVision8.Runner.Exporters
         }
 
         #region Save Wav Code
-        
-	    //  derived from Gregorio Zanon's script
+
+        //  derived from Gregorio Zanon's script
 //  http://forum.unity3d.com/threads/119295-Writing-AudioListener.GetOutputData-to-wav-problem?p=806734&viewfull=1#post806734
 
-	    
-        const int HEADER_SIZE = 44;
 
-	public  byte[] Save(string filepath, IAudioClip clip) {
+        private const int HEADER_SIZE = 44;
 
-		MemoryStream fileStream;
-		
-		using (fileStream = CreateEmpty()) {
+        public byte[] Save(string filepath, IAudioClip clip)
+        {
+            MemoryStream fileStream;
 
-			ConvertAndWrite(fileStream, clip);
+            using (fileStream = CreateEmpty())
+            {
+                ConvertAndWrite(fileStream, clip);
 
-			WriteHeader(fileStream, clip);
-		}
+                WriteHeader(fileStream, clip);
+            }
 
-		return fileStream.GetBuffer(); // TODO: return false if there's a failure saving the file
-	}
+            return fileStream.GetBuffer(); // TODO: return false if there's a failure saving the file
+        }
 
-	 MemoryStream CreateEmpty() {
+        private MemoryStream CreateEmpty()
+        {
 //		var fileStream = new FileStream(filepath, FileMode.Create);
-	    byte emptyByte = new byte();
-		
-		var fileStream = new MemoryStream(emptyByte);
-	    for(int i = 0; i < HEADER_SIZE; i++) //preparing the header
-	    {
-	        fileStream.WriteByte(emptyByte);
-	    }
+            var emptyByte = new byte();
 
-		return fileStream;
-	}
+            var fileStream = new MemoryStream(emptyByte);
+            for (var i = 0; i < HEADER_SIZE; i++) //preparing the header
+                fileStream.WriteByte(emptyByte);
 
-	 void ConvertAndWrite(MemoryStream fileStream, IAudioClip clip) {
+            return fileStream;
+        }
 
-		var samples = new float[clip.samples];
+        private void ConvertAndWrite(MemoryStream fileStream, IAudioClip clip)
+        {
+            var samples = new float[clip.samples];
 
-		clip.GetData(samples, 0);
+            clip.GetData(samples, 0);
 
-		Int16[] intData = new Int16[samples.Length];
-		//converting in 2 float[] steps to Int16[], //then Int16[] to Byte[]
+            var intData = new short[samples.Length];
+            //converting in 2 float[] steps to Int16[], //then Int16[] to Byte[]
 
-		Byte[] bytesData = new Byte[samples.Length * 2];
-		//bytesData array is twice the size of
-		//dataSource array because a float converted in Int16 is 2 bytes.
+            var bytesData = new byte[samples.Length * 2];
+            //bytesData array is twice the size of
+            //dataSource array because a float converted in Int16 is 2 bytes.
 
-		int rescaleFactor = 32767; //to convert float to Int16
+            var rescaleFactor = 32767; //to convert float to Int16
 
-		for (int i = 0; i<samples.Length; i++) {
-			intData[i] = (short) (samples[i] * rescaleFactor);
-			Byte[] byteArr = new Byte[2];
-			byteArr = BitConverter.GetBytes(intData[i]);
-			byteArr.CopyTo(bytesData, i * 2);
-		}
+            for (var i = 0; i < samples.Length; i++)
+            {
+                intData[i] = (short) (samples[i] * rescaleFactor);
+                var byteArr = new byte[2];
+                byteArr = BitConverter.GetBytes(intData[i]);
+                byteArr.CopyTo(bytesData, i * 2);
+            }
 
-		fileStream.Write(bytesData, 0, bytesData.Length);
-	}
+            fileStream.Write(bytesData, 0, bytesData.Length);
+        }
 
-	 void WriteHeader(MemoryStream fileStream, IAudioClip clip) {
+        private void WriteHeader(MemoryStream fileStream, IAudioClip clip)
+        {
+            var hz = clip.frequency;
+            var channels = clip.channels;
+            var samples = clip.samples;
 
-		var hz = clip.frequency;
-		var channels = clip.channels;
-		var samples = clip.samples;
+            fileStream.Seek(0, SeekOrigin.Begin);
 
-		fileStream.Seek(0, SeekOrigin.Begin);
+            var riff = Encoding.UTF8.GetBytes("RIFF");
+            fileStream.Write(riff, 0, 4);
 
-		Byte[] riff = System.Text.Encoding.UTF8.GetBytes("RIFF");
-		fileStream.Write(riff, 0, 4);
+            var chunkSize = BitConverter.GetBytes(fileStream.Length - 8);
+            fileStream.Write(chunkSize, 0, 4);
 
-		Byte[] chunkSize = BitConverter.GetBytes(fileStream.Length - 8);
-		fileStream.Write(chunkSize, 0, 4);
+            var wave = Encoding.UTF8.GetBytes("WAVE");
+            fileStream.Write(wave, 0, 4);
 
-		Byte[] wave = System.Text.Encoding.UTF8.GetBytes("WAVE");
-		fileStream.Write(wave, 0, 4);
+            var fmt = Encoding.UTF8.GetBytes("fmt ");
+            fileStream.Write(fmt, 0, 4);
 
-		Byte[] fmt = System.Text.Encoding.UTF8.GetBytes("fmt ");
-		fileStream.Write(fmt, 0, 4);
+            var subChunk1 = BitConverter.GetBytes(16);
+            fileStream.Write(subChunk1, 0, 4);
 
-		Byte[] subChunk1 = BitConverter.GetBytes(16);
-		fileStream.Write(subChunk1, 0, 4);
+            //UInt16 two = 2; // unused
+            ushort one = 1;
 
-		//UInt16 two = 2; // unused
-		UInt16 one = 1;
+            var audioFormat = BitConverter.GetBytes(one);
+            fileStream.Write(audioFormat, 0, 2);
 
-		Byte[] audioFormat = BitConverter.GetBytes(one);
-		fileStream.Write(audioFormat, 0, 2);
+            var numChannels = BitConverter.GetBytes(channels);
+            fileStream.Write(numChannels, 0, 2);
 
-		Byte[] numChannels = BitConverter.GetBytes(channels);
-		fileStream.Write(numChannels, 0, 2);
+            var sampleRate = BitConverter.GetBytes(hz);
+            fileStream.Write(sampleRate, 0, 4);
 
-		Byte[] sampleRate = BitConverter.GetBytes(hz);
-		fileStream.Write(sampleRate, 0, 4);
+            var byteRate =
+                BitConverter.GetBytes(hz * channels *
+                                      2); // sampleRate * bytesPerSample*number of channels, here 44100*2*2
+            fileStream.Write(byteRate, 0, 4);
 
-		Byte[] byteRate = BitConverter.GetBytes(hz * channels * 2); // sampleRate * bytesPerSample*number of channels, here 44100*2*2
-		fileStream.Write(byteRate, 0, 4);
+            var blockAlign = (ushort) (channels * 2);
+            fileStream.Write(BitConverter.GetBytes(blockAlign), 0, 2);
 
-		UInt16 blockAlign = (ushort) (channels * 2);
-		fileStream.Write(BitConverter.GetBytes(blockAlign), 0, 2);
+            ushort bps = 16;
+            var bitsPerSample = BitConverter.GetBytes(bps);
+            fileStream.Write(bitsPerSample, 0, 2);
 
-		UInt16 bps = 16;
-		Byte[] bitsPerSample = BitConverter.GetBytes(bps);
-		fileStream.Write(bitsPerSample, 0, 2);
+            var datastring = Encoding.UTF8.GetBytes("data");
+            fileStream.Write(datastring, 0, 4);
 
-		Byte[] datastring = System.Text.Encoding.UTF8.GetBytes("data");
-		fileStream.Write(datastring, 0, 4);
-
-		Byte[] subChunk2 = BitConverter.GetBytes(samples * channels * 2);
-		fileStream.Write(subChunk2, 0, 4);
+            var subChunk2 = BitConverter.GetBytes(samples * channels * 2);
+            fileStream.Write(subChunk2, 0, 4);
 
 //		fileStream.Close();
-	}
-        
+        }
 
         #endregion
     }

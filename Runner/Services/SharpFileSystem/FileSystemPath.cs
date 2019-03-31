@@ -1,49 +1,37 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace SharpFileSystem
 {
-    public struct FileSystemPath: IEquatable<FileSystemPath>, IComparable<FileSystemPath>
+    public struct FileSystemPath : IEquatable<FileSystemPath>, IComparable<FileSystemPath>
     {
         public static readonly char DirectorySeparator = '/';
-        public static FileSystemPath Root { get; private set; }
+        public static FileSystemPath Root { get; }
 
         private readonly string _path;
-        
-        public string Path
-        {
-            get { return _path ?? "/"; }
-        }
 
-        public bool IsDirectory
-        {
-            get { return Path[Path.Length - 1] == DirectorySeparator; }
-        }
+        public string Path => _path ?? "/";
 
-        public bool IsFile
-        {
-            get { return !IsDirectory; }
-        }
+        public bool IsDirectory => Path[Path.Length - 1] == DirectorySeparator;
 
-        public bool IsRoot
-        {
-            get { return Path.Length == 1; }
-        }
+        public bool IsFile => !IsDirectory;
+
+        public bool IsRoot => Path.Length == 1;
 
         public string EntityName
         {
             get
             {
-                string name = Path;
+                var name = Path;
                 if (IsRoot)
                     return null;
-                int endOfName = name.Length;
+                var endOfName = name.Length;
                 if (IsDirectory)
                     endOfName--;
-                int startOfName = name.LastIndexOf(DirectorySeparator, endOfName - 1, endOfName) + 1;
+                var startOfName = name.LastIndexOf(DirectorySeparator, endOfName - 1, endOfName) + 1;
                 return name.Substring(startOfName, endOfName - startOfName);
             }
         }
@@ -52,13 +40,13 @@ namespace SharpFileSystem
         {
             get
             {
-                string parentPath = Path;
+                var parentPath = Path;
                 if (IsRoot)
                     throw new InvalidOperationException("There is no parent of root.");
-                int lookaheadCount = parentPath.Length;
+                var lookaheadCount = parentPath.Length;
                 if (IsDirectory)
                     lookaheadCount--;
-                int index = parentPath.LastIndexOf(DirectorySeparator, lookaheadCount - 1, lookaheadCount);
+                var index = parentPath.LastIndexOf(DirectorySeparator, lookaheadCount - 1, lookaheadCount);
                 Debug.Assert(index >= 0);
                 parentPath = parentPath.Remove(index + 1);
                 return new FileSystemPath(parentPath);
@@ -146,7 +134,8 @@ namespace SharpFileSystem
         public FileSystemPath RemoveParent(FileSystemPath parent)
         {
             if (!parent.IsDirectory)
-                throw new ArgumentException("The specified path can not be the parent of this path: it is not a directory.");
+                throw new ArgumentException(
+                    "The specified path can not be the parent of this path: it is not a directory.");
             if (!Path.StartsWith(parent.Path))
                 throw new ArgumentException("The specified path is not a parent of this path.");
             return new FileSystemPath(Path.Remove(0, parent.Path.Length - 1));
@@ -165,8 +154,8 @@ namespace SharpFileSystem
         {
             if (!IsFile)
                 throw new ArgumentException("The specified FileSystemPath is not a file.");
-            string name = EntityName;
-            int extensionIndex = name.LastIndexOf('.');
+            var name = EntityName;
+            var extensionIndex = name.LastIndexOf('.');
             if (extensionIndex < 0)
                 return "";
             return name.Substring(extensionIndex);
@@ -177,25 +166,26 @@ namespace SharpFileSystem
         {
             if (!IsFile)
                 throw new ArgumentException("The specified FileSystemPath is not a file.");
-            string name = EntityName;
-            int extensionIndex = name.LastIndexOf('.');
+            var name = EntityName;
+            var extensionIndex = name.LastIndexOf('.');
             if (extensionIndex >= 0)
                 return ParentPath.AppendFile(name.Substring(0, extensionIndex) + extension);
-            return FileSystemPath.Parse(Path + extension);
+            return Parse(Path + extension);
         }
 
         [Pure]
         public string[] GetDirectorySegments()
         {
-            FileSystemPath path = this;
+            var path = this;
             if (IsFile)
                 path = path.ParentPath;
             var segments = new LinkedList<string>();
-            while(!path.IsRoot)
+            while (!path.IsRoot)
             {
                 segments.AddFirst(path.EntityName);
                 path = path.ParentPath;
             }
+
             return segments.ToArray();
         }
 

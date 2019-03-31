@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace SharpFileSystem.FileSystems
 {
     public class MemoryFileSystem : IFileSystem
     {
-        private IDictionary<FileSystemPath, ISet<FileSystemPath>> _directories =
-    new Dictionary<FileSystemPath, ISet<FileSystemPath>>();
-        private IDictionary<FileSystemPath, MemoryFile> _files =
+        private readonly IDictionary<FileSystemPath, ISet<FileSystemPath>> _directories =
+            new Dictionary<FileSystemPath, ISet<FileSystemPath>>();
+
+        private readonly IDictionary<FileSystemPath, MemoryFile> _files =
             new Dictionary<FileSystemPath, MemoryFile>();
+
         public MemoryFileSystem()
         {
             _directories.Add(FileSystemPath.Root, new HashSet<FileSystemPath>());
@@ -86,8 +86,6 @@ namespace SharpFileSystem.FileSystems
 
         public class MemoryFile
         {
-            public byte[] Content { get; set; }
-
             public MemoryFile()
                 : this(new byte[0])
             {
@@ -97,44 +95,34 @@ namespace SharpFileSystem.FileSystems
             {
                 Content = content;
             }
+
+            public byte[] Content { get; set; }
         }
 
         public class MemoryFileStream : Stream
         {
             private readonly MemoryFile _file;
 
-            public byte[] Content
-            {
-                get { return _file.Content; }
-                set { _file.Content = value; }
-            }
-
-            public override bool CanRead
-            {
-                get { return true; }
-            }
-
-            public override bool CanSeek
-            {
-                get { return true; }
-            }
-
-            public override bool CanWrite
-            {
-                get { return true; }
-            }
-
-            public override long Length
-            {
-                get { return _file.Content.Length; }
-            }
-
-            public override long Position { get; set; }
-
             public MemoryFileStream(MemoryFile file)
             {
                 _file = file;
             }
+
+            public byte[] Content
+            {
+                get => _file.Content;
+                set => _file.Content = value;
+            }
+
+            public override bool CanRead => true;
+
+            public override bool CanSeek => true;
+
+            public override bool CanWrite => true;
+
+            public override long Length => _file.Content.Length;
+
+            public override long Position { get; set; }
 
             public override void Flush()
             {
@@ -151,16 +139,16 @@ namespace SharpFileSystem.FileSystems
 
             public override void SetLength(long value)
             {
-                int newLength = (int)value;
-                byte[] newContent = new byte[newLength];
-                Buffer.BlockCopy(Content, 0, newContent, 0, Math.Min(newLength, (int)Length));
+                var newLength = (int) value;
+                var newContent = new byte[newLength];
+                Buffer.BlockCopy(Content, 0, newContent, 0, Math.Min(newLength, (int) Length));
                 Content = newContent;
             }
 
             public override int Read(byte[] buffer, int offset, int count)
             {
-                int mincount = Math.Min(count, Math.Abs((int)(Length - Position)));
-                Buffer.BlockCopy(Content, (int)Position, buffer, offset, mincount);
+                var mincount = Math.Min(count, Math.Abs((int) (Length - Position)));
+                Buffer.BlockCopy(Content, (int) Position, buffer, offset, mincount);
                 Position += mincount;
                 return mincount;
             }
@@ -169,7 +157,7 @@ namespace SharpFileSystem.FileSystems
             {
                 if (Length - Position < count)
                     SetLength(Position + count);
-                Buffer.BlockCopy(buffer, offset, Content, (int)Position, count);
+                Buffer.BlockCopy(buffer, offset, Content, (int) Position, count);
                 Position += count;
             }
         }

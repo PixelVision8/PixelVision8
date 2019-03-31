@@ -1,17 +1,22 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 namespace PixelVision8.Engine.Chips
 {
@@ -24,6 +29,7 @@ namespace PixelVision8.Engine.Chips
     /// </summary>
     public class TilemapChip : AbstractChip
     {
+        public bool autoImport;
 
         public TileData[] tiles;
 
@@ -34,15 +40,10 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public int totalFlags = 16;
 
-        public bool autoImport;
-
         /// <summary>
         ///     The total tiles in the chip.
         /// </summary>
-        public int total
-        {
-            get { return columns * rows; }
-        }
+        public int total => columns * rows;
 
         /// <summary>
         ///     The width of the tile map by tiles.
@@ -60,7 +61,7 @@ namespace PixelVision8.Engine.Chips
         {
             invalid = true;
         }
-        
+
         /// <summary>
         ///     This goes flags all tiles with a given sprite ID that it has changed and should be redrawn
         /// </summary>
@@ -69,15 +70,12 @@ namespace PixelVision8.Engine.Chips
         {
 //            GetTile(id).invalid = true;
 
-            for (int i = 0; i < total; i++)
+            for (var i = 0; i < total; i++)
             {
                 var tile = tiles[i];
-                if (tile.spriteID == id)
-                {
-                    tile.Invalidate();
-                }
+                if (tile.spriteID == id) tile.Invalidate();
             }
-            
+
             Invalidate();
         }
 
@@ -85,23 +83,17 @@ namespace PixelVision8.Engine.Chips
         {
 //            cachedTileMap.Clear();
 
-            for (int i = 0; i < total; i++)
-            {
+            for (var i = 0; i < total; i++)
                 tiles[i].Invalidate();
 //                layers[(int) Layer.Invalid][i] = -1;
-            }
-            
+
             Invalidate();
         }
 
         public void ResetValidation()
         {
             invalid = false;
-            for (int i = 0; i < total; i++)
-            {
-                tiles[i].ResetValidation();
-            }
-
+            for (var i = 0; i < total; i++) tiles[i].ResetValidation();
         }
 
         public TileData GetTile(int column, int row)
@@ -112,10 +104,10 @@ namespace PixelVision8.Engine.Chips
         public int CalculateTileIndex(int column, int row)
         {
             // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-            int size = rows;
-            row = ((row % size) + size) % size;
+            var size = rows;
+            row = (row % size + size) % size;
             size = columns;
-            column = ((column % size) + size) % size;
+            column = (column % size + size) % size;
             // size is still == columns from the previous operation - let's reuse the local
 
             return column + size * row;
@@ -145,11 +137,8 @@ namespace PixelVision8.Engine.Chips
             tiles = new TileData[total];
 
             // Create all of the tiles we need
-            for (int i = 0; i < total; i++)
-            {
-                tiles[i] = new TileData(i);
-            }
-            
+            for (var i = 0; i < total; i++) tiles[i] = new TileData(i);
+
             if (clear)
                 Clear();
 
@@ -162,11 +151,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public void Clear()
         {
-            
-            for (int i = 0; i < total; i++)
-            {
-                tiles[i].Clear();
-            }
+            for (var i = 0; i < total; i++) tiles[i].Clear();
 
             Invalidate();
         }
@@ -191,6 +176,5 @@ namespace PixelVision8.Engine.Chips
             base.Deactivate();
             engine.tilemapChip = null;
         }
-
     }
 }

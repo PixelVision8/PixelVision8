@@ -1,9 +1,31 @@
 ﻿using Microsoft.Xna.Framework;
+//   
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
+//  
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
+// 
+// Contributors
+// --------------------------------------------------------
+// This is the official list of Pixel Vision 8 contributors:
+//  
+// Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
+//
 
 namespace PixelVision8.Engine.Chips
 {
     public interface IGameChip
     {
+        int[] ConvertTextToSprites(string text, string fontName = "default");
+
+        int[] ConvertCharacterToPixelData(char character, string fontName);
 
         #region Color APIs
 
@@ -135,9 +157,8 @@ namespace PixelVision8.Engine.Chips
         ///     the full size from the visible size. Simply supply false as an argument to get the full display dimensions.
         /// </summary>
         Point Display(bool visible = true);
-        
+
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
         Rectangle VisibleBounds();
@@ -188,7 +209,8 @@ namespace PixelVision8.Engine.Chips
         ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
         ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
         /// </param>
-        void DrawPixels(int[] pixelData, int x, int y, int width, int height, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0);
+        void DrawPixels(int[] pixelData, int x, int y, int width, int height, bool flipH = false, bool flipV = false,
+            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0);
 
         /// <summary>
         ///     This method allows you to draw a single pixel to the Tilemap Cache. It's an expensive operation which leverages 
@@ -248,7 +270,8 @@ namespace PixelVision8.Engine.Chips
         ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
         ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
         /// </param>
-        void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0);
+        void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
+            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0);
 
         /// <summary>
         ///     The DrawSprites method makes it easier to combine and draw groups of sprites to the display in a grid. This is
@@ -294,10 +317,13 @@ namespace PixelVision8.Engine.Chips
         ///     wrap around the screen when they reach the edges of the screen.
         /// </param>
         /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
-        void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rectangle? bounds = null);
+        void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
+            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
+            Rectangle? bounds = null);
 
         /// <summary>
-        ///     DrawSpriteBlock() is similar to DrawSprites except you define the first sprite (upper left corner) and the width x height 
+        ///     DrawSpriteBlock() is similar to DrawSprites except you define the first sprite (upper left corner) and the width x
+        ///     height
         ///     (in sprites) to sample from sprite ram. This will create a larger sprite by using neighbor sprites.
         /// </summary>
         /// <param name="id">The top left sprite to start with. </param>
@@ -333,7 +359,9 @@ namespace PixelVision8.Engine.Chips
         ///     wrap around the screen when they reach the edges of the screen.
         /// </param>
         /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
-        void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rectangle? bounds = null);
+        void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false,
+            bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true,
+            bool useScrollPos = true, Rectangle? bounds = null);
 
         /// <summary>
         ///     The DrawTile method makes it easier to update the visuals of a tile on any of the map layers. By default, 
@@ -433,20 +461,23 @@ namespace PixelVision8.Engine.Chips
         ///     which automatically uses the full visible height of the display, while taking into account the Y position offset.
         /// </param>
         /// <param name="offsetX">
-        ///     An optional int value to override the scroll X position. This is useful when you need to change the left x position 
+        ///     An optional int value to override the scroll X position. This is useful when you need to change the left x position
         ///     from where to sample the tilemap data from.
         /// </param>
         /// <param name="offsetY">
-        ///     An optional int value to override the scroll Y position. This is useful when you need to change the top y position 
+        ///     An optional int value to override the scroll Y position. This is useful when you need to change the top y position
         ///     from where to sample the tilemap data from.
         /// </param>
         /// <param name="DrawMode">
         ///     This accepts DrawMode Tile and TilemapCache.
         /// </param>
-        void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null, int? offsetY = null, DrawMode drawMode = DrawMode.Tile);
+        void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null, int? offsetY = null,
+            DrawMode drawMode = DrawMode.Tile);
 
         /// <summary>
-        ///     This method allows you to draw a rectangle with a fill color. By default, this method is used to clear the screen but you can supply a color offset to change the color value and use it to fill a rectangle area with a specific color instead.
+        ///     This method allows you to draw a rectangle with a fill color. By default, this method is used to clear the screen
+        ///     but you can supply a color offset to change the color value and use it to fill a rectangle area with a specific
+        ///     color instead.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -662,6 +693,7 @@ namespace PixelVision8.Engine.Chips
         ///     The loop to rewind too.
         /// </param>
         void RewindSong(int position = 0, int loopID = 0);
+
         #endregion
 
         #region Sprite APIs
@@ -727,7 +759,7 @@ namespace PixelVision8.Engine.Chips
         int TotalSprites(bool ignoreEmpty = true);
 
         /// <summary>
-        ///     This method returns the maximum number of sprites the Display Chip can render in a single frame. Use this 
+        ///     This method returns the maximum number of sprites the Display Chip can render in a single frame. Use this
         ///     to better understand the limitations of the hardware your game is running on. This is a read only property
         ///     at runtime.
         /// </summary>
@@ -783,7 +815,8 @@ namespace PixelVision8.Engine.Chips
         ///     Returns a dictionary containing the spriteID, colorOffset, and flag for an individual tile.
         /// </returns>
         //TODO this should return a custom class not a Dictionary
-        TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null, bool? flipH = null, bool? flipV = null);
+        TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null,
+            bool? flipH = null, bool? flipV = null);
 
         /// <summary>
         ///     This forces the map to redraw its cached pixel data. Use this to clear any pixel data added
@@ -836,11 +869,7 @@ namespace PixelVision8.Engine.Chips
         ///     An optional flag int value to be applied to each updated tile.
         /// </param>
         void UpdateTiles(int column, int row, int columns, int[] ids, int? colorOffset = null, int? flag = null);
-        
+
         #endregion
-
-        int[] ConvertTextToSprites(string text, string fontName = "default");
-
-        int[] ConvertCharacterToPixelData(char character, string fontName);
     }
 }

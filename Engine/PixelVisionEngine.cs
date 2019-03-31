@@ -1,17 +1,22 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System;
 using System.Collections.Generic;
@@ -21,7 +26,6 @@ using PixelVision8.Engine.Services;
 
 namespace PixelVision8.Engine
 {
-    
     /// <summary>
     ///     This is the default engine class for Pixel Vision 8. It manages the
     ///     state of all chips, the game itself and helps with communication between
@@ -29,29 +33,22 @@ namespace PixelVision8.Engine
     /// </summary>
     public class PixelVisionEngine : IEngine, IServiceLocator
     {
-
-        protected string[] defaultChips;
-        protected Dictionary<string, IService> _services = new Dictionary<string, IService>();
-
-        protected Dictionary<string, AbstractChip> chips = new Dictionary<string, AbstractChip>();
-        protected List<IDraw> drawChips = new List<IDraw>();
-//        protected PixelVisionEngine engine;
-        protected List<IUpdate> updateChips = new List<IUpdate>();
-
-        
-        public Dictionary<string, IService> services
-        {
-            get { return _services; }
-        }
-        
-        public Dictionary<string, string> metaData => _metaData;
-
         protected Dictionary<string, string> _metaData = new Dictionary<string, string>
         {
             {"name", "untitled"}
         };
-        
+
+        protected Dictionary<string, IService> _services = new Dictionary<string, IService>();
+
+        protected Dictionary<string, AbstractChip> chips = new Dictionary<string, AbstractChip>();
+
+        protected string[] defaultChips;
+        protected List<IDraw> drawChips = new List<IDraw>();
+
         public Dictionary<string, byte[]> files = new Dictionary<string, byte[]>();
+
+//        protected PixelVisionEngine engine;
+        protected List<IUpdate> updateChips = new List<IUpdate>();
 
         /// <summary>
         ///     The PixelVisionEngine constructor requires a render target and an
@@ -70,9 +67,11 @@ namespace PixelVision8.Engine
             this.name = name;
 
             //this.canWrite = readOnly;
-            
+
             Init();
         }
+
+        public Dictionary<string, string> metaData => _metaData;
 
         /// <summary>
         /// </summary>
@@ -203,7 +202,7 @@ namespace PixelVision8.Engine
 
             foreach (var chip in updateChips)
                 chip.Update(timeDelta);
-            
+
 //            chipManager.Update(timeDelta);
         }
 
@@ -271,6 +270,9 @@ namespace PixelVision8.Engine
                     target.Add(data.Key, data.Value);
         }
 
+
+        public Dictionary<string, IService> services => _services;
+
         /// <summary>
         ///     The PixelVisionEngine Init() method creates the
         ///     <see cref="ChipManager" /> and <see cref="APIBridge" /> as well as any
@@ -313,12 +315,12 @@ namespace PixelVision8.Engine
 
             throw new Exception("The requested service '" + id + "' is not registered");
         }
-        
+
         public bool HasChip(string id)
         {
             return chips.ContainsKey(id);
         }
-        
+
         public AbstractChip GetChip(string id, bool activeOnCreate = true)
         {
             //Debug.Log("Chip Manager: Get Chip " + id);
@@ -350,7 +352,7 @@ namespace PixelVision8.Engine
 
             return chipInstance;
         }
-        
+
         public void ActivateChip(string id, AbstractChip chip, bool autoActivate = true)
         {
             if (HasChip(id))
@@ -373,7 +375,7 @@ namespace PixelVision8.Engine
             if (autoActivate)
                 chip.Activate(this);
         }
-        
+
         public void DeactivateChip(string id, AbstractChip chip)
         {
             chip.Deactivate();
@@ -386,7 +388,7 @@ namespace PixelVision8.Engine
 
             chips.Remove(id);
         }
-        
+
         public void RemoveInactiveChips()
         {
             foreach (var item in chips.Where(c => c.Value.active == false).ToArray())
@@ -394,7 +396,5 @@ namespace PixelVision8.Engine
         }
 
         #endregion
-
     }
-
 }

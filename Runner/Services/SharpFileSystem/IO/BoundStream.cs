@@ -5,9 +5,9 @@ namespace SharpFileSystem.IO
 {
     public class BoundStream : Stream
     {
-        private Stream _stream;
-        private long _length;
-        private long _position = 0;
+        private readonly long _length;
+        private long _position;
+        private readonly Stream _stream;
 
         public BoundStream(Stream stream, long length)
         {
@@ -15,19 +15,18 @@ namespace SharpFileSystem.IO
             _length = length;
         }
 
-        public override bool CanRead
-        {
-            get { return _stream.CanRead; }
-        }
+        public override bool CanRead => _stream.CanRead;
 
-        public override bool CanSeek
-        {
-            get { return _stream.CanSeek; }
-        }
+        public override bool CanSeek => _stream.CanSeek;
 
-        public override bool CanWrite
+        public override bool CanWrite => _stream.CanWrite;
+
+        public override long Length => _length;
+
+        public override long Position
         {
-            get { return _stream.CanWrite; }
+            get => _position;
+            set => throw new NotSupportedException();
         }
 
         public override void Flush()
@@ -35,24 +34,13 @@ namespace SharpFileSystem.IO
             _stream.Flush();
         }
 
-        public override long Length
-        {
-            get { return _length; }
-        }
-
-        public override long Position
-        {
-            get { return _position; }
-            set { throw new NotSupportedException(); }
-        }
-
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (count > (int)(_length - _position))
-                count = (int)(_length - _position);
+            if (count > (int) (_length - _position))
+                count = (int) (_length - _position);
             if (count == 0)
                 return 0;
-            int result = _stream.Read(buffer, offset, count);
+            var result = _stream.Read(buffer, offset, count);
             _position += result;
             return result;
         }

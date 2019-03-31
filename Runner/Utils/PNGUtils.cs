@@ -1,3 +1,22 @@
+//   
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
+//  
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
+// 
+// Contributors
+// --------------------------------------------------------
+// This is the official list of Pixel Vision 8 contributors:
+//  
+// Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
+//
 
 using System;
 using System.Collections;
@@ -9,13 +28,11 @@ using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Runner.Utils
 {
-
-
     public class Palette
     {
         public IList<Color> colors;
 
-        private string maskHex;
+        private readonly string maskHex;
 //        public List<Color> uniqueColors = new List<Color>();
 
         internal Palette(string maskHex = "#FF00FF")
@@ -25,19 +42,13 @@ namespace PixelVision8.Runner.Utils
             colors = new List<Color>();
         }
 
-        internal Color this[int index]
-        {
-            get
-            {
-                return colors[index];
-            }
-        }
+        internal Color this[int index] => colors[index];
 
         internal void AddColor(Color color)
         {
 //            if (colors.IndexOf(color) == -1)
 //            {
-                colors.Add(color);
+            colors.Add(color);
 
 
 //            var colorData = new ColorData(color.R, color.G, color.B);
@@ -63,10 +74,7 @@ namespace PixelVision8.Runner.Utils
 
         internal void AddAlphaToColors(IList<byte> alphas)
         {
-            for (int i = 0; i < alphas.Count; i++)
-            {
-                AddAlphaToColorAtIndex(i, alphas[i]);
-            }
+            for (var i = 0; i < alphas.Count; i++) AddAlphaToColorAtIndex(i, alphas[i]);
         }
     }
 
@@ -80,58 +88,26 @@ namespace PixelVision8.Runner.Utils
         }
 
         /// <summary>
-        /// Length of Data field
+        ///     Length of Data field
         /// </summary>
-        internal uint Length
-        {
-            get;
-            set;
-        }
+        internal uint Length { get; set; }
 
-        internal string Type
-        {
-            get;
-            set;
-        }
+        internal string Type { get; set; }
 
-        private bool Ancillary
-        {
-            get;
-            set;
-        }
+        private bool Ancillary { get; set; }
 
-        private bool Private
-        {
-            get;
-            set;
-        }
+        private bool Private { get; set; }
 
-        private bool Reserved
-        {
-            get;
-            set;
-        }
+        private bool Reserved { get; set; }
 
-        private bool SafeToCopy
-        {
-            get;
-            set;
-        }
+        private bool SafeToCopy { get; set; }
 
-        internal byte[] Data
-        {
-            get;
-            set;
-        }
+        internal byte[] Data { get; set; }
 
         /// <summary>
-        /// CRC of both Type and Data fields, but not Length field
+        ///     CRC of both Type and Data fields, but not Length field
         /// </summary>
-        internal uint Crc
-        {
-            get;
-            set;
-        }
+        internal uint Crc { get; set; }
 
         internal virtual void Decode(byte[] chunkBytes)
         {
@@ -139,21 +115,18 @@ namespace PixelVision8.Runner.Utils
 
             Length = chunkBytesList.GetRange(0, 4).ToArray().ToUInt();
             DecodeType(chunkBytesList.GetRange(4, 4).ToArray());
-            Data = chunkBytesList.GetRange(8, (int)Length).ToArray();
-            Crc = chunkBytesList.GetRange((int)(8 + Length), 4).ToArray().ToUInt();
+            Data = chunkBytesList.GetRange(8, (int) Length).ToArray();
+            Crc = chunkBytesList.GetRange((int) (8 + Length), 4).ToArray().ToUInt();
 
-            if (CrcCheck() == false)
-            {
-                throw new Exception("CRC check failed.");
-            }
+            if (CrcCheck() == false) throw new Exception("CRC check failed.");
         }
 
         internal virtual byte[] Encode()
         {
             var result = new List<byte>();
 
-            uint dataLength = (uint)Data.Length;
-            uint dataCrc = PngCrc.Calculate(InputToCrcCheck());
+            var dataLength = (uint) Data.Length;
+            var dataCrc = PngCrc.Calculate(InputToCrcCheck());
 
             result.AddRange(dataLength.ToByteArray());
             result.AddRange(GetChunkTypeBytes(Type));
@@ -179,12 +152,12 @@ namespace PixelVision8.Runner.Utils
         {
             var crcInputBytes = InputToCrcCheck();
 
-            return (PngCrc.Calculate(crcInputBytes) == Crc);
+            return PngCrc.Calculate(crcInputBytes) == Crc;
         }
 
         private byte[] InputToCrcCheck()
         {
-            byte[] chunkTypeBytes = GetChunkTypeBytes(Type);
+            var chunkTypeBytes = GetChunkTypeBytes(Type);
             return chunkTypeBytes.Concat(Data).ToArray();
         }
 
@@ -201,59 +174,26 @@ namespace PixelVision8.Runner.Utils
 
     internal class HeaderChunk : PngChunk
     {
-        private static byte[] pngSignature = { 137, 80, 78, 71, 13, 10, 26, 10 };
-        
         internal HeaderChunk()
         {
             Type = "IHDR";
         }
 
-        internal uint Width
-        {
-            get;
-            set;
-        }
+        internal uint Width { get; set; }
 
-        internal uint Height
-        {
-            get;
-            set;
-        }
+        internal uint Height { get; set; }
 
-        internal byte BitDepth
-        {
-            get;
-            set;
-        }
+        internal byte BitDepth { get; set; }
 
-        internal ColorType ColorType
-        {
-            get;
-            set;
-        }
+        internal ColorType ColorType { get; set; }
 
-        internal byte CompressionMethod
-        {
-            get;
-            set;
-        }
+        internal byte CompressionMethod { get; set; }
 
-        internal byte FilterMethod
-        {
-            get;
-            set;
-        }
+        internal byte FilterMethod { get; set; }
 
-        internal byte InterlaceMethod
-        {
-            get;
-            set;
-        }
+        internal byte InterlaceMethod { get; set; }
 
-        internal static byte[] PngSignature
-        {
-            get { return pngSignature; }
-        }
+        internal static byte[] PngSignature { get; } = {137, 80, 78, 71, 13, 10, 26, 10};
 
         internal override void Decode(byte[] chunkBytes)
         {
@@ -263,15 +203,15 @@ namespace PixelVision8.Runner.Utils
             Width = chunkData.Take(4).ToArray().ToUInt();
             Height = chunkData.Skip(4).Take(4).ToArray().ToUInt();
             BitDepth = chunkData.Skip(8).First();
-            ColorType = (ColorType)chunkData.Skip(9).First();
+            ColorType = (ColorType) chunkData.Skip(9).First();
             CompressionMethod = chunkData.Skip(10).First();
             FilterMethod = chunkData.Skip(11).First();
             InterlaceMethod = chunkData.Skip(12).First();
 
             if (BitDepth < 8)
-            {
-                throw new Exception(String.Format("Bit depth less than 8 bits per sample is unsupported.  Image bit depth is {0} bits per sample.", BitDepth));
-            }
+                throw new Exception(string.Format(
+                    "Bit depth less than 8 bits per sample is unsupported.  Image bit depth is {0} bits per sample.",
+                    BitDepth));
         }
 
         internal override byte[] Encode()
@@ -281,7 +221,7 @@ namespace PixelVision8.Runner.Utils
             chunkData.AddRange(Width.ToByteArray().ToList());
             chunkData.AddRange(Height.ToByteArray().ToList());
             chunkData.Add(BitDepth);
-            chunkData.Add((byte)ColorType);
+            chunkData.Add((byte) ColorType);
             chunkData.Add(CompressionMethod);
             chunkData.Add(FilterMethod);
             chunkData.Add(InterlaceMethod);
@@ -300,28 +240,21 @@ namespace PixelVision8.Runner.Utils
             Palette = new Palette();
         }
 
-        internal Palette Palette
-        {
-            get;
-            set;
-        }
+        internal Palette Palette { get; set; }
 
         internal override void Decode(byte[] chunkBytes)
         {
             base.Decode(chunkBytes);
             var chunkData = Data;
 
-            if (chunkData.Length % 3 != 0)
-            {
-                throw new Exception("Malformed palette chunk - length not multiple of 3.");
-            }
+            if (chunkData.Length % 3 != 0) throw new Exception("Malformed palette chunk - length not multiple of 3.");
 
-            for (int i = 0; i < chunkData.Length / 3; i++)
+            for (var i = 0; i < chunkData.Length / 3; i++)
             {
-                byte red = (chunkData.Skip(3 * i).Take(1).First());///(float)byte.MaxValue;
-                byte green = (chunkData.Skip((3 * i) + 1).Take(1).First());///(float)byte.MaxValue;
-                byte blue = (chunkData.Skip((3 * i) + 2).Take(1).First());///(float)byte.MaxValue;
-                
+                var red = chunkData.Skip(3 * i).Take(1).First(); ///(float)byte.MaxValue;
+                var green = chunkData.Skip(3 * i + 1).Take(1).First(); ///(float)byte.MaxValue;
+                var blue = chunkData.Skip(3 * i + 2).Take(1).First(); ///(float)byte.MaxValue;
+
                 Palette.AddColor(new Color(red, green, blue));
             }
         }
@@ -335,11 +268,7 @@ namespace PixelVision8.Runner.Utils
             PaletteTransparencies = new List<byte>();
         }
 
-        internal IList<byte> PaletteTransparencies
-        {
-            get;
-            set;
-        }
+        internal IList<byte> PaletteTransparencies { get; set; }
 
         internal override void Decode(byte[] chunkBytes)
         {
@@ -377,7 +306,7 @@ namespace PixelVision8.Runner.Utils
     }
 
     #endregion
-    
+
     #region Enumerations
 
     public enum ColorType
@@ -413,7 +342,7 @@ namespace PixelVision8.Runner.Utils
         {
             var encodedScanline = new byte[scanline.Length + 1];
 
-            encodedScanline[0] = (byte)FilterType.None;
+            encodedScanline[0] = (byte) FilterType.None;
             scanline.CopyTo(encodedScanline, 1);
 
             return encodedScanline;
@@ -424,13 +353,13 @@ namespace PixelVision8.Runner.Utils
     {
         internal static byte[] Decode(byte[] scanline, int bytesPerPixel)
         {
-            byte[] result = new byte[scanline.Length];
+            var result = new byte[scanline.Length];
 
-            for (int x = 1; x < scanline.Length; x++)
+            for (var x = 1; x < scanline.Length; x++)
             {
-                byte priorRawByte = (x - bytesPerPixel < 1) ? (byte)0 : result[x - bytesPerPixel];
+                var priorRawByte = x - bytesPerPixel < 1 ? (byte) 0 : result[x - bytesPerPixel];
 
-                result[x] = (byte)((scanline[x] + priorRawByte) % 256);
+                result[x] = (byte) ((scanline[x] + priorRawByte) % 256);
             }
 
             return result;
@@ -440,13 +369,13 @@ namespace PixelVision8.Runner.Utils
         {
             var encodedScanline = new byte[scanline.Length + 1];
 
-            encodedScanline[0] = (byte)FilterType.Sub;
+            encodedScanline[0] = (byte) FilterType.Sub;
 
-            for (int x = 0; x < scanline.Length; x++)
+            for (var x = 0; x < scanline.Length; x++)
             {
-                byte priorRawByte = (x - bytesPerPixel < 0) ? (byte)0 : scanline[x - bytesPerPixel];
+                var priorRawByte = x - bytesPerPixel < 0 ? (byte) 0 : scanline[x - bytesPerPixel];
 
-                encodedScanline[x + 1] = (byte)((scanline[x] - priorRawByte) % 256);
+                encodedScanline[x + 1] = (byte) ((scanline[x] - priorRawByte) % 256);
             }
 
             return encodedScanline;
@@ -457,13 +386,13 @@ namespace PixelVision8.Runner.Utils
     {
         internal static byte[] Decode(byte[] scanline, byte[] previousScanline)
         {
-            byte[] result = new byte[scanline.Length];
+            var result = new byte[scanline.Length];
 
-            for (int x = 1; x < scanline.Length; x++)
+            for (var x = 1; x < scanline.Length; x++)
             {
-                byte above = previousScanline[x];
+                var above = previousScanline[x];
 
-                result[x] = (byte)((scanline[x] + above) % 256);
+                result[x] = (byte) ((scanline[x] + above) % 256);
             }
 
             return result;
@@ -473,13 +402,13 @@ namespace PixelVision8.Runner.Utils
         {
             var encodedScanline = new byte[scanline.Length + 1];
 
-            encodedScanline[0] = (byte)FilterType.Up;
+            encodedScanline[0] = (byte) FilterType.Up;
 
-            for (int x = 0; x < scanline.Length; x++)
+            for (var x = 0; x < scanline.Length; x++)
             {
-                byte above = previousScanline[x];
+                var above = previousScanline[x];
 
-                encodedScanline[x + 1] = (byte)((scanline[x] - above) % 256);
+                encodedScanline[x + 1] = (byte) ((scanline[x] - above) % 256);
             }
 
             return encodedScanline;
@@ -490,14 +419,14 @@ namespace PixelVision8.Runner.Utils
     {
         internal static byte[] Decode(byte[] scanline, byte[] previousScanline, int bytesPerPixel)
         {
-            byte[] result = new byte[scanline.Length];
+            var result = new byte[scanline.Length];
 
-            for (int x = 1; x < scanline.Length; x++)
+            for (var x = 1; x < scanline.Length; x++)
             {
-                byte left = (x - bytesPerPixel < 1) ? (byte)0 : result[x - bytesPerPixel];
-                byte above = previousScanline[x];
+                var left = x - bytesPerPixel < 1 ? (byte) 0 : result[x - bytesPerPixel];
+                var above = previousScanline[x];
 
-                result[x] = (byte)((scanline[x] + Average(left, above)) % 256);
+                result[x] = (byte) ((scanline[x] + Average(left, above)) % 256);
             }
 
             return result;
@@ -507,14 +436,14 @@ namespace PixelVision8.Runner.Utils
         {
             var encodedScanline = new byte[scanline.Length + 1];
 
-            encodedScanline[0] = (byte)FilterType.Average;
+            encodedScanline[0] = (byte) FilterType.Average;
 
-            for (int x = 0; x < scanline.Length; x++)
+            for (var x = 0; x < scanline.Length; x++)
             {
-                byte left = (x - bytesPerPixel < 0) ? (byte)0 : scanline[x - bytesPerPixel];
-                byte above = previousScanline[x];
+                var left = x - bytesPerPixel < 0 ? (byte) 0 : scanline[x - bytesPerPixel];
+                var above = previousScanline[x];
 
-                encodedScanline[x + 1] = (byte)((scanline[x] - Average(left, above)) % 256);
+                encodedScanline[x + 1] = (byte) ((scanline[x] - Average(left, above)) % 256);
             }
 
             return encodedScanline;
@@ -530,15 +459,15 @@ namespace PixelVision8.Runner.Utils
     {
         internal static byte[] Decode(byte[] scanline, byte[] previousScanline, int bytesPerPixel)
         {
-            byte[] result = new byte[scanline.Length];
+            var result = new byte[scanline.Length];
 
-            for (int x = 1; x < scanline.Length; x++)
+            for (var x = 1; x < scanline.Length; x++)
             {
-                byte left = (x - bytesPerPixel < 1) ? (byte)0 : result[x - bytesPerPixel];
-                byte above = previousScanline[x];
-                byte upperLeft = (x - bytesPerPixel < 1) ? (byte)0 : previousScanline[x - bytesPerPixel];
+                var left = x - bytesPerPixel < 1 ? (byte) 0 : result[x - bytesPerPixel];
+                var above = previousScanline[x];
+                var upperLeft = x - bytesPerPixel < 1 ? (byte) 0 : previousScanline[x - bytesPerPixel];
 
-                result[x] = (byte)((scanline[x] + PaethPredictor(left, above, upperLeft)) % 256);
+                result[x] = (byte) ((scanline[x] + PaethPredictor(left, above, upperLeft)) % 256);
             }
 
             return result;
@@ -548,15 +477,15 @@ namespace PixelVision8.Runner.Utils
         {
             var encodedScanline = new byte[scanline.Length + 1];
 
-            encodedScanline[0] = (byte)FilterType.Paeth;
+            encodedScanline[0] = (byte) FilterType.Paeth;
 
-            for (int x = 0; x < scanline.Length; x++)
+            for (var x = 0; x < scanline.Length; x++)
             {
-                byte left = (x - bytesPerPixel < 0) ? (byte)0 : scanline[x - bytesPerPixel];
-                byte above = previousScanline[x];
-                byte upperLeft = (x - bytesPerPixel < 0) ? (byte)0 : previousScanline[x - bytesPerPixel];
+                var left = x - bytesPerPixel < 0 ? (byte) 0 : scanline[x - bytesPerPixel];
+                var above = previousScanline[x];
+                var upperLeft = x - bytesPerPixel < 0 ? (byte) 0 : previousScanline[x - bytesPerPixel];
 
-                encodedScanline[x + 1] = (byte)((scanline[x] - PaethPredictor(left, above, upperLeft)) % 256);
+                encodedScanline[x + 1] = (byte) ((scanline[x] - PaethPredictor(left, above, upperLeft)) % 256);
             }
 
             return encodedScanline;
@@ -564,20 +493,14 @@ namespace PixelVision8.Runner.Utils
 
         private static int PaethPredictor(int a, int b, int c)
         {
-            int p = a + b - c;
-            int pa = Math.Abs(p - a);
-            int pb = Math.Abs(p - b);
-            int pc = Math.Abs(p - c);
+            var p = a + b - c;
+            var pa = Math.Abs(p - a);
+            var pb = Math.Abs(p - b);
+            var pc = Math.Abs(p - c);
 
-            if ((pa <= pb) && (pa <= pc))
-            {
-                return a;
-            }
+            if (pa <= pb && pa <= pc) return a;
 
-            if (pb <= pc)
-            {
-                return b;
-            }
+            if (pb <= pc) return b;
 
             return c;
         }
@@ -596,7 +519,7 @@ namespace PixelVision8.Runner.Utils
         }
 
         /// <summary>
-        /// Build CRC lookup table for performance (once-off)
+        ///     Build CRC lookup table for performance (once-off)
         /// </summary>
         private static void BuildCrcTable()
         {
@@ -609,16 +532,10 @@ namespace PixelVision8.Runner.Utils
                 c = n;
 
                 for (k = 0; k < 8; k++)
-                {
                     if ((c & 1) > 0)
-                    {
                         c = 0xedb88320 ^ (c >> 1);
-                    }
                     else
-                    {
                         c = c >> 1;
-                    }
-                }
 
                 crcTable[n] = c;
             }
@@ -626,19 +543,13 @@ namespace PixelVision8.Runner.Utils
 
         internal static uint Calculate(byte[] bytes)
         {
-            uint c = 0xffffffff;
+            var c = 0xffffffff;
 
             int n;
 
-            if (crcTable == null)
-            {
-                BuildCrcTable();
-            }
+            if (crcTable == null) BuildCrcTable();
 
-            for (n = 0; n < bytes.Length; n++)
-            {
-                c = crcTable[(c ^ bytes[n]) & 0xff] ^ (c >> 8);
-            }
+            for (n = 0; n < bytes.Length; n++) c = crcTable[(c ^ bytes[n]) & 0xff] ^ (c >> 8);
 
             return c ^ 0xffffffff;
         }
@@ -651,25 +562,18 @@ namespace PixelVision8.Runner.Utils
             byte[] input;
 
             if (BitConverter.IsLittleEndian)
-            {
                 input = ReverseByteArray(bytes);
-            }
             else
-            {
                 input = bytes;
-            }
 
             return BitConverter.ToUInt32(input, 0);
         }
 
         internal static byte[] ToByteArray(this uint integer)
         {
-            byte[] output = BitConverter.GetBytes(integer);
+            var output = BitConverter.GetBytes(integer);
 
-            if (BitConverter.IsLittleEndian)
-            {
-                return ReverseByteArray(output);
-            }
+            if (BitConverter.IsLittleEndian) return ReverseByteArray(output);
 
             return output;
         }

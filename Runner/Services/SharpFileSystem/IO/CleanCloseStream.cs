@@ -2,39 +2,27 @@ using System.IO;
 
 namespace SharpFileSystem.IO
 {
-    public class CleanCloseStream: Stream
+    public class CleanCloseStream : Stream
     {
-        private Stream _stream;
-
-        public override bool CanRead
-        {
-            get { return _stream.CanRead; }
-        }
-
-        public override bool CanSeek
-        {
-            get { return _stream.CanSeek; }
-        }
-
-        public override bool CanWrite
-        {
-            get { return _stream.CanWrite; }
-        }
-
-        public override long Length
-        {
-            get { return _stream.Length; }
-        }
-
-        public override long Position
-        {
-            get { return _stream.Position; }
-            set { _stream.Position = value; }
-        }
+        private readonly Stream _stream;
 
         public CleanCloseStream(Stream stream)
         {
             _stream = stream;
+        }
+
+        public override bool CanRead => _stream.CanRead;
+
+        public override bool CanSeek => _stream.CanSeek;
+
+        public override bool CanWrite => _stream.CanWrite;
+
+        public override long Length => _stream.Length;
+
+        public override long Position
+        {
+            get => _stream.Position;
+            set => _stream.Position = value;
         }
 
         public override int Read(byte[] buffer, int offset, int count)
@@ -67,6 +55,7 @@ namespace SharpFileSystem.IO
             while (_stream.ReadByte() != -1)
             {
             }
+
             _stream.Close();
         }
     }

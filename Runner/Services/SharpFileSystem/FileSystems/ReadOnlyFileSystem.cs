@@ -1,19 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace SharpFileSystem.FileSystems
 {
-    public class ReadOnlyFileSystem: IFileSystem
+    public class ReadOnlyFileSystem : IFileSystem
     {
-        public IFileSystem FileSystem { get; private set; }
-
         public ReadOnlyFileSystem(IFileSystem fileSystem)
         {
             FileSystem = fileSystem;
         }
+
+        public IFileSystem FileSystem { get; }
 
         public void Dispose()
         {

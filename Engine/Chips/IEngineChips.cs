@@ -1,30 +1,33 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using PixelVision8.Engine.Services;
 
 namespace PixelVision8.Engine.Chips
 {
-
     /// <summary>
     ///     The <see cref="IEngineChips" /> internal represents
     ///     all of the core chips the engine needs to run.
     /// </summary>
     public interface IEngineChips
     {
-
         /// <summary>
         ///     The Chip Manager class is responsible for registering and
         ///     deactivating chips. This property offers direct access to it.
@@ -101,7 +104,7 @@ namespace PixelVision8.Engine.Chips
         MusicChip musicChip { get; set; }
 
         AbstractChip GetChip(string id, bool activeOnCreate = true);
-        
+
         void AddService(string id, IService service);
 
 
@@ -111,16 +114,11 @@ namespace PixelVision8.Engine.Chips
         bool HasChip(string id);
 
 
-
-
         void ActivateChip(string id, AbstractChip chip, bool autoActivate = true);
 
 
         void DeactivateChip(string id, AbstractChip chip);
 
         void RemoveInactiveChips();
-
-
     }
-
 }

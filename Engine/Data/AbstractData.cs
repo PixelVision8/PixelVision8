@@ -1,24 +1,28 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System;
 using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine
 {
-
     /// <summary>
     ///     The AbstractData class represents a standard foundation for all
     ///     data objects in the engine. It implements the ISave, ILoad and
@@ -27,7 +31,6 @@ namespace PixelVision8.Engine
     /// </summary>
     public abstract class AbstractData : IInvalidate
     {
-
         protected bool _invalid;
 
         /// <summary>
@@ -38,10 +41,7 @@ namespace PixelVision8.Engine
         ///     before refreshing their data.
         /// </summary>
         /// <value>Boolean</value>
-        public virtual bool invalid
-        {
-            get { return _invalid; }
-        }
+        public virtual bool invalid => _invalid;
 
         /// <summary>
         ///     This method allows a clean way to set the invalid property to true
@@ -62,9 +62,7 @@ namespace PixelVision8.Engine
         /// <param name="value"></param>
         public virtual void ResetValidation(int value = 0)
         {
-            _invalid = Convert.ToBoolean(MathUtil.Clamp(value, 0, 1));
+            _invalid = Convert.ToBoolean(value.Clamp(0, 1));
         }
-
     }
-
 }

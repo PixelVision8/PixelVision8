@@ -4,9 +4,6 @@ namespace SharpFileSystem
 {
     public class ParseException : Exception
     {
-        public string Input { get; private set; }
-        public string Reason { get; private set; }
-
         public ParseException(string input)
             : base("Could not parse input \"" + input + "\"")
         {
@@ -20,5 +17,8 @@ namespace SharpFileSystem
             Input = input;
             Reason = reason;
         }
+
+        public string Input { get; }
+        public string Reason { get; }
     }
 }

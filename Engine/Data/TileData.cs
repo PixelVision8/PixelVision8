@@ -1,83 +1,38 @@
-﻿﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+﻿//   
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 namespace PixelVision8.Engine
 {
     public class TileData : AbstractData
     {
-        private int _spriteID;
         private int _colorOffset;
         private int _flag = -1;
         private bool _flipH;
         private bool _flipV;
-        
+        private int _spriteID;
+
         public int index;
 
-        public int spriteID
-        {
-            get { return _spriteID; }
-            set
-            {
-                _spriteID = value;
-                Invalidate();
-            }
-        }
 
-        public int colorOffset
-        {
-            get { return _colorOffset; }
-            set
-            {
-                _colorOffset = value;
-                Invalidate();
-            }
-        }
-
-        public int flag
-        {
-            get { return _flag; }
-            set
-            {
-                _flag = value;
-                Invalidate();
-            }
-        }
-        
-        public bool flipH
-        {
-            get { return _flipH; }
-            set
-            {
-                _flipH = value;
-                Invalidate();
-            }
-        }
-
-        
-        public bool flipV
-        {
-            get { return _flipV; }
-            set
-            {
-                _flipV = value;
-                Invalidate();
-            }
-        }
-        
-        
-        public TileData(int index, int spriteID = -1, int colorOffset = 0, int flag = -1, bool flipH = false, bool flipV = false)
+        public TileData(int index, int spriteID = -1, int colorOffset = 0, int flag = -1, bool flipH = false,
+            bool flipV = false)
         {
             this.index = index;
             this.spriteID = spriteID;
@@ -89,6 +44,57 @@ namespace PixelVision8.Engine
             Invalidate();
         }
 
+        public int spriteID
+        {
+            get => _spriteID;
+            set
+            {
+                _spriteID = value;
+                Invalidate();
+            }
+        }
+
+        public int colorOffset
+        {
+            get => _colorOffset;
+            set
+            {
+                _colorOffset = value;
+                Invalidate();
+            }
+        }
+
+        public int flag
+        {
+            get => _flag;
+            set
+            {
+                _flag = value;
+                Invalidate();
+            }
+        }
+
+        public bool flipH
+        {
+            get => _flipH;
+            set
+            {
+                _flipH = value;
+                Invalidate();
+            }
+        }
+
+
+        public bool flipV
+        {
+            get => _flipV;
+            set
+            {
+                _flipV = value;
+                Invalidate();
+            }
+        }
+
         public void Clear()
         {
             spriteID = -1;
@@ -97,11 +103,9 @@ namespace PixelVision8.Engine
 
             flipH = false;
             flipV = false;
-            
-            Invalidate();
 
+            Invalidate();
         }
-        
     }
 }
 

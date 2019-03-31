@@ -1,4 +1,23 @@
-using System;
+//   
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
+//  
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
+// 
+// Contributors
+// --------------------------------------------------------
+// This is the official list of Pixel Vision 8 contributors:
+//  
+// Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
+//
+
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
@@ -37,9 +56,9 @@ namespace PixelVision8.Engine.Utils
             if (hex[0] == '#')
                 hex = hex.Substring(1);
 
-            r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber);// / (float) byte.MaxValue;
-            g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber);// / (float) byte.MaxValue;
-            b = byte.Parse(hex.Substring(4, 2), NumberStyles.HexNumber);// / (float) byte.MaxValue;
+            r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
+            g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
+            b = byte.Parse(hex.Substring(4, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
         }
 
         /// <summary>
@@ -58,22 +77,21 @@ namespace PixelVision8.Engine.Utils
         public static Color HexToColor(string hex)
         {
             byte r, g, b;
-            
+
             HexToRgb(hex, out r, out g, out b);
-            
+
             return new Color(r, g, b);
         }
-        
+
         public static void HexToColor(string hex, Color color)
         {
             byte r, g, b;
-            
+
             HexToRgb(hex, out r, out g, out b);
 
             color.R = r;
             color.G = g;
             color.B = b;
-            
         }
     }
 }

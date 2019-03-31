@@ -1,26 +1,29 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using PixelVision8.Runner.Data;
 
 namespace PixelVision8.Engine.Chips
 {
-
     public class SfxrSoundChip : SoundChip
     {
-
         /// <summary>
         ///     This stub methods is designed to be overridden with a Factory to
         ///     create new sound instances that implement the ISoundData interface.
@@ -47,7 +50,7 @@ namespace PixelVision8.Engine.Chips
                 synth.UpdateSettings(param);
             }
         }
-        
+
         /// <summary>
         ///     This allows you to feed soudn effect data directly to the sound chip and play it on
         ///     on a specific channel. Use this if you don't have a sound effect stored in the sound
@@ -63,15 +66,9 @@ namespace PixelVision8.Engine.Chips
 
             var channel = channels[channelID];
 
-            if (channel != null)
-            {
-                channel.Stop();
-            }
+            if (channel != null) channel.Stop();
 
             tmpSoundData.Play(frequency);
-
         }
-
     }
-
 }

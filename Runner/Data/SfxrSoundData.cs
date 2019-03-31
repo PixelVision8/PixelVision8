@@ -1,27 +1,30 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using PixelVision8.Engine;
 using PixelVision8.Runner.Chips.Sfxr;
 
 namespace PixelVision8.Runner.Data
 {
-
     public class SfxrSoundData : ISoundData
     {
-
         protected SfxrSynth synth;
 
         public SfxrSoundData(string name = "Untitled")
@@ -30,19 +33,13 @@ namespace PixelVision8.Runner.Data
             synth = new SfxrSynth();
         }
 
-        public SfxrParams parameters
-        {
-            get { return synth.parameters; }
-        }
+        public SfxrParams parameters => synth.parameters;
 
         public bool ignore { get; private set; }
 
         public string name { get; set; }
 
-        public bool playing
-        {
-            get { return synth.playing; }
-        }
+        public bool playing => synth.playing;
 
         /// <summary>
         ///     Plays the sound at a specific frequency.
@@ -50,9 +47,9 @@ namespace PixelVision8.Runner.Data
         /// <param name="frequency"></param>
         public void Play(float? frequency = null)
         {
-            if(frequency.HasValue)
+            if (frequency.HasValue)
                 synth.parameters.startFrequency = frequency.Value;
-            
+
             synth.Play();
         }
 
@@ -74,7 +71,6 @@ namespace PixelVision8.Runner.Data
 
         public void UpdateSettings(string param)
         {
-            
             synth.parameters.SetSettingsString(param);
             CacheSound();
         }
@@ -88,7 +84,5 @@ namespace PixelVision8.Runner.Data
         {
             synth.parameters.Mutate(value);
         }
-
     }
-
 }

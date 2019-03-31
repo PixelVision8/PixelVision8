@@ -1,17 +1,22 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System;
 using System.Collections;
@@ -21,7 +26,6 @@ using System.Text;
 
 namespace PixelVision8.Runner.Utils
 {
-
 //    public class ToJson : Attribute
 //    {
 //
@@ -69,7 +73,6 @@ namespace PixelVision8.Runner.Utils
     /// </summary>
     public static class Json
     {
-
         /// <summary>
         ///     Parses the string json into a value
         /// </summary>
@@ -96,7 +99,6 @@ namespace PixelVision8.Runner.Utils
 
         private sealed class Parser : IDisposable
         {
-
             private const string WORD_BREAK = "{}[],:\"";
 
             private StringReader json;
@@ -106,15 +108,9 @@ namespace PixelVision8.Runner.Utils
                 json = new StringReader(jsonString);
             }
 
-            private char PeekChar
-            {
-                get { return Convert.ToChar(json.Peek()); }
-            }
+            private char PeekChar => Convert.ToChar(json.Peek());
 
-            private char NextChar
-            {
-                get { return Convert.ToChar(json.Read()); }
-            }
+            private char NextChar => Convert.ToChar(json.Read());
 
             private string NextWord
             {
@@ -410,7 +406,6 @@ namespace PixelVision8.Runner.Utils
 
             private enum TOKEN
             {
-
                 NONE,
                 CURLY_OPEN,
                 CURLY_CLOSE,
@@ -423,14 +418,11 @@ namespace PixelVision8.Runner.Utils
                 TRUE,
                 FALSE,
                 NULL
-
             }
-
         }
 
         private sealed class Serializer
         {
-
             private readonly StringBuilder builder;
 
             private Serializer()
@@ -550,6 +542,7 @@ namespace PixelVision8.Runner.Utils
                                 builder.Append("\\u");
                                 builder.Append(codepoint.ToString("x4"));
                             }
+
                             break;
                     }
 
@@ -578,9 +571,6 @@ namespace PixelVision8.Runner.Utils
                 else
                     SerializeString(value.ToString());
             }
-
         }
-
     }
-
 }

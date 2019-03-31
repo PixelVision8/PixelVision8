@@ -1,17 +1,22 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System;
 using System.Linq;
@@ -27,12 +32,9 @@ namespace PixelVision8.Engine.Chips
     /// </summary>
     public class SpriteChip : AbstractChip
     {
+        // TODO these are hard coded assuming the sprites are always 8x8
+        private readonly int[] emptySpriteData = Enumerable.Repeat(-1, 64).ToArray();
         protected int _colorsPerSprite = 8;
-        
-        /// <summary>
-        ///     Sets the total number of sprite draw calls for the display.
-        /// </summary>
-        public int maxSpriteCount { get; set; }
         protected int _pages = 4;
 
         /// <summary>
@@ -54,7 +56,26 @@ namespace PixelVision8.Engine.Chips
         private int tmpX;
         private int tmpY;
 
+        private int totalSprites1;
+
         public bool unique = false;
+
+//        private int height1;
+        private int w;
+
+//        private int[] cachedSprite;
+//        private int totalSpritePixels;
+//        private int[] tmpPixelData;
+
+        private int width1;
+
+        private int x;
+        private int y;
+
+        /// <summary>
+        ///     Sets the total number of sprite draw calls for the display.
+        /// </summary>
+        public int maxSpriteCount { get; set; }
 
         /// <summary>
         ///     The global <see cref="width" /> of sprites in the engine. By default
@@ -75,27 +96,22 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public TextureData texture
         {
-            get { return _texture; }
-            set { SpriteChipUtil.CloneTextureData(value, _texture); } //TODO do we need this?
+            get => _texture;
+            set => SpriteChipUtil.CloneTextureData(value, _texture);
+//TODO do we need this?
         }
 
         /// <summary>
         ///     Return's the <see cref="Sprite" /> Ram's internal
         ///     <see cref="texture" /> <see cref="width" />
         /// </summary>
-        public int textureWidth
-        {
-            get { return _texture.width; }
-        }
+        public int textureWidth => _texture.width;
 
         /// <summary>
         ///     Return's the <see cref="Sprite" /> Ram's internal
         ///     <see cref="texture" /> <see cref="width" />
         /// </summary>
-        public int textureHeight
-        {
-            get { return _texture.height; }
-        }
+        public int textureHeight => _texture.height;
 
         /// <summary>
         ///     The virtual number of pages of sprite memory the SpriteChip
@@ -103,13 +119,13 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public int pages
         {
-            get { return _pages; }
+            get => _pages;
             set
             {
                 if (_pages == value)
                     return;
 
-                _pages = MathUtil.Clamp(value, 1, 8);
+                _pages = value.Clamp(1, 8);
                 Resize(pageWidth, pageHeight * pages);
             }
         }
@@ -117,18 +133,12 @@ namespace PixelVision8.Engine.Chips
         /// <summary>
         ///     Number of sprites on each page of memory.
         /// </summary>
-        public int spritesPerPage
-        {
-            get { return pageWidth / width * (pageHeight / height); }
-        }
+        public int spritesPerPage => pageWidth / width * (pageHeight / height);
 
         /// <summary>
         ///     Total number of sprites that can be stored in memory.
         /// </summary>
-        public int totalSprites
-        {
-            get { return spritesPerPage * pages; }
-        }
+        public int totalSprites => spritesPerPage * pages;
 
         /// <summary>
         ///     Total number of sprites that exist in memory.
@@ -143,12 +153,8 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public int colorsPerSprite
         {
-            get { return _colorsPerSprite; }
-            set
-            {
-                // There can only be a minimum of 2 colors and a maximum of 16 colors
-                _colorsPerSprite = MathUtil.Clamp(value, 2, 16);
-            }
+            get => _colorsPerSprite;
+            set => _colorsPerSprite = value.Clamp(2, 16);
         }
 
         /// <summary>
@@ -196,8 +202,7 @@ namespace PixelVision8.Engine.Chips
             //_texture.wrapMode = false;
             width = 8;
             height = 8;
-            
-            
+
 
             Clear();
         }
@@ -207,8 +212,7 @@ namespace PixelVision8.Engine.Chips
             base.Deactivate();
             engine.spriteChip = null;
         }
-        
-        int totalSprites1;
+
         /// <summary>
         ///     This resizes the <see cref="Sprite" /> Ram's
         ///     internal TextureData. This will destroy all
@@ -257,7 +261,7 @@ namespace PixelVision8.Engine.Chips
         {
             if (index < 0 || index >= cache.Length)
                 return;
-            
+
             cache[index] = SpriteChipUtil.SpriteDataToString(data);
 
             var totalPixels = width * height;
@@ -277,19 +281,8 @@ namespace PixelVision8.Engine.Chips
 //            pixelDataCache = new int[totalSprites][];
             _texture.Clear();
         }
-
-//        private int[] cachedSprite;
-//        private int totalSpritePixels;
-//        private int[] tmpPixelData;
-
-        private int width1;
-//        private int height1;
-        private int w;
-        
-        // TODO these are hard coded assuming the sprites are always 8x8
-        private readonly int[] emptySpriteData = Enumerable.Repeat(-1, 64).ToArray();
 //        private readonly int totalSpritePixels = 64;
-        
+
         /// <summary>
         ///     Returns an array of ints that represent a sprite. Each
         ///     int should be mapped to a color
@@ -307,34 +300,28 @@ namespace PixelVision8.Engine.Chips
             if (index == -1)
             {
                 var size = width * height;
-                
-                if (pixelData.Length < size)
-                {
-                    Array.Resize(ref pixelData, size);
-                }
-                
+
+                if (pixelData.Length < size) Array.Resize(ref pixelData, size);
+
                 Array.Copy(emptySpriteData, pixelData, size);
             }
             else
             {
                 width1 = _texture.width;
 //                height1 = _texture.height;
-    
+
                 w = width1 / width;
-    
+
                 tmpX = index % w * width;
                 tmpY = index / w * height;
-                
+
                 // Flip y for Unity
-    //            tmpY = height1 - tmpY - height;
-    
+                //            tmpY = height1 - tmpY - height;
+
                 _texture.CopyPixels(ref pixelData, tmpX, tmpY, width, height);
             }
         }
 
-        private int x;
-        private int y;
-        
         /// <summary>
         ///     Updates the sprite data at a given position in the
         ///     <see cref="texture" /> data.
@@ -356,7 +343,7 @@ namespace PixelVision8.Engine.Chips
 //            var totalSprites2 = SpriteChipUtil.CalculateTotalSprites(width2, height2, spriteWidth, spriteHeight);
 
             // Make sure we stay in bounds
-            index = MathUtil.Clamp(index, 0, totalSprites1 - 1);
+            index = index.Clamp(0, totalSprites1 - 1);
 
             var w1 = _texture.width / width;
 
@@ -367,7 +354,7 @@ namespace PixelVision8.Engine.Chips
 //                y = _texture.height - y - height;
 
             _texture.SetPixels(x, y, width, height, pixels);
-            
+
             CacheSprite(index, pixels);
         }
 
@@ -388,9 +375,8 @@ namespace PixelVision8.Engine.Chips
                     return -1;
 
             var sprite = SpriteChipUtil.SpriteDataToString(pixels);
-            
+
             return Array.IndexOf(cache, sprite);
         }
-        
     }
 }

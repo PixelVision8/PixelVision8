@@ -1,17 +1,22 @@
-﻿//
-// Copyright (c) Jesse Freeman. All rights reserved.  
-//
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
-//
+﻿//   
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
+//  
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
+// 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
-//
+//  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
@@ -23,7 +28,10 @@ namespace PixelVision8.Runner.Exporters
 {
     public class FlagColorExporter : IAbstractExporter
     {
-        
+//        private ITextureFactory textureFactory;
+        private PixelDataExporter exporter;
+        private readonly ColorChip flagColorChip;
+
 //        public static Color ConvertFlagColor(int flagValue, int totalFlags)
 //        {
 //            var colorValue = CalcualteFlagColor(flagValue, totalFlags);
@@ -35,15 +43,12 @@ namespace PixelVision8.Runner.Exporters
 //        {
 //            return (flagValue * totalFlags) / 256f;
 //        }
-        
-        private string fullFileName;
-//        private ITextureFactory textureFactory;
-        private PixelDataExporter exporter;
-        private Point tileSize;
-        private int totalFlags;
-        private GameChip gameChip;
-        private ColorChip flagColorChip;
-        
+
+        private readonly string fullFileName;
+        private readonly GameChip gameChip;
+        private readonly Point tileSize;
+        private readonly int totalFlags;
+
         public FlagColorExporter(string fileName, IEngineChips engineChips)
         {
             fullFileName = fileName;
@@ -55,32 +60,20 @@ namespace PixelVision8.Runner.Exporters
             gameChip = engineChips.gameChip;
 
             flagColorChip = engineChips.GetChip(FlagColorParser.flagColorChipName, false) as ColorChip;
-            
+
             tileSize = gameChip.SpriteSize();
-            
+
 //            this.textureFactory = textureFactory;
-        
-        }
-        
-        public int currentStep
-        {
-            get { return exporter.currentStep; }
         }
 
-        public int totalSteps
-        {
-            get { return exporter.totalSteps; }
+        public int currentStep => exporter.currentStep;
 
-        }
+        public int totalSteps => exporter.totalSteps;
 
-        public bool completed
-        {
-            get { return exporter.completed; }
+        public bool completed => exporter.completed;
 
-        }
         public void CalculateSteps()
         {
-            
             var cols = 16;
             var rows = MathUtil.CeilToInt(totalFlags / (float) cols);
 
@@ -91,34 +84,31 @@ namespace PixelVision8.Runner.Exporters
             canvas.Clear();
 
             var totalPixels = tileSize.X * tileSize.Y;
-            
+
             var brush = new int[totalPixels];
 
-            Color[] colors = new Color[totalFlags];
+            var colors = new Color[totalFlags];
 
             var flagColors = flagColorChip.colors;
-            
-            for (int i = 0; i < totalFlags; i++)
+
+            for (var i = 0; i < totalFlags; i++)
             {
                 colors[i] = flagColors[i];
-                
+
                 var pos = gameChip.CalculatePosition(i, w);
 
                 pos.X *= tileSize.X;
                 pos.Y *= tileSize.Y;
                 // Update the brush
-                for (int j = 0; j < totalPixels; j++)
-                {
-                    brush[j] = i;
-                }
-                
-                canvas.SetPixels(pos.X, pos.Y, tileSize.X, tileSize.Y, brush);
+                for (var j = 0; j < totalPixels; j++) brush[j] = i;
 
+                canvas.SetPixels(pos.X, pos.Y, tileSize.X, tileSize.Y, brush);
             }
+
             var imageExporter = new PNGWriter();
 
             exporter = new PixelDataExporter(fullFileName, canvas.pixels, w, h, colors, imageExporter);
-            
+
             exporter.CalculateSteps();
         }
 
@@ -127,18 +117,8 @@ namespace PixelVision8.Runner.Exporters
             exporter.NextStep();
         }
 
-        public byte[] bytes
-        {
-            get { return exporter.bytes; }
-        }
+        public byte[] bytes => exporter.bytes;
 
-        public string fileName
-        {
-            get { return exporter.fileName; }
-        }
-        
-        
-
-        
+        public string fileName => exporter.fileName;
     }
 }

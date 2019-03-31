@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,24 +7,20 @@ namespace SharpFileSystem.FileSystems
 {
     public class FileSystemMounter : IFileSystem
     {
-        public ICollection<KeyValuePair<FileSystemPath, IFileSystem>> Mounts { get; private set; }
-
         public FileSystemMounter(IEnumerable<KeyValuePair<FileSystemPath, IFileSystem>> mounts)
         {
-            Mounts = new SortedList<FileSystemPath, IFileSystem>(new InverseComparer<FileSystemPath>(Comparer<FileSystemPath>.Default));
-            foreach(var mount in mounts)
+            Mounts = new SortedList<FileSystemPath, IFileSystem>(
+                new InverseComparer<FileSystemPath>(Comparer<FileSystemPath>.Default));
+            foreach (var mount in mounts)
                 Mounts.Add(mount);
         }
 
         public FileSystemMounter(params KeyValuePair<FileSystemPath, IFileSystem>[] mounts)
-            : this((IEnumerable<KeyValuePair<FileSystemPath, IFileSystem>>)mounts)
+            : this((IEnumerable<KeyValuePair<FileSystemPath, IFileSystem>>) mounts)
         {
         }
 
-        protected KeyValuePair<FileSystemPath, IFileSystem> Get(FileSystemPath path)
-        {
-            return Mounts.First(pair => pair.Key == path || pair.Key.IsParentOf(path));
-        }
+        public ICollection<KeyValuePair<FileSystemPath, IFileSystem>> Mounts { get; }
 
         public void Dispose()
         {
@@ -37,7 +32,8 @@ namespace SharpFileSystem.FileSystems
         {
             var pair = Get(path);
             var entities = pair.Value.GetEntities(path.IsRoot ? path : path.RemoveParent(pair.Key));
-            return new EnumerableCollection<FileSystemPath>(entities.Select(p => pair.Key.AppendPath(p)), entities.Count);
+            return new EnumerableCollection<FileSystemPath>(entities.Select(p => pair.Key.AppendPath(p)),
+                entities.Count);
         }
 
         public bool Exists(FileSystemPath path)
@@ -51,7 +47,6 @@ namespace SharpFileSystem.FileSystems
             {
                 return false;
             }
-            
         }
 
         public Stream CreateFile(FileSystemPath path)
@@ -76,6 +71,11 @@ namespace SharpFileSystem.FileSystems
         {
             var pair = Get(path);
             pair.Value.Delete(path.RemoveParent(pair.Key));
+        }
+
+        protected KeyValuePair<FileSystemPath, IFileSystem> Get(FileSystemPath path)
+        {
+            return Mounts.First(pair => pair.Key == path || pair.Key.IsParentOf(path));
         }
     }
 }

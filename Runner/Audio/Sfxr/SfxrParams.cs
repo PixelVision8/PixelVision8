@@ -21,357 +21,503 @@
 //  
 //  @author Zeh Fernando
 
+using System;
+
 namespace PixelVision8.Runner.Chips.Sfxr
 {
-    using System;
-
     public class SfxrParams
     {
-        public bool paramsDirty; // Whether the parameters have been changed since last time (shouldn't used cached sound)
+        private static readonly Random _random = new Random();
 
-        private uint _waveType = 0; // Shape of wave to generate (see enum WaveType)
+        private float _attackTime; // Length of the volume envelope attack (0 to 1)
+
+        private float _bitCrush; // Bit crush: resamples the audio at a lower frequency (0 to 1)
+        private float _bitCrushSweep; // Bit crush sweep: sweeps the Bit Crush filter up or down (-1 to 1)
+
+        private float _changeAmount; // Shift in note, either up or down (-1 to 1)
+        private float _changeAmount2; // Shift in note, either up or down (-1 to 1)
+
+        // From BFXR
+        private float
+            _changeRepeat; // Pitch Jump Repeat Speed: larger Values means more pitch jumps, which can be useful for arpeggiation (0 to 1)
+
+        private float _changeSpeed; // How fast the note shift happens (only happens once) (0 to 1)
+        private float _changeSpeed2; // How fast the note shift happens (only happens once) (0 to 1)
+
+        private float
+            _compressionAmount; // Compression: pushes amplitudes together into a narrower range to make them stand out more. Very good for sound effects, where you want them to stick out against background music (0 to 1)
+
+        private float _decayTime; // Length of the volume envelope decay (yes, I know it's called release) (0 to 1)
+        private float _deltaSlide; // Accelerates the slide (-1 to 1)
+        private float _dutySweep; // Sweeps the duty up or down (-1 to 1)
+
+        private float
+            _hpFilterCutoff; // Frequency at which the high-pass filter starts attenuating lower frequencies (0 to 1)
+
+        private float _hpFilterCutoffSweep; // Sweeps the high-pass cutoff up or down (-1 to 1)
+
+        private float
+            _lpFilterCutoff; // Frequency at which the low-pass filter starts attenuating higher frequencies (0 to 1)
+
+        private float _lpFilterCutoffSweep; // Sweeps the low-pass cutoff up or down (-1 to 1)
+
+        private float
+            _lpFilterResonance; // Changes the attenuation rate for the low-pass filter, changing the timbre (0 to 1)
 
         private float _masterVolume = 0.5f; // Overall volume of the sound (0 to 1)
 
-        private float _attackTime = 0.0f;   // Length of the volume envelope attack (0 to 1)
-        private float _sustainTime = 0.0f;  // Length of the volume envelope sustain (0 to 1)
-        private float _sustainPunch = 0.0f; // Tilts the sustain envelope for more 'pop' (0 to 1)
-        private float _decayTime = 0.0f;    // Length of the volume envelope decay (yes, I know it's called release) (0 to 1)
+        private float
+            _minFrequency; // If sliding, the sound will stop at this frequency, to prevent really low notes (0 to 1)
 
-        private float _startFrequency = 0.0f;   // Base note of the sound (0 to 1)
-        private float _minFrequency = 0.0f; // If sliding, the sound will stop at this frequency, to prevent really low notes (0 to 1)
+        private float _overtoneFalloff; // Harmonics falloff: the rate at which higher overtones should decay (0 to 1)
 
-        private float _slide = 0.0f;    // Slides the note up or down (-1 to 1)
-        private float _deltaSlide = 0.0f;   // Accelerates the slide (-1 to 1)
+        private float
+            _overtones; // Harmonics: overlays copies of the waveform with copies and multiples of its frequency. Good for bulking out or otherwise enriching the texture of the sounds (warning: this is the number 1 cause of usfxr slowdown!) (0 to 1)
 
-        private float _vibratoDepth = 0.0f; // Strength of the vibrato effect (0 to 1)
-        private float _vibratoSpeed = 0.0f; // Speed of the vibrato effect (i.e. frequency) (0 to 1)
+        private float _phaserOffset; // Offsets a second copy of the wave by a small phase, changing the tibre (-1 to 1)
+        private float _phaserSweep; // Sweeps the phase up or down (-1 to 1)
 
-        private float _changeAmount = 0.0f; // Shift in note, either up or down (-1 to 1)
-        private float _changeSpeed = 0.0f;  // How fast the note shift happens (only happens once) (0 to 1)
+        private float _repeatSpeed; // Speed of the note repeating - certain variables are reset each time (0 to 1)
 
-        private float _squareDuty = 0.0f;   // Controls the ratio between the up and down states of the square wave, changing the tibre (0 to 1)
-        private float _dutySweep = 0.0f;    // Sweeps the duty up or down (-1 to 1)
+        private float _slide; // Slides the note up or down (-1 to 1)
 
-        private float _repeatSpeed = 0.0f;  // Speed of the note repeating - certain variables are reset each time (0 to 1)
+        private float
+            _squareDuty; // Controls the ratio between the up and down states of the square wave, changing the tibre (0 to 1)
 
-        private float _phaserOffset = 0.0f; // Offsets a second copy of the wave by a small phase, changing the tibre (-1 to 1)
-        private float _phaserSweep = 0.0f;  // Sweeps the phase up or down (-1 to 1)
+        private float _startFrequency; // Base note of the sound (0 to 1)
+        private float _sustainPunch; // Tilts the sustain envelope for more 'pop' (0 to 1)
+        private float _sustainTime; // Length of the volume envelope sustain (0 to 1)
 
-        private float _lpFilterCutoff = 0.0f;   // Frequency at which the low-pass filter starts attenuating higher frequencies (0 to 1)
-        private float _lpFilterCutoffSweep = 0.0f;  // Sweeps the low-pass cutoff up or down (-1 to 1)
-        private float _lpFilterResonance = 0.0f;    // Changes the attenuation rate for the low-pass filter, changing the timbre (0 to 1)
+        private float _vibratoDepth; // Strength of the vibrato effect (0 to 1)
+        private float _vibratoSpeed; // Speed of the vibrato effect (i.e. frequency) (0 to 1)
 
-        private float _hpFilterCutoff = 0.0f;   // Frequency at which the high-pass filter starts attenuating lower frequencies (0 to 1)
-        private float _hpFilterCutoffSweep = 0.0f;  // Sweeps the high-pass cutoff up or down (-1 to 1)
+        private uint _waveType; // Shape of wave to generate (see enum WaveType)
 
-        // From BFXR
-        private float _changeRepeat = 0.0f; // Pitch Jump Repeat Speed: larger Values means more pitch jumps, which can be useful for arpeggiation (0 to 1)
-        private float _changeAmount2 = 0.0f;    // Shift in note, either up or down (-1 to 1)
-        private float _changeSpeed2 = 0.0f; // How fast the note shift happens (only happens once) (0 to 1)
-
-        private float _compressionAmount = 0.0f;    // Compression: pushes amplitudes together into a narrower range to make them stand out more. Very good for sound effects, where you want them to stick out against background music (0 to 1)
-
-        private float _overtones = 0.0f;    // Harmonics: overlays copies of the waveform with copies and multiples of its frequency. Good for bulking out or otherwise enriching the texture of the sounds (warning: this is the number 1 cause of usfxr slowdown!) (0 to 1)
-        private float _overtoneFalloff = 0.0f;  // Harmonics falloff: the rate at which higher overtones should decay (0 to 1)
-
-        private float _bitCrush = 0.0f; // Bit crush: resamples the audio at a lower frequency (0 to 1)
-        private float _bitCrushSweep = 0.0f;    // Bit crush sweep: sweeps the Bit Crush filter up or down (-1 to 1)
-
-        private static readonly Random _random = new Random();
+        public bool
+            paramsDirty; // Whether the parameters have been changed since last time (shouldn't used cached sound)
 
         /// <summary>
-        /// Shape of the wave (0:square, 1:sawtooth, 2:sin, 3:noise)
+        ///     Shape of the wave (0:square, 1:sawtooth, 2:sin, 3:noise)
         /// </summary>
         public uint waveType
         {
-            get { return _waveType; }
-            set { _waveType = value > 8 ? 0 : value; paramsDirty = true; }
+            get => _waveType;
+            set
+            {
+                _waveType = value > 8 ? 0 : value;
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Overall volume of the sound (0 to 1)
+        ///     Overall volume of the sound (0 to 1)
         /// </summary>
         public float masterVolume
         {
-            get { return _masterVolume; }
-            set { _masterVolume = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _masterVolume;
+            set
+            {
+                _masterVolume = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Length of the volume envelope attack (0 to 1)
+        ///     Length of the volume envelope attack (0 to 1)
         /// </summary>
         public float attackTime
         {
-            get { return _attackTime; }
-            set { _attackTime = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _attackTime;
+            set
+            {
+                _attackTime = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Length of the volume envelope sustain (0 to 1)
+        ///     Length of the volume envelope sustain (0 to 1)
         /// </summary>
         public float sustainTime
         {
-            get { return _sustainTime; }
-            set { _sustainTime = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _sustainTime;
+            set
+            {
+                _sustainTime = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Tilts the sustain envelope for more 'pop' (0 to 1)
+        ///     Tilts the sustain envelope for more 'pop' (0 to 1)
         /// </summary>
         public float sustainPunch
         {
-            get { return _sustainPunch; }
-            set { _sustainPunch = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _sustainPunch;
+            set
+            {
+                _sustainPunch = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Length of the volume envelope decay (yes, I know it's called release) (0 to 1)
+        ///     Length of the volume envelope decay (yes, I know it's called release) (0 to 1)
         /// </summary>
         public float decayTime
         {
-            get { return _decayTime; }
-            set { _decayTime = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _decayTime;
+            set
+            {
+                _decayTime = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Base note of the sound (0 to 1)
+        ///     Base note of the sound (0 to 1)
         /// </summary>
         public float startFrequency
         {
-            get { return _startFrequency; }
-            set { _startFrequency = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _startFrequency;
+            set
+            {
+                _startFrequency = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// If sliding, the sound will stop at this frequency, to prevent really low notes (0 to 1)
+        ///     If sliding, the sound will stop at this frequency, to prevent really low notes (0 to 1)
         /// </summary>
         public float minFrequency
         {
-            get { return _minFrequency; }
-            set { _minFrequency = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _minFrequency;
+            set
+            {
+                _minFrequency = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Slides the note up or down (-1 to 1)
+        ///     Slides the note up or down (-1 to 1)
         /// </summary>
         public float slide
         {
-            get { return _slide; }
-            set { _slide = Mathf.Clamp(value, -1, 1); paramsDirty = true; }
+            get => _slide;
+            set
+            {
+                _slide = Mathf.Clamp(value, -1, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Accelerates the slide (-1 to 1)
+        ///     Accelerates the slide (-1 to 1)
         /// </summary>
         public float deltaSlide
         {
-            get { return _deltaSlide; }
-            set { _deltaSlide = Mathf.Clamp(value, -1, 1); paramsDirty = true; }
+            get => _deltaSlide;
+            set
+            {
+                _deltaSlide = Mathf.Clamp(value, -1, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Strength of the vibrato effect (0 to 1)
+        ///     Strength of the vibrato effect (0 to 1)
         /// </summary>
         public float vibratoDepth
         {
-            get { return _vibratoDepth; }
-            set { _vibratoDepth = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _vibratoDepth;
+            set
+            {
+                _vibratoDepth = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Speed of the vibrato effect (i.e. frequency) (0 to 1)
+        ///     Speed of the vibrato effect (i.e. frequency) (0 to 1)
         /// </summary>
         public float vibratoSpeed
         {
-            get { return _vibratoSpeed; }
-            set { _vibratoSpeed = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _vibratoSpeed;
+            set
+            {
+                _vibratoSpeed = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Shift in note, either up or down (-1 to 1)
+        ///     Shift in note, either up or down (-1 to 1)
         /// </summary>
         public float changeAmount
         {
-            get { return _changeAmount; }
-            set { _changeAmount = Mathf.Clamp(value, -1, 1); paramsDirty = true; }
+            get => _changeAmount;
+            set
+            {
+                _changeAmount = Mathf.Clamp(value, -1, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// How fast the note shift happens (only happens once) (0 to 1)
+        ///     How fast the note shift happens (only happens once) (0 to 1)
         /// </summary>
         public float changeSpeed
         {
-            get { return _changeSpeed; }
-            set { _changeSpeed = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _changeSpeed;
+            set
+            {
+                _changeSpeed = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Controls the ratio between the up and down states of the square wave, changing the tibre (0 to 1)
+        ///     Controls the ratio between the up and down states of the square wave, changing the tibre (0 to 1)
         /// </summary>
         public float squareDuty
         {
-            get { return _squareDuty; }
-            set { _squareDuty = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _squareDuty;
+            set
+            {
+                _squareDuty = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Sweeps the duty up or down (-1 to 1)
+        ///     Sweeps the duty up or down (-1 to 1)
         /// </summary>
         public float dutySweep
         {
-            get { return _dutySweep; }
-            set { _dutySweep = Mathf.Clamp(value, -1, 1); paramsDirty = true; }
+            get => _dutySweep;
+            set
+            {
+                _dutySweep = Mathf.Clamp(value, -1, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Speed of the note repeating - certain variables are reset each time (0 to 1)
+        ///     Speed of the note repeating - certain variables are reset each time (0 to 1)
         /// </summary>
         public float repeatSpeed
         {
-            get { return _repeatSpeed; }
-            set { _repeatSpeed = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _repeatSpeed;
+            set
+            {
+                _repeatSpeed = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Offsets a second copy of the wave by a small phase, changing the tibre (-1 to 1)
+        ///     Offsets a second copy of the wave by a small phase, changing the tibre (-1 to 1)
         /// </summary>
         public float phaserOffset
         {
-            get { return _phaserOffset; }
-            set { _phaserOffset = Mathf.Clamp(value, -1, 1); paramsDirty = true; }
+            get => _phaserOffset;
+            set
+            {
+                _phaserOffset = Mathf.Clamp(value, -1, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Sweeps the phase up or down (-1 to 1)
+        ///     Sweeps the phase up or down (-1 to 1)
         /// </summary>
         public float phaserSweep
         {
-            get { return _phaserSweep; }
-            set { _phaserSweep = Mathf.Clamp(value, -1, 1); paramsDirty = true; }
+            get => _phaserSweep;
+            set
+            {
+                _phaserSweep = Mathf.Clamp(value, -1, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Frequency at which the low-pass filter starts attenuating higher frequencies (0 to 1)
+        ///     Frequency at which the low-pass filter starts attenuating higher frequencies (0 to 1)
         /// </summary>
         public float lpFilterCutoff
         {
-            get { return _lpFilterCutoff; }
-            set { _lpFilterCutoff = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _lpFilterCutoff;
+            set
+            {
+                _lpFilterCutoff = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Sweeps the low-pass cutoff up or down (-1 to 1)
+        ///     Sweeps the low-pass cutoff up or down (-1 to 1)
         /// </summary>
         public float lpFilterCutoffSweep
         {
-            get { return _lpFilterCutoffSweep; }
-            set { _lpFilterCutoffSweep = Mathf.Clamp(value, -1, 1); paramsDirty = true; }
+            get => _lpFilterCutoffSweep;
+            set
+            {
+                _lpFilterCutoffSweep = Mathf.Clamp(value, -1, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Changes the attenuation rate for the low-pass filter, changing the timbre (0 to 1)
+        ///     Changes the attenuation rate for the low-pass filter, changing the timbre (0 to 1)
         /// </summary>
         public float lpFilterResonance
         {
-            get { return _lpFilterResonance; }
-            set { _lpFilterResonance = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _lpFilterResonance;
+            set
+            {
+                _lpFilterResonance = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Frequency at which the high-pass filter starts attenuating lower frequencies (0 to 1)
+        ///     Frequency at which the high-pass filter starts attenuating lower frequencies (0 to 1)
         /// </summary>
         public float hpFilterCutoff
         {
-            get { return _hpFilterCutoff; }
-            set { _hpFilterCutoff = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _hpFilterCutoff;
+            set
+            {
+                _hpFilterCutoff = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Sweeps the high-pass cutoff up or down (-1 to 1)
+        ///     Sweeps the high-pass cutoff up or down (-1 to 1)
         /// </summary>
         public float hpFilterCutoffSweep
         {
-            get { return _hpFilterCutoffSweep; }
-            set { _hpFilterCutoffSweep = Mathf.Clamp(value, -1, 1); paramsDirty = true; }
+            get => _hpFilterCutoffSweep;
+            set
+            {
+                _hpFilterCutoffSweep = Mathf.Clamp(value, -1, 1);
+                paramsDirty = true;
+            }
         }
 
         // From BFXR
 
         /// <summary>
-        /// Pitch Jump Repeat Speed: larger Values means more pitch jumps, which can be useful for arpeggiation (0 to 1)
+        ///     Pitch Jump Repeat Speed: larger Values means more pitch jumps, which can be useful for arpeggiation (0 to 1)
         /// </summary>
         public float changeRepeat
         {
-            get { return _changeRepeat; }
-            set { _changeRepeat = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _changeRepeat;
+            set
+            {
+                _changeRepeat = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Shift in note, either up or down (-1 to 1)
+        ///     Shift in note, either up or down (-1 to 1)
         /// </summary>
         public float changeAmount2
         {
-            get { return _changeAmount2; }
-            set { _changeAmount2 = Mathf.Clamp(value, -1, 1); paramsDirty = true; }
+            get => _changeAmount2;
+            set
+            {
+                _changeAmount2 = Mathf.Clamp(value, -1, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// How fast the note shift happens (only happens once) (0 to 1)
+        ///     How fast the note shift happens (only happens once) (0 to 1)
         /// </summary>
         public float changeSpeed2
         {
-            get { return _changeSpeed2; }
-            set { _changeSpeed2 = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _changeSpeed2;
+            set
+            {
+                _changeSpeed2 = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Pushes amplitudes together into a narrower range to make them stand out more. Very good for sound effects, where you want them to stick out against background music (0 to 1)
+        ///     Pushes amplitudes together into a narrower range to make them stand out more. Very good for sound effects, where
+        ///     you want them to stick out against background music (0 to 1)
         /// </summary>
         public float compressionAmount
         {
-            get { return _compressionAmount; }
-            set { _compressionAmount = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _compressionAmount;
+            set
+            {
+                _compressionAmount = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Harmonics: overlays copies of the waveform with copies and multiples of its frequency. Good for bulking out or otherwise enriching the texture of the sounds (warning: this is the number 1 cause of bfxr slowdown!) (0 to 1)
+        ///     Harmonics: overlays copies of the waveform with copies and multiples of its frequency. Good for bulking out or
+        ///     otherwise enriching the texture of the sounds (warning: this is the number 1 cause of bfxr slowdown!) (0 to 1)
         /// </summary>
         public float overtones
         {
-            get { return _overtones; }
-            set { _overtones = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _overtones;
+            set
+            {
+                _overtones = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Harmonics falloff: The rate at which higher overtones should decay (0 to 1)
+        ///     Harmonics falloff: The rate at which higher overtones should decay (0 to 1)
         /// </summary>
         public float overtoneFalloff
         {
-            get { return _overtoneFalloff; }
-            set { _overtoneFalloff = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _overtoneFalloff;
+            set
+            {
+                _overtoneFalloff = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Bit crush: resamples the audio at a lower frequency (0 to 1)
+        ///     Bit crush: resamples the audio at a lower frequency (0 to 1)
         /// </summary>
         public float bitCrush
         {
-            get { return _bitCrush; }
-            set { _bitCrush = Mathf.Clamp(value, 0, 1); paramsDirty = true; }
+            get => _bitCrush;
+            set
+            {
+                _bitCrush = Mathf.Clamp(value, 0, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Bit crush sweep: sweeps the Bit Crush filter up or down (-1 to 1)
+        ///     Bit crush sweep: sweeps the Bit Crush filter up or down (-1 to 1)
         /// </summary>
         public float bitCrushSweep
         {
-            get { return _bitCrushSweep; }
-            set { _bitCrushSweep = Mathf.Clamp(value, -1, 1); paramsDirty = true; }
+            get => _bitCrushSweep;
+            set
+            {
+                _bitCrushSweep = Mathf.Clamp(value, -1, 1);
+                paramsDirty = true;
+            }
         }
 
         /// <summary>
-        /// Sets the parameters to generate a pickup/coin sound
+        ///     Sets the parameters to generate a pickup/coin sound
         /// </summary>
         public void GeneratePickupCoin()
         {
@@ -386,21 +532,21 @@ namespace PixelVision8.Runner.Chips.Sfxr
             if (GetRandomBool())
             {
                 _changeSpeed = 0.5f + GetRandom() * 0.2f;
-                int cnum = (int)(GetRandom() * 7f) + 1;
-                int cden = cnum + (int)(GetRandom() * 7f) + 2;
-                _changeAmount = (float)cnum / (float)cden;
+                var cnum = (int) (GetRandom() * 7f) + 1;
+                var cden = cnum + (int) (GetRandom() * 7f) + 2;
+                _changeAmount = cnum / (float) cden;
             }
         }
 
         /// <summary>
-        /// Sets the parameters to generate a laser/shoot sound
+        ///     Sets the parameters to generate a laser/shoot sound
         /// </summary>
         public void GenerateLaserShoot()
         {
             resetParams();
 
-            _waveType = (uint)(GetRandom() * 3);
-            if (_waveType == 2 && GetRandomBool()) _waveType = (uint)(GetRandom() * 2f);
+            _waveType = (uint) (GetRandom() * 3);
+            if (_waveType == 2 && GetRandomBool()) _waveType = (uint) (GetRandom() * 2f);
 
             _startFrequency = 0.5f + GetRandom() * 0.5f;
             _minFrequency = _startFrequency - 0.2f - GetRandom() * 0.6f;
@@ -440,7 +586,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Sets the parameters to generate an explosion sound
+        ///     Sets the parameters to generate an explosion sound
         /// </summary>
         public void GenerateExplosion()
         {
@@ -482,20 +628,16 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Sets the parameters to generate a powerup sound
+        ///     Sets the parameters to generate a powerup sound
         /// </summary>
         public void GeneratePowerup()
         {
             resetParams();
 
             if (GetRandomBool())
-            {
                 _waveType = 1;
-            }
             else
-            {
                 _squareDuty = GetRandom() * 0.6f;
-            }
 
             if (GetRandomBool())
             {
@@ -520,21 +662,16 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Sets the parameters to generate a hit/hurt sound
+        ///     Sets the parameters to generate a hit/hurt sound
         /// </summary>
         public void GenerateHitHurt()
         {
             resetParams();
 
-            _waveType = (uint)(GetRandom() * 3f);
+            _waveType = (uint) (GetRandom() * 3f);
             if (_waveType == 2)
-            {
                 _waveType = 3;
-            }
-            else if (_waveType == 0)
-            {
-                _squareDuty = GetRandom() * 0.6f;
-            }
+            else if (_waveType == 0) _squareDuty = GetRandom() * 0.6f;
 
             _startFrequency = 0.2f + GetRandom() * 0.6f;
             _slide = -0.3f - GetRandom() * 0.4f;
@@ -546,7 +683,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Sets the parameters to generate a jump sound
+        ///     Sets the parameters to generate a jump sound
         /// </summary>
         public void GenerateJump()
         {
@@ -565,13 +702,13 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Sets the parameters to generate a blip/select sound
+        ///     Sets the parameters to generate a blip/select sound
         /// </summary>
         public void GenerateBlipSelect()
         {
             resetParams();
 
-            _waveType = (uint)(GetRandom() * 2f);
+            _waveType = (uint) (GetRandom() * 2f);
             if (_waveType == 0) _squareDuty = GetRandom() * 0.6f;
 
             _startFrequency = 0.2f + GetRandom() * 0.4f;
@@ -582,7 +719,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Resets the parameters, used at the start of each generate function
+        ///     Resets the parameters, used at the start of each generate function
         /// </summary>
         protected void resetParams()
         {
@@ -633,7 +770,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Randomly adjusts the parameters ever so slightly
+        ///     Randomly adjusts the parameters ever so slightly
         /// </summary>
         /// <param name="__mutation"></param>
         public void Mutate(float __mutation = 0.05f)
@@ -673,20 +810,20 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Sets all parameters to random values
+        ///     Sets all parameters to random values
         /// </summary>
         public void Randomize()
         {
             resetParams();
 
-            _waveType = (uint)(GetRandom() * 9f);
+            _waveType = (uint) (GetRandom() * 9f);
 
             _attackTime = Pow(GetRandom() * 2f - 1f, 4);
             _sustainTime = Pow(GetRandom() * 2f - 1f, 2);
             _sustainPunch = Pow(GetRandom() * 0.8f, 2);
             _decayTime = GetRandom();
 
-            _startFrequency = (GetRandomBool()) ? Pow(GetRandom() * 2f - 1f, 2) : (Pow(GetRandom() * 0.5f, 3) + 0.5f);
+            _startFrequency = GetRandomBool() ? Pow(GetRandom() * 2f - 1f, 2) : Pow(GetRandom() * 0.5f, 3) + 0.5f;
             _minFrequency = 0.0f;
 
             _slide = Pow(GetRandom() * 2f - 1f, 3);
@@ -719,15 +856,9 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 _decayTime = 0.2f + GetRandom() * 0.3f;
             }
 
-            if ((_startFrequency > 0.7f && _slide > 0.2) || (_startFrequency < 0.2 && _slide < -0.05))
-            {
-                _slide = -_slide;
-            }
+            if (_startFrequency > 0.7f && _slide > 0.2 || _startFrequency < 0.2 && _slide < -0.05) _slide = -_slide;
 
-            if (_lpFilterCutoff < 0.1f && _lpFilterCutoffSweep < -0.05f)
-            {
-                _lpFilterCutoffSweep = -_lpFilterCutoffSweep;
-            }
+            if (_lpFilterCutoff < 0.1f && _lpFilterCutoffSweep < -0.05f) _lpFilterCutoffSweep = -_lpFilterCutoffSweep;
 
             // From BFXR
             _changeRepeat = GetRandom();
@@ -746,16 +877,17 @@ namespace PixelVision8.Runner.Chips.Sfxr
         // Setting string methods
 
         /// <summary>
-        /// Returns a string representation of the parameters for copy/paste sharing in the old format (24 parameters, SFXR/AS3SFXR compatible)
+        ///     Returns a string representation of the parameters for copy/paste sharing in the old format (24 parameters,
+        ///     SFXR/AS3SFXR compatible)
         /// </summary>
         /// <returns>A comma-delimited list of parameter values</returns>
         public string GetSettingsStringLegacy()
         {
-            string str = "";
+            var str = "";
 
             // 24 params
 
-            str += waveType.ToString() + ",";
+            str += waveType + ",";
             str += To4DP(_attackTime) + ",";
             str += To4DP(_sustainTime) + ",";
             str += To4DP(_sustainPunch) + ",";
@@ -784,16 +916,17 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Returns a string representation of the parameters for copy/paste sharing in the new format (32 parameters, BFXR compatible)
+        ///     Returns a string representation of the parameters for copy/paste sharing in the new format (32 parameters, BFXR
+        ///     compatible)
         /// </summary>
         /// <returns>A comma-delimited list of parameter values</returns>
         public string GetSettingsString()
         {
-            string str = "";
+            var str = "";
 
             // 32 params
 
-            str += waveType.ToString() + ",";
+            str += waveType + ",";
             str += To4DP(_masterVolume) + ",";
             str += To4DP(_attackTime) + ",";
             str += To4DP(_sustainTime) + ",";
@@ -830,13 +963,13 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Parses a settings string into the parameters
+        ///     Parses a settings string into the parameters
         /// </summary>
         /// <param name="__string">string Settings string to parse</param>
         /// <returns>If the string successfully parsed</returns>
         public bool SetSettingsString(string __string)
         {
-            string[] values = __string.Split(new char[] { ',' });
+            var values = __string.Split(',');
 
             if (values.Length == 24)
             {
@@ -917,25 +1050,25 @@ namespace PixelVision8.Runner.Chips.Sfxr
         // Copying methods
 
         /// <summary>
-        /// Returns a copy of this SfxrParams with all settings duplicated
+        ///     Returns a copy of this SfxrParams with all settings duplicated
         /// </summary>
         /// <returns>A copy of this SfxrParams</returns>
         public SfxrParams Clone()
         {
-            SfxrParams outp = new SfxrParams();
+            var outp = new SfxrParams();
             outp.CopyFrom(this);
 
             return outp;
         }
 
         /// <summary>
-        /// Copies parameters from another instance 
+        ///     Copies parameters from another instance
         /// </summary>
         /// <param name="__params">Instance to copy parameters from</param>
         /// <param name="__makeDirty"></param>
         public void CopyFrom(SfxrParams __params, bool __makeDirty = false)
         {
-            bool wasDirty = paramsDirty;
+            var wasDirty = paramsDirty;
             SetSettingsString(GetSettingsString());
             paramsDirty = wasDirty || __makeDirty;
         }
@@ -943,7 +1076,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
         // Utility methods
 
         /// <summary>
-        /// Faster power function; this function takes about 36% of the time Mathf.Pow() would take in our use cases 
+        ///     Faster power function; this function takes about 36% of the time Mathf.Pow() would take in our use cases
         /// </summary>
         /// <param name="__pbase">base		Base to raise to power</param>
         /// <param name="__power">power		Power to raise base by</param>
@@ -962,7 +1095,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Returns the number as a string to 4 decimal places
+        ///     Returns the number as a string to 4 decimal places
         /// </summary>
         /// <param name="__value">Number to convert</param>
         /// <returns>Number to 4dp as a string</returns>
@@ -973,7 +1106,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Parses a string into an uint value; also returns 0 if the string is empty, rather than an error 
+        ///     Parses a string into an uint value; also returns 0 if the string is empty, rather than an error
         /// </summary>
         /// <param name="__value"></param>
         /// <returns></returns>
@@ -984,7 +1117,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Parses a string into a float value; also returns 0 if the string is empty, rather than an error
+        ///     Parses a string into a float value; also returns 0 if the string is empty, rather than an error
         /// </summary>
         /// <param name="__value"></param>
         /// <returns></returns>
@@ -995,16 +1128,16 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         /// <summary>
-        /// Returns a random value: 0 <= n < 1
+        ///     Returns a random value: 0 <= n < 1
         /// </summary>
         /// <returns></returns>
         private float GetRandom()
         {
-            return (float)_random.NextDouble();
+            return (float) _random.NextDouble();
         }
 
         /// <summary>
-        /// Returns a random bool
+        ///     Returns a random bool
         /// </summary>
         /// <returns></returns>
         private bool GetRandomBool()

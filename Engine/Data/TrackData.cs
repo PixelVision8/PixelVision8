@@ -1,24 +1,28 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System;
 using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine
 {
-
     /// <summary>
     ///     A track is a collection of ISoundData that is played
     ///     back in a specific sequence. The track uses notes to
@@ -26,11 +30,12 @@ namespace PixelVision8.Engine
     /// </summary>
     public class TrackData : AbstractData
     {
-
         /// <summary>
         ///     Total number of notes in a single track.
         /// </summary>
         public int maxNotes = 32;
+
+        public bool mute;
 
         /// <summary>
         ///     All the notes in this track, played one per beat.
@@ -41,8 +46,6 @@ namespace PixelVision8.Engine
         ///     ID of SFX to use for the instrument
         /// </summary>
         public int sfxID;
-
-        public bool mute;
 
         /// <summary>
         ///     Create a new TrackData instance by supplying the
@@ -60,8 +63,8 @@ namespace PixelVision8.Engine
         /// </summary>
         public int totalNotes
         {
-            get { return notes.Length; }
-            set { Array.Resize(ref notes, MathUtil.Clamp(value, 0, maxNotes)); }
+            get => notes.Length;
+            set => Array.Resize(ref notes, value.Clamp(0, maxNotes));
         }
 
         /// <summary>
@@ -83,7 +86,5 @@ namespace PixelVision8.Engine
             for (var i = 0; i < totalNotes; i++)
                 notes[i] = 0;
         }
-
     }
-
 }

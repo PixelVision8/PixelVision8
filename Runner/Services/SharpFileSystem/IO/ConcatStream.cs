@@ -5,9 +5,10 @@ namespace SharpFileSystem.IO
 {
     public class ConcatStream : Stream
     {
-        private long[] _offsets;
-        private Stream[] _streams;
-        private int _streamIndex = 0;
+        private readonly long _length;
+        private readonly long[] _offsets;
+        private int _streamIndex;
+        private readonly Stream[] _streams;
 
         public ConcatStream(params Stream[] streams)
         {
@@ -16,7 +17,7 @@ namespace SharpFileSystem.IO
 
             long offset = 0;
             _length = 0;
-            for(int i = 0; i < _streams.Length; i++)
+            for (var i = 0; i < _streams.Length; i++)
             {
                 _offsets[i] = offset;
                 offset += _streams[i].Length;
@@ -24,62 +25,41 @@ namespace SharpFileSystem.IO
             }
         }
 
-        public Stream CurrentStream
-        {
-            get { return _streams[_streamIndex]; }
-        }
+        public Stream CurrentStream => _streams[_streamIndex];
 
-        public long CurrentStreamOffset
-        {
-            get { return _offsets[_streamIndex]; }
-        }
+        public long CurrentStreamOffset => _offsets[_streamIndex];
 
-        public override bool CanRead
-        {
-            get { return true; }
-        }
+        public override bool CanRead => true;
 
-        public override bool CanSeek
-        {
-            get { return true; }
-        }
+        public override bool CanSeek => true;
 
-        public override bool CanWrite
+        public override bool CanWrite => false;
+
+        public override long Length => _length;
+
+        public override long Position
         {
-            get { return false; }
+            get => CurrentStreamOffset + CurrentStream.Position;
+            set
+            {
+                if (value < CurrentStreamOffset)
+                    do
+                    {
+                        _streamIndex--;
+                    } while (value < CurrentStreamOffset);
+                else if (value >= CurrentStreamOffset + CurrentStream.Length)
+                    do
+                    {
+                        _streamIndex++;
+                    } while (value >= CurrentStreamOffset + CurrentStream.Length && _streamIndex < _streams.Length - 1);
+
+                CurrentStream.Position = value - CurrentStreamOffset;
+            }
         }
 
         public override void Flush()
         {
             CurrentStream.Flush();
-        }
-
-        private long _length;
-        public override long Length { get { return _length; } }
-
-        public override long Position
-        {
-            get { return CurrentStreamOffset + CurrentStream.Position; }
-            set
-            {
-                if (value < CurrentStreamOffset)
-                {
-                    do
-                    {
-                        _streamIndex--;
-                    }
-                    while (value < CurrentStreamOffset);
-                }
-                else if (value >= (CurrentStreamOffset + CurrentStream.Length))
-                {
-                    do
-                    {
-                        _streamIndex++;
-                    }
-                    while (value >= (CurrentStreamOffset + CurrentStream.Length) && _streamIndex < _streams.Length - 1);
-                }
-                CurrentStream.Position = value - CurrentStreamOffset;
-            }
         }
 
         public override int Read(byte[] buffer, int offset, int count)
@@ -88,14 +68,14 @@ namespace SharpFileSystem.IO
             do
             {
                 readBytes = CurrentStream.Read(buffer, offset, count);
-            }
-            while (readBytes == 0 && _streamIndex < _streams.Length - 1);
+            } while (readBytes == 0 && _streamIndex < _streams.Length - 1);
+
             return readBytes;
         }
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            switch(origin)
+            switch (origin)
             {
                 case SeekOrigin.Begin:
                     return Position = offset;
@@ -104,6 +84,7 @@ namespace SharpFileSystem.IO
                 case SeekOrigin.End:
                     return Position = Length - offset;
             }
+
             return Position;
         }
 

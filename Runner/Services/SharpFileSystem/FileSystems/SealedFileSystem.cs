@@ -5,12 +5,12 @@ namespace SharpFileSystem.FileSystems
 {
     public class SealedFileSystem : IFileSystem
     {
-        private IFileSystem Parent { get; set; }
-
         public SealedFileSystem(IFileSystem parent)
         {
             Parent = parent;
         }
+
+        private IFileSystem Parent { get; }
 
         public ICollection<FileSystemPath> GetEntities(FileSystemPath path)
         {

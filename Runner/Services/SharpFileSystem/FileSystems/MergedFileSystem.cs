@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace SharpFileSystem.FileSystems
 {
-    public class MergedFileSystem: IFileSystem
+    public class MergedFileSystem : IFileSystem
     {
-        public IEnumerable<IFileSystem> FileSystems { get; set; }
         public MergedFileSystem(IEnumerable<IFileSystem> fileSystems)
         {
             FileSystems = fileSystems.ToArray();
@@ -19,9 +17,11 @@ namespace SharpFileSystem.FileSystems
             FileSystems = fileSystems.ToArray();
         }
 
+        public IEnumerable<IFileSystem> FileSystems { get; set; }
+
         public void Dispose()
         {
-            foreach(var fs in FileSystems)
+            foreach (var fs in FileSystems)
                 fs.Dispose();
         }
 
@@ -29,22 +29,15 @@ namespace SharpFileSystem.FileSystems
         {
             var entities = new SortedList<FileSystemPath, FileSystemPath>();
             foreach (var fs in FileSystems.Where(fs => fs.Exists(path)))
-            {
-                foreach(var entity in fs.GetEntities(path))
-                    if (!entities.ContainsKey(entity))
-                        entities.Add(entity, entity);
-            }
+            foreach (var entity in fs.GetEntities(path))
+                if (!entities.ContainsKey(entity))
+                    entities.Add(entity, entity);
             return entities.Values;
         }
 
         public bool Exists(FileSystemPath path)
         {
             return FileSystems.Any(fs => fs.Exists(path));
-        }
-
-        public IFileSystem GetFirst(FileSystemPath path)
-        {
-            return FileSystems.FirstOrDefault(fs => fs.Exists(path));
         }
 
         public Stream CreateFile(FileSystemPath path)
@@ -73,8 +66,13 @@ namespace SharpFileSystem.FileSystems
 
         public void Delete(FileSystemPath path)
         {
-            foreach(var fs in FileSystems.Where(fs => fs.Exists(path)))
+            foreach (var fs in FileSystems.Where(fs => fs.Exists(path)))
                 fs.Delete(path);
+        }
+
+        public IFileSystem GetFirst(FileSystemPath path)
+        {
+            return FileSystems.FirstOrDefault(fs => fs.Exists(path));
         }
     }
 }

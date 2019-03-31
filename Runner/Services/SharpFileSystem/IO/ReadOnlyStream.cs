@@ -5,41 +5,29 @@ namespace SharpFileSystem.IO
 {
     public class ReadOnlyStream : Stream
     {
-        private Stream _stream;
+        private readonly Stream _stream;
 
         public ReadOnlyStream(Stream stream)
         {
             _stream = stream;
         }
 
-        public override bool CanRead
-        {
-            get { return _stream.CanRead; }
-        }
+        public override bool CanRead => _stream.CanRead;
 
-        public override bool CanSeek
-        {
-            get { return false; }
-        }
+        public override bool CanSeek => false;
 
-        public override bool CanWrite
+        public override bool CanWrite => false;
+
+        public override long Length => _stream.Length;
+
+        public override long Position
         {
-            get { return false; }
+            get => _stream.Position;
+            set => _stream.Position = value;
         }
 
         public override void Flush()
         {
-        }
-
-        public override long Length
-        {
-            get { return _stream.Length; }
-        }
-
-        public override long Position
-        {
-            get { return _stream.Position; }
-            set { _stream.Position = value; }
         }
 
         public override int Read(byte[] buffer, int offset, int count)

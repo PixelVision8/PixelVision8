@@ -1,9 +1,28 @@
+//   
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
+//  
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
+// 
+// Contributors
+// --------------------------------------------------------
+// This is the official list of Pixel Vision 8 contributors:
+//  
+// Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
+//
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PixelVision8.Engine.Services;
-
 
 namespace PixelVision8.Runner
 {
@@ -15,19 +34,12 @@ namespace PixelVision8.Runner
         Log,
         Exception
     }
-
 }
+
 namespace PixelVision8.Runner.Services
 {
-    
-    public class LogService: AbstractService
+    public class LogService : AbstractService
     {
-        public int totalItems = 100;
-        
-        public List<string> logBuffer = new List<string>();
-        
-        
-        
         private readonly string[] logCharacters =
         {
             "¡", // 129 Error
@@ -39,17 +51,19 @@ namespace PixelVision8.Runner.Services
             "¥",
             "¥"
         };
-    
+
         private readonly StringBuilder sb = new StringBuilder();
-        
+
+        public List<string> logBuffer = new List<string>();
+        public int totalItems = 100;
+
         public LogService(int total)
         {
-            this.totalItems = total;
+            totalItems = total;
         }
 
         public void UpdateLog(string logString, LogType type = LogType.Log, string stackTrace = "")
         {
-
             var typeCharacter = logCharacters[(int) type];
 
             // Clear string builder
@@ -65,45 +79,32 @@ namespace PixelVision8.Runner.Services
                 sb.Append(stackTrace);
                 sb.Append("\n");
             }
-                
+
             // Push message into the log buffer
 
-            if (logBuffer.Count > totalItems)
-            {
-                // Remove the last item
-                logBuffer.RemoveAt(0);
-            }
-            
+            if (logBuffer.Count > totalItems) logBuffer.RemoveAt(0);
+
             Console.WriteLine(sb.ToString());
-            
+
             logBuffer.Add(sb.ToString());
-            
         }
 
         public List<string> ReadLogItems(int start = 0, int end = -1)
         {
-
             var tmpList = new List<string>();
-            
-            if (end == -1)
-            {
-                end = logBuffer.Count;
-            }
+
+            if (end == -1) end = logBuffer.Count;
 
             var total = end - start;
-            
-            for (int i = start; i < total; i++)
-            {
-                tmpList.Add(logBuffer[i]);
-            }
+
+            for (var i = start; i < total; i++) tmpList.Add(logBuffer[i]);
 
             return tmpList;
-
         }
 
         public string ReadLog(int start = 0, int end = -1)
         {
-            return String.Join("\n", ReadLogItems(start, end).ToArray());
+            return string.Join("\n", ReadLogItems(start, end).ToArray());
         }
 
         public string ReadLastLogItem()

@@ -1,19 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace SharpFileSystem.FileSystems
 {
     public class FileSystemWrapper : IFileSystem
     {
-        public IFileSystem Parent { get; private set; }
-
         public FileSystemWrapper(IFileSystem parent)
         {
             Parent = parent;
         }
+
+        public IFileSystem Parent { get; }
 
         public ICollection<FileSystemPath> GetEntities(FileSystemPath path)
         {

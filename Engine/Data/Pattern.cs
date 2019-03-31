@@ -1,17 +1,22 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System;
 
@@ -19,13 +24,26 @@ namespace PixelVision8.Engine
 {
     public class Pattern : AbstractData
     {
-        public int[] pixels = new int[0];
+        protected int _height;
 
         // Those are accessed internally very often,
         // and field accesses (ldfld, stfld) are much faster than
         // property accesses (call / callvirt get_ / set_)
         protected int _width;
-        protected int _height;
+        public int[] pixels = new int[0];
+
+        private int[] tmpPixels;
+
+        protected int total;
+
+
+        public Pattern(int width = 1, int height = 1)
+        {
+            _width = width;
+            _height = height;
+
+            Resize(width, height);
+        }
 
         /// <summary>
         ///     The <see cref="width" /> of the Pattern.
@@ -37,16 +55,6 @@ namespace PixelVision8.Engine
         /// </summary>
         public int height => _height;
 
-        
-        public Pattern(int width = 1, int height = 1)
-        {
-            this._width = width;
-            this._height = height;
-            
-            Resize(width, height);
-            
-        }
-        
         /// <summary>
         ///     Returns a single pixel. If x or y is out of bounds it will wrap.
         /// </summary>
@@ -55,7 +63,6 @@ namespace PixelVision8.Engine
         /// <returns></returns>
         public virtual int GetPixel(int x, int y)
         {
-
             // Wrap x,y values so they don't go out of bounds
 //            x = x % width;
 //            y = y % height;
@@ -63,14 +70,13 @@ namespace PixelVision8.Engine
 //            return pixels[x + width * y];
 
             // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-            int size = _height;
-            y = ((y % size) + size) % size;
+            var size = _height;
+            y = (y % size + size) % size;
             size = _width;
-            x = ((x % size) + size) % size;
+            x = (x % size + size) % size;
             // size is still == _width from the previous operation - let's reuse the local
 
             return pixels[x + size * y];
-            
         }
 
         /// <summary>
@@ -85,25 +91,23 @@ namespace PixelVision8.Engine
 //                return;
 
             // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-            int size = _height;
-            y = ((y % size) + size) % size;
+            var size = _height;
+            y = (y % size + size) % size;
             size = _width;
-            x = ((x % size) + size) % size;
+            x = (x % size + size) % size;
             // size is still == _width from the previous operation - let's reuse the local
 
             var index = x + size * y;
-            
+
             // TODO this should never be out of range
 //            if(index > -1 && index < pixels.Length)
             pixels[index] = color;
 //            else
 //                Debug.Log("index "+ index + " "+x+ "," + y);
-            
+
             Invalidate();
         }
 
-        private int[] tmpPixels;
-        
         /// <summary>
         ///     Return a copy of the pixel data.
         /// </summary>
@@ -113,12 +117,10 @@ namespace PixelVision8.Engine
             tmpPixels = new int[pixels.Length];
 
             Array.Copy(pixels, tmpPixels, pixels.Length);
-            
+
             return tmpPixels;
         }
 
-        protected int total;
-        
         /// <summary>
         ///     This replaces all the pixels in the TextureData with the supplied
         ///     values.
@@ -136,7 +138,6 @@ namespace PixelVision8.Engine
         }
 
         /// <summary>
-        ///     
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -149,57 +150,55 @@ namespace PixelVision8.Engine
 
             if (total == 0)
                 return;
-            
+
             // Per-line copy, as there is no special per-pixel logic required.
 
             // Vertical wrapping is not an issue. Horizontal wrapping requires splitting the copy into two operations.
             // Keep important data in local variables.
             int dstY;
-            int[] dst = this.pixels;
-            int width = _width;
-            int height = _height;
-            int offsetStart = ((x % width) + width) % width;
-            int offsetEnd = offsetStart + blockWidth;
+            var dst = this.pixels;
+            var width = _width;
+            var height = _height;
+            var offsetStart = (x % width + width) % width;
+            var offsetEnd = offsetStart + blockWidth;
             if (offsetEnd <= width)
             {
                 // Copy each entire line at once.
                 for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
                 {
                     // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                    dstY = (((y + tmpY) % height) + height) % height;
+                    dstY = ((y + tmpY) % height + height) % height;
                     Array.Copy(pixels, tmpY * blockWidth, dst, offsetStart + dstY * width, blockWidth);
                 }
             }
             else
             {
                 // Copy each non-wrapping section and each wrapped section separately.
-                int wrap = offsetEnd % width;
+                var wrap = offsetEnd % width;
                 for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
                 {
                     // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                    dstY = (((y + tmpY) % height) + height) % height;
+                    dstY = ((y + tmpY) % height + height) % height;
                     Array.Copy(pixels, tmpY * blockWidth, dst, offsetStart + dstY * width, blockWidth - wrap);
-                    Array.Copy(pixels, (blockWidth - wrap) + tmpY * blockWidth, dst, dstY * width, wrap);
+                    Array.Copy(pixels, blockWidth - wrap + tmpY * blockWidth, dst, dstY * width, wrap);
                 }
             }
-
         }
-        
+
         /// <summary>
-        ///     
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
         public virtual void Resize(int width, int height)
         {
-            this._width = width;
-            this._height = height;
-            
+            _width = width;
+            _height = height;
+
             Array.Resize(ref pixels, width * height);
-            
+
             Clear();
         }
-        
+
         /// <summary>
         ///     Clears the pixel data. The default empty value is -1 since the
         ///     ColorChip starts at 0. You can also use the Clear() method to
@@ -210,42 +209,37 @@ namespace PixelVision8.Engine
         /// </param>
         public virtual void Clear(int colorRef = -1, int x = 0, int y = 0, int? width = null, int? height = null)
         {
-            
-
             int[] tmpPixels = null;
 
             var tmpWidth = width ?? this.width;
             var tmpHeight = height ?? this.height;
-            
+
 //            if (colorRef == -1)
 //            {
-                
-                var total = tmpWidth * tmpHeight;
 
-                tmpPixels = new int[total];
-                
-                for (int i = 0; i < total; i++)
-                {
-                    tmpPixels[i] = colorRef;
-                }
-                 
+            var total = tmpWidth * tmpHeight;
+
+            tmpPixels = new int[total];
+
+            for (var i = 0; i < total; i++) tmpPixels[i] = colorRef;
+
 //            }
 
-            
-                SetPixels(x, y, tmpWidth, tmpHeight, tmpPixels);
+
+            SetPixels(x, y, tmpWidth, tmpHeight, tmpPixels);
 
 //            
 //            MergePixels(x, y, width ?? this.width, height ?? this.height, tmpPixels,
 //                false, false, 0, false);
-            
-            
+
+
 //            total = pixels.Length;
 //            
 //            for (int i = total - 1; i > -1; i--)
 //            {
 //                pixels[i] = colorRef;
 //            }
-            
+
             Invalidate();
         }
 
@@ -307,7 +301,7 @@ namespace PixelVision8.Engine
             int pixel;
             int srcX, srcY;
             for (var i = total - 1; i > -1; i--)
-            {    
+            {
                 pixel = pixels?[i] ?? -1;
 
                 if (pixel != -1 || ignoreTransparent != true)
@@ -325,7 +319,7 @@ namespace PixelVision8.Engine
 
                     SetPixel(srcX + x, srcY + y, pixel);
                 }
-                
+
 
 //                
 //                if (pixel != -1 && ignoreTransparent == false)
@@ -333,10 +327,8 @@ namespace PixelVision8.Engine
 //                    
 //                }
             }
-            
-            Invalidate();
 
+            Invalidate();
         }
-        
     }
 }

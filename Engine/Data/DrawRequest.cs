@@ -1,26 +1,29 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System;
 
 namespace PixelVision8.Engine
 {
-
     public struct DrawRequest
     {
-
         private int[] _pixelData;
         public bool flipH;
         public bool flipV;
@@ -33,10 +36,10 @@ namespace PixelVision8.Engine
         private int totalPixels;
 
         public bool isRectangle => totalPixels < 0;
-        
+
         public int[] pixelData
         {
-            get { return _pixelData; }
+            get => _pixelData;
             set
             {
                 totalPixels = value?.Length ?? -1;
@@ -50,10 +53,7 @@ namespace PixelVision8.Engine
                 }
 
                 // ... except we set it to null to draw a solid rectangle
-                if (value == null)
-                {
-                    return;
-                }
+                if (value == null) return;
 
                 if (_pixelData.Length < totalPixels)
                     Array.Resize(ref _pixelData, totalPixels);
@@ -61,7 +61,5 @@ namespace PixelVision8.Engine
                 Array.Copy(value, _pixelData, totalPixels);
             }
         }
-
     }
-
 }

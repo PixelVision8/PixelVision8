@@ -1,4 +1,24 @@
-﻿using System;
+﻿//   
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
+//  
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
+// 
+// Contributors
+// --------------------------------------------------------
+// This is the official list of Pixel Vision 8 contributors:
+//  
+// Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
+//
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -9,7 +29,6 @@ using Microsoft.Xna.Framework.Input;
 
 namespace PixelVision8.Engine.Chips
 {
-
     public enum MouseInput
     {
         LeftButton,
@@ -17,10 +36,11 @@ namespace PixelVision8.Engine.Chips
         MiddleButton,
         Button1,
         Button2,
-        None,
+        None
     }
-    
-    public enum InputMap  {
+
+    public enum InputMap
+    {
         Player1UpKey,
         Player1DownKey,
         Player1RightKey,
@@ -52,83 +72,44 @@ namespace PixelVision8.Engine.Chips
         Player2SelectButton,
         Player2StartButton,
         Player2AButton,
-        Player2BButton,
+        Player2BButton
     }
 
     public class ControllerChip : AbstractChip, IControllerChip
     {
-        private class Controller
-        {
-//            public int GamePadIndex;
-            public GamePadState CurrentState;
-            public GamePadState PreviousState;
-            public Dictionary<Buttons, Keys> KeyboardMap;
-//            public Dictionary<Buttons, MouseInput> MouseMap;
-            public bool IsConnected()
-            {
-                return CurrentState.IsConnected;
-            }
-        }
-        
-        private List<Controller> players;
-        private GamePadDeadZone gamePadDeadZone = GamePadDeadZone.IndependentAxes;
+        private static readonly int repsPerSec = 20;
+
 //        private Array inputValues;
 //        private Array mouseValues;
 //        private List<int> gamepadIndices = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7 };
 //        private const int KEYBOARD_INDEX = -1;
 //        private const int MOUSE_INDEX = -2;
         public KeyboardState currentKeyboardState;
-        public KeyboardState previousKeyboardState;
         public MouseState currentMouseState;
+        private DateTime downSince = DateTime.Now;
+        private readonly GamePadDeadZone gamePadDeadZone = GamePadDeadZone.IndependentAxes;
+
+        private readonly StringBuilder inputStringBuilder = new StringBuilder();
+        private DateTime lastRep = DateTime.Now;
+
+        private List<Controller> players;
+        public KeyboardState previousKeyboardState;
         public MouseState previousMouseState;
-//        public float DeadzoneSticks = 0.25f;
-//        public float DeadzoneTriggers = 0.25f;
-//        public int PlayerCount = 1;
-
-        public override void Configure()
-        {
-            engine.controllerChip = this;
-            
-//            inputValues = Enum.GetValues(typeof(Buttons));
-            players = new List<Controller>()
-            {
-                new Controller(),
-                new Controller()
-            };
-
-            
-            // Setup Mouse
-            currentMouseState = Mouse.GetState();
-            previousMouseState = currentMouseState;
-            
-//            RegisterKeyInput();
-//            RegisterControllers();
-//            FindNewGamepads();
-        }
-        
-        public override void Deactivate()
-        {
-            base.Deactivate();
-            engine.controllerChip = null;
-        }
 
         private Keys? repChar;
-        private DateTime lastRep = DateTime.Now;
-        private DateTime downSince = DateTime.Now;
-        private float timeUntilRepInMillis = 500f;
-        private static int repsPerSec = 20;
-        
+        private readonly float timeUntilRepInMillis = 500f;
+
         public void Update(float timeDelta)
         {
             // Save the one and only (if available) keyboardstate 
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
-            
+
             // Save the one and only (if available) mousestate 
             previousMouseState = currentMouseState;
             currentMouseState = Mouse.GetState();
-            
-            for (int i = players.Count - 1; i >= 0; i--)
+
+            for (var i = players.Count - 1; i >= 0; i--)
             {
                 var player = players[i];
                 if (player.IsConnected())
@@ -139,13 +120,12 @@ namespace PixelVision8.Engine.Chips
 //                    players[i] = player;//TODO: needed?
                 }
             }
-            
+
             // Build the input string
             inputStringBuilder.Clear();
-            
-            foreach (Keys key in (Keys[]) Enum.GetValues(typeof(Keys)))
+
+            foreach (var key in (Keys[]) Enum.GetValues(typeof(Keys)))
             {
-                
                 if (JustPressed(key))
                 {
 //                    KeyDown?.Invoke(null, new KeyEventArgs(key), keyState);
@@ -153,7 +133,7 @@ namespace PixelVision8.Engine.Chips
 //                    {
                     downSince = DateTime.Now;
                     repChar = key;
-                
+
                     BuildInputString(key);
 //                        KeyPressed(null, new KeyEventArgs(key), keyState);
 //                    }
@@ -162,10 +142,7 @@ namespace PixelVision8.Engine.Chips
                 {
 //                    if (KeyUp != null)
 //                    {
-                    if (repChar == key)
-                    {
-                        repChar = null;
-                    }
+                    if (repChar == key) repChar = null;
 
 //                        KeyUp(null, new KeyEventArgs(key), keyState);
 //                    }
@@ -174,12 +151,12 @@ namespace PixelVision8.Engine.Chips
                 var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
                 if (repChar != null && repChar == key && currentKeyboardState.IsKeyDown(tmpKey))
                 {
-                    DateTime now = DateTime.Now;
-                    TimeSpan downFor = now.Subtract(downSince);
+                    var now = DateTime.Now;
+                    var downFor = now.Subtract(downSince);
                     if (downFor.CompareTo(TimeSpan.FromMilliseconds(timeUntilRepInMillis)) > 0)
                     {
                         // Should repeat since the wait time is over now.
-                        TimeSpan repeatSince = now.Subtract(lastRep);
+                        var repeatSince = now.Subtract(lastRep);
                         if (repeatSince.CompareTo(TimeSpan.FromMilliseconds(1000f / repsPerSec)) > 0)
                         {
                             // Time for another key-stroke.
@@ -192,16 +169,213 @@ namespace PixelVision8.Engine.Chips
                         }
                     }
                 }
-                
             }
+
 //            base.Update(gameTime);
+        }
+
+        public string ReadInputString()
+        {
+            return inputStringBuilder.ToString(); //throw new NotImplementedException();
+        }
+
+        public bool GetKeyDown(Keys key)
+        {
+            var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
+
+            return currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey);
+        }
+
+        public bool GetKeyUp(Keys key)
+        {
+            var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
+
+            return !currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey);
+        }
+
+
+        public new bool export { get; set; }
+
+        public bool ButtonReleased(Buttons button, int controllerID = 0)
+        {
+            // TODO need to test this out
+            var value = false;
+
+            var player = getPlayer(controllerID);
+
+            if (player != null)
+            {
+                Keys key = player.KeyboardMap.TryGetValue(button, out key) ? key : default(Keys);
+
+                var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
+
+                // Test the keyboard or the controller
+                value = !currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey) ||
+                        !IsPressed(player.CurrentState, button) && IsPressed(player.PreviousState, button);
+            }
+
+            return value;
+        }
+
+        public bool ButtonDown(Buttons button, int controllerID = 0)
+        {
+            var value = false;
+
+            var player = getPlayer(controllerID);
+
+            if (player != null)
+            {
+                Keys key = player.KeyboardMap.TryGetValue(button, out key) ? key : default(Keys);
+
+                var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
+
+                // Test the keyboard or the controller
+                value = currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey) ||
+                        IsPressed(player.CurrentState, button) && IsPressed(player.PreviousState, button);
+            }
+
+            return value;
+        }
+
+
+        public void RegisterKeyInput()
+        {
+            currentKeyboardState = Keyboard.GetState();
+            previousKeyboardState = currentKeyboardState;
+
+            var player1 = getPlayer(0);
+
+            var test = engine.GetMetaData(InputMap.Player1UpKey.ToString());
+//            Console.WriteLine("Key test up - "+test + " - " + InputMap.Player1UpKey.ToString());
+            //(Keys) Enum.Parse(typeof(Keys), 
+//            player1.GamePadIndex = KEYBOARD_INDEX;
+
+            try
+            {
+                player1.KeyboardMap = new Dictionary<Buttons, Keys>
+                {
+                    {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1UpKey.ToString()))},
+                    {
+                        Buttons.Left,
+                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1LeftKey.ToString()))
+                    },
+                    {
+                        Buttons.Right,
+                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1RightKey.ToString()))
+                    },
+                    {
+                        Buttons.Down,
+                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1DownKey.ToString()))
+                    },
+                    {
+                        Buttons.Select,
+                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1SelectKey.ToString()))
+                    },
+                    {
+                        Buttons.Start,
+                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1StartKey.ToString()))
+                    },
+                    {Buttons.A, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1AKey.ToString()))},
+                    {Buttons.B, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1BKey.ToString()))}
+                };
+
+                var player2 = getPlayer(1);
+//            player2.GamePadIndex = KEYBOARD_INDEX;
+                player2.KeyboardMap = new Dictionary<Buttons, Keys>
+                {
+                    {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2UpKey.ToString()))},
+                    {
+                        Buttons.Left,
+                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2LeftKey.ToString()))
+                    },
+                    {
+                        Buttons.Right,
+                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2RightKey.ToString()))
+                    },
+                    {
+                        Buttons.Down,
+                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2DownKey.ToString()))
+                    },
+                    {
+                        Buttons.Select,
+                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2SelectKey.ToString()))
+                    },
+                    {
+                        Buttons.Start,
+                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2StartKey.ToString()))
+                    },
+                    {Buttons.A, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2AKey.ToString()))},
+                    {Buttons.B, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2BKey.ToString()))}
+                };
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+//        public void UpdateControllerKey(int controllerID, PixelVisionSDK.ButtonState state)
+//        {
+//            
+//            //throw new NotImplementedException();
+//        }
+
+        public void RegisterControllers()
+        {
+            var state = GamePad.GetState(0, gamePadDeadZone);
+            if (state.IsConnected)
+            {
+                var player1 = getPlayer(0);
+//                player1.GamePadIndex = 0;
+                player1.CurrentState = state;
+            }
+
+            state = GamePad.GetState(1, gamePadDeadZone);
+            if (state.IsConnected)
+            {
+                var player2 = getPlayer(1);
+//                player2.GamePadIndex = 1;
+                player2.CurrentState = state;
+            }
+        }
+//        public float DeadzoneSticks = 0.25f;
+//        public float DeadzoneTriggers = 0.25f;
+//        public int PlayerCount = 1;
+
+        public override void Configure()
+        {
+            engine.controllerChip = this;
+
+//            inputValues = Enum.GetValues(typeof(Buttons));
+            players = new List<Controller>
+            {
+                new Controller(),
+                new Controller()
+            };
+
+
+            // Setup Mouse
+            currentMouseState = Mouse.GetState();
+            previousMouseState = currentMouseState;
+
+//            RegisterKeyInput();
+//            RegisterControllers();
+//            FindNewGamepads();
+        }
+
+        public override void Deactivate()
+        {
+            base.Deactivate();
+            engine.controllerChip = null;
         }
 
         private void BuildInputString(Keys key)
         {
-            inputStringBuilder.Append(GetChar(key, currentKeyboardState.CapsLock, currentKeyboardState.NumLock, currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) || currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift)));
+            inputStringBuilder.Append(GetChar(key, currentKeyboardState.CapsLock, currentKeyboardState.NumLock,
+                currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) ||
+                currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift)));
         }
-        
+
         private Controller getPlayer(int index)
         {
             return index >= 0 && index < players.Count ? players[index] : null;
@@ -262,8 +436,10 @@ namespace PixelVision8.Engine.Chips
 //                case Buttons.RightStickRight:
 //                    return state.ThumbSticks.Right.X > DeadzoneSticks;
             }
+
             return false;
         }
+
         private bool IsPressed(MouseState state, int input)
         {
             switch (input)
@@ -273,32 +449,24 @@ namespace PixelVision8.Engine.Chips
                 case 1:
                     return state.RightButton == ButtonState.Pressed;
             }
+
             return false;
         }
 
         public bool JustPressed(Keys key)
         {
-            var tmpKey = (Microsoft.Xna.Framework.Input.Keys) ((int) key);
+            var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
 
             return currentKeyboardState.IsKeyDown(tmpKey) && !previousKeyboardState.IsKeyDown(tmpKey);
         }
-        
-        StringBuilder inputStringBuilder = new StringBuilder();
-        
-        public string ReadInputString()
-        {
-            
-            
-            return inputStringBuilder.ToString(); //throw new NotImplementedException();
-        }
-        
+
         private string GetChar(Keys key, bool caps, bool num, bool shift)
         {
             if (key.ToString().Length == 1) // TODO: Optmize by checking if its in range instead
             {
                 if (shift || caps)
                     return key.ToString();
-                
+
                 return key.ToString().ToLower();
             }
 
@@ -307,69 +475,69 @@ namespace PixelVision8.Engine.Chips
                 case Keys.Space:
                     return " ";
                 case Keys.Tilde:
-                    return (shift) ? "~" : "`";
+                    return shift ? "~" : "`";
                 case Keys.Alpha1:
-                    return (shift) ? "!" : "1";
+                    return shift ? "!" : "1";
                 case Keys.Alpha2:
-                    return (shift) ? "@" : "2";
+                    return shift ? "@" : "2";
                 case Keys.Alpha3:
-                    return (shift) ? "#" : "3";
+                    return shift ? "#" : "3";
                 case Keys.Alpha4:
-                    return (shift) ? "$" : "4";
+                    return shift ? "$" : "4";
                 case Keys.Alpha5:
-                    return (shift) ? "%" : "5";
+                    return shift ? "%" : "5";
                 case Keys.Alpha6:
-                    return (shift) ? "^" : "6";
+                    return shift ? "^" : "6";
                 case Keys.Alpha7:
-                    return (shift) ? "&" : "7";
+                    return shift ? "&" : "7";
                 case Keys.Alpha8:
-                    return (shift) ? "*" : "8";
+                    return shift ? "*" : "8";
                 case Keys.Alpha9:
-                    return (shift) ? "(" : "9";
+                    return shift ? "(" : "9";
                 case Keys.Alpha0:
-                    return (shift) ? ")" : "0";
+                    return shift ? ")" : "0";
                 case Keys.Minus:
-                    return (shift) ? "_" : "-";
+                    return shift ? "_" : "-";
                 case Keys.Plus:
-                    return (shift) ? "+" : "=";
+                    return shift ? "+" : "=";
                 case Keys.OpenBrackets:
-                    return (shift) ? "{" : "[";
+                    return shift ? "{" : "[";
                 case Keys.CloseBrackets:
-                    return (shift) ? "}" : "]";
+                    return shift ? "}" : "]";
                 case Keys.Semicolon:
-                    return (shift) ? ":" : ";";
+                    return shift ? ":" : ";";
                 case Keys.Pipe:
-                    return (shift) ? "|" : "\\";
+                    return shift ? "|" : "\\";
                 case Keys.Quotes:
-                    return (shift) ? "\"" : "'";
+                    return shift ? "\"" : "'";
                 case Keys.Backslash:
-                    return (shift) ? "|" : "\\";
+                    return shift ? "|" : "\\";
                 case Keys.Comma:
-                    return (shift) ? "<" : ",";
+                    return shift ? "<" : ",";
                 case Keys.Period:
-                    return (shift) ? ">" : ".";
+                    return shift ? ">" : ".";
                 case Keys.Question:
-                    return (shift) ? "?" : "/";
+                    return shift ? "?" : "/";
                 case Keys.NumPad0:
-                    return (num) ? "0" : "";
+                    return num ? "0" : "";
                 case Keys.NumPad1:
-                    return (num) ? "1" : "";
+                    return num ? "1" : "";
                 case Keys.NumPad2:
-                    return (num) ? "2" : "";
+                    return num ? "2" : "";
                 case Keys.NumPad3:
-                    return (num) ? "3" : "";
+                    return num ? "3" : "";
                 case Keys.NumPad4:
-                    return (num) ? "4" : "";
+                    return num ? "4" : "";
                 case Keys.NumPad5:
-                    return (num) ? "5" : "";
+                    return num ? "5" : "";
                 case Keys.NumPad6:
-                    return (num) ? "6" : "";
+                    return num ? "6" : "";
                 case Keys.NumPad7:
-                    return (num) ? "7" : "";
+                    return num ? "7" : "";
                 case Keys.NumPad8:
-                    return (num) ? "8" : "";
+                    return num ? "8" : "";
                 case Keys.NumPad9:
-                    return (num) ? "9" : "";
+                    return num ? "9" : "";
                 case Keys.Add:
                     return "+";
                 case Keys.Divide:
@@ -377,7 +545,7 @@ namespace PixelVision8.Engine.Chips
                 case Keys.Multiply:
                     return "*";
                 case Keys.Decimal:
-                    return (num) ? "." : "";
+                    return num ? "." : "";
             }
 
             return string.Empty;
@@ -388,22 +556,43 @@ namespace PixelVision8.Engine.Chips
             return false; //throw new NotImplementedException();
         }
 
-        public bool GetKeyDown(Keys key)
+        public void InputMapping(string key, string value = null)
         {
-            var tmpKey = (Microsoft.Xna.Framework.Input.Keys) ((int) key);
+            // TODO need to parse the type
 
-            return currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey);
+            // Remove player
+            key = key.Remove(0, "Player".Length);
+
+            var player = key.Substring(0, "Player2".Length);
+
+//            getPlayer(0).KeyboardMap
         }
 
-        public bool GetKeyUp(Keys key)
+        public override void Shutdown()
         {
-            var tmpKey = (Microsoft.Xna.Framework.Input.Keys) ((int) key);
+//            Console.WriteLine("Save keys");
 
-            return !currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey);
+            // TODO loop through all the keys and save them back to the bios
+            base.Shutdown();
+        }
+
+        private class Controller
+        {
+//            public int GamePadIndex;
+            public GamePadState CurrentState;
+            public Dictionary<Buttons, Keys> KeyboardMap;
+
+            public GamePadState PreviousState;
+
+//            public Dictionary<Buttons, MouseInput> MouseMap;
+            public bool IsConnected()
+            {
+                return CurrentState.IsConnected;
+            }
         }
 
         #region Mouse APIs
-        
+
 //        private bool mouseInputActive => mouseInput != null;
 
         public bool GetMouseButtonDown(int id = 0)
@@ -413,9 +602,7 @@ namespace PixelVision8.Engine.Chips
 
         public bool GetMouseButtonUp(int id = 0)
         {
-
             return !IsPressed(currentMouseState, id) && IsPressed(previousMouseState, id);
-
         }
 
         public Point ReadMousePosition()
@@ -423,8 +610,8 @@ namespace PixelVision8.Engine.Chips
             var pos = PointToScreen(currentMouseState.Position);
             return new Point(pos.X, pos.Y);
         }
-        
-        
+
+
 //        public void ConvertMousePosition(Vector pos)
 //        {
 //           
@@ -437,12 +624,12 @@ namespace PixelVision8.Engine.Chips
 //        }
 
         private Matrix scaleMatrix = Matrix.CreateScale(1, 1, 1);
-        
+
         public void MouseScale(float x, float y)
         {
             scaleMatrix = Matrix.CreateScale(x, y, 1.0f);
         }
-        
+
 //        public Matrix GetScaleMatrix()
 //        {
 ////            var scaleX = (float)GraphicsDeviceManager.DefaultBackBufferWidth / (engine.displayChip.width - engine.displayChip.overscanXPixels);
@@ -450,24 +637,23 @@ namespace PixelVision8.Engine.Chips
 //            return ;
 //        }
 
-        public Microsoft.Xna.Framework.Point PointToScreen(Microsoft.Xna.Framework.Point point)
+        public Point PointToScreen(Point point)
         {
             return PointToScreen(point.X, point.Y);
         }
 
-        public Microsoft.Xna.Framework.Point PointToScreen(int x, int y)
+        public Point PointToScreen(int x, int y)
         {
-            
 //            var viewport = GraphicsDevice.Viewport;
-            var vx = x;// - viewport.X;
-            var vy = y;// - viewport.Y;
+            var vx = x; // - viewport.X;
+            var vy = y; // - viewport.Y;
 //            var scaleMatrix = GetScaleMatrix();
             var invertedMatrix = Matrix.Invert(scaleMatrix);
             return Vector2.Transform(new Vector2(vx, vy), invertedMatrix).ToPoint();
         }
-        
+
 //        private IMouseInput mouseInput;
-        
+
 //        public void RegisterMouseInput()
 //        {
 //            
@@ -479,145 +665,5 @@ namespace PixelVision8.Engine.Chips
 //        }
 
         #endregion
-
-        
-
-        public new bool export { get; set; }
-
-        public bool ButtonReleased(Buttons button, int controllerID = 0)
-        {
-            // TODO need to test this out
-            var value = false;
-            
-            var player = getPlayer(controllerID);
-            
-            if (player != null)
-            {
-                Keys key = player.KeyboardMap.TryGetValue(button, out key) ? key : default(Keys);
-
-                var tmpKey = (Microsoft.Xna.Framework.Input.Keys) ((int) key);
-
-                // Test the keyboard or the controller
-                value = (!currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey)) || !IsPressed(player.CurrentState, button) && IsPressed(player.PreviousState, button);
-            }
-            
-            return value;
-        }
-
-        public bool ButtonDown(Buttons button, int controllerID = 0)
-        {
-            var value = false;
-            
-            var player = getPlayer(controllerID);
-            
-            if (player != null)
-            {
-                Keys key = player.KeyboardMap.TryGetValue(button, out key) ? key : default(Keys);
-
-                var tmpKey = (Microsoft.Xna.Framework.Input.Keys) ((int) key);
-
-                // Test the keyboard or the controller
-                value = (currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey)) || IsPressed(player.CurrentState, button) && IsPressed(player.PreviousState, button);
-            }
-            
-            return value;
-        }
-
-        
-        public void RegisterKeyInput()
-        {
-            currentKeyboardState = Keyboard.GetState();
-            previousKeyboardState = currentKeyboardState;
-            
-            var player1 = getPlayer(0);
-
-            var test = engine.GetMetaData(InputMap.Player1UpKey.ToString() as string);
-//            Console.WriteLine("Key test up - "+test + " - " + InputMap.Player1UpKey.ToString());
-            //(Keys) Enum.Parse(typeof(Keys), 
-//            player1.GamePadIndex = KEYBOARD_INDEX;
-
-            try
-            {
-                player1.KeyboardMap = new Dictionary<Buttons, Keys>
-            {
-                { Buttons.Up, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1UpKey.ToString()))},
-                { Buttons.Left, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1LeftKey.ToString())) },
-                { Buttons.Right, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1RightKey.ToString())) },
-                { Buttons.Down, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1DownKey.ToString())) },
-                { Buttons.Select, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1SelectKey.ToString())) },
-                { Buttons.Start, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1StartKey.ToString())) },
-                { Buttons.A, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1AKey.ToString())) },
-                { Buttons.B, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player1BKey.ToString())) },
-            };
-            
-            var player2 = getPlayer(1);
-//            player2.GamePadIndex = KEYBOARD_INDEX;
-            player2.KeyboardMap = new Dictionary<Buttons, Keys>
-            {
-                { Buttons.Up, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2UpKey.ToString()))},
-                { Buttons.Left, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2LeftKey.ToString())) },
-                { Buttons.Right, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2RightKey.ToString())) },
-                { Buttons.Down, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2DownKey.ToString())) },
-                { Buttons.Select, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2SelectKey.ToString())) },
-                { Buttons.Start, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2StartKey.ToString())) },
-                { Buttons.A, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2AKey.ToString())) },
-                { Buttons.B, (Keys) Enum.Parse(typeof(Keys), engine.GetMetaData(InputMap.Player2BKey.ToString())) },
-            };
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-
-        }
-
-        public void InputMapping(string key, string value = null)
-        {
-            // TODO need to parse the type
-
-            // Remove player
-            key = key.Remove(0, "Player".Length);
-            
-            var player = key.Substring(0, "Player2".Length);
-            
-//            getPlayer(0).KeyboardMap
-
-        }
-
-        public override void Shutdown()
-        {
-//            Console.WriteLine("Save keys");
-            
-            // TODO loop through all the keys and save them back to the bios
-            base.Shutdown();
-        }
-//        public void UpdateControllerKey(int controllerID, PixelVisionSDK.ButtonState state)
-//        {
-//            
-//            //throw new NotImplementedException();
-//        }
-
-        public void RegisterControllers()
-        {
-
-            var state = GamePad.GetState(0, gamePadDeadZone);
-            if (state.IsConnected)
-            {
-                var player1 = getPlayer(0);
-//                player1.GamePadIndex = 0;
-                player1.CurrentState = state;
-            }
-            
-            state = GamePad.GetState(1, gamePadDeadZone);
-            if (state.IsConnected)
-            {
-                var player2 = getPlayer(1);
-//                player2.GamePadIndex = 1;
-                player2.CurrentState = state;
-            }
-            
-            
-        }
     }
 }

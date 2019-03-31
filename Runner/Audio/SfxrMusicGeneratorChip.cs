@@ -1,3 +1,23 @@
+//   
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
+//  
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
+// 
+// Contributors
+// --------------------------------------------------------
+// This is the official list of Pixel Vision 8 contributors:
+//  
+// Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
+//
+
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
@@ -24,8 +44,6 @@ namespace PixelVision8.Runner.Chips
 
     public class TrackSettings
     {
-        Random r = new Random();
-        
         private readonly Point[] defaultOctaves =
         {
             new Point(6, 6), // MELODY
@@ -37,8 +55,10 @@ namespace PixelVision8.Runner.Chips
             new Point(6, 7), // SNARE
             new Point(6, 6), // KICK
             new Point(3, 7), // RAND
-            new Point(3, 7), // NONE
+            new Point(3, 7) // NONE
         };
+
+        private InstrumentType _instrumentType;
 
         // MELODY: square
         // HARMONY: square
@@ -62,12 +82,12 @@ namespace PixelVision8.Runner.Chips
             "2,.6,,.2981,.1079,.1122,.0225,.1826,.0583,-.2287,.1341,.3666,.0704,.0258,.1558,.0187,.1626,.2816,-.0543,.3192,.0642,.3733,.2103,-.3137,-.3065,.8693,-.3045,.4969,.0218,-.015,.1222,.0003" // (KICK,+0)
         };
 
-        private InstrumentType _instrumentType;
-        
+        private readonly Random r = new Random();
+
 
         public InstrumentType instrumentType
         {
-            get { return _instrumentType; }
+            get => _instrumentType;
             set
             {
                 _instrumentType = value;
@@ -76,10 +96,9 @@ namespace PixelVision8.Runner.Chips
 
 //                if (typeID < defaultOctaves.Length)
 //                {
-                    // Changing the instrument should set the deafult octave values
-                    octaveRange = defaultOctaves[typeID];
+                // Changing the instrument should set the deafult octave values
+                octaveRange = defaultOctaves[typeID];
 //                }
-                
             }
         }
 
@@ -87,36 +106,29 @@ namespace PixelVision8.Runner.Chips
         public Point octaveRange { get; set; }
 
         //    public bool locked;
-        public bool generate
-        {
-            get { return instrumentType != InstrumentType.None; }
-        }
+        public bool generate => instrumentType != InstrumentType.None;
 
 
-        public string instrumentSettings
-        {
-            get { return ReadInstrumentSoundData((int) instrumentType); }
-        }
+        public string instrumentSettings => ReadInstrumentSoundData((int) instrumentType);
 
         public string ReadInstrumentSoundData(int value)
         {
 //            if (value == (int) InstrumentType.None) return null;
 
             var id = instrumentType == InstrumentType.Random ? r.Next(0, 7) : value;
-            
+
             // Update the octave to match the returned instrument id
             octaveRange = defaultOctaves[id];
 
             return instrumentTemplates[id];
         }
     }
-    
+
     public class SfxrMusicGeneratorChip : SfxrMusicChip
     {
-        Random r = new Random();
-        
         public Point octaveRange = new Point(1, 8);
-        
+        private readonly Random r = new Random();
+
         #region Music Generator
 
         // NES = 4 voices in this order
@@ -297,10 +309,7 @@ namespace PixelVision8.Runner.Chips
         public float soundParamDelta = 0.1f; // hmm log scale finesse fine tuning needed? FIXME?
         public TrackSettings[] trackSettings = new TrackSettings[0];
 
-        public int currentBeat
-        {
-            get { return Convert.ToInt32(sequencerBeatNumber); }
-        }
+        public int currentBeat => Convert.ToInt32(sequencerBeatNumber);
 
         public bool ReadLoop()
         {
@@ -357,7 +366,6 @@ namespace PixelVision8.Runner.Chips
 
             //musicChip.UpdateInstrument(track, sfxID);
             activeTrackerData.tracks[track].sfxID = sfxID.Clamp(0, soundChip.totalSounds);
-
         }
 
         public void UpdateTempo(int value)
@@ -476,7 +484,8 @@ namespace PixelVision8.Runner.Chips
 
             // mutate instruments FIXME
             if ((float) r.NextDouble() < pcgInstMutationChance) // only mutate half the time
-                MutateAllInstruments((float)r.NextDouble() * (pcgInstMutateMax - pcgInstMutateMin) + pcgInstMutateMin);//Random.Range(pcgInstMutateMin, pcgInstMutateMax)); //TODO need to make sure this is working correctly
+                MutateAllInstruments((float) r.NextDouble() * (pcgInstMutateMax - pcgInstMutateMin) +
+                                     pcgInstMutateMin); //Random.Range(pcgInstMutateMin, pcgInstMutateMax)); //TODO need to make sure this is working correctly
 
             // sanity check (not needed?)
             //        if (pcgTrackMax < 1)
@@ -492,16 +501,12 @@ namespace PixelVision8.Runner.Chips
             var harmonyTrackID = Array.FindIndex(trackSettings, t => t.instrumentType == InstrumentType.Harmony);
 
             //Debug.Log("Found Harmony Track " + harmonyTrackID);
-            
+
             // Make sure that the track settings is alwasy the correct size
-            if (trackSettings.Length < total)
-            {
-                Array.Resize(ref trackSettings, total);
-            }
-            
+            if (trackSettings.Length < total) Array.Resize(ref trackSettings, total);
+
             for (var trackNum = 0; trackNum < total; trackNum++) // in each track
             {
-                
                 // Need to account for a null track if the generator was not reconfigured
                 if (trackSettings[trackNum] == null)
                 {
@@ -509,7 +514,7 @@ namespace PixelVision8.Runner.Chips
                     trackSettings[trackNum].instrumentType = (InstrumentType) trackNum;
                     trackSettings[trackNum].sfxID = trackNum;
                 }
-                
+
                 // Get the current track settings
                 settings = trackSettings[trackNum];
                 trackData = activeTrackerData.tracks[trackNum];
@@ -606,7 +611,7 @@ namespace PixelVision8.Runner.Chips
 
                     // is silence appropriate for this moment?
                     //restHere = UnityEngine.Random.Range(0f,1f - noteChangeBoost) > pcgComplexity;
-                    randy = (float)r.NextDouble();//Random.value;
+                    randy = (float) r.NextDouble(); //Random.value;
                     restHere = randy + noteChangeBoost < pcgComplexity;
 
                     // never rest the first beat of the song on bass
@@ -636,7 +641,8 @@ namespace PixelVision8.Runner.Chips
 
                             // Need to set the harmony track to a note if it exists
                             if (harmonyTrackID > -1)
-                                activeTrackerData.tracks[harmonyTrackID].notes[noteNum] = pcgHarmonySuggestion + noteTranspose;
+                                activeTrackerData.tracks[harmonyTrackID].notes[noteNum] =
+                                    pcgHarmonySuggestion + noteTranspose;
 
                             // BASS: always sound nice with the harmony on beat 1 of other bars
                             if (beginBar)
@@ -657,14 +663,15 @@ namespace PixelVision8.Runner.Chips
                         }
                         else if (instrument == InstrumentType.Bass) // and not beat 1, done above
                         {
-                            if (!wasFunkyLastNote && (float)r.NextDouble() < pcgFunk) // we want a funky OCTAVE bass note
+                            if (!wasFunkyLastNote && (float) r.NextDouble() < pcgFunk
+                            ) // we want a funky OCTAVE bass note
                             {
                                 wasFunkyLastNote = true;
 
                                 // either stay the same, or jump higher or lower by an entire octave
                                 var funkyOffset = 12;
-                                if ((float)r.NextDouble() > 0.5f) // octave higher half the time
-                                    if ((float)r.NextDouble() > 0.5f) // stay same 25% of the time
+                                if ((float) r.NextDouble() > 0.5f) // octave higher half the time
+                                    if ((float) r.NextDouble() > 0.5f) // stay same 25% of the time
                                         funkyOffset = 0;
                                     else // octave lower %25 of the time
                                         funkyOffset = -12;
@@ -699,7 +706,6 @@ namespace PixelVision8.Runner.Chips
         {
             scale = value;
             pcgScale = scaleTable[(Scale) value];
-
         }
 
         /////////////////////////////////////////////////////////////////////////////
@@ -710,7 +716,7 @@ namespace PixelVision8.Runner.Chips
             var aNote = 0;
             var noteDistance = r.Next(pcgNoteDistanceMin, pcgNoteDistanceMax); // 0,1,2
             var noteDir = 1; // +1 or -1 only
-            if ((float)r.NextDouble() > 0.5f)
+            if ((float) r.NextDouble() > 0.5f)
                 noteDir = -1; // down
 
             // pure random noise - works
@@ -808,6 +814,4 @@ namespace PixelVision8.Runner.Chips
 
         #endregion
     }
-    
-    
 }

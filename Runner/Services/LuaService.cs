@@ -1,17 +1,23 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
+//  
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System;
 using MoonSharp.Interpreter;
@@ -31,37 +37,39 @@ namespace PixelVision8.Runner.Services
         {
             this.runner = runner;
         }
-        
+
         /// <summary>
         ///     This service exposes some of the runner's APIs to Lua Games.
         /// </summary>
         /// <param name="luaScript"></param>
         public virtual void ConfigureScript(Script luaScript)
         {
-            
             luaScript.Options.DebugPrint = runner.DisplayWarning;
-            
+
             luaScript.Globals["Volume"] = (VolumeDelegator) runner.Volume;
             luaScript.Globals["Mute"] = (MuteDelegator) runner.Mute;
-            
+
             luaScript.Globals["Scale"] = (ScaleDelegator) runner.Scale;
-            luaScript.Globals["Fullscreen"] = (FullscreenDelegator)runner.Fullscreen;
-            luaScript.Globals["CropScreen"] = (CropScreenDelegator)runner.CropScreen;
-            luaScript.Globals["StretchScreen"] = (StretchScreenDelegator)runner.StretchScreen;
-            
+            luaScript.Globals["Fullscreen"] = (FullscreenDelegator) runner.Fullscreen;
+            luaScript.Globals["CropScreen"] = (CropScreenDelegator) runner.CropScreen;
+            luaScript.Globals["StretchScreen"] = (StretchScreenDelegator) runner.StretchScreen;
+
             luaScript.Globals["DebugLayers"] = new Action<bool>(runner.DebugLayers);
             luaScript.Globals["DebugLayers"] = new Action<int>(runner.ToggleLayers);
-            
+
             luaScript.Globals["ResetGame"] = new Action(runner.ResetGame);
-            
         }
 
         private delegate int VolumeDelegator(int? volume);
-        private delegate bool MuteDelegator(bool? value);
-        private delegate int ScaleDelegator(int? value);
-        private delegate bool FullscreenDelegator(bool? newValue);
-        private delegate bool CropScreenDelegator(bool? newValue);
-        private delegate bool StretchScreenDelegator(bool? newValue);
 
+        private delegate bool MuteDelegator(bool? value);
+
+        private delegate int ScaleDelegator(int? value);
+
+        private delegate bool FullscreenDelegator(bool? newValue);
+
+        private delegate bool CropScreenDelegator(bool? newValue);
+
+        private delegate bool StretchScreenDelegator(bool? newValue);
     }
 }

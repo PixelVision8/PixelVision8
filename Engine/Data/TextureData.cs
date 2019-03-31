@@ -1,23 +1,27 @@
 ﻿//   
-// Copyright (c) Jesse Freeman. All rights reserved.  
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-// Licensed under the Microsoft Public License (MS-PL) License. 
-// See LICENSE file in the project root for full license information. 
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
 // 
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
 //  
 // Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+//
 
 using System;
 
 namespace PixelVision8.Engine
 {
-
     /// <summary>
     ///     <see cref="TextureData" /> represent a grid of pixel data in the engine.
     ///     Pixel data aren't values that can be used to
@@ -29,7 +33,6 @@ namespace PixelVision8.Engine
     /// </summary>
     public class TextureData : Pattern
     {
-
         /// <summary>
         ///     The constructor for a new TextureData class. It requires new
         ///     dimensions and an optional value for changing the wrap mode.
@@ -61,21 +64,16 @@ namespace PixelVision8.Engine
             int color;
 
             if (!ignoreTransparent)
-            {
                 Array.Copy(pixels, data, total);
-            }
             else
-            {
                 for (var i = 0; i < total; i++)
                 {
                     color = pixels[i];
                     if (color != transparentColor)
                         data[i] = color;
                 }
-            }
-                
         }
-        
+
         /// <summary>
         ///     Returns a set of pixel <paramref name="data" /> from a specific
         ///     position and size. Supply anint array to get a
@@ -109,38 +107,33 @@ namespace PixelVision8.Engine
             // Vertical wrapping is not an issue. Horizontal wrapping requires splitting the copy into two operations.
             // Keep important data in local variables.
             int srcY;
-            int[] src = pixels;
-            int width = _width;
-            int height = _height;
-            int offsetStart = ((x % width) + width) % width;
-            int offsetEnd = offsetStart + blockWidth;
+            var src = pixels;
+            var width = _width;
+            var height = _height;
+            var offsetStart = (x % width + width) % width;
+            var offsetEnd = offsetStart + blockWidth;
             if (offsetEnd <= width)
             {
                 // Copy each entire line at once.
                 for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
                 {
                     // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                    srcY = (((y + tmpY) % height) + height) % height;
+                    srcY = ((y + tmpY) % height + height) % height;
                     Array.Copy(src, offsetStart + srcY * width, data, tmpY * blockWidth, blockWidth);
                 }
             }
             else
             {
                 // Copy each non-wrapping section and each wrapped section separately.
-                int wrap = offsetEnd % width;
+                var wrap = offsetEnd % width;
                 for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
                 {
                     // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                    srcY = (((y + tmpY) % height) + height) % height;
+                    srcY = ((y + tmpY) % height + height) % height;
                     Array.Copy(src, offsetStart + srcY * width, data, tmpY * blockWidth, blockWidth - wrap);
-                    Array.Copy(src, srcY * width, data, (blockWidth - wrap) + tmpY * blockWidth, wrap);
+                    Array.Copy(src, srcY * width, data, blockWidth - wrap + tmpY * blockWidth, wrap);
                 }
             }
-
         }
-
-        
-
     }
-
 }

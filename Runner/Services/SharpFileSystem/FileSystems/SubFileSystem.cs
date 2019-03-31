@@ -5,26 +5,16 @@ using SharpFileSystem.Collections;
 
 namespace SharpFileSystem.FileSystems
 {
-    public class SubFileSystem: IFileSystem
+    public class SubFileSystem : IFileSystem
     {
-        public IFileSystem FileSystem { get; private set; }
-        public FileSystemPath Root { get; private set; }
-
         public SubFileSystem(IFileSystem fileSystem, FileSystemPath root)
         {
             FileSystem = fileSystem;
             Root = root;
         }
 
-        protected FileSystemPath AppendRoot(FileSystemPath path)
-        {
-            return Root.AppendPath(path);
-        }
-
-        protected FileSystemPath RemoveRoot(FileSystemPath path)
-        {
-            return path.RemoveParent(Root);
-        }
+        public IFileSystem FileSystem { get; }
+        public FileSystemPath Root { get; }
 
         public void Dispose()
         {
@@ -60,6 +50,16 @@ namespace SharpFileSystem.FileSystems
         public void Delete(FileSystemPath path)
         {
             FileSystem.Delete(AppendRoot(path));
+        }
+
+        protected FileSystemPath AppendRoot(FileSystemPath path)
+        {
+            return Root.AppendPath(path);
+        }
+
+        protected FileSystemPath RemoveRoot(FileSystemPath path)
+        {
+            return path.RemoveParent(Root);
         }
     }
 }

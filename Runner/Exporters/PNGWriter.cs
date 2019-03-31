@@ -1,3 +1,23 @@
+//   
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
+//  
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
+// 
+// Contributors
+// --------------------------------------------------------
+// This is the official list of Pixel Vision 8 contributors:
+//  
+// Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
+//
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,173 +29,172 @@ namespace PixelVision8.Runner.Exporters
 {
     public class PNGWriter : IImageExporter
     {
-//          private const int bitsPerSample = 8;
-        private ColorType colorType;
         private Color[] colorData;
-      
-      public int height { get; private set; }
-      public int width { get; private set; }
 
-      public PNGWriter()
-      {
-        // TODO this shouldn't save PNGs with alpha
-        this.colorType = ColorType.RgbWithAlpha;
-      }
+//          private const int bitsPerSample = 8;
+        private readonly ColorType colorType;
+
+        public PNGWriter()
+        {
+            // TODO this shouldn't save PNGs with alpha
+            colorType = ColorType.RgbWithAlpha;
+        }
+
+        public int height { get; private set; }
+        public int width { get; private set; }
 
 //        private int width;
 //        private int height;
-    
-        public void Write(int width1, int height1, Stream outputStream, Color[] colors)
-      {
-        width = width1;
-        height = height1;
 
-        colorData = colors;
-        
+        public void Write(int width1, int height1, Stream outputStream, Color[] colors)
+        {
+            width = width1;
+            height = height1;
+
+            colorData = colors;
+
 //        switch (texture2D.Format)
 //        {
 //          case SurfaceFormat.Color:
 //        texture2D.GetData(colorData);
 //        
 //        GetColorData(texture2D);
-        
-        
-        
-        
-        outputStream.Write(HeaderChunk.PngSignature, 0, HeaderChunk.PngSignature.Length);
-        byte[] buffer1 = new HeaderChunk
-        {
-          Width = ((uint) width1),
-          Height = ((uint) height1),
-          BitDepth = 8,
-          ColorType = colorType,
-          CompressionMethod = 0,
-          FilterMethod = 0,
-          InterlaceMethod = 0
-        }.Encode();
-        outputStream.Write(buffer1, 0, buffer1.Length);
-        byte[] buffer2 = EncodePixelData();
-        MemoryStream memoryStream = new MemoryStream();
-        try
-        {
-          using (ZlibStream zlibStream = new ZlibStream(new MemoryStream(buffer2), CompressionMode.Compress))
-            zlibStream.CopyTo(memoryStream);
-        }
-        catch (Exception ex)
-        {
-          throw new Exception("An error occurred during DEFLATE compression.", ex);
-        }
 
-        DataChunk dataChunk = new DataChunk();
-        dataChunk.Data = memoryStream.ToArray();
-        byte[] buffer3 = dataChunk.Encode();
-        outputStream.Write(buffer3, 0, buffer3.Length);
-        byte[] buffer4 = new EndChunk().Encode();
-        outputStream.Write(buffer4, 0, buffer4.Length);
-      }
 
-      private byte[] EncodePixelData()
-      {
-        List<byte[]> numArrayList = new List<byte[]>();
-        int bytesPerPixel = CalculateBytesPerPixel();
-        byte[] previousScanline = new byte[width * bytesPerPixel];
-        for (int y = 0; y < height; ++y)
-        {
-          byte[] rawScanline = GetRawScanline(y);
-          byte[] filteredScanline = GetOptimalFilteredScanline(rawScanline, previousScanline, bytesPerPixel);
-          numArrayList.Add(filteredScanline);
-          previousScanline = rawScanline;
+            outputStream.Write(HeaderChunk.PngSignature, 0, HeaderChunk.PngSignature.Length);
+            var buffer1 = new HeaderChunk
+            {
+                Width = (uint) width1,
+                Height = (uint) height1,
+                BitDepth = 8,
+                ColorType = colorType,
+                CompressionMethod = 0,
+                FilterMethod = 0,
+                InterlaceMethod = 0
+            }.Encode();
+            outputStream.Write(buffer1, 0, buffer1.Length);
+            var buffer2 = EncodePixelData();
+            var memoryStream = new MemoryStream();
+            try
+            {
+                using (var zlibStream = new ZlibStream(new MemoryStream(buffer2), CompressionMode.Compress))
+                {
+                    zlibStream.CopyTo(memoryStream);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred during DEFLATE compression.", ex);
+            }
+
+            var dataChunk = new DataChunk();
+            dataChunk.Data = memoryStream.ToArray();
+            var buffer3 = dataChunk.Encode();
+            outputStream.Write(buffer3, 0, buffer3.Length);
+            var buffer4 = new EndChunk().Encode();
+            outputStream.Write(buffer4, 0, buffer4.Length);
         }
 
-        List<byte> byteList = new List<byte>();
-        foreach (byte[] numArray in numArrayList)
-          byteList.AddRange(numArray);
-        return byteList.ToArray();
-      }
-
-      /// <summary>
-      /// Applies all PNG filters to the given scanline and returns the filtered scanline that is deemed
-      /// to be most compressible, using lowest total variation as proxy for compressibility.
-      /// </summary>
-      /// <param name="rawScanline"></param>
-      /// <param name="previousScanline"></param>
-      /// <param name="bytesPerPixel"></param>
-      /// <returns></returns>
-      private byte[] GetOptimalFilteredScanline(byte[] rawScanline, byte[] previousScanline, int bytesPerPixel)
-      {
-        List<Tuple<byte[], int>> tupleList = new List<Tuple<byte[], int>>();
-        byte[] input1 = SubFilter.Encode(rawScanline, bytesPerPixel);
-        tupleList.Add(new Tuple<byte[], int>(input1, CalculateTotalVariation(input1)));
-        byte[] input2 = UpFilter.Encode(rawScanline, previousScanline);
-        tupleList.Add(new Tuple<byte[], int>(input2, CalculateTotalVariation(input2)));
-        byte[] input3 = AverageFilter.Encode(rawScanline, previousScanline, bytesPerPixel);
-        tupleList.Add(new Tuple<byte[], int>(input3, CalculateTotalVariation(input3)));
-        byte[] input4 = PaethFilter.Encode(rawScanline, previousScanline, bytesPerPixel);
-        tupleList.Add(new Tuple<byte[], int>(input4, CalculateTotalVariation(input4)));
-        int maxValue = int.MaxValue;
-        int index1 = 0;
-        for (int index2 = 0; index2 < tupleList.Count; ++index2)
+        private byte[] EncodePixelData()
         {
-          if (tupleList[index2].Item2 < maxValue)
-          {
-            index1 = index2;
-            maxValue = tupleList[index2].Item2;
-          }
+            var numArrayList = new List<byte[]>();
+            var bytesPerPixel = CalculateBytesPerPixel();
+            var previousScanline = new byte[width * bytesPerPixel];
+            for (var y = 0; y < height; ++y)
+            {
+                var rawScanline = GetRawScanline(y);
+                var filteredScanline = GetOptimalFilteredScanline(rawScanline, previousScanline, bytesPerPixel);
+                numArrayList.Add(filteredScanline);
+                previousScanline = rawScanline;
+            }
+
+            var byteList = new List<byte>();
+            foreach (var numArray in numArrayList)
+                byteList.AddRange(numArray);
+            return byteList.ToArray();
         }
 
-        return tupleList[index1].Item1;
-      }
-
-      /// <summary>
-      /// Calculates the total variation of given byte array.  Total variation is the sum of the absolute values of
-      /// neighbour differences.
-      /// </summary>
-      /// <param name="input"></param>
-      /// <returns></returns>
-      private int CalculateTotalVariation(byte[] input)
-      {
-        int num = 0;
-        for (int index = 1; index < input.Length; ++index)
-          num += Math.Abs(input[index] - input[index - 1]);
-        return num;
-      }
-
-      private byte[] GetRawScanline(int y)
-      {
-        byte[] numArray = new byte[4 * width];
-        for (int index = 0; index < width; ++index)
+        /// <summary>
+        ///     Applies all PNG filters to the given scanline and returns the filtered scanline that is deemed
+        ///     to be most compressible, using lowest total variation as proxy for compressibility.
+        /// </summary>
+        /// <param name="rawScanline"></param>
+        /// <param name="previousScanline"></param>
+        /// <param name="bytesPerPixel"></param>
+        /// <returns></returns>
+        private byte[] GetOptimalFilteredScanline(byte[] rawScanline, byte[] previousScanline, int bytesPerPixel)
         {
-          Color color = colorData[y * width + index];
-          
+            var tupleList = new List<Tuple<byte[], int>>();
+            var input1 = SubFilter.Encode(rawScanline, bytesPerPixel);
+            tupleList.Add(new Tuple<byte[], int>(input1, CalculateTotalVariation(input1)));
+            var input2 = UpFilter.Encode(rawScanline, previousScanline);
+            tupleList.Add(new Tuple<byte[], int>(input2, CalculateTotalVariation(input2)));
+            var input3 = AverageFilter.Encode(rawScanline, previousScanline, bytesPerPixel);
+            tupleList.Add(new Tuple<byte[], int>(input3, CalculateTotalVariation(input3)));
+            var input4 = PaethFilter.Encode(rawScanline, previousScanline, bytesPerPixel);
+            tupleList.Add(new Tuple<byte[], int>(input4, CalculateTotalVariation(input4)));
+            var maxValue = int.MaxValue;
+            var index1 = 0;
+            for (var index2 = 0; index2 < tupleList.Count; ++index2)
+                if (tupleList[index2].Item2 < maxValue)
+                {
+                    index1 = index2;
+                    maxValue = tupleList[index2].Item2;
+                }
+
+            return tupleList[index1].Item1;
+        }
+
+        /// <summary>
+        ///     Calculates the total variation of given byte array.  Total variation is the sum of the absolute values of
+        ///     neighbour differences.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        private int CalculateTotalVariation(byte[] input)
+        {
+            var num = 0;
+            for (var index = 1; index < input.Length; ++index)
+                num += Math.Abs(input[index] - input[index - 1]);
+            return num;
+        }
+
+        private byte[] GetRawScanline(int y)
+        {
+            var numArray = new byte[4 * width];
+            for (var index = 0; index < width; ++index)
+            {
+                var color = colorData[y * width + index];
+
 //          if(color.a < 0) color = new ColorData("#FF00FF");
 
-          numArray[4 * index] = color.R;//Convert.ToByte(color.R * byte.MaxValue);
-          numArray[4 * index + 1] = color.G;//Convert.ToByte(color.G * byte.MaxValue);
-          numArray[4 * index + 2] = color.B;//Convert.ToByte(color.B * byte.MaxValue);
-          numArray[4 * index + 3] = byte.MaxValue;//color.A;
+                numArray[4 * index] = color.R; //Convert.ToByte(color.R * byte.MaxValue);
+                numArray[4 * index + 1] = color.G; //Convert.ToByte(color.G * byte.MaxValue);
+                numArray[4 * index + 2] = color.B; //Convert.ToByte(color.B * byte.MaxValue);
+                numArray[4 * index + 3] = byte.MaxValue; //color.A;
+            }
+
+            return numArray;
         }
 
-        return numArray;
-      }
-
-      private int CalculateBytesPerPixel()
-      {
-        switch (colorType)
+        private int CalculateBytesPerPixel()
         {
-          case ColorType.Grayscale:
-            return 1;
-          case ColorType.Rgb:
-            return 3;
-          case ColorType.Palette:
-            return 1;
-          case ColorType.GrayscaleWithAlpha:
-            return 2;
-          case ColorType.RgbWithAlpha:
-            return 4;
-          default:
-            return -1;
+            switch (colorType)
+            {
+                case ColorType.Grayscale:
+                    return 1;
+                case ColorType.Rgb:
+                    return 3;
+                case ColorType.Palette:
+                    return 1;
+                case ColorType.GrayscaleWithAlpha:
+                    return 2;
+                case ColorType.RgbWithAlpha:
+                    return 4;
+                default:
+                    return -1;
+            }
         }
-      }
 
 //      private void GetColorData(Texture2D texture2D)
 //      {

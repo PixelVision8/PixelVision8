@@ -1,19 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace SharpFileSystem.Collections
 {
-    public class EnumerableCollection<T>: ICollection<T>
+    public class EnumerableCollection<T> : ICollection<T>
     {
         private readonly IEnumerable<T> _enumerable;
-
-        public int Count { get; private set; }
-
-        public bool IsReadOnly
-        {
-            get { return true; }
-        }
 
         public EnumerableCollection(IEnumerable<T> enumerable, int count)
         {
@@ -21,12 +15,16 @@ namespace SharpFileSystem.Collections
             Count = count;
         }
 
+        public int Count { get; }
+
+        public bool IsReadOnly => true;
+
         public IEnumerator<T> GetEnumerator()
         {
             return _enumerable.GetEnumerator();
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
@@ -39,14 +37,14 @@ namespace SharpFileSystem.Collections
         public void CopyTo(T[] array, int arrayIndex)
         {
             if (array.Length < Count + arrayIndex)
-                throw new ArgumentOutOfRangeException(nameof(array), "The supplied array (of size " + array.Length + ") cannot contain " + Count + " items on index " + arrayIndex);
-            foreach (var item in _enumerable)
-            {
-                array[arrayIndex++] = item;
-            }
+                throw new ArgumentOutOfRangeException(nameof(array),
+                    "The supplied array (of size " + array.Length + ") cannot contain " + Count + " items on index " +
+                    arrayIndex);
+            foreach (var item in _enumerable) array[arrayIndex++] = item;
         }
 
         #region Unsupported methods
+
         public void Add(T item)
         {
             throw new NotSupportedException();
@@ -61,6 +59,7 @@ namespace SharpFileSystem.Collections
         {
             throw new NotSupportedException();
         }
+
         #endregion
     }
 }
