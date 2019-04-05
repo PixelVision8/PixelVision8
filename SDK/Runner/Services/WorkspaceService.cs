@@ -39,17 +39,17 @@ namespace PixelVision8.Runner.Services
 {
     public class WorkspaceService : AbstractService
     {
-        protected List<string> archiveExtensions;
+        public List<string> archiveExtensions;
 
         public bool autoRunEnabled = true;
 
-        protected BiosService bios;
+//        protected BiosService bios;
 
-        protected DiskDriveService diskDrives;
+        public DiskDriveService diskDrives;
         protected FileSystemMounter diskMounter = new FileSystemMounter();
 //        public string documentsPath;
 
-        protected List<string> fileExtensions = new List<string>
+        public List<string> fileExtensions = new List<string>
         {
             "png",
             "lua",
@@ -65,7 +65,7 @@ namespace PixelVision8.Runner.Services
 
         protected LogService logService;
 
-        protected List<string> requiredFiles = new List<string>
+        public List<string> requiredFiles = new List<string>
         {
             "data.json",
             "info.json"
@@ -79,11 +79,11 @@ namespace PixelVision8.Runner.Services
         /// </summary>
         public WorkspaceService(BiosService bios, DesktopRunner runner)
         {
-            this.bios = bios;
+//            this.bios = bios;
             this.runner = runner;
         }
 
-        protected FileSystemPath userBiosPath => FileSystemPath.Parse("/Storage/user-bios.json");
+//        protected FileSystemPath userBiosPath => FileSystemPath.Parse("/Storage/user-bios.json");
 
         public int totalDisks
         {
@@ -131,8 +131,7 @@ namespace PixelVision8.Runner.Services
             EntityMovers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityMover());
             EntityCopiers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityCopier());
 
-            // Load bios from the user's storage folder
-            LoadBios(new[] {userBiosPath});
+            
         }
 
         public void MountWorkspace(string name)
@@ -315,7 +314,7 @@ namespace PixelVision8.Runner.Services
             }
 
             // Only update the bios when we need  to
-            if (updateBios) UpdateDiskInBios();
+//            if (updateBios) UpdateDiskInBios();
         }
 
         public void AutoRunGameFromDisk(string diskName)
@@ -369,12 +368,7 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        public void UpdateDiskInBios()
-        {
-            var paths = diskDrives.physicalPaths;
-
-            for (var i = 0; i < paths.Length; i++) WriteBiosData("Disk" + i, paths[i]);
-        }
+        
 
         public void SaveDisksInMemory()
         {
@@ -399,7 +393,7 @@ namespace PixelVision8.Runner.Services
                     diskDrives.RemoveDisk(path);
 
                     // Update the bios when a disk is removed
-                    UpdateDiskInBios();
+//                    UpdateDiskInBios();
                 }
                 catch
                 {
@@ -449,14 +443,14 @@ namespace PixelVision8.Runner.Services
             // Look to see if we have the bios default tool in the OS folder
             try
             {
-                var biosAutoRun = FileSystemPath.Parse((string) ReadBiosData("AutoRun", ""));
-
-                if (fileSystem.Exists(biosAutoRun))
-                    if (ValidateGameInDir(biosAutoRun))
-                    {
-                        runner.Load(biosAutoRun.Path);
-                        return;
-                    }
+//                var biosAutoRun = FileSystemPath.Parse((string) ReadBiosData("AutoRun", ""));
+//
+//                if (fileSystem.Exists(biosAutoRun))
+//                    if (ValidateGameInDir(biosAutoRun))
+//                    {
+//                        runner.Load(biosAutoRun.Path);
+//                        return;
+//                    }
             }
             catch
             {
@@ -790,7 +784,7 @@ namespace PixelVision8.Runner.Services
         {
             if (logService == null)
             {
-                var total = MathHelper.Clamp(Convert.ToInt32((long) ReadBiosData("TotalLogItems", 100L, true)), 1, 500);
+                var total = 100;//MathHelper.Clamp(Convert.ToInt32((long) ReadBiosData("TotalLogItems", 100L, true)), 1, 500);
 
                 logService = new LogService(total);
             }
@@ -881,42 +875,42 @@ namespace PixelVision8.Runner.Services
 
         #region Bios APIs
 
-        public void LoadBios(FileSystemPath[] paths)
-        {
-            for (var i = 0; i < paths.Length; i++)
-            {
-                var path = paths[i];
+//        public void LoadBios(FileSystemPath[] paths)
+//        {
+//            for (var i = 0; i < paths.Length; i++)
+//            {
+//                var path = paths[i];
+//
+//                if (fileSystem.Exists(path))
+//                {
+//                    var json = ReadTextFromFile(path);
+//
+//                    ParseBiosText(json);
+//                }
+//            }
+//
+//            ConfigureWorkspaceSettings();
+//        }
 
-                if (fileSystem.Exists(path))
-                {
-                    var json = ReadTextFromFile(path);
+//        public void ParseBiosText(string json)
+//        {
+//            bios.ParseBiosText(json);
+//        }
 
-                    ParseBiosText(json);
-                }
-            }
-
-            ConfigureWorkspaceSettings();
-        }
-
-        public void ParseBiosText(string json)
-        {
-            bios.ParseBiosText(json);
-        }
-
-        protected void ConfigureWorkspaceSettings()
-        {
-            archiveExtensions =
-                ((string) ReadBiosData("ArchiveExtensions", "zip,pv8,pvt,pvs,pva")).Split(',')
-                .ToList(); //new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
-            fileExtensions =
-                ((string) ReadBiosData("FileExtensions", "png,lua,json,txt")).Split(',')
-                .ToList(); //new List<string> {"png", "lua", "json", "txt"};
-//            gameFolders = ((string)ReadBiosData("GameFolders", "Games,Systems,Tools")).Split(',').ToList();//new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
-
-            requiredFiles =
-                ((string) ReadBiosData("RequiredFiles", "data.json,info.json")).Split(',')
-                .ToList(); //new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
-        }
+//        protected void ConfigureWorkspaceSettings()
+//        {
+//            archiveExtensions =
+//                ((string) ReadBiosData("ArchiveExtensions", "zip,pv8,pvt,pvs,pva")).Split(',')
+//                .ToList(); //new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
+//            fileExtensions =
+//                ((string) ReadBiosData("FileExtensions", "png,lua,json,txt")).Split(',')
+//                .ToList(); //new List<string> {"png", "lua", "json", "txt"};
+////            gameFolders = ((string)ReadBiosData("GameFolders", "Games,Systems,Tools")).Split(',').ToList();//new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
+//
+//            requiredFiles =
+//                ((string) ReadBiosData("RequiredFiles", "data.json,info.json")).Split(',')
+//                .ToList(); //new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
+//        }
 
         /// <summary>
         ///     Modifies the bios in memory. Changes are saved to the current bios and are stored in a userBiosChanges var to make
@@ -924,63 +918,63 @@ namespace PixelVision8.Runner.Services
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public void UpdateBiosData(string key, object value)
-        {
-            bios.UpdateBiosData(key, value);
-        }
+//        public void UpdateBiosData(string key, object value)
+//        {
+//            bios.UpdateBiosData(key, value);
+//        }
 
         /// <summary>
         ///     This saves any changes made to the bios from the user's session
         /// </summary>
-        public void SaveBiosChanges()
-        {
-            // TODO need to update this
-//            var path = FileSystemPath.Parse(userBiosPath);
+//        public void SaveBiosChanges()
+//        {
+//            // TODO need to update this
+////            var path = FileSystemPath.Parse(userBiosPath);
+//
+//            // Look for changes
+//            if (bios.userBiosChanges != null)
+//            {
+//                // Get the path to where the user's bios should be saved
+////                var path = FileSystemPath.Parse("/User/").AppendFile("user-bios.json");
+//
+//                if (!fileSystem.Exists(userBiosPath))
+//                {
+//                    var newBios = fileSystem.CreateFile(userBiosPath);
+//                    newBios.Close();
+//                }
+//
+//                // Create a user data dictionary
+//                var userData = new Dictionary<string, object>();
+//
+//                // Load the raw data for ther user's bio
+//                var json = ReadTextFromFile(userBiosPath);
+//
+//                // If the json file isn't empty, deserialize it
+//                if (json != "") userData = Json.Deserialize(json) as Dictionary<string, object>;
+//
+//                // Loop through each of the items in the uerBiosChanges dictionary
+//                foreach (var pair in bios.userBiosChanges)
+//                    // Set the changed values over any existing values from the json
+//                    if (userData.ContainsKey(pair.Key))
+//                        userData[pair.Key] = pair.Value;
+//                    else
+//                        userData.Add(pair.Key, pair.Value);
+//
+//
+//                // Save the new bios data back to the user's bios file.
+//                SaveTextToFile(userBiosPath, Json.Serialize(userData), true);
+//            }
+//        }
 
-            // Look for changes
-            if (bios.userBiosChanges != null)
-            {
-                // Get the path to where the user's bios should be saved
-//                var path = FileSystemPath.Parse("/User/").AppendFile("user-bios.json");
-
-                if (!fileSystem.Exists(userBiosPath))
-                {
-                    var newBios = fileSystem.CreateFile(userBiosPath);
-                    newBios.Close();
-                }
-
-                // Create a user data dictionary
-                var userData = new Dictionary<string, object>();
-
-                // Load the raw data for ther user's bio
-                var json = ReadTextFromFile(userBiosPath);
-
-                // If the json file isn't empty, deserialize it
-                if (json != "") userData = Json.Deserialize(json) as Dictionary<string, object>;
-
-                // Loop through each of the items in the uerBiosChanges dictionary
-                foreach (var pair in bios.userBiosChanges)
-                    // Set the changed values over any existing values from the json
-                    if (userData.ContainsKey(pair.Key))
-                        userData[pair.Key] = pair.Value;
-                    else
-                        userData.Add(pair.Key, pair.Value);
-
-
-                // Save the new bios data back to the user's bios file.
-                SaveTextToFile(userBiosPath, Json.Serialize(userData), true);
-            }
-        }
-
-        public object ReadBiosData(string key, object defaultValue, bool autoSave = false)
-        {
-            return bios.ReadBiosData(key, defaultValue, autoSave);
-        }
-
-        public void WriteBiosData(string key, object value)
-        {
-            bios.UpdateBiosData(key, value);
-        }
+//        public object ReadBiosData(string key, object defaultValue, bool autoSave = false)
+//        {
+//            return bios.ReadBiosData(key, defaultValue, autoSave);
+//        }
+//
+//        public void WriteBiosData(string key, object value)
+//        {
+//            bios.UpdateBiosData(key, value);
+//        }
 
         protected IFileSystem currentDisk;
 
@@ -1084,18 +1078,20 @@ namespace PixelVision8.Runner.Services
             return false;
         }
 
+        public FileSystemPath osLibPath;
+        public FileSystemPath workspaceLibPath;
+        
         public void IncludeLibDirectoryFiles(Dictionary<string, byte[]> files)
         {
             // Create paths to the System/Libs and Workspace/Libs folder
             var paths = new List<FileSystemPath>
             {
                 // Look in the system folder
-                FileSystemPath.Root.AppendDirectory("PixelVisionOS")
-                    .AppendDirectory((string) ReadBiosData("LibsDir", "Libs")),
-
+                osLibPath
+                ,
+                workspaceLibPath
                 // Look in the workspace folder
-                FileSystemPath.Root.AppendDirectory("Workspace")
-                    .AppendDirectory((string) ReadBiosData("LibsDir", "Libs"))
+                
             };
 
             var diskPaths = diskDrives.disks;
@@ -1211,9 +1207,9 @@ namespace PixelVision8.Runner.Services
         public void ShutdownSystem()
         {
             // make sure we have the current list of disks in the bios
-            UpdateDiskInBios();
+//            UpdateDiskInBios();
             SaveActiveDisks();
-            SaveBiosChanges();
+            
             ClearTempDirectory();
         }
 
@@ -1226,11 +1222,11 @@ namespace PixelVision8.Runner.Services
                     fileSystem.Delete(entities);
         }
 
-        public string DefaultBootTool()
-        {
-            // TODO need to see if there is a startup disk loaded
-            return (string) ReadBiosData("BootTool", "/PixelVisionOS/Tools/BootTool/");
-        }
+//        public string DefaultBootTool()
+//        {
+//            // TODO need to see if there is a startup disk loaded
+//            return (string) ReadBiosData("BootTool", "/PixelVisionOS/Tools/BootTool/");
+//        }
 
 //        public string DefaultTool()
 //        {

@@ -51,7 +51,7 @@ namespace PixelVision8.Runner.Services
                 var fileSystem = workspace.fileSystem;
                 try
                 {
-                    var directoryName = workspace.ReadBiosData("ScreenshotDir", "Screenshots") as string;
+                    var directoryName = "Screenshots";//workspace.ReadBiosData("ScreenshotDir", "Screenshots") as string;
 
                     var path = FileSystemPath.Root.AppendDirectory("Tmp").AppendDirectory(directoryName);
 

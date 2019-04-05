@@ -206,13 +206,13 @@ namespace PixelVision8.Runner.Services
 
         public virtual object ReadBiosSafeMode(string key)
         {
-            return desktopRunner.workspaceService.ReadBiosData(key, null);
+            return desktopRunner.bios.ReadBiosData(key, null);
         }
 
         public virtual void WriteBiosSafeMode(string key, object value)
         {
             // TODO should there be a set of safe keys and values types that can be accepted?
-            desktopRunner.workspaceService.WriteBiosData(key, value);
+            desktopRunner.bios.UpdateBiosData(key, value);
         }
 
         /// <summary>

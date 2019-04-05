@@ -76,7 +76,7 @@ namespace PixelVision8.Runner.Services
         public bool VaildateSpriteBuilderFolder(FileSystemPath rootPath)
         {
             // TODO need to make sure this is in the current game directory and uses the filesyem path
-            rootPath = rootPath.AppendDirectory((string) ReadBiosData("SpriteBuilderDir", "SpriteBuilder"));
+            rootPath = rootPath.AppendDirectory("SpriteBuilder");//(string) ReadBiosData("SpriteBuilderDir", "SpriteBuilder"));
 
             return fileSystem.Exists(rootPath);
         }

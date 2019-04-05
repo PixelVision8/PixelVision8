@@ -97,7 +97,7 @@ namespace PixelVision8.Runner
             if (toggle.HasValue)
             {
                 displayTarget.useCRT = toggle.Value;
-                workspaceService.UpdateBiosData(BiosSettings.CRT.ToString(), toggle.Value.ToString());
+                bios.UpdateBiosData(BiosSettings.CRT.ToString(), toggle.Value.ToString());
                 ResetResolution();
             }
 
@@ -110,7 +110,7 @@ namespace PixelVision8.Runner
             if (brightness.HasValue)
             {
                 displayTarget.brightness = brightness.Value;
-                workspaceService.UpdateBiosData(BiosSettings.Brightness.ToString(), (long) (brightness * 100));
+                bios.UpdateBiosData(BiosSettings.Brightness.ToString(), (long) (brightness * 100));
             }
 
             return displayTarget.brightness;
@@ -121,7 +121,7 @@ namespace PixelVision8.Runner
             if (sharpness.HasValue)
             {
                 displayTarget.sharpness = sharpness.Value;
-                workspaceService.UpdateBiosData(BiosSettings.Sharpness.ToString(), sharpness);
+                bios.UpdateBiosData(BiosSettings.Sharpness.ToString(), sharpness);
             }
 
             return displayTarget.sharpness;
@@ -138,7 +138,7 @@ namespace PixelVision8.Runner
             var actions = Enum.GetValues(typeof(ActionKeys)).Cast<ActionKeys>();
             foreach (var action in actions)
             {
-                actionKeys[action] = (Keys)Convert.ToInt32((long)workspaceService.ReadBiosData(action.ToString(), (long)actionKeys[action], true));
+                actionKeys[action] = (Keys)Convert.ToInt32((long)bios.ReadBiosData(action.ToString(), (long)actionKeys[action], true));
             }
             
             
@@ -148,7 +148,7 @@ namespace PixelVision8.Runner
             if (File.Exists(shaderPath))
             {
                 displayTarget.shaderPath = shaderPath;
-                EnableCRT(Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.CRT.ToString(), "True") as string));
+                EnableCRT(Convert.ToBoolean(bios.ReadBiosData(BiosSettings.CRT.ToString(), "True") as string));
 
             }
             
@@ -206,7 +206,7 @@ namespace PixelVision8.Runner
                 // Read the bios text
                 var biosText = File.ReadAllText(biosPath);
                 
-                var bios = new BiosService();
+                bios = new BiosService();
 
                 try
                 {
@@ -256,6 +256,9 @@ namespace PixelVision8.Runner
                 // Mount the filesystem
                 workspaceService.MountFileSystems(mounts);
                 
+                // Load bios from the user's storage folder
+                LoadBios(new[] {userBiosPath});
+                
                 // Build the OS Folder
     
                 osFileSystem = new MergedFileSystem();
@@ -266,7 +269,7 @@ namespace PixelVision8.Runner
                 // Mount the PixelVisionOS directory
                 workspaceService.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("PixelVisionOS"), osFileSystem));
                 
-                workspaceService.SetupLogFile(FileSystemPath.Parse(workspaceService.ReadBiosData("LogFilePath", "/Tmp/Log.txt") as string));
+                workspaceService.SetupLogFile(FileSystemPath.Parse(bios.ReadBiosData("LogFilePath", "/Tmp/Log.txt") as string));
                 
                 if (workspaceService.fileSystem.Exists(FileSystemPath.Root.AppendDirectory("PixelVisionOS")))
                 {
@@ -275,7 +278,7 @@ namespace PixelVision8.Runner
                     ConfigureRunner();
 
                     // Boot the game
-                    Load(workspaceService.DefaultBootTool(), RunnerMode.Booting);
+                    Load((string) bios.ReadBiosData("BootTool", "/PixelVisionOS/Tools/BootTool/"), RunnerMode.Booting);
                     
                 }
                 else
@@ -518,7 +521,7 @@ namespace PixelVision8.Runner
             
             for (int i = 0; i < totalDisks; i++)
             {
-                var diskPath = (string) workspaceService.ReadBiosData("Disk" + i, "none");
+                var diskPath = (string) bios.ReadBiosData("Disk" + i, "none");
                 if (diskPath != "none")
                 {
 //                        Console.WriteLine("Boot Mount "+ diskPath + " AutoRun " + (i == 0) + " AR Enabled " + workspaceService.autoRunEnabled);
@@ -529,19 +532,19 @@ namespace PixelVision8.Runner
 
             string[] args = Environment.GetCommandLineArgs();
             
-            workspaceService.WriteBiosData("TmpDisks", args.Length);
+            bios.UpdateBiosData("TmpDisks", args.Length);
 
             var count = 0;
         
             foreach (string arg in args.Skip(1))
             {
-                workspaceService.WriteBiosData("TmpDisk"+count, arg);
+                bios.UpdateBiosData("TmpDisk"+count, arg);
 //                    workspaceService.MountDisk(arg, false);
                 count++;
 
             }
 
-            var workspaceName = workspaceService.ReadBiosData("WorkspaceDir", "") as string;
+            var workspaceName = bios.ReadBiosData("WorkspaceDir", "") as string;
         
             // Only create the workspace if there is a workspace directory in the bios
             if (workspaceName != "")
@@ -585,7 +588,7 @@ namespace PixelVision8.Runner
             // Look to see if we have the bios default tool in the OS folder
             try
             {
-                var biosAutoRun = FileSystemPath.Parse((string) workspaceService.ReadBiosData("AutoRun", ""));
+                var biosAutoRun = FileSystemPath.Parse((string) bios.ReadBiosData("AutoRun", ""));
                 
                 if (workspaceService.fileSystem.Exists(biosAutoRun))
                 {
@@ -674,7 +677,7 @@ namespace PixelVision8.Runner
                         metaData["showDiskAnimation"] = nextMetaData["showDiskAnimation"];
 
                     // Get the default path to the load tool from the bios
-                    path = (string) workspaceService.ReadBiosData("LoadTool", "/PixelVisionOS/Tools/LoadTool/");
+                    path = (string) bios.ReadBiosData("LoadTool", "/PixelVisionOS/Tools/LoadTool/");
 
                     // Change the mode to loading
                     newMode = RunnerMode.Loading;
@@ -780,6 +783,8 @@ namespace PixelVision8.Runner
         {
             if(shutdown == false)
             workspaceService.MountDisk(path);
+
+            UpdateDiskInBios();
             
             // TODO need to make sure this is the right time to do this
             

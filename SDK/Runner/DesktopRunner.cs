@@ -32,7 +32,7 @@ using PixelVision8.Runner.Services;
 using SharpFileSystem;
 using SharpFileSystem.FileSystems;
 using PixelVision8.Runner.Exporters;
-
+using PixelVision8.Runner.Utils;
 using Directory = System.IO.Directory;
 using File = System.IO.File;
 
@@ -74,48 +74,50 @@ namespace PixelVision8.Runner
             sessionID = DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
             // TODO This may be a string
-            Volume(MathHelper.Clamp(Convert.ToInt32((long) workspaceService.ReadBiosData(BiosSettings.Volume.ToString(), 40L)), 0, 100));
+            Volume(MathHelper.Clamp(Convert.ToInt32((long) bios.ReadBiosData(BiosSettings.Volume.ToString(), 40L)), 0, 100));
 
-            Mute(Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.Mute.ToString(), "False") as string));
+            Mute(Convert.ToBoolean(bios.ReadBiosData(BiosSettings.Mute.ToString(), "False") as string));
 
-            systemVersion = (string) workspaceService.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
-            systemName = (string) workspaceService.ReadBiosData("SystemName", "PixelVision8");
+            systemVersion = (string) bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
+            systemName = (string) bios.ReadBiosData("SystemName", "PixelVision8");
 
             Window.Title =
-                (string) workspaceService.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8") + " " +
+                (string) bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8") + " " +
                 systemVersion;
         }
 
         public override void ConfigureDisplayTarget()
         {
             // Get the virtual monitor resolution
-            var tmpRes = ((string) workspaceService.ReadBiosData(BiosSettings.Resolution.ToString(), "512x480"))
+            var tmpRes = ((string) bios.ReadBiosData(BiosSettings.Resolution.ToString(), "512x480"))
                 .Split('x').Select(int.Parse)
                 .ToArray();
 
             // TODO this may be a string
             try
             {
-                Scale(Convert.ToInt32((long) workspaceService.ReadBiosData(BiosSettings.Scale.ToString(), 1)));
+                Scale(Convert.ToInt32((long) bios.ReadBiosData(BiosSettings.Scale.ToString(), 1)));
             }
             catch
             {
-                Scale(Convert.ToInt32((string) workspaceService.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
+                Scale(Convert.ToInt32((string) bios.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
             }
 
 
             Fullscreen(Convert.ToBoolean(
-                workspaceService.ReadBiosData(BiosSettings.FullScreen.ToString(), "False") as string));
+                bios.ReadBiosData(BiosSettings.FullScreen.ToString(), "False") as string));
             StretchScreen(
                 Convert.ToBoolean(
-                    workspaceService.ReadBiosData(BiosSettings.StretchScreen.ToString(), "False") as string));
+                    bios.ReadBiosData(BiosSettings.StretchScreen.ToString(), "False") as string));
             CropScreen(Convert.ToBoolean(
-                workspaceService.ReadBiosData(BiosSettings.CropScreen.ToString(), "False") as string));
+                bios.ReadBiosData(BiosSettings.CropScreen.ToString(), "False") as string));
             // Create the default display target
 
             displayTarget = new DisplayTarget(graphics, tmpRes[0], tmpRes[1], Fullscreen());
         }
 
+        public BiosService bios;
+        
         /// <summary>
         ///     Override the base initialize() method and setup the file system for PV8 to run on the desktop.
         /// </summary>
@@ -130,7 +132,7 @@ namespace PixelVision8.Runner
                 // Read the bios text
                 var biosText = File.ReadAllText(biosPath);
 
-                var bios = new BiosService();
+                bios = new BiosService();
 
                 try
                 {
@@ -144,9 +146,6 @@ namespace PixelVision8.Runner
 
                 // Create a workspace
                 workspaceService = new WorkspaceService(bios, this);
-                
-                
-                
                 
                 var mounts = new Dictionary<FileSystemPath, IFileSystem>();
 
@@ -183,7 +182,7 @@ namespace PixelVision8.Runner
 
 
                 workspaceService.SetupLogFile(
-                    FileSystemPath.Parse(workspaceService.ReadBiosData("LogFilePath", "/Tmp/Log.txt") as string));
+                    FileSystemPath.Parse(bios.ReadBiosData("LogFilePath", "/Tmp/Log.txt") as string));
 
 //                if (workspaceService.fileSystem.Exists(FileSystemPath.Root.AppendDirectory("PixelVisionOS")))
 //                {
@@ -191,7 +190,7 @@ namespace PixelVision8.Runner
                     ConfigureRunner();
 
                     
-                    var biosAutoRun = FileSystemPath.Parse((string) workspaceService.ReadBiosData("AutoRun", ""));
+                    var biosAutoRun = FileSystemPath.Parse((string) bios.ReadBiosData("AutoRun", ""));
                 
                     if (workspaceService.fileSystem.Exists(biosAutoRun))
                     {
@@ -217,6 +216,85 @@ namespace PixelVision8.Runner
                 Console.WriteLine("Error: No Bios file found.");
             }
         }
+        
+        public void LoadBios(FileSystemPath[] paths)
+        {
+            for (var i = 0; i < paths.Length; i++)
+            {
+                var path = paths[i];
+
+                if (workspaceService.fileSystem.Exists(path))
+                {
+                    var json = workspaceService.ReadTextFromFile(path);
+
+                    bios.ParseBiosText(json);
+                }
+            }
+
+            ConfigureWorkspaceSettings();
+        }
+        
+        protected void ConfigureWorkspaceSettings()
+        {
+            workspaceService.archiveExtensions =
+                ((string) bios.ReadBiosData("ArchiveExtensions", "zip,pv8,pvt,pvs,pva")).Split(',')
+                .ToList(); //new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
+            workspaceService.fileExtensions =
+                ((string) bios.ReadBiosData("FileExtensions", "png,lua,json,txt")).Split(',')
+                .ToList(); //new List<string> {"png", "lua", "json", "txt"};
+//            gameFolders = ((string)ReadBiosData("GameFolders", "Games,Systems,Tools")).Split(',').ToList();//new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
+
+            workspaceService.requiredFiles =
+                ((string) bios.ReadBiosData("RequiredFiles", "data.json,info.json")).Split(',')
+                .ToList(); //new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
+            
+            workspaceService.osLibPath = FileSystemPath.Root.AppendDirectory("PixelVisionOS")
+                .AppendDirectory((string) bios.ReadBiosData("LibsDir", "Libs"));
+            workspaceService.workspaceLibPath = FileSystemPath.Root.AppendDirectory("Workspace")
+                .AppendDirectory((string) bios.ReadBiosData("LibsDir", "Libs"));
+        }
+        
+        protected FileSystemPath userBiosPath => FileSystemPath.Parse("/Storage/user-bios.json");
+
+        public void SaveBiosChanges()
+        {
+            // TODO need to update this
+//            var path = FileSystemPath.Parse(userBiosPath);
+
+            // Look for changes
+            if (bios.userBiosChanges != null)
+            {
+                // Get the path to where the user's bios should be saved
+//                var path = FileSystemPath.Parse("/User/").AppendFile("user-bios.json");
+
+                if (!workspaceService.fileSystem.Exists(userBiosPath))
+                {
+                    var newBios = workspaceService.fileSystem.CreateFile(userBiosPath);
+                    newBios.Close();
+                }
+
+                // Create a user data dictionary
+                var userData = new Dictionary<string, object>();
+
+                // Load the raw data for ther user's bio
+                var json = workspaceService.ReadTextFromFile(userBiosPath);
+
+                // If the json file isn't empty, deserialize it
+                if (json != "") userData = Json.Deserialize(json) as Dictionary<string, object>;
+
+                // Loop through each of the items in the uerBiosChanges dictionary
+                foreach (var pair in bios.userBiosChanges)
+                    // Set the changed values over any existing values from the json
+                    if (userData.ContainsKey(pair.Key))
+                        userData[pair.Key] = pair.Value;
+                    else
+                        userData.Add(pair.Key, pair.Value);
+
+
+                // Save the new bios data back to the user's bios file.
+                workspaceService.SaveTextToFile(userBiosPath, Json.Serialize(userData), true);
+            }
+        }
 
         public override void ConfigureServices()
         {
@@ -239,7 +317,7 @@ namespace PixelVision8.Runner
             // Pass input mapping
             foreach (var keyMap in defaultKeys)
             {
-                var rawValue = workspaceService.ReadBiosData(keyMap.Key.ToString(), keyMap.Value, true);
+                var rawValue = bios.ReadBiosData(keyMap.Key.ToString(), keyMap.Value, true);
                 if (rawValue is long)
                     rawValue = Convert.ToInt32(rawValue);
 
@@ -279,6 +357,9 @@ namespace PixelVision8.Runner
             // Toggle the shutdown flag
             shutdown = true;
 
+            UpdateDiskInBios();
+            SaveBiosChanges();
+            
             // Save any changes to the bios to the user's custom bios file
             workspaceService.ShutdownSystem();
         }
@@ -314,8 +395,17 @@ namespace PixelVision8.Runner
 
                 // Eject the fist disk
                 workspaceService.EjectDisk();
+
+                UpdateDiskInBios();
             }
 //            }
+        }
+        
+        public void UpdateDiskInBios()
+        {
+            var paths = workspaceService.diskDrives.physicalPaths;
+
+            for (var i = 0; i < paths.Length; i++) bios.UpdateBiosData("Disk" + i, paths[i]);
         }
 
         public virtual bool Load(string path, RunnerMode newMode = RunnerMode.Playing,
@@ -483,12 +573,12 @@ namespace PixelVision8.Runner
 
         protected string GetErrorMessage(ErrorCode code)
         {
-            return (string) workspaceService.ReadBiosData(code.ToString(), "Error code " + (int) code);
+            return (string) bios.ReadBiosData(code.ToString(), "Error code " + (int) code);
         }
 
         protected virtual void LoadError(Dictionary<string, string> metaData)
         {
-            var tool = (string) workspaceService.ReadBiosData("ErrorTool", "/PixelVisionOS/Tools/ErrorTool/");
+            var tool = (string) bios.ReadBiosData("ErrorTool", "/PixelVisionOS/Tools/ErrorTool/");
 
             workspaceService.UpdateLog(metaData["errorMessage"], LogType.Error,
                 metaData.ContainsKey("exceptionMessage") ? metaData["exceptionMessage"] : null);
