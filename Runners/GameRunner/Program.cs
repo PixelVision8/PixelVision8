@@ -29,7 +29,7 @@ namespace Desktop
                 root = root.Replace("/MonoBundle/Content", "/Resources/Content");
             }
             
-            using (var game = new GameRunner(root, "/App/DefaultGame/"))
+            using (var game = new DesktopRunner(root))
                 game.Run();
         }
     }

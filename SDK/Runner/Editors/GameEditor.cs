@@ -58,7 +58,7 @@ namespace PixelVision8.Runner.Editors
 //
         private GameChip gameChip;
         private SfxrMusicGeneratorChip musicChip;
-        protected DesktopRunner runner;
+        protected TmpDesktopRunner runner;
         private SfxrSoundChip soundChip;
         private SpriteChip spriteChip;
         private PixelVisionEngine targetGame;
@@ -76,7 +76,7 @@ namespace PixelVision8.Runner.Editors
         /// <param name="workspace"></param>
         /// <param name="luaService"></param>
 //        [MoonSharpHidden]
-        public GameEditor(DesktopRunner runner, IServiceLocator serviceManager)
+        public GameEditor(TmpDesktopRunner runner, IServiceLocator serviceManager)
         {
             this.runner = runner;
             this.serviceManager = serviceManager;

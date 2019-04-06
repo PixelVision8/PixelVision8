@@ -43,8 +43,7 @@ namespace PixelVision8.Runner.Services
 
 //        protected BiosService bios;
 
-        public DiskDriveService diskDrives;
-        protected FileSystemMounter diskMounter = new FileSystemMounter();
+        
 //        public string documentsPath;
 
         public List<string> fileExtensions = new List<string>
@@ -69,17 +68,20 @@ namespace PixelVision8.Runner.Services
             "info.json"
         };
 
-        protected DesktopRunner runner;
+//        protected DesktopRunner runner;
 //        public string tmpPath;
 
         /// <summary>
         ///     This class manages all of the logic Pixel Vision 8 needs to create and manage the workspace.
         /// </summary>
-        public WorkspaceService(DesktopRunner runner)
+        public WorkspaceService(KeyValuePair<FileSystemPath, IFileSystem> mountPoint)
         {
 //            this.bios = bios;
-            this.runner = runner;
-            fileSystem = new FileSystemMounter();
+//            this.runner = runner;
+            fileSystem = new FileSystemMounter(mountPoint);
+            EntityMovers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityMover());
+            EntityCopiers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityCopier());
+
         }
 
 //        protected FileSystemPath userBiosPath => FileSystemPath.Parse("/Storage/user-bios.json");
@@ -95,7 +97,7 @@ namespace PixelVision8.Runner.Services
         ///     This mounts the file system from a collection of File System Paths and File System instances.
         /// </summary>
         /// <param name="fileSystems"></param>
-        public void MountFileSystems(Dictionary<FileSystemPath, IFileSystem> fileSystems)
+        public virtual void MountFileSystems(Dictionary<FileSystemPath, IFileSystem> fileSystems)
         {
             // Create a new File System
             foreach (var mountPoint in fileSystems)
@@ -116,23 +118,21 @@ namespace PixelVision8.Runner.Services
 //            fileSystem.Mounts.Add(mount);
 
 
-            // Create a mount point for disks
+//            // Create a mount point for disks
+//
+//            diskMounter = new FileSystemMounter();
+//
+//            // Add the disk mount point
+//            fileSystem.Mounts.Add(
+//                new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("Disks"),
+//                    diskMounter));
+//
+//
+//            // Create a disk drive service to mange the disks
+//            diskDrives = new DiskDriveService(diskMounter, totalDisks);
 
-            diskMounter = new FileSystemMounter();
 
-            // Add the disk mount point
-            fileSystem.Mounts.Add(
-                new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("Disks"),
-                    diskMounter));
-
-
-            // Create a disk drive service to mange the disks
-            diskDrives = new DiskDriveService(diskMounter, totalDisks);
-
-
-            EntityMovers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityMover());
-            EntityCopiers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityCopier());
-
+            
             
         }
 
@@ -246,221 +246,221 @@ namespace PixelVision8.Runner.Services
             return flag == requiredFiles.Count;
         }
 
-        public Dictionary<string, string> DiskPaths()
-        {
-            var pathRefs = new Dictionary<string, string>();
-
-            var mounts = diskDrives.disks; //disks.Mounts as SortedList<FileSystemPath, IFileSystem>;
-
-            for (var i = 0; i < mounts.Length; i++)
-            {
-                var path = mounts[i];
-                pathRefs.Add(path.EntityName, "/Disks" + path.Path);
-            }
-
-            return pathRefs;
-        }
-
-        public void MountDisk(string path, bool updateBios = true)
-        {
-//            Console.WriteLine("Load File - " + path + " Auto Run " + autoRunEnabled);
-            try
-            {
-                IFileSystem disk;
-
-                string entityName;
-
-                var attr = File.GetAttributes(path);
-
-                if (attr.HasFlag(FileAttributes.Directory))
-                    entityName = new DirectoryInfo(path).Name;
-                else
-                    entityName = Path.GetFileNameWithoutExtension(path);
-
-                if (path.EndsWith(".pv8") || path.EndsWith(".zip"))
-                    disk = ZipFileSystem.Open(path);
-                else
-                    disk = new PhysicalFileSystem(path);
-
-                if (disk == null)
-                    return;
-
-                // Test to see if the disk is a valid game
-                if (ValidateGameInDir(disk) == false &&
-                    disk.Exists(FileSystemPath.Root.AppendFile("info.json")) == false) return;
-
-                // Update the root path to just be the name of the entity
-                var rootPath = FileSystemPath.Root.AppendDirectory(entityName);
-
-                // Check to see if there is already a disk in slot 1, if so we want to eject it since only slot 1 can boot
-                if (diskDrives.total > 0 && autoRunEnabled)
-                {
-                    // Clear the load history
-                    runner.loadHistory.Clear();
-
-                    // Remove all the other disks
-                    diskDrives.EjectAll();
-                }
-
-                // Add the new disk
-                diskDrives.AddDisk(rootPath, disk);
-
-                // Only try to auto run a game if this is enabled in the runner
-                if (autoRunEnabled) AutoRunGameFromDisk(entityName);
-            }
-            catch
-            {
-                autoRunEnabled = true;
-                // TODO need to make sure we show a better error to explain why the disk couldn't load
-                runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
-            }
-
-            // Only update the bios when we need  to
-//            if (updateBios) UpdateDiskInBios();
-        }
-
-        public void AutoRunGameFromDisk(string diskName)
-        {
-            var diskPath = FileSystemPath.Root.AppendDirectory("Disks")
-                .AppendDirectory(diskName);
-
-
-            var autoRunPath = diskPath.AppendFile("info.json");
-
-            // Try to read the disk's info file and see if there is an auto run path
-            try
-            {
-                // Only run a disk if there is an auto run file in there
-                if (fileSystem.Exists(autoRunPath))
-                {
-                    var json = ReadTextFromFile(autoRunPath);
-
-                    var autoRunData = Json.Deserialize(json) as Dictionary<string, object>;
-
-                    var tmpPath = autoRunData["AutoRun"] as string;
-
-                    // Get the auto run from the json file
-                    var newDiskPath = FileSystemPath.Parse("/Disks/" + diskName + tmpPath);
-
-                    // Change the disk path to the one in the auto-run file
-                    if (fileSystem.Exists(newDiskPath)) diskPath = newDiskPath;
-                }
-            }
-            catch
-            {
-                // ignored
-            }
-
-            // Always validate that the disk is a valid game before trying to load it.
-            if (ValidateGameInDir(diskPath))
-            {
-                // Create new meta data for the game. We wan to display the disk insert animation.
-                var metaData = new Dictionary<string, string>
-                {
-                    {"showDiskAnimation", "true"}
-                };
-
-                // Load the disk path and play the game
-                runner.Load(diskPath.Path, RunnerGame.RunnerMode.Playing, metaData);
-            }
-            else
-            {
-                // If the new auto run path can't be found, throw an error
-                runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
-            }
-        }
-
-        
-
-        public void SaveDisksInMemory()
-        {
-            Console.WriteLine("Save disks in memory");
-
-            var paths = diskDrives.disks;
-
-            for (var i = 0; i < paths.Length; i++) diskDrives.SaveDisk(paths[i]);
-        }
-
-        // Make sure you can only eject a disk by forcing the path to be in the disk mounts scope
-        public void EjectDisk(FileSystemPath? filePath = null)
-        {
-            // Remove the disk if disks exists
-            if (diskDrives.total > 0)
-                try
-                {
-                    // Use the path that is supplied or get the first disk path
-                    var path = filePath.HasValue ? filePath.Value : diskDrives.disks.First();
-
-                    // Attempt to remove the disk
-                    diskDrives.RemoveDisk(path);
-
-                    // Update the bios when a disk is removed
-//                    UpdateDiskInBios();
-                }
-                catch
-                {
-                    // ignored error when removing a disk that doesn't exist
-                }
-
-//            // Test to see if there is an OS image
+//        public Dictionary<string, string> DiskPaths()
+//        {
+//            var pathRefs = new Dictionary<string, string>();
+//
+//            var mounts = diskDrives.disks; //disks.Mounts as SortedList<FileSystemPath, IFileSystem>;
+//
+//            for (var i = 0; i < mounts.Length; i++)
+//            {
+//                var path = mounts[i];
+//                pathRefs.Add(path.EntityName, "/Disks" + path.Path);
+//            }
+//
+//            return pathRefs;
+//        }
+//
+//        public void MountDisk(string path, bool updateBios = true)
+//        {
+////            Console.WriteLine("Load File - " + path + " Auto Run " + autoRunEnabled);
 //            try
 //            {
-//                if (fileSystem.Exists(FileSystemPath.Root.AppendDirectory("Workspace")))
-//                {
-//                    // Reset he current game
+//                IFileSystem disk;
 //
-//                    // TODO Need to figure out how we should restart here
-//                    runner.ResetGame();
+//                string entityName;
 //
-//                    // Exit out of the function
+//                var attr = File.GetAttributes(path);
+//
+//                if (attr.HasFlag(FileAttributes.Directory))
+//                    entityName = new DirectoryInfo(path).Name;
+//                else
+//                    entityName = Path.GetFileNameWithoutExtension(path);
+//
+//                if (path.EndsWith(".pv8") || path.EndsWith(".zip"))
+//                    disk = ZipFileSystem.Open(path);
+//                else
+//                    disk = new PhysicalFileSystem(path);
+//
+//                if (disk == null)
 //                    return;
+//
+//                // Test to see if the disk is a valid game
+//                if (ValidateGameInDir(disk) == false &&
+//                    disk.Exists(FileSystemPath.Root.AppendFile("info.json")) == false) return;
+//
+//                // Update the root path to just be the name of the entity
+//                var rootPath = FileSystemPath.Root.AppendDirectory(entityName);
+//
+//                // Check to see if there is already a disk in slot 1, if so we want to eject it since only slot 1 can boot
+//                if (diskDrives.total > 0 && autoRunEnabled)
+//                {
+//                    // Clear the load history
+////                    runner.loadHistory.Clear();
+//
+//                    // Remove all the other disks
+//                    diskDrives.EjectAll();
+//                }
+//
+//                // Add the new disk
+//                diskDrives.AddDisk(rootPath, disk);
+//
+//                // Only try to auto run a game if this is enabled in the runner
+//                if (autoRunEnabled) AutoRunGameFromDisk(entityName);
+//            }
+//            catch
+//            {
+//                autoRunEnabled = true;
+//                // TODO need to make sure we show a better error to explain why the disk couldn't load
+////                runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
+//            }
+//
+//            // Only update the bios when we need  to
+////            if (updateBios) UpdateDiskInBios();
+//        }
+//
+//        public void AutoRunGameFromDisk(string diskName)
+//        {
+//            var diskPath = FileSystemPath.Root.AppendDirectory("Disks")
+//                .AppendDirectory(diskName);
+//
+//
+//            var autoRunPath = diskPath.AppendFile("info.json");
+//
+//            // Try to read the disk's info file and see if there is an auto run path
+//            try
+//            {
+//                // Only run a disk if there is an auto run file in there
+//                if (fileSystem.Exists(autoRunPath))
+//                {
+//                    var json = ReadTextFromFile(autoRunPath);
+//
+//                    var autoRunData = Json.Deserialize(json) as Dictionary<string, object>;
+//
+//                    var tmpPath = autoRunData["AutoRun"] as string;
+//
+//                    // Get the auto run from the json file
+//                    var newDiskPath = FileSystemPath.Parse("/Disks/" + diskName + tmpPath);
+//
+//                    // Change the disk path to the one in the auto-run file
+//                    if (fileSystem.Exists(newDiskPath)) diskPath = newDiskPath;
 //                }
 //            }
 //            catch
 //            {
 //                // ignored
 //            }
-
-            // What happens when there are no disks
-            if (diskDrives.total > 0)
-                try
-                {
-                    // Get the next disk name
-                    var diskName = diskDrives.disks.First().Path.Replace("/", "");
-
-                    // Clear the history
-                    runner.loadHistory.Clear();
-
-                    // Attempt to run the fist disk
-                    AutoRunGameFromDisk(diskName);
-
-                    return;
-                }
-                catch
-                {
-                    // ignored
-                }
-
-            // TODO this is duplicated from the Pixel Vision 8 Runner
-            // Look to see if we have the bios default tool in the OS folder
-            try
-            {
-//                var biosAutoRun = FileSystemPath.Parse((string) ReadBiosData("AutoRun", ""));
 //
-//                if (fileSystem.Exists(biosAutoRun))
-//                    if (ValidateGameInDir(biosAutoRun))
-//                    {
-//                        runner.Load(biosAutoRun.Path);
-//                        return;
-//                    }
-            }
-            catch
-            {
-            }
-
-            // If ejecting a disk fails, display the disk error
-            runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
-        }
+//            // Always validate that the disk is a valid game before trying to load it.
+//            if (ValidateGameInDir(diskPath))
+//            {
+//                // Create new meta data for the game. We wan to display the disk insert animation.
+//                var metaData = new Dictionary<string, string>
+//                {
+//                    {"showDiskAnimation", "true"}
+//                };
+//
+//                // Load the disk path and play the game
+////                runner.Load(diskPath.Path, RunnerGame.RunnerMode.Playing, metaData);
+//            }
+//            else
+//            {
+//                // If the new auto run path can't be found, throw an error
+////                runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
+//            }
+//        }
+//
+//        
+//
+//        public void SaveDisksInMemory()
+//        {
+//            Console.WriteLine("Save disks in memory");
+//
+//            var paths = diskDrives.disks;
+//
+//            for (var i = 0; i < paths.Length; i++) diskDrives.SaveDisk(paths[i]);
+//        }
+//
+//        // Make sure you can only eject a disk by forcing the path to be in the disk mounts scope
+//        public void EjectDisk(FileSystemPath? filePath = null)
+//        {
+//            // Remove the disk if disks exists
+//            if (diskDrives.total > 0)
+//                try
+//                {
+//                    // Use the path that is supplied or get the first disk path
+//                    var path = filePath.HasValue ? filePath.Value : diskDrives.disks.First();
+//
+//                    // Attempt to remove the disk
+//                    diskDrives.RemoveDisk(path);
+//
+//                    // Update the bios when a disk is removed
+////                    UpdateDiskInBios();
+//                }
+//                catch
+//                {
+//                    // ignored error when removing a disk that doesn't exist
+//                }
+//
+////            // Test to see if there is an OS image
+////            try
+////            {
+////                if (fileSystem.Exists(FileSystemPath.Root.AppendDirectory("Workspace")))
+////                {
+////                    // Reset he current game
+////
+////                    // TODO Need to figure out how we should restart here
+////                    runner.ResetGame();
+////
+////                    // Exit out of the function
+////                    return;
+////                }
+////            }
+////            catch
+////            {
+////                // ignored
+////            }
+//
+//            // What happens when there are no disks
+//            if (diskDrives.total > 0)
+//                try
+//                {
+//                    // Get the next disk name
+//                    var diskName = diskDrives.disks.First().Path.Replace("/", "");
+//
+//                    // Clear the history
+////                    runner.loadHistory.Clear();
+//
+//                    // Attempt to run the fist disk
+//                    AutoRunGameFromDisk(diskName);
+//
+//                    return;
+//                }
+//                catch
+//                {
+//                    // ignored
+//                }
+//
+//            // TODO this is duplicated from the Pixel Vision 8 Runner
+//            // Look to see if we have the bios default tool in the OS folder
+//            try
+//            {
+////                var biosAutoRun = FileSystemPath.Parse((string) ReadBiosData("AutoRun", ""));
+////
+////                if (fileSystem.Exists(biosAutoRun))
+////                    if (ValidateGameInDir(biosAutoRun))
+////                    {
+////                        runner.Load(biosAutoRun.Path);
+////                        return;
+////                    }
+//            }
+//            catch
+//            {
+//            }
+//
+//            // If ejecting a disk fails, display the disk error
+////            runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
+//        }
 
         public string FindValidSavePath(string gamePath)
         {
@@ -676,111 +676,111 @@ namespace PixelVision8.Runner.Services
             return canWrite;
         }
 
-        public void SaveActiveDisks()
-        {
-            var disks = diskDrives.disks;
-
-            foreach (var disk in disks) diskDrives.SaveDisk(disk);
-        }
-
-
-        public void SaveActiveDisk()
-        {
+//        public void SaveActiveDisks()
+//        {
 //            var disks = diskDrives.disks;
 //
-//            foreach (var disk in disks)
-//            {
-//                diskDrives.SaveDisk(disk);
-//            }
-
-
-            if (currentDisk is ZipFileSystem disk)
-            {
-//                Console.WriteLine("Workspace is ready to save active disk");
-
-//                disk.Save();
-                var fileNameZip = disk.srcPath;
-
-                var files = currentDisk.GetEntitiesRecursive(FileSystemPath.Root);
-
-                using (var memoryStream = new MemoryStream())
-                {
-                    using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
-                    {
-                        foreach (var file in files)
-                            try
-                            {
-                                // We can only save files
-                                if (file.IsFile && !file.EntityName.StartsWith("._"))
-                                {
-                                    var tmpPath = file.Path.Substring(1);
-
-                                    var tmpFile = archive.CreateEntry(tmpPath);
-
-                                    using (var entryStream = tmpFile.Open())
-                                    {
-                                        disk.OpenFile(file, FileAccess.ReadWrite).CopyTo(entryStream);
-                                    }
-                                }
-                            }
-                            catch
-                            {
-//                                Console.WriteLine("Archive Error: "+ e);
-                            }
-                    }
-
-                    try
-                    {
-                        if (File.Exists(fileNameZip)) File.Move(fileNameZip, fileNameZip + ".bak");
-
-                        using (var fileStream = new FileStream(fileNameZip, FileMode.Create))
-                        {
-                            memoryStream.Seek(0, SeekOrigin.Begin);
-                            memoryStream.CopyTo(fileStream);
-                        }
-
-                        // Make sure we close the stream
-                        memoryStream.Close();
-
-//                        Console.WriteLine("Save archive ");
-
-                        File.Delete(fileNameZip + ".bak");
-                    }
-                    catch
-                    {
-                        if (File.Exists(fileNameZip + ".bak")) File.Move(fileNameZip + ".bak", fileNameZip);
-
-//                        Console.WriteLine("Disk Save Error "+e);
-                    }
-                }
-            }
-
-
-            var mounts = fileSystem.Mounts as SortedList<FileSystemPath, IFileSystem>;
-
-            // Create a new mount point for the current game
-            var rootPath = FileSystemPath.Root.AppendDirectory("Game");
-
-            // Make sure we don't have a disk with the same name
-            if (mounts.ContainsKey(rootPath)) mounts.Remove(rootPath);
-        }
-
-//        public void EjectDisks()
-//        {
-//            diskDrives.EjectAll();
-//            
-//            runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
-//
+//            foreach (var disk in disks) diskDrives.SaveDisk(disk);
 //        }
-
-        public void AutoRunFirstDisk()
-        {
-            if (diskDrives.total > 0)
-            {
-                var firstDisk = diskDrives.disks[0];
-                AutoRunGameFromDisk(firstDisk.EntityName);
-            }
-        }
+//
+//
+//        public void SaveActiveDisk()
+//        {
+////            var disks = diskDrives.disks;
+////
+////            foreach (var disk in disks)
+////            {
+////                diskDrives.SaveDisk(disk);
+////            }
+//
+//
+//            if (currentDisk is ZipFileSystem disk)
+//            {
+////                Console.WriteLine("Workspace is ready to save active disk");
+//
+////                disk.Save();
+//                var fileNameZip = disk.srcPath;
+//
+//                var files = currentDisk.GetEntitiesRecursive(FileSystemPath.Root);
+//
+//                using (var memoryStream = new MemoryStream())
+//                {
+//                    using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+//                    {
+//                        foreach (var file in files)
+//                            try
+//                            {
+//                                // We can only save files
+//                                if (file.IsFile && !file.EntityName.StartsWith("._"))
+//                                {
+//                                    var tmpPath = file.Path.Substring(1);
+//
+//                                    var tmpFile = archive.CreateEntry(tmpPath);
+//
+//                                    using (var entryStream = tmpFile.Open())
+//                                    {
+//                                        disk.OpenFile(file, FileAccess.ReadWrite).CopyTo(entryStream);
+//                                    }
+//                                }
+//                            }
+//                            catch
+//                            {
+////                                Console.WriteLine("Archive Error: "+ e);
+//                            }
+//                    }
+//
+//                    try
+//                    {
+//                        if (File.Exists(fileNameZip)) File.Move(fileNameZip, fileNameZip + ".bak");
+//
+//                        using (var fileStream = new FileStream(fileNameZip, FileMode.Create))
+//                        {
+//                            memoryStream.Seek(0, SeekOrigin.Begin);
+//                            memoryStream.CopyTo(fileStream);
+//                        }
+//
+//                        // Make sure we close the stream
+//                        memoryStream.Close();
+//
+////                        Console.WriteLine("Save archive ");
+//
+//                        File.Delete(fileNameZip + ".bak");
+//                    }
+//                    catch
+//                    {
+//                        if (File.Exists(fileNameZip + ".bak")) File.Move(fileNameZip + ".bak", fileNameZip);
+//
+////                        Console.WriteLine("Disk Save Error "+e);
+//                    }
+//                }
+//            }
+//
+//
+//            var mounts = fileSystem.Mounts as SortedList<FileSystemPath, IFileSystem>;
+//
+//            // Create a new mount point for the current game
+//            var rootPath = FileSystemPath.Root.AppendDirectory("Game");
+//
+//            // Make sure we don't have a disk with the same name
+//            if (mounts.ContainsKey(rootPath)) mounts.Remove(rootPath);
+//        }
+//
+////        public void EjectDisks()
+////        {
+////            diskDrives.EjectAll();
+////            
+////            runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
+////
+////        }
+//
+//        public void AutoRunFirstDisk()
+//        {
+//            if (diskDrives.total > 0)
+//            {
+//                var firstDisk = diskDrives.disks[0];
+//                AutoRunGameFromDisk(firstDisk.EntityName);
+//            }
+//        }
 
         public void SetupLogFile(FileSystemPath filePath)
         {
@@ -980,11 +980,13 @@ namespace PixelVision8.Runner.Services
 
         protected IFileSystem currentDisk;
 
-        public bool LoadGame(string path, IEngine targetEngine, IRunner runner, bool showPreloader)
+        public Dictionary<string, byte[]> LoadGame(string path)
         {
             var filePath = FileSystemPath.Parse(path); //FileSystemPath.Root.AppendPath(fullPath);
             var exits = fileSystem.Exists(filePath);
 
+            Dictionary<string, byte[]> files = null;
+            
             if (exits)
                 try
                 {
@@ -1014,7 +1016,7 @@ namespace PixelVision8.Runner.Services
 
                     mounts.Add(rootPath, currentDisk);
 
-                    var files = ConvertDiskFilesToBytes(currentDisk);
+                    files = ConvertDiskFilesToBytes(currentDisk);
 
                     IncludeLibDirectoryFiles(files);
 
@@ -1066,10 +1068,9 @@ namespace PixelVision8.Runner.Services
                         Console.WriteLine(e);
                     }
 
-                    // Read and Run the disk
-                    runner.ProcessFiles(targetEngine, files, showPreloader);
+                    
 
-                    return true;
+//                    return true;
                 }
                 catch
                 {
@@ -1077,15 +1078,14 @@ namespace PixelVision8.Runner.Services
 //                    Console.WriteLine("System Error: Could not load from path " + filePath.Path);
                 }
 
-            return false;
+            return files;
         }
 
         public FileSystemPath osLibPath;
         public FileSystemPath workspaceLibPath;
-        
-        public void IncludeLibDirectoryFiles(Dictionary<string, byte[]> files)
+
+        protected virtual List<FileSystemPath> GetLibDirectoryPaths()
         {
-            // Create paths to the System/Libs and Workspace/Libs folder
             var paths = new List<FileSystemPath>
             {
                 // Look in the system folder
@@ -1096,18 +1096,35 @@ namespace PixelVision8.Runner.Services
                 
             };
 
-            var diskPaths = diskDrives.disks;
-
-            var totalDisks = diskPaths.Length - 1;
-
-            // Loop backwards through disks
-            for (var i = totalDisks; i >= 0; i--)
-            {
-                var diskPath = FileSystemPath.Root.AppendDirectory("Disks")
-                    .AppendPath(diskPaths[i].AppendDirectory("Libs"));
-
-                paths.Add(diskPath);
-            }
+            return paths;
+        }
+        
+        public void IncludeLibDirectoryFiles(Dictionary<string, byte[]> files)
+        {
+            // Create paths to the System/Libs and Workspace/Libs folder
+            var paths = GetLibDirectoryPaths();
+//            new List<FileSystemPath>
+//            {
+//                // Look in the system folder
+//                osLibPath
+//                ,
+//                workspaceLibPath
+//                // Look in the workspace folder
+//                
+//            };
+//
+//            var diskPaths = diskDrives.disks;
+//
+//            var totalDisks = diskPaths.Length - 1;
+//
+//            // Loop backwards through disks
+//            for (var i = totalDisks; i >= 0; i--)
+//            {
+//                var diskPath = FileSystemPath.Root.AppendDirectory("Disks")
+//                    .AppendPath(diskPaths[i].AppendDirectory("Libs"));
+//
+//                paths.Add(diskPath);
+//            }
 
             AddExtraFiles(files, paths);
         }
@@ -1206,11 +1223,9 @@ namespace PixelVision8.Runner.Services
             libs.ToList().ForEach(x => files.Add(x.Key, x.Value));
         }
 
-        public void ShutdownSystem()
+        public virtual void ShutdownSystem()
         {
-            // make sure we have the current list of disks in the bios
-//            UpdateDiskInBios();
-            SaveActiveDisks();
+            
             
             ClearTempDirectory();
         }
@@ -1223,6 +1238,7 @@ namespace PixelVision8.Runner.Services
                 foreach (var entities in fileSystem.GetEntities(tmpPath))
                     fileSystem.Delete(entities);
         }
+        
 
 //        public string DefaultBootTool()
 //        {

@@ -25,6 +25,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Services;
 using SharpFileSystem;
@@ -40,49 +41,35 @@ namespace PixelVision8.Runner
     /// </summary>
     public class DesktopRunner : RunnerGame
     {
-        protected string autoRunPath;
-        public bool backKeyEnabled = true;
-        public List<string> loadHistory = new List<string>();
-        protected List<Dictionary<string, string>> metaDataHistory = new List<Dictionary<string, string>>();
-        
-        protected string rootPath;
-        protected bool shutdown;
-        public string systemName;
-        public string systemVersion;
+// Store the path to the game's files
+        private IControllerChip controllerChip;
+        public BiosService bios;
         public WorkspaceService workspaceService;
+        protected string rootPath;
+        protected FileSystemPath userBiosPath => FileSystemPath.Parse("/Storage/user-bios.json");
 
-        public DesktopRunner(string rootPath, string autoRunPath = null)
+        /// <summary>
+        ///     This constructor saves the path to the game's files and kicks off the base constructor
+        /// </summary>
+        /// <param name="gamePath"></param>
+        public DesktopRunner(string rootPath)
         {
             this.rootPath = rootPath;
-            this.autoRunPath = autoRunPath;
         }
-
-        // Default path to where PV8 workspaces will go
-        protected string Documents => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-        public string sessionID { get; protected set; }
-
 
         protected override void ConfigureRunner()
         {
             base.ConfigureRunner();
-
-            // Save the session ID
-            sessionID = DateTime.Now.ToString("yyyyMMddHHmmssffff");
-
+            
             // TODO This may be a string
             Volume(MathHelper.Clamp(Convert.ToInt32((long) bios.ReadBiosData(BiosSettings.Volume.ToString(), 40L)), 0, 100));
 
             Mute(Convert.ToBoolean(bios.ReadBiosData(BiosSettings.Mute.ToString(), "False") as string));
 
-            systemVersion = (string) bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
-            systemName = (string) bios.ReadBiosData("SystemName", "PixelVision8");
-
             Window.Title =
-                (string) bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8") + " " +
-                systemVersion;
+                (string) bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner");
         }
-
+        
         public override void ConfigureDisplayTarget()
         {
             // Get the virtual monitor resolution
@@ -100,7 +87,6 @@ namespace PixelVision8.Runner
                 Scale(Convert.ToInt32((string) bios.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
             }
 
-
             Fullscreen(Convert.ToBoolean(
                 bios.ReadBiosData(BiosSettings.FullScreen.ToString(), "False") as string));
             StretchScreen(
@@ -113,34 +99,58 @@ namespace PixelVision8.Runner
             displayTarget = new DisplayTarget(graphics, tmpRes[0], tmpRes[1], Fullscreen());
         }
 
-        public BiosService bios;
-
-        protected virtual void CreateWorkspaceService()
+        protected override void ConfigureKeyboard()
         {
-            workspaceService = new WorkspaceService(this);
+            // Pass input mapping
+            foreach (var keyMap in defaultKeys)
+            {
+                var rawValue = bios.ReadBiosData(keyMap.Key.ToString(), keyMap.Value, true);
+                if (rawValue is long)
+                    rawValue = Convert.ToInt32(rawValue);
+
+                var keyValue = rawValue;
+
+                tmpEngine.SetMetaData(keyMap.Key.ToString(), keyValue.ToString());
+            }
+
+            tmpEngine.controllerChip.RegisterKeyInput();
         }
         
         /// <summary>
-        ///     Override the base initialize() method and setup the file system for PV8 to run on the desktop.
+        ///     The base runner contains a list of the core chips. Here you'll want to add the game chip to the list so it can run.
+        ///     This is called when a new game is created by the runner.
+        /// </summary>
+        public override List<string> defaultChips
+        {
+            get
+            {
+                // Get the list of default chips
+                var chips = base.defaultChips;
+
+                // Add the custom C# game chip
+                chips.Add(typeof(LuaGameChip).FullName);
+
+                // Return the list of chips
+                return chips;
+            }
+        }
+
+        /// <summary>
+        ///     This is called when the runner first starts up.
         /// </summary>
         protected override void Initialize()
         {
-            // Create a workspace
-            CreateWorkspaceService();
-                
-            // Add root path
-            workspaceService.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(
+            // Create the workspace starting at the App's directory
+            workspaceService = new WorkspaceService(new KeyValuePair<FileSystemPath, IFileSystem>(
                 FileSystemPath.Root.AppendDirectory("App"),
                 new PhysicalFileSystem(rootPath)));
             
-            
-            // Create a path to the system bios
             var biosPath = FileSystemPath.Root.AppendDirectory("App").AppendFile("bios.json");//Path.Combine(rootPath, "bios.json")));
 
             // Test if a bios file exists
             if (workspaceService.fileSystem.Exists(biosPath))
             {
-                
+
                 // Read the bios text
                 var biosText = workspaceService.ReadTextFromFile(biosPath);
 //                
@@ -154,47 +164,20 @@ namespace PixelVision8.Runner
                 {
 //                    DisplayBootErrorScreen("Error parsing system bios.");
                 }
-                
+
                 ConfigureWorkspace();
                 
-                
-//                if (workspaceService.fileSystem.Exists(FileSystemPath.Root.AppendDirectory("PixelVisionOS")))
-//                {
-             
-                // Initialize the runner
+                // Configure the runner
                 ConfigureRunner();
 
-                LoadDefaultGame();  
-//                }
-//                else
-//                {
-//                    // TODO No OS Found
-//                }
-
+                // Load the game
+                LoadDefaultGame();
             }
             else
             {
                 // TODO no bios found
-//                DisplayError(ErrorCode.LoadError, new Dictionary<string, string>(){{"LoadError", biosPath.ToString()}});
             }
         }
-        
-        protected virtual void LoadDefaultGame()
-        {
-
-            var gamePath = (string) bios.ReadBiosData("AutoRun", "/App/DefaultGame/");
-
-            var filePath = FileSystemPath.Parse(gamePath);
-
-            var files = workspaceService.fileSystem.GetEntities(filePath);
-            
-            
-            // Boot the game
-            Load((string) bios.ReadBiosData("AutoRun", "/App/DefaultGame/"), RunnerMode.Booting);
-
-        }
-
-        protected string tmpPath;
         
         protected virtual void ConfigureWorkspace()
         {
@@ -205,7 +188,7 @@ namespace PixelVision8.Runner
             // Get the base directory from the bios or use Pixel Vision 8 as the default name
             var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8") as string;
                 
-            tmpPath = Path.Combine(LocalStorage, baseDir, "Tmp");
+            var tmpPath = Path.Combine(LocalStorage, baseDir, "Tmp");
                 
             // Create an array of required directories
             var requiredDirectories = new Dictionary<string, string>()
@@ -217,6 +200,7 @@ namespace PixelVision8.Runner
             // Loop through the list of directories, make sure they exist and create them
             foreach (var directory in requiredDirectories)
             {
+                
                 if (!Directory.Exists(directory.Value))
                 {
 
@@ -224,88 +208,83 @@ namespace PixelVision8.Runner
                         
                 }
                     
-                // Add directories to mount points
+                // Add directories as mount points
                 mounts.Add(FileSystemPath.Root.AppendDirectory(directory.Key), new PhysicalFileSystem(directory.Value));
                     
             }
                 
             // Mount the filesystem
             workspaceService.MountFileSystems(mounts);
+
+            var userBios =
+                workspaceService.ReadTextFromFile(userBiosPath);
             
-            // Load bios from the user's storage folder
-            LoadBios(new[] {userBiosPath});
-                
-            
-            
-//            // Custom to PV8
-//            
-//            documentsPath = Path.Combine(Documents, baseDir);
-//
-//            
-//            workspaceService.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(
-//                FileSystemPath.Root.AppendDirectory("User"),
-//                new PhysicalFileSystem(documentsPath)));
-//            
-//            // Build the OS Folder
-//    
-//            osFileSystem = new MergedFileSystem();
-//
-//            osFileSystem.FileSystems = osFileSystem.FileSystems.Concat(new[] { new SubFileSystem(workspaceService.fileSystem,
-//                FileSystemPath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS")) });
-//                
-//            // Mount the PixelVisionOS directory
-//            workspaceService.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("PixelVisionOS"), osFileSystem));
-//                
+            bios.ParseBiosText(userBios);
+  
             workspaceService.SetupLogFile(FileSystemPath.Parse(bios.ReadBiosData("LogFilePath", "/Tmp/Log.txt") as string));
 
         }
-        
-        public void LoadBios(FileSystemPath[] paths)
+
+        public override void ConfigureServices()
         {
-            for (var i = 0; i < paths.Length; i++)
-            {
-                var path = paths[i];
+            var luaService = new LuaService(this);
 
-                if (workspaceService.fileSystem.Exists(path))
-                {
-                    var json = workspaceService.ReadTextFromFile(path);
-
-                    bios.ParseBiosText(json);
-                }
-            }
-
-            ConfigureWorkspaceSettings();
+            // Register Lua Service
+            tmpEngine.AddService(typeof(LuaService).FullName, luaService);
         }
-        
-        protected void ConfigureWorkspaceSettings()
-        {
-            workspaceService.archiveExtensions =
-                ((string) bios.ReadBiosData("ArchiveExtensions", "zip,pv8,pvt,pvs,pva")).Split(',')
-                .ToList(); //new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
-            workspaceService.fileExtensions =
-                ((string) bios.ReadBiosData("FileExtensions", "png,lua,json,txt")).Split(',')
-                .ToList(); //new List<string> {"png", "lua", "json", "txt"};
-//            gameFolders = ((string)ReadBiosData("GameFolders", "Games,Systems,Tools")).Split(',').ToList();//new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
 
-            workspaceService.requiredFiles =
-                ((string) bios.ReadBiosData("RequiredFiles", "data.json,info.json")).Split(',')
-                .ToList(); //new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
+        /// <summary>
+        ///     This mthod manually loads the game file's binary data then configures the engine and processes the files.
+        /// </summary>
+        private void LoadDefaultGame()
+        {
             
-            workspaceService.osLibPath = FileSystemPath.Root.AppendDirectory("PixelVisionOS")
-                .AppendDirectory((string) bios.ReadBiosData("LibsDir", "Libs"));
-            workspaceService.workspaceLibPath = FileSystemPath.Root.AppendDirectory("Workspace")
-                .AppendDirectory((string) bios.ReadBiosData("LibsDir", "Libs"));
+            // Create a new dictionary to store the file binary data
+            var gameFiles = workspaceService.LoadGame((string) bios.ReadBiosData("AutoRun", "/App/DefaultGame/"));//gamePath)));
 
-//            workspaceService.spriteBuilderFolderName = (string) bios.ReadBiosData("SpriteBuilderDir", "SpriteBuilder");
+            // Configure a new PV8 engine to play the game
+            ConfigureEngine();
+
+            // Process the files
+            ProcessFiles(tmpEngine, gameFiles);
+
+        }
+
+//        public override void ResetGame()
+//        {
+//            LoadDefaultGame();
+//        }
+        
+        
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            ShutdownSystem();
+
+            base.OnExiting(sender, args);
+        }
+
+        public void ShutdownSystem()
+        {
+            // We only want to call this once so don't run if shutdown is true
+//            if (shutdown)
+//                return;
+
+            // Shutdown the active game
+            ShutdownActiveEngine();
+
+            // Toggle the shutdown flag
+//            shutdown = true;
+
+//            UpdateDiskInBios();
+            SaveBiosChanges();
+            
+            // Save any changes to the bios to the user's custom bios file
+            workspaceService.ShutdownSystem();
         }
         
-        protected FileSystemPath userBiosPath => FileSystemPath.Parse("/Storage/user-bios.json");
-
         public void SaveBiosChanges()
         {
-            // TODO need to update this
-//            var path = FileSystemPath.Parse(userBiosPath);
-
+ 
             // Look for changes
             if (bios.userBiosChanges != null)
             {
@@ -335,300 +314,9 @@ namespace PixelVision8.Runner
                     else
                         userData.Add(pair.Key, pair.Value);
 
-
                 // Save the new bios data back to the user's bios file.
                 workspaceService.SaveTextToFile(userBiosPath, Json.Serialize(userData), true);
             }
-        }
-
-        public override void ConfigureServices()
-        {
-            base.ConfigureServices();
-
-            tmpEngine.AddService(typeof(WorkspaceService).FullName, workspaceService);
-        }
-
-        protected override void Update(GameTime gameTime)
-        {
-            if (shutdown)
-                return;
-
-            base.Update(gameTime);
-            
-        }
-
-        protected override void ConfigureKeyboard()
-        {
-            // Pass input mapping
-            foreach (var keyMap in defaultKeys)
-            {
-                var rawValue = bios.ReadBiosData(keyMap.Key.ToString(), keyMap.Value, true);
-                if (rawValue is long)
-                    rawValue = Convert.ToInt32(rawValue);
-
-                var keyValue = rawValue;
-
-                tmpEngine.SetMetaData(keyMap.Key.ToString(), keyValue.ToString());
-            }
-
-            tmpEngine.controllerChip.RegisterKeyInput();
-        }
-
-//        public virtual void LoadDefaultGame()
-//        {
-//            
-//            // TODO this should just load the default game path?
-//            
-//        }
-
-        
-
-        protected override void OnExiting(object sender, EventArgs args)
-        {
-            ShutdownSystem();
-
-            base.OnExiting(sender, args);
-        }
-
-        public void ShutdownSystem()
-        {
-            // We only want to call this once so don't run if shutdown is true
-            if (shutdown)
-                return;
-
-            // Shutdown the active game
-            ShutdownActiveEngine();
-
-            // Toggle the shutdown flag
-            shutdown = true;
-
-            UpdateDiskInBios();
-            SaveBiosChanges();
-            
-            // Save any changes to the bios to the user's custom bios file
-            workspaceService.ShutdownSystem();
-        }
-
-        public override void DisplayWarning(string message)
-        {
-            workspaceService.UpdateLog(message);
-        }
-
-        public virtual void Back()
-        {
-            if (mode == RunnerMode.Loading)
-                return;
-
-//            if (mode == RunnerMode.Booting)
-//            {
-//                BootDone();
-//            }
-//            else
-//            {
-            if (loadHistory.Count > 1)
-            {
-                var path = loadHistory.First();
-
-                loadHistory.Clear();
-
-                // TODO need to see if its a tool or a game?
-                Load(path, RunnerMode.Loading);
-            }
-            else
-            {
-                loadHistory.Clear();
-
-                // Eject the fist disk
-                workspaceService.EjectDisk();
-
-                UpdateDiskInBios();
-            }
-//            }
-        }
-        
-        public void UpdateDiskInBios()
-        {
-            var paths = workspaceService.diskDrives.physicalPaths;
-
-            for (var i = 0; i < paths.Length; i++) bios.UpdateBiosData("Disk" + i, paths[i]);
-        }
-
-        public virtual bool Load(string path, RunnerMode newMode = RunnerMode.Playing,
-            Dictionary<string, string> metaData = null)
-        {
-            // Reset auto run to be true each time a disk is loaded
-            workspaceService.autoRunEnabled = true;
-
-            
-            // TODO need to depricate the preloader argument
-//            if (preload == true)
-//            {
-//                newMode = RunnerMode.Loading;
-//            }
-            
-            
-            // If we are going to preload, save the current load call and change the values for the preloader tool
-//            if (newMode == RunnerMode.Loading)
-//            {
-//                nextPathToLoad = path;
-//                nextMetaData = metaData;
-//                nextMode = RunnerMode.Playing;
-//
-//                // Create new meta data for the pre-loader
-//                metaData = new Dictionary<string, string>
-//                {
-//                    {"nextMode", nextMode.ToString()},
-//                    {"showDiskAnimation", "false"}
-//                };
-//
-//                // Look to see if the game's meta data changes the disk animation flag
-//                if (nextMetaData != null && nextMetaData.ContainsKey("showDiskAnimation"))
-//                    metaData["showDiskAnimation"] = nextMetaData["showDiskAnimation"];
-//
-//                // Get the default path to the load tool from the bios
-//                path = (string) workspaceService.ReadBiosData("LoadTool", "/PixelVisionOS/Tools/LoadTool/");
-//
-//                // Change the mode to loading
-//                newMode = RunnerMode.Loading;
-//            }
-
-            // Create a new meta data dictionary if one doesn't exist yet
-            if (metaData == null) metaData = new Dictionary<string, string>();
-
-            // Spit path and convert to a list
-            var splitPath = path.Split('/').ToList();
-            var gameName = "";
-            var rootPath = "/";
-            var total = splitPath.Count - 1;
-
-            // Loop through each item in the path and get the game name and root path
-            for (var i = 1; i < total; i++)
-                if (i < total - 1)
-                    rootPath += splitPath[i] + "/";
-                else
-                    gameName = splitPath[i];
-
-//            Console.WriteLine("Load "+ gameName + " in " + rootPath);
-
-            // Add the game's name and root path to the meta data
-            if (metaData.ContainsKey("GameName"))
-                metaData["GameName"] = gameName;
-            else
-                metaData.Add("GameName", gameName);
-
-            // Change the root path for the game's meta data
-            if (metaData.ContainsKey("RootPath"))
-                metaData["RootPath"] = rootPath;
-            else
-                metaData.Add("RootPath", rootPath);
-
-            // Update the runner mode
-            mode = newMode;
-
-            // When playing a game, save it to history and the meta data so it can be reloaded correctly
-            if (mode == RunnerMode.Playing)
-            {
-                lastMode = mode;
-                loadHistory.Add(path);
-                metaDataHistory.Add(metaData);
-            }
-
-            // Create a new tmpEngine
-            ConfigureEngine(metaData);
-
-            // Path the full path to the engine's name
-            tmpEngine.name = path;
-
-            bool success;
-
-            // Have the workspace run the game from the current path
-            success = workspaceService.LoadGame(path, tmpEngine, this, displayProgress);
-
-            // If the game is unable to run, display an error
-            if (success == false) DisplayError(ErrorCode.NoAutoRun, new Dictionary<string, string> {{"@{path}", path}});
-
-            // Re-enable back when loading a new game
-            backKeyEnabled = true;
-
-            // Create new FileSystemPath
-            return success;
-        }
-
-        public virtual void DisplayError(ErrorCode code, Dictionary<string, string> tokens = null,
-            Exception exception = null)
-        {
-//			Debug.Log("Display Error");
-
-            if (mode == RunnerMode.Error)
-                return;
-
-            // var id = (int) code;
-
-            var sb = new StringBuilder();
-
-            // Pull the error message from the bios
-            var message = GetErrorMessage(code);
-
-            sb.Append(message);
-
-            if (tokens != null)
-                foreach (var entry in tokens)
-                    sb.Replace(entry.Key, entry.Value);
-
-            // Make sure we stop preloading if we crash during the process
-//            loading = false;
-
-            var messageString = sb.ToString();
-
-            var metaData = new Dictionary<string, string>
-            {
-                {"errorMessage", messageString}
-            };
-
-            string exceptionMessage = null;
-
-            if (exception != null) metaData["exceptionMessage"] = exception.StackTrace;
-
-
-            // TODO need to be able to pass in an error
-            LoadError(metaData);
-        }
-
-        public virtual void SaveGameData(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
-        {
-            
-            // Simple save game exporter
-
-            var saveExporter = new SavedDataExporter(path, engine);
-            saveExporter.CalculateSteps();
-            while (saveExporter.completed == false)
-            {
-                saveExporter.NextStep();
-            }
-            
-            // Save file
-            var saveFile = new Dictionary<string, byte[]>()
-            {
-                {saveExporter.fileName, saveExporter.bytes}
-            };
-            
-            workspaceService.SaveExporterFiles(saveFile);
-            
-        }
-
-        protected string GetErrorMessage(ErrorCode code)
-        {
-            return (string) bios.ReadBiosData(code.ToString(), "Error code " + (int) code);
-        }
-
-        protected virtual void LoadError(Dictionary<string, string> metaData)
-        {
-            var tool = (string) bios.ReadBiosData("ErrorTool", "/PixelVisionOS/Tools/ErrorTool/");
-
-            workspaceService.UpdateLog(metaData["errorMessage"], LogType.Error,
-                metaData.ContainsKey("exceptionMessage") ? metaData["exceptionMessage"] : null);
-
-            Load(tool, RunnerMode.Error, metaData);
         }
     }
 }

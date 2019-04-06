@@ -38,7 +38,7 @@ namespace PixelVision8.Runner.Services
 {
     public class LuaServicePlus : LuaService//, IPlatformAccessor // TODO need to map to these APIs
     {
-        protected DesktopRunner desktopRunner;
+        protected TmpDesktopRunner desktopRunner;
 
         private List<DirectoryItem> directoryItems = new List<DirectoryItem>();
 
@@ -77,13 +77,13 @@ namespace PixelVision8.Runner.Services
 //            ".p8"
         };
 
-        private WorkspaceService workspace;
+        private WorkspaceServicePlus workspace;
 
-        public LuaServicePlus(DesktopRunner runner) : base(runner)
+        public LuaServicePlus(TmpDesktopRunner runner) : base(runner)
         {
             desktopRunner = runner;
 
-            workspace = runner.workspaceService;
+            workspace = runner.workspaceService as WorkspaceServicePlus;
 
             // TODO need to use service locator for this
 //            workspace = locator.GetService(typeof(WorkspaceService).FullName) as WorkspaceService;

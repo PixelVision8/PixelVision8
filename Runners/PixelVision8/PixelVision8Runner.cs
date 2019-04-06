@@ -28,7 +28,7 @@ namespace PixelVision8.Runner
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class PixelVision8Runner : DesktopRunner
+    public class PixelVision8Runner : TmpDesktopRunner
     {
         private MergedFileSystem osFileSystem;
         private ScreenshotService screenshotService;
@@ -132,7 +132,7 @@ namespace PixelVision8.Runner
         {
             base.ConfigureRunner();
             
-            screenshotService = new ScreenshotService(workspaceService);
+            screenshotService = new ScreenshotService(workspaceServicePlus);
             exportService = new ExportService(null); //TODO Need to create a new AudioClipAdaptor
             
             var actions = Enum.GetValues(typeof(ActionKeys)).Cast<ActionKeys>();
@@ -153,8 +153,8 @@ namespace PixelVision8.Runner
             }
             
             // Set the display bios values here but this should be in the base runner?
-//            Brightness(Convert.ToSingle((long) workspaceService.ReadBiosData(BiosSettings.Brightness.ToString(), 100L))/100F);
-//            Sharpness(Convert.ToSingle((long) workspaceService.ReadBiosData(BiosSettings.Sharpness.ToString(), -6L)));
+//            Brightness(Convert.ToSingle((long) workspaceServicePlus.ReadBiosData(BiosSettings.Brightness.ToString(), 100L))/100F);
+//            Sharpness(Convert.ToSingle((long) workspaceServicePlus.ReadBiosData(BiosSettings.Sharpness.ToString(), -6L)));
 
         }
 
@@ -187,7 +187,7 @@ namespace PixelVision8.Runner
 //        {
 //            return _tmpPath;
 //        }
-        
+
         /// <summary>
         ///     Override the base initialize() method and setup the file system for PV8 to run on the desktop.
         /// </summary>
@@ -195,10 +195,10 @@ namespace PixelVision8.Runner
 //        {
 //
 //            // Create a workspace
-//            workspaceService = new WorkspaceServicePlus(this);
+//            workspaceServicePlus = new workspaceServicePlusPlus(this);
 //                
 //            // Add root path
-//            workspaceService.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(
+//            workspaceServicePlus.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(
 //                FileSystemPath.Root.AppendDirectory("App"),
 //                new PhysicalFileSystem(rootPath)));
 //            
@@ -207,11 +207,11 @@ namespace PixelVision8.Runner
 //            var biosPath = FileSystemPath.Root.AppendDirectory("App").AppendFile("bios.json");//Path.Combine(rootPath, "bios.json")));
 //
 //            // Test if a bios file exists
-//            if (workspaceService.fileSystem.Exists(biosPath))
+//            if (workspaceServicePlus.fileSystem.Exists(biosPath))
 //            {
 //                
 //                // Read the bios text
-//                var biosText = workspaceService.ReadTextFromFile(biosPath);
+//                var biosText = workspaceServicePlus.ReadTextFromFile(biosPath);
 ////                
 //                bios = new BiosService();
 //
@@ -227,7 +227,7 @@ namespace PixelVision8.Runner
 //                ConfigureWorkspace();
 //                
 //                
-////                if (workspaceService.fileSystem.Exists(FileSystemPath.Root.AppendDirectory("PixelVisionOS")))
+////                if (workspaceServicePlus.fileSystem.Exists(FileSystemPath.Root.AppendDirectory("PixelVisionOS")))
 ////                {
 //             
 //                // Initialize the runner
@@ -249,9 +249,16 @@ namespace PixelVision8.Runner
 //            
 //        }
 
+        protected WorkspaceServicePlus workspaceServicePlus;
+        
         protected override void CreateWorkspaceService()
         {
-            workspaceService = new WorkspaceServicePlus(this);
+            workspaceServicePlus = new WorkspaceServicePlus(this, new KeyValuePair<FileSystemPath, IFileSystem>(
+                FileSystemPath.Root.AppendDirectory("App"),
+                new PhysicalFileSystem(rootPath)));
+
+            // Pass the new service back to the base class
+            workspaceService = workspaceServicePlus;
         }
 
         protected override void ConfigureWorkspace()
@@ -288,7 +295,7 @@ namespace PixelVision8.Runner
 //            }
 //                
 //            // Mount the filesystem
-//            workspaceService.MountFileSystems(mounts);
+//            workspaceServicePlus.MountFileSystems(mounts);
 //            
 //            // Load bios from the user's storage folder
 //            LoadBios(new[] {userBiosPath});
@@ -303,7 +310,7 @@ namespace PixelVision8.Runner
             documentsPath = Path.Combine(Documents, baseDir);
 
             
-            workspaceService.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(
+            workspaceServicePlus.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(
                 FileSystemPath.Root.AppendDirectory("User"),
                 new PhysicalFileSystem(documentsPath)));
             
@@ -311,11 +318,11 @@ namespace PixelVision8.Runner
     
             osFileSystem = new MergedFileSystem();
 
-            osFileSystem.FileSystems = osFileSystem.FileSystems.Concat(new[] { new SubFileSystem(workspaceService.fileSystem,
+            osFileSystem.FileSystems = osFileSystem.FileSystems.Concat(new[] { new SubFileSystem(workspaceServicePlus.fileSystem,
                 FileSystemPath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS")) });
                 
             // Mount the PixelVisionOS directory
-            workspaceService.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("PixelVisionOS"), osFileSystem));
+            workspaceServicePlus.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("PixelVisionOS"), osFileSystem));
                 
             
             var workspaceName = bios.ReadBiosData("WorkspaceDir", "") as string;
@@ -324,13 +331,13 @@ namespace PixelVision8.Runner
             if (workspaceName != "")
             {
                 // Create the workspace
-                workspaceService.MountWorkspace(workspaceName);
+                workspaceServicePlus.MountWorkspace(workspaceName);
                 
                 var path = FileSystemPath.Root.AppendDirectory("Workspace").AppendDirectory("System");
 
                 try
                 {
-                    if (workspaceService.fileSystem.Exists(path))
+                    if (workspaceServicePlus.fileSystem.Exists(path))
                     {
                         Console.WriteLine("Found Workspace system folder");
                         
@@ -338,7 +345,7 @@ namespace PixelVision8.Runner
                             new[] { 
                                 new SubFileSystem
                                 (
-                                    workspaceService.fileSystem, 
+                                    workspaceServicePlus.fileSystem, 
                                     path
                                 ) 
                             }
@@ -353,7 +360,7 @@ namespace PixelVision8.Runner
                 
                 
             }
-//            workspaceService.SetupLogFile(FileSystemPath.Parse(bios.ReadBiosData("LogFilePath", "/Tmp/Log.txt") as string));
+//            workspaceServicePlus.SetupLogFile(FileSystemPath.Parse(bios.ReadBiosData("LogFilePath", "/Tmp/Log.txt") as string));
 
         }
         
@@ -582,20 +589,20 @@ namespace PixelVision8.Runner
             if (mode != RunnerMode.Booting)
                 return;
             
-            var totalDisks = workspaceService.totalDisks;
+            var totalDisks = workspaceServicePlus.totalDisks;
         
             var loadedDisks = 0;
 
             // Disable auto run when loading up the default disks
-            workspaceService.autoRunEnabled = false;
+            workspaceServicePlus.autoRunEnabled = false;
             
             for (int i = 0; i < totalDisks; i++)
             {
                 var diskPath = (string) bios.ReadBiosData("Disk" + i, "none");
                 if (diskPath != "none")
                 {
-//                        Console.WriteLine("Boot Mount "+ diskPath + " AutoRun " + (i == 0) + " AR Enabled " + workspaceService.autoRunEnabled);
-                    workspaceService.MountDisk(diskPath, false);
+//                        Console.WriteLine("Boot Mount "+ diskPath + " AutoRun " + (i == 0) + " AR Enabled " + workspaceServicePlus.autoRunEnabled);
+                    workspaceServicePlus.MountDisk(diskPath, false);
                     loadedDisks++;
                 }
             }
@@ -609,7 +616,7 @@ namespace PixelVision8.Runner
             foreach (string arg in args.Skip(1))
             {
                 bios.UpdateBiosData("TmpDisk"+count, arg);
-//                    workspaceService.MountDisk(arg, false);
+//                    workspaceServicePlus.MountDisk(arg, false);
                 count++;
 
             }
@@ -619,17 +626,17 @@ namespace PixelVision8.Runner
             // Setup Drag and drop support
             Window.FileDropped += (o, e) => OnFileDropped(o, e);
             
-            workspaceService.autoRunEnabled = true;
+            workspaceServicePlus.autoRunEnabled = true;
         
             // Look to see if we have the bios default tool in the OS folder
             try
             {
                 var biosAutoRun = FileSystemPath.Parse((string) bios.ReadBiosData("AutoRun", ""));
                 
-                if (workspaceService.fileSystem.Exists(biosAutoRun))
+                if (workspaceServicePlus.fileSystem.Exists(biosAutoRun))
                 {
 
-                    if (workspaceService.ValidateGameInDir(biosAutoRun))
+                    if (workspaceServicePlus.ValidateGameInDir(biosAutoRun))
                     {
                         Load(biosAutoRun.Path, RunnerMode.Loading);
                         return;
@@ -650,7 +657,7 @@ namespace PixelVision8.Runner
             else
             {
                 // When all the disks are loaded, auto run the first disk
-                workspaceService.AutoRunFirstDisk();
+                workspaceServicePlus.AutoRunFirstDisk();
             }
                 
         }
@@ -669,11 +676,11 @@ namespace PixelVision8.Runner
                 {
                     //Print("Active Engine To Save", activeEngine.name);
 
-                    SaveGameData(workspaceService.FindValidSavePath(activeEngine.name), activeEngine, SaveFlags.SaveData, false);
+                    SaveGameData(workspaceServicePlus.FindValidSavePath(activeEngine.name), activeEngine, SaveFlags.SaveData, false);
                 }
 
                 // Save the active disk
-                workspaceService.SaveActiveDisk();
+                workspaceServicePlus.SaveActiveDisk();
 
             }
             catch (Exception e)
@@ -776,7 +783,7 @@ namespace PixelVision8.Runner
         public override void SaveGameData(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
         {
             
-//            Console.WriteLine("Save Game Date " + path + " /Game/ Exist " + workspaceService.fileSystem.Exists(FileSystemPath.Parse("/Game/")));
+//            Console.WriteLine("Save Game Date " + path + " /Game/ Exist " + workspaceServicePlus.fileSystem.Exists(FileSystemPath.Parse("/Game/")));
             
             // TODO testing saving all files to the rootPath of the game directory
             
@@ -818,7 +825,7 @@ namespace PixelVision8.Runner
         public void OnFileDropped(object gameWindow, string path)
         {
             if(shutdown == false)
-            workspaceService.MountDisk(path);
+            workspaceServicePlus.MountDisk(path);
 
             UpdateDiskInBios();
             
@@ -861,6 +868,13 @@ namespace PixelVision8.Runner
 
             // Reload the game
             Load(lastURI, RunnerMode.Loading, metaData);
+        }
+        
+                public void UpdateDiskInBios()
+        {
+            var paths = workspaceServicePlus.diskDrives.physicalPaths;
+
+            for (var i = 0; i < paths.Length; i++) bios.UpdateBiosData("Disk" + i, paths[i]);
         }
 
 //        public void Dispose()
