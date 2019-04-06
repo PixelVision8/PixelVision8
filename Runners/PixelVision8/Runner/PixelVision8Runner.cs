@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
 using PixelVision8.Engine;
@@ -28,7 +29,7 @@ namespace PixelVision8.Runner
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class PixelVision8Runner : TmpDesktopRunner
+    public class PixelVision8Runner : DesktopRunner
     {
         private MergedFileSystem osFileSystem;
         private ScreenshotService screenshotService;
@@ -40,7 +41,16 @@ namespace PixelVision8.Runner
         protected RunnerMode nextMode;
         protected string nextPathToLoad;
         private string documentsPath;
-        
+        public bool backKeyEnabled = true;
+        public List<string> loadHistory = new List<string>();
+        protected List<Dictionary<string, string>> metaDataHistory = new List<Dictionary<string, string>>();
+        protected string Documents => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        public string sessionID { get; protected set; }
+
+//        protected string rootPath;
+        protected bool shutdown;
+        public string systemName;
+        public string systemVersion;
         
         public ExportService exportService { get; private set; }
 
@@ -69,7 +79,7 @@ namespace PixelVision8.Runner
         };
         
         // Default path to where PV8 workspaces will go
-        public PixelVision8Runner(string rootPath, string autoRunPath = null) : base(rootPath, autoRunPath)
+        public PixelVision8Runner(string rootPath) : base(rootPath)
         {
         }
 
@@ -131,6 +141,12 @@ namespace PixelVision8.Runner
         protected override void ConfigureRunner()
         {
             base.ConfigureRunner();
+            
+            // Save the session ID
+            sessionID = DateTime.Now.ToString("yyyyMMddHHmmssffff");
+
+            systemVersion = (string) bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
+            systemName = (string) bios.ReadBiosData("SystemName", "PixelVision8");
             
             screenshotService = new ScreenshotService(workspaceServicePlus);
             exportService = new ExportService(null); //TODO Need to create a new AudioClipAdaptor
@@ -302,6 +318,24 @@ namespace PixelVision8.Runner
 //                
             
             base.ConfigureWorkspace();
+            
+            workspaceService.archiveExtensions =
+                ((string) bios.ReadBiosData("ArchiveExtensions", "zip,pv8,pvt,pvs,pva")).Split(',')
+                .ToList(); //new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
+            workspaceService.fileExtensions =
+                ((string) bios.ReadBiosData("FileExtensions", "png,lua,json,txt")).Split(',')
+                .ToList(); //new List<string> {"png", "lua", "json", "txt"};
+//            gameFolders = ((string)ReadBiosData("GameFolders", "Games,Systems,Tools")).Split(',').ToList();//new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
+
+            workspaceService.requiredFiles =
+                ((string) bios.ReadBiosData("RequiredFiles", "data.json,info.json")).Split(',')
+                .ToList(); //new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
+            
+            workspaceService.osLibPath = FileSystemPath.Root.AppendDirectory("PixelVisionOS")
+                .AppendDirectory((string) bios.ReadBiosData("LibsDir", "Libs"));
+            workspaceService.workspaceLibPath = FileSystemPath.Root.AppendDirectory("Workspace")
+                .AppendDirectory((string) bios.ReadBiosData("LibsDir", "Libs"));
+        
             
             var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8") as string;
 
@@ -672,12 +706,12 @@ namespace PixelVision8.Runner
             {
                 base.ShutdownActiveEngine();
                 
-                if (activeEngine.gameChip.saveSlots > 0)
-                {
-                    //Print("Active Engine To Save", activeEngine.name);
-
-                    SaveGameData(workspaceServicePlus.FindValidSavePath(activeEngine.name), activeEngine, SaveFlags.SaveData, false);
-                }
+//                if (activeEngine.gameChip.saveSlots > 0)
+//                {
+//                    //Print("Active Engine To Save", activeEngine.name);
+//
+//                    SaveGameData(workspaceServicePlus.FindValidSavePath(activeEngine.name), activeEngine, SaveFlags.SaveData, false);
+//                }
 
                 // Save the active disk
                 workspaceServicePlus.SaveActiveDisk();
@@ -696,7 +730,7 @@ namespace PixelVision8.Runner
         
         
 
-        public override bool Load(string path, RunnerMode newMode = RunnerMode.Playing, Dictionary<string, string> metaData = null)
+        public bool Load(string path, RunnerMode newMode = RunnerMode.Playing, Dictionary<string, string> metaData = null)
         {
 
             try
@@ -726,8 +760,82 @@ namespace PixelVision8.Runner
                     newMode = RunnerMode.Loading;
                 }
                 
+                 // TODO This should be moved into the desktop runner?
+                 workspaceService.autoRunEnabled = true;
+    
+                // Create a new meta data dictionary if one doesn't exist yet
+                if (metaData == null) metaData = new Dictionary<string, string>();
+    
+                // Spit path and convert to a list
+                var splitPath = path.Split('/').ToList();
+                var gameName = "";
+                var rootPath = "/";
+                var total = splitPath.Count - 1;
+    
+                // Loop through each item in the path and get the game name and root path
+                for (var i = 1; i < total; i++)
+                    if (i < total - 1)
+                        rootPath += splitPath[i] + "/";
+                    else
+                        gameName = splitPath[i];
+    
+    //            Console.WriteLine("Load "+ gameName + " in " + rootPath);
+    
+                // Add the game's name and root path to the meta data
+                if (metaData.ContainsKey("GameName"))
+                    metaData["GameName"] = gameName;
+                else
+                    metaData.Add("GameName", gameName);
+    
+                // Change the root path for the game's meta data
+                if (metaData.ContainsKey("RootPath"))
+                    metaData["RootPath"] = rootPath;
+                else
+                    metaData.Add("RootPath", rootPath);
+    
+                // Update the runner mode
+                mode = newMode;
+    
+                // When playing a game, save it to history and the meta data so it can be reloaded correctly
+                if (mode == RunnerMode.Playing)
+                {
+                    lastMode = mode;
+                    loadHistory.Add(path);
+                    metaDataHistory.Add(metaData);
+                }
+    
+                // Create a new tmpEngine
+                ConfigureEngine(metaData);
+    
+                // Path the full path to the engine's name
+                tmpEngine.name = path;
+    
+                bool success;
+    
+                // Have the workspace run the game from the current path
+                var files = workspaceService.LoadGame(path);
+    
+                if (files != null)
+                {
+                    // Read and Run the disk
+                    ProcessFiles(tmpEngine, files, displayProgress);
+                    success = true;
+                }
+                else
+                {
+                    DisplayError(ErrorCode.LoadError, new Dictionary<string, string> {{"@{path}", path}});
+                    success = false;
+                }
                 
-                return base.Load(path, newMode, metaData);
+                // If the game is unable to run, display an error
+    //            if (success == false) 
+    
+                // Re-enable back when loading a new game
+                backKeyEnabled = true;
+    
+                // Create new FileSystemPath
+                return success;
+//                return base.Load(path, newMode, metaData);
             }
             catch (Exception e)
             {
@@ -881,6 +989,122 @@ namespace PixelVision8.Runner
 //        {
 ////            throw new NotImplementedException();
 //        }
+
+        public override void DisplayWarning(string message)
+        {
+            workspaceService.UpdateLog(message);
+        }
+        
+        public virtual void Back()
+        {
+            if (mode == RunnerMode.Loading)
+                return;
+
+//            if (mode == RunnerMode.Booting)
+//            {
+//                BootDone();
+//            }
+//            else
+//            {
+            if (loadHistory.Count > 1)
+            {
+                var path = loadHistory.First();
+
+                loadHistory.Clear();
+
+                // TODO need to see if its a tool or a game?
+                Load(path, RunnerMode.Loading);
+            }
+            else
+            {
+                loadHistory.Clear();
+
+                // TODO need to add back in disk logic
+                // Eject the fist disk
+//                workspaceService.EjectDisk();
+//
+//                UpdateDiskInBios();
+            }
+//            }
+        }
+        
+        public override void ShutdownSystem()
+        {
+            // We only want to call this once so don't run if shutdown is true
+            if (shutdown)
+                return;
+
+            // Shutdown the active game
+//            ShutdownActiveEngine();
+
+            // Toggle the shutdown flag
+            shutdown = true;
+            
+            base.ShutdownSystem();
+
+//            UpdateDiskInBios();
+//            SaveBiosChanges();
+//            
+//            // Save any changes to the bios to the user's custom bios file
+//            workspaceService.ShutdownSystem();
+        }
+        
+        public virtual void DisplayError(ErrorCode code, Dictionary<string, string> tokens = null,
+            Exception exception = null)
+        {
+//			Debug.Log("Display Error");
+
+            if (mode == RunnerMode.Error)
+                return;
+
+            // var id = (int) code;
+
+            var sb = new StringBuilder();
+
+            // Pull the error message from the bios
+            var message = GetErrorMessage(code);
+
+            sb.Append(message);
+
+            if (tokens != null)
+                foreach (var entry in tokens)
+                    sb.Replace(entry.Key, entry.Value);
+
+            // Make sure we stop preloading if we crash during the process
+//            loading = false;
+
+            var messageString = sb.ToString();
+
+            var metaData = new Dictionary<string, string>
+            {
+                {"errorMessage", messageString}
+            };
+
+            string exceptionMessage = null;
+
+            if (exception != null) metaData["exceptionMessage"] = exception.StackTrace;
+
+
+            // TODO need to be able to pass in an error
+            LoadError(metaData);
+        }
+
+        
+
+        protected string GetErrorMessage(ErrorCode code)
+        {
+            return (string) bios.ReadBiosData(code.ToString(), "Error code " + (int) code);
+        }
+
+        protected virtual void LoadError(Dictionary<string, string> metaData)
+        {
+            var tool = (string) bios.ReadBiosData("ErrorTool", "/PixelVisionOS/Tools/ErrorTool/");
+
+            workspaceService.UpdateLog(metaData["errorMessage"], LogType.Error,
+                metaData.ContainsKey("exceptionMessage") ? metaData["exceptionMessage"] : null);
+
+            Load(tool, RunnerMode.Error, metaData);
+        }
     }
     
 }

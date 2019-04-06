@@ -108,7 +108,6 @@
     <Compile Include="Runner\Services\LuaServicePlus.cs" />
     <Compile Include="Runner\Services\ScreenshotService.cs" />
     <Compile Include="Runner\Services\WorkspaceServicePlus.cs" />
-    <Compile Include="Runner\TmpDesktopRunner.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MoonSharp.Interpreter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=921e73ce94aa17f8">

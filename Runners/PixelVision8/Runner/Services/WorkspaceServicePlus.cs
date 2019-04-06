@@ -40,7 +40,7 @@ namespace PixelVision8.Runner.Services
         public DiskDriveService diskDrives;
         protected FileSystemMounter diskMounter = new FileSystemMounter();
         
-        public WorkspaceServicePlus(TmpDesktopRunner runner, KeyValuePair<FileSystemPath, IFileSystem> mountPoint) : base(mountPoint)
+        public WorkspaceServicePlus(PixelVision8Runner runner, KeyValuePair<FileSystemPath, IFileSystem> mountPoint) : base(mountPoint)
         {
         }
 

@@ -47,7 +47,7 @@ namespace PixelVision8.Runner
         public WorkspaceService workspaceService;
         protected string rootPath;
         protected FileSystemPath userBiosPath => FileSystemPath.Parse("/Storage/user-bios.json");
-
+        protected string tmpPath;
         /// <summary>
         ///     This constructor saves the path to the game's files and kicks off the base constructor
         /// </summary>
@@ -135,15 +135,20 @@ namespace PixelVision8.Runner
             }
         }
 
+        protected virtual void CreateWorkspaceService()
+        {
+            workspaceService = new WorkspaceService(new KeyValuePair<FileSystemPath, IFileSystem>(
+                FileSystemPath.Root.AppendDirectory("App"),
+                new PhysicalFileSystem(rootPath)));
+        }
+        
         /// <summary>
         ///     This is called when the runner first starts up.
         /// </summary>
         protected override void Initialize()
         {
             // Create the workspace starting at the App's directory
-            workspaceService = new WorkspaceService(new KeyValuePair<FileSystemPath, IFileSystem>(
-                FileSystemPath.Root.AppendDirectory("App"),
-                new PhysicalFileSystem(rootPath)));
+            CreateWorkspaceService();
             
             var biosPath = FileSystemPath.Root.AppendDirectory("App").AppendFile("bios.json");//Path.Combine(rootPath, "bios.json")));
 
@@ -188,7 +193,7 @@ namespace PixelVision8.Runner
             // Get the base directory from the bios or use Pixel Vision 8 as the default name
             var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8") as string;
                 
-            var tmpPath = Path.Combine(LocalStorage, baseDir, "Tmp");
+            tmpPath = Path.Combine(LocalStorage, baseDir, "Tmp");
                 
             // Create an array of required directories
             var requiredDirectories = new Dictionary<string, string>()
@@ -236,7 +241,7 @@ namespace PixelVision8.Runner
         /// <summary>
         ///     This mthod manually loads the game file's binary data then configures the engine and processes the files.
         /// </summary>
-        private void LoadDefaultGame()
+        protected virtual void LoadDefaultGame()
         {
             
             // Create a new dictionary to store the file binary data
@@ -248,6 +253,28 @@ namespace PixelVision8.Runner
             // Process the files
             ProcessFiles(tmpEngine, gameFiles);
 
+        }
+        
+        public virtual void SaveGameData(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
+        {
+            
+            // Simple save game exporter
+
+            var saveExporter = new SavedDataExporter(path, engine);
+            saveExporter.CalculateSteps();
+            while (saveExporter.completed == false)
+            {
+                saveExporter.NextStep();
+            }
+            
+            // Save file
+            var saveFile = new Dictionary<string, byte[]>()
+            {
+                {saveExporter.fileName, saveExporter.bytes}
+            };
+            
+            workspaceService.SaveExporterFiles(saveFile);
+            
         }
 
 //        public override void ResetGame()
@@ -263,7 +290,7 @@ namespace PixelVision8.Runner
             base.OnExiting(sender, args);
         }
 
-        public void ShutdownSystem()
+        public virtual void ShutdownSystem()
         {
             // We only want to call this once so don't run if shutdown is true
 //            if (shutdown)
@@ -280,6 +307,40 @@ namespace PixelVision8.Runner
             
             // Save any changes to the bios to the user's custom bios file
             workspaceService.ShutdownSystem();
+        }
+        
+        public override void ShutdownActiveEngine()
+        {
+            // Look to see if there is an active engine
+            if (activeEngine == null)
+                return;
+
+            try
+            {
+                base.ShutdownActiveEngine();
+                
+                if (activeEngine.gameChip.saveSlots > 0)
+                {
+                    //Print("Active Engine To Save", activeEngine.name);
+
+                    SaveGameData(workspaceService.FindValidSavePath(activeEngine.name), activeEngine, SaveFlags.SaveData, false);
+                }
+
+                // Save the active disk
+//                workspaceService.SaveActiveDisk();
+
+            }
+            catch (Exception e)
+            {
+
+                
+                // TODO need to throw an error
+//                var error = e as ScriptRuntimeException;
+//
+//                DisplayError(ErrorCode.Exception,
+//                    new Dictionary<string, string> {{"@{error}", error != null ? error.DecoratedMessage : e.Message}}, e);
+            }
+
         }
         
         public void SaveBiosChanges()
