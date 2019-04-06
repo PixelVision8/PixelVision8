@@ -31,7 +31,7 @@ namespace PixelVision8.Runner.Services
 {
     public class WorkspaceServicePlus : WorkspaceService
     {
-        public WorkspaceServicePlus(BiosService bios, DesktopRunner runner) : base(bios, runner)
+        public WorkspaceServicePlus(DesktopRunner runner) : base(runner)
         {
         }
 
@@ -73,10 +73,13 @@ namespace PixelVision8.Runner.Services
             }
         }
 
+        // TODO this is hardcoded but should come from the bios
+        public string spriteBuilderFolderName = "SpriteBuilder";
+        
         public bool VaildateSpriteBuilderFolder(FileSystemPath rootPath)
         {
             // TODO need to make sure this is in the current game directory and uses the filesyem path
-            rootPath = rootPath.AppendDirectory("SpriteBuilder");//(string) ReadBiosData("SpriteBuilderDir", "SpriteBuilder"));
+            rootPath = rootPath.AppendDirectory(spriteBuilderFolderName);//(string) ReadBiosData("SpriteBuilderDir", "SpriteBuilder"));
 
             return fileSystem.Exists(rootPath);
         }

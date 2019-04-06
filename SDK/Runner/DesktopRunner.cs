@@ -25,8 +25,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Services;
 using SharpFileSystem;
@@ -34,7 +32,6 @@ using SharpFileSystem.FileSystems;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Utils;
 using Directory = System.IO.Directory;
-using File = System.IO.File;
 
 namespace PixelVision8.Runner
 {
@@ -117,104 +114,150 @@ namespace PixelVision8.Runner
         }
 
         public BiosService bios;
+
+        protected virtual void CreateWorkspaceService()
+        {
+            workspaceService = new WorkspaceService(this);
+        }
         
         /// <summary>
         ///     Override the base initialize() method and setup the file system for PV8 to run on the desktop.
         /// </summary>
         protected override void Initialize()
         {
+            // Create a workspace
+            CreateWorkspaceService();
+                
+            // Add root path
+            workspaceService.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(
+                FileSystemPath.Root.AppendDirectory("App"),
+                new PhysicalFileSystem(rootPath)));
+            
+            
             // Create a path to the system bios
-            var biosPath = Path.Combine(rootPath, "bios.json");
+            var biosPath = FileSystemPath.Root.AppendDirectory("App").AppendFile("bios.json");//Path.Combine(rootPath, "bios.json")));
 
             // Test if a bios file exists
-            if (File.Exists(biosPath))
+            if (workspaceService.fileSystem.Exists(biosPath))
             {
+                
                 // Read the bios text
-                var biosText = File.ReadAllText(biosPath);
-
+                var biosText = workspaceService.ReadTextFromFile(biosPath);
+//                
                 bios = new BiosService();
 
                 try
                 {
                     bios.ParseBiosText(biosText);
                 }
-                catch (Exception e)
+                catch
                 {
-                    Console.WriteLine(e);
 //                    DisplayBootErrorScreen("Error parsing system bios.");
                 }
-
-                // Create a workspace
-                workspaceService = new WorkspaceService(bios, this);
                 
-                var mounts = new Dictionary<FileSystemPath, IFileSystem>();
-
-                // Get the base directory from the bios or use Pixel Vision 8 as the default name
-                var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8") as string;
-
-                // Create an array of required directories
-                var requiredDirectories = new Dictionary<string, string>
-                {
-                    {"App", rootPath},
-                    {"User", Path.Combine(Documents, baseDir)},
-                    {"Storage", Path.Combine(LocalStorage, baseDir)},
-                    {"Tmp", Path.Combine(LocalStorage, baseDir, "Tmp")}
-                };
-
-                // Loop through the list of directories, make sure they exist and create them
-                foreach (var directory in requiredDirectories)
-                {
-                    if (!Directory.Exists(directory.Value)) Directory.CreateDirectory(directory.Value);
-
-                    // Add directories to mount points
-                    mounts.Add(FileSystemPath.Root.AppendDirectory(directory.Key),
-                        new PhysicalFileSystem(directory.Value));
-                }
-
-                // Mount the filesystem
-                workspaceService.MountFileSystems(mounts);
-
-                // Mount the PixelVisionOS directory
-//                workspaceService.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(
-//                    FileSystemPath.Root.AppendDirectory("PixelVisionOS"),
-//                    new SubFileSystem(workspaceService.fileSystem,
-//                        FileSystemPath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS"))));
-
-
-                workspaceService.SetupLogFile(
-                    FileSystemPath.Parse(bios.ReadBiosData("LogFilePath", "/Tmp/Log.txt") as string));
-
+                ConfigureWorkspace();
+                
+                
 //                if (workspaceService.fileSystem.Exists(FileSystemPath.Root.AppendDirectory("PixelVisionOS")))
 //                {
-                    // Initialize the runner
-                    ConfigureRunner();
+             
+                // Initialize the runner
+                ConfigureRunner();
 
-                    
-                    var biosAutoRun = FileSystemPath.Parse((string) bios.ReadBiosData("AutoRun", ""));
-                
-                    if (workspaceService.fileSystem.Exists(biosAutoRun))
-                    {
-
-                        if (workspaceService.ValidateGameInDir(biosAutoRun))
-                        {
-                            Load(biosAutoRun.Path);
-                            return;
-                        }
-                    
-                    }
-                    
-                    // Boot the game
-                    Load(autoRunPath);
+                LoadDefaultGame();  
 //                }
 //                else
 //                {
-//                    Console.WriteLine("No OS found.");
+//                    // TODO No OS Found
 //                }
+
             }
             else
             {
-                Console.WriteLine("Error: No Bios file found.");
+                // TODO no bios found
+//                DisplayError(ErrorCode.LoadError, new Dictionary<string, string>(){{"LoadError", biosPath.ToString()}});
             }
+        }
+        
+        protected virtual void LoadDefaultGame()
+        {
+
+            var gamePath = (string) bios.ReadBiosData("AutoRun", "/App/DefaultGame/");
+
+            var filePath = FileSystemPath.Parse(gamePath);
+
+            var files = workspaceService.fileSystem.GetEntities(filePath);
+            
+            
+            // Boot the game
+            Load((string) bios.ReadBiosData("AutoRun", "/App/DefaultGame/"), RunnerMode.Booting);
+
+        }
+
+        protected string tmpPath;
+        
+        protected virtual void ConfigureWorkspace()
+        {
+            var mounts = new Dictionary<FileSystemPath, IFileSystem>();
+
+            // Create the base directory in the documents and local storage folder
+                
+            // Get the base directory from the bios or use Pixel Vision 8 as the default name
+            var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8") as string;
+                
+            tmpPath = Path.Combine(LocalStorage, baseDir, "Tmp");
+                
+            // Create an array of required directories
+            var requiredDirectories = new Dictionary<string, string>()
+            {
+                {"Storage", Path.Combine(LocalStorage, baseDir)},
+                {"Tmp", tmpPath}
+            };
+                
+            // Loop through the list of directories, make sure they exist and create them
+            foreach (var directory in requiredDirectories)
+            {
+                if (!Directory.Exists(directory.Value))
+                {
+
+                    Directory.CreateDirectory(directory.Value);
+                        
+                }
+                    
+                // Add directories to mount points
+                mounts.Add(FileSystemPath.Root.AppendDirectory(directory.Key), new PhysicalFileSystem(directory.Value));
+                    
+            }
+                
+            // Mount the filesystem
+            workspaceService.MountFileSystems(mounts);
+            
+            // Load bios from the user's storage folder
+            LoadBios(new[] {userBiosPath});
+                
+            
+            
+//            // Custom to PV8
+//            
+//            documentsPath = Path.Combine(Documents, baseDir);
+//
+//            
+//            workspaceService.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(
+//                FileSystemPath.Root.AppendDirectory("User"),
+//                new PhysicalFileSystem(documentsPath)));
+//            
+//            // Build the OS Folder
+//    
+//            osFileSystem = new MergedFileSystem();
+//
+//            osFileSystem.FileSystems = osFileSystem.FileSystems.Concat(new[] { new SubFileSystem(workspaceService.fileSystem,
+//                FileSystemPath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS")) });
+//                
+//            // Mount the PixelVisionOS directory
+//            workspaceService.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("PixelVisionOS"), osFileSystem));
+//                
+            workspaceService.SetupLogFile(FileSystemPath.Parse(bios.ReadBiosData("LogFilePath", "/Tmp/Log.txt") as string));
+
         }
         
         public void LoadBios(FileSystemPath[] paths)
@@ -252,6 +295,8 @@ namespace PixelVision8.Runner
                 .AppendDirectory((string) bios.ReadBiosData("LibsDir", "Libs"));
             workspaceService.workspaceLibPath = FileSystemPath.Root.AppendDirectory("Workspace")
                 .AppendDirectory((string) bios.ReadBiosData("LibsDir", "Libs"));
+
+//            workspaceService.spriteBuilderFolderName = (string) bios.ReadBiosData("SpriteBuilderDir", "SpriteBuilder");
         }
         
         protected FileSystemPath userBiosPath => FileSystemPath.Parse("/Storage/user-bios.json");

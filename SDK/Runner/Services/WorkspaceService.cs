@@ -24,10 +24,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Services;
-using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Utils;
 using SharpFileSystem;
@@ -77,10 +75,11 @@ namespace PixelVision8.Runner.Services
         /// <summary>
         ///     This class manages all of the logic Pixel Vision 8 needs to create and manage the workspace.
         /// </summary>
-        public WorkspaceService(BiosService bios, DesktopRunner runner)
+        public WorkspaceService(DesktopRunner runner)
         {
 //            this.bios = bios;
             this.runner = runner;
+            fileSystem = new FileSystemMounter();
         }
 
 //        protected FileSystemPath userBiosPath => FileSystemPath.Parse("/Storage/user-bios.json");
@@ -99,7 +98,10 @@ namespace PixelVision8.Runner.Services
         public void MountFileSystems(Dictionary<FileSystemPath, IFileSystem> fileSystems)
         {
             // Create a new File System
-            fileSystem = new FileSystemMounter(fileSystems);
+            foreach (var mountPoint in fileSystems)
+            {
+                fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(mountPoint.Key, mountPoint.Value));
+            }
 
             // Create System Mount for the built in OS system folder.
 //            var system = new SubFileSystem(fileSystem, FileSystemPath.Root.AppendDirectory("PixelVisionOS").AppendDirectory("System"));
