@@ -81,10 +81,34 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="PixelVision8Runner.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TmpDesktopRunner.cs" />
+    <Compile Include="Runner\Audio\SfxrMusicGeneratorChip.cs" />
+    <Compile Include="Runner\Editors\GameEditor.cs" />
+    <Compile Include="Runner\Exporters\ColorPaletteExporter.cs" />
+    <Compile Include="Runner\Exporters\FlagColorExporter.cs" />
+    <Compile Include="Runner\Exporters\FontExporter.cs" />
+    <Compile Include="Runner\Exporters\IExport.cs" />
+    <Compile Include="Runner\Exporters\IImageExporter.cs" />
+    <Compile Include="Runner\Exporters\ImageExporter.cs" />
+    <Compile Include="Runner\Exporters\MetaDataExporter.cs" />
+    <Compile Include="Runner\Exporters\MusicExporter.cs" />
+    <Compile Include="Runner\Exporters\PixelDataExporter.cs" />
+    <Compile Include="Runner\Exporters\PNGWriter.cs" />
+    <Compile Include="Runner\Exporters\SongExporter.cs" />
+    <Compile Include="Runner\Exporters\SoundExporter.cs" />
+    <Compile Include="Runner\Exporters\SpriteBuilderExporter.cs" />
+    <Compile Include="Runner\Exporters\SpriteExporter.cs" />
+    <Compile Include="Runner\Exporters\SystemExporter.cs" />
+    <Compile Include="Runner\Exporters\TilemapJsonExporter.cs" />
+    <Compile Include="Runner\PixelVision8Runner.cs" />
+    <Compile Include="Runner\Services\ExportService.cs" />
+    <Compile Include="Runner\Services\LoadServicePlus.cs" />
+    <Compile Include="Runner\Services\LuaPlatformAccessorService.cs" />
+    <Compile Include="Runner\Services\LuaServicePlus.cs" />
+    <Compile Include="Runner\Services\ScreenshotService.cs" />
+    <Compile Include="Runner\Services\WorkspaceServicePlus.cs" />
+    <Compile Include="Runner\TmpDesktopRunner.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MoonSharp.Interpreter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=921e73ce94aa17f8">
@@ -111,6 +135,7 @@
       <Link>Content\PixelVisionOS\Effects\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Runner\.DS_Store" />
   </ItemGroup>
   <!-- Core Runner Tools -->
   <ItemGroup>
@@ -159,6 +184,5 @@
   </Target>
   <Import Project="..\..\SDK\PixelVision8.Workspace.projitems" Label="Shared" />
   <Import Project="..\..\SDK\PixelVision8.SDK.projitems" Label="Shared" />
-  <Import Project="..\..\SDK\PixelVision8.Plus.projitems" Label="Shared" />
   <Import Project="..\..\SDK\PixelVision8.Lua.projitems" Label="Shared" />
 </Project>
