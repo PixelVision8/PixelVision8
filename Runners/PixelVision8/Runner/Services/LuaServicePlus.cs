@@ -42,7 +42,7 @@ namespace PixelVision8.Runner.Services
 
         private List<DirectoryItem> directoryItems = new List<DirectoryItem>();
 
-        protected IFileSystem fileSystem;
+//        protected IFileSystem fileSystem;
 
         // TODO move GameEditor to the plus library
         protected GameEditor gameEditor;
@@ -88,7 +88,7 @@ namespace PixelVision8.Runner.Services
             // TODO need to use service locator for this
 //            workspace = locator.GetService(typeof(WorkspaceService).FullName) as WorkspaceService;
 //            
-            fileSystem = workspace.fileSystem;
+//            fileSystem = workspace;
         }
 
         //public WorkspaceService workspace => desktopRunner.workspaceService;
@@ -305,7 +305,7 @@ namespace PixelVision8.Runner.Services
             var editors = new Dictionary<string, string>();
 
 
-            var fileSystem = workspace.fileSystem;
+//            var fileSystem = workspace;
 
 
             var paths = new List<FileSystemPath>
@@ -328,11 +328,11 @@ namespace PixelVision8.Runner.Services
 
                 try
                 {
-                    if (fileSystem.Exists(path))
+                    if (workspace.Exists(path))
                     {
 //                    Console.WriteLine("Look for editors in " + path);
 
-                        var folders = fileSystem.GetEntities(path);
+                        var folders = workspace.GetEntities(path);
 
                         foreach (var folder in folders)
                             if (folder.IsDirectory)
@@ -586,9 +586,9 @@ namespace PixelVision8.Runner.Services
 
             try
             {
-                if (workspace.fileSystem.Exists(filePath) && filePath.IsDirectory)
+                if (workspace.Exists(filePath) && filePath.IsDirectory)
                 {
-                    var files = workspace.fileSystem.GetEntities(filePath);
+                    var files = workspace.GetEntities(filePath);
 
                     using (var memoryStream = new MemoryStream())
                     {
@@ -611,7 +611,7 @@ namespace PixelVision8.Runner.Services
 
                                             using (var entryStream = tmpFile.Open())
                                             {
-                                                workspace.fileSystem.OpenFile(file, FileAccess.ReadWrite)
+                                                workspace.OpenFile(file, FileAccess.ReadWrite)
                                                     .CopyTo(entryStream);
 
                                                 // TODO need a way to only include lua files we reference
@@ -680,19 +680,19 @@ namespace PixelVision8.Runner.Services
 
                         try
                         {
-                            if (workspace.fileSystem.Exists(tmpExportPath) == false)
-                                workspace.fileSystem.CreateDirectory(tmpExportPath);
+                            if (workspace.Exists(tmpExportPath) == false)
+                                workspace.CreateDirectory(tmpExportPath);
 
                             // Create a folder with the timestamp
                             tmpExportPath = tmpExportPath.AppendDirectory(DateTime.Now.ToString("yyyyMMddHHmmss"));
-                            workspace.fileSystem.CreateDirectory(tmpExportPath);
+                            workspace.CreateDirectory(tmpExportPath);
 
 
                             // Add the zip filename to it
                             tmpZipPath = tmpExportPath.AppendFile(filePath.EntityName + ".pv8");
 
 
-                            using (var fileStream = workspace.fileSystem.CreateFile(tmpZipPath) as FileStream)
+                            using (var fileStream = workspace.CreateFile(tmpZipPath) as FileStream)
                             {
                                 memoryStream.Seek(0, SeekOrigin.Begin);
                                 memoryStream.CopyTo(fileStream);
@@ -714,15 +714,15 @@ namespace PixelVision8.Runner.Services
 
                         try
                         {
-                            if (workspace.fileSystem.Exists(exportPath) == false)
-                                workspace.fileSystem.CreateDirectory(exportPath);
+                            if (workspace.Exists(exportPath) == false)
+                                workspace.CreateDirectory(exportPath);
                         }
                         catch
                         {
                         }
 
                         exportPath = workspace.UniqueFilePath(exportPath.AppendDirectory("Build"));
-                        workspace.fileSystem.CreateDirectory(exportPath);
+                        workspace.CreateDirectory(exportPath);
 
                         CopyFile(tmpZipPath.Path, exportPath.Path);
 
@@ -755,9 +755,9 @@ namespace PixelVision8.Runner.Services
             {
                 var filePath = FileSystemPath.Parse(path);
 
-                if (workspace.fileSystem.Exists(filePath))
+                if (workspace.Exists(filePath))
                 {
-                    var file = workspace.fileSystem.OpenFile(filePath, FileAccess.Read) as FileStream;
+                    var file = workspace.OpenFile(filePath, FileAccess.Read) as FileStream;
 
                     return file.Name;
                 }
@@ -776,7 +776,7 @@ namespace PixelVision8.Runner.Services
 
             try
             {
-                return workspace.fileSystem.Exists(filePath);
+                return workspace.Exists(filePath);
             }
             catch
             {
@@ -822,9 +822,9 @@ namespace PixelVision8.Runner.Services
 
             var filePath = FileSystemPath.Parse(path);
 
-            if (fileSystem.Exists(filePath))
+            if (workspace.Exists(filePath))
             {
-                var entities = fileSystem.GetEntities(filePath);
+                var entities = workspace.GetEntities(filePath);
 
 //                var validGamePath = ValidateGameInDir(path);
 
@@ -912,10 +912,10 @@ namespace PixelVision8.Runner.Services
             var filePath = workspace.UniqueFilePath(FileSystemPath.Parse(path));
 
             // Need to make sure we don't create a new file over an existing one
-            if (filePath.IsDirectory && !fileSystem.Exists(filePath))
+            if (filePath.IsDirectory && !workspace.Exists(filePath))
                 try
                 {
-                    fileSystem.CreateDirectory(filePath);
+                    workspace.CreateDirectory(filePath);
 
                     return true;
                 }
@@ -958,11 +958,11 @@ namespace PixelVision8.Runner.Services
                 var parent = destPath.ParentPath;
 
                 // Check that the path exists
-                if (!fileSystem.Exists(parent)) fileSystem.CreateDirectoryRecursive(parent);
+                if (!workspace.Exists(parent)) workspace.CreateDirectoryRecursive(parent);
 //                }
 
                 // Ignore files with the same src and dest path but the copy action is still successful
-                if (srcPath != destPath) fileSystem.Copy(srcPath, fileSystem, destPath);
+                if (srcPath != destPath) workspace.Copy(srcPath, destPath);
 
                 return true;
             }
@@ -983,7 +983,7 @@ namespace PixelVision8.Runner.Services
             var destPath = FileSystemPath.Parse(dest);
 
             // Copy fails if an existing file is in the destination directory with the same name
-            if (fileSystem.Exists(destPath))
+            if (workspace.Exists(destPath))
             {
                 runner.DisplayWarning("Move failed because '" + destPath + "' already exists.");
 
@@ -997,7 +997,7 @@ namespace PixelVision8.Runner.Services
             if (srcPath.IsFile)
                 try
                 {
-                    fileSystem.Move(srcPath, fileSystem, destPath);
+                    workspace.Move(srcPath, destPath);
 
                     return true;
                 }
@@ -1010,14 +1010,14 @@ namespace PixelVision8.Runner.Services
                 try
                 {
                     // Create the new directory
-                    fileSystem.CreateDirectory(destPath);
+                    workspace.CreateDirectory(destPath);
 
                     // Get the old directory's entities
-                    var entities = fileSystem.GetEntities(srcPath);
+                    var entities = workspace.GetEntities(srcPath);
 
                     // Copy each entity over
                     foreach (var entity in entities)
-                        fileSystem.Copy(entity, fileSystem, destPath.AppendFile(entity.EntityName));
+                        workspace.Copy(entity, destPath.AppendFile(entity.EntityName));
 
 
                     if (DeleteFile(src, true)) return true;
@@ -1046,13 +1046,13 @@ namespace PixelVision8.Runner.Services
                     var destPath = FileSystemPath.Parse("/Tmp/Trash/");
 
                     // Create trash if its missing
-                    if (!workspace.fileSystem.Exists(destPath)) workspace.fileSystem.CreateDirectory(destPath);
+                    if (!workspace.Exists(destPath)) workspace.CreateDirectory(destPath);
 
                     CopyFile(src, destPath.Path);
                 }
 
                 // Delete the file from the disk system
-                fileSystem.Delete(srcPath);
+                workspace.Delete(srcPath);
 
                 return true;
             }

@@ -60,7 +60,7 @@ namespace PixelVision8Runner.Runner.Services
 
             // TODO need to convert mode to file system mode
             
-            return workspace.fileSystem.OpenFile(FileSystemPath.Parse(filename), FileAccess.Read);
+            return workspace.OpenFile(FileSystemPath.Parse(filename), FileAccess.Read);
             
             
         }
@@ -88,18 +88,18 @@ namespace PixelVision8Runner.Runner.Services
         public bool OS_FileExists(string file)
         {
 
-            return workspace.fileSystem.Exists(FileSystemPath.Parse(file));
+            return workspace.Exists(FileSystemPath.Parse(file));
             
         }
 
         public void OS_FileDelete(string file)
         {
-            workspace.fileSystem.Delete(FileSystemPath.Parse(file));
+            workspace.Delete(FileSystemPath.Parse(file));
         }
 
         public void OS_FileMove(string src, string dst)
         {
-            workspace.fileSystem.Move(FileSystemPath.Parse(src), workspace.fileSystem, FileSystemPath.Parse(dst));
+            workspace.Move(FileSystemPath.Parse(src), FileSystemPath.Parse(dst));
             
         }
 

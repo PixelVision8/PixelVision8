@@ -140,7 +140,7 @@ namespace PixelVision8.Runner.Editors
             var filePath = FileSystemPath.Parse(path);
 
             // If the file doesn't exist, return false.
-            if (!workspace.fileSystem.Exists(filePath))
+            if (!workspace.Exists(filePath))
                 return false;
 
             var files = workspace.ConvertDiskFilesToBytes(workspace.ReadDisk(filePath));
@@ -1214,7 +1214,7 @@ namespace PixelVision8.Runner.Editors
             var filePath = FileSystemPath.Parse(path);
 
             // If the file doesn't exist, return false.
-            if (!workspace.fileSystem.Exists(filePath))
+            if (!workspace.Exists(filePath))
                 return false;
 
             byte[] imageBytes = null;
@@ -1224,7 +1224,7 @@ namespace PixelVision8.Runner.Editors
                 // Read bytes from image file
                 using (var memoryStream = new MemoryStream())
                 {
-                    workspace.fileSystem.OpenFile(filePath, FileAccess.Read).CopyTo(memoryStream);
+                    workspace.OpenFile(filePath, FileAccess.Read).CopyTo(memoryStream);
 
                     imageBytes = memoryStream.ToArray();
                 }
@@ -1303,7 +1303,7 @@ namespace PixelVision8.Runner.Editors
             var filePath = FileSystemPath.Parse(path);
 
             // If the file doesn't exist, return false.
-            if (!workspace.fileSystem.Exists(filePath))
+            if (!workspace.Exists(filePath))
                 return false;
 
             byte[] imageBytes = null;
@@ -1313,7 +1313,7 @@ namespace PixelVision8.Runner.Editors
                 // Read bytes from image file
                 using (var memoryStream = new MemoryStream())
                 {
-                    workspace.fileSystem.OpenFile(filePath, FileAccess.Read).CopyTo(memoryStream);
+                    workspace.OpenFile(filePath, FileAccess.Read).CopyTo(memoryStream);
 
                     imageBytes = memoryStream.ToArray();
                 }
@@ -1388,7 +1388,7 @@ namespace PixelVision8.Runner.Editors
             {
                 var oldPath = parentFilePath.AppendFile(oldName);
 
-                if (workspace.fileSystem.Exists(oldPath)) workspace.fileSystem.Delete(oldPath);
+                if (workspace.Exists(oldPath)) workspace.Delete(oldPath);
             }
 
             var fontPath = parentFilePath.AppendFile(fontName);

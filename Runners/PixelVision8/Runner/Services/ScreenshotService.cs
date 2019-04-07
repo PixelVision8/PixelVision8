@@ -48,7 +48,7 @@ namespace PixelVision8.Runner.Services
         {
             get
             {
-                var fileSystem = workspace.fileSystem;
+//                var fileSystem = workspace.fileSystem;
                 try
                 {
                     var directoryName = "Screenshots";//workspace.ReadBiosData("ScreenshotDir", "Screenshots") as string;
@@ -57,7 +57,7 @@ namespace PixelVision8.Runner.Services
 
                     try
                     {
-                        if (fileSystem.Exists(FileSystemPath.Root.AppendDirectory("Workspace")))
+                        if (workspace.Exists(FileSystemPath.Root.AppendDirectory("Workspace")))
                             path = FileSystemPath.Root.AppendDirectory("Workspace")
                                 .AppendDirectory(directoryName);
                     }
@@ -67,7 +67,7 @@ namespace PixelVision8.Runner.Services
                     }
 
                     // Check to see if a screenshot directory exits
-                    if (!fileSystem.Exists(path)) fileSystem.CreateDirectoryRecursive(path);
+                    if (!workspace.Exists(path)) workspace.CreateDirectoryRecursive(path);
 
                     active = true;
 

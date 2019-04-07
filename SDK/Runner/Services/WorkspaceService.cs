@@ -51,7 +51,7 @@ namespace PixelVision8.Runner.Services
             "txt"
         };
 
-        public FileSystemMounter fileSystem;
+        protected FileSystemMounter fileSystem;
 
 //        protected FileStream logFile;
 
@@ -1249,6 +1249,69 @@ namespace PixelVision8.Runner.Services
 //            return (string)ReadBiosData("DefaultTool", "/");
 //        }
 
+        #endregion
+
+
+
+        #region FileSystem IO
+
+        // TODO All paths going into the Workspace should be string
+
+        public ICollection<FileSystemPath> GetEntities(FileSystemPath path)
+        {
+            return fileSystem.GetEntities(path);
+        }
+        
+        public bool Exists(FileSystemPath path)
+        {
+            return fileSystem.Exists(path);
+        }
+
+        public Stream CreateFile(FileSystemPath path)
+        {
+            return fileSystem.CreateFile(path);
+        }
+
+        public Stream OpenFile(FileSystemPath path, FileAccess access)
+        {
+            return fileSystem.OpenFile(path, access);
+        }
+
+        public void CreateDirectory(FileSystemPath path)
+        {
+            fileSystem.CreateDirectory(path);
+        }
+
+        public void Delete(FileSystemPath path)
+        {
+            fileSystem.Delete(path);
+        }
+
+        public void Copy(FileSystemPath src, FileSystemPath dest)
+        {
+            fileSystem.Copy(src, fileSystem, dest);
+        }
+        
+        public void Move(FileSystemPath src, FileSystemPath dest)
+        {
+            fileSystem.Move(src, fileSystem, dest);
+        }
+
+        public void CreateDirectoryRecursive(FileSystemPath path)
+        {
+            fileSystem.CreateDirectoryRecursive(path);
+        }
+
+        public void AddMount(KeyValuePair<FileSystemPath, IFileSystem> mount)
+        {
+            fileSystem.Mounts.Add(mount);
+        }
+
+        public SubFileSystem CreateSubFileSystem(FileSystemPath path)
+        {
+            return new SubFileSystem(fileSystem, path);
+        }
+        
         #endregion
     }
 }

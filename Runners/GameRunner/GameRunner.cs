@@ -144,7 +144,7 @@ namespace PixelVision8.Runner
             var biosPath = FileSystemPath.Root.AppendDirectory("App").AppendFile("bios.json");//Path.Combine(rootPath, "bios.json")));
 
             // Test if a bios file exists
-            if (workspaceService.fileSystem.Exists(biosPath))
+            if (workspaceService.Exists(biosPath))
             {
 
                 // Read the bios text
@@ -287,9 +287,9 @@ namespace PixelVision8.Runner
                 // Get the path to where the user's bios should be saved
 //                var path = FileSystemPath.Parse("/User/").AppendFile("user-bios.json");
 
-                if (!workspaceService.fileSystem.Exists(userBiosPath))
+                if (!workspaceService.Exists(userBiosPath))
                 {
-                    var newBios = workspaceService.fileSystem.CreateFile(userBiosPath);
+                    var newBios = workspaceService.CreateFile(userBiosPath);
                     newBios.Close();
                 }
 

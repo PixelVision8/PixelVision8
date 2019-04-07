@@ -309,7 +309,7 @@ namespace PixelVision8.Runner
             documentsPath = Path.Combine(Documents, baseDir);
 
             
-            workspaceServicePlus.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(
+            workspaceServicePlus.AddMount(new KeyValuePair<FileSystemPath, IFileSystem>(
                 FileSystemPath.Root.AppendDirectory("User"),
                 new PhysicalFileSystem(documentsPath)));
             
@@ -317,11 +317,11 @@ namespace PixelVision8.Runner
     
             osFileSystem = new MergedFileSystem();
 
-            osFileSystem.FileSystems = osFileSystem.FileSystems.Concat(new[] { new SubFileSystem(workspaceServicePlus.fileSystem,
+            osFileSystem.FileSystems = osFileSystem.FileSystems.Concat(new[] { workspaceService.CreateSubFileSystem(
                 FileSystemPath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS")) });
                 
             // Mount the PixelVisionOS directory
-            workspaceServicePlus.fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("PixelVisionOS"), osFileSystem));
+            workspaceServicePlus.AddMount(new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("PixelVisionOS"), osFileSystem));
                 
             
             var workspaceName = bios.ReadBiosData("WorkspaceDir", "") as string;
@@ -336,17 +336,13 @@ namespace PixelVision8.Runner
 
                 try
                 {
-                    if (workspaceServicePlus.fileSystem.Exists(path))
+                    if (workspaceServicePlus.Exists(path))
                     {
                         Console.WriteLine("Found Workspace system folder");
                         
                         osFileSystem.FileSystems = osFileSystem.FileSystems.Concat(
                             new[] { 
-                                new SubFileSystem
-                                (
-                                    workspaceServicePlus.fileSystem, 
-                                    path
-                                ) 
+                                workspaceService.CreateSubFileSystem(path) 
                             }
                         );
                     }
@@ -632,7 +628,7 @@ namespace PixelVision8.Runner
             {
                 var biosAutoRun = FileSystemPath.Parse((string) bios.ReadBiosData("AutoRun", ""));
                 
-                if (workspaceServicePlus.fileSystem.Exists(biosAutoRun))
+                if (workspaceServicePlus.Exists(biosAutoRun))
                 {
 
                     if (workspaceServicePlus.ValidateGameInDir(biosAutoRun))

@@ -155,9 +155,9 @@ namespace PixelVision8.Runner
             var shaderPath = FileSystemPath.Parse(bios.ReadBiosData(CRTBiosSettings.CRTEffectPath.ToString(), "/App/Effects/crt-lottes-mg.ogl.mgfxo") as string);
 
             
-            if (workspaceService.fileSystem.Exists(shaderPath))
+            if (workspaceService.Exists(shaderPath))
             {
-                displayTarget.shaderPath = workspaceService.fileSystem.OpenFile(shaderPath, FileAccess.Read);
+                displayTarget.shaderPath = workspaceService.OpenFile(shaderPath, FileAccess.Read);
                 
                 EnableCRT(Convert.ToBoolean(bios.ReadBiosData(CRTBiosSettings.CRT.ToString(), "True") as string));
                 Brightness(Convert.ToSingle((long) bios.ReadBiosData(CRTBiosSettings.Brightness.ToString(), 100L))/100F);
@@ -222,7 +222,7 @@ namespace PixelVision8.Runner
             var biosPath = FileSystemPath.Root.AppendDirectory("App").AppendFile("bios.json");//Path.Combine(rootPath, "bios.json")));
 
             // Test if a bios file exists
-            if (workspaceService.fileSystem.Exists(biosPath))
+            if (workspaceService.Exists(biosPath))
             {
 
                 // Read the bios text
@@ -410,9 +410,9 @@ namespace PixelVision8.Runner
                 // Get the path to where the user's bios should be saved
 //                var path = FileSystemPath.Parse("/User/").AppendFile("user-bios.json");
 
-                if (!workspaceService.fileSystem.Exists(userBiosPath))
+                if (!workspaceService.Exists(userBiosPath))
                 {
-                    var newBios = workspaceService.fileSystem.CreateFile(userBiosPath);
+                    var newBios = workspaceService.CreateFile(userBiosPath);
                     newBios.Close();
                 }
 
