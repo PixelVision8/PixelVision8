@@ -78,14 +78,9 @@ namespace PixelVision8.Runner
             Window.Title =
                 (string) bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner");
             
-            
         }
 
         #region Runner settings
-
-        
-
-        
 
         /// <summary>
         ///     Override Volume so it saves changes to the bios.

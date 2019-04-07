@@ -509,6 +509,7 @@ namespace PixelVision8.Runner.Services
         }
 
         // TODO this is hardcoded but should come from the bios
+        
         public string spriteBuilderFolderName = "SpriteBuilder";
         
         public bool VaildateSpriteBuilderFolder(FileSystemPath rootPath)

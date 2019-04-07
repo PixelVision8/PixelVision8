@@ -51,21 +51,6 @@ namespace PixelVision8.Runner
         public string systemVersion;
         
         public ExportService exportService { get; private set; }
-
-        public override List<string> defaultChips {
-            get
-            {
-                
-                // Get the list of default chips
-                var chips = base.defaultChips;
-                
-                // Add the custom Lua Game chip
-                chips.Add(typeof(LuaGameChip).FullName);
-                
-                // Return the list of chips
-                return chips;
-            }
-        }
         
         public readonly Dictionary<ActionKeys, Keys> actionKeys = new Dictionary<ActionKeys, Keys>()
         {
@@ -99,6 +84,12 @@ namespace PixelVision8.Runner
             {
                 actionKeys[action] = (Keys)Convert.ToInt32((long)bios.ReadBiosData(action.ToString(), (long)actionKeys[action], true));
             }
+            
+            // Replace title with version
+            
+            Window.Title =
+                (string) bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner") + " " + 
+                (string) bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
            
         }
 

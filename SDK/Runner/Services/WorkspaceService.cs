@@ -1275,11 +1275,6 @@ namespace PixelVision8.Runner.Services
         {
             fileSystem.Mounts.Add(mount);
         }
-
-        public SubFileSystem CreateSubFileSystem(FileSystemPath path)
-        {
-            return new SubFileSystem(fileSystem, path);
-        }
         
         #endregion
 
