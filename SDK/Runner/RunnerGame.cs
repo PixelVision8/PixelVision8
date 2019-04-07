@@ -44,10 +44,7 @@ namespace PixelVision8.Runner
             SystemVersion,
             FullScreen,
             StretchScreen,
-            CropScreen,
-            CRT,
-            Brightness,
-            Sharpness
+            CropScreen
         }
 
         public enum ErrorCode
@@ -104,8 +101,8 @@ namespace PixelVision8.Runner
             {InputMap.Player2BButton, (int) Buttons.B}
         };
 
-        protected int _scale = 1;
-        protected bool cropScreen = true;
+//        protected int _scale = 1;
+//        protected bool cropScreen = true;
 
         protected bool debugLayers = true;
         protected bool displayProgress;
@@ -113,7 +110,7 @@ namespace PixelVision8.Runner
         public DisplayTarget displayTarget;
         protected TimeSpan elapsedTime = TimeSpan.Zero;
         protected int frameCounter;
-        protected bool fullscreen;
+//        protected bool fullscreen;
 
         protected GraphicsDeviceManager graphics;
         protected RunnerMode lastMode;
@@ -121,7 +118,7 @@ namespace PixelVision8.Runner
         protected RunnerMode mode;
 
         protected bool resolutionInvalid = true;
-        protected bool stretchScreen;
+//        protected bool stretchScreen;
         protected float timeDelta;
         protected IEngine tmpEngine;
         protected IServiceLocator serviceManager;
@@ -209,13 +206,13 @@ namespace PixelVision8.Runner
         {
             if (scale.HasValue)
             {
-                _scale = MathHelper.Clamp(scale.Value, 1, 6);
+                displayTarget.monitorScale = scale.Value;//MathHelper.Clamp(, 1, 6);
 
 //                ResetResolution();
                 InvalidateResolution();
             }
 
-            return _scale;
+            return displayTarget.monitorScale;
         }
 
 
@@ -223,14 +220,13 @@ namespace PixelVision8.Runner
         {
             if (value.HasValue)
             {
-                fullscreen = value.Value;
+                displayTarget.fullscreen = value.Value;
 
                 InvalidateResolution();
                 //ResetResolution();
             }
 
-            return
-                fullscreen; //Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.FullScreen.ToString(), "False") as string);
+            return displayTarget.fullscreen; //Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.FullScreen.ToString(), "False") as string);
         }
 
         public virtual bool StretchScreen(bool? value = null)
@@ -238,7 +234,7 @@ namespace PixelVision8.Runner
             if (value.HasValue)
             {
 //                var newScale = scale.Value.Clamp(1, 8);
-                stretchScreen = value.Value;
+                displayTarget.stretchScreen = value.Value;
 
 //                workspaceService.UpdateBiosData(BiosSettings.StretchScreen.ToString(), value.Value.ToString());
 //                ResetResolution();
@@ -247,7 +243,7 @@ namespace PixelVision8.Runner
             }
 
             return
-                stretchScreen; //Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.StretchScreen.ToString(), "False") as string);
+                displayTarget.stretchScreen; //Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.StretchScreen.ToString(), "False") as string);
         }
 
         public virtual bool CropScreen(bool? value = null)
@@ -256,7 +252,7 @@ namespace PixelVision8.Runner
             {
 //                var newScale = scale.Value.Clamp(1, 8);
 
-                cropScreen = value.Value;
+                displayTarget.cropScreen = value.Value;
 
 //                workspaceService.UpdateBiosData(BiosSettings.CropScreen.ToString(), value.Value.ToString());
                 //ResetResolution();
@@ -264,8 +260,7 @@ namespace PixelVision8.Runner
 //                displayTarget?.MonitorResolution(scale: scale);
             }
 
-            return
-                cropScreen; //Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.CropScreen.ToString(), "False") as string);
+            return displayTarget.cropScreen; //Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.CropScreen.ToString(), "False") as string);
         }
 
         public void DebugLayers(bool value)
@@ -343,7 +338,7 @@ namespace PixelVision8.Runner
         public virtual void ConfigureDisplayTarget()
         {
             // Create the default display target
-            displayTarget = new DisplayTarget(graphics, 512, 480, Fullscreen());
+            displayTarget = new DisplayTarget(graphics, 512, 480);
         }
 
         public void InvalidateResolution()
@@ -359,14 +354,14 @@ namespace PixelVision8.Runner
 
         protected override void Update(GameTime gameTime)
         {
+            if (activeEngine == null)
+                return;
+            
             if (resolutionInvalid)
             {
                 ResetResolution();
                 ResetResolutionValidation();
             }
-
-            if (activeEngine == null)
-                return;
 
             timeDelta = (float) gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -397,8 +392,11 @@ namespace PixelVision8.Runner
 
         protected override void Draw(GameTime gameTime)
         {
+            
             if (activeEngine == null)
                 return;
+            
+            
 
             frameCounter++;
 
@@ -566,7 +564,7 @@ namespace PixelVision8.Runner
             if (activeEngine == null)
                 return;
 
-            displayTarget.ResetResolution(activeEngine, Scale(), Fullscreen(), CropScreen(), StretchScreen());
+            displayTarget.ResetResolution(activeEngine);
             IsMouseVisible = false;
         }
 

@@ -88,7 +88,7 @@ namespace PixelVision8.Runner.Data
         private Rectangle visibleRect;
 
         // TODO think we just need to pass in the active game and not the entire runner?
-        public DisplayTarget(GraphicsDeviceManager graphicManager, int width, int height, bool fullscreen = false)
+        public DisplayTarget(GraphicsDeviceManager graphicManager, int width, int height)
         {
             this.graphicManager = graphicManager;
 
@@ -133,13 +133,13 @@ namespace PixelVision8.Runner.Data
             set => shaderEffect?.Parameters["hardPix"]?.SetValue(value);
         }
 
-        public string shaderPath
+        public Stream shaderPath
         {
             set
             {
 //                Effect tmpEffect;
 
-                using (var reader = new BinaryReader(File.Open(value, FileMode.Open)))
+                using (var reader = new BinaryReader(value))
                 {
                     crtShader = new Effect(graphicManager.GraphicsDevice,
                         reader.ReadBytes((int) reader.BaseStream.Length));
@@ -179,8 +179,43 @@ namespace PixelVision8.Runner.Data
         }
 //        private GameWindow window;
 
-        public void ResetResolution(IEngine activeEngine, int monitorScale, bool fullscreen, bool matchResolution,
-            bool stretch)
+        private int _monitorScale = 1;
+        
+        public int monitorScale
+        {
+            get => _monitorScale;
+            set
+            {
+                var maxWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                var maxHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+
+                var fits = false;
+
+                while (fits == false)
+                {
+                    var newWidth = _monitorWidth * value;
+                    var newHeight = _monitorHeight * value;
+
+                    if (newWidth < maxWidth && newHeight < maxHeight)
+                    {
+                        fits = true;
+                        _monitorScale = value;
+
+                    }
+                    else
+                    {
+                        value --;
+                    }
+                
+                }
+            }
+        }
+
+        public bool fullscreen = false;
+        public bool stretchScreen;
+        public bool cropScreen = true;
+        
+        public void ResetResolution(IEngine activeEngine)
         {
             var displayChip = activeEngine.displayChip;
 
@@ -190,15 +225,21 @@ namespace PixelVision8.Runner.Data
             var overScanY = displayChip.overscanYPixels;
 
 
-            renderTexture?.Dispose();
-
-            renderTexture = new Texture2D(graphicManager.GraphicsDevice, gameWidth, gameHeight);
-
+            if (renderTexture == null || renderTexture.Width != gameWidth || renderTexture.Height != gameHeight)
+            {
+                renderTexture = new Texture2D(graphicManager.GraphicsDevice, gameWidth, gameHeight);
+            }
+//            else if()
+//            {
+//                renderTexture?.Dispose();
+//                renderTexture = new Texture2D(graphicManager.GraphicsDevice, gameWidth, gameHeight);
+//            }
+            
             // Calculate the game's resolution
             visibleRect.Width = renderTexture.Width - overScanX;
             visibleRect.Height = renderTexture.Height - overScanY;
 
-            var tmpMonitorScale = fullscreen ? 1 : MathHelper.Clamp(monitorScale, 1, 4);
+            var tmpMonitorScale = fullscreen ? 1 : monitorScale;
 
             // Calculate the monitor's resolution
             var displayWidth = fullscreen
@@ -214,7 +255,7 @@ namespace PixelVision8.Runner.Data
             scale.X = (float) displayWidth / visibleRect.Width;
             scale.Y = (float) displayHeight / visibleRect.Height;
 
-            if (!stretch)
+            if (!stretchScreen)
             {
                 // To preserve the aspect ratio,
                 // use the smaller scale factor.
@@ -225,7 +266,7 @@ namespace PixelVision8.Runner.Data
             offset.X = (displayWidth - visibleRect.Width * scale.X) * .5f;
             offset.Y = (displayHeight - visibleRect.Height * scale.Y) * .5f;
 
-            if (matchResolution && !fullscreen)
+            if (cropScreen && !fullscreen)
             {
                 displayWidth = Math.Min(displayWidth, (int) (visibleRect.Width * scale.X));
                 displayHeight = Math.Min(displayHeight, (int) (visibleRect.Height * scale.Y));
@@ -253,6 +294,8 @@ namespace PixelVision8.Runner.Data
             // Set the new number of pixels
             totalPixels = renderTexture.Width * renderTexture.Height;
         }
+
+        
 
         public void Render(IEngine activeEngine, bool ignoreTransparent = false)
         {

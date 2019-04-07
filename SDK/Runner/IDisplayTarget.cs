@@ -24,8 +24,7 @@ namespace PixelVision8.Runner
 {
     public interface IDisplayTarget
     {
-        void ResetResolution(IEngine activeEngine, int monitorScale, bool fullscreen, bool matchResolution,
-            bool stretch);
+        void ResetResolution(IEngine activeEngine);
 
         void Render(IEngine engine, bool ignoreTransparent = false);
 //        void CacheColors(IEngine engine);

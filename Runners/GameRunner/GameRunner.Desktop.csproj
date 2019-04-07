@@ -82,6 +82,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\..\Effects\*.*">
+      <Link>Content\Effects\%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

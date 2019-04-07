@@ -21,17 +21,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using PixelVision8.Engine;
 using PixelVision8.Engine.Services;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Utils;
 using SharpFileSystem;
 using SharpFileSystem.FileSystems;
 using SharpFileSystem.IO;
-using File = System.IO.File;
 
 namespace PixelVision8.Runner.Services
 {
@@ -39,7 +36,7 @@ namespace PixelVision8.Runner.Services
     {
         public List<string> archiveExtensions;
 
-        public bool autoRunEnabled = true;
+//        public bool autoRunEnabled = true;
 
 //        protected BiosService bios;
 

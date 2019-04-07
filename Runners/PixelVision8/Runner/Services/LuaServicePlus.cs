@@ -899,7 +899,7 @@ namespace PixelVision8.Runner.Services
 
         public void EnableAutoRun(bool value)
         {
-            workspace.autoRunEnabled = value;
+            desktopRunner.autoRunEnabled = value;
         }
 
         public void EnableBackKey(bool value)

@@ -115,16 +115,16 @@ namespace PixelVision8.Runner.Services
             return pathRefs;
         }
 
-        public void MountDisk(string path, bool updateBios = true)
+        public string MountDisk(string path, bool updateBios = true)
         {
 //            Console.WriteLine("Load File - " + path + " Auto Run " + autoRunEnabled);
-            try
-            {
+//            try
+//            {
                 IFileSystem disk;
 
                 string entityName;
 
-                var attr = System.IO.File.GetAttributes(path);
+                var attr = File.GetAttributes(path);
 
                 if (attr.HasFlag(FileAttributes.Directory))
                     entityName = new DirectoryInfo(path).Name;
@@ -137,17 +137,17 @@ namespace PixelVision8.Runner.Services
                     disk = new PhysicalFileSystem(path);
 
                 if (disk == null)
-                    return;
+                    return null;
 
                 // Test to see if the disk is a valid game
                 if (ValidateGameInDir(disk) == false &&
-                    disk.Exists(FileSystemPath.Root.AppendFile("info.json")) == false) return;
+                    disk.Exists(FileSystemPath.Root.AppendFile("info.json")) == false) return null;
 
                 // Update the root path to just be the name of the entity
                 var rootPath = FileSystemPath.Root.AppendDirectory(entityName);
 
                 // Check to see if there is already a disk in slot 1, if so we want to eject it since only slot 1 can boot
-                if (diskDrives.total > 0 && autoRunEnabled)
+                if (diskDrives.total > 0)// && autoRunEnabled)
                 {
                     // Clear the load history
 //                    runner.loadHistory.Clear();
@@ -159,21 +159,24 @@ namespace PixelVision8.Runner.Services
                 // Add the new disk
                 diskDrives.AddDisk(rootPath, disk);
 
+                // Return the disk name
+                return entityName;
+                
                 // Only try to auto run a game if this is enabled in the runner
-                if (autoRunEnabled) AutoRunGameFromDisk(entityName);
-            }
-            catch
-            {
-                autoRunEnabled = true;
-                // TODO need to make sure we show a better error to explain why the disk couldn't load
-//                runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
-            }
+//                if (autoRunEnabled) AutoRunGameFromDisk(entityName);
+//            }
+//            catch
+//            {
+//                autoRunEnabled = true;
+//                // TODO need to make sure we show a better error to explain why the disk couldn't load
+////                runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
+//            }
 
             // Only update the bios when we need  to
 //            if (updateBios) UpdateDiskInBios();
         }
 
-        public void AutoRunGameFromDisk(string diskName)
+        public string AutoRunGameFromDisk(string diskName)
         {
             var diskPath = FileSystemPath.Root.AppendDirectory("Disks")
                 .AppendDirectory(diskName);
@@ -208,17 +211,15 @@ namespace PixelVision8.Runner.Services
             // Always validate that the disk is a valid game before trying to load it.
             if (ValidateGameInDir(diskPath))
             {
-                // Create new meta data for the game. We wan to display the disk insert animation.
-                var metaData = new Dictionary<string, string>
-                {
-                    {"showDiskAnimation", "true"}
-                };
+                
 
+                return diskPath.Path;
                 // Load the disk path and play the game
 //                runner.Load(diskPath.Path, RunnerGame.RunnerMode.Playing, metaData);
             }
             else
             {
+                return null;
                 // If the new auto run path can't be found, throw an error
 //                runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
             }
@@ -341,13 +342,15 @@ namespace PixelVision8.Runner.Services
             return paths;
         }
 
-        public void AutoRunFirstDisk()
+        public string AutoRunFirstDisk()
         {
             if (diskDrives.total > 0)
             {
                 var firstDisk = diskDrives.disks[0];
-                AutoRunGameFromDisk(firstDisk.EntityName);
+                return firstDisk.EntityName;
             }
+
+            return null;
         }
 
         public override void ShutdownSystem()

@@ -92,7 +92,7 @@ namespace PixelVision8.Runner
                 bios.ReadBiosData(BiosSettings.CropScreen.ToString(), "False") as string));
             // Create the default display target
 
-            displayTarget = new DisplayTarget(graphics, tmpRes[0], tmpRes[1], Fullscreen());
+            displayTarget = new DisplayTarget(graphics, tmpRes[0], tmpRes[1]);
         }
 
         protected override void ConfigureKeyboard()

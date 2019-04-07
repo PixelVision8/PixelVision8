@@ -101,41 +101,7 @@ namespace PixelVision8.Runner
 //            }
 //        }
         
-        public bool EnableCRT(bool? toggle)
-        {
-
-            if (toggle.HasValue)
-            {
-                displayTarget.useCRT = toggle.Value;
-                bios.UpdateBiosData(BiosSettings.CRT.ToString(), toggle.Value.ToString());
-                ResetResolution();
-            }
-
-            return displayTarget.useCRT;
-
-        }
-
-        public float Brightness(float? brightness = null)
-        {
-            if (brightness.HasValue)
-            {
-                displayTarget.brightness = brightness.Value;
-                bios.UpdateBiosData(BiosSettings.Brightness.ToString(), (long) (brightness * 100));
-            }
-
-            return displayTarget.brightness;
-        }
         
-        public float Sharpness(float? sharpness = null)
-        {
-            if (sharpness.HasValue)
-            {
-                displayTarget.sharpness = sharpness.Value;
-                bios.UpdateBiosData(BiosSettings.Sharpness.ToString(), sharpness);
-            }
-
-            return displayTarget.sharpness;
-        }
         
 
         protected override void ConfigureRunner()
@@ -159,14 +125,10 @@ namespace PixelVision8.Runner
             
             
             // TODO need to fix the path to /PixelVisionOS/Effects/
-            var shaderPath = Path.Combine(rootPath, "crt-lottes-mg.ogl.mgfxo");
+//            var shaderPath = Path.Combine(rootPath, "crt-lottes-mg.ogl.mgfxo");
 
-            if (File.Exists(shaderPath))
-            {
-                displayTarget.shaderPath = shaderPath;
-                EnableCRT(Convert.ToBoolean(bios.ReadBiosData(BiosSettings.CRT.ToString(), "True") as string));
 
-            }
+            
             
             // Set the display bios values here but this should be in the base runner?
 //            Brightness(Convert.ToSingle((long) workspaceServicePlus.ReadBiosData(BiosSettings.Brightness.ToString(), 100L))/100F);
@@ -275,6 +237,9 @@ namespace PixelVision8.Runner
 
             // Pass the new service back to the base class
             workspaceService = workspaceServicePlus;
+            
+            serviceManager.AddService(typeof(WorkspaceService).FullName, workspaceService);
+
         }
 
         protected override void ConfigureWorkspace()
@@ -319,21 +284,21 @@ namespace PixelVision8.Runner
             
             base.ConfigureWorkspace();
             
-            workspaceService.archiveExtensions =
+            workspaceServicePlus.archiveExtensions =
                 ((string) bios.ReadBiosData("ArchiveExtensions", "zip,pv8,pvt,pvs,pva")).Split(',')
                 .ToList(); //new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
-            workspaceService.fileExtensions =
+            workspaceServicePlus.fileExtensions =
                 ((string) bios.ReadBiosData("FileExtensions", "png,lua,json,txt")).Split(',')
                 .ToList(); //new List<string> {"png", "lua", "json", "txt"};
 //            gameFolders = ((string)ReadBiosData("GameFolders", "Games,Systems,Tools")).Split(',').ToList();//new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
 
-            workspaceService.requiredFiles =
+            workspaceServicePlus.requiredFiles =
                 ((string) bios.ReadBiosData("RequiredFiles", "data.json,info.json")).Split(',')
                 .ToList(); //new List<string> {"zip", "pv8", "pvt", "pvs", "pva"});
             
-            workspaceService.osLibPath = FileSystemPath.Root.AppendDirectory("PixelVisionOS")
+            workspaceServicePlus.osLibPath = FileSystemPath.Root.AppendDirectory("PixelVisionOS")
                 .AppendDirectory((string) bios.ReadBiosData("LibsDir", "Libs"));
-            workspaceService.workspaceLibPath = FileSystemPath.Root.AppendDirectory("Workspace")
+            workspaceServicePlus.workspaceLibPath = FileSystemPath.Root.AppendDirectory("Workspace")
                 .AppendDirectory((string) bios.ReadBiosData("LibsDir", "Libs"));
         
             
@@ -616,6 +581,8 @@ namespace PixelVision8.Runner
             
         }
 
+        public bool autoRunEnabled = true;
+        
         public void BootDone()
         {
             
@@ -628,15 +595,15 @@ namespace PixelVision8.Runner
             var loadedDisks = 0;
 
             // Disable auto run when loading up the default disks
-            workspaceServicePlus.autoRunEnabled = false;
+            autoRunEnabled = false;
             
             for (int i = 0; i < totalDisks; i++)
             {
                 var diskPath = (string) bios.ReadBiosData("Disk" + i, "none");
                 if (diskPath != "none")
                 {
-//                        Console.WriteLine("Boot Mount "+ diskPath + " AutoRun " + (i == 0) + " AR Enabled " + workspaceServicePlus.autoRunEnabled);
-                    workspaceServicePlus.MountDisk(diskPath, false);
+//                        Console.WriteLine("Boot Mount "+ diskPath + " AutoRun " + (i == 0) + " AR Enabled " + autoRunEnabled);
+                    MountDisk(diskPath, false);
                     loadedDisks++;
                 }
             }
@@ -654,13 +621,11 @@ namespace PixelVision8.Runner
                 count++;
 
             }
-
-            
         
             // Setup Drag and drop support
             Window.FileDropped += (o, e) => OnFileDropped(o, e);
             
-            workspaceServicePlus.autoRunEnabled = true;
+            autoRunEnabled = true;
         
             // Look to see if we have the bios default tool in the OS folder
             try
@@ -691,16 +656,70 @@ namespace PixelVision8.Runner
             else
             {
                 // When all the disks are loaded, auto run the first disk
-                workspaceServicePlus.AutoRunFirstDisk();
+                var diskName = workspaceServicePlus.AutoRunFirstDisk();
+
+                if (diskName != null)
+                {
+                    AutoRunGameFromDisk(diskName);
+                }
+                else
+                {
+                    DisplayError(ErrorCode.NoAutoRun);
+                }
+                
             }
                 
+        }
+        
+        public void MountDisk(string path, bool updateBios = true)
+        {
+//            Console.WriteLine("Load File - " + path + " Auto Run " + autoRunEnabled);
+            try
+            {
+                var diskName = workspaceServicePlus.MountDisk(path, updateBios);
+
+                // Only try to auto run a game if this is enabled in the runner
+                if (autoRunEnabled) AutoRunGameFromDisk(diskName);
+            }
+            catch
+            {
+//                autoRunEnabled = true;
+                // TODO need to make sure we show a better error to explain why the disk couldn't load
+                 DisplayError(RunnerGame.ErrorCode.NoAutoRun);
+            }
+
+            // Only update the bios when we need  to
+//            if (updateBios) UpdateDiskInBios();
+        }
+        
+        public void AutoRunGameFromDisk(string diskName)
+        {
+            var diskPath = workspaceServicePlus.AutoRunGameFromDisk(diskName);
+
+            if(diskPath != null)
+            {
+                
+                // Create new meta data for the game. We wan to display the disk insert animation.
+                var metaData = new Dictionary<string, string>
+                {
+                    {"showDiskAnimation", "true"}
+                };
+                
+                // Load the disk path and play the game
+                Load(diskPath, RunnerMode.Playing, metaData);
+            }
+            else
+            {
+                // If the new auto run path can't be found, throw an error
+                DisplayError(RunnerGame.ErrorCode.NoAutoRun);
+            }
         }
         
         public override void ShutdownActiveEngine()
         {
             // Look to see if there is an active engine
-            if (activeEngine == null)
-                return;
+//            if (activeEngine == null)
+//                return;
 
             try
             {
@@ -761,7 +780,7 @@ namespace PixelVision8.Runner
                 }
                 
                  // TODO This should be moved into the desktop runner?
-                 workspaceService.autoRunEnabled = true;
+                 autoRunEnabled = true;
     
                 // Create a new meta data dictionary if one doesn't exist yet
                 if (metaData == null) metaData = new Dictionary<string, string>();
@@ -813,7 +832,7 @@ namespace PixelVision8.Runner
                 bool success;
     
                 // Have the workspace run the game from the current path
-                var files = workspaceService.LoadGame(path);
+                var files = workspaceServicePlus.LoadGame(path);
     
                 if (files != null)
                 {
@@ -933,7 +952,7 @@ namespace PixelVision8.Runner
         public void OnFileDropped(object gameWindow, string path)
         {
             if(shutdown == false)
-            workspaceServicePlus.MountDisk(path);
+            MountDisk(path);
 
             UpdateDiskInBios();
             
@@ -992,7 +1011,7 @@ namespace PixelVision8.Runner
 
         public override void DisplayWarning(string message)
         {
-            workspaceService.UpdateLog(message);
+            workspaceServicePlus.UpdateLog(message);
         }
         
         public virtual void Back()
@@ -1021,7 +1040,7 @@ namespace PixelVision8.Runner
 
                 // TODO need to add back in disk logic
                 // Eject the fist disk
-//                workspaceService.EjectDisk();
+//                workspaceServicePlus.EjectDisk();
 //
 //                UpdateDiskInBios();
             }
@@ -1046,7 +1065,7 @@ namespace PixelVision8.Runner
 //            SaveBiosChanges();
 //            
 //            // Save any changes to the bios to the user's custom bios file
-//            workspaceService.ShutdownSystem();
+//            workspaceServicePlus.ShutdownSystem();
         }
         
         public virtual void DisplayError(ErrorCode code, Dictionary<string, string> tokens = null,
@@ -1100,7 +1119,7 @@ namespace PixelVision8.Runner
         {
             var tool = (string) bios.ReadBiosData("ErrorTool", "/PixelVisionOS/Tools/ErrorTool/");
 
-            workspaceService.UpdateLog(metaData["errorMessage"], LogType.Error,
+            workspaceServicePlus.UpdateLog(metaData["errorMessage"], LogType.Error,
                 metaData.ContainsKey("exceptionMessage") ? metaData["exceptionMessage"] : null);
 
             Load(tool, RunnerMode.Error, metaData);

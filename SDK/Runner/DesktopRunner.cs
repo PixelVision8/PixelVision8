@@ -36,6 +36,15 @@ using Directory = System.IO.Directory;
 
 namespace PixelVision8.Runner
 {
+    
+    public enum CRTBiosSettings
+    {
+        CRT,
+        Brightness,
+        Sharpness,
+        CRTEffectPath
+    }
+    
     /// <summary>
     ///     This is the main type for your game.
     /// </summary>
@@ -68,7 +77,50 @@ namespace PixelVision8.Runner
 
             Window.Title =
                 (string) bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner");
+            
+            
         }
+
+        #region CRT Filter Settings
+
+        public bool EnableCRT(bool? toggle)
+        {
+
+            if (toggle.HasValue)
+            {
+                displayTarget.useCRT = toggle.Value;
+                bios.UpdateBiosData(CRTBiosSettings.CRT.ToString(), toggle.Value.ToString());
+                InvalidateResolution();
+            }
+
+            return displayTarget.useCRT;
+
+        }
+
+        public float Brightness(float? brightness = null)
+        {
+            if (brightness.HasValue)
+            {
+                displayTarget.brightness = brightness.Value;
+                bios.UpdateBiosData(CRTBiosSettings.Brightness.ToString(), (long) (brightness * 100));
+            }
+
+            return displayTarget.brightness;
+        }
+        
+        public float Sharpness(float? sharpness = null)
+        {
+            if (sharpness.HasValue)
+            {
+                displayTarget.sharpness = sharpness.Value;
+                bios.UpdateBiosData(CRTBiosSettings.Sharpness.ToString(), sharpness);
+            }
+
+            return displayTarget.sharpness;
+        }
+
+        #endregion
+        
         
         public override void ConfigureDisplayTarget()
         {
@@ -76,17 +128,9 @@ namespace PixelVision8.Runner
             var tmpRes = ((string) bios.ReadBiosData(BiosSettings.Resolution.ToString(), "512x480"))
                 .Split('x').Select(int.Parse)
                 .ToArray();
-
-            // TODO this may be a string
-            try
-            {
-                Scale(Convert.ToInt32((long) bios.ReadBiosData(BiosSettings.Scale.ToString(), 1)));
-            }
-            catch
-            {
-                Scale(Convert.ToInt32((string) bios.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
-            }
-
+            
+            displayTarget = new DisplayTarget(graphics, tmpRes[0], tmpRes[1]);
+            
             Fullscreen(Convert.ToBoolean(
                 bios.ReadBiosData(BiosSettings.FullScreen.ToString(), "False") as string));
             StretchScreen(
@@ -96,7 +140,30 @@ namespace PixelVision8.Runner
                 bios.ReadBiosData(BiosSettings.CropScreen.ToString(), "False") as string));
             // Create the default display target
 
-            displayTarget = new DisplayTarget(graphics, tmpRes[0], tmpRes[1], Fullscreen());
+            
+            // TODO this may be a string
+            try
+            {
+                Scale(Convert.ToInt32((long) bios.ReadBiosData(BiosSettings.Scale.ToString(), 1)));
+            }
+            catch
+            {
+                Scale(Convert.ToInt32((string) bios.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
+            }
+            
+            // Configure CRT shader
+            var shaderPath = FileSystemPath.Parse(bios.ReadBiosData(CRTBiosSettings.CRTEffectPath.ToString(), "/App/Effects/crt-lottes-mg.ogl.mgfxo") as string);
+
+            
+            if (workspaceService.fileSystem.Exists(shaderPath))
+            {
+                displayTarget.shaderPath = workspaceService.fileSystem.OpenFile(shaderPath, FileAccess.Read);
+                
+                EnableCRT(Convert.ToBoolean(bios.ReadBiosData(CRTBiosSettings.CRT.ToString(), "True") as string));
+                Brightness(Convert.ToSingle((long) bios.ReadBiosData(CRTBiosSettings.Brightness.ToString(), 100L))/100F);
+                Sharpness(Convert.ToSingle((long) bios.ReadBiosData(CRTBiosSettings.Sharpness.ToString(), -6L)));
+            }
+            
         }
 
         protected override void ConfigureKeyboard()
@@ -140,6 +207,8 @@ namespace PixelVision8.Runner
             workspaceService = new WorkspaceService(new KeyValuePair<FileSystemPath, IFileSystem>(
                 FileSystemPath.Root.AppendDirectory("App"),
                 new PhysicalFileSystem(rootPath)));
+            
+            serviceManager.AddService(typeof(WorkspaceService).FullName, workspaceService);
         }
         
         /// <summary>
@@ -315,31 +384,20 @@ namespace PixelVision8.Runner
             if (activeEngine == null)
                 return;
 
-            try
+            
+            base.ShutdownActiveEngine();
+            
+            if (activeEngine.gameChip.saveSlots > 0)
             {
-                base.ShutdownActiveEngine();
-                
-                if (activeEngine.gameChip.saveSlots > 0)
-                {
-                    //Print("Active Engine To Save", activeEngine.name);
+                //Print("Active Engine To Save", activeEngine.name);
 
-                    SaveGameData(workspaceService.FindValidSavePath(activeEngine.name), activeEngine, SaveFlags.SaveData, false);
-                }
+                SaveGameData(workspaceService.FindValidSavePath(activeEngine.name), activeEngine, SaveFlags.SaveData, false);
+            }
 
                 // Save the active disk
 //                workspaceService.SaveActiveDisk();
 
-            }
-            catch (Exception e)
-            {
-
-                
-                // TODO need to throw an error
-//                var error = e as ScriptRuntimeException;
-//
-//                DisplayError(ErrorCode.Exception,
-//                    new Dictionary<string, string> {{"@{error}", error != null ? error.DecoratedMessage : e.Message}}, e);
-            }
+            
 
         }
         
