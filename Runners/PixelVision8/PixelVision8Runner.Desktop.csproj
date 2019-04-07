@@ -138,25 +138,25 @@
   <!-- Core Runner Tools -->
   <ItemGroup>
     <Content Include="..\..\Disks\RunnerTools\BootTool\*.*">
-      <Link>Content\PixelVisionOS\Tools\BootTool\%(FileName)%(Extension)</Link>
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\Disks\RunnerTools\ErrorTool\*.*">
-      <Link>Content\PixelVisionOS\Tools\ErrorTool\%(FileName)%(Extension)</Link>
+      <Link>Content\PixelVisionOS\System\Tools\ErrorTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\Disks\RunnerTools\LoadTool\*.*">
-      <Link>Content\PixelVisionOS\Tools\LoadTool\%(FileName)%(Extension)</Link>
+      <Link>Content\PixelVisionOS\System\Tools\LoadTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\Disks\RunnerTools\UnloadTool\*.*">
-      <Link>Content\PixelVisionOS\Tools\UnloadTool\%(FileName)%(Extension)</Link>
+      <Link>Content\PixelVisionOS\System\Tools\UnloadTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

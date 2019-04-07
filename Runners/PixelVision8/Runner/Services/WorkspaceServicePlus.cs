@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Data;
@@ -42,6 +41,63 @@ namespace PixelVision8.Runner.Services
         
         public WorkspaceServicePlus(PixelVision8Runner runner, KeyValuePair<FileSystemPath, IFileSystem> mountPoint) : base(mountPoint)
         {
+        }
+        
+        public void MountWorkspace(string name)
+        {
+            
+            var osFileSystem = new MergedFileSystem();
+
+            osFileSystem.FileSystems = osFileSystem.FileSystems.Concat(new[] { new SubFileSystem(fileSystem,
+                FileSystemPath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS")) });
+                
+            // Mount the PixelVisionOS directory
+            AddMount(new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("PixelVisionOS"), osFileSystem));
+                
+            
+            var filePath = FileSystemPath.Root.AppendDirectory("User");
+
+            // Make sure that the user directory exits
+            if (fileSystem.Exists(filePath))
+            {
+                filePath = filePath.AppendDirectory(name);
+
+                // If the filesystem doesn't exit, we want to create it
+                if (!fileSystem.Exists(filePath)) fileSystem.CreateDirectory(filePath);
+            }
+
+            var workspaceDisk = new SubFileSystem(fileSystem, filePath);
+
+            fileSystem.Mounts.Add(
+                new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("Workspace"),
+                    workspaceDisk));
+            
+            // Create a path to the workspace system folder
+            var path = FileSystemPath.Root.AppendDirectory("Workspace").AppendDirectory("System");
+
+            try
+            {
+                // Look to see if the workspace system folder exists
+                if (Exists(path))
+                {
+//                    Console.WriteLine("Found Workspace system folder");
+                    
+                    // Add the workspace system folder to the os file system
+                    osFileSystem.FileSystems = osFileSystem.FileSystems.Concat(
+                        new[] { 
+                            new SubFileSystem(fileSystem, path) 
+                        }
+                    );
+                }
+                
+            }
+            catch 
+            {
+                Console.WriteLine("No system folder");
+            }
+            
+            
+
         }
 
         // Exports the active song in the music chip
@@ -115,7 +171,7 @@ namespace PixelVision8.Runner.Services
             return pathRefs;
         }
 
-        public string MountDisk(string path, bool updateBios = true)
+        public string MountDisk(string path)
         {
 //            Console.WriteLine("Load File - " + path + " Auto Run " + autoRunEnabled);
 //            try
@@ -147,14 +203,14 @@ namespace PixelVision8.Runner.Services
                 var rootPath = FileSystemPath.Root.AppendDirectory(entityName);
 
                 // Check to see if there is already a disk in slot 1, if so we want to eject it since only slot 1 can boot
-                if (diskDrives.total > 0)// && autoRunEnabled)
-                {
-                    // Clear the load history
-//                    runner.loadHistory.Clear();
-
-                    // Remove all the other disks
-                    diskDrives.EjectAll();
-                }
+//                if (diskDrives.total > 0)// && autoRunEnabled)
+//                {
+//                    // Clear the load history
+////                    runner.loadHistory.Clear();
+//
+//                    // Remove all the other disks
+////                    diskDrives.EjectAll();
+//                }
 
                 // Add the new disk
                 diskDrives.AddDisk(rootPath, disk);
@@ -334,7 +390,7 @@ namespace PixelVision8.Runner.Services
             for (var i = totalDisks; i >= 0; i--)
             {
                 var diskPath = FileSystemPath.Root.AppendDirectory("Disks")
-                    .AppendPath(diskPaths[i].AppendDirectory("Libs"));
+                    .AppendPath(diskPaths[i].AppendDirectory("System").AppendDirectory("Libs"));
 
                 paths.Add(diskPath);
             }
@@ -342,16 +398,16 @@ namespace PixelVision8.Runner.Services
             return paths;
         }
 
-        public string AutoRunFirstDisk()
-        {
-            if (diskDrives.total > 0)
-            {
-                var firstDisk = diskDrives.disks[0];
-                return firstDisk.EntityName;
-            }
-
-            return null;
-        }
+//        public string AutoRunFirstDisk()
+//        {
+//            if (diskDrives.total > 0)
+//            {
+//                var firstDisk = diskDrives.disks[0];
+//                return firstDisk.EntityName;
+//            }
+//
+//            return null;
+//        }
 
         public override void ShutdownSystem()
         {
@@ -362,14 +418,14 @@ namespace PixelVision8.Runner.Services
             base.ShutdownSystem();
         }
 
-        public void SaveDisksInMemory()
-        {
-            Console.WriteLine("Save disks in memory");
-
-            var paths = diskDrives.disks;
-
-            for (var i = 0; i < paths.Length; i++) diskDrives.SaveDisk(paths[i]);
-        }
+//        public void SaveDisksInMemory()
+//        {
+//            Console.WriteLine("Save disks in memory");
+//
+//            var paths = diskDrives.disks;
+//
+//            for (var i = 0; i < paths.Length; i++) diskDrives.SaveDisk(paths[i]);
+//        }
 
         // Make sure you can only eject a disk by forcing the path to be in the disk mounts scope
         public void EjectDisk(FileSystemPath? filePath = null)

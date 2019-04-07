@@ -179,7 +179,7 @@ namespace PixelVision8.Runner
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public int Volume(int? value = null)
+        public virtual int Volume(int? value = null)
         {
             var vol = audioPlayerFactory.Volume(value);
             return vol;
@@ -190,7 +190,7 @@ namespace PixelVision8.Runner
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool Mute(bool? value = null)
+        public virtual bool Mute(bool? value = null)
         {
             var mute = audioPlayerFactory.Mute(value);
             return mute;
@@ -202,7 +202,7 @@ namespace PixelVision8.Runner
         /// </summary>
         /// <param name="scale"></param>
         /// <param name="fullScreen"></param>
-        public int Scale(int? scale = null)
+        public virtual int Scale(int? scale = null)
         {
             if (scale.HasValue)
             {

@@ -81,6 +81,86 @@ namespace PixelVision8.Runner
             
         }
 
+        #region Runner settings
+
+        
+
+        
+
+        /// <summary>
+        ///     Override Volume so it saves changes to the bios.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public override int Volume(int? value = null)
+        {
+            var vol = base.Volume(value);
+            
+            bios.UpdateBiosData(BiosSettings.Volume.ToString(), vol);
+            
+            return vol;
+        }
+
+        /// <summary>
+        ///     Change the mute value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public override bool Mute(bool? value = null)
+        {
+            var mute = base.Mute(value);
+            
+            bios.UpdateBiosData(BiosSettings.Mute.ToString(), mute);
+            
+            return mute;
+        }
+
+
+        /// <summary>
+        ///     Scale the resolution.
+        /// </summary>
+        /// <param name="scale"></param>
+        /// <param name="fullScreen"></param>
+        public override int Scale(int? scale = null)
+        {
+            var value = base.Scale(scale);
+
+            bios.UpdateBiosData(BiosSettings.Scale.ToString(), value);
+            
+            return value;
+        }
+
+
+        public override bool Fullscreen(bool? value = null)
+        {
+            var full = base.Fullscreen(value);
+
+            bios.UpdateBiosData(BiosSettings.FullScreen.ToString(), full.ToString());
+            
+            return full;
+
+        }
+
+        public override bool StretchScreen(bool? value = null)
+        {
+            var stretch = base.StretchScreen(value);
+
+            bios.UpdateBiosData(BiosSettings.StretchScreen.ToString(), stretch.ToString());
+            
+            return stretch;
+        }
+
+        public override bool CropScreen(bool? value = null)
+        {
+            var crop = base.CropScreen(value);
+
+            bios.UpdateBiosData(BiosSettings.CropScreen.ToString(), crop.ToString());
+            
+            return crop;
+        }
+        
+        #endregion
+        
         #region CRT Filter Settings
 
         public bool EnableCRT(bool? toggle)
@@ -142,14 +222,14 @@ namespace PixelVision8.Runner
 
             
             // TODO this may be a string
-            try
-            {
-                Scale(Convert.ToInt32((long) bios.ReadBiosData(BiosSettings.Scale.ToString(), 1)));
-            }
-            catch
-            {
-                Scale(Convert.ToInt32((string) bios.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
-            }
+//            try
+//            {
+                Scale(Convert.ToInt32((long) bios.ReadBiosData(BiosSettings.Scale.ToString(), 1L)));
+//            }
+//            catch
+//            {
+//                Scale(Convert.ToInt32((string) bios.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
+//            }
             
             // Configure CRT shader
             var shaderPath = FileSystemPath.Parse(bios.ReadBiosData(CRTBiosSettings.CRTEffectPath.ToString(), "/App/Effects/crt-lottes-mg.ogl.mgfxo") as string);
@@ -312,15 +392,19 @@ namespace PixelVision8.Runner
         /// </summary>
         protected virtual void LoadDefaultGame()
         {
+
+            var autoRunPath = (string) bios.ReadBiosData("AutoRun", "/App/DefaultGame/");
             
             // Create a new dictionary to store the file binary data
-            var gameFiles = workspaceService.LoadGame((string) bios.ReadBiosData("AutoRun", "/App/DefaultGame/"));//gamePath)));
+            var gameFiles = workspaceService.LoadGame(autoRunPath);//gamePath)));
 
             // Configure a new PV8 engine to play the game
             ConfigureEngine();
 
             // Process the files
             ProcessFiles(tmpEngine, gameFiles);
+
+            tmpEngine.name = autoRunPath;
 
         }
         
@@ -436,6 +520,11 @@ namespace PixelVision8.Runner
                 // Save the new bios data back to the user's bios file.
                 workspaceService.SaveTextToFile(userBiosPath, Json.Serialize(userData), true);
             }
+        }
+        
+        public override void DisplayWarning(string message)
+        {
+            workspaceService.UpdateLog(message);
         }
     }
 }

@@ -133,40 +133,7 @@ namespace PixelVision8.Runner.Services
             
         }
 
-        public void MountWorkspace(string name)
-        {
-            var filePath = FileSystemPath.Root.AppendDirectory("User");
-
-            // Make sure that the user directory exits
-            if (fileSystem.Exists(filePath))
-            {
-                filePath = filePath.AppendDirectory(name);
-
-                // If the filesystem doesn't exit, we want to create it
-                if (!fileSystem.Exists(filePath)) fileSystem.CreateDirectory(filePath);
-            }
-
-            var workspaceDisk = new SubFileSystem(fileSystem, filePath);
-
-            fileSystem.Mounts.Add(
-                new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("Workspace"),
-                    workspaceDisk));
-
-//            filePath = filePath.AppendDirectory("System");
-//
-//            if (fileSystem.Exists(filePath))
-//            {
-//                
-//                var osDisk = new SubFileSystem(fileSystem, filePath);
-//
-//                
-//                fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("PixelVisionOS"), osDisk));
-//            }
-
-//            var contents = fileSystem.GetEntities(FileSystemPath.Root.AppendDirectory("Workspace"));
-//            
-//            Console.WriteLine("Workspace Contents " + contents.Count);
-        }
+        
 
         public Dictionary<string, object> ReadGameMetaData(FileSystemPath filePath)
         {
@@ -1262,6 +1229,8 @@ namespace PixelVision8.Runner.Services
             return fileSystem.GetEntities(path);
         }
         
+        
+        
         public bool Exists(FileSystemPath path)
         {
             return fileSystem.Exists(path);
@@ -1312,6 +1281,20 @@ namespace PixelVision8.Runner.Services
             return new SubFileSystem(fileSystem, path);
         }
         
+        #endregion
+
+        #region New string path API
+
+        public bool ValidateGameInDir(string path)
+        {
+            return ValidateGameInDir(FileSystemPath.Parse(path));
+        }
+
+        public bool Exists(string path)
+        {
+            return fileSystem.Exists(FileSystemPath.Parse(path));
+        }
+
         #endregion
     }
 }

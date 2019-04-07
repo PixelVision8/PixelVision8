@@ -3,10 +3,10 @@
   "BaseDir" : "PixelVision8",
   
   "Resolution" : "512x480",
-  "BootTool": "/PixelVisionOS/Tools/BootTool/",
-  "LoadTool": "/PixelVisionOS/Tools/LoadTool/",
-  "UnloadTool": "/PixelVisionOS/Tools/UnloadTool/",
-  "ErrorTool": "/PixelVisionOS/Tools/ErrorTool/",
+  "BootTool": "/PixelVisionOS/System/Tools/BootTool/",
+  "LoadTool": "/PixelVisionOS/System/Tools/LoadTool/",
+  "UnloadTool": "/PixelVisionOS/System/Tools/UnloadTool/",
+  "ErrorTool": "/PixelVisionOS/System/Tools/ErrorTool/",
   
   "SystemName": "Pixel Vision 8",
   "SystemVersion": "v0.9.4",

@@ -25,14 +25,14 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using MoonSharp.Interpreter;
-using MoonSharp.Interpreter.Platforms;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Editors;
 using PixelVision8.Runner.Exporters;
+
+// TODO need to remove reference to this
 using SharpFileSystem;
-using PixelVision8.Runner;
 
 namespace PixelVision8.Runner.Services
 {
@@ -310,13 +310,13 @@ namespace PixelVision8.Runner.Services
 
             var paths = new List<FileSystemPath>
             {
-                FileSystemPath.Parse("/PixelVisionOS/Tools/"),
-                FileSystemPath.Parse("/Workspace/Tools/")
+                FileSystemPath.Parse("/PixelVisionOS/System/Tools/"),
+                FileSystemPath.Parse("/Workspace/System/Tools/")
             };
 
             // Add disk paths
             var disks = workspace.DiskPaths();
-            foreach (var disk in disks) paths.Add(FileSystemPath.Parse(disk.Value).AppendDirectory("Tools"));
+            foreach (var disk in disks) paths.Add(FileSystemPath.Parse(disk.Value).AppendDirectory("System").AppendDirectory("Tools"));
 
             // TODO loop through the workspace and the disks to add new paths
 

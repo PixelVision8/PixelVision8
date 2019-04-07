@@ -30,61 +30,17 @@ namespace PixelVision8.Runner.Data
     public class DisplayTarget : IDisplayTarget
     {
         private readonly int _monitorHeight = 640;
-
-//        private readonly GraphicsDeviceManager _graphicsDeviceManager;
-
         private readonly int _monitorWidth = 640;
         private int _totalPixels;
-
         private bool _useCRT;
         private Effect crtShader;
-
         private readonly GraphicsDeviceManager graphicManager;
         public Vector2 offset;
         private Texture2D renderTexture;
-
-//        private int _monitorScale = 1;
-//        
-//        public int monitorScale
-//        {
-//            get { return _monitorScale; }
-//            set { _monitorScale = value.Clamp(1, 6); }
-//        }
-
         public Vector2 scale = new Vector2(1, 1);
-
         private Effect shaderEffect;
-
         private readonly SpriteBatch spriteBatch;
-//        
-
         private int totalPixels;
-//        {
-//            get { return _totalPixels; }
-//
-//            set
-//            {
-//                if (cachedPixels.Length != value)
-//                {
-//                    // Now it's time to resize our cahcedPixels array. We calculate the total number of pixels by multiplying the width by the 
-//                    // height. We'll use this array to make sure we have enough pixels to correctly render the DisplayChip's own pixel data.
-//                    Array.Resize(ref cachedPixels, value);
-//                }
-//
-//                _totalPixels = value;
-//
-//            }
-//        }
-
-//        private int bgColorID;
-//        private int[] pixelData;
-//        private int colorRef;
-//        private Color[] colorsData;
-//        private int i;
-//        private Color colorData;
-//        public Color[] cachedColors = new Color[0];
-//        protected Color[] cachedPixels = new Color[0];
-//        protected int totalCachedColors;
         private Rectangle visibleRect;
 
         // TODO think we just need to pass in the active game and not the entire runner?
@@ -229,12 +185,7 @@ namespace PixelVision8.Runner.Data
             {
                 renderTexture = new Texture2D(graphicManager.GraphicsDevice, gameWidth, gameHeight);
             }
-//            else if()
-//            {
-//                renderTexture?.Dispose();
-//                renderTexture = new Texture2D(graphicManager.GraphicsDevice, gameWidth, gameHeight);
-//            }
-            
+
             // Calculate the game's resolution
             visibleRect.Width = renderTexture.Width - overScanX;
             visibleRect.Height = renderTexture.Height - overScanY;
@@ -302,37 +253,6 @@ namespace PixelVision8.Runner.Data
             // TODO didn't have to check length before service refactoring
             if (activeEngine == null || totalPixels != activeEngine.displayChip.pixels.Length) return;
 
-//            // The first part of rendering Pixel Vision 8's DisplayChip is to get all of the current pixel data during the current frame. Each 
-//            // Integer in this Array contains an ID we can use to match up to the cached colors we created when setting up the Runner.
-//            pixelData = activeEngine.displayChip.pixels; //.displayPixelData;
-//
-//            // Need to make sure we are using the latest colors.
-//            if (activeEngine.colorChip.invalid)
-//                CacheColors(activeEngine);
-//
-//            // Now it's time to loop through all of the DisplayChip's pixel data.
-//            for (i = 0; i < totalPixels; i++)
-//            {
-//                // Here we get a reference to the color we are trying to look up from the pixelData array. Then we compare that ID to what we 
-//                // have in the cachedPixels. If the color is out of range, we use the cachedTransparentColor. If the color exists in the cache we use that.
-//                colorRef = pixelData[i];
-//
-//                // Replace transparent colors with bg for next pass
-//                if (colorRef < 0 || (colorRef >= totalCachedColors))
-//                {
-//                    colorRef = ignoreTransparent ? -1 : bgColorID;
-//                }
-//
-//                if (colorRef > -1)
-//                {
-//                    cachedPixels[i] = cachedColors[colorRef];
-//                }
-//
-//                // As you can see, we are using a protected field called cachedPixels. When we call ResetResolution, we resize this array to make sure that 
-//                // it matches the length of the DisplayChip's pixel data. By keeping a reference to this Array and updating each color instead of rebuilding 
-//                // it, we can significantly increase the render performance of the Runner.
-//            }
-
             renderTexture.SetData(activeEngine.displayChip.pixels);
 
             spriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: shaderEffect);
@@ -343,41 +263,5 @@ namespace PixelVision8.Runner.Data
             spriteBatch.End();
         }
 
-
-        /// <summary>
-        ///     To optimize the Runner, we need to save a reference to each color in the ColorChip as native Unity Colors. The
-        ///     cached
-        ///     colors will improve rendering performance later when we cover the DisplayChip's pixel data into a format the
-        ///     Texture2D
-        ///     can display.
-        /// </summary>
-//        public void CacheColors(IEngine activeEngine)
-//        {
-//            
-//            // We also want to cache the ScreenBufferChip's background color. The background color is an ID that references one of the ColorChip's colors.
-//            bgColorID = activeEngine.colorChip.backgroundColor;
-//            
-//            // The ColorChip can return an array of ColorData. ColorData is an internal data structure that Pixel Vision 8 uses to store 
-//            // color information. It has properties for a Hex representation as well as RGB.
-//            colorsData = activeEngine.colorChip.colors;
-//
-//            // To improve performance, we'll save a reference to the total cashed colors directly to the Runner's totalCachedColors field. 
-//            // Also, we'll create a new array to store native Unity Color classes.
-//            totalCachedColors = colorsData.Length;
-//            
-//            if (cachedColors.Length != totalCachedColors)
-//                Array.Resize(ref cachedColors, totalCachedColors);
-//
-//            // Now it's time to loop through each of the colors and convert them from ColorData to Color instances. 
-//            for (i = 0; i < totalCachedColors; i++)
-//            {
-//                // Converting ColorData to Unity Colors is relatively straight forward by simply passing the ColorData's RGB properties into 
-//                // the Unity Color class's constructor and saving it  to the cachedColors array.
-//                colorData = colorsData[i];
-//                
-//                // TODO is there a better way to do this without having to update all 256 colors?
-//                cachedColors[i] = new Color(colorData.R, colorData.G, colorData.B);
-//            }
-//        }
     }
 }
