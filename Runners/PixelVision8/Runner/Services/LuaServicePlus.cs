@@ -105,21 +105,14 @@ namespace PixelVision8.Runner.Services
                 (ImportColorsFromGameEditorDelegator) ImportColorsFromGameEditor;
             
             
-            luaScript.Globals["DisksPaths"] = (DisksPathsDelegator) DisksPaths;
-            luaScript.Globals["SaveActiveDisks"] = new Action(() =>
-            {
-                var disks = workspace.diskDrives.disks;
-
-                foreach (var disk in disks) workspace.diskDrives.SaveDisk(disk);
-            });
-            luaScript.Globals["EjectDisk"] = new Action<string>(EjectDisk);
+            
             
             // Filesystem
             
             luaScript.Globals["NewFile"] = (NewFileDelegator) NewFile;
             luaScript.Globals["UniqueFilePath"] = (UniqueFilePathDelegator) UniqueFilePath;
             luaScript.Globals["NewFolder"] = (NewFolderDelegator) NewFolder;
-            luaScript.Globals["CopyFile"] = (CopyFileDelegator) ((src, dest, destFileSystem) => CopyFile(src, dest));
+            luaScript.Globals["CopyFile"] = (CopyFileDelegator) CopyFile;
             luaScript.Globals["MoveFile"] = (MoveFileDelegator) MoveFile;
             luaScript.Globals["DeleteFile"] = (DeleteFileDelegator) DeleteFile;
             luaScript.Globals["ParentDirectory"] = (ParentDirectoryDelegator) ParentDirectory;
@@ -141,8 +134,8 @@ namespace PixelVision8.Runner.Services
 //            luaScript.Globals["ReadPreloaderMessage"] = new Func<string>(runner.ReadPreLoaderMessage);
 
 
-            luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
-            luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
+//            luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
+//            luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
 
 
             // Get the export service
@@ -863,7 +856,7 @@ namespace PixelVision8.Runner.Services
 
         private delegate bool NewFolderDelegator(string path);
 
-        private delegate bool CopyFileDelegator(string src, string dest, IFileSystem destFileSystem = null);
+        private delegate bool CopyFileDelegator(string src, string dest);
 
         private delegate bool MoveFileDelegator(string src, string dest);
 
@@ -903,20 +896,20 @@ namespace PixelVision8.Runner.Services
 
         #region File System API
 
-        public void EjectDisk(string path)
-        {
-            workspace.EjectDisk(FileSystemPath.Parse(path));
-        }
+//        public void EjectDisk(string path)
+//        {
+//            workspace.EjectDisk(FileSystemPath.Parse(path));
+//        }
 
-        public void EnableAutoRun(bool value)
-        {
-            desktopRunner.autoRunEnabled = value;
-        }
-
-        public void EnableBackKey(bool value)
-        {
-            desktopRunner.backKeyEnabled = value;
-        }
+//        public void EnableAutoRun(bool value)
+//        {
+//            desktopRunner.autoRunEnabled = value;
+//        }
+//
+//        public void EnableBackKey(bool value)
+//        {
+//            desktopRunner.backKeyEnabled = value;
+//        }
 
         public bool NewFolder(string path)
         {
@@ -949,28 +942,16 @@ namespace PixelVision8.Runner.Services
             var srcPath = FileSystemPath.Parse(src);
             var destPath = FileSystemPath.Parse(dest);
 
-            // Copy fails if an existing file is in the destination directory with the same name
-//            if (fileSystem.Exists(destPath))
-//            {
-//                runner.DisplayWarning("Copy failed because '"+destPath+"' already exists.");
-//                
-//                return false;
-//            }
-
-
+            Console.WriteLine("Copy from "+src + " to " + destPath);
+            
             try
             {
-//                destPath = srcPath.IsDirectory ? destPath.AppendDirectory(srcPath.EntityName) : destPath.AppendFile(srcPath.EntityName);
-
-//                if (destPath.IsFile)
-//                {
 
                 // Get the parent directory
                 var parent = destPath.ParentPath;
 
                 // Check that the path exists
                 if (!workspace.Exists(parent)) workspace.CreateDirectoryRecursive(parent);
-//                }
 
                 // Ignore files with the same src and dest path but the copy action is still successful
                 if (srcPath != destPath) workspace.Copy(srcPath, destPath);

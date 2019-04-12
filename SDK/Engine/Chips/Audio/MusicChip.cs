@@ -19,6 +19,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Utils;
 
@@ -52,7 +53,7 @@ namespace PixelVision8.Engine.Chips
         protected float noteTickSEven;
         protected float noteTickSOdd;
 
-        public long sequencerBeatNumber;
+        public int sequencerBeatNumber; // TODO changed this from long to int, need to make sure there aren't any other issues with this change
 
 //        protected int sequencerLoopNum;
         public bool songCurrentlyPlaying;
@@ -66,6 +67,17 @@ namespace PixelVision8.Engine.Chips
         protected float time;
         public TrackerData[] trackerDataCollection = new TrackerData[0];
         public int tracksPerLoop = 8;
+        
+        
+        public Dictionary<string, int> songData = new Dictionary<string, int>()
+        {
+            {"playing", 0},
+            {"note", -1},
+            {"notes", -1},
+            {"pattern", -1},
+            {"patterns", -1},
+            {"loop", 0}
+        };
 
         public int totalSongs
         {
@@ -185,14 +197,34 @@ namespace PixelVision8.Engine.Chips
         {
             time += timeDelta;
 
+            songData["playing"] = Convert.ToInt32(songCurrentlyPlaying);
+            
             //TODO need to make sure this still actually works after removing Time.time reference
             if (songCurrentlyPlaying)
-
+            {
                 if (time >= nextBeatTimestamp)
                 {
                     nextBeatTimestamp = time + (sequencerBeatNumber % 2 == 1 ? noteTickSOdd : noteTickSEven);
                     OnBeat();
                 }
+                
+                // If song is playing, update songData values
+                songData["note"] = sequencerBeatNumber;
+                songData["notes"] = notesPerTrack;
+                songData["pattern"] = currentSong.currentPos;
+                songData["patterns"] = currentSong.end;
+                songData["loop"] = Convert.ToInt32(loopSong);
+            }
+            else
+            {
+                // If song is not playing, clear the songData values
+                songData["note"] = -1;
+                songData["notes"] = -1;
+                songData["pattern"] = -1;
+                songData["patterns"] = -1;
+                songData["loop"] = 0;
+            }
+            
         }
 
         public virtual TrackerData CreateNewTrackerData(string name, int tracks = 4)
@@ -328,6 +360,9 @@ namespace PixelVision8.Engine.Chips
                 // Look to see if the next pattern is -1 and if looping is false
                 if (currentSong.AtEnd())
                 {
+                    
+//                    Console.WriteLine("End of song " + loopSong + " " + songCurrentlyPlaying);
+                    
                     if (loopSong == false)
                     {
 //                        Console.WriteLine("Stop song");

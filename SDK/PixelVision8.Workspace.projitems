@@ -15,7 +15,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\IAbstractExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SavedDataExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\BiosService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\DiskDriveService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\Collections\EnumerableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\Collections\InverseComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SharpFileSystem\Collections\TypeCombinationDictionary.cs" />

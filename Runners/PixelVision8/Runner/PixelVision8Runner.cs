@@ -101,7 +101,7 @@ namespace PixelVision8.Runner
                 FileSystemPath.Root.AppendDirectory("App"),
                 new PhysicalFileSystem(rootPath)));
 
-            // Pass the new service back to the base class
+            // Pass the new service back to the base class    
             workspaceService = workspaceServicePlus;
             
             serviceManager.AddService(typeof(WorkspaceService).FullName, workspaceService);
@@ -195,10 +195,45 @@ namespace PixelVision8.Runner
             luaScript.Globals["SystemVersion"] = new Func<string>(() => systemVersion);
             luaScript.Globals["SystemName"] = new Func<string>(() => systemName);
             luaScript.Globals["SessionID"] = new Func<string>(() => sessionID);
+
+            luaScript.Globals["DisksPaths"] = new Func<Dictionary<string, string>>(workspaceServicePlus.DiskPaths);
+            luaScript.Globals["SaveActiveDisks"] = new Action(() =>
+            {
+                var disks = workspaceServicePlus.disks;
+
+                foreach (var disk in disks) workspaceServicePlus.SaveDisk(disk);
+            });
+            luaScript.Globals["EjectDisk"] = new Action<string>(EjectDisk);
+            
+            luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
+            luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
+            luaScript.Globals["RebuildWorkspace"] = new Action(workspaceServicePlus.RebuildWorkspace);
             
             // Activate the game
             base.ActivateEngine(engine);
             
+        }
+        
+        public void EjectDisk(string path)
+        {
+            workspaceServicePlus.EjectDisk(FileSystemPath.Parse(path));
+
+            UpdateDiskInBios();
+
+            
+
+            AutoLoadDefaultGame();
+
+        }
+        
+        public void EnableAutoRun(bool value)
+        {
+            autoRunEnabled = value;
+        }
+
+        public void EnableBackKey(bool value)
+        {
+            backKeyEnabled = value;
         }
         
         private delegate bool EnableCRTDelegator(bool? toggle);
@@ -359,21 +394,51 @@ namespace PixelVision8.Runner
         }
 
         public bool autoRunEnabled = true;
-        
+
         public void BootDone()
         {
-            
+
             // Only call BootDone when the runner is booting.
             if (mode != RunnerMode.Booting)
                 return;
-            
-            
+
             // Setup Drag and drop support
             Window.FileDropped += (o, e) => OnFileDropped(o, e);
-            
-            // Enable auto run by default
-            autoRunEnabled = true;
+
+            // Mount all of the disks from the bios
+//            var totalDisks = ;
+
+//            var loadedDisks = 0;
+
+            // Disable auto run when loading up the default disks
+            autoRunEnabled = false;
+
+            for (int i = 0; i < workspaceServicePlus.totalDisks; i++)
+            {
+                var diskPath = (string) bios.ReadBiosData("Disk" + i, "none");
+                if (diskPath != "none")
+                {
+                    Console.WriteLine("Mount disk " + diskPath);
+
+                    // manually mount each disk since we are not going to load from them
+                    workspaceServicePlus.MountDisk(diskPath);
+//                    loadedDisks++;
+                }
+            }
+
+            AutoLoadDefaultGame();
+
+        }
         
+        public void AutoLoadDefaultGame()
+        {
+
+            loadHistory.Clear();
+            metaDataHistory.Clear();
+            
+        // Enable auto run by default
+            autoRunEnabled = true;
+            
             // Look to see if we have the bios default tool in the OS folder
             try
             {
@@ -399,6 +464,19 @@ namespace PixelVision8.Runner
                 // ignored
             }
 
+            // Try to boot from the first disk
+            try
+            {
+                var firstDiskPath = workspaceServicePlus.disks.First().EntityName;
+
+                AutoRunGameFromDisk(firstDiskPath);
+
+                return;
+            }
+            catch
+            {
+                // ignored
+            }
 
             DisplayError(ErrorCode.NoAutoRun);
             
@@ -441,12 +519,12 @@ namespace PixelVision8.Runner
                 };
                 
                 // Load the disk path and play the game
-                Load(diskPath, RunnerMode.Playing, metaData);
+                Load(diskPath, RunnerMode.Loading, metaData);
             }
             else
             {
                 // If the new auto run path can't be found, throw an error
-                DisplayError(GameRunner.ErrorCode.NoAutoRun);
+                DisplayError(ErrorCode.NoAutoRun);
             }
         }
         
@@ -678,7 +756,7 @@ namespace PixelVision8.Runner
         public void OnFileDropped(object gameWindow, string path)
         {
             if(shutdown == false)
-            MountDisk(path);
+                MountDisk(path);
 
 //            UpdateDiskInBios();
             
@@ -748,6 +826,7 @@ namespace PixelVision8.Runner
                 var path = loadHistory.First();
 
                 loadHistory.Clear();
+                metaDataHistory.Clear();
 
                 // TODO need to see if its a tool or a game?
                 Load(path, RunnerMode.Loading);
@@ -755,6 +834,7 @@ namespace PixelVision8.Runner
             else
             {
                 loadHistory.Clear();
+                metaDataHistory.Clear();
 
                 DisplayError(ErrorCode.NoAutoRun);
                 // TODO need to add back in disk logic
@@ -777,6 +857,8 @@ namespace PixelVision8.Runner
 
             // Toggle the shutdown flag
             shutdown = true;
+
+            UpdateDiskInBios();
             
             base.ShutdownSystem();
 
@@ -785,6 +867,16 @@ namespace PixelVision8.Runner
 //            
 //            // Save any changes to the bios to the user's custom bios file
 //            workspaceServicePlus.ShutdownSystem();
+        }
+
+        public void UpdateDiskInBios()
+        {
+            var paths = workspaceServicePlus.physicalPaths;
+
+            for (int i = 0; i < paths.Length; i++)
+            {
+                bios.UpdateBiosData("Disk" + i, paths[i]);
+            }
         }
         
         public virtual void DisplayError(ErrorCode code, Dictionary<string, string> tokens = null,

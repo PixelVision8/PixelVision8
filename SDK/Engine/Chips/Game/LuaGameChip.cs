@@ -19,6 +19,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
@@ -347,9 +348,10 @@ namespace PixelVision8.Engine.Chips
             luaScript.Globals["PlayPattern"] = (PlayPatternDelegate) PlayPattern;
             luaScript.Globals["PlayPatterns"] = (PlayPatternsDelegate) PlayPatterns;
             luaScript.Globals["PlaySong"] = (PlaySongDelegate) PlaySong;
-            luaScript.Globals["PauseSong"] = (PauseSongDelegate) PauseSong;
+            luaScript.Globals["PauseSong"] = new Action(PauseSong);
             luaScript.Globals["RewindSong"] = (RewindSongDelegate) RewindSong;
-            luaScript.Globals["StopSong"] = (StopSongDelegate) StopSong;
+            luaScript.Globals["StopSong"] = new Action(StopSong);
+            luaScript.Globals["SongData"] = new Func<Dictionary<string, int>>(SongData);
 
             #endregion
 

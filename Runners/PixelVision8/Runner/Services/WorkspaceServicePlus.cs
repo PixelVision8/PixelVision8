@@ -36,7 +36,7 @@ namespace PixelVision8.Runner.Services
 {
     public class WorkspaceServicePlus : WorkspaceService
     {
-        public DiskDriveService diskDrives;
+//        public DiskDriveService diskDrives;
         public string spriteBuilderFolderName = "SpriteBuilder";
         protected FileSystemMounter diskMounter = new FileSystemMounter();
         
@@ -48,21 +48,17 @@ namespace PixelVision8.Runner.Services
         {
             // TODO need to read this from the bios
             get;
-            set;
         } = 3;
         
         public void MountWorkspace(string name)
         {
-            
-            var osFileSystem = new MergedFileSystem();
 
-            osFileSystem.FileSystems = osFileSystem.FileSystems.Concat(new[] { new SubFileSystem(fileSystem,
-                FileSystemPath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS")) });
-                
-            // Mount the PixelVisionOS directory
-            AddMount(new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("PixelVisionOS"), osFileSystem));
-                
-            
+//            var osPath = FileSystemPath.Root.AppendDirectory("PixelVisionOS");
+//            
+//            var mounts = fileSystem.Mounts as SortedList<FileSystemPath, IFileSystem>;
+//            
+//            mounts.Remove()
+//            
             var filePath = FileSystemPath.Root.AppendDirectory("User");
 
             // Make sure that the user directory exits
@@ -79,7 +75,31 @@ namespace PixelVision8.Runner.Services
             fileSystem.Mounts.Add(
                 new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("Workspace"),
                     workspaceDisk));
+
+
+            RebuildWorkspace();
+        }
+
+        public void RebuildWorkspace()
+        {
+            var osPath = FileSystemPath.Root.AppendDirectory("PixelVisionOS");
             
+            var mounts = fileSystem.Mounts as SortedList<FileSystemPath, IFileSystem>;
+
+            if (mounts.ContainsKey(osPath))
+            {
+                mounts.Remove(osPath);
+            }
+            
+            var osFileSystem = new MergedFileSystem();
+
+            osFileSystem.FileSystems = osFileSystem.FileSystems.Concat(new[] { new SubFileSystem(fileSystem,
+                FileSystemPath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS")) });
+                
+            // Mount the PixelVisionOS directory
+            AddMount(new KeyValuePair<FileSystemPath, IFileSystem>(osPath, osFileSystem));
+
+
             // Create a path to the workspace system folder
             var path = FileSystemPath.Root.AppendDirectory("Workspace").AppendDirectory("System");
 
@@ -103,7 +123,6 @@ namespace PixelVision8.Runner.Services
             {
                 Console.WriteLine("No system folder");
             }
-
         }
 
         // Exports the active song in the music chip
@@ -159,14 +178,16 @@ namespace PixelVision8.Runner.Services
 
 
             // Create a disk drive service to mange the disks
-            diskDrives = new DiskDriveService(diskMounter, totalDisks);
+//            diskDrives = new DiskDriveService(diskMounter, totalDisks);
+
+            diskMount = diskMounter.Mounts as SortedList<FileSystemPath, IFileSystem>;
         }
         
         public Dictionary<string, string> DiskPaths()
         {
             var pathRefs = new Dictionary<string, string>();
 
-            var mounts = diskDrives.disks; //disks.Mounts as SortedList<FileSystemPath, IFileSystem>;
+            var mounts = disks; //disks.Mounts as SortedList<FileSystemPath, IFileSystem>;
 
             for (var i = 0; i < mounts.Length; i++)
             {
@@ -207,7 +228,7 @@ namespace PixelVision8.Runner.Services
                 var rootPath = FileSystemPath.Root.AppendDirectory(entityName);
 
                 // Add the new disk
-                diskDrives.AddDisk(rootPath, disk);
+                AddDisk(rootPath, disk);
 
                 // Return the disk name
                 return entityName;
@@ -344,7 +365,7 @@ namespace PixelVision8.Runner.Services
                 
             var paths = new List<FileSystemPath>();
             
-            var diskPaths = diskDrives.disks;
+            var diskPaths = disks;
 
             var totalDisks = diskPaths.Length - 1;
 
@@ -365,9 +386,9 @@ namespace PixelVision8.Runner.Services
         {
             // make sure we have the current list of disks in the bios
 //            UpdateDiskInBios();
-            var disks = diskDrives.disks;
+//            var disks = disks;
 
-            foreach (var disk in disks) diskDrives.SaveDisk(disk);
+            foreach (var disk in disks) SaveDisk(disk);
 
             base.ShutdownSystem();
         }
@@ -376,14 +397,14 @@ namespace PixelVision8.Runner.Services
         public void EjectDisk(FileSystemPath? filePath = null)
         {
             // Remove the disk if disks exists
-            if (diskDrives.total > 0)
+            if (total > 0)
                 try
                 {
                     // Use the path that is supplied or get the first disk path
-                    var path = filePath.HasValue ? filePath.Value : diskDrives.disks.First();
+                    var path = filePath.HasValue ? filePath.Value : disks.First();
 
                     // Attempt to remove the disk
-                    diskDrives.RemoveDisk(path);
+                    RemoveDisk(path);
 
                     // Update the bios when a disk is removed
 //                    UpdateDiskInBios();
@@ -394,11 +415,11 @@ namespace PixelVision8.Runner.Services
                 }
 
             // What happens when there are no disks
-            if (diskDrives.total > 0)
+            if (total > 0)
                 try
                 {
                     // Get the next disk name
-                    var diskName = diskDrives.disks.First().Path.Replace("/", "");
+                    var diskName = disks.First().Path.Replace("/", "");
 
                     // Clear the history
 //                    runner.loadHistory.Clear();
@@ -478,6 +499,107 @@ namespace PixelVision8.Runner.Services
             }
 
             return count;
+        }
+        
+        private SortedList<FileSystemPath, IFileSystem> diskMount;
+        private List<FileSystemPath> diskNames = new List<FileSystemPath>();
+
+//        public int totalDisks = 5;
+
+//        public DiskDriveService(FileSystemMounter diskMount, int totalDisks)
+//        {
+//            this.diskMount = diskMount.Mounts as SortedList<FileSystemPath, IFileSystem>;
+//
+//            this.totalDisks = totalDisks;
+//        }
+
+        public int total => diskNames.Count;
+
+        public FileSystemPath[] disks => diskNames.ToArray();
+
+        public string[] physicalPaths
+        {
+            get
+            {
+                var paths = new string[totalDisks];
+
+                for (var i = 0; i < totalDisks; i++)
+                {
+                    var tmpPath = "none";
+
+                    if (i < total)
+                    {
+                        var key = disks[i];
+
+                        if (diskMount.ContainsKey(key))
+                        {
+                            var disk = diskMount[key];
+
+                            if (disk is PhysicalFileSystem src)
+                                tmpPath = src.PhysicalRoot;
+                            else if (disk is ZipFileSystem zipDisk) tmpPath = zipDisk.srcPath;
+                        }
+                    }
+
+                    paths[i] = tmpPath;
+                }
+
+                return paths;
+            }
+        }
+
+        public void AddDisk(FileSystemPath path, IFileSystem disk)
+        {
+            // If for some reason we don't have a mount point we need to exit out of this method
+            if (diskMount == null)
+                return;
+
+            // If we are out of open disks, remove the last one
+            if (total == totalDisks) RemoveDisk(diskNames.Last());
+
+            // Attempt to remove the disk if it is already inserted
+            RemoveDisk(path);
+
+            // Add the new disk to the disk mount
+            diskMount.Add(path, disk);
+
+            // Add the disk path to the list of names
+            diskNames.Add(path);
+        }
+
+        public void RemoveDisk(FileSystemPath path)
+        {
+            if (diskMount.ContainsKey(path))
+            {
+                // Check to see if this is a zip
+                SaveDisk(path);
+
+                // Remove disk from the mount point
+                diskMount.Remove(path);
+
+                // Remove the disk from the list of name
+                diskNames.Remove(path);
+            }
+        }
+
+        public void SaveDisk(FileSystemPath path)
+        {
+//            Console.WriteLine("Attempting to save disk " + path);
+
+            if (diskMount.ContainsKey(path))
+            {
+//                Console.WriteLine("Found disk " + path);
+
+                var mount = diskMount[path];
+                if (mount is ZipFileSystem) ((ZipFileSystem) mount).Save();
+            }
+        }
+
+        public void EjectAll()
+        {
+//            var names = disks;
+
+            foreach (var path in disks) RemoveDisk(path);
         }
     }
 }

@@ -1489,6 +1489,11 @@ namespace PixelVision8.Engine.Chips
             musicChip.PlayPatterns(loopIDs, loop);
         }
 
+        public Dictionary<string, int> SongData()
+        {
+            return musicChip.songData;
+        }
+
         /// <summary>
         ///     Toggles the current playback state of the sequencer. If the song
         ///     is playing it will pause, if it is paused it will play.

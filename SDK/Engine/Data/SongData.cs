@@ -47,7 +47,7 @@ namespace PixelVision8.Engine
 
                 // TODO need to change start
 
-                end = _patterns.Length;
+                end = _patterns.Length - 1;
 
                 // TODO end should match up with the length of the song before it is resized or the end if it is bigger
 
