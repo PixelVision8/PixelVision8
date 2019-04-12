@@ -37,11 +37,19 @@ namespace PixelVision8.Runner.Services
     public class WorkspaceServicePlus : WorkspaceService
     {
         public DiskDriveService diskDrives;
+        public string spriteBuilderFolderName = "SpriteBuilder";
         protected FileSystemMounter diskMounter = new FileSystemMounter();
         
-        public WorkspaceServicePlus(PixelVision8Runner runner, KeyValuePair<FileSystemPath, IFileSystem> mountPoint) : base(mountPoint)
+        public WorkspaceServicePlus(KeyValuePair<FileSystemPath, IFileSystem> mountPoint) : base(mountPoint)
         {
         }
+        
+        public int totalDisks
+        {
+            // TODO need to read this from the bios
+            get;
+            set;
+        } = 3;
         
         public void MountWorkspace(string name)
         {
@@ -95,8 +103,6 @@ namespace PixelVision8.Runner.Services
             {
                 Console.WriteLine("No system folder");
             }
-            
-            
 
         }
 
@@ -173,9 +179,7 @@ namespace PixelVision8.Runner.Services
 
         public string MountDisk(string path)
         {
-//            Console.WriteLine("Load File - " + path + " Auto Run " + autoRunEnabled);
-//            try
-//            {
+
                 IFileSystem disk;
 
                 string entityName;
@@ -202,34 +206,12 @@ namespace PixelVision8.Runner.Services
                 // Update the root path to just be the name of the entity
                 var rootPath = FileSystemPath.Root.AppendDirectory(entityName);
 
-                // Check to see if there is already a disk in slot 1, if so we want to eject it since only slot 1 can boot
-//                if (diskDrives.total > 0)// && autoRunEnabled)
-//                {
-//                    // Clear the load history
-////                    runner.loadHistory.Clear();
-//
-//                    // Remove all the other disks
-////                    diskDrives.EjectAll();
-//                }
-
                 // Add the new disk
                 diskDrives.AddDisk(rootPath, disk);
 
                 // Return the disk name
                 return entityName;
                 
-                // Only try to auto run a game if this is enabled in the runner
-//                if (autoRunEnabled) AutoRunGameFromDisk(entityName);
-//            }
-//            catch
-//            {
-//                autoRunEnabled = true;
-//                // TODO need to make sure we show a better error to explain why the disk couldn't load
-////                runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
-//            }
-
-            // Only update the bios when we need  to
-//            if (updateBios) UpdateDiskInBios();
         }
 
         public string AutoRunGameFromDisk(string diskName)
@@ -281,23 +263,9 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        public void SaveActiveDisks()
-        {
-            var disks = diskDrives.disks;
-
-            foreach (var disk in disks) diskDrives.SaveDisk(disk);
-        }
-
 
         public void SaveActiveDisk()
         {
-//            var disks = diskDrives.disks;
-//
-//            foreach (var disk in disks)
-//            {
-//                diskDrives.SaveDisk(disk);
-//            }
-
 
             if (currentDisk is ZipFileSystem disk)
             {
@@ -370,17 +338,11 @@ namespace PixelVision8.Runner.Services
             if (mounts.ContainsKey(rootPath)) mounts.Remove(rootPath);
         }
 
-//        public void EjectDisks()
-//        {
-//            diskDrives.EjectAll();
-//            
-//            runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
-//
-//        }
-
-        protected override List<FileSystemPath> GetLibDirectoryPaths()
+        public override void IncludeLibDirectoryFiles(Dictionary<string, byte[]> files)
         {
-            var paths = base.GetLibDirectoryPaths();
+            base.IncludeLibDirectoryFiles(files);
+                
+            var paths = new List<FileSystemPath>();
             
             var diskPaths = diskDrives.disks;
 
@@ -395,37 +357,20 @@ namespace PixelVision8.Runner.Services
                 paths.Add(diskPath);
             }
 
-            return paths;
+            AddExtraFiles(files, paths);
+            
         }
-
-//        public string AutoRunFirstDisk()
-//        {
-//            if (diskDrives.total > 0)
-//            {
-//                var firstDisk = diskDrives.disks[0];
-//                return firstDisk.EntityName;
-//            }
-//
-//            return null;
-//        }
 
         public override void ShutdownSystem()
         {
             // make sure we have the current list of disks in the bios
 //            UpdateDiskInBios();
-            SaveActiveDisks();
-            
+            var disks = diskDrives.disks;
+
+            foreach (var disk in disks) diskDrives.SaveDisk(disk);
+
             base.ShutdownSystem();
         }
-
-//        public void SaveDisksInMemory()
-//        {
-//            Console.WriteLine("Save disks in memory");
-//
-//            var paths = diskDrives.disks;
-//
-//            for (var i = 0; i < paths.Length; i++) diskDrives.SaveDisk(paths[i]);
-//        }
 
         // Make sure you can only eject a disk by forcing the path to be in the disk mounts scope
         public void EjectDisk(FileSystemPath? filePath = null)
@@ -448,25 +393,6 @@ namespace PixelVision8.Runner.Services
                     // ignored error when removing a disk that doesn't exist
                 }
 
-//            // Test to see if there is an OS image
-//            try
-//            {
-//                if (fileSystem.Exists(FileSystemPath.Root.AppendDirectory("Workspace")))
-//                {
-//                    // Reset he current game
-//
-//                    // TODO Need to figure out how we should restart here
-//                    runner.ResetGame();
-//
-//                    // Exit out of the function
-//                    return;
-//                }
-//            }
-//            catch
-//            {
-//                // ignored
-//            }
-
             // What happens when there are no disks
             if (diskDrives.total > 0)
                 try
@@ -480,39 +406,17 @@ namespace PixelVision8.Runner.Services
                     // Attempt to run the fist disk
                     AutoRunGameFromDisk(diskName);
 
-                    return;
                 }
                 catch
                 {
                     // ignored
                 }
-
-            // TODO this is duplicated from the Pixel Vision 8 Runner
-            // Look to see if we have the bios default tool in the OS folder
-            try
-            {
-//                var biosAutoRun = FileSystemPath.Parse((string) ReadBiosData("AutoRun", ""));
-//
-//                if (fileSystem.Exists(biosAutoRun))
-//                    if (ValidateGameInDir(biosAutoRun))
-//                    {
-//                        runner.Load(biosAutoRun.Path);
-//                        return;
-//                    }
-            }
-            catch
-            {
-            }
-
-            // If ejecting a disk fails, display the disk error
-//            runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
         }
 
         // TODO this is hardcoded but should come from the bios
         
-        public string spriteBuilderFolderName = "SpriteBuilder";
         
-        public bool VaildateSpriteBuilderFolder(FileSystemPath rootPath)
+        public bool ValidateSpriteBuilderFolder(FileSystemPath rootPath)
         {
             // TODO need to make sure this is in the current game directory and uses the filesyem path
             rootPath = rootPath.AppendDirectory(spriteBuilderFolderName);//(string) ReadBiosData("SpriteBuilderDir", "SpriteBuilder"));

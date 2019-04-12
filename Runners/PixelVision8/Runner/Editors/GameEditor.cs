@@ -2147,7 +2147,7 @@ namespace PixelVision8.Runner.Editors
             var filePath = FileSystemPath.Parse(rootPath);
 
             // Check to see if the sprite builder folder exists
-            return workspace.VaildateSpriteBuilderFolder(filePath);
+            return workspace.ValidateSpriteBuilderFolder(filePath);
         }
 
         /// <summary>

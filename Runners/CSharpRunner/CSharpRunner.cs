@@ -26,7 +26,7 @@ using PixelVisionRunner.EmptyTemplateDemo;
 
 namespace Desktop
 {
-    public class CSharpRunner : RunnerGame
+    public class CSharpRunner : GameRunner
     {
 
         // Store the path to the game's files

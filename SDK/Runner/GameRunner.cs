@@ -32,7 +32,7 @@ using PixelVision8.Runner.Services;
 
 namespace PixelVision8.Runner
 {
-    public class RunnerGame : Game, IRunner
+    public class GameRunner : Game, IRunner
     {
         public enum BiosSettings
         {
@@ -123,7 +123,7 @@ namespace PixelVision8.Runner
         protected IEngine tmpEngine;
         protected IServiceLocator serviceManager;
 
-        public RunnerGame()
+        public GameRunner()
         {
             // Fix a bug related to parsing numbers in Europe, among other things
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;

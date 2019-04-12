@@ -30,6 +30,7 @@ using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Editors;
 using PixelVision8.Runner.Exporters;
+using PixelVision8.Runner.Utils;
 
 // TODO need to remove reference to this
 using SharpFileSystem;
@@ -105,7 +106,12 @@ namespace PixelVision8.Runner.Services
             
             
             luaScript.Globals["DisksPaths"] = (DisksPathsDelegator) DisksPaths;
-            luaScript.Globals["SaveActiveDisks"] = new Action(workspace.SaveActiveDisks);
+            luaScript.Globals["SaveActiveDisks"] = new Action(() =>
+            {
+                var disks = workspace.diskDrives.disks;
+
+                foreach (var disk in disks) workspace.diskDrives.SaveDisk(disk);
+            });
             luaScript.Globals["EjectDisk"] = new Action<string>(EjectDisk);
             
             // Filesystem
@@ -220,10 +226,10 @@ namespace PixelVision8.Runner.Services
         /// </summary>
         /// <param name="path">A valid workspace path to the PV8 archive or game directory.</param>
         /// <returns>Returns a table with the metadata from the pv8 project.</returns>
-        public Dictionary<string, object> ReadGameMetaData(string path = null)
-        {
-            return desktopRunner.workspaceService.ReadGameMetaData(FileSystemPath.Parse(path).AppendFile("info.json"));
-        }
+//        public Dictionary<string, object> ReadGameMetaData(string path = null)
+//        {
+//            return desktopRunner.workspaceService.ReadGameMetaData(FileSystemPath.Parse(path).AppendFile("info.json"));
+//        }
 
 
         
@@ -341,11 +347,16 @@ namespace PixelVision8.Runner.Services
 //                            Console.WriteLine("Reading from game folder " + folder);
 
 
-                                    var metaData = workspace.ReadGameMetaData(folder.AppendFile("info.json"));
+//                                    var metaData = workspace.ReadGameMetaData(folder.AppendFile("info.json"));
 
-                                    if (metaData.ContainsKey("editType"))
+                                    var data = workspace.ReadTextFromFile(folder.AppendFile("info.json")); //ReadTextFromFile(filePath);
+
+                                    // parse the json data into a dictionary the engine can use
+                                    var jsonData =  Json.Deserialize(data) as Dictionary<string, object>;
+                                    
+                                    if (jsonData.ContainsKey("editType"))
                                     {
-                                        var split = ((string) metaData["editType"]).Split(',');
+                                        var split = ((string) jsonData["editType"]).Split(',');
 
                                         var totalTypes = split.Length;
 

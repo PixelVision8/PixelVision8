@@ -28,7 +28,7 @@ using PixelVision8.Runner.Services;
 
 namespace PixelVision8.Runner
 {
-    public class LuaRunner : RunnerGame
+    public class LuaRunner : GameRunner
     {
         // Store the path to the game's files
         private readonly string gamePath;

@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
@@ -48,7 +47,7 @@ namespace PixelVision8.Runner
     /// <summary>
     ///     This is the main type for your game.
     /// </summary>
-    public class DesktopRunner : RunnerGame
+    public class DesktopRunner : GameRunner
     {
 // Store the path to the game's files
         private IControllerChip controllerChip;

@@ -85,7 +85,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\SystemParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TilemapJsonParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TilemapParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\RunnerGame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\GameRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LoadService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LogService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SaveFlags.cs" />

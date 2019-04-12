@@ -97,7 +97,7 @@ namespace PixelVision8.Runner
         
         protected override void CreateWorkspaceService()
         {
-            workspaceServicePlus = new WorkspaceServicePlus(this, new KeyValuePair<FileSystemPath, IFileSystem>(
+            workspaceServicePlus = new WorkspaceServicePlus(new KeyValuePair<FileSystemPath, IFileSystem>(
                 FileSystemPath.Root.AppendDirectory("App"),
                 new PhysicalFileSystem(rootPath)));
 
@@ -446,7 +446,7 @@ namespace PixelVision8.Runner
             else
             {
                 // If the new auto run path can't be found, throw an error
-                DisplayError(RunnerGame.ErrorCode.NoAutoRun);
+                DisplayError(GameRunner.ErrorCode.NoAutoRun);
             }
         }
         

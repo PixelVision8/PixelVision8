@@ -55,7 +55,7 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["StretchScreen"] = (StretchScreenDelegator) runner.StretchScreen;
 
             luaScript.Globals["DebugLayers"] = new Action<bool>(runner.DebugLayers);
-            luaScript.Globals["DebugLayers"] = new Action<int>(runner.ToggleLayers);
+            luaScript.Globals["ToggleLayers"] = new Action<int>(runner.ToggleLayers);
 
             luaScript.Globals["ResetGame"] = new Action(runner.ResetGame);
         }
