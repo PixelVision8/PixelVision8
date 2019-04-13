@@ -28,7 +28,7 @@ using PixelVision8.Runner.Workspace;
 
 namespace PixelVision8.Runner.Services
 {
-    public class WorkspaceService : AbstractService
+    public class WorkspaceService : FileSystemMounter, IService
     {
 
         #region Default paths
@@ -48,7 +48,7 @@ namespace PixelVision8.Runner.Services
             "txt"
         };
 
-        protected FileSystemMounter fileSystem;
+//        protected FileSystemMounter fileSystem;
         protected FileSystemPath logFilePath;
         protected LogService logService;
         protected IFileSystem currentDisk;
@@ -64,9 +64,9 @@ namespace PixelVision8.Runner.Services
         /// <summary>
         ///     This class manages all of the logic Pixel Vision 8 needs to create and manage the workspace.
         /// </summary>
-        public WorkspaceService(KeyValuePair<FileSystemPath, IFileSystem> mountPoint)
+        public WorkspaceService(KeyValuePair<FileSystemPath, IFileSystem> mountPoint) :base(mountPoint)
         {
-            fileSystem = new FileSystemMounter(mountPoint);
+//            fileSystem = new FileSystemMounter(mountPoint);
 //            EntityMovers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityMover());
 //            EntityCopiers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityCopier());
         }
@@ -82,19 +82,19 @@ namespace PixelVision8.Runner.Services
             // Create a new File System
             foreach (var mountPoint in fileSystems)
             {
-                fileSystem.Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(mountPoint.Key, mountPoint.Value));
+                Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(mountPoint.Key, mountPoint.Value));
             }
         }
         
         public bool ValidateGameInDir(FileSystemPath filePath)
         {
-            if (!fileSystem.Exists(filePath))
+            if (!Exists(filePath))
                 return false;
 
             var flag = 0;
 
             foreach (var file in requiredFiles)
-                if (fileSystem.Exists(filePath.AppendFile(file)))
+                if (Exists(filePath.AppendFile(file)))
                     flag++;
 
             return flag == requiredFiles.Count;
@@ -160,9 +160,9 @@ namespace PixelVision8.Runner.Services
                     Stream stream;
 
 
-                    if (fileSystem.Exists(path))
+                    if (Exists(path))
                     {
-                        stream = fileSystem.OpenFile(path, FileAccess.ReadWrite);
+                        stream = OpenFile(path, FileAccess.ReadWrite);
                     }
                     else
                     {
@@ -172,12 +172,12 @@ namespace PixelVision8.Runner.Services
                             // Get the parent path
                             var parent = path.ParentPath;
 
-                            if (!fileSystem.Exists(parent)) fileSystem.CreateDirectoryRecursive(parent);
+                            if (!Exists(parent)) this.CreateDirectoryRecursive(parent);
                         }
 
                         // Create a new file
                         // Create a new file
-                        stream = fileSystem.CreateFile(path);
+                        stream = CreateFile(path);
                     }
 
                     // TODO need to write to the file
@@ -220,7 +220,7 @@ namespace PixelVision8.Runner.Services
 
         public FileSystemPath UniqueFilePath(FileSystemPath path)
         {
-            if (!fileSystem.Exists(path)) return path;
+            if (!Exists(path)) return path;
 
             var fileSplit = SplitFileName(path);
             var name = fileSplit[0];
@@ -239,7 +239,7 @@ namespace PixelVision8.Runner.Services
                     filePath = filePath.AppendFile(string.Format("{0}{1}{2}", name, ix, fileSplit[1]));
 
 //                Console.WriteLine("Path " + filePath.Path);
-            } while (fileSystem.Exists(filePath));
+            } while (Exists(filePath));
 
             return filePath;
         }
@@ -254,20 +254,20 @@ namespace PixelVision8.Runner.Services
                 var filePath = path.IsDirectory ? path : path.ParentPath;
 
                 // Make sure the directory exists first
-                if (fileSystem.Exists(filePath))
+                if (Exists(filePath))
                     try
                     {
                         // Create a unique folder path name
                         var uniqueFolderPath = filePath.AppendDirectory(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
 
                         // Create the unique folder
-                        fileSystem.CreateDirectory(uniqueFolderPath);
+                        CreateDirectory(uniqueFolderPath);
 
                         // If we don't throw an error (which is caught above) we have written to the directory
                         canWrite = true;
 
                         // Delete the folder we just created
-                        fileSystem.Delete(uniqueFolderPath);
+                        Delete(uniqueFolderPath);
                     }
                     catch
                     {
@@ -329,11 +329,11 @@ namespace PixelVision8.Runner.Services
         {
 //            var filePath = FileSystemPath.Parse(path);
 
-            if (fileSystem.Exists(filePath))
+            if (Exists(filePath))
             {
                 var text = "";
 
-                using (var file = fileSystem.OpenFile(filePath, FileAccess.Read))
+                using (var file = OpenFile(filePath, FileAccess.Read))
                 {
                     text = file.ReadAllText();
                     file.Close();
@@ -352,10 +352,10 @@ namespace PixelVision8.Runner.Services
 
             Stream file = null;
 
-            if (fileSystem.Exists(filePath)) fileSystem.Delete(filePath);
+            if (Exists(filePath)) Delete(filePath);
 
             // TODO need to look into how to clear the bytes before writing to it?
-            file = fileSystem.CreateFile(filePath);
+            file = CreateFile(filePath);
 
             if (file != null)
             {
@@ -376,7 +376,7 @@ namespace PixelVision8.Runner.Services
         public Dictionary<string, byte[]> LoadGame(string path)
         {
             var filePath = FileSystemPath.Parse(path); //FileSystemPath.Root.AppendPath(fullPath);
-            var exits = fileSystem.Exists(filePath);
+            var exits = Exists(filePath);
 
             Dictionary<string, byte[]> files = null;
             
@@ -385,10 +385,10 @@ namespace PixelVision8.Runner.Services
                 {
                     // Found disk to load
                     if (filePath.IsDirectory)
-                        currentDisk = new SubFileSystem(fileSystem, filePath);
+                        currentDisk = new SubFileSystem(this, filePath);
                     else if (filePath.IsFile)
                         if (archiveExtensions.IndexOf(filePath.Path.Split('.').Last()) > -1)
-                            using (var stream = fileSystem.OpenFile(filePath, FileAccess.ReadWrite))
+                            using (var stream = OpenFile(filePath, FileAccess.ReadWrite))
                             {
                                 if (stream is FileStream)
                                     currentDisk = ZipFileSystem.Open((FileStream) stream);
@@ -399,7 +399,7 @@ namespace PixelVision8.Runner.Services
                             }
 
                     // We need to get a list of the current mounts
-                    var mounts = fileSystem.Mounts as SortedList<FileSystemPath, IFileSystem>;
+                    var mounts = Mounts as SortedList<FileSystemPath, IFileSystem>;
 
                     // Create a new mount point for the current game
                     var rootPath = FileSystemPath.Root.AppendDirectory("Game");
@@ -432,10 +432,10 @@ namespace PixelVision8.Runner.Services
                             // Check if save file is in tmp directory
                             var saveFile = FileSystemPath.Parse(FindValidSavePath(tmpFilePath.Path));
 
-                            if (saveFile.Path != "/" && fileSystem.Exists(saveFile))
+                            if (saveFile.Path != "/" && Exists(saveFile))
                                 using (var memoryStream = new MemoryStream())
                                 {
-                                    using (var file = fileSystem.OpenFile(saveFile, FileAccess.Read))
+                                    using (var file = OpenFile(saveFile, FileAccess.Read))
                                     {
                                         file.CopyTo(memoryStream);
                                         file.Close();
@@ -496,10 +496,10 @@ namespace PixelVision8.Runner.Services
 
             // Found disk to load
             if (path.IsDirectory)
-                disk = new SubFileSystem(fileSystem, path);
+                disk = new SubFileSystem(this, path);
             else if (path.IsFile)
                 if (archiveExtensions.IndexOf(path.Path.Split('.').Last()) > -1)
-                    using (var stream = ZipFileSystem.Open(fileSystem.OpenFile(path, FileAccess.Read) as FileStream))
+                    using (var stream = ZipFileSystem.Open(OpenFile(path, FileAccess.Read) as FileStream))
                     {
                         disk = stream;
 
@@ -544,9 +544,9 @@ namespace PixelVision8.Runner.Services
             foreach (var path in paths)
                 try
                 {
-                    if (fileSystem.Exists(path))
+                    if (Exists(path))
                     {
-                        var tmpFiles = fileSystem.GetEntities(path);
+                        var tmpFiles = GetEntities(path);
                         var luaFiles = from p in tmpFiles
                             where p.EntityName.EndsWith("lua")
                             select p;
@@ -557,7 +557,7 @@ namespace PixelVision8.Runner.Services
                             if (!files.ContainsKey(luaFile.EntityName))
                                 using (var memoryStream = new MemoryStream())
                                 {
-                                    using (var fileStream = fileSystem.OpenFile(luaFile, FileAccess.Read))
+                                    using (var fileStream = OpenFile(luaFile, FileAccess.Read))
                                     {
                                         fileStream.CopyTo(memoryStream);
                                         fileStream.Close();
@@ -590,66 +590,80 @@ namespace PixelVision8.Runner.Services
         {
 //            var tmpPath = FileSystemPath.Parse("/Tmp/");
 
-            if (fileSystem.Exists(TmpFileSystemPath))
-                foreach (var entities in fileSystem.GetEntities(TmpFileSystemPath))
-                    fileSystem.Delete(entities);
+            if (Exists(TmpFileSystemPath))
+                foreach (var entities in GetEntities(TmpFileSystemPath))
+                    Delete(entities);
         }
 
         #region FileSystem IO
 
         // TODO All paths going into the Workspace should be string
 
-        public ICollection<FileSystemPath> GetEntities(FileSystemPath path)
-        {
-            return fileSystem.GetEntities(path);
-        }
+//        public ICollection<FileSystemPath> GetEntities(FileSystemPath path)
+//        {
+//            return GetEntities(path);
+//        }
         
-        public bool Exists(FileSystemPath path)
-        {
-            return fileSystem.Exists(path);
-        }
+//        public bool Exists(FileSystemPath path)
+//        {
+//            return Exists(path);
+//        }
 
-        public Stream CreateFile(FileSystemPath path)
-        {
-            return fileSystem.CreateFile(path);
-        }
-
-        public Stream OpenFile(FileSystemPath path, FileAccess access)
-        {
-            return fileSystem.OpenFile(path, access);
-        }
-
-        public void CreateDirectory(FileSystemPath path)
-        {
-            fileSystem.CreateDirectory(path);
-        }
-
-        public void Delete(FileSystemPath path)
-        {
-            fileSystem.Delete(path);
-        }
+//        public Stream CreateFile(FileSystemPath path)
+//        {
+//            return CreateFile(path);
+//        }
+//
+//        public Stream OpenFile(FileSystemPath path, FileAccess access)
+//        {
+//            return OpenFile(path, access);
+//        }
+//
+//        public void CreateDirectory(FileSystemPath path)
+//        {
+//            CreateDirectory(path);
+//        }
+//
+//        public void Delete(FileSystemPath path)
+//        {
+//            Delete(path);
+//        }
 
         public void Copy(FileSystemPath src, FileSystemPath dest)
         {
-            fileSystem.Copy(src, fileSystem, dest);
+            this.Copy(src, this, dest);
         }
         
         public void Move(FileSystemPath src, FileSystemPath dest)
         {
-            fileSystem.Move(src, fileSystem, dest);
+            this.Move(src, this, dest);
         }
 
-        public void CreateDirectoryRecursive(FileSystemPath path)
-        {
-            fileSystem.CreateDirectoryRecursive(path);
-        }
+//        public void CreateDirectoryRecursive(FileSystemPath path)
+//        {
+//            CreateDirectoryRecursive(path);
+//        }
 
         public void AddMount(KeyValuePair<FileSystemPath, IFileSystem> mount)
         {
-            fileSystem.Mounts.Add(mount);
+            Mounts.Add(mount);
         }
         
         #endregion
 
+        public IServiceLocator locator
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        ///     This method registers the service with the service locator.
+        /// </summary>
+        /// <param name="locator"></param>
+        public virtual void RegisterService(IServiceLocator locator)
+        {
+            this.locator = locator;
+        }
     }
 }

@@ -119,46 +119,13 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["GetDirectoryContents"] = (GetDirectoryContentsDelegator) GetDirectoryContents;
             luaScript.Globals["PathExists"] = (PathExistsDelegator) PathExists;
             
-
-//            luaScript.Globals["IsExporting"] = new Func<bool>(IsExporting);
             luaScript.Globals["ExportGame"] = (ExportGameDelegator) ExportGame;
-            luaScript.Globals["GetSystemPath"] = (GetSystemPathDelegator) GetSystemPath;
-
-            
-
-
-//            luaScript.Globals["ReadFPS"] = new Func<int>(runner.activeEngine.gameChip.ReadFPS);
-            
+//            luaScript.Globals["GetSystemPath"] = (GetSystemPathDelegator) GetSystemPath;
             luaScript.Globals["ClearLog"] = new Action(workspace.ClearLog);
-
-//            luaScript.Globals["ReadPreloaderMessage"] = new Func<string>(runner.ReadPreLoaderMessage);
-
-
-//            luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
-//            luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
-
-
-            // Get the export service
-
-//            var exportService =
-//                runner.activeEngine.GetService(typeof(ExportService).FullName) as ExportService;
-
-            // Manage exporting
-            
-
-
-            // TODO need to expose other screen scale modes
-
-
             luaScript.Globals["ReadLogItems"] = new Func<List<string>>(workspace.ReadLogItems);
-//            luaScript.Globals["ReadMetaData"] = (ReadMetaDataDelegator) desktopRunner.ReadMetaData;
-//            luaScript.Globals["WriteMetaData"] = (WriteMetaDataDelegator) desktopRunner.WriteMetaData;
             luaScript.Globals["ReadTextFile"] = new Func<string, string>(ReadTextFile);
             luaScript.Globals["ReadBiosData"] = (ReadBiosSafeModeDelegator) ReadBiosSafeMode;
             luaScript.Globals["WriteBiosData"] = (WriteBiosSafeModeDelegator) WriteBiosSafeMode;
-            
-//            luaScript.Globals["ValidateGameInDir"] = (ValidateGameInDirDelegator) ValidateGameInDir;
-
             luaScript.Globals["RemapKey"] = new Action<string, int>(RemapKey);
             luaScript.Globals["SaveTextToFile"] = (SaveTextToFileDelegator) SaveTextToFile;
 
@@ -753,27 +720,6 @@ namespace PixelVision8.Runner.Services
             return response;
         }
 
-        public string GetSystemPath(string path)
-        {
-            try
-            {
-                var filePath = FileSystemPath.Parse(path);
-
-                if (workspace.Exists(filePath))
-                {
-                    var file = workspace.OpenFile(filePath, FileAccess.Read) as FileStream;
-
-                    return file.Name;
-                }
-            }
-            catch
-            {
-                // ignored
-            }
-
-            return "";
-        }
-
         public bool PathExists(string path)
         {
             var filePath = FileSystemPath.Parse(path);
@@ -868,24 +814,10 @@ namespace PixelVision8.Runner.Services
 
         private delegate Dictionary<string, object> ExportGameDelegator(string path, int fileSize = 512);
 
-        private delegate string GetSystemPathDelegator(string path);
-
         private delegate string ParentDirectoryDelegator(string path);
 
         private delegate List<DirectoryItem> GetDirectoryContentsDelegator(string path, bool testIfGame = false,
             bool ignoreDirectories = false, string[] validFiles = null);
-
-        private delegate Dictionary<string, string> DisksPathsDelegator();
-
-//        private delegate bool EnableCRTDelegator(bool? toggle);
-//
-//        private delegate float BrightnessDelegator(float? brightness = null);
-//
-//        private delegate float SharpnessDelegator(float? sharpness = null);
-
-//        private delegate string ReadMetaDataDelegator(string key, string defaultValue = "undefined");
-//
-//        private delegate void WriteMetaDataDelegator(string key, string value);
 
         private delegate object ReadBiosSafeModeDelegator(string key);
 
@@ -895,21 +827,6 @@ namespace PixelVision8.Runner.Services
 
 
         #region File System API
-
-//        public void EjectDisk(string path)
-//        {
-//            workspace.EjectDisk(FileSystemPath.Parse(path));
-//        }
-
-//        public void EnableAutoRun(bool value)
-//        {
-//            desktopRunner.autoRunEnabled = value;
-//        }
-//
-//        public void EnableBackKey(bool value)
-//        {
-//            desktopRunner.backKeyEnabled = value;
-//        }
 
         public bool NewFolder(string path)
         {
@@ -942,8 +859,6 @@ namespace PixelVision8.Runner.Services
             var srcPath = FileSystemPath.Parse(src);
             var destPath = FileSystemPath.Parse(dest);
 
-            Console.WriteLine("Copy from "+src + " to " + destPath);
-            
             try
             {
 
