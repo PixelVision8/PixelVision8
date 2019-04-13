@@ -23,7 +23,6 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PixelVision8.Engine;
-using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Runner.Data
 {
@@ -31,7 +30,7 @@ namespace PixelVision8.Runner.Data
     {
         private readonly int _monitorHeight = 640;
         private readonly int _monitorWidth = 640;
-        private int _totalPixels;
+//        private int _totalPixels;
         private bool _useCRT;
         private Effect crtShader;
         private readonly GraphicsDeviceManager graphicManager;

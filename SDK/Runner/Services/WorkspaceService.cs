@@ -24,15 +24,20 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using PixelVision8.Engine.Services;
-using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Workspace;
-using PixelVision8.Runner.Workspace.FileSystems;
-using PixelVision8.Runner.Workspace.IO;
 
 namespace PixelVision8.Runner.Services
 {
     public class WorkspaceService : AbstractService
     {
+
+        #region Default paths
+    
+        public FileSystemPath TmpFileSystemPath { get; set; } = FileSystemPath.Root.AppendDirectory("Tmp");
+        
+
+        #endregion
+        
         public List<string> archiveExtensions;
 
         public List<string> fileExtensions = new List<string>
@@ -62,9 +67,8 @@ namespace PixelVision8.Runner.Services
         public WorkspaceService(KeyValuePair<FileSystemPath, IFileSystem> mountPoint)
         {
             fileSystem = new FileSystemMounter(mountPoint);
-            EntityMovers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityMover());
-            EntityCopiers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityCopier());
-
+//            EntityMovers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityMover());
+//            EntityCopiers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityCopier());
         }
 
         
@@ -580,12 +584,14 @@ namespace PixelVision8.Runner.Services
             libs.ToList().ForEach(x => files.Add(x.Key, x.Value));
         }
 
+        
+        
         public virtual void ShutdownSystem()
         {
-            var tmpPath = FileSystemPath.Parse("/Tmp/");
+//            var tmpPath = FileSystemPath.Parse("/Tmp/");
 
-            if (fileSystem.Exists(tmpPath))
-                foreach (var entities in fileSystem.GetEntities(tmpPath))
+            if (fileSystem.Exists(TmpFileSystemPath))
+                foreach (var entities in fileSystem.GetEntities(TmpFileSystemPath))
                     fileSystem.Delete(entities);
         }
 
@@ -645,18 +651,5 @@ namespace PixelVision8.Runner.Services
         
         #endregion
 
-        #region New string path API
-
-        public bool ValidateGameInDir(string path)
-        {
-            return ValidateGameInDir(FileSystemPath.Parse(path));
-        }
-
-        public bool Exists(string path)
-        {
-            return fileSystem.Exists(FileSystemPath.Parse(path));
-        }
-
-        #endregion
     }
 }

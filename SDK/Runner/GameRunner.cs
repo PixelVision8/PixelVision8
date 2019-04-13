@@ -283,6 +283,7 @@ namespace PixelVision8.Runner
         /// <param name="showBoot"></param>
         public virtual void ResetGame()
         {
+            throw new NotImplementedException();
         }
 
 

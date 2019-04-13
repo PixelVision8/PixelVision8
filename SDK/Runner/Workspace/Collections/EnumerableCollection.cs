@@ -27,7 +27,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PixelVision8.Runner.Workspace.Collections
+namespace PixelVision8.Runner.Workspace
 {
     public class EnumerableCollection<T> : ICollection<T>
     {

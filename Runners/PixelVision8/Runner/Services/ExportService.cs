@@ -341,7 +341,7 @@ namespace PixelVision8.Runner.Services
                 {
                     NextExporter();
                 }
-                catch (Exception exception)
+                catch
                 {
 //                    DisplayError(RunnerGame.ErrorCode.Exception, new Dictionary<string, string>(){{"@{error}",exception.Message}}, exception);
 //                    throw;

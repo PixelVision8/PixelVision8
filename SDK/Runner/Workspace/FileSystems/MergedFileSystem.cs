@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace PixelVision8.Runner.Workspace.FileSystems
+namespace PixelVision8.Runner.Workspace
 {
     public class MergedFileSystem : IFileSystem
     {

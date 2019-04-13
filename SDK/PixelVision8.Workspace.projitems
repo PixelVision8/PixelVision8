@@ -18,13 +18,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\WorkspaceService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\Collections\EnumerableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\Collections\InverseComparer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\Collections\TypeCombinationDictionary.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\Directory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\EntityCopiers.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\EntityMovers.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\Extensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\File.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystemEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystemExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystemPath.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\FileSystemMounter.cs" />
@@ -34,15 +27,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\ReadOnlyFileSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\SubFileSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\ZipFileSystem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\IEntityCopier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\IEntityMover.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\IFileSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\IO\EmptyStream.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\IO\StreamExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\ITypeDictionary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\ParseException.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\PhysicalEntityMover.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\StandardEntityCopier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\StandardEntityMover.cs" />
   </ItemGroup>
 </Project>

@@ -25,9 +25,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using PixelVision8.Runner.Workspace.Collections;
+using PixelVision8.Runner.Workspace;
 
-namespace PixelVision8.Runner.Workspace.FileSystems
+namespace PixelVision8.Runner.Workspace
 {
     public class SubFileSystem : IFileSystem
     {

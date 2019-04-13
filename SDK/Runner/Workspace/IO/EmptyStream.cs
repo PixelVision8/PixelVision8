@@ -24,7 +24,7 @@
 
 using System.IO;
 
-namespace PixelVision8.Runner.Workspace.IO
+namespace PixelVision8.Runner.Workspace
 {
     public class EmptyStream : Stream
     {

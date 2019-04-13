@@ -36,5 +36,7 @@ namespace PixelVision8.Runner.Workspace
         Stream OpenFile(FileSystemPath path, FileAccess access);
         void CreateDirectory(FileSystemPath path);
         void Delete(FileSystemPath path);
+        
+        // TODO should add readonly, copy and move?
     }
 }

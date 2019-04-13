@@ -26,7 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace PixelVision8.Runner.Workspace.FileSystems
+namespace PixelVision8.Runner.Workspace
 {
     public class MemoryFileSystem : IFileSystem
     {

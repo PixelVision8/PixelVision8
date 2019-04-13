@@ -9,7 +9,6 @@ using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Workspace;
-using PixelVision8.Runner.Workspace.FileSystems;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace PixelVision8.Runner
@@ -445,11 +444,11 @@ namespace PixelVision8.Runner
                 var biosAutoRun = (string) bios.ReadBiosData("AutoRun", "");
                 
                 // Check to see if this path exists
-                if (workspaceServicePlus.Exists(biosAutoRun))
+                if (workspaceServicePlus.Exists(FileSystemPath.Parse(biosAutoRun)))
                 {
 
                     // Validate that the path is actually a game
-                    if (workspaceServicePlus.ValidateGameInDir(biosAutoRun))
+                    if (workspaceServicePlus.ValidateGameInDir(FileSystemPath.Parse(biosAutoRun)))
                     {
                         // Attempt to load the game
                         Load(biosAutoRun, RunnerMode.Loading);
@@ -765,7 +764,7 @@ namespace PixelVision8.Runner
             ResetGame();
         }
         
-        public void ResetGame()
+        public override void ResetGame()
         {
             // Make sure we don't reload when booting or loading
             if (mode == RunnerMode.Booting || mode == RunnerMode.Loading || loadHistory.Count == 0)
@@ -773,7 +772,7 @@ namespace PixelVision8.Runner
 
             //TODO this nees to also pass in the last metaData state
             // Load the last game from the history
-            var lastURI = loadHistory.Last();
+            var lastURI = FileSystemPath.Parse(loadHistory.Last());
             var metaData = metaDataHistory.Last();
 
             // Clear the load history if it is loading the first item
@@ -802,11 +801,11 @@ namespace PixelVision8.Runner
                 }
     
                 // Reload the game
-                Load(lastURI, RunnerMode.Loading, metaData);
+                Load(lastURI.Path, RunnerMode.Loading, metaData);
                 return;
             }
             
-            DisplayError(ErrorCode.LoadError, new Dictionary<string, string>(){{"@{path}", lastURI}});
+            DisplayError(ErrorCode.LoadError, new Dictionary<string, string>(){{"@{path}", lastURI.Path}});
             
         }
         
@@ -909,8 +908,6 @@ namespace PixelVision8.Runner
             {
                 {"errorMessage", messageString}
             };
-
-            string exceptionMessage = null;
 
             if (exception != null) metaData["exceptionMessage"] = exception.StackTrace;
 

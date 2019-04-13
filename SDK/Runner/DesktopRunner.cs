@@ -28,10 +28,8 @@ using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Workspace;
-using PixelVision8.Runner.Workspace.FileSystems;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Utils;
-using Directory = System.IO.Directory;
 
 namespace PixelVision8.Runner
 {
@@ -50,7 +48,7 @@ namespace PixelVision8.Runner
     public class DesktopRunner : GameRunner
     {
 // Store the path to the game's files
-        private IControllerChip controllerChip;
+//        private IControllerChip controllerChip;
         public BiosService bios;
         public WorkspaceService workspaceService;
         protected string rootPath;

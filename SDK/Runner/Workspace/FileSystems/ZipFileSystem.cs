@@ -21,11 +21,11 @@
 using System;
 using System.IO;
 using System.IO.Compression;
-using PixelVision8.Runner.Workspace.IO;
+using PixelVision8.Runner.Workspace;
 
 // TODO need to remove dependency on System.IO.File
 
-namespace PixelVision8.Runner.Workspace.FileSystems
+namespace PixelVision8.Runner.Workspace
 {
     public class ZipFileSystem : MemoryFileSystem
     {
