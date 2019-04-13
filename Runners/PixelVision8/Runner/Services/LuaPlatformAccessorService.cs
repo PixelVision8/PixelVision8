@@ -4,7 +4,7 @@ using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Platforms;
 using PixelVision8.Engine.Services;
 using PixelVision8.Runner.Services;
-using SharpFileSystem;
+using PixelVision8.Runner.Workspace;
 
 namespace PixelVision8Runner.Runner.Services
 {

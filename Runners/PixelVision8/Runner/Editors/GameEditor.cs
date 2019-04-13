@@ -33,7 +33,7 @@ using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Importers;
 using PixelVision8.Runner.Parsers;
 using PixelVision8.Runner.Services;
-using SharpFileSystem;
+using PixelVision8.Runner.Workspace;
 
 namespace PixelVision8.Runner.Editors
 {

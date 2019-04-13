@@ -1,0 +1,74 @@
+//   
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
+//  
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
+//
+// Based on SharpFileSystem by Softwarebakery Copyright (c) 2013 under
+// MIT license at https://github.com/bobvanderlinden/sharpfilesystem.
+// Modified for PixelVision8 by Jesse Freeman
+// 
+// Contributors
+// --------------------------------------------------------
+// This is the official list of Pixel Vision 8 contributors:
+//  
+// Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
+//
+
+using System;
+using System.IO;
+
+namespace PixelVision8.Runner.Workspace
+{
+    public class StandardEntityCopier : IEntityCopier
+    {
+        public StandardEntityCopier()
+        {
+            BufferSize = 65536;
+        }
+
+        public int BufferSize { get; set; }
+
+        public void Copy(IFileSystem source, FileSystemPath sourcePath, IFileSystem destination,
+            FileSystemPath destinationPath)
+        {
+            bool isFile;
+            if ((isFile = sourcePath.IsFile) != destinationPath.IsFile)
+                throw new ArgumentException(
+                    "The specified destination-path is of a different type than the source-path.");
+
+            if (isFile)
+            {
+                using (var sourceStream = source.OpenFile(sourcePath, FileAccess.Read))
+                {
+                    using (var destinationStream = destination.CreateFile(destinationPath))
+                    {
+                        var buffer = new byte[BufferSize];
+                        int readBytes;
+                        while ((readBytes = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
+                            destinationStream.Write(buffer, 0, readBytes);
+                    }
+                }
+            }
+            else
+            {
+                if (!destinationPath.IsRoot)
+                    destination.CreateDirectory(destinationPath);
+                foreach (var ep in source.GetEntities(sourcePath))
+                {
+                    var destinationEntityPath = ep.IsFile
+                        ? destinationPath.AppendFile(ep.EntityName)
+                        : destinationPath.AppendDirectory(ep.EntityName);
+                    Copy(source, ep, destination, destinationEntityPath);
+                }
+            }
+        }
+    }
+}

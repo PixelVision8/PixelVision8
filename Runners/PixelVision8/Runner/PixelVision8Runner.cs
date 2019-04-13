@@ -8,8 +8,8 @@ using MoonSharp.Interpreter;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Services;
-using SharpFileSystem;
-using SharpFileSystem.FileSystems;
+using PixelVision8.Runner.Workspace;
+using PixelVision8.Runner.Workspace.FileSystems;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace PixelVision8.Runner

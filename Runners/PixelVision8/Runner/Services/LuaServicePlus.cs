@@ -33,7 +33,7 @@ using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Utils;
 
 // TODO need to remove reference to this
-using SharpFileSystem;
+using PixelVision8.Runner.Workspace;
 
 namespace PixelVision8.Runner.Services
 {

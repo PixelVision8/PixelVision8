@@ -25,9 +25,9 @@ using System.Linq;
 using System.Text;
 using PixelVision8.Engine.Services;
 using PixelVision8.Runner.Data;
-using SharpFileSystem;
-using SharpFileSystem.FileSystems;
-using SharpFileSystem.IO;
+using PixelVision8.Runner.Workspace;
+using PixelVision8.Runner.Workspace.FileSystems;
+using PixelVision8.Runner.Workspace.IO;
 
 namespace PixelVision8.Runner.Services
 {
