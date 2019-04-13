@@ -22,7 +22,6 @@ using System;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using PixelVision8.Engine;
 
 namespace PixelVision8.Runner.Data
 {
@@ -53,6 +52,7 @@ namespace PixelVision8.Runner.Data
 
             _monitorWidth = MathHelper.Clamp(width, 64, 640);
             _monitorHeight = MathHelper.Clamp(height, 64, 480);
+            
 //            monitorScale = scale;
         }
 
@@ -170,19 +170,20 @@ namespace PixelVision8.Runner.Data
         public bool stretchScreen;
         public bool cropScreen = true;
         
-        public void ResetResolution(IEngine activeEngine)
+        public void ResetResolution(int gameWidth, int gameHeight, int overScanX = 0, int overScanY = 0)
         {
-            var displayChip = activeEngine.displayChip;
-
-            var gameWidth = displayChip.width;
-            var gameHeight = displayChip.height;
-            var overScanX = displayChip.overscanXPixels;
-            var overScanY = displayChip.overscanYPixels;
-
-
+            
             if (renderTexture == null || renderTexture.Width != gameWidth || renderTexture.Height != gameHeight)
             {
                 renderTexture = new Texture2D(graphicManager.GraphicsDevice, gameWidth, gameHeight);
+                
+                shaderEffect?.Parameters["textureSize"].SetValue(new Vector2(gameWidth, gameHeight));
+                shaderEffect?.Parameters["videoSize"].SetValue(new Vector2(gameWidth, gameHeight));
+                shaderEffect?.Parameters["outputSize"].SetValue(new Vector2(graphicManager.PreferredBackBufferWidth,
+                    graphicManager.PreferredBackBufferHeight));
+                
+                // Set the new number of pixels
+                totalPixels = renderTexture.Width * renderTexture.Height;
             }
 
             // Calculate the game's resolution
@@ -226,33 +227,25 @@ namespace PixelVision8.Runner.Data
 
 //            Console.WriteLine("Reset Res Fullscreen " + fullscreen + " "+displayWidth+"x"+displayHeight);
 
+
             // Apply changes
             graphicManager.IsFullScreen = fullscreen;
-            graphicManager.PreferredBackBufferWidth = displayWidth;
-            graphicManager.PreferredBackBufferHeight = displayHeight;
-            graphicManager.ApplyChanges();
+            
+            if(graphicManager.PreferredBackBufferWidth != displayWidth || graphicManager.PreferredBackBufferHeight != displayHeight)
+            {
+                graphicManager.PreferredBackBufferWidth = displayWidth;
+                graphicManager.PreferredBackBufferHeight = displayHeight;
+                graphicManager.ApplyChanges();
+            }
 
-
-            shaderEffect?.Parameters["textureSize"].SetValue(new Vector2(gameWidth, gameHeight));
-            shaderEffect?.Parameters["videoSize"].SetValue(new Vector2(gameWidth, gameHeight));
-            shaderEffect?.Parameters["outputSize"].SetValue(new Vector2(graphicManager.PreferredBackBufferWidth,
-                graphicManager.PreferredBackBufferHeight));
-
-            // Update the controller to use the correct mouse scale
-            activeEngine.controllerChip.MouseScale(scale.X, scale.Y);
-
-            // Set the new number of pixels
-            totalPixels = renderTexture.Width * renderTexture.Height;
         }
 
-        
-
-        public void Render(IEngine activeEngine, bool ignoreTransparent = false)
+        public void Render(Color[] pixels)
         {
             // TODO didn't have to check length before service refactoring
-            if (activeEngine == null || totalPixels != activeEngine.displayChip.pixels.Length) return;
+            if (totalPixels != pixels.Length) return;
 
-            renderTexture.SetData(activeEngine.displayChip.pixels);
+            renderTexture.SetData(pixels);
 
             spriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: shaderEffect);
 

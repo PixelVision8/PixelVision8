@@ -19,7 +19,7 @@ namespace Microsoft.Xna.Framework
         static Color()
         {
             Black = new Color(0xff000000);
-            CornflowerBlue = new Color(0xffed9564);
+//            CornflowerBlue = new Color(0xffed9564);
             Magenta = new Color(0xffff00ff);
             White= new Color(uint.MaxValue);
         }

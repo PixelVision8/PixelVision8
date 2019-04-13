@@ -68,7 +68,10 @@ namespace PixelVision8.Runner
             base.ConfigureRunner();
             
             // TODO This may be a string
-            Volume(MathHelper.Clamp(Convert.ToInt32((long) bios.ReadBiosData(BiosSettings.Volume.ToString(), 40L)), 0, 100));
+            Volume(MathHelper.Clamp(
+                
+                Convert.ToInt32(bios.ReadBiosData(BiosSettings.Volume.ToString(), "40")),
+                 0, 100));
 
             Mute(Convert.ToBoolean(bios.ReadBiosData(BiosSettings.Mute.ToString(), "False") as string));
 
@@ -88,7 +91,7 @@ namespace PixelVision8.Runner
         {
             var vol = base.Volume(value);
             
-            bios.UpdateBiosData(BiosSettings.Volume.ToString(), vol);
+            bios.UpdateBiosData(BiosSettings.Volume.ToString(), vol.ToString());
             
             return vol;
         }
@@ -102,7 +105,7 @@ namespace PixelVision8.Runner
         {
             var mute = base.Mute(value);
             
-            bios.UpdateBiosData(BiosSettings.Mute.ToString(), mute);
+            bios.UpdateBiosData(BiosSettings.Mute.ToString(), mute.ToString());
             
             return mute;
         }
@@ -117,7 +120,7 @@ namespace PixelVision8.Runner
         {
             var value = base.Scale(scale);
 
-            bios.UpdateBiosData(BiosSettings.Scale.ToString(), value);
+            bios.UpdateBiosData(BiosSettings.Scale.ToString(), value.ToString());
             
             return value;
         }
@@ -174,7 +177,7 @@ namespace PixelVision8.Runner
             if (brightness.HasValue)
             {
                 displayTarget.brightness = brightness.Value;
-                bios.UpdateBiosData(CRTBiosSettings.Brightness.ToString(), (long) (brightness * 100));
+                bios.UpdateBiosData(CRTBiosSettings.Brightness.ToString(), (brightness * 100).ToString());
             }
 
             return displayTarget.brightness;
@@ -185,7 +188,7 @@ namespace PixelVision8.Runner
             if (sharpness.HasValue)
             {
                 displayTarget.sharpness = sharpness.Value;
-                bios.UpdateBiosData(CRTBiosSettings.Sharpness.ToString(), sharpness);
+                bios.UpdateBiosData(CRTBiosSettings.Sharpness.ToString(), sharpness.ToString());
             }
 
             return displayTarget.sharpness;
@@ -216,7 +219,7 @@ namespace PixelVision8.Runner
             // TODO this may be a string
 //            try
 //            {
-                Scale(Convert.ToInt32((long) bios.ReadBiosData(BiosSettings.Scale.ToString(), 1L)));
+                Scale(Convert.ToInt32(bios.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
 //            }
 //            catch
 //            {
@@ -232,9 +235,11 @@ namespace PixelVision8.Runner
                 displayTarget.shaderPath = workspaceService.OpenFile(shaderPath, FileAccess.Read);
                 
                 EnableCRT(Convert.ToBoolean(bios.ReadBiosData(CRTBiosSettings.CRT.ToString(), "True") as string));
-                Brightness(Convert.ToSingle((long) bios.ReadBiosData(CRTBiosSettings.Brightness.ToString(), 100L))/100F);
-                Sharpness(Convert.ToSingle((long) bios.ReadBiosData(CRTBiosSettings.Sharpness.ToString(), -6L)));
+                Brightness(Convert.ToSingle(bios.ReadBiosData(CRTBiosSettings.Brightness.ToString(), "100"))/100F);
+                Sharpness(Convert.ToSingle(bios.ReadBiosData(CRTBiosSettings.Sharpness.ToString(), "-6")));
             }
+            
+            displayTarget.ResetResolution(tmpRes[0], tmpRes[1]);
             
         }
 
@@ -243,9 +248,9 @@ namespace PixelVision8.Runner
             // Pass input mapping
             foreach (var keyMap in defaultKeys)
             {
-                var rawValue = bios.ReadBiosData(keyMap.Key.ToString(), keyMap.Value, true);
-                if (rawValue is long)
-                    rawValue = Convert.ToInt32(rawValue);
+                var rawValue = Convert.ToInt32(bios.ReadBiosData(keyMap.Key.ToString(), keyMap.Value.ToString(), true));
+//                if (rawValue is long)
+//                    rawValue = Convert.ToInt32(rawValue);
 
                 var keyValue = rawValue;
 

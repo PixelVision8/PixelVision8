@@ -72,8 +72,8 @@ namespace PixelVision8.Runner
             // Save the session ID
             sessionID = DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
-            systemVersion = (string) bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
-            systemName = (string) bios.ReadBiosData("SystemName", "PixelVision8");
+            systemVersion = bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
+            systemName = bios.ReadBiosData("SystemName", "PixelVision8");
             
             screenshotService = new ScreenshotService(workspaceServicePlus);
             exportService = new ExportService(null); //TODO Need to create a new AudioClipAdaptor
@@ -81,14 +81,14 @@ namespace PixelVision8.Runner
             var actions = Enum.GetValues(typeof(ActionKeys)).Cast<ActionKeys>();
             foreach (var action in actions)
             {
-                actionKeys[action] = (Keys)Convert.ToInt32((long)bios.ReadBiosData(action.ToString(), (long)actionKeys[action], true));
+                actionKeys[action] = (Keys)Convert.ToInt32(bios.ReadBiosData(action.ToString(), ((int)actionKeys[action]).ToString(), true));
             }
             
             // Replace title with version
             
             Window.Title =
-                (string) bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner") + " " + 
-                (string) bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
+                bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner") + " " + 
+                bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
            
         }
 
@@ -364,8 +364,8 @@ namespace PixelVision8.Runner
 
         protected override void Draw(GameTime gameTime)
         {
-            if (activeEngine == null)
-                return;
+//            if (activeEngine == null)
+//                return;
             
             try
             {

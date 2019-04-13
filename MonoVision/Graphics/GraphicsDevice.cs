@@ -73,11 +73,7 @@ namespace Microsoft.Xna.Framework.Graphics
         // clears to colors where all components are either 0 or 255.
         // Despite XNA4 using Purple here, we use black (in Release) to avoid
         // performance warnings on Intel/Mesa
-#if DEBUG
-        private static readonly Color DiscardColor = new Color(68, 34, 136, 255);
-#else
         private static readonly Color DiscardColor = new Color(0, 0, 0, 255);
-#endif
 
         /// <summary>
         /// The active vertex shader.
@@ -499,25 +495,25 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
-        public void Clear(/*ClearOptions options,*/ Color color, float depth, int stencil)
-        {
-            PlatformClear(/*options,*/ color.ToVector4(), depth, stencil);
-
-            unchecked
-            {
-                _graphicsMetrics._clearCount++;
-            }
-        }
-
-		public void Clear(/*ClearOptions options,*/ Vector4 color, float depth, int stencil)
-		{
-            PlatformClear(/*options,*/ color, depth, stencil);
-
-            unchecked
-            {
-                _graphicsMetrics._clearCount++;
-            }
-        }
+//        public void Clear(/*ClearOptions options,*/ Color color, float depth, int stencil)
+//        {
+//            PlatformClear(/*options,*/ color.ToVector4(), depth, stencil);
+//
+//            unchecked
+//            {
+//                _graphicsMetrics._clearCount++;
+//            }
+//        }
+//
+//		public void Clear(/*ClearOptions options,*/ Vector4 color, float depth, int stencil)
+//		{
+//            PlatformClear(/*options,*/ color, depth, stencil);
+//
+//            unchecked
+//            {
+//                _graphicsMetrics._clearCount++;
+//            }
+//        }
 
         public void Dispose()
         {

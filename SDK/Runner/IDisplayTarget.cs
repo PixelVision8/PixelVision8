@@ -18,15 +18,15 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
+using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Runner
 {
     public interface IDisplayTarget
     {
-        void ResetResolution(IEngine activeEngine);
+        void ResetResolution(int gameWidth, int gameHeight, int overScanX = 0, int overScanY = 0);
 
-        void Render(IEngine engine, bool ignoreTransparent = false);
+        void Render(Color[] colors);
 //        void CacheColors(IEngine engine);
 //        void ConvertMousePosition(Vector pos);
     }

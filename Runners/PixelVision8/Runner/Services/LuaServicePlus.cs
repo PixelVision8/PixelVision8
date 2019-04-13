@@ -167,7 +167,7 @@ namespace PixelVision8.Runner.Services
 // TODO need to rewire mapping action keys since this should be more generic
 
             // Save the new mapped key to the bios
-            WriteBiosSafeMode(mapKey, keyCode);
+            WriteBiosSafeMode(mapKey, keyCode.ToString());
         }
 
         public virtual object ReadBiosSafeMode(string key)
@@ -175,7 +175,7 @@ namespace PixelVision8.Runner.Services
             return desktopRunner.bios.ReadBiosData(key, null);
         }
 
-        public virtual void WriteBiosSafeMode(string key, object value)
+        public virtual void WriteBiosSafeMode(string key, string value)
         {
             // TODO should there be a set of safe keys and values types that can be accepted?
             desktopRunner.bios.UpdateBiosData(key, value);
@@ -821,7 +821,7 @@ namespace PixelVision8.Runner.Services
 
         private delegate object ReadBiosSafeModeDelegator(string key);
 
-        private delegate void WriteBiosSafeModeDelegator(string key, object value);
+        private delegate void WriteBiosSafeModeDelegator(string key, string value);
         
         private delegate bool SaveTextToFileDelegator(string filePath, string text, bool autoCreate = false);
 

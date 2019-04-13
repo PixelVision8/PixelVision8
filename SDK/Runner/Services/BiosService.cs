@@ -27,14 +27,14 @@ namespace PixelVision8.Runner.Services
     {
 //        #region Bios APIs
 
-        private readonly Dictionary<string, object> biosData;
+        private readonly Dictionary<string, string> biosData;
 
         public Dictionary<string, object> userBiosChanges;
 
         public BiosService()
         {
             // Create a new dictionary to store bios settings
-            biosData = new Dictionary<string, object>();
+            biosData = new Dictionary<string, string>();
         }
 
         public void ParseBiosText(string json)
@@ -45,9 +45,9 @@ namespace PixelVision8.Runner.Services
 
                 foreach (var pair in data)
                     if (biosData.ContainsKey(pair.Key))
-                        biosData[pair.Key] = pair.Value;
+                        biosData[pair.Key] = pair.Value.ToString();
                     else
-                        biosData.Add(pair.Key, pair.Value);
+                        biosData.Add(pair.Key, pair.Value.ToString());
             }
             catch
             {
@@ -62,7 +62,7 @@ namespace PixelVision8.Runner.Services
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public void UpdateBiosData(string key, object value)
+        public void UpdateBiosData(string key, string value)
         {
             // Update internal bios value
             if (biosData.ContainsKey(key))
@@ -79,7 +79,7 @@ namespace PixelVision8.Runner.Services
                 userBiosChanges.Add(key, value);
         }
 
-        public object ReadBiosData(string key, object defaultValue, bool autoSave = false)
+        public string ReadBiosData(string key, string defaultValue, bool autoSave = false)
         {
             // Check to see if the key is in the bios
             if (!biosData.ContainsKey(key))

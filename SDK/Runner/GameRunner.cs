@@ -340,6 +340,7 @@ namespace PixelVision8.Runner
         {
             // Create the default display target
             displayTarget = new DisplayTarget(graphics, 512, 480);
+            
         }
 
         public void InvalidateResolution()
@@ -358,11 +359,7 @@ namespace PixelVision8.Runner
             if (activeEngine == null)
                 return;
             
-            if (resolutionInvalid)
-            {
-                ResetResolution();
-                ResetResolutionValidation();
-            }
+            
 
             timeDelta = (float) gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -396,16 +393,13 @@ namespace PixelVision8.Runner
             
             if (activeEngine == null)
                 return;
-            
-            
 
             frameCounter++;
-
 
             // Clear with black and draw the runner.
 //            else
 //            {
-            graphics.GraphicsDevice.Clear(Color.Black);
+//            graphics.GraphicsDevice.Clear(Color.Black);
             // Now it's time to call the PixelVisionEngine's Draw() method. This Draw() call propagates throughout all of the Chips that have 
             // registered themselves as being able to draw such as the GameChip and the DisplayChip.
             activeEngine.Draw();
@@ -414,12 +408,18 @@ namespace PixelVision8.Runner
 //            {
 //                if (displayTarget != null)
 //                {
-            displayTarget.Render(activeEngine);
+            displayTarget.Render(activeEngine.displayChip.pixels);
 //                }
 //            }
 
 
 //            }
+
+            if (resolutionInvalid)
+            {
+                ResetResolution();
+                ResetResolutionValidation();
+            }
         }
 
         public void ParseFiles(Dictionary<string, byte[]> files, IEngine engine, SaveFlags saveFlags,
@@ -546,7 +546,7 @@ namespace PixelVision8.Runner
 
             // After loading the game, we are ready to run it.
             activeEngine.RunGame();
-
+            
 //            if (displayTarget != null)
 //            {
 
@@ -554,9 +554,9 @@ namespace PixelVision8.Runner
 
 
             // Reset the game's resolution
-//            ResetResolution();
+            ResetResolution();
 
-            InvalidateResolution();
+//            InvalidateResolution();
 //            }
         }
 
@@ -565,8 +565,19 @@ namespace PixelVision8.Runner
             if (activeEngine == null)
                 return;
 
-            displayTarget.ResetResolution(activeEngine);
+            var displayChip = activeEngine.displayChip;
+
+            var gameWidth = displayChip.width;
+            var gameHeight = displayChip.height;
+            var overScanX = displayChip.overscanXPixels;
+            var overScanY = displayChip.overscanYPixels;
+            
+            displayTarget.ResetResolution(gameWidth, gameHeight, overScanX, overScanY);
             IsMouseVisible = false;
+            
+            // Update the mouse to use the new monitor scale
+            var scale = displayTarget.scale;
+            activeEngine.controllerChip.MouseScale(scale.X, scale.Y);
         }
 
         protected void ParseFiles(Dictionary<string, byte[]> files, SaveFlags? flags = null)
