@@ -711,8 +711,9 @@ namespace PixelVision8.Runner
 
                     loadService.StartLoading();
                 }
-            }
+            }    
         }
+
         
 //        public void PreLoaderComplete()
 //        {

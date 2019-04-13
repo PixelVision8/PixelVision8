@@ -1283,7 +1283,7 @@ namespace PixelVision8.Runner.Editors
                 targetGame.tilemapChip.Resize(tmpParser.width / 8, tmpParser.height / 8);
 
 
-                runner.ParseFiles(files, targetGame, saveFlags, false);
+                runner.ParseFiles(files, targetGame, saveFlags, true);
             }
             catch
             {
@@ -1359,7 +1359,7 @@ namespace PixelVision8.Runner.Editors
 
                 targetGame.name = path;
 
-                runner.ParseFiles(files, targetGame, saveFlags, false);
+                runner.ParseFiles(files, targetGame, saveFlags, true);
             }
             catch
             {
@@ -1371,11 +1371,6 @@ namespace PixelVision8.Runner.Editors
             Reset();
 
             return true;
-        }
-
-        public void StartLoading()
-        {
-//            runner.StartLoading();
         }
 
         public void SaveFont(string fontName, string oldName = null)

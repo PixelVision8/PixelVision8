@@ -30,6 +30,7 @@ namespace PixelVision8.Runner.Workspace
 {
     public interface IFileSystem : IDisposable
     {
+        
         ICollection<FileSystemPath> GetEntities(FileSystemPath path);
         bool Exists(FileSystemPath path);
         Stream CreateFile(FileSystemPath path);

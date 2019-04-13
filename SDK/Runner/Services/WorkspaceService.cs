@@ -82,7 +82,7 @@ namespace PixelVision8.Runner.Services
             // Create a new File System
             foreach (var mountPoint in fileSystems)
             {
-                Mounts.Add(new KeyValuePair<FileSystemPath, IFileSystem>(mountPoint.Key, mountPoint.Value));
+                AddMount(new KeyValuePair<FileSystemPath, IFileSystem>(mountPoint.Key, mountPoint.Value));
             }
         }
         
