@@ -267,7 +267,38 @@ namespace PixelVision8.Runner.Services
             if (ValidateGameInDir(diskPath))
             {
                 
+                // TODO need to make sure the auto run disk is at the top of the list
 
+                var diskPaths = new List<string>();
+                
+                foreach (var disk in diskMount)
+                {
+                    var name = disk.Key.EntityName;
+
+                    var physicalPath = ((PhysicalFileSystem) disk.Value).PhysicalRoot;
+                    
+                    if (name == diskName)
+                    {
+                        diskPaths.Insert(0, physicalPath);
+                    }
+                    else
+                    {
+                        diskPaths.Add(physicalPath);
+                    }
+                    
+                }
+                
+                EjectAll();
+
+                foreach (var oldPath in diskPaths)
+                {
+                    MountDisk(oldPath);
+                }
+                
+//                SortedList<WorkspacePath, IFileSystem> 
+//                
+//                    diskMount
+                    
                 return diskPath.Path;
                 // Load the disk path and play the game
 //                runner.Load(diskPath.Path, RunnerGame.RunnerMode.Playing, metaData);

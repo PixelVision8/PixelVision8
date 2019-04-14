@@ -414,10 +414,10 @@ namespace PixelVision8.Runner
 
             for (int i = 0; i < workspaceServicePlus.totalDisks; i++)
             {
-                var diskPath = (string) bios.ReadBiosData("Disk" + i, "none");
+                var diskPath =  bios.ReadBiosData("Disk" + i, "none");
                 if (diskPath != "none")
                 {
-                    Console.WriteLine("Mount disk " + diskPath);
+//                    Console.WriteLine("Mount disk " + diskPath);
 
                     // manually mount each disk since we are not going to load from them
                     workspaceServicePlus.MountDisk(diskPath);
@@ -441,7 +441,7 @@ namespace PixelVision8.Runner
             // Look to see if we have the bios default tool in the OS folder
             try
             {
-                var biosAutoRun = (string) bios.ReadBiosData("AutoRun", "");
+                var biosAutoRun = bios.ReadBiosData("AutoRun", "");
                 
                 // Check to see if this path exists
                 if (workspaceServicePlus.Exists(WorkspacePath.Parse(biosAutoRun)))
@@ -510,7 +510,7 @@ namespace PixelVision8.Runner
 
             if(diskPath != null)
             {
-                
+
                 // Create new meta data for the game. We wan to display the disk insert animation.
                 var metaData = new Dictionary<string, string>
                 {
@@ -588,7 +588,7 @@ namespace PixelVision8.Runner
                         metaData["showDiskAnimation"] = nextMetaData["showDiskAnimation"];
 
                     // Get the default path to the load tool from the bios
-                    path = (string) bios.ReadBiosData("LoadTool", "/PixelVisionOS/Tools/LoadTool/");
+                    path =  bios.ReadBiosData("LoadTool", "/PixelVisionOS/Tools/LoadTool/");
 
                     // Change the mode to loading
                     newMode = RunnerMode.Loading;
@@ -921,12 +921,12 @@ namespace PixelVision8.Runner
 
         protected string GetErrorMessage(ErrorCode code)
         {
-            return (string) bios.ReadBiosData(code.ToString(), "Error code " + (int) code);
+            return  bios.ReadBiosData(code.ToString(), "Error code " + (int) code);
         }
 
         protected virtual void LoadError(Dictionary<string, string> metaData)
         {
-            var tool = (string) bios.ReadBiosData("ErrorTool", "/PixelVisionOS/Tools/ErrorTool/");
+            var tool =  bios.ReadBiosData("ErrorTool", "/PixelVisionOS/Tools/ErrorTool/");
 
             workspaceServicePlus.UpdateLog(metaData["errorMessage"], LogType.Error,
                 metaData.ContainsKey("exceptionMessage") ? metaData["exceptionMessage"] : null);
