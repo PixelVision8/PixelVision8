@@ -52,7 +52,7 @@ namespace PixelVision8.Runner
         public BiosService bios;
         public WorkspaceService workspaceService;
         protected string rootPath;
-        protected FileSystemPath userBiosPath => FileSystemPath.Parse("/Storage/user-bios.json");
+        protected WorkspacePath userBiosPath => WorkspacePath.Parse("/Storage/user-bios.json");
         protected string tmpPath;
         /// <summary>
         ///     This constructor saves the path to the game's files and kicks off the base constructor
@@ -227,7 +227,7 @@ namespace PixelVision8.Runner
 //            }
             
             // Configure CRT shader
-            var shaderPath = FileSystemPath.Parse(bios.ReadBiosData(CRTBiosSettings.CRTEffectPath.ToString(), "/App/Effects/crt-lottes-mg.ogl.mgfxo") as string);
+            var shaderPath = WorkspacePath.Parse(bios.ReadBiosData(CRTBiosSettings.CRTEffectPath.ToString(), "/App/Effects/crt-lottes-mg.ogl.mgfxo") as string);
 
             
             if (workspaceService.Exists(shaderPath))
@@ -281,8 +281,8 @@ namespace PixelVision8.Runner
 
         protected virtual void CreateWorkspaceService()
         {
-            workspaceService = new WorkspaceService(new KeyValuePair<FileSystemPath, IFileSystem>(
-                FileSystemPath.Root.AppendDirectory("App"),
+            workspaceService = new WorkspaceService(new KeyValuePair<WorkspacePath, IFileSystem>(
+                WorkspacePath.Root.AppendDirectory("App"),
                 new PhysicalFileSystem(rootPath)));
             
             serviceManager.AddService(typeof(WorkspaceService).FullName, workspaceService);
@@ -296,7 +296,7 @@ namespace PixelVision8.Runner
             // Create the workspace starting at the App's directory
             CreateWorkspaceService();
             
-            var biosPath = FileSystemPath.Root.AppendDirectory("App").AppendFile("bios.json");//Path.Combine(rootPath, "bios.json")));
+            var biosPath = WorkspacePath.Root.AppendDirectory("App").AppendFile("bios.json");//Path.Combine(rootPath, "bios.json")));
 
             // Test if a bios file exists
             if (workspaceService.Exists(biosPath))
@@ -332,7 +332,7 @@ namespace PixelVision8.Runner
         
         protected virtual void ConfigureWorkspace()
         {
-            var mounts = new Dictionary<FileSystemPath, IFileSystem>();
+            var mounts = new Dictionary<WorkspacePath, IFileSystem>();
 
             // Create the base directory in the documents and local storage folder
                 
@@ -360,7 +360,7 @@ namespace PixelVision8.Runner
                 }
                     
                 // Add directories as mount points
-                mounts.Add(FileSystemPath.Root.AppendDirectory(directory.Key), new PhysicalFileSystem(directory.Value));
+                mounts.Add(WorkspacePath.Root.AppendDirectory(directory.Key), new PhysicalFileSystem(directory.Value));
                     
             }
                 
@@ -372,7 +372,7 @@ namespace PixelVision8.Runner
             
             bios.ParseBiosText(userBios);
   
-            workspaceService.SetupLogFile(FileSystemPath.Parse(bios.ReadBiosData("LogFilePath", "/Tmp/Log.txt") as string));
+            workspaceService.SetupLogFile(WorkspacePath.Parse(bios.ReadBiosData("LogFilePath", "/Tmp/Log.txt") as string));
 
         }
 

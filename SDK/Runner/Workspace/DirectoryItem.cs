@@ -23,8 +23,6 @@ using System.Linq;
 namespace PixelVision8.Runner.Workspace
 {
     
-    // TODO this should be moved into the FileSystemPath
-    
     public class DirectoryItem
     {
         public string ext = "";
@@ -35,15 +33,12 @@ namespace PixelVision8.Runner.Workspace
         public string parentPath;
         public string path;
         public bool selected;
-
         public string type = "none";
-//        public bool isGameFile;
 
-        public DirectoryItem(FileSystemPath filePath, bool gameFile = false)
+        public DirectoryItem(WorkspacePath filePath)
         {
             path = filePath.Path;
             parentPath = filePath.ParentPath.Path;
-//            isGameFile = gameFile;
 
             isDirectory = filePath.IsDirectory;
 

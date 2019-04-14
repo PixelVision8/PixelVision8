@@ -31,57 +31,57 @@ namespace PixelVision8.Runner.Workspace
 {
     public class SubFileSystem : IFileSystem
     {
-        public SubFileSystem(IFileSystem fileSystem, FileSystemPath root)
+        public SubFileSystem(IFileSystem fileSystem, WorkspacePath root)
         {
             FileSystem = fileSystem;
             Root = root;
         }
 
         public IFileSystem FileSystem { get; }
-        public FileSystemPath Root { get; }
+        public WorkspacePath Root { get; }
 
         public void Dispose()
         {
             FileSystem.Dispose();
         }
 
-        public ICollection<FileSystemPath> GetEntities(FileSystemPath path)
+        public ICollection<WorkspacePath> GetEntities(WorkspacePath path)
         {
             var paths = FileSystem.GetEntities(AppendRoot(path));
-            return new EnumerableCollection<FileSystemPath>(paths.Select(p => RemoveRoot(p)), paths.Count);
+            return new EnumerableCollection<WorkspacePath>(paths.Select(p => RemoveRoot(p)), paths.Count);
         }
 
-        public bool Exists(FileSystemPath path)
+        public bool Exists(WorkspacePath path)
         {
             return FileSystem.Exists(AppendRoot(path));
         }
 
-        public Stream CreateFile(FileSystemPath path)
+        public Stream CreateFile(WorkspacePath path)
         {
             return FileSystem.CreateFile(AppendRoot(path));
         }
 
-        public Stream OpenFile(FileSystemPath path, FileAccess access)
+        public Stream OpenFile(WorkspacePath path, FileAccess access)
         {
             return FileSystem.OpenFile(AppendRoot(path), access);
         }
 
-        public void CreateDirectory(FileSystemPath path)
+        public void CreateDirectory(WorkspacePath path)
         {
             FileSystem.CreateDirectory(AppendRoot(path));
         }
 
-        public void Delete(FileSystemPath path)
+        public void Delete(WorkspacePath path)
         {
             FileSystem.Delete(AppendRoot(path));
         }
 
-        protected FileSystemPath AppendRoot(FileSystemPath path)
+        protected WorkspacePath AppendRoot(WorkspacePath path)
         {
             return Root.AppendPath(path);
         }
 
-        protected FileSystemPath RemoveRoot(FileSystemPath path)
+        protected WorkspacePath RemoveRoot(WorkspacePath path)
         {
             return path.RemoveParent(Root);
         }

@@ -50,7 +50,7 @@ namespace PixelVision8.Runner.Workspace
                 if (destinationPath.StartsWith(extractPath, StringComparison.Ordinal))
                 {
 
-                    var filePath = FileSystemPath.Root.AppendPath(entryPath);
+                    var filePath = WorkspacePath.Root.AppendPath(entryPath);
 
                     if (filePath.IsFile)
                         try
@@ -105,7 +105,7 @@ namespace PixelVision8.Runner.Workspace
 
             var fileNameZip = disk.srcPath;
 
-            var files = disk.GetEntitiesRecursive(FileSystemPath.Root);
+            var files = disk.GetEntitiesRecursive(WorkspacePath.Root);
 
             using (var memoryStream = new MemoryStream())
             {

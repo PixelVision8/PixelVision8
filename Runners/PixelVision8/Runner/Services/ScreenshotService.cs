@@ -44,7 +44,7 @@ namespace PixelVision8.Runner.Services
             this.imageExporter = new PNGWriter();
         }
 
-        private FileSystemPath screenshotDir
+        private WorkspacePath screenshotDir
         {
             get
             {
@@ -53,12 +53,12 @@ namespace PixelVision8.Runner.Services
                 {
                     var directoryName = "Screenshots";//workspace.ReadBiosData("ScreenshotDir", "Screenshots") as string;
 
-                    var path = FileSystemPath.Root.AppendDirectory("Tmp").AppendDirectory(directoryName);
+                    var path = WorkspacePath.Root.AppendDirectory("Tmp").AppendDirectory(directoryName);
 
                     try
                     {
-                        if (workspace.Exists(FileSystemPath.Root.AppendDirectory("Workspace")))
-                            path = FileSystemPath.Root.AppendDirectory("Workspace")
+                        if (workspace.Exists(WorkspacePath.Root.AppendDirectory("Workspace")))
+                            path = WorkspacePath.Root.AppendDirectory("Workspace")
                                 .AppendDirectory(directoryName);
                     }
                     catch
@@ -78,11 +78,11 @@ namespace PixelVision8.Runner.Services
 //                    Console.WriteLine("Save Screenshot Error:\n"+e.Message);
                 }
 
-                return FileSystemPath.Root;
+                return WorkspacePath.Root;
             }
         }
 
-        public FileSystemPath GenerateScreenshotName()
+        public WorkspacePath GenerateScreenshotName()
         {
             return workspace.UniqueFilePath(screenshotDir.AppendFile("screenshot.png"));
         }

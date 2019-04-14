@@ -101,8 +101,8 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["FindEditors"] = new Func<Dictionary<string, string>>(FindEditors);
 
             
-            luaScript.Globals["ImportColorsFromGameEditor"] =
-                (ImportColorsFromGameEditorDelegator) ImportColorsFromGameEditor;
+//            luaScript.Globals["ImportColorsFromGameEditor"] =
+//                (ImportColorsFromGameEditorDelegator) ImportColorsFromGameEditor;
             
             
             
@@ -110,28 +110,42 @@ namespace PixelVision8.Runner.Services
             // Filesystem
             
             luaScript.Globals["NewFile"] = (NewFileDelegator) NewFile;
-            luaScript.Globals["UniqueFilePath"] = (UniqueFilePathDelegator) UniqueFilePath;
+            
+            luaScript.Globals["UniqueFilePath"] = new Func<WorkspacePath, WorkspacePath>(workspace.UniqueFilePath);
+            luaScript.Globals["CreateDirectory"] = new Action<WorkspacePath>(workspace.CreateDirectory);
+            
+            
             luaScript.Globals["NewFolder"] = (NewFolderDelegator) NewFolder;
+            luaScript.Globals["MoveTo"] = new Action<WorkspacePath, WorkspacePath>(workspace.Move);
+            luaScript.Globals["CopyTo"] = new Action<WorkspacePath, WorkspacePath>(workspace.Copy);
+            luaScript.Globals["PathExists"] = new Func<WorkspacePath, bool>(workspace.Exists);
+            
+            
             luaScript.Globals["CopyFile"] = (CopyFileDelegator) CopyFile;
             luaScript.Globals["MoveFile"] = (MoveFileDelegator) MoveFile;
+            
             luaScript.Globals["DeleteFile"] = (DeleteFileDelegator) DeleteFile;
             luaScript.Globals["ParentDirectory"] = (ParentDirectoryDelegator) ParentDirectory;
             luaScript.Globals["GetDirectoryContents"] = (GetDirectoryContentsDelegator) GetDirectoryContents;
-            luaScript.Globals["PathExists"] = (PathExistsDelegator) PathExists;
+            luaScript.Globals["OldPathExists"] = (PathExistsDelegator) PathExists;
             
             luaScript.Globals["ExportGame"] = (ExportGameDelegator) ExportGame;
 //            luaScript.Globals["GetSystemPath"] = (GetSystemPathDelegator) GetSystemPath;
             luaScript.Globals["ClearLog"] = new Action(workspace.ClearLog);
             luaScript.Globals["ReadLogItems"] = new Func<List<string>>(workspace.ReadLogItems);
             luaScript.Globals["ReadTextFile"] = new Func<string, string>(ReadTextFile);
-            luaScript.Globals["ReadBiosData"] = (ReadBiosSafeModeDelegator) ReadBiosSafeMode;
-            luaScript.Globals["WriteBiosData"] = (WriteBiosSafeModeDelegator) WriteBiosSafeMode;
-            luaScript.Globals["RemapKey"] = new Action<string, int>(RemapKey);
             luaScript.Globals["SaveTextToFile"] = (SaveTextToFileDelegator) SaveTextToFile;
 
-
             
+            // Expose Bios APIs
+            luaScript.Globals["ReadBiosData"] = new Func<string, string>(ReadBiosSafeMode);
+            luaScript.Globals["WriteBiosData"] = new Action<string, string>(WriteBiosSafeMode);
 
+            //            luaScript.Globals["RemapKey"] = new Action<string, int>(RemapKey);
+
+            luaScript.Globals["NewWorkspacePath"] = new Func<string, WorkspacePath>(WorkspacePath.Parse);
+            
+            UserData.RegisterType<WorkspacePath>();
             UserData.RegisterType<DirectoryItem>();
 
 
@@ -146,31 +160,12 @@ namespace PixelVision8.Runner.Services
 //            luaScript.Globals["Sharpness"] = (SharpnessDelegator)Sharpness;
         }
 
-        
-
-        public void RemapKey(string mapKey, int keyCode)
-        {
-            if (keyCode == -1)
-                return;
-
-            // Check to see if this is an action key and update it.
-//            var success = Enum.TryParse(mapKey, out RunnerGame.ActionKeys actinoKey);
-//            if (success)
-//            {
-//                if (runner.actionKeys.ContainsKey(actinoKey))
-//                {
-//                    runner.actionKeys[actinoKey] = (Keys)keyCode;
-//                }
-//            }
-
-
-// TODO need to rewire mapping action keys since this should be more generic
-
-            // Save the new mapped key to the bios
-            WriteBiosSafeMode(mapKey, keyCode.ToString());
-        }
-
-        public virtual object ReadBiosSafeMode(string key)
+//        public FileSystemPath NewFileSystemPath(string path)
+//        {
+//            return FileSystemPath.Parse(path);
+//        }
+//        
+        public virtual string ReadBiosSafeMode(string key)
         {
             return desktopRunner.bios.ReadBiosData(key, null);
         }
@@ -182,19 +177,6 @@ namespace PixelVision8.Runner.Services
         }
 
         /// <summary>
-        ///     Returns the meta data from a game folder. This containes the name, ext, version and description.
-        /// </summary>
-        /// <param name="path">A valid workspace path to the PV8 archive or game directory.</param>
-        /// <returns>Returns a table with the metadata from the pv8 project.</returns>
-//        public Dictionary<string, object> ReadGameMetaData(string path = null)
-//        {
-//            return desktopRunner.workspaceService.ReadGameMetaData(FileSystemPath.Parse(path).AppendFile("info.json"));
-//        }
-
-
-        
-
-        /// <summary>
         ///     This will read a text file from a valid workspace path and return it as a string. This can read .txt, .json and
         ///     .lua files.
         /// </summary>
@@ -202,63 +184,39 @@ namespace PixelVision8.Runner.Services
         /// <returns>Returns the contents of the file as a string.</returns>
         public string ReadTextFile(string path)
         {
-            var filePath = FileSystemPath.Parse(path);
+            var filePath = WorkspacePath.Parse(path);
 
             return workspace.ReadTextFromFile(filePath);
         }
 
         public bool SaveTextToFile(string filePath, string text, bool autoCreate = false)
         {
-            var path = FileSystemPath.Parse(filePath);
+            var path = WorkspacePath.Parse(filePath);
 
             return workspace.SaveTextToFile(path, text, autoCreate);
         }
 
-
-        // TODO move all of this into the Runner Game
-//        public bool EnableCRT(bool? toggle)
+//        public int ImportColorsFromGameEditor(int? resetIndex = null)
 //        {
-//            return runner.EnableCRT(toggle);
-//        }
+//            var colorChip = runner.activeEngine.colorChip;
 //
-//        public float Brightness(float? brightness = null)
-//        {
-//            return runner.Brightness(brightness);
+//            if (resetIndex.HasValue && resetIndex.Value > 0) colorChip.total = resetIndex.Value;
+//
+////            var totalPages = colorChip.pages;
+//
+//            // The current color chip's total becomes the start index for the new colors
+//            var colorIndex = runner.activeEngine.gameChip.TotalColors(false);
+//
+//            // Set the color chip's page total to the current pages plus the editor's pages
+////            colorChip.pages = totalPages + gameEditor.ColorPages();
+//
+//            var colors = gameEditor.activeColorChip.hexColors;
+//
+//            for (var i = colorIndex; i < colorChip.total; i++)
+//                colorChip.UpdateColorAt(i, colors[i - colorIndex]);
+//
+//            return colorIndex;
 //        }
-//        
-//        public float Sharpness(float? sharpness = null)
-//        {
-//            return runner.Sharpness(sharpness);
-//        }
-
-//        public void CreateGameEditor()
-//        {
-//            gameEditor = new GameEditor(desktopRunner);
-//            // Register the game editor with  the lua service
-//            RegisterType("gameEditor", gameEditor);
-//        }
-
-        public int ImportColorsFromGameEditor(int? resetIndex = null)
-        {
-            var colorChip = runner.activeEngine.colorChip;
-
-            if (resetIndex.HasValue && resetIndex.Value > 0) colorChip.total = resetIndex.Value;
-
-//            var totalPages = colorChip.pages;
-
-            // The current color chip's total becomes the start index for the new colors
-            var colorIndex = runner.activeEngine.gameChip.TotalColors(false);
-
-            // Set the color chip's page total to the current pages plus the editor's pages
-//            colorChip.pages = totalPages + gameEditor.ColorPages();
-
-            var colors = gameEditor.activeColorChip.hexColors;
-
-            for (var i = colorIndex; i < colorChip.total; i++)
-                colorChip.UpdateColorAt(i, colors[i - colorIndex]);
-
-            return colorIndex;
-        }
 
 //        private bool IsExporting()
 //        {
@@ -274,15 +232,15 @@ namespace PixelVision8.Runner.Services
 //            var fileSystem = workspace;
 
 
-            var paths = new List<FileSystemPath>
+            var paths = new List<WorkspacePath>
             {
-                FileSystemPath.Parse("/PixelVisionOS/System/Tools/"),
-                FileSystemPath.Parse("/Workspace/System/Tools/")
+                WorkspacePath.Parse("/PixelVisionOS/System/Tools/"),
+                WorkspacePath.Parse("/Workspace/System/Tools/")
             };
 
             // Add disk paths
             var disks = workspace.DiskPaths();
-            foreach (var disk in disks) paths.Add(FileSystemPath.Parse(disk.Value).AppendDirectory("System").AppendDirectory("Tools"));
+            foreach (var disk in disks) paths.Add(WorkspacePath.Parse(disk.Value).AppendDirectory("System").AppendDirectory("Tools"));
 
             // TODO loop through the workspace and the disks to add new paths
 
@@ -350,7 +308,7 @@ namespace PixelVision8.Runner.Services
 
             try
             {
-                var filePath = workspace.UniqueFilePath(FileSystemPath.Parse(path));
+                var filePath = workspace.UniqueFilePath(WorkspacePath.Parse(path));
 
                 var fileName = filePath.EntityName;
                 var fileExt = filePath.GetExtension();
@@ -553,7 +511,7 @@ namespace PixelVision8.Runner.Services
                 {"message", ""}
             };
 
-            var filePath = FileSystemPath.Parse(path);
+            var filePath = WorkspacePath.Parse(path);
 
             try
             {
@@ -645,9 +603,9 @@ namespace PixelVision8.Runner.Services
                         }
 
 
-                        var tmpExportPath = FileSystemPath.Root.AppendDirectory("Tmp").AppendDirectory("Builds");
+                        var tmpExportPath = WorkspacePath.Root.AppendDirectory("Tmp").AppendDirectory("Builds");
 
-                        FileSystemPath tmpZipPath;
+                        WorkspacePath tmpZipPath;
 
                         try
                         {
@@ -722,7 +680,7 @@ namespace PixelVision8.Runner.Services
 
         public bool PathExists(string path)
         {
-            var filePath = FileSystemPath.Parse(path);
+            var filePath = WorkspacePath.Parse(path);
 
             try
             {
@@ -734,14 +692,14 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        public Dictionary<string, string> DisksPaths()
-        {
-            return workspace.DiskPaths();
-        }
+//        public Dictionary<string, string> DisksPaths()
+//        {
+//            return workspace.DiskPaths();
+//        }
 
         public string ParentDirectory(string path)
         {
-            var filePath = FileSystemPath.Parse(path).ParentPath.Path;
+            var filePath = WorkspacePath.Parse(path).ParentPath.Path;
 
             return filePath;
         }
@@ -770,7 +728,7 @@ namespace PixelVision8.Runner.Services
         {
             directoryItems.Clear();
 
-            var filePath = FileSystemPath.Parse(path);
+            var filePath = WorkspacePath.Parse(path);
 
             if (workspace.Exists(filePath))
             {
@@ -783,7 +741,6 @@ namespace PixelVision8.Runner.Services
                         ignoreFiles.IndexOf(entity.EntityName) <= -1)
                     {
                         var tmpItem = new DirectoryItem(entity);
-
 
                         // Make sure we only include 
                         if (tmpItem.name.Length > 0)
@@ -819,9 +776,9 @@ namespace PixelVision8.Runner.Services
         private delegate List<DirectoryItem> GetDirectoryContentsDelegator(string path, bool testIfGame = false,
             bool ignoreDirectories = false, string[] validFiles = null);
 
-        private delegate object ReadBiosSafeModeDelegator(string key);
-
-        private delegate void WriteBiosSafeModeDelegator(string key, string value);
+//        private delegate object ReadBiosSafeModeDelegator(string key);
+//
+//        private delegate void WriteBiosSafeModeDelegator(string key, string value);
         
         private delegate bool SaveTextToFileDelegator(string filePath, string text, bool autoCreate = false);
 
@@ -830,7 +787,7 @@ namespace PixelVision8.Runner.Services
 
         public bool NewFolder(string path)
         {
-            var filePath = workspace.UniqueFilePath(FileSystemPath.Parse(path));
+            var filePath = workspace.UniqueFilePath(WorkspacePath.Parse(path));
 
             // Need to make sure we don't create a new file over an existing one
             if (filePath.IsDirectory && !workspace.Exists(filePath))
@@ -850,14 +807,14 @@ namespace PixelVision8.Runner.Services
 
         public string UniqueFilePath(string path)
         {
-            return workspace.UniqueFilePath(FileSystemPath.Parse(path)).Path;
+            return workspace.UniqueFilePath(WorkspacePath.Parse(path)).Path;
         }
 
         public bool CopyFile(string src, string dest)
         {
             // Create new paths for the source and destination
-            var srcPath = FileSystemPath.Parse(src);
-            var destPath = FileSystemPath.Parse(dest);
+            var srcPath = WorkspacePath.Parse(src);
+            var destPath = WorkspacePath.Parse(dest);
 
             try
             {
@@ -886,8 +843,8 @@ namespace PixelVision8.Runner.Services
         public bool MoveFile(string src, string dest)
         {
             // Create new paths for the source and destination
-            var srcPath = FileSystemPath.Parse(src);
-            var destPath = FileSystemPath.Parse(dest);
+            var srcPath = WorkspacePath.Parse(src);
+            var destPath = WorkspacePath.Parse(dest);
 
             // Copy fails if an existing file is in the destination directory with the same name
             if (workspace.Exists(destPath))
@@ -942,7 +899,7 @@ namespace PixelVision8.Runner.Services
 
         public bool DeleteFile(string src, bool autoDelete = false)
         {
-            var srcPath = FileSystemPath.Parse(src);
+            var srcPath = WorkspacePath.Parse(src);
 
             try
             {
@@ -950,7 +907,7 @@ namespace PixelVision8.Runner.Services
                 if (autoDelete == false)
                 {
                     // Make sure there is a trash
-                    var destPath = FileSystemPath.Parse("/Tmp/Trash/");
+                    var destPath = WorkspacePath.Parse("/Tmp/Trash/");
 
                     // Create trash if its missing
                     if (!workspace.Exists(destPath)) workspace.CreateDirectory(destPath);

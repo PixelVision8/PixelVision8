@@ -36,7 +36,7 @@ namespace PixelVision8.Runner.Services
         public string spriteBuilderFolderName = "SpriteBuilder";
         protected FileSystemMounter diskMounter = new FileSystemMounter();
         
-        public WorkspaceServicePlus(KeyValuePair<FileSystemPath, IFileSystem> mountPoint) : base(mountPoint)
+        public WorkspaceServicePlus(KeyValuePair<WorkspacePath, IFileSystem> mountPoint) : base(mountPoint)
         {
         }
         
@@ -55,7 +55,7 @@ namespace PixelVision8.Runner.Services
 //            
 //            mounts.Remove()
 //            
-            var filePath = FileSystemPath.Root.AppendDirectory("User");
+            var filePath = WorkspacePath.Root.AppendDirectory("User");
 
             // Make sure that the user directory exits
             if (Exists(filePath))
@@ -69,7 +69,7 @@ namespace PixelVision8.Runner.Services
             var workspaceDisk = new SubFileSystem(this, filePath);
 
             Mounts.Add(
-                new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("Workspace"),
+                new KeyValuePair<WorkspacePath, IFileSystem>(WorkspacePath.Root.AppendDirectory("Workspace"),
                     workspaceDisk));
 
 
@@ -78,9 +78,9 @@ namespace PixelVision8.Runner.Services
 
         public void RebuildWorkspace()
         {
-            var osPath = FileSystemPath.Root.AppendDirectory("PixelVisionOS");
+            var osPath = WorkspacePath.Root.AppendDirectory("PixelVisionOS");
             
-            var mounts = Mounts as SortedList<FileSystemPath, IFileSystem>;
+            var mounts = Mounts as SortedList<WorkspacePath, IFileSystem>;
 
             if (mounts.ContainsKey(osPath))
             {
@@ -90,14 +90,14 @@ namespace PixelVision8.Runner.Services
             var osFileSystem = new MergedFileSystem();
 
             osFileSystem.FileSystems = osFileSystem.FileSystems.Concat(new[] { new SubFileSystem(this,
-                FileSystemPath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS")) });
+                WorkspacePath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS")) });
                 
             // Mount the PixelVisionOS directory
-            AddMount(new KeyValuePair<FileSystemPath, IFileSystem>(osPath, osFileSystem));
+            AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(osPath, osFileSystem));
 
 
             // Create a path to the workspace system folder
-            var path = FileSystemPath.Root.AppendDirectory("Workspace").AppendDirectory("System");
+            var path = WorkspacePath.Root.AppendDirectory("Workspace").AppendDirectory("System");
 
             try
             {
@@ -124,7 +124,7 @@ namespace PixelVision8.Runner.Services
         // Exports the active song in the music chip
         public void ExportSong(string path, MusicChip musicChip, SoundChip soundChip)
         {
-            var filePath = FileSystemPath.Parse(path);
+            var filePath = WorkspacePath.Parse(path);
 
             if (Exists(filePath))
             {
@@ -159,7 +159,7 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        public override void MountFileSystems(Dictionary<FileSystemPath, IFileSystem> fileSystems)
+        public override void MountFileSystems(Dictionary<WorkspacePath, IFileSystem> fileSystems)
         {
             base.MountFileSystems(fileSystems);
             
@@ -169,14 +169,14 @@ namespace PixelVision8.Runner.Services
 
             // Add the disk mount point
             Mounts.Add(
-                new KeyValuePair<FileSystemPath, IFileSystem>(FileSystemPath.Root.AppendDirectory("Disks"),
+                new KeyValuePair<WorkspacePath, IFileSystem>(WorkspacePath.Root.AppendDirectory("Disks"),
                     diskMounter));
 
 
             // Create a disk drive service to mange the disks
 //            diskDrives = new DiskDriveService(diskMounter, totalDisks);
 
-            diskMount = diskMounter.Mounts as SortedList<FileSystemPath, IFileSystem>;
+            diskMount = diskMounter.Mounts as SortedList<WorkspacePath, IFileSystem>;
         }
         
         public Dictionary<string, string> DiskPaths()
@@ -218,10 +218,10 @@ namespace PixelVision8.Runner.Services
 
                 // Test to see if the disk is a valid game
                 if (ValidateGameInDir(disk) == false &&
-                    disk.Exists(FileSystemPath.Root.AppendFile("info.json")) == false) return null;
+                    disk.Exists(WorkspacePath.Root.AppendFile("info.json")) == false) return null;
 
                 // Update the root path to just be the name of the entity
-                var rootPath = FileSystemPath.Root.AppendDirectory(entityName);
+                var rootPath = WorkspacePath.Root.AppendDirectory(entityName);
 
                 // Add the new disk
                 AddDisk(rootPath, disk);
@@ -233,7 +233,7 @@ namespace PixelVision8.Runner.Services
 
         public string AutoRunGameFromDisk(string diskName)
         {
-            var diskPath = FileSystemPath.Root.AppendDirectory("Disks")
+            var diskPath = WorkspacePath.Root.AppendDirectory("Disks")
                 .AppendDirectory(diskName);
 
 
@@ -252,7 +252,7 @@ namespace PixelVision8.Runner.Services
                     var tmpPath = autoRunData["AutoRun"] as string;
 
                     // Get the auto run from the json file
-                    var newDiskPath = FileSystemPath.Parse("/Disks/" + diskName + tmpPath);
+                    var newDiskPath = WorkspacePath.Parse("/Disks/" + diskName + tmpPath);
 
                     // Change the disk path to the one in the auto-run file
                     if (Exists(newDiskPath)) diskPath = newDiskPath;
@@ -291,7 +291,7 @@ namespace PixelVision8.Runner.Services
 //                disk.Save();
                 var fileNameZip = disk.srcPath;
 
-                var files = currentDisk.GetEntitiesRecursive(FileSystemPath.Root);
+                var files = currentDisk.GetEntitiesRecursive(WorkspacePath.Root);
 
                 using (var memoryStream = new MemoryStream())
                 {
@@ -346,10 +346,10 @@ namespace PixelVision8.Runner.Services
             }
 
 
-            var mounts = Mounts as SortedList<FileSystemPath, IFileSystem>;
+            var mounts = Mounts as SortedList<WorkspacePath, IFileSystem>;
 
             // Create a new mount point for the current game
-            var rootPath = FileSystemPath.Root.AppendDirectory("Game");
+            var rootPath = WorkspacePath.Root.AppendDirectory("Game");
 
             // Make sure we don't have a disk with the same name
             if (mounts.ContainsKey(rootPath)) mounts.Remove(rootPath);
@@ -359,7 +359,7 @@ namespace PixelVision8.Runner.Services
         {
             base.IncludeLibDirectoryFiles(files);
                 
-            var paths = new List<FileSystemPath>();
+            var paths = new List<WorkspacePath>();
             
             var diskPaths = disks;
 
@@ -368,7 +368,7 @@ namespace PixelVision8.Runner.Services
             // Loop backwards through disks
             for (var i = totalDisks; i >= 0; i--)
             {
-                var diskPath = FileSystemPath.Root.AppendDirectory("Disks")
+                var diskPath = WorkspacePath.Root.AppendDirectory("Disks")
                     .AppendPath(diskPaths[i].AppendDirectory("System").AppendDirectory("Libs"));
 
                 paths.Add(diskPath);
@@ -390,7 +390,7 @@ namespace PixelVision8.Runner.Services
         }
 
         // Make sure you can only eject a disk by forcing the path to be in the disk mounts scope
-        public void EjectDisk(FileSystemPath? filePath = null)
+        public void EjectDisk(WorkspacePath? filePath = null)
         {
             // Remove the disk if disks exists
             if (total > 0)
@@ -433,7 +433,7 @@ namespace PixelVision8.Runner.Services
         // TODO this is hardcoded but should come from the bios
         
         
-        public bool ValidateSpriteBuilderFolder(FileSystemPath rootPath)
+        public bool ValidateSpriteBuilderFolder(WorkspacePath rootPath)
         {
             // TODO need to make sure this is in the current game directory and uses the filesyem path
             rootPath = rootPath.AppendDirectory(spriteBuilderFolderName);//(string) ReadBiosData("SpriteBuilderDir", "SpriteBuilder"));
@@ -445,7 +445,7 @@ namespace PixelVision8.Runner.Services
         {
             var count = 0;
 
-            var filePath = FileSystemPath.Parse(path);
+            var filePath = WorkspacePath.Parse(path);
 
             var srcPath = filePath.AppendDirectory("SpriteBuilder");
 
@@ -497,8 +497,8 @@ namespace PixelVision8.Runner.Services
             return count;
         }
         
-        private SortedList<FileSystemPath, IFileSystem> diskMount;
-        private List<FileSystemPath> diskNames = new List<FileSystemPath>();
+        private SortedList<WorkspacePath, IFileSystem> diskMount;
+        private List<WorkspacePath> diskNames = new List<WorkspacePath>();
 
 //        public int totalDisks = 5;
 
@@ -511,7 +511,7 @@ namespace PixelVision8.Runner.Services
 
         public int total => diskNames.Count;
 
-        public FileSystemPath[] disks => diskNames.ToArray();
+        public WorkspacePath[] disks => diskNames.ToArray();
 
         public string[] physicalPaths
         {
@@ -544,7 +544,7 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        public void AddDisk(FileSystemPath path, IFileSystem disk)
+        public void AddDisk(WorkspacePath path, IFileSystem disk)
         {
             // If for some reason we don't have a mount point we need to exit out of this method
             if (diskMount == null)
@@ -563,7 +563,7 @@ namespace PixelVision8.Runner.Services
             diskNames.Add(path);
         }
 
-        public void RemoveDisk(FileSystemPath path)
+        public void RemoveDisk(WorkspacePath path)
         {
             if (diskMount.ContainsKey(path))
             {
@@ -578,7 +578,7 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        public void SaveDisk(FileSystemPath path)
+        public void SaveDisk(WorkspacePath path)
         {
 //            Console.WriteLine("Attempting to save disk " + path);
 

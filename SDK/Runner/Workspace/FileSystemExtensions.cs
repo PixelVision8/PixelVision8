@@ -53,7 +53,7 @@ namespace PixelVision8.Runner.Workspace
 //                paths.Select(p => FileSystemEntity.Create(directory.FileSystem, p)), paths.Count);
 //        }
 
-        public static IEnumerable<FileSystemPath> GetEntitiesRecursive(this IFileSystem fileSystem, FileSystemPath path)
+        public static IEnumerable<WorkspacePath> GetEntitiesRecursive(this IFileSystem fileSystem, WorkspacePath path)
         {
             if (!path.IsDirectory)
                 throw new ArgumentException("The specified path is not a directory.");
@@ -66,11 +66,11 @@ namespace PixelVision8.Runner.Workspace
             }
         }
 
-        public static void CreateDirectoryRecursive(this IFileSystem fileSystem, FileSystemPath path)
+        public static void CreateDirectoryRecursive(this IFileSystem fileSystem, WorkspacePath path)
         {
             if (!path.IsDirectory)
                 throw new ArgumentException("The specified path is not a directory.");
-            var currentDirectoryPath = FileSystemPath.Root;
+            var currentDirectoryPath = WorkspacePath.Root;
             foreach (var dirName in path.GetDirectorySegments())
             {
                 currentDirectoryPath = currentDirectoryPath.AppendDirectory(dirName);
@@ -83,8 +83,8 @@ namespace PixelVision8.Runner.Workspace
         
         private static readonly int BufferSize = 65536;
         
-        public static void Move(this IFileSystem sourceFileSystem, FileSystemPath sourcePath,
-            IFileSystem destinationFileSystem, FileSystemPath destinationPath)
+        public static void Move(this IFileSystem sourceFileSystem, WorkspacePath sourcePath,
+            IFileSystem destinationFileSystem, WorkspacePath destinationPath)
         {
             
             bool isFile;
@@ -150,8 +150,8 @@ namespace PixelVision8.Runner.Workspace
 
         #region Copy Extensions
 
-        public static void Copy(this IFileSystem sourceFileSystem, FileSystemPath sourcePath,
-            IFileSystem destinationFileSystem, FileSystemPath destinationPath)
+        public static void Copy(this IFileSystem sourceFileSystem, WorkspacePath sourcePath,
+            IFileSystem destinationFileSystem, WorkspacePath destinationPath)
         {
             bool isFile;
             if ((isFile = sourcePath.IsFile) != destinationPath.IsFile)

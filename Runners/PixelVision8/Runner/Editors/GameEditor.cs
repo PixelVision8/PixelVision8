@@ -137,7 +137,7 @@ namespace PixelVision8.Runner.Editors
 //            
             // TODO this is hard coded to the disks directory and should be from the bios or somewhere else?
             // Convert to a system path
-            var filePath = FileSystemPath.Parse(path);
+            var filePath = WorkspacePath.Parse(path);
 
             // If the file doesn't exist, return false.
             if (!workspace.Exists(filePath))
@@ -1211,7 +1211,7 @@ namespace PixelVision8.Runner.Editors
         public bool LoadImage(string path)
         {
             // Convert to a system path
-            var filePath = FileSystemPath.Parse(path);
+            var filePath = WorkspacePath.Parse(path);
 
             // If the file doesn't exist, return false.
             if (!workspace.Exists(filePath))
@@ -1300,7 +1300,7 @@ namespace PixelVision8.Runner.Editors
         public bool LoadFont(string path)
         {
             // Convert to a system path
-            var filePath = FileSystemPath.Parse(path);
+            var filePath = WorkspacePath.Parse(path);
 
             // If the file doesn't exist, return false.
             if (!workspace.Exists(filePath))
@@ -1377,7 +1377,7 @@ namespace PixelVision8.Runner.Editors
         {
             var engineName = targetGame.name;
 
-            var parentFilePath = FileSystemPath.Parse(engineName).ParentPath;
+            var parentFilePath = WorkspacePath.Parse(engineName).ParentPath;
 
             if (fontName != oldName)
             {
@@ -2139,7 +2139,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public bool SpriteBuilderActive(string rootPath)
         {
-            var filePath = FileSystemPath.Parse(rootPath);
+            var filePath = WorkspacePath.Parse(rootPath);
 
             // Check to see if the sprite builder folder exists
             return workspace.ValidateSpriteBuilderFolder(filePath);

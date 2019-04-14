@@ -96,8 +96,8 @@ namespace PixelVision8.Runner
         
         protected override void CreateWorkspaceService()
         {
-            workspaceServicePlus = new WorkspaceServicePlus(new KeyValuePair<FileSystemPath, IFileSystem>(
-                FileSystemPath.Root.AppendDirectory("App"),
+            workspaceServicePlus = new WorkspaceServicePlus(new KeyValuePair<WorkspacePath, IFileSystem>(
+                WorkspacePath.Root.AppendDirectory("App"),
                 new PhysicalFileSystem(rootPath)));
 
             // Pass the new service back to the base class    
@@ -131,7 +131,7 @@ namespace PixelVision8.Runner
                 .ToList();
 
             // Include any library files in the OS mount point
-            workspaceServicePlus.osLibPath = FileSystemPath.Root.AppendDirectory("PixelVisionOS")
+            workspaceServicePlus.osLibPath = WorkspacePath.Root.AppendDirectory("PixelVisionOS")
                 .AppendDirectory((string) bios.ReadBiosData("LibsDir", "Libs"));
 
             // PV8 Needs to access the documents folder so it can create the workspace drive
@@ -141,8 +141,8 @@ namespace PixelVision8.Runner
             documentsPath = Path.Combine(Documents, baseDir);
             
             // Create a new physical file system mount
-            workspaceServicePlus.AddMount(new KeyValuePair<FileSystemPath, IFileSystem>(
-                FileSystemPath.Root.AppendDirectory("User"),
+            workspaceServicePlus.AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(
+                WorkspacePath.Root.AppendDirectory("User"),
                 new PhysicalFileSystem(documentsPath)));
             
             // Look for the workspace name
@@ -215,7 +215,7 @@ namespace PixelVision8.Runner
         
         public void EjectDisk(string path)
         {
-            workspaceServicePlus.EjectDisk(FileSystemPath.Parse(path));
+            workspaceServicePlus.EjectDisk(WorkspacePath.Parse(path));
 
             UpdateDiskInBios();
 
@@ -444,11 +444,11 @@ namespace PixelVision8.Runner
                 var biosAutoRun = (string) bios.ReadBiosData("AutoRun", "");
                 
                 // Check to see if this path exists
-                if (workspaceServicePlus.Exists(FileSystemPath.Parse(biosAutoRun)))
+                if (workspaceServicePlus.Exists(WorkspacePath.Parse(biosAutoRun)))
                 {
 
                     // Validate that the path is actually a game
-                    if (workspaceServicePlus.ValidateGameInDir(FileSystemPath.Parse(biosAutoRun)))
+                    if (workspaceServicePlus.ValidateGameInDir(WorkspacePath.Parse(biosAutoRun)))
                     {
                         // Attempt to load the game
                         Load(biosAutoRun, RunnerMode.Loading);
@@ -773,7 +773,7 @@ namespace PixelVision8.Runner
 
             //TODO this nees to also pass in the last metaData state
             // Load the last game from the history
-            var lastURI = FileSystemPath.Parse(loadHistory.Last());
+            var lastURI = WorkspacePath.Parse(loadHistory.Last());
             var metaData = metaDataHistory.Last();
 
             // Clear the load history if it is loading the first item

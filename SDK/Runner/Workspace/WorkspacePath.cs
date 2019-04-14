@@ -30,10 +30,10 @@ using System.Linq;
 
 namespace PixelVision8.Runner.Workspace
 {
-    public struct FileSystemPath : IEquatable<FileSystemPath>, IComparable<FileSystemPath>
+    public struct WorkspacePath : IEquatable<WorkspacePath>, IComparable<WorkspacePath>
     {
         public static readonly char DirectorySeparator = '/';
-        public static FileSystemPath Root { get; }
+        public static WorkspacePath Root { get; }
 
         private readonly string _path;
 
@@ -60,7 +60,7 @@ namespace PixelVision8.Runner.Workspace
             }
         }
 
-        public FileSystemPath ParentPath
+        public WorkspacePath ParentPath
         {
             get
             {
@@ -73,16 +73,16 @@ namespace PixelVision8.Runner.Workspace
                 var index = parentPath.LastIndexOf(DirectorySeparator, lookaheadCount - 1, lookaheadCount);
                 Debug.Assert(index >= 0);
                 parentPath = parentPath.Remove(index + 1);
-                return new FileSystemPath(parentPath);
+                return new WorkspacePath(parentPath);
             }
         }
 
-        static FileSystemPath()
+        static WorkspacePath()
         {
-            Root = new FileSystemPath(DirectorySeparator.ToString());
+            Root = new WorkspacePath(DirectorySeparator.ToString());
         }
 
-        private FileSystemPath(string path)
+        private WorkspacePath(string path)
         {
             _path = path;
         }
@@ -94,7 +94,7 @@ namespace PixelVision8.Runner.Workspace
             return s[0] == DirectorySeparator;
         }
 
-        public static FileSystemPath Parse(string s)
+        public static WorkspacePath Parse(string s)
         {
             if (s == null)
                 throw new ArgumentNullException("s");
@@ -102,75 +102,75 @@ namespace PixelVision8.Runner.Workspace
                 throw new ParseException(s, "Path is not rooted");
             if (s.Contains(string.Concat(DirectorySeparator, DirectorySeparator)))
                 throw new ParseException(s, "Path contains double directory-separators.");
-            return new FileSystemPath(s);
+            return new WorkspacePath(s);
         }
 
-        public FileSystemPath AppendPath(string relativePath)
+        public WorkspacePath AppendPath(string relativePath)
         {
             if (IsRooted(relativePath))
                 throw new ArgumentException("The specified path should be relative.", "relativePath");
             if (!IsDirectory)
                 throw new InvalidOperationException("This FileSystemPath is not a directory.");
-            return new FileSystemPath(Path + relativePath);
+            return new WorkspacePath(Path + relativePath);
         }
 
         [Pure]
-        public FileSystemPath AppendPath(FileSystemPath path)
+        public WorkspacePath AppendPath(WorkspacePath path)
         {
             if (!IsDirectory)
                 throw new InvalidOperationException("This FileSystemPath is not a directory.");
-            return new FileSystemPath(Path + path.Path.Substring(1));
+            return new WorkspacePath(Path + path.Path.Substring(1));
         }
 
         [Pure]
-        public FileSystemPath AppendDirectory(string directoryName)
+        public WorkspacePath AppendDirectory(string directoryName)
         {
             if (directoryName.Contains(DirectorySeparator.ToString()))
                 throw new ArgumentException("The specified name includes directory-separator(s).", "directoryName");
             if (!IsDirectory)
                 throw new InvalidOperationException("The specified FileSystemPath is not a directory.");
-            return new FileSystemPath(Path + directoryName + DirectorySeparator);
+            return new WorkspacePath(Path + directoryName + DirectorySeparator);
         }
 
         [Pure]
-        public FileSystemPath AppendFile(string fileName)
+        public WorkspacePath AppendFile(string fileName)
         {
             if (fileName.Contains(DirectorySeparator.ToString()))
                 throw new ArgumentException("The specified name includes directory-separator(s).", "fileName");
             if (!IsDirectory)
                 throw new InvalidOperationException("The specified FileSystemPath is not a directory.");
-            return new FileSystemPath(Path + fileName);
+            return new WorkspacePath(Path + fileName);
         }
 
         [Pure]
-        public bool IsParentOf(FileSystemPath path)
+        public bool IsParentOf(WorkspacePath path)
         {
             return IsDirectory && Path.Length != path.Path.Length && path.Path.StartsWith(Path);
         }
 
         [Pure]
-        public bool IsChildOf(FileSystemPath path)
+        public bool IsChildOf(WorkspacePath path)
         {
             return path.IsParentOf(this);
         }
 
         [Pure]
-        public FileSystemPath RemoveParent(FileSystemPath parent)
+        public WorkspacePath RemoveParent(WorkspacePath parent)
         {
             if (!parent.IsDirectory)
                 throw new ArgumentException(
                     "The specified path can not be the parent of this path: it is not a directory.");
             if (!Path.StartsWith(parent.Path))
                 throw new ArgumentException("The specified path is not a parent of this path.");
-            return new FileSystemPath(Path.Remove(0, parent.Path.Length - 1));
+            return new WorkspacePath(Path.Remove(0, parent.Path.Length - 1));
         }
 
         [Pure]
-        public FileSystemPath RemoveChild(FileSystemPath child)
+        public WorkspacePath RemoveChild(WorkspacePath child)
         {
             if (!Path.EndsWith(child.Path))
                 throw new ArgumentException("The specified path is not a child of this path.");
-            return new FileSystemPath(Path.Substring(0, Path.Length - child.Path.Length + 1));
+            return new WorkspacePath(Path.Substring(0, Path.Length - child.Path.Length + 1));
         }
 
         [Pure]
@@ -186,7 +186,7 @@ namespace PixelVision8.Runner.Workspace
         }
 
         [Pure]
-        public FileSystemPath ChangeExtension(string extension)
+        public WorkspacePath ChangeExtension(string extension)
         {
             if (!IsFile)
                 throw new ArgumentException("The specified FileSystemPath is not a file.");
@@ -214,7 +214,7 @@ namespace PixelVision8.Runner.Workspace
         }
 
         [Pure]
-        public int CompareTo(FileSystemPath other)
+        public int CompareTo(WorkspacePath other)
         {
             return Path.CompareTo(other.Path);
         }
@@ -228,13 +228,13 @@ namespace PixelVision8.Runner.Workspace
         [Pure]
         public override bool Equals(object obj)
         {
-            if (obj is FileSystemPath)
-                return Equals((FileSystemPath) obj);
+            if (obj is WorkspacePath)
+                return Equals((WorkspacePath) obj);
             return false;
         }
 
         [Pure]
-        public bool Equals(FileSystemPath other)
+        public bool Equals(WorkspacePath other)
         {
             return other.Path.Equals(Path);
         }
@@ -245,12 +245,12 @@ namespace PixelVision8.Runner.Workspace
             return Path.GetHashCode();
         }
 
-        public static bool operator ==(FileSystemPath pathA, FileSystemPath pathB)
+        public static bool operator ==(WorkspacePath pathA, WorkspacePath pathB)
         {
             return pathA.Equals(pathB);
         }
 
-        public static bool operator !=(FileSystemPath pathA, FileSystemPath pathB)
+        public static bool operator !=(WorkspacePath pathA, WorkspacePath pathB)
         {
             return !(pathA == pathB);
         }

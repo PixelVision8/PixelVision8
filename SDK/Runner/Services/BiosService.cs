@@ -29,7 +29,7 @@ namespace PixelVision8.Runner.Services
 
         private readonly Dictionary<string, string> biosData;
 
-        public Dictionary<string, object> userBiosChanges;
+        public Dictionary<string, string> userBiosChanges;
 
         public BiosService()
         {
@@ -70,7 +70,7 @@ namespace PixelVision8.Runner.Services
             else
                 biosData.Add(key, value);
 
-            if (userBiosChanges == null) userBiosChanges = new Dictionary<string, object>();
+            if (userBiosChanges == null) userBiosChanges = new Dictionary<string, string>();
 
             // Update the user bios and save it
             if (userBiosChanges.ContainsKey(key))

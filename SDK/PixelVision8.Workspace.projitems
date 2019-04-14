@@ -19,7 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\Collections\EnumerableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\Collections\InverseComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystemExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystemPath.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\WorkspacePath.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\FileSystemMounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\MemoryFileSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\MergedFileSystem.cs" />

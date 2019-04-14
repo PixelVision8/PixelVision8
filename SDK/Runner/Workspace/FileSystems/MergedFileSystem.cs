@@ -49,9 +49,9 @@ namespace PixelVision8.Runner.Workspace
                 fs.Dispose();
         }
 
-        public ICollection<FileSystemPath> GetEntities(FileSystemPath path)
+        public ICollection<WorkspacePath> GetEntities(WorkspacePath path)
         {
-            var entities = new SortedList<FileSystemPath, FileSystemPath>();
+            var entities = new SortedList<WorkspacePath, WorkspacePath>();
             foreach (var fs in FileSystems.Where(fs => fs.Exists(path)))
             foreach (var entity in fs.GetEntities(path))
                 if (!entities.ContainsKey(entity))
@@ -59,18 +59,18 @@ namespace PixelVision8.Runner.Workspace
             return entities.Values;
         }
 
-        public bool Exists(FileSystemPath path)
+        public bool Exists(WorkspacePath path)
         {
             return FileSystems.Any(fs => fs.Exists(path));
         }
 
-        public Stream CreateFile(FileSystemPath path)
+        public Stream CreateFile(WorkspacePath path)
         {
             var fs = GetFirst(path) ?? FileSystems.First();
             return fs.CreateFile(path);
         }
 
-        public Stream OpenFile(FileSystemPath path, FileAccess access)
+        public Stream OpenFile(WorkspacePath path, FileAccess access)
         {
             var fs = GetFirst(path);
             if (fs == null)
@@ -78,7 +78,7 @@ namespace PixelVision8.Runner.Workspace
             return fs.OpenFile(path, access);
         }
 
-        public void CreateDirectory(FileSystemPath path)
+        public void CreateDirectory(WorkspacePath path)
         {
             if (Exists(path))
                 throw new ArgumentException("The specified directory already exists.");
@@ -88,13 +88,13 @@ namespace PixelVision8.Runner.Workspace
             fs.CreateDirectory(path);
         }
 
-        public void Delete(FileSystemPath path)
+        public void Delete(WorkspacePath path)
         {
             foreach (var fs in FileSystems.Where(fs => fs.Exists(path)))
                 fs.Delete(path);
         }
 
-        public IFileSystem GetFirst(FileSystemPath path)
+        public IFileSystem GetFirst(WorkspacePath path)
         {
             return FileSystems.FirstOrDefault(fs => fs.Exists(path));
         }

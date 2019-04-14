@@ -33,7 +33,7 @@ namespace PixelVision8.Runner.Services
 
         #region Default paths
     
-        public FileSystemPath TmpFileSystemPath { get; set; } = FileSystemPath.Root.AppendDirectory("Tmp");
+        public WorkspacePath TmpFileSystemPath { get; set; } = WorkspacePath.Root.AppendDirectory("Tmp");
         
 
         #endregion
@@ -49,11 +49,11 @@ namespace PixelVision8.Runner.Services
         };
 
 //        protected FileSystemMounter fileSystem;
-        protected FileSystemPath logFilePath;
+        protected WorkspacePath logFilePath;
         protected LogService logService;
         protected IFileSystem currentDisk;
-        public FileSystemPath osLibPath;
-        public FileSystemPath workspaceLibPath;
+        public WorkspacePath osLibPath;
+        public WorkspacePath workspaceLibPath;
         
         public List<string> requiredFiles = new List<string>
         {
@@ -64,7 +64,7 @@ namespace PixelVision8.Runner.Services
         /// <summary>
         ///     This class manages all of the logic Pixel Vision 8 needs to create and manage the workspace.
         /// </summary>
-        public WorkspaceService(KeyValuePair<FileSystemPath, IFileSystem> mountPoint) :base(mountPoint)
+        public WorkspaceService(KeyValuePair<WorkspacePath, IFileSystem> mountPoint) :base(mountPoint)
         {
 //            fileSystem = new FileSystemMounter(mountPoint);
 //            EntityMovers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityMover());
@@ -77,16 +77,16 @@ namespace PixelVision8.Runner.Services
         ///     This mounts the file system from a collection of File System Paths and File System instances.
         /// </summary>
         /// <param name="fileSystems"></param>
-        public virtual void MountFileSystems(Dictionary<FileSystemPath, IFileSystem> fileSystems)
+        public virtual void MountFileSystems(Dictionary<WorkspacePath, IFileSystem> fileSystems)
         {
             // Create a new File System
             foreach (var mountPoint in fileSystems)
             {
-                AddMount(new KeyValuePair<FileSystemPath, IFileSystem>(mountPoint.Key, mountPoint.Value));
+                AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(mountPoint.Key, mountPoint.Value));
             }
         }
         
-        public bool ValidateGameInDir(FileSystemPath filePath)
+        public bool ValidateGameInDir(WorkspacePath filePath)
         {
             if (!Exists(filePath))
                 return false;
@@ -107,7 +107,7 @@ namespace PixelVision8.Runner.Services
             try
             {
                 foreach (var file in requiredFiles)
-                    if (target.Exists(FileSystemPath.Root.AppendFile(file)))
+                    if (target.Exists(WorkspacePath.Root.AppendFile(file)))
                         flag++;
             }
             catch
@@ -123,7 +123,7 @@ namespace PixelVision8.Runner.Services
         {
             var savePath = "/";
 
-            var filePath = FileSystemPath.Parse(gamePath);
+            var filePath = WorkspacePath.Parse(gamePath);
 
 
             var parentFilePath = filePath.ParentPath;
@@ -153,7 +153,7 @@ namespace PixelVision8.Runner.Services
                 try
                 {
                     // Anything that is not in the "/Workspace/" root is routed to save into the tmp directory
-                    var path = FileSystemPath.Parse(file.Key);
+                    var path = WorkspacePath.Parse(file.Key);
 
 //                    Console.WriteLine("Save Exported file " + file.Key + " to " + path);
 
@@ -201,7 +201,7 @@ namespace PixelVision8.Runner.Services
 
         }
 
-        public string[] SplitFileName(FileSystemPath filePath)
+        public string[] SplitFileName(WorkspacePath filePath)
         {
             var split = filePath.EntityName.Split('.').ToList();
 
@@ -218,7 +218,7 @@ namespace PixelVision8.Runner.Services
             return results;
         }
 
-        public FileSystemPath UniqueFilePath(FileSystemPath path)
+        public WorkspacePath UniqueFilePath(WorkspacePath path)
         {
             if (!Exists(path)) return path;
 
@@ -226,7 +226,7 @@ namespace PixelVision8.Runner.Services
             var name = fileSplit[0];
 
             var ix = 0;
-            FileSystemPath filePath;
+            WorkspacePath filePath;
 
             do
             {
@@ -244,7 +244,7 @@ namespace PixelVision8.Runner.Services
             return filePath;
         }
 
-        public bool WriteAccess(FileSystemPath path)
+        public bool WriteAccess(WorkspacePath path)
         {
             var canWrite = false;
 
@@ -286,7 +286,7 @@ namespace PixelVision8.Runner.Services
             return canWrite;
         }
 
-        public void SetupLogFile(FileSystemPath filePath)
+        public void SetupLogFile(WorkspacePath filePath)
         {
             if (logService == null)
             {
@@ -325,7 +325,7 @@ namespace PixelVision8.Runner.Services
 
         #region File IO
 
-        public string ReadTextFromFile(FileSystemPath filePath)
+        public string ReadTextFromFile(WorkspacePath filePath)
         {
 //            var filePath = FileSystemPath.Parse(path);
 
@@ -347,7 +347,7 @@ namespace PixelVision8.Runner.Services
             return "";
         }
 
-        public bool SaveTextToFile(FileSystemPath filePath, string text, bool autoCreate = false)
+        public bool SaveTextToFile(WorkspacePath filePath, string text, bool autoCreate = false)
         {
 
             Stream file = null;
@@ -375,7 +375,7 @@ namespace PixelVision8.Runner.Services
         
         public Dictionary<string, byte[]> LoadGame(string path)
         {
-            var filePath = FileSystemPath.Parse(path); //FileSystemPath.Root.AppendPath(fullPath);
+            var filePath = WorkspacePath.Parse(path); //FileSystemPath.Root.AppendPath(fullPath);
             var exits = Exists(filePath);
 
             Dictionary<string, byte[]> files = null;
@@ -399,10 +399,10 @@ namespace PixelVision8.Runner.Services
                             }
 
                     // We need to get a list of the current mounts
-                    var mounts = Mounts as SortedList<FileSystemPath, IFileSystem>;
+                    var mounts = Mounts as SortedList<WorkspacePath, IFileSystem>;
 
                     // Create a new mount point for the current game
-                    var rootPath = FileSystemPath.Root.AppendDirectory("Game");
+                    var rootPath = WorkspacePath.Root.AppendDirectory("Game");
 
                     // Make sure we don't have a disk with the same name
                     if (mounts.ContainsKey(rootPath)) mounts.Remove(rootPath);
@@ -417,7 +417,7 @@ namespace PixelVision8.Runner.Services
                     try
                     {
                         // Convert the path to a system path
-                        var tmpFilePath = FileSystemPath.Parse(path);
+                        var tmpFilePath = WorkspacePath.Parse(path);
 
 
                         // TODO should we still try to load the saves file from a zip?
@@ -430,7 +430,7 @@ namespace PixelVision8.Runner.Services
 //                        if (WriteAccess(tmpFilePath) == false)
 //                        {
                             // Check if save file is in tmp directory
-                            var saveFile = FileSystemPath.Parse(FindValidSavePath(tmpFilePath.Path));
+                            var saveFile = WorkspacePath.Parse(FindValidSavePath(tmpFilePath.Path));
 
                             if (saveFile.Path != "/" && Exists(saveFile))
                                 using (var memoryStream = new MemoryStream())
@@ -477,7 +477,7 @@ namespace PixelVision8.Runner.Services
         public virtual void IncludeLibDirectoryFiles(Dictionary<string, byte[]> files)
         {
             // Create paths to the System/Libs and Workspace/Libs folder
-            var paths = new List<FileSystemPath>
+            var paths = new List<WorkspacePath>
             {
                 // Look in the system folder
                 osLibPath
@@ -490,7 +490,7 @@ namespace PixelVision8.Runner.Services
             AddExtraFiles(files, paths);
         }
 
-        public IFileSystem ReadDisk(FileSystemPath path)
+        public IFileSystem ReadDisk(WorkspacePath path)
         {
             IFileSystem disk = null;
 
@@ -513,7 +513,7 @@ namespace PixelVision8.Runner.Services
         public Dictionary<string, byte[]> ConvertDiskFilesToBytes(IFileSystem disk)
         {
             var files = new Dictionary<string, byte[]>();
-            var tmpFiles = disk.GetEntities(FileSystemPath.Root);
+            var tmpFiles = disk.GetEntities(WorkspacePath.Root);
 
             var list = from p in tmpFiles
                 where fileExtensions.Any(val => p.EntityName.EndsWith(val))
@@ -537,7 +537,7 @@ namespace PixelVision8.Runner.Services
             return files;
         }
 
-        public void AddExtraFiles(Dictionary<string, byte[]> files, List<FileSystemPath> paths)
+        public void AddExtraFiles(Dictionary<string, byte[]> files, List<WorkspacePath> paths)
         {
             var libs = new Dictionary<string, byte[]>();
 
@@ -629,12 +629,12 @@ namespace PixelVision8.Runner.Services
 //            Delete(path);
 //        }
 
-        public void Copy(FileSystemPath src, FileSystemPath dest)
+        public void Copy(WorkspacePath src, WorkspacePath dest)
         {
             this.Copy(src, this, dest);
         }
         
-        public void Move(FileSystemPath src, FileSystemPath dest)
+        public void Move(WorkspacePath src, WorkspacePath dest)
         {
             this.Move(src, this, dest);
         }
@@ -644,7 +644,7 @@ namespace PixelVision8.Runner.Services
 //            CreateDirectoryRecursive(path);
 //        }
 
-        public void AddMount(KeyValuePair<FileSystemPath, IFileSystem> mount)
+        public void AddMount(KeyValuePair<WorkspacePath, IFileSystem> mount)
         {
             Mounts.Add(mount);
         }

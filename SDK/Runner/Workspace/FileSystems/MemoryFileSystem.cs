@@ -30,33 +30,33 @@ namespace PixelVision8.Runner.Workspace
 {
     public class MemoryFileSystem : IFileSystem
     {
-        private readonly IDictionary<FileSystemPath, ISet<FileSystemPath>> _directories =
-            new Dictionary<FileSystemPath, ISet<FileSystemPath>>();
+        private readonly IDictionary<WorkspacePath, ISet<WorkspacePath>> _directories =
+            new Dictionary<WorkspacePath, ISet<WorkspacePath>>();
 
-        private readonly IDictionary<FileSystemPath, MemoryFile> _files =
-            new Dictionary<FileSystemPath, MemoryFile>();
+        private readonly IDictionary<WorkspacePath, MemoryFile> _files =
+            new Dictionary<WorkspacePath, MemoryFile>();
 
         public MemoryFileSystem()
         {
-            _directories.Add(FileSystemPath.Root, new HashSet<FileSystemPath>());
+            _directories.Add(WorkspacePath.Root, new HashSet<WorkspacePath>());
         }
 
-        public ICollection<FileSystemPath> GetEntities(FileSystemPath path)
+        public ICollection<WorkspacePath> GetEntities(WorkspacePath path)
         {
             if (!path.IsDirectory)
                 throw new ArgumentException("The specified path is no directory.", "path");
-            ISet<FileSystemPath> subentities;
+            ISet<WorkspacePath> subentities;
             if (!_directories.TryGetValue(path, out subentities))
                 throw new DirectoryNotFoundException();
             return subentities;
         }
 
-        public bool Exists(FileSystemPath path)
+        public bool Exists(WorkspacePath path)
         {
             return path.IsDirectory ? _directories.ContainsKey(path) : _files.ContainsKey(path);
         }
 
-        public Stream CreateFile(FileSystemPath path)
+        public Stream CreateFile(WorkspacePath path)
         {
             if (!path.IsFile)
                 throw new ArgumentException("The specified path is no file.", "path");
@@ -66,7 +66,7 @@ namespace PixelVision8.Runner.Workspace
             return new MemoryFileStream(_files[path] = new MemoryFile());
         }
 
-        public Stream OpenFile(FileSystemPath path, FileAccess access)
+        public Stream OpenFile(WorkspacePath path, FileAccess access)
         {
             if (!path.IsFile)
                 throw new ArgumentException("The specified path is no file.", "path");
@@ -76,20 +76,20 @@ namespace PixelVision8.Runner.Workspace
             return new MemoryFileStream(file);
         }
 
-        public void CreateDirectory(FileSystemPath path)
+        public void CreateDirectory(WorkspacePath path)
         {
             if (!path.IsDirectory)
                 throw new ArgumentException("The specified path is no directory.", "path");
-            ISet<FileSystemPath> subentities;
+            ISet<WorkspacePath> subentities;
             if (_directories.ContainsKey(path))
                 throw new ArgumentException("The specified directory-path already exists.", "path");
             if (!_directories.TryGetValue(path.ParentPath, out subentities))
                 throw new DirectoryNotFoundException();
             subentities.Add(path);
-            _directories[path] = new HashSet<FileSystemPath>();
+            _directories[path] = new HashSet<WorkspacePath>();
         }
 
-        public void Delete(FileSystemPath path)
+        public void Delete(WorkspacePath path)
         {
             if (path.IsRoot)
                 throw new ArgumentException("The root cannot be deleted.");

@@ -31,7 +31,7 @@ namespace PixelVision8.Runner.Workspace
 {
     public class PhysicalFileSystem : IFileSystem
     {
-        public ICollection<FileSystemPath> GetEntities(FileSystemPath path)
+        public ICollection<WorkspacePath> GetEntities(WorkspacePath path)
         {
             var physicalPath = GetPhysicalPath(path);
             var directories = Directory.GetDirectories(physicalPath);
@@ -40,39 +40,39 @@ namespace PixelVision8.Runner.Workspace
                 directories.Select(p => GetVirtualDirectoryPath(p));
             var virtualFiles =
                 files.Select(p => GetVirtualFilePath(p));
-            return new EnumerableCollection<FileSystemPath>(virtualDirectories.Concat(virtualFiles),
+            return new EnumerableCollection<WorkspacePath>(virtualDirectories.Concat(virtualFiles),
                 directories.Length + files.Length);
         }
 
-        public bool Exists(FileSystemPath path)
+        public bool Exists(WorkspacePath path)
         {
             return path.IsFile
                 ? File.Exists(GetPhysicalPath(path))
                 : Directory.Exists(GetPhysicalPath(path));
         }
 
-        public Stream CreateFile(FileSystemPath path)
+        public Stream CreateFile(WorkspacePath path)
         {
             if (!path.IsFile)
                 throw new ArgumentException("The specified path is not a file.", "path");
             return File.Create(GetPhysicalPath(path));
         }
 
-        public Stream OpenFile(FileSystemPath path, FileAccess access)
+        public Stream OpenFile(WorkspacePath path, FileAccess access)
         {
             if (!path.IsFile)
                 throw new ArgumentException("The specified path is not a file.", "path");
             return File.Open(GetPhysicalPath(path), FileMode.Open, access);
         }
 
-        public void CreateDirectory(FileSystemPath path)
+        public void CreateDirectory(WorkspacePath path)
         {
             if (!path.IsDirectory)
                 throw new ArgumentException("The specified path is not a directory.", "path");
             Directory.CreateDirectory(GetPhysicalPath(path));
         }
 
-        public void Delete(FileSystemPath path)
+        public void Delete(WorkspacePath path)
         {
             if (path.IsFile)
                 File.Delete(GetPhysicalPath(path));
@@ -97,30 +97,30 @@ namespace PixelVision8.Runner.Workspace
             PhysicalRoot = physicalRoot;
         }
 
-        public string GetPhysicalPath(FileSystemPath path)
+        public string GetPhysicalPath(WorkspacePath path)
         {
             return Path.Combine(PhysicalRoot,
-                path.ToString().Remove(0, 1).Replace(FileSystemPath.DirectorySeparator, Path.DirectorySeparatorChar));
+                path.ToString().Remove(0, 1).Replace(WorkspacePath.DirectorySeparator, Path.DirectorySeparatorChar));
         }
 
-        public FileSystemPath GetVirtualFilePath(string physicalPath)
+        public WorkspacePath GetVirtualFilePath(string physicalPath)
         {
             if (!physicalPath.StartsWith(PhysicalRoot, StringComparison.InvariantCultureIgnoreCase))
                 throw new ArgumentException("The specified path is not member of the PhysicalRoot.", "physicalPath");
-            var virtualPath = FileSystemPath.DirectorySeparator + physicalPath.Remove(0, PhysicalRoot.Length)
-                                  .Replace(Path.DirectorySeparatorChar, FileSystemPath.DirectorySeparator);
-            return FileSystemPath.Parse(virtualPath);
+            var virtualPath = WorkspacePath.DirectorySeparator + physicalPath.Remove(0, PhysicalRoot.Length)
+                                  .Replace(Path.DirectorySeparatorChar, WorkspacePath.DirectorySeparator);
+            return WorkspacePath.Parse(virtualPath);
         }
 
-        public FileSystemPath GetVirtualDirectoryPath(string physicalPath)
+        public WorkspacePath GetVirtualDirectoryPath(string physicalPath)
         {
             if (!physicalPath.StartsWith(PhysicalRoot, StringComparison.InvariantCultureIgnoreCase))
                 throw new ArgumentException("The specified path is not member of the PhysicalRoot.", "physicalPath");
-            var virtualPath = FileSystemPath.DirectorySeparator + physicalPath.Remove(0, PhysicalRoot.Length)
-                                  .Replace(Path.DirectorySeparatorChar, FileSystemPath.DirectorySeparator);
-            if (virtualPath[virtualPath.Length - 1] != FileSystemPath.DirectorySeparator)
-                virtualPath += FileSystemPath.DirectorySeparator;
-            return FileSystemPath.Parse(virtualPath);
+            var virtualPath = WorkspacePath.DirectorySeparator + physicalPath.Remove(0, PhysicalRoot.Length)
+                                  .Replace(Path.DirectorySeparatorChar, WorkspacePath.DirectorySeparator);
+            if (virtualPath[virtualPath.Length - 1] != WorkspacePath.DirectorySeparator)
+                virtualPath += WorkspacePath.DirectorySeparator;
+            return WorkspacePath.Parse(virtualPath);
         }
 
         #endregion
