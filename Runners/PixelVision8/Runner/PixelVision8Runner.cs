@@ -96,9 +96,12 @@ namespace PixelVision8.Runner
         
         protected override void CreateWorkspaceService()
         {
-            workspaceServicePlus = new WorkspaceServicePlus(new KeyValuePair<WorkspacePath, IFileSystem>(
-                WorkspacePath.Root.AppendDirectory("App"),
-                new PhysicalFileSystem(rootPath)));
+            workspaceServicePlus = new WorkspaceServicePlus(
+                new KeyValuePair<WorkspacePath, IFileSystem>(
+                    WorkspacePath.Root.AppendDirectory("App"),
+                    new PhysicalFileSystem(rootPath)
+                    )
+                );
 
             // Pass the new service back to the base class    
             workspaceService = workspaceServicePlus;
@@ -132,7 +135,7 @@ namespace PixelVision8.Runner
 
             // Include any library files in the OS mount point
             workspaceServicePlus.osLibPath = WorkspacePath.Root.AppendDirectory("PixelVisionOS")
-                .AppendDirectory((string) bios.ReadBiosData("LibsDir", "Libs"));
+                .AppendDirectory(bios.ReadBiosData("LibsDir", "Libs"));
 
             // PV8 Needs to access the documents folder so it can create the workspace drive
             var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8") as string;
@@ -144,6 +147,10 @@ namespace PixelVision8.Runner
             workspaceServicePlus.AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(
                 WorkspacePath.Root.AppendDirectory("User"),
                 new PhysicalFileSystem(documentsPath)));
+            
+            // Add trash
+            // Create a trash folder
+            
             
             // Look for the workspace name
             var workspaceName = bios.ReadBiosData("WorkspaceDir", "Workspace") as string;

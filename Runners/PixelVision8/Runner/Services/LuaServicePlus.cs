@@ -111,21 +111,19 @@ namespace PixelVision8.Runner.Services
             
             luaScript.Globals["NewFile"] = (NewFileDelegator) NewFile;
             
+            // File APIs
             luaScript.Globals["UniqueFilePath"] = new Func<WorkspacePath, WorkspacePath>(workspace.UniqueFilePath);
             luaScript.Globals["CreateDirectory"] = new Action<WorkspacePath>(workspace.CreateDirectory);
-            
-            
-            luaScript.Globals["NewFolder"] = (NewFolderDelegator) NewFolder;
             luaScript.Globals["MoveTo"] = new Action<WorkspacePath, WorkspacePath>(workspace.Move);
             luaScript.Globals["CopyTo"] = new Action<WorkspacePath, WorkspacePath>(workspace.Copy);
             luaScript.Globals["PathExists"] = new Func<WorkspacePath, bool>(workspace.Exists);
             
             
-            luaScript.Globals["CopyFile"] = (CopyFileDelegator) CopyFile;
-            luaScript.Globals["MoveFile"] = (MoveFileDelegator) MoveFile;
+//            luaScript.Globals["CopyFile"] = (CopyFileDelegator) CopyFile;
+//            luaScript.Globals["MoveFile"] = (MoveFileDelegator) MoveFile;
             
-            luaScript.Globals["DeleteFile"] = (DeleteFileDelegator) DeleteFile;
-            luaScript.Globals["ParentDirectory"] = (ParentDirectoryDelegator) ParentDirectory;
+//            luaScript.Globals["DeleteFile"] = (DeleteFileDelegator) DeleteFile;
+//            luaScript.Globals["ParentDirectory"] = (ParentDirectoryDelegator) ParentDirectory;
             luaScript.Globals["GetDirectoryContents"] = (GetDirectoryContentsDelegator) GetDirectoryContents;
             luaScript.Globals["OldPathExists"] = (PathExistsDelegator) PathExists;
             
@@ -653,7 +651,7 @@ namespace PixelVision8.Runner.Services
                         exportPath = workspace.UniqueFilePath(exportPath.AppendDirectory("Build"));
                         workspace.CreateDirectory(exportPath);
 
-                        CopyFile(tmpZipPath.Path, exportPath.Path);
+                        workspace.Copy(tmpZipPath, exportPath);
 
                         response["success"] = true;
                         response["message"] = "A new build was created in " + exportPath + ".";
@@ -692,17 +690,12 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-//        public Dictionary<string, string> DisksPaths()
+//        public string ParentDirectory(string path)
 //        {
-//            return workspace.DiskPaths();
+//            var filePath = WorkspacePath.Parse(path).ParentPath.Path;
+//
+//            return filePath;
 //        }
-
-        public string ParentDirectory(string path)
-        {
-            var filePath = WorkspacePath.Parse(path).ParentPath.Path;
-
-            return filePath;
-        }
 
         /// <summary>
         ///     This method returns the contents of a workspace directory. It scans the directory and builds an array
@@ -753,181 +746,19 @@ namespace PixelVision8.Runner.Services
             return directoryItems;
         }
 
-        private delegate int ImportColorsFromGameEditorDelegator(int? resetIndex = null);
-
         private delegate bool PathExistsDelegator(string path);
-
-        private delegate bool NewFolderDelegator(string path);
-
-        private delegate bool CopyFileDelegator(string src, string dest);
-
-        private delegate bool MoveFileDelegator(string src, string dest);
-
-        private delegate bool DeleteFileDelegator(string src, bool autoDelete = true);
-
-        private delegate string UniqueFilePathDelegator(string path);
 
         private delegate bool NewFileDelegator(string path);
 
         private delegate Dictionary<string, object> ExportGameDelegator(string path, int fileSize = 512);
 
-        private delegate string ParentDirectoryDelegator(string path);
+//        private delegate string ParentDirectoryDelegator(string path);
 
         private delegate List<DirectoryItem> GetDirectoryContentsDelegator(string path, bool testIfGame = false,
             bool ignoreDirectories = false, string[] validFiles = null);
 
-//        private delegate object ReadBiosSafeModeDelegator(string key);
-//
-//        private delegate void WriteBiosSafeModeDelegator(string key, string value);
-        
         private delegate bool SaveTextToFileDelegator(string filePath, string text, bool autoCreate = false);
 
 
-        #region File System API
-
-        public bool NewFolder(string path)
-        {
-            var filePath = workspace.UniqueFilePath(WorkspacePath.Parse(path));
-
-            // Need to make sure we don't create a new file over an existing one
-            if (filePath.IsDirectory && !workspace.Exists(filePath))
-                try
-                {
-                    workspace.CreateDirectory(filePath);
-
-                    return true;
-                }
-                catch
-                {
-                    runner.DisplayWarning("Could not create a new directory at '" + path + "'.");
-                }
-
-            return false;
-        }
-
-        public string UniqueFilePath(string path)
-        {
-            return workspace.UniqueFilePath(WorkspacePath.Parse(path)).Path;
-        }
-
-        public bool CopyFile(string src, string dest)
-        {
-            // Create new paths for the source and destination
-            var srcPath = WorkspacePath.Parse(src);
-            var destPath = WorkspacePath.Parse(dest);
-
-            try
-            {
-
-                // Get the parent directory
-                var parent = destPath.ParentPath;
-
-                // Check that the path exists
-                if (!workspace.Exists(parent)) workspace.CreateDirectoryRecursive(parent);
-
-                // Ignore files with the same src and dest path but the copy action is still successful
-                if (srcPath != destPath) workspace.Copy(srcPath, destPath);
-
-                return true;
-            }
-            catch (Exception e)
-            {
-//                Console.WriteLine(e);
-                runner.DisplayWarning("Unable to copy '" + srcPath.Path + "' to '" + destPath.Path + "'.\n" +
-                                      e.Message);
-            }
-
-            return false;
-        }
-
-        public bool MoveFile(string src, string dest)
-        {
-            // Create new paths for the source and destination
-            var srcPath = WorkspacePath.Parse(src);
-            var destPath = WorkspacePath.Parse(dest);
-
-            // Copy fails if an existing file is in the destination directory with the same name
-            if (workspace.Exists(destPath))
-            {
-                runner.DisplayWarning("Move failed because '" + destPath + "' already exists.");
-
-                return false;
-            }
-
-
-            // TODO there is an issue copying nested folders with files in it, so this hack is a bit safer.
-
-            // If this is a single file we are just going to use move.
-            if (srcPath.IsFile)
-                try
-                {
-                    workspace.Move(srcPath, destPath);
-
-                    return true;
-                }
-                catch
-                {
-                    runner.DisplayWarning("Unable to move '" + src + "' to '" + destPath + "'.");
-                }
-            // For directories we need to use a little hack since move doesn't work on nested folders with files for some reason.
-            else
-                try
-                {
-                    // Create the new directory
-                    workspace.CreateDirectory(destPath);
-
-                    // Get the old directory's entities
-                    var entities = workspace.GetEntities(srcPath);
-
-                    // Copy each entity over
-                    foreach (var entity in entities)
-                        workspace.Copy(entity, destPath.AppendFile(entity.EntityName));
-
-
-                    if (DeleteFile(src, true)) return true;
-
-                    // If the original couldn't be delete, something went wrong and delete the new directory
-                    DeleteFile(dest, true);
-                }
-                catch
-                {
-                    runner.DisplayWarning("Unable to move '" + src + "'.");
-                }
-
-            return false;
-        }
-
-        public bool DeleteFile(string src, bool autoDelete = false)
-        {
-            var srcPath = WorkspacePath.Parse(src);
-
-            try
-            {
-                // Check to see if the file should be moved to the trash
-                if (autoDelete == false)
-                {
-                    // Make sure there is a trash
-                    var destPath = WorkspacePath.Parse("/Tmp/Trash/");
-
-                    // Create trash if its missing
-                    if (!workspace.Exists(destPath)) workspace.CreateDirectory(destPath);
-
-                    CopyFile(src, destPath.Path);
-                }
-
-                // Delete the file from the disk system
-                workspace.Delete(srcPath);
-
-                return true;
-            }
-            catch
-            {
-                runner.DisplayWarning("Unable to delete '" + src + "'.");
-            }
-
-            return false;
-        }
-
-        #endregion
     }
 }

@@ -372,7 +372,7 @@ namespace PixelVision8.Runner
             
             bios.ParseBiosText(userBios);
   
-            workspaceService.SetupLogFile(WorkspacePath.Parse(bios.ReadBiosData("LogFilePath", "/Tmp/Log.txt") as string));
+            workspaceService.SetupLogFile(WorkspacePath.Parse(bios.ReadBiosData("LogFilePath", "/Tmp/Log.txt")));
 
         }
 
