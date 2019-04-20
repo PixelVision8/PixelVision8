@@ -9,7 +9,6 @@
     <Import_RootNamespace>PixelVisionWorkspace</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\DirectoryItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\DesktopRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\AbstractExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\IAbstractExporter.cs" />

@@ -202,7 +202,7 @@ namespace PixelVision8.Runner
             luaScript.Globals["SystemName"] = new Func<string>(() => systemName);
             luaScript.Globals["SessionID"] = new Func<string>(() => sessionID);
 
-            luaScript.Globals["DisksPaths"] = new Func<Dictionary<string, string>>(workspaceServicePlus.DiskPaths);
+            luaScript.Globals["DiskPaths"] = new Func<Dictionary<string, string>>(workspaceServicePlus.DiskPaths);
             luaScript.Globals["SaveActiveDisks"] = new Action(() =>
             {
                 var disks = workspaceServicePlus.disks;

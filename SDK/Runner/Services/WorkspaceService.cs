@@ -148,6 +148,8 @@ namespace PixelVision8.Runner.Services
 
         public void SaveExporterFiles(Dictionary<string, byte[]> files)
         {
+            // TODO the dictionary string should be converted into a Workspace path
+            
             // Save all the files to the disk
             foreach (var file in files)
                 try

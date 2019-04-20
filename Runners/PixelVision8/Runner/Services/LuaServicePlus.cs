@@ -24,24 +24,54 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Editors;
 using PixelVision8.Runner.Exporters;
+using PixelVision8.Runner.Importers;
+using PixelVision8.Runner.Parsers;
 using PixelVision8.Runner.Utils;
 
 // TODO need to remove reference to this
 using PixelVision8.Runner.Workspace;
 
+
+
+
 namespace PixelVision8.Runner.Services
 {
+
+    // Wrapper for texture data that includes Hex color data to rebuild colors when exporting
+    public class Image : TextureData
+    {
+        public string[] colors;
+        
+        public Image(int width, int height, string[] colors, int[] pixelData = null) : base(width, height)
+        {
+            this.colors = colors;
+            
+            if (pixelData == null)
+            {
+                var total = width * height;
+                
+                pixelData = new int[total];
+
+                for (int i = 0; i < total; i++)
+                {
+                    pixelData[i] = -1;
+                }
+            }
+        }
+    }
+    
     public class LuaServicePlus : LuaService//, IPlatformAccessor // TODO need to map to these APIs
     {
         protected PixelVision8Runner desktopRunner;
 
-        private List<DirectoryItem> directoryItems = new List<DirectoryItem>();
+//        private List<DirectoryItem> directoryItems = new List<DirectoryItem>();
 
 //        protected IFileSystem fileSystem;
 
@@ -65,18 +95,18 @@ namespace PixelVision8.Runner.Services
             "saves.json"
         };
 
-        private readonly List<string> validFiles = new List<string>
-        {
-            ".png",
-            ".json",
-            ".txt",
-            ".lua",
-            ".pv8" //,
-//            ".pvt",
-//            ".pva",
-//            ".pvs",
-//            ".p8"
-        };
+//        private readonly List<string> validFiles = new List<string>
+//        {
+//            ".png",
+//            ".json",
+//            ".txt",
+//            ".lua",
+//            ".pv8" //,
+////            ".pvt",
+////            ".pva",
+////            ".pvs",
+////            ".p8"
+//        };
 
         private WorkspaceServicePlus workspace;
 
@@ -98,7 +128,7 @@ namespace PixelVision8.Runner.Services
         {
             base.ConfigureScript(luaScript);
 
-            luaScript.Globals["FindEditors"] = new Func<Dictionary<string, string>>(FindEditors);
+//            luaScript.Globals["FindEditors"] = new Func<Dictionary<string, string>>(FindEditors);
 
             
 //            luaScript.Globals["ImportColorsFromGameEditor"] =
@@ -116,23 +146,40 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["CreateDirectory"] = new Action<WorkspacePath>(workspace.CreateDirectory);
             luaScript.Globals["MoveTo"] = new Action<WorkspacePath, WorkspacePath>(workspace.Move);
             luaScript.Globals["CopyTo"] = new Action<WorkspacePath, WorkspacePath>(workspace.Copy);
+            luaScript.Globals["Delete"] = new Action<WorkspacePath>(workspace.Delete);
             luaScript.Globals["PathExists"] = new Func<WorkspacePath, bool>(workspace.Exists);
-            
+            luaScript.Globals["GetEntities"] = new Func<WorkspacePath, List<WorkspacePath>>(path =>
+                workspace.GetEntities(path).OrderBy(o => o.EntityName).ToList());
             
 //            luaScript.Globals["CopyFile"] = (CopyFileDelegator) CopyFile;
 //            luaScript.Globals["MoveFile"] = (MoveFileDelegator) MoveFile;
             
 //            luaScript.Globals["DeleteFile"] = (DeleteFileDelegator) DeleteFile;
 //            luaScript.Globals["ParentDirectory"] = (ParentDirectoryDelegator) ParentDirectory;
-            luaScript.Globals["GetDirectoryContents"] = (GetDirectoryContentsDelegator) GetDirectoryContents;
+//            luaScript.Globals["GetDirectoryContents"] = (GetDirectoryContentsDelegator) GetDirectoryContents;
             luaScript.Globals["OldPathExists"] = (PathExistsDelegator) PathExists;
             
             luaScript.Globals["ExportGame"] = (ExportGameDelegator) ExportGame;
 //            luaScript.Globals["GetSystemPath"] = (GetSystemPathDelegator) GetSystemPath;
             luaScript.Globals["ClearLog"] = new Action(workspace.ClearLog);
             luaScript.Globals["ReadLogItems"] = new Func<List<string>>(workspace.ReadLogItems);
+            
+            // TODO these are deprecated
             luaScript.Globals["ReadTextFile"] = new Func<string, string>(ReadTextFile);
             luaScript.Globals["SaveTextToFile"] = (SaveTextToFileDelegator) SaveTextToFile;
+            
+            // File helpers
+            luaScript.Globals["NewImage"] = new Func<int, int, string[], int[], Image>(NewImage);
+            
+            // Read file helpers
+            luaScript.Globals["ReadJson"] = new Func<WorkspacePath, Dictionary<string, object>>(ReadJson);
+            luaScript.Globals["ReadText"] = new Func<WorkspacePath, string>(ReadText);
+            luaScript.Globals["ReadImage"] = new Func<WorkspacePath, string, Image>(ReadImage);
+            
+            // Save file helpers
+            luaScript.Globals["SaveText"] = new Action<WorkspacePath, string>(SaveText);
+            luaScript.Globals["SaveImage"] = new Action<WorkspacePath, Image>(SaveImage);
+            
 
             
             // Expose Bios APIs
@@ -144,7 +191,7 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["NewWorkspacePath"] = new Func<string, WorkspacePath>(WorkspacePath.Parse);
             
             UserData.RegisterType<WorkspacePath>();
-            UserData.RegisterType<DirectoryItem>();
+//            UserData.RegisterType<DirectoryItem>();
 
 
             // Register the game editor with  the lua service
@@ -158,6 +205,11 @@ namespace PixelVision8.Runner.Services
 //            luaScript.Globals["Sharpness"] = (SharpnessDelegator)Sharpness;
         }
 
+//        private List<WorkspacePath> GetEntities(WorkspacePath path)
+//        {
+//            return workspace.GetEntities(path).ToList();
+//        }
+
 //        public FileSystemPath NewFileSystemPath(string path)
 //        {
 //            return FileSystemPath.Parse(path);
@@ -168,10 +220,99 @@ namespace PixelVision8.Runner.Services
             return desktopRunner.bios.ReadBiosData(key, null);
         }
 
+
         public virtual void WriteBiosSafeMode(string key, string value)
         {
             // TODO should there be a set of safe keys and values types that can be accepted?
             desktopRunner.bios.UpdateBiosData(key, value);
+        }
+        
+        PNGWriter _pngWriter = new PNGWriter();
+        PNGReader _pngReader = new PNGReader();
+
+        public Image NewImage(int width, int height, string[] colors, int[] pixelData = null)
+        {
+            return new Image(width, height, colors, pixelData);
+        }
+        
+        public Dictionary<string, object> ReadJson(WorkspacePath src)
+        {
+            return Json.Deserialize(ReadText(src)) as Dictionary<string, object>;
+        }
+        
+        public string ReadText(WorkspacePath src)
+        {
+            return workspace.ReadTextFromFile(src);
+        }
+        
+        /// <summary>
+        ///     Helper function to create a new text file.
+        /// </summary>
+        /// <param name="dest"></param>
+        /// <param name="defaultText"></param>
+        public void SaveText(WorkspacePath dest, string defaultText = "")
+        {
+            workspace.SaveTextToFile(dest, defaultText, true);
+        }
+
+        public Image ReadImage(WorkspacePath src, string maskHex = "#ff00ff")
+        {
+
+            throw new NotImplementedException();
+            
+            PNGReader reader = null;
+            
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var fileStream = workspace.OpenFile(src, FileAccess.Read))
+                {
+                    fileStream.CopyTo(memoryStream);
+                    fileStream.Close();
+                }
+    
+                reader = new PNGReader(memoryStream.ToArray(), maskHex);
+                
+            }
+            
+            var imageParser = new ImageParser(_pngReader, maskHex);
+
+            // TODO need to finish this parser 
+            return new Image(reader.width, reader.height, new []{"ff00ff"});
+            
+        }
+        
+        public void SaveImage(WorkspacePath dest, Image image)
+        {
+
+            int width = image.width;
+            int height = image.height;
+            string[] hexColors = image.colors;
+            
+            // convert colors
+            var totalColors = hexColors.Length;
+            var colors = new Color[totalColors];
+            for (int i = 0; i < totalColors; i++)
+            {
+                colors[i] = ColorUtils.HexToColor(hexColors[i]);
+            }
+
+            var pixelData = image.pixels;
+            
+            var exporter = new PixelDataExporter(dest.EntityName, pixelData, width, height, colors, _pngWriter);
+            exporter.CalculateSteps();
+
+            while (exporter.completed == false)
+            {
+                exporter.NextStep();
+            }
+
+            var output = new Dictionary<string, byte[]>()
+            {
+                {dest.Path, exporter.bytes}
+            };
+            
+            workspace.SaveExporterFiles(output);
+
         }
 
         /// <summary>
@@ -233,7 +374,7 @@ namespace PixelVision8.Runner.Services
             var paths = new List<WorkspacePath>
             {
                 WorkspacePath.Parse("/PixelVisionOS/System/Tools/"),
-                WorkspacePath.Parse("/Workspace/System/Tools/")
+//                WorkspacePath.Parse("/Workspace/System/Tools/")
             };
 
             // Add disk paths
@@ -716,35 +857,35 @@ namespace PixelVision8.Runner.Services
         ///     file types will be returned.
         /// </param>
         /// <returns></returns>
-        public List<DirectoryItem> GetDirectoryContents(string path, bool testIfGame = false,
-            bool ignoreDirectories = false, string[] fileFilter = null)
-        {
-            directoryItems.Clear();
-
-            var filePath = WorkspacePath.Parse(path);
-
-            if (workspace.Exists(filePath))
-            {
-                var entities = workspace.GetEntities(filePath);
-
-//                var validGamePath = ValidateGameInDir(path);
-
-                foreach (var entity in entities)
-                    if (entity.IsDirectory || validFiles.IndexOf(entity.GetExtension()) != -1 &&
-                        ignoreFiles.IndexOf(entity.EntityName) <= -1)
-                    {
-                        var tmpItem = new DirectoryItem(entity);
-
-                        // Make sure we only include 
-                        if (tmpItem.name.Length > 0)
-                            directoryItems.Add(tmpItem);
-                    }
-
-                directoryItems = directoryItems.OrderBy(o => o.name).ToList();
-            }
-
-            return directoryItems;
-        }
+//        public List<DirectoryItem> GetDirectoryContents(string path, bool testIfGame = false,
+//            bool ignoreDirectories = false, string[] fileFilter = null)
+//        {
+//            directoryItems.Clear();
+//
+//            var filePath = WorkspacePath.Parse(path);
+//
+//            if (workspace.Exists(filePath))
+//            {
+//                var entities = workspace.GetEntities(filePath);
+//
+////                var validGamePath = ValidateGameInDir(path);
+//
+//                foreach (var entity in entities)
+//                    if (entity.IsDirectory || validFiles.IndexOf(entity.GetExtension()) != -1 &&
+//                        ignoreFiles.IndexOf(entity.EntityName) <= -1)
+//                    {
+//                        var tmpItem = new DirectoryItem(entity);
+//
+//                        // Make sure we only include 
+//                        if (tmpItem.name.Length > 0)
+//                            directoryItems.Add(tmpItem);
+//                    }
+//
+//                directoryItems = directoryItems.OrderBy(o => o.name).ToList();
+//            }
+//
+//            return directoryItems;
+//        }
 
         private delegate bool PathExistsDelegator(string path);
 
@@ -754,8 +895,8 @@ namespace PixelVision8.Runner.Services
 
 //        private delegate string ParentDirectoryDelegator(string path);
 
-        private delegate List<DirectoryItem> GetDirectoryContentsDelegator(string path, bool testIfGame = false,
-            bool ignoreDirectories = false, string[] validFiles = null);
+//        private delegate List<DirectoryItem> GetDirectoryContentsDelegator(string path, bool testIfGame = false,
+//            bool ignoreDirectories = false, string[] validFiles = null);
 
         private delegate bool SaveTextToFileDelegator(string filePath, string text, bool autoCreate = false);
 
