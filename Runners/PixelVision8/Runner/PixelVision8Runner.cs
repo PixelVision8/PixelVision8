@@ -39,8 +39,11 @@ namespace PixelVision8.Runner
         protected string nextPathToLoad;
         private string documentsPath;
         public bool backKeyEnabled = true;
-        public List<string> loadHistory = new List<string>();
-        protected List<Dictionary<string, string>> metaDataHistory = new List<Dictionary<string, string>>();
+        
+        public List<KeyValuePair<string, Dictionary<string, string>>> loadHistory = new List<KeyValuePair<string, Dictionary<string, string>>>();
+        
+//        public List<string> loadHistory = new List<string>();
+//        protected List<Dictionary<string, string>> metaDataHistory = new List<Dictionary<string, string>>();
         protected string Documents => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         public string sessionID { get; protected set; }
 
@@ -270,10 +273,16 @@ namespace PixelVision8.Runner
         /// </param>
         public void QuitCurrentTool(Dictionary<string, string> metaData, string tool = null)
         {
+            // When quitting, we should modify the history by removing the current game and if a new game is provided, add that to the history
+            
             if (tool != null)
+                // TODO need to remove the previous game from the history
                 LoadGame(tool, metaData);
             else
+            {
                 Back();
+            }
+                
         }
         
 
@@ -440,7 +449,7 @@ namespace PixelVision8.Runner
         {
 
             loadHistory.Clear();
-            metaDataHistory.Clear();
+//            metaDataHistory.Clear();
             
         // Enable auto run by default
             autoRunEnabled = true;
@@ -641,8 +650,13 @@ namespace PixelVision8.Runner
                 if (mode == RunnerMode.Playing)
                 {
                     lastMode = mode;
-                    loadHistory.Add(path);
-                    metaDataHistory.Add(metaData);
+
+                    // Only add the history if the last item is not the same
+//                    if(loadHistory.Last().Key != path)
+                        loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaData));
+
+//                    loadHistory.Add(path);
+//                    metaDataHistory.Add(metaData);
                 }
     
                 // Create a new tmpEngine
@@ -780,8 +794,11 @@ namespace PixelVision8.Runner
 
             //TODO this nees to also pass in the last metaData state
             // Load the last game from the history
-            var lastURI = WorkspacePath.Parse(loadHistory.Last());
-            var metaData = metaDataHistory.Last();
+
+            var lastGameRef = loadHistory.Last();
+            
+            var lastURI = WorkspacePath.Parse(lastGameRef.Key);
+            var metaData = lastGameRef.Value;
 
             // Clear the load history if it is loading the first item
             if (loadHistory.Count == 1)
@@ -822,35 +839,25 @@ namespace PixelVision8.Runner
             if (mode == RunnerMode.Loading)
                 return;
 
-//            if (mode == RunnerMode.Booting)
-//            {
-//                BootDone();
-//            }
-//            else
-//            {
             if (loadHistory.Count > 1)
             {
-                var path = loadHistory.First();
-
-                loadHistory.Clear();
-                metaDataHistory.Clear();
-
-                // TODO need to see if its a tool or a game?
-                Load(path, RunnerMode.Loading);
+                // Remvoe the last game that was running from the history
+                loadHistory.RemoveAt(loadHistory.Count - 1);
+                
+                // Get the previous game
+                var lastGameRef = loadHistory.Last();
+                
+                // Remove that game from history since we are about to load it
+                loadHistory.RemoveAt(loadHistory.Count - 1);
+                
+                // Load the last game
+                Load(lastGameRef.Key, RunnerMode.Loading, lastGameRef.Value);
             }
             else
             {
-                loadHistory.Clear();
-                metaDataHistory.Clear();
-
                 DisplayError(ErrorCode.NoAutoRun);
-                // TODO need to add back in disk logic
-                // Eject the fist disk
-                workspaceServicePlus.EjectDisk();
-//
-//                UpdateDiskInBios();
             }
-//            }
+
         }
         
         public override void ShutdownSystem()
