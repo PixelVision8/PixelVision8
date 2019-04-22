@@ -89,38 +89,41 @@ namespace PixelVision8.Runner.Services
                 mounts.Remove(osPath);
             }
             
-            var osFileSystem = new MergedFileSystem();
-
-            osFileSystem.FileSystems = osFileSystem.FileSystems.Concat(new[] { new SubFileSystem(this,
-                WorkspacePath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS")) });
-                
-            // Mount the PixelVisionOS directory
-            AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(osPath, osFileSystem));
-
-
+            var systemPaths = new List<IFileSystem>()
+            {
+                new SubFileSystem(this,
+                    WorkspacePath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS"))
+            };
+            
             // Create a path to the workspace system folder
             var path = WorkspacePath.Root.AppendDirectory("Workspace").AppendDirectory("System");
 
-            try
-            {
+//            try
+//            {
                 // Look to see if the workspace system folder exists
                 if (Exists(path))
                 {
 //                    Console.WriteLine("Found Workspace system folder");
                     
+                    
+
                     // Add the workspace system folder to the os file system
-                    osFileSystem.FileSystems = osFileSystem.FileSystems.Concat(
-                        new[] { 
-                            new SubFileSystem(this, path) 
-                        }
-                    );
+                    systemPaths.Add(new SubFileSystem(this, path));
+//                }
+//                    );
                 }
                 
-            }
-            catch 
-            {
-                Console.WriteLine("No system folder");
-            }
+//            }
+//            catch 
+//            {
+//                Console.WriteLine("No system folder");
+//            }
+//            
+//            var osFileSystem = ;
+            
+            // Mount the PixelVisionOS directory
+            AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(osPath, new MergedFileSystem(systemPaths)));
+            
         }
 
         // Exports the active song in the music chip

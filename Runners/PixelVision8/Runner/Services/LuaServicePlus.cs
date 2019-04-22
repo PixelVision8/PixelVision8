@@ -143,7 +143,7 @@ namespace PixelVision8.Runner.Services
             
             // File APIs
             luaScript.Globals["UniqueFilePath"] = new Func<WorkspacePath, WorkspacePath>(workspace.UniqueFilePath);
-            luaScript.Globals["CreateDirectory"] = new Action<WorkspacePath>(workspace.CreateDirectory);
+            luaScript.Globals["CreateDirectory"] = new Action<WorkspacePath>(workspace.CreateDirectoryRecursive);
             luaScript.Globals["MoveTo"] = new Action<WorkspacePath, WorkspacePath>(workspace.Move);
             luaScript.Globals["CopyTo"] = new Action<WorkspacePath, WorkspacePath>(workspace.Copy);
             luaScript.Globals["Delete"] = new Action<WorkspacePath>(workspace.Delete);

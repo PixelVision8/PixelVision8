@@ -583,9 +583,6 @@ namespace PixelVision8.Runner
             try
             {
                 
-                
-                
-                
                 if (newMode == RunnerMode.Loading)
                 {
                     nextPathToLoad = path;
@@ -900,6 +897,9 @@ namespace PixelVision8.Runner
 
             if (mode == RunnerMode.Error)
                 return;
+            
+            // TODO should this only work on special cases?
+            autoRunEnabled = true;
 
             // var id = (int) code;
 
