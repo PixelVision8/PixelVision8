@@ -2395,6 +2395,26 @@ namespace PixelVision8.Runner.Editors
             runner.activeEngine.colorChip.total = total;
         }
 
+        public void ExportSFX(int id, WorkspacePath workspacePath)
+        {
+            var sfx = soundChip.ReadSound(id);
+            
+            // TODO need to wire this up
+            var synth = new SfxrSynth();
+            synth.parameters.SetSettingsString(sfx.ReadSettings());
+//            var stream = workspace.CreateFile(path);
+            
+            var files = new Dictionary<string, byte[]>()
+            {
+                {workspacePath.Path, synth.GenerateWav()}
+            };
+            
+            workspace.SaveExporterFiles(files);
+//            
+//            File.WriteAllBytes(path, synth.GetWavFile());
+
+        }
+
         #endregion
     }
 }

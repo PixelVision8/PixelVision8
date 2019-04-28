@@ -25,6 +25,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using MoonSharp.Interpreter;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Utils;
@@ -150,8 +151,9 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["PathExists"] = new Func<WorkspacePath, bool>(workspace.Exists);
             luaScript.Globals["GetEntities"] = new Func<WorkspacePath, List<WorkspacePath>>(path =>
                 workspace.GetEntities(path).OrderBy(o => o.EntityName, new OrdinalStringComparer()).ToList());
+
+            luaScript.Globals["PlayWav"] = new Action<WorkspacePath>(PlayWav);
             
-//            luaScript.Globals["CopyFile"] = (CopyFileDelegator) CopyFile;
 //            luaScript.Globals["MoveFile"] = (MoveFileDelegator) MoveFile;
             
 //            luaScript.Globals["DeleteFile"] = (DeleteFileDelegator) DeleteFile;
@@ -215,6 +217,20 @@ namespace PixelVision8.Runner.Services
 //            return FileSystemPath.Parse(path);
 //        }
 //        
+
+        public void PlayWav(WorkspacePath workspacePath)
+        {
+
+            if (workspace.Exists(workspacePath) && workspacePath.GetExtension() == ".wav")
+            {
+                var bytes = workspace.OpenFile(workspacePath, FileAccess.Read).ReadAllBytes();
+
+                SoundEffect soundEffect = new SoundEffect(bytes, 44000, AudioChannels.Stereo);
+
+                soundEffect.Play();
+            }
+        }
+        
         public virtual string ReadBiosSafeMode(string key)
         {
             return desktopRunner.bios.ReadBiosData(key, null);

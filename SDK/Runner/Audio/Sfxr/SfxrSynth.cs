@@ -1023,5 +1023,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
 
             return sum / 64f - 1f;
         }
+        
+        
     }
 }
