@@ -149,7 +149,7 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["Delete"] = new Action<WorkspacePath>(workspace.Delete);
             luaScript.Globals["PathExists"] = new Func<WorkspacePath, bool>(workspace.Exists);
             luaScript.Globals["GetEntities"] = new Func<WorkspacePath, List<WorkspacePath>>(path =>
-                workspace.GetEntities(path).OrderBy(o => o.EntityName).ToList());
+                workspace.GetEntities(path).OrderBy(o => o.EntityName, new OrdinalStringComparer()).ToList());
             
 //            luaScript.Globals["CopyFile"] = (CopyFileDelegator) CopyFile;
 //            luaScript.Globals["MoveFile"] = (MoveFileDelegator) MoveFile;
