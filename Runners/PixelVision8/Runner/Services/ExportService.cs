@@ -37,7 +37,7 @@ namespace PixelVision8.Runner.Services
         private readonly List<IAbstractExporter> exporters = new List<IAbstractExporter>();
 
 //        private ITextureFactory textureFactory;
-        private readonly IAudioClipFactory audioClipFactory;
+//        private readonly IAudioClipFactory audioClipFactory;
 
         private int currentParserID;
 
@@ -54,11 +54,11 @@ namespace PixelVision8.Runner.Services
 
         public int totalSteps;
 
-        public ExportService(IAudioClipFactory audioClipFactory)
+        public ExportService(/*IAudioClipFactory audioClipFactory*/)
         {
 //            this.textureFactory = textureFactory;
 //            this.colorFactory = colorFactory;
-            this.audioClipFactory = audioClipFactory;
+//            this.audioClipFactory = audioClipFactory;
 //            this.flip = flip;
         }
 
@@ -275,7 +275,7 @@ namespace PixelVision8.Runner.Services
 //            var name = targetEngine.musicChip.activeSongData.songName;
 //            UnityEngine.Debug.Log("Export Song " + path);
             // TODO need to add a base path to the file name so we can create folders.
-            AddExporter(new SongExporter(path, musicChip, soundChip, audioClipFactory));
+            AddExporter(new SongExporter(path, musicChip, soundChip/*, audioClipFactory*/));
         }
 
         public void ExportSpriteBuilder(string path, IEngine engine, Dictionary<string, byte[]> files)

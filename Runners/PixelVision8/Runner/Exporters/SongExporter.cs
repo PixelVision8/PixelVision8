@@ -28,37 +28,83 @@ using PixelVision8.Runner.Data;
 
 namespace PixelVision8.Runner.Exporters
 {
+    
     public class AudioClip : IAudioClip
     {
         private readonly string name;
+        private float[] data;
 
+        public static IAudioClip NewAudioClip(string name, int lengthSamples, int channels, int frequency, bool stream)
+        {
+            return new AudioClip(name, lengthSamples, channels, frequency);    
+        }
+        
         public AudioClip(string name, int samples, int channels, int frequency)
         {
             this.name = name;
             this.samples = samples;
             this.channels = channels;
             this.frequency = frequency;
+            this.data = new float[samples];
         }
 
         public bool SetData(float[] data, int offsetSamples)
         {
-            throw new NotImplementedException();
+//            throw new NotImplementedException();
+//            offsetSamples = 0;
+            
+            var total = data.Length;
+            for (int i = 0; i < total; i++)
+            {
+                var index = i + offsetSamples;
+                
+                if (index < samples)
+                {
+                    this.data[index] = data[i];
+                }
+            }
+
+            return true;
         }
 
-        public int samples { get; set; }
-        public int channels { get; set; }
+        public int samples { get;}
+        public int channels { get;}
 
         public bool GetData(float[] data, int offsetSamples)
         {
-            throw new NotImplementedException();
+
+            try
+            {
+                Array.Copy(this.data, data, samples);
+                return true;
+            }
+            catch /*(Exception e)*/
+            {
+//                Console.WriteLine(e);
+//                throw;
+            }
+            
+            
+//            var total = data.Length;
+//            for (int i = 0; i < total; i++)
+//            {
+//                var index = i + offsetSamples;
+//                
+//                if (index < samples)
+//                {
+//                    data[i] = this.data[index];
+//                }
+//            }
+
+            return true;
         }
 
-        public int frequency { get; set; }
+        public int frequency { get; }
     }
 
     public class SongExporter : AbstractExporter
     {
-        private readonly IAudioClipFactory audioClipFactory;
+//        private readonly IAudioClipFactory audioClipFactory;
 
 //        private IEngine engine;
         private readonly int MAX_NOTE_NUM = 127; // how many notes in these arrays below
@@ -89,8 +135,8 @@ namespace PixelVision8.Runner.Exporters
 
         private IAudioClip[] trackresult;
 
-        public SongExporter(string path, MusicChip musicChip, SoundChip soundChip,
-            IAudioClipFactory audioClipFactory) : base(path)
+        public SongExporter(string path, MusicChip musicChip, SoundChip soundChip/*,
+            IAudioClipFactory audioClipFactory*/) : base(path)
         {
 //            Debug.Log("FileName " + musicChip.activeSongData.songName);
 
@@ -102,7 +148,7 @@ namespace PixelVision8.Runner.Exporters
             this.soundChip = soundChip;
 
             // Save a reference to the audio factory
-            this.audioClipFactory = audioClipFactory;
+//            this.audioClipFactory = audioClipFactory;
 
             // Calculate steps
 //            CalculateSteps();
@@ -195,7 +241,7 @@ namespace PixelVision8.Runner.Exporters
                 // stereo
                 //trackresult[tracknum] = AudioClip.Create("Track"+tracknum, songdatalength / 2, 2, preRenderBitrate, false);
                 // mono
-                trackresult[tracknum] = audioClipFactory.NewAudioClip("Track" + tracknum, songdatalength / 2, 1,
+                trackresult[tracknum] = AudioClip.NewAudioClip("Track" + tracknum, songdatalength / 2, 1,
                     preRenderBitrate, false);
 
                 songdataCurrentPos = 0;
@@ -348,7 +394,7 @@ namespace PixelVision8.Runner.Exporters
             // stereo
             //AudioClip result = AudioClip.Create("MixdownSTEREO", length / 2, 2, preRenderBitrate, false);
             // mono
-            var result = audioClipFactory.NewAudioClip("MixdownMONO", length / 2, 1, preRenderBitrate, false);
+            var result = AudioClip.NewAudioClip("MixdownMONO", length / 2, 1, preRenderBitrate, false);
             result.SetData(data, 0); // TODO: we can get a warning here: data too large to fit: discarded x samples
             // the truncation can happen with a large sustain of a note that could go on after the song is over
             // one solution is to pad the end with 4sec of 0000s then maybe search and TRIM

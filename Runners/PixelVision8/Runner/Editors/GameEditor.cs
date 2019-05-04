@@ -2398,6 +2398,8 @@ namespace PixelVision8.Runner.Editors
         public void ExportSFX(int id, WorkspacePath workspacePath)
         {
             var sfx = soundChip.ReadSound(id);
+
+            workspacePath = workspacePath.AppendFile(sfx.name + ".wav");
             
             // TODO need to wire this up
             var synth = new SfxrSynth();

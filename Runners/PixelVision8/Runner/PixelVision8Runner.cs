@@ -99,7 +99,7 @@ namespace PixelVision8.Runner
             systemName = bios.ReadBiosData("SystemName", "PixelVision8");
             
             screenshotService = new ScreenshotService(workspaceServicePlus);
-            exportService = new ExportService(null); //TODO Need to create a new AudioClipAdaptor
+            exportService = new ExportService(); //TODO Need to create a new AudioClipAdaptor
             
             var actions = Enum.GetValues(typeof(ActionKeys)).Cast<ActionKeys>();
             foreach (var action in actions)
@@ -856,7 +856,7 @@ namespace PixelVision8.Runner
             if (mode == RunnerMode.Loading)
                 return;
 
-            if (loadHistory.Count > 1)
+            if (loadHistory.Count > 0)
             {
                 // Remvoe the last game that was running from the history
                 loadHistory.RemoveAt(loadHistory.Count - 1);
