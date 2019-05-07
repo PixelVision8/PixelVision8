@@ -135,7 +135,7 @@ namespace PixelVision8.Runner.Workspace
 
                 try
                 {
-                    if (System.IO.File.Exists(fileNameZip)) System.IO.File.Move(fileNameZip, fileNameZip + ".bak");
+                    if (File.Exists(fileNameZip)) File.Move(fileNameZip, fileNameZip + ".bak");
 
                     using (var fileStream = new FileStream(fileNameZip, FileMode.Create))
                     {
@@ -148,11 +148,11 @@ namespace PixelVision8.Runner.Workspace
 
                     Console.WriteLine("Save archive ");
 
-                    System.IO.File.Delete(fileNameZip + ".bak");
+                    File.Delete(fileNameZip + ".bak");
                 }
                 catch (Exception e)
                 {
-                    if (System.IO.File.Exists(fileNameZip + ".bak")) System.IO.File.Move(fileNameZip + ".bak", fileNameZip);
+                    if (File.Exists(fileNameZip + ".bak")) File.Move(fileNameZip + ".bak", fileNameZip);
 
                     Console.WriteLine("Disk Save Error " + e);
                 }

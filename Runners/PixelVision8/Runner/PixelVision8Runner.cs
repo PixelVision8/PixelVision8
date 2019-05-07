@@ -143,7 +143,7 @@ namespace PixelVision8.Runner
             
             // Define PV8 disk extensions from the bios
             workspaceServicePlus.archiveExtensions =
-                ((string) bios.ReadBiosData("ArchiveExtensions", "zip,pv8,pvt,pvs,pva")).Split(',')
+                ((string) bios.ReadBiosData("ArchiveExtensions", "zip,pv8,pvt,pvs,pva,pvr")).Split(',')
                 .ToList();
             
             //  Define the valid file extensions from the bios
@@ -304,7 +304,6 @@ namespace PixelVision8.Runner
             }
                 
         }
-        
 
         protected override void Update(GameTime gameTime)
         {
@@ -359,7 +358,6 @@ namespace PixelVision8.Runner
                 {
                     Back();
                 }
-                
             }
             else
             {
@@ -668,9 +666,18 @@ namespace PixelVision8.Runner
                 {
                     lastMode = mode;
 
-                    // Only add the history if the last item is not the same
-//                    if(loadHistory.Last().Key != path)
+                    if (loadHistory.Count > 0)
+                    {
+//                        Console.WriteLine("History " + loadHistory.Last().Key + " " + path);
+                        // Only add the history if the last item is not the same
+                        if(loadHistory.Last().Key != path)
+                            loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaData));
+                    }
+                    else
+                    {
                         loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaData));
+                    }
+                    
 
 //                    loadHistory.Add(path);
 //                    metaDataHistory.Add(metaData);
@@ -856,7 +863,7 @@ namespace PixelVision8.Runner
             if (mode == RunnerMode.Loading)
                 return;
 
-            if (loadHistory.Count > 0)
+            if (loadHistory.Count > 1)
             {
                 // Remvoe the last game that was running from the history
                 loadHistory.RemoveAt(loadHistory.Count - 1);

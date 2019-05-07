@@ -335,13 +335,13 @@ namespace PixelVision8.Runner.Services
             {
                 var text = "";
 
-                using (var file = OpenFile(filePath, FileAccess.Read))
+                using (var file = OpenFile(filePath, FileAccess.Read) as FileStream)
                 {
                     text = file.ReadAllText();
                     file.Close();
                     file.Dispose();
                 }
-
+                
                 return text; //file.ReadAllText();
             }
 
@@ -530,8 +530,6 @@ namespace PixelVision8.Runner.Services
                         fileStream.CopyTo(memoryStream);
                         fileStream.Close();
                     }
-
-                    ;
 
                     files.Add(file.EntityName, memoryStream.ToArray());
                 }

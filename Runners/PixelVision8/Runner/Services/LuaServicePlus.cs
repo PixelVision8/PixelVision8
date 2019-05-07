@@ -140,7 +140,7 @@ namespace PixelVision8.Runner.Services
             
             // Filesystem
             
-            luaScript.Globals["NewFile"] = (NewFileDelegator) NewFile;
+//            luaScript.Globals["NewFile"] = (NewFileDelegator) NewFile;
             
             // File APIs
             luaScript.Globals["UniqueFilePath"] = new Func<WorkspacePath, WorkspacePath>(workspace.UniqueFilePath);
@@ -151,7 +151,9 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["PathExists"] = new Func<WorkspacePath, bool>(workspace.Exists);
             luaScript.Globals["GetEntities"] = new Func<WorkspacePath, List<WorkspacePath>>(path =>
                 workspace.GetEntities(path).OrderBy(o => o.EntityName, new OrdinalStringComparer()).ToList());
-
+            luaScript.Globals["GetEntitiesRecursive"] = new Func<WorkspacePath, List<WorkspacePath>>(path =>
+                workspace.GetEntitiesRecursive(path).OrderBy(o => o.EntityName, new OrdinalStringComparer()).ToList());
+            
             luaScript.Globals["PlayWav"] = new Action<WorkspacePath>(PlayWav);
             
 //            luaScript.Globals["MoveFile"] = (MoveFileDelegator) MoveFile;
@@ -160,6 +162,9 @@ namespace PixelVision8.Runner.Services
 //            luaScript.Globals["ParentDirectory"] = (ParentDirectoryDelegator) ParentDirectory;
 //            luaScript.Globals["GetDirectoryContents"] = (GetDirectoryContentsDelegator) GetDirectoryContents;
             luaScript.Globals["OldPathExists"] = (PathExistsDelegator) PathExists;
+            
+            luaScript.Globals["CreateDisk"] = new Func<string, WorkspacePath[], WorkspacePath, int, Dictionary<string, object>> (CreateDisk);
+            luaScript.Globals["CreateExe"] = new Func<string, WorkspacePath[], WorkspacePath, WorkspacePath, Dictionary<string, object>> (CreateExe);
             
             luaScript.Globals["ExportGame"] = (ExportGameDelegator) ExportGame;
 //            luaScript.Globals["GetSystemPath"] = (GetSystemPathDelegator) GetSystemPath;
@@ -253,7 +258,10 @@ namespace PixelVision8.Runner.Services
         
         public Dictionary<string, object> ReadJson(WorkspacePath src)
         {
-            return Json.Deserialize(ReadText(src)) as Dictionary<string, object>;
+
+            var text = ReadText(src);
+            
+            return Json.Deserialize(text) as Dictionary<string, object>;
         }
         
         public string ReadText(WorkspacePath src)
@@ -377,287 +385,590 @@ namespace PixelVision8.Runner.Services
 //        {
 //            return desktopRunner.IsExporting();
 //        }
-        public Dictionary<string, string> FindEditors()
+//        public Dictionary<string, string> FindEditors()
+//        {
+////            Console.WriteLine("Searching for editors");
+//
+//            var editors = new Dictionary<string, string>();
+//
+//
+////            var fileSystem = workspace;
+//
+//
+//            var paths = new List<WorkspacePath>
+//            {
+//                WorkspacePath.Parse("/PixelVisionOS/System/Tools/"),
+////                WorkspacePath.Parse("/Workspace/System/Tools/")
+//            };
+//
+//            // Add disk paths
+//            var disks = workspace.DiskPaths();
+//            foreach (var disk in disks) paths.Add(WorkspacePath.Parse(disk.Value).AppendDirectory("System").AppendDirectory("Tools"));
+//
+//            // TODO loop through the workspace and the disks to add new paths
+//
+//            var total = paths.Count;
+//
+//            for (var i = 0; i < total; i++)
+//            {
+//                var path = paths[i];
+//
+//                try
+//                {
+//                    if (workspace.Exists(path))
+//                    {
+////                    Console.WriteLine("Look for editors in " + path);
+//
+//                        var folders = workspace.GetEntities(path);
+//
+//                        foreach (var folder in folders)
+//                            if (folder.IsDirectory)
+//                                if (workspace.ValidateGameInDir(folder))
+//                                {
+////                            Console.WriteLine("Reading from game folder " + folder);
+//
+//
+////                                    var metaData = workspace.ReadGameMetaData(folder.AppendFile("info.json"));
+//
+//                                    var data = workspace.ReadTextFromFile(folder.AppendFile("info.json")); //ReadTextFromFile(filePath);
+//
+//                                    // parse the json data into a dictionary the engine can use
+//                                    var jsonData =  Json.Deserialize(data) as Dictionary<string, object>;
+//                                    
+//                                    if (jsonData.ContainsKey("editType"))
+//                                    {
+//                                        var split = ((string) jsonData["editType"]).Split(',');
+//
+//                                        var totalTypes = split.Length;
+//
+//                                        for (var j = 0; j < totalTypes; j++)
+//                                        {
+//                                            var key = split[j];
+//
+//                                            if (!editors.ContainsKey(key))
+//                                                editors.Add(key, folder.Path);
+//                                            else
+//                                                editors[key] = folder.Path;
+//
+////                                        Console.WriteLine("Editor Found " +  key + " " + folder.Path);
+//                                        }
+//                                    }
+//                                }
+//                    }
+//                }
+//                catch
+//                {
+////                    runner.DisplayWarning("Couldn't find editor path " + path);
+//                }
+//            }
+//
+//            return editors;
+//        }
+
+//        public bool NewFile(string path)
+//        {
+//            var success = false;
+//
+//            try
+//            {
+//                var filePath = workspace.UniqueFilePath(WorkspacePath.Parse(path));
+//
+//                var fileName = filePath.EntityName;
+//                var fileExt = filePath.GetExtension();
+//
+//                if (fileExt == ".json" || fileExt == ".txt" || fileExt == ".lua")
+//                {
+//                    var sb = new StringBuilder();
+//
+//                    if (fileExt == ".json")
+//                    {
+//                        if (fileName == "tilemap.json")
+//                        {
+//                            // TODO need a template for the tilemap
+//
+//                            sb.AppendLine("{");
+//                            sb.AppendLine("    \"width\":33,");
+//                            sb.AppendLine("    \"height\":31,");
+//                            sb.AppendLine("    \"nextobjectid\":1,");
+//                            sb.AppendLine("    \"orientation\":\"orthogonal\",");
+//                            sb.AppendLine("    \"renderorder\":\"right-down\",");
+//                            sb.AppendLine("    \"tiledversion\":\"1.0.3\",");
+//                            sb.AppendLine("    \"tilewidth\":8,");
+//                            sb.AppendLine("    \"tileheight\":8,");
+//                            sb.AppendLine("    \"type\":\"map\",");
+//                            sb.AppendLine("    \"version\":1,");
+//                            sb.AppendLine("    \"backgroundcolor\":\"#FF00FF\",");
+//                            sb.AppendLine("    \"tilesets\": [");
+//                            sb.AppendLine("    {");
+//                            sb.AppendLine("        \"columns\":16,");
+//                            sb.AppendLine("        \"firstgid\":1,");
+//                            sb.AppendLine("        \"image\":\"sprites.png\",");
+//                            sb.AppendLine("        \"imagewidth\":128,");
+//                            sb.AppendLine("        \"imageheight\":1024,");
+//                            sb.AppendLine("        \"margin\":0,");
+//                            sb.AppendLine("        \"name\":\"sprites\",");
+//                            sb.AppendLine("        \"spacing\":0,");
+//                            sb.AppendLine("        \"tilewidth\":8,");
+//                            sb.AppendLine("        \"tileheight\":8,");
+//                            sb.AppendLine("        \"tilecount\":2048,");
+//                            sb.AppendLine("        \"transparentcolor\":\"#FF00FF\"");
+//                            sb.AppendLine("    }");
+//                            sb.AppendLine("    ],\"layers\": [");
+//                            sb.AppendLine("    {");
+//                            sb.AppendLine("        \"draworder\":\"topdown\",");
+//                            sb.AppendLine("        \"name\":\"Tilemap\",");
+//                            sb.AppendLine("        \"id\":1,");
+//                            sb.AppendLine("        \"type\":\"objectgroup\",");
+//                            sb.AppendLine("        \"opacity\":1,");
+//                            sb.AppendLine("        \"visible\":true,");
+//                            sb.AppendLine("        \"x\":0,");
+//                            sb.AppendLine("        \"y\":0,");
+//                            sb.AppendLine("        \"objects\": [");
+//                            sb.AppendLine("");
+//                            sb.AppendLine("            ]");
+//                            sb.AppendLine("    }");
+//                            sb.AppendLine("    ]");
+//                            sb.AppendLine("}");
+//                        }
+//                        else if (fileName == "data.json")
+//                        {
+//                            sb.AppendLine("{");
+//                            sb.AppendLine("    \"ColorChip\":");
+//                            sb.AppendLine("    {");
+//                            sb.AppendLine("        \"pages\":4,");
+//                            sb.AppendLine("        \"colorsPerPage\":64,");
+//                            sb.AppendLine("        \"maxColors\":64,");
+//                            sb.AppendLine("    },");
+//                            sb.AppendLine("    \"DisplayChip\":");
+//                            sb.AppendLine("    {");
+//                            sb.AppendLine("        \"width\":256,");
+//                            sb.AppendLine("        \"height\":240");
+//                            sb.AppendLine("    },");
+//                            sb.AppendLine("    \"GameChip\":");
+//                            sb.AppendLine("    {");
+//                            sb.AppendLine("        \"maxSize\":256,");
+//                            sb.AppendLine("        \"saveSlots\":8");
+//                            sb.AppendLine("    },");
+//                            sb.AppendLine("    \"MusicChip\":");
+//                            sb.AppendLine("    {");
+//                            sb.AppendLine("        \"totalTracks\":4,");
+//                            sb.AppendLine("        \"notesPerTrack\":127,");
+//                            sb.AppendLine("        \"totalLoop\":16");
+//                            sb.AppendLine("    },");
+//                            sb.AppendLine("    \"SoundChip\":");
+//                            sb.AppendLine("    {");
+//                            sb.AppendLine("        \"totalChannels\":4,");
+//                            sb.AppendLine("        \"totalSounds\":16");
+//                            sb.AppendLine("    },");
+//                            sb.AppendLine("    \"SpriteChip\":{");
+//                            sb.AppendLine("        \"maxSpriteCount\":0,");
+//                            sb.AppendLine("        \"unique\":false,");
+//                            sb.AppendLine("        \"pages\":4,");
+//                            sb.AppendLine("        \"cps\":8");
+//                            sb.AppendLine("    },");
+//                            sb.AppendLine("    \"TilemapChip\":");
+//                            sb.AppendLine("    {");
+//                            sb.AppendLine("        \"columns\":32,");
+//                            sb.AppendLine("        \"rows\":30,");
+//                            sb.AppendLine("        \"totalFlags\":16");
+//                            sb.AppendLine("    }");
+//                            sb.AppendLine("}");
+//                        }
+//                        else if (fileName == "info.json")
+//                        {
+//                            sb.AppendLine("{");
+//                            sb.AppendLine("    \"name\":\"untitled\",");
+//                            sb.AppendLine("    \"version\":\"v0.9.0\",");
+//                            sb.AppendLine("}");
+//                        }
+//                        else if (fileName == "sounds.json")
+//                        {
+//                            sb.AppendLine("{");
+//                            sb.AppendLine("    \"SoundChip\":");
+//                            sb.AppendLine("    {");
+//                            sb.AppendLine("        \"sounds\": []");
+//                            sb.AppendLine("    }");
+//                            sb.AppendLine("}");
+//                        }
+//                        else if (fileName == "music.json")
+//                        {
+//                            sb.AppendLine("{");
+//                            sb.AppendLine("    \"MusicChip\":");
+//                            sb.AppendLine("    {");
+//                            sb.AppendLine("        \"songs\": []");
+//                            sb.AppendLine("    }");
+//                            sb.AppendLine("}");
+//                        }
+//                        else
+//                        {
+//                            sb.AppendLine("{");
+//                            sb.AppendLine("}");
+//                        }
+//                    }
+//                    else if (fileExt == ".txt")
+//                    {
+//                        sb.AppendLine("Empty text file.");
+//                    }
+//                    else if (fileExt == ".lua")
+//                    {
+//                        sb.AppendLine("-- Empty code file.");
+//                    }
+//
+//                    workspace.SaveTextToFile(filePath, sb.ToString(), true);
+//                }
+//                else if (fileExt == ".png" || fileExt == "font.png")
+//                {
+//                    TextureData textureData = null;
+//
+//                    if (fileName.EndsWith("font.png"))
+//                    {
+//                        textureData = new TextureData(96, 64);
+//                    }
+//                    else if (fileName == "colors.png")
+//                    {
+//                        textureData = new TextureData(64, 64);
+//                        textureData.SetPixel(0, 0, 1);
+//                        textureData.SetPixel(0, 0, 2);
+//                    }
+//                    else if (fileName == "sprites.png")
+//                    {
+//                        textureData = new TextureData(128, 128);
+//                    }
+//
+//                    if (textureData != null)
+//                    {
+//                        textureData.Clear(0);
+//
+//                        var exporter = new PixelDataExporter(fileName, textureData.pixels, textureData.width,
+//                            textureData.height, new[]
+//                            {
+//                                // TODO why is this hard coded here?
+//                                ColorUtils.HexToColor("#ff00ff"),
+//                                ColorUtils.HexToColor("#000000"),
+//                                ColorUtils.HexToColor("#ffffff")
+//                            }, new PNGWriter());
+//
+//                        exporter.CalculateSteps();
+//
+//                        while (exporter.completed == false) exporter.NextStep();
+//
+//                        workspace.SaveExporterFiles(new Dictionary<string, byte[]> {{filePath.Path, exporter.bytes}});
+//                    }
+//                }
+//
+//                success = true;
+//            }
+//            catch (Exception e)
+//            {
+//                runner.DisplayWarning(e.Message);
+//            }
+//
+//            return success;
+//        }
+
+        public long FileSize(WorkspacePath workspacePath)
         {
-//            Console.WriteLine("Searching for editors");
-
-            var editors = new Dictionary<string, string>();
-
-
-//            var fileSystem = workspace;
-
-
-            var paths = new List<WorkspacePath>
+            if (workspace.Exists(workspacePath) == false)
             {
-                WorkspacePath.Parse("/PixelVisionOS/System/Tools/"),
-//                WorkspacePath.Parse("/Workspace/System/Tools/")
-            };
-
-            // Add disk paths
-            var disks = workspace.DiskPaths();
-            foreach (var disk in disks) paths.Add(WorkspacePath.Parse(disk.Value).AppendDirectory("System").AppendDirectory("Tools"));
-
-            // TODO loop through the workspace and the disks to add new paths
-
-            var total = paths.Count;
-
-            for (var i = 0; i < total; i++)
+                return -1;
+            }else if (workspacePath.IsDirectory)
             {
-                var path = paths[i];
-
-                try
-                {
-                    if (workspace.Exists(path))
-                    {
-//                    Console.WriteLine("Look for editors in " + path);
-
-                        var folders = workspace.GetEntities(path);
-
-                        foreach (var folder in folders)
-                            if (folder.IsDirectory)
-                                if (workspace.ValidateGameInDir(folder))
-                                {
-//                            Console.WriteLine("Reading from game folder " + folder);
-
-
-//                                    var metaData = workspace.ReadGameMetaData(folder.AppendFile("info.json"));
-
-                                    var data = workspace.ReadTextFromFile(folder.AppendFile("info.json")); //ReadTextFromFile(filePath);
-
-                                    // parse the json data into a dictionary the engine can use
-                                    var jsonData =  Json.Deserialize(data) as Dictionary<string, object>;
-                                    
-                                    if (jsonData.ContainsKey("editType"))
-                                    {
-                                        var split = ((string) jsonData["editType"]).Split(',');
-
-                                        var totalTypes = split.Length;
-
-                                        for (var j = 0; j < totalTypes; j++)
-                                        {
-                                            var key = split[j];
-
-                                            if (!editors.ContainsKey(key))
-                                                editors.Add(key, folder.Path);
-                                            else
-                                                editors[key] = folder.Path;
-
-//                                        Console.WriteLine("Editor Found " +  key + " " + folder.Path);
-                                        }
-                                    }
-                                }
-                    }
-                }
-                catch
-                {
-//                    runner.DisplayWarning("Couldn't find editor path " + path);
-                }
+                return 0;
             }
 
-            return editors;
+            return workspace.OpenFile(workspacePath, FileAccess.Read).ReadAllBytes().Length / 1024;
         }
-
-        public bool NewFile(string path)
+        
+        public Dictionary<string, object> CreateDisk(string gameName, WorkspacePath[] filePaths, WorkspacePath exportPath, int maxFileSize = 512)
         {
-            var success = false;
+            var response = new Dictionary<string, object>
+            {
+                {"success", false},
+                {"message", ""}
+            };
+            
+//            var gamePath = WorkspacePath.Parse(path);
 
             try
             {
-                var filePath = workspace.UniqueFilePath(WorkspacePath.Parse(path));
-
-                var fileName = filePath.EntityName;
-                var fileExt = filePath.GetExtension();
-
-                if (fileExt == ".json" || fileExt == ".txt" || fileExt == ".lua")
-                {
-                    var sb = new StringBuilder();
-
-                    if (fileExt == ".json")
+                
+                    using (var memoryStream = new MemoryStream())
                     {
-                        if (fileName == "tilemap.json")
+                        using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
                         {
-                            // TODO need a template for the tilemap
-
-                            sb.AppendLine("{");
-                            sb.AppendLine("    \"width\":33,");
-                            sb.AppendLine("    \"height\":31,");
-                            sb.AppendLine("    \"nextobjectid\":1,");
-                            sb.AppendLine("    \"orientation\":\"orthogonal\",");
-                            sb.AppendLine("    \"renderorder\":\"right-down\",");
-                            sb.AppendLine("    \"tiledversion\":\"1.0.3\",");
-                            sb.AppendLine("    \"tilewidth\":8,");
-                            sb.AppendLine("    \"tileheight\":8,");
-                            sb.AppendLine("    \"type\":\"map\",");
-                            sb.AppendLine("    \"version\":1,");
-                            sb.AppendLine("    \"backgroundcolor\":\"#FF00FF\",");
-                            sb.AppendLine("    \"tilesets\": [");
-                            sb.AppendLine("    {");
-                            sb.AppendLine("        \"columns\":16,");
-                            sb.AppendLine("        \"firstgid\":1,");
-                            sb.AppendLine("        \"image\":\"sprites.png\",");
-                            sb.AppendLine("        \"imagewidth\":128,");
-                            sb.AppendLine("        \"imageheight\":1024,");
-                            sb.AppendLine("        \"margin\":0,");
-                            sb.AppendLine("        \"name\":\"sprites\",");
-                            sb.AppendLine("        \"spacing\":0,");
-                            sb.AppendLine("        \"tilewidth\":8,");
-                            sb.AppendLine("        \"tileheight\":8,");
-                            sb.AppendLine("        \"tilecount\":2048,");
-                            sb.AppendLine("        \"transparentcolor\":\"#FF00FF\"");
-                            sb.AppendLine("    }");
-                            sb.AppendLine("    ],\"layers\": [");
-                            sb.AppendLine("    {");
-                            sb.AppendLine("        \"draworder\":\"topdown\",");
-                            sb.AppendLine("        \"name\":\"Tilemap\",");
-                            sb.AppendLine("        \"id\":1,");
-                            sb.AppendLine("        \"type\":\"objectgroup\",");
-                            sb.AppendLine("        \"opacity\":1,");
-                            sb.AppendLine("        \"visible\":true,");
-                            sb.AppendLine("        \"x\":0,");
-                            sb.AppendLine("        \"y\":0,");
-                            sb.AppendLine("        \"objects\": [");
-                            sb.AppendLine("");
-                            sb.AppendLine("            ]");
-                            sb.AppendLine("    }");
-                            sb.AppendLine("    ]");
-                            sb.AppendLine("}");
-                        }
-                        else if (fileName == "data.json")
-                        {
-                            sb.AppendLine("{");
-                            sb.AppendLine("    \"ColorChip\":");
-                            sb.AppendLine("    {");
-                            sb.AppendLine("        \"pages\":4,");
-                            sb.AppendLine("        \"colorsPerPage\":64,");
-                            sb.AppendLine("        \"maxColors\":64,");
-                            sb.AppendLine("    },");
-                            sb.AppendLine("    \"DisplayChip\":");
-                            sb.AppendLine("    {");
-                            sb.AppendLine("        \"width\":256,");
-                            sb.AppendLine("        \"height\":240");
-                            sb.AppendLine("    },");
-                            sb.AppendLine("    \"GameChip\":");
-                            sb.AppendLine("    {");
-                            sb.AppendLine("        \"maxSize\":256,");
-                            sb.AppendLine("        \"saveSlots\":8");
-                            sb.AppendLine("    },");
-                            sb.AppendLine("    \"MusicChip\":");
-                            sb.AppendLine("    {");
-                            sb.AppendLine("        \"totalTracks\":4,");
-                            sb.AppendLine("        \"notesPerTrack\":127,");
-                            sb.AppendLine("        \"totalLoop\":16");
-                            sb.AppendLine("    },");
-                            sb.AppendLine("    \"SoundChip\":");
-                            sb.AppendLine("    {");
-                            sb.AppendLine("        \"totalChannels\":4,");
-                            sb.AppendLine("        \"totalSounds\":16");
-                            sb.AppendLine("    },");
-                            sb.AppendLine("    \"SpriteChip\":{");
-                            sb.AppendLine("        \"maxSpriteCount\":0,");
-                            sb.AppendLine("        \"unique\":false,");
-                            sb.AppendLine("        \"pages\":4,");
-                            sb.AppendLine("        \"cps\":8");
-                            sb.AppendLine("    },");
-                            sb.AppendLine("    \"TilemapChip\":");
-                            sb.AppendLine("    {");
-                            sb.AppendLine("        \"columns\":32,");
-                            sb.AppendLine("        \"rows\":30,");
-                            sb.AppendLine("        \"totalFlags\":16");
-                            sb.AppendLine("    }");
-                            sb.AppendLine("}");
-                        }
-                        else if (fileName == "info.json")
-                        {
-                            sb.AppendLine("{");
-                            sb.AppendLine("    \"name\":\"untitled\",");
-                            sb.AppendLine("    \"version\":\"v0.9.0\",");
-                            sb.AppendLine("}");
-                        }
-                        else if (fileName == "sounds.json")
-                        {
-                            sb.AppendLine("{");
-                            sb.AppendLine("    \"SoundChip\":");
-                            sb.AppendLine("    {");
-                            sb.AppendLine("        \"sounds\": []");
-                            sb.AppendLine("    }");
-                            sb.AppendLine("}");
-                        }
-                        else if (fileName == "music.json")
-                        {
-                            sb.AppendLine("{");
-                            sb.AppendLine("    \"MusicChip\":");
-                            sb.AppendLine("    {");
-                            sb.AppendLine("        \"songs\": []");
-                            sb.AppendLine("    }");
-                            sb.AppendLine("}");
-                        }
-                        else
-                        {
-                            sb.AppendLine("{");
-                            sb.AppendLine("}");
-                        }
-                    }
-                    else if (fileExt == ".txt")
-                    {
-                        sb.AppendLine("Empty text file.");
-                    }
-                    else if (fileExt == ".lua")
-                    {
-                        sb.AppendLine("-- Empty code file.");
-                    }
-
-                    workspace.SaveTextToFile(filePath, sb.ToString(), true);
-                }
-                else if (fileExt == ".png" || fileExt == "font.png")
-                {
-                    TextureData textureData = null;
-
-                    if (fileName.EndsWith("font.png"))
-                    {
-                        textureData = new TextureData(96, 64);
-                    }
-                    else if (fileName == "colors.png")
-                    {
-                        textureData = new TextureData(64, 64);
-                        textureData.SetPixel(0, 0, 1);
-                        textureData.SetPixel(0, 0, 2);
-                    }
-                    else if (fileName == "sprites.png")
-                    {
-                        textureData = new TextureData(128, 128);
-                    }
-
-                    if (textureData != null)
-                    {
-                        textureData.Clear(0);
-
-                        var exporter = new PixelDataExporter(fileName, textureData.pixels, textureData.width,
-                            textureData.height, new[]
+                            // Copy all the core files
+                            foreach (var file in filePaths)
                             {
-                                // TODO why is this hard coded here?
-                                ColorUtils.HexToColor("#ff00ff"),
-                                ColorUtils.HexToColor("#000000"),
-                                ColorUtils.HexToColor("#ffffff")
-                            }, new PNGWriter());
+                                
+                            
+                                try
+                                {
+                                    if (file.IsFile)
+                                    {
+                                        var fileName = file.EntityName;
 
-                        exporter.CalculateSteps();
+                                        if (supportedExportFiles.IndexOf(fileName) > -1 || fileName.EndsWith(".lua") ||
+                                            fileName.EndsWith(".font.png"))
+                                        {
+                                            var tmpPath = file.EntityName;
+                                            
+                                            Console.WriteLine("Adding File " + file.Path);
 
-                        while (exporter.completed == false) exporter.NextStep();
+                                            var tmpFile = archive.CreateEntry(tmpPath);
 
-                        workspace.SaveExporterFiles(new Dictionary<string, byte[]> {{filePath.Path, exporter.bytes}});
+                                            using (var entryStream = tmpFile.Open())
+                                            {
+                                                workspace.OpenFile(file, FileAccess.ReadWrite).CopyTo(entryStream);
+                                            }
+                                        }
+                                    }
+                                }
+                                catch(Exception e)
+                                {
+                                Console.WriteLine("Archive Error: "+ e);
+                                }
+
+                            }
+                            
+                        }
+
+                        var fileSize = memoryStream.Length / 1024;
+
+                        response.Add("fileSize", fileSize);
+
+                        Console.WriteLine("FileSize " + fileSize);
+
+                        if (fileSize > maxFileSize)
+                        {
+                            response["message"] =
+                                "The game is too big to compile. You'll need to reduce the file size or increase the game size to create a new build.";
+
+                            return response;
+                        }
+
+
+                        var tmpExportPath = WorkspacePath.Root.AppendDirectory("Tmp").AppendDirectory("Builds");
+
+                        WorkspacePath tmpZipPath;
+
+                        try
+                        {
+                            // Make sure there is a builds folder in the Tmp directory
+                            if (workspace.Exists(tmpExportPath) == false)
+                                workspace.CreateDirectory(tmpExportPath);
+
+                            // Create a folder with the timestamp
+                            tmpExportPath = tmpExportPath.AppendDirectory(DateTime.Now.ToString("yyyyMMddHHmmss"));
+                            workspace.CreateDirectory(tmpExportPath);
+
+                            // Add the zip filename to it
+                            tmpZipPath = tmpExportPath.AppendFile(gameName + ".pv8");
+
+
+                            using (var fileStream = workspace.CreateFile(tmpZipPath) as FileStream)
+                            {
+                                memoryStream.Seek(0, SeekOrigin.Begin);
+                                memoryStream.CopyTo(fileStream);
+                            }
+
+                            // Make sure we close the stream
+                            memoryStream.Close();
+                        }
+                        catch
+                        {
+                            response["message"] = "Unable to create a temporary build for " + gameName +
+                                                  " in " + tmpExportPath;
+
+                            return response;
+                        }
+
+                        // Move the new build over 
+//                        var exportPath = gamePath.AppendDirectory("Builds");
+
+                        try
+                        {
+                            
+                            exportPath = workspace.UniqueFilePath(exportPath.AppendDirectory("Build"));
+                            
+//                            workspace.CreateDirectory(exportPath);
+                            
+                            workspace.CreateDirectoryRecursive(exportPath);
+
+                            exportPath = exportPath.AppendFile(tmpZipPath.EntityName);
+                            workspace.Copy(tmpZipPath,exportPath );
+
+                            response["success"] = true;
+                            response["message"] = "A new build was created in " + exportPath + ".";
+                            response["path"] = exportPath.Path;
+                        }
+                        catch
+                        {
+                            response["message"] = "Unable to create path for " + gameName +
+                                                  " in " + exportPath;
+
+                            return response;
+                        }
+
+//                        return true;
                     }
-                }
 
-                success = true;
+                    // Create a zip file 
+//                }
             }
-            catch (Exception e)
+            catch
             {
-                runner.DisplayWarning(e.Message);
+                response["message"] = "Unable to create a build for " + gameName;
+
+
+//                Console.WriteLine(e);
+//                throw;
             }
 
-            return success;
+            return response;
         }
 
+        public Dictionary<string, object> CreateExe(string name, WorkspacePath[] files, WorkspacePath template, WorkspacePath exportPath)
+        {
+            
+            var response = new Dictionary<string, object>
+            {
+                {"success", false},
+                {"message", ""}
+            };
+            
+            // Make sure the source is a pv8 file
+            if (workspace.Exists(template) && template.GetExtension() == ".pvr")
+            {
+                
+//                exportPath = workspace.UniqueFilePath(exportPath.AppendDirectory("Build"));
+                            
+                // Add template name by removing Runner.pvr from the end
+
+//                exportPath = exportPath.AppendDirectory(template.EntityName.Replace("Runner.pvr", ""));
+                
+                // Create the new directory
+//                workspace.CreateDirectory(exportPath);
+                            
+                workspace.CreateDirectoryRecursive(exportPath);
+
+                exportPath = exportPath.AppendFile(name + ".zip");
+                
+                workspace.Copy(template, exportPath);
+                
+                // Read template into memory
+                var disk = workspace.ReadDisk(exportPath) as ZipFileSystem;
+
+                var buildFilePath = WorkspacePath.Root.AppendFile("build.json");
+                var buildText = "";
+
+                var diskFiles = disk.GetEntities(WorkspacePath.Root);
+
+                if (disk.Exists(buildFilePath))
+                {
+                    using (var file = disk.OpenFile(buildFilePath, FileAccess.Read))
+                    {
+                        
+                        buildText = file.ReadAllText();
+                        file.Close();
+                        file.Dispose();
+                    }
+                }
+                
+                
+                var buildJson = Json.Deserialize(buildText) as Dictionary<string, object>;
+
+                Console.WriteLine("ContentDir " + (buildJson["ContentDir"] as String));
+
+                var contentPath = WorkspacePath.Parse(buildJson["ContentDir"] as String);
+
+                disk.Delete(contentPath);
+                
+                disk.CreateDirectoryRecursive(contentPath);
+                
+                // Delete the build script
+                disk.Delete(buildFilePath);
+                
+//                var total = gameFiles.Length;
+
+//                var gameFiles = new Dictionary<string, byte[]>();
+//                var files = disk.GetEntities(WorkspacePath.Root);
+
+                var list = from p in files
+                    where workspace.fileExtensions.Any(val => p.EntityName.EndsWith(val))
+                    select p;
+
+                foreach (var file in list)
+                {
+
+//                    var newFile = disk.CreateFile(contentPath.AppendFile(file.EntityName));
+                    
+                    // TODO Track if file is critical
+                    using (var memoryStream = disk.CreateFile(contentPath.AppendFile(file.EntityName)))
+                    {
+
+                        Console.WriteLine("Include " + file.EntityName);
+
+                        using (var fileStream = workspace.OpenFile(file, FileAccess.Read))
+                        {
+                            fileStream.CopyTo(memoryStream);
+                            fileStream.Close();
+                        }
+
+//                        gameFiles.Add(file.EntityName, memoryStream.ToArray());
+                    }
+                }
+//                for (int i = 0; i < total; i++)
+//                {
+////                    var file = workspace.OpenFile(files[i], FileAccess.Read);
+//
+//                    using (var file = disk.OpenFile(gameFiles[i], FileAccess.Read))
+//                    {
+//                        
+//                        file.Close();
+//                    }
+//                    
+//                    // TODO need to 
+//                    
+//                    Console.WriteLine("Include " + gameFiles[i]);
+//                }
+                
+//                var filePath = disk.GetEntitiesRecursive(WorkspacePath.Root);
+                
+//                workspace.Copy(src, disk, WorkspacePath.Root);
+                
+                
+
+//                var tmpFile = disk.CreateFile(tmpPath);
+//
+//                using (var entryStream = tmpFile.Open())
+//                {
+//                    disk.OpenFile(file, FileAccess.ReadWrite).CopyTo(entryStream);
+//                }
+
+
+                // TODO add src files
+    
+                // Convert template into bytes
+//                var files = workspace.ConvertDiskFilesToBytes(disk);
+                
+//                Console.Write("Files");
+                
+                
+                disk.Save();
+                //workspace.SaveExporterFiles(files);
+
+//                var zip = new ZipArchive(workspace.OpenFile(template, FileAccess.Read));
+//                        
+//                zip.
+//                workspace.Copy(tmpZipPath, exportPath.AppendFile(tmpZipPath.EntityName));
+
+
+            }
+
+
+            return response;
+        }
+        
         public Dictionary<string, object> ExportGame(string path, int maxFileSize = 512)
         {
             var response = new Dictionary<string, object>
@@ -680,6 +991,9 @@ namespace PixelVision8.Runner.Services
                         {
                             // Copy all the core files
                             foreach (var file in files)
+                            {
+                                
+                            
                                 try
                                 {
                                     if (file.IsFile)
@@ -714,12 +1028,13 @@ namespace PixelVision8.Runner.Services
                                         }
                                     }
                                 }
-                                catch
+                                catch(Exception e)
                                 {
-//                                Console.WriteLine("Archive Error: "+ e);
+                                Console.WriteLine("Archive Error: "+ e);
                                 }
 
-
+                            }
+                            
                             // Copy the lib files
 
                             var libFiles = new Dictionary<string, byte[]>();
@@ -905,7 +1220,7 @@ namespace PixelVision8.Runner.Services
 
         private delegate bool PathExistsDelegator(string path);
 
-        private delegate bool NewFileDelegator(string path);
+//        private delegate bool NewFileDelegator(string path);
 
         private delegate Dictionary<string, object> ExportGameDelegator(string path, int fileSize = 512);
 
