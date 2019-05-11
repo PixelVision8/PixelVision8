@@ -33,7 +33,8 @@ namespace PixelVision8.Engine
 
         public int currentPos = -1;
         public string name = "Untitled";
-        public int start = 0;
+        public int _start = 0;
+        public int _end = 0;
         public int totalPatternsPerSong = 100;
 
         public int[] patterns
@@ -55,7 +56,18 @@ namespace PixelVision8.Engine
             }
         }
 
-        public int end { get; set; }
+        public int start
+        {
+            get => _start;
+            // Make sure the start is always less than the end position or the total patterns per song
+            set => _start = MathHelper.Clamp(value, 0, Math.Min(_end, totalPatternsPerSong) - 1);
+        }
+
+        public int end {
+            get => _end;
+            // Always make sure the end position is greater than the start position and less than the total patterns per song
+            set => _end = MathHelper.Clamp(value, start + 1, totalPatternsPerSong);
+        }
 
 //        public SongData(int[] patterns, int start, int end, bool loops = true)
 //        {
@@ -75,9 +87,9 @@ namespace PixelVision8.Engine
 
         public bool AtEnd()
         {
-//            Console.WriteLine("End "+ end + " " + currentPos);
+            Console.WriteLine("End "+ end + " " + currentPos);
 
-            return currentPos >= end;
+            return currentPos >= end - 1;
         }
 
         public void Rewind()

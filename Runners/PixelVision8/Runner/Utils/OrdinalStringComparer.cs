@@ -61,6 +61,7 @@ namespace PixelVision8.Runner.Utils
 		/// <returns>A signed integer that indicates the relative values of x and y, as in the Compare method in the <c>IComparer&lt;T&gt;</c> interface.</returns>
 		public int Compare(string x, string y)
 		{
+			
 			// check for null values first: a null reference is considered to be less than any reference that is not null
 			if (x == null && y == null)
 			{
@@ -91,20 +92,29 @@ namespace PixelVision8.Runner.Utils
 
 				int numericX = -1;
 				int numericY = -1;
-				if (int.TryParse(splitX[i], out numericX))
+				
+				// TODO this was throwing an error in the build folder so wrapping in a try/catch until I can figure out why
+				try
 				{
-					if (int.TryParse(splitY[i], out numericY))
+					if (int.TryParse(splitX[i], out numericX))
 					{
-						comparer = numericX - numericY;
+						if (int.TryParse(splitY[i], out numericY))
+						{
+							comparer = numericX - numericY;
+						}
+						else
+						{
+							comparer = 1; // x > y
+						}
 					}
 					else
 					{
-						comparer = 1; // x > y
+						comparer = String.Compare(splitX[i], splitY[i], comparisonMode);
 					}
 				}
-				else
+				catch
 				{
-					comparer = String.Compare(splitX[i], splitY[i], comparisonMode);
+					// ignored
 				}
 			}
 

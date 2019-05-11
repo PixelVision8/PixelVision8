@@ -161,12 +161,12 @@ namespace PixelVision8.Runner.Services
 //            luaScript.Globals["DeleteFile"] = (DeleteFileDelegator) DeleteFile;
 //            luaScript.Globals["ParentDirectory"] = (ParentDirectoryDelegator) ParentDirectory;
 //            luaScript.Globals["GetDirectoryContents"] = (GetDirectoryContentsDelegator) GetDirectoryContents;
-            luaScript.Globals["OldPathExists"] = (PathExistsDelegator) PathExists;
+//            luaScript.Globals["OldPathExists"] = (PathExistsDelegator) PathExists;
             
             luaScript.Globals["CreateDisk"] = new Func<string, WorkspacePath[], WorkspacePath, int, Dictionary<string, object>> (CreateDisk);
             luaScript.Globals["CreateExe"] = new Func<string, WorkspacePath[], WorkspacePath, WorkspacePath, Dictionary<string, object>> (CreateExe);
             
-            luaScript.Globals["ExportGame"] = (ExportGameDelegator) ExportGame;
+//            luaScript.Globals["ExportGame"] = (ExportGameDelegator) ExportGame;
 //            luaScript.Globals["GetSystemPath"] = (GetSystemPathDelegator) GetSystemPath;
             luaScript.Globals["ClearLog"] = new Action(workspace.ClearLog);
             luaScript.Globals["ReadLogItems"] = new Func<List<string>>(workspace.ReadLogItems);
@@ -839,16 +839,7 @@ namespace PixelVision8.Runner.Services
             // Make sure the source is a pv8 file
             if (workspace.Exists(template) && template.GetExtension() == ".pvr")
             {
-                
-//                exportPath = workspace.UniqueFilePath(exportPath.AppendDirectory("Build"));
-                            
-                // Add template name by removing Runner.pvr from the end
 
-//                exportPath = exportPath.AppendDirectory(template.EntityName.Replace("Runner.pvr", ""));
-                
-                // Create the new directory
-//                workspace.CreateDirectory(exportPath);
-                            
                 workspace.CreateDirectoryRecursive(exportPath);
 
                 exportPath = exportPath.AppendFile(name + ".zip");
@@ -861,7 +852,7 @@ namespace PixelVision8.Runner.Services
                 var buildFilePath = WorkspacePath.Root.AppendFile("build.json");
                 var buildText = "";
 
-                var diskFiles = disk.GetEntities(WorkspacePath.Root);
+//                var diskFiles = disk.GetEntities(WorkspacePath.Root);
 
                 if (disk.Exists(buildFilePath))
                 {
@@ -880,6 +871,22 @@ namespace PixelVision8.Runner.Services
                 Console.WriteLine("ContentDir " + (buildJson["ContentDir"] as String));
 
                 var contentPath = WorkspacePath.Parse(buildJson["ContentDir"] as String);
+                
+                var executables = buildJson["Executables"] as List<object>;
+
+                for (int i = 0; i < executables.Count; i++)
+                {
+                    var exePath = WorkspacePath.Root.AppendFile(executables[i] as string);
+                    if (disk.Exists(exePath))
+                    {
+                        var newExePath = exePath.ParentPath.AppendFile(name + exePath.GetExtension());
+                        
+//                        Console.WriteLine(exePath + " " + newExePath);
+                        disk.Move(exePath, disk, newExePath);
+                    }
+                }
+                
+                // TODO need to look into how to rename launcher files on linux.
 
                 disk.Delete(contentPath);
                 
@@ -917,51 +924,9 @@ namespace PixelVision8.Runner.Services
 //                        gameFiles.Add(file.EntityName, memoryStream.ToArray());
                     }
                 }
-//                for (int i = 0; i < total; i++)
-//                {
-////                    var file = workspace.OpenFile(files[i], FileAccess.Read);
-//
-//                    using (var file = disk.OpenFile(gameFiles[i], FileAccess.Read))
-//                    {
-//                        
-//                        file.Close();
-//                    }
-//                    
-//                    // TODO need to 
-//                    
-//                    Console.WriteLine("Include " + gameFiles[i]);
-//                }
-                
-//                var filePath = disk.GetEntitiesRecursive(WorkspacePath.Root);
-                
-//                workspace.Copy(src, disk, WorkspacePath.Root);
-                
-                
 
-//                var tmpFile = disk.CreateFile(tmpPath);
-//
-//                using (var entryStream = tmpFile.Open())
-//                {
-//                    disk.OpenFile(file, FileAccess.ReadWrite).CopyTo(entryStream);
-//                }
-
-
-                // TODO add src files
-    
-                // Convert template into bytes
-//                var files = workspace.ConvertDiskFilesToBytes(disk);
-                
-//                Console.Write("Files");
-                
                 
                 disk.Save();
-                //workspace.SaveExporterFiles(files);
-
-//                var zip = new ZipArchive(workspace.OpenFile(template, FileAccess.Read));
-//                        
-//                zip.
-//                workspace.Copy(tmpZipPath, exportPath.AppendFile(tmpZipPath.EntityName));
-
 
             }
 
@@ -969,198 +934,198 @@ namespace PixelVision8.Runner.Services
             return response;
         }
         
-        public Dictionary<string, object> ExportGame(string path, int maxFileSize = 512)
-        {
-            var response = new Dictionary<string, object>
-            {
-                {"success", false},
-                {"message", ""}
-            };
+//        public Dictionary<string, object> ExportGame(string path, int maxFileSize = 512)
+//        {
+//            var response = new Dictionary<string, object>
+//            {
+//                {"success", false},
+//                {"message", ""}
+//            };
+//
+//            var filePath = WorkspacePath.Parse(path);
+//
+//            try
+//            {
+//                if (workspace.Exists(filePath) && filePath.IsDirectory)
+//                {
+//                    var files = workspace.GetEntities(filePath);
+//
+//                    using (var memoryStream = new MemoryStream())
+//                    {
+//                        using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+//                        {
+//                            // Copy all the core files
+//                            foreach (var file in files)
+//                            {
+//                                
+//                            
+//                                try
+//                                {
+//                                    if (file.IsFile)
+//                                    {
+//                                        var fileName = file.EntityName;
+//
+//                                        if (supportedExportFiles.IndexOf(fileName) > -1 || fileName.EndsWith(".lua") ||
+//                                            fileName.EndsWith(".font.png"))
+//                                        {
+//                                            var tmpPath = file.EntityName;
+//
+//                                            var tmpFile = archive.CreateEntry(tmpPath);
+//
+//                                            using (var entryStream = tmpFile.Open())
+//                                            {
+//                                                workspace.OpenFile(file, FileAccess.ReadWrite)
+//                                                    .CopyTo(entryStream);
+//
+//                                                // TODO need a way to only include lua files we reference
+////                                                if (fileName.EndsWith(".lua"))
+////                                                {
+////                                                    string fileContents;
+////                                                    using (StreamReader reader = new StreamReader(entryStream))
+////                                                    {
+////                                                        fileContents = reader.ReadToEnd();
+////                                                        
+////                                                        Console.WriteLine("Script\n"+fileContents);
+////                                                        
+////                                                    }
+////                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                                catch(Exception e)
+//                                {
+//                                Console.WriteLine("Archive Error: "+ e);
+//                                }
+//
+//                            }
+//                            
+//                            // Copy the lib files
+//
+//                            var libFiles = new Dictionary<string, byte[]>();
+//
+//                            workspace.IncludeLibDirectoryFiles(libFiles);
+//
+//                            foreach (var libFile in libFiles)
+//                            {
+//                                var tmpPath = "Libs/" + libFile.Key;
+//
+//                                var zipEntry = archive.CreateEntry(tmpPath);
+//
+//                                //Get the stream of the attachment
+//                                using (var originalFileStream = new MemoryStream(libFile.Value))
+//                                using (var zipEntryStream = zipEntry.Open())
+//                                {
+//                                    //Copy the attachment stream to the zip entry stream
+//                                    originalFileStream.CopyTo(zipEntryStream);
+//                                }
+//                            }
+//                        }
+//
+//
+//                        var fileSize = memoryStream.Length / 1024;
+//
+//                        response.Add("fileSize", fileSize);
+//
+//                        Console.WriteLine("FileSize " + fileSize);
+//
+//                        if (fileSize > maxFileSize)
+//                        {
+//                            response["message"] =
+//                                "The game is too big to compile. You'll need to reduce the file size or increase the game size to create a new build.";
+//
+//                            return response;
+//                        }
+//
+//
+//                        var tmpExportPath = WorkspacePath.Root.AppendDirectory("Tmp").AppendDirectory("Builds");
+//
+//                        WorkspacePath tmpZipPath;
+//
+//                        try
+//                        {
+//                            if (workspace.Exists(tmpExportPath) == false)
+//                                workspace.CreateDirectory(tmpExportPath);
+//
+//                            // Create a folder with the timestamp
+//                            tmpExportPath = tmpExportPath.AppendDirectory(DateTime.Now.ToString("yyyyMMddHHmmss"));
+//                            workspace.CreateDirectory(tmpExportPath);
+//
+//
+//                            // Add the zip filename to it
+//                            tmpZipPath = tmpExportPath.AppendFile(filePath.EntityName + ".pv8");
+//
+//
+//                            using (var fileStream = workspace.CreateFile(tmpZipPath) as FileStream)
+//                            {
+//                                memoryStream.Seek(0, SeekOrigin.Begin);
+//                                memoryStream.CopyTo(fileStream);
+//                            }
+//
+//                            // Make sure we close the stream
+//                            memoryStream.Close();
+//                        }
+//                        catch
+//                        {
+//                            response["message"] = "Unable to create a temporary build for " + filePath.EntityName +
+//                                                  " in " + tmpExportPath;
+//
+//                            return response;
+//                        }
+//
+//                        // Move the new build over 
+//                        var exportPath = filePath.AppendDirectory("Builds");
+//
+//                        try
+//                        {
+//                            if (workspace.Exists(exportPath) == false)
+//                                workspace.CreateDirectory(exportPath);
+//                        }
+//                        catch
+//                        {
+//                        }
+//
+//                        exportPath = workspace.UniqueFilePath(exportPath.AppendDirectory("Build"));
+//                        workspace.CreateDirectory(exportPath);
+//
+//                        workspace.Copy(tmpZipPath, exportPath);
+//
+//                        response["success"] = true;
+//                        response["message"] = "A new build was created in " + exportPath + ".";
+//                        response["path"] = exportPath.Path;
+//
+////                        return true;
+//                    }
+//
+//                    // Create a zip file 
+//                }
+//            }
+//            catch
+//            {
+//                response["message"] = "Unable to create a build for " + filePath.EntityName;
+//
+//                return response;
+//
+////                Console.WriteLine(e);
+////                throw;
+//            }
+//
+//            return response;
+//        }
 
-            var filePath = WorkspacePath.Parse(path);
-
-            try
-            {
-                if (workspace.Exists(filePath) && filePath.IsDirectory)
-                {
-                    var files = workspace.GetEntities(filePath);
-
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
-                        {
-                            // Copy all the core files
-                            foreach (var file in files)
-                            {
-                                
-                            
-                                try
-                                {
-                                    if (file.IsFile)
-                                    {
-                                        var fileName = file.EntityName;
-
-                                        if (supportedExportFiles.IndexOf(fileName) > -1 || fileName.EndsWith(".lua") ||
-                                            fileName.EndsWith(".font.png"))
-                                        {
-                                            var tmpPath = file.EntityName;
-
-                                            var tmpFile = archive.CreateEntry(tmpPath);
-
-                                            using (var entryStream = tmpFile.Open())
-                                            {
-                                                workspace.OpenFile(file, FileAccess.ReadWrite)
-                                                    .CopyTo(entryStream);
-
-                                                // TODO need a way to only include lua files we reference
-//                                                if (fileName.EndsWith(".lua"))
-//                                                {
-//                                                    string fileContents;
-//                                                    using (StreamReader reader = new StreamReader(entryStream))
-//                                                    {
-//                                                        fileContents = reader.ReadToEnd();
-//                                                        
-//                                                        Console.WriteLine("Script\n"+fileContents);
-//                                                        
-//                                                    }
-//                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                catch(Exception e)
-                                {
-                                Console.WriteLine("Archive Error: "+ e);
-                                }
-
-                            }
-                            
-                            // Copy the lib files
-
-                            var libFiles = new Dictionary<string, byte[]>();
-
-                            workspace.IncludeLibDirectoryFiles(libFiles);
-
-                            foreach (var libFile in libFiles)
-                            {
-                                var tmpPath = "Libs/" + libFile.Key;
-
-                                var zipEntry = archive.CreateEntry(tmpPath);
-
-                                //Get the stream of the attachment
-                                using (var originalFileStream = new MemoryStream(libFile.Value))
-                                using (var zipEntryStream = zipEntry.Open())
-                                {
-                                    //Copy the attachment stream to the zip entry stream
-                                    originalFileStream.CopyTo(zipEntryStream);
-                                }
-                            }
-                        }
-
-
-                        var fileSize = memoryStream.Length / 1024;
-
-                        response.Add("fileSize", fileSize);
-
-                        Console.WriteLine("FileSize " + fileSize);
-
-                        if (fileSize > maxFileSize)
-                        {
-                            response["message"] =
-                                "The game is too big to compile. You'll need to reduce the file size or increase the game size to create a new build.";
-
-                            return response;
-                        }
-
-
-                        var tmpExportPath = WorkspacePath.Root.AppendDirectory("Tmp").AppendDirectory("Builds");
-
-                        WorkspacePath tmpZipPath;
-
-                        try
-                        {
-                            if (workspace.Exists(tmpExportPath) == false)
-                                workspace.CreateDirectory(tmpExportPath);
-
-                            // Create a folder with the timestamp
-                            tmpExportPath = tmpExportPath.AppendDirectory(DateTime.Now.ToString("yyyyMMddHHmmss"));
-                            workspace.CreateDirectory(tmpExportPath);
-
-
-                            // Add the zip filename to it
-                            tmpZipPath = tmpExportPath.AppendFile(filePath.EntityName + ".pv8");
-
-
-                            using (var fileStream = workspace.CreateFile(tmpZipPath) as FileStream)
-                            {
-                                memoryStream.Seek(0, SeekOrigin.Begin);
-                                memoryStream.CopyTo(fileStream);
-                            }
-
-                            // Make sure we close the stream
-                            memoryStream.Close();
-                        }
-                        catch
-                        {
-                            response["message"] = "Unable to create a temporary build for " + filePath.EntityName +
-                                                  " in " + tmpExportPath;
-
-                            return response;
-                        }
-
-                        // Move the new build over 
-                        var exportPath = filePath.AppendDirectory("Builds");
-
-                        try
-                        {
-                            if (workspace.Exists(exportPath) == false)
-                                workspace.CreateDirectory(exportPath);
-                        }
-                        catch
-                        {
-                        }
-
-                        exportPath = workspace.UniqueFilePath(exportPath.AppendDirectory("Build"));
-                        workspace.CreateDirectory(exportPath);
-
-                        workspace.Copy(tmpZipPath, exportPath);
-
-                        response["success"] = true;
-                        response["message"] = "A new build was created in " + exportPath + ".";
-                        response["path"] = exportPath.Path;
-
-//                        return true;
-                    }
-
-                    // Create a zip file 
-                }
-            }
-            catch
-            {
-                response["message"] = "Unable to create a build for " + filePath.EntityName;
-
-                return response;
-
-//                Console.WriteLine(e);
-//                throw;
-            }
-
-            return response;
-        }
-
-        public bool PathExists(string path)
-        {
-            var filePath = WorkspacePath.Parse(path);
-
-            try
-            {
-                return workspace.Exists(filePath);
-            }
-            catch
-            {
-                return false;
-            }
-        }
+//        public bool PathExists(string path)
+//        {
+//            var filePath = WorkspacePath.Parse(path);
+//
+//            try
+//            {
+//                return workspace.Exists(filePath);
+//            }
+//            catch
+//            {
+//                return false;
+//            }
+//        }
 
 //        public string ParentDirectory(string path)
 //        {
@@ -1218,11 +1183,11 @@ namespace PixelVision8.Runner.Services
 //            return directoryItems;
 //        }
 
-        private delegate bool PathExistsDelegator(string path);
+//        private delegate bool PathExistsDelegator(string path);
 
 //        private delegate bool NewFileDelegator(string path);
 
-        private delegate Dictionary<string, object> ExportGameDelegator(string path, int fileSize = 512);
+//        private delegate Dictionary<string, object> ExportGameDelegator(string path, int fileSize = 512);
 
 //        private delegate string ParentDirectoryDelegator(string path);
 
