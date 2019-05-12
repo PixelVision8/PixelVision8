@@ -216,7 +216,7 @@ namespace PixelVision8.Runner
             luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int) (loadService.percent * 100));
             luaScript.Globals["ShutdownSystem"] = new Action(ShutdownSystem);
             luaScript.Globals["QuitCurrentTool"] = (QuitCurrentToolDelagator) QuitCurrentTool;
-            luaScript.Globals["LoadGame"] = (LoadGameDelegator) LoadGame;
+            luaScript.Globals["LoadGame"] = new Func<string, Dictionary<string, string>, bool>((path, metadata) => Load(path, RunnerMode.Loading, metadata));
             
             luaScript.Globals["DocumentPath"] = new Func<string>(() => documentsPath);
             luaScript.Globals["TmpPath"] = new Func<string>(() => tmpPath);
@@ -268,17 +268,17 @@ namespace PixelVision8.Runner
         private delegate bool EnableCRTDelegator(bool? toggle);
         private delegate float BrightnessDelegator(float? brightness = null);
         private delegate float SharpnessDelegator(float? sharpness = null);
-        private delegate bool LoadGameDelegator(string path, Dictionary<string, string> metaData = null);
+//        private delegate bool LoadGameDelegator(string path, Dictionary<string, string> metaData = null);
         private delegate void QuitCurrentToolDelagator(Dictionary<string, string> metaData, string tool = null);
 
         
         
-        protected bool LoadGame(string path, Dictionary<string, string> metaData = null)
-        {
-            var success = Load(path, RunnerMode.Loading, metaData);
-
-            return success;
-        }
+//        protected bool LoadGame(string path, Dictionary<string, string> metaData = null)
+//        {
+//            var success = Load(path, RunnerMode.Loading, metaData);
+//
+//            return success;
+//        }
 
         /// <summary>
         ///     This quits the current tool and returns to the default tool which should be the workspace explorer.
@@ -297,7 +297,7 @@ namespace PixelVision8.Runner
             
             if (tool != null)
                 // TODO need to remove the previous game from the history
-                LoadGame(tool, metaData);
+                Load(tool, RunnerMode.Loading, metaData);
             else
             {
                 Back();

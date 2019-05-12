@@ -567,9 +567,9 @@ namespace PixelVision8.Runner.Editors
             return musicChip.totalSongs;
         }
 
-        public void PlaySong(int[] loopIDs, bool loop = true)
+        public void PlaySong(int id, bool loop = false, int startAt = 0)
         {
-            gameChip.PlayPatterns(loopIDs, loop);
+            gameChip.PlaySong(id, loop, startAt);
         }
 
         public void PlayPattern(int id, bool loop = true)
