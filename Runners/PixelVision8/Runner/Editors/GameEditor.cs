@@ -591,8 +591,19 @@ namespace PixelVision8.Runner.Editors
             return musicChip.songs[id].start;
         }
 
-        public int[] ReadSongPatterns(int id)
+        public int[] SongPatterns(int id, int[] patterns = null)
         {
+
+            if (patterns != null)
+            {
+
+                var newPatterns = new int[patterns.Length];
+                
+                Array.Copy(patterns, newPatterns, patterns.Length);
+                
+                musicChip.songs[id].patterns = newPatterns;
+            }
+            
             return musicChip.songs[id].patterns;
         }
 
@@ -601,9 +612,9 @@ namespace PixelVision8.Runner.Editors
             return musicChip.totalSongs;
         }
 
-        public void UpdateSongPatternAt(int id, int value)
+        public void UpdateSongPatternAt(int id, int position, int value)
         {
-            musicChip.songs[id].UpdatePatternAt(id, value);
+            musicChip.songs[id].UpdatePatternAt(position, value);
         }
 
         public int SongEnd(int id, int? pos = null)
