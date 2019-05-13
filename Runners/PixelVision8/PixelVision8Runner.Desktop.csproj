@@ -111,7 +111,6 @@
     <Compile Include="Runner\Utils\OrdinalStringComparer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="MoonSharp.Interpreter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=921e73ce94aa17f8">
       <HintPath>..\..\packages\MoonSharp.2.0.0.0\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
     </Reference>
@@ -136,6 +135,7 @@
       <Link>Content\Effects\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Packaging.targets" />
   </ItemGroup>
   <!-- Core Runner Tools -->
   <ItemGroup>
@@ -174,14 +174,14 @@
       <Name>MonoVision.OpenGL</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="..\..\packages\InfinitespaceStudios.MonoGame.Packaging.0.1.10-alpha\build\InfinitespaceStudios.MonoGame.Packaging.targets" Condition="Exists('..\..\packages\InfinitespaceStudios.MonoGame.Packaging.0.1.10-alpha\build\InfinitespaceStudios.MonoGame.Packaging.targets') AND '$(Configuration)' == 'Release'" />
+  <Import Project="Packaging.targets" Condition="'$(Configuration)' == 'Release'" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\InfinitespaceStudios.MonoGame.Packaging.0.1.10-alpha\build\InfinitespaceStudios.MonoGame.Packaging.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\InfinitespaceStudios.MonoGame.Packaging.0.1.10-alpha\build\InfinitespaceStudios.MonoGame.Packaging.targets'))" />
-  </Target>
+  <!--  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">-->
+  <!--    <PropertyGroup>-->
+  <!--      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>-->
+  <!--    </PropertyGroup>-->
+  <!--    <Error Condition="!Exists('..\..\packages\InfinitespaceStudios.MonoGame.Packaging.0.1.10-alpha\build\InfinitespaceStudios.MonoGame.Packaging.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\InfinitespaceStudios.MonoGame.Packaging.0.1.10-alpha\build\InfinitespaceStudios.MonoGame.Packaging.targets'))" />-->
+  <!--  </Target>-->
   <Import Project="..\..\SDK\PixelVision8.Workspace.projitems" Label="Shared" />
   <Import Project="..\..\SDK\PixelVision8.SDK.projitems" Label="Shared" />
   <Import Project="..\..\SDK\PixelVision8.Lua.projitems" Label="Shared" />
