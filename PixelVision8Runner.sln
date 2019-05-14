@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoVision.OpenGL", "MonoVi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelVision8Runner.Desktop", "Runners\PixelVision8\PixelVision8Runner.Desktop.csproj", "{51ECE038-73D1-4F38-AFE7-B7D29431496C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackageCreator", "PackageCreator\PackageCreator.csproj", "{8D68A6CD-9CA2-4478-B1D7-123F0EBB4BF4}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Shared\PixelVision8\PixelVision8.SDK.projitems*{0e005b2d-eac6-46a4-a054-97627ec9c805}*SharedItemsImports = 13
@@ -42,6 +44,10 @@ Global
 		{51ECE038-73D1-4F38-AFE7-B7D29431496C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51ECE038-73D1-4F38-AFE7-B7D29431496C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51ECE038-73D1-4F38-AFE7-B7D29431496C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D68A6CD-9CA2-4478-B1D7-123F0EBB4BF4}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{8D68A6CD-9CA2-4478-B1D7-123F0EBB4BF4}.Debug|Any CPU.Build.0 = Debug|x86
+		{8D68A6CD-9CA2-4478-B1D7-123F0EBB4BF4}.Release|Any CPU.ActiveCfg = Release|x86
+		{8D68A6CD-9CA2-4478-B1D7-123F0EBB4BF4}.Release|Any CPU.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{19864555-B496-4A0F-AC32-EB668034A6E2} = {B0E8551B-B9FD-4020-BD22-36DC2224F79F}
 		{6D75E618-19CA-4C51-9546-F10965FBC0B8} = {B0E8551B-B9FD-4020-BD22-36DC2224F79F}
 		{51ECE038-73D1-4F38-AFE7-B7D29431496C} = {8759BE68-DE03-4611-A6C1-D6E5C51E6708}
+		{8D68A6CD-9CA2-4478-B1D7-123F0EBB4BF4} = {B0E8551B-B9FD-4020-BD22-36DC2224F79F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F34BD1FF-9FB3-4809-B45D-C0B2DAB96D51}

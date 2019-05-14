@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <UsingTask TaskName="InfinitespaceStudios.MonoGame.PackagingTasks.CreatePackage" AssemblyFile="..\..\packages\InfinitespaceStudios.MonoGame.Packaging.0.1.10-alpha\build\InfinitespaceStudios.MonoGame.PackagingTasks.dll" />
+    <UsingTask TaskName="InfinitespaceStudios.MonoGame.PackagingTasks.CreatePackage" AssemblyFile="..\..\PackageCreator\bin\Release\PackageCreator.dll" />
+<!--    <UsingTask TaskName="InfinitespaceStudios.MonoGame.PackagingTasks.ResolveDependencies" AssemblyFile="..\..\Packager\build\InfinitespaceStudios.MonoGame.PackagingTasks.dll" />-->
     <PropertyGroup>
         <IncludeMcsInPackage Condition=" '$(IncludeMcsInPackage)' == ''">False</IncludeMcsInPackage>
         <PackageIcon Condition=" '$(PackageIcon)' == '' And Exists('$(MSBuildProjectDirectory)\Icon.png')">$(MSBuildProjectDirectory)\Icon.png</PackageIcon>

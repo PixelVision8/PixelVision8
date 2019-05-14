@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <ProjectGuid>{8D68A6CD-9CA2-4478-B1D7-123F0EBB4BF4}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <AssemblyName>PackageCreator</AssemblyName>
+    <OutputType>Library</OutputType>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>false</Optimize>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>false</DebugSymbols>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>pdbonly</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Mono.Posix, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
+    <Reference Include="System.IO.Compression, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <HintPath>..\..\..\..\..\..\..\Library\Frameworks\Mono.framework\Versions\5.18.0\lib\mono\4.5-api\System.IO.Compression.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="PackageCreator\CreatePackage.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <AutoGen>false</AutoGen>
+      <DesignTimeSharedInput>false</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="PackageCreator\ZipFile.cs">
+      <AutoGen>false</AutoGen>
+      <DesignTimeSharedInput>false</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="PackageCreator\Generator.cs">
+      <AutoGen>false</AutoGen>
+      <DesignTimeSharedInput>false</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Kick" />
+    <EmbeddedResource Include="config" />
+    <EmbeddedResource Include="KickNoMcs" />
+    <EmbeddedResource Include="kick.bin.osx" />
+    <EmbeddedResource Include="mcs.bin.osx" />
+    <EmbeddedResource Include="kick.bin.x86" />
+    <EmbeddedResource Include="mcs.bin.x86" />
+    <EmbeddedResource Include="kick.bin.x86_64" />
+    <EmbeddedResource Include="mcs.bin.x86_64" />
+    <EmbeddedResource Include="Mono.Posix.dll" />
+    <EmbeddedResource Include="Mono.Security.dll" />
+    <EmbeddedResource Include="mscorlib.dll" />
+    <EmbeddedResource Include="System.Configuration.dll" />
+    <EmbeddedResource Include="System.Core.dll" />
+    <EmbeddedResource Include="System.Data.dll" />
+    <EmbeddedResource Include="System.dll" />
+    <EmbeddedResource Include="System.Drawing.dll" />
+    <EmbeddedResource Include="System.Runtime.Serialization.dll" />
+    <EmbeddedResource Include="System.Security.dll" />
+    <EmbeddedResource Include="System.Xml.dll" />
+    <EmbeddedResource Include="System.Xml.Linq.dll" />
+    <EmbeddedResource Include="WindowsBase.dll" />
+    <EmbeddedResource Include="System.IO.Compression.FileSystem.dll" />
+    <EmbeddedResource Include="System.IO.Compression.dll" />
+    <EmbeddedResource Include="mscorlib.dll.linux" />
+    <EmbeddedResource Include="Info.plist" />
+    <EmbeddedResource Include="machine.config" />
+    <EmbeddedResource Include="System.IO.Compression.dll.config" />
+    <EmbeddedResource Include="App.icns" />
+    <EmbeddedResource Include="libMonoPosixHelper.dylib" />
+    <EmbeddedResource Include="libMonoPosixHelper.x86" />
+    <EmbeddedResource Include="libMonoPosixHelper.x86_64" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
