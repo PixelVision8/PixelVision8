@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <UsingTask TaskName="CreatePackage" AssemblyFile="..\..\PackageCreator\bin\Release\PackageCreator.dll" />
+    <UsingTask TaskName="CreatePackage" AssemblyFile="..\PackageCreator.dll" />
     <PropertyGroup>
         <IncludeMcsInPackage Condition=" '$(IncludeMcsInPackage)' == ''">False</IncludeMcsInPackage>
         <PackageIcon Condition=" '$(PackageIcon)' == '' And Exists('$(MSBuildProjectDirectory)\Icon.png')">$(MSBuildProjectDirectory)\Icon.png</PackageIcon>
