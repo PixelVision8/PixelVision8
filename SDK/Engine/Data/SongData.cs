@@ -87,7 +87,7 @@ namespace PixelVision8.Engine
 
         public bool AtEnd()
         {
-            Console.WriteLine("End "+ end + " " + currentPos);
+//            Console.WriteLine("End "+ end + " " + currentPos);
 
             return currentPos >= end - 1;
         }
