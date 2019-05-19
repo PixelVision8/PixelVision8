@@ -160,27 +160,34 @@ namespace PixelVision8.Runner
             workspaceServicePlus.osLibPath = WorkspacePath.Root.AppendDirectory("PixelVisionOS")
                 .AppendDirectory(bios.ReadBiosData("LibsDir", "Libs"));
 
+            
+            // Look for the workspace name
+            var workspaceName = bios.ReadBiosData("WorkspaceDir", "Workspace");
+
             // PV8 Needs to access the documents folder so it can create the workspace drive
             var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8") as string;
 
             // Create the real system path to the documents folder
             documentsPath = Path.Combine(Documents, baseDir);
-            
+
+            if (Directory.Exists(documentsPath) == false)
+            {
+                Directory.CreateDirectory(documentsPath);
+            }
+        
             // Create a new physical file system mount
             workspaceServicePlus.AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(
                 WorkspacePath.Root.AppendDirectory("User"),
                 new PhysicalFileSystem(documentsPath)));
             
-            // Add trash
-            // Create a trash folder
-            
-            
-            // Look for the workspace name
-            var workspaceName = bios.ReadBiosData("WorkspaceDir", "Workspace") as string;
-        
             // Mount the workspace drive    
             workspaceServicePlus.MountWorkspace(workspaceName);
             
+//            else
+//            {
+                workspaceServicePlus.RebuildWorkspace();
+//            }
+
         }
         
         protected override void LoadDefaultGame()
@@ -248,8 +255,6 @@ namespace PixelVision8.Runner
             workspaceServicePlus.EjectDisk(WorkspacePath.Parse(path));
 
             UpdateDiskInBios();
-
-            
 
             AutoLoadDefaultGame();
 
@@ -523,8 +528,19 @@ namespace PixelVision8.Runner
                 var diskName = workspaceServicePlus.MountDisk(path);
 
                 // Only try to auto run a game if this is enabled in the runner
-                if (autoRunEnabled) 
+                if (autoRunEnabled)
+                {
+                    // If we are running this disk clear the previous history
+                    loadHistory.Clear();
+                    
+                    // Run the disk
                     AutoRunGameFromDisk(diskName);
+                }
+                else
+                {
+                    // TODO sometimes we don't wan to do this
+                    ResetGame();
+                }
                 
             }
             catch
@@ -807,7 +823,7 @@ namespace PixelVision8.Runner
             
             // TODO need to make sure this is the right time to do this
             
-            ResetGame();
+//            ResetGame();
         }
         
         public override void ResetGame()
@@ -863,24 +879,44 @@ namespace PixelVision8.Runner
             if (mode == RunnerMode.Loading)
                 return;
 
-            if (loadHistory.Count > 1)
+            if (loadHistory.Count > 0)
             {
-                // Remvoe the last game that was running from the history
-                loadHistory.RemoveAt(loadHistory.Count - 1);
+
+                try
+                {
+                    // Remvoe the last game that was running from the history
+                    loadHistory.RemoveAt(loadHistory.Count - 1);
                 
-                // Get the previous game
-                var lastGameRef = loadHistory.Last();
+                    // Get the previous game
+                    var lastGameRef = loadHistory.Last();
                 
-                // Remove that game from history since we are about to load it
-                loadHistory.RemoveAt(loadHistory.Count - 1);
+                    // Remove that game from history since we are about to load it
+                    loadHistory.RemoveAt(loadHistory.Count - 1);
                 
-                // Load the last game
-                Load(lastGameRef.Key, RunnerMode.Loading, lastGameRef.Value);
+                    // Load the last game
+                    Load(lastGameRef.Key, RunnerMode.Loading, lastGameRef.Value);
+
+                    return;
+                }
+                catch
+                {
+                    // ignored
+                }
             }
-            else
-            {
-                DisplayError(ErrorCode.NoAutoRun);
-            }
+//            else
+//            {
+//                ();
+//            }
+            
+            // Make sure all disks are ejected
+            workspaceServicePlus.EjectAll();
+
+            AutoLoadDefaultGame();
+            //DisplayError(ErrorCode.NoAutoRun);
+//            else
+//            {
+//                
+//            }
 
         }
         

@@ -57,9 +57,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\Mathf.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\SfxrParams.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\SfxrSynth.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Chips\Games\BootGameChip.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Chips\Games\ErrorGameChip.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Chips\Games\LoadGameChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\DisplayTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\IAudioClip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\IAudioClipFactory.cs" />

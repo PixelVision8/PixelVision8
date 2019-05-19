@@ -53,7 +53,6 @@ namespace PixelVision8.Runner.Data
             _monitorWidth = MathHelper.Clamp(width, 64, 640);
             _monitorHeight = MathHelper.Clamp(height, 64, 480);
             
-//            monitorScale = scale;
         }
 
         public bool useCRT
@@ -113,26 +112,9 @@ namespace PixelVision8.Runner.Data
                 crtShader.Parameters["shape"]?.SetValue(2f); // 2.0f
 
                 useCRT = true;
-                // Monitor brightness
-//                shaderEffect.Parameters["maskDark"]?.SetValue(.5f); // 0.5f
-//                
-//                
-//                shaderEffect.Parameters["maskLight"]?.SetValue(1.5f); // 1.5f ?
-//                
-//                shaderEffect.Parameters["scaleInLinearGamma"]?.SetValue(1.0f); // 1.0f
-//                shaderEffect.Parameters["shadowMask"]?.SetValue(0.5f); // 3.0f ?
-//                
-
-//                shaderEffect.Parameters["hardBloomScan"]?.SetValue(-8.5f); //-1.5f
-//                shaderEffect.Parameters["hardBloomPix"]?.SetValue(-8f); // -2.0f
-//                shaderEffect.Parameters["bloomAmount"]?.SetValue(0f); // 0.15f
-//                
-
-
-//                shaderEffect = new Effect(graphicManager.GraphicsDevice, File.ReadAllBytes(value));
+                
             }
         }
-//        private GameWindow window;
 
         private int _monitorScale = 1;
         

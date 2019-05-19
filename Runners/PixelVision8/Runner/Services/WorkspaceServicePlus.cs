@@ -23,10 +23,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
-using PixelVision8.Runner.Exporters;
+using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Utils;
 using PixelVision8.Runner.Workspace;
 
@@ -41,12 +40,13 @@ namespace PixelVision8.Runner.Services
         public WorkspaceServicePlus(KeyValuePair<WorkspacePath, IFileSystem> mountPoint) : base(mountPoint)
         {
         }
-        
-        public int totalDisks
+
+        public int totalDisks => 3;//Exists(WorkspacePath.Root.AppendDirectory("Workspace")) ? 3 : 3;
+
+        public void CreateWorkspaceDrive(string name)
         {
-            // TODO need to read this from the bios
-            get;
-        } = 3;
+            
+        }
         
         public void MountWorkspace(string name)
         {
@@ -65,7 +65,8 @@ namespace PixelVision8.Runner.Services
                 filePath = filePath.AppendDirectory(name);
 
                 // If the filesystem doesn't exit, we want to create it
-                if (!Exists(filePath)) CreateDirectory(filePath);
+                if (!Exists(filePath)) 
+                    CreateDirectory(filePath);
             }
 
             var workspaceDisk = new SubFileSystem(this, filePath);
@@ -75,7 +76,7 @@ namespace PixelVision8.Runner.Services
                     workspaceDisk));
 
 
-            RebuildWorkspace();
+//            RebuildWorkspace();
         }
 
         public void RebuildWorkspace()
@@ -98,29 +99,15 @@ namespace PixelVision8.Runner.Services
             // Create a path to the workspace system folder
             var path = WorkspacePath.Root.AppendDirectory("Workspace").AppendDirectory("System");
 
-//            try
-//            {
                 // Look to see if the workspace system folder exists
-                if (Exists(path))
-                {
-//                    Console.WriteLine("Found Workspace system folder");
-                    
-                    
+            if (Exists(path))
+            {
 
-                    // Add the workspace system folder to the os file system
-                    systemPaths.Add(new SubFileSystem(this, path));
-//                }
-//                    );
-                }
-                
-//            }
-//            catch 
-//            {
-//                Console.WriteLine("No system folder");
-//            }
-//            
-//            var osFileSystem = ;
-            
+                // Add the workspace system folder to the os file system
+                systemPaths.Add(new SubFileSystem(this, path));
+
+            }
+ 
             // Mount the PixelVisionOS directory
             AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(osPath, new MergedFileSystem(systemPaths)));
             
