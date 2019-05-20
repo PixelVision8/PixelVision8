@@ -29,82 +29,11 @@ using PixelVision8.Runner.Data;
 namespace PixelVision8.Runner.Exporters
 {
     
-    public class AudioClip : IAudioClip
-    {
-        private readonly string name;
-        private float[] data;
-
-        public static IAudioClip NewAudioClip(string name, int lengthSamples, int channels, int frequency, bool stream)
-        {
-            return new AudioClip(name, lengthSamples, channels, frequency);    
-        }
-        
-        public AudioClip(string name, int samples, int channels, int frequency)
-        {
-            this.name = name;
-            this.samples = samples;
-            this.channels = channels;
-            this.frequency = frequency;
-            this.data = new float[samples];
-        }
-
-        public bool SetData(float[] data, int offsetSamples)
-        {
-//            throw new NotImplementedException();
-//            offsetSamples = 0;
-            
-            var total = data.Length;
-            for (int i = 0; i < total; i++)
-            {
-                var index = i + offsetSamples;
-                
-                if (index < samples)
-                {
-                    this.data[index] = data[i];
-                }
-            }
-
-            return true;
-        }
-
-        public int samples { get;}
-        public int channels { get;}
-
-        public bool GetData(float[] data, int offsetSamples)
-        {
-
-            try
-            {
-                Array.Copy(this.data, data, samples);
-                return true;
-            }
-            catch /*(Exception e)*/
-            {
-//                Console.WriteLine(e);
-//                throw;
-            }
-            
-            
-//            var total = data.Length;
-//            for (int i = 0; i < total; i++)
-//            {
-//                var index = i + offsetSamples;
-//                
-//                if (index < samples)
-//                {
-//                    data[i] = this.data[index];
-//                }
-//            }
-
-            return true;
-        }
-
-        public int frequency { get; }
-    }
+    
 
     public class SongExporter : AbstractExporter
     {
-//        private readonly IAudioClipFactory audioClipFactory;
+//        private readonly RawAudioDataFactory audioClipFactory;
 
 //        private IEngine engine;
         private readonly int MAX_NOTE_NUM = 127; // how many notes in these arrays below
@@ -128,20 +57,20 @@ namespace PixelVision8.Runner.Exporters
 
         // optimization: precache silent playback to ram
         public int preRenderBitrate = 44100; //48000; // should be 44100; FIXME TODO EXPERIMENTING W BUGFIX
-        private IAudioClip result;
+        private RawAudioData result;
 
         public float
             swing_rhythm_factor = 0.7f; //1.0f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
 
-        private IAudioClip[] trackresult;
+        private RawAudioData[] trackresult;
 
         public SongExporter(string path, MusicChip musicChip, SoundChip soundChip/*,
-            IAudioClipFactory audioClipFactory*/) : base(path)
+            RawAudioDataFactory audioClipFactory*/) : base(path)
         {
 //            Debug.Log("FileName " + musicChip.activeSongData.songName);
 
             // Rebuild the path by adding the active song name and wav extension
-            fileName = path + musicChip.activeTrackerData.songName + ".wav";
+            fileName = path + "pattern-"+musicChip.currentPattern.ToString().PadLeft(2, '0') + ".wav";
 
             // Save references to the currentc chips
             this.musicChip = musicChip;
@@ -222,14 +151,17 @@ namespace PixelVision8.Runner.Exporters
             updateNoteTickLengths(songData); // FIXME: allow shuffle rhythm note length changes?
 
             var notedatalength = (int) (preRenderBitrate * 2f * note_tick_s_odd); // one note worth of stereo audio (x2)
+            
+            // TODO this is off. It is happening to fast and not matching up to the correct speed of the song.
             var beatlength = preRenderBitrate * note_tick_s_odd; // one note worth of time
+            
             var songdatalength = notedatalength * totalNotesInSong * 2; // stereo cd quality x song length
 
             var notebuffer = new float[notedatalength];
             var songdataCurrentPos = 0;
 
             // all the tracks we need - an array of audioclips that will be merged into result
-            trackresult = new IAudioClip[tcount];
+            trackresult = new RawAudioData[tcount];
 
             var instrument = new SfxrSynth[songData.totalTracks];
 
@@ -241,7 +173,7 @@ namespace PixelVision8.Runner.Exporters
                 // stereo
                 //trackresult[tracknum] = AudioClip.Create("Track"+tracknum, songdatalength / 2, 2, preRenderBitrate, false);
                 // mono
-                trackresult[tracknum] = AudioClip.NewAudioClip("Track" + tracknum, songdatalength / 2, 1,
+                trackresult[tracknum] = RawAudioData.NewAudioClip(songdatalength / 2, 1,
                     preRenderBitrate, false);
 
                 songdataCurrentPos = 0;
@@ -298,7 +230,7 @@ namespace PixelVision8.Runner.Exporters
                         // sounds pitch-shifted and faster - a different bitrate?
                         // WORKS GREAT IF WE RUN CACHESOUND() FIRST
                         // TODO need to figure out why we can't access the cachedWave
-//                        notebuffer = instrument[tracknum].cachedWave; // the wave data for the current note
+                        notebuffer = instrument[tracknum].cachedWave; // the wave data for the current note
 
                         // this SHOULD be the solution. but outputs all 0's
                         //bool gotAllData = instrument[tracknum].GenerateAudioFilterData(notebuffer, 2);
@@ -339,7 +271,9 @@ namespace PixelVision8.Runner.Exporters
 
         private void updateNoteTickLengths(TrackerData trackerData)
         {
-            note_tick_s = 30.0f / trackerData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
+            
+            // TODO needed to increase this number to match the speed better but this should be test out more.
+            note_tick_s = 45.0f / trackerData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
 //            if (!SongData.shuffleRhythm) swing_rhythm_factor = 1; // not a swing beat: all beats same length
             note_tick_s_odd = note_tick_s * swing_rhythm_factor; // small beat
             note_tick_s_even = note_tick_s * 2 - note_tick_s_odd; // long beat
@@ -349,7 +283,7 @@ namespace PixelVision8.Runner.Exporters
         }
 
         // pre-rendered waveforms - OPTIMIZATION - SLOW SLOW SLOW - FIXME
-        public /* static */ IAudioClip MixdownAudioClips(params IAudioClip[] clips)
+        public /* static */ RawAudioData MixdownAudioClips(params RawAudioData[] clips)
         {
             if (clips == null || clips.Length == 0) return null;
 
@@ -370,7 +304,7 @@ namespace PixelVision8.Runner.Exporters
                 if (clips[i] == null)
                     continue;
 
-                clips[i].GetData(buffer, 0);
+                clips[i].GetData(buffer);
 
                 // mix two signals together: we might get too loud...
                 // FIXME: we may need to make all clips a bit quieter
@@ -394,8 +328,8 @@ namespace PixelVision8.Runner.Exporters
             // stereo
             //AudioClip result = AudioClip.Create("MixdownSTEREO", length / 2, 2, preRenderBitrate, false);
             // mono
-            var result = AudioClip.NewAudioClip("MixdownMONO", length / 2, 1, preRenderBitrate, false);
-            result.SetData(data, 0); // TODO: we can get a warning here: data too large to fit: discarded x samples
+            var result = RawAudioData.NewAudioClip(length / 2, 1, preRenderBitrate, false);
+            result.SetData(data); // TODO: we can get a warning here: data too large to fit: discarded x samples
             // the truncation can happen with a large sustain of a note that could go on after the song is over
             // one solution is to pad the end with 4sec of 0000s then maybe search and TRIM
 
@@ -410,7 +344,7 @@ namespace PixelVision8.Runner.Exporters
 
         private const int HEADER_SIZE = 44;
 
-        public byte[] Save(string filepath, IAudioClip clip)
+        public byte[] Save(string filepath, RawAudioData clip)
         {
             MemoryStream fileStream;
 
@@ -436,11 +370,11 @@ namespace PixelVision8.Runner.Exporters
             return fileStream;
         }
 
-        private void ConvertAndWrite(MemoryStream fileStream, IAudioClip clip)
+        private void ConvertAndWrite(MemoryStream fileStream, RawAudioData clip)
         {
             var samples = new float[clip.samples];
 
-            clip.GetData(samples, 0);
+            clip.GetData(samples);
 
             var intData = new short[samples.Length];
             //converting in 2 float[] steps to Int16[], //then Int16[] to Byte[]
@@ -462,7 +396,7 @@ namespace PixelVision8.Runner.Exporters
             fileStream.Write(bytesData, 0, bytesData.Length);
         }
 
-        private void WriteHeader(MemoryStream fileStream, IAudioClip clip)
+        private void WriteHeader(MemoryStream fileStream, RawAudioData clip)
         {
             var hz = clip.frequency;
             var channels = clip.channels;

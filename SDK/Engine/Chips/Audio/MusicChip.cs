@@ -40,7 +40,7 @@ namespace PixelVision8.Engine.Chips
 
         protected int _totalTracks;
 
-        protected int currentPattern = -1;
+        public int currentPattern = -1;
         private SongData currentSong;
         public bool loopSong;
         public int maxNoteNum = 127; // how many notes in these arrays below

@@ -41,7 +41,7 @@ namespace PixelVision8.Runner.Services
         {
         }
 
-        public int totalDisks => 3;//Exists(WorkspacePath.Root.AppendDirectory("Workspace")) ? 3 : 3;
+        public int totalDisks => 2;//Exists(WorkspacePath.Root.AppendDirectory("Workspace")) ? 3 : 3;
 
         public void CreateWorkspaceDrive(string name)
         {
@@ -120,7 +120,7 @@ namespace PixelVision8.Runner.Services
 
             if (Exists(filePath))
             {
-                filePath = filePath.AppendDirectory("Loops");
+                filePath = filePath.AppendDirectory("Patterns");
 
                 if (!Exists(filePath)) CreateDirectory(filePath);
 

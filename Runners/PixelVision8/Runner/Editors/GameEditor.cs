@@ -1845,12 +1845,12 @@ namespace PixelVision8.Runner.Editors
             musicChip.LoadPattern(id);
         }
 
-        public string LoopName(string value = null)
-        {
-            if (value != null) musicChip.activeTrackerData.songName = value;
-
-            return musicChip.activeTrackerData.songName;
-        }
+//        public string LoopName(string value = null)
+//        {
+//            if (value != null) musicChip.activeTrackerData.songName = value;
+//
+//            return musicChip.activeTrackerData.songName;
+//        }
 
         /// <summary>
         /// </summary>

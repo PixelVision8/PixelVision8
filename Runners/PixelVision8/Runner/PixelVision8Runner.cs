@@ -244,12 +244,42 @@ namespace PixelVision8.Runner
             luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
             luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
             luaScript.Globals["RebuildWorkspace"] = new Action(workspaceServicePlus.RebuildWorkspace);
+            luaScript.Globals["MountDisk"] = new Action<WorkspacePath>((path) =>
+            {
+                var segments = path.GetDirectorySegments();
+
+                var systemPath = Path.PathSeparator.ToString();
+                
+                if (segments[0] == "Disk")
+                {
+                    
+                }
+                else if (segments[0] == "Workspace")
+                {
+                    // TODO the workspace could have a different name so we should check the bios
+                    systemPath = Path.Combine(documentsPath, segments[0]);
+                }
+
+                for (int i = 1; i < segments.Length; i++)
+                {
+                    systemPath = Path.Combine(systemPath, segments[i]);
+                }
+
+                systemPath = Path.Combine(systemPath,
+                    path.IsDirectory ? Path.PathSeparator.ToString() : path.EntityName);
+
+    
+                Console.WriteLine("Mount Disk From " + systemPath);
+
+                MountDisk(systemPath);
+                
+            });
             
             // Activate the game
             base.ActivateEngine(engine);
             
         }
-        
+
         public void EjectDisk(string path)
         {
             workspaceServicePlus.EjectDisk(WorkspacePath.Parse(path));

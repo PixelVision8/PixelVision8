@@ -335,7 +335,7 @@ namespace PixelVision8.Runner.Services
             {
                 var text = "";
 
-                using (var file = OpenFile(filePath, FileAccess.Read) as FileStream)
+                using (var file = OpenFile(filePath, FileAccess.Read))
                 {
                     text = file.ReadAllText();
                     file.Close();

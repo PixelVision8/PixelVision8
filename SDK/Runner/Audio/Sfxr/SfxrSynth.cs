@@ -36,6 +36,10 @@ namespace PixelVision8.Runner.Chips.Sfxr
         private float _bitcrushLast; // Last sample value
         private float _bitcrushPhase; // Samples when this > 1
 
+        public float[] cachedWave
+        {
+            get { return _cachedWave; }
+        }
 
         // Sound properties
         private float[] _cachedWave; // Cached wave data from a cacheSound() call

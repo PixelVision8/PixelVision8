@@ -36,7 +36,7 @@ namespace PixelVision8.Engine
         /// <summary>
         ///     The song title
         /// </summary>
-        public string songName = "Untitled";
+//        public string songName = "Untitled";
 
         /// <summary>
         ///     All the tracks used in this loop
@@ -45,7 +45,7 @@ namespace PixelVision8.Engine
 
         public TrackerData(string name = "Untitled", int tracks = 4)
         {
-            Reset(name);
+            Reset();
             totalTracks = tracks;
         }
 
@@ -98,11 +98,10 @@ namespace PixelVision8.Engine
         /// <summary>
         ///     Reset the default values of the SongData instance
         /// </summary>
-        /// <param name="name"></param>
         /// <param name="trackCount"></param>
-        public void Reset(string name = "Untitled", int trackCount = 4)
+        public void Reset(int trackCount = 4)
         {
-            songName = name;
+//            songName = name;
             totalTracks = trackCount;
             foreach (var track in tracks)
                 track.Reset(true);

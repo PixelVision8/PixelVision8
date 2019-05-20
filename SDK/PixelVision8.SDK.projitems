@@ -58,8 +58,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\SfxrParams.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\SfxrSynth.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\DisplayTarget.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\IAudioClip.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\IAudioClipFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\SfxrSoundData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\SfxrTrackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\SfxrTrackerData.cs" />

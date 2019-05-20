@@ -317,8 +317,8 @@ namespace PixelVision8.Runner.Parsers
 
                     var sngData = patternData[i] as Dictionary<string, object>;
 
-                    if (sngData.ContainsKey(patternNameKey))
-                        song.songName = (string) sngData[patternNameKey];
+//                    if (sngData.ContainsKey(patternNameKey))
+//                        song.songName = (string) sngData[patternNameKey];
 
                     if (sngData.ContainsKey("speedInBPM"))
                         song.speedInBPM = Convert.ToInt32((long) sngData["speedInBPM"]);

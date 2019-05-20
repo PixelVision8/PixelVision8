@@ -321,15 +321,15 @@ namespace PixelVision8.Runner.Chips
             loopSong = value;
         }
 
-        public string ReadSongName()
-        {
-            return activeTrackerData.songName;
-        }
-
-        public void UpdateSongName(string value)
-        {
-            activeTrackerData.songName = value;
-        }
+//        public string ReadSongName()
+//        {
+//            return activeTrackerData.songName;
+//        }
+//
+//        public void UpdateSongName(string value)
+//        {
+//            activeTrackerData.songName = value;
+//        }
 
         public int ReadNote(int track, int beat)
         {
@@ -473,7 +473,7 @@ namespace PixelVision8.Runner.Chips
             //updateNoteTickLengths();
 
             // random song name
-            UpdateSongName(randomSongName());
+//            UpdateSongName(randomSongName());
 
             // random key (root note) /* 60 = middle C */
             pcgKeyRootNote = 60 + r.Next(pcgKeyRangeMin, pcgKeyRangeMax); // vary the key up or down

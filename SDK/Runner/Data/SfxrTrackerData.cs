@@ -40,10 +40,10 @@ namespace PixelVision8.Runner.Data
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-            sb.Append("\"patternName\":\"");
-            sb.Append(songName);
-            sb.Append("\",");
-            JsonUtil.GetLineBreak(sb, 1);
+//            sb.Append("\"patternName\":\"");
+//            sb.Append(songName);
+//            sb.Append("\",");
+//            JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"speedInBPM\":");
             sb.Append(speedInBPM);
