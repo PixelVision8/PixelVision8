@@ -612,9 +612,15 @@ namespace PixelVision8.Runner.Editors
             return musicChip.totalSongs;
         }
 
-        public void UpdateSongPatternAt(int id, int position, int value)
+        public int SongPatternAt(int id, int position, int? newPattern)
         {
-            musicChip.songs[id].UpdatePatternAt(position, value);
+
+            if (newPattern.HasValue)
+            {
+                musicChip.songs[id].UpdatePatternAt(position, newPattern.Value);
+            }
+
+            return musicChip.songs[id].patterns[position];
         }
 
         public int SongEnd(int id, int? pos = null)
