@@ -80,7 +80,7 @@ namespace PixelVision8.Runner.Exporters
             var w = cols * tileSize.X;
             var h = rows * tileSize.Y;
 
-            var canvas = new Pattern(w, h);
+            var canvas = new TextureData(w, h);
             canvas.Clear();
 
             var totalPixels = tileSize.X * tileSize.Y;

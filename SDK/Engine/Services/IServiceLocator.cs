@@ -24,8 +24,6 @@ namespace PixelVision8.Engine.Services
 {
     public interface IServiceLocator
     {
-//        Dictionary<string, IService> services { get; }
-
         void AddService(string id, IService service);
 
         IService GetService(string id);

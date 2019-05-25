@@ -1888,13 +1888,6 @@ namespace PixelVision8.Engine.Chips
 
             var tileSize = SpriteSize();
 
-            // Get a local reference to the layers we need
-//            var tmpSpriteIDs = tilemapChip.layers[(int) TilemapChip.Layer.Sprites];
-//            var tmpPaletteIDs = tilemapChip.layers[(int) TilemapChip.Layer.Colors];
-//            var invalideLayer = tilemapChip.layers[(int) TilemapChip.Layer.Invalid];
-//            var flipHLayer = tilemapChip.layers[(int) TilemapChip.Layer.FlipH];
-//            var flipVLayer = tilemapChip.layers[(int) TilemapChip.Layer.FlipV];
-
             // Create tmp variables for loop
             int x, y, spriteID;
 
@@ -2021,11 +2014,6 @@ namespace PixelVision8.Engine.Chips
         {
             return new Point(x, y);
         }
-
-//        public TextureData NewTextureData(int width, int height, bool wrapMode = true)
-//        {
-//            return new TextureData(width, height, wrapMode);
-//        }
 
         #endregion
 
@@ -2228,7 +2216,6 @@ namespace PixelVision8.Engine.Chips
 
             var intArray = new int[bits.Length];
 
-//            bits.CopyTo(intArray, 0);
             bits.CopyTo(intArray, 0);
 
             return intArray;

@@ -33,9 +33,9 @@ namespace PixelVision8.Engine
         private bool drawCentered;
         private readonly IGameChip gameChip;
         private Point linePattern = new Point(1, 0);
-        private readonly Pattern pattern;
+        private readonly TextureData pattern;
         private readonly Point spriteSize;
-        private readonly Pattern stroke;
+        private readonly TextureData stroke;
 
         protected int[] tmpIDs = new int[0];
 
@@ -45,10 +45,10 @@ namespace PixelVision8.Engine
         public Canvas(int width, int height, IGameChip gameChip = null) : base(width, height)
         {
             this.gameChip = gameChip;
-            pattern = new Pattern(1, 1);
+            pattern = new TextureData(1, 1);
             pattern.SetPixel(0, 0, 0);
 
-            stroke = new Pattern(1, 1);
+            stroke = new TextureData(1, 1);
             stroke.SetPixel(0, 0, 0);
 
             spriteSize = gameChip.SpriteSize();
@@ -479,20 +479,6 @@ namespace PixelVision8.Engine
 
             var paddingW = spriteSize.X;
             var paddingH = spriteSize.Y;
-
-//            if (drawMode == DrawMode.Tile)
-//            {
-//                paddingW = 1;
-//                paddingH = 1;
-//            }
-//            startY = displayChip.height - height - startY;
-
-//            if (flipH || flipV)
-//                SpriteChipUtil.FlipSpriteData(ref tmpIDs, width, height, flipH, flipV);
-
-            // Store the sprite id from the ids array
-//            int id;
-//            bool render;
 
             // TODO need to offset the bounds based on the scroll position before testing against it
 

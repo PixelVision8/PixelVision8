@@ -25,8 +25,6 @@ namespace PixelVision8.Engine.Services
     public interface IService
     {
         void RegisterService(IServiceLocator locator);
-//        T GetInstance<T>() where T : IService;
-//        bool Execute(string command, Dictionary<string, object> data);
         IServiceLocator locator { get; set; }
     }
 }

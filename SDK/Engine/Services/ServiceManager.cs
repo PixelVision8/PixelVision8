@@ -7,8 +7,6 @@ namespace PixelVision8.Engine.Services
     {
         protected Dictionary<string, IService> services = new Dictionary<string, IService>();
 
-//        public Dictionary<string, IService> services => _services;
-
         public void AddService(string id, IService service)
         {
             // Add the service to the managed list

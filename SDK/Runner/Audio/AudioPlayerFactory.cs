@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Chips.Sfxr;
 
 namespace PixelVision8.Runner.Audio
@@ -31,7 +30,7 @@ namespace PixelVision8.Runner.Audio
 
         public IAudioPlayer Create(ISfxrSynth synth)
         {
-            return new AudioPlayer(synth, this);
+            return new SfxrAudioPlayer(synth, this);
         }
 
         public int Volume(int? value = null)

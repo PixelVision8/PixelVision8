@@ -18,7 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-namespace PixelVision8.Engine.Chips
+namespace PixelVision8.Runner.Audio
 {
     public interface IVolumeManager
     {

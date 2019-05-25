@@ -20,12 +20,11 @@
 
 using System.IO;
 using Microsoft.Xna.Framework.Audio;
-using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Chips.Sfxr;
 
 namespace PixelVision8.Runner.Audio
 {
-    internal class AudioPlayer : IAudioPlayer
+    internal class SfxrAudioPlayer : IAudioPlayer
     {
         private bool _isDisposed;
         private readonly SoundEffect _soundEffect;
@@ -34,7 +33,7 @@ namespace PixelVision8.Runner.Audio
         private readonly SoundState state;
         private readonly IVolumeManager volumeManager;
 
-        public AudioPlayer(ISfxrSynth synth, IVolumeManager volumeManagerManager)
+        public SfxrAudioPlayer(ISfxrSynth synth, IVolumeManager volumeManagerManager)
         {
             volumeManager = volumeManagerManager;
 

@@ -27,25 +27,6 @@ namespace PixelVision8.Runner.Data
 {
     public class SfxrTrackData : TrackData
     {
-//        /// <summary>
-//        /// </summary>
-//        /// <param name="data"></param>
-//        public void DeserializeData(Dictionary<string, object> data)
-//        {
-//            if (data.ContainsKey("sfxID"))
-//                sfxID = Convert.ToInt32((long) data["sfxID"]);
-//
-//            if (data.ContainsKey("notes"))
-//            {
-//                var noteData = (List<object>) data["notes"];
-//                var totalNotes = noteData.Count;
-//                notes = new int[totalNotes];
-//                for (var k = 0; k < totalNotes; k++)
-//                    notes[k] = (int) (long) noteData[k];
-//            }
-//        }
-
-//        public bool ignore { get; private set; }
 
         /// <summary>
         /// </summary>

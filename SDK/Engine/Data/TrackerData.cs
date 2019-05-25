@@ -20,7 +20,6 @@
 
 using System;
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine
 {
@@ -32,11 +31,6 @@ namespace PixelVision8.Engine
     public class TrackerData : AbstractData
     {
         protected int _speedInBPM = 120;
-
-        /// <summary>
-        ///     The song title
-        /// </summary>
-//        public string songName = "Untitled";
 
         /// <summary>
         ///     All the tracks used in this loop

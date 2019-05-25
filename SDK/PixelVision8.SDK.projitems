@@ -10,10 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\AbstractChip.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\IVolumeManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\MusicChip.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\SfxrMusicChip.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\SfxrSoundChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\SoundChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Game\GameChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Game\IGameChip.cs" />
@@ -34,7 +31,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\IInvalidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\ISoundData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Keys.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Pattern.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\SongData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\TextureData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\TileData.cs" />
@@ -49,8 +45,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Utils\ColorUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Utils\MathUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Utils\SpriteChipUtil.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\AudioPlayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\SfxrAudioPlayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\AudioPlayerFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\IVolumeManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\SfxrMusicChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\SfxrSoundChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\IAudioPlayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\IAudioPlayerFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\ISfxrSynth.cs" />
