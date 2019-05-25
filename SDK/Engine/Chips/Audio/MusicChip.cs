@@ -53,7 +53,11 @@ namespace PixelVision8.Engine.Chips
         protected float noteTickSEven;
         protected float noteTickSOdd;
 
-        public int sequencerBeatNumber; // TODO changed this from long to int, need to make sure there aren't any other issues with this change
+        public int sequencerBeatNumber
+        {
+            get;
+            set;
+        } // TODO changed this from long to int, need to make sure there aren't any other issues with this change
 
 //        protected int sequencerLoopNum;
         public bool songCurrentlyPlaying;

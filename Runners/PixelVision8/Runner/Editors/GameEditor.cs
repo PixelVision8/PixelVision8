@@ -567,7 +567,7 @@ namespace PixelVision8.Runner.Editors
             return musicChip.totalSongs;
         }
 
-        public void PlaySong(int id, bool loop = false, int startAt = 0)
+        public void PlaySong(int id, bool loop = true, int startAt = 0)
         {
             gameChip.PlaySong(id, loop, startAt);
         }
@@ -2023,6 +2023,16 @@ namespace PixelVision8.Runner.Editors
         public bool SongPlaying()
         {
             return musicChip.songCurrentlyPlaying;
+        }
+
+        public int CurrentPattern()
+        {
+            return musicChip.currentPattern;
+        }
+
+        public Dictionary<string, int> ReadSongData()
+        {
+            return musicChip.songData;
         }
 
         /// <summary>

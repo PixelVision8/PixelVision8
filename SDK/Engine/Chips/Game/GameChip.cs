@@ -1450,7 +1450,7 @@ namespace PixelVision8.Engine.Chips
             return soundChip.IsChannelPlaying(channel);
         }
 
-        public void PlaySong(int id, bool loop = false, int startAt = 0)
+        public void PlaySong(int id, bool loop = true, int startAt = 0)
         {
             musicChip.PlaySong(id, loop, startAt);
         }

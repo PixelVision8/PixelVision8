@@ -34,7 +34,7 @@ namespace PixelVision8.Engine
         public int currentPos = -1;
         public string name = "Untitled";
         public int _start = 0;
-        public int _end = 0;
+        public int _end = 1;
         public int totalPatternsPerSong = 100;
 
         public int[] patterns
@@ -89,7 +89,7 @@ namespace PixelVision8.Engine
         {
 //            Console.WriteLine("End "+ end + " " + currentPos);
 
-            return currentPos >= end - 1;
+            return currentPos >= end;
         }
 
         public void Rewind()
