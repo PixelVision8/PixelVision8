@@ -45,8 +45,7 @@ namespace PixelVision8.Engine
 
         protected int total;
 
-    
-        
+
         /// <summary>
         ///     The constructor for a new TextureData class. It requires new
         ///     dimensions and an optional value for changing the wrap mode.
@@ -350,7 +349,7 @@ namespace PixelVision8.Engine
 
             Invalidate();
         }
-        
+
 
         /// <summary>
         ///     A fast method for getting a copy of the texture's pixel data.

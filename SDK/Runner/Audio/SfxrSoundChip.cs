@@ -52,13 +52,18 @@ namespace PixelVision8.Engine.Chips
         }
 
         /// <summary>
-        ///     This allows you to feed soudn effect data directly to the sound chip and play it on
-        ///     on a specific channel. Use this if you don't have a sound effect stored in the sound
-        ///     chip or for hard coded sounds. These sounds are not cached by the engine so it may
-        ///     cause performance issues when playing back at run time.
+        ///     This helper method allows you to pass raw SFXR string data to the sound chip for playback. It works just
+        ///     like the normal PlaySound() API but accepts a string instead of a sound ID. Calling PlayRawSound() could
+        ///     be expensive since the sound effect data is not cached by the engine. It is mostly used for sound effects
+        ///     in tools and shouldn't be called when playing a game.
         /// </summary>
-        /// <param name="channel"></param>
-        /// <param name="data"></param>
+        /// <param name="data">Raw string data representing SFXR sound properties in a comma-separated list.</param>
+        /// <param name="channel">
+        ///     The channel the sound should play back on. Channel 0 is set by default.
+        /// </param>
+        /// <param name="frequency">
+        ///     An optional float argument to change the frequency of the raw sound. The default setting is 0.1266.
+        /// </param>
         public void PlayRawSound(string data, int channelID = 0, float frequency = 0.1266f)
         {
             var tmpSoundData = CreateEmptySoundData("Raw Sound") as SfxrSoundData;

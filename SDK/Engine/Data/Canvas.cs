@@ -29,26 +29,26 @@ namespace PixelVision8.Engine
 {
     public class Canvas : TextureData
     {
-        private bool canDraw;
-        private bool drawCentered;
-        private readonly IGameChip gameChip;
-        private Point linePattern = new Point(1, 0);
+        private readonly GameChip gameChip;
         private readonly TextureData pattern;
         private readonly Point spriteSize;
         private readonly TextureData stroke;
+        private bool canDraw;
+        private bool drawCentered;
+        private Point linePattern = new Point(1, 0);
 
         protected int[] tmpIDs = new int[0];
 
         private int[] tmpPixelData = new int[0];
         public bool wrap = false;
 
-        public Canvas(int width, int height, IGameChip gameChip = null) : base(width, height)
+        public Canvas(int width, int height, GameChip gameChip = null) : base(width, height)
         {
             this.gameChip = gameChip;
-            pattern = new TextureData(1, 1);
+            pattern = new TextureData();
             pattern.SetPixel(0, 0, 0);
 
-            stroke = new TextureData(1, 1);
+            stroke = new TextureData();
             stroke.SetPixel(0, 0, 0);
 
             spriteSize = gameChip.SpriteSize();

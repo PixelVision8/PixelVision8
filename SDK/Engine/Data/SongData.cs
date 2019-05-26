@@ -27,13 +27,13 @@ namespace PixelVision8.Engine
 {
     public class SongData : AbstractData
     {
+        public int _end = 1;
         private int[] _patterns = new int[100];
+        public int _start;
 
 
         public int currentPos = -1;
         public string name = "Untitled";
-        public int _start = 0;
-        public int _end = 1;
         public int totalPatternsPerSong = 100;
 
         public int[] patterns
@@ -62,7 +62,8 @@ namespace PixelVision8.Engine
             set => _start = MathHelper.Clamp(value, 0, Math.Min(_end, totalPatternsPerSong) - 1);
         }
 
-        public int end {
+        public int end
+        {
             get => _end;
             // Always make sure the end position is greater than the start position and less than the total patterns per song
             set => _end = MathHelper.Clamp(value, start + 1, totalPatternsPerSong);

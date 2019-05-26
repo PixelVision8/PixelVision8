@@ -18,9 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
-
 namespace PixelVision8.Engine.Services
 {
     /// <summary>
@@ -31,11 +28,7 @@ namespace PixelVision8.Engine.Services
     /// </summary>
     public abstract class AbstractService : IService
     {
-        public IServiceLocator locator
-        {
-            get;
-            set;
-        }
+        public IServiceLocator locator { get; set; }
 
         /// <summary>
         ///     This method registers the service with the service locator.
@@ -45,6 +38,5 @@ namespace PixelVision8.Engine.Services
         {
             this.locator = locator;
         }
-
     }
 }

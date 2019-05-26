@@ -208,9 +208,12 @@ namespace PixelVision8.Runner.Services
                 if (disk == null)
                     return null;
 
+//                var entities = disk.GetEntities(WorkspacePath.Root);
+                
                 // Test to see if the disk is a valid game
                 if (ValidateGameInDir(disk) == false &&
-                    disk.Exists(WorkspacePath.Root.AppendFile("info.json")) == false) return null;
+                    disk.Exists(WorkspacePath.Root.AppendFile("info.json")) == false) 
+                    return null;
 
                 // Update the root path to just be the name of the entity
                 var rootPath = WorkspacePath.Root.AppendDirectory(entityName);
@@ -267,7 +270,18 @@ namespace PixelVision8.Runner.Services
                 {
                     var name = disk.Key.EntityName;
 
-                    var physicalPath = ((PhysicalFileSystem) disk.Value).PhysicalRoot;
+                    var physicalPath = "";
+                    
+                    if (disk.Value is PhysicalFileSystem fileSystem)
+                    {
+                        physicalPath = fileSystem.PhysicalRoot;
+                        
+                    }
+                    else if(disk.Value is ZipFileSystem system)
+                    {
+                        physicalPath = system.srcPath;
+
+                    }
                     
                     if (name == diskName)
                     {

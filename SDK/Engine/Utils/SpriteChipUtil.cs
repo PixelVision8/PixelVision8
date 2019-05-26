@@ -20,7 +20,6 @@
 
 using System;
 using System.Text;
-using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Engine.Utils
 {
@@ -39,23 +38,23 @@ namespace PixelVision8.Engine.Utils
             return cols * rows;
         }
 
-        public static void CalculateSpritePos(int index, int width, int height, int spriteWidth, int spriteHeight,
-            out int x, out int y,
-            bool flipY = true)
-        {
-            var totalSprites = CalculateTotalSprites(width, height, spriteWidth, spriteHeight);
-
-            // Make sure we stay in bounds
-            index = MathHelper.Clamp(index, 0, totalSprites - 1);
-
-            var w = width / spriteWidth;
-
-            x = index % w * spriteWidth;
-            y = index / w * spriteHeight;
-
-            if (flipY)
-                y = height - y - spriteHeight;
-        }
+//        public static void CalculateSpritePos(int index, int width, int height, int spriteWidth, int spriteHeight,
+//            out int x, out int y,
+//            bool flipY = true)
+//        {
+//            var totalSprites = CalculateTotalSprites(width, height, spriteWidth, spriteHeight);
+//
+//            // Make sure we stay in bounds
+//            index = MathHelper.Clamp(index, 0, totalSprites - 1);
+//
+//            var w = width / spriteWidth;
+//
+//            x = index % w * spriteWidth;
+//            y = index / w * spriteHeight;
+//
+//            if (flipY)
+//                y = height - y - spriteHeight;
+//        }
 
         public static void CloneTextureData(TextureData source, TextureData target)
         {

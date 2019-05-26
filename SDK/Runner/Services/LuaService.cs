@@ -46,13 +46,13 @@ namespace PixelVision8.Runner.Services
         {
             luaScript.Options.DebugPrint = runner.DisplayWarning;
 
-            luaScript.Globals["Volume"] = (VolumeDelegator) runner.Volume;
-            luaScript.Globals["Mute"] = (MuteDelegator) runner.Mute;
+            luaScript.Globals["Volume"] = new Func<int?, int>(runner.Volume);
+            luaScript.Globals["Mute"] = new Func<bool?, bool>(runner.Mute);
 
-            luaScript.Globals["Scale"] = (ScaleDelegator) runner.Scale;
-            luaScript.Globals["Fullscreen"] = (FullscreenDelegator) runner.Fullscreen;
-            luaScript.Globals["CropScreen"] = (CropScreenDelegator) runner.CropScreen;
-            luaScript.Globals["StretchScreen"] = (StretchScreenDelegator) runner.StretchScreen;
+            luaScript.Globals["Scale"] = new Func<int?, int>(runner.Scale);
+            luaScript.Globals["Fullscreen"] = new Func<bool?, bool>(runner.Fullscreen);
+            luaScript.Globals["CropScreen"] = new Func<bool?, bool>(runner.CropScreen);
+            luaScript.Globals["StretchScreen"] = new Func<bool?, bool>(runner.StretchScreen);
 
             luaScript.Globals["DebugLayers"] = new Action<bool>(runner.DebugLayers);
             luaScript.Globals["ToggleLayers"] = new Action<int>(runner.ToggleLayers);
@@ -60,16 +60,5 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["ResetGame"] = new Action(runner.ResetGame);
         }
 
-        private delegate int VolumeDelegator(int? volume);
-
-        private delegate bool MuteDelegator(bool? value);
-
-        private delegate int ScaleDelegator(int? value);
-
-        private delegate bool FullscreenDelegator(bool? newValue);
-
-        private delegate bool CropScreenDelegator(bool? newValue);
-
-        private delegate bool StretchScreenDelegator(bool? newValue);
     }
 }

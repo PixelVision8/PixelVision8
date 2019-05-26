@@ -35,9 +35,6 @@ namespace PixelVision8.Engine.Utils
         /// <returns></returns>
         public static string RgbToHex(byte r, byte g, byte b)
         {
-//            var r1 = 0;//(byte) MathUtil.Clamp(MathUtil.RoundToInt(r * byte.MaxValue), 0, byte.MaxValue);
-//            var g1 = 0;//(byte) MathUtil.Clamp(MathUtil.RoundToInt(g * byte.MaxValue), 0, byte.MaxValue);
-//            var b1 = 0;//(byte) MathUtil.Clamp(MathUtil.RoundToInt(b * byte.MaxValue), 0, byte.MaxValue);
             return "#" + string.Format("{0:X2}{1:X2}{2:X2}", r, g, b);
         }
 

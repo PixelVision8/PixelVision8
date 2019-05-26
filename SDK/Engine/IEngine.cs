@@ -30,21 +30,9 @@ namespace PixelVision8.Engine
     /// </summary>
     public interface IEngine : IEngineChips, IUpdate, IDraw
     {
-        /// <summary>
-        ///     A flag for if the engine is <see cref="running" />
-        /// </summary>
-//        bool running { get; }
-
         string name { get; set; }
 
         Dictionary<string, string> metaData { get; }
-//        bool canWrite { get; set; }
-
-        /// <summary>
-        ///     This method loads a <paramref name="game" /> into memory
-        /// </summary>
-        /// <param name="game"></param>
-//        void LoadGame();
 
         /// <summary>
         ///     Run the game in memory

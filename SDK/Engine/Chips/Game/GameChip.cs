@@ -64,7 +64,7 @@ namespace PixelVision8.Engine.Chips
     ///     chip life-cycle. The engine manages the game's state, the game's own life-cycle and
     ///     serialization/deserialization of the game's data.
     /// </summary>
-    public class GameChip : AbstractChip, IUpdate, IDraw, IGameChip
+    public class GameChip : AbstractChip, IUpdate, IDraw
     {
 //        protected readonly Dictionary<string, int> tmpTileData = new Dictionary<string, int>
 //        {
@@ -111,40 +111,40 @@ namespace PixelVision8.Engine.Chips
 
         #region Graphics
 
-        /// <summary>
-        ///     Creates a new canvas instance.
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
-        public Canvas NewCanvas(int width, int height)
-        {
-            return new Canvas(width, height, this);
-        }
+//        /// <summary>
+//        ///     Creates a new canvas instance.
+//        /// </summary>
+//        /// <param name="width"></param>
+//        /// <param name="height"></param>
+//        /// <returns></returns>
+//        public Canvas NewCanvas(int width, int height)
+//        {
+//            return new Canvas(width, height, this);
+//        }
 
         #endregion
 
         #region Debug
 
-        /// <summary>
-        ///     This returns the averaged FPS that is calculated by the Game Creator on each frame. This is not always
-        ///     accurate and should only be used as the best guest estimate into the real framerate of your game.
-        /// </summary>
-        /// <returns>Returns an int with the current FPS out of a maximum of 60.</returns>
-        public int ReadFPS()
-        {
-            return fps;
-        }
+//        /// <summary>
+//        ///     This returns the averaged FPS that is calculated by the Game Creator on each frame. This is not always
+//        ///     accurate and should only be used as the best guest estimate into the real framerate of your game.
+//        /// </summary>
+//        /// <returns>Returns an int with the current FPS out of a maximum of 60.</returns>
+//        public int ReadFPS()
+//        {
+//            return fps;
+//        }
 
-        /// <summary>
-        ///     Returns the total number of sprites on the display in the current frame. Call this at the end of the
-        ///     Draw() method to get an accurate count of sprite draw calls.
-        /// </summary>
-        /// <returns>Returns an int for the total number of sprite draw calls at the current point in time.</returns>
-        public int ReadTotalSprites()
-        {
-            return currentSprites;
-        }
+//        /// <summary>
+//        ///     Returns the total number of sprites on the display in the current frame. Call this at the end of the
+//        ///     Draw() method to get an accurate count of sprite draw calls.
+//        /// </summary>
+//        /// <returns>Returns an int for the total number of sprite draw calls at the current point in time.</returns>
+//        public int ReadTotalSprites()
+//        {
+//            return currentSprites;
+//        }
 
         #endregion
 
@@ -2362,7 +2362,7 @@ namespace PixelVision8.Engine.Chips
                 }
             }
         }
-        
+
         public string ReadMetaData(string key, string defaultValue = "undefined")
         {
             return engine.GetMetaData(key, defaultValue);

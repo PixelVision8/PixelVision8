@@ -13,13 +13,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\MusicChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\SoundChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Game\GameChip.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Game\IGameChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Graphics\ColorChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Graphics\DisplayChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Graphics\FontChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Graphics\SpriteChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Graphics\TilemapChip.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\IChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\IDraw.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\IEngineChips.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Input\ControllerChip.cs" />
@@ -53,7 +51,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\IAudioPlayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\IAudioPlayerFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\ISfxrSynth.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\Mathf.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\SfxrParams.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\SfxrSynth.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\DisplayTarget.cs" />

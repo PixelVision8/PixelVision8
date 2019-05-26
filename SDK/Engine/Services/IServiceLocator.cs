@@ -18,8 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
-
 namespace PixelVision8.Engine.Services
 {
     public interface IServiceLocator

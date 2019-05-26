@@ -98,7 +98,7 @@ namespace PixelVision8.Engine
 //            songName = name;
             totalTracks = trackCount;
             foreach (var track in tracks)
-                track.Reset(true);
+                track.Reset();
         }
     }
 }

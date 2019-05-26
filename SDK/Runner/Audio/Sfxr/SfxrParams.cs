@@ -22,6 +22,7 @@
 //  @author Zeh Fernando
 
 using System;
+using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Runner.Chips.Sfxr
 {
@@ -117,7 +118,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _masterVolume;
             set
             {
-                _masterVolume = Mathf.Clamp(value, 0, 1);
+                _masterVolume = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -130,7 +131,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _attackTime;
             set
             {
-                _attackTime = Mathf.Clamp(value, 0, 1);
+                _attackTime = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -143,7 +144,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _sustainTime;
             set
             {
-                _sustainTime = Mathf.Clamp(value, 0, 1);
+                _sustainTime = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -156,7 +157,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _sustainPunch;
             set
             {
-                _sustainPunch = Mathf.Clamp(value, 0, 1);
+                _sustainPunch = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -169,7 +170,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _decayTime;
             set
             {
-                _decayTime = Mathf.Clamp(value, 0, 1);
+                _decayTime = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -182,7 +183,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _startFrequency;
             set
             {
-                _startFrequency = Mathf.Clamp(value, 0, 1);
+                _startFrequency = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -195,7 +196,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _minFrequency;
             set
             {
-                _minFrequency = Mathf.Clamp(value, 0, 1);
+                _minFrequency = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -208,7 +209,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _slide;
             set
             {
-                _slide = Mathf.Clamp(value, -1, 1);
+                _slide = MathHelper.Clamp(value, -1, 1);
                 paramsDirty = true;
             }
         }
@@ -221,7 +222,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _deltaSlide;
             set
             {
-                _deltaSlide = Mathf.Clamp(value, -1, 1);
+                _deltaSlide = MathHelper.Clamp(value, -1, 1);
                 paramsDirty = true;
             }
         }
@@ -234,7 +235,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _vibratoDepth;
             set
             {
-                _vibratoDepth = Mathf.Clamp(value, 0, 1);
+                _vibratoDepth = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -247,7 +248,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _vibratoSpeed;
             set
             {
-                _vibratoSpeed = Mathf.Clamp(value, 0, 1);
+                _vibratoSpeed = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -260,7 +261,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _changeAmount;
             set
             {
-                _changeAmount = Mathf.Clamp(value, -1, 1);
+                _changeAmount = MathHelper.Clamp(value, -1, 1);
                 paramsDirty = true;
             }
         }
@@ -273,7 +274,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _changeSpeed;
             set
             {
-                _changeSpeed = Mathf.Clamp(value, 0, 1);
+                _changeSpeed = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -286,7 +287,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _squareDuty;
             set
             {
-                _squareDuty = Mathf.Clamp(value, 0, 1);
+                _squareDuty = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -299,7 +300,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _dutySweep;
             set
             {
-                _dutySweep = Mathf.Clamp(value, -1, 1);
+                _dutySweep = MathHelper.Clamp(value, -1, 1);
                 paramsDirty = true;
             }
         }
@@ -312,7 +313,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _repeatSpeed;
             set
             {
-                _repeatSpeed = Mathf.Clamp(value, 0, 1);
+                _repeatSpeed = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -325,7 +326,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _phaserOffset;
             set
             {
-                _phaserOffset = Mathf.Clamp(value, -1, 1);
+                _phaserOffset = MathHelper.Clamp(value, -1, 1);
                 paramsDirty = true;
             }
         }
@@ -338,7 +339,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _phaserSweep;
             set
             {
-                _phaserSweep = Mathf.Clamp(value, -1, 1);
+                _phaserSweep = MathHelper.Clamp(value, -1, 1);
                 paramsDirty = true;
             }
         }
@@ -351,7 +352,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _lpFilterCutoff;
             set
             {
-                _lpFilterCutoff = Mathf.Clamp(value, 0, 1);
+                _lpFilterCutoff = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -364,7 +365,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _lpFilterCutoffSweep;
             set
             {
-                _lpFilterCutoffSweep = Mathf.Clamp(value, -1, 1);
+                _lpFilterCutoffSweep = MathHelper.Clamp(value, -1, 1);
                 paramsDirty = true;
             }
         }
@@ -377,7 +378,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _lpFilterResonance;
             set
             {
-                _lpFilterResonance = Mathf.Clamp(value, 0, 1);
+                _lpFilterResonance = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -390,7 +391,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _hpFilterCutoff;
             set
             {
-                _hpFilterCutoff = Mathf.Clamp(value, 0, 1);
+                _hpFilterCutoff = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -403,7 +404,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _hpFilterCutoffSweep;
             set
             {
-                _hpFilterCutoffSweep = Mathf.Clamp(value, -1, 1);
+                _hpFilterCutoffSweep = MathHelper.Clamp(value, -1, 1);
                 paramsDirty = true;
             }
         }
@@ -418,7 +419,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _changeRepeat;
             set
             {
-                _changeRepeat = Mathf.Clamp(value, 0, 1);
+                _changeRepeat = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -431,7 +432,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _changeAmount2;
             set
             {
-                _changeAmount2 = Mathf.Clamp(value, -1, 1);
+                _changeAmount2 = MathHelper.Clamp(value, -1, 1);
                 paramsDirty = true;
             }
         }
@@ -444,7 +445,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _changeSpeed2;
             set
             {
-                _changeSpeed2 = Mathf.Clamp(value, 0, 1);
+                _changeSpeed2 = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -458,7 +459,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _compressionAmount;
             set
             {
-                _compressionAmount = Mathf.Clamp(value, 0, 1);
+                _compressionAmount = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -472,7 +473,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _overtones;
             set
             {
-                _overtones = Mathf.Clamp(value, 0, 1);
+                _overtones = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -485,7 +486,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _overtoneFalloff;
             set
             {
-                _overtoneFalloff = Mathf.Clamp(value, 0, 1);
+                _overtoneFalloff = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -498,7 +499,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _bitCrush;
             set
             {
-                _bitCrush = Mathf.Clamp(value, 0, 1);
+                _bitCrush = MathHelper.Clamp(value, 0, 1);
                 paramsDirty = true;
             }
         }
@@ -511,7 +512,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             get => _bitCrushSweep;
             set
             {
-                _bitCrushSweep = Mathf.Clamp(value, -1, 1);
+                _bitCrushSweep = MathHelper.Clamp(value, -1, 1);
                 paramsDirty = true;
             }
         }

@@ -38,17 +38,11 @@ namespace PixelVision8.Engine
             {"name", "untitled"}
         };
 
-
         protected Dictionary<string, AbstractChip> chips = new Dictionary<string, AbstractChip>();
-
         protected string[] defaultChips;
         protected List<IDraw> drawChips = new List<IDraw>();
-
-        public Dictionary<string, byte[]> files = new Dictionary<string, byte[]>();
-
-//        protected PixelVisionEngine engine;
-        protected List<IUpdate> updateChips = new List<IUpdate>();
         protected IServiceLocator serviceLocator;
+        protected List<IUpdate> updateChips = new List<IUpdate>();
 
         /// <summary>
         ///     The PixelVisionEngine constructor requires a render target and an
@@ -77,14 +71,6 @@ namespace PixelVision8.Engine
         /// </summary>
         /// <tocexclude />
         public string name { get; set; }
-
-        //public bool canWrite { get; set; }
-
-        /// <summary>
-        ///     Access to the ChipManager.
-        ///     <tocexclude />
-        /// </summary>
-//        public ChipManager chipManager => this;
 
         /// <summary>
         ///     Access to the ColorChip.
@@ -139,27 +125,6 @@ namespace PixelVision8.Engine
         /// </summary>
         /// <tocexclude />
         public GameChip gameChip { get; set; }
-
-        /// <summary>
-        ///     Flag if the engine is <see cref="running" /> or not.
-        /// </summary>
-        /// <tocexclude />
-//        public bool running { get; private set; }
-
-        /// <summary>
-        ///     This method allows you to load a <paramref name="game" /> into the
-        ///     Engine's memory. Loading a <paramref name="game" /> doesn't run it.
-        ///     It simply sets it up to be run by calling the RunGame() method. This
-        ///     allows you to perform additional tasks once a <paramref name="game" />
-        ///     is loaded before it plays.
-        /// </summary>
-        /// <param name="game"></param>
-        /// <tocexclude />
-//        public virtual void LoadGame(GameChip game)
-//        {
-////            running = false;
-//            chipManager.ActivateChip(game.GetType().FullName, game);
-//        }
 
         /// <summary>
         ///     Attempts to run a game that has been loaded into memory via the
@@ -228,7 +193,6 @@ namespace PixelVision8.Engine
         /// <tocexclude />
         public virtual void Shutdown()
         {
-            
             // Shutdown chips
             foreach (var chip in chips)
                 chip.Value.Shutdown();
@@ -238,7 +202,6 @@ namespace PixelVision8.Engine
 //            
 //            // Removed references to services
 //            _services.Clear();
-            
         }
 
         /// <summary>
@@ -278,7 +241,6 @@ namespace PixelVision8.Engine
                 if (Array.IndexOf(ignoreKeys, data.Key) == -1)
                     target.Add(data.Key, data.Value);
         }
-
 
 
         /// <summary>

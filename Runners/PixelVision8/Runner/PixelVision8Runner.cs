@@ -484,7 +484,7 @@ namespace PixelVision8.Runner
             for (int i = 0; i < workspaceServicePlus.totalDisks; i++)
             {
                 var diskPath =  bios.ReadBiosData("Disk" + i, "none");
-                if (diskPath != "none")
+                if (diskPath != "none" && diskPath != "")
                 {
 //                    Console.WriteLine("Mount disk " + diskPath);
 

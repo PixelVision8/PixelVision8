@@ -29,24 +29,11 @@ namespace PixelVision8.Engine.Chips
     public interface IEngineChips
     {
         /// <summary>
-        ///     The Chip Manager class is responsible for registering and
-        ///     deactivating chips. This property offers direct access to it.
-        /// </summary>
-//        ChipManager chipManager { get; set; }
-
-        /// <summary>
         ///     The color chips stores colors for the engine. It's used by several
         ///     other systems to properly convert pixel data into color data for the
         ///     display. This property offers direct access to it.
         /// </summary>
         ColorChip colorChip { get; set; }
-
-        /// <summary>
-        ///     The Color Map Chip allows you to remap colors from artwork imported
-        ///     into the engine at run time. This property offers direct access to
-        ///     it.
-        /// </summary>
-//        ColorChip colorMapChip { get; set; }
 
         /// <summary>
         ///     The controller chip handles all input to the engine. This property
@@ -86,12 +73,6 @@ namespace PixelVision8.Engine.Chips
         GameChip gameChip { get; set; }
 
         /// <summary>
-        ///     The API bridge is the connection between both the engine and the
-        ///     chips. It's used by the game to simply access to each system of the
-        ///     engine. This property offers direct access to it.
-        /// </summary>
-        //APIBridge apiBridge { get; set; }
-        /// <summary>
         ///     The Fonts Chip is responsible for rendering text to the display.
         ///     This property offers direct access to it.
         /// </summary>
@@ -107,15 +88,11 @@ namespace PixelVision8.Engine.Chips
 
         void AddService(string id, IService service);
 
-
         IService GetService(string id);
-
 
         bool HasChip(string id);
 
-
         void ActivateChip(string id, AbstractChip chip, bool autoActivate = true);
-
 
         void DeactivateChip(string id, AbstractChip chip);
 

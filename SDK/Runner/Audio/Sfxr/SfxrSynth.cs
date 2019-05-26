@@ -361,7 +361,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
                     _waveDataPos = _cachedWavePos;
 
                     var samplesNeeded =
-                        (int) Mathf.Min(__data.Length / __channels, _cachedWave.Length - _cachedWavePos);
+                        (int) Math.Min(__data.Length / __channels, _cachedWave.Length - _cachedWavePos);
 
                     if (SynthWave(_cachedWave, (int) _cachedWavePos, (uint) samplesNeeded) || samplesNeeded == 0)
                     {
@@ -504,7 +504,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
 
                 _minFrequency = p.minFrequency;
 
-                _bitcrushFreq = 1f - Mathf.Pow(p.bitCrush, 1f / 3f);
+                _bitcrushFreq = 1f - (float)Math.Pow(p.bitCrush, 1f / 3f);
                 _bitcrushFreqSweep = -p.bitCrushSweep * 0.000015f;
                 _bitcrushPhase = 0;
                 _bitcrushLast = 0;
@@ -653,7 +653,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 if (_vibratoAmplitude > 0)
                 {
                     _vibratoPhase += _vibratoSpeed;
-                    _periodTemp = _period * (1.0f + Mathf.Sin(_vibratoPhase) * _vibratoAmplitude);
+                    _periodTemp = _period * (1.0f + (float)Math.Sin(_vibratoPhase) * _vibratoAmplitude);
                 }
 
                 _periodTempInt = (int) _periodTemp;
@@ -873,15 +873,15 @@ namespace PixelVision8.Runner.Chips.Sfxr
                     _bitcrushLast = _superSample;
                 }
 
-                _bitcrushFreq = Mathf.Max(Mathf.Min(_bitcrushFreq + _bitcrushFreqSweep, 1f), 0f);
+                _bitcrushFreq = Math.Max(Math.Min(_bitcrushFreq + _bitcrushFreqSweep, 1f), 0f);
 
                 _superSample = _bitcrushLast;
 
                 // Compressor
                 if (_superSample > 0f)
-                    _superSample = Mathf.Pow(_superSample, _compressionFactor);
+                    _superSample = (float)Math.Pow(_superSample, _compressionFactor);
                 else
-                    _superSample = -Mathf.Pow(-_superSample, _compressionFactor);
+                    _superSample = -(float)Math.Pow(-_superSample, _compressionFactor);
 
                 // Clipping if too loud
                 if (_superSample < -1f)

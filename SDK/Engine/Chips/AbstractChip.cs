@@ -45,7 +45,7 @@ namespace PixelVision8.Engine.Chips
     ///     // When ready, activate the chip by passing in a reference to an engine instance
     ///     chip.Activate(engine);
     /// </example>
-    public class AbstractChip : IChip
+    public class AbstractChip
     {
         protected PixelVisionEngine engine;
 

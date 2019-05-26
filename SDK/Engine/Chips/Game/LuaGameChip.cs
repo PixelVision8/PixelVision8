@@ -46,178 +46,10 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
-
         protected virtual void RegisterLuaServices()
         {
             // Override to add your own Lua services before the game starts
         }
-
-        #region Sound
-
-        /// <summary>
-        ///     This helper method allows you to pass raw SFXR string data to the sound chip for playback. It works just
-        ///     like the normal PlaySound() API but accepts a string instead of a sound ID. Calling PlayRawSound() could
-        ///     be expensive since the sound effect data is not cached by the engine. It is mostly used for sound effects
-        ///     in tools and shouldn't be called when playing a game.
-        /// </summary>
-        /// <param name="data">Raw string data representing SFXR sound properties in a comma-separated list.</param>
-        /// <param name="channel">
-        ///     The channel the sound should play back on. Channel 0 is set by default.
-        /// </param>
-        /// <param name="frequency">
-        ///     An optional float argument to change the frequency of the raw sound. The default setting is 0.1266.
-        /// </param>
-        public void PlayRawSound(string data, int channel = 0, float frequency = 0.1266f)
-        {
-            var soundChip = engine.soundChip as SfxrSoundChip;
-
-            if (soundChip != null) soundChip.PlayRawSound(data, channel, frequency);
-        }
-
-        #endregion
-
-        private delegate Rectangle NewRectDelegator(int x = 0, int y = 0, int w = 0, int h = 0);
-
-        private delegate Point NewPointDelegator(int x = 0, int y = 0);
-
-//        private delegate void DrawPixelDelegate(int x, int y, int colorRef, DrawMode drawMode = DrawMode.UI);
-
-        private delegate int BackgroundColorDelegate(int? id = null);
-
-        private delegate bool KeyDelegate(Keys key, InputState state = InputState.Down);
-
-        private delegate bool ButtonDelegate(Buttons buttons, InputState state = InputState.Down, int player = 0);
-
-        private delegate void ReplaceColorDelegate(int index, int id);
-
-        private delegate void ClearDelegate(int x = 0, int y = 0, int? width = null, int? height = null);
-
-        private delegate Point DisplayDelegate(bool visible = true);
-
-        private delegate void LoadScriptDelegate(string name);
-
-        private delegate void DrawPixelsDelegate(int[] pixelData, int x, int y, int width, int height,
-            bool flipH = false, bool flipV = false,
-            DrawMode mode = DrawMode.Sprite, int colorOffset = 0);
-
-        private delegate void DrawSpriteDelegate(int id, int x, int y, bool flipH = false, bool flipV = false,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0);
-
-//        private delegate void DrawTileDelegate(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0, bool flipH = false, bool flipV = false);
-//
-//        private delegate void DrawTilesDelegate(int[] ids, int c, int r, int width, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0);
-
-        private delegate void DrawSpritesDelegate(int[] ids, int x, int y, int width, bool flipH = false,
-            bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true,
-            bool useScrollPos = true, Rectangle? bounds = null);
-
-        private delegate void DrawSpriteBlockDelegate(int id, int x, int y, int width = 1, int height = 1,
-            bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0,
-            bool onScreen = true, bool useScrollPos = true, Rectangle? bounds = null);
-
-        private delegate void DrawTextDelegate(string text, int x, int y, DrawMode mode = DrawMode.Sprite,
-            string font = "Default", int colorOffset = 0, int spacing = 0);
-
-        private delegate void DrawTilemapDelegate(int x = 0, int y = 0, int columns = 0, int rows = 0,
-            int? offsetX = null, int? offsetY = null, DrawMode drawMode = DrawMode.Tile);
-
-        private delegate void DrawRectDelegate(int x, int y, int width, int height, int color = -1,
-            DrawMode drawMode = DrawMode.UI);
-
-        private delegate bool MouseButtonDelegate(int button, InputState state = InputState.Down);
-
-        private delegate Point MousePositionDelegate();
-
-        private delegate string InputStringDelegate();
-
-        private delegate string ReadDataDelegate(string key, string defaultValue = "undefined");
-
-        private delegate void RebuildMapDelegate(int? columns = null, int? rows = null, int[] spriteIDs = null,
-            int[] colorOffsets = null, int[] flags = null);
-
-        private delegate void RedrawDisplayDelegate();
-
-        private delegate void RewindSongDelegate(int position, int loop);
-
-        private delegate Point ScrollPositionDelegate(int? x, int? y);
-
-        private delegate void PlaySoundDelegate(int id, int channel = 0);
-
-        private delegate void PlayRawSoundDelegate(string data, int channel = 0, float frequency = 0.1266f);
-
-        private delegate void PlayPatternDelegate(int id, bool loop = true);
-
-        private delegate void PlayPatternsDelegate(int[] trackIDs, bool loop = true);
-
-        private delegate void PlaySongDelegate(int id, bool loop = true, int startAt = 0);
-
-        private delegate void PauseSongDelegate();
-
-        private delegate Point SpriteSizeDelegate(int? x = 8, int? y = 8);
-
-        private delegate void StopSongDelegate();
-
-        private delegate Point TilemapSizeDelegate(int? columns = null, int? rows = null);
-
-        private delegate TileData TileDelegate(int column, int row, int? spriteID, int? colorOffset,
-            int? flag, bool? flipH = null, bool? flipV = null);
-
-        private delegate int[] SpriteDelegate(int id, int[] data = null);
-
-        private delegate int[] SpritesDelegate(int[] id, int width);
-
-        private delegate int FlagDelegate(int column, int row, int? value = null);
-
-        private delegate void UpdateTilesDelegate(int column, int row, int columns, int[] ids, int? colorOffset = null,
-            int? flag = null);
-
-        private delegate void WriteDataDelegate(string key, string value);
-
-        private delegate string ColorDelegate(int id, string value = null);
-
-        private delegate int ColorsPerSpriteDelegate();
-
-        private delegate int TotalSpritesDelegate(bool ignoreEmpty = true);
-
-        private delegate int TotalColorsDelegate(bool ignoreEmpty = true);
-
-        private delegate int ClampDelegate(int val, int min, int max);
-
-        private delegate int RepeatDelegate(int val, int max);
-
-        private delegate int CalculateIndexDelegate(int x, int y, int width);
-
-        private delegate Point CalculatePositionDelegate(int index, int width);
-
-        private delegate string WordWrapDelegate(string text, int width);
-
-        private delegate string[] SplitLinesDelegate(string txt);
-
-        private delegate int[] BitArrayDelegate(int value);
-
-        private delegate int CalcualteDistanceDelegate(int x0, int y0, int x1, int y1);
-
-        private delegate int[] ConvertTextToSpritesDelegate(string text, string fontName = "default");
-
-        private delegate int[] ConvertCharacterToPixelDataDelegate(char character, string fontName);
-
-        private delegate string ReadMetaDataDelegator(string key, string defaultValue = "undefined");
-
-        private delegate void WriteMetaDataDelegator(string key, string value);
-        //        private delegate TextureData NewTextureDataDelegate(int width, int height, bool wrapMode = true);
-
-        private delegate Canvas NewCanvasDelegator(int width, int height);
-
-        private delegate int PaletteOffsetDelegator(int value);
-
-        private delegate void RegisterMetaSpriteDelegator(string name, int width, MetaSpriteData[] sprites);
-
-        private delegate void DeleteMetaSpriteDelegator(string name);
-
-        private delegate void DrawMetaSpriteDelegator(string name, int x, int y, bool flipH, bool flipV,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
-            Rectangle? bounds = null);
-
 
         #region Lifecycle
 
@@ -283,73 +115,71 @@ namespace PixelVision8.Engine.Chips
 
             #region Color APIs
 
-            luaScript.Globals["BackgroundColor"] = (BackgroundColorDelegate) BackgroundColor;
-            luaScript.Globals["Color"] = (ColorDelegate) Color;
-            luaScript.Globals["ColorsPerSprite"] = (ColorsPerSpriteDelegate) ColorsPerSprite;
-            luaScript.Globals["TotalColors"] = (TotalColorsDelegate) TotalColors;
-            luaScript.Globals["ReplaceColor"] = (ReplaceColorDelegate) ReplaceColor;
+            luaScript.Globals["BackgroundColor"] = new Func<int?, int>(BackgroundColor);
+            luaScript.Globals["Color"] = new Func<int, string, string>(Color);
+            luaScript.Globals["ColorsPerSprite"] = new Func<int>(ColorsPerSprite);
+            luaScript.Globals["TotalColors"] = new Func<bool, int>(TotalColors);
+            luaScript.Globals["ReplaceColor"] = new Action<int, int>(ReplaceColor);
 
             #endregion
 
             #region Display APIs
 
-            luaScript.Globals["Clear"] = (ClearDelegate) Clear;
-            luaScript.Globals["Display"] = (DisplayDelegate) Display;
-            luaScript.Globals["DrawPixels"] = (DrawPixelsDelegate) DrawPixels;
-//            luaScript.Globals["DrawPixel"] = (DrawPixelDelegate)((x, y, colorRef, drawMode) => DrawPixel(x, y, colorRef));
-            luaScript.Globals["DrawSprite"] = (DrawSpriteDelegate) DrawSprite;
-            luaScript.Globals["DrawSprites"] = (DrawSpritesDelegate) DrawSprites;
-            luaScript.Globals["DrawSpriteBlock"] = (DrawSpriteBlockDelegate) DrawSpriteBlock;
+            luaScript.Globals["Clear"] = new Action<int, int, int?, int?>(Clear);
+            luaScript.Globals["Display"] = new Func<bool, Point>(Display);
+            luaScript.Globals["DrawPixels"] = new Action<int[], int, int, int, int, bool, bool, DrawMode, int>(DrawPixels);
+            luaScript.Globals["DrawSprite"] = new Action<int, int, int, bool, bool, DrawMode, int>(DrawSprite);
+            luaScript.Globals["DrawSprites"] = new Action<int[], int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprites);
+            luaScript.Globals["DrawSpriteBlock"] = new Action<int, int, int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSpriteBlock);
 
-//            luaScript.Globals["DrawTile"] = (DrawTileDelegate)DrawTile;
-//            luaScript.Globals["DrawTiles"] = (DrawTilesDelegate)DrawTiles;
-            luaScript.Globals["DrawText"] = (DrawTextDelegate) DrawText;
-            luaScript.Globals["DrawTilemap"] = (DrawTilemapDelegate) DrawTilemap;
+            luaScript.Globals["DrawText"] = new Action<string, int, int, DrawMode, string, int, int>(DrawText);
+            luaScript.Globals["DrawTilemap"] = new Action<int, int, int, int, int?, int?, DrawMode>(DrawTilemap);
 
-            luaScript.Globals["DrawRect"] = (DrawRectDelegate) DrawRect;
-            luaScript.Globals["RedrawDisplay"] = (RedrawDisplayDelegate) RedrawDisplay;
-            luaScript.Globals["ScrollPosition"] = (ScrollPositionDelegate) ((x, y) => ScrollPosition(x, y));
+            luaScript.Globals["DrawRect"] = new Action<int, int, int, int, int, DrawMode>(DrawRect);
+            luaScript.Globals["RedrawDisplay"] = new Action(RedrawDisplay);
+            luaScript.Globals["ScrollPosition"] = new Func<int?, int?, Point>(ScrollPosition);
 
             #endregion
 
             #region File IO APIs
 
-            luaScript.Globals["LoadScript"] = (LoadScriptDelegate) LoadScript;
-            luaScript.Globals["ReadSaveData"] = (ReadDataDelegate) ReadSaveData;
-            luaScript.Globals["WriteSaveData"] = (WriteDataDelegate) WriteSaveData;
-            luaScript.Globals["ReadMetaData"] = (ReadMetaDataDelegator) ReadMetaData;
-            luaScript.Globals["WriteMetaData"] = (WriteMetaDataDelegator) WriteMetaData;
-            
+            luaScript.Globals["LoadScript"] = new Action<string>(LoadScript);
+            luaScript.Globals["ReadSaveData"] = new Func<string, string, string>(ReadSaveData);
+            luaScript.Globals["WriteSaveData"] = new Action<string, string>(WriteSaveData);
+            luaScript.Globals["ReadMetaData"] = new Func<string, string, string>(ReadMetaData);
+            luaScript.Globals["WriteMetaData"] = new Action<string, string>(WriteMetaData);
+
             #endregion
 
             #region Input APIs
 
-            luaScript.Globals["Key"] = (KeyDelegate) Key;
-            luaScript.Globals["Button"] = (ButtonDelegate) Button;
-            luaScript.Globals["MouseButton"] = (MouseButtonDelegate) MouseButton;
-            luaScript.Globals["MousePosition"] = (MousePositionDelegate) MousePosition;
-            luaScript.Globals["InputString"] = (InputStringDelegate) InputString;
+            luaScript.Globals["Key"] = new Func<Keys, InputState, bool>(Key);
+            luaScript.Globals["Button"] = new Func<Buttons, InputState, int, bool>(Button);
+            luaScript.Globals["MouseButton"] = new Func<int, InputState, bool>(MouseButton);
+            luaScript.Globals["MousePosition"] = new Func<Point>(MousePosition);
+            luaScript.Globals["InputString"] = new Func<string>(InputString);
 
             #endregion
 
             #region Math APIs
 
-            luaScript.Globals["CalculateIndex"] = (CalculateIndexDelegate) CalculateIndex;
-            luaScript.Globals["CalculatePosition"] = (CalculatePositionDelegate) CalculatePosition;
-            luaScript.Globals["Clamp"] = (ClampDelegate) Clamp;
-            luaScript.Globals["Repeat"] = (RepeatDelegate) Repeat;
+            luaScript.Globals["CalculateIndex"] = new Func<int, int, int, int>(CalculateIndex);
+            luaScript.Globals["CalculatePosition"] = new Func<int, int, Point>(CalculatePosition);
+            luaScript.Globals["Clamp"] = new Func<int, int, int, int>(Clamp);
+            luaScript.Globals["Repeat"] = new Func<int, int, int>(Repeat);
 
             #endregion
 
             #region Sound APIs
 
-            luaScript.Globals["PlaySound"] = (PlaySoundDelegate) PlaySound;
-            luaScript.Globals["PlayRawSound"] = (PlayRawSoundDelegate) PlayRawSound;
-            luaScript.Globals["PlayPattern"] = (PlayPatternDelegate) PlayPattern;
-            luaScript.Globals["PlayPatterns"] = (PlayPatternsDelegate) PlayPatterns;
-            luaScript.Globals["PlaySong"] = (PlaySongDelegate) PlaySong;
+            luaScript.Globals["PlaySound"] = new Action<int, int>(PlaySound);
+            luaScript.Globals["PlayRawSound"] = new Action<string, int, float>(((SfxrSoundChip)soundChip).PlayRawSound);
+        
+            luaScript.Globals["PlayPattern"] = new Action<int, bool>(PlayPattern);
+            luaScript.Globals["PlayPatterns"] = new Action<int[], bool>(PlayPatterns);
+            luaScript.Globals["PlaySong"] = new Action<int, bool, int>(PlaySong);
             luaScript.Globals["PauseSong"] = new Action(PauseSong);
-            luaScript.Globals["RewindSong"] = (RewindSongDelegate) RewindSong;
+            luaScript.Globals["RewindSong"] = new Action<int, int>(RewindSong);
             luaScript.Globals["StopSong"] = new Action(StopSong);
             luaScript.Globals["SongData"] = new Func<Dictionary<string, int>>(SongData);
 
@@ -357,21 +187,21 @@ namespace PixelVision8.Engine.Chips
 
             #region Sprite APIs
 
-            luaScript.Globals["Sprite"] = (SpriteDelegate) Sprite;
-            luaScript.Globals["Sprites"] = (SpritesDelegate) Sprites;
-            luaScript.Globals["SpriteSize"] = (SpriteSizeDelegate) SpriteSize;
-            luaScript.Globals["TotalSprites"] = (TotalSpritesDelegate) TotalSprites;
+            luaScript.Globals["Sprite"] = new Func<int, int[], int[]>(Sprite);
+            luaScript.Globals["Sprites"] = new Func<int[], int, int[]>(Sprites);
+            luaScript.Globals["SpriteSize"] = new Func<int?, int?, Point>(SpriteSize);
+            luaScript.Globals["TotalSprites"] = new Func<bool, int>(TotalSprites);
 
             #endregion
 
             #region Tilemap
 
-            luaScript.Globals["RebuildTilemap"] =
-                (RebuildMapDelegate) ((columns, rows, spriteIDs1, colorOffsets, flags) => RebuildTilemap());
-            luaScript.Globals["TilemapSize"] = (TilemapSizeDelegate) TilemapSize;
-            luaScript.Globals["Tile"] = (TileDelegate) Tile;
-            luaScript.Globals["UpdateTiles"] = (UpdateTilesDelegate) UpdateTiles;
-            luaScript.Globals["Flag"] = (FlagDelegate) Flag;
+            luaScript.Globals["RebuildTilemap"] = new Action(RebuildTilemap);
+                
+            luaScript.Globals["TilemapSize"] = new Func<int?, int?, Point>(TilemapSize);
+            luaScript.Globals["Tile"] = new Func<int, int, int?, int?, int?, bool?, bool?, TileData>(Tile);
+            luaScript.Globals["UpdateTiles"] = new Action<int, int, int, int[], int?, int?>(UpdateTiles);
+            luaScript.Globals["Flag"] = new Func<int, int, int?, int> (Flag);
 
 
             luaScript.Globals["SaveTilemapCache"] = new Action(SaveTilemapCache);
@@ -381,39 +211,35 @@ namespace PixelVision8.Engine.Chips
 
             #region Utils
 
-            luaScript.Globals["WordWrap"] = (WordWrapDelegate) WordWrap;
-            luaScript.Globals["SplitLines"] = (SplitLinesDelegate) SplitLines;
-            luaScript.Globals["BitArray"] = (BitArrayDelegate) BitArray;
-            luaScript.Globals["CalculateDistance"] = (CalcualteDistanceDelegate) CalculateDistance;
+            luaScript.Globals["WordWrap"] = new Func<string, int, string>(WordWrap);
+            luaScript.Globals["SplitLines"] = new Func<string, string[]>(SplitLines);
+            luaScript.Globals["BitArray"] = new Func<int, int[]>(BitArray);
+            luaScript.Globals["CalculateDistance"] = new Func<int, int, int, int,int>(CalculateDistance);
 
             #endregion
 
             #region Debug
 
-            luaScript.Globals["ReadFPS"] = new Func<int>(ReadFPS);
-            luaScript.Globals["ReadTotalSprites"] = new Func<int>(ReadTotalSprites);
+            luaScript.Globals["ReadFPS"] = new Func<int>(()=>fps);
+            luaScript.Globals["ReadTotalSprites"] = new Func<int>(()=>currentSprites);
 
             #endregion
 
             #region Text
 
-            luaScript.Globals["ConvertTextToSprites"] = (ConvertTextToSpritesDelegate) ConvertTextToSprites;
-            luaScript.Globals["ConvertCharacterToPixelData"] =
-                (ConvertCharacterToPixelDataDelegate) ConvertCharacterToPixelData;
+            luaScript.Globals["ConvertTextToSprites"] = new Func<string, string, int[]>(ConvertTextToSprites);
+            luaScript.Globals["ConvertCharacterToPixelData"] = new Func<char, string, int[]>(ConvertCharacterToPixelData);
 
             #endregion
 
             #region Experimental APIs
 
-            luaScript.Globals["PaletteOffset"] = (PaletteOffsetDelegator) PaletteOffset;
+            luaScript.Globals["PaletteOffset"] = new Func<int, int>(PaletteOffset);
 
 
-            luaScript.Globals["RegisterMetaSprite"] = (RegisterMetaSpriteDelegator) RegisterMetaSprite;
-            luaScript.Globals["DeleteMetaSprite"] = (DeleteMetaSpriteDelegator) DeleteMetaSprite;
-            luaScript.Globals["DrawMetaSprite"] = (DrawMetaSpriteDelegator) DrawMetaSprite;
-
-            luaScript.Globals["DrawMetaSprite"] = (DrawMetaSpriteDelegator) DrawMetaSprite;
-            luaScript.Globals["DrawMetaSprite"] = (DrawMetaSpriteDelegator) DrawMetaSprite;
+            luaScript.Globals["RegisterMetaSprite"] = new Action<string, int, MetaSpriteData[]>(RegisterMetaSprite);
+            luaScript.Globals["DeleteMetaSprite"] = new Action<string>(DeleteMetaSprite);
+            luaScript.Globals["DrawMetaSprite"] = new Action<string, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawMetaSprite);
 
             UserData.RegisterType<MetaSpriteData>();
             luaScript.Globals["MetaSpriteData"] = UserData.CreateStatic<MetaSpriteData>();
@@ -441,28 +267,20 @@ namespace PixelVision8.Engine.Chips
 
             // Register PV8's vector type
             UserData.RegisterType<Point>();
-            luaScript.Globals["NewPoint"] = (NewPointDelegator) NewPoint;
-
-            // TODO need to depricate this
-//            luaScript.Globals["NewVector"] = (NewPointDelegator)NewPoint;
-
+            luaScript.Globals["NewPoint"] = new Func<int, int, Point>(NewPoint);
 
             // Register PV8's TileData type
             UserData.RegisterType<TileData>();
 
             // Register PV8's rect type
             UserData.RegisterType<Rectangle>();
-            luaScript.Globals["NewRect"] = (NewRectDelegator) NewRect;
-
-            //            // Register PV8's rect type
-            //            UserData.RegisterType<TextureData>();
-            //            luaScript.Globals["NewTextureData"] = (NewTextureDataDelegate)NewTextureData;
+            luaScript.Globals["NewRect"] = new Func<int, int, int, int, Rectangle>(NewRect);
 
             // Register PV8's rect type
             UserData.RegisterType<Canvas>();
-            luaScript.Globals["NewCanvas"] = (NewCanvasDelegator) NewCanvas;
+            luaScript.Globals["NewCanvas"] = new Func<int, int, Canvas>((width, height) => new Canvas(width, height, this));
 
-            // Load the deafult script
+            // Load the default script
             LoadScript("code.lua");
 
             // Register any extra services
@@ -472,36 +290,6 @@ namespace PixelVision8.Engine.Chips
             if (luaScript.Globals["Reset"] != null)
                 luaScript.Call(luaScript.Globals["Reset"]);
         }
-
-
-        /// <summary>
-        ///     Defines a meta sprite from a collection of sprites. This API is not working yet.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="flipH"></param>
-        /// <param name="flipV"></param>
-        /// <param name="colorOffset"></param>
-        /// <returns></returns>
-        public MetaSpriteData NewMetaSpriteData(int id, bool flipH = false, bool flipV = false, int colorOffset = 0)
-        {
-            return new MetaSpriteData(id, flipH, flipV, colorOffset);
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="width"></param>
-        /// <param name="sprites"></param>
-        /// <returns></returns>
-        public MetaSprite NewMetaSprite(string name, int width, MetaSpriteData[] sprites)
-        {
-            return new MetaSprite(name, width, sprites);
-        }
-
-        private delegate MetaSpriteData NewMetaSpriteDataDelegator(int id, bool flipH = false, bool flipV = false,
-            int colorOffset = 0);
-
-        private delegate MetaSprite NewMetaSpriteDelegator(string name, int width, MetaSpriteData[] sprites);
 
         #endregion
 

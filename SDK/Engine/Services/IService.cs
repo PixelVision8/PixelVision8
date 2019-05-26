@@ -18,13 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
-
 namespace PixelVision8.Engine.Services
 {
     public interface IService
     {
-        void RegisterService(IServiceLocator locator);
         IServiceLocator locator { get; set; }
+        void RegisterService(IServiceLocator locator);
     }
 }

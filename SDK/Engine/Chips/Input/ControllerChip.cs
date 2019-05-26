@@ -78,6 +78,10 @@ namespace PixelVision8.Engine.Chips
     public class ControllerChip : AbstractChip, IControllerChip
     {
         private static readonly int repsPerSec = 20;
+        private readonly GamePadDeadZone gamePadDeadZone = GamePadDeadZone.IndependentAxes;
+
+        private readonly StringBuilder inputStringBuilder = new StringBuilder();
+        private readonly float timeUntilRepInMillis = 500f;
 
 //        private Array inputValues;
 //        private Array mouseValues;
@@ -87,9 +91,6 @@ namespace PixelVision8.Engine.Chips
         public KeyboardState currentKeyboardState;
         public MouseState currentMouseState;
         private DateTime downSince = DateTime.Now;
-        private readonly GamePadDeadZone gamePadDeadZone = GamePadDeadZone.IndependentAxes;
-
-        private readonly StringBuilder inputStringBuilder = new StringBuilder();
         private DateTime lastRep = DateTime.Now;
 
         private List<Controller> players;
@@ -97,7 +98,6 @@ namespace PixelVision8.Engine.Chips
         public MouseState previousMouseState;
 
         private Keys? repChar;
-        private readonly float timeUntilRepInMillis = 500f;
 
         public void Update(float timeDelta)
         {

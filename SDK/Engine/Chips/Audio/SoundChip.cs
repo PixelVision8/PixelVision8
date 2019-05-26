@@ -20,7 +20,6 @@
 
 using System;
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine.Chips
 {

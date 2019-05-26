@@ -17,7 +17,7 @@ namespace PixelVision8.Engine.Services
 
             // Register service locator
             service.locator = this;
-            
+
             // Add a reference of the service locator
             service.RegisterService(this);
         }
@@ -29,7 +29,7 @@ namespace PixelVision8.Engine.Services
 
             throw new Exception("The requested service '" + id + "' is not registered");
         }
-        
+
         public void RemoveService(string id)
         {
             if (services.ContainsKey(id))
