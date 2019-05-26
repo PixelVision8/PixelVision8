@@ -26,7 +26,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\AbstractData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Canvas.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\DrawRequest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\IInvalidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\ISoundData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Keys.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\SongData.cs" />
@@ -43,13 +42,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Utils\ColorUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Utils\MathUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Utils\SpriteChipUtil.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\SfxrAudioPlayer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\AudioPlayerFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\IVolumeManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\AudioPlayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\IAudioPlayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\VolumeManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\SfxrMusicChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\SfxrSoundChip.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\IAudioPlayer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\IAudioPlayerFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\ISfxrSynth.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\SfxrParams.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\SfxrSynth.cs" />

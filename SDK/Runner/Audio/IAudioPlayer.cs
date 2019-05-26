@@ -18,11 +18,14 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
+
 namespace PixelVision8.Runner.Audio
 {
-    public interface IVolumeManager
+    public interface IAudioPlayer : IDisposable
     {
-        int Volume(int? value = null);
-        bool Mute(bool? value = null);
+        bool playing { get; }
+        void Play();
+        void Stop();
     }
 }

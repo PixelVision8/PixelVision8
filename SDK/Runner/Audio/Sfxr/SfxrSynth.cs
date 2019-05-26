@@ -22,10 +22,11 @@
 //  @author Zeh Fernando
 
 using System;
+using PixelVision8.Runner.Audio;
 
 namespace PixelVision8.Runner.Chips.Sfxr
 {
-    public class SfxrSynth : ISfxrSynth
+    public class SfxrSynth
     {
         private const int LO_RES_NOISE_PERIOD = 8; // Should be < 32
 
@@ -151,7 +152,6 @@ namespace PixelVision8.Runner.Chips.Sfxr
         private uint _waveType; // Shape of wave to generate (see enum WaveType)
         private float amp; // Used in other calculations
 
-        public static IAudioPlayerFactory AudioPlayerFactory { get; set; }
 
         /// <summary>
         ///     Sound parameters
@@ -292,7 +292,8 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 _waveDataPos = 0;
             }
 
-            _audioPlayer = AudioPlayerFactory.Create(this);
+            // TODO need to make sure this is really cached - it's not
+            _audioPlayer = new AudioPlayer(GenerateWav());
             _audioPlayer.Play();
         }
 
@@ -316,26 +317,26 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         // ?
-        private int WriteSamples(float[] __originSamples, int __originPos, float[] __targetSamples,
-            int __targetChannels)
-        {
-            // Writes raw samples to Unity's format and return number of samples actually written
-            var samplesToWrite = __targetSamples.Length / __targetChannels;
-
-            if (__originPos + samplesToWrite > __originSamples.Length)
-                samplesToWrite = __originSamples.Length - __originPos;
-
-            if (samplesToWrite > 0)
-            {
-                // Interlaced filling of sample datas (faster?)
-                int i, j;
-                for (i = 0; i < __targetChannels; i++)
-                for (j = 0; j < samplesToWrite; j++)
-                    __targetSamples[j * __targetChannels + i] = __originSamples[j + __originPos];
-            }
-
-            return samplesToWrite;
-        }
+//        private int WriteSamples(float[] __originSamples, int __originPos, float[] __targetSamples,
+//            int __targetChannels)
+//        {
+//            // Writes raw samples to Unity's format and return number of samples actually written
+//            var samplesToWrite = __targetSamples.Length / __targetChannels;
+//
+//            if (__originPos + samplesToWrite > __originSamples.Length)
+//                samplesToWrite = __originSamples.Length - __originPos;
+//
+//            if (samplesToWrite > 0)
+//            {
+//                // Interlaced filling of sample datas (faster?)
+//                int i, j;
+//                for (i = 0; i < __targetChannels; i++)
+//                for (j = 0; j < samplesToWrite; j++)
+//                    __targetSamples[j * __targetChannels + i] = __originSamples[j + __originPos];
+//            }
+//
+//            return samplesToWrite;
+//        }
 
         /**
          * If there is a cached sound to play, reads out of the data.
@@ -344,41 +345,41 @@ namespace PixelVision8.Runner.Chips.Sfxr
          * @param	channels	Number of channels used
          * @return	Whether it needs to continue (there are samples left) or not
          */
-        private bool GenerateAudioFilterData(float[] __data, int __channels)
-        {
-            var endOfSamples = false;
-
-            if (_waveData != null)
-            {
-                var samplesWritten = WriteSamples(_waveData, (int) _waveDataPos, __data, __channels);
-                _waveDataPos += (uint) samplesWritten;
-                if (samplesWritten == 0) endOfSamples = true;
-            }
-            else
-            {
-                if (_cachingNormal)
-                {
-                    _waveDataPos = _cachedWavePos;
-
-                    var samplesNeeded =
-                        (int) Math.Min(__data.Length / __channels, _cachedWave.Length - _cachedWavePos);
-
-                    if (SynthWave(_cachedWave, (int) _cachedWavePos, (uint) samplesNeeded) || samplesNeeded == 0)
-                    {
-                        _cachingNormal = false;
-                        endOfSamples = true;
-                    }
-                    else
-                    {
-                        _cachedWavePos += (uint) samplesNeeded;
-                    }
-
-                    WriteSamples(_cachedWave, (int) _waveDataPos, __data, __channels);
-                }
-            }
-
-            return !endOfSamples;
-        }
+//        private bool GenerateAudioFilterData(float[] __data, int __channels)
+//        {
+//            var endOfSamples = false;
+//
+//            if (_waveData != null)
+//            {
+//                var samplesWritten = WriteSamples(_waveData, (int) _waveDataPos, __data, __channels);
+//                _waveDataPos += (uint) samplesWritten;
+//                if (samplesWritten == 0) endOfSamples = true;
+//            }
+//            else
+//            {
+//                if (_cachingNormal)
+//                {
+//                    _waveDataPos = _cachedWavePos;
+//
+//                    var samplesNeeded =
+//                        (int) Math.Min(__data.Length / __channels, _cachedWave.Length - _cachedWavePos);
+//
+//                    if (SynthWave(_cachedWave, (int) _cachedWavePos, (uint) samplesNeeded) || samplesNeeded == 0)
+//                    {
+//                        _cachingNormal = false;
+//                        endOfSamples = true;
+//                    }
+//                    else
+//                    {
+//                        _cachedWavePos += (uint) samplesNeeded;
+//                    }
+//
+//                    WriteSamples(_cachedWave, (int) _waveDataPos, __data, __channels);
+//                }
+//            }
+//
+//            return !endOfSamples;
+//        }
 
 
         // Cache sound methods

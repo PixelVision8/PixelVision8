@@ -19,6 +19,7 @@
 //
 
 using PixelVision8.Engine;
+using PixelVision8.Runner.Audio;
 using PixelVision8.Runner.Chips.Sfxr;
 
 namespace PixelVision8.Runner.Data
@@ -26,7 +27,8 @@ namespace PixelVision8.Runner.Data
     public class SfxrSoundData : ISoundData
     {
         protected SfxrSynth synth;
-
+//        protected AudioPlayer audioPlayer;
+        
         public SfxrSoundData(string name = "Untitled")
         {
             this.name = name;

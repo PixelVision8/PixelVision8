@@ -20,24 +20,19 @@
 
 using System.IO;
 using Microsoft.Xna.Framework.Audio;
-using PixelVision8.Runner.Chips.Sfxr;
 
 namespace PixelVision8.Runner.Audio
 {
-    internal class SfxrAudioPlayer : IAudioPlayer
+    internal class AudioPlayer : IAudioPlayer
     {
         private bool _isDisposed;
         private readonly SoundEffect _soundEffect;
 
         private readonly SoundEffectInstance _soundEffectInstance;
         private readonly SoundState state;
-        private readonly IVolumeManager volumeManager;
 
-        public SfxrAudioPlayer(ISfxrSynth synth, IVolumeManager volumeManagerManager)
+        public AudioPlayer(byte[] wavData)
         {
-            volumeManager = volumeManagerManager;
-
-            var wavData = synth.GenerateWav();
 
             using (var stream = new MemoryStream(wavData))
             {
@@ -62,11 +57,11 @@ namespace PixelVision8.Runner.Audio
 
         public void Play()
         {
-            if (volumeManager.Mute())
+            if (VolumeManager.Mute())
                 return;
 
             // Apply sound and convert to a fraction
-            _soundEffectInstance.Volume = volumeManager.Volume() / 100f;
+            _soundEffectInstance.Volume = VolumeManager.Volume() / 100f;
             _soundEffectInstance.Play();
         }
 

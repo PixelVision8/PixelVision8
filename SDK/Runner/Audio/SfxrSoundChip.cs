@@ -44,11 +44,7 @@ namespace PixelVision8.Engine.Chips
         public override void UpdateSound(int index, string param)
         {
             var synth = sounds[index] as SfxrSoundData;
-            if (synth != null)
-            {
-                synth.CacheSound();
-                synth.UpdateSettings(param);
-            }
+            synth?.UpdateSettings(param);
         }
 
         /// <summary>

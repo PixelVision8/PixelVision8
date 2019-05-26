@@ -18,29 +18,22 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Runner.Chips.Sfxr;
-
 namespace PixelVision8.Runner.Audio
 {
-    public class AudioPlayerFactory : IAudioPlayerFactory, IVolumeManager
+    public class VolumeManager
     {
-        private bool _mute;
-        private int lastVolume;
-        private int muteVoldume;
+        private static bool _mute;
+        private static int lastVolume;
+        private static int muteVoldume;
 
-        public IAudioPlayer Create(ISfxrSynth synth)
-        {
-            return new SfxrAudioPlayer(synth, this);
-        }
-
-        public int Volume(int? value = null)
+        public static int Volume(int? value = null)
         {
             if (value.HasValue) lastVolume = value.Value;
 
             return lastVolume;
         }
 
-        public bool Mute(bool? value = null)
+        public static bool Mute(bool? value = null)
         {
             if (value.HasValue)
                 if (_mute != value)

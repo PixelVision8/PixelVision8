@@ -31,7 +31,7 @@ namespace PixelVision8.Engine.Chips
     ///     It allows the engine to work in color indexes that the display can map
     ///     to actual colors in Unity via the class's set of APIs.
     /// </summary>
-    public class ColorChip : AbstractChip, IInvalidate
+    public class ColorChip : AbstractChip
     {
         protected int _bgColor;
 

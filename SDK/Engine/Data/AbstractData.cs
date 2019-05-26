@@ -29,7 +29,7 @@ namespace PixelVision8.Engine
     ///     IInvalidate interfaces and provides as standard API for serializing
     ///     the data it contains via the CustomSerializeData() method.
     /// </summary>
-    public abstract class AbstractData : IInvalidate
+    public abstract class AbstractData
     {
         protected bool _invalid;
 

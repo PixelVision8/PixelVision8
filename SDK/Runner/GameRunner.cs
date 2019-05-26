@@ -136,7 +136,6 @@ namespace PixelVision8.Runner
         }
 
         protected bool exporting { get; set; }
-        protected AudioPlayerFactory audioPlayerFactory { get; set; }
 
         public string LocalStorage
         {
@@ -181,7 +180,7 @@ namespace PixelVision8.Runner
         /// <returns></returns>
         public virtual int Volume(int? value = null)
         {
-            var vol = audioPlayerFactory.Volume(value);
+            var vol = VolumeManager.Volume(value);
             return vol;
         }
 
@@ -192,7 +191,7 @@ namespace PixelVision8.Runner
         /// <returns></returns>
         public virtual bool Mute(bool? value = null)
         {
-            var mute = audioPlayerFactory.Mute(value);
+            var mute = VolumeManager.Mute(value);
             return mute;
         }
 
@@ -319,17 +318,17 @@ namespace PixelVision8.Runner
         {
             ConfigureDisplayTarget();
 
-            CreateAudioPlayerFactory();
+//            CreateAudioPlayerFactory();
 
             CreateLoadService();
         }
 
-        public virtual void CreateAudioPlayerFactory()
-        {
-            audioPlayerFactory = new AudioPlayerFactory();
-
-            SfxrSynth.AudioPlayerFactory = audioPlayerFactory;
-        }
+//        public virtual void CreateAudioPlayerFactory()
+//        {
+//            audioPlayerFactory = new AudioPlayerFactory();
+//
+//            SfxrSynth.AudioPlayerFactory = audioPlayerFactory;
+//        }
 
         public virtual void CreateLoadService()
         {
