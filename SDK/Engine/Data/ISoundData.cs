@@ -18,6 +18,8 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
+
 namespace PixelVision8.Engine
 {
     /// <summary>
@@ -26,7 +28,7 @@ namespace PixelVision8.Engine
     ///     Interface with access to sound data to use it inside of
     ///     games and the MusicChip.
     /// </summary>
-    public interface ISoundData
+    public interface ISoundData: IDisposable
     {
         string name { get; set; }
         bool playing { get; }

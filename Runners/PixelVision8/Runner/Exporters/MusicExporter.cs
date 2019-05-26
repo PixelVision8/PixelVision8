@@ -84,7 +84,7 @@ namespace PixelVision8.Runner.Exporters
             total = musicChip.trackerDataCollection.Length;
             for (var i = 0; i < total; i++)
             {
-                var songData = musicChip.trackerDataCollection[i] as SfxrTrackerData;
+                var songData = musicChip.trackerDataCollection[i];
                 if (songData != null)
                 {
                     JsonUtil.indentLevel++;

@@ -122,7 +122,7 @@ namespace PixelVision8.Runner.Chips
         }
     }
 
-    public class SfxrMusicGeneratorChip : SfxrMusicChip
+    public class SfxrMusicGeneratorChip : MusicChip
     {
         public Point octaveRange = new Point(1, 8);
         private readonly Random r = new Random();

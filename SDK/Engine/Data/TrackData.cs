@@ -19,7 +19,10 @@
 //
 
 using System;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
+using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Engine
 {
@@ -85,6 +88,29 @@ namespace PixelVision8.Engine
         {
             for (var i = 0; i < totalNotes; i++)
                 notes[i] = 0;
+        }
+        
+        public string SerializeData()
+        {
+            var sb = new StringBuilder();
+            JsonUtil.GetLineBreak(sb);
+            sb.Append("{");
+            JsonUtil.GetLineBreak(sb, 1);
+
+            sb.Append("\"sfxID\":");
+            sb.Append(sfxID);
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+
+            sb.Append("\"notes\":[");
+
+            sb.Append(string.Join(",", notes.Select(x => x.ToString()).ToArray()));
+            sb.Append("]");
+
+            JsonUtil.GetLineBreak(sb);
+            sb.Append("}");
+
+            return sb.ToString();
         }
     }
 }

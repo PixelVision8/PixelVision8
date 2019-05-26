@@ -597,38 +597,7 @@ namespace PixelVision8.Runner.Services
 
         #region FileSystem IO
 
-        // TODO All paths going into the Workspace should be string
-
-//        public ICollection<FileSystemPath> GetEntities(FileSystemPath path)
-//        {
-//            return GetEntities(path);
-//        }
         
-//        public bool Exists(FileSystemPath path)
-//        {
-//            return Exists(path);
-//        }
-
-//        public Stream CreateFile(FileSystemPath path)
-//        {
-//            return CreateFile(path);
-//        }
-//
-//        public Stream OpenFile(FileSystemPath path, FileAccess access)
-//        {
-//            return OpenFile(path, access);
-//        }
-//
-//        public void CreateDirectory(FileSystemPath path)
-//        {
-//            CreateDirectory(path);
-//        }
-//
-//        public void Delete(FileSystemPath path)
-//        {
-//            Delete(path);
-//        }
-
         public void Copy(WorkspacePath src, WorkspacePath dest)
         {
             this.Copy(src, this, dest);
@@ -638,11 +607,6 @@ namespace PixelVision8.Runner.Services
         {
             this.Move(src, this, dest);
         }
-
-//        public void CreateDirectoryRecursive(FileSystemPath path)
-//        {
-//            CreateDirectoryRecursive(path);
-//        }
 
         public void AddMount(KeyValuePair<WorkspacePath, IFileSystem> mount)
         {

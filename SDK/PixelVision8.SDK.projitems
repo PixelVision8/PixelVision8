@@ -42,15 +42,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Utils\ColorUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Utils\MathUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Utils\SpriteChipUtil.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\IAudioPlayer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\SfxrMusicChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\SfxrSoundChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\SfxrParams.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Audio\Sfxr\SfxrSynth.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\DisplayTarget.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\SfxrSoundData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\SfxrTrackData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\SfxrTrackerData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\SpriteExportData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\IDisplayTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\IRunner.cs" />

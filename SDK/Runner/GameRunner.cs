@@ -26,8 +26,6 @@ using Microsoft.Xna.Framework.Audio;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Services;
-using PixelVision8.Runner.Audio;
-using PixelVision8.Runner.Chips.Sfxr;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Services;
 

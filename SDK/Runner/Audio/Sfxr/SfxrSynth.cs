@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework.Audio;
 using PixelVision8.Engine;
-using PixelVision8.Runner.Audio;
 
 namespace PixelVision8.Runner.Chips.Sfxr
 {
@@ -48,7 +47,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
     {
         private const int LO_RES_NOISE_PERIOD = 8; // Should be < 32
 
-        private IAudioPlayer _audioPlayer;
+//        private IAudioPlayer _audioPlayer;
         
         private Dictionary<string, SoundCache> wavCache = new Dictionary<string, SoundCache>();
 
@@ -194,7 +193,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             this.name = name;
         }
 
-        public bool playing => _audioPlayer.playing;
+        public bool playing => _soundInstance.State == SoundState.Playing;
 
         /// <summary>
         ///     Returns a ByteArray of the wave in the form of a .wav file, ready to be saved out
@@ -330,13 +329,10 @@ namespace PixelVision8.Runner.Chips.Sfxr
         /// </summary>
         public void Stop()
         {
-            if (_audioPlayer != null)
-            {
-                _soundInstance.Stop();
+            _soundInstance?.Stop();
 //                _audioPlayer.Stop();
 //                _audioPlayer.Dispose();
 //                _audioPlayer = null;
-            }
 
             if (_original != null)
             {
@@ -971,6 +967,16 @@ namespace PixelVision8.Runner.Chips.Sfxr
         public void Mutate(float value = 0.05f)
         {
             parameters.Mutate(value);
+        }
+
+        public void Dispose()
+        {
+            _soundInstance?.Dispose();
+
+            foreach (var wav in wavCache)
+            {
+                wav.Value.soundInstance?.Dispose();
+            }
         }
     }
 

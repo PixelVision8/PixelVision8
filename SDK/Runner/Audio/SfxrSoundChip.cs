@@ -58,5 +58,18 @@ namespace PixelVision8.Engine.Chips
 
             tmpSoundData.Play(frequency);
         }
+
+        public override void Shutdown()
+        {
+            // Dispose of all the cached audio
+            foreach (var channel in channels)
+            {
+                channel?.Dispose();
+            }
+            
+            base.Shutdown();
+            
+            
+        }
     }
 }
