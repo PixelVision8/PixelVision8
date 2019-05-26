@@ -72,7 +72,7 @@ namespace PixelVision8.Engine.Chips
         public virtual void UpdateSound(int index, string param)
         {
             var synth = sounds[index];
-            synth.CacheSound();
+//            synth.CacheSound();
             synth.UpdateSettings(param);
         }
 

@@ -361,19 +361,19 @@ namespace PixelVision8.Engine.Chips
 
 
                 // Look to see if the next pattern is -1 and if looping is false
-                if (currentSong.AtEnd())
+                if (loopSong == false)
                 {
 //                    Console.WriteLine("End of song " + loopSong + " " + songCurrentlyPlaying);
-
-                    if (loopSong == false)
-                    {
+//
+//                    if (loopSong == false)
+//                    {
 //                        Console.WriteLine("Stop song");
                         // Stop the song and return
                         songCurrentlyPlaying = false;
                         return;
-                    }
+//                    }
 
-                    RewindSong();
+                    //RewindSong();
                 }
 
 //                Console.WriteLine("Load new pattern");
@@ -496,7 +496,7 @@ namespace PixelVision8.Engine.Chips
 
             // Save the loop value
             loopSong = loop;
-
+            
             // Load the next pattern
             LoadPattern(currentSong.NextPattern());
 

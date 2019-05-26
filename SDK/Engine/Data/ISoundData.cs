@@ -45,7 +45,7 @@ namespace PixelVision8.Engine
         /// <summary>
         ///     Caches the sound file to improve performance
         /// </summary>
-        void CacheSound();
+//        void CacheSound();
 
         void UpdateSettings(string param);
 

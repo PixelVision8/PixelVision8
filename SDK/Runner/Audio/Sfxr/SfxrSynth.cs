@@ -22,6 +22,8 @@
 //  @author Zeh Fernando
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using PixelVision8.Runner.Audio;
 
 namespace PixelVision8.Runner.Chips.Sfxr
@@ -31,6 +33,9 @@ namespace PixelVision8.Runner.Chips.Sfxr
         private const int LO_RES_NOISE_PERIOD = 8; // Should be < 32
 
         private IAudioPlayer _audioPlayer;
+        
+        private Dictionary<string, SoundCache> wavCache = new Dictionary<string, SoundCache>();
+
 
         private float _bitcrushFreq; // Inversely proportional to the number of samples to skip
         private float _bitcrushFreqSweep; // Change of the above
@@ -146,12 +151,11 @@ namespace PixelVision8.Runner.Chips.Sfxr
         private float _vibratoPhase; // Phase through the vibrato sine wave
         private float _vibratoSpeed; // Speed at which the vibrato phase moves
 
-        private float[] _waveData; // Full wave, read out in chuncks by the onSampleData method
+        private byte[] _waveData; // Full wave, read out in chuncks by the onSampleData method
         private uint _waveDataPos; // Current position in the waveData
 
         private uint _waveType; // Shape of wave to generate (see enum WaveType)
         private float amp; // Used in other calculations
-
 
         /// <summary>
         ///     Sound parameters
@@ -174,14 +178,14 @@ namespace PixelVision8.Runner.Chips.Sfxr
         /// <param name="__sampleRate">Sample rate to generate the .wav data at (44100 or 22050, default 44100)</param>
         /// <param name="__bitDepth">Bit depth to generate the .wav at (8 or 16, default 16)</param>
         /// <returns>Wave data (in .wav format) as a byte array</returns>
-        public byte[] GenerateWav(uint __sampleRate = 44100, uint __bitDepth = 16)
+        public byte[] GenerateWav()
         {
             Stop();
 
             Reset(true);
 
-            if (__sampleRate != 44100) __sampleRate = 22050;
-            if (__bitDepth != 16) __bitDepth = 8;
+            var __sampleRate = 22050u;
+            var __bitDepth = 8u;
 
             var soundLength = _envelopeFullLength;
             if (__bitDepth == 16) soundLength *= 2;
@@ -236,15 +240,18 @@ namespace PixelVision8.Runner.Chips.Sfxr
             writeUintToBytes(wav, ref bytePos, soundLength, Endian.LITTLE_ENDIAN);
 
             // Generate normal synth data
-            var audioData = new float[_envelopeFullLength];
-            SynthWave(audioData, 0, _envelopeFullLength);
-
+//            var audioData = _cachedWave;//new float[_envelopeFullLength];
+//            SynthWave(audioData, 0, _envelopeFullLength);
+    
+            _cachedWave = new float[_envelopeFullLength];
+            SynthWave(_cachedWave, 0, _envelopeFullLength);
+            
             // Write data as bytes
             var sampleCount = 0;
             var bufferSample = 0f;
-            for (var i = 0; i < audioData.Length; i++)
+            for (var i = 0; i < _cachedWave.Length; i++)
             {
-                bufferSample += audioData[i];
+                bufferSample += _cachedWave[i];
                 sampleCount++;
 
                 if (__sampleRate == 44100 || sampleCount == 2)
@@ -272,28 +279,16 @@ namespace PixelVision8.Runner.Chips.Sfxr
         /// </summary>
         public void Play()
         {
-            if (_cachingAsync) return;
 
             Stop();
 
-            if (_params.paramsDirty || _cachingNormal || _cachedWave == null)
+            if (_params.paramsDirty)
             {
-                // Needs to cache new data
-                _cachedWavePos = 0;
-                _cachingNormal = true;
-                _waveData = null;
-                Reset(true);
-                _cachedWave = new float[_envelopeFullLength];
-            }
-            else
-            {
-                // Play from cached data
-                _waveData = _cachedWave;
-                _waveDataPos = 0;
+                CacheSound();
             }
 
             // TODO need to make sure this is really cached - it's not
-            _audioPlayer = new AudioPlayer(GenerateWav());
+            _audioPlayer = new AudioPlayer(_waveData);
             _audioPlayer.Play();
         }
 
@@ -316,74 +311,21 @@ namespace PixelVision8.Runner.Chips.Sfxr
             }
         }
 
-        // ?
-//        private int WriteSamples(float[] __originSamples, int __originPos, float[] __targetSamples,
-//            int __targetChannels)
-//        {
-//            // Writes raw samples to Unity's format and return number of samples actually written
-//            var samplesToWrite = __targetSamples.Length / __targetChannels;
-//
-//            if (__originPos + samplesToWrite > __originSamples.Length)
-//                samplesToWrite = __originSamples.Length - __originPos;
-//
-//            if (samplesToWrite > 0)
-//            {
-//                // Interlaced filling of sample datas (faster?)
-//                int i, j;
-//                for (i = 0; i < __targetChannels; i++)
-//                for (j = 0; j < samplesToWrite; j++)
-//                    __targetSamples[j * __targetChannels + i] = __originSamples[j + __originPos];
-//            }
-//
-//            return samplesToWrite;
-//        }
-
-        /**
-         * If there is a cached sound to play, reads out of the data.
-         * If there isn't, synthesises new chunch of data, caching it as it goes.
-         * @param	data		Float[] to write data to
-         * @param	channels	Number of channels used
-         * @return	Whether it needs to continue (there are samples left) or not
-         */
-//        private bool GenerateAudioFilterData(float[] __data, int __channels)
-//        {
-//            var endOfSamples = false;
-//
-//            if (_waveData != null)
-//            {
-//                var samplesWritten = WriteSamples(_waveData, (int) _waveDataPos, __data, __channels);
-//                _waveDataPos += (uint) samplesWritten;
-//                if (samplesWritten == 0) endOfSamples = true;
-//            }
-//            else
-//            {
-//                if (_cachingNormal)
-//                {
-//                    _waveDataPos = _cachedWavePos;
-//
-//                    var samplesNeeded =
-//                        (int) Math.Min(__data.Length / __channels, _cachedWave.Length - _cachedWavePos);
-//
-//                    if (SynthWave(_cachedWave, (int) _cachedWavePos, (uint) samplesNeeded) || samplesNeeded == 0)
-//                    {
-//                        _cachingNormal = false;
-//                        endOfSamples = true;
-//                    }
-//                    else
-//                    {
-//                        _cachedWavePos += (uint) samplesNeeded;
-//                    }
-//
-//                    WriteSamples(_cachedWave, (int) _waveDataPos, __data, __channels);
-//                }
-//            }
-//
-//            return !endOfSamples;
-//        }
-
-
         // Cache sound methods
 
+        internal class SoundCache
+        {
+            public float[] audio;
+            public byte[] wave;
+
+            public SoundCache(float[] audio, byte[] wave)
+            {
+                this.audio = audio;
+                this.wave = wave;
+            }
+        }
+        
+        
         /**
          * Cache the sound for speedy playback.
          * If a callback is passed in, the caching will be done asynchronously, taking maxTimePerFrame milliseconds
@@ -392,35 +334,37 @@ namespace PixelVision8.Runner.Chips.Sfxr
          * @param	callback			Function to call when the caching is complete
          * @param	maxTimePerFrame		Maximum time in milliseconds the caching will use per frame
          */
-        public void CacheSound(Action __callback = null, bool __isFromCoroutine = false)
+        public void CacheSound()
         {
             Stop();
 
-            if (_cachingAsync && !__isFromCoroutine) return;
 
-            if (__callback != null)
+            var paramKey = parameters.GetSettingsString();
+
+
+            if (wavCache.ContainsKey(paramKey))
             {
-                // TODO: provide abstract way of caching app wide
-
-                //_mutation = false;
-                //_cachingNormal = true;
-                //_cachingAsync = true;
-
-                //GameObject _surrogateObj = new GameObject("SfxrGameObjectSurrogate-" + (Time.realtimeSinceStartup));
-                //SfxrCacheSurrogate _surrogate = _surrogateObj.AddComponent<SfxrCacheSurrogate>();
-                //_surrogate.CacheSound(this, __callback);
+                _cachedWave = wavCache[paramKey].audio;
+                _waveData = wavCache[paramKey].wave;
             }
             else
             {
+                // Needs to cache new data
+                _cachedWavePos = 0;
+                _cachingNormal = true;
+                _waveData = null;
+            
                 Reset(true);
+            
+//                Console.WriteLine("Cache audio data");
 
-                _cachedWave = new float[_envelopeFullLength];
+                _waveData = GenerateWav();
 
-                SynthWave(_cachedWave, 0, _envelopeFullLength);
-
-                _cachingNormal = false;
-                _cachingAsync = false;
+                _params.paramsDirty = false;
+                
+                wavCache[paramKey] = new SoundCache(_cachedWave, _waveData);
             }
+            
         }
 
         /**

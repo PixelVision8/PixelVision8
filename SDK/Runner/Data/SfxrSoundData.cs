@@ -19,7 +19,6 @@
 //
 
 using PixelVision8.Engine;
-using PixelVision8.Runner.Audio;
 using PixelVision8.Runner.Chips.Sfxr;
 
 namespace PixelVision8.Runner.Data
@@ -66,15 +65,15 @@ namespace PixelVision8.Runner.Data
         /// <summary>
         ///     Caches the sound file to improve performance
         /// </summary>
-        public void CacheSound()
-        {
-            synth.CacheSound();
-        }
+//        public void CacheSound()
+//        {
+//            synth.CacheSound();
+//        }
 
         public void UpdateSettings(string param)
         {
             synth.parameters.SetSettingsString(param);
-            CacheSound();
+//            CacheSound();
         }
 
         public string ReadSettings()
