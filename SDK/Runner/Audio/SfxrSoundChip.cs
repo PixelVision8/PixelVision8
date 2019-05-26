@@ -18,7 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Runner.Data;
+using PixelVision8.Runner.Chips.Sfxr;
 
 namespace PixelVision8.Engine.Chips
 {
@@ -31,20 +31,7 @@ namespace PixelVision8.Engine.Chips
         /// <returns></returns>
         public override ISoundData CreateEmptySoundData(string name = "Untitled")
         {
-            return new SfxrSoundData(name);
-        }
-
-        /// <summary>
-        ///     Updates a sound in the collection.
-        /// </summary>
-        /// <param name="index">The index to update the sound at.</param>
-        /// <param name="param">
-        ///     A string representing the synth properties.
-        /// </param>
-        public override void UpdateSound(int index, string param)
-        {
-            var synth = sounds[index] as SfxrSoundData;
-            synth?.UpdateSettings(param);
+            return new SfxrSynth(name);
         }
 
         /// <summary>
@@ -62,7 +49,7 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void PlayRawSound(string data, int channelID = 0, float frequency = 0.1266f)
         {
-            var tmpSoundData = CreateEmptySoundData("Raw Sound") as SfxrSoundData;
+            var tmpSoundData = CreateEmptySoundData("Raw Sound");
             tmpSoundData.UpdateSettings(data);
 
             var channel = channels[channelID];

@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Services;
@@ -173,26 +174,39 @@ namespace PixelVision8.Runner
 
         public virtual IEngine activeEngine { get; protected set; }
 
-        /// <summary>
-        ///     Change the volume value.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        private static bool _mute;
+        private static int lastVolume;
+        private static int muteVoldume;
+
         public virtual int Volume(int? value = null)
         {
-            var vol = VolumeManager.Volume(value);
-            return vol;
+            if (value.HasValue) lastVolume = value.Value;
+
+            SoundEffect.MasterVolume = lastVolume/100f;
+           
+            return lastVolume;
         }
 
-        /// <summary>
-        ///     Change the mute value.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
         public virtual bool Mute(bool? value = null)
         {
-            var mute = VolumeManager.Mute(value);
-            return mute;
+            if (value.HasValue)
+                if (_mute != value)
+                {
+                    _mute = value.Value;
+
+                    if (_mute)
+                    {
+                        muteVoldume = lastVolume;
+
+                        Volume(0);
+                    }
+                    else
+                    {
+                        Volume(muteVoldume);
+                    }
+                }
+
+            return _mute;
         }
 
 

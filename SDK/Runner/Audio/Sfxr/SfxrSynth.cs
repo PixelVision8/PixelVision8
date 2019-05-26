@@ -22,13 +22,29 @@
 //  @author Zeh Fernando
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using Microsoft.Xna.Framework.Audio;
+using PixelVision8.Engine;
 using PixelVision8.Runner.Audio;
 
 namespace PixelVision8.Runner.Chips.Sfxr
 {
-    public class SfxrSynth
+    internal struct SoundCache
+    {
+        public float[] audio;
+        public byte[] wave;
+        public SoundEffectInstance soundInstance;
+        
+        public SoundCache(float[] audio, byte[] wave, SoundEffectInstance soundInstance)
+        {
+            this.audio = audio;
+            this.wave = wave;
+            this.soundInstance = soundInstance;
+        }
+    }
+    
+    public class SfxrSynth : ISoundData
     {
         private const int LO_RES_NOISE_PERIOD = 8; // Should be < 32
 
@@ -156,6 +172,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
 
         private uint _waveType; // Shape of wave to generate (see enum WaveType)
         private float amp; // Used in other calculations
+        private SoundEffectInstance _soundInstance;
 
         /// <summary>
         ///     Sound parameters
@@ -168,6 +185,13 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 _params = value;
                 _params.paramsDirty = true;
             }
+        }
+
+        public string name { get; set; }
+        
+        public SfxrSynth(string name = "Untitled")
+        {
+            this.name = name;
         }
 
         public bool playing => _audioPlayer.playing;
@@ -254,15 +278,15 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 bufferSample += _cachedWave[i];
                 sampleCount++;
 
-                if (__sampleRate == 44100 || sampleCount == 2)
+                if (sampleCount == 2)
                 {
                     bufferSample /= sampleCount;
                     sampleCount = 0;
 
-                    if (__bitDepth == 16)
-                        writeShortToBytes(wav, ref bytePos, (short) Math.Round(32000f * bufferSample),
-                            Endian.LITTLE_ENDIAN);
-                    else
+//                    if (__bitDepth == 16)
+//                        writeShortToBytes(wav, ref bytePos, (short) Math.Round(32000f * bufferSample),
+//                            Endian.LITTLE_ENDIAN);
+//                    else
                         writeBytes(wav, ref bytePos, new[] {(byte) (Math.Round(bufferSample * 127f) + 128)},
                             Endian.LITTLE_ENDIAN);
 
@@ -277,19 +301,28 @@ namespace PixelVision8.Runner.Chips.Sfxr
         /// Plays the sound. If the parameters are dirty, synthesises sound as it plays, caching it for later.
         //  If they're not, plays from the cached sound. Won't play if caching asynchronously.
         /// </summary>
-        public void Play()
+        public void Play(float? frequency = null)
         {
-
+            
             Stop();
+            
+//            if (VolumeManager.Mute())
+//                return;
 
+            if (frequency.HasValue)
+                parameters.startFrequency = frequency.Value;
+            
             if (_params.paramsDirty)
             {
                 CacheSound();
             }
 
             // TODO need to make sure this is really cached - it's not
-            _audioPlayer = new AudioPlayer(_waveData);
-            _audioPlayer.Play();
+//            _audioPlayer = new AudioPlayer(_waveData);
+//            _audioPlayer.Play();
+
+//            _soundInstance.Volume = VolumeManager.Volume() / 100;
+            _soundInstance.Play();
         }
 
         /// <summary>
@@ -299,9 +332,10 @@ namespace PixelVision8.Runner.Chips.Sfxr
         {
             if (_audioPlayer != null)
             {
-                _audioPlayer.Stop();
-                _audioPlayer.Dispose();
-                _audioPlayer = null;
+                _soundInstance.Stop();
+//                _audioPlayer.Stop();
+//                _audioPlayer.Dispose();
+//                _audioPlayer = null;
             }
 
             if (_original != null)
@@ -313,17 +347,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
 
         // Cache sound methods
 
-        internal class SoundCache
-        {
-            public float[] audio;
-            public byte[] wave;
-
-            public SoundCache(float[] audio, byte[] wave)
-            {
-                this.audio = audio;
-                this.wave = wave;
-            }
-        }
+        
         
         
         /**
@@ -346,6 +370,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
             {
                 _cachedWave = wavCache[paramKey].audio;
                 _waveData = wavCache[paramKey].wave;
+                _soundInstance = wavCache[paramKey].soundInstance;
             }
             else
             {
@@ -355,14 +380,30 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 _waveData = null;
             
                 Reset(true);
-            
+
+
+                if (_soundInstance != null)
+                {
+                    _soundInstance.Stop();
+                }
 //                Console.WriteLine("Cache audio data");
 
                 _waveData = GenerateWav();
 
                 _params.paramsDirty = false;
+
+//                SoundEffectInstance soundInstance = null;
                 
-                wavCache[paramKey] = new SoundCache(_cachedWave, _waveData);
+                using (var stream = new MemoryStream(_waveData))
+                {
+                    var soundEffect = SoundEffect.FromStream(stream);
+                    _soundInstance = soundEffect.CreateInstance();
+                }
+
+                // may make these on a per-play instance at some point
+//                _soundEffectInstance = _soundEffect.CreateInstance();
+                
+                wavCache[paramKey] = new SoundCache(_cachedWave, _waveData, _soundInstance);
             }
             
         }
@@ -914,6 +955,22 @@ namespace PixelVision8.Runner.Chips.Sfxr
         {
             BIG_ENDIAN,
             LITTLE_ENDIAN
+        }
+        
+        public void UpdateSettings(string param)
+        {
+            parameters.SetSettingsString(param);
+//            CacheSound();
+        }
+
+        public string ReadSettings()
+        {
+            return parameters.GetSettingsString();
+        }
+
+        public void Mutate(float value = 0.05f)
+        {
+            parameters.Mutate(value);
         }
     }
 

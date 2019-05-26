@@ -23,8 +23,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
-using PixelVision8.Runner.Data;
 
 namespace PixelVision8.Runner.Chips
 {
@@ -397,7 +395,7 @@ namespace PixelVision8.Runner.Chips
             var sfxID = ReadTrackSFX(track);
 
             // play the sound
-            var instrument = soundChip.ReadSound(sfxID) as SfxrSoundData;
+            var instrument = soundChip.ReadSound(sfxID);
             if (instrument != null)
                 instrument.Play(noteStartFrequency[midinote]);
         }
@@ -788,10 +786,10 @@ namespace PixelVision8.Runner.Chips
 
             for (var trackNum = 0; trackNum < trackCount; trackNum++)
             {
-                var instrument = soundChip.ReadSound(activeTrackerData.tracks[trackNum].sfxID) as SfxrSoundData;
+                var instrument = soundChip.ReadSound(activeTrackerData.tracks[trackNum].sfxID);
 
                 if (instrument != null)
-                    instrument.parameters.Mutate(howmuch);
+                    instrument.Mutate(howmuch);
 
                 // remember the strings
                 // fixme ON ALL LOOPS!!!!
