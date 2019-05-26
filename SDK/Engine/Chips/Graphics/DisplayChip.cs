@@ -267,5 +267,40 @@ namespace PixelVision8.Engine.Chips
                 }
             }
         }
+
+        public Color[] VisiblePixels()
+        {
+            var pixels = engine.displayChip.pixels;
+    
+            var displaySize = engine.gameChip.Display();
+    
+    
+            var visibleWidth = displaySize.X;
+            var visibleHeight = displaySize.Y;
+            var width = engine.displayChip.width;
+                
+                
+            // Need to crop the image
+            var newPixels = new Color[visibleWidth * visibleHeight];
+    
+            var totalPixels = pixels.Length;
+            var newTotalPixels = newPixels.Length;
+                
+            var index = 0;
+                
+            for (int i = 0; i < totalPixels; i++)
+            {
+    
+                var col = i % width;
+                if (col < visibleWidth && index < newTotalPixels)
+                {
+                    newPixels[index] = pixels[i];
+                    index++;
+                }
+    
+            }
+
+            return newPixels;
+        }
     }
 }

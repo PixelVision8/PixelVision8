@@ -29,18 +29,21 @@ namespace PixelVision8.Runner.Data
     {
         private readonly int _monitorHeight = 640;
         private readonly int _monitorWidth = 640;
-//        private int _totalPixels;
         private bool _useCRT;
         private Effect crtShader;
         private readonly GraphicsDeviceManager graphicManager;
         public Vector2 offset;
-        private Texture2D renderTexture;
+        public Texture2D renderTexture;
         public Vector2 scale = new Vector2(1, 1);
         private Effect shaderEffect;
         private readonly SpriteBatch spriteBatch;
         private int totalPixels;
         private Rectangle visibleRect;
-
+        private int _monitorScale = 1;
+        public bool fullscreen = false;
+        public bool stretchScreen;
+        public bool cropScreen = true;
+        
         // TODO think we just need to pass in the active game and not the entire runner?
         public DisplayTarget(GraphicsDeviceManager graphicManager, int width, int height)
         {
@@ -115,8 +118,6 @@ namespace PixelVision8.Runner.Data
                 
             }
         }
-
-        private int _monitorScale = 1;
         
         public int monitorScale
         {
@@ -147,10 +148,6 @@ namespace PixelVision8.Runner.Data
                 }
             }
         }
-
-        public bool fullscreen = false;
-        public bool stretchScreen;
-        public bool cropScreen = true;
         
         public void ResetResolution(int gameWidth, int gameHeight, int overScanX = 0, int overScanY = 0)
         {

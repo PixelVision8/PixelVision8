@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using GifEncoder;
 using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
 using PixelVision8.Engine;
@@ -88,6 +89,8 @@ namespace PixelVision8.Runner
         {
         }
 
+        private string windowTitle;
+        
         protected override void ConfigureRunner()
         {
             base.ConfigureRunner();
@@ -109,10 +112,13 @@ namespace PixelVision8.Runner
             
             // Replace title with version
             
-            Window.Title =
-                bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner") + " " + 
-                bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
-           
+            windowTitle = bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner") + " " + 
+                          bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
+
+            // Offset the title by 2 for the record icon
+            Window.Title = windowTitle;
+
+
         }
 
         protected WorkspaceServicePlus workspaceServicePlus;
@@ -376,6 +382,17 @@ namespace PixelVision8.Runner
 
                     }else if (controllerChip.GetKeyUp(actionKeys[ActionKeys.RecordKey]))
                     {
+                        if (recording)
+                        {
+                            StopRecording();
+                        }
+                        else
+                        {
+                            StartRecording();
+                        }
+                        
+                        Console.WriteLine(recording);
+                        
 //                        Console.WriteLine("Toggle Recoding");
                     }else if (controllerChip.GetKeyUp(actionKeys[ActionKeys.RestartKey]))
                     {
@@ -445,7 +462,14 @@ namespace PixelVision8.Runner
                 }
                 else
                 {
-                    base.Draw(gameTime);    
+                    base.Draw(gameTime);
+
+                    if (recording)
+                    {
+                        gifEncoder.BuildPalette(activeEngine.displayChip);
+                        gifEncoder.AddFrame(activeEngine.displayChip);
+                    }
+                        
                 }
 
             }
@@ -644,6 +668,12 @@ namespace PixelVision8.Runner
         public bool Load(string path, RunnerMode newMode = RunnerMode.Playing, Dictionary<string, string> metaData = null)
         {
 
+            // Make sure we stop recording when loading a new game
+            if (recording)
+            {
+                StopRecording();
+            }
+            
             try
             {
                 
@@ -1040,6 +1070,62 @@ namespace PixelVision8.Runner
 
             Load(tool, RunnerMode.Error, metaData);
         }
+        
+        protected AnimatedGifEncoder gifEncoder;
+        private WorkspacePath tmpGifPath = WorkspacePath.Root.AppendDirectory("Tmp").AppendFile("tmp-recording.gif");
+        public bool recording { get; set; }
+
+        
+        public void StartRecording()
+        {
+
+            if (!recording)
+            {
+
+                recording = true;
+
+                if (workspaceService.Exists(tmpGifPath))
+                {
+                    workspaceServicePlus.Delete(tmpGifPath);
+                }
+
+                gifEncoder = new AnimatedGifEncoder(workspaceService.CreateFile(tmpGifPath) as FileStream);
+                gifEncoder.SetDelay(1000 / 60);
+
+                
+                Window.Title = windowTitle + " (REC)";
+
+            }
+
+        }
+        
+        public void StopRecording(bool save = true)
+        {
+            if (!recording || gifEncoder == null)
+                return;
+            
+//            recordIcon = false;
+            //Debug.Log("Stop Recording");
+            recording = false;
+            gifEncoder.Finish();
+            
+            Window.Title = windowTitle;
+
+            var gifDirectory = WorkspacePath.Root.AppendDirectory("Workspace").AppendDirectory("Recordings");
+
+            if (!workspaceService.Exists(gifDirectory))
+            {
+                workspaceServicePlus.CreateDirectoryRecursive(gifDirectory);
+            }
+            
+            var path = workspaceService.UniqueFilePath(gifDirectory.AppendFile("recoding.gif"));
+            
+            workspaceService.Move(tmpGifPath, path);
+            
+        }
+
+        
+        
     }
     
 }
