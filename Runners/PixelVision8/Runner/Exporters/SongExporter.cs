@@ -180,7 +180,7 @@ namespace PixelVision8.Runner.Exporters
 
                 // set the params to current track's instrument string
                 instrument[tracknum].parameters
-                    .SetSettingsString(soundChip.ReadSound(songData.tracks[tracknum].sfxID).ReadSettings());
+                    .SetSettingsString(soundChip.ReadSound(songData.tracks[tracknum].sfxID).param);
 //                        SongData.loops[loopnum].tracks[tracknum].instrument);
 
                 for (notenum = 0; notenum < ncount; notenum++)
@@ -205,7 +205,7 @@ namespace PixelVision8.Runner.Exporters
                         //instrument[tracknum] = new SfxrSynth(); // shouldn't be required
                         // set the params to current track's instrument string
                         instrument[tracknum].parameters
-                            .SetSettingsString(soundChip.ReadSound(songData.tracks[tracknum].sfxID).ReadSettings());
+                            .SetSettingsString(soundChip.ReadSound(songData.tracks[tracknum].sfxID).param);
 
 
                         // pitch shift the sound to the correct musical note frequency

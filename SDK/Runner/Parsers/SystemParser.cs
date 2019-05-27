@@ -396,7 +396,7 @@ namespace PixelVision8.Runner.Parsers
                             soundData.name = sndData["name"] as string;
 
                         if (sndData.ContainsKey("settings"))
-                            soundData.UpdateSettings(sndData["settings"] as string);
+                            soundData.param = sndData["settings"] as string;
                     }
                 }
             }

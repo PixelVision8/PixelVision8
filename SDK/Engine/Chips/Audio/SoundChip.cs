@@ -20,9 +20,23 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using PixelVision8.Runner.Chips.Sfxr;
 
 namespace PixelVision8.Engine.Chips
 {
+
+    public class SoundData : AbstractData
+    {
+        public string name { get; set; }
+        public string param { get; set; }
+
+        public SoundData(string name, string param = "")
+        {
+            this.name = name;
+            this.param = param;
+        }
+    }
+    
     /// <summary>
     ///     The <see cref="SoundChip" /> is responsible for playing back sound
     ///     effects in the engine. It's powered by SFxr.
@@ -31,7 +45,7 @@ namespace PixelVision8.Engine.Chips
     {
         protected ISoundData[] channels = new ISoundData[0];
 
-        protected ISoundData[] sounds;
+        protected SoundData[] sounds;
 
         /// <summary>
         ///     The total number of <see cref="channels" /> available for playing
@@ -40,7 +54,14 @@ namespace PixelVision8.Engine.Chips
         public int totalChannels
         {
             get => channels.Length;
-            set => Array.Resize(ref channels, value);
+            set
+            {
+                value = MathHelper.Clamp(value, 1, 5);
+                Array.Resize(ref channels, value);
+                for (var i = 0; i < value; i++)
+                    if (channels[i] == null)
+                        channels[i] = new SfxrSynth();
+            }
         }
 
         /// <summary>
@@ -58,7 +79,7 @@ namespace PixelVision8.Engine.Chips
 
                 for (var i = 0; i < value; i++)
                     if (sounds[i] == null)
-                        sounds[i] = CreateEmptySoundData("Untitled" + i.ToString("D2"));
+                        sounds[i] = new SoundData("Untitled" + i.ToString("D2"));
             }
         }
 
@@ -71,8 +92,10 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public virtual void UpdateSound(int index, string param)
         {
-            var synth = sounds[index];
-            synth.UpdateSettings(param);
+//            var synth = sounds[index];
+//            synth.UpdateSettings(param);
+
+            sounds[index].param = param;
         }
 
         /// <summary>
@@ -82,7 +105,7 @@ namespace PixelVision8.Engine.Chips
         public void ClearSound(int index)
         {
             // TODO need to see if there is a better way to revert a sound
-            sounds[index] = CreateEmptySoundData("Untitled" + index.ToString("D2"));
+            sounds[index] = new SoundData("Untitled" + index.ToString("D2"));
         }
 
         /// <summary>
@@ -132,9 +155,9 @@ namespace PixelVision8.Engine.Chips
 
             channel?.Stop();
 
-            channel = sounds[index];
+//            channel = sounds[index];
 
-            channel.Play(frequency);
+            channel.Play(sounds[index].param, frequency);
         }
 
         public bool IsChannelPlaying(int channelID)
@@ -152,7 +175,7 @@ namespace PixelVision8.Engine.Chips
         /// <returns>
         ///     A reference to a SfxrSynth which contains the sound data.
         /// </returns>
-        public ISoundData ReadSound(int id)
+        public SoundData ReadSound(int id)
         {
             return sounds[id];
         }

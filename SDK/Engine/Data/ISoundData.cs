@@ -37,7 +37,7 @@ namespace PixelVision8.Engine
         ///     Plays the sound at a specific frequency.
         /// </summary>
         /// <param name="frequency"></param>
-        void Play(float? frequency = null);
+        void Play(string param, float? frequency = null);
 
         /// <summary>
         ///     Stops the current sound from playing

@@ -1792,7 +1792,12 @@ namespace PixelVision8.Runner.Editors
         /// <param name="id"></param>
         public void Mutate(int id)
         {
-            soundChip.ReadSound(id).Mutate();
+            
+            var param = new SfxrParams();
+            param.SetSettingsString(soundChip.ReadSound(id).param);
+            param.Mutate();
+            soundChip.UpdateSound(id, param.GetSettingsString());
+//            soundChip.ReadSound(id).Mutate();
         }
 
         /// <summary>
@@ -2430,7 +2435,7 @@ namespace PixelVision8.Runner.Editors
             
             // TODO need to wire this up
             var synth = new SfxrSynth();
-            synth.parameters.SetSettingsString(sfx.ReadSettings());
+            synth.parameters.SetSettingsString(sfx.param);
 //            var stream = workspace.CreateFile(path);
             
             var files = new Dictionary<string, byte[]>()

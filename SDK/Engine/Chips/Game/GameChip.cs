@@ -1433,7 +1433,7 @@ namespace PixelVision8.Engine.Chips
         {
             if (data != null) soundChip.UpdateSound(id, data);
 
-            return soundChip.ReadSound(id).ReadSettings();
+            return soundChip.ReadSound(id).param;
         }
 
         /// <summary>

@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\AbstractChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\IChannel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\MusicChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\SoundChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Game\GameChip.cs" />

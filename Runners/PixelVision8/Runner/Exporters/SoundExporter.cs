@@ -81,7 +81,7 @@ namespace PixelVision8.Runner.Exporters
                 sb.Append("\",");
                 JsonUtil.GetLineBreak(sb, 1);
                 sb.Append("\"settings\":");
-                sb.Append("\"" + sound.ReadSettings() + "\"");
+                sb.Append("\"" + sound.param + "\"");
                 JsonUtil.GetLineBreak(sb, 1);
                 sb.Append("}");
 

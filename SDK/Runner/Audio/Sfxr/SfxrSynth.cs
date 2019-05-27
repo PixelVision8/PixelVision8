@@ -193,7 +193,16 @@ namespace PixelVision8.Runner.Chips.Sfxr
             this.name = name;
         }
 
-        public bool playing => _soundInstance.State == SoundState.Playing;
+        public bool playing
+        {
+            get
+            {
+                if(_soundInstance == null)
+                    return false;
+
+                return _soundInstance.State == SoundState.Playing;
+            }
+        }
 
         /// <summary>
         ///     Returns a ByteArray of the wave in the form of a .wav file, ready to be saved out
@@ -300,10 +309,12 @@ namespace PixelVision8.Runner.Chips.Sfxr
         /// Plays the sound. If the parameters are dirty, synthesises sound as it plays, caching it for later.
         //  If they're not, plays from the cached sound. Won't play if caching asynchronously.
         /// </summary>
-        public void Play(float? frequency = null)
+        public void Play(string param, float? frequency = null)
         {
             
             Stop();
+
+            parameters.SetSettingsString(param);
             
 //            if (VolumeManager.Mute())
 //                return;
@@ -393,6 +404,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 using (var stream = new MemoryStream(_waveData))
                 {
                     var soundEffect = SoundEffect.FromStream(stream);
+                    
                     _soundInstance = soundEffect.CreateInstance();
                 }
 

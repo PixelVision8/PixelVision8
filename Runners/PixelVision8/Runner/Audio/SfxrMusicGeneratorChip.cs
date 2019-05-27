@@ -396,8 +396,12 @@ namespace PixelVision8.Runner.Chips
 
             // play the sound
             var instrument = soundChip.ReadSound(sfxID);
-            if (instrument != null)
-                instrument.Play(noteStartFrequency[midinote]);
+            
+            
+            
+            soundChip.PlaySound(sfxID, track, noteStartFrequency[midinote]);
+//            if (instrument != null)
+//                instrument.Play(noteStartFrequency[midinote]);
         }
 
         public void ConfigureGenerator()
@@ -481,9 +485,9 @@ namespace PixelVision8.Runner.Chips
             pcgScale = scaleTable[Scale.Major]; //scaleMajor;
 
             // mutate instruments FIXME
-            if ((float) r.NextDouble() < pcgInstMutationChance) // only mutate half the time
-                MutateAllInstruments((float) r.NextDouble() * (pcgInstMutateMax - pcgInstMutateMin) +
-                                     pcgInstMutateMin); //Random.Range(pcgInstMutateMin, pcgInstMutateMax)); //TODO need to make sure this is working correctly
+//            if ((float) r.NextDouble() < pcgInstMutationChance) // only mutate half the time
+//                MutateAllInstruments((float) r.NextDouble() * (pcgInstMutateMax - pcgInstMutateMin) +
+//                                     pcgInstMutateMin); //Random.Range(pcgInstMutateMin, pcgInstMutateMax)); //TODO need to make sure this is working correctly
 
             // sanity check (not needed?)
             //        if (pcgTrackMax < 1)
@@ -775,31 +779,31 @@ namespace PixelVision8.Runner.Chips
         }
 
         /////////////////////////////////////////////////////////////////////////////
-        private void MutateAllInstruments(float howmuch) // eg 0.05f
-            /////////////////////////////////////////////////////////////////////////////
-        {
-            var trackCount = activeTrackerData.tracks.Length; // fixme redun
-
-            //#if DEBUGMUSIC
-            //		Debug.Log("mutateAllInstruments randomizing " + trackCount + " instruments by " + howmuch);
-            //#endif
-
-            for (var trackNum = 0; trackNum < trackCount; trackNum++)
-            {
-                var instrument = soundChip.ReadSound(activeTrackerData.tracks[trackNum].sfxID);
-
-                if (instrument != null)
-                    instrument.Mutate(howmuch);
-
-                // remember the strings
-                // fixme ON ALL LOOPS!!!!
-                //activeSongData.tracks[trackNum].instrument = instrument[trackNum].parameters.GetSettingsString();
-            }
-
-            //        //TODO this needs to be removed
-            //        if (chiptuneSequencer != null)
-            //            chiptuneSequencer.updateSFXRGUI();
-        }
+//        private void MutateAllInstruments(float howmuch) // eg 0.05f
+//            /////////////////////////////////////////////////////////////////////////////
+//        {
+//            var trackCount = activeTrackerData.tracks.Length; // fixme redun
+//
+//            //#if DEBUGMUSIC
+//            //		Debug.Log("mutateAllInstruments randomizing " + trackCount + " instruments by " + howmuch);
+//            //#endif
+//
+//            for (var trackNum = 0; trackNum < trackCount; trackNum++)
+//            {
+//                var instrument = soundChip.ReadSound(activeTrackerData.tracks[trackNum].sfxID);
+//
+//                if (instrument != null)
+//                    instrument.Mutate(howmuch);
+//
+//                // remember the strings
+//                // fixme ON ALL LOOPS!!!!
+//                //activeSongData.tracks[trackNum].instrument = instrument[trackNum].parameters.GetSettingsString();
+//            }
+//
+//            //        //TODO this needs to be removed
+//            //        if (chiptuneSequencer != null)
+//            //            chiptuneSequencer.updateSFXRGUI();
+//        }
 
         /////////////////////////////////////////////////////////////////////////////
         public string randomSongName()

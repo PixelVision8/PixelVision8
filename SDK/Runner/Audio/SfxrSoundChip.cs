@@ -49,23 +49,23 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void PlayRawSound(string data, int channelID = 0, float frequency = 0.1266f)
         {
-            var tmpSoundData = CreateEmptySoundData("Raw Sound");
-            tmpSoundData.UpdateSettings(data);
+//            var tmpSoundData = CreateEmptySoundData("Raw Sound");
+//            tmpSoundData.UpdateSettings(data);
 
             var channel = channels[channelID];
 
-            if (channel != null) channel.Stop();
+//            if (channel != null) channel.Stop();
 
-            tmpSoundData.Play(frequency);
+            channel.Play(data, frequency);
         }
 
         public override void Shutdown()
         {
             // Dispose of all the cached audio
-            foreach (var channel in channels)
-            {
-                channel?.Dispose();
-            }
+//            foreach (var channel in channels)
+//            {
+//                channel?.Dispose();
+//            }
             
             base.Shutdown();
             
