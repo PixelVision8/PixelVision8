@@ -1,16 +1,13 @@
-
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Microsoft.Xna.Framework;
+using PixelVision8.Engine.Chips;
 
 //using UnityEngine;
 
-using System;
-using System.IO;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using PixelVision8.Engine.Chips;
-
 namespace GifEncoder
 {
-    // TODO this uses the old Unity code, need to update with raw data directly from the display
 	public class AnimatedGifEncoder
 	{
 		protected int width; // image size
@@ -32,6 +29,8 @@ namespace GifEncoder
 		protected int sample = 10; // default sample interval for quantizer
         protected NeuQuant nq;
 
+        
+        
         public AnimatedGifEncoder(FileStream fileStream)
         {
 	        fs = fileStream;//new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
@@ -46,71 +45,58 @@ namespace GifEncoder
 		{
 			delay = (int)Math.Round(ms / 10.0f);
 		}
-        	
-		public void BuildPalette(DisplayChip frame)
-		{
-			if (!sizeSet)
-			{
-				// use first frame's size
-				width = frame.visibleBounds.Width;
-				height = frame.visibleBounds.Height;
-				sizeSet = true;
-			}
 
-			currentFramePixels = frame.VisiblePixels();
-			GetImagePixels(); // convert to correct format if necessary
-//            this.AnalyzePixels(); // build color table & map pixels
-			
-			if (firstFrame)
-			{
-				// HEY YOU - THIS IS IMPORTANT!
-				//
-				// Unlike the code this project is built on, we generate a palette only once, using the data from the
-				// first frame. This speeds up encoding (building the palette is slow) and makes it so that subsequent
-				// frames use the same colors and look more consistent from frame to frame, but has an undesirable
-				// side-effect of getting confused when radically different colors show up in later frames. This wasn't
-				// a problem with Infinifactory, but if your game uses a deliberately reduced color palette you might
-				// want to switch back to using per-frame palettes. 
-				//
-				// This is, of course, left as an exercise for the reader.
+        public void CreatePalette(DisplayChip displayChip, ColorChip colorChip)
+        {
+	        
+	        currentFramePixels = colorChip.colors;
+	        width = currentFramePixels.Length;
+	        height = 1;
+	        
+	        GetImagePixels(); // convert to correct format if necessary
+	        
+	        // Force this to analize the system color palette
+	        nq = new NeuQuant(pixels, pixels.Length, sample);
+	        colorTab = nq.Process();
 
-				// initialize quantizer and create reduced palette
-				nq = new NeuQuant(pixels, pixels.Length, sample);
-				colorTab = nq.Process();
-                
-				// create the buffer for the displayed pixel data:
-				visiblePixels = new byte[pixels.Length];
-			}
-		}
-		
+
+	        currentFramePixels = displayChip.VisiblePixels();
+	        width = displayChip.visibleBounds.Width;
+	        height = displayChip.visibleBounds.Height;
+	        sizeSet = true;
+	        
+	        GetImagePixels();
+	        // create the buffer for the displayed pixel data:
+	        visiblePixels = new byte[pixels.Length];
+	        
+//	        AnalyzePixels(); // build color table & map pixels
+
+	        colorDepth = (int)Math.Log(NeuQuant.PaletteSize + 1, 2);
+	        palSize = colorDepth - 1;
+//	        if (firstFrame)
+//	        {
+		        WriteLSD(); // logical screen descriptior
+		        WritePalette(); // global color table
+		        if (repeat >= 0)
+		        {
+			        // use NS app extension to indicate reps
+			        WriteNetscapeExt();
+		        }
+//	        }
+        }
         /// <summary>
         /// Adds a frame to the animated GIF. If this is the first frame, it will be used to specify the size and color palette of the GIF.
         /// </summary>
-        public void AddFrame(DisplayChip frame) 
+        public void AddFrame(DisplayChip displayChip) 
 		{
-//            if (!this.sizeSet)
-//            {
-//                // use first frame's size
-//                this.width = frame.width;
-//                this.height = frame.height;
-//                this.sizeSet = true;
-//            }
-//            this.currentFramePixels = frame.GetPixels32();
-			currentFramePixels = frame.VisiblePixels();
+
+            currentFramePixels = displayChip.VisiblePixels();
             GetImagePixels(); // convert to correct format if necessary
             AnalyzePixels(); // build color table & map pixels
-            if (firstFrame)
-            {
-                WriteLSD(); // logical screen descriptior
-                WritePalette(); // global color table
-                if (repeat >= 0)
-                {
-                    // use NS app extension to indicate reps
-                    WriteNetscapeExt();
-                }
-            }
+
             WriteGraphicCtrlExt(); // write graphic control extension
             WriteImageDesc(); // image descriptor
+            
             WritePixels(); // encode and write pixel data
             firstFrame = false;
 		}
@@ -122,25 +108,25 @@ namespace GifEncoder
 		{
             fs.WriteByte(0x3b); // gif trailer
             fs.Flush();
-            fs.Dispose();
+            fs.Close();
 		}
 
         /// <summary>
         /// Cancels the encoding process and deletes the temporary file.
         /// </summary>
-        public void Cancel()
-        {
-            string filePath = fs.Name;
-            Finish();
-            File.Delete(filePath);
-        }
+//        public void Cancel()
+//        {
+//            string filePath = fs.Name;
+//            Finish();
+//            File.Delete(filePath);
+//        }
 	
 		/// <summary>
         /// Analyzes image colors and creates color map.
 		/// </summary>
 		private void AnalyzePixels() 
 		{
-//            if (this.firstFrame)
+//            if (firstFrame)
 //            {
 //                // HEY YOU - THIS IS IMPORTANT!
 //                //
@@ -154,11 +140,7 @@ namespace GifEncoder
 //                // This is, of course, left as an exercise for the reader.
 //
 //                // initialize quantizer and create reduced palette
-//                this.nq = new NeuQuant(this.pixels, this.pixels.Length, this.sample);
-//                this.colorTab = nq.Process();
 //                
-//                // create the buffer for the displayed pixel data:
-//                this.visiblePixels = new byte[this.pixels.Length];
 //            }
 
 			int nPix = pixels.Length / 3;
@@ -219,7 +201,7 @@ namespace GifEncoder
             {
                 for (int x = 0; x < width; x++)
                 {
-                    Color pixel = currentFramePixels[(y) * width + x];
+                    Color pixel = currentFramePixels[y * width + x];
                     pixels[y * width * 3 + x * 3 + 0] = pixel.R;
                     pixels[y * width * 3 + x * 3 + 1] = pixel.G;
                     pixels[y * width * 3 + x * 3 + 2] = pixel.B;
@@ -310,7 +292,7 @@ namespace GifEncoder
             fs.WriteByte(Convert.ToByte((value >> 8) & 0xff));
 		}
 	
-        private void WriteString(string s)
+        private void WriteString(String s)
 		{
 			char[] chars = s.ToCharArray();
 			for (int i = 0; i < chars.Length; i++) 
@@ -319,4 +301,5 @@ namespace GifEncoder
 			}
 		}
 	}
+
 }

@@ -22,6 +22,7 @@ using System;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using PixelVision8.Runner.Services;
 
 namespace PixelVision8.Runner.Data
 {
@@ -36,7 +37,7 @@ namespace PixelVision8.Runner.Data
         public Texture2D renderTexture;
         public Vector2 scale = new Vector2(1, 1);
         private Effect shaderEffect;
-        private readonly SpriteBatch spriteBatch;
+        public readonly SpriteBatch spriteBatch;
         private int totalPixels;
         private Rectangle visibleRect;
         private int _monitorScale = 1;
@@ -232,6 +233,18 @@ namespace PixelVision8.Runner.Data
                 SpriteEffects.None, 1f);
 
             spriteBatch.End();
+        }
+
+        public void CaptureScreenshot()
+        {
+            var gd = graphicManager.GraphicsDevice;
+            
+            Color[] colors = new Color[gd.Viewport.Width * gd.Viewport.Height];
+
+            gd.GetBackBufferData<Color>(colors);
+            
+            
+            
         }
 
     }

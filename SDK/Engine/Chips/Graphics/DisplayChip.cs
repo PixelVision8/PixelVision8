@@ -270,15 +270,14 @@ namespace PixelVision8.Engine.Chips
 
         public Color[] VisiblePixels()
         {
+
             var pixels = engine.displayChip.pixels;
     
             var displaySize = engine.gameChip.Display();
     
-    
             var visibleWidth = displaySize.X;
             var visibleHeight = displaySize.Y;
             var width = engine.displayChip.width;
-                
                 
             // Need to crop the image
             var newPixels = new Color[visibleWidth * visibleHeight];

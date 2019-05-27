@@ -466,8 +466,9 @@ namespace PixelVision8.Runner
 
                     if (recording)
                     {
-                        gifEncoder.BuildPalette(activeEngine.displayChip);
+
                         gifEncoder.AddFrame(activeEngine.displayChip);
+                        
                     }
                         
                 }
@@ -1092,6 +1093,7 @@ namespace PixelVision8.Runner
                 gifEncoder = new AnimatedGifEncoder(workspaceService.CreateFile(tmpGifPath) as FileStream);
                 gifEncoder.SetDelay(1000 / 60);
 
+                gifEncoder.CreatePalette(activeEngine.displayChip, activeEngine.colorChip);
                 
                 Window.Title = windowTitle + " (REC)";
 
