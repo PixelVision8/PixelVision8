@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
+using PixelVision8.Runner.Services;
+using PixelVision8.Runner.Workspace;
 
 //using UnityEngine;
 
@@ -14,7 +18,7 @@ namespace GifEncoder
 		protected int height;
 		protected int repeat = 0; // no repeat
 		protected int delay; // frame delay (hundredths)
-		protected FileStream fs;
+		public MemoryStream fs;
 
 		protected Color[] currentFramePixels; // current frame pixels
 		protected byte[] pixels; // BGR byte array from frame
@@ -31,9 +35,9 @@ namespace GifEncoder
 
         
         
-        public AnimatedGifEncoder(FileStream fileStream)
+        public AnimatedGifEncoder()
         {
-	        fs = fileStream;//new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
+	        fs = new MemoryStream();
             WriteString("GIF89a"); // header
         }
 
@@ -73,75 +77,44 @@ namespace GifEncoder
 
 	        colorDepth = (int)Math.Log(NeuQuant.PaletteSize + 1, 2);
 	        palSize = colorDepth - 1;
-//	        if (firstFrame)
-//	        {
-		        WriteLSD(); // logical screen descriptior
-		        WritePalette(); // global color table
-		        if (repeat >= 0)
-		        {
-			        // use NS app extension to indicate reps
-			        WriteNetscapeExt();
-		        }
-//	        }
+//	        
+	        WriteLSD(); // logical screen descriptior
+	        WritePalette(); // global color table
+	        if (repeat >= 0)
+	        {
+		        // use NS app extension to indicate reps
+		        WriteNetscapeExt();
+	        }
         }
+
+        private List<Color[]> frameData = new List<Color[]>();
+        private BackgroundWorker exportWorker;
+        public bool exporting = false;
+        public bool exportingDone = false;
+        public byte[] bytes;
+
         /// <summary>
         /// Adds a frame to the animated GIF. If this is the first frame, it will be used to specify the size and color palette of the GIF.
         /// </summary>
         public void AddFrame(DisplayChip displayChip) 
 		{
-
-            currentFramePixels = displayChip.VisiblePixels();
-            GetImagePixels(); // convert to correct format if necessary
-            AnalyzePixels(); // build color table & map pixels
-
-            WriteGraphicCtrlExt(); // write graphic control extension
-            WriteImageDesc(); // image descriptor
+			frameData.Add(displayChip.VisiblePixels());
             
-            WritePixels(); // encode and write pixel data
+
+            
+            
+//            WritePixels(); // encode and write pixel data
+            
             firstFrame = false;
 		}
 	
-		/// <summary>
-        /// Flushes any pending data and closes output file.
-		/// </summary>
-		public void Finish() 
-		{
-            fs.WriteByte(0x3b); // gif trailer
-            fs.Flush();
-            fs.Close();
-		}
+		
 
-        /// <summary>
-        /// Cancels the encoding process and deletes the temporary file.
-        /// </summary>
-//        public void Cancel()
-//        {
-//            string filePath = fs.Name;
-//            Finish();
-//            File.Delete(filePath);
-//        }
-	
 		/// <summary>
         /// Analyzes image colors and creates color map.
 		/// </summary>
 		private void AnalyzePixels() 
 		{
-//            if (firstFrame)
-//            {
-//                // HEY YOU - THIS IS IMPORTANT!
-//                //
-//                // Unlike the code this project is built on, we generate a palette only once, using the data from the
-//                // first frame. This speeds up encoding (building the palette is slow) and makes it so that subsequent
-//                // frames use the same colors and look more consistent from frame to frame, but has an undesirable
-//                // side-effect of getting confused when radically different colors show up in later frames. This wasn't
-//                // a problem with Infinifactory, but if your game uses a deliberately reduced color palette you might
-//                // want to switch back to using per-frame palettes. 
-//                //
-//                // This is, of course, left as an exercise for the reader.
-//
-//                // initialize quantizer and create reduced palette
-//                
-//            }
 
 			int nPix = pixels.Length / 3;
 			indexedPixels = new byte[nPix];
@@ -152,19 +125,6 @@ namespace GifEncoder
                 int g = r + 1;
                 int b = g + 1;
                 
-                // HEY YOU - THIS IS IMPORTANT!
-                //
-                // As you may know, animated GIFs aren't exactly the most efficient way to encode video; notably,
-                // they lack the interframe compression found in real video formats. However, we can do something
-                // similar by taking advantage of the GIF format's ability to "build on" a previous frame by
-                // specifying pixels as transparent and allowing the previous frame's image to show through in those
-                // locations. If a pixel doesn't change much from a previous pixel it will be replaced with the
-                // transparent color, and if enough of those pixels are used in a frame it will compress much better
-                // than if you had all the original color data for the frame. 
-                // 
-                // In a game like Infinifactory, where the recording camera is locked and only a small portion of
-                // the scene is animated, this reduced the size of GIFs to about 1/3 of their original size.
-
                 const int ChangeDelta = 3;
                 bool pixelRequired = firstFrame ||
                     Math.Abs(pixels[r] - visiblePixels[r]) > ChangeDelta ||
@@ -282,8 +242,19 @@ namespace GifEncoder
 
         private void WritePixels()
 		{
-            LZWEncoder encoder = new LZWEncoder(width, height, indexedPixels, colorDepth);
-            encoder.Encode(fs);
+			for (int i = 0; i < frameData.Count; i++)
+			{
+				currentFramePixels = frameData[i];
+				GetImagePixels(); // convert to correct format if necessary
+				AnalyzePixels(); // build color table & map pixels
+				
+				WriteGraphicCtrlExt(); // write graphic control extension
+				WriteImageDesc(); // image descriptor
+			
+				LZWEncoder encoder = new LZWEncoder(width, height, indexedPixels, colorDepth);
+				encoder.Encode(fs);
+			}
+			
 		}
 	
 		private void WriteShort(int value)
@@ -300,6 +271,85 @@ namespace GifEncoder
                 fs.WriteByte((byte)chars[i]);
 			}
 		}
+        
+        /// <summary>
+        /// Flushes any pending data and closes output file.
+        /// </summary>
+        public void Finish()
+        {
+	        StartExport();
+//	        WritePixels();
+//			
+//	        fs.WriteByte(0x3b); // gif trailer
+//	        fs.Flush();
+//	        fs.Close();
+        }
+        
+        public void StartExport()
+        {
+            
+                exportWorker = new BackgroundWorker();
+
+                // TODO need a way to of locking this.
+
+                exportWorker.WorkerSupportsCancellation = true;
+                exportWorker.WorkerReportsProgress = true;
+
+
+//                Console.WriteLine("Start export " + exportService.totalSteps + " steps");
+
+                exportWorker.DoWork += WorkerExportSteps;
+//            bgw.ProgressChanged += WorkerLoaderProgressChanged;
+                exportWorker.RunWorkerCompleted += WorkerExporterCompleted;
+
+//            bgw.WorkerReportsProgress = true;
+                exportWorker.RunWorkerAsync();
+
+                exporting = true;
+        }
+
+        private void WorkerExportSteps(object sender, DoWorkEventArgs e)
+        {
+//            var result = e.Result;
+
+	        for (int i = 0; i < frameData.Count; i++)
+	        {
+		        currentFramePixels = frameData[i];
+		        GetImagePixels(); // convert to correct format if necessary
+		        AnalyzePixels(); // build color table & map pixels
+				
+		        WriteGraphicCtrlExt(); // write graphic control extension
+		        WriteImageDesc(); // image descriptor
+			
+		        LZWEncoder encoder = new LZWEncoder(width, height, indexedPixels, colorDepth);
+		        encoder.Encode(fs);
+		        
+		        Thread.Sleep(1);
+//		        exportWorker.ReportProgress((int) (percent * 100), i);
+	        }
+                
+//            }
+        }
+
+        public void WorkerExporterCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+
+	        
+	        
+            fs.WriteByte(0x3b); // gif trailer
+            
+//            bytes = fs.ReadAllBytes();
+            
+//            fs.Flush();
+//            
+//            
+//            
+//            
+//            fs.Close();
+
+            exporting = false;
+            exportingDone = true;
+        }
 	}
 
 }
