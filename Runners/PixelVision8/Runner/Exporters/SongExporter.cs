@@ -64,8 +64,12 @@ namespace PixelVision8.Runner.Exporters
 
         private RawAudioData[] trackresult;
 
-        public SongExporter(string path, MusicChip musicChip, SoundChip soundChip/*,
-            RawAudioDataFactory audioClipFactory*/) : base(path)
+        private int[] patterns;
+        private int currentPattern = 0;
+        
+        int songdataCurrentPos = 0;
+        
+        public SongExporter(string path, MusicChip musicChip, SoundChip soundChip, int[] patterns) : base(path)
         {
 //            Debug.Log("FileName " + musicChip.activeSongData.songName);
 
@@ -75,6 +79,8 @@ namespace PixelVision8.Runner.Exporters
             // Save references to the currentc chips
             this.musicChip = musicChip;
             this.soundChip = soundChip;
+
+            this.patterns = patterns;
 
             // Save a reference to the audio factory
 //            this.audioClipFactory = audioClipFactory;
@@ -87,15 +93,44 @@ namespace PixelVision8.Runner.Exporters
         {
             base.CalculateSteps();
 
-            steps.Add(ExportSong);
+            
+            // Calculate the notes
+            var a = 440.0f; // a is 440 hz...
+            note_hz = new float[MAX_NOTE_NUM];
+            note_startFrequency = new float[MAX_NOTE_NUM];
+            note_startFrequency[0] = 0f; // since we never set it below
+//            var SR = 44100.0f; // hmm preRenderBitrate? nah
+            float hertz;
+            for (var x = 0; x < MAX_NOTE_NUM; ++x)
+            {
+                // what Hz is a particular musical note? (eg A#)
+                hertz = a / 32.0f * (float) Math.Pow(2.0f, (x - 9.0f) / 12.0f);
+                note_hz[x] = hertz; // this appears to be correct: C = 60 = 261.6255Hz
+
+                // derive the SFXR sine wave frequency to play this Hz
+                // FIXME: this sounds about a semitone too high compared to real life piano!
+                // note_startFrequency[x] = Mathf.Sqrt(hertz / SR * 100.0f / 8.0f - 0.001f);
+                // maybe the algorithm assumes 1 based array etc?
+                if (x < 126) // let's just hack in one semitone lower sounds (but not overflow array)
+                    note_startFrequency[x + 1] =
+                        (float) Math.Sqrt(hertz / preRenderBitrate * 100.0f / 8.0f - 0.001f) -
+                        0.0018f; // last num is a hack using my ears to "tune"
+            }
+            
+            for (int i = 0; i < patterns.Length; i++)
+            {
+                steps.Add(ExportSong);
+            }
+            
             steps.Add(MixdownAudioClips);
             steps.Add(CreateSongByteData);
         }
 
         public void ExportSong()
         {
+            
             // Get the active song data
-            var songData = musicChip.activeTrackerData;
+            var songData = musicChip.trackerDataCollection[currentPattern];
 
             // to mix tracks, you just ADD THE DATA
             // but need to clip? nope just add (and maybe amp all down a little?)
@@ -121,31 +156,10 @@ namespace PixelVision8.Runner.Exporters
 //            int lcount = songData.loops.Length;
             var tcount = songData.tracks.Length;
             var ncount = songData.tracks[0].notes.Length;
-
+    
             var totalNotesInSong = ncount; // total musical notes in song loops x notes
 
-            // Calculate the notes
-            var a = 440.0f; // a is 440 hz...
-            note_hz = new float[MAX_NOTE_NUM];
-            note_startFrequency = new float[MAX_NOTE_NUM];
-            note_startFrequency[0] = 0f; // since we never set it below
-            var SR = 44100.0f; // hmm preRenderBitrate? nah
-            float hertz;
-            for (var x = 0; x < MAX_NOTE_NUM; ++x)
-            {
-                // what Hz is a particular musical note? (eg A#)
-                hertz = a / 32.0f * (float) Math.Pow(2.0f, (x - 9.0f) / 12.0f);
-                note_hz[x] = hertz; // this appears to be correct: C = 60 = 261.6255Hz
-
-                // derive the SFXR sine wave frequency to play this Hz
-                // FIXME: this sounds about a semitone too high compared to real life piano!
-                // note_startFrequency[x] = Mathf.Sqrt(hertz / SR * 100.0f / 8.0f - 0.001f);
-                // maybe the algorithm assumes 1 based array etc?
-                if (x < 126) // let's just hack in one semitone lower sounds (but not overflow array)
-                    note_startFrequency[x + 1] =
-                        (float) Math.Sqrt(hertz / SR * 100.0f / 8.0f - 0.001f) -
-                        0.0018f; // last num is a hack using my ears to "tune"
-            }
+            
 
 
             updateNoteTickLengths(songData); // FIXME: allow shuffle rhythm note length changes?
@@ -157,11 +171,22 @@ namespace PixelVision8.Runner.Exporters
             
             var songdatalength = notedatalength * totalNotesInSong * 2; // stereo cd quality x song length
 
+            Console.WriteLine("New song length "+ songdatalength);
+            
             var notebuffer = new float[notedatalength];
-            var songdataCurrentPos = 0;
+            
 
-            // all the tracks we need - an array of audioclips that will be merged into result
-            trackresult = new RawAudioData[tcount];
+            if (trackresult == null)
+            {
+                // all the tracks we need - an array of audioclips that will be merged into result
+                trackresult = new RawAudioData[tcount];
+
+                for (int i = 0; i < tcount; i++)
+                {
+                    trackresult[i] = new RawAudioData(0, 1,
+                        preRenderBitrate);
+                }
+            }
 
             var instrument = new SfxrSynth[songData.totalTracks];
 
@@ -173,10 +198,13 @@ namespace PixelVision8.Runner.Exporters
                 // stereo
                 //trackresult[tracknum] = AudioClip.Create("Track"+tracknum, songdatalength / 2, 2, preRenderBitrate, false);
                 // mono
-                trackresult[tracknum] = RawAudioData.NewAudioClip(songdatalength / 2, 1,
-                    preRenderBitrate, false);
 
-                songdataCurrentPos = 0;
+                songdataCurrentPos = trackresult[tracknum].samples;
+                trackresult[tracknum].Resize(trackresult[tracknum].samples + (songdatalength / 2));
+
+                Console.WriteLine("Resize " + tracknum + " by " + (songdatalength / 2) +" from "+ songdataCurrentPos +  " to " + trackresult[tracknum].samples);
+                
+//                songdataCurrentPos = 0;
 
                 // set the params to current track's instrument string
                 instrument[tracknum].parameters
@@ -253,6 +281,7 @@ namespace PixelVision8.Runner.Exporters
             } // for all tracks
 
 
+            currentPattern++;
             currentStep++;
         }
 
@@ -328,7 +357,7 @@ namespace PixelVision8.Runner.Exporters
             // stereo
             //AudioClip result = AudioClip.Create("MixdownSTEREO", length / 2, 2, preRenderBitrate, false);
             // mono
-            var result = RawAudioData.NewAudioClip(length / 2, 1, preRenderBitrate, false);
+            var result = new RawAudioData(length / 2, 1, preRenderBitrate);
             result.SetData(data); // TODO: we can get a warning here: data too large to fit: discarded x samples
             // the truncation can happen with a large sustain of a note that could go on after the song is over
             // one solution is to pad the end with 4sec of 0000s then maybe search and TRIM

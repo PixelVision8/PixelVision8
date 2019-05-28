@@ -27,14 +27,14 @@ namespace PixelVision8.Runner.Data
     {
         
         private float[] data;
-        public int samples { get;}
+        public int samples { get; set; }
         public int channels { get;}
 
         public int frequency { get; }
-        public static RawAudioData NewAudioClip(int lengthSamples, int channels, int frequency, bool stream)
-        {
-            return new RawAudioData(lengthSamples, channels, frequency);    
-        }
+//        public static RawAudioData NewAudioClip(int lengthSamples, int channels, int frequency, bool stream)
+//        {
+//            return new RawAudioData(lengthSamples, channels, frequency);    
+//        }
         
         public RawAudioData(int samples, int channels, int frequency)
         {
@@ -63,6 +63,12 @@ namespace PixelVision8.Runner.Data
         public void GetData(float[] data)
         {
             Array.Copy(this.data, data, samples);
+        }
+
+        public void Resize(int samples)
+        {
+            Array.Resize(ref data, samples);
+            this.samples = samples;
         }
 
     }

@@ -1037,9 +1037,16 @@ namespace PixelVision8.Runner.Editors
 //            return tilemapChip.totalFlags;
 //        }
 //
-        public void ExportSong(string path)
+        public void ExportSong(string path, int id)
         {
-            workspace.ExportSong(path, musicChip, soundChip);
+
+            var currentSong = musicChip.songs[id];
+
+            var selectedPatterns = new int[currentSong.end];
+            
+            Array.Copy(currentSong.patterns, selectedPatterns, selectedPatterns.Length);
+            
+            workspace.ExportSong(path, musicChip, soundChip, selectedPatterns);
         }
 
 //

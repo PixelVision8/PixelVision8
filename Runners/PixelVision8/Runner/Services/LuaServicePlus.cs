@@ -121,6 +121,7 @@ namespace PixelVision8.Runner.Services
                 workspace.GetEntitiesRecursive(path).OrderBy(o => o.EntityName, new OrdinalStringComparer()).ToList());
             
             luaScript.Globals["PlayWav"] = new Action<WorkspacePath>(PlayWav);
+            luaScript.Globals["StopWav"] = new Action(StopWav);
             
             luaScript.Globals["CreateDisk"] = new Func<string, WorkspacePath[], WorkspacePath, int, Dictionary<string, object>> (CreateDisk);
             luaScript.Globals["CreateExe"] = new Func<string, WorkspacePath[], WorkspacePath, WorkspacePath, Dictionary<string, object>> (CreateExe);
@@ -163,17 +164,37 @@ namespace PixelVision8.Runner.Services
 
         }
 
+        private SoundEffectInstance currentSound;
+        
         public void PlayWav(WorkspacePath workspacePath)
         {
 
             if (workspace.Exists(workspacePath) && workspacePath.GetExtension() == ".wav")
             {
-                var bytes = workspace.OpenFile(workspacePath, FileAccess.Read).ReadAllBytes();
 
-                SoundEffect soundEffect = new SoundEffect(bytes, 44000, AudioChannels.Stereo);
+                if (currentSound != null)
+                {
+                    StopWav();
+                }
+                
+                using (var stream = workspace.OpenFile(workspacePath, FileAccess.Read))
+                {
+                    currentSound = SoundEffect.FromStream(stream).CreateInstance();
+                }
+                
+                currentSound.Play();
 
-                soundEffect.Play();
             }
+        }
+
+        public void StopWav()
+        {
+            if (currentSound != null)
+            {
+                currentSound.Stop();
+                currentSound = null;
+            }
+            
         }
         
         public virtual string ReadBiosSafeMode(string key)

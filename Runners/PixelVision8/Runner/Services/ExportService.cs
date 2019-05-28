@@ -267,7 +267,7 @@ namespace PixelVision8.Runner.Services
             totalSteps += exporter.totalSteps;
         }
 
-        public void ExportSong(string path, MusicChip musicChip, SoundChip soundChip)
+        public void ExportSong(string path, MusicChip musicChip, SoundChip soundChip, int[] patterns)
         {
             Reset();
 
@@ -275,7 +275,7 @@ namespace PixelVision8.Runner.Services
 //            var name = targetEngine.musicChip.activeSongData.songName;
 //            UnityEngine.Debug.Log("Export Song " + path);
             // TODO need to add a base path to the file name so we can create folders.
-            AddExporter(new SongExporter(path, musicChip, soundChip/*, audioClipFactory*/));
+            AddExporter(new SongExporter(path, musicChip, soundChip, patterns));
         }
 
         public void ExportSpriteBuilder(string path, IEngine engine, Dictionary<string, byte[]> files)
