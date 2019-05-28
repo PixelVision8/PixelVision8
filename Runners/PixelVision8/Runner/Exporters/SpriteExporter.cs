@@ -35,13 +35,13 @@ namespace PixelVision8.Runner.Exporters
         protected SpriteChip spriteChip;
 
 
-        public SpriteExporter(string fileName, IEngine engine, IImageExporter imageExporter)
+        public SpriteExporter(string fileName, IEngine engine, IImageExporter imageExporter, SpriteChip spriteChip = null)
         {
             fullFileName = fileName;
             this.engine = engine;
             this.imageExporter = imageExporter;
 
-            spriteChip = engine.spriteChip;
+            this.spriteChip = spriteChip ?? engine.spriteChip;
 
             var colorMapChip = engine.GetChip(ColorMapParser.chipName, false) as ColorChip;
 

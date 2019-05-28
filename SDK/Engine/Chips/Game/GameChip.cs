@@ -562,34 +562,6 @@ namespace PixelVision8.Engine.Chips
         }
 
         /// <summary>
-        ///     This method allows you to draw a single pixel to the Tilemap Cache. It's an expensive operation which leverages 
-        ///     DrawPixels(). This should only be used in special occasions when batching pixel data draw request aren't possible.
-        /// </summary>
-        /// <param name="x">
-        ///     The x position where to display the new pixel data. The display's horizontal 0 position is on the far left-hand
-        ///     side.
-        ///     When using DrawMode.TilemapCache, the pixel data is drawn into the tilemap's cache instead of directly on
-        ///     the display when using DrawMode.Sprite.
-        /// </param>
-        /// <param name="y">
-        ///     The Y position where to display the new pixel data. The display's vertical 0 position is on the top. When using
-        ///     DrawMode.TilemapCache, the pixel data is drawn into the tilemap's cache instead of directly on the display
-        ///     when using DrawMode.Sprite.
-        /// </param>
-        /// <param name="colorRef">
-        ///     The color ID to use when drawing the pixel.
-        /// </param>
-//        public void DrawPixel(int x, int y, int colorRef)
-//        {
-//
-//            singlePixel[0] = colorRef;
-//            
-//            // Route the single pixel call to the DrawPixels call
-//            DrawPixels(singlePixel, x, y, 1, 1, DrawMode.TilemapCache);
-//            
-//        }
-
-        /// <summary>
         ///     Sprites represent individual collections of pixel data at a fixed size. By default, Pixel Vision 8 sprites are
         ///     8 x 8 pixels and have a set limit of visible colors. You can use the DrawSprite() method to render any sprite
         ///     stored in the Sprite Chip. The display also has a limitation on how many sprites can be on the screen at one time.
@@ -1027,14 +999,38 @@ namespace PixelVision8.Engine.Chips
             spriteIDs = ConvertTextToSprites(text, font);
             total = spriteIDs.Length;
 
-            var offset = charWidth + spacing;
-
+            var clearTiles = false;
+            
             if (drawMode == DrawMode.Tile)
-                offset = 1;
-
+            {
+                // Set the clear tile flag
+                clearTiles = true;
+                
+                // Change to Tilemap Cache since we are not actually drawing the tiles
+                drawMode = DrawMode.TilemapCache;
+                
+                // Need to adjust the position since tile mode is in columns,rows
+                nextX *= 8;
+                nextY *= 8;
+    
+                // spacing is disabled when in tilemode
+                spacing = 0;
+            }
+            
+            var offset = charWidth + spacing;
+                
             for (var j = 0; j < total; j++)
             {
-                DrawSprite(spriteIDs[j], nextX, nextY, false, false, drawMode, colorOffset);
+
+                // Clear the background when in tile mode
+                if (clearTiles)
+                    Tile(nextX / 8, nextY / 8, -1);
+                
+                fontChip.ReadSpriteAt(spriteIDs[j], tmpSpriteData);
+
+                DrawPixels(tmpSpriteData, nextX, nextY, spriteChip.width, spriteChip.height, false, false, drawMode,
+                colorOffset);
+                
                 nextX += offset;
             }
         }
@@ -1236,7 +1232,13 @@ namespace PixelVision8.Engine.Chips
             if (index < totalCharacters && index > -1)
                 spriteID = fontMap[index];
 
-            if (spriteID > -1) return Sprite(spriteID);
+            if (spriteID > -1)
+            {
+                fontChip.ReadSpriteAt(spriteID, tmpSpriteData);
+                return tmpSpriteData;
+            }
+                
+//                return Sprite(spriteID);
 
             return null;
         }

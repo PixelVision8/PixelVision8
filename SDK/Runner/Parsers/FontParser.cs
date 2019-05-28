@@ -32,15 +32,17 @@ namespace PixelVision8.Runner.Parsers
         private int[] fontMap;
 
         public FontParser(IImageParser imageParser, IEngineChips chips, string name = "Default") : base(imageParser,
-            chips)
+            chips, true, chips.fontChip)
         {
             fontChip = chips.fontChip;
-            if (fontChip == null)
-            {
-                // Create a new font chip to store data
-                fontChip = new FontChip();
-                chips.ActivateChip(fontChip.GetType().FullName, fontChip);
-            }
+//            spriteChip = fontChip;
+            
+//            if (fontChip == null)
+//            {
+//                // Create a new font chip to store data
+//                fontChip = new FontChip();
+//                chips.ActivateChip(fontChip.GetType().FullName, fontChip);
+//            }
 
 //            this.autoImport = autoImport;
             this.name = name;

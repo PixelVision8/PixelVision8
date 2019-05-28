@@ -34,7 +34,7 @@ namespace PixelVision8.Engine.Chips
     public class SpriteChip : AbstractChip
     {
         // TODO these are hard coded assuming the sprites are always 8x8
-        private readonly int[] emptySpriteData = Enumerable.Repeat(-1, 64).ToArray();
+        protected readonly int[] emptySpriteData = Enumerable.Repeat(-1, 64).ToArray();
         protected int _colorsPerSprite = 8;
         protected int _pages = 4;
 
@@ -54,24 +54,24 @@ namespace PixelVision8.Engine.Chips
         public int pageWidth = 128;
 
 //        protected int[][] pixelDataCache;
-        private int tmpX;
-        private int tmpY;
+        protected int tmpX;
+        protected int tmpY;
 
-        private int totalSprites1;
+        protected int totalSprites1;
 
         public bool unique = false;
 
-//        private int height1;
-        private int w;
+//        protected int height1;
+        protected int w;
 
-//        private int[] cachedSprite;
-//        private int totalSpritePixels;
-//        private int[] tmpPixelData;
+//        protected int[] cachedSprite;
+//        protected int totalSpritePixels;
+//        protected int[] tmpPixelData;
 
-        private int width1;
+        protected int width1;
 
-        private int x;
-        private int y;
+        protected int x;
+        protected int y;
 
         /// <summary>
         ///     Sets the total number of sprite draw calls for the display.
@@ -155,7 +155,7 @@ namespace PixelVision8.Engine.Chips
         public int colorsPerSprite
         {
             get => _colorsPerSprite;
-            set => _colorsPerSprite = MathHelper.Clamp(value, 2, 16);
+            set => _colorsPerSprite = MathHelper.Clamp(value, 1, 16);
         }
 
         /// <summary>
@@ -258,7 +258,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="data">
         ///     An array of ints that represents the sprite's color data.
         /// </param>
-        private void CacheSprite(int index, int[] data)
+        protected void CacheSprite(int index, int[] data)
         {
             if (index < 0 || index >= cache.Length)
                 return;
@@ -282,7 +282,7 @@ namespace PixelVision8.Engine.Chips
 //            pixelDataCache = new int[totalSprites][];
             _texture.Clear();
         }
-//        private readonly int totalSpritePixels = 64;
+//        protected readonly int totalSpritePixels = 64;
 
         /// <summary>
         ///     Returns an array of ints that represent a sprite. Each

@@ -517,14 +517,20 @@ namespace PixelVision8.Engine
             if (gameChip == null)
                 return;
 
-            var ids = gameChip.ConvertTextToSprites(text, font);
-            var total = ids.Length;
+//            var ids = gameChip.ConvertTextToSprites(text, font);
+            var total = text.Length;
             var nextX = x;
             var nextY = y;
 
+            
             for (var i = 0; i < total; i++)
             {
-                DrawSprite(ids[i], nextX, nextY, false, false, colorOffset);
+
+                
+                MergePixels(nextX, nextY, spriteSize.X, spriteSize.Y, gameChip.ConvertCharacterToPixelData(text[i], font), false, false, colorOffset);
+
+                
+//                DrawSprite(ids[i], nextX, nextY, false, false, colorOffset);
                 nextX += spriteSize.X + spacing;
             }
         }

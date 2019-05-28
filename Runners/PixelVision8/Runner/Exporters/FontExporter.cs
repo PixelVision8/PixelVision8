@@ -27,14 +27,14 @@ namespace PixelVision8.Runner.Exporters
     public class FontExporter : SpriteExporter
     {
         public FontExporter(string fileName, IEngine engine, IImageExporter imageExporter) : base(fileName, engine,
-            imageExporter)
+            imageExporter, engine.fontChip)
         {
         }
 
         // TODO this should be a step in the exporter
         public override void ConfigurePixelData()
         {
-            var spriteChip = engine.spriteChip;
+//            var spriteChip = engine.fontChip;
 
             var width = 96; //spriteChip.textureWidth;
             var height = 64; //spriteChip.textureHeight;
@@ -64,9 +64,7 @@ namespace PixelVision8.Runner.Exporters
                     spriteChip.height, tmpPixelData);
             }
 
-            var colorMapChip = engine.GetChip(ColorMapParser.chipName, false) as ColorChip;
-
-            var colors = colorMapChip == null ? engine.colorChip.colors : colorMapChip.colors;
+            var colors = !(engine.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip) ? engine.colorChip.colors : colorMapChip.colors;
 
             var imageExporter = new PNGWriter();
 

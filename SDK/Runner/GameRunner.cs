@@ -367,7 +367,7 @@ namespace PixelVision8.Runner
 
         protected override void Update(GameTime gameTime)
         {
-            if (activeEngine == null)
+            if (activeEngine == null || !IsActive)
                 return;
             
             
@@ -413,7 +413,10 @@ namespace PixelVision8.Runner
             graphics.GraphicsDevice.Clear(Color.Black);
             // Now it's time to call the PixelVisionEngine's Draw() method. This Draw() call propagates throughout all of the Chips that have 
             // registered themselves as being able to draw such as the GameChip and the DisplayChip.
-            activeEngine.Draw();
+            
+            // Only call draw if the window has focus
+            if(IsActive)
+                activeEngine.Draw();
 
 //            if (activeEngine.running && displayTarget != null)
 //            {

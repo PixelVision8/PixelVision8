@@ -61,6 +61,7 @@ namespace PixelVision8.Runner.Editors
         protected PixelVision8Runner runner;
         private SfxrSoundChip soundChip;
         private SpriteChip spriteChip;
+        private FontChip fontChip;
         private PixelVisionEngine targetGame;
         private TilemapChip tilemapChip;
 
@@ -198,6 +199,7 @@ namespace PixelVision8.Runner.Editors
 //            colorMapChip = targetGame.colorMapChip;
             displayChip = targetGame.displayChip;
             spriteChip = targetGame.spriteChip;
+            fontChip = targetGame.fontChip;
             tilemapChip = targetGame.tilemapChip;
             soundChip = targetGame.soundChip as SfxrSoundChip;
             musicChip = targetGame.musicChip as SfxrMusicGeneratorChip; // TODO need to create a SfxrMusicChip
@@ -1355,6 +1357,7 @@ namespace PixelVision8.Runner.Editors
                 {
                     typeof(ColorChip).FullName,
                     typeof(SpriteChip).FullName,
+                    typeof(FontChip).FullName,
                     typeof(TilemapChip).FullName,
                     typeof(DisplayChip).FullName,
                     typeof(GameChip).FullName
@@ -1370,9 +1373,9 @@ namespace PixelVision8.Runner.Editors
                     2; // TODO need to make sure there are enough colors for the font but technically it should be 1 bit (b&w)
 
                 // Make sure we only have unique sprites
-                targetGame.spriteChip.unique = false;
-
-                targetGame.spriteChip.pages = 1;
+//                targetGame.spriteChip.unique = false;
+                targetGame.fontChip.unique = false;
+                targetGame.fontChip.pages = 1;
 
                 targetGame.name = path;
 
@@ -1388,6 +1391,23 @@ namespace PixelVision8.Runner.Editors
             Reset();
 
             return true;
+        }
+        
+        
+        public int[] FontSprite(int id, int[] data = null)
+        {
+            if (data != null)
+            {
+                fontChip.UpdateSpriteAt(id, data);
+
+                return data;
+            }
+
+            int[] tmpSpriteData = new int[64];
+            
+            fontChip.ReadSpriteAt(id, tmpSpriteData);
+
+            return tmpSpriteData;
         }
 
         public void SaveFont(string fontName, string oldName = null)

@@ -52,16 +52,16 @@ namespace PixelVision8.Runner.Parsers
 //        protected ITextureFactory textureFactory;
 //        protected byte[] data;
 
-        public SpriteParser(IImageParser imageParser, IEngineChips chips, bool unique = true) : base(imageParser)
+        public SpriteParser(IImageParser imageParser, IEngineChips chips, bool unique = true, SpriteChip spriteChip = null) : base(imageParser)
         {
 //            this.textureFactory = textureFactory;
 
 
             this.chips = chips;
-            spriteChip = chips.spriteChip;
+            this.spriteChip = spriteChip ?? chips.spriteChip;
 
-            spriteWidth = spriteChip.width;
-            spriteHeight = spriteChip.height;
+            spriteWidth = this.spriteChip.width;
+            spriteHeight = this.spriteChip.height;
         }
 
         protected virtual void CalculateBounds()
@@ -92,9 +92,7 @@ namespace PixelVision8.Runner.Parsers
         {
             cps = spriteChip.colorsPerSprite;
 
-            var colorMapChip = chips.GetChip(ColorMapParser.chipName, false) as ColorChip;
-
-            colorData = colorMapChip != null ? colorMapChip.colors : chips.colorChip.colors;
+            colorData = chips.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip ? colorMapChip.colors : chips.colorChip.colors;
 
             maskColor = ColorUtils.HexToColor(chips.colorChip.maskColor);
             maxSprites = SpriteChipUtil.CalculateTotalSprites(spriteChip.textureWidth, spriteChip.textureHeight,

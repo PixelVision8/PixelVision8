@@ -208,5 +208,18 @@ namespace PixelVision8.Engine.Chips
         {
             if (channels[channel] != null) channels[channel].Stop();
         }
+
+        public override void Shutdown()
+        {
+            foreach (var channel in channels)
+            {
+                if(channel.playing)
+                    channel.Stop();
+            }
+            
+            base.Shutdown();
+            
+            
+        }
     }
 }

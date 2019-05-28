@@ -27,7 +27,7 @@ namespace PixelVision8.Engine.Chips
     ///     top of the same APIs as the <see cref="SpriteChip" /> but has custom
     ///     methods for converting text into sprites.
     /// </summary>
-    public class FontChip : AbstractChip
+    public class FontChip : SpriteChip
     {
         public Dictionary<string, int[]> fonts = new Dictionary<string, int[]>();
 
@@ -41,6 +41,18 @@ namespace PixelVision8.Engine.Chips
         public override void Configure()
         {
             engine.fontChip = this;
+
+//            colorsPerSprite = 2;
+//            pages = 2;
+            width = 8;
+            height = 8;
+            pages = 1;
+            colorsPerSprite = 2;
+            unique = true;
+            Resize(pageWidth, pageHeight * pages);
+
+
+            Clear();
         }
 
         public override void Deactivate()
