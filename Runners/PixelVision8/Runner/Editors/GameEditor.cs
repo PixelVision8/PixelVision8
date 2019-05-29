@@ -1040,13 +1040,9 @@ namespace PixelVision8.Runner.Editors
         public void ExportSong(string path, int id)
         {
 
-            var currentSong = musicChip.songs[id];
-
-            var selectedPatterns = new int[currentSong.end];
             
-            Array.Copy(currentSong.patterns, selectedPatterns, selectedPatterns.Length);
             
-            workspace.ExportSong(path, musicChip, soundChip, selectedPatterns);
+            workspace.ExportSong(path, musicChip, soundChip, id);
         }
 
 //

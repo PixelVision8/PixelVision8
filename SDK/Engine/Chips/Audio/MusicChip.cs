@@ -45,12 +45,15 @@ namespace PixelVision8.Engine.Chips
         public int maxNoteNum = 127; // how many notes in these arrays below
         public int maxTracks = 8; // max number of instruments playing notes
         public float nextBeatTimestamp;
-        protected float[] noteHZ; // a lookup table of all musical notes in Hz
+        public float[] noteHZ; // a lookup table of all musical notes in Hz
 
         public float[] noteStartFrequency; // same, but for sfxr frequency 0..1 range
         protected float noteTickS = 30.0f / 120.0f; // (30.0f/120.0f) = 120BPM eighth notes
         protected float noteTickSEven;
         protected float noteTickSOdd;
+        
+        public int preRenderBitrate = 44100; //48000; // should be 44100; FIXME TODO EXPERIMENTING W BUGFIX
+
 
 //        protected int sequencerLoopNum;
         public bool songCurrentlyPlaying;
@@ -250,11 +253,12 @@ namespace PixelVision8.Engine.Chips
 
             // Setup the sequencer values
 
+            
             var a = 440.0f; // a is 440 hz...
             noteHZ = new float[maxNoteNum];
             noteStartFrequency = new float[maxNoteNum];
             noteStartFrequency[0] = 0f; // since we never set it below
-            var SR = 44100.0f; // hmm preRenderBitrate? nah
+//            var SR = 44100.0f; // hmm preRenderBitrate? nah
             float hertz;
 
             for (var x = 0; x < maxNoteNum; ++x)
@@ -268,7 +272,7 @@ namespace PixelVision8.Engine.Chips
                 // note_startFrequency[x] = Mathf.Sqrt(hertz / SR * 100.0f / 8.0f - 0.001f);
                 // maybe the algorithm assumes 1 based array etc?
                 if (x < 126) // let's just hack in one semitone lower sounds (but not overflow array)
-                    noteStartFrequency[x + 1] = (float) Math.Sqrt(hertz / SR * 100.0f / 8.0f - 0.001f) - 0.0018f;
+                    noteStartFrequency[x + 1] = (float) Math.Sqrt(hertz / preRenderBitrate * 100.0f / 8.0f - 0.001f) - 0.0018f;
 
                 // last num is a hack using my ears to "tune"
             }

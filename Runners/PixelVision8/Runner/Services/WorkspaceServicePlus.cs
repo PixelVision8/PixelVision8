@@ -113,25 +113,33 @@ namespace PixelVision8.Runner.Services
         }
 
         // Exports the active song in the music chip
-        public void ExportSong(string path, MusicChip musicChip, SoundChip soundChip, int[] patterns)
+        public void ExportSong(string path, MusicChip musicChip, SoundChip soundChip, int id)
         {
+            
+            var currentSong = musicChip.songs[id];
+
+            var selectedPatterns = new int[currentSong.end];
+            
+            Array.Copy(currentSong.patterns, selectedPatterns, selectedPatterns.Length);
+            
             var filePath = WorkspacePath.Parse(path);
 
             if (Exists(filePath))
             {
-                filePath = filePath.AppendDirectory("Patterns");
+                filePath = filePath.AppendDirectory("Wavs").AppendDirectory("Songs");
 
                 if (!Exists(filePath)) CreateDirectory(filePath);
 
                 try
                 {
+                    filePath = UniqueFilePath(filePath.AppendFile(currentSong.name + ".wav"));
+                    
                     var exportService = locator.GetService(typeof(ExportService).FullName) as ExportService;
-
 
                     // TODO exporting sprites doesn't work
                     if (exportService != null)
                     {
-                        exportService.ExportSong(filePath.Path, musicChip, soundChip, patterns);
+                        exportService.ExportSong(filePath.Path, musicChip, soundChip, selectedPatterns);
 //
                         exportService.StartExport();
                     }
