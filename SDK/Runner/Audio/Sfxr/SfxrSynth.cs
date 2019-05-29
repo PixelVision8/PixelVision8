@@ -26,30 +26,31 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework.Audio;
 using PixelVision8.Engine;
+using PixelVision8.Runner.Data;
 
 namespace PixelVision8.Runner.Chips.Sfxr
 {
-    internal struct SoundCache
-    {
-        public float[] audio;
-        public byte[] wave;
-        public SoundEffectInstance soundInstance;
-        
-        public SoundCache(float[] audio, byte[] wave, SoundEffectInstance soundInstance)
-        {
-            this.audio = audio;
-            this.wave = wave;
-            this.soundInstance = soundInstance;
-        }
-    }
+//    internal struct SoundCache
+//    {
+//        public float[] audio;
+//        public byte[] wave;
+//        public SoundEffectInstance soundInstance;
+//        
+//        public SoundCache(float[] audio, byte[] wave, SoundEffectInstance soundInstance)
+//        {
+//            this.audio = audio;
+//            this.wave = wave;
+//            this.soundInstance = soundInstance;
+//        }
+//    }
     
-    public class SfxrSynth : ISoundData
+    public class SfxrSynth : RawAudioData, ISoundData
     {
         private const int LO_RES_NOISE_PERIOD = 8; // Should be < 32
 
 //        private IAudioPlayer _audioPlayer;
         
-        private Dictionary<string, SoundCache> wavCache = new Dictionary<string, SoundCache>();
+        private Dictionary<string, SoundEffectInstance> wavCache = new Dictionary<string, SoundEffectInstance>();
 
 
         private float _bitcrushFreq; // Inversely proportional to the number of samples to skip
@@ -57,13 +58,8 @@ namespace PixelVision8.Runner.Chips.Sfxr
         private float _bitcrushLast; // Last sample value
         private float _bitcrushPhase; // Samples when this > 1
 
-        public float[] cachedWave
-        {
-            get { return _cachedWave; }
-        }
-
         // Sound properties
-        private float[] _cachedWave; // Cached wave data from a cacheSound() call
+//        private float[] _cachedWave; // Cached wave data from a cacheSound() call
         private uint _cachedWavePos; // Equivalent to _cachedWave.position in the old code
 
         private bool _cachingAsync; // If the synth is currently caching asynchronously
@@ -187,8 +183,8 @@ namespace PixelVision8.Runner.Chips.Sfxr
         }
 
         public string name { get; set; }
-        
-        public SfxrSynth(string name = "Untitled")
+
+        public SfxrSynth(string name = "Untitled", int samples = 0, int channels = 1, int frequency = 22050) : base(samples, channels, frequency)
         {
             this.name = name;
         }
@@ -210,104 +206,21 @@ namespace PixelVision8.Runner.Chips.Sfxr
         /// <param name="__sampleRate">Sample rate to generate the .wav data at (44100 or 22050, default 44100)</param>
         /// <param name="__bitDepth">Bit depth to generate the .wav at (8 or 16, default 16)</param>
         /// <returns>Wave data (in .wav format) as a byte array</returns>
-        public byte[] GenerateWav()
+        public override byte[] GenerateWav()
         {
             Stop();
 
             Reset(true);
-
-            var __sampleRate = 22050u;
-            var __bitDepth = 8u;
-
-            var soundLength = _envelopeFullLength;
-            if (__bitDepth == 16) soundLength *= 2;
-            if (__sampleRate == 22050) soundLength /= 2;
-
-            var fileSize = 36 + soundLength;
-            var blockAlign = __bitDepth / 8;
-            var bytesPerSec = __sampleRate * blockAlign;
-
-            // The file size is actually 8 bytes more than the fileSize
-            var wav = new byte[fileSize + 8];
-
-            var bytePos = 0;
-
-            // Header
-
-            // Chunk ID "RIFF"
-            writeUintToBytes(wav, ref bytePos, 0x52494646, Endian.BIG_ENDIAN);
-
-            // Chunck Data Size
-            writeUintToBytes(wav, ref bytePos, fileSize, Endian.LITTLE_ENDIAN);
-
-            // RIFF Type "WAVE"
-            writeUintToBytes(wav, ref bytePos, 0x57415645, Endian.BIG_ENDIAN);
-
-            // Format Chunk
-
-            // Chunk ID "fmt "
-            writeUintToBytes(wav, ref bytePos, 0x666D7420, Endian.BIG_ENDIAN);
-
-            // Chunk Data Size
-            writeUintToBytes(wav, ref bytePos, 16, Endian.LITTLE_ENDIAN);
-
-            // Compression Code PCM
-            writeShortToBytes(wav, ref bytePos, 1, Endian.LITTLE_ENDIAN);
-            // Number of channels
-            writeShortToBytes(wav, ref bytePos, 1, Endian.LITTLE_ENDIAN);
-            // Sample rate
-            writeUintToBytes(wav, ref bytePos, __sampleRate, Endian.LITTLE_ENDIAN);
-            // Average bytes per second
-            writeUintToBytes(wav, ref bytePos, bytesPerSec, Endian.LITTLE_ENDIAN);
-            // Block align
-            writeShortToBytes(wav, ref bytePos, (short) blockAlign, Endian.LITTLE_ENDIAN);
-            // Significant bits per sample
-            writeShortToBytes(wav, ref bytePos, (short) __bitDepth, Endian.LITTLE_ENDIAN);
-
-            // Data Chunk
-
-            // Chunk ID "data"
-            writeUintToBytes(wav, ref bytePos, 0x64617461, Endian.BIG_ENDIAN);
-            // Chunk Data Size
-            writeUintToBytes(wav, ref bytePos, soundLength, Endian.LITTLE_ENDIAN);
-
-            // Generate normal synth data
-//            var audioData = _cachedWave;//new float[_envelopeFullLength];
-//            SynthWave(audioData, 0, _envelopeFullLength);
-    
-            _cachedWave = new float[_envelopeFullLength];
-            SynthWave(_cachedWave, 0, _envelopeFullLength);
             
-            // Write data as bytes
-            var sampleCount = 0;
-            var bufferSample = 0f;
-            for (var i = 0; i < _cachedWave.Length; i++)
-            {
-                bufferSample += _cachedWave[i];
-                sampleCount++;
+            Resize(Convert.ToInt32(_envelopeFullLength));
+            SynthWave(data, 0, _envelopeFullLength);
 
-                if (sampleCount == 2)
-                {
-                    bufferSample /= sampleCount;
-                    sampleCount = 0;
-
-//                    if (__bitDepth == 16)
-//                        writeShortToBytes(wav, ref bytePos, (short) Math.Round(32000f * bufferSample),
-//                            Endian.LITTLE_ENDIAN);
-//                    else
-                        writeBytes(wav, ref bytePos, new[] {(byte) (Math.Round(bufferSample * 127f) + 128)},
-                            Endian.LITTLE_ENDIAN);
-
-                    bufferSample = 0f;
-                }
-            }
-
-            return wav;
+            return base.GenerateWav();
         }
 
         /// <summary>
-        /// Plays the sound. If the parameters are dirty, synthesises sound as it plays, caching it for later.
-        //  If they're not, plays from the cached sound. Won't play if caching asynchronously.
+        ///     Plays the sound. If the parameters are dirty, synthesises sound as it plays, caching it for later.
+        ///     If they're not, plays from the cached sound. Won't play if caching asynchronously.
         /// </summary>
         public void Play(string param, float? frequency = null)
         {
@@ -315,9 +228,6 @@ namespace PixelVision8.Runner.Chips.Sfxr
             Stop();
 
             parameters.SetSettingsString(param);
-            
-//            if (VolumeManager.Mute())
-//                return;
 
             if (frequency.HasValue)
                 parameters.startFrequency = frequency.Value;
@@ -327,11 +237,6 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 CacheSound();
             }
 
-            // TODO need to make sure this is really cached - it's not
-//            _audioPlayer = new AudioPlayer(_waveData);
-//            _audioPlayer.Play();
-
-//            _soundInstance.Volume = VolumeManager.Volume() / 100;
             _soundInstance.Play();
         }
 
@@ -341,9 +246,6 @@ namespace PixelVision8.Runner.Chips.Sfxr
         public void Stop()
         {
             _soundInstance?.Stop();
-//                _audioPlayer.Stop();
-//                _audioPlayer.Dispose();
-//                _audioPlayer = null;
 
             if (_original != null)
             {
@@ -352,10 +254,6 @@ namespace PixelVision8.Runner.Chips.Sfxr
             }
         }
 
-        // Cache sound methods
-
-        
-        
         
         /**
          * Cache the sound for speedy playback.
@@ -375,9 +273,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
 
             if (wavCache.ContainsKey(paramKey))
             {
-                _cachedWave = wavCache[paramKey].audio;
-                _waveData = wavCache[paramKey].wave;
-                _soundInstance = wavCache[paramKey].soundInstance;
+                _soundInstance = wavCache[paramKey];
             }
             else
             {
@@ -393,14 +289,11 @@ namespace PixelVision8.Runner.Chips.Sfxr
                 {
                     _soundInstance.Stop();
                 }
-//                Console.WriteLine("Cache audio data");
 
                 _waveData = GenerateWav();
 
                 _params.paramsDirty = false;
 
-//                SoundEffectInstance soundInstance = null;
-                
                 using (var stream = new MemoryStream(_waveData))
                 {
                     var soundEffect = SoundEffect.FromStream(stream);
@@ -408,10 +301,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
                     _soundInstance = soundEffect.CreateInstance();
                 }
 
-                // may make these on a per-play instance at some point
-//                _soundEffectInstance = _soundEffect.CreateInstance();
-                
-                wavCache[paramKey] = new SoundCache(_cachedWave, _waveData, _soundInstance);
+                wavCache[paramKey] = _soundInstance;
             }
             
         }
@@ -900,75 +790,9 @@ namespace PixelVision8.Runner.Chips.Sfxr
             return (float) (_random.NextDouble() % 1);
         }
 
-        /// <summary>
-        ///     Returns the number of samples actually used by the wave
-        /// </summary>
-        /// <returns></returns>
-        private uint getNumSamples()
-        {
-            return _envelopeFullLength;
-        }
-
-        /// <summary>
-        ///     Writes a short (Int16) to a byte array.
-        ///     This is an aux function used when creating the WAV data.
-        /// </summary>
-        /// <param name="__bytes"></param>
-        /// <param name="__position"></param>
-        /// <param name="__newShort"></param>
-        /// <param name="__endian"></param>
-        private void writeShortToBytes(byte[] __bytes, ref int __position, short __newShort, Endian __endian)
-        {
-            writeBytes(__bytes, ref __position,
-                new byte[2] {(byte) ((__newShort >> 8) & 0xff), (byte) (__newShort & 0xff)}, __endian);
-        }
-
-        /// <summary>
-        ///     Writes a uint (UInt32) to a byte array.
-        ///     This is an aux function used when creating the WAV data.
-        /// </summary>
-        /// <param name="__bytes"></param>
-        /// <param name="__position"></param>
-        /// <param name="__newUint"></param>
-        /// <param name="__endian"></param>
-        private void writeUintToBytes(byte[] __bytes, ref int __position, uint __newUint, Endian __endian)
-        {
-            writeBytes(__bytes, ref __position,
-                new byte[4]
-                {
-                    (byte) ((__newUint >> 24) & 0xff), (byte) ((__newUint >> 16) & 0xff),
-                    (byte) ((__newUint >> 8) & 0xff), (byte) (__newUint & 0xff)
-                }, __endian);
-        }
-
-        /// <summary>
-        ///     Writes any number of bytes into a byte array, at a given position.
-        ///     This is an aux function used when creating the WAV data.
-        /// </summary>
-        /// <param name="__bytes"></param>
-        /// <param name="__position"></param>
-        /// <param name="__newBytes"></param>
-        /// <param name="__endian"></param>
-        private void writeBytes(byte[] __bytes, ref int __position, byte[] __newBytes, Endian __endian)
-        {
-            // Writes __newBytes to __bytes at position __position, increasing the position depending on the length of __newBytes
-            for (var i = 0; i < __newBytes.Length; i++)
-            {
-                __bytes[__position] = __newBytes[__endian == Endian.BIG_ENDIAN ? i : __newBytes.Length - i - 1];
-                __position++;
-            }
-        }
-
-        private enum Endian
-        {
-            BIG_ENDIAN,
-            LITTLE_ENDIAN
-        }
-        
         public void UpdateSettings(string param)
         {
             parameters.SetSettingsString(param);
-//            CacheSound();
         }
 
         public string ReadSettings()
@@ -987,7 +811,7 @@ namespace PixelVision8.Runner.Chips.Sfxr
 
             foreach (var wav in wavCache)
             {
-                wav.Value.soundInstance?.Dispose();
+                wav.Value?.Dispose();
             }
         }
     }

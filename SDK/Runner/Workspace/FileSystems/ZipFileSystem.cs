@@ -21,7 +21,6 @@
 using System;
 using System.IO;
 using System.IO.Compression;
-using PixelVision8.Runner.Workspace;
 
 // TODO need to remove dependency on System.IO.File
 
@@ -78,7 +77,7 @@ namespace PixelVision8.Runner.Workspace
         public static ZipFileSystem Open(string path)
         {
             // TODO this may fail on other systems because of the use of File
-            return Open( System.IO.File.OpenRead(path));
+            return Open( File.OpenRead(path));
         }
 
         public static ZipFileSystem Open(FileStream s)

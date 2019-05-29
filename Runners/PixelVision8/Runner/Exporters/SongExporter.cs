@@ -193,8 +193,9 @@ namespace PixelVision8.Runner.Exporters
                         // sounds pitch-shifted and faster - a different bitrate?
                         // WORKS GREAT IF WE RUN CACHESOUND() FIRST
                         // TODO need to figure out why we can't access the cachedWave
-                        notebuffer = instrument[tracknum].cachedWave; // the wave data for the current note
+                        notebuffer = instrument[tracknum].data; // the wave data for the current note
 
+                        
                         // this SHOULD be the solution. but outputs all 0's
                         //bool gotAllData = instrument[tracknum].GenerateAudioFilterData(notebuffer, 2);
 
@@ -255,7 +256,7 @@ namespace PixelVision8.Runner.Exporters
                 if (clips[i] == null)
                     continue;
 
-                clips[i].GetData(buffer);
+                buffer = clips[i].data;//.GetData(buffer);
 
                 // mix two signals together: we might get too loud...
                 // FIXME: we may need to make all clips a bit quieter

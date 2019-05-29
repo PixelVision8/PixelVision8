@@ -26,13 +26,13 @@ namespace PixelVision8.Runner.Data
     public class RawAudioData : AbstractData
     {
         
-        private float[] data;
+        public float[] data;
         public int samples { get; set; }
         public int channels { get;}
 
         public int frequency { get; }
 
-        public RawAudioData(int samples, int channels, int frequency)
+        public RawAudioData(int samples = 0, int channels = 1, int frequency = 22050)
         {
             this.samples = samples;
             this.channels = channels;
@@ -56,10 +56,10 @@ namespace PixelVision8.Runner.Data
 
         }
         
-        public void GetData(float[] data)
-        {
-            Array.Copy(this.data, data, samples);
-        }
+//        public void GetData(float[] data)
+//        {
+//            Array.Copy(this.data, data, samples);
+//        }
 
         public void Resize(int samples)
         {
@@ -75,7 +75,7 @@ namespace PixelVision8.Runner.Data
         /// <param name="__sampleRate">Sample rate to generate the .wav data at (44100 or 22050, default 44100)</param>
         /// <param name="__bitDepth">Bit depth to generate the .wav at (8 or 16, default 16)</param>
         /// <returns>Wave data (in .wav format) as a byte array</returns>
-        public byte[] GenerateWav()
+        public virtual byte[] GenerateWav()
         {
 
             var __sampleRate = 22050u;
@@ -164,7 +164,7 @@ namespace PixelVision8.Runner.Data
         /// <param name="__position"></param>
         /// <param name="__newShort"></param>
         /// <param name="__endian"></param>
-        private void writeShortToBytes(byte[] __bytes, ref int __position, short __newShort, Endian __endian)
+        protected void writeShortToBytes(byte[] __bytes, ref int __position, short __newShort, Endian __endian)
         {
             writeBytes(__bytes, ref __position,
                 new byte[2] {(byte) ((__newShort >> 8) & 0xff), (byte) (__newShort & 0xff)}, __endian);
@@ -178,7 +178,7 @@ namespace PixelVision8.Runner.Data
         /// <param name="__position"></param>
         /// <param name="__newUint"></param>
         /// <param name="__endian"></param>
-        private void writeUintToBytes(byte[] __bytes, ref int __position, uint __newUint, Endian __endian)
+        protected void writeUintToBytes(byte[] __bytes, ref int __position, uint __newUint, Endian __endian)
         {
             writeBytes(__bytes, ref __position,
                 new byte[4]
@@ -196,7 +196,7 @@ namespace PixelVision8.Runner.Data
         /// <param name="__position"></param>
         /// <param name="__newBytes"></param>
         /// <param name="__endian"></param>
-        private void writeBytes(byte[] __bytes, ref int __position, byte[] __newBytes, Endian __endian)
+        protected void writeBytes(byte[] __bytes, ref int __position, byte[] __newBytes, Endian __endian)
         {
             // Writes __newBytes to __bytes at position __position, increasing the position depending on the length of __newBytes
             for (var i = 0; i < __newBytes.Length; i++)
@@ -206,7 +206,7 @@ namespace PixelVision8.Runner.Data
             }
         }
 
-        private enum Endian
+        protected enum Endian
         {
             BIG_ENDIAN,
             LITTLE_ENDIAN

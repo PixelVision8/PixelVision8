@@ -84,7 +84,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runner\Audio\SfxrMusicGeneratorChip.cs" />
-    <Compile Include="Runner\Data\RawAudioData.cs" />
     <Compile Include="Runner\Editors\GameEditor.cs" />
     <Compile Include="Runner\Exporters\ColorPaletteExporter.cs" />
     <Compile Include="Runner\Exporters\FlagColorExporter.cs" />
@@ -174,6 +173,9 @@
       <Project>{6d75e618-19ca-4c51-9546-f10965fbc0b8}</Project>
       <Name>MonoVision.OpenGL</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Runner\Data" />
   </ItemGroup>
   <Import Project="Packaging.targets" Condition="'$(Configuration)' == 'Release'" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

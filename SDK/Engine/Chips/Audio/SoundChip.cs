@@ -218,8 +218,6 @@ namespace PixelVision8.Engine.Chips
             }
             
             base.Shutdown();
-            
-            
         }
     }
 }
