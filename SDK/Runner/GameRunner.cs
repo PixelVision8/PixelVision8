@@ -163,7 +163,7 @@ namespace PixelVision8.Runner
                     typeof(ControllerChip).FullName,
                     typeof(DisplayChip).FullName,
                     typeof(MusicChip).FullName,
-                    typeof(SfxrSoundChip).FullName
+                    typeof(SoundChip).FullName
                 };
 
                 return chips;

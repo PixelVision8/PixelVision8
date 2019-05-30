@@ -24,7 +24,7 @@
 using System;
 using Microsoft.Xna.Framework;
 
-namespace PixelVision8.Runner.Chips.Sfxr
+namespace PixelVision8.Engine.Audio
 {
     public class SfxrParams
     {

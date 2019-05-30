@@ -20,7 +20,7 @@
 
 using System;
 using Microsoft.Xna.Framework;
-using PixelVision8.Runner.Chips.Sfxr;
+using PixelVision8.Engine.Audio;
 
 namespace PixelVision8.Engine.Chips
 {
@@ -115,8 +115,7 @@ namespace PixelVision8.Engine.Chips
         /// <returns></returns>
         public virtual ISoundData CreateEmptySoundData(string name = "Untitled")
         {
-            throw new NotImplementedException(
-                "Need to create a new ISoundData type and override SoundCollection CreateEmptySoundData method.");
+            return new SfxrSynth(name);
         }
 
         /// <summary>
@@ -218,6 +217,26 @@ namespace PixelVision8.Engine.Chips
             }
             
             base.Shutdown();
+        }
+        
+        /// <summary>
+        ///     This helper method allows you to pass raw SFXR string data to the sound chip for playback. It works just
+        ///     like the normal PlaySound() API but accepts a string instead of a sound ID. Calling PlayRawSound() could
+        ///     be expensive since the sound effect data is not cached by the engine. It is mostly used for sound effects
+        ///     in tools and shouldn't be called when playing a game.
+        /// </summary>
+        /// <param name="data">Raw string data representing SFXR sound properties in a comma-separated list.</param>
+        /// <param name="channel">
+        ///     The channel the sound should play back on. Channel 0 is set by default.
+        /// </param>
+        /// <param name="frequency">
+        ///     An optional float argument to change the frequency of the raw sound. The default setting is 0.1266.
+        /// </param>
+        public void PlayRawSound(string data, int channelID = 0, float frequency = 0.1266f)
+        {
+            var channel = channels[channelID];
+
+            channel.Play(data, frequency);
         }
     }
 }

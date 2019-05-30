@@ -24,11 +24,11 @@ using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
+using PixelVision8.Engine.Audio;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Services;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Chips;
-using PixelVision8.Runner.Chips.Sfxr;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Importers;
 using PixelVision8.Runner.Parsers;
@@ -59,7 +59,7 @@ namespace PixelVision8.Runner.Editors
         private GameChip gameChip;
         private SfxrMusicGeneratorChip musicChip;
         protected PixelVision8Runner runner;
-        private SfxrSoundChip soundChip;
+        private SoundChip soundChip;
         private SpriteChip spriteChip;
         private FontChip fontChip;
         private PixelVisionEngine targetGame;
@@ -98,7 +98,7 @@ namespace PixelVision8.Runner.Editors
                     typeof(ControllerChip).FullName,
                     typeof(DisplayChip).FullName,
                     typeof(SfxrMusicGeneratorChip).FullName, // TODO this is a custom chip just for the editor
-                    typeof(SfxrSoundChip).FullName,
+                    typeof(SoundChip).FullName,
                     typeof(LuaGameChip).FullName
                 };
 
@@ -201,7 +201,7 @@ namespace PixelVision8.Runner.Editors
             spriteChip = targetGame.spriteChip;
             fontChip = targetGame.fontChip;
             tilemapChip = targetGame.tilemapChip;
-            soundChip = targetGame.soundChip as SfxrSoundChip;
+            soundChip = targetGame.soundChip;
             musicChip = targetGame.musicChip as SfxrMusicGeneratorChip; // TODO need to create a SfxrMusicChip
 //            
 //            colorPaletteChip = targetGame.chipManager.GetChip(ColorPaletteParser.chipName, false) as ColorChip;

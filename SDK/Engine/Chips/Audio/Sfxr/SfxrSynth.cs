@@ -25,24 +25,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework.Audio;
-using PixelVision8.Engine;
 using PixelVision8.Runner.Data;
 
-namespace PixelVision8.Runner.Chips.Sfxr
+namespace PixelVision8.Engine.Audio
 {
-//    internal struct SoundCache
-//    {
-//        public float[] audio;
-//        public byte[] wave;
-//        public SoundEffectInstance soundInstance;
-//        
-//        public SoundCache(float[] audio, byte[] wave, SoundEffectInstance soundInstance)
-//        {
-//            this.audio = audio;
-//            this.wave = wave;
-//            this.soundInstance = soundInstance;
-//        }
-//    }
     
     public class SfxrSynth : RawAudioData, ISoundData
     {

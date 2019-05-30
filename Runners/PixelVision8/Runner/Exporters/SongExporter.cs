@@ -18,18 +18,12 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.IO;
-using System.Text;
-using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
-using PixelVision8.Runner.Chips.Sfxr;
+using PixelVision8.Engine.Audio;
 using PixelVision8.Runner.Data;
 
 namespace PixelVision8.Runner.Exporters
 {
-    
-    
 
     public class SongExporter : AbstractExporter
     {
@@ -194,7 +188,6 @@ namespace PixelVision8.Runner.Exporters
                         // WORKS GREAT IF WE RUN CACHESOUND() FIRST
                         // TODO need to figure out why we can't access the cachedWave
                         notebuffer = instrument[tracknum].data; // the wave data for the current note
-
                         
                         // this SHOULD be the solution. but outputs all 0's
                         //bool gotAllData = instrument[tracknum].GenerateAudioFilterData(notebuffer, 2);

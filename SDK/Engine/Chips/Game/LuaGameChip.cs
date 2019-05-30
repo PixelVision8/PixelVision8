@@ -173,7 +173,7 @@ namespace PixelVision8.Engine.Chips
             #region Sound APIs
 
             luaScript.Globals["PlaySound"] = new Action<int, int>(PlaySound);
-            luaScript.Globals["PlayRawSound"] = new Action<string, int, float>(((SfxrSoundChip)soundChip).PlayRawSound);
+            luaScript.Globals["PlayRawSound"] = new Action<string, int, float>((soundChip).PlayRawSound);
         
             luaScript.Globals["PlayPattern"] = new Action<int, bool>(PlayPattern);
             luaScript.Globals["PlayPatterns"] = new Action<int[], bool>(PlayPatterns);
