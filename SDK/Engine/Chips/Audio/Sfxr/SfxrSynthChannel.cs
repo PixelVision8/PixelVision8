@@ -1,4 +1,4 @@
-﻿//  SfxrSynth
+﻿﻿//  SfxrSynth
 //    
 //  Copyright 2010 Thomas Vian
 //  Copyright 2013 Zeh Fernando
@@ -30,26 +30,25 @@ using PixelVision8.Runner.Data;
 namespace PixelVision8.Engine.Audio
 {
     
-    public class SfxrSynth : RawAudioData, ISoundData
+    public enum Voices
+    {
+        None = -1,
+        Square = 0,
+        Saw = 1,
+        Sine = 2,
+        Noise = 3,
+    }  
+    
+    public class SfxrSynth : RawAudioData, IChannel
     {
         private const int LO_RES_NOISE_PERIOD = 8; // Should be < 32
 
-//        private IAudioPlayer _audioPlayer;
-        
         private Dictionary<string, SoundEffectInstance> wavCache = new Dictionary<string, SoundEffectInstance>();
-
 
         private float _bitcrushFreq; // Inversely proportional to the number of samples to skip
         private float _bitcrushFreqSweep; // Change of the above
         private float _bitcrushLast; // Last sample value
         private float _bitcrushPhase; // Samples when this > 1
-
-        // Sound properties
-//        private float[] _cachedWave; // Cached wave data from a cacheSound() call
-        private uint _cachedWavePos; // Equivalent to _cachedWave.position in the old code
-
-        private bool _cachingAsync; // If the synth is currently caching asynchronously
-        private bool _cachingNormal; // If the synth is caching a normal sound
 
         private float _changeAmount; // Amount to change the note by
 
@@ -124,8 +123,7 @@ namespace PixelVision8.Engine.Audio
         private int _phaserInt; // Integer phaser offset, for bit maths
         private float _phaserOffset; // Phase offset for phaser effect
         private int _phaserPos; // Position through the phaser buffer
-        private float[] _pinkNoiseBuffer; // Buffer of random values used to generate pink noise
-        private PinkNumber _pinkNumber; // Used to generate pink noise
+
         private float _pos; // Phase expresed as a Number from 0-1, used for fast sin approx
 
         private readonly Random _random = new Random();
@@ -148,10 +146,7 @@ namespace PixelVision8.Engine.Audio
         private float _vibratoPhase; // Phase through the vibrato sine wave
         private float _vibratoSpeed; // Speed at which the vibrato phase moves
 
-        private byte[] _waveData; // Full wave, read out in chuncks by the onSampleData method
-        private uint _waveDataPos; // Current position in the waveData
-
-        private uint _waveType; // Shape of wave to generate (see enum WaveType)
+        private WaveShape _waveType; // Shape of wave to generate (see enum WaveType)
         private float amp; // Used in other calculations
         private SoundEffectInstance _soundInstance;
 
@@ -168,11 +163,9 @@ namespace PixelVision8.Engine.Audio
             }
         }
 
-        public string name { get; set; }
 
-        public SfxrSynth(string name = "Untitled", int samples = 0, int channels = 1, int frequency = 22050) : base(samples, channels, frequency)
+        public SfxrSynth(int samples = 0, int channels = 1, int frequency = 22050) : base(samples, channels, frequency)
         {
-            this.name = name;
         }
 
         public bool playing
@@ -264,9 +257,9 @@ namespace PixelVision8.Engine.Audio
             else
             {
                 // Needs to cache new data
-                _cachedWavePos = 0;
-                _cachingNormal = true;
-                _waveData = null;
+//                _cachedWavePos = 0;
+//                _cachingNormal = true;
+//                _waveData = null;
             
                 Reset(true);
 
@@ -276,15 +269,16 @@ namespace PixelVision8.Engine.Audio
                     _soundInstance.Stop();
                 }
 
-                _waveData = GenerateWav();
+//                _waveData = GenerateWav();
 
                 _params.paramsDirty = false;
 
-                using (var stream = new MemoryStream(_waveData))
+                using (var stream = new MemoryStream(GenerateWav()))
                 {
                     var soundEffect = SoundEffect.FromStream(stream);
                     
                     _soundInstance = soundEffect.CreateInstance();
+                    
                 }
 
                 wavCache[paramKey] = _soundInstance;
@@ -423,14 +417,14 @@ namespace PixelVision8.Engine.Audio
 
                 if (_phaserBuffer == null) _phaserBuffer = new float[1024];
                 if (_noiseBuffer == null) _noiseBuffer = new float[32];
-                if (_pinkNoiseBuffer == null) _pinkNoiseBuffer = new float[32];
-                if (_pinkNumber == null) _pinkNumber = new PinkNumber();
+//                if (_pinkNoiseBuffer == null) _pinkNoiseBuffer = new float[32];
+//                if (_pinkNumber == null) _pinkNumber = new PinkNumber();
                 if (_loResNoiseBuffer == null) _loResNoiseBuffer = new float[32];
 
                 uint i;
                 for (i = 0; i < 1024; i++) _phaserBuffer[i] = 0.0f;
                 for (i = 0; i < 32; i++) _noiseBuffer[i] = getRandom() * 2.0f - 1.0f;
-                for (i = 0; i < 32; i++) _pinkNoiseBuffer[i] = _pinkNumber.getNextValue();
+//                for (i = 0; i < 32; i++) _pinkNoiseBuffer[i] = _pinkNumber.getNextValue();
                 for (i = 0; i < 32; i++)
                     _loResNoiseBuffer[i] = i % LO_RES_NOISE_PERIOD == 0
                         ? getRandom() * 2.0f - 1.0f
@@ -601,17 +595,9 @@ namespace PixelVision8.Engine.Audio
                         _phase = _phase % _periodTempInt;
 
                         // Generates new random noise for this period
-                        if (_waveType == 3)
+                        if (_waveType == WaveShape.Noise)
                             for (n = 0; n < 32; n++)
                                 _noiseBuffer[n] = getRandom() * 2.0f - 1.0f;
-                        else if (_waveType == 5)
-                            for (n = 0; n < 32; n++)
-                                _pinkNoiseBuffer[n] = _pinkNumber.getNextValue();
-                        else if (_waveType == 6)
-                            for (n = 0; n < 32; n++)
-                                _loResNoiseBuffer[n] = n % LO_RES_NOISE_PERIOD == 0
-                                    ? getRandom() * 2.0f - 1.0f
-                                    : _loResNoiseBuffer[n - 1];
                     }
 
                     _sample = 0;
@@ -625,15 +611,15 @@ namespace PixelVision8.Engine.Audio
                         // Gets the sample from the oscillator
                         switch (_waveType)
                         {
-                            case 0:
+                            case WaveShape.Square:
                                 // Square
                                 _sample = tempPhase / _periodTemp < _squareDuty ? 0.5f : -0.5f;
                                 break;
-                            case 1:
+                            case WaveShape.Saw:
                                 // Sawtooth
                                 _sample = 1.0f - tempPhase / _periodTemp * 2.0f;
                                 break;
-                            case 2:
+                            case WaveShape.Sine:
                                 // Sine: fast and accurate approx
                                 _pos = tempPhase / _periodTemp;
                                 _pos = _pos > 0.5f ? (_pos - 1.0f) * 6.28318531f : _pos * 6.28318531f;
@@ -644,47 +630,13 @@ namespace PixelVision8.Engine.Audio
                                     ? 0.225f * (_sample * -_sample - _sample) + _sample
                                     : 0.225f * (_sample * _sample - _sample) + _sample;
                                 break;
-                            case 3:
+                            case WaveShape.Noise:
                                 // Noise
                                 _sample = _noiseBuffer[(uint) (tempPhase * 32f / _periodTempInt) % 32];
                                 break;
-                            case 4:
+                            case WaveShape.Triangle:
                                 // Triangle
                                 _sample = Math.Abs(1f - tempPhase / _periodTemp * 2f) - 1f;
-                                break;
-                            case 5:
-                                // Pink noise
-                                _sample = _pinkNoiseBuffer[(uint) (tempPhase * 32f / _periodTempInt) % 32];
-                                break;
-                            case 6:
-                                // Tan
-                                _sample = (float) Math.Tan(Math.PI * tempPhase / _periodTemp);
-                                break;
-                            case 7:
-                                // Whistle
-                                // Sine wave code
-                                _pos = tempPhase / _periodTemp;
-                                _pos = _pos > 0.5f ? (_pos - 1.0f) * 6.28318531f : _pos * 6.28318531f;
-                                _sample = _pos < 0
-                                    ? 1.27323954f * _pos + 0.405284735f * _pos * _pos
-                                    : 1.27323954f * _pos - 0.405284735f * _pos * _pos;
-                                _sample = 0.75f * (_sample < 0
-                                              ? 0.225f * (_sample * -_sample - _sample) + _sample
-                                              : 0.225f * (_sample * _sample - _sample) + _sample);
-                                // Then whistle (essentially an overtone with frequencyx20 and amplitude0.25
-                                _pos = tempPhase * 20f % _periodTemp / _periodTemp;
-                                _pos = _pos > 0.5f ? (_pos - 1.0f) * 6.28318531f : _pos * 6.28318531f;
-                                _sample2 = _pos < 0
-                                    ? 1.27323954f * _pos + .405284735f * _pos * _pos
-                                    : 1.27323954f * _pos - 0.405284735f * _pos * _pos;
-                                _sample += 0.25f * (_sample2 < 0
-                                               ? .225f * (_sample2 * -_sample2 - _sample2) + _sample2
-                                               : .225f * (_sample2 * _sample2 - _sample2) + _sample2);
-                                break;
-                            case 8:
-                                // Breaker
-                                amp = tempPhase / _periodTemp;
-                                _sample = Math.Abs(1f - amp * amp * 2f) - 1f;
                                 break;
                         }
 
@@ -776,21 +728,6 @@ namespace PixelVision8.Engine.Audio
             return (float) (_random.NextDouble() % 1);
         }
 
-        public void UpdateSettings(string param)
-        {
-            parameters.SetSettingsString(param);
-        }
-
-        public string ReadSettings()
-        {
-            return parameters.GetSettingsString();
-        }
-
-        public void Mutate(float value = 0.05f)
-        {
-            parameters.Mutate(value);
-        }
-
         public void Dispose()
         {
             _soundInstance?.Dispose();
@@ -808,56 +745,55 @@ namespace PixelVision8.Engine.Audio
     ///     From BFXR
     ///     Class taken from http://www.firstpr.com.au/dsp/pink-noise/#Filtering
     /// </summary>
-    internal class PinkNumber
-    {
-        private int diff;
-        private int i;
-        private int key;
-        private int last_key;
-        private readonly int max_key;
-        private readonly Random randomGenerator;
-        private readonly uint range;
-
-        private readonly float rangeBy5;
-        private uint sum;
-        private readonly uint[] white_values;
-
-        public PinkNumber()
-        {
-            max_key = 0x1f; // Five bits set
-            range = 128;
-            rangeBy5 = range / 5f;
-            key = 0;
-            white_values = new uint[5];
-            randomGenerator = new Random();
-            for (i = 0; i < 5; i++) white_values[i] = (uint) (randomGenerator.NextDouble() % 1 * rangeBy5);
-        }
-
-        public float getNextValue()
-        {
-            // Returns a number between -1 and 1
-            last_key = key;
-            sum = 0;
-
-            key++;
-            if (key > max_key) key = 0;
-
-            // Exclusive-Or previous value with current value. This gives
-            // a list of bits that have changed.
-            diff = last_key ^ key;
-            sum = 0;
-            for (i = 0; i < 5; i++)
-            {
-                // If bit changed get new random number for corresponding
-                // white_value
-                if ((diff & (1 << i)) > 0) white_values[i] = (uint) (randomGenerator.NextDouble() % 1 * rangeBy5);
-                ;
-                sum += white_values[i];
-            }
-
-            return sum / 64f - 1f;
-        }
-        
-        
-    }
+//    internal class PinkNumber
+//    {
+//        private int diff;
+//        private int i;
+//        private int key;
+//        private int last_key;
+//        private readonly int max_key;
+//        private readonly Random randomGenerator;
+//        private readonly uint range;
+//
+//        private readonly float rangeBy5;
+//        private uint sum;
+//        private readonly uint[] white_values;
+//
+//        public PinkNumber()
+//        {
+//            max_key = 0x1f; // Five bits set
+//            range = 128;
+//            rangeBy5 = range / 5f;
+//            key = 0;
+//            white_values = new uint[5];
+//            randomGenerator = new Random();
+//            for (i = 0; i < 5; i++) white_values[i] = (uint) (randomGenerator.NextDouble() % 1 * rangeBy5);
+//        }
+//
+//        public float getNextValue()
+//        {
+//            // Returns a number between -1 and 1
+//            last_key = key;
+//            sum = 0;
+//
+//            key++;
+//            if (key > max_key) key = 0;
+//
+//            // Exclusive-Or previous value with current value. This gives
+//            // a list of bits that have changed.
+//            diff = last_key ^ key;
+//            sum = 0;
+//            for (i = 0; i < 5; i++)
+//            {
+//                // If bit changed get new random number for corresponding
+//                // white_value
+//                if ((diff & (1 << i)) > 0) white_values[i] = (uint) (randomGenerator.NextDouble() % 1 * rangeBy5);
+//                ;
+//                sum += white_values[i];
+//            }
+//
+//            return sum / 64f - 1f;
+//        }
+//        
+//    }
 }

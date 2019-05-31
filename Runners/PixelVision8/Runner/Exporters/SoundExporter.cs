@@ -54,7 +54,9 @@ namespace PixelVision8.Runner.Exporters
         {
             var soundChip = targetEngine.soundChip;
 
+            sb.Append("\"version\":\"v2\",");
             JsonUtil.GetLineBreak(sb, 1);
+            
             JsonUtil.indentLevel++;
             sb.Append("\"sounds\": [");
 

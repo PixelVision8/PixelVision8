@@ -43,7 +43,7 @@ namespace PixelVision8.Engine.Chips
     /// </summary>
     public class SoundChip : AbstractChip
     {
-        protected ISoundData[] channels = new ISoundData[0];
+        protected IChannel[] channels = new IChannel[0];
 
         protected SoundData[] sounds;
 
@@ -60,7 +60,7 @@ namespace PixelVision8.Engine.Chips
                 Array.Resize(ref channels, value);
                 for (var i = 0; i < value; i++)
                     if (channels[i] == null)
-                        channels[i] = new SfxrSynth();
+                        channels[i] = CreateSoundChannel();
             }
         }
 
@@ -92,6 +92,8 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public virtual void UpdateSound(int index, string param)
         {
+            
+            Console.WriteLine("Update Song " + index + " " + param);
 //            var synth = sounds[index];
 //            synth.UpdateSettings(param);
 
@@ -113,9 +115,9 @@ namespace PixelVision8.Engine.Chips
         ///     create new sound instances that implement the ISoundData interface.
         /// </summary>
         /// <returns></returns>
-        public virtual ISoundData CreateEmptySoundData(string name = "Untitled")
+        public virtual IChannel CreateSoundChannel()
         {
-            return new SfxrSynth(name);
+            return new SfxrSynth();
         }
 
         /// <summary>
@@ -185,7 +187,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public ISoundData ReadChannel(int index)
+        public IChannel ReadChannel(int index)
         {
             if (index < 0 || index >= totalChannels)
                 return null;

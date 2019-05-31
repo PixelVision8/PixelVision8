@@ -28,9 +28,8 @@ namespace PixelVision8.Engine.Audio
     ///     Interface with access to sound data to use it inside of
     ///     games and the MusicChip.
     /// </summary>
-    public interface ISoundData: IDisposable
+    public interface IChannel
     {
-        string name { get; set; }
         bool playing { get; }
 
         /// <summary>
@@ -44,15 +43,5 @@ namespace PixelVision8.Engine.Audio
         /// </summary>
         void Stop();
 
-        /// <summary>
-        ///     Caches the sound file to improve performance
-        /// </summary>
-//        void CacheSound();
-
-        void UpdateSettings(string param);
-
-        string ReadSettings();
-
-        void Mutate(float value = 0.05f);
     }
 }

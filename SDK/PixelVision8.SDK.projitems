@@ -13,7 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\IChannel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\MusicChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\Sfxr\SfxrParams.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\Sfxr\SfxrSynth.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\Sfxr\SfxrSynthChannel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\SoundChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Game\GameChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Graphics\ColorChip.cs" />
