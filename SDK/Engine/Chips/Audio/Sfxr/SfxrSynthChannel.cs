@@ -45,10 +45,10 @@ namespace PixelVision8.Engine.Audio
 
         private Dictionary<string, SoundEffectInstance> wavCache = new Dictionary<string, SoundEffectInstance>();
 
-        private float _bitcrushFreq; // Inversely proportional to the number of samples to skip
-        private float _bitcrushFreqSweep; // Change of the above
-        private float _bitcrushLast; // Last sample value
-        private float _bitcrushPhase; // Samples when this > 1
+//        private float _bitcrushFreq; // Inversely proportional to the number of samples to skip
+//        private float _bitcrushFreqSweep; // Change of the above
+//        private float _bitcrushLast; // Last sample value
+//        private float _bitcrushPhase; // Samples when this > 1
 
         private float _changeAmount; // Amount to change the note by
 
@@ -106,9 +106,9 @@ namespace PixelVision8.Engine.Audio
         private float[] _noiseBuffer; // Buffer of random values used to generate noise
 
         private SfxrParams _original; // Copied properties for mutation base
-        private float _overtoneFalloff; // Minimum frequency before stopping
+//        private float _overtoneFalloff; // Minimum frequency before stopping
 
-        private int _overtones; // Minimum frequency before stopping
+//        private int _overtones; // Minimum frequency before stopping
 
         private SfxrParams _params = new SfxrParams(); // Params instance
         private float _period; // Period of the wave
@@ -159,7 +159,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _params = value;
-                _params.paramsDirty = true;
+                _params.Invalidate();
             }
         }
 
@@ -211,7 +211,7 @@ namespace PixelVision8.Engine.Audio
             if (frequency.HasValue)
                 parameters.startFrequency = frequency.Value;
             
-            if (_params.paramsDirty)
+            if (_params.invalid)
             {
                 CacheSound();
             }
@@ -271,7 +271,7 @@ namespace PixelVision8.Engine.Audio
 
 //                _waveData = GenerateWav();
 
-                _params.paramsDirty = false;
+                _params.ResetValidation();
 
                 using (var stream = new MemoryStream(GenerateWav()))
                 {
@@ -342,7 +342,7 @@ namespace PixelVision8.Engine.Audio
 
             if (__totalReset)
             {
-                p.paramsDirty = false;
+                p.ResetValidation();
 
                 _masterVolume = p.masterVolume * p.masterVolume;
 
@@ -363,15 +363,15 @@ namespace PixelVision8.Engine.Audio
 
                 _phase = 0;
 
-                _overtones = (int) (p.overtones * 10f);
-                _overtoneFalloff = p.overtoneFalloff;
+//                _overtones = (int) (p.overtones * 10f);
+//                _overtoneFalloff = p.overtoneFalloff;
 
                 _minFrequency = p.minFrequency;
 
-                _bitcrushFreq = 1f - (float)Math.Pow(p.bitCrush, 1f / 3f);
-                _bitcrushFreqSweep = -p.bitCrushSweep * 0.000015f;
-                _bitcrushPhase = 0;
-                _bitcrushLast = 0;
+//                _bitcrushFreq = 1f - (float)Math.Pow(p.bitCrush, 1f / 3f);
+//                _bitcrushFreqSweep = -p.bitCrushSweep * 0.000015f;
+//                _bitcrushPhase = 0;
+//                _bitcrushLast = 0;
 
                 _compressionFactor = 1f / (1f + 4f * p.compressionAmount);
 
@@ -602,11 +602,11 @@ namespace PixelVision8.Engine.Audio
 
                     _sample = 0;
                     sampleTotal = 0;
-                    overtoneStrength = 1f;
+//                    overtoneStrength = 1f;
 
-                    for (k = 0; k <= _overtones; k++)
-                    {
-                        tempPhase = _phase * (k + 1) % _periodTemp;
+//                    for (k = 0; k <= _overtones; k++)
+//                    {
+                        tempPhase = _phase * (0 + 1) % _periodTemp;
 
                         // Gets the sample from the oscillator
                         switch (_waveType)
@@ -640,9 +640,9 @@ namespace PixelVision8.Engine.Audio
                                 break;
                         }
 
-                        sampleTotal += overtoneStrength * _sample;
-                        overtoneStrength *= 1f - _overtoneFalloff;
-                    }
+                        sampleTotal += _sample;
+//                        overtoneStrength *= 1f - _overtoneFalloff;
+//                    }
 
                     _sample = sampleTotal;
 
@@ -688,16 +688,16 @@ namespace PixelVision8.Engine.Audio
                 _superSample = _masterVolume * _envelopeVolume * _superSample * 0.125f;
 
                 // Bit crush
-                _bitcrushPhase += _bitcrushFreq;
-                if (_bitcrushPhase > 1f)
-                {
-                    _bitcrushPhase = 0;
-                    _bitcrushLast = _superSample;
-                }
-
-                _bitcrushFreq = Math.Max(Math.Min(_bitcrushFreq + _bitcrushFreqSweep, 1f), 0f);
-
-                _superSample = _bitcrushLast;
+//                _bitcrushPhase += _bitcrushFreq;
+//                if (_bitcrushPhase > 1f)
+//                {
+//                    _bitcrushPhase = 0;
+//                    _bitcrushLast = _superSample;
+//                }
+//
+//                _bitcrushFreq = Math.Max(Math.Min(_bitcrushFreq + _bitcrushFreqSweep, 1f), 0f);
+//
+//                _superSample = _bitcrushLast;
 
                 // Compressor
                 if (_superSample > 0f)

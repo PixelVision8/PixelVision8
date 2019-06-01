@@ -36,14 +36,14 @@ namespace PixelVision8.Engine.Audio
         Triangle = 4
     }
     
-    public class SfxrParams
+    public class SfxrParams : AbstractData
     {
         private static readonly Random _random = new Random();
 
         private float _attackTime; // Length of the volume envelope attack (0 to 1)
 
-        private float _bitCrush; // Bit crush: resamples the audio at a lower frequency (0 to 1)
-        private float _bitCrushSweep; // Bit crush sweep: sweeps the Bit Crush filter up or down (-1 to 1)
+//        private float _bitCrush; // Bit crush: resamples the audio at a lower frequency (0 to 1)
+//        private float _bitCrushSweep; // Bit crush sweep: sweeps the Bit Crush filter up or down (-1 to 1)
 
         private float _changeAmount; // Shift in note, either up or down (-1 to 1)
         private float _changeAmount2; // Shift in note, either up or down (-1 to 1)
@@ -80,10 +80,10 @@ namespace PixelVision8.Engine.Audio
         private float
             _minFrequency; // If sliding, the sound will stop at this frequency, to prevent really low notes (0 to 1)
 
-        private float _overtoneFalloff; // Harmonics falloff: the rate at which higher overtones should decay (0 to 1)
+//        private float _overtoneFalloff; // Harmonics falloff: the rate at which higher overtones should decay (0 to 1)
 
-        private float
-            _overtones; // Harmonics: overlays copies of the waveform with copies and multiples of its frequency. Good for bulking out or otherwise enriching the texture of the sounds (warning: this is the number 1 cause of usfxr slowdown!) (0 to 1)
+//        private float
+//            _overtones; // Harmonics: overlays copies of the waveform with copies and multiples of its frequency. Good for bulking out or otherwise enriching the texture of the sounds (warning: this is the number 1 cause of usfxr slowdown!) (0 to 1)
 
         private float _phaserOffset; // Offsets a second copy of the wave by a small phase, changing the tibre (-1 to 1)
         private float _phaserSweep; // Sweeps the phase up or down (-1 to 1)
@@ -104,8 +104,8 @@ namespace PixelVision8.Engine.Audio
 
         private WaveShape _waveType; // Shape of wave to generate (see enum WaveType)
 
-        public bool
-            paramsDirty; // Whether the parameters have been changed since last time (shouldn't used cached sound)
+//        public bool
+//            paramsDirty; // Whether the parameters have been changed since last time (shouldn't used cached sound)
 
         /// <summary>
         ///     Shape of the wave (0:square, 1:sawtooth, 2:sin, 3:noise)
@@ -116,7 +116,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _waveType = value;// > 8 ? 0 : value;
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -129,7 +129,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _masterVolume = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -142,7 +142,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _attackTime = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -155,7 +155,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _sustainTime = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -168,7 +168,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _sustainPunch = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -181,7 +181,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _decayTime = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -194,7 +194,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _startFrequency = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -207,7 +207,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _minFrequency = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -220,7 +220,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _slide = MathHelper.Clamp(value, -1, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -233,7 +233,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _deltaSlide = MathHelper.Clamp(value, -1, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -246,7 +246,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _vibratoDepth = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -259,7 +259,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _vibratoSpeed = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -272,7 +272,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _changeAmount = MathHelper.Clamp(value, -1, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -285,7 +285,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _changeSpeed = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -298,7 +298,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _squareDuty = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -311,7 +311,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _dutySweep = MathHelper.Clamp(value, -1, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -324,7 +324,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _repeatSpeed = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -337,7 +337,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _phaserOffset = MathHelper.Clamp(value, -1, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -350,7 +350,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _phaserSweep = MathHelper.Clamp(value, -1, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -363,7 +363,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _lpFilterCutoff = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -376,7 +376,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _lpFilterCutoffSweep = MathHelper.Clamp(value, -1, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -389,7 +389,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _lpFilterResonance = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -402,7 +402,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _hpFilterCutoff = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -415,7 +415,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _hpFilterCutoffSweep = MathHelper.Clamp(value, -1, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -430,7 +430,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _changeRepeat = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -443,7 +443,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _changeAmount2 = MathHelper.Clamp(value, -1, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -456,7 +456,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _changeSpeed2 = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -470,7 +470,7 @@ namespace PixelVision8.Engine.Audio
             set
             {
                 _compressionAmount = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
+                Invalidate();
             }
         }
 
@@ -478,54 +478,54 @@ namespace PixelVision8.Engine.Audio
         ///     Harmonics: overlays copies of the waveform with copies and multiples of its frequency. Good for bulking out or
         ///     otherwise enriching the texture of the sounds (warning: this is the number 1 cause of bfxr slowdown!) (0 to 1)
         /// </summary>
-        public float overtones
-        {
-            get => _overtones;
-            set
-            {
-                _overtones = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
-            }
-        }
-
-        /// <summary>
-        ///     Harmonics falloff: The rate at which higher overtones should decay (0 to 1)
-        /// </summary>
-        public float overtoneFalloff
-        {
-            get => _overtoneFalloff;
-            set
-            {
-                _overtoneFalloff = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
-            }
-        }
+//        public float overtones
+//        {
+//            get => _overtones;
+//            set
+//            {
+//                _overtones = MathHelper.Clamp(value, 0, 1);
+//                Invalidate();
+//            }
+//        }
+//
+//        /// <summary>
+//        ///     Harmonics falloff: The rate at which higher overtones should decay (0 to 1)
+//        /// </summary>
+//        public float overtoneFalloff
+//        {
+//            get => _overtoneFalloff;
+//            set
+//            {
+//                _overtoneFalloff = MathHelper.Clamp(value, 0, 1);
+//                Invalidate();
+//            }
+//        }
 
         /// <summary>
         ///     Bit crush: resamples the audio at a lower frequency (0 to 1)
         /// </summary>
-        public float bitCrush
-        {
-            get => _bitCrush;
-            set
-            {
-                _bitCrush = MathHelper.Clamp(value, 0, 1);
-                paramsDirty = true;
-            }
-        }
-
-        /// <summary>
-        ///     Bit crush sweep: sweeps the Bit Crush filter up or down (-1 to 1)
-        /// </summary>
-        public float bitCrushSweep
-        {
-            get => _bitCrushSweep;
-            set
-            {
-                _bitCrushSweep = MathHelper.Clamp(value, -1, 1);
-                paramsDirty = true;
-            }
-        }
+//        public float bitCrush
+//        {
+//            get => _bitCrush;
+//            set
+//            {
+//                _bitCrush = MathHelper.Clamp(value, 0, 1);
+//                Invalidate();
+//            }
+//        }
+//
+//        /// <summary>
+//        ///     Bit crush sweep: sweeps the Bit Crush filter up or down (-1 to 1)
+//        /// </summary>
+//        public float bitCrushSweep
+//        {
+//            get => _bitCrushSweep;
+//            set
+//            {
+//                _bitCrushSweep = MathHelper.Clamp(value, -1, 1);
+//                Invalidate();
+//            }
+//        }
 
         /// <summary>
         ///     Sets the parameters to generate a pickup/coin sound
@@ -736,7 +736,7 @@ namespace PixelVision8.Engine.Audio
         /// </summary>
         protected void resetParams()
         {
-            paramsDirty = true;
+            Invalidate();
 
             _waveType = 0;
             _startFrequency = 0.3f;
@@ -775,11 +775,11 @@ namespace PixelVision8.Engine.Audio
 
             _compressionAmount = 0.3f;
 
-            _overtones = 0.0f;
-            _overtoneFalloff = 0.0f;
+//            _overtones = 0.0f;
+//            _overtoneFalloff = 0.0f;
 
-            _bitCrush = 0.0f;
-            _bitCrushSweep = 0.0f;
+//            _bitCrush = 0.0f;
+//            _bitCrushSweep = 0.0f;
         }
 
         /// <summary>
@@ -816,10 +816,10 @@ namespace PixelVision8.Engine.Audio
             if (GetRandomBool()) changeAmount2 += GetRandom() * __mutation * 2f - __mutation;
             if (GetRandomBool()) changeSpeed2 += GetRandom() * __mutation * 2f - __mutation;
             if (GetRandomBool()) compressionAmount += GetRandom() * __mutation * 2f - __mutation;
-            if (GetRandomBool()) overtones += GetRandom() * __mutation * 2f - __mutation;
-            if (GetRandomBool()) overtoneFalloff += GetRandom() * __mutation * 2f - __mutation;
-            if (GetRandomBool()) bitCrush += GetRandom() * __mutation * 2f - __mutation;
-            if (GetRandomBool()) bitCrushSweep += GetRandom() * __mutation * 2f - __mutation;
+//            if (GetRandomBool()) overtones += GetRandom() * __mutation * 2f - __mutation;
+//            if (GetRandomBool()) overtoneFalloff += GetRandom() * __mutation * 2f - __mutation;
+//            if (GetRandomBool()) bitCrush += GetRandom() * __mutation * 2f - __mutation;
+//            if (GetRandomBool()) bitCrushSweep += GetRandom() * __mutation * 2f - __mutation;
         }
 
         /// <summary>
@@ -881,11 +881,11 @@ namespace PixelVision8.Engine.Audio
 
             _compressionAmount = GetRandom();
 
-            _overtones = GetRandom();
-            _overtoneFalloff = GetRandom();
-
-            _bitCrush = GetRandom();
-            _bitCrushSweep = GetRandom() * 2f - 1f;
+//            _overtones = GetRandom();
+//            _overtoneFalloff = GetRandom();
+//
+//            _bitCrush = GetRandom();
+//            _bitCrushSweep = GetRandom() * 2f - 1f;
         }
 
         // Setting string methods
@@ -1082,9 +1082,9 @@ namespace PixelVision8.Engine.Audio
         /// <param name="__makeDirty"></param>
         public void CopyFrom(SfxrParams __params, bool __makeDirty = false)
         {
-            var wasDirty = paramsDirty;
+            var wasDirty = invalid;
             SetSettingsString(GetSettingsString());
-            paramsDirty = wasDirty || __makeDirty;
+            _invalid = wasDirty || __makeDirty;
         }
 
         // Utility methods
