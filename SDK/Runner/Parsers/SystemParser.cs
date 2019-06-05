@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
+using PixelVision8.Engine.Audio;
 using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Runner.Parsers
@@ -377,6 +378,19 @@ namespace PixelVision8.Runner.Parsers
             if (data.ContainsKey("totalSounds"))
                 soundChip.totalSounds = (int) (long) data["totalSounds"];
 
+            if (data.ContainsKey("channelTypes"))
+            {
+                var types = (List<object>) data["channelTypes"];
+
+                for (int i = 0; i < types.Count; i++)
+                {
+                    // Make sure we are only changing channels that exist
+                    if (i < soundChip.totalChannels)
+                    {
+                        soundChip.ChannelType(i, (WaveType)Convert.ToInt32(types[i]));
+                    }
+                }
+            }
 
             // Disabled this for now as I break out into individual files
             if (data.ContainsKey("sounds"))

@@ -722,6 +722,21 @@ namespace PixelVision8.Runner.Editors
             return gameChip.Sound(id, data);
         }
 
+        public int ChannelType(int id, int? typeID = null)
+        {
+
+            WaveType? type = null;
+            
+            if (typeID.HasValue)
+            {
+                type = (WaveType) typeID.Value;
+            }
+    
+            Console.WriteLine("Set Wave Type " + type + " " + typeID);
+            
+            return (int)soundChip.ChannelType(id, type);
+        }
+
         #endregion
 
 //        

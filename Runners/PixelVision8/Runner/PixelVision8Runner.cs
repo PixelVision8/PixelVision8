@@ -103,12 +103,8 @@ namespace PixelVision8.Runner
             
             screenshotService = new ScreenshotService(workspaceServicePlus);
             exportService = new ExportService(); //TODO Need to create a new AudioClipAdaptor
-            
-            var actions = Enum.GetValues(typeof(ActionKeys)).Cast<ActionKeys>();
-            foreach (var action in actions)
-            {
-                actionKeys[action] = (Keys)Convert.ToInt32(bios.ReadBiosData(action.ToString(), ((int)actionKeys[action]).ToString(), true));
-            }
+
+            RefreshActionKeys();
             
             // Replace title with version
             
@@ -119,6 +115,15 @@ namespace PixelVision8.Runner
             Window.Title = windowTitle;
 
 
+        }
+
+        public void RefreshActionKeys()
+        {
+            var actions = Enum.GetValues(typeof(ActionKeys)).Cast<ActionKeys>();
+            foreach (var action in actions)
+            {
+                actionKeys[action] = (Keys)Convert.ToInt32(bios.ReadBiosData(action.ToString(), ((int)actionKeys[action]).ToString(), true));
+            }
         }
 
         protected WorkspaceServicePlus workspaceServicePlus;
@@ -230,6 +235,7 @@ namespace PixelVision8.Runner
             luaScript.Globals["ShutdownSystem"] = new Action(ShutdownSystem);
             luaScript.Globals["QuitCurrentTool"] = (QuitCurrentToolDelagator) QuitCurrentTool;
             luaScript.Globals["LoadGame"] = new Func<string, Dictionary<string, string>, bool>((path, metadata) => Load(path, RunnerMode.Loading, metadata));
+            luaScript.Globals["RefreshActionKeys"] = new Action(RefreshActionKeys);
             
             luaScript.Globals["DocumentPath"] = new Func<string>(() => documentsPath);
             luaScript.Globals["TmpPath"] = new Func<string>(() => tmpPath);

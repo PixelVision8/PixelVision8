@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
+using PixelVision8.Engine.Audio;
 using PixelVision8.Runner;
 using PixelVision8.Runner.Services;
 
@@ -250,6 +251,9 @@ namespace PixelVision8.Engine.Chips
             #endregion
 
             // Enums
+            UserData.RegisterType<WaveType>();
+            luaScript.Globals["WaveType"] = UserData.CreateStatic<WaveType>();
+            
             UserData.RegisterType<DrawMode>();
             luaScript.Globals["DrawMode"] = UserData.CreateStatic<DrawMode>();
 

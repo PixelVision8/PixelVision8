@@ -93,7 +93,6 @@ namespace PixelVision8.Engine.Chips
         public virtual void UpdateSound(int index, string param)
         {
             
-            Console.WriteLine("Update Song " + index + " " + param);
 //            var synth = sounds[index];
 //            synth.UpdateSettings(param);
 
@@ -219,6 +218,13 @@ namespace PixelVision8.Engine.Chips
             }
             
             base.Shutdown();
+        }
+
+        public WaveType ChannelType(int id, WaveType? type = null)
+        {
+            
+            // The channel will handle this so pass the values over to its API.
+            return channels[id].ChannelType(type);
         }
         
         /// <summary>

@@ -18,6 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
 using System.Text;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
@@ -398,8 +399,25 @@ namespace PixelVision8.Runner.Exporters
 
             sb.Append("\"totalSounds\":");
             sb.Append(soundChip.totalSounds);
-//            sb.Append(",");
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+            
+            sb.Append("\"channelTypes\":[");
 
+            var total = soundChip.totalChannels;
+            
+            for (int i = 0; i < total; i++)
+            {
+                Console.WriteLine("Channel "+i +" type "+soundChip.ChannelType(i));
+                
+                sb.Append((int) soundChip.ChannelType(i));
+                if (i < total - 1)
+                {
+                    sb.Append(",");
+                }
+            }
+            sb.Append("]");
+            
             JsonUtil.GetLineBreak(sb, 0);
             sb.Append("}");
             sb.Append(",");
