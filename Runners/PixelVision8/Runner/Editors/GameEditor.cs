@@ -732,7 +732,7 @@ namespace PixelVision8.Runner.Editors
                 type = (WaveType) typeID.Value;
             }
     
-            Console.WriteLine("Set Wave Type " + type + " " + typeID);
+//            Console.WriteLine("Set Wave Type " + type  + (typeID.HasValue ? " - " + typeID.Value.ToString() : ""));
             
             return (int)soundChip.ChannelType(id, type);
         }
