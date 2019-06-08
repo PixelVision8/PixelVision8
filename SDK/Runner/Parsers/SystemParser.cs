@@ -287,8 +287,8 @@ namespace PixelVision8.Runner.Parsers
                 }
             }
 
-            if (data.ContainsKey("totalTracks"))
-                musicChip.totalTracks = Convert.ToInt32((long) data["totalTracks"]);
+//            if (data.ContainsKey("totalTracks"))
+//                musicChip.totalTracks = Convert.ToInt32((long) data["totalTracks"]);
 
             if (data.ContainsKey("notesPerTrack"))
                 musicChip.maxNoteNum = Convert.ToInt32((long) data["notesPerTrack"]);

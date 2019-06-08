@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
 
 namespace PixelVision8.Runner.Chips
 {
@@ -70,14 +69,14 @@ namespace PixelVision8.Runner.Chips
         // TODO this should be part of the generator not each track
         public string[] instrumentTemplates =
         {
-            "0,.5,,.2,,.2,.3,.1266,,,,,,,,,,,,,,,,,,1,,,,,,", //(MELODY,+0) = 
-            "0,.5,,.01,,.509,.3,.1266,,,,,,,,,,,,,.31,,,,,1,,,.1,,,", // (HARMONY,+1)
-            "4,1,,.01,,.509,.3,.1266,,,,,,,,,,,,,.31,,,,,1,,,.1,,,", //(BASS,-2)
-            "3,.1,,.01,,.209,.1,.1668,,,,,,,,,,,,,.31,,,,,.3,,,.1,,,-.1", // (DRUMS,+0)
-            "2,.2,.6,.01,,.609,.3,.1347,,,,,.2,,,,,,,,.31,,,,,1,,,.1,,,", //(LEAD,+1)
-            "8,.1,.5706,.4763,.0767,.8052,.3043,.1266,,,-.002,-.6654,.1035,.5323,.6592,.5553,.2062,-.2339,-.3279,.6005,-.4241,-.0038,.8698,-.0032,,.6377,.1076,-.6659,.0221,.0164,.4068,-.3421", // (PAD,+0)
-            "3,.1,.032,.11,.6905,.4,.1015,.1668,.0412,-.2434,.0259,.1296,.4162,.7,1,.2053,.069,.7284,-.2346,.065,.5,-.213,.0969,-.1699,.8019,.1452,-.0715,.3,.1509,.9632,.4123,-.3067", // (SNARE,+1)
-            "2,.6,,.2981,.1079,.1122,.0225,.1826,.0583,-.2287,.1341,.3666,.0704,.0258,.1558,.0187,.1626,.2816,-.0543,.3192,.0642,.3733,.2103,-.3137,-.3065,.8693,-.3045,.4969,.0218,-.015,.1222,.0003" // (KICK,+0)
+            "0,,.2,,.2,.1266,,,,,,,,,,,,,1,,,,,.5", //(MELODY,+0) = 
+            "0,,.01,,.509,.1266,,,,,,,,.31,,,,,1,,,.1,,.5", // (HARMONY,+1)
+            "4,,.01,,.509,.1266,,,,,,,,.31,,,,,1,,,.1,,1", //(BASS,-2)
+            "3,,.01,,.209,.1668,,,,,,,,.31,,,,,.3,,,.1,,.5", // (DRUMS,+0)
+            "4,.6,.01,,.609,.1347,,,,,.2,,,.31,,,,,1,,,.1,,.5", //(LEAD,+1)
+            "4,.5706,.4763,.0767,.8052,.1266,,,-.002,,.1035,.2062,,,-.0038,.8698,-.0032,,.6377,.1076,,.0221,.0164,.5", // (PAD,+0)
+            "3,.032,.11,.6905,.4,.1668,.0412,-.2434,.0259,.1296,.4162,.069,.7284,.5,-.213,.0969,-.1699,.8019,.1452,-.0715,.3,.1509,.9632,.5", // (SNARE,+1)
+            "4,,.2981,.1079,.1122,.1826,.0583,-.2287,.1341,.3666,.0704,.1626,.2816,.0642,.3733,.2103,-.3137,-.3065,.8693,-.3045,.4969,.0218,-.015,.6" // (KICK,+0)
         };
 
         private readonly Random r = new Random();
@@ -122,7 +121,7 @@ namespace PixelVision8.Runner.Chips
         }
     }
 
-    public class SfxrMusicGeneratorChip : MusicChip
+    public class SfxrMusicGeneratorChip
     {
         public Point octaveRange = new Point(1, 8);
         private readonly Random r = new Random();
@@ -223,20 +222,6 @@ namespace PixelVision8.Runner.Chips
 
         private int[] pcgScale; // what SCALE to generate the melody? (eg the major scale)
 
-
-        //public int pcgSongCount = 1; // mega-slow auto generation of multiple songs
-        //private int pcgTension = 2; // TODO: unimplemented
-        //private int pcgTrackBASS = 2; // the bass line
-        //private int pcgTrackDRUMS = 3; // often a "high hat" noise
-        //private int pcgTrackHARMONY = 1; // second voice accompanying the above
-        //private int pcgTrackKICK = 7; // four on the floor
-        //private int pcgTrackLEAD = 4; // bitchin guitar solo
-        //private int pcgTrackMax = 4; // how many instruments to use (1-8)
-
-        // default instrument numbers using standard instrument settings
-        //[Header("Procedural Track Sugestions")]
-        //public int pcgTrackMELODY; // the main song notes
-
         public int pcgTrackPAD = 5; // long chord or swell
         public int pcgTrackSFX = 6; // often a "snare drum"
         public bool recordingNoteInput = true; // when we play on piano does it record in SongData?
@@ -259,154 +244,11 @@ namespace PixelVision8.Runner.Chips
             {Scale.HarmonicMinor, new[] {2, 1, 2, 2, 1, 3, 1}}
         };
 
-        //    public int[] scaleMajor = {2, 2, 1, 2, 2, 2, 1};
-        //
-        //    public int[] scaleMajorPentatonic = {2, 2, 3, 2, 3};
-        //    public int[] scaleMelodicMinorDown = {2, 2, 1, 2, 2, 1, 2};
-        //    public int[] scaleMelodicMinorUp = {2, 1, 2, 2, 2, 2, 1};
-        //    public int[] scaleMinorPentatonic = {3, 2, 2, 3, 2};
-        //    public int[] scaleMixolydian = {2, 2, 1, 2, 2, 1, 2};
-        //    public int[] scaleNaturalMinor = {2, 1, 2, 2, 1, 2, 2};
-        //    public int[] scaleAhavaRaba = { 1, 3, 1, 2, 1, 2, 2 };
-        //    public int[] scaleChromatic = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-        //    public int[] scaleDiatonic = { 2, 2, 2, 2, 2, 2 };
-        //    public int[] scaleDorian = { 2, 1, 2, 2, 2, 1, 2 };
-        //    public int[] scaleHarmonicMinor = { 2, 1, 2, 2, 1, 3, 1 };
-
-        public string[] songNameWords =
-        {
-            "Gold", "Silver", "Copper", "Ruby",
-            "Sea", "Forest", "Desert", "Mountain",
-            "Hug", "Slap", "Push", "Pull",
-            "Change", "Code", "Hack", "Fix",
-            "Lick", "Bang", "Trees", "Clouds",
-            "Super", "Mega", "Love", "Bird",
-            "Lizard", "Lava", "Boss", "Space",
-            "Spy", "Action", "Forever", "Galaxy",
-            "World", "Jump", "Chip", "Tune",
-            "Beep", "Ditty", "Little", "Speedy",
-            "Rock", "Song", "Theme", "Play",
-            "Zap", "Crunch", "Fling", "Wiggle",
-            "Hit", "Miss", "Sweet", "Cool",
-            "Nice", "Ice", "Fire", "Danger",
-            "Gold", "Sonic", "Tails", "Peachy",
-            "Koopi", "Bowsa", "Mushroom", "Shroomy",
-            "Coin", "Brick", "Castle", "Town",
-            "City", "Ship", "House", "Floor",
-            "Dance", "Boogie", "Awesome", "Cool",
-            "Happily", "Radish", "Apple", "Cake",
-            "Chocolate", "Cream", "Milk", "Sandwich",
-            "Burger", "Snack", "Drink", "Munch",
-            "Crunch", "Bouncy", "Smash", "Arcade",
-            "Brunch", "Dinner", "Breakfast", "Supper",
-            "Dessert", "Veggie", "Bacon", "Sugar",
-            "Plumber", "Doctor", "Princess", "Monster",
-            "Random", "Snazzy", "Bros"
-        };
-
-        public float soundParamDelta = 0.1f; // hmm log scale finesse fine tuning needed? FIXME?
         public TrackSettings[] trackSettings = new TrackSettings[0];
 
-        public int currentBeat => Convert.ToInt32(sequencerBeatNumber);
-
-        public bool ReadLoop()
+        public void ConfigureGenerator(int tracks)
         {
-            return loopSong;
-        }
-
-        public void UpdateLoop(bool value)
-        {
-            loopSong = value;
-        }
-
-//        public string ReadSongName()
-//        {
-//            return activeTrackerData.songName;
-//        }
-//
-//        public void UpdateSongName(string value)
-//        {
-//            activeTrackerData.songName = value;
-//        }
-
-        public int ReadNote(int track, int beat)
-        {
-            if (track < 0 || track >= totalTracks)
-                return 0;
-
-            var notes = activeTrackerData.tracks[track].notes;
-
-            if (beat > notes.Length || beat < 0)
-                return 0;
-
-            return notes[beat];
-        }
-
-        public void UpdateNote(int track, int beat, int value)
-        {
-            activeTrackerData.tracks[track].notes[beat] = value;
-
-            //workspace.InvalidateSave();
-        }
-
-        public int ReadInstrument(int track)
-        {
-            return activeTrackerData.tracks[track].sfxID;
-        }
-
-        public void UpdateInstrument(int track, int sfxID)
-        {
-            if (track < 0 || track >= soundChip.totalChannels)
-                return;
-
-            if (sfxID < 0 || sfxID >= soundChip.totalSounds)
-                return;
-
-            //musicChip.UpdateInstrument(track, sfxID);
-            activeTrackerData.tracks[track].sfxID = MathHelper.Clamp(sfxID, 0, soundChip.totalSounds);
-        }
-
-        public void UpdateTempo(int value)
-        {
-            activeTrackerData.speedInBPM = value;
-            UpdateNoteTickLengths();
-
-            //workspace.InvalidateSave();
-        }
-
-        public void StartSequencer()
-        {
-            songCurrentlyPlaying = true;
-        }
-
-        public void StopSequencer()
-        {
-            songCurrentlyPlaying = false;
-        }
-
-        public void MoveToBeat(int id)
-        {
-            sequencerBeatNumber = id;
-        }
-
-        public void PlayNote(int track, int midinote)
-        {
-            // midi note middle C is 60 = 261.6255653006hz
-            var sfxID = ReadTrackSFX(track);
-
-            // play the sound
-            var instrument = soundChip.ReadSound(sfxID);
-            
-            
-            
-            soundChip.PlaySound(sfxID, track, noteStartFrequency[midinote]);
-//            if (instrument != null)
-//                instrument.Play(noteStartFrequency[midinote]);
-        }
-
-        public void ConfigureGenerator()
-        {
-            var total = totalTracks;
+            var total = tracks;
 
             Array.Resize(ref trackSettings, total);
             for (var i = 0; i < total; i++)
@@ -429,23 +271,7 @@ namespace PixelVision8.Runner.Chips
             //workspace.InvalidateSave();
         }
 
-        public int ReadTrackInstrument(int track)
-        {
-            return (int) trackSettings[track].instrumentType;
-        }
-
-        public int ReadTrackSFX(int track)
-        {
-            return trackSettings[track].sfxID;
-        }
-
-        public void SetTrack(int track, int instrument, int sfxID)
-        {
-            trackSettings[track].instrumentType = (InstrumentType) instrument;
-            trackSettings[track].sfxID = sfxID;
-        }
-
-        public void GenerateSong()
+        public void GenerateSong(IEngine chips)
         {
             float noteChangeBoost; // more likely to play a note on beat one of each bar
             var restHere = true; // if true, silence
@@ -457,7 +283,12 @@ namespace PixelVision8.Runner.Chips
             var randy = 0f; // for debugging random number generator
             bool wasFunkyLastNote;
 
-            ResetTracker();
+            var musicChip = chips.musicChip;
+            var soundChip = chips.soundChip;
+
+            var activeTrackerData = musicChip.activeTrackerData;
+
+            musicChip.ResetTracker();
 
             pcgScale = scaleTable[Scale.Major]; //scaleMajor;
 
@@ -469,8 +300,13 @@ namespace PixelVision8.Runner.Chips
 
             // randomize the song data
 
+            
             // random tempo
-            UpdateTempo(r.Next(pcgMinTempo, pcgMaxTempo));
+            activeTrackerData.speedInBPM = r.Next(pcgMinTempo, pcgMaxTempo);
+            musicChip.UpdateNoteTickLengths();
+            
+            
+//            UpdateTempo();
 
             //updateNoteTickLengths();
 
@@ -497,7 +333,10 @@ namespace PixelVision8.Runner.Chips
 
 
             TrackSettings settings = null;
-            var total = totalTracks; //trackSettings.Length;//activeSongData.tracks.Length;//trackSettings.Length;
+            var total = musicChip.totalTracks; //trackSettings.Length;//activeSongData.tracks.Length;//trackSettings.Length;
+            
+            Console.WriteLine("total tracks" + total);
+            
             TrackData trackData = null;
 
             var harmonyTrackID = Array.FindIndex(trackSettings, t => t.instrumentType == InstrumentType.Harmony);
@@ -547,7 +386,7 @@ namespace PixelVision8.Runner.Chips
                 // pure 0-1 (but density 10 means complexity 0 due to the way we calc prob)
 
                 // Loop through each beat and create a note
-                for (var noteNum = 0; noteNum < notesPerTrack; noteNum++) // for each note
+                for (var noteNum = 0; noteNum < musicChip.notesPerTrack; noteNum++) // for each note
                 {
                     // Get the instrument ID for the track
                     var instrument = settings.instrumentType;
@@ -776,42 +615,6 @@ namespace PixelVision8.Runner.Chips
 
             pcgPreviousNote = aNote;
             return aNote;
-        }
-
-        /////////////////////////////////////////////////////////////////////////////
-//        private void MutateAllInstruments(float howmuch) // eg 0.05f
-//            /////////////////////////////////////////////////////////////////////////////
-//        {
-//            var trackCount = activeTrackerData.tracks.Length; // fixme redun
-//
-//            //#if DEBUGMUSIC
-//            //		Debug.Log("mutateAllInstruments randomizing " + trackCount + " instruments by " + howmuch);
-//            //#endif
-//
-//            for (var trackNum = 0; trackNum < trackCount; trackNum++)
-//            {
-//                var instrument = soundChip.ReadSound(activeTrackerData.tracks[trackNum].sfxID);
-//
-//                if (instrument != null)
-//                    instrument.Mutate(howmuch);
-//
-//                // remember the strings
-//                // fixme ON ALL LOOPS!!!!
-//                //activeSongData.tracks[trackNum].instrument = instrument[trackNum].parameters.GetSettingsString();
-//            }
-//
-//            //        //TODO this needs to be removed
-//            //        if (chiptuneSequencer != null)
-//            //            chiptuneSequencer.updateSFXRGUI();
-//        }
-
-        /////////////////////////////////////////////////////////////////////////////
-        public string randomSongName()
-            /////////////////////////////////////////////////////////////////////////////
-        {
-            return songNameWords[r.Next(0, songNameWords.Length - 1)];
-
-            //+songNameWords[UnityEngine.Random.Range(0, songNameWords.Length - 1)];
         }
 
         #endregion

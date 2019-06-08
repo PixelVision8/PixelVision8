@@ -43,7 +43,7 @@ namespace PixelVision8.Engine.Chips
         private SongData currentSong;
         public bool loopSong;
         public int maxNoteNum = 127; // how many notes in these arrays below
-        public int maxTracks = 8; // max number of instruments playing notes
+        public int maxTracks = 5; // max number of instruments playing notes
         public float nextBeatTimestamp;
         public float[] noteHZ; // a lookup table of all musical notes in Hz
 
@@ -164,20 +164,20 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
-        public int totalTracks
-        {
-            get => _totalTracks;
-            set
-            {
-                value = MathHelper.Clamp(value, 1, maxTracks);
-
-                var total = trackerDataCollection.Length;
-                for (var i = 0; i < total; i++)
-                    trackerDataCollection[i].totalTracks = value;
-
-                _totalTracks = value;
-            }
-        }
+        public int totalTracks => soundChip.totalChannels;
+//        {
+//            get => _totalTracks;
+//            set
+//            {
+//                value = MathHelper.Clamp(value, 1, maxTracks);
+//
+//                var total = trackerDataCollection.Length;
+//                for (var i = 0; i < total; i++)
+//                    trackerDataCollection[i].totalTracks = value;
+//
+//                _totalTracks = value;
+//            }
+//        }
 
         /// <summary>
         ///     The active song's data that was loaded into memory.
@@ -233,7 +233,7 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
-        public virtual TrackerData CreateNewTrackerData(string name, int tracks = 4)
+        public virtual TrackerData CreateNewTrackerData(string name, int tracks = 5)
         {
             return new TrackerData(name, tracks);
         }
@@ -247,8 +247,8 @@ namespace PixelVision8.Engine.Chips
 
             //engine.chipManager.AddToUpdateList(this);
             totalLoops = 16;
-            maxTracks = 4;
-            totalTracks = maxTracks;
+//            maxTracks = 4;
+//            totalTracks = maxTracks;
             totalSongs = 16;
 
             // Setup the sequencer values

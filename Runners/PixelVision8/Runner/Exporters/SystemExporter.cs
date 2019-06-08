@@ -352,10 +352,10 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-            sb.Append("\"totalTracks\":");
-            sb.Append(musicChip.totalTracks);
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
+//            sb.Append("\"totalTracks\":");
+//            sb.Append(musicChip.totalTracks);
+//            sb.Append(",");
+//            JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"totalSongs\":");
             sb.Append(musicChip.totalSongs);

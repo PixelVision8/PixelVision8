@@ -39,7 +39,7 @@ namespace PixelVision8.Engine
         /// </summary>
         public TrackData[] tracks = new TrackData[0];
 
-        public TrackerData(string name = "Untitled", int tracks = 4)
+        public TrackerData(string name = "Untitled", int tracks = 5)
         {
             Reset();
             totalTracks = tracks;
@@ -95,7 +95,7 @@ namespace PixelVision8.Engine
         ///     Reset the default values of the SongData instance
         /// </summary>
         /// <param name="trackCount"></param>
-        public void Reset(int trackCount = 4)
+        public void Reset(int trackCount = 5)
         {
 //            songName = name;
             totalTracks = trackCount;

@@ -46,7 +46,7 @@ namespace PixelVision8.Engine.Chips
 //            pages = 2;
             width = 8;
             height = 8;
-            pages = 1;
+            pages = 2;
             colorsPerSprite = 2;
             unique = true;
             Resize(pageWidth, pageHeight * pages);
