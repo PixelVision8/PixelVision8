@@ -894,15 +894,15 @@ namespace PixelVision8.Engine.Audio
         /// </summary>
         /// <param name="__string">string Settings string to parse</param>
         /// <returns>If the string successfully parsed</returns>
-        public bool SetSettingsString(string __string)
+        public void SetSettingsString(string __string)
         {
             var values = __string.Split(',');
             
+            resetParams();
+            
+            // Parse the params if there are enough values
             if (values.Length == 24)
             {
-                // Old format (SFXR): 24 parameters
-                resetParams();
-
                 waveType = (WaveType)ParseUint(values[0]);
                 attackTime = ParseFloat(values[1]);
                 sustainTime = ParseFloat(values[2]);
@@ -928,12 +928,7 @@ namespace PixelVision8.Engine.Audio
                 hpFilterCutoffSweep = ParseFloat(values[22]);
                 masterVolume = ParseFloat(values[23]);
             }
-            else
-            {
-                return false;
-            }
-
-            return true;
+            
         }
 
         // Copying methods
