@@ -81,7 +81,6 @@ namespace PixelVision8.Runner.Chips
 
         private readonly Random r = new Random();
 
-
         public InstrumentType instrumentType
         {
             get => _instrumentType;
