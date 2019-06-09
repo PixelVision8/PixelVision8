@@ -159,7 +159,7 @@ namespace PixelVision8.Runner
             
             //  Define the valid file extensions from the bios
             workspaceServicePlus.fileExtensions =
-                ((string) bios.ReadBiosData("FileExtensions", "png,lua,json,txt")).Split(',')
+                ((string) bios.ReadBiosData("FileExtensions", "png,lua,json,txt,wav")).Split(',')
                 .ToList();
 
             // Define the files required to make a game valid from the bios

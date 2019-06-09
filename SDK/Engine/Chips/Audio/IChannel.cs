@@ -19,6 +19,7 @@
 //
 
 using System;
+using PixelVision8.Engine.Data;
 
 namespace PixelVision8.Engine.Audio
 {
@@ -35,8 +36,9 @@ namespace PixelVision8.Engine.Audio
         /// <summary>
         ///     Plays the sound at a specific frequency.
         /// </summary>
+        /// <param name="soundData"></param>
         /// <param name="frequency"></param>
-        void Play(string param, float? frequency = null);
+        void Play(SoundData soundData, float? frequency = null);
 
         /// <summary>
         ///     Stops the current sound from playing

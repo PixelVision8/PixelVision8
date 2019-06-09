@@ -45,7 +45,8 @@ namespace PixelVision8.Runner.Services
             "png",
             "lua",
             "json",
-            "txt"
+            "txt",
+            "wav"
         };
 
 //        protected FileSystemMounter fileSystem;
@@ -515,11 +516,27 @@ namespace PixelVision8.Runner.Services
         public Dictionary<string, byte[]> ConvertDiskFilesToBytes(IFileSystem disk)
         {
             var files = new Dictionary<string, byte[]>();
-            var tmpFiles = disk.GetEntities(WorkspacePath.Root);
-
-            var list = from p in tmpFiles
+            
+            // Get the root files
+            List<WorkspacePath> list = (from p in disk.GetEntities(WorkspacePath.Root)
                 where fileExtensions.Any(val => p.EntityName.EndsWith(val))
-                select p;
+                select p).ToList();
+            
+            // TODO this is an example of how we can have other files in folders and import them in.
+            
+            // Look for any wav files in the samples folder
+            
+            // Samples Directory
+//            var samplesPath = WorkspacePath.Root.AppendDirectory("Samples"); // TODO this should probably not be hard coded
+//            
+//            // Check if the directory exists
+//            if (disk.Exists(samplesPath))
+//            {
+//                // Get all the wav files in the samples folder
+//                list = list.Concat(from p in disk.GetEntities(samplesPath) where p.EntityName.EndsWith("wav") select p).ToList();
+//            }
+
+            // Loop through all the files and convert them into binary data to be used by other parser
 
             foreach (var file in list)
                 // TODO Track if file is critical
@@ -530,8 +547,10 @@ namespace PixelVision8.Runner.Services
                         fileStream.CopyTo(memoryStream);
                         fileStream.Close();
                     }
-
-                    files.Add(file.EntityName, memoryStream.ToArray());
+    
+//                    Console.WriteLine("Add File " + file.Path.Substring(1));
+                    
+                    files.Add(file.Path.Substring(1), memoryStream.ToArray());
                 }
 
             return files;

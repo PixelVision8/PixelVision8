@@ -24,7 +24,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Microsoft.Xna.Framework.Audio;
+using PixelVision8.Engine.Data;
 using PixelVision8.Runner.Data;
 
 namespace PixelVision8.Engine.Audio
@@ -187,22 +189,51 @@ namespace PixelVision8.Engine.Audio
         ///     Plays the sound. If the parameters are dirty, synthesises sound as it plays, caching it for later.
         ///     If they're not, plays from the cached sound. Won't play if caching asynchronously.
         /// </summary>
-        public void Play(string param, float? frequency = null)
+        public void Play(SoundData soundData, float? frequency = null)
         {
             
+            // Stop any playing sound
             Stop();
-
-            parameters.SetSettingsString(param);
-
-            if (frequency.HasValue)
-                parameters.startFrequency = frequency.Value;
             
-            if (_params.invalid)
+            // Clear the last sound instance
+            _soundInstance = null;
+
+            // See if this is a wav
+            if (soundData.isWav)
             {
-                CacheSound();
+                if (waveType == WaveType.Sample)
+                {
+                    using (var stream = new MemoryStream(soundData.bytes))
+                    {
+                        var soundEffect = SoundEffect.FromStream(stream);
+
+                        var param = new SfxrParams();
+                        param.SetSettingsString(soundData.param);
+                        
+                        // TODO This should be cached?
+                        _soundInstance = soundEffect.CreateInstance();
+                        _soundInstance.Volume = param.masterVolume;
+                        
+                    }
+                }
+            }
+            else
+            {
+
+                parameters.SetSettingsString(soundData.param);
+
+                if (frequency.HasValue)
+                    parameters.startFrequency = frequency.Value;
+                
+                if (_params.invalid)
+                {
+                    CacheSound();
+                }
+            
             }
 
-            _soundInstance.Play();
+            // Only play if there is a sound instance
+            _soundInstance?.Play();
         }
 
         /// <summary>

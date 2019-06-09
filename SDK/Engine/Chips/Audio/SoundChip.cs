@@ -19,23 +19,17 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Audio;
+using PixelVision8.Engine.Data;
 
 namespace PixelVision8.Engine.Chips
 {
 
-    public class SoundData : AbstractData
-    {
-        public string name { get; set; }
-        public string param { get; set; }
-
-        public SoundData(string name, string param = "")
-        {
-            this.name = name;
-            this.param = param;
-        }
-    }
+    
     
     /// <summary>
     ///     The <see cref="SoundChip" /> is responsible for playing back sound
@@ -157,7 +151,8 @@ namespace PixelVision8.Engine.Chips
 
 //            channel = sounds[index];
 
-            channel.Play(sounds[index].param, frequency);
+            channel.Play(sounds[index], frequency);
+            
         }
 
         public bool IsChannelPlaying(int channelID)
@@ -244,7 +239,21 @@ namespace PixelVision8.Engine.Chips
         {
             var channel = channels[channelID];
 
-            channel.Play(data, frequency);
+            channel.Play(new SoundData("untitled", data), frequency);
+        }
+
+        public void AddSample(string name, byte[] bytes)
+        {
+            for (int i = 0; i < totalSounds; i++)
+            {
+                var tmpSound = sounds[i];
+
+                if (tmpSound.name == name)
+                {
+                    sounds[i].bytes = bytes;
+                }
+            }
+
         }
     }
 }

@@ -32,6 +32,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Keys.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\RawAudioData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\SongData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\SoundData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\TextureData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\TileData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\TrackData.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TilemapJsonParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TilemapParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\GameRunner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\WavParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LoadService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LogService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SaveFlags.cs" />

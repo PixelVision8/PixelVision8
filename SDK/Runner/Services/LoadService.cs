@@ -18,6 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -572,12 +573,14 @@ namespace PixelVision8.Runner.Services
 
                 AddParser(new SystemParser(targetEngine, fileContents));
 
-//                var jsonParser = new SystemParser(fileContents, targetEngine);
-//                jsonParser.CalculateSteps();
-//                
-//                while (jsonParser.completed == false)
-//                    jsonParser.NextStep();
             }
+            
+            // TODO go through all wav files that were loaded and pass them off to the Sample parser
+            var wavFiles = (from p in files where p.Key.EndsWith("wav") select p).ToDictionary(x => x.Key, x => x.Value);
+
+            AddParser(new WavParser(targetEngine, wavFiles));
+            
+//            Console.WriteLine("Selecting wavs " + wav.ToList().Count);
         }
 
         private void LoadMusic(Dictionary<string, byte[]> files)
