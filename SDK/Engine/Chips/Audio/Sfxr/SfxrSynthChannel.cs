@@ -201,7 +201,7 @@ namespace PixelVision8.Engine.Audio
             // See if this is a wav
             if (soundData.isWav)
             {
-                if (waveType == WaveType.Sample)
+                if (_waveLock == WaveType.Sample || _waveLock == WaveType.None)
                 {
                     using (var stream = new MemoryStream(soundData.bytes))
                     {
@@ -768,61 +768,4 @@ namespace PixelVision8.Engine.Audio
         }
     }
 
-    /// <summary>
-    ///     Pink Number
-    ///     -----------
-    ///     From BFXR
-    ///     Class taken from http://www.firstpr.com.au/dsp/pink-noise/#Filtering
-    /// </summary>
-//    internal class PinkNumber
-//    {
-//        private int diff;
-//        private int i;
-//        private int key;
-//        private int last_key;
-//        private readonly int max_key;
-//        private readonly Random randomGenerator;
-//        private readonly uint range;
-//
-//        private readonly float rangeBy5;
-//        private uint sum;
-//        private readonly uint[] white_values;
-//
-//        public PinkNumber()
-//        {
-//            max_key = 0x1f; // Five bits set
-//            range = 128;
-//            rangeBy5 = range / 5f;
-//            key = 0;
-//            white_values = new uint[5];
-//            randomGenerator = new Random();
-//            for (i = 0; i < 5; i++) white_values[i] = (uint) (randomGenerator.NextDouble() % 1 * rangeBy5);
-//        }
-//
-//        public float getNextValue()
-//        {
-//            // Returns a number between -1 and 1
-//            last_key = key;
-//            sum = 0;
-//
-//            key++;
-//            if (key > max_key) key = 0;
-//
-//            // Exclusive-Or previous value with current value. This gives
-//            // a list of bits that have changed.
-//            diff = last_key ^ key;
-//            sum = 0;
-//            for (i = 0; i < 5; i++)
-//            {
-//                // If bit changed get new random number for corresponding
-//                // white_value
-//                if ((diff & (1 << i)) > 0) white_values[i] = (uint) (randomGenerator.NextDouble() % 1 * rangeBy5);
-//                ;
-//                sum += white_values[i];
-//            }
-//
-//            return sum / 64f - 1f;
-//        }
-//        
-//    }
 }

@@ -22,21 +22,25 @@ namespace PixelVision8.Runner.Parsers
         {
             base.CalculateSteps();
             steps.Add(ParseWavData);
+            steps.Add(ConfigureSamples);
         }
 
         public void ParseWavData()
         {
 
-            
             foreach (var file in files)
             {
                 var name = file.Key.Replace(".wav", "");
                 soundChip.AddSample(name, file.Value);
-                
-                Console.WriteLine("Parsed Wav " + name);
-                //TODO add audio to sound chip
-                
             }
+            
+            currentStep++;
+        }
+        
+        public void ConfigureSamples()
+        {
+
+            soundChip.RefreshSamples();
             
             currentStep++;
         }

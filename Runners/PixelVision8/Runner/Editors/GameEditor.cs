@@ -26,6 +26,7 @@ using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Audio;
 using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Data;
 using PixelVision8.Engine.Services;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Chips;
@@ -691,7 +692,7 @@ namespace PixelVision8.Runner.Editors
 
             return tileData;
         }
-
+        
         public void RebuildTilemap()
         {
             gameChip.RebuildTilemap();
@@ -1846,8 +1847,9 @@ namespace PixelVision8.Runner.Editors
         /// <param name="id"></param>
         public void NewSound(int id)
         {
-            var settings = new SfxrSynth().parameters;
-            gameChip.Sound(id, settings.GetSettingsString());
+//            var settings = new SfxrSynth().parameters;
+// TODO I don't like that this is a static value on the SoundData class
+            gameChip.Sound(id, SoundData.DEFAULT_SOUND_PARAM);//settings.GetSettingsString());
         }
 
         /// <summary>
@@ -1857,7 +1859,12 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public string SoundLabel(int index, string value = null)
         {
-            if (value != null) soundChip.UpdateLabel(index, value);
+            if (value != null)
+            {
+                soundChip.UpdateLabel(index, value);
+
+                soundChip.RefreshSamples();
+            }
 
             return soundChip.ReadLabel(index);
         }
@@ -1903,6 +1910,11 @@ namespace PixelVision8.Runner.Editors
 //
 //            return musicChip.activeTrackerData.songName;
 //        }
+
+        public bool IsWav(int id)
+        {
+            return soundChip.ReadSound(id).isWav;
+        }
 
         /// <summary>
         /// </summary>

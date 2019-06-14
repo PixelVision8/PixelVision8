@@ -223,7 +223,7 @@ namespace PixelVision8.Engine.Chips
         }
         
         /// <summary>
-        ///     This helper method allows you to pass raw SFXR string data to the sound chip for playback. It works just
+        ///     This helper method allows you to pass raw     SFXR string data to the sound chip for playback. It works just
         ///     like the normal PlaySound() API but accepts a string instead of a sound ID. Calling PlayRawSound() could
         ///     be expensive since the sound effect data is not cached by the engine. It is mostly used for sound effects
         ///     in tools and shouldn't be called when playing a game.
@@ -242,18 +242,35 @@ namespace PixelVision8.Engine.Chips
             channel.Play(new SoundData("untitled", data), frequency);
         }
 
+        private Dictionary<string, byte[]> soundBank = new Dictionary<string, byte[]>();
+        
+        
         public void AddSample(string name, byte[] bytes)
         {
+            
+            // Add the wav sample to the sound bank
+            if (soundBank.ContainsKey(name))
+            {
+                soundBank[name] = bytes;
+            }
+            else
+            {
+                soundBank.Add(name, bytes);
+            }
+            
+        }
+
+        /// <summary>
+        ///     Goes through the sounds and the sound bank and adds the sample byte data
+        /// </summary>
+        public void RefreshSamples()
+        {
+            
             for (int i = 0; i < totalSounds; i++)
             {
-                var tmpSound = sounds[i];
-
-                if (tmpSound.name == name)
-                {
-                    sounds[i].bytes = bytes;
-                }
+                var name = sounds[i].name;
+                sounds[i].bytes = soundBank.ContainsKey(name) ? soundBank[name] : null;
             }
-
         }
     }
 }
