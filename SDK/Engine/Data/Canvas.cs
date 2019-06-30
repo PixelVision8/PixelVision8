@@ -98,41 +98,35 @@ namespace PixelVision8.Engine
             // TODO need to rescale the pixel data if scale is larger than 1
             if (scale != 1)
             {
-                var oldSize = pixels.Length;
 
-                var oldData = new int[oldSize];
+                var newWidth = width * scale;
+                var newHeight = height * scale;
 
-                Array.Copy(pixels, oldData, oldSize);
-
-                var newSpriteWidth = _width * scale;
-                var newSpriteHeight = _height * scale;
-
-                var newSize = newSpriteWidth * newSpriteHeight;
-
-                Array.Resize(ref tmpPixelData, newSize);
-
-                for (var i = 0; i < newSize; i++)
+                var w = width;
+                var w2 = newWidth;
+                var texColors = GetPixels();
+                var newColors = new int[newWidth * newHeight];
+                var ratioX = (float) width / newWidth;
+                var ratioY = (float) height / newHeight;
+            
+                for (var y1 = 0; y1 < newHeight; y1++)
                 {
-                    int tmpX, tmpY, oldIndex;
-
-                    // Calculate the next x,y position
-                    tmpX = i % newSpriteWidth;
-                    tmpY = i / newSpriteWidth;
-
-                    // Convert to the old index
-                    oldIndex = tmpX / scale + tmpY / scale * 8;
-
-                    // Copy over the pixel data
-                    tmpPixelData[i] = pixels[oldIndex];
+                    var thisY = (int) (ratioY * y1) * w;
+                    var yw = y1 * w2;
+                    for (var x1 = 0; x1 < w2; x1++)
+                    {
+                        newColors[yw + x1] = texColors[(int) (thisY + ratioX * x1)];
+                    }
                 }
 
-                gameChip.DrawPixels(tmpPixelData, x, y, newSpriteWidth, newSpriteHeight, false, false, drawMode);
+                gameChip.DrawPixels(newColors, x, y, newWidth, newHeight, false, false, drawMode);
             }
             else
             {
                 gameChip.DrawPixels(pixels, x, y, _width, _height, false, false, drawMode);
             }
         }
+
 
         /// <summary>
         /// </summary>

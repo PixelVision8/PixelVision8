@@ -2208,12 +2208,24 @@ namespace PixelVision8.Runner.Editors
         /// <param name="flipH"></param>
         /// <param name="flipV"></param>
         /// <returns></returns>
-        public int[] ReadSpriteData(int id, bool flipH, bool flipV)
+        public int[] ReadSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
         {
-            var pixelData = Sprite(id);
+
+//            var scale = 1;
+
+            var blockSizeX = scaleX * spriteChip.width;
+            var blockSizeY = scaleY * spriteChip.height;
+
+            var pixelData = new int[blockSizeX * blockSizeY];
+
+            var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
+
+            spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
+            
+//            var pixelData = Sprite(id);
 
             if (flipH || flipV)
-                SpriteChipUtil.FlipSpriteData(ref pixelData, spriteChip.width, spriteChip.height, flipH, flipV);
+                SpriteChipUtil.FlipSpriteData(ref pixelData, blockSizeX, blockSizeY, flipH, flipV);
 
             return pixelData;
         }
@@ -2223,8 +2235,32 @@ namespace PixelVision8.Runner.Editors
         /// <param name="id"></param>
         /// <param name="flipH"></param>
         /// <param name="flipV"></param>
-        public void WriteSpriteData(int id, bool flipH, bool flipV)
+        public void WriteSpriteData(int id, int[] pixelData, int scaleX = 1, int scaleY = 1)
         {
+            
+            var blockSizeX = scaleX * spriteChip.width;
+            var blockSizeY = scaleY * spriteChip.height;
+    
+            var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
+
+//            var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
+    
+//            Console.WriteLine("Write sprite " + pos.X +" "+pos.Y);
+            spriteChip.texture.SetPixels(pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY, pixelData);
+            
+            
+            // TODO need to invalidate the cached sprite data
+            
+            
+//            spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSize, blockSize);
+//            
+////            var pixelData = Sprite(id);
+//
+//            if (flipH || flipV)
+//                SpriteChipUtil.FlipSpriteData(ref pixelData, blockSize, blockSize, flipH, flipV);
+            
+            // TODO need to invalidate all the sprites that are within the bounds of the update
+            
             // TODO need to make sure the sprite data is flipped correctly before being saved
         }
 
