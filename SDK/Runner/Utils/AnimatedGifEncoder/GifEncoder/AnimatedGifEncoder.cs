@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Workspace;
 
@@ -52,8 +53,24 @@ namespace GifEncoder
 
         public void CreatePalette(DisplayChip displayChip, ColorChip colorChip)
         {
+
+	        var allColors = colorChip.colors;
+	        var uniqueColors = new List<Color>()
+	        {
+		        ColorUtils.HexToColor(colorChip.maskColor),
+		        Color.Black,
+		        Color.White
+	        };
 	        
-	        currentFramePixels = colorChip.colors;
+	        for (int i = 0; i < allColors.Length; i++)
+	        {
+		        if (uniqueColors.IndexOf(allColors[i]) == -1)
+		        {
+			        uniqueColors.Add(allColors[i]);
+		        }
+	        }
+	        
+	        currentFramePixels = uniqueColors.ToArray();
 	        width = currentFramePixels.Length;
 	        height = 1;
 	        
@@ -105,7 +122,7 @@ namespace GifEncoder
             
 //            WritePixels(); // encode and write pixel data
             
-            firstFrame = false;
+            
 		}
 	
 		
@@ -130,7 +147,7 @@ namespace GifEncoder
                     Math.Abs(pixels[r] - visiblePixels[r]) > ChangeDelta ||
                     Math.Abs(pixels[g] - visiblePixels[g]) > ChangeDelta ||
                     Math.Abs(pixels[b] - visiblePixels[b]) > ChangeDelta;
-
+	
                 int index;
                 if (pixelRequired)
                 {
@@ -244,6 +261,8 @@ namespace GifEncoder
 		{
 			for (int i = 0; i < frameData.Count; i++)
 			{
+				firstFrame = i == 0;
+				
 				currentFramePixels = frameData[i];
 				GetImagePixels(); // convert to correct format if necessary
 				AnalyzePixels(); // build color table & map pixels
@@ -253,6 +272,8 @@ namespace GifEncoder
 			
 				LZWEncoder encoder = new LZWEncoder(width, height, indexedPixels, colorDepth);
 				encoder.Encode(fs);
+
+				
 			}
 			
 		}
@@ -314,6 +335,8 @@ namespace GifEncoder
 
 	        for (int i = 0; i < frameData.Count; i++)
 	        {
+		        firstFrame = i == 0;
+		        
 		        currentFramePixels = frameData[i];
 		        GetImagePixels(); // convert to correct format if necessary
 		        AnalyzePixels(); // build color table & map pixels
