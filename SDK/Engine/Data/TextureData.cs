@@ -139,6 +139,18 @@ namespace PixelVision8.Engine
 
             return tmpPixels;
         }
+        
+        public virtual int[] GetPixels(int x, int y, int blockWidth, int blockHeight)
+        {
+            tmpPixels = new int[blockWidth * blockHeight];
+            
+            CopyPixels(ref tmpPixels, x, y, blockWidth, blockHeight);
+            
+//            Array.Copy(pixels, tmpPixels, pixels.Length);
+
+            return tmpPixels;
+        }
+        
 
         /// <summary>
         ///     This replaces all the pixels in the TextureData with the supplied

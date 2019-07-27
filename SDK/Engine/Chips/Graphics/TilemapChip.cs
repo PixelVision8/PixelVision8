@@ -18,6 +18,8 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
+
 namespace PixelVision8.Engine.Chips
 {
     /// <summary>
@@ -130,8 +132,10 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void Resize(int columns, int rows, bool clear = true)
         {
-            this.columns = columns;
-            this.rows = rows;
+            
+            // Maps need to be divisible by  32 which is the largest meta tile size
+            this.columns = columns;//(int)Math.Ceiling(columns/ 4f) * 4;
+            this.rows = rows;//(int)Math.Ceiling(rows/ 4f) * 4;
 
             // Create a new array for each tile's data
             tiles = new TileData[total];

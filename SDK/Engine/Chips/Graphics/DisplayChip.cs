@@ -231,6 +231,7 @@ namespace PixelVision8.Engine.Chips
 
             total = width * height;
 
+            
             for (i = 0; i < total; i++)
             {
                 colorID = pixelData?[i] ?? 0;
@@ -266,6 +267,7 @@ namespace PixelVision8.Engine.Chips
                     pixels[index] = cachedColors[colorID];
                 }
             }
+            
         }
 
         public Color[] VisiblePixels()

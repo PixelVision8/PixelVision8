@@ -2449,7 +2449,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         public void CopyCanvasToDisplay(Canvas srcCanvas, int x, int y, int width, int height, int colorOffset,
-            int maskColor = -1)
+            int maskColor = -1, int offsetX =0, int offsetY =0, bool useScrollPos = true)
         {
             // Only render when a canvas exists
 //            if (tmpCanvas == null)
@@ -2459,8 +2459,8 @@ namespace PixelVision8.Runner.Editors
 
             // Get scroll position for tmpX/Y position
             var scrollPos = gameChip.ScrollPosition();
-            var tmpX = scrollPos.X;
-            var tmpY = scrollPos.Y;
+            var tmpX = scrollPos.X + offsetX;
+            var tmpY = scrollPos.Y + offsetY;
 
             // Copy the pixels from the canvas
             srcCanvas.CopyPixels(ref tmpPixelData, tmpX, tmpY, width, height);
