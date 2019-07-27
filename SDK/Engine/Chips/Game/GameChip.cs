@@ -1774,7 +1774,7 @@ namespace PixelVision8.Engine.Chips
         /// <returns>
         ///     Returns a vector of the tile maps size in tiles where x and y are the columns and rows of the tilemap.
         /// </returns>
-        public Point TilemapSize(int? width = null, int? height = null)
+        public Point TilemapSize(int? width = null, int? height = null, bool clear = false)
         {
             var size = new Point(tilemapChip.columns, tilemapChip.rows);
 
@@ -1793,7 +1793,7 @@ namespace PixelVision8.Engine.Chips
             }
 
             if (resize)
-                tilemapChip.Resize(size.X, size.Y);
+                tilemapChip.Resize(size.X, size.Y, clear);
 
             return size;
         }

@@ -82,12 +82,7 @@ namespace PixelVision8.Engine
         /// <returns></returns>
         public virtual int GetPixel(int x, int y)
         {
-            // Wrap x,y values so they don't go out of bounds
-//            x = x % width;
-//            y = y % height;
-//
-//            return pixels[x + width * y];
-
+            
             // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
             var size = _height;
             y = (y % size + size) % size;
@@ -106,8 +101,6 @@ namespace PixelVision8.Engine
         /// <param name="color"></param>
         public virtual void SetPixel(int x, int y, int color)
         {
-//            if (color == -1)
-//                return;
 
             // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
             var size = _height;
@@ -118,11 +111,7 @@ namespace PixelVision8.Engine
 
             var index = x + size * y;
 
-            // TODO this should never be out of range
-//            if(index > -1 && index < pixels.Length)
             pixels[index] = color;
-//            else
-//                Debug.Log("index "+ index + " "+x+ "," + y);
 
             Invalidate();
         }
@@ -245,58 +234,16 @@ namespace PixelVision8.Engine
             var tmpWidth = width ?? this.width;
             var tmpHeight = height ?? this.height;
 
-//            if (colorRef == -1)
-//            {
-
             var total = tmpWidth * tmpHeight;
 
             tmpPixels = new int[total];
 
             for (var i = 0; i < total; i++) tmpPixels[i] = colorRef;
 
-//            }
-
-
             SetPixels(x, y, tmpWidth, tmpHeight, tmpPixels);
-
-//            
-//            MergePixels(x, y, width ?? this.width, height ?? this.height, tmpPixels,
-//                false, false, 0, false);
-
-
-//            total = pixels.Length;
-//            
-//            for (int i = total - 1; i > -1; i--)
-//            {
-//                pixels[i] = colorRef;
-//            }
 
             Invalidate();
         }
-
-        /// <summary>
-        ///     This replaces all the pixels in a specific area of the TextureData.
-        /// </summary>
-        /// <param name="x">
-        ///     The x position to start at. 0 is the left of the texture.
-        /// </param>
-        /// <param name="y">
-        ///     The y position to start at. 0 is the top of the texture.
-        /// </param>
-        /// <param name="blockWidth">
-        ///     The <see cref="width" /> of the area to replace.
-        /// </param>
-        /// <param name="blockHeight">
-        ///     The <see cref="height" /> of the area to replace.
-        /// </param>
-        /// <param name="pixels">The pixel data to be used.</param>
-        /// <param name="colorOffset"></param>
-        /// <param name="ignoreTransparent"></param>
-//        public void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels,
-//            int colorOffset = 0, bool ignoreTransparent = true)
-//        {
-//            MergePixels(x, y, blockWidth, blockHeight, pixels, false, false, colorOffset, ignoreTransparent);
-//        }
 
         /// <summary>
         ///     This replaces all the pixels in a specific area of the TextureData.

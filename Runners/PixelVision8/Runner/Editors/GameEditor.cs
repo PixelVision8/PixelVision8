@@ -698,9 +698,9 @@ namespace PixelVision8.Runner.Editors
             gameChip.RebuildTilemap();
         }
 
-        public Point TilemapSize(int? width = null, int? height = null)
+        public Point TilemapSize(int? width = null, int? height = null, bool clear = false)
         {
-            return gameChip.TilemapSize(width, height);
+            return gameChip.TilemapSize(width, height, clear);
         }
 
         public void UpdateTiles(int column, int row, int columns, int[] ids, int? colorOffset = null, int? flag = null)

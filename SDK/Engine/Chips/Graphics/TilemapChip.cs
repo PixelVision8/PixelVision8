@@ -1,4 +1,4 @@
-﻿//   
+﻿﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -132,20 +132,37 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void Resize(int columns, int rows, bool clear = true)
         {
-            
-            // Maps need to be divisible by  32 which is the largest meta tile size
-            this.columns = columns;//(int)Math.Ceiling(columns/ 4f) * 4;
-            this.rows = rows;//(int)Math.Ceiling(rows/ 4f) * 4;
 
             // Create a new array for each tile's data
-            tiles = new TileData[total];
+            var newTiles = new TileData[columns * rows];
+            
+            var row = 0;
+            
+            for (var i = 0; i < newTiles.Length; i++) {
 
-            // Create all of the tiles we need
-            for (var i = 0; i < total; i++) tiles[i] = new TileData(i);
+                var c = i % columns;
+                var r = row;
 
-            if (clear)
-                Clear();
+                if (c < this.columns && r < this.rows && clear == false)
+                {
+                    newTiles[i] = GetTile(c, r);
+                }
+                else
+                {
+                    newTiles[i] = new TileData(i);
+                }
+                
+                if (c == (columns - 1)) {
+                    row++;
+                }
 
+            }
+           
+            // Save the new tilemap data
+            this.columns = columns;
+            this.rows = rows;
+            tiles = newTiles;
+            
             Invalidate();
         }
 

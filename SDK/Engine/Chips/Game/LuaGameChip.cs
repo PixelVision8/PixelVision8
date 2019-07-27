@@ -199,7 +199,7 @@ namespace PixelVision8.Engine.Chips
 
             luaScript.Globals["RebuildTilemap"] = new Action(RebuildTilemap);
                 
-            luaScript.Globals["TilemapSize"] = new Func<int?, int?, Point>(TilemapSize);
+            luaScript.Globals["TilemapSize"] = new Func<int?, int?, bool, Point>(TilemapSize);
             luaScript.Globals["Tile"] = new Func<int, int, int?, int?, int?, bool?, bool?, TileData>(Tile);
             luaScript.Globals["UpdateTiles"] = new Action<int, int, int, int[], int?, int?>(UpdateTiles);
             luaScript.Globals["Flag"] = new Func<int, int, int?, int> (Flag);
