@@ -146,6 +146,7 @@ namespace PixelVision8.Engine.Chips
                 if (c < this.columns && r < this.rows && clear == false)
                 {
                     newTiles[i] = GetTile(c, r);
+                    newTiles[i].index = i;
                 }
                 else
                 {
