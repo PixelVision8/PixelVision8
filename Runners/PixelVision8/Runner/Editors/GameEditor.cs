@@ -708,6 +708,83 @@ namespace PixelVision8.Runner.Editors
             gameChip.UpdateTiles(column, row, columns, ids, colorOffset, flag);
         }
 
+        public void FloodFillTilemap(int value, int column, int row, int mode = 0, int scaleX = 1, int scaleY = 1, int colorOffset = -1)
+        {
+            var canvas = NewCanvas(tilemapChip.columns, tilemapChip.rows);
+
+            var tiles = tilemapChip.tiles;
+            
+            var total = canvas.pixels.Length;
+
+            // Loop through all the tiles and build the pixels
+            for (int i = 0; i < total; i++)
+            {
+                canvas.pixels[i] = mode == 0 ? tiles[i].spriteID : tiles[i].flag;
+            }
+
+            
+            if (mode == 0)
+            {
+                // Build the pattern
+                var size = scaleX * scaleY;
+                var pattern = new int[size];
+                var spriteCols = 16;
+
+                var spritePos = value == -1 ? new Point(-1, -1) : gameChip.CalculatePosition(value, spriteCols);
+                    
+                for (int i = 0; i < size; i++)
+                {
+                    var offset = gameChip.CalculatePosition(i, scaleX);
+
+                    // TODO this is not right
+                    offset.X += spritePos.X;
+                    offset.Y += spritePos.Y;
+                    pattern[i] = value == -1
+                        ? value
+                        : (gameChip.CalculateIndex(offset.X, offset.Y, spriteCols) + 1) * -100;
+                }
+                
+                canvas.SetPattern(pattern, scaleX, scaleY);
+
+            }
+            else if (mode == 1)
+            {
+                canvas.SetPattern(new int[]{value}, 1, 1);
+            }
+            
+            canvas.FloodFill(column, row);
+            
+            // Copy the pixel data back to the tilemap
+            for (int i = 0; i < total; i++)
+            {
+                if (mode == 0)
+                {
+                    var tile = tiles[i];
+
+                    if (canvas.pixels[i] < -1)
+                    {
+                        var pixel = ((canvas.pixels[i]) / -100) - 1;
+                        
+                        tile.spriteID = pixel;
+
+                        if (colorOffset > -1)
+                        {
+                            tile.colorOffset = colorOffset;
+                        }
+                    }
+                    
+                        
+                }
+                else if (mode == 1)
+                {
+                    tiles[i].flag = canvas.pixels[i];
+                }
+            }
+            
+            tilemapChip.Invalidate();
+        }
+        
+
         public int[] ConvertTextToSprites(string text, string fontName = "default")
         {
             throw new NotImplementedException();
@@ -2208,7 +2285,19 @@ namespace PixelVision8.Runner.Editors
         /// <param name="flipH"></param>
         /// <param name="flipV"></param>
         /// <returns></returns>
-        public int[] ReadSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
+        public int[] ReadGameSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
+        {
+
+            return ReadSpriteData(spriteChip, id, scaleX, scaleY, flipH, flipV);
+        }
+        
+        public int[] ReadToolSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
+        {
+
+            return ReadSpriteData(runner.activeEngine.spriteChip, id, scaleX, scaleY, flipH, flipV);
+        }
+        
+        private int[] ReadSpriteData(SpriteChip spriteChip, int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
         {
 
 //            var scale = 1;
