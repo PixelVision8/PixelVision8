@@ -89,15 +89,15 @@ namespace PixelVision8.Engine
         ///     Fast blit to the display through the draw request API
         /// </summary>
         /// <param name="drawMode"></param>
-        public void DrawPixels(int x = 0, int y = 0, DrawMode drawMode = DrawMode.TilemapCache, int scale = 1)
+        public void DrawPixels(int x = 0, int y = 0, DrawMode drawMode = DrawMode.TilemapCache, int scale = 1, int maskColor = -1, int maskColorID = -1)
         {
             // This only works when the canvas has a reference to the gameChip
             if (gameChip == null)
                 return;
 
             // TODO need to rescale the pixel data if scale is larger than 1
-            if (scale != 1)
-            {
+//            if (scale != 1)
+//            {
 
                 var newWidth = width * scale;
                 var newHeight = height * scale;
@@ -115,16 +115,19 @@ namespace PixelVision8.Engine
                     var yw = y1 * w2;
                     for (var x1 = 0; x1 < w2; x1++)
                     {
-                        newColors[yw + x1] = texColors[(int) (thisY + ratioX * x1)];
+
+                        var pixel = texColors[(int) (thisY + ratioX * x1)];
+                        
+                        newColors[yw + x1] = pixel == maskColorID ? maskColor : pixel;
                     }
                 }
 
                 gameChip.DrawPixels(newColors, x, y, newWidth, newHeight, false, false, drawMode);
-            }
-            else
-            {
-                gameChip.DrawPixels(pixels, x, y, _width, _height, false, false, drawMode);
-            }
+//            }
+//            else
+//            {
+//                gameChip.DrawPixels(pixels, x, y, _width, _height, false, false, drawMode);
+//            }
         }
 
 

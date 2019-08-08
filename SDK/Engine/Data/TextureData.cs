@@ -279,7 +279,7 @@ namespace PixelVision8.Engine
             int pixel;
             int srcX, srcY;
             for (var i = total - 1; i > -1; i--)
-            {
+            {    
                 pixel = pixels?[i] ?? -1;
 
                 if (pixel != -1 || ignoreTransparent != true)
