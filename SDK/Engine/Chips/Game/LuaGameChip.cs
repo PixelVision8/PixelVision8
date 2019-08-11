@@ -49,15 +49,11 @@ namespace PixelVision8.Engine.Chips
 
         protected virtual void RegisterLuaServices()
         {
-            // Override to add your own Lua services before the game starts
+            
         }
 
         #region Lifecycle
 
-        /// <summary>
-        ///     Init() is called when a game is loaded into memory and is ready to be played. Use this hook to initialize
-        ///     your game's logic. It is only called once.
-        /// </summary>
         public override void Init()
         {
             if (luaScript?.Globals["Init"] == null)

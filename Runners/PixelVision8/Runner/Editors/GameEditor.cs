@@ -109,7 +109,12 @@ namespace PixelVision8.Runner.Editors
 
         public bool invalid => _invalid;
 
-        //        [MoonSharpHidden]
+        
+        /// <summary>
+        ///     Helper method to build save flags.
+        /// </summary>
+        /// <param name="flags"></param>
+        /// <returns></returns>
         private SaveFlags BuildSaveFlags(SaveFlags[] flags)
         {
             // Since Lua doesn't know how to handle bit flags, we need to do the conversion on the C# side of things
@@ -123,12 +128,15 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
-        ///     This allows you to load files inside of the Workspace/Sandbox/ directory into the Game Editor. It
+        ///     This allows you to load game files inside of the Workspace directory into the Game Editor. It
         ///     accepts an array of SaveFlags enums which define what game files to load. Use this method to load only
         ///     what you need to edit to speed up parsing game data.
         /// </summary>
         /// <param name="flags">Supply an array of SaveFlags enums for each file you want to load into the Game Editor instance.</param>
         /// <returns>Returns a bool if the loading process was successful.</returns>
+        
+        // TODO should use workspace path as argument
+        
         public bool Load(string path, SaveFlags[] flags)
         {
 //            // If the path is not valid, return null
@@ -213,6 +221,10 @@ namespace PixelVision8.Runner.Editors
             ChangeColorMode();
         }
 
+        /// <summary>
+        ///     Returns a list of library paths
+        /// </summary>
+        /// <returns></returns>
         public string[] LibraryPaths()
         {
             var files = new Dictionary<string, byte[]>();
@@ -290,6 +302,7 @@ namespace PixelVision8.Runner.Editors
 
 //
         /// <summary>
+        ///     Allows you to save the current game you are editing. Pass in SaveFlags to define which files should be exported.
         /// </summary>
         /// <param name="flags"></param>
         public void Save(string path, SaveFlags[] flags)
@@ -314,6 +327,7 @@ namespace PixelVision8.Runner.Editors
 
 //
         /// <summary>
+        ///     Change the game's max size setting.
         /// </summary>
         /// <param name="size"></param>
         /// <returns></returns>
@@ -328,6 +342,11 @@ namespace PixelVision8.Runner.Editors
             return gameChip.maxSize;
         }
 
+        /// <summary>
+        ///     Change the game's save slot settings.
+        /// </summary>
+        /// <param name="total"></param>
+        /// <returns></returns>
         public int GameSaveSlots(int? total = null)
         {
             if (total.HasValue)
@@ -340,6 +359,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Lock or unlock the game specs.
         /// </summary>
         /// <param name="isLocked"></param>
         /// <returns></returns>
@@ -379,6 +399,7 @@ namespace PixelVision8.Runner.Editors
 //        }
 //
         /// <summary>
+        ///     Change the name of the game.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -397,7 +418,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
-        ///     This is read only, shouldn't be allowed to manually change a game's version since that only happens when saving
+        ///     Get the current version of the runner.
         /// </summary>
         /// <returns></returns>
         public string Version()
@@ -405,10 +426,6 @@ namespace PixelVision8.Runner.Editors
             return targetGame.GetMetaData("version", runner.systemVersion);
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
         public string Ext(string value = null)
         {
             if (value != null)
@@ -445,6 +462,12 @@ namespace PixelVision8.Runner.Editors
             colorChip.Clear();
         }
 
+        /// <summary>
+        ///     Get the total colors or change the limit for how many colors the color chip can store.
+        /// </summary>
+        /// <param name="ignoreEmpty"></param>
+        /// <param name="total"></param>
+        /// <returns></returns>
         public int TotalColors(bool ignoreEmpty = false, int? total = null)
         {
             if (total.HasValue)
@@ -460,6 +483,11 @@ namespace PixelVision8.Runner.Editors
             return gameChip.ColorsPerSprite();
         }
 
+        /// <summary>
+        ///     Get the maximum number or sprites or change it.
+        /// </summary>
+        /// <param name="total"></param>
+        /// <returns></returns>
         public int MaxSpriteCount(int? total)
         {
             if (total.HasValue) gameChip.MaxSpriteCount(total.Value);
@@ -468,6 +496,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Get the display size or change it.
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
@@ -505,6 +534,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Get the over scan value or change it
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -565,6 +595,11 @@ namespace PixelVision8.Runner.Editors
         }
 
 
+        /// <summary>
+        ///     Get the total number of songs or change it
+        /// </summary>
+        /// <param name="total"></param>
+        /// <returns></returns>
         public int TotalSongs(int? total = null)
         {
             if (total.HasValue)
@@ -583,6 +618,12 @@ namespace PixelVision8.Runner.Editors
             gameChip.PlayPattern(id, true);
         }
 
+        /// <summary>
+        ///     Get a song's name or change it
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public string SongName(int id, string value = null)
         {
             if (value != null) musicChip.songs[id].name = value;
@@ -597,6 +638,12 @@ namespace PixelVision8.Runner.Editors
             return musicChip.songs[id].start;
         }
 
+        /// <summary>
+        ///     Return the patterns in a song or change them.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="patterns"></param>
+        /// <returns></returns>
         public int[] SongPatterns(int id, int[] patterns = null)
         {
 
@@ -618,6 +665,13 @@ namespace PixelVision8.Runner.Editors
             return musicChip.totalSongs;
         }
 
+        /// <summary>
+        ///     Get the pattern at a position in the song or change it.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="position"></param>
+        /// <param name="newPattern"></param>
+        /// <returns></returns>
         public int SongPatternAt(int id, int position, int? newPattern)
         {
 
@@ -628,7 +682,13 @@ namespace PixelVision8.Runner.Editors
 
             return musicChip.songs[id].patterns[position];
         }
-
+        
+        /// <summary>
+        ///     Get the end position of a song or change it.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="pos"></param>
+        /// <returns></returns>
         public int SongEnd(int id, int? pos = null)
         {
             if (pos.HasValue) musicChip.songs[id].end = pos.Value;
@@ -661,6 +721,15 @@ namespace PixelVision8.Runner.Editors
             return gameChip.Sprite(id, data);
         }
 
+        /// <summary>
+        ///     Helper utility for flipping pixel data.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="flipH"></param>
+        /// <param name="flipV"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         public int[] FlipPixelData(int[] data, bool flipH = false, bool flipV = false, int width = 8, int height = 8)
         {
             SpriteChipUtil.FlipSpriteData(ref data, width, height, flipH, flipV);
@@ -708,6 +777,16 @@ namespace PixelVision8.Runner.Editors
             gameChip.UpdateTiles(column, row, columns, ids, colorOffset, flag);
         }
 
+        /// <summary>
+        ///     This allows you to fill a tilemap with a specific tile ID. It's used in the Tilemap editor. Define the position you want to start at and any tile matching that ID touching will be replaced.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="column"></param>
+        /// <param name="row"></param>
+        /// <param name="mode"></param>
+        /// <param name="scaleX"></param>
+        /// <param name="scaleY"></param>
+        /// <param name="colorOffset"></param>
         public void FloodFillTilemap(int value, int column, int row, int mode = 0, int scaleX = 1, int scaleY = 1, int colorOffset = -1)
         {
             var canvas = NewCanvas(tilemapChip.columns, tilemapChip.rows);
@@ -803,6 +882,12 @@ namespace PixelVision8.Runner.Editors
             return gameChip.Sound(id, data);
         }
 
+        /// <summary>
+        ///     Get the channel type or change it.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="typeID"></param>
+        /// <returns></returns>
         public int ChannelType(int id, int? typeID = null)
         {
 
@@ -819,329 +904,23 @@ namespace PixelVision8.Runner.Editors
         }
 
         #endregion
-
-//        
-//        #region APIs not availible to the Game Editor
-//
-//        // TODO remove this from the Interface?
-//        public void ReplaceColor(int index, int id)
-//        {
-//            throw new System.NotImplementedException();
-//        }
-//
-//        // TODO remove this from the interface
-//        public void Clear(int x = 0, int y = 0, int? width = null, int? height = null)
-//        {
-//            throw new System.NotImplementedException();
-//        }
-//
-//        public Vector Display(bool visible = true)
-//        {
-//            return gameChip.Display(visible);
-//        }
-//
-//        public Rect VisibleBounds()
-//        {
-//            throw new NotImplementedException();
-//        }
-//
-//        // TODO route the drawing APIs back through the current chip and not the game chip
-//        public void DrawPixels(int[] pixelData, int x, int y, int width, int height,
-//            DrawMode drawMode = DrawMode.Sprite,
-//            bool flipH = false, bool flipV = false, int colorOffset = 0)
-//        {
-//            throw new System.NotImplementedException();
-//        }
-//
-//        public void DrawPixel(int x, int y, int colorRef)
-//        {
-//            throw new System.NotImplementedException();
-//        }
-//
-//        public void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
-//            DrawMode drawMode = DrawMode.Sprite,
-//            int colorOffset = 0)
-//        {
-//            throw new System.NotImplementedException();
-//        }
-//
-//        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
-//            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
-//            Rect bounds = null)
-//        {
-//            throw new System.NotImplementedException();
-//        }
-//
-//        public void DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default",
-//            int colorOffset = 0, int spacing = 0)
-//        {
-//            throw new System.NotImplementedException();
-//        }
-//
-//        public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null,
-//            int? offsetY = null, DrawMode drawMode = DrawMode.Tile)
-//        {
-//            throw new System.NotImplementedException();
-//        }
-//
-//        public void DrawRect(int x, int y, int width, int height, int color = -1,
-//            DrawMode drawMode = DrawMode.Background)
-//        {
-//            throw new NotImplementedException();
-//        }
-//
-//        #endregion
-//
-//
-//
-//        #region Builds
-//
-//        public bool CreateExportArchive()
-//        {
-//            
-//            var path = workspace.WorkspacePath(WorkspaceFolders.TmpDir) + fullName;
-//            
-//            var files = workspace.FindValidGameFiles(workspace.WorkspacePath(WorkspaceFolders.CurrentGameDir));
-//
-//            // Create a zip
-//            workspace.CreateZip(workspace.ConvertToSystemPath(path), files);
-//                
-////            var archiveFlags = BuildArchiveFlags(flags);
-//
-////            var name = fullName;
-////
-////            var src = workspace.WorkspacePath(WorkspaceFolders.CurrentGameDir);
-////            var dest = workspace.WorkspacePath(WorkspaceFolders.TmpDir);
-////
-////            workspace.ArchiveDirectory(name, src, dest, "PixelVision8 Archive File - " + name);
-//
-////            var path = workspace.CreateArchive(name, workspace.WorkspacePath(WorkspaceFolders.TmpDir), archiveFlags);
-//
-//            return workspace.FileExists(path);
-//
-//        }
-//
-//        public string buildPath
-//        {
-//            get { return workspace.WorkspacePath(WorkspaceFolders.BuildsDir) + Name() + "/"; }
-//        }
-//
-//        public string tmpArchivePath
-//        {
-//            get
-//            {
-//                var path = workspace.WorkspacePath(WorkspaceFolders.TmpDir) + fullName;
-//
-//                return path;
-//            }
-//        }
-//
-//        /// <summary>
-//        /// 
-//        /// </summary>
-//        public void ClearBuilds()
-//        {
-//            if (workspace.DirectoryExists(buildPath))
-//            {
-//                workspace.DeleteDirectory(buildPath);
-//            }
-//        }
-//
-//        /// <summary>
-//        /// 
-//        /// </summary>
-//        /// <param name="target"></param>
-//        /// <returns></returns>
-//        public bool Export(string target)
-//        {
-////            var gameName = workspace.ReadGameData("name", "Untitled");
-//
-//            if (!workspace.DirectoryExists(buildPath))
-//            {
-//                workspace.CreateDirectory(buildPath);
-//            }
-//
-//            bool success;
-//
-//            if (!workspace.FileExists(tmpArchivePath))
-//            {
-//                success = CreateExportArchive();
-//
-//                if (!success)
-//                {
-//                    return false;
-//                }
-//
-//            }
-//
-//            try
-//            {
-//                switch (target)
-//                {
-//                    case "Archive":
-//                        workspace.CopyFile(tmpArchivePath, buildPath + fullName);
-//                        success = true;
-//                        break;
-//                    default:
-//
-//                        success = CreateExport(target);
-//
-//                        break;
-//                }
-//            }
-//            catch (Exception e)
-//            {
-////                Debug.Log("Export Error: " + e);
-//                success = false;
-//            }
-//
-////            if(success)
-////                Debug.Log("Build '"+target+"' for " + gameName );
-//
-//            return success;
-//        }
-//
-//        private bool CreateExport(string template)
-//        {
-//            
-//            // TODO this needs to use the new logic to only include files that are critical for the game to run
-//
-//            for (int i = 0; i < runnerPaths.Length; i++)
-//            {
-//                var fullPath = workspace.ConvertToSystemPath(runnerPaths[i]);
-//
-//                if (workspace.DirectoryExists(fullPath))
-//                {
-//                    var tempDir = fullPath + template + "/";
-//                    var destPath = buildPath + template + "/";
-//                    if (workspace.DirectoryExists(tempDir))
-//                    {
-//                        workspace.CopyAll(tempDir, destPath);
-//
-//                        var copyDest = destPath;
-//                        var fileName = fullName;
-//
-//                        var buildFile = destPath + "build.json";
-//
-//                        var exes = new string[0];
-//
-//                        if (workspace.FileExists(buildFile))
-//                        {
-//                            var buildJson =
-//                                Json.Deserialize(workspace.ReadTextFromFile(destPath + "build.json")) as
-//                                    Dictionary<string, object>;
-//
-//                            if (buildJson.ContainsKey("StreamingAssets"))
-//                            {
-//                                copyDest += buildJson["StreamingAssets"] as string;
-//                            }
-//
-//                            if (buildJson.ContainsKey("defaultName"))
-//                            {
-//                                fileName = buildJson["defaultName"] as string;
-//                            }
-//
-//                            if (buildJson.ContainsKey("executables"))
-//                            {
-//
-//                                var values = buildJson["executables"] as List<object>;
-//
-//                                exes = values.ConvertAll(x => (string) x).ToArray();
-//                            }
-//
-//                            workspace.FileDelete(buildFile);
-//
-//                        }
-//
-//                        // Create the path for the final file
-//                        copyDest += fileName;
-//
-//                        // If the file exits, delete the old one
-//                        if (workspace.FileExists(copyDest))
-//                        {
-//                            workspace.FileDelete(copyDest);
-//                        }
-//
-//                        // Copy over the new archive
-//                        workspace.CopyFile(buildPath + fullName, copyDest);
-//
-//                        if (exes != null)
-//                        {
-//                            foreach (var exe in exes)
-//                            {
-//
-//                                // TODO need to get extension
-//
-//                                var exePath = destPath + exe;
-//
-//
-////                                if (workspace.FileExists(exePath))
-////                                {
-//
-//                                var ext = workspace.GetFileExtension(exePath);
-//
-////                                    Debug.Log("Rename " + exe + " " + ext);
-//
-//                                if (ext == ".app")
-//                                {
-//                                    workspace.MoveDirectory(exePath, destPath + Name() + ext);
-//                                }
-//                                else
-//                                {
-//                                    workspace.MoveFile(exePath, destPath + Name() + ext);
-//
-//                                }
-////                                }
-//
-//                            }
-//                        }
-//
-//
-//                        return true;
-//                    }
-//
-//                }
-//
-//            }
-//
-//            return false;
-//        }
-//
-//        #endregion
-//
-//
-//        private string fullName
-//        {
-//            get { return Name() + Ext(); }
-//        }
-//
-//        //TODO this should be part of the bios. SHould be ordered in priority
-//        // Find runner folders
-//        string[] runnerPaths = new[]
-//        {
-//            "Workspace/Runners/",
-//            "System/GameCreatorPro/Runners/"
-//        };
-//
-//        public int TotalFlags(int? total)
-//        {
-//            if (total.HasValue)
-//            {
-//                tilemapChip.totalFlags = total.Value;
-//            }
-//
-//            return tilemapChip.totalFlags;
-//        }
-//
+        
+        /// <summary>
+        ///     Exports a song to a wav file.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="id"></param>
         public void ExportSong(string path, int id)
         {
 
-            
-            
             workspace.ExportSong(path, musicChip, soundChip, id);
         }
 
-//
+        /// <summary>
+        ///     Change the value if unique sprites are loaded in
+        /// </summary>
+        /// <param name="flag"></param>
+        /// <returns></returns>
         public bool UniqueSprites(bool? flag = null)
         {
             if (flag.HasValue)
@@ -1150,20 +929,16 @@ namespace PixelVision8.Runner.Editors
             return spriteChip.unique;
         }
 
-//        public bool UniqueColors(bool? flag = null)
-//        {
-//            if (flag.HasValue)
-//                colorChip.unique = flag.Value;
-//
-//            return colorChip.unique;
-//
-//        }
-
         public string[] Colors()
         {
             return colorChip.hexColors;
         }
 
+        /// <summary>
+        ///     Change the flag for importing tiles if they are not found in the Sprite Chip
+        /// </summary>
+        /// <param name="flag"></param>
+        /// <returns></returns>
         public bool ImportTiles(bool? flag = null)
         {
             if (flag.HasValue)
@@ -1172,7 +947,11 @@ namespace PixelVision8.Runner.Editors
             return tilemapChip.autoImport;
         }
 
-
+        /// <summary>
+        ///     Toggle the flag for debug color allowing the mask color to be shown instead of defaulting to the background color.
+        /// </summary>
+        /// <param name="flag"></param>
+        /// <returns></returns>
         public bool DebugColor(bool? flag = null)
         {
             if (flag.HasValue)
@@ -1181,49 +960,6 @@ namespace PixelVision8.Runner.Editors
             return colorChip.debugMode;
         }
 
-//        public long CalculateProjectSize(bool compressed = true)
-//        {
-//
-//            var files = workspace.FindValidGameFiles(workspace.WorkspacePath(WorkspaceFolders.CurrentGameDir));
-//
-//            var size = 0L;
-//            
-//            if (compressed)
-//            {
-//                // Figure out the tmp path for the directory
-//                var path = workspace.WorkspacePath(WorkspaceFolders.TmpDir) + "TmpSizeArchive.zip";
-//                
-//                // Create a zip
-//                workspace.CreateZip(workspace.ConvertToSystemPath(path), files);
-//                
-//                // Get the size of the zip
-//                size = workspace.GetFileSize(path);
-//                
-//                // Delete the tmp zip
-//                workspace.FileDelete(path);
-//
-//                // TODO need to zip up the files in the tmp directory to see the final size
-//            }
-//            else
-//            {
-//                
-//                foreach (var file in files)
-//                {
-//                    size += workspace.GetFileSize(file);
-//                }
-//                
-//            }
-//            
-//            
-//            
-//            return size;
-//        }
-//
-//        public string ConvertSizeToString(long value)
-//        {
-//            return workspace.ConvertSizeToString(value);
-//        }
-
         public string FlagColor(int id)
         {
             var flagColors = ((ColorChip) targetGame.GetChip(FlagColorParser.flagColorChipName, false)).hexColors;
@@ -1231,7 +967,10 @@ namespace PixelVision8.Runner.Editors
             return flagColors[id];
         }
 
-
+        /// <summary>
+        ///     Change the color mode of the game to edit specific color spaces in the Color Chip.
+        /// </summary>
+        /// <param name="mode"></param>
         public void ChangeColorMode(int mode = 0)
         {
             if (mode == 1)
@@ -1274,6 +1013,9 @@ namespace PixelVision8.Runner.Editors
         }
 
 
+        /// <summary>
+        ///     This will go through the Sprite Chip memory and remove any duplicate sprites it finds.
+        /// </summary>
         public void OptimizeSprites()
         {
 //            Console.WriteLine("Optimize sprites " + spriteChip.width + " " + spriteChip.height);
@@ -1321,11 +1063,20 @@ namespace PixelVision8.Runner.Editors
 //            spriteChip.texture = tmpSpriteChip.texture;
         }
 
+        /// <summary>
+        ///     Returns the total number of sprites in memory.
+        /// </summary>
+        /// <returns></returns>
         public int SpritesInRam()
         {
             return spriteChip.spritesInRam;
         }
 
+        /// <summary>
+        ///     Loads an image from a path in the Workspace.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public bool LoadImage(string path)
         {
             // Convert to a system path
@@ -1415,6 +1166,11 @@ namespace PixelVision8.Runner.Editors
             return true;
         }
 
+        /// <summary>
+        ///     Load a font from a path in the Workspace
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public bool LoadFont(string path)
         {
             // Convert to a system path
@@ -1492,7 +1248,12 @@ namespace PixelVision8.Runner.Editors
             return true;
         }
         
-        
+        /// <summary>
+        ///     Change a font's sprite data
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public int[] FontSprite(int id, int[] data = null)
         {
             if (data != null)
@@ -1508,6 +1269,12 @@ namespace PixelVision8.Runner.Editors
 
             return tmpSpriteData;
         }
+        
+        /// <summary>
+        ///     Save a font
+        /// </summary>
+        /// <param name="fontName"></param>
+        /// <param name="oldName"></param>
 
         public void SaveFont(string fontName, string oldName = null)
         {
@@ -1549,65 +1316,10 @@ namespace PixelVision8.Runner.Editors
             targetGame.SetMetaData(key, value);
         }
 
-//
-//        #region Controller APIs
-//
-//        public int CaptureKey(int[] values)
-//        {
-//            return controllerChip.CaptureKey(values);
-//        }
-//
-//        public int[] ReadButtonKeys(int player)
-//        {
-//            return controllerChip.ReadControllerKeys(player);
-//        }
-//
-//        public void UpdateControllerKey(int controllerID, int buttonID, int key)
-//        {
-//            var button = (Buttons) buttonID;
-//
-//            //workspace.UpdateControllerKey(controllerID, button, key);
-//            controllerChip.UpdateControllerKey(controllerID, new KeyboardButtonInput(button, key));
-//        }
-//
-//        public int ReadControllerKey(int controllerID, int buttonID)
-//        {
-//            return controllerChip.ReadControllerKey(controllerID, (Buttons) buttonID);
-//        }
-//
-//        public void Revert()
-//        {
-//            controllerChip.RevertControllerMapping();
-//        }
-//
-//        public void CaptureButton()
-//        {
-//            // TODO need to figure out how to connect this to the imput class and get the native system's controller values
-//            throw new NotImplementedException();
-////            var value = Input.GetAxis("Joystick 1 Up");
-////
-////            if (value > 0)
-////                Debug.Log("UP : " + value);
-//        }
-//
-//        public int ReadSystemKey(int id)
-//        {
-//            return controllerChip.ReadSystemKey(id);
-//        }
-//
-//        public void SaveController()
-//        {
-//            controllerChip.UpdateKeysInBios();
-//        }
-//
-//        #endregion
-//
-//
-//
-
         #region Colors
 
         /// <summary>
+        ///     Get or change the total number of colors per page
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
@@ -1620,14 +1332,9 @@ namespace PixelVision8.Runner.Editors
             return MathUtil.CeilToInt(activeColorChip.total / 64);
         }
 
-//        public bool PaletteMode(bool? active)
-//        {
-//            if (active.HasValue)
-//                colorChip.paletteMode = active.Value;
-//            
-//            return colorChip.paletteMode;
-//        }
-
+        /// <summary>
+        ///     Convert sprites in memory to palette colors, clamping the total colors in each sprite to 16
+        /// </summary>
         public void ReindexSprites()
         {
             // TODO each sprite needs to be clamped between the max colors per sprite
@@ -1704,16 +1411,6 @@ namespace PixelVision8.Runner.Editors
             spriteChip.texture.SetPixels(rawSpriteData);
         }
 
-//        public int colorsPerPalette(int? total)
-//        {
-//            if (total.HasValue)
-//            {
-//                colorChip.colorsPerPalette = total.Value;
-//            }    
-//
-//            return colorChip.colorsPerPalette;
-//        }
-
         /// <summary>
         ///     Special method to resize a tool's memory to allow it to store colors for the tool
         ///     and the game itself. Should make the color chip memory store 512 colors
@@ -1723,33 +1420,8 @@ namespace PixelVision8.Runner.Editors
             runner.activeEngine.colorChip.total = 512;
         }
 
-
         /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-//        public string[] SupportedColors()
-//        {
-//            try
-//            {
-//                return colorChip.supportedColors;
-//            }
-//            catch (Exception e)
-//            {
-//                var tmpColors = colorChip.hexColors.Distinct().ToList();
-//
-//                tmpColors.Remove(colorChip.maskColor);
-//                
-//                return tmpColors.ToArray();
-//            }
-//        }
-
-//        public int TotalSupportedColors()
-//        {
-//            return SupportedColors().Length;
-//        }
-
-        /// <summary>
+        ///     Change a game's mask color
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -1772,6 +1444,7 @@ namespace PixelVision8.Runner.Editors
         };
 
         /// <summary>
+        ///     Get or change the total sprite pages in memory
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
@@ -1783,6 +1456,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Get or change the colors per sprite
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
@@ -1844,6 +1518,7 @@ namespace PixelVision8.Runner.Editors
 //        }
 
         /// <summary>
+        ///     Get or change the total number of sounds
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
@@ -1855,6 +1530,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Get or change the total channels
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
@@ -1866,6 +1542,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Create a new sound from a template at a specific position in the sound chip's memory
         /// </summary>
         /// <param name="index"></param>
         /// <param name="template"></param>
@@ -1907,6 +1584,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Mutate a sound at a specific ID
         /// </summary>
         /// <param name="id"></param>
         public void Mutate(int id)
@@ -1920,6 +1598,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Create a new sound and clear an existing one.
         /// </summary>
         /// <param name="id"></param>
         public void NewSound(int id)
@@ -1930,6 +1609,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Get or change the sound label
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
@@ -1951,6 +1631,7 @@ namespace PixelVision8.Runner.Editors
         #region Music
 
         /// <summary>
+        ///     Get or change the total tracks
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
@@ -1962,6 +1643,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Get or change the total loops
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
@@ -1972,9 +1654,6 @@ namespace PixelVision8.Runner.Editors
             return musicChip.totalLoops;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="id"></param>
         public void LoadLoop(int id)
         {
             //TODO change this to load loop, all APIs should be loop based
@@ -1988,12 +1667,18 @@ namespace PixelVision8.Runner.Editors
 //            return musicChip.activeTrackerData.songName;
 //        }
 
+        /// <summary>
+        ///     Check to see if a sound is a wav file being read form the workspace.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public bool IsWav(int id)
         {
             return soundChip.ReadSound(id).isWav;
         }
 
         /// <summary>
+        ///     Modify a note
         /// </summary>
         /// <param name="track"></param>
         /// <param name="beat"></param>
@@ -2015,6 +1700,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Get or change the tempo value
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -2031,6 +1717,12 @@ namespace PixelVision8.Runner.Editors
             //workspace.InvalidateSave();
         }
 
+        /// <summary>
+        ///     Mute a track
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public bool MuteTrack(int track, bool? value = null)
         {
             if (value.HasValue) musicChip.activeTrackerData.tracks[track].mute = value.Value;
@@ -2038,6 +1730,12 @@ namespace PixelVision8.Runner.Editors
             return musicChip.activeTrackerData.tracks[track].mute;
         }
 
+        /// <summary>
+        ///     Change a track's SFX ID in the song generator
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public int ConfigTrackSFX(int track, int? id)
         {
             if (id.HasValue) songGenerator.trackSettings[track].sfxID = id.Value;
@@ -2045,6 +1743,12 @@ namespace PixelVision8.Runner.Editors
             return songGenerator.trackSettings[track].sfxID;
         }
 
+        /// <summary>
+        ///     Configure a track's instrument in the song generator
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public int ConfigTrackInstrument(int track, int? id)
         {
             if (id.HasValue) songGenerator.trackSettings[track].instrumentType = (InstrumentType) id.Value;
@@ -2052,6 +1756,12 @@ namespace PixelVision8.Runner.Editors
             return (int) songGenerator.trackSettings[track].instrumentType;
         }
 
+        /// <summary>
+        ///     Change the track octave in the song generator
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="range"></param>
+        /// <returns></returns>
         public Point ConfigTrackOctaveRange(int track, Point? range = null)
         {
             if (range.HasValue) songGenerator.trackSettings[track].octaveRange = range.Value;
@@ -2060,6 +1770,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Change the track instrument in the song generator
         /// </summary>
         /// <param name="track"></param>
         /// <param name="sfxID"></param>
@@ -2072,6 +1783,11 @@ namespace PixelVision8.Runner.Editors
             return musicChip.activeTrackerData.tracks[track].sfxID;
         }
 
+        /// <summary>
+        ///     Get or change the notes per track
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public int NotesPerTrack(int? value = null)
         {
             if (value.HasValue) musicChip.notesPerTrack = 32;
@@ -2080,6 +1796,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Play instrument
         /// </summary>
         /// <param name="id"></param>
         public void PreviewInstrument(int id)
@@ -2092,6 +1809,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Configures the music generator
         /// </summary>
         public void ConfigureGenerator()
         {
@@ -2100,6 +1818,7 @@ namespace PixelVision8.Runner.Editors
 
 
         /// <summary>
+        ///     Generate a new song
         /// </summary>
         public void GenerateSong()
         {
@@ -2107,6 +1826,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Change the octave range in the song generator
         /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
@@ -2121,6 +1841,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Manually update the sequencer
         /// </summary>
         /// <param name="timeDelta"></param>
         public void UpdateSequencer(float timeDelta)
@@ -2129,6 +1850,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Manually start the sequencer
         /// </summary>
         /// <param name="loop"></param>
         public void StartSequencer(bool loop = false)
@@ -2138,6 +1860,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Loop the current song
         /// </summary>
         /// <param name="value"></param>
         public void LoopSong(bool value)
@@ -2146,15 +1869,13 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Manually stop the sequencer
         /// </summary>
         public void StopSequencer()
         {
             musicChip.songCurrentlyPlaying = false;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <returns></returns>
         public bool SongPlaying()
         {
             return musicChip.songCurrentlyPlaying;
@@ -2171,6 +1892,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Get the current beat value or change it
         /// </summary>
         /// <param name="pos"></param>
         /// <returns></returns>
@@ -2182,6 +1904,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Manually reset the tracker
         /// </summary>
         public void ResetSong()
         {
@@ -2189,6 +1912,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Play a note
         /// </summary>
         /// <param name="track"></param>
         /// <param name="beat"></param>
@@ -2207,6 +1931,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Return the instrument ID in the song generator
         /// </summary>
         /// <param name="track"></param>
         /// <returns></returns>
@@ -2280,6 +2005,7 @@ namespace PixelVision8.Runner.Editors
         #region Sprites
 
         /// <summary>
+        ///     Read game sprite pixel data directly from the sprite chip's memory
         /// </summary>
         /// <param name="id"></param>
         /// <param name="flipH"></param>
@@ -2291,12 +2017,21 @@ namespace PixelVision8.Runner.Editors
             return ReadSpriteData(spriteChip, id, scaleX, scaleY, flipH, flipV);
         }
         
+        /// <summary>
+        ///     Read tool sprite pixel data directly from the sprite chip's memory
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="scaleX"></param>
+        /// <param name="scaleY"></param>
+        /// <param name="flipH"></param>
+        /// <param name="flipV"></param>
+        /// <returns></returns>
         public int[] ReadToolSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
         {
 
             return ReadSpriteData(runner.activeEngine.spriteChip, id, scaleX, scaleY, flipH, flipV);
         }
-        
+
         private int[] ReadSpriteData(SpriteChip spriteChip, int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
         {
 
@@ -2320,6 +2055,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Write sprite data directly into the Sprite Chip's memory
         /// </summary>
         /// <param name="id"></param>
         /// <param name="flipH"></param>
@@ -2354,6 +2090,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Check to see if the sprite builder is active
         /// </summary>
         /// <returns></returns>
         public bool SpriteBuilderActive(string rootPath)
@@ -2365,6 +2102,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
+        ///     Run the sprite builder
         /// </summary>
         /// <returns></returns>
         public int RunSpriteBuilder(string path)
@@ -2396,6 +2134,12 @@ namespace PixelVision8.Runner.Editors
 
         #region Render Tilemap Layer
 
+        /// <summary>
+        ///     Create a new Canvas using the edited game as a source
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         public Canvas NewCanvas(int width, int height)
         {
             return new Canvas(width, height, gameChip);
@@ -2415,6 +2159,10 @@ namespace PixelVision8.Runner.Editors
 
         public int renderPercent => MathHelper.Clamp(((int) (currentLoop / (float) totalLoops * 100)), 0, 100);
 
+        /// <summary>
+        ///     Draws the map to a layer
+        /// </summary>
+        /// <param name="mode"></param>
         public void RenderMapLayer(int mode)
         {
             var realWidth = spriteChip.width * tilemapChip.columns;
@@ -2448,6 +2196,9 @@ namespace PixelVision8.Runner.Editors
             }
         }
 
+        /// <summary>
+        ///     Moves to the next render step
+        /// </summary>
         public void NextRenderStep()
         {
             var offset = currentLoop * maxPerLoop;
@@ -2471,6 +2222,12 @@ namespace PixelVision8.Runner.Editors
             currentLoop++;
         }
 
+        /// <summary>
+        ///     Draw a specific tile
+        /// </summary>
+        /// <param name="tileData"></param>
+        /// <param name="col"></param>
+        /// <param name="row"></param>
         private void RenderTile(TileData tileData, int col, int row)
         {
             int[] spriteData;
@@ -2505,7 +2262,15 @@ namespace PixelVision8.Runner.Editors
             }
         }
 
-
+        /// <summary>
+        ///     Fast copy of render to the display
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="colorOffset"></param>
+        /// <param name="maskColor"></param>
         public void CopyRenderToDisplay(int x, int y, int width, int height, int colorOffset, int maskColor = -1)
         {
             // Only render when a canvas exists
@@ -2537,6 +2302,19 @@ namespace PixelVision8.Runner.Editors
                 DrawMode.TilemapCache, colorOffset);
         }
 
+        /// <summary>
+        ///     Fast canvas copy to the display
+        /// </summary>
+        /// <param name="srcCanvas"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="colorOffset"></param>
+        /// <param name="maskColor"></param>
+        /// <param name="offsetX"></param>
+        /// <param name="offsetY"></param>
+        /// <param name="useScrollPos"></param>
         public void CopyCanvasToDisplay(Canvas srcCanvas, int x, int y, int width, int height, int colorOffset,
             int maskColor = -1, int offsetX =0, int offsetY =0, bool useScrollPos = true)
         {
@@ -2615,6 +2393,11 @@ namespace PixelVision8.Runner.Editors
             runner.activeEngine.colorChip.total = total;
         }
 
+        /// <summary>
+        ///     Export a SFX as a wav
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="workspacePath"></param>
         public void ExportSFX(int id, WorkspacePath workspacePath)
         {
             var sfx = soundChip.ReadSound(id);

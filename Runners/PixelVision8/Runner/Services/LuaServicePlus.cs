@@ -65,6 +65,8 @@ namespace PixelVision8.Runner.Services
                     pixelData[i] = -1;
                 }
             }
+
+            pixels = pixelData;
         }
     }
     
@@ -155,7 +157,7 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["NewWorkspacePath"] = new Func<string, WorkspacePath>(WorkspacePath.Parse);
             
             UserData.RegisterType<WorkspacePath>();
-
+            UserData.RegisterType<Image>();
 
             // Register the game editor with  the lua service
             gameEditor = new GameEditor(desktopRunner, locator);

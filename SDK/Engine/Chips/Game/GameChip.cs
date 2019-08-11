@@ -66,12 +66,6 @@ namespace PixelVision8.Engine.Chips
     /// </summary>
     public class GameChip : AbstractChip, IUpdate, IDraw
     {
-//        protected readonly Dictionary<string, int> tmpTileData = new Dictionary<string, int>
-//        {
-//            {"spriteID", -1},
-//            {"colorOffset", -1},
-//            {"flag", -1}
-//        };
 
 //        protected string _name = "Untitle_Game";
         protected int _saveSlots;
@@ -109,46 +103,6 @@ namespace PixelVision8.Engine.Chips
                 textFiles.Add(name, file);
         }
 
-        #region Graphics
-
-//        /// <summary>
-//        ///     Creates a new canvas instance.
-//        /// </summary>
-//        /// <param name="width"></param>
-//        /// <param name="height"></param>
-//        /// <returns></returns>
-//        public Canvas NewCanvas(int width, int height)
-//        {
-//            return new Canvas(width, height, this);
-//        }
-
-        #endregion
-
-        #region Debug
-
-//        /// <summary>
-//        ///     This returns the averaged FPS that is calculated by the Game Creator on each frame. This is not always
-//        ///     accurate and should only be used as the best guest estimate into the real framerate of your game.
-//        /// </summary>
-//        /// <returns>Returns an int with the current FPS out of a maximum of 60.</returns>
-//        public int ReadFPS()
-//        {
-//            return fps;
-//        }
-
-//        /// <summary>
-//        ///     Returns the total number of sprites on the display in the current frame. Call this at the end of the
-//        ///     Draw() method to get an accurate count of sprite draw calls.
-//        /// </summary>
-//        /// <returns>Returns an int for the total number of sprite draw calls at the current point in time.</returns>
-//        public int ReadTotalSprites()
-//        {
-//            return currentSprites;
-//        }
-
-        #endregion
-
-
         #region GameChip Properties
 
         /// <summary>
@@ -158,9 +112,6 @@ namespace PixelVision8.Engine.Chips
 
         public bool lockSpecs = false;
 
-//        public string ext = ".pv8";
-//        public string version = "0.0.0";
-//        
         /// <summary>
         ///     Used to limit the amount of data the game can save.
         /// </summary>
@@ -181,20 +132,6 @@ namespace PixelVision8.Engine.Chips
                 }
             }
         }
-
-        /// <summary>
-        ///     Name of the game.
-        /// </summary>
-//        public string name
-//        {
-//            get { return _name ?? GetType().Name; }
-//            set { _name = value; }
-//        }
-//        
-//        /// <summary>
-//        ///     The description for the game.
-//        /// </summary>
-//        public string description { get; set; }
 
         #endregion
 
@@ -228,6 +165,9 @@ namespace PixelVision8.Engine.Chips
         ///     your animation system. The time delta is provided on each frame so you can calculate the difference in
         ///     milliseconds since the last render took place.
         /// </summary>
+        ///  <label>
+        ///     Runner
+        /// </label>
         /// <param name="timeDelta">A float value representing the time in milliseconds since the last Draw() call was completed.</param>
         public virtual void Update(float timeDelta)
         {
@@ -250,6 +190,9 @@ namespace PixelVision8.Engine.Chips
         ///     your game should take place such as clearing the display, drawing sprites, and pushing raw pixel data
         ///     into the display.
         /// </summary>
+        /// <label>
+        ///     Runner
+        /// </label>
         public virtual void Draw()
         {
             // Overwrite this method and add your own draw logic.
@@ -260,6 +203,9 @@ namespace PixelVision8.Engine.Chips
         ///     It allows you to perform additional configuration that would not be able to happen if the Init() method
         ///     is not called. This is mostly ignored in the Runner and is mainly used in the Game Creator.
         /// </summary>
+        /// <label>
+        ///     Runner
+        /// </label>
         public override void Reset()
         {
             currentSprites = 0;
@@ -488,6 +434,10 @@ namespace PixelVision8.Engine.Chips
             return display;
         }
 
+        /// <summary>
+        ///     Returns the visible bounds of the display as a Rectangle.
+        /// </summary>
+        /// <returns></returns>
         public Rectangle VisibleBounds()
         {
             return displayChip.visibleBounds;
@@ -539,8 +489,7 @@ namespace PixelVision8.Engine.Chips
         ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
         ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
         /// </param>
-        public void DrawPixels(int[] pixelData, int x, int y, int width, int height, bool flipH = false,
-            bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
+        public void DrawPixels(int[] pixelData, int x, int y, int width, int height, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
             switch (drawMode)
             {
@@ -599,8 +548,7 @@ namespace PixelVision8.Engine.Chips
         ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
         ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
         /// </param>
-        public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
+        public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
             // Only apply the max sprite count to sprite draw modes
 
@@ -637,23 +585,6 @@ namespace PixelVision8.Engine.Chips
                 currentSprites++;
             }
 
-
-//            var spriteMode = (drawMode == DrawMode.Sprite || drawMode == DrawMode.SpriteAbove || drawMode == DrawMode.SpriteBelow);
-//            
-//            if (spriteChip.maxSpriteCount > 0 && currentSprites >= spriteChip.maxSpriteCount && spriteMode)
-//                return;
-//            
-//            // TODO this should be condensed into a single call?
-//            
-//            //TODO flipping H, V and colorOffset should all be passed into reading a sprite
-//            spriteChip.ReadSpriteAt(id, tmpSpriteData);
-//
-//            // Mode 0 is sprite above bg and mode 1 is sprite below bg.
-//            //var mode = aboveBG ? DrawMode.Sprite : DrawMode.SpriteBelow;
-//            DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, drawMode, flipH, flipV, colorOffset);
-//            
-//            if(spriteMode)
-//                currentSprites ++;
         }
 
         protected int[] tmpIDs = new int[0];
@@ -709,9 +640,7 @@ namespace PixelVision8.Engine.Chips
         ///     wrap around the screen when they reach the edges of the screen.
         /// </param>
         /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
-        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
-            Rectangle? bounds = null)
+        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rectangle? bounds = null)
         {
             total = ids.Length;
 
@@ -823,9 +752,7 @@ namespace PixelVision8.Engine.Chips
         ///     wrap around the screen when they reach the edges of the screen.
         /// </param>
         /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
-        public void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false,
-            bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true,
-            bool useScrollPos = true, Rectangle? bounds = null)
+        public void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rectangle? bounds = null)
         {
             total = width * height;
 
@@ -855,88 +782,6 @@ namespace PixelVision8.Engine.Chips
             DrawSprites(sprites, x, y, width, flipH, flipV, drawMode, colorOffset, onScreen, useScrollPos, bounds);
         }
 
-        /// <summary>
-        ///     The DrawTile method makes it easier to update the visuals of a tile on any of the map layers. By default, 
-        ///     this will modify a single tile's sprite id and color offset. You can also define the DrawMode to target a 
-        ///     specific layer. By default, DrawMode.Tile is used, but this method also accepts DrawMode.TilemapCache and 
-        ///     DrawMode.UI to target the UI layer above the tilemap. It's important to note that this method can only draw 
-        ///     a tile at a specific column and row. If you need pixel perfect drawing on the TilemapCache or UI layer, use 
-        ///     the DrawPixels method. Finally, drawing a tile into the tilemap itself will force that tile to be copied to 
-        ///     the Tilemap Cache on the next render pass just like calling the Tile() method.
-        /// </summary>
-        /// <param name="id">Sprite ID to use for the tile.</param>
-        /// <param name="c">The column in the layer.</param>
-        /// <param name="r">The row in the layer.</param>
-        /// <param name="drawMode">This accepts DrawMode.Tile, DrawMode.TilemapCache and DrawMode.UI.</param>
-        /// <param name="colorOffset">This is the color offset to use for the tile.</param>
-//        public void DrawTile(int id, int c, int r, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0, bool flipH = false, bool flipV = false)
-//        {
-//
-//            if (drawMode == DrawMode.Tile)
-//            {
-//                Tile(c, r, id, colorOffset);
-//            }
-//            else 
-//            if (drawMode == DrawMode.TilemapCache)
-//            {
-//                c *= spriteChip.width;
-//                r *= spriteChip.height;
-//                
-//                //TODO flipping H, V and colorOffset should all be passed into reading a sprite
-//                spriteChip.ReadSpriteAt(id, tmpSpriteData);
-//                
-//                // Mode 0 is sprite above bg and mode 1 is sprite below bg.
-//                //var mode = aboveBG ? DrawMode.Sprite : DrawMode.SpriteBelow;
-//                DrawPixels(tmpSpriteData, c, r, spriteChip.width, spriteChip.height, drawMode, flipH, flipV, colorOffset);
-//            }
-//            
-//        }
-
-        /// <summary>
-        ///     The DrawTiles method makes it easier to update the visuals of multiple tiles at once by leveraging the
-        ///     DrawTile method. Simply pass in an Array of sprite IDs, the column, row and width (in tiles) to
-        ///     make bulk changes to a tilemap layer. You can also define the DrawMode to target a specific layer. By default,
-        ///     DrawMode.Tile is used, but this method also accepts DrawMode.TilemapCache and DrawMode.UI to target the UI
-        ///     layer above the tilemap.
-        /// </summary>
-        /// <param name="ids">An Array of Sprite IDs.</param>
-        /// <param name="c">The column in the layer.</param>
-        /// <param name="r">The row in the layer.</param>
-        /// <param name="width">The number of horizontal tiles in the group.</param>
-        /// <param name="drawMode">This accepts DrawMode.Tile, DrawMode.TilemapCache and DrawMode.UI.</param>
-        /// <param name="colorOffset">This is the color offset to use for the tile.</param>
-//        public void DrawTiles(int[] ids, int c, int r, int width, DrawMode drawMode = DrawMode.Tile, int colorOffset = 0)
-//        {
-//
-//            if (drawMode == DrawMode.Tile)
-//            {
-//                UpdateTiles(c, r, width, ids, colorOffset);
-//            }
-//            else if (drawMode == DrawMode.TilemapCache)
-//            {
-//
-//                total = ids.Length;
-//
-//                // Store the sprite id from the ids array
-//                int id;
-//
-//                for (var i = 0; i < total; i++)
-//                {
-//                    // Set the sprite id
-//                    id = ids[i];
-//
-//                    // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
-//                    // Test to see if the sprite is within range
-//                    if (id > -1)
-//                    {
-//                        var c1 = (MathUtil.FloorToInt(i % width));
-//                        var r2 = (MathUtil.FloorToInt(i / width));
-//
-//                        DrawTile(id, c1 + c, r2 + r, drawMode, colorOffset);
-//                    }
-//                }
-//            }
-//        }
         private Point spriteSize;
 
         private int charWidth;
@@ -986,8 +831,7 @@ namespace PixelVision8.Engine.Chips
         ///     when rendering text as tiles. This value can be positive or negative depending on your needs. By default, it is 0.
         /// </param>
         /// <returns></returns>
-        public void DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default",
-            int colorOffset = 0, int spacing = 0)
+        public void DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0)
         {
             // TODO this should use DrawSprites() API
             spriteSize = SpriteSize();
@@ -1038,10 +882,7 @@ namespace PixelVision8.Engine.Chips
 
         private int[] tmpTilemapCache = new int[0];
 
-//        private int oX;
-//        private int oY;
         private int width;
-//        private int sY;
 
         /// <summary>
         ///     By default, the tilemap renders to the display by simply calling DrawTilemap(). This automatically fills the entire
@@ -1078,8 +919,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="DrawMode">
         ///     This accepts DrawMode Tile and TilemapCache.
         /// </param>
-        public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null,
-            int? offsetY = null, DrawMode drawMode = DrawMode.Tile)
+        public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null, int? offsetY = null, DrawMode drawMode = DrawMode.Tile)
         {
             viewPort.X = offsetX ?? _scrollX;
             viewPort.Y = offsetY ?? _scrollY;
@@ -1106,8 +946,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="height"></param>
         /// <param name="color"></param>
         /// <param name="drawMode"></param>
-        public void DrawRect(int x, int y, int width, int height, int color = -1,
-            DrawMode drawMode = DrawMode.Background)
+        public void DrawRect(int x, int y, int width, int height, int color = -1, DrawMode drawMode = DrawMode.Background)
         {
             // TODO is there a faster way to do this?
             DrawPixels(null, x, y, width, height, false, false, drawMode, color);
@@ -1125,8 +964,6 @@ namespace PixelVision8.Engine.Chips
 
         protected int _scrollX;
         protected int _scrollY;
-
-//        Vector pos = new Vector();
 
         /// <summary>
         ///     You can scroll the tilemap by calling the ScrollPosition() method and supplying a new scroll X and Y position.
@@ -1183,6 +1020,13 @@ namespace PixelVision8.Engine.Chips
 
         protected int charOffset = 32;
 
+        /// <summary>
+        ///     A helper method to convert a string of characters into an array of sprite IDs.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="fontName"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public int[] ConvertTextToSprites(string text, string fontName = "default")
         {
             total = text.Length;
@@ -1216,6 +1060,13 @@ namespace PixelVision8.Engine.Chips
             return spriteIDs;
         }
 
+        /// <summary>
+        ///     A helper method that converts a single character into pixel data.
+        /// </summary>
+        /// <param name="character"></param>
+        /// <param name="fontName"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public int[] ConvertCharacterToPixelData(char character, string fontName)
         {
             var fontMap = fontChip.ReadFont(fontName);
@@ -1447,18 +1298,29 @@ namespace PixelVision8.Engine.Chips
             soundChip.StopSound(channel);
         }
 
+        /// <summary>
+        ///     Returns a bool if the channel is playing a sound.
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <returns></returns>
         public bool IsChannelPlaying(int channel)
         {
             return soundChip.IsChannelPlaying(channel);
         }
 
+        /// <summary>
+        ///     Plays a sing by it's ID. You can pass in a start position for it to being at a specific pattern ID in the song.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="loop"></param>
+        /// <param name="startAt"></param>
         public void PlaySong(int id, bool loop = true, int startAt = 0)
         {
             musicChip.PlaySong(id, loop, startAt);
         }
 
         /// <summary>
-        ///     This helper method allows you to automatically load a set of loops as a complete
+        ///     This helper method allows you to automatically load a set of patterns as a complete
         ///     song and plays them back. You can also define if the tracks should loop when they
         ///     are done playing.
         /// </summary>
@@ -1475,7 +1337,7 @@ namespace PixelVision8.Engine.Chips
         }
 
         /// <summary>
-        ///     This helper method allows you to automatically load a set of loops as a complete
+        ///     This helper method allows you to automatically load a set of patterns as a complete
         ///     song and plays them back. You can also define if the tracks should loop when they
         ///     are done playing.
         /// </summary>
@@ -1491,6 +1353,10 @@ namespace PixelVision8.Engine.Chips
             musicChip.PlayPatterns(loopIDs, loop);
         }
 
+        /// <summary>
+        ///     Returns a dictionary with information about the current state of the music chip.
+        /// </summary>
+        /// <returns></returns>
         public Dictionary<string, int> SongData()
         {
             return musicChip.songData;
@@ -1698,12 +1564,13 @@ namespace PixelVision8.Engine.Chips
         /// <param name="flag">
         ///     An int value between -1 and 16 used for collision detection.
         /// </param>
+        /// <param name="flipH"></param>
+        /// <param name="flipV"></param> 
         /// <returns>
         ///     Returns a dictionary containing the spriteID, colorOffset, and flag for an individual tile.
         /// </returns>
         //TODO this should return a custom class not a Dictionary
-        public TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null,
-            bool? flipH = null, bool? flipV = null)
+        public TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null, bool? flipH = null, bool? flipV = null)
         {
             var invalidateTileMap = false;
 
@@ -1848,17 +1715,6 @@ namespace PixelVision8.Engine.Chips
         #region Tilemap Cache
 
         protected int[] tmpPixelData = new int[8 * 8];
-
-//        public int realWidth
-//        {
-//            get { return spriteChip.width * tilemapChip.columns; }
-//        }
-//
-//        public int realHeight
-//        {
-//            get { return spriteChip.height * tilemapChip.rows; }
-//        }
-
 
         /// <summary>
         ///     This method converts the tile map into pixel data that can be
@@ -2203,7 +2059,14 @@ namespace PixelVision8.Engine.Chips
             return lines;
         }
 
-        //TODO need to write a commment for this
+        /// <summary>
+        ///     Fast calculation to get the distance between two points
+        /// </summary>
+        /// <param name="x0"></param>
+        /// <param name="y0"></param>
+        /// <param name="x1"></param>
+        /// <param name="y1"></param>
+        /// <returns></returns>
         public int CalculateDistance(int x0, int y0, int x1, int y1)
         {
             var dx = x1 - x0;
@@ -2283,7 +2146,6 @@ namespace PixelVision8.Engine.Chips
 
         public void DeleteMetaSprite(string name)
         {
-            // Make sure that the meta sprite exits
             if (!metaSprites.ContainsKey(name))
                 throw new Exception(
                     "Meta Sprite '" + name + "' doesn't exist.");
@@ -2291,11 +2153,8 @@ namespace PixelVision8.Engine.Chips
             metaSprites.Remove(name);
         }
 
-        public void DrawMetaSprite(string name, int x, int y, bool flipH, bool flipV,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
-            Rectangle? bounds = null)
+        public void DrawMetaSprite(string name, int x, int y, bool flipH, bool flipV, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true, Rectangle? bounds = null)
         {
-            // Make sure that the meta sprite exits
             if (!metaSprites.ContainsKey(name)) throw new Exception("Meta Sprite '" + name + "' doesn't exist.");
 
             // Get all of the sprites we'll need to draw
@@ -2365,10 +2224,22 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
+        /// <summary>
+        ///     Reads the meta data that was passed into the game when it was loaded.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
         public string ReadMetaData(string key, string defaultValue = "undefined")
         {
             return engine.GetMetaData(key, defaultValue);
         }
+        
+        /// <summary>
+        ///     Writes meta data back into the game which can be read if the game reloads.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
 
         public void WriteMetaData(string key, string value)
         {

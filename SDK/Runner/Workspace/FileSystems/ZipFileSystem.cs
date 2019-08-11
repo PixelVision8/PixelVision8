@@ -145,7 +145,7 @@ namespace PixelVision8.Runner.Workspace
                     // Make sure we close the stream
                     memoryStream.Close();
 
-                    Console.WriteLine("Save archive ");
+//                    Console.WriteLine("Save archive ");
 
                     File.Delete(fileNameZip + ".bak");
                 }
