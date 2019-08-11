@@ -125,8 +125,8 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["PlayWav"] = new Action<WorkspacePath>(PlayWav);
             luaScript.Globals["StopWav"] = new Action(StopWav);
             
-            luaScript.Globals["CreateDisk"] = new Func<string, WorkspacePath[], WorkspacePath, int, Dictionary<string, object>> (CreateDisk);
-            luaScript.Globals["CreateExe"] = new Func<string, WorkspacePath[], WorkspacePath, WorkspacePath, Dictionary<string, object>> (CreateExe);
+            luaScript.Globals["CreateDisk"] = new Func<string, WorkspacePath[], WorkspacePath, int, string[], Dictionary<string, object>> (CreateDisk);
+            luaScript.Globals["CreateExe"] = new Func<string, WorkspacePath[], WorkspacePath, WorkspacePath, string[], Dictionary<string, object>> (CreateExe);
             luaScript.Globals["ClearLog"] = new Action(workspace.ClearLog);
             luaScript.Globals["ReadLogItems"] = new Func<List<string>>(workspace.ReadLogItems);
             
@@ -335,7 +335,7 @@ namespace PixelVision8.Runner.Services
             return workspace.OpenFile(workspacePath, FileAccess.Read).ReadAllBytes().Length / 1024;
         }
         
-        public Dictionary<string, object> CreateDisk(string gameName, WorkspacePath[] filePaths, WorkspacePath exportPath, int maxFileSize = 512)
+        public Dictionary<string, object> CreateDisk(string gameName, WorkspacePath[] filePaths, WorkspacePath exportPath, int maxFileSize = 512, string[] libFileNames = null)
         {
             var response = new Dictionary<string, object>
             {
@@ -368,7 +368,7 @@ namespace PixelVision8.Runner.Services
                                         {
                                             var tmpPath = file.EntityName;
                                             
-                                            Console.WriteLine("Adding File " + file.Path);
+//                                            Console.WriteLine("Adding File " + file.Path);
 
                                             var tmpFile = archive.CreateEntry(tmpPath);
 
@@ -381,10 +381,46 @@ namespace PixelVision8.Runner.Services
                                 }
                                 catch(Exception e)
                                 {
-                                Console.WriteLine("Archive Error: "+ e);
+                                    Console.WriteLine("Archive Error: "+ e);
                                 }
 
                             }
+                            
+                            // Copy all the lib files
+                            if (libFileNames != null)
+                            {
+                                
+                                var libFileData = new Dictionary<string, byte[]>();
+
+                                workspace.IncludeLibDirectoryFiles(libFileData);
+
+                                var total = libFileNames.Length;
+
+                                for (int i = 0; i < total; i++)
+                                {
+
+                                    var fileName = libFileNames[i] + ".lua";
+
+                                    if (libFileData.ContainsKey(fileName))
+                                    {
+                                        
+                                        var tmpPath = fileName;
+                                            
+                                        var tmpFile = archive.CreateEntry(tmpPath);
+                                        
+                                        Stream stream = new MemoryStream(libFileData[fileName]);
+                                    
+                                        using (var entryStream = tmpFile.Open())
+                                        {
+                                            stream.CopyTo(entryStream);
+                                        }
+                                        
+                                    }
+
+                                }
+
+                            }
+                            
                             
                         }
 
@@ -392,7 +428,7 @@ namespace PixelVision8.Runner.Services
 
                         response.Add("fileSize", fileSize);
 
-                        Console.WriteLine("FileSize " + fileSize);
+//                        Console.WriteLine("FileSize " + fileSize);
 
                         if (fileSize > maxFileSize)
                         {
@@ -483,7 +519,7 @@ namespace PixelVision8.Runner.Services
             return response;
         }
 
-        public Dictionary<string, object> CreateExe(string name, WorkspacePath[] files, WorkspacePath template, WorkspacePath exportPath)
+        public Dictionary<string, object> CreateExe(string name, WorkspacePath[] files, WorkspacePath template, WorkspacePath exportPath, string[] libFileNames = null)
         {
             
             var response = new Dictionary<string, object>
@@ -524,7 +560,7 @@ namespace PixelVision8.Runner.Services
                 
                 var buildJson = Json.Deserialize(buildText) as Dictionary<string, object>;
 
-                Console.WriteLine("ContentDir " + (buildJson["ContentDir"] as String));
+//                Console.WriteLine("ContentDir " + (buildJson["ContentDir"] as String));
 
                 var contentPath = WorkspacePath.Parse(buildJson["ContentDir"] as String);
                 
@@ -541,6 +577,8 @@ namespace PixelVision8.Runner.Services
                         disk.Move(exePath, disk, newExePath);
                     }
                 }
+                
+                
                 
                 // TODO need to look into how to rename launcher files on linux.
 
@@ -569,7 +607,7 @@ namespace PixelVision8.Runner.Services
                     using (var memoryStream = disk.CreateFile(contentPath.AppendFile(file.EntityName)))
                     {
 
-                        Console.WriteLine("Include " + file.EntityName);
+//                        Console.WriteLine("Include " + file.EntityName);
 
                         using (var fileStream = workspace.OpenFile(file, FileAccess.Read))
                         {
@@ -579,6 +617,43 @@ namespace PixelVision8.Runner.Services
 
 //                        gameFiles.Add(file.EntityName, memoryStream.ToArray());
                     }
+                }
+                
+                // Copy all the lib files
+                if (libFileNames != null)
+                {
+                                
+                    var libFileData = new Dictionary<string, byte[]>();
+
+                    workspace.IncludeLibDirectoryFiles(libFileData);
+
+                    var total = libFileNames.Length;
+
+                    for (int i = 0; i < total; i++)
+                    {
+
+                        var fileName = libFileNames[i] + ".lua";
+
+                        if (libFileData.ContainsKey(fileName))
+                        {
+                                        
+                            var tmpPath = fileName;
+                            
+//                            Console.WriteLine("Include lib " + tmpPath);
+
+                            using (var tmpFile = disk.CreateFile(contentPath.AppendFile(tmpPath)))
+                            {
+
+                                Stream stream = new MemoryStream(libFileData[fileName]);
+
+                                stream.CopyTo(tmpFile);
+                             
+                            }
+
+                        }
+
+                    }
+
                 }
 
                 

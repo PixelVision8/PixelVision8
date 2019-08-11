@@ -208,7 +208,7 @@ namespace InfinitespaceStudios.MonoGame.PackageCreator
 			Generator.zipSuffix = new Dictionary<Generator.Platform, string>()
 			{
 				{ Generator.Platform.MacOS, "-AppStore" },
-				{ Generator.Platform.Steam, "-Steam" },
+				{ Generator.Platform.Steam, "" },
 				{ Generator.Platform.Linux, "" },
 				{ Generator.Platform.Itchio, "" },
 				{ Generator.Platform.Windows, "" }

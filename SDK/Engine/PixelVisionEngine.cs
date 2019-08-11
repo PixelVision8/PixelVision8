@@ -224,9 +224,21 @@ namespace PixelVision8.Engine
         public void SetMetaData(string key, string value)
         {
             if (!_metaData.ContainsKey(key))
-                _metaData.Add(key, value);
-            else
+            {
+                if (value == "")
+                {
+                    _metaData.Remove(key);    
+                }
+                else
+                {
+                    _metaData.Add(key, value);    
+                }
+            }
+            else if(value != "")
+            {
                 _metaData[key] = value;
+            }
+                
         }
 
         /// <summary>

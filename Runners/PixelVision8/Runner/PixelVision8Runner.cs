@@ -347,7 +347,7 @@ namespace PixelVision8.Runner
                 Load(tool, RunnerMode.Loading, metaData);
             else
             {
-                Back();
+                Back(metaData);
             }
                 
         }
@@ -989,7 +989,7 @@ namespace PixelVision8.Runner
             
         }
         
-        public virtual void Back()
+        public virtual void Back(Dictionary<string, string> metaData = null)
         {
             if (mode == RunnerMode.Loading)
                 return;
@@ -1004,6 +1004,23 @@ namespace PixelVision8.Runner
                 
                     // Get the previous game
                     var lastGameRef = loadHistory.Last();
+                    
+                    // Copy the new meta data over to the last game ref before passing in
+                    if (metaData != null)
+                    {
+                        foreach (string key in metaData.Keys)
+                        {
+                            if (lastGameRef.Value.ContainsKey(key))
+                            {
+                                lastGameRef.Value[key] = metaData[key];
+                            }
+                            else
+                            {
+                                lastGameRef.Value.Add(key, metaData[key]);    
+                            }
+                            
+                        }
+                    }
                 
                     // Remove that game from history since we are about to load it
                     loadHistory.RemoveAt(loadHistory.Count - 1);
