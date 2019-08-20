@@ -118,7 +118,7 @@ namespace PixelVision8.Runner.Parsers
 //                }
             }
 
-            flagColorChip.total = newFlagColors.Count;
+//            flagColorChip.Resize(newFlagColors.Count);
 
             for (var i = 0; i < newFlagColors.Count; i++) flagColorChip.UpdateColorAt(i, newFlagColors[i]);
 

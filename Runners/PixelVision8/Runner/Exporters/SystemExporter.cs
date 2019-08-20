@@ -179,10 +179,10 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-            sb.Append("\"total\":");
-            sb.Append(colorChip.total);
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
+//            sb.Append("\"total\":");
+//            sb.Append(colorChip.total);
+//            sb.Append(",");
+//            JsonUtil.GetLineBreak(sb, 1);
 
 //            sb.Append("\"pages\":");
 //            sb.Append(colorChip.pages);

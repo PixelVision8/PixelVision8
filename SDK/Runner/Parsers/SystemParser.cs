@@ -120,22 +120,26 @@ namespace PixelVision8.Runner.Parsers
             {
                 // Pull out the color data
                 var colors = (List<object>) data["colors"];
-
-                var newTotal = colors.Count;
-                colorChip.total = newTotal;
+    
+                // Force the color chip to have 256 colors
+//                colorChip.total = 256;
+                
+                // Clear the colors
                 colorChip.Clear();
-                for (var i = 0; i < newTotal; i++)
+                
+                // Add all the colors from the data
+                for (var i = 0; i < colors.Count; i++)
                     colorChip.UpdateColorAt(i, (string) colors[i]);
             }
 
 
             // TODO this is deprecated and only in for legacy support
             // If the data has a page count, resize the pages to match that value, even though there may be less colors than pages
-            if (data.ContainsKey("pages"))
-                colorChip.total = (int) (long) data["pages"] * 64;
-
-            if (data.ContainsKey("total"))
-                colorChip.total = (int) (long) data["total"];
+//            if (data.ContainsKey("pages"))
+//                colorChip.total = (int) (long) data["pages"] * 64;
+//
+//            if (data.ContainsKey("total"))
+//                colorChip.total = (int) (long) data["total"];
 
             if (data.ContainsKey("backgroundColor"))
                 colorChip.backgroundColor = (int) (long) data["backgroundColor"];

@@ -38,6 +38,7 @@ using PixelVision8.Runner.Workspace;
 
 namespace PixelVision8.Runner.Editors
 {
+
     /// <summary>
     ///     This class allows you to edit the current sandbox game.
     /// </summary>
@@ -468,13 +469,25 @@ namespace PixelVision8.Runner.Editors
         /// <param name="ignoreEmpty"></param>
         /// <param name="total"></param>
         /// <returns></returns>
-        public int TotalColors(bool ignoreEmpty = false, int? total = null)
+        public int TotalColors(bool ignoreEmpty = false)
         {
-            if (total.HasValue)
-                activeColorChip.total = total.Value;
+//            if (total.HasValue)
+//                activeColorChip.maxColors = total.Value;
 
             return ignoreEmpty ? activeColorChip.totalUsedColors : activeColorChip.total;
         }
+
+        public int MaximumColors(int? value)
+        {
+
+            if (value.HasValue)
+            {
+                colorChip.maxColors = value.Value;
+            }
+
+            return colorChip.maxColors;
+        }
+        
 
         // Since we want to be able to edit this value but the interface doesn't allow it, we hide it in lua and use the overload instead
 //        [MoonSharpHidden]
@@ -1137,7 +1150,7 @@ namespace PixelVision8.Runner.Editors
                 targetGame.colorChip.unique = true;
 
                 // 
-                targetGame.colorChip.total = 256;
+//                targetGame.colorChip.total = 256;
                 targetGame.colorChip.Clear();
 
                 // Make sure we only have unique sprites
@@ -1224,8 +1237,8 @@ namespace PixelVision8.Runner.Editors
                 targetGame.colorChip.unique = true;
 
                 // 
-                targetGame.colorChip.total =
-                    2; // TODO need to make sure there are enough colors for the font but technically it should be 1 bit (b&w)
+//                targetGame.colorChip.total =
+//                    2; // TODO need to make sure there are enough colors for the font but technically it should be 1 bit (b&w)
 
                 // Make sure we only have unique sprites
 //                targetGame.spriteChip.unique = false;
@@ -1323,14 +1336,14 @@ namespace PixelVision8.Runner.Editors
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
-        public int ColorPages(int? total = null)
-        {
-            // TODO this is deprecated and the API needs to be updated
-
-            if (total.HasValue) activeColorChip.total = total.Value * 64;
-
-            return MathUtil.CeilToInt(activeColorChip.total / 64);
-        }
+//        public int ColorPages(int? total = null)
+//        {
+//            // TODO this is deprecated and the API needs to be updated
+//
+//            if (total.HasValue) activeColorChip.total = total.Value * 64;
+//
+//            return MathUtil.CeilToInt(activeColorChip.total / 64);
+//        }
 
         /// <summary>
         ///     Convert sprites in memory to palette colors, clamping the total colors in each sprite to 16
@@ -1341,33 +1354,63 @@ namespace PixelVision8.Runner.Editors
 
             var rawSpriteData = spriteChip.texture.GetPixels();
 
-            var colorMap = new List<int> {-1};
+            var colorMap = new List<int>();
 
             var total = rawSpriteData.Length;
 
             var i = 0;
+            var j = 0;
 
-            // The first pass creates a color map
-            for (i = 0; i < total; i++)
+            var spritePixelTotal = gameChip.SpriteSize().X * gameChip.SpriteSize().Y;
+
+            var totalSprites = spriteChip.totalSprites;
+
+            var tmpPixelData = new int[spritePixelTotal];
+            var pixel = -1;
+            var tmpIndex = -1;
+            // Loop through each sprite
+            for (i = 0; i < totalSprites; i++)
             {
-                var pixel = rawSpriteData[i];
-//                if (pixel > -1)
-//                {
-                if (colorMap.IndexOf(pixel) == -1) colorMap.Add(pixel);
-//                }
-            }
+                
+                // Read the sprite data
+                spriteChip.ReadSpriteAt(i, tmpPixelData);
+                    
+                // Clear the color map
+//                colorMap.Clear();
+                
+                // Index the pixel data
+                for (j = 0; j < spritePixelTotal; j++)
+                {
+                    pixel = tmpPixelData[j];
 
-            // Loop back through the pixels and remap them
-            for (i = 0; i < total; i++)
+                    if (pixel > -1)
+                    {
+                        tmpIndex = colorMap.IndexOf(pixel);
+                        if (tmpIndex == -1)
+                        {
+                            colorMap.Add(pixel);
+                            tmpIndex = colorMap.Count - 1;
+                        }
+
+                        tmpPixelData[j] = tmpIndex;
+                    }
+                    
+                    
+                }
+                
+                spriteChip.UpdateSpriteAt(i, tmpPixelData);
+                
+            }
+            
+            // Update the CPS to reflect the indexed colors
+            spriteChip.colorsPerSprite = colorMap.Count;
+            
+            // Copy the colors to the first palette
+            for (i = 0; i < spriteChip.colorsPerSprite; i++)
             {
-                var pixel = rawSpriteData[i];
-
-//                if (pixel > -1)
-//                {
-                rawSpriteData[i] = colorMap.IndexOf(pixel);
-//                }
+                colorChip.UpdateColorAt(128 + i, colorChip.ReadColorAt(colorMap[i]));
             }
-
+            
             // Create the 16 colors the sprites will be remapped to
             var colorMapColors = new[]
             {
@@ -1394,9 +1437,10 @@ namespace PixelVision8.Runner.Editors
 
             // Create a color map chip
             var colorMapChip = new ColorChip();
+            colorMapChip.total = colorMapColors.Length;
 
             // Clear the color map chip and rebuild the pages
-            colorMapChip.total = total;
+//            colorMapChip.total = total;
             colorMapChip.Clear();
 
             // Add the colors to the color map chip
@@ -1408,7 +1452,7 @@ namespace PixelVision8.Runner.Editors
             targetGame.ActivateChip(ColorMapParser.chipName, colorMapChip, false);
 
             // Set the pixels back into the sprite texture
-            spriteChip.texture.SetPixels(rawSpriteData);
+//            spriteChip.texture.SetPixels(rawSpriteData);
         }
 
         /// <summary>
@@ -1417,6 +1461,7 @@ namespace PixelVision8.Runner.Editors
         /// </summary>
         public void ResizeToolColorMemory()
         {
+            
             runner.activeEngine.colorChip.total = 512;
         }
 
