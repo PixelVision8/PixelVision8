@@ -88,7 +88,9 @@ namespace PixelVision8.Runner.Parsers
                 if (tmpColor.A < 1) // && !ignoreTransparent)
                     tmpColor = magenta;
 
-                colors.Add(tmpColor);
+                
+                if(tmpColor != magenta)
+                    colors.Add(tmpColor);
             }
 
             totalColors = colors.Count;
