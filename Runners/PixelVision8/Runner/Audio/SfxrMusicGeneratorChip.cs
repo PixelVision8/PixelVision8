@@ -93,7 +93,7 @@ namespace PixelVision8.Runner.Chips
 //                if (typeID < defaultOctaves.Length)
 //                {
                 // Changing the instrument should set the deafult octave values
-                octaveRange = defaultOctaves[typeID];
+                 octaveRange = defaultOctaves[typeID];
 //                }
             }
         }
@@ -334,7 +334,7 @@ namespace PixelVision8.Runner.Chips
             TrackSettings settings = null;
             var total = musicChip.totalTracks; //trackSettings.Length;//activeSongData.tracks.Length;//trackSettings.Length;
             
-            Console.WriteLine("total tracks" + total);
+//            Console.WriteLine("total tracks" + total);
             
             TrackData trackData = null;
 

@@ -122,7 +122,7 @@ namespace PixelVision8.Engine.Chips
         {
             engine.soundChip = this;
             totalSounds = 16;
-            totalChannels = 4;
+            totalChannels = 5;
         }
 
         /// <summary>

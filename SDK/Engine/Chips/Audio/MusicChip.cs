@@ -77,7 +77,7 @@ namespace PixelVision8.Engine.Chips
 
         protected float time;
         public TrackerData[] trackerDataCollection = new TrackerData[0];
-        public int tracksPerLoop = 8;
+//        public int tracksPerLoop = 8;
 
         public int
             sequencerBeatNumber
@@ -142,7 +142,7 @@ namespace PixelVision8.Engine.Chips
                     {
                         var sondData = trackerDataCollection[i];
                         if (sondData == null)
-                            trackerDataCollection[i] = CreateNewTrackerData("Untitled" + i, maxTracks);
+                            trackerDataCollection[i] = CreateNewTrackerData("Untitled" + i, totalTracks);
                         else
                             sondData.totalTracks = totalTracks;
                     }
@@ -246,10 +246,7 @@ namespace PixelVision8.Engine.Chips
             engine.musicChip = this;
 
             //engine.chipManager.AddToUpdateList(this);
-            totalLoops = 16;
-//            maxTracks = 4;
-//            totalTracks = maxTracks;
-            totalSongs = 16;
+            
 
             // Setup the sequencer values
 
@@ -276,6 +273,11 @@ namespace PixelVision8.Engine.Chips
 
                 // last num is a hack using my ears to "tune"
             }
+            
+            totalLoops = 16;
+//            maxTracks = 4;
+//            totalTracks = maxTracks;
+            totalSongs = 16;
         }
 
         /// <summary>
@@ -297,8 +299,9 @@ namespace PixelVision8.Engine.Chips
             UpdateNoteTickLengths();
 
             // Updates the tracks per loop
-            tracksPerLoop = activeTrackerData.tracks.Length;
-
+//            tracksPerLoop = activeTrackerData.tracks.Length;
+    
+//            Console.WriteLine("Load Pattern Track " + tracksPerLoop);
             // Update the music notes?
             UpdateMusicNotes();
         }
@@ -461,8 +464,8 @@ namespace PixelVision8.Engine.Chips
         protected void UpdateMusicNotes()
         {
             for (var x = 0; x < notesPerTrack; x++)
-                if (tracksPerLoop < activeTrackerData.tracks.Length)
-                    for (var y = 0; y < tracksPerLoop; y++)
+                if (totalTracks < activeTrackerData.tracks.Length)
+                    for (var y = 0; y < totalTracks; y++)
                         if (activeTrackerData.tracks[y].notes.Length != notesPerTrack)
                             Array.Resize(ref activeTrackerData.tracks[y].notes, notesPerTrack);
         }

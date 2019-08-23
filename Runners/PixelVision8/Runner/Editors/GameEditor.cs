@@ -214,6 +214,7 @@ namespace PixelVision8.Runner.Editors
             soundChip = targetGame.soundChip;
             musicChip = targetGame.musicChip; // TODO need to create a SfxrMusicChip
             
+//            Console.WriteLine("MC Tracks " + musicChip.totalTracks);
             songGenerator = new SfxrMusicGeneratorChip();
             
 //            
@@ -1403,12 +1404,12 @@ namespace PixelVision8.Runner.Editors
             }
             
             // Update the CPS to reflect the indexed colors
-            spriteChip.colorsPerSprite = colorMap.Count;
+            spriteChip.colorsPerSprite = colorMap.Count == 0 ? spriteChip.colorsPerSprite : colorMap.Count;
             
             // Copy the colors to the first palette
             for (i = 0; i < spriteChip.colorsPerSprite; i++)
             {
-                colorChip.UpdateColorAt(128 + i, colorChip.ReadColorAt(colorMap[i]));
+                colorChip.UpdateColorAt(128 + i, colorChip.ReadColorAt(colorMap.Count == 0 ? i : colorMap[i]));
             }
             
             // Create the 16 colors the sprites will be remapped to
@@ -1770,8 +1771,13 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public bool MuteTrack(int track, bool? value = null)
         {
+            if (track >= musicChip.activeTrackerData.tracks.Length)
+            {
+                return false;
+            }
+            
             if (value.HasValue) musicChip.activeTrackerData.tracks[track].mute = value.Value;
-
+            
             return musicChip.activeTrackerData.tracks[track].mute;
         }
 
