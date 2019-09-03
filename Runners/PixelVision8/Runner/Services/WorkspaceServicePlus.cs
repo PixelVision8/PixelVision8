@@ -132,7 +132,9 @@ namespace PixelVision8.Runner.Services
 
                 try
                 {
-                    filePath = UniqueFilePath(filePath.AppendFile(currentSong.name + ".wav"));
+                    filePath = UniqueFilePath(filePath.AppendFile("song "+ id +" - " +currentSong.name + ".wav"));
+                    
+                    Console.WriteLine("Export song to " + filePath);
                     
                     var exportService = locator.GetService(typeof(ExportService).FullName) as ExportService;
 
@@ -156,6 +158,51 @@ namespace PixelVision8.Runner.Services
 //
 //                runner.StartExport();
             }
+        }
+        
+        public void ExportPattern(WorkspacePath filePath, MusicChip musicChip, SoundChip soundChip, int id)
+        {
+            
+//            var currentSong = musicChip.songs[id];
+
+            var selectedPatterns = new int[id];
+            
+//            Array.Copy(currentSong.patterns, selectedPatterns, selectedPatterns.Length);
+            
+//            var filePath = WorkspacePath.Parse(path);
+
+//            if (Exists(filePath))
+//            {
+//                filePath = filePath.AppendDirectory("Wavs").AppendDirectory("Songs");
+
+                if (!Exists(filePath)) CreateDirectory(filePath);
+
+                try
+                {
+                    filePath = UniqueFilePath(filePath.AppendFile("pattern+"+id + ".wav"));
+                    
+                    var exportService = locator.GetService(typeof(ExportService).FullName) as ExportService;
+
+                    // TODO exporting sprites doesn't work
+                    if (exportService != null)
+                    {
+                        exportService.ExportSong(filePath.Path, musicChip, soundChip, selectedPatterns);
+//
+                        exportService.StartExport();
+                    }
+                }
+                catch (Exception e)
+                {
+                    // TODO this needs to go through the error system?
+                    Console.WriteLine(e);
+                    throw;
+                }
+
+                // TODO saving song doesn't work
+//                runner.exportService.ExportSong(filePath.Path, musicChip, soundChip);
+//
+//                runner.StartExport();
+//            }
         }
 
         public override void MountFileSystems(Dictionary<WorkspacePath, IFileSystem> fileSystems)

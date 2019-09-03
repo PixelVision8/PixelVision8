@@ -37,12 +37,11 @@ namespace PixelVision8.Runner.Parsers
         protected Color tmpColor;
         protected int totalColors;
 
-        public ColorParser(IImageParser imageParser, ColorChip colorChip, Color magenta,
-            bool unique = false) : base(imageParser)
+        public ColorParser(IImageParser imageParser, ColorChip colorChip) : base(imageParser)
         {
             this.colorChip = colorChip;
-            this.unique = unique;
-            this.magenta = magenta;
+            unique = colorChip.unique;
+            magenta = ColorUtils.HexToColor(colorChip.maskColor);
         }
 
         public override void CalculateSteps()
@@ -88,9 +87,16 @@ namespace PixelVision8.Runner.Parsers
                 if (tmpColor.A < 1) // && !ignoreTransparent)
                     tmpColor = magenta;
 
-                
-                if(tmpColor != magenta)
+                if (unique && tmpColor == magenta)
+                {
+                    
+                }
+                else
+                {
+
+//                if(tmpColor != magenta)
                     colors.Add(tmpColor);
+                }
             }
 
             totalColors = colors.Count;

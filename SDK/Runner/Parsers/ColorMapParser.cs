@@ -29,7 +29,7 @@ namespace PixelVision8.Runner.Parsers
         public static string chipName = "PixelVisionSDK.Chips.ColorMapChip";
 
         public ColorMapParser(IImageParser imageParser, ColorChip colorChip, Color magenta, bool unique = false) : base(
-            imageParser, colorChip, magenta, unique)
+            imageParser, colorChip)
         {
         }
 

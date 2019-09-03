@@ -509,7 +509,7 @@ namespace PixelVision8.Runner.Services
 //                var tex = ReadTexture(files[fileName]);
                 var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
 
-                return new ColorParser(imageParser, targetEngine.colorChip, maskColor, targetEngine.colorChip.unique);
+                return new ColorParser(imageParser, targetEngine.colorChip);
             }
 
             return null;

@@ -831,7 +831,7 @@ namespace PixelVision8.Engine.Chips
         ///     when rendering text as tiles. This value can be positive or negative depending on your needs. By default, it is 0.
         /// </param>
         /// <returns></returns>
-        public void DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0)
+        public void DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default", int colorOffset = 0, int spacing = 0, Rectangle? bounds = null)
         {
             // TODO this should use DrawSprites() API
             spriteSize = SpriteSize();
@@ -866,14 +866,24 @@ namespace PixelVision8.Engine.Chips
             for (var j = 0; j < total; j++)
             {
 
-                // Clear the background when in tile mode
-                if (clearTiles)
-                    Tile(nextX / 8, nextY / 8, -1);
+                var visible = true;
                 
-                fontChip.ReadSpriteAt(spriteIDs[j], tmpSpriteData);
+                if (bounds.HasValue)
+                {
+                    visible = bounds.Value.Contains(nextX, nextY);
+                }
 
-                DrawPixels(tmpSpriteData, nextX, nextY, spriteChip.width, spriteChip.height, false, false, drawMode,
-                colorOffset);
+                if (visible)
+                {
+                    // Clear the background when in tile mode
+                    if (clearTiles)
+                        Tile(nextX / 8, nextY / 8, -1);
+                    
+                    fontChip.ReadSpriteAt(spriteIDs[j], tmpSpriteData);
+
+                    DrawPixels(tmpSpriteData, nextX, nextY, spriteChip.width, spriteChip.height, false, false, drawMode,
+                    colorOffset);
+                }
                 
                 nextX += offset;
             }

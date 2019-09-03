@@ -129,7 +129,7 @@ namespace PixelVision8.Engine.Chips
             luaScript.Globals["DrawSprites"] = new Action<int[], int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprites);
             luaScript.Globals["DrawSpriteBlock"] = new Action<int, int, int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSpriteBlock);
 
-            luaScript.Globals["DrawText"] = new Action<string, int, int, DrawMode, string, int, int>(DrawText);
+            luaScript.Globals["DrawText"] = new Action<string, int, int, DrawMode, string, int, int, Rectangle?>(DrawText);
             luaScript.Globals["DrawTilemap"] = new Action<int, int, int, int, int?, int?, DrawMode>(DrawTilemap);
 
             luaScript.Globals["DrawRect"] = new Action<int, int, int, int, int, DrawMode>(DrawRect);

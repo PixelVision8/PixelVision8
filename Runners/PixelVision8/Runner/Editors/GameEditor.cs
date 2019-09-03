@@ -674,10 +674,10 @@ namespace PixelVision8.Runner.Editors
             return musicChip.songs[id].patterns;
         }
 
-        public int TotalSongs()
-        {
-            return musicChip.totalSongs;
-        }
+//        public int TotalSongs()
+//        {
+//            return musicChip.totalSongs;
+//        }
 
         /// <summary>
         ///     Get the pattern at a position in the song or change it.
@@ -928,6 +928,12 @@ namespace PixelVision8.Runner.Editors
         {
 
             workspace.ExportSong(path, musicChip, soundChip, id);
+        }
+        
+        public void ExportPattern(WorkspacePath path, int id)
+        {
+
+            workspace.ExportPattern(path, musicChip, soundChip, id);
         }
 
         /// <summary>
