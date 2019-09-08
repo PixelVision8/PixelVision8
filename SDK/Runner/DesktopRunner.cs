@@ -1,4 +1,4 @@
-﻿//   
+﻿﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -212,7 +212,7 @@ namespace PixelVision8.Runner
                 Convert.ToBoolean(
                     bios.ReadBiosData(BiosSettings.StretchScreen.ToString(), "False") as string));
             CropScreen(Convert.ToBoolean(
-                bios.ReadBiosData(BiosSettings.CropScreen.ToString(), "False") as string));
+                bios.ReadBiosData(BiosSettings.CropScreen.ToString(), "True") as string));
             // Create the default display target
 
             
@@ -234,12 +234,18 @@ namespace PixelVision8.Runner
             {
                 displayTarget.shaderPath = workspaceService.OpenFile(shaderPath, FileAccess.Read);
                 
-                EnableCRT(Convert.ToBoolean(bios.ReadBiosData(CRTBiosSettings.CRT.ToString(), "True") as string));
-                Brightness(Convert.ToSingle(bios.ReadBiosData(CRTBiosSettings.Brightness.ToString(), "100"))/100F);
-                Sharpness(Convert.ToSingle(bios.ReadBiosData(CRTBiosSettings.Sharpness.ToString(), "-6")));
+                // Force the display to load the shader
+                displayTarget.useCRT = true;
+                
+                
             }
             
             displayTarget.ResetResolution(tmpRes[0], tmpRes[1]);
+            
+            // Configure the shader from the bios
+            EnableCRT(Convert.ToBoolean(bios.ReadBiosData(CRTBiosSettings.CRT.ToString(), "False") as string));
+            Brightness(Convert.ToSingle(bios.ReadBiosData(CRTBiosSettings.Brightness.ToString(), "100"))/100F);
+            Sharpness(Convert.ToSingle(bios.ReadBiosData(CRTBiosSettings.Sharpness.ToString(), "-6")));
             
         }
 

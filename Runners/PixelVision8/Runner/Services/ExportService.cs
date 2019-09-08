@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -26,7 +25,6 @@ using System.Threading;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Services;
-using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Parsers;
 

@@ -20,7 +20,10 @@
 
 using System;
 using System.IO;
-using System.IO.Compression;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
+
+//using System.IO.Compression;
 
 // TODO need to remove dependency on System.IO.File
 
@@ -30,66 +33,64 @@ namespace PixelVision8.Runner.Workspace
     {
         public string srcPath;
 
-        private ZipFileSystem(ZipArchive zipStorer, string extractPath)
+        private ZipFileSystem(ZipFile zf, string extractPath)
         {
-            
-            var entries = zipStorer.Entries;
-
-
-            // Look for the desired file
-            foreach (var entry in entries)
+            using (zf)
             {
-                var entryPath = entry.FullName;
-
-                // Gets the full path to ensure that relative segments are removed.
-                var destinationPath = Path.GetFullPath(Path.Combine(extractPath, entry.FullName));
-
-                // Ordinal match is safest, case-sensitive volumes can be mounted within volumes that
-                // are case-insensitive.
-                if (destinationPath.StartsWith(extractPath, StringComparison.Ordinal))
+                foreach (ZipEntry zipEntry in zf)
                 {
+                    if (!zipEntry.IsFile)
+                    {
+                        // Ignore directories
+                        continue;
+                    }
 
-                    var filePath = WorkspacePath.Root.AppendPath(entryPath);
+                    String entryFileName = zipEntry.Name;
 
-                    if (filePath.IsFile)
+
+                    var filePath = WorkspacePath.Root.AppendPath(entryFileName);
+
+                    if (filePath.IsFile && !filePath.Path.StartsWith("/__"))
+                    {
                         try
                         {
-                            if (!Exists(filePath.ParentPath)) this.CreateDirectoryRecursive(filePath.ParentPath);
+                            if (!Exists(filePath.ParentPath))
+                                this.CreateDirectoryRecursive(filePath.ParentPath);
 
-                            var stream = CreateFile(filePath);
+                            // 4K is optimum
+                            var buffer = new byte[4096];
 
-                            var fileStream = entry.Open();
-
-                            stream.Write(fileStream.ReadAllBytes());
-
-                            stream.Close();
+                            using (var zipStream = zf.GetInputStream(zipEntry))
+                            using (Stream fsOutput = CreateFile(filePath))
+                            {
+                                StreamUtils.Copy(zipStream, fsOutput, buffer);
+                            }
                         }
                         catch
                         {
                             // ignored
                         }
+                    }
                 }
             }
-
-            zipStorer.Dispose();
         }
 
         public static ZipFileSystem Open(string path)
         {
             // TODO this may fail on other systems because of the use of File
-            return Open( File.OpenRead(path));
+            return Open(File.OpenRead(path));
         }
 
         public static ZipFileSystem Open(FileStream s)
         {
-            var fileSystem = new ZipFileSystem(new ZipArchive(s, ZipArchiveMode.Read), Path.GetFullPath(s.Name));
+            var fileSystem = new ZipFileSystem(new ZipFile(s), Path.GetFullPath(s.Name));
             fileSystem.srcPath = Path.GetFullPath(s.Name);
             return fileSystem;
         }
 
         public static ZipFileSystem Open(Stream s, string name)
         {
-            return new ZipFileSystem(new ZipArchive(s, ZipArchiveMode.Read), Path.GetFullPath(name));
+            return new ZipFileSystem(new ZipFile(s), Path.GetFullPath(name));
         }
 
         public void Save()
@@ -104,59 +105,72 @@ namespace PixelVision8.Runner.Workspace
 
             var fileNameZip = disk.srcPath;
 
+            // Move the original file so we keep it safe
+            if (File.Exists(fileNameZip)) File.Move(fileNameZip, fileNameZip + ".bak");
+
             var files = disk.GetEntitiesRecursive(WorkspacePath.Root);
 
-            using (var memoryStream = new MemoryStream())
-            {
-                using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+//            using (var fileStream = new FileStream(fileNameZip, FileMode.Create))
+//            {
+                using (ZipOutputStream archive = new ZipOutputStream(new FileStream(fileNameZip, FileMode.Create)))
                 {
-                    foreach (var file in files)
-                        try
+                    // Define the compression level
+                    // 0 - store only to 9 - means best compression
+                    archive.SetLevel(0);
+
+                    byte[] buffer = new byte[4096];
+                    try
+                    {
+                        foreach (var file in files)
                         {
                             // We can only save files
-                            if (file.IsFile && !file.EntityName.StartsWith("._"))
+                            if (file.IsFile && !file.EntityName.StartsWith("."))
                             {
                                 var tmpPath = file.Path.Substring(1);
+ 
+                                // Using GetFileName makes the result compatible with XP
+                                // as the resulting path is not absolute.
+                                ZipEntry entry = new ZipEntry(tmpPath);
 
-                                var tmpFile = archive.CreateEntry(tmpPath);
+                                // Could also use the last write time or similar for the file.
+                                entry.DateTime = DateTime.Now;
+                                archive.PutNextEntry(entry);
 
-                                using (var entryStream = tmpFile.Open())
+                                using (var fs = OpenFile(file, FileAccess.Read))
                                 {
-                                    disk.OpenFile(file, FileAccess.ReadWrite).CopyTo(entryStream);
+                                    // Using a fixed size buffer here makes no noticeable difference for output
+                                    // but keeps a lid on memory usage.
+                                    int sourceBytes;
+
+                                    do
+                                    {
+                                        sourceBytes = fs.Read(buffer, 0, buffer.Length);
+                                        archive.Write(buffer, 0, sourceBytes);
+                                    } while (sourceBytes > 0);
                                 }
+                                
+                                archive.CloseEntry();
+
                             }
                         }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine("Archive Error: " + e);
-                        }
-                }
+                        
+                        // Finish is important to ensure trailing information for a Zip file is appended.  Without this
+                        // the created file would be invalid.
+                        archive.Finish();
 
-                try
-                {
-                    if (File.Exists(fileNameZip)) File.Move(fileNameZip, fileNameZip + ".bak");
-
-                    using (var fileStream = new FileStream(fileNameZip, FileMode.Create))
+                        // Close is important to wrap things up and unlock the file.
+                        archive.Close();
+                        
+                        File.Delete(fileNameZip + ".bak");
+                    }
+                    catch (Exception e)
                     {
-                        memoryStream.Seek(0, SeekOrigin.Begin);
-                        memoryStream.CopyTo(fileStream);
+                        Console.WriteLine("Archive Error: " + e);
+
+                        if (File.Exists(fileNameZip + ".bak")) File.Move(fileNameZip + ".bak", fileNameZip);
                     }
 
-                    // Make sure we close the stream
-                    memoryStream.Close();
-
-//                    Console.WriteLine("Save archive ");
-
-                    File.Delete(fileNameZip + ".bak");
-                }
-                catch (Exception e)
-                {
-                    if (File.Exists(fileNameZip + ".bak")) File.Move(fileNameZip + ".bak", fileNameZip);
-
-                    Console.WriteLine("Disk Save Error " + e);
-                }
             }
         }
-
     }
 }

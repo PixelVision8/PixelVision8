@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
@@ -375,65 +374,67 @@ namespace PixelVision8.Runner.Services
         public void SaveActiveDisk()
         {
 
+//            Console.WriteLine("Save Active Disk");
+            
             if (currentDisk is ZipFileSystem disk)
             {
 //                Console.WriteLine("Workspace is ready to save active disk");
 
-//                disk.Save();
-                var fileNameZip = disk.srcPath;
-
-                var files = currentDisk.GetEntitiesRecursive(WorkspacePath.Root);
-
-                using (var memoryStream = new MemoryStream())
-                {
-                    using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
-                    {
-                        foreach (var file in files)
-                            try
-                            {
-                                // We can only save files
-                                if (file.IsFile && !file.EntityName.StartsWith("._"))
-                                {
-                                    var tmpPath = file.Path.Substring(1);
-
-                                    var tmpFile = archive.CreateEntry(tmpPath);
-
-                                    using (var entryStream = tmpFile.Open())
-                                    {
-                                        disk.OpenFile(file, FileAccess.ReadWrite).CopyTo(entryStream);
-                                    }
-                                }
-                            }
-                            catch
-                            {
-//                                Console.WriteLine("Archive Error: "+ e);
-                            }
-                    }
-
-                    try
-                    {
-                        if (File.Exists(fileNameZip)) File.Move(fileNameZip, fileNameZip + ".bak");
-
-                        using (var fileStream = new FileStream(fileNameZip, FileMode.Create))
-                        {
-                            memoryStream.Seek(0, SeekOrigin.Begin);
-                            memoryStream.CopyTo(fileStream);
-                        }
-
-                        // Make sure we close the stream
-                        memoryStream.Close();
-
-//                        Console.WriteLine("Save archive ");
-
-                        File.Delete(fileNameZip + ".bak");
-                    }
-                    catch
-                    {
-                        if (File.Exists(fileNameZip + ".bak")) File.Move(fileNameZip + ".bak", fileNameZip);
-
-//                        Console.WriteLine("Disk Save Error "+e);
-                    }
-                }
+                disk.Save();
+//                var fileNameZip = disk.srcPath;
+//
+//                var files = currentDisk.GetEntitiesRecursive(WorkspacePath.Root);
+//
+//                using (var memoryStream = new MemoryStream())
+//                {
+//                    using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+//                    {
+//                        foreach (var file in files)
+//                            try
+//                            {
+//                                // We can only save files
+//                                if (file.IsFile && !file.EntityName.StartsWith("._"))
+//                                {
+//                                    var tmpPath = file.Path.Substring(1);
+//
+//                                    var tmpFile = archive.CreateEntry(tmpPath);
+//
+//                                    using (var entryStream = tmpFile.Open())
+//                                    {
+//                                        disk.OpenFile(file, FileAccess.ReadWrite).CopyTo(entryStream);
+//                                    }
+//                                }
+//                            }
+//                            catch
+//                            {
+////                                Console.WriteLine("Archive Error: "+ e);
+//                            }
+//                    }
+//
+//                    try
+//                    {
+//                        if (File.Exists(fileNameZip)) File.Move(fileNameZip, fileNameZip + ".bak");
+//
+//                        using (var fileStream = new FileStream(fileNameZip, FileMode.Create))
+//                        {
+//                            memoryStream.Seek(0, SeekOrigin.Begin);
+//                            memoryStream.CopyTo(fileStream);
+//                        }
+//
+//                        // Make sure we close the stream
+//                        memoryStream.Close();
+//
+////                        Console.WriteLine("Save archive ");
+//
+//                        File.Delete(fileNameZip + ".bak");
+//                    }
+//                    catch
+//                    {
+//                        if (File.Exists(fileNameZip + ".bak")) File.Move(fileNameZip + ".bak", fileNameZip);
+//
+////                        Console.WriteLine("Disk Save Error "+e);
+//                    }
+//                }
             }
 
 

@@ -63,7 +63,7 @@ namespace PixelVision8.Runner.Data
         {
             get
             {
-                if (crtShader == null)
+                if (crtShader == null || shaderEffect == null)
                     return false;
 
                 return _useCRT;
@@ -227,7 +227,7 @@ namespace PixelVision8.Runner.Data
 
             renderTexture.SetData(pixels);
 
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: shaderEffect);
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: useCRT ? shaderEffect : null);
 
             spriteBatch.Draw(renderTexture, offset, visibleRect, Color.White, 0f, Vector2.Zero, scale,
                 SpriteEffects.None, 1f);
