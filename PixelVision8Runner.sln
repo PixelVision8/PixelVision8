@@ -1,0 +1,70 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{B0E8551B-B9FD-4020-BD22-36DC2224F79F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Runners", "Runners", "{8759BE68-DE03-4611-A6C1-D6E5C51E6708}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameRunner.Desktop", "Runners\GameRunner\GameRunner.Desktop.csproj", "{9030D2E9-3B2C-47D9-8AF0-82874CB00C24}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "PixelVision8.SDK", "SDK\PixelVision8.SDK.shproj", "{0E005B2D-EAC6-46A4-A054-97627EC9C805}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "PixelVision8.Lua", "SDK\PixelVision8.Lua.shproj", "{E44760EB-E7C5-40C1-BBFC-0092FBF1C12B}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "PixelVision8.Workspace", "SDK\PixelVision8.Workspace.shproj", "{19864555-B496-4A0F-AC32-EB668034A6E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoVision.OpenGL", "MonoVision\MonoVision.OpenGL.csproj", "{6D75E618-19CA-4C51-9546-F10965FBC0B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelVision8Runner.Desktop", "Runners\PixelVision8\PixelVision8Runner.Desktop.csproj", "{51ECE038-73D1-4F38-AFE7-B7D29431496C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackageCreator", "PackageCreator\PackageCreator.csproj", "{8D68A6CD-9CA2-4478-B1D7-123F0EBB4BF4}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Shared\PixelVision8\PixelVision8.SDK.projitems*{0e005b2d-eac6-46a4-a054-97627ec9c805}*SharedItemsImports = 13
+		Shared\PixelVision8\PixelVision8.SDK.projitems*{9030d2e9-3b2c-47d9-8af0-82874cb00c24}*SharedItemsImports = 4
+		Shared\PixelVision8\PixelVision8.SDK.projitems*{daf95523-3de1-4cd9-9628-c4770ef55b31}*SharedItemsImports = 4
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9030D2E9-3B2C-47D9-8AF0-82874CB00C24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9030D2E9-3B2C-47D9-8AF0-82874CB00C24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9030D2E9-3B2C-47D9-8AF0-82874CB00C24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9030D2E9-3B2C-47D9-8AF0-82874CB00C24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D75E618-19CA-4C51-9546-F10965FBC0B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D75E618-19CA-4C51-9546-F10965FBC0B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D75E618-19CA-4C51-9546-F10965FBC0B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D75E618-19CA-4C51-9546-F10965FBC0B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51ECE038-73D1-4F38-AFE7-B7D29431496C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51ECE038-73D1-4F38-AFE7-B7D29431496C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51ECE038-73D1-4F38-AFE7-B7D29431496C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51ECE038-73D1-4F38-AFE7-B7D29431496C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D68A6CD-9CA2-4478-B1D7-123F0EBB4BF4}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{8D68A6CD-9CA2-4478-B1D7-123F0EBB4BF4}.Debug|Any CPU.Build.0 = Debug|x86
+		{8D68A6CD-9CA2-4478-B1D7-123F0EBB4BF4}.Release|Any CPU.ActiveCfg = Release|x86
+		{8D68A6CD-9CA2-4478-B1D7-123F0EBB4BF4}.Release|Any CPU.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9030D2E9-3B2C-47D9-8AF0-82874CB00C24} = {8759BE68-DE03-4611-A6C1-D6E5C51E6708}
+		{E44760EB-E7C5-40C1-BBFC-0092FBF1C12B} = {B0E8551B-B9FD-4020-BD22-36DC2224F79F}
+		{0E005B2D-EAC6-46A4-A054-97627EC9C805} = {B0E8551B-B9FD-4020-BD22-36DC2224F79F}
+		{19864555-B496-4A0F-AC32-EB668034A6E2} = {B0E8551B-B9FD-4020-BD22-36DC2224F79F}
+		{6D75E618-19CA-4C51-9546-F10965FBC0B8} = {B0E8551B-B9FD-4020-BD22-36DC2224F79F}
+		{51ECE038-73D1-4F38-AFE7-B7D29431496C} = {8759BE68-DE03-4611-A6C1-D6E5C51E6708}
+		{8D68A6CD-9CA2-4478-B1D7-123F0EBB4BF4} = {B0E8551B-B9FD-4020-BD22-36DC2224F79F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F34BD1FF-9FB3-4809-B45D-C0B2DAB96D51}
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		version = 0.9.0
+	EndGlobalSection
+EndGlobal

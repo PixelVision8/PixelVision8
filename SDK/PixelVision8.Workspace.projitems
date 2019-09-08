@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>D30AC84B-3012-4A7B-A329-3BDE09F9022F</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>PixelVisionWorkspace</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\DesktopRunner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\AbstractExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\IAbstractExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SavedDataExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\BiosService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\WorkspaceService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\Collections\EnumerableCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\Collections\InverseComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystemExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\WorkspacePath.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\FileSystemMounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\MemoryFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\MergedFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\PhysicalFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\SubFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\ZipFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\IFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\IO\EmptyStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\IO\StreamExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\ParseException.cs" />
+  </ItemGroup>
+</Project>
