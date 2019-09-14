@@ -82,6 +82,7 @@ namespace PixelVision8.Engine.Chips
         public Dictionary<string, string> textFiles = new Dictionary<string, string>();
 
         private int[] tmpSpriteData = new int[0];
+        private int[] tmpFontData = new int[0];
         private int tmpSpriteDataID = -1;
 
 
@@ -232,6 +233,7 @@ namespace PixelVision8.Engine.Chips
 
             // Resize the tmpSpriteData so it mateches the sprite's width and height
             Array.Resize(ref tmpSpriteData, spriteChip.width * spriteChip.height);
+            Array.Resize(ref tmpFontData, spriteChip.width * spriteChip.height);
 
             base.Reset();
         }
@@ -875,13 +877,15 @@ namespace PixelVision8.Engine.Chips
 
                 if (visible)
                 {
+//                    var tmpFontData = new int[64];
+                    
                     // Clear the background when in tile mode
                     if (clearTiles)
                         Tile(nextX / 8, nextY / 8, -1);
                     
-                    fontChip.ReadSpriteAt(spriteIDs[j], tmpSpriteData);
+                    fontChip.ReadSpriteAt(spriteIDs[j], tmpFontData);
 
-                    DrawPixels(tmpSpriteData, nextX, nextY, spriteChip.width, spriteChip.height, false, false, drawMode,
+                    DrawPixels(tmpFontData, nextX, nextY, spriteChip.width, spriteChip.height, false, false, drawMode,
                     colorOffset);
                 }
                 
@@ -2104,12 +2108,12 @@ namespace PixelVision8.Engine.Chips
         /// <summary>
         ///     This method will automatically calculate the start color offset for palettes in the color chip.
         /// </summary>
-        /// <param name="value">The palette number, 1 - 8</param>
+        /// <param name="paletteID">The palette number, 1 - 8</param>
         /// <returns></returns>
-        public int PaletteOffset(int value)
+        public int PaletteOffset(int paletteID, int paletteColor = 0)
         {
             // TODO this is hardcoded right now but there are 8 palettes with a max of 16 colors each
-            return 128 + Clamp(value, 0, 7) * 16;
+            return 128 + (Clamp(paletteID, 0, 7) * 16) + Clamp(paletteColor, 0, ColorsPerSprite()-1);
         }
 
         public struct MetaSpriteData

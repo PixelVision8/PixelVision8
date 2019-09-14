@@ -68,7 +68,7 @@ namespace PixelVision8.Runner.Exporters
 
             var imageExporter = new PNGWriter();
 
-            exporter = new PixelDataExporter(fullFileName, textureData.pixels, width, height, colors, imageExporter);
+            exporter = new PixelDataExporter(fullFileName, textureData.pixels, width, height, colors, imageExporter, engine.colorChip.maskColor);
         }
     }
 }

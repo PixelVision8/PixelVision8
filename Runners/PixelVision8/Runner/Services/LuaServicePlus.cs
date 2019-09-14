@@ -236,23 +236,23 @@ namespace PixelVision8.Runner.Services
         {
             throw new NotImplementedException();
 
-            PNGReader reader = null;
-
-            using (var memoryStream = new MemoryStream())
-            {
-                using (var fileStream = workspace.OpenFile(src, FileAccess.Read))
-                {
-                    fileStream.CopyTo(memoryStream);
-                    fileStream.Close();
-                }
-
-                reader = new PNGReader(memoryStream.ToArray(), maskHex);
-            }
-
-            var imageParser = new ImageParser(_pngReader, maskHex);
-
-            // TODO need to finish this parser 
-            return new Image(reader.width, reader.height, new[] {"ff00ff"});
+//            PNGReader reader = null;
+//
+//            using (var memoryStream = new MemoryStream())
+//            {
+//                using (var fileStream = workspace.OpenFile(src, FileAccess.Read))
+//                {
+//                    fileStream.CopyTo(memoryStream);
+//                    fileStream.Close();
+//                }
+//
+//                reader = new PNGReader(memoryStream.ToArray(), maskHex);
+//            }
+//
+//            var imageParser = new ImageParser(_pngReader, maskHex);
+//
+//            // TODO need to finish this parser 
+//            return new Image(reader.width, reader.height, new[] {"ff00ff"});
         }
 
         public void SaveImage(WorkspacePath dest, Image image)
@@ -271,7 +271,7 @@ namespace PixelVision8.Runner.Services
 
             var pixelData = image.pixels;
 
-            var exporter = new PixelDataExporter(dest.EntityName, pixelData, width, height, colors, _pngWriter);
+            var exporter = new PixelDataExporter(dest.EntityName, pixelData, width, height, colors, _pngWriter, "#FF00FF");
             exporter.CalculateSteps();
 
             while (exporter.completed == false)

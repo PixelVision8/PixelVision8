@@ -231,7 +231,7 @@ namespace PixelVision8.Engine.Chips
 
             #region Experimental APIs
 
-            luaScript.Globals["PaletteOffset"] = new Func<int, int>(PaletteOffset);
+            luaScript.Globals["PaletteOffset"] = new Func<int, int, int>(PaletteOffset);
 
 
             luaScript.Globals["RegisterMetaSprite"] = new Action<string, int, MetaSpriteData[]>(RegisterMetaSprite);

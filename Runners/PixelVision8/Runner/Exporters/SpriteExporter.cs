@@ -78,7 +78,7 @@ namespace PixelVision8.Runner.Exporters
 
             spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
 
-            exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, imageExporter);
+            exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, imageExporter, engine.colorChip.maskColor);
         }
     }
 }

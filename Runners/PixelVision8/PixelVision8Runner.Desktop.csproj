@@ -86,7 +86,6 @@
     <Compile Include="Runner\Audio\SfxrMusicGeneratorChip.cs" />
     <Compile Include="Runner\Editors\GameEditor.cs" />
     <Compile Include="Runner\Exporters\ColorPaletteExporter.cs" />
-    <Compile Include="Runner\Exporters\FlagColorExporter.cs" />
     <Compile Include="Runner\Exporters\FontExporter.cs" />
     <Compile Include="Runner\Exporters\IExport.cs" />
     <Compile Include="Runner\Exporters\IImageExporter.cs" />

@@ -243,13 +243,13 @@ namespace PixelVision8.Runner.Parsers
             musicChip.export = true;
 
             var patternKey = "songs";
-            var patternNameKey = "songName";
+//            var patternNameKey = "songName";
 
             if (data.ContainsKey("version") && (string) data["version"] == "v2")
 
             {
                 patternKey = "patterns";
-                patternNameKey = "patternName";
+//                patternNameKey = "patternName";
 
 
                 // TODO build song playlist

@@ -1219,11 +1219,10 @@ namespace PixelVision8.Runner.Editors
 
             try
             {
-                var saveFlags = BuildSaveFlags(new[] {SaveFlags.Colors, SaveFlags.Fonts});
+                var saveFlags = BuildSaveFlags(new[] {SaveFlags.Fonts});
 
                 var files = new Dictionary<string, byte[]>
                 {
-                    {"colors.png", imageBytes},
                     {filePath.EntityName, imageBytes}
                 };
 

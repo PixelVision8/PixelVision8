@@ -27,12 +27,13 @@ namespace PixelVision8.Runner.Exporters
     {
         protected Color[] paletteColors;
         protected int[] pixelData;
-
+        protected Color maskColor = new Color(255, 0, 255);
         public PixelDataExporter(string fileName, int[] pixelData, int width, int height, Color[] paletteColors,
-            IImageExporter imageExporter) : base(fileName, imageExporter, null, width, height)
+            IImageExporter imageExporter, string maskHex) : base(fileName, imageExporter, null, width, height)
         {
             this.paletteColors = paletteColors;
             this.pixelData = pixelData;
+            maskColor = ColorUtils.HexToColor(maskHex);
         }
 
         public override void CalculateSteps()
@@ -57,7 +58,7 @@ namespace PixelVision8.Runner.Exporters
                 if (refID > -1 && refID < total)
                     colors[i] = paletteColors[refID];
                 else
-                    colors[i] = ColorUtils.HexToColor("#FF00FF");
+                    colors[i] = maskColor;
             }
 
             currentStep++;

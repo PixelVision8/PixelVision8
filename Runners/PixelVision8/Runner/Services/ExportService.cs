@@ -290,7 +290,7 @@ namespace PixelVision8.Runner.Services
 
             var imageExporter = new PNGWriter();
 
-            AddExporter(new PixelDataExporter(path, pixelData, width, height, engine.colorChip.colors, imageExporter));
+            AddExporter(new PixelDataExporter(path, pixelData, width, height, engine.colorChip.colors, imageExporter, engine.colorChip.maskColor));
         }
 
         public void StartExport(bool useSteps = true)

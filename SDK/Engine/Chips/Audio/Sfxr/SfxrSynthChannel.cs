@@ -114,7 +114,7 @@ namespace PixelVision8.Engine.Audio
 
         private int _repeatTime; // Counter for the repeats
         private float _sample; // Sub-sample calculated 8 times per actual sample, averaged out to get the super sample
-        private float _sample2; // Used in other calculations
+//        private float _sample2; // Used in other calculations
 
         private float _slide; // Note slide
 
@@ -133,7 +133,7 @@ namespace PixelVision8.Engine.Audio
         
         
         
-        private float amp; // Used in other calculations
+//        private float amp; // Used in other calculations
         private SoundEffectInstance _soundInstance;
 
         private WaveType _waveLock = WaveType.None;
@@ -478,9 +478,9 @@ namespace PixelVision8.Engine.Audio
         {
             _finished = false;
 
-            int i, j, n, k;
+            int i, j, n;
             var l = (int) __length;
-            float overtoneStrength, tempPhase, sampleTotal;
+            float tempPhase, sampleTotal;
 
             for (i = 0; i < l; i++)
             {

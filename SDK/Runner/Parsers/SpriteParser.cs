@@ -228,7 +228,7 @@ namespace PixelVision8.Runner.Parsers
         }
 
 
-        public void ConvertColorsToIndexes(int totalColors)
+        public virtual void ConvertColorsToIndexes(int totalColors)
         {
             // Calculate the total number of pixels
             var total = tmpPixels.Length;

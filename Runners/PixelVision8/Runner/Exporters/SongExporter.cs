@@ -50,7 +50,7 @@ namespace PixelVision8.Runner.Exporters
         private int[] patterns;
         private int currentPattern = 0;
         
-        int songdataCurrentPos = 0;
+//        int songdataCurrentPos = 0;
         
         public SongExporter(string path, MusicChip musicChip, SoundChip soundChip, int[] patterns) : base(path)
         {

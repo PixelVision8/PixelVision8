@@ -171,9 +171,9 @@ namespace PixelVision8.Runner.Chips
             AhavaRaba
         }
 
-        private readonly float pcgInstMutateMax = 0.2f;
-        private readonly float pcgInstMutateMin = 0f;
-        private readonly float pcgInstMutationChance = 0f; // maybe add 0.1 chance we make instruments wacky
+//        private readonly float pcgInstMutateMax = 0.2f;
+//        private readonly float pcgInstMutateMin = 0f;
+//        private readonly float pcgInstMutationChance = 0f; // maybe add 0.1 chance we make instruments wacky
         private readonly int pcgKeyRangeMax = 8;
         private readonly int pcgKeyRangeMin = -8;
 
