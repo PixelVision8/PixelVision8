@@ -64,8 +64,12 @@ namespace Desktop
         /// </summary>
         protected override void Initialize()
         {
+
             // Configure the runner
             ConfigureRunner();
+            
+            // Manually override scale on boot up
+            Scale(1);
 
             // Load the game
             LoadDefaultGame();
