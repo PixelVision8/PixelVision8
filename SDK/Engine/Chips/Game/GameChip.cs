@@ -355,7 +355,7 @@ namespace PixelVision8.Engine.Chips
         ///     The ReplaceColor() method allows you to quickly change a color to an existing color without triggering
         ///     the DisplayChip to parse and cache a new hex value. Consider this an alternative to the Color() method.
         ///     It is useful for simulating palette swapping animation on sprites pointed to a fixed group of color IDs.
-        ///     Simply cal the ReplaceColor() method and supply a target color ID position, then the new color ID it
+        ///     Simply call the ReplaceColor() method and supply a target color ID position, then the new color ID it
         ///     should point to. Since you are only changing the color's ID pointer, there is little to no performance
         ///     penalty during the GameChip's draw phase.
         /// </summary>
