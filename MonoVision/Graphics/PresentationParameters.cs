@@ -19,7 +19,7 @@ namespace Microsoft.Xna.Framework.Graphics
     {
         #region Constants
 
-        public const int DefaultPresentRate = 60;
+//        public const int DefaultPresentRate = 60;
 
         #endregion Constants
 
@@ -31,7 +31,7 @@ namespace Microsoft.Xna.Framework.Graphics
         private int backBufferWidth = GraphicsDeviceManager.DefaultBackBufferWidth;
         private IntPtr deviceWindowHandle;
         private int multiSampleCount;
-        private bool disposed;
+//        private bool disposed;
         private bool isFullScreen;
         private bool hardwareModeSwitch = true;
 
@@ -99,15 +99,6 @@ namespace Microsoft.Xna.Framework.Graphics
         [CLSCompliant(false)]
         public SwapChainPanel SwapChainPanel { get; set; }
 #endif
-
-        /// <summary>
-        /// Get or set the depth stencil format for the back buffer.
-        /// </summary>
-//		public DepthFormat DepthStencilFormat
-//        {
-//            get { return depthStencilFormat; }
-//            set { depthStencilFormat = value; }
-//        }
 
         /// <summary>
         /// Get or set a value indicating if we are in full screen mode.

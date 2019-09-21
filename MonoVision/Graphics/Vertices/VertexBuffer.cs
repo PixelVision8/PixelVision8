@@ -53,30 +53,6 @@ namespace Microsoft.Xna.Framework.Graphics
             PlatformGraphicsDeviceResetting();
         }
 
-        /// <summary>
-        /// Get the vertex data froom this VertexBuffer.
-        /// </summary>
-        /// <typeparam name="T">The struct you want to fill.</typeparam>
-        /// <param name="offsetInBytes">The offset to the first element in the vertex buffer in bytes.</param>
-        /// <param name="data">An array of T's to be filled.</param>
-        /// <param name="startIndex">The index to start filling the data array.</param>
-        /// <param name="elementCount">The number of T's to get.</param>
-        /// <param name="vertexStride">The size of how a vertex buffer element should be interpreted.</param>
-        ///
-        /// <remarks>
-        /// Note that this pulls data from VRAM into main memory and because of that is a very expensive operation.
-        /// It is often a better idea to keep a copy of the data in main memory.
-        /// </remarks>
-        ///
-        /// <remarks>
-        /// <p>Using this operation it is easy to get certain vertex elements from a VertexBuffer.</p>
-        /// <p>
-        /// For example to get the texture coordinates from a VertexBuffer of <see cref="VertexPositionTexture"/> you can call 
-        /// GetData(4 * 3, data, elementCount, 20). 'data'should be an array of <see cref="Vector2"/> in this example.
-        /// The offsetInBytes is the number of bytes taken up by the <see cref="VertexPositionTexture.Position"/> of the vertex.
-        /// For vertexStride we pass the size of a <see cref="VertexPositionTexture"/>.
-        /// </p>
-        /// </remarks>
         public void GetData<T> (int offsetInBytes, T[] data, int startIndex, int elementCount, int vertexStride = 0) where T : struct
         {
             var elementSizeInBytes = ReflectionHelpers.SizeOf<T>.Get();

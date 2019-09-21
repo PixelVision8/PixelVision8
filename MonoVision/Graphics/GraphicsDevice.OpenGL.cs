@@ -129,13 +129,13 @@ namespace Microsoft.Xna.Framework.Graphics
         internal int _maxTextureSize = 0;
 
         // Keeps track of last applied state to avoid redundant OpenGL calls
-        internal bool _lastBlendEnable = false;
+//        internal bool _lastBlendEnable = false;
 //        internal BlendState _lastBlendState = new BlendState();
 //        internal DepthStencilState _lastDepthStencilState = new DepthStencilState();
 //        internal RasterizerState _lastRasterizerState = new RasterizerState();
         private Vector4 _lastClearColor = Vector4.Zero;
-        private float _lastClearDepth = 1.0f;
-        private int _lastClearStencil = 0;
+//        private float _lastClearDepth = 1.0f;
+//        private int _lastClearStencil = 0;
 
         // Get a hashed value based on the currently bound shaders
         // throws an exception if no shaders are bound
@@ -576,7 +576,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
             // Reset the raster state because we flip vertices
             // when rendering offscreen and hence the cull direction.
-            _rasterizerStateDirty = true;
+//            _rasterizerStateDirty = true;
 
             // Textures will need to be rebound to render correctly in the new render target.
             Textures.Dirty();
@@ -858,10 +858,6 @@ namespace Microsoft.Xna.Framework.Graphics
 #if !GLES
             GL.DrawBuffers(this._currentRenderTargetCount, this._drawBuffers);
 #endif
-
-            // Reset the raster state because we flip vertices
-            // when rendering offscreen and hence the cull direction.
-            _rasterizerStateDirty = true;
 
             // Textures will need to be rebound to render correctly in the new render target.
             Textures.Dirty();

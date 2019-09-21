@@ -430,26 +430,6 @@ namespace Microsoft.Xna.Framework
         }
 
         /// <summary>
-        /// Indicates the desire for a multisampled back buffer.
-        /// </summary>
-        /// <remarks>
-        /// When called at startup this will automatically set the MSAA mode during initialization.  If
-        /// set after startup you must call ApplyChanges() for the MSAA mode to be changed.
-        /// </remarks>
-        public bool PreferMultiSampling
-        {
-            get
-            {
-                return _preferMultiSampling;
-            }
-            set
-            {
-                _shouldApplyChanges = true;
-                _preferMultiSampling = value;
-            }
-        }
-
-        /// <summary>
         /// Indicates the desired back buffer color format.
         /// </summary>
         /// <remarks>
@@ -509,67 +489,5 @@ namespace Microsoft.Xna.Framework
             }
         }
 
-        /// <summary>
-        /// Indicates the desired depth-stencil buffer format.
-        /// </summary>
-        /// <remarks>
-        /// The depth-stencil buffer format defines the scene depth precision and stencil bits available for effects during rendering.
-        /// When called at startup this will automatically set the format during initialization.  If
-        /// set after startup you must call ApplyChanges() for the format to be changed.
-        /// </remarks>
-//        public DepthFormat PreferredDepthStencilFormat
-//        {
-//            get
-//            {
-//                return _preferredDepthStencilFormat;
-//            }
-//            set
-//            {
-//                _shouldApplyChanges = true;
-//                _preferredDepthStencilFormat = value;
-//            }
-//        }
-
-        /// <summary>
-        /// Indicates the desire for vsync when presenting the back buffer.
-        /// </summary>
-        /// <remarks>
-        /// Vsync limits the frame rate of the game to the monitor referesh rate to prevent screen tearing.
-        /// When called at startup this will automatically set the vsync mode during initialization.  If
-        /// set after startup you must call ApplyChanges() for the vsync mode to be changed.
-        /// </remarks>
-        public bool SynchronizeWithVerticalRetrace
-        {
-            get
-            {
-                return _synchronizedWithVerticalRetrace;
-            }
-            set
-            {
-                _shouldApplyChanges = true;
-                _synchronizedWithVerticalRetrace = value;
-            }
-        }
-
-        /// <summary>
-        /// Indicates the desired allowable display orientations when the device is rotated.
-        /// </summary>
-        /// <remarks>
-        /// This property only applies to mobile platforms with automatic display rotation.
-        /// When called at startup this will automatically apply the supported orientations during initialization.  If
-        /// set after startup you must call ApplyChanges() for the supported orientations to be changed.
-        /// </remarks>
-        public DisplayOrientation SupportedOrientations
-        {
-            get
-            {
-                return _supportedOrientations;
-            }
-            set
-            {
-                _shouldApplyChanges = true;
-                _supportedOrientations = value;
-            }
-        }
     }
 }

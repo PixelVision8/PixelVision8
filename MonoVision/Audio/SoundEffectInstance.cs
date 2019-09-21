@@ -112,23 +112,6 @@ namespace Microsoft.Xna.Framework.Audio
             Dispose(false);
         }
 
-        /// <summary>Applies 3D positioning to the SoundEffectInstance using a single listener.</summary>
-        /// <param name="listener">Data about the listener.</param>
-        /// <param name="emitter">Data about the source of emission.</param>
-//        public void Apply3D(AudioListener listener, AudioEmitter emitter)
-//        {
-//            PlatformApply3D(listener, emitter);
-//        }
-//
-//        /// <summary>Applies 3D positioning to the SoundEffectInstance using multiple listeners.</summary>
-//        /// <param name="listeners">Data about each listener.</param>
-//        /// <param name="emitter">Data about the source of emission.</param>
-//        public void Apply3D(AudioListener[] listeners, AudioEmitter emitter)
-//        {
-//            foreach (var l in listeners)
-//				PlatformApply3D(l, emitter);
-//        }
-
         /// <summary>Pauses playback of a SoundEffectInstance.</summary>
         /// <remarks>Paused instances can be resumed with SoundEffectInstance.Play() or SoundEffectInstance.Resume().</remarks>
         public virtual void Pause()

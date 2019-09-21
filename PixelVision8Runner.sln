@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2000
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{B0E8551B-B9FD-4020-BD22-36DC2224F79F}"
 EndProject
@@ -23,9 +23,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackageCreator", "PackageCr
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Shared\PixelVision8\PixelVision8.SDK.projitems*{0e005b2d-eac6-46a4-a054-97627ec9c805}*SharedItemsImports = 13
-		Shared\PixelVision8\PixelVision8.SDK.projitems*{9030d2e9-3b2c-47d9-8af0-82874cb00c24}*SharedItemsImports = 4
-		Shared\PixelVision8\PixelVision8.SDK.projitems*{daf95523-3de1-4cd9-9628-c4770ef55b31}*SharedItemsImports = 4
+		SDK\PixelVision8.SDK.projitems*{0e005b2d-eac6-46a4-a054-97627ec9c805}*SharedItemsImports = 13
+		SDK\PixelVision8.Workspace.projitems*{19864555-b496-4a0f-ac32-eb668034a6e2}*SharedItemsImports = 13
+		SDK\PixelVision8.Lua.projitems*{51ece038-73d1-4f38-afe7-b7d29431496c}*SharedItemsImports = 4
+		SDK\PixelVision8.SDK.projitems*{51ece038-73d1-4f38-afe7-b7d29431496c}*SharedItemsImports = 4
+		SDK\PixelVision8.Workspace.projitems*{51ece038-73d1-4f38-afe7-b7d29431496c}*SharedItemsImports = 4
+		SDK\PixelVision8.Lua.projitems*{9030d2e9-3b2c-47d9-8af0-82874cb00c24}*SharedItemsImports = 4
+		SDK\PixelVision8.SDK.projitems*{9030d2e9-3b2c-47d9-8af0-82874cb00c24}*SharedItemsImports = 4
+		SDK\PixelVision8.Workspace.projitems*{9030d2e9-3b2c-47d9-8af0-82874cb00c24}*SharedItemsImports = 4
+		SDK\PixelVision8.Lua.projitems*{e44760eb-e7c5-40c1-bbfc-0092fbf1c12b}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,8 +60,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9030D2E9-3B2C-47D9-8AF0-82874CB00C24} = {8759BE68-DE03-4611-A6C1-D6E5C51E6708}
-		{E44760EB-E7C5-40C1-BBFC-0092FBF1C12B} = {B0E8551B-B9FD-4020-BD22-36DC2224F79F}
 		{0E005B2D-EAC6-46A4-A054-97627EC9C805} = {B0E8551B-B9FD-4020-BD22-36DC2224F79F}
+		{E44760EB-E7C5-40C1-BBFC-0092FBF1C12B} = {B0E8551B-B9FD-4020-BD22-36DC2224F79F}
 		{19864555-B496-4A0F-AC32-EB668034A6E2} = {B0E8551B-B9FD-4020-BD22-36DC2224F79F}
 		{6D75E618-19CA-4C51-9546-F10965FBC0B8} = {B0E8551B-B9FD-4020-BD22-36DC2224F79F}
 		{51ECE038-73D1-4F38-AFE7-B7D29431496C} = {8759BE68-DE03-4611-A6C1-D6E5C51E6708}

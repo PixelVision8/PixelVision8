@@ -115,7 +115,7 @@ namespace Microsoft.Xna.Framework.Graphics
 					}
 				}
 			}
-			catch (Exception e)
+			catch
 			{
 				var effectKey = MonoGame.Utilities.Hash.ComputeHash(effectCode);
 				if (!graphicsDevice.EffectCache.TryGetValue(effectKey, out cloneSource))

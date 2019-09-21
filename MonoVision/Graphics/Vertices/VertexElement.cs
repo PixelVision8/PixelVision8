@@ -55,7 +55,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// </value>
         /// <remarks>
         /// Usage indices in a vertex declaration usually start with 0. When multiple vertex buffers
-        /// are bound to the input assembler stage (see <see cref="GraphicsDevice.SetVertexBuffers"/>),
+        /// are bound to the input assembler stage,
         /// MonoGame internally adjusts the usage indices based on the order in which the vertex
         /// buffers are bound.
         /// </remarks>
