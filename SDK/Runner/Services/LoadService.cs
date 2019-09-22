@@ -166,7 +166,7 @@ namespace PixelVision8.Runner.Services
 
 
             // Step 6 (optional). Look for tile map to load
-            if ((saveFlags & SaveFlags.FlagColors) == SaveFlags.FlagColors) LoadFlagColors(files);
+//            if ((saveFlags & SaveFlags.FlagColors) == SaveFlags.FlagColors) LoadFlagColors(files);
 
             // Step 6 (optional). Look for tile map to load
             if ((saveFlags & SaveFlags.Tilemap) == SaveFlags.Tilemap) LoadTilemap(files);
@@ -315,20 +315,20 @@ namespace PixelVision8.Runner.Services
             return new FontParser(imageParser, targetEngine, fontName);
         }
 
-        private void LoadFlagColors(Dictionary<string, byte[]> files)
-        {
-            // First thing we do is check for any custom tilemap flag colors
-            byte[] flagTex = null;
-            var flags = "flags.png";
-
-            if (files.ContainsKey(flags)) flagTex = files[flags];
-
-            var imageParser = new PNGReader(flagTex, targetEngine.colorChip.maskColor);
-
-
-            // This will also create the custom flag color chip we need for parsing the tilemap later on
-            AddParser(new FlagColorParser(imageParser, targetEngine));
-        }
+//        private void LoadFlagColors(Dictionary<string, byte[]> files)
+//        {
+//            // First thing we do is check for any custom tilemap flag colors
+//            byte[] flagTex = null;
+//            var flags = "flags.png";
+//
+//            if (files.ContainsKey(flags)) flagTex = files[flags];
+//
+//            var imageParser = new PNGReader(flagTex, targetEngine.colorChip.maskColor);
+//
+//
+//            // This will also create the custom flag color chip we need for parsing the tilemap later on
+//            AddParser(new FlagColorParser(imageParser, targetEngine));
+//        }
 
         private void LoadTilemap(Dictionary<string, byte[]> files)
         {
@@ -338,7 +338,7 @@ namespace PixelVision8.Runner.Services
 
             // TODO should this be manually called?
             // Make sure we have the flag color chip
-            LoadFlagColors(files);
+//            LoadFlagColors(files);
 
 //            var tilemapExists = false;
 
@@ -360,10 +360,10 @@ namespace PixelVision8.Runner.Services
                 byte[] tileFlagTex = null;
 
 
-                var tileFlags = "tilemap-flags.png";
-
-
-                if (files.ContainsKey(tileFlags)) tileFlagTex = files[tileFlags];
+//                var tileFlags = "tilemap-flags.png";
+//
+//
+//                if (files.ContainsKey(tileFlags)) tileFlagTex = files[tileFlags];
 
 
                 var imageParser = new PNGReader(files[tilemapFile], targetEngine.colorChip.maskColor);

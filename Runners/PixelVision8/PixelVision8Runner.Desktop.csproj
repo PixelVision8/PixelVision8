@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{51ece038-73d1-4f38-afe7-b7d29431496c}</ProjectGuid>
+    <ProjectGuid>{51ECE038-73D1-4F38-AFE7-B7D29431496C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PixelVision8</RootNamespace>
@@ -140,8 +140,68 @@
   </ItemGroup>
   <!-- Core Runner Tools -->
   <ItemGroup>
-    <Content Include="..\..\Disks\RunnerTools\BootTool\*.*">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\%(FileName)%(Extension)</Link>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\boot-text.lua">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\boot-text.lua</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\code.lua">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\code.lua</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\colors.png">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\colors.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\data.json">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\data.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\flags.png">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\flags.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\info.json">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\info.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\large-bold.font.png">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\large-bold.font.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\music.json">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\music.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\saves.json">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\saves.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\sb-sprites.lua">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\sb-sprites.lua</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\small.font.png">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\small.font.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\sounds.json">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\sounds.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\sprites.cache.png">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\sprites.cache.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\sprites.psd">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\sprites.psd</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\tilemap.json">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\tilemap.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\tilemap.png">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\tilemap.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -176,7 +236,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Runner\Data" />
+    <Folder Include="Runner\Data\" />
   </ItemGroup>
   <Import Project="Packaging.targets" Condition="'$(Configuration)' == 'Release'" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -304,30 +304,29 @@ namespace PixelVision8.Engine
 
             if (HasChip(id))
             {
-                var chip = chips[id];
-
-                if (activeOnCreate)
-                    ActivateChip(id, chip);
-
-                return chip;
+                return chips[id];
             }
 
-            // TODO create a chip
             var type = Type.GetType(id);
 
-            AbstractChip chipInstance = null;
-
-            try
+            if (type != null)
             {
-                chipInstance = Activator.CreateInstance(type) as AbstractChip;
-                ActivateChip(id, chipInstance);
-            }
-            catch (Exception)
-            {
-                //throw new Exception("Chip '" + id + "' could not be created.");
+                AbstractChip chipInstance = null;
+
+                try
+                {
+                    chipInstance = Activator.CreateInstance(type) as AbstractChip;
+                    ActivateChip(id, chipInstance, activeOnCreate);
+                }
+                catch// (Exception)
+                {
+                    //Console.WriteLine("Chip '" + id + "' could not be created.");
+                }
+
+                return chipInstance;
             }
 
-            return chipInstance;
+            return null;
         }
 
         public void ActivateChip(string id, AbstractChip chip, bool autoActivate = true)

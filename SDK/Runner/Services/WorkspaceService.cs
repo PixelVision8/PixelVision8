@@ -54,7 +54,7 @@ namespace PixelVision8.Runner.Services
         protected LogService logService;
         protected IFileSystem currentDisk;
         public WorkspacePath osLibPath;
-        public WorkspacePath workspaceLibPath;
+//        public WorkspacePath workspaceLibPath;
         
         public List<string> requiredFiles = new List<string>
         {
@@ -484,8 +484,8 @@ namespace PixelVision8.Runner.Services
             {
                 // Look in the system folder
                 osLibPath
-                ,
-                workspaceLibPath
+//                ,
+//                workspaceLibPath
                 // Look in the workspace folder
                 
             };

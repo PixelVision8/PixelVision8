@@ -980,12 +980,12 @@ namespace PixelVision8.Runner.Editors
             return colorChip.debugMode;
         }
 
-        public string FlagColor(int id)
-        {
-            var flagColors = ((ColorChip) targetGame.GetChip(FlagColorParser.flagColorChipName, false)).hexColors;
-
-            return flagColors[id];
-        }
+//        public string FlagColor(int id)
+//        {
+//            var flagColors = ((ColorChip) targetGame.GetChip(FlagColorParser.flagColorChipName, false)).hexColors;
+//
+//            return flagColors[id];
+//        }
 
         /// <summary>
         ///     Change the color mode of the game to edit specific color spaces in the Color Chip.
@@ -1022,10 +1022,10 @@ namespace PixelVision8.Runner.Editors
                 // Since we are using a color chip we need to make sure we call the rigt chip because its not registered with the engine
                 activeColorChip = targetGame.GetChip(ColorMapParser.chipName, false) as ColorChip;
             }
-            else if (mode == 2)
-            {
-                activeColorChip = targetGame.GetChip(FlagColorParser.flagColorChipName, false) as ColorChip;
-            }
+//            else if (mode == 2)
+//            {
+//                activeColorChip = targetGame.GetChip(FlagColorParser.flagColorChipName, false) as ColorChip;
+//            }
             else
             {
                 activeColorChip = targetGame.colorChip;
