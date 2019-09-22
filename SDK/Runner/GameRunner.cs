@@ -105,7 +105,7 @@ namespace PixelVision8.Runner
 
         protected bool debugLayers = true;
         protected bool displayProgress;
-
+        protected bool autoShutdown = false;
         public DisplayTarget displayTarget;
         protected TimeSpan elapsedTime = TimeSpan.Zero;
         protected int frameCounter;
@@ -335,13 +335,6 @@ namespace PixelVision8.Runner
             CreateLoadService();
         }
 
-//        public virtual void CreateAudioPlayerFactory()
-//        {
-//            audioPlayerFactory = new AudioPlayerFactory();
-//
-//            SfxrSynth.AudioPlayerFactory = audioPlayerFactory;
-//        }
-
         public virtual void CreateLoadService()
         {
             loadService = new LoadService();
@@ -367,7 +360,7 @@ namespace PixelVision8.Runner
 
         protected override void Update(GameTime gameTime)
         {
-            if (activeEngine == null || !IsActive)
+            if (activeEngine == null || !RunnerActive)
                 return;
             
             
@@ -399,6 +392,17 @@ namespace PixelVision8.Runner
             // current framerate.
         }
 
+        protected virtual bool RunnerActive
+        {
+            get
+            {
+                if (autoShutdown)
+                    return IsActive;
+                
+                return true;
+            }
+        }
+
         protected override void Draw(GameTime gameTime)
         {
             
@@ -408,26 +412,18 @@ namespace PixelVision8.Runner
             frameCounter++;
 
             // Clear with black and draw the runner.
-//            else
-//            {
             graphics.GraphicsDevice.Clear(Color.Black);
+            
             // Now it's time to call the PixelVisionEngine's Draw() method. This Draw() call propagates throughout all of the Chips that have 
             // registered themselves as being able to draw such as the GameChip and the DisplayChip.
-            
+
             // Only call draw if the window has focus
-            if(IsActive)
+            if (RunnerActive)
+            {
                 activeEngine.Draw();
+            }
 
-//            if (activeEngine.running && displayTarget != null)
-//            {
-//                if (displayTarget != null)
-//                {
             displayTarget.Render(activeEngine.displayChip.pixels);
-//                }
-//            }
-
-
-//            }
 
             if (resolutionInvalid)
             {
@@ -500,11 +496,9 @@ namespace PixelVision8.Runner
         public virtual void ShutdownActiveEngine()
         {
             // Look to see if there is an active engine
-            if (activeEngine == null)
-                return;
 
             // Show down the engine
-            activeEngine.Shutdown();
+            activeEngine?.Shutdown();
 
 
             // TODO need to move this over to the workspace
@@ -520,36 +514,6 @@ namespace PixelVision8.Runner
             // TODO need to overwrite with any custom services you need the engine to load
         }
 
-//        public int ReadPreLoaderPercent()
-//        {
-//            return (int) (loadService.percent * 100);
-//        }
-
-
-        /// <summary>
-        ///     Reads a metadata property from the active game engine. It requires a string for the key and returns a
-        ///     string value. You can also supply an optional default value. When a game is loaded, it can be passed
-        ///     metadata to help retain state between loading, and this allows you to read that data.
-        /// </summary>
-        /// <param name="key">A string for the metadata property's key.</param>
-        /// <param name="defaultValue"></param>
-        /// <returns>If no key is found, this will return the default data, so it does not return nil.</returns>
-//        public string ReadMetaData(string key, string defaultValue = "undefined")
-//        {
-//            return activeEngine.GetMetaData(key, defaultValue);
-//        }
-//
-//        public void WriteMetaData(string key, string value)
-//        {
-//            activeEngine.SetMetaData(key, value);
-//        }
-
-        #region Preloader APIs
-
-        
-
-        #endregion
-
         public virtual void ActivateEngine(IEngine engine)
         {
             if (engine == null)
@@ -560,18 +524,10 @@ namespace PixelVision8.Runner
 
             // After loading the game, we are ready to run it.
             activeEngine.RunGame();
-            
-//            if (displayTarget != null)
-//            {
-
-//            displayTarget.CacheColors(activeEngine);
-
 
             // Reset the game's resolution
             ResetResolution();
 
-//            InvalidateResolution();
-//            }
         }
 
         public void ResetResolution()
@@ -604,7 +560,6 @@ namespace PixelVision8.Runner
                 flags |= SaveFlags.ColorMap;
                 flags |= SaveFlags.Sprites;
                 flags |= SaveFlags.Tilemap;
-                flags |= SaveFlags.TilemapFlags;
                 flags |= SaveFlags.Fonts;
                 flags |= SaveFlags.Sounds;
                 flags |= SaveFlags.Music;

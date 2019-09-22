@@ -53,7 +53,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\AbstractParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ColorMapParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ColorParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\FlagColorParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\FontParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\IAbstractParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\IImageParser.cs" />

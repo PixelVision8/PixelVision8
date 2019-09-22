@@ -47,8 +47,7 @@ function Init()
 
   local startX = math.floor((32 / 2) - (labelWidth / 2))
 
-  DrawSprite(logosmall.spriteIDs[1], startX, 1, false, false, DrawMode.Tile)
-  -- DrawTile(logosmall.spriteIDs[1], startX, 1)
+  DrawSprite(logosmall.spriteIDs[1], startX * 8 - 2, 8, false, false, DrawMode.TilemapCache)
 
   startX = startX + 1
 

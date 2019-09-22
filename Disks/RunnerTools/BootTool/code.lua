@@ -75,7 +75,7 @@ function Init()
 
   local startX = 256 - labelWidth
 
-  DrawText(runnerName, startX, 225, DrawMode.TilemapCache, "large-bold", 11)
+  DrawText(runnerName, startX, 225, DrawMode.TilemapCache, "large", 11)
 
   DrawText(runnerVer, startX + (#runnerName * 8) + 8, 225, DrawMode.TilemapCache, "small", 11, - 4)
 
@@ -83,7 +83,7 @@ function Init()
 
   -- We want to render the text from the bottom of the screen so we offset it and loop backwards.
   for i = 1, total do
-    DrawText(lines[i], 1, startY + (i - 1), DrawMode.Tile, "large-bold", 15)
+    DrawText(lines[i], 1, startY + (i - 1), DrawMode.Tile, "large", 15)
   end
 
   -- Replace the tile with a logo and rest the color offset to 0 (since the font was set to 15)

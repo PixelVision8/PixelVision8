@@ -73,14 +73,13 @@ function Init()
 
   local startX = math.floor((32 / 2) - (labelWidth / 2))
 
-  -- DrawSprite(logosmall.spriteIDs[1], startX, 1, DrawMode.Tile)
-  DrawSprite(logosmall.spriteIDs[1], startX, 1, false, false, DrawMode.Tile)
+  DrawSprite(logosmall.spriteIDs[1], startX * 8 - 2, 8, false, false, DrawMode.TilemapCache)
 
   startX = startX + 1
 
-  DrawText(runnerName, startX, 1, DrawMode.Tile, "large-bold", 15)
+  DrawText(runnerName, startX, 1, DrawMode.Tile, "large", 15)
 
-  DrawText(runnerVer, startX + #runnerName + 1, 1, DrawMode.Tile, "large-bold", 15)
+  DrawText(runnerVer, startX + #runnerName + 1, 1, DrawMode.Tile, "large", 15)
 
 
   if(ReadMetaData("showDiskAnimation") == "false") then
@@ -141,7 +140,7 @@ function Update(timeDelta)
       if(preloading == false) then
 
         -- Display the message
-        DrawText(message, offset, 27, DrawMode.Tile, "large-bold", 15)
+        DrawText(message, offset, 27, DrawMode.Tile, "large", 15)
 
         -- Set the offset for the number sprites
         offset = offset + (#message - 4)
@@ -180,7 +179,7 @@ function Draw()
 
     -- Draw percent as sprites
     local percentString = string.rpad(tostring(percent), 3, "0")
-    DrawText(percentString, offset * 8, 27 * 8, DrawMode.Sprite, "large-bold", 15)
+    DrawText(percentString, offset * 8, 27 * 8, DrawMode.Sprite, "large", 15)
 
   end
 

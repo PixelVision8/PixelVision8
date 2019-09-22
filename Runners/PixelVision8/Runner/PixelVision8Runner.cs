@@ -104,6 +104,8 @@ namespace PixelVision8.Runner
             screenshotService = new ScreenshotService(workspaceServicePlus);
             exportService = new ExportService(); //TODO Need to create a new AudioClipAdaptor
 
+            autoShutdown = bios.ReadBiosData("AutoShutdown", "True") == "True";
+
             RefreshActionKeys();
             
             // Replace title with version
@@ -592,7 +594,7 @@ namespace PixelVision8.Runner
                 var biosAutoRun = bios.ReadBiosData("AutoRun", "");
                 
                 // Check to see if this path exists
-                if (workspaceServicePlus.Exists(WorkspacePath.Parse(biosAutoRun)))
+                if (biosAutoRun != "" && workspaceServicePlus.Exists(WorkspacePath.Parse(biosAutoRun)))
                 {
 
                     // Validate that the path is actually a game
@@ -696,13 +698,6 @@ namespace PixelVision8.Runner
             {
                 base.ShutdownActiveEngine();
                 
-//                if (activeEngine.gameChip.saveSlots > 0)
-//                {
-//                    //Print("Active Engine To Save", activeEngine.name);
-//
-//                    SaveGameData(workspaceServicePlus.FindValidSavePath(activeEngine.name), activeEngine, SaveFlags.SaveData, false);
-//                }
-
                 // Save the active disk
                 workspaceServicePlus.SaveActiveDisk();
 

@@ -99,8 +99,8 @@ namespace PixelVision8.Runner.Editors
                     typeof(FontChip).FullName,
                     typeof(ControllerChip).FullName,
                     typeof(DisplayChip).FullName,
-                    typeof(MusicChip).FullName, // TODO this is a custom chip just for the editor
                     typeof(SoundChip).FullName,
+                    typeof(MusicChip).FullName,
                     typeof(LuaGameChip).FullName
                 };
 
