@@ -730,7 +730,11 @@ namespace PixelVision8.Runner
                 if (newMode == RunnerMode.Loading)
                 {
                     nextPathToLoad = path;
-                    nextMetaData = metaData;
+
+                    // Save a copy of the meta data
+                    nextMetaData = metaData?.ToDictionary(entry => entry.Key,
+                        entry => entry.Value);
+
                     nextMode = RunnerMode.Playing;
 
                     // Create new meta data for the pre-loader
@@ -792,16 +796,19 @@ namespace PixelVision8.Runner
                 {
                     lastMode = mode;
 
+                    var metaDataCopy = metaData.ToDictionary(entry => entry.Key,
+                        entry => entry.Value);
+
                     if (loadHistory.Count > 0)
                     {
 //                        Console.WriteLine("History " + loadHistory.Last().Key + " " + path);
                         // Only add the history if the last item is not the same
                         if(loadHistory.Last().Key != path)
-                            loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaData));
+                            loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaDataCopy));
                     }
                     else
                     {
-                        loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaData));
+                        loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaDataCopy));
                     }
                     
 
@@ -948,10 +955,24 @@ namespace PixelVision8.Runner
             var lastGameRef = loadHistory.Last();
             
             var lastURI = WorkspacePath.Parse(lastGameRef.Key);
+
             var metaData = lastGameRef.Value;
 
+            // Merge values from the active game
+            foreach (KeyValuePair<string, string> entry in activeEngine.metaData)
+            {
+                if (metaData.ContainsKey(entry.Key))
+                {
+                    metaData[entry.Key] = entry.Value;
+                }
+                else
+                {
+                    metaData.Add(entry.Key, entry.Value);
+                }
+            }
+
             // Clear the load history if it is loading the first item
-            if (loadHistory.Count == 1)
+                if (loadHistory.Count == 1)
             {
                 // This insures you can't quit the first game that is loaded.
                 loadHistory.Clear();

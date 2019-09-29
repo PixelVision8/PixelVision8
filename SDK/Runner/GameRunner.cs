@@ -396,7 +396,7 @@ namespace PixelVision8.Runner
         {
             get
             {
-                if (autoShutdown)
+                if (autoShutdown && mode != RunnerMode.Loading)
                     return IsActive;
                 
                 return true;

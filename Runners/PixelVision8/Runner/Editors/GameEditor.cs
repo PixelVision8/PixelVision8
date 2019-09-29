@@ -1219,7 +1219,7 @@ namespace PixelVision8.Runner.Editors
 
             try
             {
-                var saveFlags = BuildSaveFlags(new[] {SaveFlags.Fonts});
+                var saveFlags = BuildSaveFlags(new[] {SaveFlags.Colors, SaveFlags.Fonts});
 
                 var files = new Dictionary<string, byte[]>
                 {
@@ -1295,20 +1295,27 @@ namespace PixelVision8.Runner.Editors
         /// <param name="fontName"></param>
         /// <param name="oldName"></param>
 
-        public void SaveFont(string fontName, string oldName = null)
+        public string SaveFont(string fontName)
         {
             var engineName = targetGame.name;
+
+            var oldName = fontChip.fonts.Keys.First();
 
             var parentFilePath = WorkspacePath.Parse(engineName).ParentPath;
 
             if (fontName != oldName)
             {
-                var oldPath = parentFilePath.AppendFile(oldName);
+                var oldPath = parentFilePath.AppendFile(oldName + ".font.png");
 
-                if (workspace.Exists(oldPath)) workspace.Delete(oldPath);
+                if (workspace.Exists(oldPath))
+                    workspace.Delete(oldPath);
+
+                var value = fontChip.fonts[oldName];
+                fontChip.fonts.Remove(oldName);
+                fontChip.fonts[fontName] = value;
             }
 
-            var fontPath = parentFilePath.AppendFile(fontName);
+            var fontPath = workspace.UniqueFilePath(parentFilePath.AppendFile(fontName + ".font.png"));
 
             var pngWriter = new PNGWriter();
 
@@ -1323,6 +1330,9 @@ namespace PixelVision8.Runner.Editors
             };
 
             workspace.SaveExporterFiles(files);
+            
+            // Return just the name of the font without the extension
+            return fontPath.EntityName;
         }
 
         public string ReadMetaData(string key, string defaultValue = "")
