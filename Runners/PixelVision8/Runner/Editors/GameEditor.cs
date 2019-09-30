@@ -1303,6 +1303,8 @@ namespace PixelVision8.Runner.Editors
 
             var parentFilePath = WorkspacePath.Parse(engineName).ParentPath;
 
+            var fontPath = parentFilePath.AppendFile(fontName + ".font.png");
+
             if (fontName != oldName)
             {
                 var oldPath = parentFilePath.AppendFile(oldName + ".font.png");
@@ -1312,10 +1314,15 @@ namespace PixelVision8.Runner.Editors
 
                 var value = fontChip.fonts[oldName];
                 fontChip.fonts.Remove(oldName);
+
+                fontPath = workspace.UniqueFilePath(fontPath);
+
+                fontName = fontPath.EntityName.Split('.')[0];
+
                 fontChip.fonts[fontName] = value;
             }
 
-            var fontPath = workspace.UniqueFilePath(parentFilePath.AppendFile(fontName + ".font.png"));
+//            var fontPath = workspace.UniqueFilePath(parentFilePath.AppendFile(fontName + ".font.png"));
 
             var pngWriter = new PNGWriter();
 
