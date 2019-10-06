@@ -18,6 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -141,8 +142,6 @@ namespace PixelVision8.Runner.Exporters
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
-
-// tilesets start
             sb.Append("\"tilesets\": [");
             JsonUtil.GetLineBreak(sb, 2);
 
@@ -152,7 +151,6 @@ namespace PixelVision8.Runner.Exporters
                     "sprites.png",
                     new SpriteVector(spriteChip.texture.width, spriteChip.texture.height, spriteChip.totalSprites)
                 }
-//                {"flags.png", new SpriteVector(8, MathUtil.CeilToInt((float) tilemapChip.totalFlags / 8), tilemapChip.totalFlags)}
             };
 
             var totalSheets = sheets.Count;
@@ -253,24 +251,6 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("\"layers\": [");
             JsonUtil.GetLineBreak(sb, 2);
 
-
-            // TODO need to do this as a loop
-
-
-//            var list = new List<string>
-//            {
-//                TilemapChip.Layer.Sprites.ToString(),
-////                TilemapChip.Layer.Flags.ToString(),
-////                Layer.Palettes.ToString()
-//            };
-
-//            var totalLayers = list.Count;
-
-//            for (int i = 0; i < totalLayers; i++)
-//            {
-
-//                var layerName = list[i];
-
             var idOffset = 1 + spriteChip.totalSprites;
 
             // Layer start
@@ -293,12 +273,6 @@ namespace PixelVision8.Runner.Exporters
             sb.Append(1);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 3);
-
-            // height
-//                sb.Append("\"height\":");
-//                sb.Append(tilemapChip.rows);
-//                sb.Append(",");
-//                JsonUtil.GetLineBreak(sb, 3);
 
             // type
             sb.Append("\"type\":");
@@ -346,25 +320,15 @@ namespace PixelVision8.Runner.Exporters
                 var tile = gameChip.Tile(pos.X, pos.Y);
 
                 // Only save a tile if it exists
-                if (tile.spriteID > -1)
+                if (tile.spriteID + tile.flag >= -1)
                 {
                     sb.Append("{");
                     JsonUtil.GetLineBreak(sb, 5);
-
-//                    sb.Append("\"id\":");
-//                    sb.Append(tileCounter);
-//                    sb.Append(",");
-//                    JsonUtil.GetLineBreak(sb, 5);
 
                     sb.Append("\"name\":");
                     sb.Append("\"Tile:" + pos.X + "," + pos.Y + "\"");
                     sb.Append(",");
                     JsonUtil.GetLineBreak(sb, 5);
-
-//                    sb.Append("\"type\":");
-//                    sb.Append("\""+tile.spriteID+"\"");
-//                    sb.Append(",");
-//                    JsonUtil.GetLineBreak(sb, 5);
 
                     // TODO need to add in flip values to this sprite ID
                     sb.Append("\"gid\":");
@@ -388,29 +352,17 @@ namespace PixelVision8.Runner.Exporters
                     sb.Append(",");
                     JsonUtil.GetLineBreak(sb, 5);
 
+                    // Tiled Y pos is 1 based, so offset the x position by 1 tile
                     sb.Append("\"y\":");
-                    sb.Append((pos.Y + 1) * spriteSize.Y); // Tiled Y pos is 1 based, so offset the x position by 1 tile
+                    sb.Append((pos.Y + 1) * spriteSize.Y); 
                     sb.Append(",");
                     JsonUtil.GetLineBreak(sb, 5);
-
-//                    sb.Append("\"rotation\":");
-//                    sb.Append(0);
-//                    sb.Append(",");
-//                    JsonUtil.GetLineBreak(sb, 5);
-//                    
-//                    // visible
-//                    sb.Append("\"visible\":");
-//                    sb.Append("true");
-//                    sb.Append(",");
-//                    JsonUtil.GetLineBreak(sb, 5);
 
                     // layers start
                     sb.Append("\"properties\": [");
                     JsonUtil.GetLineBreak(sb, 6);
 
                     // Save flag id
-
-                    // 
                     JsonUtil.GetLineBreak(sb, 7);
                     sb.Append("{");
 
@@ -426,15 +378,13 @@ namespace PixelVision8.Runner.Exporters
 
                     sb.Append("\"value\":");
                     sb.Append(tile.flag);
-
+                    
                     // property end
                     JsonUtil.GetLineBreak(sb, 6);
                     sb.Append("},");
 
 
-                    // Save flag id
-
-                    // 
+                    // Save color offset
                     JsonUtil.GetLineBreak(sb, 7);
                     sb.Append("{");
 
@@ -462,29 +412,21 @@ namespace PixelVision8.Runner.Exporters
 
                     sb.Append("}");
 
-//                    Console.WriteLine(i + " Add Comma " + total + " " + tileCounter);
-
-//                    if (i < total-2)
-//                    {
                     sb.Append(",");
-//                    }
-
-//                    JsonUtil.GetLineBreak(sb, 4);
 
                     tileCounter++;
                 }
             }
 
+//            sb.Append(String.Join("", new List<int>(layers[(int)Layer.Sprites]).ConvertAll(i => i.ToString()).ToArray()));
+
+            //                var layerEnum = (TilemapChip.Layer) Enum.Parse(typeof(TilemapChip.Layer), layerName);
+            //                    
+            //                // Need to join the layer array and add 1 to the sprite ID since tiled isn't 
+            //                sb.Append(string.Join(",", tilemapChip.layers[(int)layerEnum].Select(x => (x == -1 ? 0 : x + idOffset).ToString())));
+
             // Remove the last comma
             sb.Length--;
-
-
-            //            sb.Append(String.Join("", new List<int>(layers[(int)Layer.Sprites]).ConvertAll(i => i.ToString()).ToArray()));
-
-//                var layerEnum = (TilemapChip.Layer) Enum.Parse(typeof(TilemapChip.Layer), layerName);
-//                    
-//                // Need to join the layer array and add 1 to the sprite ID since tiled isn't 
-//                sb.Append(string.Join(",", tilemapChip.layers[(int)layerEnum].Select(x => (x == -1 ? 0 : x + idOffset).ToString())));
 
             // tilesets end
             JsonUtil.GetLineBreak(sb, 3);
@@ -493,13 +435,6 @@ namespace PixelVision8.Runner.Exporters
             // Layer end
             JsonUtil.GetLineBreak(sb, 2);
             sb.Append("}");
-
-//                if (i < totalLayers - 1 && totalLayers > 1)
-//                {
-//                    sb.Append(",");
-//                }
-
-//            }
 
             // layers end
             JsonUtil.GetLineBreak(sb, 1);
@@ -520,10 +455,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void CloseStringBuilder()
         {
-//            JsonUtil.indentLevel--;
-//            JsonUtil.GetLineBreak(sb);
-//            sb.Append("}");
-//            
+
             JsonUtil.indentLevel--;
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");

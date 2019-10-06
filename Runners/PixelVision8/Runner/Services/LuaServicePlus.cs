@@ -353,7 +353,7 @@ namespace PixelVision8.Runner.Services
                 {
                     // Define the compression level
                     // 0 - store only to 9 - means best compression
-                    OutputStream.SetLevel(0);
+                    OutputStream.SetLevel(4);
 
                     byte[] buffer = new byte[4096];
 
