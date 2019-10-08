@@ -9,7 +9,7 @@
   "ErrorTool": "/PixelVisionOS/System/Tools/ErrorTool/",
   
   "SystemName": "Pixel Vision 8",
-  "SystemVersion": "v0.9.5",
+  "SystemVersion": "v0.9.6",
   
   "NoAutoRun": "Could not find a game to run.",
   "NoDefaultTool": "Could not find a default tool to load.",

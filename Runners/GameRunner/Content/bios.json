@@ -2,7 +2,7 @@
 
   "BaseDir" : "GameRunner",
   "SystemName": "PV8 Game Runner",
-  "SystemVersion": "v0.9.4",
+  "SystemVersion": "v0.9.6",
   "AutoRun": "/App/DefaultGame/",
   "Resolution" : "512x480",
   
