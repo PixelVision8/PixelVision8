@@ -35,6 +35,8 @@ namespace PixelVision8.Runner.Workspace
 
         private ZipFileSystem(ZipFile zf, string extractPath)
         {
+//            var entities = zf.GetEnumerator();
+            
             using (zf)
             {
                 foreach (ZipEntry zipEntry in zf)
@@ -45,12 +47,12 @@ namespace PixelVision8.Runner.Workspace
                         continue;
                     }
 
-                    String entryFileName = zipEntry.Name;
+                    var entryFileName = zipEntry.Name;
 
 
                     var filePath = WorkspacePath.Root.AppendPath(entryFileName);
 
-                    if (filePath.IsFile && !filePath.Path.StartsWith("/__"))
+                    if (!filePath.Path.StartsWith("/__"))
                     {
                         try
                         {
