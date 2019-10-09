@@ -551,27 +551,23 @@ namespace PixelVision8.Runner
             if (mode != RunnerMode.Booting)
                 return;
 
-            // Setup Drag and drop support
-            Window.FileDropped += (o, e) => OnFileDropped(o, e);
-
-            // Mount all of the disks from the bios
-//            var totalDisks = ;
-
-//            var loadedDisks = 0;
-
-            // Disable auto run when loading up the default disks
-            autoRunEnabled = false;
-
-            for (int i = 0; i < workspaceServicePlus.totalDisks; i++)
+            // We only activate this if there is not bios setting to disable it
+            if (bios.ReadBiosData("FileDiskMounting", "True") != "False")
             {
-                var diskPath =  bios.ReadBiosData("Disk" + i, "none");
-                if (diskPath != "none" && diskPath != "")
-                {
-//                    Console.WriteLine("Mount disk " + diskPath);
+                // Setup Drag and drop support
+                Window.FileDropped += (o, e) => OnFileDropped(o, e);
+            
+                // Disable auto run when loading up the default disks
+                autoRunEnabled = false;
 
-                    // manually mount each disk since we are not going to load from them
-                    workspaceServicePlus.MountDisk(diskPath);
-//                    loadedDisks++;
+                for (int i = 0; i < workspaceServicePlus.totalDisks; i++)
+                {
+                    var diskPath =  bios.ReadBiosData("Disk" + i, "none");
+                    if (diskPath != "none" && diskPath != "")
+                    {
+                        // manually mount each disk since we are not going to load from them
+                        workspaceServicePlus.MountDisk(diskPath);
+                    }
                 }
             }
 
