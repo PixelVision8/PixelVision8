@@ -1,4 +1,4 @@
-﻿﻿//   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -33,7 +33,7 @@ using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner
 {
-    
+
     public enum CRTBiosSettings
     {
         CRT,
@@ -41,17 +41,19 @@ namespace PixelVision8.Runner
         Sharpness,
         CRTEffectPath
     }
-    
+
     /// <summary>
     ///     This is the main type for your game.
     /// </summary>
     public class DesktopRunner : GameRunner
     {
-// Store the path to the game's files
-//        private IControllerChip controllerChip;
+        // Store the path to the game's files
+        //        private IControllerChip controllerChip;
         public BiosService bios;
         public WorkspaceService workspaceService;
         protected string rootPath;
+        protected WorkspacePath biosPath = WorkspacePath.Root.AppendDirectory("App").AppendFile("bios.json");
+
         protected WorkspacePath userBiosPath => WorkspacePath.Parse("/Storage/user-bios.json");
         protected string tmpPath;
         /// <summary>
@@ -66,18 +68,18 @@ namespace PixelVision8.Runner
         protected override void ConfigureRunner()
         {
             base.ConfigureRunner();
-            
+
             // TODO This may be a string
             Volume(MathHelper.Clamp(
-                
+
                 Convert.ToInt32(bios.ReadBiosData(BiosSettings.Volume.ToString(), "40")),
                  0, 100));
 
             Mute(Convert.ToBoolean(bios.ReadBiosData(BiosSettings.Mute.ToString(), "False") as string));
 
             Window.Title =
-                (string) bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner");
-            
+                (string)bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner");
+
         }
 
         #region Runner settings
@@ -90,9 +92,9 @@ namespace PixelVision8.Runner
         public override int Volume(int? value = null)
         {
             var vol = base.Volume(value);
-            
+
             bios.UpdateBiosData(BiosSettings.Volume.ToString(), vol.ToString());
-            
+
             return vol;
         }
 
@@ -104,9 +106,9 @@ namespace PixelVision8.Runner
         public override bool Mute(bool? value = null)
         {
             var mute = base.Mute(value);
-            
+
             bios.UpdateBiosData(BiosSettings.Mute.ToString(), mute.ToString());
-            
+
             return mute;
         }
 
@@ -121,7 +123,7 @@ namespace PixelVision8.Runner
             var value = base.Scale(scale);
 
             bios.UpdateBiosData(BiosSettings.Scale.ToString(), value.ToString());
-            
+
             return value;
         }
 
@@ -131,7 +133,7 @@ namespace PixelVision8.Runner
             var full = base.Fullscreen(value);
 
             bios.UpdateBiosData(BiosSettings.FullScreen.ToString(), full.ToString());
-            
+
             return full;
 
         }
@@ -141,7 +143,7 @@ namespace PixelVision8.Runner
             var stretch = base.StretchScreen(value);
 
             bios.UpdateBiosData(BiosSettings.StretchScreen.ToString(), stretch.ToString());
-            
+
             return stretch;
         }
 
@@ -150,12 +152,12 @@ namespace PixelVision8.Runner
             var crop = base.CropScreen(value);
 
             bios.UpdateBiosData(BiosSettings.CropScreen.ToString(), crop.ToString());
-            
+
             return crop;
         }
-        
+
         #endregion
-        
+
         #region CRT Filter Settings
 
         public bool EnableCRT(bool? toggle)
@@ -182,7 +184,7 @@ namespace PixelVision8.Runner
 
             return displayTarget.brightness;
         }
-        
+
         public float Sharpness(float? sharpness = null)
         {
             if (sharpness.HasValue)
@@ -195,17 +197,18 @@ namespace PixelVision8.Runner
         }
 
         #endregion
-        
-        
+
+
         public override void ConfigureDisplayTarget()
         {
             // Get the virtual monitor resolution
-            var tmpRes = ((string) bios.ReadBiosData(BiosSettings.Resolution.ToString(), "512x480"))
+            var tmpRes = ((string)bios.ReadBiosData(BiosSettings.Resolution.ToString(), "512x480"))
                 .Split('x').Select(int.Parse)
                 .ToArray();
-            
-            displayTarget = new DisplayTarget(graphics, tmpRes[0], tmpRes[1]);
-            
+
+            if(displayTarget == null)
+                displayTarget = new DisplayTarget(graphics, tmpRes[0], tmpRes[1]);
+
             Fullscreen(Convert.ToBoolean(
                 bios.ReadBiosData(BiosSettings.FullScreen.ToString(), "False") as string));
             StretchScreen(
@@ -213,40 +216,28 @@ namespace PixelVision8.Runner
                     bios.ReadBiosData(BiosSettings.StretchScreen.ToString(), "False") as string));
             CropScreen(Convert.ToBoolean(
                 bios.ReadBiosData(BiosSettings.CropScreen.ToString(), "True") as string));
-            // Create the default display target
+            
+            Scale(Convert.ToInt32(bios.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
 
-            
-            // TODO this may be a string
-//            try
-//            {
-                Scale(Convert.ToInt32(bios.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
-//            }
-//            catch
-//            {
-//                Scale(Convert.ToInt32((string) bios.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
-//            }
-            
             // Configure CRT shader
             var shaderPath = WorkspacePath.Parse(bios.ReadBiosData(CRTBiosSettings.CRTEffectPath.ToString(), "/App/Effects/crt-lottes-mg.ogl.mgfxo") as string);
 
-            
             if (workspaceService.Exists(shaderPath))
             {
                 displayTarget.shaderPath = workspaceService.OpenFile(shaderPath, FileAccess.Read);
-                
+
                 // Force the display to load the shader
                 displayTarget.useCRT = true;
-                
-                
+
             }
-            
+
             displayTarget.ResetResolution(tmpRes[0], tmpRes[1]);
-            
+
             // Configure the shader from the bios
             EnableCRT(Convert.ToBoolean(bios.ReadBiosData(CRTBiosSettings.CRT.ToString(), "False") as string));
-            Brightness(Convert.ToSingle(bios.ReadBiosData(CRTBiosSettings.Brightness.ToString(), "100"))/100F);
+            Brightness(Convert.ToSingle(bios.ReadBiosData(CRTBiosSettings.Brightness.ToString(), "100")) / 100F);
             Sharpness(Convert.ToSingle(bios.ReadBiosData(CRTBiosSettings.Sharpness.ToString(), "-6")));
-            
+
         }
 
         protected override void ConfigureKeyboard()
@@ -255,8 +246,8 @@ namespace PixelVision8.Runner
             foreach (var keyMap in defaultKeys)
             {
                 var rawValue = Convert.ToInt32(bios.ReadBiosData(keyMap.Key.ToString(), keyMap.Value.ToString(), true));
-//                if (rawValue is long)
-//                    rawValue = Convert.ToInt32(rawValue);
+                //                if (rawValue is long)
+                //                    rawValue = Convert.ToInt32(rawValue);
 
                 var keyValue = rawValue;
 
@@ -265,7 +256,7 @@ namespace PixelVision8.Runner
 
             tmpEngine.controllerChip.RegisterKeyInput();
         }
-        
+
         /// <summary>
         ///     The base runner contains a list of the core chips. Here you'll want to add the game chip to the list so it can run.
         ///     This is called when a new game is created by the runner.
@@ -290,10 +281,10 @@ namespace PixelVision8.Runner
             workspaceService = new WorkspaceService(new KeyValuePair<WorkspacePath, IFileSystem>(
                 WorkspacePath.Root.AppendDirectory("App"),
                 new PhysicalFileSystem(rootPath)));
-            
+
             serviceManager.AddService(typeof(WorkspaceService).FullName, workspaceService);
         }
-        
+
         /// <summary>
         ///     This is called when the runner first starts up.
         /// </summary>
@@ -301,8 +292,8 @@ namespace PixelVision8.Runner
         {
             // Create the workspace starting at the App's directory
             CreateWorkspaceService();
-            
-            var biosPath = WorkspacePath.Root.AppendDirectory("App").AppendFile("bios.json");//Path.Combine(rootPath, "bios.json")));
+
+//            var biosPath = WorkspacePath.Root.AppendDirectory("App").AppendFile("bios.json");//Path.Combine(rootPath, "bios.json")));
 
             // Test if a bios file exists
             if (workspaceService.Exists(biosPath))
@@ -310,7 +301,7 @@ namespace PixelVision8.Runner
 
                 // Read the bios text
                 var biosText = workspaceService.ReadTextFromFile(biosPath);
-//                
+                //                
                 bios = new BiosService();
 
                 try
@@ -319,11 +310,11 @@ namespace PixelVision8.Runner
                 }
                 catch
                 {
-//                    DisplayBootErrorScreen("Error parsing system bios.");
+                    //                    DisplayBootErrorScreen("Error parsing system bios.");
                 }
 
                 ConfigureWorkspace();
-                
+
                 // Configure the runner
                 ConfigureRunner();
 
@@ -335,49 +326,49 @@ namespace PixelVision8.Runner
                 // TODO no bios found
             }
         }
-        
+
         protected virtual void ConfigureWorkspace()
         {
             var mounts = new Dictionary<WorkspacePath, IFileSystem>();
 
             // Create the base directory in the documents and local storage folder
-                
+
             // Get the base directory from the bios or use Pixel Vision 8 as the default name
             var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8") as string;
-                
+
             tmpPath = Path.Combine(LocalStorage, baseDir, "Tmp");
-                
+
             // Create an array of required directories
             var requiredDirectories = new Dictionary<string, string>()
             {
                 {"Storage", Path.Combine(LocalStorage, baseDir)},
                 {"Tmp", tmpPath}
             };
-                
+
             // Loop through the list of directories, make sure they exist and create them
             foreach (var directory in requiredDirectories)
             {
-                
+
                 if (!Directory.Exists(directory.Value))
                 {
 
                     Directory.CreateDirectory(directory.Value);
-                        
+
                 }
-                    
+
                 // Add directories as mount points
                 mounts.Add(WorkspacePath.Root.AppendDirectory(directory.Key), new PhysicalFileSystem(directory.Value));
-                    
+
             }
-                
+
             // Mount the filesystem
             workspaceService.MountFileSystems(mounts);
 
             var userBios =
                 workspaceService.ReadTextFromFile(userBiosPath);
-            
+
             bios.ParseBiosText(userBios);
-  
+
             workspaceService.SetupLogFile(WorkspacePath.Parse(bios.ReadBiosData("LogFilePath", "/Tmp/Log.txt")));
 
         }
@@ -396,8 +387,8 @@ namespace PixelVision8.Runner
         protected virtual void LoadDefaultGame()
         {
 
-            var autoRunPath = (string) bios.ReadBiosData("AutoRun", "/App/DefaultGame/");
-            
+            var autoRunPath = (string)bios.ReadBiosData("AutoRun", "/App/DefaultGame/");
+
             // Create a new dictionary to store the file binary data
             var gameFiles = workspaceService.LoadGame(autoRunPath);//gamePath)));
 
@@ -410,10 +401,10 @@ namespace PixelVision8.Runner
             tmpEngine.name = autoRunPath;
 
         }
-        
+
         public virtual void SaveGameData(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
         {
-            
+
             // Simple save game exporter
 
             var saveExporter = new SavedDataExporter(path, engine);
@@ -422,23 +413,23 @@ namespace PixelVision8.Runner
             {
                 saveExporter.NextStep();
             }
-            
+
             // Save file
             var saveFile = new Dictionary<string, byte[]>()
             {
                 {saveExporter.fileName, saveExporter.bytes}
             };
-            
+
             workspaceService.SaveExporterFiles(saveFile);
-            
+
         }
 
-//        public override void ResetGame()
-//        {
-//            LoadDefaultGame();
-//        }
-        
-        
+        //        public override void ResetGame()
+        //        {
+        //            LoadDefaultGame();
+        //        }
+
+
         protected override void OnExiting(object sender, EventArgs args)
         {
             ShutdownSystem();
@@ -449,31 +440,31 @@ namespace PixelVision8.Runner
         public virtual void ShutdownSystem()
         {
             // We only want to call this once so don't run if shutdown is true
-//            if (shutdown)
-//                return;
+            //            if (shutdown)
+            //                return;
 
             // Shutdown the active game
             ShutdownActiveEngine();
 
             // Toggle the shutdown flag
-//            shutdown = true;
+            //            shutdown = true;
 
-//            UpdateDiskInBios();
+            //            UpdateDiskInBios();
             SaveBiosChanges();
-            
+
             // Save any changes to the bios to the user's custom bios file
             workspaceService.ShutdownSystem();
         }
-        
+
         public override void ShutdownActiveEngine()
         {
             // Look to see if there is an active engine
             if (activeEngine == null)
                 return;
 
-            
+
             base.ShutdownActiveEngine();
-            
+
             if (activeEngine.gameChip.saveSlots > 0)
             {
                 //Print("Active Engine To Save", activeEngine.name);
@@ -481,21 +472,21 @@ namespace PixelVision8.Runner
                 SaveGameData(workspaceService.FindValidSavePath(activeEngine.name), activeEngine, SaveFlags.SaveData, false);
             }
 
-                // Save the active disk
-//                workspaceService.SaveActiveDisk();
+            // Save the active disk
+            //                workspaceService.SaveActiveDisk();
 
-            
+
 
         }
-        
+
         public void SaveBiosChanges()
         {
- 
+
             // Look for changes
             if (bios.userBiosChanges != null)
             {
                 // Get the path to where the user's bios should be saved
-//                var path = FileSystemPath.Parse("/User/").AppendFile("user-bios.json");
+                //                var path = FileSystemPath.Parse("/User/").AppendFile("user-bios.json");
 
                 if (!workspaceService.Exists(userBiosPath))
                 {
@@ -524,7 +515,7 @@ namespace PixelVision8.Runner
                 workspaceService.SaveTextToFile(userBiosPath, Json.Serialize(userData), true);
             }
         }
-        
+
         public override void DisplayWarning(string message)
         {
             workspaceService.UpdateLog(message);

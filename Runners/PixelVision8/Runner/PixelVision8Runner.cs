@@ -232,7 +232,7 @@ namespace PixelVision8.Runner
             luaScript.Globals["EnableCRT"] = (EnableCRTDelegator) EnableCRT;
             luaScript.Globals["Brightness"] = (BrightnessDelegator)Brightness;
             luaScript.Globals["Sharpness"] = (SharpnessDelegator)Sharpness;
-            luaScript.Globals["BootDone"] = new Action(BootDone);
+            luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
             luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int) (loadService.percent * 100));
             luaScript.Globals["ShutdownSystem"] = new Action(ShutdownSystem);
             luaScript.Globals["QuitCurrentTool"] = (QuitCurrentToolDelagator) QuitCurrentTool;
@@ -317,17 +317,8 @@ namespace PixelVision8.Runner
         private delegate bool EnableCRTDelegator(bool? toggle);
         private delegate float BrightnessDelegator(float? brightness = null);
         private delegate float SharpnessDelegator(float? sharpness = null);
-//        private delegate bool LoadGameDelegator(string path, Dictionary<string, string> metaData = null);
         private delegate void QuitCurrentToolDelagator(Dictionary<string, string> metaData, string tool = null);
 
-        
-        
-//        protected bool LoadGame(string path, Dictionary<string, string> metaData = null)
-//        {
-//            var success = Load(path, RunnerMode.Loading, metaData);
-//
-//            return success;
-//        }
 
         /// <summary>
         ///     This quits the current tool and returns to the default tool which should be the workspace explorer.
@@ -394,7 +385,7 @@ namespace PixelVision8.Runner
                         }
 
                         // Get the path to the new file
-                        var path = workspaceService.UniqueFilePath(gifDirectory.AppendFile("recoding.gif"));
+                        var path = workspaceService.UniqueFilePath(gifDirectory.AppendFile("recording.gif"));
 
                         // Create a new file in the workspace
                         var fileStream = workspaceService.CreateFile(path);
@@ -458,14 +449,14 @@ namespace PixelVision8.Runner
                     }
             }else if (controllerChip.GetKeyUp(Keys.Escape) && backKeyEnabled)
             {
-                if (mode == RunnerMode.Booting)
-                {
-                    BootDone();
-                }
-                else
-                {
+//                if (mode == RunnerMode.Booting)
+//                {
+//                    BootDone();
+//                }
+//                else
+//                {
                     Back();
-                }
+//                }
             }
             else
             {
@@ -544,12 +535,29 @@ namespace PixelVision8.Runner
 
         public bool autoRunEnabled = true;
 
-        public void BootDone()
+        public void BootDone(bool safeMode = false)
         {
 
             // Only call BootDone when the runner is booting.
             if (mode != RunnerMode.Booting)
                 return;
+
+            // Test to see if we are in save mode before loading the bios
+            if (safeMode)
+            {
+
+                // Clear the current bios
+                bios.Clear();
+
+                // Read the bios text
+                var biosText = workspaceService.ReadTextFromFile(biosPath);
+
+                // Reparse the bios text
+                bios.ParseBiosText(biosText);
+
+                // Reset all the default values from the bios
+                ConfigureDisplayTarget();
+            }
 
             // We only activate this if there is not bios setting to disable it
             if (bios.ReadBiosData("FileDiskMounting", "True") != "False")
@@ -581,7 +589,7 @@ namespace PixelVision8.Runner
             loadHistory.Clear();
 //            metaDataHistory.Clear();
             
-        // Enable auto run by default
+            // Enable auto run by default
             autoRunEnabled = true;
             
             // Look to see if we have the bios default tool in the OS folder
@@ -807,9 +815,6 @@ namespace PixelVision8.Runner
                         loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaDataCopy));
                     }
                     
-
-//                    loadHistory.Add(path);
-//                    metaDataHistory.Add(metaData);
                 }
     
                 // Create a new tmpEngine
@@ -887,17 +892,6 @@ namespace PixelVision8.Runner
                 }
             }    
         }
-
-        
-//        public void PreLoaderComplete()
-//        {
-////            Console.WriteLine("Preloading complete " + ReadPreloaderPercent());
-////            loading = false;
-//            RunGame();
-//        }
-
-        
-        
         
         public override void SaveGameData(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
         {
@@ -910,7 +904,6 @@ namespace PixelVision8.Runner
             // TODO this should be moved into the ExportGame class
             exportService.StartExport(useSteps);
 
-//
         }
 
         public override void ConfigureServices()
@@ -1047,21 +1040,12 @@ namespace PixelVision8.Runner
                     // ignored
                 }
             }
-//            else
-//            {
-//                ();
-//            }
             
             // Make sure all disks are ejected
             workspaceServicePlus.EjectAll();
 
             AutoLoadDefaultGame();
-            //DisplayError(ErrorCode.NoAutoRun);
-//            else
-//            {
-//                
-//            }
-
+            
         }
         
         public override void ShutdownSystem()
@@ -1070,9 +1054,6 @@ namespace PixelVision8.Runner
             if (shutdown)
                 return;
 
-            // Shutdown the active game
-//            ShutdownActiveEngine();
-
             // Toggle the shutdown flag
             shutdown = true;
 
@@ -1080,11 +1061,6 @@ namespace PixelVision8.Runner
             
             base.ShutdownSystem();
 
-//            UpdateDiskInBios();
-//            SaveBiosChanges();
-//            
-//            // Save any changes to the bios to the user's custom bios file
-//            workspaceServicePlus.ShutdownSystem();
         }
 
         public void UpdateDiskInBios()
@@ -1100,15 +1076,12 @@ namespace PixelVision8.Runner
         public virtual void DisplayError(ErrorCode code, Dictionary<string, string> tokens = null,
             Exception exception = null)
         {
-//			Debug.Log("Display Error");
 
             if (mode == RunnerMode.Error)
                 return;
             
             // TODO should this only work on special cases?
             autoRunEnabled = true;
-
-            // var id = (int) code;
 
             var sb = new StringBuilder();
 
@@ -1120,9 +1093,6 @@ namespace PixelVision8.Runner
             if (tokens != null)
                 foreach (var entry in tokens)
                     sb.Replace(entry.Key, entry.Value);
-
-            // Make sure we stop preloading if we crash during the process
-//            loading = false;
 
             var messageString = sb.ToString();
 

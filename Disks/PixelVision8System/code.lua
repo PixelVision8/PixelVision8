@@ -18,6 +18,9 @@ local message = "EMPTY GAME\n\n\nThis is an empty game template. Press Esc to ex
 -- use this method to configure background color, ScreenBufferChip and draw a text box.
 function Init()
 
+  -- Here we are manually changing the background color
+  BackgroundColor(0)
+
   local display = Display()
 
   -- We are going to render the message in a box as tiles. To do this, we need to wrap the

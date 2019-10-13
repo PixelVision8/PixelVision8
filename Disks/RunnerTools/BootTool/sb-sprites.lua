@@ -17,4 +17,16 @@ logoframe14={width=12,spriteIDs={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,
 logoframe15={width=12,spriteIDs={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,0,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,38,38,38,41,42,43}}
 logosmall={width=1,spriteIDs={331}}
 topborder={width=32,spriteIDs={353,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,354,355}}
--- spritelib-end
+txticon={width=2,spriteIDs={368}}
+workspaceicon={width=2,spriteIDs={370}}
+settingsicon={width=2,spriteIDs={372}}
+luaicon={width=2,spriteIDs={374}}
+colorsicon={width=2,spriteIDs={376}}
+spritesicon={width=2,spriteIDs={378}}
+tilesicon={width=2,spriteIDs={380}}
+soundsicon={width=2,spriteIDs={382}}
+musicicon={width=2,spriteIDs={400}}
+dataicon={width=2,spriteIDs={402}}
+diskicon={width=2,spriteIDs={404}}
+fonticon={width=2,spriteIDs={406}}
+--spritelib-end

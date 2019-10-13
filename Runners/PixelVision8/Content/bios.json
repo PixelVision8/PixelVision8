@@ -7,12 +7,13 @@
   "LoadTool": "/PixelVisionOS/System/Tools/LoadTool/",
   "UnloadTool": "/PixelVisionOS/System/Tools/UnloadTool/",
   "ErrorTool": "/PixelVisionOS/System/Tools/ErrorTool/",
-  
+  "AutoRun":"/PixelVisionOS/System/OSInstaller/",
+
   "SystemName": "Pixel Vision 8",
   "SystemVersion": "v0.9.6",
   "FileDiskMounting":  "True",
   
-  "NoAutoRun": "Could not find a game to run.",
+  "NoAutoRun": "Could not find an OS to boot. Restart Pixel Vision 8 in 'safe mode' by holding down the Shift key.",
   "NoDefaultTool": "Could not find a default tool to load.",
   "Exception": "@{error}\nPress Ctrl + 4 to reload the current game.",
   "LoadError": "There was an issue loading from '@{path}'.",

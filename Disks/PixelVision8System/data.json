@@ -1,14 +1,12 @@
 {
     "ColorChip":
     {
-        "pages":2,
-        "colorsPerPage":64,
+        "total":16,
         "maxColors":128,
         "backgroundColor":0,
         "maskColor":"#FF00FF",
         "unique":false,
         "debug":false,
-        "paletteMode":false,
         
     },
     "DisplayChip":
@@ -31,14 +29,16 @@
     },
     "MusicChip":
     {
-        "totalTracks":4,
+        "totalSongs":32,
         "notesPerTrack":127,
+        "totalPatterns":24,
         "totalLoop":24
     },
     "SoundChip":
     {
         "totalChannels":5,
-        "totalSounds":32
+        "totalSounds":32,
+        "channelTypes":[-1,-1,-1,-1,-1]
     },
     
     "SpriteChip":{
@@ -51,9 +51,10 @@
     },
     "TilemapChip":
     {
-        "columns":33,
-        "rows":31,
-        "totalFlags":16"autoImport":false,
+        "columns":256,
+        "rows":256,
+        "totalFlags":16,
+        "autoImport":false,
         
     }
 }

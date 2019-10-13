@@ -95,5 +95,17 @@ namespace PixelVision8.Runner.Services
             // If the key exists, use the key's value
             return biosData[key];
         }
+
+        public void ClearUserChanges()
+        {
+            userBiosChanges.Clear();
+        }
+
+        public void Clear(bool clearUserChanges = true)
+        {
+            biosData.Clear();
+            ClearUserChanges();
+        }
+
     }
 }

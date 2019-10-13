@@ -45,14 +45,14 @@ local nextScreenTime = 0
 local startDelay = .5
 local ready = false
 local bottomBorder = 224 + 8
--- local shortcutDelay = 1
--- local shortcutTime = 0
--- local checkShortcuts = true
+local safeMode = false
+local showPlugin = -1
 
 function Init()
 
   EnableAutoRun(false)
-  --EnableBackKey(false)
+
+  EnableBackKey(false)
 
   -- Set the default background color
   BackgroundColor(5)
@@ -98,6 +98,12 @@ function Update(timeDelta)
 
   shortcutTime = time + timeDelta
 
+  if(Key(Keys.Escape)) then
+
+    -- Trigger BootDone
+    BootDone(safeMode)
+    return
+  end
   -- if(shortcutTime > shortcutDelay) then
   --   checkShortcuts = false
   -- end
@@ -153,7 +159,7 @@ function Update(timeDelta)
 
         if(nextScreenTime > nextScreenDelay) then
           -- Trigger BootDone
-          BootDone()
+          BootDone(safeMode)
 
         end
 
@@ -173,8 +179,21 @@ function Update(timeDelta)
 
       elseif(done == false) then
 
-        -- If frames are over total sprites, we are done
-        done = true
+        if(editors == nil) then
+          editors = FindEditors()
+          showPlugin = 0
+        end
+
+        if(showPlugin >= #editors or safeMode == true) then
+          -- If frames are over total sprites, we are done
+          done = true
+        else
+          showPlugin = showPlugin + 1
+          local key = _G[editors[showPlugin] .. "icon"];
+
+          DrawSpriteBlock(key.spriteIDs[1], ((showPlugin - 1) * 2) + 1, 24, key.width, key.width, false, false, DrawMode.Tile)
+
+        end
 
       end
     end
@@ -220,6 +239,12 @@ function KeyPressCheck()
     elseif(Key(Keys.Alpha4)) then
       Scale(4)
       InvalidateKeys()
+    elseif(Key(Keys.LeftShift) or Key(Keys.RightShift)) then
+      if(safeMode == false) then
+        safeMode = true
+        DrawText("SAFE MODE", 8, 225, DrawMode.TilemapCache, "small", 11, - 4)
+        print("Safe mode")
+      end
     end
   end
 
@@ -227,4 +252,81 @@ end
 
 function InvalidateKeys()
   invalid = true
+end
+
+
+
+function FindEditors()
+
+  local editors = {}
+
+  local paths = 
+  {
+    NewWorkspacePath("/PixelVisionOS/Tools/"),
+  }
+
+  if(PathExists(paths[1]) == nil) then
+    return
+  end
+
+  local total = #paths
+
+  local tools = {}
+
+  for i = 1, total do
+
+    local path = paths[i];
+
+    if (PathExists(path)) then
+
+      local folders = GetEntities(path);
+      local total = 0
+
+      for i = 1, #folders do
+
+        local folder = folders[i]
+
+        if (folder.IsDirectory) then
+
+          local tmpInfoPath = folder.AppendFile("info.json")
+
+          if(PathExists(tmpInfoPath)) then
+
+            local jsonData = ReadJson(tmpInfoPath )
+            
+            if (jsonData["editType"] ~= nil) then
+              --     {
+              local split = string.split(jsonData["editType"], ",")
+              --
+              local totalTypes = #split
+              for j = 1, totalTypes do
+
+                if(_G[split[j] .. "icon"] ~= nil) then
+                  table.insert(tools, split[j])
+                end
+                
+              end
+            end
+          end
+        end
+      end
+    end
+
+  end
+
+  table.sort(tools)
+
+  return tools
+end
+
+string.split = function(string, delimiter)
+  if delimiter == nil then
+    delimiter = "%s"
+  end
+  local t = {} ; i = 1
+  for str in string.gmatch(string, "([^"..delimiter.."]+)") do
+    t[i] = str
+    i = i + 1
+  end
+  return t
 end
