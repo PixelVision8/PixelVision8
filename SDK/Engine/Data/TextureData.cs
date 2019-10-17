@@ -236,13 +236,18 @@ namespace PixelVision8.Engine
 
             var total = tmpWidth * tmpHeight;
 
-            tmpPixels = new int[total];
+            // TODO look into why this was being set to a negative value
+            if (total >= 0)
+            {
+                tmpPixels = new int[total];
 
-            for (var i = 0; i < total; i++) tmpPixels[i] = colorRef;
+                for (var i = 0; i < total; i++) tmpPixels[i] = colorRef;
 
-            SetPixels(x, y, tmpWidth, tmpHeight, tmpPixels);
+                SetPixels(x, y, tmpWidth, tmpHeight, tmpPixels);
 
-            Invalidate();
+                Invalidate();
+            }
+            
         }
 
         /// <summary>

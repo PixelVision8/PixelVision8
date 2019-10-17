@@ -512,7 +512,7 @@ namespace PixelVision8.Runner
                         userData.Add(pair.Key, pair.Value);
 
                 // Save the new bios data back to the user's bios file.
-                workspaceService.SaveTextToFile(userBiosPath, Json.Serialize(userData), true);
+                workspaceService.SaveTextToFile(userBiosPath, Json.Serialize(userData));
             }
         }
 
