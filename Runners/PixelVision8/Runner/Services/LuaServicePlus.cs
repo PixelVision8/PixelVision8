@@ -230,7 +230,7 @@ namespace PixelVision8.Runner.Services
         /// <param name="defaultText"></param>
         public void SaveText(WorkspacePath dest, string defaultText = "")
         {
-            workspace.SaveTextToFile(dest, defaultText);
+            workspace.SaveTextToFile(dest, defaultText, true);
         }
 
         public Image ReadImage(WorkspacePath src, string maskHex = "#ff00ff")
@@ -305,7 +305,7 @@ namespace PixelVision8.Runner.Services
         {
             var path = WorkspacePath.Parse(filePath);
 
-            return workspace.SaveTextToFile(path, text);
+            return workspace.SaveTextToFile(path, text, autoCreate);
         }
 
         public long FileSize(WorkspacePath workspacePath)
@@ -454,9 +454,10 @@ namespace PixelVision8.Runner.Services
                     // Move the new build over 
                     exportPath = workspace.UniqueFilePath(exportPath.AppendDirectory("Build"));
 
-                    // Make sure we create this on on the right mount point
+//                            workspace.CreateDirectory(exportPath);
+
                     workspace.CreateDirectoryRecursive(exportPath);
-                    
+
                     exportPath = exportPath.AppendFile(tmpZipPath.EntityName);
                     workspace.Copy(tmpZipPath, exportPath);
 

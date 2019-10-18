@@ -309,7 +309,7 @@ namespace PixelVision8.Runner.Services
 
             logService.UpdateLog(logString, type, stackTrace);
 
-            SaveTextToFile(logFilePath, logService.ReadLog());
+            SaveTextToFile(logFilePath, logService.ReadLog(), true);
         }
 
         public void ClearLog()
@@ -318,7 +318,7 @@ namespace PixelVision8.Runner.Services
             logService.Clear();
 
             // Update the log file now that it is empty
-            SaveTextToFile(logFilePath, logService.ReadLog());
+            SaveTextToFile(logFilePath, logService.ReadLog(), true);
         }
 
         public List<string> ReadLogItems()
@@ -350,20 +350,20 @@ namespace PixelVision8.Runner.Services
             return "";
         }
 
-        public bool SaveTextToFile(WorkspacePath filePath, string text)
+        public bool SaveTextToFile(WorkspacePath filePath, string text, bool autoCreate = false)
         {
 
-            // Overwrite any existing file by creating a new on in it's place
-            Stream file = CreateFile(filePath);
+            Stream file = null;
+
+            if (Exists(filePath)) Delete(filePath);
 
             // TODO need to look into how to clear the bytes before writing to it?
+            file = CreateFile(filePath);
 
             if (file != null)
             {
                 var bytes = Encoding.ASCII.GetBytes(text);
-
                 file.Write(bytes);
-
 
                 file.Close();
 

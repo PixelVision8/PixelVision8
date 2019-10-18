@@ -75,7 +75,7 @@ namespace PixelVision8.Runner.Workspace
         public Stream CreateFile(WorkspacePath path)
         {
             var pair = Get(path);
-            return pair.Value.CreateFile(path.RemoveParent(pair.Key));  
+            return pair.Value.CreateFile(path.RemoveParent(pair.Key));
         }
 
         public Stream OpenFile(WorkspacePath path, FileAccess access)
