@@ -56,7 +56,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
         internal GraphicsResource()
         {
-            
+
         }
 
         ~GraphicsResource()
@@ -116,14 +116,14 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
-		public event EventHandler<EventArgs> Disposing;
-		
-		public GraphicsDevice GraphicsDevice
-		{
-			get
-			{
-				return graphicsDevice;
-			}
+        public event EventHandler<EventArgs> Disposing;
+
+        public GraphicsDevice GraphicsDevice
+        {
+            get
+            {
+                return graphicsDevice;
+            }
 
             internal set
             {
@@ -145,24 +145,24 @@ namespace Microsoft.Xna.Framework.Graphics
                 _selfReference = new WeakReference(this);
                 graphicsDevice.AddResourceReference(_selfReference);
             }
-		}
-		
-		public bool IsDisposed
-		{
-			get
-			{
-				return disposed;
-			}
-		}
-		
-		public string Name { get; set; }
-		
-		public Object Tag { get; set; }
+        }
+
+        public bool IsDisposed
+        {
+            get
+            {
+                return disposed;
+            }
+        }
+
+        public string Name { get; set; }
+
+        public Object Tag { get; set; }
 
         public override string ToString()
         {
             return string.IsNullOrEmpty(Name) ? base.ToString() : Name;
         }
-	}
+    }
 }
 

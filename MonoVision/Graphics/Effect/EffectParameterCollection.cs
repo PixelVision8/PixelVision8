@@ -16,7 +16,7 @@ namespace Microsoft.Xna.Framework.Graphics
             for (int i = 0; i < _parameters.Length; i++)
             {
                 string name = _parameters[i].Name;
-                if(!string.IsNullOrWhiteSpace(name))
+                if (!string.IsNullOrWhiteSpace(name))
                     _indexLookup.Add(name, i);
             }
         }
@@ -43,13 +43,13 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             get { return _parameters.Length; }
         }
-		
-		public EffectParameter this[int index]
-		{
-			get { return _parameters[index]; }
-		}
-		
-		public EffectParameter this[string name]
+
+        public EffectParameter this[int index]
+        {
+            get { return _parameters[index]; }
+        }
+
+        public EffectParameter this[string name]
         {
             get
             {
@@ -57,7 +57,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 if (_indexLookup.TryGetValue(name, out index))
                     return _parameters[index];
                 return null;
-			}
+            }
         }
 
         public IEnumerator<EffectParameter> GetEnumerator()

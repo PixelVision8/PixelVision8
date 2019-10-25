@@ -60,11 +60,11 @@ namespace Microsoft.Xna.Framework.Input.Touch
         /// States completion of a drag gesture(VerticalDrag, HorizontalDrag, or FreeDrag).
         /// </summary>
         /// <remarks>No position or delta information is available for this sample.</remarks>
-		DragComplete = 2,	
-	    /// <summary>
+		DragComplete = 2,
+        /// <summary>
         /// States that a touch was combined with a quick swipe.
-	    /// </summary>    
-	    /// <remarks>Flicks does not contain position information. The velocity of it can be read from <see cref="GestureSample.Delta"/></remarks>
+        /// </summary>    
+        /// <remarks>Flicks does not contain position information. The velocity of it can be read from <see cref="GestureSample.Delta"/></remarks>
         Flick = 4,
         /// <summary>
         /// The use touched a point and then performed a free-form drag.

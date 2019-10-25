@@ -16,11 +16,11 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Color data.
         /// </summary>
-        Color,   
+        Color,
         /// <summary>
         /// Texture coordinate data or can be used for user-defined data.
         /// </summary>
-        TextureCoordinate, 
+        TextureCoordinate,
         /// <summary>
         /// Normal data.
         /// </summary>
@@ -40,7 +40,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Blending weight data.
         /// </summary>
-        BlendWeight,     
+        BlendWeight,
         /// <summary>
         /// Depth data.
         /// </summary>
@@ -48,7 +48,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Fog data.
         /// </summary>
-        Fog,      
+        Fog,
         /// <summary>
         /// Point size data. Usable for drawing point sprites.
         /// </summary>
@@ -56,7 +56,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Sampler data for specifies the displacement value to look up.
         /// </summary>
-        Sample,     
+        Sample,
         /// <summary>
         /// Single, positive float value, specifies a tessellation factor used in the tessellation unit to control the rate of tessellation.
         /// </summary>

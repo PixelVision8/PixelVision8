@@ -4,7 +4,7 @@
 
 namespace Microsoft.Xna.Framework.Audio
 {
-    struct RpcPoint 
+    struct RpcPoint
     {
         public RpcPointType Type;
         public float Position;

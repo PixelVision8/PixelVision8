@@ -3,10 +3,6 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
-using System.IO;
-using System.Diagnostics;
-using System.Collections.Generic;
-using MonoGame.Utilities;
 
 namespace Microsoft.Xna.Framework.Audio
 {
@@ -32,12 +28,12 @@ namespace Microsoft.Xna.Framework.Audio
                 var name = _waveBankNames[waveBankIndex];
                 if (!_audioengine.Wavebanks.TryGetValue(name, out waveBank))
                     throw new Exception("The wave bank '" + name + "' was not found!");
-                _waveBanks[waveBankIndex] = waveBank;                
+                _waveBanks[waveBankIndex] = waveBank;
             }
 
             return waveBank.GetSoundEffectInstance(trackIndex, out streaming);
         }
-        
+
         /// <summary>
         /// This event is triggered when the SoundBank is disposed.
         /// </summary>

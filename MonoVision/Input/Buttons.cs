@@ -36,7 +36,7 @@ namespace Microsoft.Xna.Framework.Input
         /// START button.
         /// </summary>
         Start = 16,
-      
+
         /// <summary>
         /// BACK button.
         /// </summary>
@@ -66,7 +66,7 @@ namespace Microsoft.Xna.Framework.Input
         /// Big button.
         /// </summary>    
         BigButton = 2048,
-       
+
         /// <summary>
         /// A button.
         /// </summary>
@@ -85,7 +85,7 @@ namespace Microsoft.Xna.Framework.Input
         /// <summary>
         /// Y button.
         /// </summary>
-        Y = 32768,    
+        Y = 32768,
 
         /// <summary>
         /// Left stick is towards the left.

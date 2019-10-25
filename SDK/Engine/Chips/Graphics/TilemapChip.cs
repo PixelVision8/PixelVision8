@@ -1,4 +1,4 @@
-﻿﻿//   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -17,8 +17,6 @@
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
 //
-
-using System;
 
 namespace PixelVision8.Engine.Chips
 {
@@ -70,7 +68,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="id"></param>
         public void InvalidateTileID(int id)
         {
-//            GetTile(id).invalid = true;
+            //            GetTile(id).invalid = true;
 
             for (var i = 0; i < total; i++)
             {
@@ -83,11 +81,11 @@ namespace PixelVision8.Engine.Chips
 
         public void InvalidateAll()
         {
-//            cachedTileMap.Clear();
+            //            cachedTileMap.Clear();
 
             for (var i = 0; i < total; i++)
                 tiles[i].Invalidate();
-//                layers[(int) Layer.Invalid][i] = -1;
+            //                layers[(int) Layer.Invalid][i] = -1;
 
             Invalidate();
         }
@@ -135,10 +133,11 @@ namespace PixelVision8.Engine.Chips
 
             // Create a new array for each tile's data
             var newTiles = new TileData[columns * rows];
-            
+
             var row = 0;
-            
-            for (var i = 0; i < newTiles.Length; i++) {
+
+            for (var i = 0; i < newTiles.Length; i++)
+            {
 
                 var c = i % columns;
                 var r = row;
@@ -152,18 +151,19 @@ namespace PixelVision8.Engine.Chips
                 {
                     newTiles[i] = new TileData(i);
                 }
-                
-                if (c == (columns - 1)) {
+
+                if (c == (columns - 1))
+                {
                     row++;
                 }
 
             }
-           
+
             // Save the new tilemap data
             this.columns = columns;
             this.rows = rows;
             tiles = newTiles;
-            
+
             Invalidate();
         }
 

@@ -24,7 +24,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Microsoft.Xna.Framework.Audio;
 using PixelVision8.Engine.Data;
 using PixelVision8.Runner.Data;
@@ -36,7 +35,7 @@ namespace PixelVision8.Engine.Audio
     {
         private const int LO_RES_NOISE_PERIOD = 8; // Should be < 32
 
-        private Dictionary<string, SoundEffectInstance> wavCache = new Dictionary<string, SoundEffectInstance>();
+        private readonly Dictionary<string, SoundEffectInstance> wavCache = new Dictionary<string, SoundEffectInstance>();
 
         private float _changeAmount; // Amount to change the note by
 
@@ -93,7 +92,7 @@ namespace PixelVision8.Engine.Audio
 
 //        private int _overtones; // Minimum frequency before stopping
 
-        private SfxrParams _params = new SfxrParams(); // Params instance
+        private readonly SfxrParams _params = new SfxrParams(); // Params instance
         private float _period; // Period of the wave
         private float _periodTemp; // Period modified by vibrato
         private int _periodTempInt; // Period modified by vibrato (as an Int)

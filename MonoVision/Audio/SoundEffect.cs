@@ -1,7 +1,7 @@
 // MonoGame - Copyright (C) The MonoGame Team
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
- 
+
 using System;
 using System.IO;
 
@@ -18,7 +18,7 @@ namespace Microsoft.Xna.Framework.Audio
         #region Internal Audio Data
 
         private string _name = string.Empty;
-        
+
         private bool _isDisposed = false;
         private readonly TimeSpan _duration;
 
@@ -349,8 +349,8 @@ namespace Microsoft.Xna.Framework.Audio
         /// <para>Each SoundEffectInstance has its own Volume property that is independent to SoundEffect.MasterVolume. During playback SoundEffectInstance.Volume is multiplied by SoundEffect.MasterVolume.</para>
         /// <para>This property is used to adjust the volume on all current and newly created SoundEffectInstances. The volume of an individual SoundEffectInstance can be adjusted on its own.</para>
         /// </remarks>
-        public static float MasterVolume 
-        { 
+        public static float MasterVolume
+        {
             get { return _masterVolume; }
             set
             {
@@ -359,7 +359,7 @@ namespace Microsoft.Xna.Framework.Audio
 
                 if (_masterVolume == value)
                     return;
-                
+
                 _masterVolume = value;
                 SoundEffectInstancePool.UpdateMasterVolume();
             }
@@ -379,7 +379,7 @@ namespace Microsoft.Xna.Framework.Audio
             set
             {
                 if (value <= 0f)
-                    throw new ArgumentOutOfRangeException ("value of DistanceScale");
+                    throw new ArgumentOutOfRangeException("value of DistanceScale");
 
                 _distanceScale = value;
             }
@@ -403,7 +403,7 @@ namespace Microsoft.Xna.Framework.Audio
                 //   although the documentation does not say it throws an error we will anyway
                 //   just so it is like the DistanceScale
                 if (value < 0.0f)
-                    throw new ArgumentOutOfRangeException ("value of DopplerScale");
+                    throw new ArgumentOutOfRangeException("value of DopplerScale");
 
                 _dopplerScale = value;
             }

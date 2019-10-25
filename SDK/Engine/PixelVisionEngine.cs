@@ -18,11 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Services;
 
 namespace PixelVision8.Engine
 {
@@ -139,18 +139,18 @@ namespace PixelVision8.Engine
                 return;
 
             // Make sure all chips are reset to their default values
-//            chipManager.Reset();
+            //            chipManager.Reset();
             foreach (var chip in chips)
                 chip.Value.Reset();
 
             // Call init on all chips
-//            chipManager.Init();
+            //            chipManager.Init();
             var chipNames = chips.Keys.ToList();
 
             foreach (var chipName in chipNames)
                 chips[chipName].Init();
 
-//            running = true;
+            //            running = true;
         }
 
         /// <summary>
@@ -162,13 +162,12 @@ namespace PixelVision8.Engine
         /// <tocexclude />
         public virtual void Update(float timeDelta)
         {
-//            if (!running)
-//                return;
+
+            // Reset the sprite counter on each frame
+            gameChip.currentSprites = 0;
 
             foreach (var chip in updateChips)
                 chip.Update(timeDelta);
-
-//            chipManager.Update(timeDelta);
         }
 
         /// <summary>
@@ -179,10 +178,7 @@ namespace PixelVision8.Engine
         /// <tocexclude />
         public virtual void Draw()
         {
-//            if (!running)
-//                return;
-
-//            chipManager.Draw();
+            
             foreach (var chip in drawChips)
                 chip.Draw();
         }
@@ -197,11 +193,11 @@ namespace PixelVision8.Engine
             foreach (var chip in chips)
                 chip.Value.Shutdown();
 
-//            // Remove chips
-//            chips.Clear();
-//            
-//            // Removed references to services
-//            _services.Clear();
+            //            // Remove chips
+            //            chips.Clear();
+            //            
+            //            // Removed references to services
+            //            _services.Clear();
         }
 
         /// <summary>
@@ -227,18 +223,18 @@ namespace PixelVision8.Engine
             {
                 if (value == "")
                 {
-                    _metaData.Remove(key);    
+                    _metaData.Remove(key);
                 }
                 else
                 {
-                    _metaData.Add(key, value);    
+                    _metaData.Add(key, value);
                 }
             }
-            else if(value != "")
+            else if (value != "")
             {
                 _metaData[key] = value;
             }
-                
+
         }
 
         /// <summary>
@@ -263,7 +259,7 @@ namespace PixelVision8.Engine
         /// <tocexclude />
         public virtual void Init()
         {
-//            chipManager = new ChipManager(this);
+            //            chipManager = new ChipManager(this);
 
             //apiBridge = new APIBridge(this);
             if (defaultChips != null)

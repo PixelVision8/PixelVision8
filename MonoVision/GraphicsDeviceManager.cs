@@ -2,9 +2,9 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input.Touch;
+using System;
 
 namespace Microsoft.Xna.Framework
 {
@@ -20,7 +20,7 @@ namespace Microsoft.Xna.Framework
         private int _preferredBackBufferHeight;
         private int _preferredBackBufferWidth;
         private SurfaceFormat _preferredBackBufferFormat;
-//        private DepthFormat _preferredDepthStencilFormat;
+        //        private DepthFormat _preferredDepthStencilFormat;
         private bool _preferMultiSampling;
         private DisplayOrientation _supportedOrientations;
         private bool _synchronizedWithVerticalRetrace = true;
@@ -60,7 +60,7 @@ namespace Microsoft.Xna.Framework
 
             _supportedOrientations = DisplayOrientation.Default;
             _preferredBackBufferFormat = SurfaceFormat.Color;
-//            _preferredDepthStencilFormat = DepthFormat.Depth24;
+            //            _preferredDepthStencilFormat = DepthFormat.Depth24;
             _synchronizedWithVerticalRetrace = true;
 
             // Assume the window client size as the default back 
@@ -132,7 +132,7 @@ namespace Microsoft.Xna.Framework
             _shouldApplyChanges = false;
 
             // hook up reset events
-            GraphicsDevice.DeviceReset     += (sender, args) => OnDeviceReset(args);
+            GraphicsDevice.DeviceReset += (sender, args) => OnDeviceReset(args);
             GraphicsDevice.DeviceResetting += (sender, args) => OnDeviceResetting(args);
 
             // update the touchpanel display size when the graphicsdevice is reset
@@ -256,7 +256,7 @@ namespace Microsoft.Xna.Framework
             presentationParameters.BackBufferFormat = _preferredBackBufferFormat;
             presentationParameters.BackBufferWidth = _preferredBackBufferWidth;
             presentationParameters.BackBufferHeight = _preferredBackBufferHeight;
-//            presentationParameters.DepthStencilFormat = _preferredDepthStencilFormat;
+            //            presentationParameters.DepthStencilFormat = _preferredDepthStencilFormat;
             presentationParameters.IsFullScreen = _wantFullScreen;
             presentationParameters.HardwareModeSwitch = _hardwareModeSwitch;
             presentationParameters.PresentationInterval = _synchronizedWithVerticalRetrace ? PresentInterval.One : PresentInterval.Immediate;
@@ -421,7 +421,7 @@ namespace Microsoft.Xna.Framework
         /// </summary>
         public bool HardwareModeSwitch
         {
-            get { return _hardwareModeSwitch;}
+            get { return _hardwareModeSwitch; }
             set
             {
                 _shouldApplyChanges = true;

@@ -3,7 +3,7 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 namespace Microsoft.Xna.Framework
-{   
+{
     /// <summary>
     /// Defines the index of player for various MonoGame components.
     /// </summary>

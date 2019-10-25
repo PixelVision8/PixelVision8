@@ -33,7 +33,7 @@ namespace MonoGame.OpenGL
 #endif
         }
 
-        private static IGraphicsContext PlatformCreateContext (IWindowInfo info)
+        private static IGraphicsContext PlatformCreateContext(IWindowInfo info)
         {
             return new GraphicsContext(info);
         }

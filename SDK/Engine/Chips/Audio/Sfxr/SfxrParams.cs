@@ -1,4 +1,4 @@
-﻿﻿//  SfxrSynth
+﻿//  SfxrSynth
 //  
 //  Copyright 2010 Thomas Vian
 //  Copyright 2013 Zeh Fernando
@@ -21,12 +21,12 @@
 //  
 //  @author Zeh Fernando
 
-using System;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace PixelVision8.Engine.Audio
 {
-    
+
     public enum WaveType
     {
         None = -1,
@@ -37,14 +37,14 @@ namespace PixelVision8.Engine.Audio
         Triangle = 4,
         Sample = 5,
     }
-    
+
     public class SfxrParams : AbstractData
     {
         private static readonly Random _random = new Random();
 
         private float _attackTime; // Length of the volume envelope attack (0 to 1)
         private float _changeAmount; // Shift in note, either up or down (-1 to 1)
-//        private float _changeAmount2; // Shift in note, either up or down (-1 to 1)
+                                     //        private float _changeAmount2; // Shift in note, either up or down (-1 to 1)
         private float _changeRepeat; // Pitch Jump Repeat Speed: larger Values means more pitch jumps, which can be useful for arpeggiation (0 to 1)
         private float _changeSpeed; // How fast the note shift happens (only happens once) (0 to 1)
         private float _changeSpeed2; // How fast the note shift happens (only happens once) (0 to 1)
@@ -72,8 +72,8 @@ namespace PixelVision8.Engine.Audio
 
         private WaveType _waveType; // Shape of wave to generate (see enum WaveType)
 
-//        public bool
-//            paramsDirty; // Whether the parameters have been changed since last time (shouldn't used cached sound)
+        //        public bool
+        //            paramsDirty; // Whether the parameters have been changed since last time (shouldn't used cached sound)
 
         /// <summary>
         ///     Shape of the wave (0:square, 1:sawtooth, 2:sin, 3:noise)
@@ -405,15 +405,15 @@ namespace PixelVision8.Engine.Audio
         /// <summary>
         ///     Shift in note, either up or down (-1 to 1)
         /// </summary>
-//        public float changeAmount2
-//        {
-//            get => _changeAmount2;
-//            set
-//            {
-//                _changeAmount2 = MathHelper.Clamp(value, -1, 1);
-//                Invalidate();
-//            }
-//        }
+        //        public float changeAmount2
+        //        {
+        //            get => _changeAmount2;
+        //            set
+        //            {
+        //                _changeAmount2 = MathHelper.Clamp(value, -1, 1);
+        //                Invalidate();
+        //            }
+        //        }
 
         /// <summary>
         ///     How fast the note shift happens (only happens once) (0 to 1)
@@ -446,54 +446,54 @@ namespace PixelVision8.Engine.Audio
         ///     Harmonics: overlays copies of the waveform with copies and multiples of its frequency. Good for bulking out or
         ///     otherwise enriching the texture of the sounds (warning: this is the number 1 cause of bfxr slowdown!) (0 to 1)
         /// </summary>
-//        public float overtones
-//        {
-//            get => _overtones;
-//            set
-//            {
-//                _overtones = MathHelper.Clamp(value, 0, 1);
-//                Invalidate();
-//            }
-//        }
-//
-//        /// <summary>
-//        ///     Harmonics falloff: The rate at which higher overtones should decay (0 to 1)
-//        /// </summary>
-//        public float overtoneFalloff
-//        {
-//            get => _overtoneFalloff;
-//            set
-//            {
-//                _overtoneFalloff = MathHelper.Clamp(value, 0, 1);
-//                Invalidate();
-//            }
-//        }
+        //        public float overtones
+        //        {
+        //            get => _overtones;
+        //            set
+        //            {
+        //                _overtones = MathHelper.Clamp(value, 0, 1);
+        //                Invalidate();
+        //            }
+        //        }
+        //
+        //        /// <summary>
+        //        ///     Harmonics falloff: The rate at which higher overtones should decay (0 to 1)
+        //        /// </summary>
+        //        public float overtoneFalloff
+        //        {
+        //            get => _overtoneFalloff;
+        //            set
+        //            {
+        //                _overtoneFalloff = MathHelper.Clamp(value, 0, 1);
+        //                Invalidate();
+        //            }
+        //        }
 
         /// <summary>
         ///     Bit crush: resamples the audio at a lower frequency (0 to 1)
         /// </summary>
-//        public float bitCrush
-//        {
-//            get => _bitCrush;
-//            set
-//            {
-//                _bitCrush = MathHelper.Clamp(value, 0, 1);
-//                Invalidate();
-//            }
-//        }
-//
-//        /// <summary>
-//        ///     Bit crush sweep: sweeps the Bit Crush filter up or down (-1 to 1)
-//        /// </summary>
-//        public float bitCrushSweep
-//        {
-//            get => _bitCrushSweep;
-//            set
-//            {
-//                _bitCrushSweep = MathHelper.Clamp(value, -1, 1);
-//                Invalidate();
-//            }
-//        }
+        //        public float bitCrush
+        //        {
+        //            get => _bitCrush;
+        //            set
+        //            {
+        //                _bitCrush = MathHelper.Clamp(value, 0, 1);
+        //                Invalidate();
+        //            }
+        //        }
+        //
+        //        /// <summary>
+        //        ///     Bit crush sweep: sweeps the Bit Crush filter up or down (-1 to 1)
+        //        /// </summary>
+        //        public float bitCrushSweep
+        //        {
+        //            get => _bitCrushSweep;
+        //            set
+        //            {
+        //                _bitCrushSweep = MathHelper.Clamp(value, -1, 1);
+        //                Invalidate();
+        //            }
+        //        }
 
         /// <summary>
         ///     Sets the parameters to generate a pickup/coin sound
@@ -511,9 +511,9 @@ namespace PixelVision8.Engine.Audio
             if (GetRandomBool())
             {
                 _changeSpeed = 0.5f + GetRandom() * 0.2f;
-                var cnum = (int) (GetRandom() * 7f) + 1;
-                var cden = cnum + (int) (GetRandom() * 7f) + 2;
-                _changeAmount = cnum / (float) cden;
+                var cnum = (int)(GetRandom() * 7f) + 1;
+                var cden = cnum + (int)(GetRandom() * 7f) + 2;
+                _changeAmount = cnum / (float)cden;
             }
         }
 
@@ -524,10 +524,10 @@ namespace PixelVision8.Engine.Audio
         {
             resetParams();
 
-            _waveType = (WaveType) (GetRandom() * 3);
-            
+            _waveType = (WaveType)(GetRandom() * 3);
+
             // TODO need to remove sine
-            if (_waveType == WaveType.Sine && GetRandomBool()) _waveType = (WaveType) (GetRandom() * 2f);
+            if (_waveType == WaveType.Sine && GetRandomBool()) _waveType = (WaveType)(GetRandom() * 2f);
 
             _startFrequency = 0.5f + GetRandom() * 0.5f;
             _minFrequency = _startFrequency - 0.2f - GetRandom() * 0.6f;
@@ -649,7 +649,7 @@ namespace PixelVision8.Engine.Audio
         {
             resetParams();
 
-            _waveType = (WaveType) (GetRandom() * 3f);
+            _waveType = (WaveType)(GetRandom() * 3f);
             if (_waveType == WaveType.Sine)
                 _waveType = WaveType.Noise;
             else if (_waveType == 0) _squareDuty = GetRandom() * 0.6f;
@@ -689,7 +689,7 @@ namespace PixelVision8.Engine.Audio
         {
             resetParams();
 
-            _waveType = (WaveType) (GetRandom() * 2f);
+            _waveType = (WaveType)(GetRandom() * 2f);
             if (_waveType == 0) _squareDuty = GetRandom() * 0.6f;
 
             _startFrequency = 0.2f + GetRandom() * 0.4f;
@@ -738,16 +738,16 @@ namespace PixelVision8.Engine.Audio
 
             // From BFXR
             _changeRepeat = 0.0f;
-//            _changeAmount2 = 0.0f;
+            //            _changeAmount2 = 0.0f;
             _changeSpeed2 = 0.0f;
 
             _compressionAmount = 0.3f;
 
-//            _overtones = 0.0f;
-//            _overtoneFalloff = 0.0f;
+            //            _overtones = 0.0f;
+            //            _overtoneFalloff = 0.0f;
 
-//            _bitCrush = 0.0f;
-//            _bitCrushSweep = 0.0f;
+            //            _bitCrush = 0.0f;
+            //            _bitCrushSweep = 0.0f;
         }
 
         /// <summary>
@@ -781,7 +781,7 @@ namespace PixelVision8.Engine.Audio
 
             // From BFXR
             if (GetRandomBool()) changeRepeat += GetRandom() * __mutation * 2f - __mutation;
-//            if (GetRandomBool()) changeAmount2 += GetRandom() * __mutation * 2f - __mutation;
+            //            if (GetRandomBool()) changeAmount2 += GetRandom() * __mutation * 2f - __mutation;
             if (GetRandomBool()) changeSpeed2 += GetRandom() * __mutation * 2f - __mutation;
             if (GetRandomBool()) compressionAmount += GetRandom() * __mutation * 2f - __mutation;
 
@@ -795,7 +795,7 @@ namespace PixelVision8.Engine.Audio
             resetParams();
 
             // TODO Need to make sure this stays within range
-            _waveType = (WaveType) (GetRandom() * 9f);
+            _waveType = (WaveType)(GetRandom() * 9f);
 
             _attackTime = Pow(GetRandom() * 2f - 1f, 4);
             _sustainTime = Pow(GetRandom() * 2f - 1f, 2);
@@ -841,7 +841,7 @@ namespace PixelVision8.Engine.Audio
 
             // From BFXR
             _changeRepeat = GetRandom();
-//            _changeAmount2 = GetRandom() * 2f - 1f;
+            //            _changeAmount2 = GetRandom() * 2f - 1f;
             _changeSpeed2 = GetRandom();
 
             _compressionAmount = GetRandom();
@@ -897,9 +897,9 @@ namespace PixelVision8.Engine.Audio
         public void SetSettingsString(string __string)
         {
             var values = __string.Split(',');
-            
+
             resetParams();
-            
+
             // Parse the params if there are enough values
             if (values.Length == 24)
             {
@@ -928,7 +928,7 @@ namespace PixelVision8.Engine.Audio
                 hpFilterCutoffSweep = ParseFloat(values[22]);
                 masterVolume = ParseFloat(values[23]);
             }
-            
+
         }
 
         // Copying methods
@@ -1017,7 +1017,7 @@ namespace PixelVision8.Engine.Audio
         /// <returns></returns>
         public float GetRandom()
         {
-            return (float) _random.NextDouble();
+            return (float)_random.NextDouble();
         }
 
         /// <summary>

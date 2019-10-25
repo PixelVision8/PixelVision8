@@ -4,7 +4,7 @@ namespace Microsoft.Xna.Framework.Graphics
 {
     public class EffectTechniqueCollection : IEnumerable<EffectTechnique>
     {
-		private readonly EffectTechnique[] _techniques;
+        private readonly EffectTechnique[] _techniques;
 
         public int Count { get { return _techniques.Length; } }
 
@@ -21,25 +21,25 @@ namespace Microsoft.Xna.Framework.Graphics
 
             return new EffectTechniqueCollection(techniques);
         }
-        
+
         public EffectTechnique this[int index]
         {
-            get { return _techniques [index]; }
+            get { return _techniques[index]; }
         }
 
         public EffectTechnique this[string name]
         {
-            get 
+            get
             {
                 // TODO: Add a name to technique lookup table.
-				foreach (var technique in _techniques) 
+                foreach (var technique in _techniques)
                 {
-					if (technique.Name == name)
-						return technique;
-			    }
+                    if (technique.Name == name)
+                        return technique;
+                }
 
-			    return null;
-		    }
+                return null;
+            }
         }
 
         public IEnumerator<EffectTechnique> GetEnumerator()

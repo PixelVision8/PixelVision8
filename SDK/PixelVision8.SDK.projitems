@@ -80,7 +80,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\ZLibStream\ZlibStream.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)Engine\Chips\Audio\.DS_Store" />
     <Content Include="$(MSBuildThisFileDirectory)Runner\Utils\AnimatedGifEncoder\LICENSE.txt" />
   </ItemGroup>
 </Project>

@@ -465,15 +465,15 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
-        ///     Get the total colors or change the limit for how many colors the color chip can store.
+        ///     Get the TotalDisks colors or change the limit for how many colors the color chip can store.
         /// </summary>
         /// <param name="ignoreEmpty"></param>
         /// <param name="total"></param>
         /// <returns></returns>
         public int TotalColors(bool ignoreEmpty = false)
         {
-//            if (total.HasValue)
-//                activeColorChip.maxColors = total.Value;
+//            if (TotalDisks.HasValue)
+//                activeColorChip.maxColors = TotalDisks.Value;
 
             return ignoreEmpty ? activeColorChip.totalUsedColors : activeColorChip.total;
         }
@@ -610,7 +610,7 @@ namespace PixelVision8.Runner.Editors
 
 
         /// <summary>
-        ///     Get the total number of songs or change it
+        ///     Get the TotalDisks number of songs or change it
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
@@ -1078,13 +1078,13 @@ namespace PixelVision8.Runner.Editors
                 spriteChip.UpdateSpriteAt(i, tmpPixelData);
             }
 
-//            Console.WriteLine("Optimized sprites " + i + " to " + total);
+//            Console.WriteLine("Optimized sprites " + i + " to " + TotalDisks);
 
 //            spriteChip.texture = tmpSpriteChip.texture;
         }
 
         /// <summary>
-        ///     Returns the total number of sprites in memory.
+        ///     Returns the TotalDisks number of sprites in memory.
         /// </summary>
         /// <returns></returns>
         public int SpritesInRam()
@@ -1157,7 +1157,7 @@ namespace PixelVision8.Runner.Editors
                 targetGame.colorChip.unique = true;
 
                 // 
-//                targetGame.colorChip.total = 256;
+//                targetGame.colorChip.TotalDisks = 256;
                 targetGame.colorChip.Clear();
 
                 // Make sure we only have unique sprites
@@ -1243,7 +1243,7 @@ namespace PixelVision8.Runner.Editors
                 targetGame.colorChip.unique = true;
 
                 // 
-//                targetGame.colorChip.total =
+//                targetGame.colorChip.TotalDisks =
 //                    2; // TODO need to make sure there are enough colors for the font but technically it should be 1 bit (b&w)
 
                 // Make sure we only have unique sprites
@@ -1355,21 +1355,21 @@ namespace PixelVision8.Runner.Editors
         #region Colors
 
         /// <summary>
-        ///     Get or change the total number of colors per page
+        ///     Get or change the TotalDisks number of colors per page
         /// </summary>
-        /// <param name="total"></param>
+        /// <param name="TotalDisks"></param>
         /// <returns></returns>
-//        public int ColorPages(int? total = null)
+//        public int ColorPages(int? TotalDisks = null)
 //        {
 //            // TODO this is deprecated and the API needs to be updated
 //
-//            if (total.HasValue) activeColorChip.total = total.Value * 64;
+//            if (TotalDisks.HasValue) activeColorChip.TotalDisks = TotalDisks.Value * 64;
 //
-//            return MathUtil.CeilToInt(activeColorChip.total / 64);
+//            return MathUtil.CeilToInt(activeColorChip.TotalDisks / 64);
 //        }
 
         /// <summary>
-        ///     Convert sprites in memory to palette colors, clamping the total colors in each sprite to 16
+        ///     Convert sprites in memory to palette colors, clamping the TotalDisks colors in each sprite to 16
         /// </summary>
         public void ReindexSprites()
         {
@@ -1455,7 +1455,7 @@ namespace PixelVision8.Runner.Editors
                 "#FFFFFF"
             };
 
-            // Set the new color total
+            // Set the new color TotalDisks
             total = colorMapColors.Length;
 
             // Create a color map chip
@@ -1463,7 +1463,7 @@ namespace PixelVision8.Runner.Editors
             colorMapChip.total = colorMapColors.Length;
 
             // Clear the color map chip and rebuild the pages
-//            colorMapChip.total = total;
+//            colorMapChip.TotalDisks = TotalDisks;
             colorMapChip.Clear();
 
             // Add the colors to the color map chip
@@ -1512,7 +1512,7 @@ namespace PixelVision8.Runner.Editors
         };
 
         /// <summary>
-        ///     Get or change the total sprite pages in memory
+        ///     Get or change the TotalDisks sprite pages in memory
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
@@ -1586,7 +1586,7 @@ namespace PixelVision8.Runner.Editors
 //        }
 
         /// <summary>
-        ///     Get or change the total number of sounds
+        ///     Get or change the TotalDisks number of sounds
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
@@ -1598,7 +1598,7 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
-        ///     Get or change the total channels
+        ///     Get or change the TotalDisks channels
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
@@ -1699,19 +1699,19 @@ namespace PixelVision8.Runner.Editors
         #region Music
 
         /// <summary>
-        ///     Get or change the total tracks
+        ///     Get or change the TotalDisks tracks
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
         public int TotalTracks(int? total)
         {
-//            if (total.HasValue) musicChip.totalTracks = total.Value;
+//            if (TotalDisks.HasValue) musicChip.totalTracks = TotalDisks.Value;
 
             return musicChip.totalTracks;
         }
 
         /// <summary>
-        ///     Get or change the total loops
+        ///     Get or change the TotalDisks loops
         /// </summary>
         /// <param name="total"></param>
         /// <returns></returns>
@@ -2163,18 +2163,6 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
-        ///     Check to see if the sprite builder is active
-        /// </summary>
-        /// <returns></returns>
-        public bool SpriteBuilderActive(string rootPath)
-        {
-            var filePath = WorkspacePath.Parse(rootPath);
-
-            // Check to see if the sprite builder folder exists
-            return workspace.ValidateSpriteBuilderFolder(filePath);
-        }
-
-        /// <summary>
         ///     Run the sprite builder
         /// </summary>
         /// <returns></returns>
@@ -2186,21 +2174,6 @@ namespace PixelVision8.Runner.Editors
 
             // Generate the sprites
             return workspace.GenerateSprites(path, targetGame);
-        }
-//
-//        /// <summary>
-//        /// 
-//        /// </summary>
-//        /// <returns></returns>
-//        public bool AreSpritesCompressed()
-//        {
-//            return workspace.AreSpritesCompressed();
-//        }
-
-        /// <summary>
-        /// </summary>
-        public void CompressSprites()
-        {
         }
 
         #endregion
@@ -2422,27 +2395,6 @@ namespace PixelVision8.Runner.Editors
 
         #endregion
 
-        #region Palette APIs
-
-//        public bool UsePalettes()
-//        {
-//            return colorPaletteChip != null;
-//        }
-
-//        public int ColorsPerPalette(int? total = null)
-//        {
-//
-//            if (total.HasValue)
-//            {
-//                // TODO need to rebuild the pages?
-//                colorPaletteChip.colorsPerPage = total.Value.Clamp(2, 8);
-//            }
-//            
-//            return UsePalettes() ? colorPaletteChip.total : -1;
-//
-//        }
-
-        #endregion
 
         // TODO need a way to reduce the palette for sprites?
 

@@ -61,7 +61,7 @@ local loopKeyframe = totalFrames
 function Init()
 
   EnableAutoRun(false)
-  --EnableBackKey(false)
+  EnableBackKey(false)
 
   -- Set the background an rebuild the screen buffer
   BackgroundColor(5)

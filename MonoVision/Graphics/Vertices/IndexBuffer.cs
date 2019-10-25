@@ -2,8 +2,8 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
 using MonoGame.Utilities;
+using System;
 
 namespace Microsoft.Xna.Framework.Graphics
 {
@@ -15,36 +15,36 @@ namespace Microsoft.Xna.Framework.Graphics
         public int IndexCount { get; private set; }
         public IndexElementSize IndexElementSize { get; private set; }
 
-   		protected IndexBuffer(GraphicsDevice graphicsDevice, Type indexType, int indexCount, BufferUsage usage, bool dynamic)
-            : this(graphicsDevice, SizeForType(graphicsDevice, indexType), indexCount, usage, dynamic)
+        protected IndexBuffer(GraphicsDevice graphicsDevice, Type indexType, int indexCount, BufferUsage usage, bool dynamic)
+         : this(graphicsDevice, SizeForType(graphicsDevice, indexType), indexCount, usage, dynamic)
         {
         }
 
-		protected IndexBuffer(GraphicsDevice graphicsDevice, IndexElementSize indexElementSize, int indexCount, BufferUsage usage, bool dynamic)
+        protected IndexBuffer(GraphicsDevice graphicsDevice, IndexElementSize indexElementSize, int indexCount, BufferUsage usage, bool dynamic)
         {
-			if (graphicsDevice == null)
+            if (graphicsDevice == null)
             {
                 throw new ArgumentNullException("graphicsDevice", FrameworkResources.ResourceCreationWhenDeviceIsNull);
             }
-			this.GraphicsDevice = graphicsDevice;
-			this.IndexElementSize = indexElementSize;	
+            this.GraphicsDevice = graphicsDevice;
+            this.IndexElementSize = indexElementSize;
             this.IndexCount = indexCount;
             this.BufferUsage = usage;
-			
+
             _isDynamic = dynamic;
 
             PlatformConstruct(indexElementSize, indexCount);
-		}
+        }
 
-		public IndexBuffer(GraphicsDevice graphicsDevice, IndexElementSize indexElementSize, int indexCount, BufferUsage bufferUsage) :
-			this(graphicsDevice, indexElementSize, indexCount, bufferUsage, false)
-		{
-		}
+        public IndexBuffer(GraphicsDevice graphicsDevice, IndexElementSize indexElementSize, int indexCount, BufferUsage bufferUsage) :
+            this(graphicsDevice, indexElementSize, indexCount, bufferUsage, false)
+        {
+        }
 
-		public IndexBuffer(GraphicsDevice graphicsDevice, Type indexType, int indexCount, BufferUsage usage) :
-			this(graphicsDevice, SizeForType(graphicsDevice, indexType), indexCount, usage, false)
-		{
-		}
+        public IndexBuffer(GraphicsDevice graphicsDevice, Type indexType, int indexCount, BufferUsage usage) :
+            this(graphicsDevice, SizeForType(graphicsDevice, indexType), indexCount, usage, false)
+        {
+        }
 
         /// <summary>
         /// Gets the relevant IndexElementSize enum value for the given type.
@@ -63,7 +63,7 @@ namespace Microsoft.Xna.Framework.Graphics
                         throw new NotSupportedException("The profile does not support an elementSize of IndexElementSize.ThirtyTwoBits; use IndexElementSize.SixteenBits or a type that has a size of two bytes.");
                     return IndexElementSize.ThirtyTwoBits;
                 default:
-                    throw new ArgumentOutOfRangeException("type","Index buffers can only be created for types that are sixteen or thirty two bits in length");
+                    throw new ArgumentOutOfRangeException("type", "Index buffers can only be created for types that are sixteen or thirty two bits in length");
             }
         }
 
@@ -101,12 +101,12 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             SetDataInternal<T>(offsetInBytes, data, startIndex, elementCount, SetDataOptions.None);
         }
-        		
-		public void SetData<T>(T[] data, int startIndex, int elementCount) where T : struct
+
+        public void SetData<T>(T[] data, int startIndex, int elementCount) where T : struct
         {
             SetDataInternal<T>(0, data, startIndex, elementCount, SetDataOptions.None);
-		}
-		
+        }
+
         public void SetData<T>(T[] data) where T : struct
         {
             SetDataInternal<T>(0, data, 0, data.Length, SetDataOptions.None);
@@ -121,5 +121,5 @@ namespace Microsoft.Xna.Framework.Graphics
 
             PlatformSetDataInternal<T>(offsetInBytes, data, startIndex, elementCount, options);
         }
-	}
+    }
 }

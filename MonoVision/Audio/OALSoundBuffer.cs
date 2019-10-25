@@ -2,42 +2,42 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
 using MonoGame.OpenAL;
+using System;
 
 namespace Microsoft.Xna.Framework.Audio
 {
-	internal class OALSoundBuffer : IDisposable
-	{
-		int openALDataBuffer;
-		ALFormat openALFormat;
-		int dataSize;
+    internal class OALSoundBuffer : IDisposable
+    {
+        int openALDataBuffer;
+        ALFormat openALFormat;
+        int dataSize;
         bool _isDisposed;
 
-		public OALSoundBuffer()
-		{
+        public OALSoundBuffer()
+        {
             AL.GenBuffers(1, out openALDataBuffer);
             ALHelper.CheckError("Failed to generate OpenAL data buffer.");
-		}
+        }
 
         ~OALSoundBuffer()
         {
             Dispose(false);
         }
 
-		public int OpenALDataBuffer
+        public int OpenALDataBuffer
         {
-			get
+            get
             {
-				return openALDataBuffer;
-			}
-		}
+                return openALDataBuffer;
+            }
+        }
 
-		public double Duration
+        public double Duration
         {
-			get;
-			set;
-		}
+            get;
+            set;
+        }
 
         public void BindDataBuffer(byte[] dataBuffer, ALFormat format, int size, int sampleRate, int sampleAlignment = 0)
         {
@@ -70,11 +70,11 @@ namespace Microsoft.Xna.Framework.Audio
             Duration = (float)(unpackedSize / ((bits / 8) * channels)) / (float)sampleRate;
         }
 
-		public void Dispose()
-		{
+        public void Dispose()
+        {
             Dispose(true);
             GC.SuppressFinalize(this);
-		}
+        }
 
         protected virtual void Dispose(bool disposing)
         {
@@ -95,5 +95,5 @@ namespace Microsoft.Xna.Framework.Audio
                 _isDisposed = true;
             }
         }
-	}
+    }
 }

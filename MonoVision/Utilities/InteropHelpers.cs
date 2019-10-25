@@ -18,11 +18,11 @@ namespace MonoGame.Utilities
             if (handle == IntPtr.Zero)
                 return string.Empty;
 
-            var ptr = (byte*) handle;
+            var ptr = (byte*)handle;
             while (*ptr != 0)
                 ptr++;
 
-            var len = ptr - (byte*) handle;
+            var len = ptr - (byte*)handle;
             if (len == 0)
                 return string.Empty;
 

@@ -1,8 +1,8 @@
 #if OPENGL
 
+using MonoGame.OpenGL;
 using System;
 using System.Collections.Generic;
-using MonoGame.OpenGL;
 
 namespace Microsoft.Xna.Framework.Graphics
 {

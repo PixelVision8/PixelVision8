@@ -2,9 +2,9 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
+using MonoGame.Utilities;
 using System;
 using System.Collections.Generic;
-using MonoGame.Utilities;
 
 namespace Microsoft.Xna.Framework
 {
@@ -33,7 +33,7 @@ namespace Microsoft.Xna.Framework
         {
             if (type == null)
                 throw new ArgumentNullException("type");
-						
+
             object service;
             if (services.TryGetValue(type, out service))
                 return service;
@@ -48,13 +48,13 @@ namespace Microsoft.Xna.Framework
 
             services.Remove(type);
         }
-        
+
         public void AddService<T>(T provider)
         {
             AddService(typeof(T), provider);
         }
 
- 	public T GetService<T>() where T : class
+        public T GetService<T>() where T : class
         {
             var service = GetService(typeof(T));
 

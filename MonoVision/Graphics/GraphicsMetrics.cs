@@ -46,7 +46,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Number of times a target was changed on the GPU.
         /// </summary>
-        public long TargetCount {get { return _targetCount; } }
+        public long TargetCount { get { return _targetCount; } }
 
         /// <summary>
         /// Number of times a texture was changed on the GPU.
@@ -89,7 +89,7 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             return new GraphicsMetrics()
             {
-                _clearCount =  value1._clearCount + value2._clearCount,
+                _clearCount = value1._clearCount + value2._clearCount,
                 _drawCount = value1._drawCount + value2._drawCount,
                 _pixelShaderCount = value1._pixelShaderCount + value2._pixelShaderCount,
                 _primitiveCount = value1._primitiveCount + value2._primitiveCount,

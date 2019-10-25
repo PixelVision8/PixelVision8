@@ -2,18 +2,15 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
 using MonoGame.OpenGL;
+using System;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.Xna.Framework.Graphics
 {
     public partial class IndexBuffer
     {
-		internal int ibo;	
+        internal int ibo;
 
         private void PlatformConstruct(IndexElementSize indexElementSize, int indexCount)
         {
@@ -72,7 +69,7 @@ namespace Microsoft.Xna.Framework.Graphics
             IntPtr ptr = GL.MapBuffer(BufferTarget.ElementArrayBuffer, BufferAccess.ReadOnly);
             // Pointer to the start of data to read in the index buffer
             ptr = new IntPtr(ptr.ToInt64() + offsetInBytes);
-			if (typeof(T) == typeof(byte))
+            if (typeof(T) == typeof(byte))
             {
                 byte[] buffer = data as byte[];
                 // If data is already a byte[] we can skip the temporary buffer
@@ -108,30 +105,30 @@ namespace Microsoft.Xna.Framework.Graphics
         private void BufferData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount, SetDataOptions options) where T : struct
         {
             GenerateIfRequired();
-            
+
             var elementSizeInByte = Marshal.SizeOf(typeof(T));
             var sizeInBytes = elementSizeInByte * elementCount;
             var dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
             var dataPtr = (IntPtr)(dataHandle.AddrOfPinnedObject().ToInt64() + startIndex * elementSizeInByte);
             var bufferSize = IndexCount * (IndexElementSize == IndexElementSize.SixteenBits ? 2 : 4);
-            
+
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo);
             GraphicsExtensions.CheckGLError();
-            
+
             if (options == SetDataOptions.Discard)
             {
                 // By assigning NULL data to the buffer this gives a hint
                 // to the device to discard the previous content.
-                GL.BufferData(  BufferTarget.ElementArrayBuffer,
+                GL.BufferData(BufferTarget.ElementArrayBuffer,
                               (IntPtr)bufferSize,
                               IntPtr.Zero,
                               _isDynamic ? BufferUsageHint.StreamDraw : BufferUsageHint.StaticDraw);
                 GraphicsExtensions.CheckGLError();
             }
-            
+
             GL.BufferSubData(BufferTarget.ElementArrayBuffer, (IntPtr)offsetInBytes, (IntPtr)sizeInBytes, dataPtr);
             GraphicsExtensions.CheckGLError();
-            
+
             dataHandle.Free();
         }
 
@@ -144,5 +141,5 @@ namespace Microsoft.Xna.Framework.Graphics
             }
             base.Dispose(disposing);
         }
-	}
+    }
 }

@@ -85,7 +85,7 @@ namespace Microsoft.Xna.Framework.Input.Touch
 		public static GestureSample ReadGesture()
         {
             // Return the next gesture.
-            return PrimaryWindow.TouchPanelState.GestureList.Dequeue();			
+            return PrimaryWindow.TouchPanelState.GestureList.Dequeue();
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Microsoft.Xna.Framework.Input.Touch
             get { return PrimaryWindow.TouchPanelState.DisplayWidth; }
             set { PrimaryWindow.TouchPanelState.DisplayWidth = value; }
         }
-		
+
         /// <summary>
         /// Gets or sets enabled gestures.
         /// </summary>

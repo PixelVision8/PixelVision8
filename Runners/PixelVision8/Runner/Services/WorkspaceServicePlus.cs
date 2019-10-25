@@ -31,30 +31,21 @@ namespace PixelVision8.Runner.Services
 {
     public class WorkspaceServicePlus : WorkspaceService
     {
-//        public DiskDriveService diskDrives;
-        public string spriteBuilderFolderName = "SpriteBuilder";
-        protected FileSystemMounter diskMounter = new FileSystemMounter();
-        
+        private SortedList<WorkspacePath, IFileSystem> diskMount;
+        public int TotalDisks => disks.Length;//.Count;
+        private bool disksInvalid = true;
+        private WorkspacePath[] _disks;
+
         public WorkspaceServicePlus(KeyValuePair<WorkspacePath, IFileSystem> mountPoint) : base(mountPoint)
         {
         }
 
-        public int totalDisks => 2;//Exists(WorkspacePath.Root.AppendDirectory("Workspace")) ? 3 : 3;
+        public int totalDisks { get; set; } = 2;
 
-        public void CreateWorkspaceDrive(string name)
-        {
-            
-        }
-        
+
         public void MountWorkspace(string name)
         {
 
-//            var osPath = FileSystemPath.Root.AppendDirectory("PixelVisionOS");
-//            
-//            var mounts = Mounts as SortedList<FileSystemPath, IFileSystem>;
-//            
-//            mounts.Remove()
-//            
             var filePath = WorkspacePath.Root.AppendDirectory("User");
 
             // Make sure that the user directory exits
@@ -73,8 +64,6 @@ namespace PixelVision8.Runner.Services
                 new KeyValuePair<WorkspacePath, IFileSystem>(WorkspacePath.Root.AppendDirectory("Workspace"),
                     workspaceDisk));
 
-
-//            RebuildWorkspace();
         }
 
         public void RebuildWorkspace()
@@ -134,14 +123,13 @@ namespace PixelVision8.Runner.Services
                     filePath = UniqueFilePath(filePath.AppendFile("song "+ id +" - " +currentSong.name + ".wav"));
                     
                     Console.WriteLine("Export song to " + filePath);
-                    
-                    var exportService = locator.GetService(typeof(ExportService).FullName) as ExportService;
+
 
                     // TODO exporting sprites doesn't work
-                    if (exportService != null)
+                    if (locator.GetService(typeof(ExportService).FullName) is ExportService exportService)
                     {
                         exportService.ExportSong(filePath.Path, musicChip, soundChip, selectedPatterns);
-//
+                        //
                         exportService.StartExport();
                     }
                 }
@@ -162,34 +150,23 @@ namespace PixelVision8.Runner.Services
         public void ExportPattern(WorkspacePath filePath, MusicChip musicChip, SoundChip soundChip, int id)
         {
             
-//            var currentSong = musicChip.songs[id];
-
             var selectedPatterns = new int[id];
             
-//            Array.Copy(currentSong.patterns, selectedPatterns, selectedPatterns.Length);
-            
-//            var filePath = WorkspacePath.Parse(path);
-
-//            if (Exists(filePath))
-//            {
-//                filePath = filePath.AppendDirectory("Wavs").AppendDirectory("Songs");
-
                 if (!Exists(filePath)) CreateDirectory(filePath);
 
                 try
                 {
                     filePath = UniqueFilePath(filePath.AppendFile("pattern+"+id + ".wav"));
-                    
-                    var exportService = locator.GetService(typeof(ExportService).FullName) as ExportService;
 
-                    // TODO exporting sprites doesn't work
-                    if (exportService != null)
-                    {
-                        exportService.ExportSong(filePath.Path, musicChip, soundChip, selectedPatterns);
-//
-                        exportService.StartExport();
-                    }
+
+                // TODO exporting sprites doesn't work
+                if (locator.GetService(typeof(ExportService).FullName) is ExportService exportService)
+                {
+                    exportService.ExportSong(filePath.Path, musicChip, soundChip, selectedPatterns);
+                    //
+                    exportService.StartExport();
                 }
+            }
                 catch (Exception e)
                 {
                     // TODO this needs to go through the error system?
@@ -197,48 +174,15 @@ namespace PixelVision8.Runner.Services
                     throw;
                 }
 
-                // TODO saving song doesn't work
-//                runner.exportService.ExportSong(filePath.Path, musicChip, soundChip);
-//
-//                runner.StartExport();
-//            }
         }
 
         public override void MountFileSystems(Dictionary<WorkspacePath, IFileSystem> fileSystems)
         {
             base.MountFileSystems(fileSystems);
             
-            // Create a mount point for disks
-
-            diskMounter = new FileSystemMounter();
-
-            // Add the disk mount point
-            Mounts.Add(
-                new KeyValuePair<WorkspacePath, IFileSystem>(WorkspacePath.Root.AppendDirectory("Disks"),
-                    diskMounter));
-
-
-            // Create a disk drive service to mange the disks
-//            diskDrives = new DiskDriveService(diskMounter, totalDisks);
-
-            diskMount = diskMounter.Mounts as SortedList<WorkspacePath, IFileSystem>;
+            diskMount = Mounts as SortedList<WorkspacePath, IFileSystem>;
         }
         
-        public Dictionary<string, string> DiskPaths()
-        {
-            var pathRefs = new Dictionary<string, string>();
-
-            var mounts = disks; //disks.Mounts as SortedList<FileSystemPath, IFileSystem>;
-
-            for (var i = 0; i < mounts.Length; i++)
-            {
-                var path = mounts[i];
-                pathRefs.Add(path.EntityName, "/Disks" + path.Path);
-            }
-
-            return pathRefs;
-        }
-
         public string MountDisk(string path)
         {
 
@@ -261,15 +205,13 @@ namespace PixelVision8.Runner.Services
                 if (disk == null)
                     return null;
 
-//                var entities = disk.GetEntities(WorkspacePath.Root);
-                
                 // Test to see if the disk is a valid game
                 if (ValidateGameInDir(disk) == false &&
                     disk.Exists(WorkspacePath.Root.AppendFile("info.json")) == false) 
                     return null;
 
                 // Update the root path to just be the name of the entity
-                var rootPath = WorkspacePath.Root.AppendDirectory(entityName);
+                var rootPath = WorkspacePath.Root.AppendDirectory("Disks").AppendDirectory(entityName);
 
                 // Add the new disk
                 AddDisk(rootPath, disk);
@@ -283,7 +225,6 @@ namespace PixelVision8.Runner.Services
         {
             var diskPath = WorkspacePath.Root.AppendDirectory("Disks")
                 .AppendDirectory(diskName);
-
 
             var autoRunPath = diskPath.AppendFile("info.json");
 
@@ -317,38 +258,19 @@ namespace PixelVision8.Runner.Services
                 
                 // TODO need to make sure the auto run disk is at the top of the list
 
+                // Move the new disk to the top of the list
                 var diskPaths = new List<string>();
                 
-                foreach (var disk in diskMount)
+                // Add the remaining disks
+                foreach (var disk in disks)
                 {
-                    var name = disk.Key.EntityName;
-
-                    var physicalPath = "";
-                    
-                    if (disk.Value is PhysicalFileSystem fileSystem)
-                    {
-                        physicalPath = fileSystem.PhysicalRoot;
-                        
-                    }
-                    else if(disk.Value is ZipFileSystem system)
-                    {
-                        physicalPath = system.srcPath;
-
-                    }
-                    
-                    if (name == diskName)
-                    {
-                        diskPaths.Insert(0, physicalPath);
-                    }
-                    else
-                    {
-                        diskPaths.Add(physicalPath);
-                    }
-                    
+                    diskPaths.Add(DiskPhysicalRoot(disk));
                 }
-                
+
+                // Remove the old disks
                 EjectAll();
 
+                // Mount all the disks
                 foreach (var oldPath in diskPaths)
                 {
                     MountDisk(oldPath);
@@ -370,81 +292,42 @@ namespace PixelVision8.Runner.Services
             }
         }
 
+        public string DiskPhysicalRoot(WorkspacePath disk)
+        {
+            var physicalPath = "";
+
+            if (diskMount.ContainsKey(disk))
+            {
+
+                if (diskMount[disk] is PhysicalFileSystem fileSystem)
+                {
+                    physicalPath = fileSystem.PhysicalRoot;
+
+                }
+                else if (diskMount[disk] is ZipFileSystem system)
+                {
+                    physicalPath = system.PhysicalRoot;
+
+                }
+            }
+
+            return physicalPath;
+        }
+
 
         public void SaveActiveDisk()
         {
-
-//            Console.WriteLine("Save Active Disk");
             
             if (currentDisk is ZipFileSystem disk)
             {
-//                Console.WriteLine("Workspace is ready to save active disk");
-
                 disk.Save();
-//                var fileNameZip = disk.srcPath;
-//
-//                var files = currentDisk.GetEntitiesRecursive(WorkspacePath.Root);
-//
-//                using (var memoryStream = new MemoryStream())
-//                {
-//                    using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
-//                    {
-//                        foreach (var file in files)
-//                            try
-//                            {
-//                                // We can only save files
-//                                if (file.IsFile && !file.EntityName.StartsWith("._"))
-//                                {
-//                                    var tmpPath = file.Path.Substring(1);
-//
-//                                    var tmpFile = archive.CreateEntry(tmpPath);
-//
-//                                    using (var entryStream = tmpFile.Open())
-//                                    {
-//                                        disk.OpenFile(file, FileAccess.ReadWrite).CopyTo(entryStream);
-//                                    }
-//                                }
-//                            }
-//                            catch
-//                            {
-////                                Console.WriteLine("Archive Error: "+ e);
-//                            }
-//                    }
-//
-//                    try
-//                    {
-//                        if (File.Exists(fileNameZip)) File.Move(fileNameZip, fileNameZip + ".bak");
-//
-//                        using (var fileStream = new FileStream(fileNameZip, FileMode.Create))
-//                        {
-//                            memoryStream.Seek(0, SeekOrigin.Begin);
-//                            memoryStream.CopyTo(fileStream);
-//                        }
-//
-//                        // Make sure we close the stream
-//                        memoryStream.Close();
-//
-////                        Console.WriteLine("Save archive ");
-//
-//                        File.Delete(fileNameZip + ".bak");
-//                    }
-//                    catch
-//                    {
-//                        if (File.Exists(fileNameZip + ".bak")) File.Move(fileNameZip + ".bak", fileNameZip);
-//
-////                        Console.WriteLine("Disk Save Error "+e);
-//                    }
-//                }
             }
-
-
-            var mounts = Mounts as SortedList<WorkspacePath, IFileSystem>;
 
             // Create a new mount point for the current game
             var rootPath = WorkspacePath.Root.AppendDirectory("Game");
 
             // Make sure we don't have a disk with the same name
-            if (mounts.ContainsKey(rootPath)) mounts.Remove(rootPath);
+            if (diskMount.ContainsKey(rootPath)) diskMount.Remove(rootPath);
         }
 
         public override void IncludeLibDirectoryFiles(Dictionary<string, byte[]> files)
@@ -454,16 +337,11 @@ namespace PixelVision8.Runner.Services
             var paths = new List<WorkspacePath>();
             
             var diskPaths = disks;
-
-            var totalDisks = diskPaths.Length - 1;
-
-            // Loop backwards through disks
-            for (var i = totalDisks; i >= 0; i--)
+  
+            foreach (var disk in diskPaths)
             {
-                var diskPath = WorkspacePath.Root.AppendDirectory("Disks")
-                    .AppendPath(diskPaths[i].AppendDirectory("System").AppendDirectory("Libs"));
+                paths.Add(disk.AppendDirectory("System").AppendDirectory("Libs"));
 
-                paths.Add(diskPath);
             }
 
             AddExtraFiles(files, paths);
@@ -482,35 +360,17 @@ namespace PixelVision8.Runner.Services
         }
 
         // Make sure you can only eject a disk by forcing the path to be in the disk mounts scope
-        public void EjectDisk(WorkspacePath? filePath = null)
+        public void EjectDisk(WorkspacePath filePath)
         {
-            // Remove the disk if disks exists
-            if (total > 0)
-                try
-                {
-                    // Use the path that is supplied or get the first disk path
-                    var path = filePath.HasValue ? filePath.Value : disks.First();
 
-                    // Attempt to remove the disk
-                    RemoveDisk(path);
-
-                    // Update the bios when a disk is removed
-//                    UpdateDiskInBios();
-                }
-                catch
-                {
-                    // ignored error when removing a disk that doesn't exist
-                }
+            RemoveDisk(filePath);
 
             // What happens when there are no disks
-            if (total > 0)
+            if (TotalDisks > 1)
                 try
                 {
                     // Get the next disk name
                     var diskName = disks.First().Path.Replace("/", "");
-
-                    // Clear the history
-//                    runner.loadHistory.Clear();
 
                     // Attempt to run the fist disk
                     AutoRunGameFromDisk(diskName);
@@ -520,17 +380,6 @@ namespace PixelVision8.Runner.Services
                 {
                     // ignored
                 }
-        }
-
-        // TODO this is hardcoded but should come from the bios
-        
-        
-        public bool ValidateSpriteBuilderFolder(WorkspacePath rootPath)
-        {
-            // TODO need to make sure this is in the current game directory and uses the filesyem path
-            rootPath = rootPath.AppendDirectory(spriteBuilderFolderName);//(string) ReadBiosData("SpriteBuilderDir", "SpriteBuilder"));
-
-            return Exists(rootPath);
         }
 
         public int GenerateSprites(string path, PixelVisionEngine targetGame)
@@ -567,14 +416,11 @@ namespace PixelVision8.Runner.Services
 
                 try
                 {
-                    var exportService = locator.GetService(typeof(ExportService).FullName) as ExportService;
-
-
                     // TODO exporting sprites doesn't work
-                    if (exportService != null)
+                    if (locator.GetService(typeof(ExportService).FullName) is ExportService exportService)
                     {
                         exportService.ExportSpriteBuilder(path + "sb-sprites.lua", targetGame, fileData);
-//
+                        //
                         exportService.StartExport();
                     }
                 }
@@ -589,61 +435,49 @@ namespace PixelVision8.Runner.Services
             return count;
         }
         
-        private SortedList<WorkspacePath, IFileSystem> diskMount;
-        private List<WorkspacePath> diskNames = new List<WorkspacePath>();
+        public void InvalidateDisks()
+        {
+            disksInvalid = true;
+        }
 
-//        public int totalDisks = 5;
+        public void ResetDiskValidation()
+        {
+            disksInvalid = false;
+        }
 
-//        public DiskDriveService(FileSystemMounter diskMount, int totalDisks)
-//        {
-//            this.diskMount = diskMount.Mounts as SortedList<FileSystemPath, IFileSystem>;
-//
-//            this.totalDisks = totalDisks;
-//        }
-
-        public int total => diskNames.Count;
-
-        public WorkspacePath[] disks => diskNames.ToArray();
-
-        public string[] physicalPaths
+        public WorkspacePath[] disks
         {
             get
             {
-                var paths = new string[totalDisks];
+                if(disksInvalid)
+                { 
+                    var paths = new List<WorkspacePath>();
 
-                for (var i = 0; i < totalDisks; i++)
-                {
-                    var tmpPath = "none";
-
-                    if (i < total)
+                    foreach (var mount in diskMount)
                     {
-                        var key = disks[i];
-
-                        if (diskMount.ContainsKey(key))
+                        if (mount.Key.GetDirectorySegments()[0] == "Disks")
                         {
-                            var disk = diskMount[key];
-
-                            if (disk is PhysicalFileSystem src)
-                                tmpPath = src.PhysicalRoot;
-                            else if (disk is ZipFileSystem zipDisk) tmpPath = zipDisk.srcPath;
+                            paths.Add(mount.Key);
                         }
                     }
 
-                    paths[i] = tmpPath;
+                    // Sort the disks alphabetically
+                    _disks = paths.ToArray();
+
+                    ResetDiskValidation();
                 }
 
-                return paths;
+                return _disks;
+
             }
+
         }
 
         public void AddDisk(WorkspacePath path, IFileSystem disk)
         {
-            // If for some reason we don't have a mount point we need to exit out of this method
-            if (diskMount == null)
-                return;
-
+           
             // If we are out of open disks, remove the last one
-            if (total == totalDisks) RemoveDisk(diskNames.Last());
+            if (TotalDisks == totalDisks) RemoveDisk(disks.Last());
 
             // Attempt to remove the disk if it is already inserted
             RemoveDisk(path);
@@ -651,8 +485,7 @@ namespace PixelVision8.Runner.Services
             // Add the new disk to the disk mount
             diskMount.Add(path, disk);
 
-            // Add the disk path to the list of names
-            diskNames.Add(path);
+            InvalidateDisks();
         }
 
         public void RemoveDisk(WorkspacePath path)
@@ -665,31 +498,46 @@ namespace PixelVision8.Runner.Services
                 // Remove disk from the mount point
                 diskMount.Remove(path);
 
-                // Remove the disk from the list of name
-                diskNames.Remove(path);
+                InvalidateDisks();
             }
         }
 
         public void SaveDisk(WorkspacePath path)
         {
-//            Console.WriteLine("Attempting to save disk " + path);
-
             if (diskMount.ContainsKey(path))
             {
-//                Console.WriteLine("Found disk " + path);
-
                 var mount = diskMount[path];
-                if (mount is ZipFileSystem) ((ZipFileSystem) mount).Save();
+                if (mount is ZipFileSystem zipFileSystem) zipFileSystem.Save();
             }
         }
 
         public void EjectAll()
         {
-//            var names = disks;
-
             foreach (var path in disks) RemoveDisk(path);
         }
 
-        
+        public override bool Exists(WorkspacePath path)
+        {
+
+            // Manually return true if the path is Disks since it's not a real mount point
+            if (path == WorkspacePath.Root.AppendDirectory("Disks"))
+            {
+                return totalDisks > 0;
+            }
+
+            try
+            {
+                var pair = Get(path);
+                return pair.Value.Exists(path.RemoveParent(pair.Key));
+            }
+            catch
+            {
+                return false;
+            }
+
+
+        }
+
+
     }
 }

@@ -2,9 +2,9 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
+using MonoGame.Utilities;
 using System;
 using System.Collections.Generic;
-using MonoGame.Utilities;
 
 namespace Microsoft.Xna.Framework.Graphics
 {
@@ -144,8 +144,8 @@ namespace Microsoft.Xna.Framework.Graphics
         /// </exception>
         public VertexDeclaration(params VertexElement[] elements)
             : this(GetVertexStride(elements), elements)
-		{
-		}
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VertexDeclaration"/> class.
@@ -180,17 +180,17 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 
         private static int GetVertexStride(VertexElement[] elements)
-		{
-			int max = 0;
-			for (var i = 0; i < elements.Length; i++)
-			{
+        {
+            int max = 0;
+            for (var i = 0; i < elements.Length; i++)
+            {
                 var start = elements[i].Offset + elements[i].VertexElementFormat.GetSize();
-				if (max < start)
-					max = start;
-			}
+                if (max < start)
+                    max = start;
+            }
 
-			return max;
-		}
+            return max;
+        }
 
         /// <summary>
         /// Returns the VertexDeclaration for Type.
@@ -202,47 +202,47 @@ namespace Microsoft.Xna.Framework.Graphics
         /// can be performed with a templated type.
         /// </remarks>
 		internal static VertexDeclaration FromType(Type vertexType)
-		{
-			if (vertexType == null)
-				throw new ArgumentNullException("vertexType", "Cannot be null");
+        {
+            if (vertexType == null)
+                throw new ArgumentNullException("vertexType", "Cannot be null");
 
             if (!ReflectionHelpers.IsValueType(vertexType))
             {
-				throw new ArgumentException("Must be value type", "vertexType");
-			}
+                throw new ArgumentException("Must be value type", "vertexType");
+            }
 
             var type = Activator.CreateInstance(vertexType) as IVertexType;
-			if (type == null)
-			{
-				throw new ArgumentException("vertexData does not inherit IVertexType");
-			}
+            if (type == null)
+            {
+                throw new ArgumentException("vertexData does not inherit IVertexType");
+            }
 
             var vertexDeclaration = type.VertexDeclaration;
-			if (vertexDeclaration == null)
-			{
-				throw new Exception("VertexDeclaration cannot be null");
-			}
+            if (vertexDeclaration == null)
+            {
+                throw new Exception("VertexDeclaration cannot be null");
+            }
 
-			return vertexDeclaration;
-		}
+            return vertexDeclaration;
+        }
 
         /// <summary>
         /// Gets a copy of the vertex elements.
         /// </summary>
         /// <returns>A copy of the vertex elements.</returns>
         public VertexElement[] GetVertexElements()
-		{
-			return (VertexElement[])_data.Elements.Clone();
-		}
+        {
+            return (VertexElement[])_data.Elements.Clone();
+        }
 
         /// <summary>
         /// Gets the size of a vertex (including padding) in bytes.
         /// </summary>
         /// <value>The size of a vertex (including padding) in bytes.</value>
         public int VertexStride
-		{
-			get { return _data.VertexStride; }
-		}
+        {
+            get { return _data.VertexStride; }
+        }
 
         /// <summary>
         /// Determines whether the specified <see cref="object"/> is equal to this instance.

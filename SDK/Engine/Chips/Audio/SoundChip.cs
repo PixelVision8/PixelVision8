@@ -20,8 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Audio;
 using PixelVision8.Engine.Data;
@@ -97,11 +95,11 @@ namespace PixelVision8.Engine.Chips
         ///     Clear all the <see cref="sounds" /> in the collection.
         /// </summary>
         /// <param name="index"></param>
-        public void ClearSound(int index)
-        {
-            // TODO need to see if there is a better way to revert a sound
-            sounds[index] = new SoundData("Untitled" + index.ToString("D2"));
-        }
+//        public void ClearSound(int index)
+//        {
+//            // TODO need to see if there is a better way to revert a sound
+//            sounds[index] = new SoundData("Untitled" + index.ToString("D2"));
+//        }
 
         /// <summary>
         ///     This stub methods is designed to be overridden with a Factory to
@@ -181,13 +179,13 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public IChannel ReadChannel(int index)
-        {
-            if (index < 0 || index >= totalChannels)
-                return null;
-
-            return channels[index];
-        }
+//        public IChannel ReadChannel(int index)
+//        {
+//            if (index < 0 || index >= totalChannels)
+//                return null;
+//
+//            return channels[index];
+//        }
 
         public string ReadLabel(int id)
         {

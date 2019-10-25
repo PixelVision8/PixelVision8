@@ -37,10 +37,10 @@ namespace Microsoft.Xna.Framework.Audio
             {
                 default:
                 case RpcPointType.Linear:
-                {
-                    var t = (position - first.Position) / (second.Position - first.Position);
-                    return first.Value + ((second.Value - first.Value) * t);
-                }
+                    {
+                        var t = (position - first.Position) / (second.Position - first.Position);
+                        return first.Value + ((second.Value - first.Value) * t);
+                    }
             }
         }
     }

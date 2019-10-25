@@ -8,10 +8,10 @@ using System.Threading;
 
 namespace Microsoft.Xna.Framework.Graphics
 {
-	public abstract partial class Texture : GraphicsResource
-	{
-		internal SurfaceFormat _format;
-		internal int _levelCount;
+    public abstract partial class Texture : GraphicsResource
+    {
+        internal SurfaceFormat _format;
+        internal int _levelCount;
 
         private readonly int _sortingKey = Interlocked.Increment(ref _lastSortingKey);
         private static int _lastSortingKey;
@@ -29,15 +29,15 @@ namespace Microsoft.Xna.Framework.Graphics
             get { return _sortingKey; }
         }
 
-		public SurfaceFormat Format
-		{
-			get { return _format; }
-		}
-		
-		public int LevelCount
-		{
-			get { return _levelCount; }
-		}
+        public SurfaceFormat Format
+        {
+            get { return _format; }
+        }
+
+        public int LevelCount
+        {
+            get { return _levelCount; }
+        }
 
         internal static int CalculateMipLevels(int width, int height = 0, int depth = 0)
         {
@@ -106,7 +106,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 case SurfaceFormat.Dxt5:
                 case SurfaceFormat.Dxt5SRgb:
                 case SurfaceFormat.RgbPvrtc4Bpp:
-                case SurfaceFormat.RgbaPvrtc4Bpp:                    
+                case SurfaceFormat.RgbaPvrtc4Bpp:
                     pitch = ((width + 3) / 4) * _format.GetSize();
                     break;
 

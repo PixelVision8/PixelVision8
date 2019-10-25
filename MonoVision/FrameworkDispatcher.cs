@@ -2,7 +2,6 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
 using Microsoft.Xna.Framework.Audio;
 
 namespace Microsoft.Xna.Framework
@@ -33,7 +32,7 @@ namespace Microsoft.Xna.Framework
         {
             DynamicSoundEffectInstanceManager.UpdatePlayingInstances();
             SoundEffectInstancePool.Update();
-//            Microphone.UpdateMicrophones();
+            //            Microphone.UpdateMicrophones();
         }
 
         private static void Initialize()

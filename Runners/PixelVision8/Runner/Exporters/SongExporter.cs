@@ -18,8 +18,8 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Audio;
+using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Data;
 
 namespace PixelVision8.Runner.Exporters
@@ -32,7 +32,7 @@ namespace PixelVision8.Runner.Exporters
         private readonly SoundChip soundChip;
 
         // to avoid clipping, all tracks are a bit quieter since we ADD values - set to 1f for full mix
-        public float mixdownTrackVolume = 0.6f; 
+        public float mixdownTrackVolume = 0.6f;
         public float[] noteStartFrequency => musicChip.noteStartFrequency;
         public float note_tick_s = 30.0f / 120.0f; // (30.0f/120.0f) = 120BPM eighth notes
         public float note_tick_s_odd;
@@ -40,18 +40,18 @@ namespace PixelVision8.Runner.Exporters
         // optimization: precache silent playback to ram
         public int preRenderBitrate => musicChip.preRenderBitrate;
 
-        
+
 
         public float swing_rhythm_factor = 0.7f; //1.0f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
 
         private RawAudioData[] trackresult;
         private RawAudioData result;
-        
+
         private int[] patterns;
         private int currentPattern = 0;
-        
-//        int songdataCurrentPos = 0;
-        
+
+        //        int songdataCurrentPos = 0;
+
         public SongExporter(string path, MusicChip musicChip, SoundChip soundChip, int[] patterns) : base(path)
         {
 
@@ -74,14 +74,14 @@ namespace PixelVision8.Runner.Exporters
             {
                 steps.Add(ExportSong);
             }
-            
+
             steps.Add(MixdownAudioClips);
             steps.Add(CreateSongByteData);
         }
 
         public void ExportSong()
         {
-            
+
             // Get the active song data
             var songData = musicChip.trackerDataCollection[patterns[currentPattern]];
 
@@ -92,23 +92,23 @@ namespace PixelVision8.Runner.Exporters
 
             var tcount = songData.tracks.Length;
             var ncount = songData.tracks[0].notes.Length;
-    
+
             var totalNotesInSong = ncount; // total musical notes in song loops x notes
 
             // TODO needed to increase this number to match the speed better but this should be test out more.
             note_tick_s = 45.0f / songData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
             note_tick_s_odd = note_tick_s * swing_rhythm_factor; // small beat
 
-            var notedatalength = (int) (preRenderBitrate * 2f * note_tick_s_odd); // one note worth of stereo audio (x2)
-            
+            var notedatalength = (int)(preRenderBitrate * 2f * note_tick_s_odd); // one note worth of stereo audio (x2)
+
             // TODO this is off. It is happening to fast and not matching up to the correct speed of the song.
             var beatlength = preRenderBitrate * note_tick_s_odd; // one note worth of time
-            
+
             var songdatalength = notedatalength * totalNotesInSong; // stereo cd quality x song length
 
-            
+
             var notebuffer = new float[notedatalength];
-            
+
             if (trackresult == null)
             {
                 // all the tracks we need - an array of audioclips that will be merged into result
@@ -123,10 +123,10 @@ namespace PixelVision8.Runner.Exporters
 
             var instrument = new SfxrSynth[songData.totalTracks];
 
-            var newStartPos = trackresult[0].samples/2;
+            var newStartPos = trackresult[0].samples / 2;
             var newLength = trackresult[0].samples + songdatalength;
-            
-            
+
+
             for (tracknum = 0; tracknum < tcount; tracknum++)
             {
                 if (instrument[tracknum] == null)
@@ -135,7 +135,7 @@ namespace PixelVision8.Runner.Exporters
 
                 var songdataCurrentPos = newStartPos;
                 trackresult[tracknum].Resize(newLength);
-                
+
                 // set the params to current track's instrument string
                 instrument[tracknum].parameters.SetSettingsString(soundChip.ReadSound(songData.tracks[tracknum].sfxID).param);
 
@@ -188,7 +188,7 @@ namespace PixelVision8.Runner.Exporters
                         // WORKS GREAT IF WE RUN CACHESOUND() FIRST
                         // TODO need to figure out why we can't access the cachedWave
                         notebuffer = instrument[tracknum].data; // the wave data for the current note
-                        
+
                         // this SHOULD be the solution. but outputs all 0's
                         //bool gotAllData = instrument[tracknum].GenerateAudioFilterData(notebuffer, 2);
 
@@ -196,14 +196,14 @@ namespace PixelVision8.Runner.Exporters
                         // move sound data into audioclip buffer
                         if (notebuffer != null && notebuffer.Length > 0)
                             trackresult[tracknum].SetData(notebuffer, songdataCurrentPos);
-//                            else
-//                                Debug.LogWarning("Notebuffer was blank. Ignoring.");
+                        //                            else
+                        //                                Debug.LogWarning("Notebuffer was blank. Ignoring.");
 
                         totalNotesRendered++;
                     }
 
                     // TODO converted this to an int, may break?
-                    songdataCurrentPos += (int) beatlength; //notedatalength; this is x2 due to stereo
+                    songdataCurrentPos += (int)beatlength; //notedatalength; this is x2 due to stereo
 
                     //yield return null; // if here, min one frame PER note PER track PER loop: too slow
                 } // for all notes
@@ -281,6 +281,6 @@ namespace PixelVision8.Runner.Exporters
             return result;
         }
 
-        
+
     }
 }

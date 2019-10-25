@@ -8,7 +8,7 @@ namespace Microsoft.Xna.Framework.Graphics
     /// Defines classes for effect parameters and shader constants.
     /// </summary>
 	public enum EffectParameterClass
-	{
+    {
         /// <summary>
         /// Scalar class type.
         /// </summary>
@@ -29,6 +29,6 @@ namespace Microsoft.Xna.Framework.Graphics
         /// Structure class type.
         /// </summary>
 		Struct
-	}
+    }
 }
 

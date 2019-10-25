@@ -18,10 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
+using System;
+using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Chips
 {
@@ -88,13 +88,13 @@ namespace PixelVision8.Runner.Chips
             {
                 _instrumentType = value;
 
-                var typeID = (int) instrumentType;
+                var typeID = (int)instrumentType;
 
-//                if (typeID < defaultOctaves.Length)
-//                {
+                //                if (typeID < defaultOctaves.Length)
+                //                {
                 // Changing the instrument should set the deafult octave values
-                 octaveRange = defaultOctaves[typeID];
-//                }
+                octaveRange = defaultOctaves[typeID];
+                //                }
             }
         }
 
@@ -105,11 +105,11 @@ namespace PixelVision8.Runner.Chips
         public bool generate => instrumentType != InstrumentType.None;
 
 
-        public string instrumentSettings => ReadInstrumentSoundData((int) instrumentType);
+        public string instrumentSettings => ReadInstrumentSoundData((int)instrumentType);
 
         public string ReadInstrumentSoundData(int value)
         {
-//            if (value == (int) InstrumentType.None) return null;
+            //            if (value == (int) InstrumentType.None) return null;
 
             var id = instrumentType == InstrumentType.Random ? r.Next(0, 7) : value;
 
@@ -171,9 +171,9 @@ namespace PixelVision8.Runner.Chips
             AhavaRaba
         }
 
-//        private readonly float pcgInstMutateMax = 0.2f;
-//        private readonly float pcgInstMutateMin = 0f;
-//        private readonly float pcgInstMutationChance = 0f; // maybe add 0.1 chance we make instruments wacky
+        //        private readonly float pcgInstMutateMax = 0.2f;
+        //        private readonly float pcgInstMutateMin = 0f;
+        //        private readonly float pcgInstMutationChance = 0f; // maybe add 0.1 chance we make instruments wacky
         private readonly int pcgKeyRangeMax = 8;
         private readonly int pcgKeyRangeMin = -8;
 
@@ -260,12 +260,12 @@ namespace PixelVision8.Runner.Chips
                     settings = trackSettings[i];
                 }
 
-                settings.instrumentType = (InstrumentType) i;
+                settings.instrumentType = (InstrumentType)i;
                 settings.sfxID = i;
             }
 
             // forces scale to the default value
-            UpdateScale((int) Scale.Major);
+            UpdateScale((int)Scale.Major);
 
             //workspace.InvalidateSave();
         }
@@ -299,18 +299,18 @@ namespace PixelVision8.Runner.Chips
 
             // randomize the song data
 
-            
+
             // random tempo
             activeTrackerData.speedInBPM = r.Next(pcgMinTempo, pcgMaxTempo);
             musicChip.UpdateNoteTickLengths();
-            
-            
-//            UpdateTempo();
+
+
+            //            UpdateTempo();
 
             //updateNoteTickLengths();
 
             // random song name
-//            UpdateSongName(randomSongName());
+            //            UpdateSongName(randomSongName());
 
             // random key (root note) /* 60 = middle C */
             pcgKeyRootNote = 60 + r.Next(pcgKeyRangeMin, pcgKeyRangeMax); // vary the key up or down
@@ -320,9 +320,9 @@ namespace PixelVision8.Runner.Chips
             pcgScale = scaleTable[Scale.Major]; //scaleMajor;
 
             // mutate instruments FIXME
-//            if ((float) r.NextDouble() < pcgInstMutationChance) // only mutate half the time
-//                MutateAllInstruments((float) r.NextDouble() * (pcgInstMutateMax - pcgInstMutateMin) +
-//                                     pcgInstMutateMin); //Random.Range(pcgInstMutateMin, pcgInstMutateMax)); //TODO need to make sure this is working correctly
+            //            if ((float) r.NextDouble() < pcgInstMutationChance) // only mutate half the time
+            //                MutateAllInstruments((float) r.NextDouble() * (pcgInstMutateMax - pcgInstMutateMin) +
+            //                                     pcgInstMutateMin); //Random.Range(pcgInstMutateMin, pcgInstMutateMax)); //TODO need to make sure this is working correctly
 
             // sanity check (not needed?)
             //        if (pcgTrackMax < 1)
@@ -333,9 +333,9 @@ namespace PixelVision8.Runner.Chips
 
             TrackSettings settings = null;
             var total = musicChip.totalTracks; //trackSettings.Length;//activeSongData.tracks.Length;//trackSettings.Length;
-            
-//            Console.WriteLine("total tracks" + total);
-            
+
+            //            Console.WriteLine("total tracks" + total);
+
             TrackData trackData = null;
 
             var harmonyTrackID = Array.FindIndex(trackSettings, t => t.instrumentType == InstrumentType.Harmony);
@@ -351,7 +351,7 @@ namespace PixelVision8.Runner.Chips
                 if (trackSettings[trackNum] == null)
                 {
                     trackSettings[trackNum] = new TrackSettings();
-                    trackSettings[trackNum].instrumentType = (InstrumentType) trackNum;
+                    trackSettings[trackNum].instrumentType = (InstrumentType)trackNum;
                     trackSettings[trackNum].sfxID = trackNum;
                 }
 
@@ -451,7 +451,7 @@ namespace PixelVision8.Runner.Chips
 
                     // is silence appropriate for this moment?
                     //restHere = UnityEngine.Random.Range(0f,1f - noteChangeBoost) > pcgComplexity;
-                    randy = (float) r.NextDouble(); //Random.value;
+                    randy = (float)r.NextDouble(); //Random.value;
                     restHere = randy + noteChangeBoost < pcgComplexity;
 
                     // never rest the first beat of the song on bass
@@ -494,8 +494,8 @@ namespace PixelVision8.Runner.Chips
                         }
                         else if (instrument == InstrumentType.Kick
 
-                            //|| (trackNum == pcgTrackSFX)		// snare drum, usually
-                            //|| (trackNum == pcgTrackDRUMS)
+                        //|| (trackNum == pcgTrackSFX)		// snare drum, usually
+                        //|| (trackNum == pcgTrackDRUMS)
                         ) // high hat, usually
                         {
                             // drums have no tonality
@@ -503,15 +503,15 @@ namespace PixelVision8.Runner.Chips
                         }
                         else if (instrument == InstrumentType.Bass) // and not beat 1, done above
                         {
-                            if (!wasFunkyLastNote && (float) r.NextDouble() < pcgFunk
+                            if (!wasFunkyLastNote && (float)r.NextDouble() < pcgFunk
                             ) // we want a funky OCTAVE bass note
                             {
                                 wasFunkyLastNote = true;
 
                                 // either stay the same, or jump higher or lower by an entire octave
                                 var funkyOffset = 12;
-                                if ((float) r.NextDouble() > 0.5f) // octave higher half the time
-                                    if ((float) r.NextDouble() > 0.5f) // stay same 25% of the time
+                                if ((float)r.NextDouble() > 0.5f) // octave higher half the time
+                                    if ((float)r.NextDouble() > 0.5f) // stay same 25% of the time
                                         funkyOffset = 0;
                                     else // octave lower %25 of the time
                                         funkyOffset = -12;
@@ -545,18 +545,18 @@ namespace PixelVision8.Runner.Chips
         public void UpdateScale(int value)
         {
             scale = value;
-            pcgScale = scaleTable[(Scale) value];
+            pcgScale = scaleTable[(Scale)value];
         }
 
         /////////////////////////////////////////////////////////////////////////////
         private int randomNote() // output a random MIDI note number
-            /////////////////////////////////////////////////////////////////////////////
+                                 /////////////////////////////////////////////////////////////////////////////
         {
             // TODO use pcg params to select notes that fit the current scale/mode/chord/harmony
             var aNote = 0;
             var noteDistance = r.Next(pcgNoteDistanceMin, pcgNoteDistanceMax); // 0,1,2
             var noteDir = 1; // +1 or -1 only
-            if ((float) r.NextDouble() > 0.5f)
+            if ((float)r.NextDouble() > 0.5f)
                 noteDir = -1; // down
 
             // pure random noise - works

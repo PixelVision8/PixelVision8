@@ -74,7 +74,7 @@ namespace Microsoft.Xna.Framework.Input
         /// <param name="deadZoneMode">Enumerated value that specifies what dead zone type to use.</param>
         /// <returns>The state of the controller.</returns>
         public static GamePadState GetState(int index, GamePadDeadZone deadZoneMode)
-        {           
+        {
             return GetState(index, deadZoneMode, deadZoneMode);
         }
 
@@ -130,7 +130,7 @@ namespace Microsoft.Xna.Framework.Input
         {
             if (index < 0 || index >= PlatformGetMaxNumberOfGamePads())
                 return false;
-            
+
             return PlatformSetVibration(index, MathHelper.Clamp(leftMotor, 0.0f, 1.0f), MathHelper.Clamp(rightMotor, 0.0f, 1.0f));
         }
 

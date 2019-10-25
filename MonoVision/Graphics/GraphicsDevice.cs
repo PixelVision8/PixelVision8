@@ -2,12 +2,9 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
+using MonoGame.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using MonoGame.Utilities;
-using System.Runtime.InteropServices;
 
 
 namespace Microsoft.Xna.Framework.Graphics
@@ -18,39 +15,39 @@ namespace Microsoft.Xna.Framework.Graphics
 
         private bool _isDisposed;
 
-//        private Color _blendFactor = Color.White;
-//        private bool _blendFactorDirty;
+        //        private Color _blendFactor = Color.White;
+        //        private bool _blendFactorDirty;
 
-//        private BlendState _blendState;
-//        private BlendState _actualBlendState;
-//        private bool _blendStateDirty;
-//
-//        private BlendState _blendStateAdditive;
-//        private BlendState _blendStateAlphaBlend;
-//        private BlendState _blendStateNonPremultiplied;
-//        private BlendState _blendStateOpaque;
+        //        private BlendState _blendState;
+        //        private BlendState _actualBlendState;
+        //        private bool _blendStateDirty;
+        //
+        //        private BlendState _blendStateAdditive;
+        //        private BlendState _blendStateAlphaBlend;
+        //        private BlendState _blendStateNonPremultiplied;
+        //        private BlendState _blendStateOpaque;
 
-//        private DepthStencilState _depthStencilState;
-//        private DepthStencilState _actualDepthStencilState;
-//        private bool _depthStencilStateDirty;
+        //        private DepthStencilState _depthStencilState;
+        //        private DepthStencilState _actualDepthStencilState;
+        //        private bool _depthStencilStateDirty;
 
-//        private DepthStencilState _depthStencilStateDefault;
-//        private DepthStencilState _depthStencilStateDepthRead;
-//        private DepthStencilState _depthStencilStateNone;
+        //        private DepthStencilState _depthStencilStateDefault;
+        //        private DepthStencilState _depthStencilStateDepthRead;
+        //        private DepthStencilState _depthStencilStateNone;
 
-//        private RasterizerState _rasterizerState;
-//        private RasterizerState _actualRasterizerState;
-//        private bool _rasterizerStateDirty;
+        //        private RasterizerState _rasterizerState;
+        //        private RasterizerState _actualRasterizerState;
+        //        private bool _rasterizerStateDirty;
 
-//        private RasterizerState _rasterizerStateCullClockwise;
-//        private RasterizerState _rasterizerStateCullCounterClockwise;
-//        private RasterizerState _rasterizerStateCullNone;
+        //        private RasterizerState _rasterizerStateCullClockwise;
+        //        private RasterizerState _rasterizerStateCullCounterClockwise;
+        //        private RasterizerState _rasterizerStateCullNone;
 
         private Rectangle _scissorRectangle;
         private bool _scissorRectangleDirty;
 
         private VertexBufferBindings _vertexBuffers;
-//        private bool _vertexBuffersDirty;
+        //        private bool _vertexBuffersDirty;
 
         private IndexBuffer _indexBuffer;
         private bool _indexBufferDirty;
@@ -111,8 +108,8 @@ namespace Microsoft.Xna.Framework.Graphics
         // collected by holding a strong reference to it in this list.
         private readonly List<WeakReference> _resources = new List<WeakReference>();
 
-		public event EventHandler<EventArgs> DeviceReset;
-		public event EventHandler<EventArgs> DeviceResetting;
+        public event EventHandler<EventArgs> DeviceReset;
+        public event EventHandler<EventArgs> DeviceResetting;
         public event EventHandler<EventArgs> Disposing;
 
         internal event EventHandler<PresentationEventArgs> PresentationChanged;
@@ -149,9 +146,9 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 
         internal GraphicsDevice()
-		{
+        {
             PresentationParameters = new PresentationParameters();
-//            PresentationParameters.DepthStencilFormat = DepthFormat.Depth24;
+            //            PresentationParameters.DepthStencilFormat = DepthFormat.Depth24;
             Setup();
             GraphicsCapabilities = new GraphicsCapabilities();
             GraphicsCapabilities.Initialize(this);
@@ -198,9 +195,9 @@ namespace Microsoft.Xna.Framework.Graphics
 #endif
 
             // Initialize the main viewport
-            _viewport = new Viewport (0, 0,
-			                         DisplayMode.Width, DisplayMode.Height);
-			_viewport.MaxDepth = 1.0f;
+            _viewport = new Viewport(0, 0,
+                                     DisplayMode.Width, DisplayMode.Height);
+            _viewport.MaxDepth = 1.0f;
 
             PlatformSetup();
 
@@ -258,7 +255,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
             // Force set the buffers and shaders on next ApplyState() call
             _vertexBuffers = new VertexBufferBindings(_maxVertexBufferSlots);
-//            _vertexBuffersDirty = true;
+            //            _vertexBuffersDirty = true;
             _indexBufferDirty = true;
             _vertexShaderDirty = true;
             _pixelShaderDirty = true;
@@ -283,9 +280,9 @@ namespace Microsoft.Xna.Framework.Graphics
 
         public void Clear(Color color)
         {
-//            var options = ClearOptions.Target;
-//            options |= ClearOptions.DepthBuffer;
-//            options |= ClearOptions.Stencil;
+            //            var options = ClearOptions.Target;
+            //            options |= ClearOptions.DepthBuffer;
+            //            options |= ClearOptions.Stencil;
             PlatformClear(/*options,*/ color.ToVector4(), _viewport.MaxDepth, 0);
 
             unchecked
@@ -363,10 +360,10 @@ namespace Microsoft.Xna.Framework.Graphics
 
             // Update the back buffer.
             OnPresentationChanged();
-            
+
             EventHelpers.Raise(this, PresentationChanged, new PresentationEventArgs(PresentationParameters));
             EventHelpers.Raise(this, DeviceReset, EventArgs.Empty);
-       }
+        }
 
         public void Reset(PresentationParameters presentationParameters)
         {
@@ -436,21 +433,21 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
-		public void SetRenderTarget(RenderTarget2D renderTarget)
-		{
-			if (renderTarget == null)
-		    {
+        public void SetRenderTarget(RenderTarget2D renderTarget)
+        {
+            if (renderTarget == null)
+            {
                 SetRenderTargets(null);
-		    }
-			else
-			{
-				_tempRenderTargetBinding[0] = new RenderTargetBinding(renderTarget);
-				SetRenderTargets(_tempRenderTargetBinding);
-			}
-		}
+            }
+            else
+            {
+                _tempRenderTargetBinding[0] = new RenderTargetBinding(renderTarget);
+                SetRenderTargets(_tempRenderTargetBinding);
+            }
+        }
 
-		public void SetRenderTargets(params RenderTargetBinding[] renderTargets)
-		{
+        public void SetRenderTargets(params RenderTargetBinding[] renderTargets)
+        {
             // Avoid having to check for null and zero length.
             var renderTargetCount = 0;
             if (renderTargets != null)
@@ -507,8 +504,8 @@ namespace Microsoft.Xna.Framework.Graphics
                 renderTargetWidth = PresentationParameters.BackBufferWidth;
                 renderTargetHeight = PresentationParameters.BackBufferHeight;
             }
-			else
-			{
+            else
+            {
                 // Copy the new bindings.
                 Array.Copy(renderTargets, _currentRenderTargetBindings, renderTargets.Length);
                 _currentRenderTargetCount = renderTargets.Length;
@@ -709,7 +706,7 @@ namespace Microsoft.Xna.Framework.Graphics
             unchecked
             {
                 _graphicsMetrics._drawCount++;
-                _graphicsMetrics._primitiveCount +=  primitiveCount;
+                _graphicsMetrics._primitiveCount += primitiveCount;
             }
         }
 
@@ -764,11 +761,11 @@ namespace Microsoft.Xna.Framework.Graphics
                 throw new ArgumentOutOfRangeException("vertexDeclaration", "Vertex stride of vertexDeclaration should be at least as big as the stride of the actual vertices.");
 
             PlatformDrawUserIndexedPrimitives<T>(primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount, vertexDeclaration);
-            
+
             unchecked
             {
                 _graphicsMetrics._drawCount++;
-                _graphicsMetrics._primitiveCount +=  primitiveCount;
+                _graphicsMetrics._primitiveCount += primitiveCount;
             }
         }
 

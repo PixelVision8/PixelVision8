@@ -18,11 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
+using System;
+using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -43,18 +43,18 @@ namespace PixelVision8.Runner.Parsers
 
         protected Color[] srcColors;
 
-//        protected ITexture2D tex;
+        //        protected ITexture2D tex;
         protected Color[] tmpPixels;
         protected int totalPixels;
         protected int totalSprites;
         protected int x, y, columns, rows;
 
-//        protected ITextureFactory textureFactory;
-//        protected byte[] data;
+        //        protected ITextureFactory textureFactory;
+        //        protected byte[] data;
 
         public SpriteParser(IImageParser imageParser, IEngineChips chips, bool unique = true, SpriteChip spriteChip = null) : base(imageParser)
         {
-//            this.textureFactory = textureFactory;
+            //            this.textureFactory = textureFactory;
 
 
             this.chips = chips;
@@ -81,7 +81,7 @@ namespace PixelVision8.Runner.Parsers
 
             steps.Add(PrepareSprites);
 
-            var loops = MathUtil.CeilToInt((float) totalSprites / maxPerLoop);
+            var loops = MathUtil.CeilToInt((float)totalSprites / maxPerLoop);
 
             for (var i = 0; i < loops; i++) steps.Add(CutOutSprites);
 

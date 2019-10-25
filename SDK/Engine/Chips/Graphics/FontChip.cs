@@ -31,7 +31,6 @@ namespace PixelVision8.Engine.Chips
     {
         public Dictionary<string, int[]> fonts = new Dictionary<string, int[]>();
 
-//        public int[] tmpPixels = new int[0];
 
         /// <summary>
         ///     This method configures the FontChip. It registers itself with the

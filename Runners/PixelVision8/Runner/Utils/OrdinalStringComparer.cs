@@ -96,26 +96,30 @@ namespace PixelVision8.Runner.Utils
 				// TODO this was throwing an error in the build folder so wrapping in a try/catch until I can figure out why
 				try
 				{
-					if (int.TryParse(splitX[i], out numericX))
-					{
-						if (int.TryParse(splitY[i], out numericY))
-						{
-							comparer = numericX - numericY;
-						}
-						else
-						{
-							comparer = 1; // x > y
-						}
-					}
-					else
-					{
-						comparer = String.Compare(splitX[i], splitY[i], comparisonMode);
-					}
+                    if (splitX[i] != "")
+                    {
+                        if (int.TryParse(splitX[i], out numericX))
+                        {
+                            if (int.TryParse(splitY[i], out numericY))
+                            {
+                                comparer = numericX - numericY;
+                            }
+                            else
+                            {
+                                comparer = 1; // x > y
+                            }
+                        }
+                        else
+                        {
+                            comparer = String.Compare(splitX[i], splitY[i], comparisonMode);
+                        }
+                    }
 				}
-				catch
-				{
-					// ignored
-				}
+                catch(Exception e)
+                {
+                    Console.WriteLine(e);
+                    // ignored
+                }
 			}
 
 			return comparer;

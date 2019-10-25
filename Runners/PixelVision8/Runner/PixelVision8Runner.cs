@@ -73,7 +73,7 @@ namespace PixelVision8.Runner
         public string systemName;
         public string systemVersion;
         
-        public ExportService exportService { get; private set; }
+        public ExportService ExportService { get; private set; }
         
         public readonly Dictionary<ActionKeys, Keys> actionKeys = new Dictionary<ActionKeys, Keys>()
         {
@@ -102,7 +102,7 @@ namespace PixelVision8.Runner
             systemName = bios.ReadBiosData("SystemName", "PixelVision8");
             
             screenshotService = new ScreenshotService(workspaceServicePlus);
-            exportService = new ExportService(); //TODO Need to create a new AudioClipAdaptor
+            ExportService = new ExportService(); //TODO Need to create a new AudioClipAdaptor
 
             autoShutdown = bios.ReadBiosData("AutoShutdown", "True") == "True";
 
@@ -180,6 +180,10 @@ namespace PixelVision8.Runner
             // PV8 Needs to access the documents folder so it can create the workspace drive
             var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8") as string;
 
+
+            // Set the TotalDisks disks
+            workspaceServicePlus.totalDisks = Int32.Parse(bios.ReadBiosData("TotalDisks", "2"));
+
             // Create the real system path to the documents folder
             documentsPath = Path.Combine(Documents, baseDir);
 
@@ -226,9 +230,9 @@ namespace PixelVision8.Runner
             // Inject the PV8 runner special global functions
             luaScript.Globals["StartNextPreload"] = new Action(StartNextPreload);
             luaScript.Globals["PreloaderComplete"] = new Action(RunGame);
-            luaScript.Globals["IsExporting"] = new Func<bool>(exportService.IsExporting);
-            luaScript.Globals["ReadExportPercent"] = new Func<int>(exportService.ReadExportPercent);
-            luaScript.Globals["ReadExportMessage"] = new Func<string>(exportService.ReadExportMessage);
+            luaScript.Globals["IsExporting"] = new Func<bool>(ExportService.IsExporting);
+            luaScript.Globals["ReadExportPercent"] = new Func<int>(ExportService.ReadExportPercent);
+            luaScript.Globals["ReadExportMessage"] = new Func<string>(ExportService.ReadExportMessage);
             luaScript.Globals["EnableCRT"] = (EnableCRTDelegator) EnableCRT;
             luaScript.Globals["Brightness"] = (BrightnessDelegator)Brightness;
             luaScript.Globals["Sharpness"] = (SharpnessDelegator)Sharpness;
@@ -246,7 +250,7 @@ namespace PixelVision8.Runner
             luaScript.Globals["SystemName"] = new Func<string>(() => systemName);
             luaScript.Globals["SessionID"] = new Func<string>(() => sessionID);
 
-            luaScript.Globals["DiskPaths"] = new Func<Dictionary<string, string>>(workspaceServicePlus.DiskPaths);
+            luaScript.Globals["DiskPaths"] = new Func<WorkspacePath[]>(() => workspaceServicePlus.disks);
             luaScript.Globals["SaveActiveDisks"] = new Action(() =>
             {
                 var disks = workspaceServicePlus.disks;
@@ -484,12 +488,11 @@ namespace PixelVision8.Runner
             }
             catch (Exception e)
             {
-//                Console.WriteLine("Update Error:\n"+e.Message);
+                //                Console.WriteLine("Update Error:\n"+e.Message);
 
-                var error = e as ScriptRuntimeException;
 
                 DisplayError(ErrorCode.Exception,
-                    new Dictionary<string, string> {{"@{error}", error != null ? error.DecoratedMessage : e.Message}},
+                    new Dictionary<string, string> { { "@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message } },
                     e);
             }
             
@@ -523,11 +526,8 @@ namespace PixelVision8.Runner
             }
             catch (Exception e)
             {
-                
-                var error = e as ScriptRuntimeException;
-
                 DisplayError(ErrorCode.Exception,
-                    new Dictionary<string, string> {{"@{error}", error != null ? error.DecoratedMessage : e.Message}}, e);
+                    new Dictionary<string, string> { { "@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message } }, e);
             }
             
             
@@ -708,16 +708,23 @@ namespace PixelVision8.Runner
             }
             catch (Exception e)
             {
-
-                var error = e as ScriptRuntimeException;
-
                 DisplayError(ErrorCode.Exception,
-                    new Dictionary<string, string> {{"@{error}", error != null ? error.DecoratedMessage : e.Message}}, e);
+                    new Dictionary<string, string> { { "@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message } }, e);
             }
 
         }
-        
-        
+
+
+        public override void RunGame()
+        {
+            // TODO This should be moved into the desktop runner?
+            autoRunEnabled = true;
+
+            // Re-enable back when loading a new game
+            backKeyEnabled = true;
+            
+            base.RunGame();
+        }
 
         public bool Load(string path, RunnerMode newMode = RunnerMode.Playing, Dictionary<string, string> metaData = null)
         {
@@ -759,9 +766,6 @@ namespace PixelVision8.Runner
                     newMode = RunnerMode.Loading;
                 }
                 
-                 // TODO This should be moved into the desktop runner?
-                 autoRunEnabled = true;
-    
                 // Create a new meta data dictionary if one doesn't exist yet
                 if (metaData == null) metaData = new Dictionary<string, string>();
     
@@ -845,8 +849,7 @@ namespace PixelVision8.Runner
                 // If the game is unable to run, display an error
     //            if (success == false) 
     
-                // Re-enable back when loading a new game
-                backKeyEnabled = true;
+                
     
                 // Create new FileSystemPath
                 return success;
@@ -854,13 +857,11 @@ namespace PixelVision8.Runner
             }
             catch (Exception e)
             {
-                
                 // Console.WriteLine("Load Error:\n"+e.Message);
-                
-                var error = e as ScriptRuntimeException;
+
 
                 DisplayError(ErrorCode.Exception,
-                    new Dictionary<string, string> {{"@{error}", error != null ? error.DecoratedMessage : e.Message}}, e);
+                    new Dictionary<string, string> { { "@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message } }, e);
             }
 
 
@@ -899,10 +900,10 @@ namespace PixelVision8.Runner
             // Export the current game
             
             // TODO exporter needs a callback when its completed
-            exportService.ExportGame(path, engine, saveFlags);
+            ExportService.ExportGame(path, engine, saveFlags);
             
             // TODO this should be moved into the ExportGame class
-            exportService.StartExport(useSteps);
+            ExportService.StartExport(useSteps);
 
         }
 
@@ -916,7 +917,7 @@ namespace PixelVision8.Runner
             // Register Lua Service
             tmpEngine.AddService(typeof(LuaService).FullName, luaService);
             
-            tmpEngine.AddService(typeof(ExportService).FullName, exportService);
+            tmpEngine.AddService(typeof(ExportService).FullName, ExportService);
 
         }
         
@@ -996,8 +997,10 @@ namespace PixelVision8.Runner
         
         public virtual void Back(Dictionary<string, string> metaData = null)
         {
-            if (mode == RunnerMode.Loading)
-                return;
+//            if (backKeyEnabled == false)
+//                return;
+//            if (mode == RunnerMode.Loading || mode == RunnerMode.Error)
+//                return;
 
             if (loadHistory.Count > 0)
             {
@@ -1065,12 +1068,19 @@ namespace PixelVision8.Runner
 
         public void UpdateDiskInBios()
         {
-            var paths = workspaceServicePlus.physicalPaths;
 
-            for (int i = 0; i < paths.Length; i++)
+            var total = workspaceServicePlus.totalDisks;
+
+            var disks = workspaceServicePlus.disks;
+            var totalDisks = disks.Length;
+
+            for (var i = 0; i < total; i++)
             {
-                bios.UpdateBiosData("Disk" + i, paths[i]);
+
+                bios.UpdateBiosData("Disk" + i, (i < totalDisks) ? workspaceServicePlus.DiskPhysicalRoot(disks[i]) : "none");
+
             }
+
         }
         
         public virtual void DisplayError(ErrorCode code, Dictionary<string, string> tokens = null,
@@ -1126,7 +1136,7 @@ namespace PixelVision8.Runner
         }
         
         protected AnimatedGifEncoder gifEncoder;
-        private WorkspacePath tmpGifPath = WorkspacePath.Root.AppendDirectory("Tmp").AppendFile("tmp-recording.gif");
+        private readonly WorkspacePath tmpGifPath = WorkspacePath.Root.AppendDirectory("Tmp").AppendFile("tmp-recording.gif");
         public bool recording { get; set; }
 
 
@@ -1154,9 +1164,9 @@ namespace PixelVision8.Runner
 
         }
         
-        List<AnimatedGifEncoder> gifEncoders = new List<AnimatedGifEncoder>();
+        private readonly List<AnimatedGifEncoder> gifEncoders = new List<AnimatedGifEncoder>();
         
-        public void StopRecording(bool save = true)
+        public void StopRecording()
         {
             if (!recording || gifEncoder == null)
                 return;

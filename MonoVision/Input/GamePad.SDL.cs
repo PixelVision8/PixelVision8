@@ -2,12 +2,10 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
+using MonoGame.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using MonoGame.Utilities;
 
 namespace Microsoft.Xna.Framework.Input
 {
@@ -64,7 +62,7 @@ namespace Microsoft.Xna.Framework.Input
                 id++;
 
             Gamepads.Add(id, gamepad);
-            
+
             if (gamepad.HapticDevice == IntPtr.Zero)
                 return;
 

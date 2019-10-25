@@ -4,7 +4,7 @@
 
 namespace Microsoft.Xna.Framework.Audio
 {
-    struct RpcVariable 
+    struct RpcVariable
     {
         public string Name;
         public float Value;

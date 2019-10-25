@@ -6,8 +6,8 @@ using System;
 
 namespace Microsoft.Xna.Framework.Audio
 {
-	static class XactHelpers
-	{
+    static class XactHelpers
+    {
         static internal readonly Random Random = new Random();
 
         public static float ParseDecibels(byte decibles)
@@ -55,6 +55,6 @@ namespace Microsoft.Xna.Framework.Audio
             // Convert from decibles to linear volume.
             return (float)Math.Pow(10.0, decibles / 20.0);
         }
-	}
+    }
 }
 

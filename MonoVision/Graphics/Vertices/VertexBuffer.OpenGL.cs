@@ -2,19 +2,16 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
 using MonoGame.OpenGL;
+using System;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.Xna.Framework.Graphics
 {
     public partial class VertexBuffer
     {
-		//internal uint vao;
-		internal int vbo;
+        //internal uint vao;
+        internal int vbo;
 
         private void PlatformConstruct()
         {
@@ -53,7 +50,7 @@ namespace Microsoft.Xna.Framework.Graphics
             // http://www.khronos.org/registry/gles/extensions/OES/OES_mapbuffer.txt
             throw new NotSupportedException("Vertex buffers are write-only on OpenGL ES platforms");
 #else
-            Threading.BlockOnUIThread (() => GetBufferData(offsetInBytes, data, startIndex, elementCount, vertexStride));
+            Threading.BlockOnUIThread(() => GetBufferData(offsetInBytes, data, startIndex, elementCount, vertexStride));
 #endif
         }
 
@@ -68,7 +65,7 @@ namespace Microsoft.Xna.Framework.Graphics
             var ptr = GL.MapBuffer(BufferTarget.ArrayBuffer, BufferAccess.ReadOnly);
             GraphicsExtensions.CheckGLError();
 
-            ptr = (IntPtr) (ptr.ToInt64() + offsetInBytes);
+            ptr = (IntPtr)(ptr.ToInt64() + offsetInBytes);
 
             if (typeof(T) == typeof(byte) && vertexStride == 1)
             {
@@ -90,8 +87,8 @@ namespace Microsoft.Xna.Framework.Graphics
                 {
                     for (var i = 0; i < elementCount; i++)
                     {
-                        data[startIndex + i] = (T) Marshal.PtrToStructure(tmpPtr, typeof(T));
-                        tmpPtr = (IntPtr) (tmpPtr.ToInt64() + vertexStride);
+                        data[startIndex + i] = (T)Marshal.PtrToStructure(tmpPtr, typeof(T));
+                        tmpPtr = (IntPtr)(tmpPtr.ToInt64() + vertexStride);
                     }
                 }
                 finally
@@ -103,7 +100,7 @@ namespace Microsoft.Xna.Framework.Graphics
             GL.UnmapBuffer(BufferTarget.ArrayBuffer);
             GraphicsExtensions.CheckGLError();
         }
-        
+
 #endif
 
         private void PlatformSetDataInternal<T>(int offsetInBytes, T[] data, int startIndex, int elementCount, int vertexStride, SetDataOptions options, int bufferSize, int elementSizeInBytes) where T : struct
@@ -117,13 +114,13 @@ namespace Microsoft.Xna.Framework.Graphics
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
             GraphicsExtensions.CheckGLError();
-            
+
             if (options == SetDataOptions.Discard)
             {
                 // By assigning NULL data to the buffer this gives a hint
                 // to the device to discard the previous content.
-                GL.BufferData(  BufferTarget.ArrayBuffer,
-                              (IntPtr)bufferSize, 
+                GL.BufferData(BufferTarget.ArrayBuffer,
+                              (IntPtr)bufferSize,
                               IntPtr.Zero,
                               _isDynamic ? BufferUsageHint.StreamDraw : BufferUsageHint.StaticDraw);
                 GraphicsExtensions.CheckGLError();
@@ -134,10 +131,10 @@ namespace Microsoft.Xna.Framework.Graphics
             {
                 // there are no gaps so we can copy in one go
                 var dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-                var dataPtr = (IntPtr) (dataHandle.AddrOfPinnedObject().ToInt64() + startIndex * elementSizeInBytes);
+                var dataPtr = (IntPtr)(dataHandle.AddrOfPinnedObject().ToInt64() + startIndex * elementSizeInBytes);
                 try
                 {
-                    GL.BufferSubData(BufferTarget.ArrayBuffer, (IntPtr) offsetInBytes, (IntPtr) (elementSizeInBytes * elementCount), dataPtr);
+                    GL.BufferSubData(BufferTarget.ArrayBuffer, (IntPtr)offsetInBytes, (IntPtr)(elementSizeInBytes * elementCount), dataPtr);
                     GraphicsExtensions.CheckGLError();
                 }
                 finally
@@ -152,14 +149,14 @@ namespace Microsoft.Xna.Framework.Graphics
                 try
                 {
                     var dstOffset = offsetInBytes;
-                    var dataPtr = (IntPtr) (dataHandle.AddrOfPinnedObject().ToInt64() + startIndex * elementSizeInByte);
+                    var dataPtr = (IntPtr)(dataHandle.AddrOfPinnedObject().ToInt64() + startIndex * elementSizeInByte);
                     for (var i = 0; i < elementCount; i++)
                     {
-                        GL.BufferSubData(BufferTarget.ArrayBuffer, (IntPtr) dstOffset, (IntPtr) elementSizeInByte, dataPtr);
+                        GL.BufferSubData(BufferTarget.ArrayBuffer, (IntPtr)dstOffset, (IntPtr)elementSizeInByte, dataPtr);
                         GraphicsExtensions.CheckGLError();
 
                         dstOffset += vertexStride;
-                        dataPtr = (IntPtr) (dataPtr.ToInt64() + elementSizeInByte);
+                        dataPtr = (IntPtr)(dataPtr.ToInt64() + elementSizeInByte);
                     }
                 }
                 finally

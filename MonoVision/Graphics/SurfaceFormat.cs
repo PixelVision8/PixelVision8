@@ -32,7 +32,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// DXT3. Texture format with compression. Surface dimensions must be a multiple 4.
         /// </summary>
-        Dxt3, 
+        Dxt3,
         /// <summary>
         /// DXT5. Texture format with compression. Surface dimensions must be a multiple 4.
         /// </summary>
@@ -126,10 +126,10 @@ namespace Microsoft.Xna.Framework.Graphics
         /// </summary>
         Dxt5SRgb = 35,
 
-		/// <summary>
+        /// <summary>
         /// PowerVR texture compression format (iOS and Android).
-		/// </summary>
-		RgbPvrtc2Bpp = 50,
+        /// </summary>
+        RgbPvrtc2Bpp = 50,
         /// <summary>
         /// PowerVR texture compression format (iOS and Android).
         /// </summary>
@@ -142,10 +142,10 @@ namespace Microsoft.Xna.Framework.Graphics
         /// PowerVR texture compression format (iOS and Android).
         /// </summary>
 		RgbaPvrtc4Bpp = 53,
-		/// <summary>
+        /// <summary>
         /// Ericcson Texture Compression (Android)
-		/// </summary>
-		RgbEtc1 = 60,
+        /// </summary>
+        RgbEtc1 = 60,
         /// <summary>
         /// DXT1 version where 1-bit alpha is used.
         /// </summary>
@@ -153,7 +153,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// ATC/ATITC compression (Android)
         /// </summary>
-        RgbaAtcExplicitAlpha =  80,
+        RgbaAtcExplicitAlpha = 80,
         /// <summary>
         /// ATC/ATITC compression (Android)
         /// </summary>

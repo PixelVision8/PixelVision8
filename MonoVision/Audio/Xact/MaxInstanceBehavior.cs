@@ -4,7 +4,7 @@
 
 namespace Microsoft.Xna.Framework.Audio
 {
-    enum MaxInstanceBehavior 
+    enum MaxInstanceBehavior
     {
         FailToPlay,
         Queue,

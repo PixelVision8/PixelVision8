@@ -20,19 +20,19 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Three component 32-bit floating point number.
         /// </summary>
-        Vector3, 
+        Vector3,
         /// <summary>
         /// Four component 32-bit floating point number.
         /// </summary>
-        Vector4, 
+        Vector4,
         /// <summary>
         /// Four component, packed unsigned byte, mapped to 0 to 1 range. 
         /// </summary>
-        Color,   
+        Color,
         /// <summary>
         /// Four component unsigned byte.
         /// </summary>
-        Byte4,        
+        Byte4,
         /// <summary>
         /// Two component signed 16-bit integer.
         /// </summary>
@@ -52,7 +52,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Two component 16-bit floating point number.
         /// </summary>
-        HalfVector2,  
+        HalfVector2,
         /// <summary>
         /// Four component 16-bit floating point number.
         /// </summary>

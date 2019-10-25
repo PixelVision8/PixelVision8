@@ -34,7 +34,7 @@ namespace Microsoft.Xna.Framework.Input
         /// Gets the joystick hat values.
         /// </summary>
         /// <value>An array list of <see cref="JoystickHat"/> that indicate hat values.</value>
-        public JoystickHat[] Hats{ get; internal set; }
+        public JoystickHat[] Hats { get; internal set; }
 
         /// <summary>
         /// Determines whether a specified instance of <see cref="Microsoft.Xna.Framework.Input.JoystickState"/> is

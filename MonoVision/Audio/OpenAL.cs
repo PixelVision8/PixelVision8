@@ -2,11 +2,11 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
-using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework.Audio;
 using MonoGame.Utilities;
+using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace MonoGame.OpenAL
 {
@@ -540,10 +540,10 @@ namespace MonoGame.OpenAL
         internal delegate void d_alcgetintegerv(IntPtr device, int param, int size, int[] values);
         internal static d_alcgetintegerv alcGetIntegerv = FuncLoader.LoadFunction<d_alcgetintegerv>(AL.NativeLibrary, "alcGetIntegerv");
 
-//        internal static void GetInteger(IntPtr device, AlcGetInteger param, int size, int[] values)
-//        {
-//            alcGetIntegerv(device, (int)param, size, values);
-//        }
+        //        internal static void GetInteger(IntPtr device, AlcGetInteger param, int size, int[] values)
+        //        {
+        //            alcGetIntegerv(device, (int)param, size, values);
+        //        }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate IntPtr d_alcgetcurrentcontext();

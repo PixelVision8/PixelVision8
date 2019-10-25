@@ -110,7 +110,7 @@ namespace Microsoft.Xna.Framework.Input
         /// <summary>
         /// Gets the button mask along with 'virtual buttons' like LeftThumbstickLeft.
         /// </summary>
-        private Buttons GetVirtualButtons ()
+        private Buttons GetVirtualButtons()
         {
             var result = Buttons._buttons;
 

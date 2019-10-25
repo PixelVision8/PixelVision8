@@ -2,10 +2,8 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
-using System.IO;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Utilities;
+using System;
 
 namespace Microsoft.Xna.Framework.Input
 {
@@ -61,7 +59,7 @@ namespace Microsoft.Xna.Framework.Input
         {
             if (Handle == IntPtr.Zero)
                 return;
-            
+
             Sdl.Mouse.FreeCursor(Handle);
             Handle = IntPtr.Zero;
         }

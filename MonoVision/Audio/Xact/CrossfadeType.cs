@@ -4,7 +4,7 @@
 
 namespace Microsoft.Xna.Framework.Audio
 {
-    enum CrossfadeType 
+    enum CrossfadeType
     {
         Linear,
         Logarithmic,

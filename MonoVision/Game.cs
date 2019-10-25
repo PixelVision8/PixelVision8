@@ -19,28 +19,28 @@ namespace Microsoft.Xna.Framework
 {
     public partial class Game : IDisposable
     {
-//        private GameComponentCollection _components;
+        //        private GameComponentCollection _components;
         private GameServiceContainer _services;
-//        private ContentManager _content;
+        //        private ContentManager _content;
         internal GamePlatform Platform;
 
-//        private SortingFilteringCollection<IDrawable> _drawables =
-//            new SortingFilteringCollection<IDrawable>(
-//                d => d.Visible,
-//                (d, handler) => d.VisibleChanged += handler,
-//                (d, handler) => d.VisibleChanged -= handler,
-//                (d1 ,d2) => Comparer<int>.Default.Compare(d1.DrawOrder, d2.DrawOrder),
-//                (d, handler) => d.DrawOrderChanged += handler,
-//                (d, handler) => d.DrawOrderChanged -= handler);
+        //        private SortingFilteringCollection<IDrawable> _drawables =
+        //            new SortingFilteringCollection<IDrawable>(
+        //                d => d.Visible,
+        //                (d, handler) => d.VisibleChanged += handler,
+        //                (d, handler) => d.VisibleChanged -= handler,
+        //                (d1 ,d2) => Comparer<int>.Default.Compare(d1.DrawOrder, d2.DrawOrder),
+        //                (d, handler) => d.DrawOrderChanged += handler,
+        //                (d, handler) => d.DrawOrderChanged -= handler);
 
-//        private SortingFilteringCollection<IUpdateable> _updateables =
-//            new SortingFilteringCollection<IUpdateable>(
-//                u => u.Enabled,
-//                (u, handler) => u.EnabledChanged += handler,
-//                (u, handler) => u.EnabledChanged -= handler,
-//                (u1, u2) => Comparer<int>.Default.Compare(u1.UpdateOrder, u2.UpdateOrder),
-//                (u, handler) => u.UpdateOrderChanged += handler,
-//                (u, handler) => u.UpdateOrderChanged -= handler);
+        //        private SortingFilteringCollection<IUpdateable> _updateables =
+        //            new SortingFilteringCollection<IUpdateable>(
+        //                u => u.Enabled,
+        //                (u, handler) => u.EnabledChanged += handler,
+        //                (u, handler) => u.EnabledChanged -= handler,
+        //                (u1, u2) => Comparer<int>.Default.Compare(u1.UpdateOrder, u2.UpdateOrder),
+        //                (u, handler) => u.UpdateOrderChanged += handler,
+        //                (u, handler) => u.UpdateOrderChanged -= handler);
 
         private IGraphicsDeviceManager _graphicsDeviceManager;
         private IGraphicsDeviceService _graphicsDeviceService;
@@ -56,7 +56,7 @@ namespace Microsoft.Xna.Framework
         private bool _shouldExit;
         private bool _suppressDraw;
 
-        partial void PlatformConstruct();       
+        partial void PlatformConstruct();
 
         public Game()
         {
@@ -64,8 +64,8 @@ namespace Microsoft.Xna.Framework
 
             LaunchParameters = new LaunchParameters();
             _services = new GameServiceContainer();
-//            _components = new GameComponentCollection();
-//            _content = new ContentManager(_services);
+            //            _components = new GameComponentCollection();
+            //            _content = new ContentManager(_services);
 
             Platform = GamePlatform.PlatformCreate(this);
             Platform.Activated += OnActivated;
@@ -93,7 +93,7 @@ namespace Microsoft.Xna.Framework
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-//            EventHelpers.Raise(this, Disposed, EventArgs.Empty);
+            //            EventHelpers.Raise(this, Disposed, EventArgs.Empty);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -103,19 +103,19 @@ namespace Microsoft.Xna.Framework
                 if (disposing)
                 {
                     // Dispose loaded game components
-//                    for (int i = 0; i < _components.Count; i++)
-//                    {
-//                        var disposable = _components[i] as IDisposable;
-//                        if (disposable != null)
-//                            disposable.Dispose();
-//                    }
-//                    _components = null;
+                    //                    for (int i = 0; i < _components.Count; i++)
+                    //                    {
+                    //                        var disposable = _components[i] as IDisposable;
+                    //                        if (disposable != null)
+                    //                            disposable.Dispose();
+                    //                    }
+                    //                    _components = null;
 
-//                    if (_content != null)
-//                    {
-//                        _content.Dispose();
-//                        _content = null;
-//                    }
+                    //                    if (_content != null)
+                    //                    {
+                    //                        _content.Dispose();
+                    //                        _content = null;
+                    //                    }
 
                     if (_graphicsDeviceManager != null)
                     {
@@ -133,7 +133,7 @@ namespace Microsoft.Xna.Framework
                         Platform = null;
                     }
 
-//                    ContentTypeReaderManager.ClearTypeCreators();
+                    //                    ContentTypeReaderManager.ClearTypeCreators();
 
                     SoundEffect.PlatformShutdown();
                 }
@@ -169,10 +169,10 @@ namespace Microsoft.Xna.Framework
 
         public LaunchParameters LaunchParameters { get; private set; }
 
-//        public GameComponentCollection Components
-//        {
-//            get { return _components; }
-//        }
+        //        public GameComponentCollection Components
+        //        {
+        //            get { return _components; }
+        //        }
 
         public TimeSpan InactiveSleepTime
         {
@@ -224,21 +224,22 @@ namespace Microsoft.Xna.Framework
             set { _isFixedTimeStep = value; }
         }
 
-        public GameServiceContainer Services {
+        public GameServiceContainer Services
+        {
             get { return _services; }
         }
 
-//        public ContentManager Content
-//        {
-//            get { return _content; }
-//            set
-//            {
-//                if (value == null)
-//                    throw new ArgumentNullException();
-//
-//                _content = value;
-//            }
-//        }
+        //        public ContentManager Content
+        //        {
+        //            get { return _content; }
+        //            set
+        //            {
+        //                if (value == null)
+        //                    throw new ArgumentNullException();
+        //
+        //                _content = value;
+        //            }
+        //        }
 
         public GraphicsDevice GraphicsDevice
         {
@@ -279,10 +280,10 @@ namespace Microsoft.Xna.Framework
 
         #region Events
 
-//        public event EventHandler<EventArgs> Activated;
-//        public event EventHandler<EventArgs> Deactivated;
-//        public event EventHandler<EventArgs> Disposed;
-//        public event EventHandler<EventArgs> Exiting;
+        //        public event EventHandler<EventArgs> Activated;
+        //        public event EventHandler<EventArgs> Deactivated;
+        //        public event EventHandler<EventArgs> Disposed;
+        //        public event EventHandler<EventArgs> Exiting;
 
 #if WINDOWS_UAP
         [CLSCompliant(false)]
@@ -302,44 +303,44 @@ namespace Microsoft.Xna.Framework
             _suppressDraw = true;
         }
 
-//        public void ResetElapsedTime()
-//        {
-//            Platform.ResetElapsedTime();
-//            _gameTimer.Reset();
-//            _gameTimer.Start();
-//            _accumulatedElapsedTime = TimeSpan.Zero;
-//            _gameTime.ElapsedGameTime = TimeSpan.Zero;
-//            _previousTicks = 0L;
-//        }
-//
-//        public void SuppressDraw()
-//        {
-//            _suppressDraw = true;
-//        }
-//        
-//        public void RunOneFrame()
-//        {
-//            if (Platform == null)
-//                return;
-//
-//            if (!Platform.BeforeRun())
-//                return;
-//
-//            if (!_initialized)
-//            {
-//                DoInitialize ();
-//                _gameTimer = Stopwatch.StartNew();
-//                _initialized = true;
-//            }
-//
-//            BeginRun();            
-//
-//            //Not quite right..
-//            Tick ();
-//
-//            EndRun ();
-//
-//        }
+        //        public void ResetElapsedTime()
+        //        {
+        //            Platform.ResetElapsedTime();
+        //            _gameTimer.Reset();
+        //            _gameTimer.Start();
+        //            _accumulatedElapsedTime = TimeSpan.Zero;
+        //            _gameTime.ElapsedGameTime = TimeSpan.Zero;
+        //            _previousTicks = 0L;
+        //        }
+        //
+        //        public void SuppressDraw()
+        //        {
+        //            _suppressDraw = true;
+        //        }
+        //        
+        //        public void RunOneFrame()
+        //        {
+        //            if (Platform == null)
+        //                return;
+        //
+        //            if (!Platform.BeforeRun())
+        //                return;
+        //
+        //            if (!_initialized)
+        //            {
+        //                DoInitialize ();
+        //                _gameTimer = Stopwatch.StartNew();
+        //                _initialized = true;
+        //            }
+        //
+        //            BeginRun();            
+        //
+        //            //Not quite right..
+        //            Tick ();
+        //
+        //            EndRun ();
+        //
+        //        }
 
         public void Run()
         {
@@ -356,8 +357,9 @@ namespace Microsoft.Xna.Framework
                 return;
             }
 
-            if (!_initialized) {
-                DoInitialize ();
+            if (!_initialized)
+            {
+                DoInitialize();
                 _initialized = true;
             }
 
@@ -365,21 +367,21 @@ namespace Microsoft.Xna.Framework
             _gameTimer = Stopwatch.StartNew();
             switch (runBehavior)
             {
-            case GameRunBehavior.Asynchronous:
-                Platform.AsyncRunLoopEnded += Platform_AsyncRunLoopEnded;
-                Platform.StartRunLoop();
-                break;
-            case GameRunBehavior.Synchronous:
-                // XNA runs one Update even before showing the window
-                DoUpdate(new GameTime());
+                case GameRunBehavior.Asynchronous:
+                    Platform.AsyncRunLoopEnded += Platform_AsyncRunLoopEnded;
+                    Platform.StartRunLoop();
+                    break;
+                case GameRunBehavior.Synchronous:
+                    // XNA runs one Update even before showing the window
+                    DoUpdate(new GameTime());
 
-                Platform.RunLoop();
-                EndRun();
-				DoExiting();
-                break;
-            default:
-                throw new ArgumentException(string.Format(
-                    "Handling for the run behavior {0} is not implemented.", runBehavior));
+                    Platform.RunLoop();
+                    EndRun();
+                    DoExiting();
+                    break;
+                default:
+                    throw new ArgumentException(string.Format(
+                        "Handling for the run behavior {0} is not implemented.", runBehavior));
             }
         }
 
@@ -394,10 +396,10 @@ namespace Microsoft.Xna.Framework
 
         public void Tick()
         {
-            // NOTE: This code is very sensitive and can break very badly
-            // with even what looks like a safe change.  Be sure to test 
-            // any change fully in both the fixed and variable timestep 
-            // modes across multiple devices and platforms.
+        // NOTE: This code is very sensitive and can break very badly
+        // with even what looks like a safe change.  Be sure to test 
+        // any change fully in both the fixed and variable timestep 
+        // modes across multiple devices and platforms.
 
         RetryTick:
 
@@ -504,85 +506,85 @@ namespace Microsoft.Xna.Framework
         protected virtual void BeginRun() { }
         protected virtual void EndRun() { }
 
-//        protected virtual void LoadContent() { }
-//        protected virtual void UnloadContent() { }
+        //        protected virtual void LoadContent() { }
+        //        protected virtual void UnloadContent() { }
 
         protected virtual void Initialize()
         {
-//            // TODO: This should be removed once all platforms use the new GraphicsDeviceManager
-//#if !(WINDOWS && DIRECTX)
-//            applyChanges(graphicsDeviceManager);
-//#endif
-//
-//            // According to the information given on MSDN (see link below), all
-//            // GameComponents in Components at the time Initialize() is called
-//            // are initialized.
-//            // http://msdn.microsoft.com/en-us/library/microsoft.xna.framework.game.initialize.aspx
-//            // Initialize all existing components
-////            InitializeExistingComponents();
-//
-//            _graphicsDeviceService = (IGraphicsDeviceService)
-//                Services.GetService(typeof(IGraphicsDeviceService));
+            //            // TODO: This should be removed once all platforms use the new GraphicsDeviceManager
+            //#if !(WINDOWS && DIRECTX)
+            //            applyChanges(graphicsDeviceManager);
+            //#endif
+            //
+            //            // According to the information given on MSDN (see link below), all
+            //            // GameComponents in Components at the time Initialize() is called
+            //            // are initialized.
+            //            // http://msdn.microsoft.com/en-us/library/microsoft.xna.framework.game.initialize.aspx
+            //            // Initialize all existing components
+            ////            InitializeExistingComponents();
+            //
+            //            _graphicsDeviceService = (IGraphicsDeviceService)
+            //                Services.GetService(typeof(IGraphicsDeviceService));
 
-//            if (_graphicsDeviceService != null &&
-//                _graphicsDeviceService.GraphicsDevice != null)
-//            {
-//                LoadContent();
-//            }
+            //            if (_graphicsDeviceService != null &&
+            //                _graphicsDeviceService.GraphicsDevice != null)
+            //            {
+            //                LoadContent();
+            //            }
         }
 
-//        private static readonly Action<IDrawable, GameTime> DrawAction =
-//            (drawable, gameTime) => drawable.Draw(gameTime);
+        //        private static readonly Action<IDrawable, GameTime> DrawAction =
+        //            (drawable, gameTime) => drawable.Draw(gameTime);
 
         protected virtual void Draw(GameTime gameTime)
         {
 
-//            _drawables.ForEachFilteredItem(DrawAction, gameTime);
+            //            _drawables.ForEachFilteredItem(DrawAction, gameTime);
         }
 
-//        private static readonly Action<IUpdateable, GameTime> UpdateAction =
-//            (updateable, gameTime) => updateable.Update(gameTime);
+        //        private static readonly Action<IUpdateable, GameTime> UpdateAction =
+        //            (updateable, gameTime) => updateable.Update(gameTime);
 
         protected virtual void Update(GameTime gameTime)
         {
-//            _updateables.ForEachFilteredItem(UpdateAction, gameTime);
-		}
+            //            _updateables.ForEachFilteredItem(UpdateAction, gameTime);
+        }
 
         protected virtual void OnExiting(object sender, EventArgs args)
         {
-//            EventHelpers.Raise(sender, Exiting, args);
+            //            EventHelpers.Raise(sender, Exiting, args);
         }
-		
-		protected virtual void OnActivated(object sender, EventArgs args)
-		{
-			AssertNotDisposed();
-//            EventHelpers.Raise(sender, Activated, args);
-		}
-		
-		protected virtual void OnDeactivated(object sender, EventArgs args)
-		{
-			AssertNotDisposed();
-//            EventHelpers.Raise(sender, Deactivated, args);
-		}
+
+        protected virtual void OnActivated(object sender, EventArgs args)
+        {
+            AssertNotDisposed();
+            //            EventHelpers.Raise(sender, Activated, args);
+        }
+
+        protected virtual void OnDeactivated(object sender, EventArgs args)
+        {
+            AssertNotDisposed();
+            //            EventHelpers.Raise(sender, Deactivated, args);
+        }
 
         #endregion Protected Methods
 
         #region Event Handlers
 
-//        private void Components_ComponentAdded(
-//            object sender, GameComponentCollectionEventArgs e)
-//        {
-//            // Since we only subscribe to ComponentAdded after the graphics
-//            // devices are set up, it is safe to just blindly call Initialize.
-//            e.GameComponent.Initialize();
-//            CategorizeComponent(e.GameComponent);
-//        }
-//
-//        private void Components_ComponentRemoved(
-//            object sender, GameComponentCollectionEventArgs e)
-//        {
-//            DecategorizeComponent(e.GameComponent);
-//        }
+        //        private void Components_ComponentAdded(
+        //            object sender, GameComponentCollectionEventArgs e)
+        //        {
+        //            // Since we only subscribe to ComponentAdded after the graphics
+        //            // devices are set up, it is safe to just blindly call Initialize.
+        //            e.GameComponent.Initialize();
+        //            CategorizeComponent(e.GameComponent);
+        //        }
+        //
+        //        private void Components_ComponentRemoved(
+        //            object sender, GameComponentCollectionEventArgs e)
+        //        {
+        //            DecategorizeComponent(e.GameComponent);
+        //        }
 
         private void Platform_AsyncRunLoopEnded(object sender, EventArgs e)
         {
@@ -591,7 +593,7 @@ namespace Microsoft.Xna.Framework
             var platform = (GamePlatform)sender;
             platform.AsyncRunLoopEnded -= Platform_AsyncRunLoopEnded;
             EndRun();
-			DoExiting();
+            DoExiting();
         }
 
         #endregion Event Handlers
@@ -605,18 +607,18 @@ namespace Microsoft.Xna.Framework
 #if !(WINDOWS && DIRECTX)
         internal void applyChanges(GraphicsDeviceManager manager)
         {
-			Platform.BeginScreenDeviceChange(GraphicsDevice.PresentationParameters.IsFullScreen);
+            Platform.BeginScreenDeviceChange(GraphicsDevice.PresentationParameters.IsFullScreen);
 
             if (GraphicsDevice.PresentationParameters.IsFullScreen)
                 Platform.EnterFullScreen();
             else
                 Platform.ExitFullScreen();
             var viewport = new Viewport(0, 0,
-			                            GraphicsDevice.PresentationParameters.BackBufferWidth,
-			                            GraphicsDevice.PresentationParameters.BackBufferHeight);
+                                        GraphicsDevice.PresentationParameters.BackBufferWidth,
+                                        GraphicsDevice.PresentationParameters.BackBufferHeight);
 
             GraphicsDevice.Viewport = viewport;
-			Platform.EndScreenDeviceChange(string.Empty, viewport.Width, viewport.Height);
+            Platform.EndScreenDeviceChange(string.Empty, viewport.Width, viewport.Height);
         }
 #endif
 
@@ -626,7 +628,7 @@ namespace Microsoft.Xna.Framework
             if (Platform.BeforeUpdate(gameTime))
             {
                 FrameworkDispatcher.Update();
-				
+
                 Update(gameTime);
 
                 //The TouchPanel needs to know the time for when touches arrive
@@ -661,16 +663,16 @@ namespace Microsoft.Xna.Framework
             // 2. Subscribe to Added/Removed events to keep the categorized
             //    lists synced and to Initialize future components as they are
             //    added.            
-//            CategorizeComponents();
-//            _components.ComponentAdded += Components_ComponentAdded;
-//            _components.ComponentRemoved += Components_ComponentRemoved;
+            //            CategorizeComponents();
+            //            _components.ComponentAdded += Components_ComponentAdded;
+            //            _components.ComponentRemoved += Components_ComponentRemoved;
         }
 
-		internal void DoExiting()
-		{
-			OnExiting(this, EventArgs.Empty);
-//			UnloadContent();
-		}
+        internal void DoExiting()
+        {
+            OnExiting(this, EventArgs.Empty);
+            //			UnloadContent();
+        }
 
         #endregion Internal Methods
 

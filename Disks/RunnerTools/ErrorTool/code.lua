@@ -36,6 +36,7 @@ function Init()
 
   -- TODO Should only enable this if there is a disk loading error?
   EnableAutoRun(true)
+  EnableBackKey(false)
 
   -- Set the background an rebuild the screen buffer
   BackgroundColor(5)

@@ -2,8 +2,8 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace MonoGame.OpenGL
 {
@@ -30,16 +30,16 @@ namespace MonoGame.OpenGL
             get { return _disposed; }
         }
 
-		public bool IsCurrent
-		{
-			get { return true; }
-		}
+        public bool IsCurrent
+        {
+            get { return true; }
+        }
 
         public GraphicsContext(IWindowInfo info)
         {
             if (_disposed)
                 return;
-            
+
             SetWindowHandle(info);
             _context = Sdl.GL.CreateContext(_winHandle);
 
@@ -60,7 +60,7 @@ namespace MonoGame.OpenGL
         {
             if (_disposed)
                 return;
-            
+
             SetWindowHandle(info);
             Sdl.GL.MakeCurrent(_winHandle, _context);
         }
@@ -69,7 +69,7 @@ namespace MonoGame.OpenGL
         {
             if (_disposed)
                 return;
-            
+
             Sdl.GL.SwapWindow(_winHandle);
         }
 

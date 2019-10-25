@@ -4,7 +4,7 @@
 
 namespace Microsoft.Xna.Framework.Audio
 {
-    enum RpcPointType 
+    enum RpcPointType
     {
         Linear,
         Fast,

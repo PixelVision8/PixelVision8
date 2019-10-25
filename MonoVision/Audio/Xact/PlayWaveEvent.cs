@@ -2,9 +2,6 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
-using System.IO;
-
 namespace Microsoft.Xna.Framework.Audio
 {
     enum VariationType
@@ -28,7 +25,7 @@ namespace Microsoft.Xna.Framework.Audio
 
         private readonly int[] _tracks;
         private readonly int[] _waveBanks;
-        
+
         private readonly byte[] _weights;
         private readonly int _totalWeights;
 
@@ -51,7 +48,7 @@ namespace Microsoft.Xna.Framework.Audio
         private SoundEffectInstance _wav;
         private bool _streaming;
 
-        public PlayWaveEvent(   XactClip clip, float timeStamp, float randomOffset, SoundBank soundBank,
+        public PlayWaveEvent(XactClip clip, float timeStamp, float randomOffset, SoundBank soundBank,
                                 int[] waveBanks, int[] tracks, byte[] weights, int totalWeights,
                                 VariationType variation, Vector2? volumeVar, Vector2? pitchVar, Vector4? filterVar,
                                 int loopCount, bool newWaveOnLoop)
@@ -82,7 +79,7 @@ namespace Microsoft.Xna.Framework.Audio
             _newWaveOnLoop = newWaveOnLoop;
         }
 
-        public override void Play() 
+        public override void Play()
         {
             if (_wav != null)
             {
@@ -90,8 +87,8 @@ namespace Microsoft.Xna.Framework.Audio
                     _wav.Stop();
                 if (_streaming)
                     _wav.Dispose();
-				else					
-					_wav._isXAct = false;					
+                else
+                    _wav._isXAct = false;
                 _wav = null;
             }
 
@@ -121,7 +118,7 @@ namespace Microsoft.Xna.Framework.Audio
                         else
                         {
                             var sum = XactHelpers.Random.Next(_totalWeights);
-                            for (var i=0; i < trackCount; i++)
+                            for (var i = 0; i < trackCount; i++)
                             {
                                 sum -= _weights[i];
                                 if (sum <= 0)
@@ -134,28 +131,28 @@ namespace Microsoft.Xna.Framework.Audio
                         break;
 
                     case VariationType.RandomNoImmediateRepeats:
-                    {
-                        if (_weights == null || trackCount == 1)
-                            _wavIndex = XactHelpers.Random.Next() % trackCount;
-                        else
                         {
-                            var last = _wavIndex;
-                            var sum = XactHelpers.Random.Next(_totalWeights);
-                            for (var i=0; i < trackCount; i++)
+                            if (_weights == null || trackCount == 1)
+                                _wavIndex = XactHelpers.Random.Next() % trackCount;
+                            else
                             {
-                                sum -= _weights[i];
-                                if (sum <= 0)
+                                var last = _wavIndex;
+                                var sum = XactHelpers.Random.Next(_totalWeights);
+                                for (var i = 0; i < trackCount; i++)
                                 {
-                                    _wavIndex = i;
-                                    break;
+                                    sum -= _weights[i];
+                                    if (sum <= 0)
+                                    {
+                                        _wavIndex = i;
+                                        break;
+                                    }
                                 }
-                            }
 
-                            if (_wavIndex == last)
-                                _wavIndex = (_wavIndex + 1) % trackCount;
+                                if (_wavIndex == last)
+                                    _wavIndex = (_wavIndex + 1) % trackCount;
+                            }
+                            break;
                         }
-                        break;
-                    }
 
                     case VariationType.Shuffle:
                         // TODO: Need some sort of deck implementation.
@@ -187,10 +184,10 @@ namespace Microsoft.Xna.Framework.Audio
                 else
                 {
                     _trackFilterFrequency = _clip.FilterFrequency;
-                    _trackFilterQFactor = _clip.FilterQ;                
+                    _trackFilterQFactor = _clip.FilterQ;
                 }
             }
- 
+
             // This is a shortcut for infinite looping of a single track.
             _wav.IsLooped = _loopCount == 255 && trackCount == 1;
 
@@ -206,14 +203,14 @@ namespace Microsoft.Xna.Framework.Audio
                 _wav.Stop();
                 if (_streaming)
                     _wav.Dispose();
-				else
-                	_wav._isXAct = false;				
+                else
+                    _wav._isXAct = false;
                 _wav = null;
             }
             _loopIndex = 0;
         }
 
-        public override void Pause() 
+        public override void Pause()
         {
             if (_wav != null)
                 _wav.Pause();
@@ -280,8 +277,8 @@ namespace Microsoft.Xna.Framework.Audio
                 {
                     if (_streaming)
                         _wav.Dispose();
-					else
-	                    _wav._isXAct = false;						
+                    else
+                        _wav._isXAct = false;
                     _wav = null;
                     _loopIndex = 0;
                 }

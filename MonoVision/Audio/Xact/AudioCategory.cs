@@ -3,9 +3,9 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Collections.Generic;
 
 namespace Microsoft.Xna.Framework.Audio
 {
@@ -36,8 +36,8 @@ namespace Microsoft.Xna.Framework.Audio
         internal float fadeIn;
         internal float fadeOut;
 
-        
-        internal AudioCategory (AudioEngine audioengine, string name, BinaryReader reader)
+
+        internal AudioCategory(AudioEngine audioengine, string name, BinaryReader reader)
         {
             Debug.Assert(audioengine != null);
             Debug.Assert(!string.IsNullOrEmpty(name));
@@ -46,22 +46,22 @@ namespace Microsoft.Xna.Framework.Audio
             _name = name;
             _engine = audioengine;
 
-            maxInstances = reader.ReadByte ();
+            maxInstances = reader.ReadByte();
             instanceLimit = maxInstances != 0xff;
 
-            fadeIn = (reader.ReadUInt16 () / 1000f);
-            fadeOut = (reader.ReadUInt16 () / 1000f);
+            fadeIn = (reader.ReadUInt16() / 1000f);
+            fadeOut = (reader.ReadUInt16() / 1000f);
 
-            byte instanceFlags = reader.ReadByte ();
+            byte instanceFlags = reader.ReadByte();
             fadeType = (CrossfadeType)(instanceFlags & 0x7);
             InstanceBehavior = (MaxInstanceBehavior)(instanceFlags >> 3);
 
-            reader.ReadUInt16 (); //unkn
+            reader.ReadUInt16(); //unkn
 
             var volume = XactHelpers.ParseVolumeFromDecibels(reader.ReadByte());
             _volume = new float[1] { volume };
 
-            byte visibilityFlags = reader.ReadByte ();
+            byte visibilityFlags = reader.ReadByte();
             isBackgroundMusic = (visibilityFlags & 0x1) != 0;
             isPublic = (visibilityFlags & 0x2) != 0;
         }
@@ -100,7 +100,7 @@ namespace Microsoft.Xna.Framework.Audio
         /// <summary>
         /// Pauses all associated sounds.
         /// </summary>
-        public void Pause ()
+        public void Pause()
         {
             foreach (var sound in _sounds)
                 sound.Pause();
@@ -109,7 +109,7 @@ namespace Microsoft.Xna.Framework.Audio
         /// <summary>
         /// Resumes all associated paused sounds.
         /// </summary>
-        public void Resume ()
+        public void Resume()
         {
             foreach (var sound in _sounds)
                 sound.Resume();

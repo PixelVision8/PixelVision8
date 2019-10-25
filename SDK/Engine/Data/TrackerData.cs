@@ -18,10 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Text;
 using Microsoft.Xna.Framework;
 using PixelVision8.Runner.Utils;
+using System;
+using System.Text;
 
 namespace PixelVision8.Engine
 {
@@ -97,12 +97,12 @@ namespace PixelVision8.Engine
         /// <param name="trackCount"></param>
         public void Reset(int trackCount = 5)
         {
-//            songName = name;
+            //            songName = name;
             totalTracks = trackCount;
             foreach (var track in tracks)
                 track.Reset();
         }
-        
+
         public string SerializeData()
         {
             var sb = new StringBuilder();
@@ -110,10 +110,10 @@ namespace PixelVision8.Engine
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-//            sb.Append("\"patternName\":\"");
-//            sb.Append(songName);
-//            sb.Append("\",");
-//            JsonUtil.GetLineBreak(sb, 1);
+            //            sb.Append("\"patternName\":\"");
+            //            sb.Append(songName);
+            //            sb.Append("\",");
+            //            JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"speedInBPM\":");
             sb.Append(speedInBPM);

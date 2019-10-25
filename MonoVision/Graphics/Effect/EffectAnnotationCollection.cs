@@ -2,41 +2,41 @@ using System.Collections.Generic;
 
 namespace Microsoft.Xna.Framework.Graphics
 {
-	public class EffectAnnotationCollection : IEnumerable<EffectAnnotation>
-	{
+    public class EffectAnnotationCollection : IEnumerable<EffectAnnotation>
+    {
         internal static readonly EffectAnnotationCollection Empty = new EffectAnnotationCollection(new EffectAnnotation[0]);
 
-	    private readonly EffectAnnotation[] _annotations;
+        private readonly EffectAnnotation[] _annotations;
 
         internal EffectAnnotationCollection(EffectAnnotation[] annotations)
         {
             _annotations = annotations;
         }
 
-		public int Count 
+        public int Count
         {
-			get { return _annotations.Length; }
-		}
-		
-		public EffectAnnotation this[int index]
+            get { return _annotations.Length; }
+        }
+
+        public EffectAnnotation this[int index]
         {
             get { return _annotations[index]; }
         }
-		
-		public EffectAnnotation this[string name]
+
+        public EffectAnnotation this[string name]
         {
-            get 
+            get
             {
-				foreach (var annotation in _annotations) 
+                foreach (var annotation in _annotations)
                 {
-					if (annotation.Name == name)
-						return annotation;
-				}
-				return null;
-			}
+                    if (annotation.Name == name)
+                        return annotation;
+                }
+                return null;
+            }
         }
-		
-		public IEnumerator<EffectAnnotation> GetEnumerator()
+
+        public IEnumerator<EffectAnnotation> GetEnumerator()
         {
             return ((IEnumerable<EffectAnnotation>)_annotations).GetEnumerator();
         }
@@ -45,6 +45,6 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             return _annotations.GetEnumerator();
         }
-	}
+    }
 }
 

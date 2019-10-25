@@ -4,17 +4,17 @@
 
 using System;
 using System.Diagnostics;
-using System.Text;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace Microsoft.Xna.Framework
 {
     /// <summary>
     /// Describes a 3D-vector.
     /// </summary>
-//#if XNADESIGNPROVIDED
-//    [System.ComponentModel.TypeConverter(typeof(Microsoft.Xna.Framework.Design.Vector3TypeConverter))]
-//#endif
+    //#if XNADESIGNPROVIDED
+    //    [System.ComponentModel.TypeConverter(typeof(Microsoft.Xna.Framework.Design.Vector3TypeConverter))]
+    //#endif
     [DataContract]
     [DebuggerDisplay("{DebugDisplayString,nq}")]
     public struct Vector3 : IEquatable<Vector3>
@@ -202,9 +202,9 @@ namespace Microsoft.Xna.Framework
             this.Y = value.Y;
             this.Z = z;
         }
-        
+
         #endregion
-        
+
         #region Public Methods
 
         /// <summary>
@@ -392,7 +392,7 @@ namespace Microsoft.Xna.Framework
         /// <returns>The squared distance between two vectors.</returns>
         public static float DistanceSquared(Vector3 value1, Vector3 value2)
         {
-            return  (value1.X - value2.X) * (value1.X - value2.X) +
+            return (value1.X - value2.X) * (value1.X - value2.X) +
                     (value1.Y - value2.Y) * (value1.Y - value2.Y) +
                     (value1.Z - value2.Z) * (value1.Z - value2.Z);
         }
@@ -499,7 +499,7 @@ namespace Microsoft.Xna.Framework
                 return false;
 
             var other = (Vector3)obj;
-            return  X == other.X &&
+            return X == other.X &&
                     Y == other.Y &&
                     Z == other.Z;
         }
@@ -511,7 +511,7 @@ namespace Microsoft.Xna.Framework
         /// <returns><c>true</c> if the instances are equal; <c>false</c> otherwise.</returns>
         public bool Equals(Vector3 other)
         {
-            return  X == other.X && 
+            return X == other.X &&
                     Y == other.Y &&
                     Z == other.Z;
         }
@@ -520,7 +520,8 @@ namespace Microsoft.Xna.Framework
         /// Gets the hash code of this <see cref="Vector3"/>.
         /// </summary>
         /// <returns>Hash code of this <see cref="Vector3"/>.</returns>
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             unchecked
             {
                 var hashCode = X.GetHashCode();

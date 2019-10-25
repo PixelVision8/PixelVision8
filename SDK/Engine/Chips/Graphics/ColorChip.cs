@@ -18,11 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
+using Microsoft.Xna.Framework;
+using PixelVision8.Engine.Utils;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine.Chips
 {
@@ -62,11 +62,11 @@ namespace PixelVision8.Engine.Chips
         protected Color[] colorCache;
 
         protected int[] invalidColors = new int[16];
-        
+
         public bool unique;
 
         private int _maxColors = -1;
-        
+
         /// <summary>
         ///     This can be used as a flag to limit the number of colors on the chip.
         /// </summary>
@@ -79,7 +79,7 @@ namespace PixelVision8.Engine.Chips
 
 
         // A flag to let the game chip know the last 128  colors are reserved for palettes
-//        public bool paletteMode;
+        //        public bool paletteMode;
 
         /// <summary>
         ///     The background color reference to use when rendering transparent in
@@ -119,11 +119,11 @@ namespace PixelVision8.Engine.Chips
         }
 
         //TODO need to figure out a better way to set this up?
-//        public int maxColors
-//        {
-//            get => _maxColors == -1 ? total : _maxColors;
-//            set => _maxColors = value;
-//        }
+        //        public int maxColors
+        //        {
+        //            get => _maxColors == -1 ? total : _maxColors;
+        //            set => _maxColors = value;
+        //        }
 
         public string[] hexColors
         {
@@ -159,11 +159,6 @@ namespace PixelVision8.Engine.Chips
                 Invalidate();
             }
         }
-
-//        public void Resize(int value)
-//        {
-//            total = MathHelper.Clamp(value, 2, 512);
-//        }
 
         /// <summary>
         ///     Returns a list of color data to be used for rendering.
@@ -226,10 +221,10 @@ namespace PixelVision8.Engine.Chips
             return index < 0 || index > _colors.Length - 1 ? maskColor : _colors[index];
         }
 
-//        public int FindColorID(string color)
-//        {
-//            return Array.IndexOf(_colors, color);
-//        }
+        //        public int FindColorID(string color)
+        //        {
+        //            return Array.IndexOf(_colors, color);
+        //        }
 
         public void Clear()
         {
@@ -267,7 +262,7 @@ namespace PixelVision8.Engine.Chips
             backgroundColor = -1;
             total = 256;
 
-//            RebuildColorPages(16);
+            //            RebuildColorPages(16);
         }
 
         public override void Deactivate()

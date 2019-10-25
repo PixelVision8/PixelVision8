@@ -3,9 +3,9 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
-using System.Text;
-using System.Runtime.Serialization;
 using System.Diagnostics;
+using System.Runtime.Serialization;
+using System.Text;
 
 namespace Microsoft.Xna.Framework
 {
@@ -19,16 +19,16 @@ namespace Microsoft.Xna.Framework
         static Color()
         {
             Black = new Color(0xff000000);
-//            CornflowerBlue = new Color(0xffed9564);
+            //            CornflowerBlue = new Color(0xffed9564);
             Magenta = new Color(0xffff00ff);
-            White= new Color(uint.MaxValue);
+            White = new Color(uint.MaxValue);
         }
 
         // Stored as RGBA with R in the least significant octet:
         // |-------|-------|-------|-------
         // A       B       G       R
         private uint _packedValue;
-	  
+
         /// <summary>
         /// Constructs an RGBA color from a packed value.
         /// The value is a 32-bit unsigned integer, with R in the least significant octet.
@@ -82,7 +82,7 @@ namespace Microsoft.Xna.Framework
         /// </summary>
         /// <param name="color">A <see cref="Color"/> for RGB values of new <see cref="Color"/> instance.</param>
         /// <param name="alpha">Alpha component value from 0.0f to 1.0f.</param>
-        public Color(Color color, float alpha):
+        public Color(Color color, float alpha) :
             this(color, (int)(alpha * 255))
         {
         }
@@ -183,7 +183,7 @@ namespace Microsoft.Xna.Framework
             {
                 unchecked
                 {
-                    return (byte) (this._packedValue >> 16);
+                    return (byte)(this._packedValue >> 16);
                 }
             }
             set
@@ -221,7 +221,7 @@ namespace Microsoft.Xna.Framework
             {
                 unchecked
                 {
-                    return (byte) this._packedValue;
+                    return (byte)this._packedValue;
                 }
             }
             set
@@ -248,8 +248,8 @@ namespace Microsoft.Xna.Framework
                 this._packedValue = (this._packedValue & 0x00ffffff) | ((uint)value << 24);
             }
         }
-		
-	/// <summary>
+
+        /// <summary>
         /// Compares whether two <see cref="Color"/> instances are equal.
         /// </summary>
         /// <param name="a"><see cref="Color"/> instance on the left of the equal sign.</param>
@@ -259,8 +259,8 @@ namespace Microsoft.Xna.Framework
         {
             return (a._packedValue == b._packedValue);
         }
-	
-	/// <summary>
+
+        /// <summary>
         /// Compares whether two <see cref="Color"/> instances are not equal.
         /// </summary>
         /// <param name="a"><see cref="Color"/> instance on the left of the not equal sign.</param>
@@ -279,7 +279,7 @@ namespace Microsoft.Xna.Framework
         {
             return this._packedValue.GetHashCode();
         }
-	
+
         /// <summary>
         /// Compares whether current instance is equal to specified object.
         /// </summary>
@@ -298,8 +298,8 @@ namespace Microsoft.Xna.Framework
             get;
             private set;
         }
-        
-        
+
+
         /// <summary>
         /// CornflowerBlue color (R:100,G:149,B:237,A:255).
         /// </summary>
@@ -308,7 +308,7 @@ namespace Microsoft.Xna.Framework
             get;
             private set;
         }
-        
+
         /// <summary>
         /// Magenta color (R:255,G:0,B:255,A:255).
         /// </summary>
@@ -322,19 +322,19 @@ namespace Microsoft.Xna.Framework
         /// White color (R:255,G:255,B:255,A:255).
         /// </summary>
         public static Color White
-    {
-        get;
-        private set;
-    }
- 
-	
-	/// <summary>
+        {
+            get;
+            private set;
+        }
+
+
+        /// <summary>
         /// Multiply <see cref="Color"/> by value.
         /// </summary>
         /// <param name="value">Source <see cref="Color"/>.</param>
         /// <param name="scale">Multiplicator.</param>
         /// <returns>Multiplication result.</returns>
-	public static Color operator *(Color value, float scale)
+        public static Color operator *(Color value, float scale)
         {
             return new Color((int)(value.R * scale), (int)(value.G * scale), (int)(value.B * scale), (int)(value.A * scale));
         }
@@ -347,7 +347,7 @@ namespace Microsoft.Xna.Framework
         {
             return new Vector4(R / 255.0f, G / 255.0f, B / 255.0f, A / 255.0f);
         }
-	
+
         /// <summary>
         /// Gets or sets packed value of this <see cref="Color"/>.
         /// </summary>
@@ -378,31 +378,31 @@ namespace Microsoft.Xna.Framework
         /// {R:[red] G:[green] B:[blue] A:[alpha]}
         /// </summary>
         /// <returns><see cref="String"/> representation of this <see cref="Color"/>.</returns>
-	public override string ToString ()
-	{
-        StringBuilder sb = new StringBuilder(25);
-        sb.Append("{R:");
-        sb.Append(R);
-        sb.Append(" G:");
-        sb.Append(G);
-        sb.Append(" B:");
-        sb.Append(B);
-        sb.Append(" A:");
-        sb.Append(A);
-        sb.Append("}");
-        return sb.ToString();
-	}
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder(25);
+            sb.Append("{R:");
+            sb.Append(R);
+            sb.Append(" G:");
+            sb.Append(G);
+            sb.Append(" B:");
+            sb.Append(B);
+            sb.Append(" A:");
+            sb.Append(A);
+            sb.Append("}");
+            return sb.ToString();
+        }
 
         #region IEquatable<Color> Members
-	
-	/// <summary>
+
+        /// <summary>
         /// Compares whether current instance is equal to specified <see cref="Color"/>.
         /// </summary>
         /// <param name="other">The <see cref="Color"/> to compare.</param>
         /// <returns><c>true</c> if the instances are equal; <c>false</c> otherwise.</returns>
         public bool Equals(Color other)
         {
-	    return this.PackedValue == other.PackedValue;
+            return this.PackedValue == other.PackedValue;
         }
 
         #endregion

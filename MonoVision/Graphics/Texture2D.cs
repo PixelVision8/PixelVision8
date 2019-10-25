@@ -2,10 +2,8 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
-using System.IO;
-using System.Runtime.InteropServices;
 using MonoGame.Utilities;
+using System;
 
 namespace Microsoft.Xna.Framework.Graphics
 {
@@ -18,10 +16,10 @@ namespace Microsoft.Xna.Framework.Graphics
             SwapChainRenderTarget,
         }
 
-		internal int width;
-		internal int height;
+        internal int width;
+        internal int height;
         internal int ArraySize;
-                
+
         internal float TexelWidth { get; private set; }
         internal float TexelHeight { get; private set; }
 
@@ -32,7 +30,7 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             get
             {
-				return new Rectangle(0, 0, this.width, this.height);
+                return new Rectangle(0, 0, this.width, this.height);
             }
         }
 
@@ -48,13 +46,13 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 
         protected Texture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipmap, SurfaceFormat format, SurfaceType type, bool shared, int arraySize)
-		{
+        {
             if (graphicsDevice == null)
                 throw new ArgumentNullException("graphicsDevice", FrameworkResources.ResourceCreationWhenDeviceIsNull);
             if (width <= 0)
-                throw new ArgumentOutOfRangeException("width","Texture width must be greater than zero");
+                throw new ArgumentOutOfRangeException("width", "Texture width must be greater than zero");
             if (height <= 0)
-                throw new ArgumentOutOfRangeException("height","Texture height must be greater than zero");
+                throw new ArgumentOutOfRangeException("height", "Texture height must be greater than zero");
             if (arraySize > 1 && !graphicsDevice.GraphicsCapabilities.SupportsTextureArrays)
                 throw new ArgumentException("Texture arrays are not supported on this graphics device", "arraySize");
 
@@ -69,8 +67,8 @@ namespace Microsoft.Xna.Framework.Graphics
             this.ArraySize = arraySize;
 
             // Texture will be assigned by the swap chain.
-		    if (type == SurfaceType.SwapChainRenderTarget)
-		        return;
+            if (type == SurfaceType.SwapChainRenderTarget)
+                return;
 
             PlatformConstruct(width, height, mipmap, format, type, shared);
         }
@@ -97,13 +95,13 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
-		/// <summary>
+        /// <summary>
         /// Changes the texture's pixels
         /// </summary>
         /// <typeparam name="T">New data for the texture</typeparam>
         /// <param name="data"></param>
-		public void SetData<T>(T[] data) where T : struct
-		{
+        public void SetData<T>(T[] data) where T : struct
+        {
             Rectangle checkedRect;
             ValidateParams(0, 0, null, data, 0, data.Length, out checkedRect);
             PlatformSetData(0, data, 0, data.Length);
@@ -151,13 +149,13 @@ namespace Microsoft.Xna.Framework.Graphics
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="data">Destination array for the texture data</param>
-        public void GetData<T> (T[] data) where T : struct
-		{
-		    if (data == null)
-		        throw new ArgumentNullException("data");
-			this.GetData(0, null, data, 0, data.Length);
-		}
-		
+        public void GetData<T>(T[] data) where T : struct
+        {
+            if (data == null)
+                throw new ArgumentNullException("data");
+            this.GetData(0, null, data, 0, data.Length);
+        }
+
         private void ValidateParams<T>(int level, int arraySlice, Rectangle? rect, T[] data,
             int startIndex, int elementCount, out Rectangle checkedRect) where T : struct
         {
@@ -224,5 +222,5 @@ namespace Microsoft.Xna.Framework.Graphics
                                             "elementCount * sizeof(T) is {0}, but data size is {1}.",
                                             elementCount * tSize, dataByteSize), "elementCount");
         }
-	}
+    }
 }

@@ -6,25 +6,25 @@ namespace Microsoft.Xna.Framework.Graphics
     {
         private readonly Effect _effect;
 
-		private readonly Shader _pixelShader;
+        private readonly Shader _pixelShader;
         private readonly Shader _vertexShader;
 
-//        private readonly BlendState _blendState;
-//        private readonly DepthStencilState _depthStencilState;
-//        private readonly RasterizerState _rasterizerState;
+        //        private readonly BlendState _blendState;
+        //        private readonly DepthStencilState _depthStencilState;
+        //        private readonly RasterizerState _rasterizerState;
 
-		public string Name { get; private set; }
+        public string Name { get; private set; }
 
         public EffectAnnotationCollection Annotations { get; private set; }
 
-        internal EffectPass(    Effect effect, 
+        internal EffectPass(Effect effect,
                                 string name,
-                                Shader vertexShader, 
-                                Shader pixelShader, 
-//                                BlendState blendState, 
-//                                DepthStencilState depthStencilState, 
+                                Shader vertexShader,
+                                Shader pixelShader,
+                                //                                BlendState blendState, 
+                                //                                DepthStencilState depthStencilState, 
                                 /*RasterizerState rasterizerState,*/
-                                EffectAnnotationCollection annotations )
+                                EffectAnnotationCollection annotations)
         {
             Debug.Assert(effect != null, "Got a null effect!");
             Debug.Assert(annotations != null, "Got a null annotation collection!");
@@ -36,13 +36,13 @@ namespace Microsoft.Xna.Framework.Graphics
             _vertexShader = vertexShader;
             _pixelShader = pixelShader;
 
-//            _blendState = blendState;
-//            _depthStencilState = depthStencilState;
-//            _rasterizerState = rasterizerState;
+            //            _blendState = blendState;
+            //            _depthStencilState = depthStencilState;
+            //            _rasterizerState = rasterizerState;
 
             Annotations = annotations;
         }
-        
+
         internal EffectPass(Effect effect, EffectPass cloneSource)
         {
             Debug.Assert(effect != null, "Got a null effect!");
@@ -52,9 +52,9 @@ namespace Microsoft.Xna.Framework.Graphics
 
             // Share all the immutable types.
             Name = cloneSource.Name;
-//            _blendState = cloneSource._blendState;
-//            _depthStencilState = cloneSource._depthStencilState;
-//            _rasterizerState = cloneSource._rasterizerState;
+            //            _blendState = cloneSource._blendState;
+            //            _depthStencilState = cloneSource._depthStencilState;
+            //            _rasterizerState = cloneSource._rasterizerState;
             Annotations = cloneSource.Annotations;
             _vertexShader = cloneSource._vertexShader;
             _pixelShader = cloneSource._pixelShader;
@@ -78,7 +78,7 @@ namespace Microsoft.Xna.Framework.Graphics
             {
                 device.VertexShader = _vertexShader;
 
-				// Update the texture parameters.
+                // Update the texture parameters.
                 SetShaderSamplers(_vertexShader, device.VertexTextures, device.VertexSamplerStates);
 
                 // Update the constant buffers.
@@ -96,7 +96,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
                 // Update the texture parameters.
                 SetShaderSamplers(_pixelShader, device.Textures, device.SamplerStates);
-                
+
                 // Update the constant buffers.
                 for (var c = 0; c < _pixelShader.CBuffers.Length; c++)
                 {
@@ -107,12 +107,12 @@ namespace Microsoft.Xna.Framework.Graphics
             }
 
             // Set the render states if we have some.
-//            if (_rasterizerState != null)
-//                device.RasterizerState = _rasterizerState;
-//            if (_blendState != null)
-//                device.BlendState = _blendState;
-//            if (_depthStencilState != null)
-//                device.DepthStencilState = _depthStencilState;
+            //            if (_rasterizerState != null)
+            //                device.RasterizerState = _rasterizerState;
+            //            if (_blendState != null)
+            //                device.BlendState = _blendState;
+            //            if (_depthStencilState != null)
+            //                device.DepthStencilState = _depthStencilState;
         }
 
         private void SetShaderSamplers(Shader shader, TextureCollection textures, SamplerStateCollection samplerStates)

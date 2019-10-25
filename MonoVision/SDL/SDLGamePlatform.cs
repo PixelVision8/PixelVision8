@@ -2,15 +2,15 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Microsoft.Xna.Framework
 {
@@ -45,7 +45,7 @@ namespace Microsoft.Xna.Framework
             var version = 100 * Sdl.Major + 10 * Sdl.Minor + Sdl.Patch;
 
             if (version <= 204)
-                Debug.WriteLine ("Please use SDL 2.0.5 or higher.");
+                Debug.WriteLine("Please use SDL 2.0.5 or higher.");
 
             // Needed so VS can debug the project on Windows
             if (version >= 205 && CurrentPlatform.OS == OS.Windows && Debugger.IsAttached)
@@ -73,11 +73,11 @@ namespace Microsoft.Xna.Framework
             }
         }
 
-        public override void BeforeInitialize ()
+        public override void BeforeInitialize()
         {
             SdlRunLoop();
 
-            base.BeforeInitialize ();
+            base.BeforeInitialize();
         }
 
         protected override void OnIsMouseVisibleChanged()
@@ -154,12 +154,13 @@ namespace Microsoft.Xna.Framework
                     string text = String.Empty;
                     unsafe
                     {
-                        while (Marshal.ReadByte ((IntPtr)ev.Text.Text, len) != 0) {
+                        while (Marshal.ReadByte((IntPtr)ev.Text.Text, len) != 0)
+                        {
                             len++;
                         }
-                        var buffer = new byte [len];
-                        Marshal.Copy ((IntPtr)ev.Text.Text, buffer, 0, len);
-                        text = System.Text.Encoding.UTF8.GetString (buffer);
+                        var buffer = new byte[len];
+                        Marshal.Copy((IntPtr)ev.Text.Text, buffer, 0, len);
+                        text = System.Text.Encoding.UTF8.GetString(buffer);
                     }
                     if (text.Length == 0)
                         continue;

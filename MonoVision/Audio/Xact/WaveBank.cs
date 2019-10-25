@@ -3,7 +3,6 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
-using System.IO;
 
 namespace Microsoft.Xna.Framework.Audio
 {
@@ -12,9 +11,9 @@ namespace Microsoft.Xna.Framework.Audio
     {
         private readonly SoundEffect[] _sounds;
         private readonly StreamInfo[] _streams;
-        
+
         private readonly bool _streaming;
-        
+
         struct StreamInfo
         {
             public int Format;
@@ -27,7 +26,7 @@ namespace Microsoft.Xna.Framework.Audio
         /// <summary>
         /// </summary>
         public bool IsPrepared { get; private set; }
-        
+
         internal SoundEffectInstance GetSoundEffectInstance(int trackIndex, out bool streaming)
         {
             if (_streaming)

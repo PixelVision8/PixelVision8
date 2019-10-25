@@ -10,16 +10,16 @@ namespace Microsoft.Xna.Framework.Input
     /// Allows getting keystrokes from keyboard.
     /// </summary>
 	public static partial class Keyboard
-	{
+    {
         /// <summary>
         /// Returns the current keyboard state.
         /// </summary>
         /// <returns>Current keyboard state.</returns>
 		public static KeyboardState GetState()
-		{
+        {
             return PlatformGetState();
-		}
-		
+        }
+
         /// <summary>
         /// Returns the current keyboard state for a given player.
         /// </summary>
@@ -27,8 +27,8 @@ namespace Microsoft.Xna.Framework.Input
         /// <returns>Current keyboard state.</returns>
         [Obsolete("Use GetState() instead. In future versions this method can be removed.")]
         public static KeyboardState GetState(PlayerIndex playerIndex)
-		{
+        {
             return PlatformGetState();
-		}
-	}
+        }
+    }
 }

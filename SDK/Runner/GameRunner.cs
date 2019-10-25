@@ -18,9 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
-using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using PixelVision8.Engine;
@@ -28,6 +25,9 @@ using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Services;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Services;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace PixelVision8.Runner
 {
@@ -100,8 +100,8 @@ namespace PixelVision8.Runner
             {InputMap.Player2BButton, (int) Buttons.B}
         };
 
-//        protected int _scale = 1;
-//        protected bool cropScreen = true;
+        //        protected int _scale = 1;
+        //        protected bool cropScreen = true;
 
         protected bool debugLayers = true;
         protected bool displayProgress;
@@ -109,7 +109,7 @@ namespace PixelVision8.Runner
         public DisplayTarget displayTarget;
         protected TimeSpan elapsedTime = TimeSpan.Zero;
         protected int frameCounter;
-//        protected bool fullscreen;
+        //        protected bool fullscreen;
 
         protected GraphicsDeviceManager graphics;
         protected RunnerMode lastMode;
@@ -117,7 +117,7 @@ namespace PixelVision8.Runner
         protected RunnerMode mode;
 
         protected bool resolutionInvalid = true;
-//        protected bool stretchScreen;
+        //        protected bool stretchScreen;
         protected float timeDelta;
         protected IEngine tmpEngine;
         protected IServiceLocator serviceManager;
@@ -129,9 +129,9 @@ namespace PixelVision8.Runner
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
             graphics = new GraphicsDeviceManager(this);
-            
+
             serviceManager = new ServiceManager();
-//            IsFixedTimeStep = true;
+            //            IsFixedTimeStep = true;
         }
 
         protected bool exporting { get; set; }
@@ -144,7 +144,7 @@ namespace PixelVision8.Runner
 
                 // TODO replace with something better
                 DisplayWarning("Local Storage Located at " + localAppData);
-//                Console.WriteLine("Local Storage " + localAppData);
+                //                Console.WriteLine("Local Storage " + localAppData);
                 return localAppData;
             }
         }
@@ -180,8 +180,8 @@ namespace PixelVision8.Runner
         {
             if (value.HasValue) lastVolume = value.Value;
 
-            SoundEffect.MasterVolume = lastVolume/100f;
-           
+            SoundEffect.MasterVolume = lastVolume / 100f;
+
             return lastVolume;
         }
 
@@ -219,7 +219,7 @@ namespace PixelVision8.Runner
             {
                 displayTarget.monitorScale = scale.Value;//MathHelper.Clamp(, 1, 6);
 
-//                ResetResolution();
+                //                ResetResolution();
                 InvalidateResolution();
             }
 
@@ -244,13 +244,13 @@ namespace PixelVision8.Runner
         {
             if (value.HasValue)
             {
-//                var newScale = scale.Value.Clamp(1, 8);
+                //                var newScale = scale.Value.Clamp(1, 8);
                 displayTarget.stretchScreen = value.Value;
 
-//                workspaceService.UpdateBiosData(BiosSettings.StretchScreen.ToString(), value.Value.ToString());
-//                ResetResolution();
+                //                workspaceService.UpdateBiosData(BiosSettings.StretchScreen.ToString(), value.Value.ToString());
+                //                ResetResolution();
                 InvalidateResolution();
-//                displayTarget?.MonitorResolution(scale: scale);
+                //                displayTarget?.MonitorResolution(scale: scale);
             }
 
             return
@@ -261,14 +261,14 @@ namespace PixelVision8.Runner
         {
             if (value.HasValue)
             {
-//                var newScale = scale.Value.Clamp(1, 8);
+                //                var newScale = scale.Value.Clamp(1, 8);
 
                 displayTarget.cropScreen = value.Value;
 
-//                workspaceService.UpdateBiosData(BiosSettings.CropScreen.ToString(), value.Value.ToString());
+                //                workspaceService.UpdateBiosData(BiosSettings.CropScreen.ToString(), value.Value.ToString());
                 //ResetResolution();
                 InvalidateResolution();
-//                displayTarget?.MonitorResolution(scale: scale);
+                //                displayTarget?.MonitorResolution(scale: scale);
             }
 
             return displayTarget.cropScreen; //Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.CropScreen.ToString(), "False") as string);
@@ -284,7 +284,7 @@ namespace PixelVision8.Runner
             if (!debugLayers)
                 return;
 
-//                if (mode == RunnerMode.Play)
+            //                if (mode == RunnerMode.Play)
             activeEngine.displayChip.layers = value - 1;
         }
 
@@ -330,7 +330,7 @@ namespace PixelVision8.Runner
         {
             ConfigureDisplayTarget();
 
-//            CreateAudioPlayerFactory();
+            //            CreateAudioPlayerFactory();
 
             CreateLoadService();
         }
@@ -344,7 +344,7 @@ namespace PixelVision8.Runner
         {
             // Create the default display target
             displayTarget = new DisplayTarget(graphics, 512, 480);
-            
+
         }
 
         public void InvalidateResolution()
@@ -362,10 +362,10 @@ namespace PixelVision8.Runner
         {
             if (activeEngine == null || !RunnerActive)
                 return;
-            
-            
 
-            timeDelta = (float) gameTime.ElapsedGameTime.TotalSeconds;
+
+
+            timeDelta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             elapsedTime += gameTime.ElapsedGameTime;
 
@@ -377,7 +377,7 @@ namespace PixelVision8.Runner
                 activeEngine.gameChip.fps = frameCounter;
 
                 // Save this to the runner
-//                frameRate = frameCounter;
+                //                frameRate = frameCounter;
 
                 frameCounter = 0;
             }
@@ -398,14 +398,14 @@ namespace PixelVision8.Runner
             {
                 if (autoShutdown && mode != RunnerMode.Loading)
                     return IsActive;
-                
+
                 return true;
             }
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            
+
             if (activeEngine == null)
                 return;
 
@@ -413,7 +413,7 @@ namespace PixelVision8.Runner
 
             // Clear with black and draw the runner.
             graphics.GraphicsDevice.Clear(Color.Black);
-            
+
             // Now it's time to call the PixelVisionEngine's Draw() method. This Draw() call propagates throughout all of the Chips that have 
             // registered themselves as being able to draw such as the GameChip and the DisplayChip.
 
@@ -451,14 +451,14 @@ namespace PixelVision8.Runner
 
             if (activeEngine != null) ShutdownActiveEngine();
 
-//		    // Pixel Vision 8 has a built in the JSON serialize/de-serialize. It allows chips to be dynamically 
-//		    // loaded by their full class name. Above we are using typeof() along with the FullName property to 
-//		    // get the string values for each chip. The engine will parse this string and automatically create 
-//		    // the chip then register it with the ChipManager. You can manually instantiate chips but its best 
-//		    // to let the engine do it for you.
-//
-//		    // It's now time to set up a new instance of the PixelVisionEngine. Here we are passing in the string 
-//		    // names of the chips it should use.
+            //		    // Pixel Vision 8 has a built in the JSON serialize/de-serialize. It allows chips to be dynamically 
+            //		    // loaded by their full class name. Above we are using typeof() along with the FullName property to 
+            //		    // get the string values for each chip. The engine will parse this string and automatically create 
+            //		    // the chip then register it with the ChipManager. You can manually instantiate chips but its best 
+            //		    // to let the engine do it for you.
+            //
+            //		    // It's now time to set up a new instance of the PixelVisionEngine. Here we are passing in the string 
+            //		    // names of the chips it should use.
             tmpEngine = CreateNewEngine(defaultChips);
 
             ConfigureServices();
@@ -541,10 +541,10 @@ namespace PixelVision8.Runner
             var gameHeight = displayChip.height;
             var overScanX = displayChip.overscanXPixels;
             var overScanY = displayChip.overscanYPixels;
-            
+
             displayTarget.ResetResolution(gameWidth, gameHeight, overScanX, overScanY);
             IsMouseVisible = false;
-            
+
             // Update the mouse to use the new monitor scale
             var scale = displayTarget.scale;
             activeEngine.controllerChip.MouseScale(scale.X, scale.Y);
@@ -569,7 +569,7 @@ namespace PixelVision8.Runner
             loadService.ParseFiles(files, tmpEngine, flags.Value);
         }
 
-        public void RunGame()
+        public virtual void RunGame()
         {
             ActivateEngine(tmpEngine);
         }

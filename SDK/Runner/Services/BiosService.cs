@@ -18,14 +18,14 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
 using PixelVision8.Runner.Utils;
+using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Services
 {
     public class BiosService
     {
-//        #region Bios APIs
+        //        #region Bios APIs
 
         private readonly Dictionary<string, string> biosData;
 
@@ -51,7 +51,7 @@ namespace PixelVision8.Runner.Services
             }
             catch
             {
-//                Console.WriteLine("Bios Error:\n"+e.Message);
+                //                Console.WriteLine("Bios Error:\n"+e.Message);
                 // TODO ignore the bios file if it can't be read
             }
         }

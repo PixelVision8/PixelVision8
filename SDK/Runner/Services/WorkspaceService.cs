@@ -228,6 +228,8 @@ namespace PixelVision8.Runner.Services
             var fileSplit = SplitFileName(path);
             var name = fileSplit[0];
 
+            // TODO need to see if the last character is a number and start from there?
+
             var ix = 0;
             WorkspacePath filePath;
 
@@ -560,7 +562,7 @@ namespace PixelVision8.Runner.Services
         {
             var libs = new Dictionary<string, byte[]>();
 
-            foreach (var path in paths)
+             foreach (var path in paths)
                 try
                 {
                     if (Exists(path))

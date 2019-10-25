@@ -2,15 +2,9 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using MonoGame.OpenGL;
-
-using System.Security;
+using System;
+using System.Diagnostics;
 
 namespace Microsoft.Xna.Framework.Graphics
 {
@@ -99,7 +93,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 GraphicsExtensions.CheckGLError();
             }
 
-            static readonly FramebufferAttachment [] FramebufferAttachements = {
+            static readonly FramebufferAttachment[] FramebufferAttachements = {
                 FramebufferAttachment.ColorAttachment0,
                 FramebufferAttachment.DepthAttachment,
                 FramebufferAttachment.StencilAttachment,
@@ -108,7 +102,7 @@ namespace Microsoft.Xna.Framework.Graphics
             internal virtual void InvalidateDrawFramebuffer()
             {
                 Debug.Assert(this.SupportsInvalidateFramebuffer);
-                GL.InvalidateFramebuffer (FramebufferTarget.Framebuffer, 3, FramebufferAttachements);
+                GL.InvalidateFramebuffer(FramebufferTarget.Framebuffer, 3, FramebufferAttachements);
             }
 
             internal virtual void InvalidateReadFramebuffer()

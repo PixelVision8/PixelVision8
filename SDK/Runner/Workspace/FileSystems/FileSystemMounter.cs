@@ -59,7 +59,7 @@ namespace PixelVision8.Runner.Workspace
                 entities.Count);
         }
 
-        public bool Exists(WorkspacePath path)
+        public virtual bool Exists(WorkspacePath path)
         {
             try
             {

@@ -2,12 +2,12 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
-using System.IO;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
 using MonoGame.Utilities;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 
 internal static class Sdl
 {

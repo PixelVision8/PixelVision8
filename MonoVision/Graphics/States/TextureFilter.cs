@@ -8,7 +8,7 @@ namespace Microsoft.Xna.Framework.Graphics
     /// Defines filtering types for texture sampler.
     /// </summary>
 	public enum TextureFilter
-	{
+    {
         /// <summary>
         /// Use linear filtering.
         /// </summary>
@@ -20,11 +20,11 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Use anisotropic filtering.
         /// </summary>
-		Anisotropic,	
+		Anisotropic,
         /// <summary>
         /// Use linear filtering to shrink or expand, and point filtering between mipmap levels (mip).
         /// </summary>
-		LinearMipPoint,
+        LinearMipPoint,
         /// <summary>
         /// Use point filtering to shrink (minify) or expand (magnify), and linear filtering between mipmap levels.
         /// </summary>
@@ -45,5 +45,5 @@ namespace Microsoft.Xna.Framework.Graphics
         /// Use point filtering to shrink, linear filtering to expand, and point filtering between mipmap levels.
         /// </summary>
 		MinPointMagLinearMipPoint
-	}
+    }
 }

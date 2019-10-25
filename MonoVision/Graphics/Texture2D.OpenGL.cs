@@ -216,7 +216,7 @@ namespace Microsoft.Xna.Framework.Graphics
             GL.BindTexture(TextureTarget.Texture2D, this.glTexture);
             GL.PixelStore(PixelStoreParameter.PackAlignment, Math.Min(tSizeInByte, 8));
 
-            if (glFormat == (PixelFormat) GLPixelFormat.CompressedTextureFormats)
+            if (glFormat == (PixelFormat)GLPixelFormat.CompressedTextureFormats)
             {
                 // Note: for compressed format Format.GetSize() returns the size of a 4x4 block
                 var pixelToT = Format.GetSize() / tSizeInByte;
@@ -255,36 +255,36 @@ namespace Microsoft.Xna.Framework.Graphics
 #endif
         }
 
-//        private unsafe static Texture2D PlatformFromStream(GraphicsDevice graphicsDevice, Stream stream)
-//        {
-//            int width, height, channels;
-//
-//            // The data returned is always four channel BGRA
-//            var data = ImageReader.Read(stream, out width, out height, out channels, Imaging.STBI_rgb_alpha);
-//
-//            // XNA blacks out any pixels with an alpha of zero.
-//            if (channels == 4)
-//            {
-//                fixed (byte* b = &data[0])
-//                {
-//                    for (var i = 0; i < data.Length; i += 4)
-//                    {
-//                        if (b[i + 3] == 0)
-//                        {
-//                            b[i + 0] = 0;
-//                            b[i + 1] = 0;
-//                            b[i + 2] = 0;
-//                        }
-//                    }
-//                }
-//            }
-//
-//            Texture2D texture = null;
-//            texture = new Texture2D(graphicsDevice, width, height);
-//            texture.SetData(data);
-//
-//            return texture;
-//        }
+        //        private unsafe static Texture2D PlatformFromStream(GraphicsDevice graphicsDevice, Stream stream)
+        //        {
+        //            int width, height, channels;
+        //
+        //            // The data returned is always four channel BGRA
+        //            var data = ImageReader.Read(stream, out width, out height, out channels, Imaging.STBI_rgb_alpha);
+        //
+        //            // XNA blacks out any pixels with an alpha of zero.
+        //            if (channels == 4)
+        //            {
+        //                fixed (byte* b = &data[0])
+        //                {
+        //                    for (var i = 0; i < data.Length; i += 4)
+        //                    {
+        //                        if (b[i + 3] == 0)
+        //                        {
+        //                            b[i + 0] = 0;
+        //                            b[i + 1] = 0;
+        //                            b[i + 2] = 0;
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //
+        //            Texture2D texture = null;
+        //            texture = new Texture2D(graphicsDevice, width, height);
+        //            texture.SetData(data);
+        //
+        //            return texture;
+        //        }
 
 #if IOS
         [CLSCompliant(false)]
@@ -416,61 +416,61 @@ namespace Microsoft.Xna.Framework.Graphics
 #endif
         }
 
-//        private void PlatformSaveAsJpeg(Stream stream, int width, int height)
-//        {
-//#if DESKTOPGL
-//            SaveAsImage(stream, width, height, ImageWriterFormat.Jpg);
-//#elif ANDROID
-//            SaveAsImage(stream, width, height, Bitmap.CompressFormat.Jpeg);
-//#else
-//            throw new NotImplementedException();
-//#endif
-//        }
-//
-//        private void PlatformSaveAsPng(Stream stream, int width, int height)
-//        {
-//#if DESKTOPGL
-//            SaveAsImage(stream, width, height, ImageWriterFormat.Png);
-//#elif ANDROID
-//            SaveAsImage(stream, width, height, Bitmap.CompressFormat.Png);
-//#else
-////            var pngWriter = new PngWriter();
-////            pngWriter.Write(this, stream);
-//#endif
-//        }
+        //        private void PlatformSaveAsJpeg(Stream stream, int width, int height)
+        //        {
+        //#if DESKTOPGL
+        //            SaveAsImage(stream, width, height, ImageWriterFormat.Jpg);
+        //#elif ANDROID
+        //            SaveAsImage(stream, width, height, Bitmap.CompressFormat.Jpeg);
+        //#else
+        //            throw new NotImplementedException();
+        //#endif
+        //        }
+        //
+        //        private void PlatformSaveAsPng(Stream stream, int width, int height)
+        //        {
+        //#if DESKTOPGL
+        //            SaveAsImage(stream, width, height, ImageWriterFormat.Png);
+        //#elif ANDROID
+        //            SaveAsImage(stream, width, height, Bitmap.CompressFormat.Png);
+        //#else
+        ////            var pngWriter = new PngWriter();
+        ////            pngWriter.Write(this, stream);
+        //#endif
+        //        }
 
 #if DESKTOPGL
-//        internal void SaveAsImage(Stream stream, int width, int height, ImageWriterFormat format)
-//        {
-//	        if (stream == null)
-//	        {
-//		        throw new ArgumentNullException("stream", "'stream' cannot be null (Nothing in Visual Basic)");
-//	        }
-//	        if (width <= 0)
-//	        {
-//		        throw new ArgumentOutOfRangeException("width", width, "'width' cannot be less than or equal to zero");
-//	        }
-//	        if (height <= 0)
-//	        {
-//		        throw new ArgumentOutOfRangeException("height", height, "'height' cannot be less than or equal to zero");
-//	        }
-//	        byte[] data = null;
-//	        try
-//	        {
-//		        data = new byte[width * height * 4];
-//		        GetData(data);
-//
-//                var writer = new ImageWriter();
-//                writer.Write(data, width, height, 4, format, stream);
-//	        }
-//	        finally
-//	        {
-//		        if (data != null)
-//		        {
-//			        data = null;
-//		        }
-//	        }
-//        }
+        //        internal void SaveAsImage(Stream stream, int width, int height, ImageWriterFormat format)
+        //        {
+        //	        if (stream == null)
+        //	        {
+        //		        throw new ArgumentNullException("stream", "'stream' cannot be null (Nothing in Visual Basic)");
+        //	        }
+        //	        if (width <= 0)
+        //	        {
+        //		        throw new ArgumentOutOfRangeException("width", width, "'width' cannot be less than or equal to zero");
+        //	        }
+        //	        if (height <= 0)
+        //	        {
+        //		        throw new ArgumentOutOfRangeException("height", height, "'height' cannot be less than or equal to zero");
+        //	        }
+        //	        byte[] data = null;
+        //	        try
+        //	        {
+        //		        data = new byte[width * height * 4];
+        //		        GetData(data);
+        //
+        //                var writer = new ImageWriter();
+        //                writer.Write(data, width, height, 4, format, stream);
+        //	        }
+        //	        finally
+        //	        {
+        //		        if (data != null)
+        //		        {
+        //			        data = null;
+        //		        }
+        //	        }
+        //        }
 #elif ANDROID
 //        private void SaveAsImage(Stream stream, int width, int height, Bitmap.CompressFormat format)
 //        {

@@ -31,7 +31,7 @@ namespace PixelVision8.Runner.Workspace
 {
     public class ZipFileSystem : MemoryFileSystem
     {
-        public string srcPath;
+        public string PhysicalRoot;
 
         private ZipFileSystem(ZipFile zf, string extractPath)
         {
@@ -86,7 +86,7 @@ namespace PixelVision8.Runner.Workspace
         public static ZipFileSystem Open(FileStream s)
         {
             var fileSystem = new ZipFileSystem(new ZipFile(s), Path.GetFullPath(s.Name));
-            fileSystem.srcPath = Path.GetFullPath(s.Name);
+            fileSystem.PhysicalRoot = Path.GetFullPath(s.Name);
             return fileSystem;
         }
 
@@ -97,7 +97,7 @@ namespace PixelVision8.Runner.Workspace
 
         public void Save()
         {
-            if (srcPath == null)
+            if (PhysicalRoot == null)
                 return;
 
 
@@ -105,7 +105,7 @@ namespace PixelVision8.Runner.Workspace
 
             var disk = this;
 
-            var fileNameZip = disk.srcPath;
+            var fileNameZip = disk.PhysicalRoot;
 
             // Move the original file so we keep it safe
             if (File.Exists(fileNameZip)) File.Move(fileNameZip, fileNameZip + ".bak");

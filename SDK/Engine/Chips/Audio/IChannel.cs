@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
 using PixelVision8.Engine.Data;
 
 namespace PixelVision8.Engine.Audio

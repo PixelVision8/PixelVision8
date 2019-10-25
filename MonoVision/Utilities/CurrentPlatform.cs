@@ -2,8 +2,8 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System.Runtime.InteropServices;
 using System;
+using System.Runtime.InteropServices;
 
 namespace MonoGame.Utilities
 {
@@ -20,8 +20,8 @@ namespace MonoGame.Utilities
         private static bool init = false;
         private static OS os;
 
-        [DllImport ("libc")]
-        static extern int uname (IntPtr buf);
+        [DllImport("libc")]
+        static extern int uname(IntPtr buf);
 
         private static void Init()
         {
@@ -29,7 +29,7 @@ namespace MonoGame.Utilities
             {
                 PlatformID pid = Environment.OSVersion.Platform;
 
-                switch (pid) 
+                switch (pid)
                 {
                     case PlatformID.Win32NT:
                     case PlatformID.Win32S:
@@ -46,20 +46,25 @@ namespace MonoGame.Utilities
                         IntPtr buf = IntPtr.Zero;
                         try
                         {
-                            buf = Marshal.AllocHGlobal (8192);
+                            buf = Marshal.AllocHGlobal(8192);
 
-                            if (uname (buf) == 0) {
-                                string sos = Marshal.PtrToStringAnsi (buf);
+                            if (uname(buf) == 0)
+                            {
+                                string sos = Marshal.PtrToStringAnsi(buf);
                                 if (sos == "Darwin")
                                 {
                                     os = OS.MacOSX;
                                     return;
                                 }
                             }
-                        } catch {
-                        } finally {
+                        }
+                        catch
+                        {
+                        }
+                        finally
+                        {
                             if (buf != IntPtr.Zero)
-                                Marshal.FreeHGlobal (buf);
+                                Marshal.FreeHGlobal(buf);
                         }
 
                         os = OS.Linux;

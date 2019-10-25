@@ -33,7 +33,7 @@ namespace MonoGame.Utilities
                 return hash;
             }
         }
-        
+
         /// <summary>
         /// Compute a hash from the content of a stream and restore the position.
         /// </summary>
@@ -55,7 +55,7 @@ namespace MonoGame.Utilities
 
                 var data = new byte[1024];
                 int length;
-                while((length = stream.Read(data, 0, data.Length)) != 0)
+                while ((length = stream.Read(data, 0, data.Length)) != 0)
                 {
                     for (var i = 0; i < length; i++)
                         hash = (hash ^ data[i]) * p;

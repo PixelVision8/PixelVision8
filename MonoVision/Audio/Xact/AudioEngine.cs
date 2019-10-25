@@ -3,8 +3,8 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Microsoft.Xna.Framework.Audio
 {
@@ -14,10 +14,10 @@ namespace Microsoft.Xna.Framework.Audio
     public class AudioEngine : IDisposable
     {
         private readonly AudioCategory[] _categories;
-//        private readonly Dictionary<string, int> _categoryLookup = new Dictionary<string, int>();
+        //        private readonly Dictionary<string, int> _categoryLookup = new Dictionary<string, int>();
 
         private readonly RpcVariable[] _variables;
-//        private readonly Dictionary<string, int> _variableLookup = new Dictionary<string, int>();
+        //        private readonly Dictionary<string, int> _variableLookup = new Dictionary<string, int>();
 
         private readonly RpcVariable[] _cueVariables;
 
@@ -44,7 +44,7 @@ namespace Microsoft.Xna.Framework.Audio
             return clone;
         }
 
-        
+
         internal int GetRpcIndex(uint fileOffset)
         {
             for (var i = 0; i < RpcCurves.Length; i++)
@@ -69,7 +69,7 @@ namespace Microsoft.Xna.Framework.Audio
 
             lock (UpdateLock)
             {
-                for (var x = 0; x < ActiveCues.Count; )
+                for (var x = 0; x < ActiveCues.Count;)
                 {
                     var cue = ActiveCues[x];
 
@@ -100,8 +100,8 @@ namespace Microsoft.Xna.Framework.Audio
                 SoundEffect.PlatformSetReverbSettings(_reverbSettings);
             }
         }
-        
-        
+
+
         internal float GetGlobalVariable(int index)
         {
             lock (UpdateLock)
@@ -134,7 +134,7 @@ namespace Microsoft.Xna.Framework.Audio
 
         private void Dispose(bool disposing)
         {
-            if (IsDisposed) 
+            if (IsDisposed)
                 return;
 
             IsDisposed = true;

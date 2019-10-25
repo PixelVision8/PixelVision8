@@ -4,9 +4,9 @@
 
 namespace Microsoft.Xna.Framework.Graphics
 {
-    
-	public enum IndexElementSize
-	{
+
+    public enum IndexElementSize
+    {
         /// <summary>
         /// 16-bit short/ushort value been used.
         /// </summary>
@@ -15,5 +15,5 @@ namespace Microsoft.Xna.Framework.Graphics
         /// 32-bit int/uint value been used.
         /// </summary>
 		ThirtyTwoBits
-	}
+    }
 }

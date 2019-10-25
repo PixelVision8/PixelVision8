@@ -1,8 +1,7 @@
-using System;
 namespace Microsoft.Xna.Framework.Graphics
 {
-	public class EffectTechnique
-	{
+    public class EffectTechnique
+    {
         public EffectPassCollection Passes { get; private set; }
 
         public EffectAnnotationCollection Annotations { get; private set; }

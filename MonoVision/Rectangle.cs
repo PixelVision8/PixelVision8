@@ -3,8 +3,8 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
-using System.Runtime.Serialization;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 
 namespace Microsoft.Xna.Framework
 {
@@ -126,7 +126,7 @@ namespace Microsoft.Xna.Framework
         {
             get
             {
-                return new Point(this.Width,this.Height);
+                return new Point(this.Width, this.Height);
             }
             set
             {
@@ -187,7 +187,7 @@ namespace Microsoft.Xna.Framework
             this.Height = height;
         }
 
-        
+
         #endregion
 
         #region Operators
@@ -217,14 +217,14 @@ namespace Microsoft.Xna.Framework
         #endregion
 
         #region Public Methods
-       
+
         /// <summary>
         /// Gets whether or not the provided coordinates lie within the bounds of this <see cref="Rectangle"/>.
         /// </summary>
         /// <param name="x">The x coordinate of the point to check for containment.</param>
         /// <param name="y">The y coordinate of the point to check for containment.</param>
         /// <returns><c>true</c> if the provided coordinates lie inside this <see cref="Rectangle"/>; <c>false</c> otherwise.</returns>
-		public bool Contains(int x, int y)
+        public bool Contains(int x, int y)
         {
             return ((((this.X <= x) && (x < (this.X + this.Width))) && (this.Y <= y)) && (y < (this.Y + this.Height)));
         }

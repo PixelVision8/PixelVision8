@@ -17,7 +17,7 @@ namespace Microsoft.Xna.Framework.Audio
             // This is 1 if the type is byte sized and 0 for 
             // floats... not sure if we should use this info.
             reader.ReadByte();
-            
+
             // The value and the min/max range for limiting the 
             // results from the RPC curve when animated.
             Value = reader.ReadSingle();

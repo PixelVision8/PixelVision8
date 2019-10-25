@@ -2,9 +2,9 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
+using MonoGame.OpenGL;
 using System;
 using System.Collections.Generic;
-using MonoGame.OpenGL;
 
 namespace Microsoft.Xna.Framework.Graphics
 {
@@ -44,8 +44,8 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 
 
-		internal void Apply(Shader shader, IntPtr offset, int programHash)
-		{
+        internal void Apply(Shader shader, IntPtr offset, int programHash)
+        {
             var attrInfo = GetAttributeInfo(shader, programHash);
 
             // Apply the vertex attribute info
@@ -64,8 +64,8 @@ namespace Microsoft.Xna.Framework.Graphics
                 GraphicsExtensions.CheckGLError();
             }
             GraphicsDevice.SetVertexAttributeArray(attrInfo.EnabledAttributes);
-		    GraphicsDevice._attribsDirty = true;
-		}
+            GraphicsDevice._attribsDirty = true;
+        }
 
         /// <summary>
         /// Vertex attribute information for a particular shader/vertex declaration combination.

@@ -15,7 +15,7 @@ namespace Microsoft.Xna.Framework.Audio
     public class Cue : IDisposable
     {
         private readonly AudioEngine _engine;
- 
+
         private readonly XactSound[] _sounds;
         private readonly float[] _probs;
 
@@ -27,7 +27,7 @@ namespace Microsoft.Xna.Framework.Audio
         /// <summary>Indicates whether or not the cue is currently stopped.</summary>
         public bool IsStopped
         {
-            get 
+            get
             {
                 if (_curSound != null)
                     return _curSound.Stopped;
@@ -40,7 +40,7 @@ namespace Microsoft.Xna.Framework.Audio
 
         public bool IsCreated { get; internal set; }
 
-        
+
         internal Cue(AudioEngine engine, string cuename, XactSound sound)
         {
             _engine = engine;
@@ -50,7 +50,7 @@ namespace Microsoft.Xna.Framework.Audio
             _probs[0] = 1.0f;
             _variables = engine.CreateCueVariables();
         }
-        
+
         internal Cue(AudioEngine engine, string cuename, XactSound[] sounds, float[] probs)
         {
             _engine = engine;
@@ -85,7 +85,7 @@ namespace Microsoft.Xna.Framework.Audio
                 _curSound.Play(volume, _engine);
             }
 
-//            _played = true;
+            //            _played = true;
             IsPrepared = false;
         }
 
@@ -175,7 +175,7 @@ namespace Microsoft.Xna.Framework.Audio
 
             return volume;
         }
-        
+
         /// <summary>
         /// This event is triggered when the Cue is disposed.
         /// </summary>

@@ -2,9 +2,9 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
+using MonoGame.OpenAL;
 using System;
 using System.Collections.Generic;
-using MonoGame.OpenAL;
 
 namespace Microsoft.Xna.Framework.Audio
 {
@@ -113,7 +113,7 @@ namespace Microsoft.Xna.Framework.Audio
                 ALHelper.CheckError("Failed to stop the source.");
                 controller.RecycleSource(SourceId);
             }
-            
+
             if (disposing)
             {
                 while (_queuedBuffers.Count > 0)

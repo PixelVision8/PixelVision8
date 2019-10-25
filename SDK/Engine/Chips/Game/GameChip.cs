@@ -18,13 +18,13 @@
 // Shawn Rakowski - @shwany
 //
 
+using Microsoft.Xna.Framework;
+using PixelVision8.Engine.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine.Chips
 {
@@ -67,16 +67,16 @@ namespace PixelVision8.Engine.Chips
     public class GameChip : AbstractChip, IUpdate, IDraw
     {
 
-//        protected string _name = "Untitle_Game";
+        //        protected string _name = "Untitle_Game";
         protected int _saveSlots;
         protected Canvas cachedTileMap;
 
-//        protected double frameCount;
-//        protected double dt;
-//        protected double updateRate = 4.0;  // 4 updates per sec
-//
-////        private int i;
-//        
+        //        protected double frameCount;
+        //        protected double dt;
+        //        protected double updateRate = 4.0;  // 4 updates per sec
+        //
+        ////        private int i;
+        //        
         public int fps;
         public Dictionary<string, string> savedData = new Dictionary<string, string>();
         public Dictionary<string, string> textFiles = new Dictionary<string, string>();
@@ -86,7 +86,7 @@ namespace PixelVision8.Engine.Chips
         private int tmpSpriteDataID = -1;
 
 
-        public int currentSprites { get; private set; }
+        public int currentSprites { get; set; }
 
         /// <summary>
         ///     This allows you to add your Lua scripts at runtime to a game from a string. This could be useful for
@@ -148,7 +148,7 @@ namespace PixelVision8.Engine.Chips
         protected FontChip fontChip;
         protected MusicChip musicChip;
 
-        private readonly int[] singlePixel = {0};
+        private readonly int[] singlePixel = { 0 };
 
         #endregion
 
@@ -172,18 +172,18 @@ namespace PixelVision8.Engine.Chips
         /// <param name="timeDelta">A float value representing the time in milliseconds since the last Draw() call was completed.</param>
         public virtual void Update(float timeDelta)
         {
-//            // Calculate framerate
-//            frameCount++;
-//            dt += timeDelta;
-//            if (dt > 1.0 / updateRate)
-//            {
-//                fps = (int)(frameCount / dt);
-//                frameCount = 0;
-//                dt -= 1.0 / updateRate;
-//            }
+            //            // Calculate framerate
+            //            frameCount++;
+            //            dt += timeDelta;
+            //            if (dt > 1.0 / updateRate)
+            //            {
+            //                fps = (int)(frameCount / dt);
+            //                frameCount = 0;
+            //                dt -= 1.0 / updateRate;
+            //            }
 
             // Reset the current sprite count
-            currentSprites = 0;
+//            currentSprites = 0;
         }
 
         /// <summary>
@@ -406,7 +406,7 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void Clear(int x = 0, int y = 0, int? width = null, int? height = null)
         {
-//            displayChip.Clear();
+            //            displayChip.Clear();
 
             w = width.HasValue ? width.Value : displayChip.width - x;
             h = height.HasValue ? height.Value : displayChip.height - y;
@@ -504,9 +504,9 @@ namespace PixelVision8.Engine.Chips
                 default:
 
                     // Need to flip the y position to draw correctly
-//                    y = displayChip.height - height - y;
+                    //                    y = displayChip.height - height - y;
 
-                    displayChip.NewDrawCall(pixelData, x, y, width, height, (int) drawMode, flipH, flipV, colorOffset);
+                    displayChip.NewDrawCall(pixelData, x, y, width, height, (int)drawMode, flipH, flipV, colorOffset);
 
                     break;
             }
@@ -665,14 +665,14 @@ namespace PixelVision8.Engine.Chips
                 paddingW = 1;
                 paddingH = 1;
             }
-//            startY = displayChip.height - height - startY;
+            //            startY = displayChip.height - height - startY;
 
             if (flipH || flipV)
                 SpriteChipUtil.FlipSpriteData(ref tmpIDs, width, height, flipH, flipV);
 
             // Store the sprite id from the ids array
-//            int id;
-//            bool render;
+            //            int id;
+            //            bool render;
 
             // TODO need to offset the bounds based on the scroll position before testing against it
 
@@ -687,16 +687,16 @@ namespace PixelVision8.Engine.Chips
                 {
                     x = MathUtil.FloorToInt(i % width) * paddingW + startX;
                     y = MathUtil.FloorToInt(i / width) * paddingH + startY;
-//
-//                    var render = true;
+                    //
+                    //                    var render = true;
 
                     // Check to see if we need to test the bounds
                     if (onScreen)
                     {
                         var tmpBounds = bounds ?? displayChip.visibleBounds;
 
-//                        if (bounds == null)
-//                            bounds = displayChip.visibleBounds;
+                        //                        if (bounds == null)
+                        //                            bounds = displayChip.visibleBounds;
 
                         // This can set the render flag to true or false based on it's location
                         //TODO need to take into account the current bounds of the screen
@@ -760,11 +760,11 @@ namespace PixelVision8.Engine.Chips
 
             var sprites = new int[total];
 
-            var sW = MathUtil.CeilToInt((float) spriteChip.textureWidth / spriteChip.width);
+            var sW = MathUtil.CeilToInt((float)spriteChip.textureWidth / spriteChip.width);
 
             var startC = id % sW;
             var tmpC = id % sW;
-            var tmpR = (int) Math.Floor(id / (double) sW);
+            var tmpR = (int)Math.Floor(id / (double)sW);
 
             var tmpCols = tmpC + width;
 
@@ -791,8 +791,8 @@ namespace PixelVision8.Engine.Chips
         private int nextY;
 
         private int[] spriteIDs;
-//        private int j;
-//        private int[] pixelData;
+        //        private int j;
+        //        private int[] pixelData;
 
         /// <summary>
         ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render
@@ -846,30 +846,30 @@ namespace PixelVision8.Engine.Chips
             total = spriteIDs.Length;
 
             var clearTiles = false;
-            
+
             if (drawMode == DrawMode.Tile)
             {
                 // Set the clear tile flag
                 clearTiles = true;
-                
+
                 // Change to Tilemap Cache since we are not actually drawing the tiles
                 drawMode = DrawMode.TilemapCache;
-                
+
                 // Need to adjust the position since tile mode is in columns,rows
                 nextX *= 8;
                 nextY *= 8;
-    
+
                 // spacing is disabled when in tilemode
                 spacing = 0;
             }
-            
+
             var offset = charWidth + spacing;
-                
+
             for (var j = 0; j < total; j++)
             {
 
                 var visible = true;
-                
+
                 if (bounds.HasValue)
                 {
                     visible = bounds.Value.Contains(nextX, nextY);
@@ -877,18 +877,18 @@ namespace PixelVision8.Engine.Chips
 
                 if (visible)
                 {
-//                    var tmpFontData = new int[64];
-                    
+                    //                    var tmpFontData = new int[64];
+
                     // Clear the background when in tile mode
                     if (clearTiles)
                         Tile(nextX / 8, nextY / 8, -1);
-                    
+
                     fontChip.ReadSpriteAt(spriteIDs[j], tmpFontData);
 
                     DrawPixels(tmpFontData, nextX, nextY, spriteChip.width, spriteChip.height, false, false, drawMode,
                     colorOffset);
                 }
-                
+
                 nextX += offset;
             }
         }
@@ -1020,7 +1020,7 @@ namespace PixelVision8.Engine.Chips
                 pos.Y = _scrollY;
             }
 
-//            pos.y = realHeight - 1 - pos.y;
+            //            pos.y = realHeight - 1 - pos.y;
             return pos;
         }
 
@@ -1047,9 +1047,9 @@ namespace PixelVision8.Engine.Chips
 
             spriteIDs = new int[total];
 
-//            char character;
+            //            char character;
 
-//            int spriteID, index;
+            //            int spriteID, index;
 
             var fontMap = fontChip.ReadFont(fontName);
 
@@ -1102,8 +1102,8 @@ namespace PixelVision8.Engine.Chips
                 fontChip.ReadSpriteAt(spriteID, tmpSpriteData);
                 return tmpSpriteData;
             }
-                
-//                return Sprite(spriteID);
+
+            //                return Sprite(spriteID);
 
             return null;
         }
@@ -1347,7 +1347,7 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void PlayPattern(int id, bool loop = true)
         {
-            musicChip.PlayPatterns(new[] {id}, loop);
+            musicChip.PlayPatterns(new[] { id }, loop);
         }
 
         /// <summary>
@@ -1480,7 +1480,7 @@ namespace PixelVision8.Engine.Chips
         {
             var spriteSize = SpriteSize();
             var realWidth = width * spriteSize.X;
-            var realHeight = (int) Math.Ceiling((float) ids.Length / width) * spriteSize.Y;
+            var realHeight = (int)Math.Ceiling((float)ids.Length / width) * spriteSize.Y;
 
             var textureData = new TextureData(realWidth, realHeight);
 
@@ -1625,7 +1625,7 @@ namespace PixelVision8.Engine.Chips
                 tilemapChip.Invalidate();
 
             return tile;
-//            return new TileData(CalculateIndex(column, row, tilemapChip.columns), tilemapChip.ReadSpriteAt(column, row), tilemapChip.ReadTileColorAt(column, row), tilemapChip.ReadFlagAt(column, row));
+            //            return new TileData(CalculateIndex(column, row, tilemapChip.columns), tilemapChip.ReadSpriteAt(column, row), tilemapChip.ReadTileColorAt(column, row), tilemapChip.ReadFlagAt(column, row));
         }
 
         /// <summary>
@@ -1717,7 +1717,7 @@ namespace PixelVision8.Engine.Chips
                 id = ids[i];
 
                 newX = MathUtil.FloorToInt(i % columns) + column;
-                newY = MathUtil.FloorToInt(i / (float) columns) + row;
+                newY = MathUtil.FloorToInt(i / (float)columns) + row;
 
                 Tile(newX, newY, id, colorOffset, flag);
             }
@@ -1785,14 +1785,14 @@ namespace PixelVision8.Engine.Chips
                     spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
 
                     // TODO need to see if the tile is flipped
-//                    var flipH = tile.flipH;
-//                    var flipV = flipVLayer[i] == 1;
+                    //                    var flipH = tile.flipH;
+                    //                    var flipV = flipVLayer[i] == 1;
 
                     if (tile.flipH || tile.flipV)
                         SpriteChipUtil.FlipSpriteData(ref tmpPixelData, spriteChip.width, spriteChip.height, tile.flipH,
                             tile.flipH);
 
-//                    targetTextureData.DrawSprite(spriteID, x, y);
+                    //                    targetTextureData.DrawSprite(spriteID, x, y);
                     // Draw the pixel data into the cachedTilemap
                     targetTextureData.MergePixels(x, y, tileSize.X, tileSize.Y, tmpPixelData, false, false,
                         tile.colorOffset, false);
@@ -1819,7 +1819,7 @@ namespace PixelVision8.Engine.Chips
             if (tilemapChip.invalid) RebuildCache(cachedTileMap);
 
             // Flip the y axis 
-//            y = cachedTileMap.height - y - blockHeight;
+            //            y = cachedTileMap.height - y - blockHeight;
 
 
             // Todo need to go through and draw to the tilemap cache but ignore transparent pixels
@@ -1829,7 +1829,7 @@ namespace PixelVision8.Engine.Chips
                 // Set pixels on the tilemap cache
                 cachedTileMap.MergePixels(x, y, blockWidth, blockHeight, pixels, flipH, flipV, colorOffset);
 
-//            Invalidate();
+            //            Invalidate();
         }
 
         public void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0)
@@ -1926,7 +1926,7 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public int Repeat(int val, int max)
         {
-            return (int) (val - Math.Floor(val / (float) max) * max);
+            return (int)(val - Math.Floor(val / (float)max) * max);
         }
 
         /// <summary>
@@ -2066,7 +2066,7 @@ namespace PixelVision8.Engine.Chips
         public string[] SplitLines(string str)
         {
             var lines = str.Split(
-                new[] {newline},
+                new[] { newline },
                 StringSplitOptions.None
             );
 
@@ -2086,7 +2086,7 @@ namespace PixelVision8.Engine.Chips
             var dx = x1 - x0;
             var dy = y1 - y0;
             var distance = Math.Sqrt(dx * dx + dy * dy);
-            return (int) distance;
+            return (int)distance;
         }
 
         public int[] BitArray(int value)
@@ -2113,7 +2113,7 @@ namespace PixelVision8.Engine.Chips
         public int PaletteOffset(int paletteID, int paletteColor = 0)
         {
             // TODO this is hardcoded right now but there are 8 palettes with a max of 16 colors each
-            return 128 + (Clamp(paletteID, 0, 7) * 16) + Clamp(paletteColor, 0, ColorsPerSprite()-1);
+            return 128 + (Clamp(paletteID, 0, 7) * 16) + Clamp(paletteColor, 0, ColorsPerSprite() - 1);
         }
 
         public struct MetaSpriteData
@@ -2192,8 +2192,8 @@ namespace PixelVision8.Engine.Chips
             var tmpBounds = bounds ?? displayChip.visibleBounds;
 
             // Get the bounds of the screen
-//            if (bounds == null)
-//                bounds = displayChip.visibleBounds;
+            //            if (bounds == null)
+            //                bounds = displayChip.visibleBounds;
 
             startX = x - (useScrollPos ? _scrollX : 0);
             startY = y - (useScrollPos ? _scrollY : 0);
@@ -2248,7 +2248,7 @@ namespace PixelVision8.Engine.Chips
         {
             return engine.GetMetaData(key, defaultValue);
         }
-        
+
         /// <summary>
         ///     Writes meta data back into the game which can be read if the game reloads.
         /// </summary>
