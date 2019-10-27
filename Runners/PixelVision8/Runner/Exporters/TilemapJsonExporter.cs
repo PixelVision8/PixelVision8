@@ -425,8 +425,11 @@ namespace PixelVision8.Runner.Exporters
             //                // Need to join the layer array and add 1 to the sprite ID since tiled isn't 
             //                sb.Append(string.Join(",", tilemapChip.layers[(int)layerEnum].Select(x => (x == -1 ? 0 : x + idOffset).ToString())));
 
-            // Remove the last comma
-            sb.Length--;
+            if (tileCounter > 0)
+            {
+                // Remove the last comma
+                sb.Length--;
+            }
 
             // tilesets end
             JsonUtil.GetLineBreak(sb, 3);
