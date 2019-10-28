@@ -59,6 +59,16 @@ namespace PixelVision8.Runner.Workspace
                 return name.Substring(startOfName, endOfName - startOfName);
             }
         }
+        
+        public string EntityNameWithoutExtension
+        {
+            get
+            {
+                var name = EntityName;
+                var ext = GetExtension();
+                return IsDirectory ? EntityName : EntityName.Substring(0, EntityName.Length - ext.Length);
+            }
+        }
 
         public WorkspacePath ParentPath
         {

@@ -180,9 +180,8 @@ namespace PixelVision8.Runner
             // PV8 Needs to access the documents folder so it can create the workspace drive
             var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8") as string;
 
-
             // Set the TotalDisks disks
-            workspaceServicePlus.totalDisks = Int32.Parse(bios.ReadBiosData("TotalDisks", "2"));
+            workspaceServicePlus.MaxDisks = Int32.Parse(bios.ReadBiosData("MaxDisks", "2"));
 
             // Create the real system path to the documents folder
             documentsPath = Path.Combine(Documents, baseDir);
@@ -250,10 +249,10 @@ namespace PixelVision8.Runner
             luaScript.Globals["SystemName"] = new Func<string>(() => systemName);
             luaScript.Globals["SessionID"] = new Func<string>(() => sessionID);
 
-            luaScript.Globals["DiskPaths"] = new Func<WorkspacePath[]>(() => workspaceServicePlus.disks);
+            luaScript.Globals["DiskPaths"] = new Func<WorkspacePath[]>(() => workspaceServicePlus.Disks);
             luaScript.Globals["SaveActiveDisks"] = new Action(() =>
             {
-                var disks = workspaceServicePlus.disks;
+                var disks = workspaceServicePlus.Disks;
 
                 foreach (var disk in disks) workspaceServicePlus.SaveDisk(disk);
             });
@@ -568,7 +567,7 @@ namespace PixelVision8.Runner
                 // Disable auto run when loading up the default disks
                 autoRunEnabled = false;
 
-                for (int i = 0; i < workspaceServicePlus.totalDisks; i++)
+                for (int i = 0; i < workspaceServicePlus.MaxDisks; i++)
                 {
                     var diskPath =  bios.ReadBiosData("Disk" + i, "none");
                     if (diskPath != "none" && diskPath != "")
@@ -620,7 +619,7 @@ namespace PixelVision8.Runner
             // Try to boot from the first disk
             try
             {
-                var firstDiskPath = workspaceServicePlus.disks.First().EntityName;
+                var firstDiskPath = workspaceServicePlus.Disks.First().EntityName;
 
                 AutoRunGameFromDisk(firstDiskPath);
 
@@ -1069,9 +1068,9 @@ namespace PixelVision8.Runner
         public void UpdateDiskInBios()
         {
 
-            var total = workspaceServicePlus.totalDisks;
+            var total = workspaceServicePlus.MaxDisks;
 
-            var disks = workspaceServicePlus.disks;
+            var disks = workspaceServicePlus.Disks;
             var totalDisks = disks.Length;
 
             for (var i = 0; i < total; i++)

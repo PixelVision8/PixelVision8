@@ -34,7 +34,6 @@ namespace PixelVision8.Runner.Exporters
         {
             this.targetEngine = targetEngine;
 
-
             CalculateSteps();
         }
 

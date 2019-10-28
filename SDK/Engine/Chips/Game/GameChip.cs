@@ -158,6 +158,7 @@ namespace PixelVision8.Engine.Chips
         {
             // Set the engine's game to this instance
             engine.gameChip = this;
+            
         }
 
         /// <summary>

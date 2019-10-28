@@ -31,17 +31,15 @@ namespace PixelVision8.Runner.Services
 {
     public class WorkspaceServicePlus : WorkspaceService
     {
-        private SortedList<WorkspacePath, IFileSystem> diskMount;
-        public int TotalDisks => disks.Length;//.Count;
+//        private SortedList<WorkspacePath, IFileSystem> DiskMount => Mounts as SortedList<WorkspacePath, IFileSystem>;
+        public int TotalDisks => _disks.Count;
         private bool disksInvalid = true;
-        private WorkspacePath[] _disks;
+        private List<WorkspacePath> _disks = new List<WorkspacePath>();
+        public int MaxDisks { get; set; } = 2;
 
         public WorkspaceServicePlus(KeyValuePair<WorkspacePath, IFileSystem> mountPoint) : base(mountPoint)
         {
         }
-
-        public int totalDisks { get; set; } = 2;
-
 
         public void MountWorkspace(string name)
         {
@@ -70,11 +68,9 @@ namespace PixelVision8.Runner.Services
         {
             var osPath = WorkspacePath.Root.AppendDirectory("PixelVisionOS");
             
-            var mounts = Mounts as SortedList<WorkspacePath, IFileSystem>;
-
-            if (mounts.ContainsKey(osPath))
+            if (Exists(osPath))
             {
-                mounts.Remove(osPath);
+                Mounts.Remove(Get(osPath));
             }
             
             var systemPaths = new List<IFileSystem>()
@@ -175,13 +171,6 @@ namespace PixelVision8.Runner.Services
                 }
 
         }
-
-        public override void MountFileSystems(Dictionary<WorkspacePath, IFileSystem> fileSystems)
-        {
-            base.MountFileSystems(fileSystems);
-            
-            diskMount = Mounts as SortedList<WorkspacePath, IFileSystem>;
-        }
         
         public string MountDisk(string path)
         {
@@ -241,7 +230,7 @@ namespace PixelVision8.Runner.Services
                     var tmpPath = autoRunData["AutoRun"] as string;
 
                     // Get the auto run from the json file
-                    var newDiskPath = WorkspacePath.Parse("/Disks/" + diskName + tmpPath);
+                    var newDiskPath = WorkspacePath.Parse($"/Disks/{diskName}{tmpPath}");
 
                     // Change the disk path to the one in the auto-run file
                     if (Exists(newDiskPath)) diskPath = newDiskPath;
@@ -262,7 +251,7 @@ namespace PixelVision8.Runner.Services
                 var diskPaths = new List<string>();
                 
                 // Add the remaining disks
-                foreach (var disk in disks)
+                foreach (var disk in Disks)
                 {
                     diskPaths.Add(DiskPhysicalRoot(disk));
                 }
@@ -275,36 +264,27 @@ namespace PixelVision8.Runner.Services
                 {
                     MountDisk(oldPath);
                 }
-                
-//                SortedList<WorkspacePath, IFileSystem> 
-//                
-//                    diskMount
-                    
+                  
                 return diskPath.Path;
-                // Load the disk path and play the game
-//                runner.Load(diskPath.Path, RunnerGame.RunnerMode.Playing, metaData);
+                
             }
-            else
-            {
-                return null;
-                // If the new auto run path can't be found, throw an error
-//                runner.DisplayError(RunnerGame.ErrorCode.NoAutoRun);
-            }
+
+            return null;
         }
 
         public string DiskPhysicalRoot(WorkspacePath disk)
         {
             var physicalPath = "";
 
-            if (diskMount.ContainsKey(disk))
+            if (Exists(disk))
             {
 
-                if (diskMount[disk] is PhysicalFileSystem fileSystem)
+                if (Get(disk).Value is PhysicalFileSystem fileSystem)
                 {
                     physicalPath = fileSystem.PhysicalRoot;
 
                 }
-                else if (diskMount[disk] is ZipFileSystem system)
+                else if (Get(disk).Value is ZipFileSystem system)
                 {
                     physicalPath = system.PhysicalRoot;
 
@@ -327,7 +307,7 @@ namespace PixelVision8.Runner.Services
             var rootPath = WorkspacePath.Root.AppendDirectory("Game");
 
             // Make sure we don't have a disk with the same name
-            if (diskMount.ContainsKey(rootPath)) diskMount.Remove(rootPath);
+            if (Exists(rootPath)) Mounts.Remove(Get(rootPath));
         }
 
         public override void IncludeLibDirectoryFiles(Dictionary<string, byte[]> files)
@@ -336,7 +316,7 @@ namespace PixelVision8.Runner.Services
                 
             var paths = new List<WorkspacePath>();
             
-            var diskPaths = disks;
+            var diskPaths = Disks;
   
             foreach (var disk in diskPaths)
             {
@@ -354,7 +334,7 @@ namespace PixelVision8.Runner.Services
 //            UpdateDiskInBios();
 //            var disks = disks;
 
-            foreach (var disk in disks) SaveDisk(disk);
+            foreach (var disk in Disks) SaveDisk(disk);
 
             base.ShutdownSystem();
         }
@@ -370,7 +350,7 @@ namespace PixelVision8.Runner.Services
                 try
                 {
                     // Get the next disk name
-                    var diskName = disks.First().Path.Replace("/", "");
+                    var diskName = Disks.First().Path.Replace("/", "");
 
                     // Attempt to run the fist disk
                     AutoRunGameFromDisk(diskName);
@@ -445,29 +425,29 @@ namespace PixelVision8.Runner.Services
             disksInvalid = false;
         }
 
-        public WorkspacePath[] disks
+        public WorkspacePath[] Disks
         {
             get
             {
-                if(disksInvalid)
-                { 
-                    var paths = new List<WorkspacePath>();
+//                if(disksInvalid)
+//                { 
+//                    var paths = new List<WorkspacePath>();
+//
+//                    foreach (var mount in Mounts)
+//                    {
+//                        if (mount.Key.GetDirectorySegments()[0] == "Disks")
+//                        {
+//                            paths.Add(mount.Key);
+//                        }
+//                    }
+//
+//                    // Sort the disks alphabetically
+//                    _disks = paths.ToArray();
+//
+//                    ResetDiskValidation();
+//                }
 
-                    foreach (var mount in diskMount)
-                    {
-                        if (mount.Key.GetDirectorySegments()[0] == "Disks")
-                        {
-                            paths.Add(mount.Key);
-                        }
-                    }
-
-                    // Sort the disks alphabetically
-                    _disks = paths.ToArray();
-
-                    ResetDiskValidation();
-                }
-
-                return _disks;
+                return _disks.ToArray();
 
             }
 
@@ -477,43 +457,52 @@ namespace PixelVision8.Runner.Services
         {
            
             // If we are out of open disks, remove the last one
-            if (TotalDisks == totalDisks) RemoveDisk(disks.Last());
+            if (TotalDisks == MaxDisks) RemoveDisk(Disks.Last());
 
             // Attempt to remove the disk if it is already inserted
             RemoveDisk(path);
 
             // Add the new disk to the disk mount
-            diskMount.Add(path, disk);
+            Mounts.Add(new KeyValuePair<WorkspacePath, IFileSystem>(path, disk));
 
+            if (!_disks.Contains(path))
+            {
+                _disks.Add(path);
+            }
             InvalidateDisks();
         }
 
         public void RemoveDisk(WorkspacePath path)
         {
-            if (diskMount.ContainsKey(path))
+            if (Exists(path))
             {
                 // Check to see if this is a zip
                 SaveDisk(path);
 
                 // Remove disk from the mount point
-                diskMount.Remove(path);
-
+                Mounts.Remove(Get(path));
+    
+                if (_disks.Contains(path))
+                {
+                    _disks.Remove(path);
+                }
+                
                 InvalidateDisks();
             }
         }
 
         public void SaveDisk(WorkspacePath path)
         {
-            if (diskMount.ContainsKey(path))
+            if (Exists(path))
             {
-                var mount = diskMount[path];
-                if (mount is ZipFileSystem zipFileSystem) zipFileSystem.Save();
+                var mount = Get(path);
+                if (mount.Value is ZipFileSystem zipFileSystem) zipFileSystem.Save();
             }
         }
 
         public void EjectAll()
         {
-            foreach (var path in disks) RemoveDisk(path);
+            foreach (var path in Disks) RemoveDisk(path);
         }
 
         public override bool Exists(WorkspacePath path)
@@ -522,22 +511,12 @@ namespace PixelVision8.Runner.Services
             // Manually return true if the path is Disks since it's not a real mount point
             if (path == WorkspacePath.Root.AppendDirectory("Disks"))
             {
-                return totalDisks > 0;
+                return MaxDisks > 0;
             }
 
-            try
-            {
-                var pair = Get(path);
-                return pair.Value.Exists(path.RemoveParent(pair.Key));
-            }
-            catch
-            {
-                return false;
-            }
-
+            return base.Exists(path);
 
         }
-
 
     }
 }
