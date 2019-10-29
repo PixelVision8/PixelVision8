@@ -105,7 +105,7 @@ namespace PixelVision8.Runner.Parsers
             colorChip.export = true;
 
             // Force the color chip to clear itself
-            colorChip.Clear();
+//            colorChip.Clear();
 
             //            if (data.ContainsKey("colorsPerPage"))
             //                colorChip.colorsPerPage = (int) (long) data["colorsPerPage"];
@@ -119,6 +119,8 @@ namespace PixelVision8.Runner.Parsers
             // Make sure we have data to parse
             if (data.ContainsKey("colors"))
             {
+                colorChip.Clear();
+                
                 // Pull out the color data
                 var colors = (List<object>)data["colors"];
 

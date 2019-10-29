@@ -19,6 +19,7 @@
 //
 
 using System;
+using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Engine
 {
@@ -211,8 +212,8 @@ namespace PixelVision8.Engine
         /// <param name="height"></param>
         public virtual void Resize(int width, int height)
         {
-            _width = width;
-            _height = height;
+            _width = MathHelper.Clamp(width, 1, 2047);
+            _height = MathHelper.Clamp(height, 1, 2047);;
 
             Array.Resize(ref pixels, width * height);
 

@@ -46,6 +46,9 @@ namespace PixelVision8.Runner.Parsers
 
         public override void CalculateSteps()
         {
+            
+            colorChip.Clear();
+            
             base.CalculateSteps();
 
 //            steps.Add(IndexColors);

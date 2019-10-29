@@ -227,7 +227,7 @@ namespace PixelVision8.Engine.Chips
 
             // Create a new canvas for the tilemap cache
             if (cachedTileMap == null)
-                cachedTileMap = new Canvas(0, 0, this);
+                cachedTileMap = new Canvas(displayChip.width, displayChip.height, this);
 
             // Build tilemap cache
             RebuildCache(cachedTileMap);
