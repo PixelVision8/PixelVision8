@@ -23,8 +23,6 @@ using PixelVision8.Engine;
 using PixelVision8.Engine.Audio;
 using System;
 using System.Collections.Generic;
-using System;
-using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Parsers
 {

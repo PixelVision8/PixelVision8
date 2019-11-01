@@ -528,6 +528,9 @@ namespace PixelVision8.Runner
             // Reset the game's resolution
             ResetResolution();
 
+            // Make sure that the first frame is cleared with the default color
+            activeEngine.gameChip.Clear();
+
         }
 
         public void ResetResolution()

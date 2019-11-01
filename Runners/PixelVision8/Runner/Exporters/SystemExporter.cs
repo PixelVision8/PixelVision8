@@ -179,29 +179,6 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-//            sb.Append("\"total\":");
-//            sb.Append(colorChip.total);
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
-
-//            sb.Append("\"pages\":");
-//            sb.Append(colorChip.pages);
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
-//
-//            sb.Append("\"colorsPerPage\":");
-//            sb.Append(colorChip.colorsPerPage);
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
-
-            // Rebuild calculated colors value
-//            colorChip.RecalculateSupportedColors();
-
-//            sb.Append("\"totalSupportedColors\":");
-//            sb.Append(colorChip.totalSupportedColors);
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
-
             sb.Append("\"maxColors\":");
             sb.Append(colorChip.maxColors);
             sb.Append(",");
@@ -227,12 +204,6 @@ namespace PixelVision8.Runner.Exporters
             sb.Append(colorChip.debugMode.ToString().ToLower());
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
-
-//            sb.Append("\"paletteMode\":");
-//            sb.Append(colorChip.paletteMode.ToString().ToLower());
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
-
 
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");

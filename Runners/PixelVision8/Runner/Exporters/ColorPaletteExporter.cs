@@ -53,13 +53,15 @@ namespace PixelVision8.Runner.Exporters
 
         public void CalculateSteps()
         {
+            var currentDebugMode = colorChip.debugMode;
+
             // Force the color chip to not replace empty colors with background value
             colorChip.debugMode = true;
 
             ConfigureColors();
 
-            // Reset color chip value
-            colorChip.debugMode = false;
+            // Restore the color chip debug value
+            colorChip.debugMode = currentDebugMode;
 
             BuildPixelData();
 
