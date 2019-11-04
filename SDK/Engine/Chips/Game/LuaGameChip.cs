@@ -31,8 +31,6 @@ namespace PixelVision8.Engine.Chips
 {
     public class LuaGameChip : GameChip
     {
-        //        public Dictionary<string, string> scripts = new Dictionary<string, string>();
-//        public Script luaScript { get; protected set; }
 
         protected Script _luaScript;
 
@@ -84,8 +82,9 @@ namespace PixelVision8.Engine.Chips
         {
             if (luaScript?.Globals["Shutdown"] == null)
                 return;
-
+           
             luaScript.Call(luaScript.Globals["Shutdown"]);
+
         }
 
         public override void Reset()

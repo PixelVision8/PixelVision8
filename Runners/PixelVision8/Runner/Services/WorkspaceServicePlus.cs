@@ -33,7 +33,7 @@ namespace PixelVision8.Runner.Services
     {
 //        private SortedList<WorkspacePath, IFileSystem> DiskMount => Mounts as SortedList<WorkspacePath, IFileSystem>;
         public int TotalDisks => _disks.Count;
-        private bool disksInvalid = true;
+//        private bool disksInvalid = true;
         private List<WorkspacePath> _disks = new List<WorkspacePath>();
         public int MaxDisks { get; set; } = 2;
 
@@ -414,16 +414,16 @@ namespace PixelVision8.Runner.Services
 
             return count;
         }
-        
-        public void InvalidateDisks()
-        {
-            disksInvalid = true;
-        }
-
-        public void ResetDiskValidation()
-        {
-            disksInvalid = false;
-        }
+//        
+//        public void InvalidateDisks()
+//        {
+//            disksInvalid = true;
+//        }
+//
+//        public void ResetDiskValidation()
+//        {
+//            disksInvalid = false;
+//        }
 
         public WorkspacePath[] Disks
         {
@@ -469,7 +469,7 @@ namespace PixelVision8.Runner.Services
             {
                 _disks.Add(path);
             }
-            InvalidateDisks();
+//            InvalidateDisks();
         }
 
         public void RemoveDisk(WorkspacePath path)
@@ -486,8 +486,8 @@ namespace PixelVision8.Runner.Services
                 {
                     _disks.Remove(path);
                 }
-                
-                InvalidateDisks();
+//                
+//                InvalidateDisks();
             }
         }
 

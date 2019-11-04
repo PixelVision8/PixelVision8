@@ -22,6 +22,7 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -70,6 +71,7 @@ namespace PixelVision8.Runner.Workspace
             {
                 return false;
             }
+
         }
 
         public Stream CreateFile(WorkspacePath path)

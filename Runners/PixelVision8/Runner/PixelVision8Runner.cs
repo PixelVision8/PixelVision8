@@ -30,7 +30,6 @@ using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Workspace;
-using Color = Microsoft.Xna.Framework.Color;
 
 namespace PixelVision8.Runner
 {
@@ -299,12 +298,15 @@ namespace PixelVision8.Runner
 
         public void EjectDisk(string path)
         {
+            ejectingDisk = true;
+
             workspaceServicePlus.EjectDisk(WorkspacePath.Parse(path));
 
             UpdateDiskInBios();
 
             AutoLoadDefaultGame();
 
+            ejectingDisk = false;
         }
         
         public void EnableAutoRun(bool value)
@@ -446,10 +448,20 @@ namespace PixelVision8.Runner
 //                        Console.WriteLine("Toggle Recoding");
                     }else if (controllerChip.GetKeyUp(actionKeys[ActionKeys.RestartKey]))
                     {
-//                        Console.WriteLine("Reset Game");
-                        ResetGame();
+                        if (controllerChip.GetKeyDown(Keys.LeftShift) || controllerChip.GetKeyDown(Keys.RightShift))
+                        {
+                            AutoLoadDefaultGame();
+                        }
+                        else
+                        {
+                            
+                            ResetGame();
 
                     }
+
+                    //                        Console.WriteLine("Reset Game");
+
+                }
             }else if (controllerChip.GetKeyUp(Keys.Escape) && backKeyEnabled)
             {
 //                if (mode == RunnerMode.Booting)
@@ -566,7 +578,7 @@ namespace PixelVision8.Runner
             
                 // Disable auto run when loading up the default disks
                 autoRunEnabled = false;
-
+                 
                 for (int i = 0; i < workspaceServicePlus.MaxDisks; i++)
                 {
                     var diskPath =  bios.ReadBiosData("Disk" + i, "none");
@@ -652,6 +664,20 @@ namespace PixelVision8.Runner
                 }
                 else
                 {
+                    // Need to force the disk animation to show
+                    var lastGameRef = loadHistory.Last();
+
+                    var metaData = lastGameRef.Value;
+
+                    if (metaData.ContainsKey("showDiskAnimation"))
+                    {
+                        metaData["showDiskAnimation"] = "true";
+                    }
+                    else
+                    {
+                        metaData.Add("showDiskAnimation", "true");
+                    }
+
                     // TODO sometimes we don't wan to do this
                     ResetGame();
                 }
@@ -756,7 +782,20 @@ namespace PixelVision8.Runner
 
                     // Look to see if the game's meta data changes the disk animation flag
                     if (nextMetaData != null && nextMetaData.ContainsKey("showDiskAnimation"))
+                    {
                         metaData["showDiskAnimation"] = nextMetaData["showDiskAnimation"];
+                    }
+                        
+
+                    // Tell the loader to show eject animation
+                    if(metaData.ContainsKey("showEjectAnimation"))
+                    {
+                        metaData["showEjectAnimation"] = ejectingDisk.ToString().ToLower();
+                    }
+                    else
+                    {
+                        metaData.Add("showEjectAnimation", ejectingDisk.ToString().ToLower());
+                    }
 
                     // Get the default path to the load tool from the bios
                     path =  bios.ReadBiosData("LoadTool", "/PixelVisionOS/Tools/LoadTool/");
@@ -817,7 +856,11 @@ namespace PixelVision8.Runner
                     {
                         loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaDataCopy));
                     }
+
                     
+
+
+
                 }
     
                 // Create a new tmpEngine
@@ -844,12 +887,18 @@ namespace PixelVision8.Runner
                     DisplayError(ErrorCode.LoadError, new Dictionary<string, string> {{"@{path}", path}});
                     success = false;
                 }
-                
+
+                // TODO need to remove old load disk animation?
+//                if (metaDataCopy.ContainsKey("showDiskAnimation"))
+//                {
+//                    metaData["showDiskAnimation"] = "false";
+//                }
+
                 // If the game is unable to run, display an error
-    //            if (success == false) 
-    
-                
-    
+                //            if (success == false) 
+
+
+
                 // Create new FileSystemPath
                 return success;
 //                return base.Load(path, newMode, metaData);
@@ -977,16 +1026,19 @@ namespace PixelVision8.Runner
                         metaData["reset"] = "true";
                     else
                         metaData.Add("reset", "true");
-                    
-                    if (metaData.ContainsKey("showDiskAnimation"))
-                        metaData["showDiskAnimation"] = "false";
-                    else
-                        metaData.Add("showDiskAnimation", "false");
-                    
                 }
     
                 // Reload the game
                 Load(lastURI.Path, RunnerMode.Loading, metaData);
+
+                if (metaData != null)
+                {
+                    if (metaData.ContainsKey("showDiskAnimation"))
+                        metaData["showDiskAnimation"] = "false";
+                    else
+                        metaData.Add("showDiskAnimation", "false");
+                }
+
                 return;
             }
             
@@ -1027,8 +1079,16 @@ namespace PixelVision8.Runner
                             }
                             
                         }
+
+                        
                     }
-                
+
+                    // Clear the disk animation
+                    if (lastGameRef.Value.ContainsKey("showDiskAnimation"))
+                    {
+                        lastGameRef.Value["showDiskAnimation"] = "false";
+                    }
+
                     // Remove that game from history since we are about to load it
                     loadHistory.RemoveAt(loadHistory.Count - 1);
                 
@@ -1164,7 +1224,8 @@ namespace PixelVision8.Runner
         }
         
         private readonly List<AnimatedGifEncoder> gifEncoders = new List<AnimatedGifEncoder>();
-        
+        private bool ejectingDisk;
+
         public void StopRecording()
         {
             if (!recording || gifEncoder == null)

@@ -303,7 +303,7 @@ namespace PixelVision8.Runner.Exporters
 
             // Save Slots
             sb.Append("\"saveSlots\":");
-            sb.Append(gameChip.saveSlots);
+            sb.Append(gameChip.SaveSlots);
 //            sb.Append(",");
 //            JsonUtil.GetLineBreak(sb, 1);
 
@@ -339,13 +339,13 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"totalPatterns\":");
-            sb.Append(musicChip.totalLoops);
+            sb.Append(musicChip.TotalLoops);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
             // TODO legacy property
             sb.Append("\"totalLoop\":");
-            sb.Append(musicChip.totalLoops);
+            sb.Append(musicChip.TotalLoops);
 
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");

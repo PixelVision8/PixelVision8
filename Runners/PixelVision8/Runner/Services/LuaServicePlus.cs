@@ -126,8 +126,9 @@ namespace PixelVision8.Runner.Services
 
 
             // Expose Bios APIs
-            luaScript.Globals["ReadBiosData"] = new Func<string, string>(ReadBiosSafeMode);
-            luaScript.Globals["WriteBiosData"] = new Action<string, string>(WriteBiosSafeMode);
+            luaScript.Globals["ReadBiosData"] = new Func<string, string, string>((key, defaultValue) =>
+                desktopRunner.bios.ReadBiosData(key, defaultValue));
+            luaScript.Globals["WriteBiosData"] = new Action<string, string>(desktopRunner.bios.UpdateBiosData);
 
             //            luaScript.Globals["RemapKey"] = new Action<string, int>(RemapKey);
 
@@ -170,12 +171,6 @@ namespace PixelVision8.Runner.Services
                 currentSound = null;
             }
         }
-
-        public virtual string ReadBiosSafeMode(string key)
-        {
-            return desktopRunner.bios.ReadBiosData(key, null);
-        }
-
 
         public virtual void WriteBiosSafeMode(string key, string value)
         {

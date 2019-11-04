@@ -97,7 +97,7 @@ namespace PixelVision8.Engine
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-            sb.Append("\"sfxID\":");
+            sb.Append("\"SfxId\":");
             sb.Append(sfxID);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);

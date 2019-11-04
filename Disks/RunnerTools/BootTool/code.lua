@@ -50,6 +50,8 @@ local showPlugin = -1
 
 function Init()
 
+  playSounds = ReadBiosData("PlaySystemSounds", "True") == "True"
+
   EnableAutoRun(false)
 
   EnableBackKey(false)
@@ -124,8 +126,10 @@ function Update(timeDelta)
       time = 0
       ready = true
 
-      -- Play the boot song
-      PlayPattern(0, false)
+      if(playSounds) then
+        -- Play the boot song
+        PlayPattern(0, false)
+      end
 
     end
 
@@ -293,7 +297,7 @@ function FindEditors()
           if(PathExists(tmpInfoPath)) then
 
             local jsonData = ReadJson(tmpInfoPath )
-            
+
             if (jsonData["editType"] ~= nil) then
               --     {
               local split = string.split(jsonData["editType"], ",")
@@ -304,7 +308,7 @@ function FindEditors()
                 if(_G[split[j] .. "icon"] ~= nil) then
                   table.insert(tools, split[j])
                 end
-                
+
               end
             end
           end

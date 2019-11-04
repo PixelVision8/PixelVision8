@@ -116,7 +116,7 @@ namespace PixelVision8.Engine.Chips
         /// <summary>
         ///     Used to limit the amount of data the game can save.
         /// </summary>
-        public int saveSlots
+        public int SaveSlots
         {
             get => _saveSlots;
             set
@@ -148,7 +148,7 @@ namespace PixelVision8.Engine.Chips
         protected FontChip fontChip;
         protected MusicChip musicChip;
 
-        private readonly int[] singlePixel = { 0 };
+//        private readonly int[] _singlePixel = { 0 };
 
         #endregion
 
@@ -1124,7 +1124,7 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void WriteSaveData(string key, string value)
         {
-            if (savedData.Count > saveSlots)
+            if (savedData.Count > SaveSlots)
                 return;
 
             if (savedData.ContainsKey(key))

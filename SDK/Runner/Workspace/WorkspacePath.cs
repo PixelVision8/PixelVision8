@@ -64,7 +64,7 @@ namespace PixelVision8.Runner.Workspace
         {
             get
             {
-                var name = EntityName;
+//                var name = EntityName;
                 var ext = GetExtension();
                 return IsDirectory ? EntityName : EntityName.Substring(0, EntityName.Length - ext.Length);
             }

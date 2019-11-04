@@ -218,7 +218,7 @@ namespace PixelVision8.Runner.Parsers
                 gameChip.maxSize = (int)(long)data["maxSize"];
 
             if (data.ContainsKey("saveSlots"))
-                gameChip.saveSlots = (int)(long)data["saveSlots"];
+                gameChip.SaveSlots = (int)(long)data["saveSlots"];
 
             if (data.ContainsKey("lockSpecs"))
                 gameChip.lockSpecs = Convert.ToBoolean(data["lockSpecs"]);
@@ -302,11 +302,11 @@ namespace PixelVision8.Runner.Parsers
                 musicChip.totalSongs = Convert.ToInt32((long)data["totalSongs"]);
 
             if (data.ContainsKey("totalPatterns"))
-                musicChip.totalLoops = Convert.ToInt32((long)data["totalPatterns"]);
+                musicChip.TotalLoops = Convert.ToInt32((long)data["totalPatterns"]);
 
             // TODO remove legacy property
             if (data.ContainsKey("totalLoop"))
-                musicChip.totalLoops = Convert.ToInt32((long)data["totalLoop"]);
+                musicChip.TotalLoops = Convert.ToInt32((long)data["totalLoop"]);
 
 
             if (data.ContainsKey(patternKey))
@@ -344,8 +344,8 @@ namespace PixelVision8.Runner.Parsers
 
                             if (track != null && trackData != null)
                             {
-                                if (trackData.ContainsKey("sfxID"))
-                                    track.sfxID = Convert.ToInt32((long)trackData["sfxID"]);
+                                if (trackData.ContainsKey("SfxId"))
+                                    track.sfxID = Convert.ToInt32((long)trackData["SfxId"]);
 
                                 if (trackData.ContainsKey("notes"))
                                 {

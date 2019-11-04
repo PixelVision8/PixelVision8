@@ -87,7 +87,7 @@ namespace PixelVision8.Runner.Editors
             workspace = runner.workspaceService as WorkspaceServicePlus;
         }
 
-        public virtual List<string> defaultChips
+        public virtual List<string> DefaultChips
         {
             get
             {
@@ -108,7 +108,7 @@ namespace PixelVision8.Runner.Editors
             }
         }
 
-        public bool invalid => _invalid;
+        public bool Invalid => _invalid;
 
         
         /// <summary>
@@ -160,7 +160,7 @@ namespace PixelVision8.Runner.Editors
 
             try
             {
-                targetGame = new PixelVisionEngine(serviceManager, defaultChips.ToArray());
+                targetGame = new PixelVisionEngine(serviceManager, DefaultChips.ToArray());
 
                 runner.ParseFiles(files, targetGame, saveFlags);
             }
@@ -353,11 +353,11 @@ namespace PixelVision8.Runner.Editors
         {
             if (total.HasValue)
             {
-                gameChip.saveSlots = total.Value;
+                gameChip.SaveSlots = total.Value;
                 Invalidate();
             }
 
-            return gameChip.saveSlots;
+            return gameChip.SaveSlots;
         }
 
         /// <summary>
@@ -1054,7 +1054,6 @@ namespace PixelVision8.Runner.Editors
             var nextSpriteID = 0;
             var i = 0;
 
-
             // Copy the sprites to the temp chip
             for (i = 0; i < total; i++)
             {
@@ -1505,7 +1504,7 @@ namespace PixelVision8.Runner.Editors
 
         #region Rendering
 
-        private readonly Dictionary<string, int> tmpPos = new Dictionary<string, int>
+        public Dictionary<string, int> TmpPos { get; } = new Dictionary<string, int>
         {
             {"x", 0},
             {"y", 0}
@@ -1717,9 +1716,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int TotalLoops(int? total)
         {
-            if (total.HasValue) musicChip.totalLoops = total.Value;
+            if (total.HasValue) musicChip.TotalLoops = total.Value;
 
-            return musicChip.totalLoops;
+            return musicChip.TotalLoops;
         }
 
         public void LoadLoop(int id)
@@ -1757,7 +1756,7 @@ namespace PixelVision8.Runner.Editors
             if (track < 0 || track >= musicChip.totalTracks)
                 return 0;
 
-            var notes = musicChip.activeTrackerData.tracks[track].notes;
+            var notes = musicChip.ActiveTrackerData.tracks[track].notes;
 
             if (beat > notes.Length || beat < 0)
                 return 0;
@@ -1776,11 +1775,11 @@ namespace PixelVision8.Runner.Editors
         {
             if (value.HasValue)
             {
-                musicChip.activeTrackerData.speedInBPM = value.Value;
+                musicChip.ActiveTrackerData.speedInBPM = value.Value;
                 musicChip.UpdateNoteTickLengths();
             }
 
-            return musicChip.activeTrackerData.speedInBPM;
+            return musicChip.ActiveTrackerData.speedInBPM;
 
             //workspace.InvalidateSave();
         }
@@ -1793,14 +1792,14 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public bool MuteTrack(int track, bool? value = null)
         {
-            if (track >= musicChip.activeTrackerData.tracks.Length)
+            if (track >= musicChip.ActiveTrackerData.tracks.Length)
             {
                 return false;
             }
             
-            if (value.HasValue) musicChip.activeTrackerData.tracks[track].mute = value.Value;
+            if (value.HasValue) musicChip.ActiveTrackerData.tracks[track].mute = value.Value;
             
-            return musicChip.activeTrackerData.tracks[track].mute;
+            return musicChip.ActiveTrackerData.tracks[track].mute;
         }
 
         /// <summary>
@@ -1811,9 +1810,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int ConfigTrackSFX(int track, int? id)
         {
-            if (id.HasValue) songGenerator.trackSettings[track].sfxID = id.Value;
+            if (id.HasValue) songGenerator.trackSettings[track].SfxId = id.Value;
 
-            return songGenerator.trackSettings[track].sfxID;
+            return songGenerator.trackSettings[track].SfxId;
         }
 
         /// <summary>
@@ -1824,9 +1823,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int ConfigTrackInstrument(int track, int? id)
         {
-            if (id.HasValue) songGenerator.trackSettings[track].instrumentType = (InstrumentType) id.Value;
+            if (id.HasValue) songGenerator.trackSettings[track].InstrumentType = (InstrumentType) id.Value;
 
-            return (int) songGenerator.trackSettings[track].instrumentType;
+            return (int) songGenerator.trackSettings[track].InstrumentType;
         }
 
         /// <summary>
@@ -1837,9 +1836,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public Point ConfigTrackOctaveRange(int track, Point? range = null)
         {
-            if (range.HasValue) songGenerator.trackSettings[track].octaveRange = range.Value;
+            if (range.HasValue) songGenerator.trackSettings[track].OctaveRange = range.Value;
 
-            return songGenerator.trackSettings[track].octaveRange;
+            return songGenerator.trackSettings[track].OctaveRange;
         }
 
         /// <summary>
@@ -1851,9 +1850,9 @@ namespace PixelVision8.Runner.Editors
         public int TrackInstrument(int track, int? sfxID)
         {
             if (sfxID.HasValue)
-                musicChip.activeTrackerData.tracks[track].sfxID = MathHelper.Clamp(sfxID.Value, 0, soundChip.totalSounds);
+                musicChip.ActiveTrackerData.tracks[track].sfxID = MathHelper.Clamp(sfxID.Value, 0, soundChip.totalSounds);
 
-            return musicChip.activeTrackerData.tracks[track].sfxID;
+            return musicChip.ActiveTrackerData.tracks[track].sfxID;
         }
 
         /// <summary>
@@ -1863,9 +1862,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int NotesPerTrack(int? value = null)
         {
-            if (value.HasValue) musicChip.notesPerTrack = 32;
+            if (value.HasValue) musicChip.NotesPerTrack = 32;
 
-            return musicChip.notesPerTrack;
+            return musicChip.NotesPerTrack;
         }
 
         /// <summary>
@@ -1971,9 +1970,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int CurrentBeat(int? pos)
         {
-            if (pos.HasValue) musicChip.sequencerBeatNumber = pos.Value;
+            if (pos.HasValue) musicChip.SequencerBeatNumber = pos.Value;
 
-            return musicChip.sequencerBeatNumber;
+            return musicChip.SequencerBeatNumber;
         }
 
         /// <summary>
@@ -1993,7 +1992,7 @@ namespace PixelVision8.Runner.Editors
         {
 //            musicChip.PlayNote(track, beat);
 
-            var sfxID = songGenerator.trackSettings[track].sfxID;
+            var sfxID = songGenerator.trackSettings[track].SfxId;
 
             // play the sound
             var instrument = soundChip.ReadSound(sfxID);
@@ -2010,7 +2009,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int ReadInstrumentID(int track)
         {
-            return (int) songGenerator.trackSettings[track].instrumentType;
+            return (int) songGenerator.trackSettings[track].InstrumentType;
         }
 
         /// <summary>
@@ -2068,8 +2067,8 @@ namespace PixelVision8.Runner.Editors
         /// <param name="sfxID"></param>
         public void SetTrack(int track, int instrument, int sfxID)
         {
-            songGenerator.trackSettings[track].instrumentType = (InstrumentType) instrument;
-            songGenerator.trackSettings[track].sfxID = sfxID;
+            songGenerator.trackSettings[track].InstrumentType = (InstrumentType) instrument;
+            songGenerator.trackSettings[track].SfxId = sfxID;
         }
 
         #endregion
@@ -2194,7 +2193,7 @@ namespace PixelVision8.Runner.Editors
         private Canvas tmpCanvas;
         public bool renderingMap { get; private set; }
         private int[] tmpPixelData = new int[0];
-        private int mapRenderMode;
+        private int _mapRenderMode;
         private int totalTiles;
         private int totalLoops;
         private readonly int maxPerLoop = 100;
@@ -2214,7 +2213,7 @@ namespace PixelVision8.Runner.Editors
             var realWidth = spriteChip.width * tilemapChip.columns;
             var realHeight = spriteChip.height * tilemapChip.rows;
 
-            mapRenderMode = mode;
+            _mapRenderMode = mode;
 
             if (layerCache[mode] == null)
             {

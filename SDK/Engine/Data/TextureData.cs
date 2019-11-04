@@ -212,8 +212,8 @@ namespace PixelVision8.Engine
         /// <param name="height"></param>
         public virtual void Resize(int width, int height)
         {
-            _width = MathHelper.Clamp(width, 1, 2047);
-            _height = MathHelper.Clamp(height, 1, 2047);;
+            _width = MathHelper.Clamp(width, 1, 2048);
+            _height = MathHelper.Clamp(height, 1, 2048);;
 
             Array.Resize(ref pixels, width * height);
 

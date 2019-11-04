@@ -500,7 +500,6 @@ namespace PixelVision8.Runner
             // Show down the engine
             activeEngine?.Shutdown();
 
-
             // TODO need to move this over to the workspace
         }
 

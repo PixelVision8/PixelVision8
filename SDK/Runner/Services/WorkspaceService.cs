@@ -122,7 +122,7 @@ namespace PixelVision8.Runner.Services
 
         public string FindValidSavePath(string gamePath)
         {
-            var savePath = "/";
+            string savePath;
 
             var filePath = WorkspacePath.Parse(gamePath);
 

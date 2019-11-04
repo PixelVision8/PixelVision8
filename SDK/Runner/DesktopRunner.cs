@@ -465,7 +465,7 @@ namespace PixelVision8.Runner
 
             base.ShutdownActiveEngine();
 
-            if (activeEngine.gameChip.saveSlots > 0)
+            if (activeEngine.gameChip.SaveSlots > 0)
             {
                 //Print("Active Engine To Save", activeEngine.name);
 

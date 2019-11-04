@@ -235,17 +235,17 @@ namespace PixelVision8.Runner.Data
             spriteBatch.End();
         }
 
-        public void CaptureScreenshot()
-        {
-            var gd = graphicManager.GraphicsDevice;
-            
-            Color[] colors = new Color[gd.Viewport.Width * gd.Viewport.Height];
-
-            gd.GetBackBufferData<Color>(colors);
-            
-            
-            
-        }
+//        public void CaptureScreenshot()
+//        {
+//            var gd = graphicManager.GraphicsDevice;
+//            
+//            Color[] colors = new Color[gd.Viewport.Width * gd.Viewport.Height];
+//
+//            gd.GetBackBufferData<Color>(colors);
+//            
+//            
+//            
+//        }
 
     }
 }

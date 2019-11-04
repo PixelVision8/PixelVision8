@@ -1,11 +1,11 @@
 --[[
-	Pixel Vision 8 - Preloader Tool
-	Copyright (C) 2017, Pixel Vision 8 (http://pixelvision8.com)
-	Created by Jesse Freeman (@jessefreeman)
+  Pixel Vision 8 - Preloader Tool
+  Copyright (C) 2017, Pixel Vision 8 (http://pixelvision8.com)
+  Created by Jesse Freeman (@jessefreeman)
 
-	Please do not copy and distribute verbatim copies
-	of this license document, but modifications without
-	distributing is allowed.
+  Please do not copy and distribute verbatim copies
+  of this license document, but modifications without
+  distributing is allowed.
 ]]--
 
 LoadScript("sb-sprites")
@@ -34,27 +34,13 @@ local loopAnimation = true
 
 function Init()
 
+  playSounds = ReadBiosData("PlaySystemSounds", "True") == "True"
+
   -- TODO Should only enable this if there is a disk loading error?
   EnableAutoRun(true)
-  EnableBackKey(false)
 
   -- Set the background an rebuild the screen buffer
-  BackgroundColor(5)
-
-  local runnerName = SystemName()
-  local runnerVer = SystemVersion() -- TODO we don't have a V char so use / instead
-
-  local labelWidth = #runnerName + #runnerVer + 2
-
-  local startX = math.floor((32 / 2) - (labelWidth / 2))
-
-  DrawSprite(logosmall.spriteIDs[1], startX * 8 - 2, 8, false, false, DrawMode.TilemapCache)
-
-  startX = startX + 1
-
-  DrawText(runnerName, startX, 1, DrawMode.Tile, "large", 15)
-
-  DrawText(runnerVer, startX + #runnerName + 1, 1, DrawMode.Tile, "large", 15)
+  BackgroundColor(tonumber(ReadBiosData("DefaultBackgroundColor", "5")))
 
   local message = ReadMetaData("errorMessage")
 
@@ -72,6 +58,9 @@ function Init()
     DrawText(lines[i], 1, startY + (i - 1), DrawMode.Tile, "large", 15)
   end
 
+  if(playSounds) then
+    PlaySound(0)
+  end
   --
 end
 
@@ -85,6 +74,7 @@ function Update(timeDelta)
       frame = 1
     end
   end
+
 end
 
 function Draw()
@@ -92,5 +82,5 @@ function Draw()
   RedrawDisplay()
 
   local sprite = currentAnimation[frame]
-  DrawSprites(sprite.spriteIDs, 104, 72, sprite.width, false, false, DrawMode.Sprite, 0)
+  DrawSprites(sprite.spriteIDs, 104, 71, sprite.width, false, false, DrawMode.Sprite, 0)
 end

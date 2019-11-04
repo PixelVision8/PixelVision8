@@ -79,7 +79,7 @@ namespace PixelVision8.Runner.Services
                 userBiosChanges.Add(key, value);
         }
 
-        public string ReadBiosData(string key, string defaultValue, bool autoSave = false)
+        public string ReadBiosData(string key, string defaultValue = "", bool autoSave = false)
         {
             // Check to see if the key is in the bios
             if (!biosData.ContainsKey(key))

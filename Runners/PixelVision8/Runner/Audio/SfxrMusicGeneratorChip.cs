@@ -81,40 +81,40 @@ namespace PixelVision8.Runner.Chips
 
         private readonly Random r = new Random();
 
-        public InstrumentType instrumentType
+        public InstrumentType InstrumentType
         {
             get => _instrumentType;
             set
             {
                 _instrumentType = value;
 
-                var typeID = (int)instrumentType;
+                var typeID = (int)InstrumentType;
 
                 //                if (typeID < defaultOctaves.Length)
                 //                {
                 // Changing the instrument should set the deafult octave values
-                octaveRange = defaultOctaves[typeID];
+                OctaveRange = defaultOctaves[typeID];
                 //                }
             }
         }
 
-        public int sfxID { get; set; }
-        public Point octaveRange { get; set; }
+        public int SfxId { get; set; }
+        public Point OctaveRange { get; set; }
 
         //    public bool locked;
-        public bool generate => instrumentType != InstrumentType.None;
+        public bool Generate => InstrumentType != InstrumentType.None;
 
 
-        public string instrumentSettings => ReadInstrumentSoundData((int)instrumentType);
+        public string InstrumentSettings => ReadInstrumentSoundData((int)InstrumentType);
 
         public string ReadInstrumentSoundData(int value)
         {
             //            if (value == (int) InstrumentType.None) return null;
 
-            var id = instrumentType == InstrumentType.Random ? r.Next(0, 7) : value;
+            var id = InstrumentType == InstrumentType.Random ? r.Next(0, 7) : value;
 
             // Update the octave to match the returned instrument id
-            octaveRange = defaultOctaves[id];
+            OctaveRange = defaultOctaves[id];
 
             return instrumentTemplates[id];
         }
@@ -260,8 +260,8 @@ namespace PixelVision8.Runner.Chips
                     settings = trackSettings[i];
                 }
 
-                settings.instrumentType = (InstrumentType)i;
-                settings.sfxID = i;
+                settings.InstrumentType = (InstrumentType)i;
+                settings.SfxId = i;
             }
 
             // forces scale to the default value
@@ -285,7 +285,7 @@ namespace PixelVision8.Runner.Chips
             var musicChip = chips.musicChip;
             var soundChip = chips.soundChip;
 
-            var activeTrackerData = musicChip.activeTrackerData;
+            var activeTrackerData = musicChip.ActiveTrackerData;
 
             musicChip.ResetTracker();
 
@@ -338,7 +338,7 @@ namespace PixelVision8.Runner.Chips
 
             TrackData trackData = null;
 
-            var harmonyTrackID = Array.FindIndex(trackSettings, t => t.instrumentType == InstrumentType.Harmony);
+            var harmonyTrackID = Array.FindIndex(trackSettings, t => t.InstrumentType == InstrumentType.Harmony);
 
             //Debug.Log("Found Harmony Track " + harmonyTrackID);
 
@@ -350,9 +350,10 @@ namespace PixelVision8.Runner.Chips
                 // Need to account for a null track if the generator was not reconfigured
                 if (trackSettings[trackNum] == null)
                 {
-                    trackSettings[trackNum] = new TrackSettings();
-                    trackSettings[trackNum].instrumentType = (InstrumentType)trackNum;
-                    trackSettings[trackNum].sfxID = trackNum;
+                    trackSettings[trackNum] = new TrackSettings
+                    {
+                        InstrumentType = (InstrumentType) trackNum, SfxId = trackNum
+                    };
                 }
 
                 // Get the current track settings
@@ -364,14 +365,14 @@ namespace PixelVision8.Runner.Chips
                 //            {
 
                 // Update track to new SFX
-                //trackData.sfxID = settings.
+                //trackData.SfxId = settings.
 
                 // Look to see if we should generate a new instrument for the track
-                if (settings.generate)
+                if (settings.Generate)
                 {
                     //Debug.Log("Generate " + settings.instrumentType + " for track " + trackNum);
-                    soundChip.UpdateSound(trackData.sfxID, settings.instrumentSettings);
-                    soundChip.UpdateLabel(trackData.sfxID, settings.instrumentType.ToString());
+                    soundChip.UpdateSound(trackData.sfxID, settings.InstrumentSettings);
+                    soundChip.UpdateLabel(trackData.sfxID, settings.InstrumentType.ToString());
                 }
 
                 // reset melody to root note of scale
@@ -385,10 +386,10 @@ namespace PixelVision8.Runner.Chips
                 // pure 0-1 (but density 10 means complexity 0 due to the way we calc prob)
 
                 // Loop through each beat and create a note
-                for (var noteNum = 0; noteNum < musicChip.notesPerTrack; noteNum++) // for each note
+                for (var noteNum = 0; noteNum < musicChip.NotesPerTrack; noteNum++) // for each note
                 {
                     // Get the instrument ID for the track
-                    var instrument = settings.instrumentType;
+                    var instrument = settings.InstrumentType;
 
                     beginPhrase = noteNum == 0; // the very start of this loop/section//phrase
                     beginBar = noteNum % 4 == 0; // put emphasis on each new bar's 1st note
@@ -477,7 +478,7 @@ namespace PixelVision8.Runner.Chips
                         else if (instrument == InstrumentType.Melody)
                         {
                             // normal "random note"
-                            trackData.notes[noteNum] = randomNote() + noteTranspose;
+                            trackData.notes[noteNum] = RandomNote() + noteTranspose;
 
                             // Need to set the harmony track to a note if it exists
                             if (harmonyTrackID > -1)
@@ -521,13 +522,13 @@ namespace PixelVision8.Runner.Chips
                             else // totally random bass note
                             {
                                 wasFunkyLastNote = false;
-                                trackData.notes[noteNum] = randomNote() + noteTranspose;
+                                trackData.notes[noteNum] = RandomNote() + noteTranspose;
                             }
                         }
                         else
                         {
                             // normal "random note" that steps up and down a scale based on prev note
-                            trackData.notes[noteNum] = randomNote() + noteTranspose;
+                            trackData.notes[noteNum] = RandomNote() + noteTranspose;
                         }
                     }
                     else // leave this note blank
@@ -549,7 +550,7 @@ namespace PixelVision8.Runner.Chips
         }
 
         /////////////////////////////////////////////////////////////////////////////
-        private int randomNote() // output a random MIDI note number
+        private int RandomNote() // output a random MIDI note number
                                  /////////////////////////////////////////////////////////////////////////////
         {
             // TODO use pcg params to select notes that fit the current scale/mode/chord/harmony
