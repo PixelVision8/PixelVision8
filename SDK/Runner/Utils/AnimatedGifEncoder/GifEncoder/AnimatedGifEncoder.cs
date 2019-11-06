@@ -1,11 +1,11 @@
-using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
+using Microsoft.Xna.Framework;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 
 //using UnityEngine;
 
@@ -13,25 +13,30 @@ namespace GifEncoder
 {
     public class AnimatedGifEncoder
     {
-        protected int width; // image size
-        protected int height;
-        protected int repeat = 0; // no repeat
-        protected int delay; // frame delay (hundredths)
-        public MemoryStream fs;
-
-        protected Color[] currentFramePixels; // current frame pixels
-        protected byte[] pixels; // BGR byte array from frame
-        protected byte[] visiblePixels;
-        protected byte[] indexedPixels; // converted frame indexed to palette
+        public byte[] bytes;
         protected int colorDepth; // number of bit planes
         protected byte[] colorTab; // RGB palette
-        protected bool[] usedEntry = new bool[256]; // active palette entries
-        protected int palSize; // color table size (bits-1)
-        protected bool firstFrame = true;
-        protected bool sizeSet; // if false, get size from first frame
-        protected int sample = 10; // default sample interval for quantizer
-        protected NeuQuant nq;
 
+        protected Color[] currentFramePixels; // current frame pixels
+        protected int delay; // frame delay (hundredths)
+        public bool exporting;
+        public bool exportingDone;
+        private BackgroundWorker exportWorker;
+        protected bool firstFrame = true;
+
+        private readonly List<Color[]> frameData = new List<Color[]>();
+        public MemoryStream fs;
+        protected int height;
+        protected byte[] indexedPixels; // converted frame indexed to palette
+        protected NeuQuant nq;
+        protected int palSize; // color table size (bits-1)
+        protected byte[] pixels; // BGR byte array from frame
+        protected int repeat = 0; // no repeat
+        protected int sample = 10; // default sample interval for quantizer
+        protected bool sizeSet; // if false, get size from first frame
+        protected bool[] usedEntry = new bool[256]; // active palette entries
+        protected byte[] visiblePixels;
+        protected int width; // image size
 
 
         public AnimatedGifEncoder()
@@ -41,32 +46,27 @@ namespace GifEncoder
         }
 
         /// <summary>
-        /// Sets the delay time between each frame, or changes it for subsequent frames (applies to last frame added).
+        ///     Sets the delay time between each frame, or changes it for subsequent frames (applies to last frame added).
         /// </summary>
         /// <param name="ms">delay time in milliseconds</param>
-		public void SetDelay(int ms)
+        public void SetDelay(int ms)
         {
-            delay = (int)Math.Round(ms / 10.0f);
+            delay = (int) Math.Round(ms / 10.0f);
         }
 
         public void CreatePalette(DisplayChip displayChip, ColorChip colorChip)
         {
-
             var allColors = colorChip.colors;
-            var uniqueColors = new List<Color>()
+            var uniqueColors = new List<Color>
             {
                 ColorUtils.HexToColor(colorChip.maskColor),
                 Color.Black,
                 Color.White
             };
 
-            for (int i = 0; i < allColors.Length; i++)
-            {
+            for (var i = 0; i < allColors.Length; i++)
                 if (uniqueColors.IndexOf(allColors[i]) == -1)
-                {
                     uniqueColors.Add(allColors[i]);
-                }
-            }
 
             currentFramePixels = uniqueColors.ToArray();
             width = currentFramePixels.Length;
@@ -90,61 +90,48 @@ namespace GifEncoder
 
             //	        AnalyzePixels(); // build color table & map pixels
 
-            colorDepth = (int)Math.Log(NeuQuant.PaletteSize + 1, 2);
+            colorDepth = (int) Math.Log(NeuQuant.PaletteSize + 1, 2);
             palSize = colorDepth - 1;
             //	        
             WriteLSD(); // logical screen descriptior
             WritePalette(); // global color table
             if (repeat >= 0)
-            {
                 // use NS app extension to indicate reps
                 WriteNetscapeExt();
-            }
         }
 
-        private List<Color[]> frameData = new List<Color[]>();
-        private BackgroundWorker exportWorker;
-        public bool exporting = false;
-        public bool exportingDone = false;
-        public byte[] bytes;
-
         /// <summary>
-        /// Adds a frame to the animated GIF. If this is the first frame, it will be used to specify the size and color palette of the GIF.
+        ///     Adds a frame to the animated GIF. If this is the first frame, it will be used to specify the size and color palette
+        ///     of the GIF.
         /// </summary>
         public void AddFrame(DisplayChip displayChip)
         {
             frameData.Add(displayChip.VisiblePixels());
 
 
-
-
             //            WritePixels(); // encode and write pixel data
-
-
         }
 
 
-
         /// <summary>
-        /// Analyzes image colors and creates color map.
+        ///     Analyzes image colors and creates color map.
         /// </summary>
         private void AnalyzePixels()
         {
-
-            int nPix = pixels.Length / 3;
+            var nPix = pixels.Length / 3;
             indexedPixels = new byte[nPix];
             // map image pixels to new palette
-            for (int i = 0; i < nPix; i++)
+            for (var i = 0; i < nPix; i++)
             {
-                int r = i * 3 + 0;
-                int g = r + 1;
-                int b = g + 1;
+                var r = i * 3 + 0;
+                var g = r + 1;
+                var b = g + 1;
 
                 const int ChangeDelta = 3;
-                bool pixelRequired = firstFrame ||
-                    Math.Abs(pixels[r] - visiblePixels[r]) > ChangeDelta ||
-                    Math.Abs(pixels[g] - visiblePixels[g]) > ChangeDelta ||
-                    Math.Abs(pixels[b] - visiblePixels[b]) > ChangeDelta;
+                var pixelRequired = firstFrame ||
+                                    Math.Abs(pixels[r] - visiblePixels[r]) > ChangeDelta ||
+                                    Math.Abs(pixels[g] - visiblePixels[g]) > ChangeDelta ||
+                                    Math.Abs(pixels[b] - visiblePixels[b]) > ChangeDelta;
 
                 int index;
                 if (pixelRequired)
@@ -160,32 +147,31 @@ namespace GifEncoder
                 }
 
                 usedEntry[index] = true;
-                indexedPixels[i] = (byte)index;
+                indexedPixels[i] = (byte) index;
             }
-            colorDepth = (int)Math.Log(NeuQuant.PaletteSize + 1, 2);
+
+            colorDepth = (int) Math.Log(NeuQuant.PaletteSize + 1, 2);
             palSize = colorDepth - 1;
         }
 
         /// <summary>
-        /// Extracts image pixels into byte array "pixels", flipping vertically
+        ///     Extracts image pixels into byte array "pixels", flipping vertically
         /// </summary>
         private void GetImagePixels()
         {
             pixels = new byte[3 * currentFramePixels.Length];
-            for (int y = 0; y < height; y++)
+            for (var y = 0; y < height; y++)
+            for (var x = 0; x < width; x++)
             {
-                for (int x = 0; x < width; x++)
-                {
-                    Color pixel = currentFramePixels[y * width + x];
-                    pixels[y * width * 3 + x * 3 + 0] = pixel.R;
-                    pixels[y * width * 3 + x * 3 + 1] = pixel.G;
-                    pixels[y * width * 3 + x * 3 + 2] = pixel.B;
-                }
+                var pixel = currentFramePixels[y * width + x];
+                pixels[y * width * 3 + x * 3 + 0] = pixel.R;
+                pixels[y * width * 3 + x * 3 + 1] = pixel.G;
+                pixels[y * width * 3 + x * 3 + 2] = pixel.B;
             }
         }
 
         /// <summary>
-        /// Writes Graphic Control Extension.
+        ///     Writes Graphic Control Extension.
         /// </summary>
         private void WriteGraphicCtrlExt()
         {
@@ -194,16 +180,12 @@ namespace GifEncoder
             fs.WriteByte(4); // data block size
 
             if (firstFrame)
-            {
                 fs.WriteByte(0x00); // packed fields: disposal = 0, transparent = 0
-            }
             else
-            {
                 fs.WriteByte(0x05); // packed fields: disposal = 1, transparent = 1
-            }
 
             WriteShort(delay); // delay x 1/100 sec
-            fs.WriteByte((byte)NeuQuant.PaletteSize); // transparent color index
+            fs.WriteByte((byte) NeuQuant.PaletteSize); // transparent color index
             fs.WriteByte(0); // block terminator
         }
 
@@ -225,9 +207,9 @@ namespace GifEncoder
 
             // packed fields
             fs.WriteByte(Convert.ToByte(0x80 | // 1   : global color table flag = 1 (gct used)
-                0x70 | // 2-4 : color resolution = 7
-                0x00 | // 5   : gct sort flag = 0
-                palSize)); // 6-8 : gct size
+                                        0x70 | // 2-4 : color resolution = 7
+                                        0x00 | // 5   : gct sort flag = 0
+                                        palSize)); // 6-8 : gct size
 
             fs.WriteByte(0); // background color index
             fs.WriteByte(0); // pixel aspect ratio - assume 1:1
@@ -248,16 +230,13 @@ namespace GifEncoder
         private void WritePalette()
         {
             fs.Write(colorTab, 0, colorTab.Length);
-            int n = (3 * (NeuQuant.PaletteSize + 1)) - colorTab.Length;
-            for (int i = 0; i < n; i++)
-            {
-                fs.WriteByte(0);
-            }
+            var n = 3 * (NeuQuant.PaletteSize + 1) - colorTab.Length;
+            for (var i = 0; i < n; i++) fs.WriteByte(0);
         }
 
         private void WritePixels()
         {
-            for (int i = 0; i < frameData.Count; i++)
+            for (var i = 0; i < frameData.Count; i++)
             {
                 firstFrame = i == 0;
 
@@ -268,12 +247,9 @@ namespace GifEncoder
                 WriteGraphicCtrlExt(); // write graphic control extension
                 WriteImageDesc(); // image descriptor
 
-                LZWEncoder encoder = new LZWEncoder(width, height, indexedPixels, colorDepth);
+                var encoder = new LZWEncoder(width, height, indexedPixels, colorDepth);
                 encoder.Encode(fs);
-
-
             }
-
         }
 
         private void WriteShort(int value)
@@ -282,17 +258,14 @@ namespace GifEncoder
             fs.WriteByte(Convert.ToByte((value >> 8) & 0xff));
         }
 
-        private void WriteString(String s)
+        private void WriteString(string s)
         {
-            char[] chars = s.ToCharArray();
-            for (int i = 0; i < chars.Length; i++)
-            {
-                fs.WriteByte((byte)chars[i]);
-            }
+            var chars = s.ToCharArray();
+            for (var i = 0; i < chars.Length; i++) fs.WriteByte((byte) chars[i]);
         }
 
         /// <summary>
-        /// Flushes any pending data and closes output file.
+        ///     Flushes any pending data and closes output file.
         /// </summary>
         public void Finish()
         {
@@ -306,7 +279,6 @@ namespace GifEncoder
 
         public void StartExport()
         {
-
             exportWorker = new BackgroundWorker();
 
             // TODO need a way to of locking this.
@@ -331,7 +303,7 @@ namespace GifEncoder
         {
             //            var result = e.Result;
 
-            for (int i = 0; i < frameData.Count; i++)
+            for (var i = 0; i < frameData.Count; i++)
             {
                 firstFrame = i == 0;
 
@@ -342,7 +314,7 @@ namespace GifEncoder
                 WriteGraphicCtrlExt(); // write graphic control extension
                 WriteImageDesc(); // image descriptor
 
-                LZWEncoder encoder = new LZWEncoder(width, height, indexedPixels, colorDepth);
+                var encoder = new LZWEncoder(width, height, indexedPixels, colorDepth);
                 encoder.Encode(fs);
 
                 Thread.Sleep(1);
@@ -354,9 +326,6 @@ namespace GifEncoder
 
         public void WorkerExporterCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-
-
-
             fs.WriteByte(0x3b); // gif trailer
 
             //            bytes = fs.ReadAllBytes();
@@ -372,5 +341,4 @@ namespace GifEncoder
             exportingDone = true;
         }
     }
-
 }

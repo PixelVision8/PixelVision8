@@ -79,75 +79,6 @@ namespace PixelVision8.Runner.Workspace
             }
         }
 
-        #region Move Extensions
-        
-        private static readonly int BufferSize = 65536;
-        
-        public static void Move(this IFileSystem sourceFileSystem, WorkspacePath sourcePath,
-            IFileSystem destinationFileSystem, WorkspacePath destinationPath)
-        {
-            
-            bool isFile;
-            if ((isFile = sourcePath.IsFile) != destinationPath.IsFile)
-                throw new ArgumentException(
-                    "The specified destination-path is of a different type than the source-path.");
-
-            if (isFile)
-            {
-                using (var sourceStream = sourceFileSystem.OpenFile(sourcePath, FileAccess.Read))
-                {
-                    using (var destinationStream = destinationFileSystem.CreateFile(destinationPath))
-                    {
-                        var buffer = new byte[BufferSize];
-                        int readBytes;
-                        while ((readBytes = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
-                            destinationStream.Write(buffer, 0, readBytes);
-                    }
-                }
-
-                sourceFileSystem.Delete(sourcePath);
-            }
-            else
-            {
-                destinationFileSystem.CreateDirectory(destinationPath);
-                foreach (var ep in sourceFileSystem.GetEntities(sourcePath).ToArray())
-                {
-                    var destinationEntityPath = ep.IsFile
-                        ? destinationPath.AppendFile(ep.EntityName)
-                        : destinationPath.AppendDirectory(ep.EntityName);
-                    Move(sourceFileSystem, ep, destinationFileSystem, destinationEntityPath);
-                }
-
-                if (!sourcePath.IsRoot)
-                    sourceFileSystem.Delete(sourcePath);
-            }
-//            IEntityMover mover;
-//            if (!EntityMovers.Registration.TryGetSupported(sourceFileSystem.GetType(), destinationFileSystem.GetType(),
-//                out mover))
-//                throw new ArgumentException("The specified combination of file-systems is not supported.");
-//            mover.Move(sourceFileSystem, sourcePath, destinationFileSystem, destinationPath);
-        }
-
-//        public static void MoveTo(this FileSystemEntity entity, IFileSystem destinationFileSystem,
-//            FileSystemPath destinationPath)
-//        {
-//            entity.FileSystem.Move(entity.Path, destinationFileSystem, destinationPath);
-//        }
-
-//        public static void MoveTo(this Directory source, Directory destination)
-//        {
-//            source.FileSystem.Move(source.Path, destination.FileSystem,
-//                destination.Path.AppendDirectory(source.Path.EntityName));
-//        }
-
-//        public static void MoveTo(this File source, Directory destination)
-//        {
-//            source.FileSystem.Move(source.Path, destination.FileSystem,
-//                destination.Path.AppendFile(source.Path.EntityName));
-//        }
-
-        #endregion
-
         #region Copy Extensions
 
         public static void Copy(this IFileSystem sourceFileSystem, WorkspacePath sourcePath,
@@ -183,6 +114,7 @@ namespace PixelVision8.Runner.Workspace
                     Copy(sourceFileSystem, ep, destinationFileSystem, destinationEntityPath);
                 }
             }
+
 //            IEntityCopier copier;
 //            if (!EntityCopiers.Registration.TryGetSupported(sourceFileSystem.GetType(), destinationFileSystem.GetType(),
 //                out copier))
@@ -205,6 +137,75 @@ namespace PixelVision8.Runner.Workspace
 //        public static void CopyTo(this File source, Directory destination)
 //        {
 //            source.FileSystem.Copy(source.Path, destination.FileSystem,
+//                destination.Path.AppendFile(source.Path.EntityName));
+//        }
+
+        #endregion
+
+        #region Move Extensions
+
+        private static readonly int BufferSize = 65536;
+
+        public static void Move(this IFileSystem sourceFileSystem, WorkspacePath sourcePath,
+            IFileSystem destinationFileSystem, WorkspacePath destinationPath)
+        {
+            bool isFile;
+            if ((isFile = sourcePath.IsFile) != destinationPath.IsFile)
+                throw new ArgumentException(
+                    "The specified destination-path is of a different type than the source-path.");
+
+            if (isFile)
+            {
+                using (var sourceStream = sourceFileSystem.OpenFile(sourcePath, FileAccess.Read))
+                {
+                    using (var destinationStream = destinationFileSystem.CreateFile(destinationPath))
+                    {
+                        var buffer = new byte[BufferSize];
+                        int readBytes;
+                        while ((readBytes = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
+                            destinationStream.Write(buffer, 0, readBytes);
+                    }
+                }
+
+                sourceFileSystem.Delete(sourcePath);
+            }
+            else
+            {
+                destinationFileSystem.CreateDirectory(destinationPath);
+                foreach (var ep in sourceFileSystem.GetEntities(sourcePath).ToArray())
+                {
+                    var destinationEntityPath = ep.IsFile
+                        ? destinationPath.AppendFile(ep.EntityName)
+                        : destinationPath.AppendDirectory(ep.EntityName);
+                    Move(sourceFileSystem, ep, destinationFileSystem, destinationEntityPath);
+                }
+
+                if (!sourcePath.IsRoot)
+                    sourceFileSystem.Delete(sourcePath);
+            }
+
+//            IEntityMover mover;
+//            if (!EntityMovers.Registration.TryGetSupported(sourceFileSystem.GetType(), destinationFileSystem.GetType(),
+//                out mover))
+//                throw new ArgumentException("The specified combination of file-systems is not supported.");
+//            mover.Move(sourceFileSystem, sourcePath, destinationFileSystem, destinationPath);
+        }
+
+//        public static void MoveTo(this FileSystemEntity entity, IFileSystem destinationFileSystem,
+//            FileSystemPath destinationPath)
+//        {
+//            entity.FileSystem.Move(entity.Path, destinationFileSystem, destinationPath);
+//        }
+
+//        public static void MoveTo(this Directory source, Directory destination)
+//        {
+//            source.FileSystem.Move(source.Path, destination.FileSystem,
+//                destination.Path.AppendDirectory(source.Path.EntityName));
+//        }
+
+//        public static void MoveTo(this File source, Directory destination)
+//        {
+//            source.FileSystem.Move(source.Path, destination.FileSystem,
 //                destination.Path.AppendFile(source.Path.EntityName));
 //        }
 

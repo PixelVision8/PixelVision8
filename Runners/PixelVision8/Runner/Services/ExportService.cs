@@ -52,14 +52,6 @@ namespace PixelVision8.Runner.Services
 
         public int totalSteps;
 
-        public ExportService(/*IAudioClipFactory audioClipFactory*/)
-        {
-//            this.textureFactory = textureFactory;
-//            this.colorFactory = colorFactory;
-//            this.audioClipFactory = audioClipFactory;
-//            this.flip = flip;
-        }
-
         public bool completed => currentParserID >= totalParsers;
 
         protected float percent => currentStep / (float) totalSteps;
@@ -290,7 +282,8 @@ namespace PixelVision8.Runner.Services
 
             var imageExporter = new PNGWriter();
 
-            AddExporter(new PixelDataExporter(path, pixelData, width, height, engine.colorChip.colors, imageExporter, engine.colorChip.maskColor));
+            AddExporter(new PixelDataExporter(path, pixelData, width, height, engine.colorChip.colors, imageExporter,
+                engine.colorChip.maskColor));
         }
 
         public void StartExport(bool useSteps = true)

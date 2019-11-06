@@ -59,7 +59,7 @@ namespace PixelVision8.Runner.Workspace
                 return name.Substring(startOfName, endOfName - startOfName);
             }
         }
-        
+
         public string EntityNameWithoutExtension
         {
             get

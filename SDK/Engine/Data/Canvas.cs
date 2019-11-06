@@ -89,7 +89,8 @@ namespace PixelVision8.Engine
         ///     Fast blit to the display through the draw request API
         /// </summary>
         /// <param name="drawMode"></param>
-        public void DrawPixels(int x = 0, int y = 0, DrawMode drawMode = DrawMode.TilemapCache, int scale = 1, int maskColor = -1, int maskColorID = -1)
+        public void DrawPixels(int x = 0, int y = 0, DrawMode drawMode = DrawMode.TilemapCache, int scale = 1,
+            int maskColor = -1, int maskColorID = -1)
         {
             // This only works when the canvas has a reference to the gameChip
             if (gameChip == null)
@@ -99,30 +100,29 @@ namespace PixelVision8.Engine
 //            if (scale != 1)
 //            {
 
-                var newWidth = width * scale;
-                var newHeight = height * scale;
+            var newWidth = width * scale;
+            var newHeight = height * scale;
 
-                var w = width;
-                var w2 = newWidth;
-                var texColors = GetPixels();
-                var newColors = new int[newWidth * newHeight];
-                var ratioX = (float) width / newWidth;
-                var ratioY = (float) height / newHeight;
-            
-                for (var y1 = 0; y1 < newHeight; y1++)
+            var w = width;
+            var w2 = newWidth;
+            var texColors = GetPixels();
+            var newColors = new int[newWidth * newHeight];
+            var ratioX = (float) width / newWidth;
+            var ratioY = (float) height / newHeight;
+
+            for (var y1 = 0; y1 < newHeight; y1++)
+            {
+                var thisY = (int) (ratioY * y1) * w;
+                var yw = y1 * w2;
+                for (var x1 = 0; x1 < w2; x1++)
                 {
-                    var thisY = (int) (ratioY * y1) * w;
-                    var yw = y1 * w2;
-                    for (var x1 = 0; x1 < w2; x1++)
-                    {
+                    var pixel = texColors[(int) (thisY + ratioX * x1)];
 
-                        var pixel = texColors[(int) (thisY + ratioX * x1)];
-                        
-                        newColors[yw + x1] = pixel == maskColorID ? maskColor : pixel;
-                    }
+                    newColors[yw + x1] = pixel == maskColorID ? maskColor : pixel;
                 }
+            }
 
-                gameChip.DrawPixels(newColors, x, y, newWidth, newHeight, false, false, drawMode);
+            gameChip.DrawPixels(newColors, x, y, newWidth, newHeight, false, false, drawMode);
 //            }
 //            else
 //            {
@@ -519,14 +519,13 @@ namespace PixelVision8.Engine
             var nextX = x;
             var nextY = y;
 
-            
+
             for (var i = 0; i < total; i++)
             {
+                MergePixels(nextX, nextY, spriteSize.X, spriteSize.Y,
+                    gameChip.ConvertCharacterToPixelData(text[i], font), false, false, colorOffset);
 
-                
-                MergePixels(nextX, nextY, spriteSize.X, spriteSize.Y, gameChip.ConvertCharacterToPixelData(text[i], font), false, false, colorOffset);
 
-                
 //                DrawSprite(ids[i], nextX, nextY, false, false, colorOffset);
                 nextX += spriteSize.X + spacing;
             }

@@ -23,18 +23,51 @@ namespace GifEncoder
 
         private static readonly int HSIZE = 5003; // 80% occupancy
 
-        // Number of characters so far in this 'packet'
-        private int a_count;
-
         // Define the storage for the packet accumulator
         private readonly byte[] accum = new byte[256];
+        private readonly int[] codetab = new int[HSIZE];
+
+        private readonly int hsize = HSIZE; // for dynamic table sizing
+
+        private readonly int[] htab = new int[HSIZE];
+        private readonly int imgH;
+
+        private readonly int imgW;
+        private readonly int initCodeSize;
+
+        private readonly int[] masks =
+        {
+            0x0000,
+            0x0001,
+            0x0003,
+            0x0007,
+            0x000F,
+            0x001F,
+            0x003F,
+            0x007F,
+            0x00FF,
+            0x01FF,
+            0x03FF,
+            0x07FF,
+            0x0FFF,
+            0x1FFF,
+            0x3FFF,
+            0x7FFF,
+            0xFFFF
+        };
+
+        private readonly int maxbits = BITS; // user settable max # bits/code
+        private readonly int maxmaxcode = 1 << BITS; // should NEVER generate this code
+        private readonly byte[] pixAry;
+
+        // Number of characters so far in this 'packet'
+        private int a_count;
 
         // block compression parameters -- after all codes are used up,
         // and compression rate changes, start over.
         private bool clear_flg;
 
         private int ClearCode;
-        private readonly int[] codetab = new int[HSIZE];
 
         // output
         //
@@ -71,39 +104,7 @@ namespace GifEncoder
         // questions about this implementation to ames!jaw.
 
         private int g_init_bits;
-
-        private readonly int hsize = HSIZE; // for dynamic table sizing
-
-        private readonly int[] htab = new int[HSIZE];
-
-        private readonly int imgW;
-        private readonly int imgH;
-        private readonly int initCodeSize;
-
-        private readonly int[] masks =
-        {
-            0x0000,
-            0x0001,
-            0x0003,
-            0x0007,
-            0x000F,
-            0x001F,
-            0x003F,
-            0x007F,
-            0x00FF,
-            0x01FF,
-            0x03FF,
-            0x07FF,
-            0x0FFF,
-            0x1FFF,
-            0x3FFF,
-            0x7FFF,
-            0xFFFF
-        };
-
-        private readonly int maxbits = BITS; // user settable max # bits/code
         private int maxcode; // maximum code, given n_bits
-        private readonly int maxmaxcode = 1 << BITS; // should NEVER generate this code
 
         // GIF Image compression - modified 'compress'
         //
@@ -117,7 +118,6 @@ namespace GifEncoder
         //              Joe Orost              (decvax!vax135!petsd!joe)
 
         private int n_bits; // number of bits/code
-        private readonly byte[] pixAry;
         private int remaining;
 
         //----------------------------------------------------------------------------

@@ -136,9 +136,9 @@ namespace GifEncoder
             for (var i = 0; i < PaletteSize; i++)
             {
                 var j = index[i];
-                map[k++] = (byte)network[j][0];
-                map[k++] = (byte)network[j][1];
-                map[k++] = (byte)network[j][2];
+                map[k++] = (byte) network[j][0];
+                map[k++] = (byte) network[j][1];
+                map[k++] = (byte) network[j][2];
             }
 
             return map;

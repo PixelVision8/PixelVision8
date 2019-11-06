@@ -7781,12 +7781,12 @@ namespace PixelVisionRunner.Utils
     internal class CRC32
     {
         private const int BUFFER_SIZE = 8192;
-        private uint _register = 0xFFFFFFFFU;
-        private uint[] crc32Table;
 
         // private member vars
         private readonly uint dwPolynomial;
         private readonly bool reverseBits;
+        private uint _register = 0xFFFFFFFFU;
+        private uint[] crc32Table;
 
 
         /// <summary>
@@ -8201,9 +8201,9 @@ namespace PixelVisionRunner.Utils
     {
         private static readonly long UnsetLengthLimit = -99;
         private readonly CRC32 _Crc32;
+        private readonly long _lengthLimit = -99;
 
         internal Stream _innerStream;
-        private readonly long _lengthLimit = -99;
 
         /// <summary>
         ///     The default constructor.

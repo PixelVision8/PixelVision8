@@ -65,18 +65,18 @@ namespace PixelVision8.Runner.Exporters
     {
         private readonly string endComment = "-- spritelib-end";
 
-        private readonly string startComment = "-- spritelib-start";
-
-        private int currentTile;
-
         private readonly IEngine engine;
 
         private readonly Dictionary<string, byte[]> files;
+
+        private readonly List<SpriteExportData> sprites = new List<SpriteExportData>();
+
+        private readonly string startComment = "-- spritelib-start";
+
+        private int currentTile;
         private int maxTilesPerLoop;
 
         public int spriteCount;
-
-        private readonly List<SpriteExportData> sprites = new List<SpriteExportData>();
         private int totalTiles;
 
         public SpriteBuilderExporter(string fileName, IEngine engine, Dictionary<string, byte[]> files) : base(fileName)

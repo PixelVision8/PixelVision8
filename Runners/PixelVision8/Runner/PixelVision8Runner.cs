@@ -33,8 +33,7 @@ using PixelVision8.Runner.Workspace;
 
 namespace PixelVision8.Runner
 {
-    
-    public enum ActionKeys  
+    public enum ActionKeys
     {
 //            RunKey,
         ScreenShotKey,
@@ -42,189 +41,194 @@ namespace PixelVision8.Runner
         RestartKey,
         BackKey
     }
-    
+
     /// <summary>
-    /// This is the main type for your game.
+    ///     This is the main type for your game.
     /// </summary>
     public class PixelVision8Runner : DesktopRunner
     {
-//        private MergedFileSystem osFileSystem;
-        private ScreenshotService screenshotService;
-        protected bool screenShotActive;
-        protected float screenshotTime = 0;
-        protected float screenshotDelay = .2f;
-        protected IControllerChip controllerChip;
-        protected Dictionary<string, string> nextMetaData;
-        protected RunnerMode nextMode;
-        protected string nextPathToLoad;
-        private string documentsPath;
-        public bool backKeyEnabled = true;
-        
-        public List<KeyValuePair<string, Dictionary<string, string>>> loadHistory = new List<KeyValuePair<string, Dictionary<string, string>>>();
-        
-//        public List<string> loadHistory = new List<string>();
-//        protected List<Dictionary<string, string>> metaDataHistory = new List<Dictionary<string, string>>();
-        protected string Documents => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        public string sessionID { get; protected set; }
-
-//        protected string rootPath;
-        protected bool shutdown;
-        public string systemName;
-        public string systemVersion;
-        
-        public ExportService ExportService { get; private set; }
-        
-        public readonly Dictionary<ActionKeys, Keys> actionKeys = new Dictionary<ActionKeys, Keys>()
+        public readonly Dictionary<ActionKeys, Keys> actionKeys = new Dictionary<ActionKeys, Keys>
         {
             // TODO need to add the other action keys here so they are mapped in the bios
             {ActionKeys.BackKey, Keys.Escape},
             {ActionKeys.ScreenShotKey, Keys.Alpha2},
             {ActionKeys.RecordKey, Keys.Alpha3},
-            {ActionKeys.RestartKey, Keys.Alpha4},
+            {ActionKeys.RestartKey, Keys.Alpha4}
         };
-        
+
+        private readonly List<AnimatedGifEncoder> gifEncoders = new List<AnimatedGifEncoder>();
+
+        private readonly WorkspacePath tmpGifPath =
+            WorkspacePath.Root.AppendDirectory("Tmp").AppendFile("tmp-recording.gif");
+
+        public bool autoRunEnabled = true;
+        public bool backKeyEnabled = true;
+        protected IControllerChip controllerChip;
+        private string documentsPath;
+        private bool ejectingDisk;
+
+        protected AnimatedGifEncoder gifEncoder;
+
+        public List<KeyValuePair<string, Dictionary<string, string>>> loadHistory =
+            new List<KeyValuePair<string, Dictionary<string, string>>>();
+
+        protected Dictionary<string, string> nextMetaData;
+        protected RunnerMode nextMode;
+        protected string nextPathToLoad;
+        protected bool screenShotActive;
+
+        protected float screenshotDelay = .2f;
+
+//        private MergedFileSystem osFileSystem;
+        private ScreenshotService screenshotService;
+        protected float screenshotTime;
+
+//        protected string rootPath;
+        protected bool shutdown;
+        public string systemName;
+        public string systemVersion;
+
+        private string windowTitle;
+
+        protected WorkspaceServicePlus workspaceServicePlus;
+
         // Default path to where PV8 workspaces will go
         public PixelVision8Runner(string rootPath) : base(rootPath)
         {
         }
 
-        private string windowTitle;
-        
+//        public List<string> loadHistory = new List<string>();
+//        protected List<Dictionary<string, string>> metaDataHistory = new List<Dictionary<string, string>>();
+        protected string Documents => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        public string sessionID { get; protected set; }
+
+        public ExportService ExportService { get; private set; }
+        public bool recording { get; set; }
+
         protected override void ConfigureRunner()
         {
             base.ConfigureRunner();
-            
+
             // Save the session ID
             sessionID = DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
             systemVersion = bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
             systemName = bios.ReadBiosData("SystemName", "PixelVision8");
-            
+
             screenshotService = new ScreenshotService(workspaceServicePlus);
             ExportService = new ExportService(); //TODO Need to create a new AudioClipAdaptor
 
             autoShutdown = bios.ReadBiosData("AutoShutdown", "True") == "True";
 
             RefreshActionKeys();
-            
+
             // Replace title with version
-            
-            windowTitle = bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner") + " " + 
+
+            windowTitle = bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner") + " " +
                           bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
 
             // Offset the title by 2 for the record icon
             Window.Title = windowTitle;
-
-
         }
 
         public void RefreshActionKeys()
         {
             var actions = Enum.GetValues(typeof(ActionKeys)).Cast<ActionKeys>();
             foreach (var action in actions)
-            {
-                actionKeys[action] = (Keys)Convert.ToInt32(bios.ReadBiosData(action.ToString(), ((int)actionKeys[action]).ToString(), true));
-            }
+                actionKeys[action] =
+                    (Keys) Convert.ToInt32(bios.ReadBiosData(action.ToString(), ((int) actionKeys[action]).ToString(),
+                        true));
         }
 
-        protected WorkspaceServicePlus workspaceServicePlus;
-        
         protected override void CreateWorkspaceService()
         {
             workspaceServicePlus = new WorkspaceServicePlus(
                 new KeyValuePair<WorkspacePath, IFileSystem>(
                     WorkspacePath.Root.AppendDirectory("App"),
                     new PhysicalFileSystem(rootPath)
-                    )
-                );
+                )
+            );
 
             // Pass the new service back to the base class    
             workspaceService = workspaceServicePlus;
-            
-            serviceManager.AddService(typeof(WorkspaceService).FullName, workspaceService);
 
+            serviceManager.AddService(typeof(WorkspaceService).FullName, workspaceService);
         }
 
         protected override void ConfigureWorkspace()
         {
-
             // Call the base ConfigureWorkspace method to configure the workspace correctly
             base.ConfigureWorkspace();
-            
+
             // Everything below is custom to PV8
-            
+
             // Define PV8 disk extensions from the bios
             workspaceServicePlus.archiveExtensions =
-                ((string) bios.ReadBiosData("ArchiveExtensions", "zip,pv8,pvt,pvs,pva,pvr")).Split(',')
-                .ToList();
-            
+                bios.ReadBiosData("ArchiveExtensions", "zip,pv8,pvt,pvs,pva,pvr").Split(',')
+                    .ToList();
+
             //  Define the valid file extensions from the bios
             workspaceServicePlus.fileExtensions =
-                ((string) bios.ReadBiosData("FileExtensions", "png,lua,json,txt,wav")).Split(',')
-                .ToList();
+                bios.ReadBiosData("FileExtensions", "png,lua,json,txt,wav").Split(',')
+                    .ToList();
 
             // Define the files required to make a game valid from the bios
             workspaceServicePlus.requiredFiles =
-                ((string) bios.ReadBiosData("RequiredFiles", "data.json,info.json")).Split(',')
-                .ToList();
+                bios.ReadBiosData("RequiredFiles", "data.json,info.json").Split(',')
+                    .ToList();
 
             // Include any library files in the OS mount point
             workspaceServicePlus.osLibPath = WorkspacePath.Root.AppendDirectory("PixelVisionOS")
                 .AppendDirectory(bios.ReadBiosData("LibsDir", "Libs"));
 
-            
+
             // Look for the workspace name
             var workspaceName = bios.ReadBiosData("WorkspaceDir", "Workspace");
 
             // PV8 Needs to access the documents folder so it can create the workspace drive
-            var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8") as string;
+            var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8");
 
             // Set the TotalDisks disks
-            workspaceServicePlus.MaxDisks = Int32.Parse(bios.ReadBiosData("MaxDisks", "2"));
+            workspaceServicePlus.MaxDisks = int.Parse(bios.ReadBiosData("MaxDisks", "2"));
 
             // Create the real system path to the documents folder
             documentsPath = Path.Combine(Documents, baseDir);
 
-            if (Directory.Exists(documentsPath) == false)
-            {
-                Directory.CreateDirectory(documentsPath);
-            }
-        
+            if (Directory.Exists(documentsPath) == false) Directory.CreateDirectory(documentsPath);
+
             // Create a new physical file system mount
             workspaceServicePlus.AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(
                 WorkspacePath.Root.AppendDirectory("User"),
                 new PhysicalFileSystem(documentsPath)));
-            
+
             // Mount the workspace drive    
             workspaceServicePlus.MountWorkspace(workspaceName);
-            
+
 //            else
 //            {
-                workspaceServicePlus.RebuildWorkspace();
+            workspaceServicePlus.RebuildWorkspace();
 //            }
-
         }
-        
+
         protected override void LoadDefaultGame()
         {
             // Boot the game
-            Load((string) bios.ReadBiosData("BootTool", "/PixelVisionOS/Tools/BootTool/"), RunnerMode.Booting);
-
+            Load(bios.ReadBiosData("BootTool", "/PixelVisionOS/Tools/BootTool/"), RunnerMode.Booting);
         }
 
         public override void ActivateEngine(IEngine engine)
         {
             // At this point this game is fully configured so all chips are accessible for extra configuring
-            
+
             // Save a reference to the controller chip so we can listen for special key events
             controllerChip = engine.controllerChip;
-            
+
             // Get a reference to the Lua game
             var game = engine.gameChip as LuaGameChip;
 
             // Get the script
             var luaScript = game.luaScript;
-            
+
             // Inject the PV8 runner special global functions
             luaScript.Globals["StartNextPreload"] = new Action(StartNextPreload);
             luaScript.Globals["PreloaderComplete"] = new Action(RunGame);
@@ -232,18 +236,20 @@ namespace PixelVision8.Runner
             luaScript.Globals["ReadExportPercent"] = new Func<int>(ExportService.ReadExportPercent);
             luaScript.Globals["ReadExportMessage"] = new Func<string>(ExportService.ReadExportMessage);
             luaScript.Globals["EnableCRT"] = (EnableCRTDelegator) EnableCRT;
-            luaScript.Globals["Brightness"] = (BrightnessDelegator)Brightness;
-            luaScript.Globals["Sharpness"] = (SharpnessDelegator)Sharpness;
+            luaScript.Globals["Brightness"] = (BrightnessDelegator) Brightness;
+            luaScript.Globals["Sharpness"] = (SharpnessDelegator) Sharpness;
             luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
             luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int) (loadService.percent * 100));
             luaScript.Globals["ShutdownSystem"] = new Action(ShutdownSystem);
             luaScript.Globals["QuitCurrentTool"] = (QuitCurrentToolDelagator) QuitCurrentTool;
-            luaScript.Globals["LoadGame"] = new Func<string, Dictionary<string, string>, bool>((path, metadata) => Load(path, RunnerMode.Loading, metadata));
+            luaScript.Globals["LoadGame"] =
+                new Func<string, Dictionary<string, string>, bool>((path, metadata) =>
+                    Load(path, RunnerMode.Loading, metadata));
             luaScript.Globals["RefreshActionKeys"] = new Action(RefreshActionKeys);
-            
+
             luaScript.Globals["DocumentPath"] = new Func<string>(() => documentsPath);
             luaScript.Globals["TmpPath"] = new Func<string>(() => tmpPath);
-            
+
             luaScript.Globals["SystemVersion"] = new Func<string>(() => systemVersion);
             luaScript.Globals["SystemName"] = new Func<string>(() => systemName);
             luaScript.Globals["SessionID"] = new Func<string>(() => sessionID);
@@ -256,19 +262,18 @@ namespace PixelVision8.Runner
                 foreach (var disk in disks) workspaceServicePlus.SaveDisk(disk);
             });
             luaScript.Globals["EjectDisk"] = new Action<string>(EjectDisk);
-            
+
             luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
             luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
             luaScript.Globals["RebuildWorkspace"] = new Action(workspaceServicePlus.RebuildWorkspace);
-            luaScript.Globals["MountDisk"] = new Action<WorkspacePath>((path) =>
+            luaScript.Globals["MountDisk"] = new Action<WorkspacePath>(path =>
             {
                 var segments = path.GetDirectorySegments();
 
                 var systemPath = Path.PathSeparator.ToString();
-                
+
                 if (segments[0] == "Disk")
                 {
-                    
                 }
                 else if (segments[0] == "Workspace")
                 {
@@ -276,24 +281,19 @@ namespace PixelVision8.Runner
                     systemPath = Path.Combine(documentsPath, segments[0]);
                 }
 
-                for (int i = 1; i < segments.Length; i++)
-                {
-                    systemPath = Path.Combine(systemPath, segments[i]);
-                }
+                for (var i = 1; i < segments.Length; i++) systemPath = Path.Combine(systemPath, segments[i]);
 
                 systemPath = Path.Combine(systemPath,
                     path.IsDirectory ? Path.PathSeparator.ToString() : path.EntityName);
 
-    
+
 //                Console.WriteLine("Mount Disk From " + systemPath);
 
                 MountDisk(systemPath);
-                
             });
-            
+
             // Activate the game
             base.ActivateEngine(engine);
-            
         }
 
         public void EjectDisk(string path)
@@ -308,7 +308,7 @@ namespace PixelVision8.Runner
 
             ejectingDisk = false;
         }
-        
+
         public void EnableAutoRun(bool value)
         {
             autoRunEnabled = value;
@@ -318,11 +318,6 @@ namespace PixelVision8.Runner
         {
             backKeyEnabled = value;
         }
-        
-        private delegate bool EnableCRTDelegator(bool? toggle);
-        private delegate float BrightnessDelegator(float? brightness = null);
-        private delegate float SharpnessDelegator(float? sharpness = null);
-        private delegate void QuitCurrentToolDelagator(Dictionary<string, string> metaData, string tool = null);
 
 
         /// <summary>
@@ -339,23 +334,19 @@ namespace PixelVision8.Runner
         public void QuitCurrentTool(Dictionary<string, string> metaData, string tool = null)
         {
             // When quitting, we should modify the history by removing the current game and if a new game is provided, add that to the history
-            
+
             if (tool != null)
                 // TODO need to remove the previous game from the history
                 Load(tool, RunnerMode.Loading, metaData);
             else
-            {
                 Back(metaData);
-            }
-                
         }
 
         protected override void Update(GameTime gameTime)
         {
-            
-            if (activeEngine == null || shutdown == true)
+            if (activeEngine == null || shutdown)
                 return;
-            
+
             // TODO make sure this order is correct or maybe it can be cleaned up
             if (screenShotActive)
             {
@@ -370,24 +361,20 @@ namespace PixelVision8.Runner
 
             // Save any gifs that have been encoded
             if (gifEncoders.Count > 0)
-            {
-
-                for (int i = gifEncoders.Count - 1; i >= 0; i--)
+                for (var i = gifEncoders.Count - 1; i >= 0; i--)
                 {
                     var encoder = gifEncoders[i];
-                    
+
                     // Do processing here, then...
                     if (encoder.exportingDone)
                     {
-                        
                         // Get the gif directory
-                        var gifDirectory = WorkspacePath.Root.AppendDirectory("Workspace").AppendDirectory("Recordings");
+                        var gifDirectory = WorkspacePath.Root.AppendDirectory("Workspace")
+                            .AppendDirectory("Recordings");
 
                         // Create the directory if it doesn't exist
                         if (!workspaceService.Exists(gifDirectory))
-                        {
                             workspaceServicePlus.CreateDirectoryRecursive(gifDirectory);
-                        }
 
                         // Get the path to the new file
                         var path = workspaceService.UniqueFilePath(gifDirectory.AppendFile("recording.gif"));
@@ -397,72 +384,56 @@ namespace PixelVision8.Runner
 
                         // Get the memory stream from the gif encoder
                         var memoryStream = encoder.fs;
-                        
+
                         memoryStream.Position = 0;
                         memoryStream.CopyTo(fileStream);
-                        
+
                         // Close the file stream
                         fileStream.Close();
                         fileStream.Dispose();
-                        
+
                         // Close the memory stream
                         memoryStream.Close();
                         memoryStream.Dispose();
-                        
+
                         // Remove the encoder
                         gifEncoders.RemoveAt(i);
                     }
                 }
 
-            }
-
             if (controllerChip.GetKeyDown(Keys.LeftControl) ||
                 controllerChip.GetKeyDown(Keys.LeftControl))
             {
+                if (controllerChip.GetKeyUp(actionKeys[ActionKeys.ScreenShotKey]))
+                {
+                    // Only take a screenshot when one isn't being saved
+                    if (!screenShotActive)
+                        //                            Console.WriteLine("Take Picture");
 
-                    if (controllerChip.GetKeyUp(actionKeys[ActionKeys.ScreenShotKey]))
-                    {
+                        screenShotActive = screenshotService.TakeScreenshot(activeEngine);
+                }
+                else if (controllerChip.GetKeyUp(actionKeys[ActionKeys.RecordKey]))
+                {
+                    if (recording)
+                        StopRecording();
+                    else
+                        StartRecording();
 
-                        // Only take a screenshot when one isn't being saved
-                        if (!screenShotActive)
-                        {
-//                            Console.WriteLine("Take Picture");
-
-                            screenShotActive = screenshotService.TakeScreenshot(activeEngine);
-
-                        }
-
-                    }else if (controllerChip.GetKeyUp(actionKeys[ActionKeys.RecordKey]))
-                    {
-                        if (recording)
-                        {
-                            StopRecording();
-                        }
-                        else
-                        {
-                            StartRecording();
-                        }
-                        
 //                        Console.WriteLine(recording);
-                        
-//                        Console.WriteLine("Toggle Recoding");
-                    }else if (controllerChip.GetKeyUp(actionKeys[ActionKeys.RestartKey]))
-                    {
-                        if (controllerChip.GetKeyDown(Keys.LeftShift) || controllerChip.GetKeyDown(Keys.RightShift))
-                        {
-                            AutoLoadDefaultGame();
-                        }
-                        else
-                        {
-                            
-                            ResetGame();
 
-                    }
+//                        Console.WriteLine("Toggle Recoding");
+                }
+                else if (controllerChip.GetKeyUp(actionKeys[ActionKeys.RestartKey]))
+                {
+                    if (controllerChip.GetKeyDown(Keys.LeftShift) || controllerChip.GetKeyDown(Keys.RightShift))
+                        AutoLoadDefaultGame();
+                    else
+                        ResetGame();
 
                     //                        Console.WriteLine("Reset Game");
-
                 }
-            }else if (controllerChip.GetKeyUp(Keys.Escape) && backKeyEnabled)
+            }
+            else if (controllerChip.GetKeyUp(Keys.Escape) && backKeyEnabled)
             {
 //                if (mode == RunnerMode.Booting)
 //                {
@@ -470,7 +441,7 @@ namespace PixelVision8.Runner
 //                }
 //                else
 //                {
-                    Back();
+                Back();
 //                }
             }
             else
@@ -493,9 +464,7 @@ namespace PixelVision8.Runner
             // Capture Script errors
             try
             {
-
                 base.Update(gameTime);
-
             }
             catch (Exception e)
             {
@@ -503,17 +472,17 @@ namespace PixelVision8.Runner
 
 
                 DisplayError(ErrorCode.Exception,
-                    new Dictionary<string, string> { { "@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message } },
+                    new Dictionary<string, string>
+                        {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message}},
                     e);
             }
-            
         }
 
         protected override void Draw(GameTime gameTime)
         {
 //            if (activeEngine == null)
 //                return;
-            
+
             try
             {
                 // If we are taking a screenshot, clear with white and don't draw the runner.
@@ -525,30 +494,19 @@ namespace PixelVision8.Runner
                 {
                     base.Draw(gameTime);
 
-                    if (recording)
-                    {
-
-                        gifEncoder.AddFrame(activeEngine.displayChip);
-                        
-                    }
-                        
+                    if (recording) gifEncoder.AddFrame(activeEngine.displayChip);
                 }
-
             }
             catch (Exception e)
             {
                 DisplayError(ErrorCode.Exception,
-                    new Dictionary<string, string> { { "@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message } }, e);
+                    new Dictionary<string, string>
+                        {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message}}, e);
             }
-            
-            
         }
-
-        public bool autoRunEnabled = true;
 
         public void BootDone(bool safeMode = false)
         {
-
             // Only call BootDone when the runner is booting.
             if (mode != RunnerMode.Booting)
                 return;
@@ -556,7 +514,6 @@ namespace PixelVision8.Runner
             // Test to see if we are in save mode before loading the bios
             if (safeMode)
             {
-
                 // Clear the current bios
                 bios.Clear();
 
@@ -575,43 +532,37 @@ namespace PixelVision8.Runner
             {
                 // Setup Drag and drop support
                 Window.FileDropped += (o, e) => OnFileDropped(o, e);
-            
+
                 // Disable auto run when loading up the default disks
                 autoRunEnabled = false;
-                 
-                for (int i = 0; i < workspaceServicePlus.MaxDisks; i++)
+
+                for (var i = 0; i < workspaceServicePlus.MaxDisks; i++)
                 {
-                    var diskPath =  bios.ReadBiosData("Disk" + i, "none");
+                    var diskPath = bios.ReadBiosData("Disk" + i, "none");
                     if (diskPath != "none" && diskPath != "")
-                    {
                         // manually mount each disk since we are not going to load from them
                         workspaceServicePlus.MountDisk(diskPath);
-                    }
                 }
             }
 
             AutoLoadDefaultGame();
-
         }
-        
+
         public void AutoLoadDefaultGame()
         {
-
             loadHistory.Clear();
 //            metaDataHistory.Clear();
-            
+
             // Enable auto run by default
             autoRunEnabled = true;
-            
+
             // Look to see if we have the bios default tool in the OS folder
             try
             {
-                var biosAutoRun = bios.ReadBiosData("AutoRun", "");
-                
+                var biosAutoRun = bios.ReadBiosData("AutoRun");
+
                 // Check to see if this path exists
                 if (biosAutoRun != "" && workspaceServicePlus.Exists(WorkspacePath.Parse(biosAutoRun)))
-                {
-
                     // Validate that the path is actually a game
                     if (workspaceServicePlus.ValidateGameInDir(WorkspacePath.Parse(biosAutoRun)))
                     {
@@ -619,9 +570,6 @@ namespace PixelVision8.Runner
                         Load(biosAutoRun, RunnerMode.Loading);
                         return;
                     }
-                    
-                }
-                
             }
             catch
             {
@@ -643,9 +591,8 @@ namespace PixelVision8.Runner
             }
 
             DisplayError(ErrorCode.NoAutoRun);
-            
         }
-        
+
         public void MountDisk(string path)
         {
 //            Console.WriteLine("Load File - " + path + " Auto Run " + autoRunEnabled);
@@ -658,7 +605,7 @@ namespace PixelVision8.Runner
                 {
                     // If we are running this disk clear the previous history
                     loadHistory.Clear();
-                    
+
                     // Run the disk
                     AutoRunGameFromDisk(diskName);
                 }
@@ -670,43 +617,37 @@ namespace PixelVision8.Runner
                     var metaData = lastGameRef.Value;
 
                     if (metaData.ContainsKey("showDiskAnimation"))
-                    {
                         metaData["showDiskAnimation"] = "true";
-                    }
                     else
-                    {
                         metaData.Add("showDiskAnimation", "true");
-                    }
 
                     // TODO sometimes we don't wan to do this
                     ResetGame();
                 }
-                
             }
             catch
             {
 //                autoRunEnabled = true;
                 // TODO need to make sure we show a better error to explain why the disk couldn't load
-                 DisplayError(ErrorCode.NoAutoRun);
+                DisplayError(ErrorCode.NoAutoRun);
             }
 
             // Only update the bios when we need  to
 //            if (updateBios) UpdateDiskInBios();
         }
-        
+
         public void AutoRunGameFromDisk(string diskName)
         {
             var diskPath = workspaceServicePlus.AutoRunGameFromDisk(diskName);
 
-            if(diskPath != null)
+            if (diskPath != null)
             {
-
                 // Create new meta data for the game. We wan to display the disk insert animation.
                 var metaData = new Dictionary<string, string>
                 {
                     {"showDiskAnimation", "true"}
                 };
-                
+
                 // Load the disk path and play the game
                 Load(diskPath, RunnerMode.Loading, metaData);
             }
@@ -716,7 +657,7 @@ namespace PixelVision8.Runner
                 DisplayError(ErrorCode.NoAutoRun);
             }
         }
-        
+
         public override void ShutdownActiveEngine()
         {
             // Look to see if there is an active engine
@@ -726,17 +667,16 @@ namespace PixelVision8.Runner
             try
             {
                 base.ShutdownActiveEngine();
-                
+
                 // Save the active disk
                 workspaceServicePlus.SaveActiveDisk();
-
             }
             catch (Exception e)
             {
                 DisplayError(ErrorCode.Exception,
-                    new Dictionary<string, string> { { "@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message } }, e);
+                    new Dictionary<string, string>
+                        {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message}}, e);
             }
-
         }
 
 
@@ -747,22 +687,18 @@ namespace PixelVision8.Runner
 
             // Re-enable back when loading a new game
             backKeyEnabled = true;
-            
+
             base.RunGame();
         }
 
-        public bool Load(string path, RunnerMode newMode = RunnerMode.Playing, Dictionary<string, string> metaData = null)
+        public bool Load(string path, RunnerMode newMode = RunnerMode.Playing,
+            Dictionary<string, string> metaData = null)
         {
-
             // Make sure we stop recording when loading a new game
-            if (recording)
-            {
-                StopRecording();
-            }
-            
+            if (recording) StopRecording();
+
             try
             {
-                
                 if (newMode == RunnerMode.Loading)
                 {
                     nextPathToLoad = path;
@@ -782,61 +718,55 @@ namespace PixelVision8.Runner
 
                     // Look to see if the game's meta data changes the disk animation flag
                     if (nextMetaData != null && nextMetaData.ContainsKey("showDiskAnimation"))
-                    {
                         metaData["showDiskAnimation"] = nextMetaData["showDiskAnimation"];
-                    }
-                        
+
 
                     // Tell the loader to show eject animation
-                    if(metaData.ContainsKey("showEjectAnimation"))
-                    {
+                    if (metaData.ContainsKey("showEjectAnimation"))
                         metaData["showEjectAnimation"] = ejectingDisk.ToString().ToLower();
-                    }
                     else
-                    {
                         metaData.Add("showEjectAnimation", ejectingDisk.ToString().ToLower());
-                    }
 
                     // Get the default path to the load tool from the bios
-                    path =  bios.ReadBiosData("LoadTool", "/PixelVisionOS/Tools/LoadTool/");
+                    path = bios.ReadBiosData("LoadTool", "/PixelVisionOS/Tools/LoadTool/");
 
                     // Change the mode to loading
                     newMode = RunnerMode.Loading;
                 }
-                
+
                 // Create a new meta data dictionary if one doesn't exist yet
                 if (metaData == null) metaData = new Dictionary<string, string>();
-    
+
                 // Spit path and convert to a list
                 var splitPath = path.Split('/').ToList();
                 var gameName = "";
                 var rootPath = "/";
                 var total = splitPath.Count - 1;
-    
+
                 // Loop through each item in the path and get the game name and root path
                 for (var i = 1; i < total; i++)
                     if (i < total - 1)
                         rootPath += splitPath[i] + "/";
                     else
                         gameName = splitPath[i];
-    
-    //            Console.WriteLine("Load "+ gameName + " in " + rootPath);
-    
+
+                //            Console.WriteLine("Load "+ gameName + " in " + rootPath);
+
                 // Add the game's name and root path to the meta data
                 if (metaData.ContainsKey("GameName"))
                     metaData["GameName"] = gameName;
                 else
                     metaData.Add("GameName", gameName);
-    
+
                 // Change the root path for the game's meta data
                 if (metaData.ContainsKey("RootPath"))
                     metaData["RootPath"] = rootPath;
                 else
                     metaData.Add("RootPath", rootPath);
-    
+
                 // Update the runner mode
                 mode = newMode;
-    
+
                 // When playing a game, save it to history and the meta data so it can be reloaded correctly
                 if (mode == RunnerMode.Playing)
                 {
@@ -849,33 +779,27 @@ namespace PixelVision8.Runner
                     {
 //                        Console.WriteLine("History " + loadHistory.Last().Key + " " + path);
                         // Only add the history if the last item is not the same
-                        if(loadHistory.Last().Key != path)
+                        if (loadHistory.Last().Key != path)
                             loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaDataCopy));
                     }
                     else
                     {
                         loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaDataCopy));
                     }
-
-                    
-
-
-
                 }
-    
+
                 // Create a new tmpEngine
                 ConfigureEngine(metaData);
-    
-                
-                
+
+
                 // Path the full path to the engine's name
                 tmpEngine.name = path;
-    
+
                 bool success;
-    
+
                 // Have the workspace run the game from the current path
                 var files = workspaceServicePlus.LoadGame(path);
-    
+
                 if (files != null)
                 {
                     // Read and Run the disk
@@ -898,7 +822,6 @@ namespace PixelVision8.Runner
                 //            if (success == false) 
 
 
-
                 // Create new FileSystemPath
                 return success;
 //                return base.Load(path, newMode, metaData);
@@ -909,14 +832,14 @@ namespace PixelVision8.Runner
 
 
                 DisplayError(ErrorCode.Exception,
-                    new Dictionary<string, string> { { "@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message } }, e);
+                    new Dictionary<string, string>
+                        {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message}}, e);
             }
 
 
             return false;
-
         }
-    
+
         public virtual void StartNextPreload()
         {
 //            Print("Start Next Preload");
@@ -939,48 +862,44 @@ namespace PixelVision8.Runner
 
                     loadService.StartLoading();
                 }
-            }    
+            }
         }
-        
+
         public override void SaveGameData(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
         {
-            
             // Export the current game
-            
+
             // TODO exporter needs a callback when its completed
             ExportService.ExportGame(path, engine, saveFlags);
-            
+
             // TODO this should be moved into the ExportGame class
             ExportService.StartExport(useSteps);
-
         }
 
         public override void ConfigureServices()
         {
-
             base.ConfigureServices();
-            
+
             var luaService = new LuaServicePlus(this);
-            
+
             // Register Lua Service
             tmpEngine.AddService(typeof(LuaService).FullName, luaService);
-            
-            tmpEngine.AddService(typeof(ExportService).FullName, ExportService);
 
+            tmpEngine.AddService(typeof(ExportService).FullName, ExportService);
         }
-        
+
         public void OnFileDropped(object gameWindow, string path)
         {
-            if(shutdown == false)
+            if (shutdown == false)
                 MountDisk(path);
 
 //            UpdateDiskInBios();
-            
+
             // TODO need to make sure this is the right time to do this
-            
+
 //            ResetGame();
         }
-        
+
         public override void ResetGame()
         {
             // Make sure we don't reload when booting or loading
@@ -991,35 +910,26 @@ namespace PixelVision8.Runner
             // Load the last game from the history
 
             var lastGameRef = loadHistory.Last();
-            
+
             var lastURI = WorkspacePath.Parse(lastGameRef.Key);
 
             var metaData = lastGameRef.Value;
 
             // Merge values from the active game
-            foreach (KeyValuePair<string, string> entry in activeEngine.metaData)
-            {
+            foreach (var entry in activeEngine.metaData)
                 if (metaData.ContainsKey(entry.Key))
-                {
                     metaData[entry.Key] = entry.Value;
-                }
                 else
-                {
                     metaData.Add(entry.Key, entry.Value);
-                }
-            }
 
             // Clear the load history if it is loading the first item
-                if (loadHistory.Count == 1)
-            {
+            if (loadHistory.Count == 1)
                 // This insures you can't quit the first game that is loaded.
                 loadHistory.Clear();
-            }
-            
+
             // Make sure this is still a valid path before we try to load it
             if (workspaceService.Exists(lastURI) && workspaceService.ValidateGameInDir(lastURI))
             {
-            
                 if (metaData != null)
                 {
                     if (metaData.ContainsKey("reset"))
@@ -1027,7 +937,7 @@ namespace PixelVision8.Runner
                     else
                         metaData.Add("reset", "true");
                 }
-    
+
                 // Reload the game
                 Load(lastURI.Path, RunnerMode.Loading, metaData);
 
@@ -1041,11 +951,10 @@ namespace PixelVision8.Runner
 
                 return;
             }
-            
-            DisplayError(ErrorCode.LoadError, new Dictionary<string, string>(){{"@{path}", lastURI.Path}});
-            
+
+            DisplayError(ErrorCode.LoadError, new Dictionary<string, string> {{"@{path}", lastURI.Path}});
         }
-        
+
         public virtual void Back(Dictionary<string, string> metaData = null)
         {
 //            if (backKeyEnabled == false)
@@ -1054,44 +963,29 @@ namespace PixelVision8.Runner
 //                return;
 
             if (loadHistory.Count > 0)
-            {
-
                 try
                 {
                     // Remvoe the last game that was running from the history
                     loadHistory.RemoveAt(loadHistory.Count - 1);
-                
+
                     // Get the previous game
                     var lastGameRef = loadHistory.Last();
-                    
+
                     // Copy the new meta data over to the last game ref before passing in
                     if (metaData != null)
-                    {
-                        foreach (string key in metaData.Keys)
-                        {
+                        foreach (var key in metaData.Keys)
                             if (lastGameRef.Value.ContainsKey(key))
-                            {
                                 lastGameRef.Value[key] = metaData[key];
-                            }
                             else
-                            {
-                                lastGameRef.Value.Add(key, metaData[key]);    
-                            }
-                            
-                        }
-
-                        
-                    }
+                                lastGameRef.Value.Add(key, metaData[key]);
 
                     // Clear the disk animation
                     if (lastGameRef.Value.ContainsKey("showDiskAnimation"))
-                    {
                         lastGameRef.Value["showDiskAnimation"] = "false";
-                    }
 
                     // Remove that game from history since we are about to load it
                     loadHistory.RemoveAt(loadHistory.Count - 1);
-                
+
                     // Load the last game
                     Load(lastGameRef.Key, RunnerMode.Loading, lastGameRef.Value);
 
@@ -1101,15 +995,13 @@ namespace PixelVision8.Runner
                 {
                     // ignored
                 }
-            }
-            
+
             // Make sure all disks are ejected
             workspaceServicePlus.EjectAll();
 
             AutoLoadDefaultGame();
-            
         }
-        
+
         public override void ShutdownSystem()
         {
             // We only want to call this once so don't run if shutdown is true
@@ -1120,35 +1012,28 @@ namespace PixelVision8.Runner
             shutdown = true;
 
             UpdateDiskInBios();
-            
-            base.ShutdownSystem();
 
+            base.ShutdownSystem();
         }
 
         public void UpdateDiskInBios()
         {
-
             var total = workspaceServicePlus.MaxDisks;
 
             var disks = workspaceServicePlus.Disks;
             var totalDisks = disks.Length;
 
             for (var i = 0; i < total; i++)
-            {
-
-                bios.UpdateBiosData("Disk" + i, (i < totalDisks) ? workspaceServicePlus.DiskPhysicalRoot(disks[i]) : "none");
-
-            }
-
+                bios.UpdateBiosData("Disk" + i,
+                    i < totalDisks ? workspaceServicePlus.DiskPhysicalRoot(disks[i]) : "none");
         }
-        
+
         public virtual void DisplayError(ErrorCode code, Dictionary<string, string> tokens = null,
             Exception exception = null)
         {
-
             if (mode == RunnerMode.Error)
                 return;
-            
+
             // TODO should this only work on special cases?
             autoRunEnabled = true;
 
@@ -1177,79 +1062,66 @@ namespace PixelVision8.Runner
             LoadError(metaData);
         }
 
-        
 
         protected string GetErrorMessage(ErrorCode code)
         {
-            return  bios.ReadBiosData(code.ToString(), "Error code " + (int) code);
+            return bios.ReadBiosData(code.ToString(), "Error code " + (int) code);
         }
 
         protected virtual void LoadError(Dictionary<string, string> metaData)
         {
-            var tool =  bios.ReadBiosData("ErrorTool", "/PixelVisionOS/Tools/ErrorTool/");
+            var tool = bios.ReadBiosData("ErrorTool", "/PixelVisionOS/Tools/ErrorTool/");
 
             workspaceServicePlus.UpdateLog(metaData["errorMessage"], LogType.Error,
                 metaData.ContainsKey("exceptionMessage") ? metaData["exceptionMessage"] : null);
 
             Load(tool, RunnerMode.Error, metaData);
         }
-        
-        protected AnimatedGifEncoder gifEncoder;
-        private readonly WorkspacePath tmpGifPath = WorkspacePath.Root.AppendDirectory("Tmp").AppendFile("tmp-recording.gif");
-        public bool recording { get; set; }
 
 
         public void StartRecording()
         {
-
             if (!recording)
             {
-
                 recording = true;
 
-                if (workspaceService.Exists(tmpGifPath))
-                {
-                    workspaceServicePlus.Delete(tmpGifPath);
-                }
+                if (workspaceService.Exists(tmpGifPath)) workspaceServicePlus.Delete(tmpGifPath);
 
                 gifEncoder = new AnimatedGifEncoder();
                 gifEncoder.SetDelay(1000 / 60);
 
                 gifEncoder.CreatePalette(activeEngine.displayChip, activeEngine.colorChip);
-                
+
                 Window.Title = windowTitle + " (REC)";
-
             }
-
         }
-        
-        private readonly List<AnimatedGifEncoder> gifEncoders = new List<AnimatedGifEncoder>();
-        private bool ejectingDisk;
 
         public void StopRecording()
         {
             if (!recording || gifEncoder == null)
                 return;
-            
+
 //            recordIcon = false;
             //Debug.Log("Stop Recording");
             recording = false;
             gifEncoder.Finish();
-            
+
             // Add the encoder to the list to watch for exporting
             gifEncoders.Add(gifEncoder);
 
             // Clear the current encoder
             gifEncoder = null;
-            
+
             // Change the title
             Window.Title = windowTitle;
-
-            
         }
 
-        
-        
+        private delegate bool EnableCRTDelegator(bool? toggle);
+
+        private delegate float BrightnessDelegator(float? brightness = null);
+
+        private delegate float SharpnessDelegator(float? sharpness = null);
+
+        private delegate void QuitCurrentToolDelagator(Dictionary<string, string> metaData, string tool = null);
     }
-    
 }

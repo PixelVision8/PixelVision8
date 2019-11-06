@@ -83,7 +83,6 @@ namespace PixelVision8.Engine
         /// <returns></returns>
         public virtual int GetPixel(int x, int y)
         {
-            
             // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
             var size = _height;
             y = (y % size + size) % size;
@@ -102,7 +101,6 @@ namespace PixelVision8.Engine
         /// <param name="color"></param>
         public virtual void SetPixel(int x, int y, int color)
         {
-
             // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
             var size = _height;
             y = (y % size + size) % size;
@@ -129,18 +127,18 @@ namespace PixelVision8.Engine
 
             return tmpPixels;
         }
-        
+
         public virtual int[] GetPixels(int x, int y, int blockWidth, int blockHeight)
         {
             tmpPixels = new int[blockWidth * blockHeight];
-            
+
             CopyPixels(ref tmpPixels, x, y, blockWidth, blockHeight);
-            
+
 //            Array.Copy(pixels, tmpPixels, pixels.Length);
 
             return tmpPixels;
         }
-        
+
 
         /// <summary>
         ///     This replaces all the pixels in the TextureData with the supplied
@@ -213,7 +211,8 @@ namespace PixelVision8.Engine
         public virtual void Resize(int width, int height)
         {
             _width = MathHelper.Clamp(width, 1, 2048);
-            _height = MathHelper.Clamp(height, 1, 2048);;
+            _height = MathHelper.Clamp(height, 1, 2048);
+            ;
 
             Array.Resize(ref pixels, width * height);
 
@@ -248,7 +247,6 @@ namespace PixelVision8.Engine
 
                 Invalidate();
             }
-            
         }
 
         /// <summary>
@@ -285,7 +283,7 @@ namespace PixelVision8.Engine
             int pixel;
             int srcX, srcY;
             for (var i = total - 1; i > -1; i--)
-            {    
+            {
                 pixel = pixels?[i] ?? -1;
 
                 if (pixel != -1 || ignoreTransparent != true)

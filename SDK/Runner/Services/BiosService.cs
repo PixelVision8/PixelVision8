@@ -18,8 +18,8 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Runner.Utils;
 using System.Collections.Generic;
+using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Services
 {
@@ -106,6 +106,5 @@ namespace PixelVision8.Runner.Services
             biosData.Clear();
             ClearUserChanges();
         }
-
     }
 }

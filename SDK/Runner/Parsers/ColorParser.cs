@@ -46,9 +46,8 @@ namespace PixelVision8.Runner.Parsers
 
         public override void CalculateSteps()
         {
-            
             colorChip.Clear();
-            
+
             base.CalculateSteps();
 
 //            steps.Add(IndexColors);
@@ -92,11 +91,9 @@ namespace PixelVision8.Runner.Parsers
 
                 if (unique && tmpColor == magenta)
                 {
-                    
                 }
                 else
                 {
-
 //                if(tmpColor != magenta)
                     colors.Add(tmpColor);
                 }

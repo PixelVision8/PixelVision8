@@ -35,7 +35,8 @@ namespace PixelVision8.Runner.Exporters
         protected SpriteChip spriteChip;
 
 
-        public SpriteExporter(string fileName, IEngine engine, IImageExporter imageExporter, SpriteChip spriteChip = null)
+        public SpriteExporter(string fileName, IEngine engine, IImageExporter imageExporter,
+            SpriteChip spriteChip = null)
         {
             fullFileName = fileName;
             this.engine = engine;
@@ -78,7 +79,8 @@ namespace PixelVision8.Runner.Exporters
 
             spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
 
-            exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, imageExporter, engine.colorChip.maskColor);
+            exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, imageExporter,
+                engine.colorChip.maskColor);
         }
     }
 }

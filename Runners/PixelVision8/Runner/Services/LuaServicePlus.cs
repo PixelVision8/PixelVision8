@@ -34,9 +34,8 @@ using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Importers;
 using PixelVision8.Runner.Parsers;
 using PixelVision8.Runner.Utils;
-
-// TODO need to remove reference to this
 using PixelVision8.Runner.Workspace;
+// TODO need to remove reference to this
 
 
 namespace PixelVision8.Runner.Services
@@ -56,10 +55,7 @@ namespace PixelVision8.Runner.Services
 
                 pixelData = new int[total];
 
-                for (int i = 0; i < total; i++)
-                {
-                    pixelData[i] = -1;
-                }
+                for (var i = 0; i < total; i++) pixelData[i] = -1;
             }
 
             pixels = pixelData;
@@ -68,9 +64,12 @@ namespace PixelVision8.Runner.Services
 
     public class LuaServicePlus : LuaService //, IPlatformAccessor // TODO need to map to these APIs
     {
+        private readonly PNGWriter _pngWriter = new PNGWriter();
+        private readonly WorkspaceServicePlus workspace;
+
+        private SoundEffectInstance currentSound;
         protected PixelVision8Runner desktopRunner;
         protected GameEditor gameEditor;
-        private readonly WorkspaceServicePlus workspace;
 
         public LuaServicePlus(PixelVision8Runner runner) : base(runner)
         {
@@ -143,16 +142,11 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["gameEditor"] = gameEditor;
         }
 
-        private SoundEffectInstance currentSound;
-
         public void PlayWav(WorkspacePath workspacePath)
         {
             if (workspace.Exists(workspacePath) && workspacePath.GetExtension() == ".wav")
             {
-                if (currentSound != null)
-                {
-                    StopWav();
-                }
+                if (currentSound != null) StopWav();
 
                 using (var stream = workspace.OpenFile(workspacePath, FileAccess.Read))
                 {
@@ -177,8 +171,6 @@ namespace PixelVision8.Runner.Services
             // TODO should there be a set of safe keys and values types that can be accepted?
             desktopRunner.bios.UpdateBiosData(key, value);
         }
-
-        readonly PNGWriter _pngWriter = new PNGWriter();
 //        readonly PNGReader _pngReader = new PNGReader();
 
         public Image NewImage(int width, int height, string[] colors, int[] pixelData = null)
@@ -228,10 +220,7 @@ namespace PixelVision8.Runner.Services
             var imageParser = new ImageParser(reader, maskHex);
             imageParser.CalculateSteps();
 
-            while (imageParser.completed == false)
-            {
-                imageParser.NextStep();
-            }
+            while (imageParser.completed == false) imageParser.NextStep();
 
             // TODO need to convert the image data to colors and pixel data
 
@@ -241,29 +230,24 @@ namespace PixelVision8.Runner.Services
 
         public void SaveImage(WorkspacePath dest, Image image)
         {
-            int width = image.width;
-            int height = image.height;
-            string[] hexColors = image.colors;
+            var width = image.width;
+            var height = image.height;
+            var hexColors = image.colors;
 
             // convert colors
             var totalColors = hexColors.Length;
             var colors = new Color[totalColors];
-            for (int i = 0; i < totalColors; i++)
-            {
-                colors[i] = ColorUtils.HexToColor(hexColors[i]);
-            }
+            for (var i = 0; i < totalColors; i++) colors[i] = ColorUtils.HexToColor(hexColors[i]);
 
             var pixelData = image.pixels;
 
-            var exporter = new PixelDataExporter(dest.EntityName, pixelData, width, height, colors, _pngWriter, "#FF00FF");
+            var exporter =
+                new PixelDataExporter(dest.EntityName, pixelData, width, height, colors, _pngWriter, "#FF00FF");
             exporter.CalculateSteps();
 
-            while (exporter.completed == false)
-            {
-                exporter.NextStep();
-            }
+            while (exporter.completed == false) exporter.NextStep();
 
-            var output = new Dictionary<string, byte[]>()
+            var output = new Dictionary<string, byte[]>
             {
                 {dest.Path, exporter.bytes}
             };
@@ -294,13 +278,8 @@ namespace PixelVision8.Runner.Services
         public long FileSize(WorkspacePath workspacePath)
         {
             if (workspace.Exists(workspacePath) == false)
-            {
                 return -1;
-            }
-            else if (workspacePath.IsDirectory)
-            {
-                return 0;
-            }
+            if (workspacePath.IsDirectory) return 0;
 
             return workspace.OpenFile(workspacePath, FileAccess.Read).ReadAllBytes().Length / 1024;
         }
@@ -316,7 +295,6 @@ namespace PixelVision8.Runner.Services
 
             try
             {
-                
                 // Create a path to the temp directory for the builds
                 var tmpExportPath = WorkspacePath.Root.AppendDirectory("Tmp").AppendDirectory("Builds");
 
@@ -329,25 +307,24 @@ namespace PixelVision8.Runner.Services
                 workspace.CreateDirectory(tmpExportPath);
 
                 // Add the zip filename to it
-                WorkspacePath tmpZipPath = tmpExportPath.AppendFile(gameName + ".pv8");
+                var tmpZipPath = tmpExportPath.AppendFile(gameName + ".pv8");
 
                 // 'using' statements guarantee the stream is closed properly which is a big source
                 // of problems otherwise.  Its exception safe as well which is great.
-                using (ZipOutputStream OutputStream = new ZipOutputStream(workspace.CreateFile(tmpZipPath)))
+                using (var OutputStream = new ZipOutputStream(workspace.CreateFile(tmpZipPath)))
                 {
                     // Define the compression level
                     // 0 - store only to 9 - means best compression
                     OutputStream.SetLevel(4);
 
-                    byte[] buffer = new byte[4096];
+                    var buffer = new byte[4096];
 
-                    foreach (WorkspacePath file in filePaths)
-                    {
+                    foreach (var file in filePaths)
                         if (file.IsFile)
                         {
                             // Using GetFileName makes the result compatible with XP
                             // as the resulting path is not absolute.
-                            ZipEntry entry = new ZipEntry(file.EntityName) {DateTime = DateTime.Now};
+                            var entry = new ZipEntry(file.EntityName) {DateTime = DateTime.Now};
 
                             // Setup the entry data as required.
 
@@ -357,7 +334,7 @@ namespace PixelVision8.Runner.Services
                             // Could also use the last write time or similar for the file.
                             OutputStream.PutNextEntry(entry);
 
-                            using (FileStream fs = workspace.OpenFile(file, FileAccess.Read) as FileStream)
+                            using (var fs = workspace.OpenFile(file, FileAccess.Read) as FileStream)
                             {
                                 // Using a fixed size buffer here makes no noticeable difference for output
                                 // but keeps a lid on memory usage.
@@ -370,7 +347,6 @@ namespace PixelVision8.Runner.Services
                                 } while (sourceBytes > 0);
                             }
                         }
-                    }
 
                     // Copy all the lib files
                     if (libFileNames != null)
@@ -381,7 +357,7 @@ namespace PixelVision8.Runner.Services
 
                         var total = libFileNames.Length;
 
-                        for (int i = 0; i < total; i++)
+                        for (var i = 0; i < total; i++)
                         {
                             var fileName = libFileNames[i] + ".lua";
 
@@ -389,7 +365,7 @@ namespace PixelVision8.Runner.Services
                             {
 //                                    var tmpPath = fileName;
 
-                                ZipEntry entry = new ZipEntry(fileName);
+                                var entry = new ZipEntry(fileName);
 
                                 OutputStream.PutNextEntry(entry);
 
@@ -457,7 +433,6 @@ namespace PixelVision8.Runner.Services
             }
 
             return response;
-
         }
 
         public Dictionary<string, object> CreateExe(string name, WorkspacePath[] files, WorkspacePath template,
@@ -469,18 +444,18 @@ namespace PixelVision8.Runner.Services
                 {"message", ""}
             };
 
-            var buildFilePath = template.ParentPath.AppendFile("build.json");
-            
-            if (workspace.Exists(buildFilePath))
-            {
-                var buildText = "";
-
-                using (var file = workspace.OpenFile(buildFilePath, FileAccess.Read))
-                {
-                    buildText = file.ReadAllText();
-                    file.Close();
-                    file.Dispose();
-                }
+//            var buildFilePath = template.ParentPath.AppendFile("build.json");
+//
+//            if (workspace.Exists(buildFilePath))
+//            {
+//                var buildText = "";
+//
+//                using (var file = workspace.OpenFile(buildFilePath, FileAccess.Read))
+//                {
+//                    buildText = file.ReadAllText();
+//                    file.Close();
+//                    file.Dispose();
+//                }
 
                 var platform = template.EntityName.Split(' ')[1].Split('.')[0];
 
@@ -492,6 +467,9 @@ namespace PixelVision8.Runner.Services
                     workspace.CreateDirectoryRecursive(exportPath);
 
                     exportPath = exportPath.AppendFile(name + ".zip");
+                    
+                    // Remove platform from name
+                    name = name.Split(' ')[0];
 
                     using (Stream fsIn = workspace.OpenFile(template, FileAccess.Read))
                     using (var zfIn = new ZipFile(fsIn))
@@ -514,7 +492,7 @@ namespace PixelVision8.Runner.Services
                                         continue;
                                     }
 
-                                    String entryFileName = zipEntry.Name;
+                                    var entryFileName = zipEntry.Name;
 
                                     if (!entryFileName.Contains(contentPath))
                                     {
@@ -525,40 +503,36 @@ namespace PixelVision8.Runner.Services
                                         if (entryFileName.EndsWith("bios.json"))
                                         {
                                             // Create a reader from a new copy of the zipEntry
-                                            using (StreamReader reader =
-                                                new StreamReader(zfIn.GetInputStream(zipEntry)))
-                                            {
+                                            StreamReader reader = new StreamReader(zfIn.GetInputStream(zipEntry));
 
-                                                // Read out all of the text
-                                                string text = reader.ReadToEnd();
-                                                //  
-                                                // Replace the base directory with the game name and no spaces
-                                                text = text.Replace(@"GameRunner",
-                                                    name.Replace(" " + platform, " ").Replace(" ", ""));
+                                            // Read out all of the text
+                                            var text = reader.ReadToEnd();
+                                            //  
+                                            // Replace the base directory with the game name and no spaces
+                                            text = text.Replace(@"GameRunner",
+                                                name.Replace(" " + platform, " ").Replace(" ", ""));
 
-                                                text = text.Replace(@"PV8 Game Runner",
-                                                    name.Replace(" " + platform, ""));
+                                            text = text.Replace(@"PV8 Game Runner",
+                                                name.Replace(" " + platform, ""));
 
-                                                // Create a new memory stream in place of the zip file entry
-                                                fsInput = new MemoryStream();
+                                            // Create a new memory stream in place of the zip file entry
+                                            fsInput = new MemoryStream();
 
-                                                // Wrap the stream in a writer
-                                                using (StreamWriter writer = new StreamWriter(fsInput))
-                                                {
-                                                    // Write the text to the stream
-                                                    writer.Write(text);
+                                            // Wrap the stream in a writer
+                                            var writer = new StreamWriter(fsInput);
 
-                                                    // Flush the stream and set it back to the begining
-                                                    writer.Flush();
-                                                    fsInput.Seek(0, SeekOrigin.Begin);
+                                            // Write the text to the stream
+                                            writer.Write(text);
 
-                                                    // Get the size so we know how big it is later on
-                                                    size = fsInput.Length;
+                                            // Flush the stream and set it back to the begining
+                                            writer.Flush();
+                                            fsInput.Seek(0, SeekOrigin.Begin);
 
-                                                }
-                                            }
-
+                                            // Get the size so we know how big it is later on
+                                            size = fsInput.Length;
                                         }
+
+
 
                                         // Clean up path for mac builds
                                         if (platform == "Mac")
@@ -569,43 +543,38 @@ namespace PixelVision8.Runner.Services
                                                 entryFileName = entryFileName.Replace("Runner.app", name + ".app");
                                             }
                                         }
-                                        else if (platform == "Linux")
+                                        else
                                         {
 
-//                                            fsInput = new MemoryStream();
+                                            //                                            fsInput = new MemoryStream();
                                             // We need to look for the launch script
                                             if (entryFileName == "Pixel Vision 8 Runner")
                                             {
                                                 // Create a reader from a new copy of the zipEntry
-                                                using (StreamReader reader =
-                                                    new StreamReader(zfIn.GetInputStream(zipEntry)))
-                                                {
+                                                StreamReader reader = new StreamReader(zfIn.GetInputStream(zipEntry));
 
-                                                    // Read out all of the text
-                                                    string text = reader.ReadToEnd();
-//  
-                                                    // Replace the default name with the game name
-                                                    text = text.Replace(@"Pixel\ Vision\ 8\ Runner",
-                                                        name.Replace(" ", @"\ "));
+                                                // Read out all of the text
+                                                string text = reader.ReadToEnd();
+                                                //  
+                                                // Replace the default name with the game name
+                                                text = text.Replace(@"Pixel\ Vision\ 8\ Runner",
+                                                    name.Replace(" ", @"\ "));
 
-                                                    // Create a new memory stream in place of the zip file entry
-                                                    fsInput = new MemoryStream();
+                                                // Create a new memory stream in place of the zip file entry
+                                                fsInput = new MemoryStream();
 
-                                                    // Wrap the stream in a writer
-                                                    using (StreamWriter writer = new StreamWriter(fsInput))
-                                                    {
+                                                // Wrap the stream in a writer
+                                                var writer = new StreamWriter(fsInput);
 
-                                                        // Write the text to the stream
-                                                        writer.Write(text);
+                                                // Write the text to the stream
+                                                writer.Write(text);
 
-                                                        // Flush the stream and set it back to the begining
-                                                        writer.Flush();
-                                                        fsInput.Seek(0, SeekOrigin.Begin);
+                                                // Flush the stream and set it back to the begining
+                                                writer.Flush();
+                                                fsInput.Seek(0, SeekOrigin.Begin);
 
-                                                        // Get the size so we know how big it is later on
-                                                        size = fsInput.Length;
-                                                    }
-                                                }
+                                                // Get the size so we know how big it is later on
+                                                size = fsInput.Length;
                                             }
 
                                             // Rename all the executibale files in the linux build
@@ -629,7 +598,6 @@ namespace PixelVision8.Runner.Services
                                             };
 
 
-
                                             zfOut.PutNextEntry(newEntry);
 
                                             var buffer = new byte[4096];
@@ -647,17 +615,17 @@ namespace PixelVision8.Runner.Services
 
                                 // Copy over all of the game files
                                 var list = from p in files
-                                    where workspace.fileExtensions.Any(val => p.EntityName.EndsWith(val))
-                                    select p;
+                                           where workspace.fileExtensions.Any(val => p.EntityName.EndsWith(val))
+                                           select p;
 
+                                // Readjust the content path
+                                contentPath = platform == "Mac" ? name + ".app/Contents/Resources/Content/DefaultGame/" : "Content/DefaultGame/";
                                 foreach (var file in list)
                                 {
                                     var entryFileName = contentPath + file.EntityName;
                                     using (var fileStream = workspace.OpenFile(file, FileAccess.Read))
                                     {
-//                                        var fileData = new MemoryStream(libFileData[fileName]);
-
-
+                                        
                                         var newEntry = new ZipEntry(entryFileName)
                                         {
                                             DateTime = DateTime.Now,
@@ -700,7 +668,8 @@ namespace PixelVision8.Runner.Services
 
                                                 var newEntry = new ZipEntry(entryFileName)
                                                 {
-                                                    DateTime = DateTime.Now, Size = fileStream.Length
+                                                    DateTime = DateTime.Now,
+                                                    Size = fileStream.Length
                                                 };
 
                                                 zfOut.PutNextEntry(newEntry);
@@ -708,7 +677,7 @@ namespace PixelVision8.Runner.Services
                                                 var buffer = new byte[4096];
 
                                                 StreamUtils.Copy(fileStream, zfOut, buffer);
-                                            
+
                                                 zfOut.CloseEntry();
 
                                                 fileStream.Close();
@@ -721,7 +690,7 @@ namespace PixelVision8.Runner.Services
                         }
                     }
 
-                }
+//                }
             }
 
             return response;

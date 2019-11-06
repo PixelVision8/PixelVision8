@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -33,8 +32,8 @@ namespace PixelVision8.Runner.Parsers
         private readonly FontChip fontChip;
         private readonly string name;
         private int[] fontMap;
-        private List<Color> uniqueFontColors = new List<Color>();
-        
+        private readonly List<Color> uniqueFontColors = new List<Color>();
+
         public FontParser(IImageParser imageParser, IEngineChips chips, string name = "Default") : base(imageParser,
             chips, true, chips.fontChip)
         {
@@ -83,8 +82,7 @@ namespace PixelVision8.Runner.Parsers
             fontMap[index] = id;
         }
 
-        
-        
+
         public override void ConvertColorsToIndexes(int totalColors)
         {
             // Calculate the total number of pixels
@@ -105,13 +103,12 @@ namespace PixelVision8.Runner.Parsers
                 // Find the current color in the loop
                 tmpColor = tmpPixels[i];
 
-                int tmpRefID = -1;
-                
+                var tmpRefID = -1;
+
                 if (!Equals(tmpColor, maskColor))
                 {
-
                     var test = Equals(tmpColor, maskColor);
-                    
+
                     tmpRefID = uniqueFontColors.IndexOf(tmpColor);
 
                     if (tmpRefID == -1)
@@ -119,7 +116,6 @@ namespace PixelVision8.Runner.Parsers
                         tmpRefID = uniqueFontColors.Count;
                         uniqueFontColors.Add(tmpColor);
                     }
-
                 }
 
 //                tmpRefID = Equals(tmpColor, maskColor) ? -1 : Array.IndexOf(colorData, tmpColor);

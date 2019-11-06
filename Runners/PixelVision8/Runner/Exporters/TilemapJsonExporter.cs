@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -43,8 +42,8 @@ namespace PixelVision8.Runner.Exporters
 
     public class TilemapJsonExporter : AbstractExporter
     {
-        private StringBuilder sb;
         private readonly IEngine targetEngine;
+        private StringBuilder sb;
 
         public TilemapJsonExporter(string fileName, IEngine targetEngine) : base(fileName)
         {
@@ -354,7 +353,7 @@ namespace PixelVision8.Runner.Exporters
 
                     // Tiled Y pos is 1 based, so offset the x position by 1 tile
                     sb.Append("\"y\":");
-                    sb.Append((pos.Y + 1) * spriteSize.Y); 
+                    sb.Append((pos.Y + 1) * spriteSize.Y);
                     sb.Append(",");
                     JsonUtil.GetLineBreak(sb, 5);
 
@@ -378,7 +377,7 @@ namespace PixelVision8.Runner.Exporters
 
                     sb.Append("\"value\":");
                     sb.Append(tile.flag);
-                    
+
                     // property end
                     JsonUtil.GetLineBreak(sb, 6);
                     sb.Append("},");
@@ -426,10 +425,8 @@ namespace PixelVision8.Runner.Exporters
             //                sb.Append(string.Join(",", tilemapChip.layers[(int)layerEnum].Select(x => (x == -1 ? 0 : x + idOffset).ToString())));
 
             if (tileCounter > 0)
-            {
                 // Remove the last comma
                 sb.Length--;
-            }
 
             // tilesets end
             JsonUtil.GetLineBreak(sb, 3);
@@ -458,7 +455,6 @@ namespace PixelVision8.Runner.Exporters
 
         private void CloseStringBuilder()
         {
-
             JsonUtil.indentLevel--;
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");

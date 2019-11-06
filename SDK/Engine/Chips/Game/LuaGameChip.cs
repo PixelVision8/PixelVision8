@@ -31,7 +31,6 @@ namespace PixelVision8.Engine.Chips
 {
     public class LuaGameChip : GameChip
     {
-
         protected Script _luaScript;
 
         public Script luaScript
@@ -47,7 +46,6 @@ namespace PixelVision8.Engine.Chips
 
         protected virtual void RegisterLuaServices()
         {
-            
         }
 
         #region Lifecycle
@@ -82,9 +80,8 @@ namespace PixelVision8.Engine.Chips
         {
             if (luaScript?.Globals["Shutdown"] == null)
                 return;
-           
-            luaScript.Call(luaScript.Globals["Shutdown"]);
 
+            luaScript.Call(luaScript.Globals["Shutdown"]);
         }
 
         public override void Reset()
@@ -123,12 +120,16 @@ namespace PixelVision8.Engine.Chips
 
             luaScript.Globals["Clear"] = new Action<int, int, int?, int?>(Clear);
             luaScript.Globals["Display"] = new Func<bool, Point>(Display);
-            luaScript.Globals["DrawPixels"] = new Action<int[], int, int, int, int, bool, bool, DrawMode, int>(DrawPixels);
+            luaScript.Globals["DrawPixels"] =
+                new Action<int[], int, int, int, int, bool, bool, DrawMode, int>(DrawPixels);
             luaScript.Globals["DrawSprite"] = new Action<int, int, int, bool, bool, DrawMode, int>(DrawSprite);
-            luaScript.Globals["DrawSprites"] = new Action<int[], int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprites);
-            luaScript.Globals["DrawSpriteBlock"] = new Action<int, int, int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSpriteBlock);
+            luaScript.Globals["DrawSprites"] =
+                new Action<int[], int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprites);
+            luaScript.Globals["DrawSpriteBlock"] =
+                new Action<int, int, int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSpriteBlock);
 
-            luaScript.Globals["DrawText"] = new Action<string, int, int, DrawMode, string, int, int, Rectangle?>(DrawText);
+            luaScript.Globals["DrawText"] =
+                new Action<string, int, int, DrawMode, string, int, int, Rectangle?>(DrawText);
             luaScript.Globals["DrawTilemap"] = new Action<int, int, int, int, int?, int?, DrawMode>(DrawTilemap);
 
             luaScript.Globals["DrawRect"] = new Action<int, int, int, int, int, DrawMode>(DrawRect);
@@ -169,8 +170,8 @@ namespace PixelVision8.Engine.Chips
             #region Sound APIs
 
             luaScript.Globals["PlaySound"] = new Action<int, int>(PlaySound);
-            luaScript.Globals["PlayRawSound"] = new Action<string, int, float>((soundChip).PlayRawSound);
-        
+            luaScript.Globals["PlayRawSound"] = new Action<string, int, float>(soundChip.PlayRawSound);
+
             luaScript.Globals["PlayPattern"] = new Action<int, bool>(PlayPattern);
             luaScript.Globals["PlayPatterns"] = new Action<int[], bool>(PlayPatterns);
             luaScript.Globals["PlaySong"] = new Action<int, bool, int>(PlaySong);
@@ -193,11 +194,11 @@ namespace PixelVision8.Engine.Chips
             #region Tilemap
 
             luaScript.Globals["RebuildTilemap"] = new Action(RebuildTilemap);
-                
+
             luaScript.Globals["TilemapSize"] = new Func<int?, int?, bool, Point>(TilemapSize);
             luaScript.Globals["Tile"] = new Func<int, int, int?, int?, int?, bool?, bool?, TileData>(Tile);
             luaScript.Globals["UpdateTiles"] = new Action<int, int, int, int[], int?, int?>(UpdateTiles);
-            luaScript.Globals["Flag"] = new Func<int, int, int?, int> (Flag);
+            luaScript.Globals["Flag"] = new Func<int, int, int?, int>(Flag);
 
 
             luaScript.Globals["SaveTilemapCache"] = new Action(SaveTilemapCache);
@@ -210,21 +211,22 @@ namespace PixelVision8.Engine.Chips
             luaScript.Globals["WordWrap"] = new Func<string, int, string>(WordWrap);
             luaScript.Globals["SplitLines"] = new Func<string, string[]>(SplitLines);
             luaScript.Globals["BitArray"] = new Func<int, int[]>(BitArray);
-            luaScript.Globals["CalculateDistance"] = new Func<int, int, int, int,int>(CalculateDistance);
+            luaScript.Globals["CalculateDistance"] = new Func<int, int, int, int, int>(CalculateDistance);
 
             #endregion
 
             #region Debug
 
-            luaScript.Globals["ReadFPS"] = new Func<int>(()=>fps);
-            luaScript.Globals["ReadTotalSprites"] = new Func<int>(()=>currentSprites);
+            luaScript.Globals["ReadFPS"] = new Func<int>(() => fps);
+            luaScript.Globals["ReadTotalSprites"] = new Func<int>(() => CurrentSprites);
 
             #endregion
 
             #region Text
 
 //            luaScript.Globals["ConvertTextToSprites"] = new Func<string, string, int[]>(ConvertTextToSprites);
-            luaScript.Globals["ConvertCharacterToPixelData"] = new Func<char, string, int[]>(ConvertCharacterToPixelData);
+            luaScript.Globals["ConvertCharacterToPixelData"] =
+                new Func<char, string, int[]>(ConvertCharacterToPixelData);
 
             #endregion
 
@@ -235,7 +237,8 @@ namespace PixelVision8.Engine.Chips
 
             luaScript.Globals["RegisterMetaSprite"] = new Action<string, int, MetaSpriteData[]>(RegisterMetaSprite);
             luaScript.Globals["DeleteMetaSprite"] = new Action<string>(DeleteMetaSprite);
-            luaScript.Globals["DrawMetaSprite"] = new Action<string, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawMetaSprite);
+            luaScript.Globals["DrawMetaSprite"] =
+                new Action<string, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawMetaSprite);
 
             UserData.RegisterType<MetaSpriteData>();
             luaScript.Globals["MetaSpriteData"] = UserData.CreateStatic<MetaSpriteData>();
@@ -248,7 +251,7 @@ namespace PixelVision8.Engine.Chips
             // Enums
             UserData.RegisterType<WaveType>();
             luaScript.Globals["WaveType"] = UserData.CreateStatic<WaveType>();
-            
+
             UserData.RegisterType<DrawMode>();
             luaScript.Globals["DrawMode"] = UserData.CreateStatic<DrawMode>();
 
@@ -277,7 +280,8 @@ namespace PixelVision8.Engine.Chips
 
             // Register PV8's rect type
             UserData.RegisterType<Canvas>();
-            luaScript.Globals["NewCanvas"] = new Func<int, int, Canvas>((width, height) => new Canvas(width, height, this));
+            luaScript.Globals["NewCanvas"] =
+                new Func<int, int, Canvas>((width, height) => new Canvas(width, height, this));
 
             // Load the default script
             LoadScript("code.lua");

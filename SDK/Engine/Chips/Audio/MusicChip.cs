@@ -51,7 +51,7 @@ namespace PixelVision8.Engine.Chips
         protected float noteTickS = 30.0f / 120.0f; // (30.0f/120.0f) = 120BPM eighth notes
         protected float noteTickSEven;
         protected float noteTickSOdd;
-        
+
         public int preRenderBitrate = 44100; //48000; // should be 44100; FIXME TODO EXPERIMENTING W BUGFIX
 
 
@@ -76,10 +76,12 @@ namespace PixelVision8.Engine.Chips
         protected float swingRhythmFactor = 0.7f;
 
         protected float time;
+
         public TrackerData[] trackerDataCollection = new TrackerData[0];
 //        public int tracksPerLoop = 8;
 
-        public int SequencerBeatNumber
+        public int
+            SequencerBeatNumber
         {
             get;
             set;
@@ -245,11 +247,11 @@ namespace PixelVision8.Engine.Chips
             engine.musicChip = this;
 
             //engine.chipManager.AddToUpdateList(this);
-            
+
 
             // Setup the sequencer values
 
-            
+
             var a = 440.0f; // a is 440 hz...
             noteHZ = new float[maxNoteNum];
             noteStartFrequency = new float[maxNoteNum];
@@ -268,11 +270,12 @@ namespace PixelVision8.Engine.Chips
                 // note_startFrequency[x] = Mathf.Sqrt(hertz / SR * 100.0f / 8.0f - 0.001f);
                 // maybe the algorithm assumes 1 based array etc?
                 if (x < 126) // let's just hack in one semitone lower sounds (but not overflow array)
-                    noteStartFrequency[x + 1] = (float) Math.Sqrt(hertz / preRenderBitrate * 100.0f / 8.0f - 0.001f) - 0.0018f;
+                    noteStartFrequency[x + 1] =
+                        (float) Math.Sqrt(hertz / preRenderBitrate * 100.0f / 8.0f - 0.001f) - 0.0018f;
 
                 // last num is a hack using my ears to "tune"
             }
-            
+
             TotalLoops = 16;
 //            maxTracks = 4;
 //            totalTracks = maxTracks;
@@ -299,7 +302,7 @@ namespace PixelVision8.Engine.Chips
 
             // Updates the tracks per loop
 //            tracksPerLoop = activeTrackerData.tracks.Length;
-    
+
 //            Console.WriteLine("Load Pattern Track " + tracksPerLoop);
             // Update the music notes?
             UpdateMusicNotes();
@@ -374,9 +377,9 @@ namespace PixelVision8.Engine.Chips
 //                    if (loopSong == false)
 //                    {
 //                        Console.WriteLine("Stop song");
-                        // Stop the song and return
-                        songCurrentlyPlaying = false;
-                        return;
+                    // Stop the song and return
+                    songCurrentlyPlaying = false;
+                    return;
 //                    }
 
                     //RewindSong();
@@ -502,7 +505,7 @@ namespace PixelVision8.Engine.Chips
 
             // Save the loop value
             loopSong = loop;
-            
+
             // Load the next pattern
             LoadPattern(currentSong.NextPattern());
 

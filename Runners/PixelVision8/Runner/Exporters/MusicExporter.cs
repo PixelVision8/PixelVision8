@@ -20,15 +20,14 @@
 
 using System.Text;
 using PixelVision8.Engine;
-using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Exporters
 {
     public class MusicExporter : AbstractExporter
     {
-        private StringBuilder sb;
         private readonly IEngine targetEngine;
+        private StringBuilder sb;
 
         public MusicExporter(string fileName, IEngine targetEngine) : base(fileName)
         {

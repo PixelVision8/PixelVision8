@@ -66,7 +66,8 @@ namespace PixelVision8.Runner.Exporters
             BuildPixelData();
 
             // Create Pixel Data Exporter
-            exporter = new PixelDataExporter(fullFileName, pixels, width, height, colors, imageExporter, colorChip.maskColor);
+            exporter = new PixelDataExporter(fullFileName, pixels, width, height, colors, imageExporter,
+                colorChip.maskColor);
 
             // calculate steps for exporter
             exporter.CalculateSteps();

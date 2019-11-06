@@ -64,11 +64,14 @@ namespace PixelVision8.Runner.Exporters
                     spriteChip.height, tmpPixelData);
             }
 
-            var colors = !(engine.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip) ? engine.colorChip.colors : colorMapChip.colors;
+            var colors = !(engine.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip)
+                ? engine.colorChip.colors
+                : colorMapChip.colors;
 
             var imageExporter = new PNGWriter();
 
-            exporter = new PixelDataExporter(fullFileName, textureData.pixels, width, height, colors, imageExporter, engine.colorChip.maskColor);
+            exporter = new PixelDataExporter(fullFileName, textureData.pixels, width, height, colors, imageExporter,
+                engine.colorChip.maskColor);
         }
     }
 }

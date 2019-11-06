@@ -27,6 +27,8 @@ namespace PixelVision8.Runner.Data
 {
     public class SpriteExportData
     {
+        // TODO this is hardcoded
+        private readonly Point spriteSize = new Point(8, 8);
         public byte[] bytes;
         public string fileName;
         public int height;
@@ -35,9 +37,6 @@ namespace PixelVision8.Runner.Data
 
 //        public TextureData src;
         public IImageParser imageParser;
-
-        // TODO this is hardcoded
-        private readonly Point spriteSize = new Point(8, 8);
         public int width;
 
         public SpriteExportData(string fileName, byte[] bytes)

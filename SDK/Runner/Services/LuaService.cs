@@ -59,6 +59,5 @@ namespace PixelVision8.Runner.Services
 
             luaScript.Globals["ResetGame"] = new Action(runner.ResetGame);
         }
-
     }
 }

@@ -27,29 +27,29 @@ namespace PixelVision8.Runner.Exporters
     {
         protected Color[] colors;
         protected int height;
+
         protected IImageExporter imageExporter;
+
 //        protected int loops;
         protected int width;
 
-        public ImageExporter(string fileName, IImageExporter imageExporter, Color[] colors, int width, int height) : base(fileName)
+        public ImageExporter(string fileName, IImageExporter imageExporter, Color[] colors, int width, int height) :
+            base(fileName)
         {
             this.imageExporter = imageExporter;
 
             this.colors = colors;
             this.width = width;
             this.height = height;
-            
         }
 
         public override void CalculateSteps()
         {
-            
             base.CalculateSteps();
-    
+
             steps.Add(WriteBytes);
-            
         }
-        
+
         protected virtual void WriteBytes()
         {
             if (colors.Length == width * height)

@@ -18,11 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Utils;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.Xna.Framework;
+using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine.Chips
 {
@@ -59,13 +59,13 @@ namespace PixelVision8.Engine.Chips
 
         protected string _maskColor = "#FF00FF";
 
+        private int _maxColors = -1;
+
         protected Color[] colorCache;
 
         protected int[] invalidColors = new int[16];
 
         public bool unique;
-
-        private int _maxColors = -1;
 
         /// <summary>
         ///     This can be used as a flag to limit the number of colors on the chip.
@@ -74,7 +74,7 @@ namespace PixelVision8.Engine.Chips
         {
             //TODO this is not used in the chip and is here for the color tool.
             get => _maxColors == -1 ? colors.Length : _maxColors;
-            set { _maxColors = MathHelper.Clamp(value, 2, 256); }
+            set => _maxColors = MathHelper.Clamp(value, 2, 256);
         }
 
 

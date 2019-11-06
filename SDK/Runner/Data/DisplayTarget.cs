@@ -22,7 +22,6 @@ using System;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using PixelVision8.Runner.Services;
 
 namespace PixelVision8.Runner.Data
 {
@@ -30,21 +29,21 @@ namespace PixelVision8.Runner.Data
     {
         private readonly int _monitorHeight = 640;
         private readonly int _monitorWidth = 640;
-        private bool _useCRT;
-        private Effect crtShader;
         private readonly GraphicsDeviceManager graphicManager;
+        public readonly SpriteBatch spriteBatch;
+        private int _monitorScale = 1;
+        private bool _useCRT;
+        public bool cropScreen = true;
+        private Effect crtShader;
+        public bool fullscreen = false;
         public Vector2 offset;
         public Texture2D renderTexture;
         public Vector2 scale = new Vector2(1, 1);
         private Effect shaderEffect;
-        public readonly SpriteBatch spriteBatch;
+        public bool stretchScreen;
         private int totalPixels;
         private Rectangle visibleRect;
-        private int _monitorScale = 1;
-        public bool fullscreen = false;
-        public bool stretchScreen;
-        public bool cropScreen = true;
-        
+
         // TODO think we just need to pass in the active game and not the entire runner?
         public DisplayTarget(GraphicsDeviceManager graphicManager, int width, int height)
         {
@@ -56,7 +55,6 @@ namespace PixelVision8.Runner.Data
 
             _monitorWidth = MathHelper.Clamp(width, 64, 640);
             _monitorHeight = MathHelper.Clamp(height, 64, 480);
-            
         }
 
         public bool useCRT
@@ -116,10 +114,9 @@ namespace PixelVision8.Runner.Data
                 crtShader.Parameters["shape"]?.SetValue(2f); // 2.0f
 
                 useCRT = true;
-                
             }
         }
-        
+
         public int monitorScale
         {
             get => _monitorScale;
@@ -139,29 +136,26 @@ namespace PixelVision8.Runner.Data
                     {
                         fits = true;
                         _monitorScale = value;
-
                     }
                     else
                     {
-                        value --;
+                        value--;
                     }
-                
                 }
             }
         }
-        
+
         public void ResetResolution(int gameWidth, int gameHeight, int overScanX = 0, int overScanY = 0)
         {
-            
             if (renderTexture == null || renderTexture.Width != gameWidth || renderTexture.Height != gameHeight)
             {
                 renderTexture = new Texture2D(graphicManager.GraphicsDevice, gameWidth, gameHeight);
-                
+
                 shaderEffect?.Parameters["textureSize"].SetValue(new Vector2(gameWidth, gameHeight));
                 shaderEffect?.Parameters["videoSize"].SetValue(new Vector2(gameWidth, gameHeight));
                 shaderEffect?.Parameters["outputSize"].SetValue(new Vector2(graphicManager.PreferredBackBufferWidth,
                     graphicManager.PreferredBackBufferHeight));
-                
+
                 // Set the new number of pixels
                 totalPixels = renderTexture.Width * renderTexture.Height;
             }
@@ -210,14 +204,14 @@ namespace PixelVision8.Runner.Data
 
             // Apply changes
             graphicManager.IsFullScreen = fullscreen;
-            
-            if(graphicManager.PreferredBackBufferWidth != displayWidth || graphicManager.PreferredBackBufferHeight != displayHeight)
+
+            if (graphicManager.PreferredBackBufferWidth != displayWidth ||
+                graphicManager.PreferredBackBufferHeight != displayHeight)
             {
                 graphicManager.PreferredBackBufferWidth = displayWidth;
                 graphicManager.PreferredBackBufferHeight = displayHeight;
                 graphicManager.ApplyChanges();
             }
-
         }
 
         public void Render(Color[] pixels)
@@ -246,6 +240,5 @@ namespace PixelVision8.Runner.Data
 //            
 //            
 //        }
-
     }
 }

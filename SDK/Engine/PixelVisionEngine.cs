@@ -18,11 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Services;
 
 namespace PixelVision8.Engine
 {
@@ -162,9 +162,8 @@ namespace PixelVision8.Engine
         /// <tocexclude />
         public virtual void Update(float timeDelta)
         {
-
             // Reset the sprite counter on each frame
-            gameChip.currentSprites = 0;
+            gameChip.CurrentSprites = 0;
 
             foreach (var chip in updateChips)
                 chip.Update(timeDelta);
@@ -178,7 +177,6 @@ namespace PixelVision8.Engine
         /// <tocexclude />
         public virtual void Draw()
         {
-            
             foreach (var chip in drawChips)
                 chip.Draw();
         }
@@ -222,19 +220,14 @@ namespace PixelVision8.Engine
             if (!_metaData.ContainsKey(key))
             {
                 if (value == "")
-                {
                     _metaData.Remove(key);
-                }
                 else
-                {
                     _metaData.Add(key, value);
-                }
             }
             else if (value != "")
             {
                 _metaData[key] = value;
             }
-
         }
 
         /// <summary>
@@ -298,10 +291,7 @@ namespace PixelVision8.Engine
         {
             //Debug.Log("Chip Manager: Get Chip " + id);
 
-            if (HasChip(id))
-            {
-                return chips[id];
-            }
+            if (HasChip(id)) return chips[id];
 
             var type = Type.GetType(id);
 
@@ -314,7 +304,7 @@ namespace PixelVision8.Engine
                     chipInstance = Activator.CreateInstance(type) as AbstractChip;
                     ActivateChip(id, chipInstance, activeOnCreate);
                 }
-                catch// (Exception)
+                catch // (Exception)
                 {
                     //Console.WriteLine("Chip '" + id + "' could not be created.");
                 }

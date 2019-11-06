@@ -30,9 +30,9 @@ namespace PixelVision8.Runner.Utils
 {
     public class Palette
     {
-        public IList<Color> colors;
-
         private readonly string maskHex;
+
+        public IList<Color> colors;
 //        public List<Color> uniqueColors = new List<Color>();
 
         internal Palette(string maskHex = "#FF00FF")

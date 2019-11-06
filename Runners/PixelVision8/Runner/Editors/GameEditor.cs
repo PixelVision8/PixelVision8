@@ -38,7 +38,6 @@ using PixelVision8.Runner.Workspace;
 
 namespace PixelVision8.Runner.Editors
 {
-
     /// <summary>
     ///     This class allows you to edit the current sandbox game.
     /// </summary>
@@ -54,23 +53,23 @@ namespace PixelVision8.Runner.Editors
 
 //        private ColorMapChip colorMapChip; // TODO this should have a GC version of the chip
         private DisplayChip displayChip;
+        private FontChip fontChip;
 
 //
 //        public IEngine targetGame;
 //
         private GameChip gameChip;
-        private  MusicChip musicChip;
+        private MusicChip musicChip;
         protected PixelVision8Runner runner;
+
+        protected IServiceLocator serviceManager;
         private SoundChip soundChip;
         private SpriteChip spriteChip;
-        private FontChip fontChip;
         private PixelVisionEngine targetGame;
         private TilemapChip tilemapChip;
 
         protected WorkspaceServicePlus workspace;
 
-        protected IServiceLocator serviceManager;
-        
 //        private ColorChip colorPaletteChip;
 
         /// <summary>
@@ -110,7 +109,7 @@ namespace PixelVision8.Runner.Editors
 
         public bool Invalid => _invalid;
 
-        
+
         /// <summary>
         ///     Helper method to build save flags.
         /// </summary>
@@ -135,9 +134,8 @@ namespace PixelVision8.Runner.Editors
         /// </summary>
         /// <param name="flags">Supply an array of SaveFlags enums for each file you want to load into the Game Editor instance.</param>
         /// <returns>Returns a bool if the loading process was successful.</returns>
-        
+
         // TODO should use workspace path as argument
-        
         public bool Load(string path, SaveFlags[] flags)
         {
 //            // If the path is not valid, return null
@@ -213,10 +211,10 @@ namespace PixelVision8.Runner.Editors
             tilemapChip = targetGame.tilemapChip;
             soundChip = targetGame.soundChip;
             musicChip = targetGame.musicChip; // TODO need to create a SfxrMusicChip
-            
+
 //            Console.WriteLine("MC Tracks " + musicChip.totalTracks);
             songGenerator = new SfxrMusicGeneratorChip();
-            
+
 //            
 //            colorPaletteChip = targetGame.chipManager.GetChip(ColorPaletteParser.chipName, false) as ColorChip;
 
@@ -480,15 +478,11 @@ namespace PixelVision8.Runner.Editors
 
         public int MaximumColors(int? value)
         {
-
-            if (value.HasValue)
-            {
-                colorChip.maxColors = value.Value;
-            }
+            if (value.HasValue) colorChip.maxColors = value.Value;
 
             return colorChip.maxColors;
         }
-        
+
 
         // Since we want to be able to edit this value but the interface doesn't allow it, we hide it in lua and use the overload instead
 //        [MoonSharpHidden]
@@ -629,7 +623,7 @@ namespace PixelVision8.Runner.Editors
 
         public void PlayPattern(int id, bool loop = true)
         {
-            gameChip.PlayPattern(id, true);
+            gameChip.PlayPattern(id);
         }
 
         /// <summary>
@@ -660,17 +654,15 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int[] SongPatterns(int id, int[] patterns = null)
         {
-
             if (patterns != null)
             {
-
                 var newPatterns = new int[patterns.Length];
-                
+
                 Array.Copy(patterns, newPatterns, patterns.Length);
-                
+
                 musicChip.songs[id].patterns = newPatterns;
             }
-            
+
             return musicChip.songs[id].patterns;
         }
 
@@ -688,15 +680,11 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int SongPatternAt(int id, int position, int? newPattern)
         {
-
-            if (newPattern.HasValue)
-            {
-                musicChip.songs[id].UpdatePatternAt(position, newPattern.Value);
-            }
+            if (newPattern.HasValue) musicChip.songs[id].UpdatePatternAt(position, newPattern.Value);
 
             return musicChip.songs[id].patterns[position];
         }
-        
+
         /// <summary>
         ///     Get the end position of a song or change it.
         /// </summary>
@@ -775,7 +763,7 @@ namespace PixelVision8.Runner.Editors
 
             return tileData;
         }
-        
+
         public void RebuildTilemap()
         {
             gameChip.RebuildTilemap();
@@ -792,7 +780,8 @@ namespace PixelVision8.Runner.Editors
         }
 
         /// <summary>
-        ///     This allows you to fill a tilemap with a specific tile ID. It's used in the Tilemap editor. Define the position you want to start at and any tile matching that ID touching will be replaced.
+        ///     This allows you to fill a tilemap with a specific tile ID. It's used in the Tilemap editor. Define the position you
+        ///     want to start at and any tile matching that ID touching will be replaced.
         /// </summary>
         /// <param name="value"></param>
         /// <param name="column"></param>
@@ -801,21 +790,19 @@ namespace PixelVision8.Runner.Editors
         /// <param name="scaleX"></param>
         /// <param name="scaleY"></param>
         /// <param name="colorOffset"></param>
-        public void FloodFillTilemap(int value, int column, int row, int mode = 0, int scaleX = 1, int scaleY = 1, int colorOffset = -1)
+        public void FloodFillTilemap(int value, int column, int row, int mode = 0, int scaleX = 1, int scaleY = 1,
+            int colorOffset = -1)
         {
             var canvas = NewCanvas(tilemapChip.columns, tilemapChip.rows);
 
             var tiles = tilemapChip.tiles;
-            
+
             var total = canvas.pixels.Length;
 
             // Loop through all the tiles and build the pixels
-            for (int i = 0; i < total; i++)
-            {
-                canvas.pixels[i] = mode == 0 ? tiles[i].spriteID : tiles[i].flag;
-            }
+            for (var i = 0; i < total; i++) canvas.pixels[i] = mode == 0 ? tiles[i].spriteID : tiles[i].flag;
 
-            
+
             if (mode == 0)
             {
                 // Build the pattern
@@ -824,8 +811,8 @@ namespace PixelVision8.Runner.Editors
                 var spriteCols = 16;
 
                 var spritePos = value == -1 ? new Point(-1, -1) : gameChip.CalculatePosition(value, spriteCols);
-                    
-                for (int i = 0; i < size; i++)
+
+                for (var i = 0; i < size; i++)
                 {
                     var offset = gameChip.CalculatePosition(i, scaleX);
 
@@ -836,47 +823,39 @@ namespace PixelVision8.Runner.Editors
                         ? value
                         : (gameChip.CalculateIndex(offset.X, offset.Y, spriteCols) + 1) * -100;
                 }
-                
-                canvas.SetPattern(pattern, scaleX, scaleY);
 
+                canvas.SetPattern(pattern, scaleX, scaleY);
             }
             else if (mode == 1)
             {
-                canvas.SetPattern(new int[]{value}, 1, 1);
+                canvas.SetPattern(new[] {value}, 1, 1);
             }
-            
+
             canvas.FloodFill(column, row);
-            
+
             // Copy the pixel data back to the tilemap
-            for (int i = 0; i < total; i++)
-            {
+            for (var i = 0; i < total; i++)
                 if (mode == 0)
                 {
                     var tile = tiles[i];
 
                     if (canvas.pixels[i] < -1)
                     {
-                        var pixel = ((canvas.pixels[i]) / -100) - 1;
-                        
+                        var pixel = canvas.pixels[i] / -100 - 1;
+
                         tile.spriteID = pixel;
 
-                        if (colorOffset > -1)
-                        {
-                            tile.colorOffset = colorOffset;
-                        }
+                        if (colorOffset > -1) tile.colorOffset = colorOffset;
                     }
-                    
-                        
                 }
                 else if (mode == 1)
                 {
                     tiles[i].flag = canvas.pixels[i];
                 }
-            }
-            
+
             tilemapChip.Invalidate();
         }
-        
+
 
         public int[] ConvertTextToSprites(string text, string fontName = "default")
         {
@@ -888,37 +867,6 @@ namespace PixelVision8.Runner.Editors
             throw new NotImplementedException();
         }
 
-
-        #region Sound Editor APIs
-
-        public string Sound(int id, string data = null)
-        {
-            return gameChip.Sound(id, data);
-        }
-
-        /// <summary>
-        ///     Get the channel type or change it.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="typeID"></param>
-        /// <returns></returns>
-        public int ChannelType(int id, int? typeID = null)
-        {
-
-            WaveType? type = null;
-            
-            if (typeID.HasValue)
-            {
-                type = (WaveType) typeID.Value;
-            }
-    
-//            Console.WriteLine("Set Wave Type " + type  + (typeID.HasValue ? " - " + typeID.Value.ToString() : ""));
-            
-            return (int)soundChip.ChannelType(id, type);
-        }
-
-        #endregion
-        
         /// <summary>
         ///     Exports a song to a wav file.
         /// </summary>
@@ -926,13 +874,11 @@ namespace PixelVision8.Runner.Editors
         /// <param name="id"></param>
         public void ExportSong(string path, int id)
         {
-
             workspace.ExportSong(path, musicChip, soundChip, id);
         }
-        
+
         public void ExportPattern(WorkspacePath path, int id)
         {
-
             workspace.ExportPattern(path, musicChip, soundChip, id);
         }
 
@@ -1040,10 +986,8 @@ namespace PixelVision8.Runner.Editors
         {
 //            Console.WriteLine("Optimize sprites " + spriteChip.width + " " + spriteChip.height);
 
-            var tmpSpriteChip = new SpriteChip();
+            var tmpSpriteChip = new SpriteChip {width = 8, height = 8};
 
-            tmpSpriteChip.width = 8;
-            tmpSpriteChip.height = 8;
 
             tmpSpriteChip.Resize(spriteChip.textureWidth, spriteChip.textureHeight);
 
@@ -1171,7 +1115,7 @@ namespace PixelVision8.Runner.Editors
                 targetGame.tilemapChip.Resize(tmpParser.width / 8, tmpParser.height / 8);
 
 
-                runner.ParseFiles(files, targetGame, saveFlags, true);
+                runner.ParseFiles(files, targetGame, saveFlags);
             }
             catch
             {
@@ -1252,7 +1196,7 @@ namespace PixelVision8.Runner.Editors
 
                 targetGame.name = path;
 
-                runner.ParseFiles(files, targetGame, saveFlags, true);
+                runner.ParseFiles(files, targetGame, saveFlags);
             }
             catch
             {
@@ -1265,7 +1209,7 @@ namespace PixelVision8.Runner.Editors
 
             return true;
         }
-        
+
         /// <summary>
         ///     Change a font's sprite data
         /// </summary>
@@ -1281,19 +1225,18 @@ namespace PixelVision8.Runner.Editors
                 return data;
             }
 
-            int[] tmpSpriteData = new int[64];
-            
+            var tmpSpriteData = new int[64];
+
             fontChip.ReadSpriteAt(id, tmpSpriteData);
 
             return tmpSpriteData;
         }
-        
+
         /// <summary>
         ///     Save a font
         /// </summary>
         /// <param name="fontName"></param>
         /// <param name="oldName"></param>
-
         public string SaveFont(string fontName)
         {
             var engineName = targetGame.name;
@@ -1336,7 +1279,7 @@ namespace PixelVision8.Runner.Editors
             };
 
             workspace.SaveExporterFiles(files);
-            
+
             // Return just the name of the font without the extension
             return fontPath.EntityName;
         }
@@ -1350,6 +1293,33 @@ namespace PixelVision8.Runner.Editors
         {
             targetGame.SetMetaData(key, value);
         }
+
+
+        #region Sound Editor APIs
+
+        public string Sound(int id, string data = null)
+        {
+            return gameChip.Sound(id, data);
+        }
+
+        /// <summary>
+        ///     Get the channel type or change it.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="typeID"></param>
+        /// <returns></returns>
+        public int ChannelType(int id, int? typeID = null)
+        {
+            WaveType? type = null;
+
+            if (typeID.HasValue) type = (WaveType) typeID.Value;
+
+//            Console.WriteLine("Set Wave Type " + type  + (typeID.HasValue ? " - " + typeID.Value.ToString() : ""));
+
+            return (int) soundChip.ChannelType(id, type);
+        }
+
+        #endregion
 
         #region Colors
 
@@ -1393,13 +1363,12 @@ namespace PixelVision8.Runner.Editors
             // Loop through each sprite
             for (i = 0; i < totalSprites; i++)
             {
-                
                 // Read the sprite data
                 spriteChip.ReadSpriteAt(i, tmpPixelData);
-                    
+
                 // Clear the color map
 //                colorMap.Clear();
-                
+
                 // Index the pixel data
                 for (j = 0; j < spritePixelTotal; j++)
                 {
@@ -1416,23 +1385,18 @@ namespace PixelVision8.Runner.Editors
 
                         tmpPixelData[j] = tmpIndex;
                     }
-                    
-                    
                 }
-                
+
                 spriteChip.UpdateSpriteAt(i, tmpPixelData);
-                
             }
-            
+
             // Update the CPS to reflect the indexed colors
             spriteChip.colorsPerSprite = colorMap.Count == 0 ? spriteChip.colorsPerSprite : colorMap.Count;
-            
+
             // Copy the colors to the first palette
             for (i = 0; i < spriteChip.colorsPerSprite; i++)
-            {
                 colorChip.UpdateColorAt(128 + i, colorChip.ReadColorAt(colorMap.Count == 0 ? i : colorMap[i]));
-            }
-            
+
             // Create the 16 colors the sprites will be remapped to
             var colorMapColors = new[]
             {
@@ -1458,8 +1422,7 @@ namespace PixelVision8.Runner.Editors
             total = colorMapColors.Length;
 
             // Create a color map chip
-            var colorMapChip = new ColorChip();
-            colorMapChip.total = colorMapColors.Length;
+            var colorMapChip = new ColorChip {total = colorMapColors.Length};
 
             // Clear the color map chip and rebuild the pages
 //            colorMapChip.TotalDisks = TotalDisks;
@@ -1483,7 +1446,6 @@ namespace PixelVision8.Runner.Editors
         /// </summary>
         public void ResizeToolColorMemory()
         {
-            
             runner.activeEngine.colorChip.total = 512;
         }
 
@@ -1656,7 +1618,6 @@ namespace PixelVision8.Runner.Editors
         /// <param name="id"></param>
         public void Mutate(int id)
         {
-            
             var param = new SfxrParams();
             param.SetSettingsString(soundChip.ReadSound(id).param);
             param.Mutate();
@@ -1672,7 +1633,7 @@ namespace PixelVision8.Runner.Editors
         {
 //            var settings = new SfxrSynth().parameters;
 // TODO I don't like that this is a static value on the SoundData class
-            gameChip.Sound(id, SoundData.DEFAULT_SOUND_PARAM);//settings.GetSettingsString());
+            gameChip.Sound(id, SoundData.DEFAULT_SOUND_PARAM); //settings.GetSettingsString());
         }
 
         /// <summary>
@@ -1792,13 +1753,10 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public bool MuteTrack(int track, bool? value = null)
         {
-            if (track >= musicChip.ActiveTrackerData.tracks.Length)
-            {
-                return false;
-            }
-            
+            if (track >= musicChip.ActiveTrackerData.tracks.Length) return false;
+
             if (value.HasValue) musicChip.ActiveTrackerData.tracks[track].mute = value.Value;
-            
+
             return musicChip.ActiveTrackerData.tracks[track].mute;
         }
 
@@ -1850,7 +1808,8 @@ namespace PixelVision8.Runner.Editors
         public int TrackInstrument(int track, int? sfxID)
         {
             if (sfxID.HasValue)
-                musicChip.ActiveTrackerData.tracks[track].sfxID = MathHelper.Clamp(sfxID.Value, 0, soundChip.totalSounds);
+                musicChip.ActiveTrackerData.tracks[track].sfxID =
+                    MathHelper.Clamp(sfxID.Value, 0, soundChip.totalSounds);
 
             return musicChip.ActiveTrackerData.tracks[track].sfxID;
         }
@@ -1995,10 +1954,8 @@ namespace PixelVision8.Runner.Editors
             var sfxID = songGenerator.trackSettings[track].SfxId;
 
             // play the sound
-            var instrument = soundChip.ReadSound(sfxID);
-            
-            
-            
+            soundChip.ReadSound(sfxID);
+
             soundChip.PlaySound(sfxID, track, musicChip.noteStartFrequency[beat]);
         }
 
@@ -2085,10 +2042,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int[] ReadGameSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
         {
-
             return ReadSpriteData(spriteChip, id, scaleX, scaleY, flipH, flipV);
         }
-        
+
         /// <summary>
         ///     Read tool sprite pixel data directly from the sprite chip's memory
         /// </summary>
@@ -2100,13 +2056,12 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int[] ReadToolSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
         {
-
             return ReadSpriteData(runner.activeEngine.spriteChip, id, scaleX, scaleY, flipH, flipV);
         }
 
-        private int[] ReadSpriteData(SpriteChip spriteChip, int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
+        private int[] ReadSpriteData(SpriteChip spriteChip, int id, int scaleX = 1, int scaleY = 1, bool flipH = false,
+            bool flipV = false)
         {
-
 //            var scale = 1;
 
             var blockSizeX = scaleX * spriteChip.width;
@@ -2117,7 +2072,7 @@ namespace PixelVision8.Runner.Editors
             var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
 
             spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
-            
+
 //            var pixelData = Sprite(id);
 
             if (flipH || flipV)
@@ -2134,30 +2089,29 @@ namespace PixelVision8.Runner.Editors
         /// <param name="flipV"></param>
         public void WriteSpriteData(int id, int[] pixelData, int scaleX = 1, int scaleY = 1)
         {
-            
             var blockSizeX = scaleX * spriteChip.width;
             var blockSizeY = scaleY * spriteChip.height;
-    
+
             var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
 
 //            var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
-    
+
 //            Console.WriteLine("Write sprite " + pos.X +" "+pos.Y);
             spriteChip.texture.SetPixels(pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY, pixelData);
-            
-            
+
+
             // TODO need to invalidate the cached sprite data
-            
-            
+
+
 //            spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSize, blockSize);
 //            
 ////            var pixelData = Sprite(id);
 //
 //            if (flipH || flipV)
 //                SpriteChipUtil.FlipSpriteData(ref pixelData, blockSize, blockSize, flipH, flipV);
-            
+
             // TODO need to invalidate all the sprites that are within the bounds of the update
-            
+
             // TODO need to make sure the sprite data is flipped correctly before being saved
         }
 
@@ -2191,9 +2145,8 @@ namespace PixelVision8.Runner.Editors
         }
 
         private Canvas tmpCanvas;
-        public bool renderingMap { get; private set; }
+        public bool RenderingMap { get; private set; }
         private int[] tmpPixelData = new int[0];
-        private int _mapRenderMode;
         private int totalTiles;
         private int totalLoops;
         private readonly int maxPerLoop = 100;
@@ -2202,7 +2155,7 @@ namespace PixelVision8.Runner.Editors
         private readonly Canvas[] layerCache = new Canvas[2];
         private SfxrMusicGeneratorChip songGenerator;
 
-        public int renderPercent => MathHelper.Clamp(((int) (currentLoop / (float) totalLoops * 100)), 0, 100);
+        public int RenderPercent => MathHelper.Clamp((int) (currentLoop / (float) totalLoops * 100), 0, 100);
 
         /// <summary>
         ///     Draws the map to a layer
@@ -2213,19 +2166,18 @@ namespace PixelVision8.Runner.Editors
             var realWidth = spriteChip.width * tilemapChip.columns;
             var realHeight = spriteChip.height * tilemapChip.rows;
 
-            _mapRenderMode = mode;
 
             if (layerCache[mode] == null)
             {
                 layerCache[mode] = new Canvas(realWidth, realHeight, gameChip);
-                renderingMap = true;
+                RenderingMap = true;
             }
 
             // Set the tmpCanvas to the cache
             tmpCanvas = layerCache[mode];
 
             // Rebuild the map if it hasn't been rendered yet.
-            if (renderingMap)
+            if (RenderingMap)
             {
                 tmpCanvas.Clear(mode == 0 ? colorChip.backgroundColor : -2);
 
@@ -2233,7 +2185,7 @@ namespace PixelVision8.Runner.Editors
 
                 Array.Resize(ref tmpPixelData, spriteChip.width * spriteChip.height);
 
-                renderingMap = true;
+                RenderingMap = true;
 
                 totalLoops = MathUtil.CeilToInt(tilemapChip.total / (float) maxPerLoop);
 
@@ -2253,7 +2205,7 @@ namespace PixelVision8.Runner.Editors
                 var index = i + offset;
                 if (index >= totalTiles)
                 {
-                    renderingMap = false;
+                    RenderingMap = false;
                     break;
                 }
 
@@ -2361,7 +2313,7 @@ namespace PixelVision8.Runner.Editors
         /// <param name="offsetY"></param>
         /// <param name="useScrollPos"></param>
         public void CopyCanvasToDisplay(Canvas srcCanvas, int x, int y, int width, int height, int colorOffset,
-            int maskColor = -1, int offsetX =0, int offsetY =0, bool useScrollPos = true)
+            int maskColor = -1, int offsetX = 0, int offsetY = 0, bool useScrollPos = true)
         {
             // Only render when a canvas exists
 //            if (tmpCanvas == null)
@@ -2427,21 +2379,20 @@ namespace PixelVision8.Runner.Editors
             var sfx = soundChip.ReadSound(id);
 
             workspacePath = workspacePath.AppendFile(sfx.name + ".wav");
-            
+
             // TODO need to wire this up
             var synth = new SfxrSynth();
             synth.parameters.SetSettingsString(sfx.param);
 //            var stream = workspace.CreateFile(path);
-            
-            var files = new Dictionary<string, byte[]>()
+
+            var files = new Dictionary<string, byte[]>
             {
                 {workspacePath.Path, synth.GenerateWav()}
             };
-            
+
             workspace.SaveExporterFiles(files);
 //            
 //            File.WriteAllBytes(path, synth.GetWavFile());
-
         }
 
         #endregion

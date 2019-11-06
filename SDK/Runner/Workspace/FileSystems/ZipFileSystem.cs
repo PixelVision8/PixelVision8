@@ -36,16 +36,14 @@ namespace PixelVision8.Runner.Workspace
         private ZipFileSystem(ZipFile zf, string extractPath)
         {
 //            var entities = zf.GetEnumerator();
-            
+
             using (zf)
             {
                 foreach (ZipEntry zipEntry in zf)
                 {
                     if (!zipEntry.IsFile)
-                    {
                         // Ignore directories
                         continue;
-                    }
 
                     var entryFileName = zipEntry.Name;
 
@@ -53,7 +51,6 @@ namespace PixelVision8.Runner.Workspace
                     var filePath = WorkspacePath.Root.AppendPath(entryFileName);
 
                     if (!filePath.Path.StartsWith("/__"))
-                    {
                         try
                         {
                             if (!Exists(filePath.ParentPath))
@@ -63,7 +60,7 @@ namespace PixelVision8.Runner.Workspace
                             var buffer = new byte[4096];
 
                             using (var zipStream = zf.GetInputStream(zipEntry))
-                            using (Stream fsOutput = CreateFile(filePath))
+                            using (var fsOutput = CreateFile(filePath))
                             {
                                 StreamUtils.Copy(zipStream, fsOutput, buffer);
                             }
@@ -72,7 +69,6 @@ namespace PixelVision8.Runner.Workspace
                         {
                             // ignored
                         }
-                    }
                 }
             }
         }
@@ -114,64 +110,60 @@ namespace PixelVision8.Runner.Workspace
 
 //            using (var fileStream = new FileStream(fileNameZip, FileMode.Create))
 //            {
-                using (ZipOutputStream archive = new ZipOutputStream(new FileStream(fileNameZip, FileMode.Create)))
+            using (var archive = new ZipOutputStream(new FileStream(fileNameZip, FileMode.Create)))
+            {
+                // Define the compression level
+                // 0 - store only to 9 - means best compression
+                archive.SetLevel(0);
+
+                var buffer = new byte[4096];
+                try
                 {
-                    // Define the compression level
-                    // 0 - store only to 9 - means best compression
-                    archive.SetLevel(0);
-
-                    byte[] buffer = new byte[4096];
-                    try
-                    {
-                        foreach (var file in files)
+                    foreach (var file in files)
+                        // We can only save files
+                        if (file.IsFile && !file.EntityName.StartsWith("."))
                         {
-                            // We can only save files
-                            if (file.IsFile && !file.EntityName.StartsWith("."))
+                            var tmpPath = file.Path.Substring(1);
+
+                            // Using GetFileName makes the result compatible with XP
+                            // as the resulting path is not absolute.
+                            var entry = new ZipEntry(tmpPath);
+
+                            // Could also use the last write time or similar for the file.
+                            entry.DateTime = DateTime.Now;
+                            archive.PutNextEntry(entry);
+
+                            using (var fs = OpenFile(file, FileAccess.Read))
                             {
-                                var tmpPath = file.Path.Substring(1);
- 
-                                // Using GetFileName makes the result compatible with XP
-                                // as the resulting path is not absolute.
-                                ZipEntry entry = new ZipEntry(tmpPath);
+                                // Using a fixed size buffer here makes no noticeable difference for output
+                                // but keeps a lid on memory usage.
+                                int sourceBytes;
 
-                                // Could also use the last write time or similar for the file.
-                                entry.DateTime = DateTime.Now;
-                                archive.PutNextEntry(entry);
-
-                                using (var fs = OpenFile(file, FileAccess.Read))
+                                do
                                 {
-                                    // Using a fixed size buffer here makes no noticeable difference for output
-                                    // but keeps a lid on memory usage.
-                                    int sourceBytes;
-
-                                    do
-                                    {
-                                        sourceBytes = fs.Read(buffer, 0, buffer.Length);
-                                        archive.Write(buffer, 0, sourceBytes);
-                                    } while (sourceBytes > 0);
-                                }
-                                
-                                archive.CloseEntry();
-
+                                    sourceBytes = fs.Read(buffer, 0, buffer.Length);
+                                    archive.Write(buffer, 0, sourceBytes);
+                                } while (sourceBytes > 0);
                             }
+
+                            archive.CloseEntry();
                         }
-                        
-                        // Finish is important to ensure trailing information for a Zip file is appended.  Without this
-                        // the created file would be invalid.
-                        archive.Finish();
 
-                        // Close is important to wrap things up and unlock the file.
-                        archive.Close();
-                        
-                        File.Delete(fileNameZip + ".bak");
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("Archive Error: " + e);
+                    // Finish is important to ensure trailing information for a Zip file is appended.  Without this
+                    // the created file would be invalid.
+                    archive.Finish();
 
-                        if (File.Exists(fileNameZip + ".bak")) File.Move(fileNameZip + ".bak", fileNameZip);
-                    }
+                    // Close is important to wrap things up and unlock the file.
+                    archive.Close();
 
+                    File.Delete(fileNameZip + ".bak");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Archive Error: " + e);
+
+                    if (File.Exists(fileNameZip + ".bak")) File.Move(fileNameZip + ".bak", fileNameZip);
+                }
             }
         }
     }

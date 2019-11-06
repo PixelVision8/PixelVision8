@@ -27,8 +27,8 @@ namespace PixelVision8.Runner.Exporters
 {
     public class SavedDataExporter : AbstractExporter
     {
-        private StringBuilder sb;
         private readonly IEngine targetEngine;
+        private StringBuilder sb;
 
         public SavedDataExporter(string fileName, IEngine targetEngine) : base(fileName)
         {

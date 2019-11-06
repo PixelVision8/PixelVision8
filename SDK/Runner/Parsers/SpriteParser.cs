@@ -18,11 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
-using System;
-using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -52,7 +52,8 @@ namespace PixelVision8.Runner.Parsers
         //        protected ITextureFactory textureFactory;
         //        protected byte[] data;
 
-        public SpriteParser(IImageParser imageParser, IEngineChips chips, bool unique = true, SpriteChip spriteChip = null) : base(imageParser)
+        public SpriteParser(IImageParser imageParser, IEngineChips chips, bool unique = true,
+            SpriteChip spriteChip = null) : base(imageParser)
         {
             //            this.textureFactory = textureFactory;
 
@@ -81,7 +82,7 @@ namespace PixelVision8.Runner.Parsers
 
             steps.Add(PrepareSprites);
 
-            var loops = MathUtil.CeilToInt((float)totalSprites / maxPerLoop);
+            var loops = MathUtil.CeilToInt((float) totalSprites / maxPerLoop);
 
             for (var i = 0; i < loops; i++) steps.Add(CutOutSprites);
 
@@ -92,7 +93,9 @@ namespace PixelVision8.Runner.Parsers
         {
             cps = spriteChip.colorsPerSprite;
 
-            colorData = chips.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip ? colorMapChip.colors : chips.colorChip.colors;
+            colorData = chips.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip
+                ? colorMapChip.colors
+                : chips.colorChip.colors;
 
             maskColor = ColorUtils.HexToColor(chips.colorChip.maskColor);
             maxSprites = SpriteChipUtil.CalculateTotalSprites(spriteChip.textureWidth, spriteChip.textureHeight,

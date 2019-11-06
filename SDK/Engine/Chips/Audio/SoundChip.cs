@@ -26,9 +26,6 @@ using PixelVision8.Engine.Data;
 
 namespace PixelVision8.Engine.Chips
 {
-
-    
-    
     /// <summary>
     ///     The <see cref="SoundChip" /> is responsible for playing back sound
     ///     effects in the engine. It's powered by SFxr.
@@ -36,6 +33,8 @@ namespace PixelVision8.Engine.Chips
     public class SoundChip : AbstractChip
     {
         protected IChannel[] channels = new IChannel[0];
+
+        private readonly Dictionary<string, byte[]> soundBank = new Dictionary<string, byte[]>();
 
         protected SoundData[] sounds;
 
@@ -84,7 +83,6 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public virtual void UpdateSound(int index, string param)
         {
-            
 //            var synth = sounds[index];
 //            synth.UpdateSettings(param);
 
@@ -150,7 +148,6 @@ namespace PixelVision8.Engine.Chips
 //            channel = sounds[index];
 
             channel.Play(sounds[index], frequency);
-            
         }
 
         public bool IsChannelPlaying(int channelID)
@@ -186,7 +183,6 @@ namespace PixelVision8.Engine.Chips
 //
 //            return channels[index];
 //        }
-
         public string ReadLabel(int id)
         {
             return ReadSound(id).name;
@@ -205,21 +201,18 @@ namespace PixelVision8.Engine.Chips
         public override void Shutdown()
         {
             foreach (var channel in channels)
-            {
-                if(channel.playing)
+                if (channel.playing)
                     channel.Stop();
-            }
-            
+
             base.Shutdown();
         }
 
         public WaveType ChannelType(int id, WaveType? type = null)
         {
-            
             // The channel will handle this so pass the values over to its API.
             return channels[id].ChannelType(type);
         }
-        
+
         /// <summary>
         ///     This helper method allows you to pass raw     SFXR string data to the sound chip for playback. It works just
         ///     like the normal PlaySound() API but accepts a string instead of a sound ID. Calling PlayRawSound() could
@@ -240,22 +233,14 @@ namespace PixelVision8.Engine.Chips
             channel.Play(new SoundData("untitled", data), frequency);
         }
 
-        private Dictionary<string, byte[]> soundBank = new Dictionary<string, byte[]>();
-        
-        
+
         public void AddSample(string name, byte[] bytes)
         {
-            
             // Add the wav sample to the sound bank
             if (soundBank.ContainsKey(name))
-            {
                 soundBank[name] = bytes;
-            }
             else
-            {
                 soundBank.Add(name, bytes);
-            }
-            
         }
 
         /// <summary>
@@ -263,8 +248,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public void RefreshSamples()
         {
-            
-            for (int i = 0; i < totalSounds; i++)
+            for (var i = 0; i < totalSounds; i++)
             {
                 var name = sounds[i].name;
                 sounds[i].bytes = soundBank.ContainsKey(name) ? soundBank[name] : null;

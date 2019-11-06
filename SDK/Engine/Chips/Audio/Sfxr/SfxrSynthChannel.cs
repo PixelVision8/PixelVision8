@@ -1,4 +1,4 @@
-﻿﻿//  SfxrSynth
+﻿//  SfxrSynth
 //    
 //  Copyright 2010 Thomas Vian
 //  Copyright 2013 Zeh Fernando
@@ -30,12 +30,15 @@ using PixelVision8.Runner.Data;
 
 namespace PixelVision8.Engine.Audio
 {
-    
     public class SfxrSynth : RawAudioData, IChannel
     {
         private const int LO_RES_NOISE_PERIOD = 8; // Should be < 32
+//        private float _overtoneFalloff; // Minimum frequency before stopping
 
-        private readonly Dictionary<string, SoundEffectInstance> wavCache = new Dictionary<string, SoundEffectInstance>();
+//        private int _overtones; // Minimum frequency before stopping
+
+        private readonly Dictionary<string, SoundEffectInstance> wavCache =
+            new Dictionary<string, SoundEffectInstance>();
 
         private float _changeAmount; // Amount to change the note by
 
@@ -88,11 +91,6 @@ namespace PixelVision8.Engine.Audio
         private float[] _noiseBuffer; // Buffer of random values used to generate noise
 
         private SfxrParams _original; // Copied properties for mutation base
-//        private float _overtoneFalloff; // Minimum frequency before stopping
-
-//        private int _overtones; // Minimum frequency before stopping
-
-        private readonly SfxrParams _params = new SfxrParams(); // Params instance
         private float _period; // Period of the wave
         private float _periodTemp; // Period modified by vibrato
         private int _periodTempInt; // Period modified by vibrato (as an Int)
@@ -107,15 +105,21 @@ namespace PixelVision8.Engine.Audio
         private int _phaserPos; // Position through the phaser buffer
 
         private float _pos; // Phase expresed as a Number from 0-1, used for fast sin approx
+
 //
 //        private readonly Random _random = new Random();
         private int _repeatLimit; // Once the time reaches this limit, some of the variables are reset
 
         private int _repeatTime; // Counter for the repeats
+
         private float _sample; // Sub-sample calculated 8 times per actual sample, averaged out to get the super sample
 //        private float _sample2; // Used in other calculations
 
         private float _slide; // Note slide
+
+
+//        private float amp; // Used in other calculations
+        private SoundEffectInstance _soundInstance;
 
         private float _squareDuty; // Offset of center switching point in the square wave
 
@@ -129,59 +133,34 @@ namespace PixelVision8.Engine.Audio
         private float _vibratoSpeed; // Speed at which the vibrato phase moves
 
         private WaveType _waveType; // Shape of wave to generate (see enum WaveType)
-        
-        
-        
-//        private float amp; // Used in other calculations
-        private SoundEffectInstance _soundInstance;
-
-        private WaveType _waveLock = WaveType.None;
-
-        public WaveType waveLock => _waveLock;
-        
-        public WaveType waveType
-        {
-            get { return waveLock == WaveType.None ? _waveType : waveLock; }
-            set { _waveType = value; }
-        }
-        
-        /// <summary>
-        ///     Sound parameters
-        /// </summary>
-        public SfxrParams parameters => _params;
 
 
         public SfxrSynth(int samples = 0, int channels = 1, int frequency = 22050) : base(samples, channels, frequency)
         {
         }
 
+        public WaveType waveLock { get; private set; } = WaveType.None;
+
+        public WaveType waveType
+        {
+            get => waveLock == WaveType.None ? _waveType : waveLock;
+            set => _waveType = value;
+        }
+
+        /// <summary>
+        ///     Sound parameters
+        /// </summary>
+        public SfxrParams parameters { get; } = new SfxrParams();
+
         public bool playing
         {
             get
             {
-                if(_soundInstance == null)
+                if (_soundInstance == null)
                     return false;
 
                 return _soundInstance.State == SoundState.Playing;
             }
-        }
-
-        /// <summary>
-        ///     Returns a ByteArray of the wave in the form of a .wav file, ready to be saved out
-        /// </summary>
-        /// <param name="__sampleRate">Sample rate to generate the .wav data at (44100 or 22050, default 44100)</param>
-        /// <param name="__bitDepth">Bit depth to generate the .wav at (8 or 16, default 16)</param>
-        /// <returns>Wave data (in .wav format) as a byte array</returns>
-        public override byte[] GenerateWav()
-        {
-            Stop();
-
-            Reset(true);
-            
-            Resize(Convert.ToInt32(_envelopeFullLength));
-            SynthWave(data, 0, _envelopeFullLength);
-
-            return base.GenerateWav();
         }
 
         /// <summary>
@@ -190,45 +169,36 @@ namespace PixelVision8.Engine.Audio
         /// </summary>
         public void Play(SoundData soundData, float? frequency = null)
         {
-            
             // Stop any playing sound
             Stop();
-            
+
             // Clear the last sound instance
             _soundInstance = null;
 
             // See if this is a wav
             if (soundData.isWav)
             {
-                if (_waveLock == WaveType.Sample || _waveLock == WaveType.None)
-                {
+                if (waveLock == WaveType.Sample || waveLock == WaveType.None)
                     using (var stream = new MemoryStream(soundData.bytes))
                     {
                         var soundEffect = SoundEffect.FromStream(stream);
 
                         var param = new SfxrParams();
                         param.SetSettingsString(soundData.param);
-                        
+
                         // TODO This should be cached?
                         _soundInstance = soundEffect.CreateInstance();
                         _soundInstance.Volume = param.masterVolume;
-                        
                     }
-                }
             }
             else
             {
-
                 parameters.SetSettingsString(soundData.param);
 
                 if (frequency.HasValue)
                     parameters.startFrequency = frequency.Value;
-                
-                if (_params.invalid)
-                {
-                    CacheSound();
-                }
-            
+
+                if (parameters.invalid) CacheSound();
             }
 
             // Only play if there is a sound instance
@@ -244,7 +214,7 @@ namespace PixelVision8.Engine.Audio
 
             if (_original != null)
             {
-                _params.CopyFrom(_original);
+                parameters.CopyFrom(_original);
                 _original = null;
             }
         }
@@ -252,13 +222,28 @@ namespace PixelVision8.Engine.Audio
         public WaveType ChannelType(WaveType? type)
         {
             if (type.HasValue)
-            {
                 // Pass this value directly to the private variable
-                _waveLock = type.Value;
-            }
+                waveLock = type.Value;
 
-            return _waveLock;
+            return waveLock;
+        }
 
+        /// <summary>
+        ///     Returns a ByteArray of the wave in the form of a .wav file, ready to be saved out
+        /// </summary>
+        /// <param name="__sampleRate">Sample rate to generate the .wav data at (44100 or 22050, default 44100)</param>
+        /// <param name="__bitDepth">Bit depth to generate the .wav at (8 or 16, default 16)</param>
+        /// <returns>Wave data (in .wav format) as a byte array</returns>
+        public override byte[] GenerateWav()
+        {
+            Stop();
+
+            Reset(true);
+
+            Resize(Convert.ToInt32(_envelopeFullLength));
+            SynthWave(data, 0, _envelopeFullLength);
+
+            return base.GenerateWav();
         }
 
 
@@ -288,30 +273,25 @@ namespace PixelVision8.Engine.Audio
 //                _cachedWavePos = 0;
 //                _cachingNormal = true;
 //                _waveData = null;
-            
+
                 Reset(true);
 
 
-                if (_soundInstance != null)
-                {
-                    _soundInstance.Stop();
-                }
+                if (_soundInstance != null) _soundInstance.Stop();
 
 //                _waveData = GenerateWav();
 
-                _params.ResetValidation();
+                parameters.ResetValidation();
 
                 using (var stream = new MemoryStream(GenerateWav()))
                 {
                     var soundEffect = SoundEffect.FromStream(stream);
-                    
+
                     _soundInstance = soundEffect.CreateInstance();
-                    
                 }
 
                 wavCache[paramKey] = _soundInstance;
             }
-            
         }
 
         /**
@@ -322,7 +302,7 @@ namespace PixelVision8.Engine.Audio
         private void Reset(bool __totalReset)
         {
             // Shorter reference
-            var p = _params;
+            var p = parameters;
 
             _period = 100.0f / (p.startFrequency * p.startFrequency + 0.001f);
             _maxPeriod = 100.0f / (p.minFrequency * p.minFrequency + 0.001f);
@@ -545,7 +525,7 @@ namespace PixelVision8.Engine.Audio
                 if (_vibratoAmplitude > 0)
                 {
                     _vibratoPhase += _vibratoSpeed;
-                    _periodTemp = _period * (1.0f + (float)Math.Sin(_vibratoPhase) * _vibratoAmplitude);
+                    _periodTemp = _period * (1.0f + (float) Math.Sin(_vibratoPhase) * _vibratoAmplitude);
                 }
 
                 _periodTempInt = (int) _periodTemp;
@@ -634,41 +614,41 @@ namespace PixelVision8.Engine.Audio
 
 //                    for (k = 0; k <= _overtones; k++)
 //                    {
-                        tempPhase = _phase * (0 + 1) % _periodTemp;
+                    tempPhase = _phase * (0 + 1) % _periodTemp;
 
-                        // Gets the sample from the oscillator
-                        switch (waveType)
-                        {
-                            case WaveType.Square:
-                                // Square
-                                _sample = tempPhase / _periodTemp < _squareDuty ? 0.5f : -0.5f;
-                                break;
-                            case WaveType.Saw:
-                                // Sawtooth
-                                _sample = 1.0f - tempPhase / _periodTemp * 2.0f;
-                                break;
-                            case WaveType.Sine:
-                                // Sine: fast and accurate approx
-                                _pos = tempPhase / _periodTemp;
-                                _pos = _pos > 0.5f ? (_pos - 1.0f) * 6.28318531f : _pos * 6.28318531f;
-                                _sample = _pos < 0
-                                    ? 1.27323954f * _pos + 0.405284735f * _pos * _pos
-                                    : 1.27323954f * _pos - 0.405284735f * _pos * _pos;
-                                _sample = _sample < 0
-                                    ? 0.225f * (_sample * -_sample - _sample) + _sample
-                                    : 0.225f * (_sample * _sample - _sample) + _sample;
-                                break;
-                            case WaveType.Noise:
-                                // Noise
-                                _sample = _noiseBuffer[(uint) (tempPhase * 32f / _periodTempInt) % 32];
-                                break;
-                            case WaveType.Triangle:
-                                // Triangle
-                                _sample = Math.Abs(1f - tempPhase / _periodTemp * 2f) - 1f;
-                                break;
-                        }
+                    // Gets the sample from the oscillator
+                    switch (waveType)
+                    {
+                        case WaveType.Square:
+                            // Square
+                            _sample = tempPhase / _periodTemp < _squareDuty ? 0.5f : -0.5f;
+                            break;
+                        case WaveType.Saw:
+                            // Sawtooth
+                            _sample = 1.0f - tempPhase / _periodTemp * 2.0f;
+                            break;
+                        case WaveType.Sine:
+                            // Sine: fast and accurate approx
+                            _pos = tempPhase / _periodTemp;
+                            _pos = _pos > 0.5f ? (_pos - 1.0f) * 6.28318531f : _pos * 6.28318531f;
+                            _sample = _pos < 0
+                                ? 1.27323954f * _pos + 0.405284735f * _pos * _pos
+                                : 1.27323954f * _pos - 0.405284735f * _pos * _pos;
+                            _sample = _sample < 0
+                                ? 0.225f * (_sample * -_sample - _sample) + _sample
+                                : 0.225f * (_sample * _sample - _sample) + _sample;
+                            break;
+                        case WaveType.Noise:
+                            // Noise
+                            _sample = _noiseBuffer[(uint) (tempPhase * 32f / _periodTempInt) % 32];
+                            break;
+                        case WaveType.Triangle:
+                            // Triangle
+                            _sample = Math.Abs(1f - tempPhase / _periodTemp * 2f) - 1f;
+                            break;
+                    }
 
-                        sampleTotal += _sample;
+                    sampleTotal += _sample;
 //                        overtoneStrength *= 1f - _overtoneFalloff;
 //                    }
 
@@ -729,9 +709,9 @@ namespace PixelVision8.Engine.Audio
 
                 // Compressor
                 if (_superSample > 0f)
-                    _superSample = (float)Math.Pow(_superSample, _compressionFactor);
+                    _superSample = (float) Math.Pow(_superSample, _compressionFactor);
                 else
-                    _superSample = -(float)Math.Pow(-_superSample, _compressionFactor);
+                    _superSample = -(float) Math.Pow(-_superSample, _compressionFactor);
 
                 // Clipping if too loud
                 if (_superSample < -1f)
@@ -755,16 +735,11 @@ namespace PixelVision8.Engine.Audio
 //            // (We get the error "get_value can only be called from the main thread" when this is called to generate the sound data)
 //            return (float) (_random.NextDouble() % 1);
 //        }
-
         public void Dispose()
         {
             _soundInstance?.Dispose();
 
-            foreach (var wav in wavCache)
-            {
-                wav.Value?.Dispose();
-            }
+            foreach (var wav in wavCache) wav.Value?.Dispose();
         }
     }
-
 }

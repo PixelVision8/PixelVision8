@@ -18,6 +18,9 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using PixelVision8.Engine;
@@ -25,9 +28,6 @@ using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Services;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Services;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
 
 namespace PixelVision8.Runner
 {
@@ -63,6 +63,10 @@ namespace PixelVision8.Runner
             Loading,
             Error
         }
+
+        private static bool _mute;
+        private static int lastVolume;
+        private static int muteVoldume;
 
         public readonly Dictionary<InputMap, int> defaultKeys = new Dictionary<InputMap, int>
         {
@@ -100,14 +104,16 @@ namespace PixelVision8.Runner
             {InputMap.Player2BButton, (int) Buttons.B}
         };
 
+        protected bool autoShutdown = false;
+
         //        protected int _scale = 1;
         //        protected bool cropScreen = true;
 
         protected bool debugLayers = true;
         protected bool displayProgress;
-        protected bool autoShutdown = false;
         public DisplayTarget displayTarget;
         protected TimeSpan elapsedTime = TimeSpan.Zero;
+
         protected int frameCounter;
         //        protected bool fullscreen;
 
@@ -117,10 +123,12 @@ namespace PixelVision8.Runner
         protected RunnerMode mode;
 
         protected bool resolutionInvalid = true;
+
+        protected IServiceLocator serviceManager;
+
         //        protected bool stretchScreen;
         protected float timeDelta;
         protected IEngine tmpEngine;
-        protected IServiceLocator serviceManager;
 
         public GameRunner()
         {
@@ -170,11 +178,18 @@ namespace PixelVision8.Runner
             }
         }
 
-        public virtual IEngine activeEngine { get; protected set; }
+        protected virtual bool RunnerActive
+        {
+            get
+            {
+                if (autoShutdown && mode != RunnerMode.Loading)
+                    return IsActive;
 
-        private static bool _mute;
-        private static int lastVolume;
-        private static int muteVoldume;
+                return true;
+            }
+        }
+
+        public virtual IEngine activeEngine { get; protected set; }
 
         public virtual int Volume(int? value = null)
         {
@@ -217,7 +232,7 @@ namespace PixelVision8.Runner
         {
             if (scale.HasValue)
             {
-                displayTarget.monitorScale = scale.Value;//MathHelper.Clamp(, 1, 6);
+                displayTarget.monitorScale = scale.Value; //MathHelper.Clamp(, 1, 6);
 
                 //                ResetResolution();
                 InvalidateResolution();
@@ -237,7 +252,9 @@ namespace PixelVision8.Runner
                 //ResetResolution();
             }
 
-            return displayTarget.fullscreen; //Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.FullScreen.ToString(), "False") as string);
+            return
+                displayTarget
+                    .fullscreen; //Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.FullScreen.ToString(), "False") as string);
         }
 
         public virtual bool StretchScreen(bool? value = null)
@@ -254,7 +271,8 @@ namespace PixelVision8.Runner
             }
 
             return
-                displayTarget.stretchScreen; //Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.StretchScreen.ToString(), "False") as string);
+                displayTarget
+                    .stretchScreen; //Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.StretchScreen.ToString(), "False") as string);
         }
 
         public virtual bool CropScreen(bool? value = null)
@@ -271,7 +289,9 @@ namespace PixelVision8.Runner
                 //                displayTarget?.MonitorResolution(scale: scale);
             }
 
-            return displayTarget.cropScreen; //Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.CropScreen.ToString(), "False") as string);
+            return
+                displayTarget
+                    .cropScreen; //Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.CropScreen.ToString(), "False") as string);
         }
 
         public void DebugLayers(bool value)
@@ -344,7 +364,6 @@ namespace PixelVision8.Runner
         {
             // Create the default display target
             displayTarget = new DisplayTarget(graphics, 512, 480);
-
         }
 
         public void InvalidateResolution()
@@ -364,8 +383,7 @@ namespace PixelVision8.Runner
                 return;
 
 
-
-            timeDelta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            timeDelta = (float) gameTime.ElapsedGameTime.TotalSeconds;
 
             elapsedTime += gameTime.ElapsedGameTime;
 
@@ -392,20 +410,8 @@ namespace PixelVision8.Runner
             // current framerate.
         }
 
-        protected virtual bool RunnerActive
-        {
-            get
-            {
-                if (autoShutdown && mode != RunnerMode.Loading)
-                    return IsActive;
-
-                return true;
-            }
-        }
-
         protected override void Draw(GameTime gameTime)
         {
-
             if (activeEngine == null)
                 return;
 
@@ -418,10 +424,7 @@ namespace PixelVision8.Runner
             // registered themselves as being able to draw such as the GameChip and the DisplayChip.
 
             // Only call draw if the window has focus
-            if (RunnerActive)
-            {
-                activeEngine.Draw();
-            }
+            if (RunnerActive) activeEngine.Draw();
 
             displayTarget.Render(activeEngine.displayChip.pixels);
 
@@ -529,7 +532,6 @@ namespace PixelVision8.Runner
 
             // Make sure that the first frame is cleared with the default color
             activeEngine.gameChip.Clear();
-
         }
 
         public void ResetResolution()

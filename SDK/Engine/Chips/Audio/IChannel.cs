@@ -52,6 +52,5 @@ namespace PixelVision8.Engine.Audio
         /// <param name="type"></param>
         /// <returns></returns>
         WaveType ChannelType(WaveType? type);
-
     }
 }

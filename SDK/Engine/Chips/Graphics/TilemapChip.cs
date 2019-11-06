@@ -130,7 +130,6 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void Resize(int columns, int rows, bool clear = true)
         {
-
             // Create a new array for each tile's data
             var newTiles = new TileData[columns * rows];
 
@@ -138,7 +137,6 @@ namespace PixelVision8.Engine.Chips
 
             for (var i = 0; i < newTiles.Length; i++)
             {
-
                 var c = i % columns;
                 var r = row;
 
@@ -152,11 +150,7 @@ namespace PixelVision8.Engine.Chips
                     newTiles[i] = new TileData(i);
                 }
 
-                if (c == (columns - 1))
-                {
-                    row++;
-                }
-
+                if (c == columns - 1) row++;
             }
 
             // Save the new tilemap data

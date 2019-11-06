@@ -89,7 +89,7 @@ namespace PixelVision8.Engine
             for (var i = 0; i < totalNotes; i++)
                 notes[i] = 0;
         }
-        
+
         public string SerializeData()
         {
             var sb = new StringBuilder();

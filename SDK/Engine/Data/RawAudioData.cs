@@ -25,37 +25,32 @@ namespace PixelVision8.Runner.Data
 {
     public class RawAudioData : AbstractData
     {
-        
         public float[] data;
-        public int samples { get; set; }
-        public int channels { get;}
-
-        public int frequency { get; }
 
         public RawAudioData(int samples = 0, int channels = 1, int frequency = 22050)
         {
             this.samples = samples;
             this.channels = channels;
             this.frequency = frequency;
-            this.data = new float[samples];
+            data = new float[samples];
         }
+
+        public int samples { get; set; }
+        public int channels { get; }
+
+        public int frequency { get; }
 
         public void SetData(float[] data, int offsetSamples = 0)
         {
-
             var total = data.Length;
-            for (int i = 0; i < total; i++)
+            for (var i = 0; i < total; i++)
             {
                 var index = i + offsetSamples;
-                
-                if (index < samples)
-                {
-                    this.data[index] = data[i];
-                }
-            }
 
+                if (index < samples) this.data[index] = data[i];
+            }
         }
-        
+
 //        public void GetData(float[] data)
 //        {
 //            Array.Copy(this.data, data, samples);
@@ -66,9 +61,9 @@ namespace PixelVision8.Runner.Data
             Array.Resize(ref data, samples);
             this.samples = samples;
         }
-        
+
         // CONVERT TO WAV
-        
+
         /// <summary>
         ///     Returns a ByteArray of the wave in the form of a .wav file, ready to be saved out
         /// </summary>
@@ -77,7 +72,6 @@ namespace PixelVision8.Runner.Data
         /// <returns>Wave data (in .wav format) as a byte array</returns>
         public virtual byte[] GenerateWav()
         {
-
             var __sampleRate = 22050u;
             var __bitDepth = 8u;
 
@@ -146,8 +140,8 @@ namespace PixelVision8.Runner.Data
                     bufferSample /= sampleCount;
                     sampleCount = 0;
 
-                        writeBytes(wav, ref bytePos, new[] {(byte) (Math.Round(bufferSample * 127f) + 128)},
-                            Endian.LITTLE_ENDIAN);
+                    writeBytes(wav, ref bytePos, new[] {(byte) (Math.Round(bufferSample * 127f) + 128)},
+                        Endian.LITTLE_ENDIAN);
 
                     bufferSample = 0f;
                 }
@@ -155,7 +149,7 @@ namespace PixelVision8.Runner.Data
 
             return wav;
         }
-        
+
         /// <summary>
         ///     Writes a short (Int16) to a byte array.
         ///     This is an aux function used when creating the WAV data.
@@ -211,6 +205,5 @@ namespace PixelVision8.Runner.Data
             BIG_ENDIAN,
             LITTLE_ENDIAN
         }
-
     }
 }

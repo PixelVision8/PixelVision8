@@ -30,14 +30,13 @@ namespace PixelVision8.Runner.Workspace
 {
     public interface IFileSystem : IDisposable
     {
-        
         ICollection<WorkspacePath> GetEntities(WorkspacePath path);
         bool Exists(WorkspacePath path);
         Stream CreateFile(WorkspacePath path);
         Stream OpenFile(WorkspacePath path, FileAccess access);
         void CreateDirectory(WorkspacePath path);
         void Delete(WorkspacePath path);
-        
+
         // TODO should add readonly, copy and move?
     }
 }

@@ -29,10 +29,9 @@ namespace PixelVision8.Runner.Exporters
 {
     public class PNGWriter : IImageExporter
     {
-        private Color[] colorData;
-
 //          private const int bitsPerSample = 8;
         private readonly ColorType colorType;
+        private Color[] colorData;
 
         public PNGWriter()
         {

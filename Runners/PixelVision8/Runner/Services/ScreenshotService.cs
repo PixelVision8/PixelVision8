@@ -29,19 +29,18 @@ namespace PixelVision8.Runner.Services
 {
     public class ScreenshotService : AbstractService
     {
-        private bool active;
-
 //        private ITextureFactory textureFactory;
         private readonly WorkspaceService workspace;
-        private PNGWriter imageExporter;
+        private bool active;
+        private readonly PNGWriter imageExporter;
 
         public ScreenshotService(WorkspaceService workspace)
         {
             // TODO this needs to get teh workspace through the service
 //            this.textureFactory = textureFactory;
             this.workspace = workspace;
-            
-            this.imageExporter = new PNGWriter();
+
+            imageExporter = new PNGWriter();
         }
 
         private WorkspacePath screenshotDir
@@ -51,7 +50,8 @@ namespace PixelVision8.Runner.Services
 //                var fileSystem = workspace.fileSystem;
                 try
                 {
-                    var directoryName = "Screenshots";//workspace.ReadBiosData("ScreenshotDir", "Screenshots") as string;
+                    var directoryName =
+                        "Screenshots"; //workspace.ReadBiosData("ScreenshotDir", "Screenshots") as string;
 
                     var path = WorkspacePath.Root.AppendDirectory("Tmp").AppendDirectory(directoryName);
 
@@ -92,53 +92,51 @@ namespace PixelVision8.Runner.Services
 //            throw new NotImplementedException();
 
             var fileName = GenerateScreenshotName().Path;
-            
+
             if (active == false)
                 return active;
-            
+
             try
             {
                 var pixels = engine.displayChip.pixels;
-    
+
                 var displaySize = engine.gameChip.Display();
-    
-    
+
+
                 var visibleWidth = displaySize.X;
                 var visibleHeight = displaySize.Y;
                 var width = engine.displayChip.width;
-                
-                
+
+
                 // Need to crop the image
                 var newPixels = new Color[visibleWidth * visibleHeight];
-    
+
                 var totalPixels = pixels.Length;
                 var newTotalPixels = newPixels.Length;
-                
+
                 var index = 0;
-                
-                for (int i = 0; i < totalPixels; i++)
+
+                for (var i = 0; i < totalPixels; i++)
                 {
-    
                     var col = i % width;
                     if (col < visibleWidth && index < newTotalPixels)
                     {
                         newPixels[index] = pixels[i];
                         index++;
                     }
-    
                 }
-            
+
                 // We need to do this manually since the exporter could be active and we don't want to break it for a screenshot
                 var tmpExporter = new ImageExporter(fileName, imageExporter, newPixels, visibleWidth, visibleHeight);
                 tmpExporter.CalculateSteps();
-    
+
                 // Manually step through the exporter
                 while (tmpExporter.completed == false)
                     tmpExporter.NextStep();
 
-            
+
                 workspace.SaveExporterFiles(new Dictionary<string, byte[]> {{tmpExporter.fileName, tmpExporter.bytes}});
-                
+
                 return true;
             }
             catch

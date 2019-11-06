@@ -26,8 +26,8 @@ namespace PixelVision8.Runner.Exporters
 {
     public class SoundExporter : AbstractExporter
     {
-        private StringBuilder sb;
         private readonly IEngine targetEngine;
+        private StringBuilder sb;
 
         public SoundExporter(string fileName, IEngine targetEngine) : base(fileName)
         {
@@ -56,7 +56,7 @@ namespace PixelVision8.Runner.Exporters
 
             sb.Append("\"version\":\"v2\",");
             JsonUtil.GetLineBreak(sb, 1);
-            
+
             JsonUtil.indentLevel++;
             sb.Append("\"sounds\": [");
 

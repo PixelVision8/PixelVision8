@@ -22,7 +22,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Runner.Workspace;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

@@ -30,15 +30,8 @@ namespace PixelVision8.Runner.Services
 {
     public class WorkspaceService : FileSystemMounter, IService
     {
-
-        #region Default paths
-    
-        public WorkspacePath TmpFileSystemPath { get; set; } = WorkspacePath.Root.AppendDirectory("Tmp");
-        
-
-        #endregion
-        
         public List<string> archiveExtensions;
+        protected IFileSystem currentDisk;
 
         public List<string> fileExtensions = new List<string>
         {
@@ -52,10 +45,10 @@ namespace PixelVision8.Runner.Services
 //        protected FileSystemMounter fileSystem;
         protected WorkspacePath logFilePath;
         protected LogService logService;
-        protected IFileSystem currentDisk;
+
         public WorkspacePath osLibPath;
 //        public WorkspacePath workspaceLibPath;
-        
+
         public List<string> requiredFiles = new List<string>
         {
             "data.json",
@@ -65,14 +58,30 @@ namespace PixelVision8.Runner.Services
         /// <summary>
         ///     This class manages all of the logic Pixel Vision 8 needs to create and manage the workspace.
         /// </summary>
-        public WorkspaceService(KeyValuePair<WorkspacePath, IFileSystem> mountPoint) :base(mountPoint)
+        public WorkspaceService(KeyValuePair<WorkspacePath, IFileSystem> mountPoint) : base(mountPoint)
         {
 //            fileSystem = new FileSystemMounter(mountPoint);
 //            EntityMovers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityMover());
 //            EntityCopiers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityCopier());
         }
 
-        
+        #region Default paths
+
+        public WorkspacePath TmpFileSystemPath { get; set; } = WorkspacePath.Root.AppendDirectory("Tmp");
+
+        #endregion
+
+        public IServiceLocator locator { get; set; }
+
+        /// <summary>
+        ///     This method registers the service with the service locator.
+        /// </summary>
+        /// <param name="locator"></param>
+        public virtual void RegisterService(IServiceLocator locator)
+        {
+            this.locator = locator;
+        }
+
 
         /// <summary>
         ///     This mounts the file system from a collection of File System Paths and File System instances.
@@ -82,11 +91,9 @@ namespace PixelVision8.Runner.Services
         {
             // Create a new File System
             foreach (var mountPoint in fileSystems)
-            {
                 AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(mountPoint.Key, mountPoint.Value));
-            }
         }
-        
+
         public bool ValidateGameInDir(WorkspacePath filePath)
         {
             if (!Exists(filePath))
@@ -150,7 +157,7 @@ namespace PixelVision8.Runner.Services
         public void SaveExporterFiles(Dictionary<string, byte[]> files)
         {
             // TODO the dictionary string should be converted into a Workspace path
-            
+
             // Save all the files to the disk
             foreach (var file in files)
                 try
@@ -201,7 +208,6 @@ namespace PixelVision8.Runner.Services
                 {
 //                    Console.WriteLine("Couldn't save " + file.Key + "\n" + e.Message);
                 }
-
         }
 
         public string[] SplitFileName(WorkspacePath filePath)
@@ -295,7 +301,8 @@ namespace PixelVision8.Runner.Services
         {
             if (logService == null)
             {
-                var total = 100;//MathHelper.Clamp(Convert.ToInt32((long) ReadBiosData("TotalLogItems", 100L, true)), 1, 500);
+                var
+                    total = 100; //MathHelper.Clamp(Convert.ToInt32((long) ReadBiosData("TotalLogItems", 100L, true)), 1, 500);
 
                 logService = new LogService(total);
             }
@@ -328,63 +335,14 @@ namespace PixelVision8.Runner.Services
             return logService.ReadLogItems();
         }
 
-        #region File IO
 
-        public string ReadTextFromFile(WorkspacePath filePath)
-        {
-//            var filePath = FileSystemPath.Parse(path);
-
-            if (Exists(filePath))
-            {
-                var text = "";
-
-                using (var file = OpenFile(filePath, FileAccess.Read))
-                {
-                    text = file.ReadAllText();
-                    file.Close();
-                    file.Dispose();
-                }
-                
-                return text; //file.ReadAllText();
-            }
-
-            // Always return an empty string if no file was found
-            return "";
-        }
-
-        public bool SaveTextToFile(WorkspacePath filePath, string text, bool autoCreate = false)
-        {
-
-            Stream file = null;
-
-            if (Exists(filePath)) Delete(filePath);
-
-            // TODO need to look into how to clear the bytes before writing to it?
-            file = CreateFile(filePath);
-
-            if (file != null)
-            {
-                var bytes = Encoding.ASCII.GetBytes(text);
-                file.Write(bytes);
-
-                file.Close();
-
-                return true;
-            }
-
-            return false;
-        }
-
-        #endregion
-
-        
         public Dictionary<string, byte[]> LoadGame(string path)
         {
             var filePath = WorkspacePath.Parse(path); //FileSystemPath.Root.AppendPath(fullPath);
             var exits = Exists(filePath);
 
             Dictionary<string, byte[]> files = null;
-            
+
             if (exits)
                 try
                 {
@@ -466,7 +424,6 @@ namespace PixelVision8.Runner.Services
                         Console.WriteLine(e);
                     }
 
-                    
 
 //                    return true;
                 }
@@ -489,7 +446,6 @@ namespace PixelVision8.Runner.Services
 //                ,
 //                workspaceLibPath
                 // Look in the workspace folder
-                
             };
 
             AddExtraFiles(files, paths);
@@ -518,16 +474,16 @@ namespace PixelVision8.Runner.Services
         public Dictionary<string, byte[]> ConvertDiskFilesToBytes(IFileSystem disk)
         {
             var files = new Dictionary<string, byte[]>();
-            
+
             // Get the root files
-            List<WorkspacePath> list = (from p in disk.GetEntities(WorkspacePath.Root)
+            var list = (from p in disk.GetEntities(WorkspacePath.Root)
                 where fileExtensions.Any(val => p.EntityName.EndsWith(val))
                 select p).ToList();
-            
+
             // TODO this is an example of how we can have other files in folders and import them in.
-            
+
             // Look for any wav files in the samples folder
-            
+
             // Samples Directory
 //            var samplesPath = WorkspacePath.Root.AppendDirectory("Samples"); // TODO this should probably not be hard coded
 //            
@@ -549,9 +505,9 @@ namespace PixelVision8.Runner.Services
                         fileStream.CopyTo(memoryStream);
                         fileStream.Close();
                     }
-    
+
 //                    Console.WriteLine("Add File " + file.Path.Substring(1));
-                    
+
                     files.Add(file.Path.Substring(1), memoryStream.ToArray());
                 }
 
@@ -562,7 +518,7 @@ namespace PixelVision8.Runner.Services
         {
             var libs = new Dictionary<string, byte[]>();
 
-             foreach (var path in paths)
+            foreach (var path in paths)
                 try
                 {
                     if (Exists(path))
@@ -605,8 +561,7 @@ namespace PixelVision8.Runner.Services
             libs.ToList().ForEach(x => files.Add(x.Key, x.Value));
         }
 
-        
-        
+
         public virtual void ShutdownSystem()
         {
 //            var tmpPath = FileSystemPath.Parse("/Tmp/");
@@ -616,14 +571,59 @@ namespace PixelVision8.Runner.Services
                     Delete(entities);
         }
 
+        #region File IO
+
+        public string ReadTextFromFile(WorkspacePath filePath)
+        {
+//            var filePath = FileSystemPath.Parse(path);
+
+            if (Exists(filePath))
+            {
+                var text = "";
+
+                using (var file = OpenFile(filePath, FileAccess.Read))
+                {
+                    text = file.ReadAllText();
+                    file.Close();
+                    file.Dispose();
+                }
+
+                return text; //file.ReadAllText();
+            }
+
+            // Always return an empty string if no file was found
+            return "";
+        }
+
+        public bool SaveTextToFile(WorkspacePath filePath, string text, bool autoCreate = false)
+        {
+            if (Exists(filePath)) Delete(filePath);
+
+            // TODO need to look into how to clear the bytes before writing to it?
+            var file = CreateFile(filePath);
+
+            if (file != null)
+            {
+                var bytes = Encoding.ASCII.GetBytes(text);
+                file.Write(bytes);
+
+                file.Close();
+
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion
+
         #region FileSystem IO
 
-        
         public void Copy(WorkspacePath src, WorkspacePath dest)
         {
             this.Copy(src, this, dest);
         }
-        
+
         public void Move(WorkspacePath src, WorkspacePath dest)
         {
             this.Move(src, this, dest);
@@ -633,22 +633,7 @@ namespace PixelVision8.Runner.Services
         {
             Mounts.Add(mount);
         }
-        
+
         #endregion
-
-        public IServiceLocator locator
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        ///     This method registers the service with the service locator.
-        /// </summary>
-        /// <param name="locator"></param>
-        public virtual void RegisterService(IServiceLocator locator)
-        {
-            this.locator = locator;
-        }
     }
 }

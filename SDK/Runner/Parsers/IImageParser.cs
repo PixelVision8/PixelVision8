@@ -18,8 +18,8 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Runner.Parsers
 {
