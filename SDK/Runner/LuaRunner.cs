@@ -43,6 +43,11 @@ namespace PixelVision8.Runner
             this.gamePath = gamePath;
         }
 
+        public LuaRunner()
+        {
+            //throw new System.NotImplementedException();
+        }
+
         /// <summary>
         ///     The base runner contains a list of the core chips. Here you'll want to add the game chip to the list so it can run.
         ///     This is called when a new game is created by the runner.

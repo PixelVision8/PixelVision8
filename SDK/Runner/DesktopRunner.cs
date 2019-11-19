@@ -63,6 +63,11 @@ namespace PixelVision8.Runner
             this.rootPath = rootPath;
         }
 
+        public DesktopRunner()
+        {
+            throw new NotImplementedException();
+        }
+
         protected WorkspacePath userBiosPath => WorkspacePath.Parse("/Storage/user-bios.json");
 
         /// <summary>

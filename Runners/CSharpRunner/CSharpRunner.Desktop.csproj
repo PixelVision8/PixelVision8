@@ -73,7 +73,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\Disks\PV8GameTemplate\*.*">
+    <Content Include="..\..\Disks\PixelVision8System\*.*">
       <Link>Content\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

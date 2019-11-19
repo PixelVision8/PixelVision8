@@ -107,7 +107,6 @@
     <Compile Include="Runner\Services\LuaServicePlus.cs" />
     <Compile Include="Runner\Services\ScreenshotService.cs" />
     <Compile Include="Runner\Services\WorkspaceServicePlus.cs" />
-    <Compile Include="Runner\Utils\OrdinalStringComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
