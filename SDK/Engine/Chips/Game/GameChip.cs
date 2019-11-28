@@ -171,18 +171,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="timeDelta">A float value representing the time in milliseconds since the last Draw() call was completed.</param>
         public virtual void Update(float timeDelta)
         {
-            //            // Calculate framerate
-            //            frameCount++;
-            //            dt += timeDelta;
-            //            if (dt > 1.0 / updateRate)
-            //            {
-            //                fps = (int)(frameCount / dt);
-            //                frameCount = 0;
-            //                dt -= 1.0 / updateRate;
-            //            }
-
-            // Reset the current sprite count
-//            currentSprites = 0;
+            // Overwrite this method and add your own draw logic.
         }
 
         /// <summary>
@@ -883,6 +872,17 @@ namespace PixelVision8.Engine.Chips
                     // Clear the background when in tile mode
                     if (clearTiles)
                         Tile(nextX / 8, nextY / 8, -1);
+
+                    // Manually increase the sprite counter if drawing to one of the sprite layers
+                    if (drawMode == DrawMode.Sprite || drawMode == DrawMode.SpriteAbove ||
+                        drawMode == DrawMode.SpriteBelow)
+                    {
+                        // If the sprite counter has been met, exit out of the draw call
+                        if (spriteChip.maxSpriteCount > 0 && CurrentSprites >= spriteChip.maxSpriteCount)
+                            return;
+
+                        CurrentSprites++;
+                    }
 
                     fontChip.ReadSpriteAt(spriteIDs[j], tmpFontData);
 

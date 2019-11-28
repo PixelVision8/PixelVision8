@@ -418,7 +418,7 @@ namespace PixelVision8.Runner
             frameCounter++;
 
             // Clear with black and draw the runner.
-            graphics.GraphicsDevice.Clear(Color.Black);
+            graphics.GraphicsDevice.Clear(Color.White);
 
             // Now it's time to call the PixelVisionEngine's Draw() method. This Draw() call propagates throughout all of the Chips that have 
             // registered themselves as being able to draw such as the GameChip and the DisplayChip.
