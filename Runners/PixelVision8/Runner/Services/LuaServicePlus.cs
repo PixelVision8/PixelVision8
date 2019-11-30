@@ -123,11 +123,11 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["SaveText"] = new Action<WorkspacePath, string>(SaveText);
             luaScript.Globals["SaveImage"] = new Action<WorkspacePath, Image>(SaveImage);
 
-
-            // Expose Bios APIs
-            luaScript.Globals["ReadBiosData"] = new Func<string, string, string>((key, defaultValue) =>
-                desktopRunner.bios.ReadBiosData(key, defaultValue));
-            luaScript.Globals["WriteBiosData"] = new Action<string, string>(desktopRunner.bios.UpdateBiosData);
+//
+//            // Expose Bios APIs
+//            luaScript.Globals["ReadBiosData"] = new Func<string, string, string>((key, defaultValue) =>
+//                desktopRunner.bios.ReadBiosData(key, defaultValue));
+//            luaScript.Globals["WriteBiosData"] = new Action<string, string>(desktopRunner.bios.UpdateBiosData);
 
             //            luaScript.Globals["RemapKey"] = new Action<string, int>(RemapKey);
 

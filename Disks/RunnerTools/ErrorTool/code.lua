@@ -36,8 +36,11 @@ function Init()
 
   playSounds = ReadBiosData("PlaySystemSounds", "True") == "True"
 
+if(EnableAutoRun ~= nil) then
   -- TODO Should only enable this if there is a disk loading error?
   EnableAutoRun(true)
+
+end
 
   -- Set the background an rebuild the screen buffer
   BackgroundColor(tonumber(ReadBiosData("DefaultBackgroundColor", "5")))

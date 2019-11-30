@@ -52,9 +52,13 @@ function Init()
 
   playSounds = ReadBiosData("PlaySystemSounds", "True") == "True"
 
-  EnableAutoRun(false)
+  if(EnableAutoRun ~= nil) then
+    EnableAutoRun(false)
+  end
 
-  EnableBackKey(false)
+  if(EnableAutoRun ~= nil) then
+    EnableBackKey(false)
+  end
 
   -- Set the default background color
   BackgroundColor(5)
@@ -206,8 +210,6 @@ end
 
 function Draw()
 
-
-
   -- Redraw the entire display
   RedrawDisplay()
 
@@ -258,13 +260,16 @@ function InvalidateKeys()
   invalid = true
 end
 
-
-
 function FindEditors()
 
   local editors = {}
 
-  local paths = 
+  -- If the file system isn't exposed, exit out of this since we can't check for any installed tool
+  if(PathExists == nil) then
+    return {}
+  end
+
+  local paths =
   {
     NewWorkspacePath("/PixelVisionOS/Tools/"),
   }

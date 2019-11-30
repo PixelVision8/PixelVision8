@@ -130,137 +130,22 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <!-- Shader Effects -->
     <Content Include="..\..\Effects\*.*">
       <Link>Content\Effects\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
   <!-- Core Runner Tools -->
-  <ItemGroup>
-    <Content Include="..\..\Disks\RunnerTools\BootTool\boot-text.lua">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\boot-text.lua</Link>
+    <Content Include="..\..\Disks\RunnerTools\BootTool\*.*">
+      <Link>Content\PixelVisionOS\System\Tools\BootTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\Disks\RunnerTools\BootTool\code.lua">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\code.lua</Link>
+    <Content Include="..\..\Disks\RunnerTools\ErrorTool\*.*">
+      <Link>Content\PixelVisionOS\System\Tools\ErrorTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\Disks\RunnerTools\BootTool\colors.png">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\colors.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\BootTool\data.json">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\data.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\BootTool\info.json">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\info.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\BootTool\large.font.png">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\large.font.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\BootTool\music.json">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\music.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\BootTool\saves.json">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\saves.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\BootTool\sb-sprites.lua">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\sb-sprites.lua</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\BootTool\small.font.png">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\small.font.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\BootTool\sounds.json">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\sounds.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\BootTool\sprites.cache.png">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\sprites.cache.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\BootTool\tilemap.json">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\tilemap.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\Disks\RunnerTools\ErrorTool\code.lua">
-      <Link>Content\PixelVisionOS\System\Tools\ErrorTool\code.lua</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\ErrorTool\colors.png">
-      <Link>Content\PixelVisionOS\System\Tools\ErrorTool\colors.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\ErrorTool\data.json">
-      <Link>Content\PixelVisionOS\System\Tools\ErrorTool\data.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\ErrorTool\info.json">
-      <Link>Content\PixelVisionOS\System\Tools\ErrorTool\info.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\ErrorTool\large.font.png">
-      <Link>Content\PixelVisionOS\System\Tools\ErrorTool\large.font.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\ErrorTool\sb-sprites.lua">
-      <Link>Content\PixelVisionOS\System\Tools\ErrorTool\sb-sprites.lua</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\ErrorTool\sprites.png">
-      <Link>Content\PixelVisionOS\System\Tools\ErrorTool\sprites.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\ErrorTool\tilemap.json">
-      <Link>Content\PixelVisionOS\System\Tools\ErrorTool\tilemap.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\Disks\RunnerTools\LoadTool\code.lua">
-      <Link>Content\PixelVisionOS\System\Tools\LoadTool\code.lua</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\LoadTool\colors.png">
-      <Link>Content\PixelVisionOS\System\Tools\LoadTool\colors.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\LoadTool\data.json">
-      <Link>Content\PixelVisionOS\System\Tools\LoadTool\data.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\LoadTool\info.json">
-      <Link>Content\PixelVisionOS\System\Tools\LoadTool\info.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\LoadTool\large.font.png">
-      <Link>Content\PixelVisionOS\System\Tools\LoadTool\large.font.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\LoadTool\sb-sprites.lua">
-      <Link>Content\PixelVisionOS\System\Tools\LoadTool\sb-sprites.lua</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\LoadTool\sprites.png">
-      <Link>Content\PixelVisionOS\System\Tools\LoadTool\sprites.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\RunnerTools\LoadTool\tilemap.json">
-      <Link>Content\PixelVisionOS\System\Tools\LoadTool\tilemap.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\Disks\RunnerTools\UnloadTool\*.*">
-      <Link>Content\PixelVisionOS\System\Tools\UnloadTool\%(FileName)%(Extension)</Link>
+    <Content Include="..\..\Disks\RunnerTools\LoadTool\*.*">
+      <Link>Content\PixelVisionOS\System\Tools\LoadTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -4,7 +4,6 @@
 	"Resolution": "512x480",
 	"BootTool": "/PixelVisionOS/System/Tools/BootTool/",
 	"LoadTool": "/PixelVisionOS/System/Tools/LoadTool/",
-	"UnloadTool": "/PixelVisionOS/System/Tools/UnloadTool/",
 	"ErrorTool": "/PixelVisionOS/System/Tools/ErrorTool/",
 	"AutoRun": "/PixelVisionOS/System/OSInstaller/",
 

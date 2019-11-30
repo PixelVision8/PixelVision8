@@ -103,14 +103,18 @@ local loopKeyframe = 0
 
 function Init()
 
-  EnableAutoRun(false)
-  EnableBackKey(false)
+  if(EnableAutoRun ~= nil) then
+    EnableAutoRun(false)
+  end
+
+  if(EnableBackKey ~= nil) then
+    EnableBackKey(false)
+  end
 
   playSounds = ReadBiosData("PlaySystemSounds", "True") == "True"
 
   -- Set the background an rebuild the screen buffer
   BackgroundColor(tonumber(ReadBiosData("DefaultBackgroundColor", "5")))
-
 
   if(ReadMetaData("showEjectAnimation") == "true") then
     currentAnimation = ejectAnimation

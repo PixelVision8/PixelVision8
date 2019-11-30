@@ -22,7 +22,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
+using MoonSharp.Interpreter;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Data;
@@ -53,6 +55,19 @@ namespace PixelVision8.Runner
         protected string rootPath;
         protected string tmpPath;
         public WorkspaceService workspaceService;
+        public string systemName;
+        public string systemVersion;
+        public string sessionID { get; protected set; }
+
+        public List<KeyValuePair<string, Dictionary<string, string>>> loadHistory =
+            new List<KeyValuePair<string, Dictionary<string, string>>>();
+
+        protected Dictionary<string, string> nextMetaData;
+        protected RunnerMode nextMode;
+        protected string nextPathToLoad;
+        protected delegate bool EnableCRTDelegator(bool? toggle);
+        protected delegate float BrightnessDelegator(float? brightness = null);
+        protected delegate float SharpnessDelegator(float? sharpness = null);
 
         /// <summary>
         ///     This constructor saves the path to the game's files and kicks off the base constructor
@@ -91,6 +106,13 @@ namespace PixelVision8.Runner
 
         protected override void ConfigureRunner()
         {
+
+            // Save the session ID
+            sessionID = DateTime.Now.ToString("yyyyMMddHHmmssffff");
+
+            systemVersion = bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
+            systemName = bios.ReadBiosData("SystemName", "PixelVision8");
+
             base.ConfigureRunner();
 
             // TODO This may be a string
@@ -104,8 +126,320 @@ namespace PixelVision8.Runner
                 bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner");
         }
 
+        public override void ActivateEngine(IEngine engine)
+        {
 
-        public override void ConfigureDisplayTarget()
+            // Get a reference to the Lua game
+            var game = engine.gameChip as LuaGameChip;
+
+            // Get the script
+            var luaScript = game.luaScript;
+
+            luaScript.Globals["StartNextPreload"] = new Action(StartNextPreload);
+            luaScript.Globals["PreloaderComplete"] = new Action(RunGame);
+            luaScript.Globals["EnableCRT"] = (EnableCRTDelegator)EnableCRT;
+            luaScript.Globals["Brightness"] = (BrightnessDelegator)Brightness;
+            luaScript.Globals["Sharpness"] = (SharpnessDelegator)Sharpness;
+            luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
+            luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int)(loadService.percent * 100));
+            luaScript.Globals["LoadGame"] =
+                new Func<string, Dictionary<string, string>, bool>((path, metadata) =>
+                    Load(path, RunnerMode.Loading, metadata));
+            luaScript.Globals["SystemVersion"] = new Func<string>(() => systemVersion);
+            luaScript.Globals["SystemName"] = new Func<string>(() => systemName);
+            luaScript.Globals["SessionID"] = new Func<string>(() => sessionID);
+
+            // Expose Bios APIs
+            luaScript.Globals["ReadBiosData"] = new Func<string, string, string>((key, defaultValue) =>
+                bios.ReadBiosData(key, defaultValue));
+            luaScript.Globals["WriteBiosData"] = new Action<string, string>(bios.UpdateBiosData);
+
+            //            luaScript.Globals["NewWorkspacePath"] = new Func<string, WorkspacePath>(WorkspacePath.Parse);
+
+            //            UserData.RegisterType<WorkspacePath>();
+
+            // Activate the game
+            base.ActivateEngine(engine);
+        }
+
+//        protected void LoadDefaultGame()
+//        {
+//            // Boot the game
+//        }
+
+        public virtual bool Load(string path, RunnerMode newMode = RunnerMode.Playing,
+            Dictionary<string, string> metaData = null)
+        {
+
+
+            try
+            {
+                if (newMode == RunnerMode.Loading)
+                {
+                    nextPathToLoad = path;
+
+                    // Save a copy of the meta data
+                    nextMetaData = metaData?.ToDictionary(entry => entry.Key,
+                        entry => entry.Value);
+
+                    nextMode = RunnerMode.Playing;
+
+                    // Create new meta data for the pre-loader
+                    metaData = new Dictionary<string, string>
+                    {
+                        {"nextMode", nextMode.ToString()},
+                        {"showDiskAnimation", "false"}
+                    };
+
+                    // Look to see if the game's meta data changes the disk animation flag
+                    if (nextMetaData != null && nextMetaData.ContainsKey("showDiskAnimation"))
+                        metaData["showDiskAnimation"] = nextMetaData["showDiskAnimation"];
+
+
+                    // TODO this was where the eject animation flag was set
+
+                    // Get the default path to the load tool from the bios
+                    path = bios.ReadBiosData("LoadTool", "/PixelVisionOS/Tools/LoadTool/");
+
+                    // Change the mode to loading
+                    newMode = RunnerMode.Loading;
+                }
+
+                // Create a new meta data dictionary if one doesn't exist yet
+                if (metaData == null) metaData = new Dictionary<string, string>();
+
+                // Spit path and convert to a list
+                var splitPath = path.Split('/').ToList();
+                var gameName = "";
+                var rootPath = "/";
+                var total = splitPath.Count - 1;
+
+                // Loop through each item in the path and get the game name and root path
+                for (var i = 1; i < total; i++)
+                    if (i < total - 1)
+                        rootPath += splitPath[i] + "/";
+                    else
+                        gameName = splitPath[i];
+
+                //            Console.WriteLine("Load "+ gameName + " in " + rootPath);
+
+                // Add the game's name and root path to the meta data
+                if (metaData.ContainsKey("GameName"))
+                    metaData["GameName"] = gameName;
+                else
+                    metaData.Add("GameName", gameName);
+
+                // Change the root path for the game's meta data
+                if (metaData.ContainsKey("RootPath"))
+                    metaData["RootPath"] = rootPath;
+                else
+                    metaData.Add("RootPath", rootPath);
+
+                // Update the runner mode
+                mode = newMode;
+
+                // When playing a game, save it to history and the meta data so it can be reloaded correctly
+                if (mode == RunnerMode.Playing)
+                {
+                    lastMode = mode;
+
+                    var metaDataCopy = metaData.ToDictionary(entry => entry.Key,
+                        entry => entry.Value);
+
+                    if (loadHistory.Count > 0)
+                    {
+                        //                        Console.WriteLine("History " + loadHistory.Last().Key + " " + path);
+                        // Only add the history if the last item is not the same
+                        if (loadHistory.Last().Key != path)
+                            loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaDataCopy));
+                    }
+                    else
+                    {
+                        loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaDataCopy));
+                    }
+                }
+
+                // Create a new tmpEngine
+                ConfigureEngine(metaData);
+
+
+                // Path the full path to the engine's name
+                tmpEngine.name = path;
+
+                bool success;
+
+                // Have the workspace run the game from the current path
+                var files = workspaceService.LoadGame(path);
+
+                if (files != null)
+                {
+                    // Read and Run the disk
+                    ProcessFiles(tmpEngine, files, displayProgress);
+                    success = true;
+                }
+                else
+                {
+                    DisplayError(ErrorCode.LoadError, new Dictionary<string, string> { { "@{path}", path } });
+                    success = false;
+                }
+
+                // TODO need to remove old load disk animation?
+                //                if (metaDataCopy.ContainsKey("showDiskAnimation"))
+                //                {
+                //                    metaData["showDiskAnimation"] = "false";
+                //                }
+
+                // If the game is unable to run, display an error
+                //            if (success == false) 
+
+
+                // Create new FileSystemPath
+                return success;
+                //                return base.Load(path, newMode, metaData);
+            }
+            catch (Exception e)
+            {
+                // Console.WriteLine("Load Error:\n"+e.Message);
+
+
+                DisplayError(ErrorCode.Exception,
+                    new Dictionary<string, string>
+                        {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message}}, e);
+            }
+
+
+            return false;
+        }
+
+        public virtual void DisplayError(ErrorCode code, Dictionary<string, string> tokens = null,
+            Exception exception = null)
+        {
+            if (mode == RunnerMode.Error)
+                return;
+
+            //            // TODO should this only work on special cases?
+            //            autoRunEnabled = true;
+
+            var sb = new StringBuilder();
+
+            // Pull the error message from the bios
+            var message = GetErrorMessage(code);
+
+            sb.Append(message);
+
+            if (tokens != null)
+                foreach (var entry in tokens)
+                    sb.Replace(entry.Key, entry.Value);
+
+            var messageString = sb.ToString();
+
+            var metaData = new Dictionary<string, string>
+            {
+                {"errorMessage", messageString}
+            };
+
+            if (exception != null) metaData["exceptionMessage"] = exception.StackTrace;
+
+
+            // TODO need to be able to pass in an error
+            LoadError(metaData);
+        }
+
+        protected string GetErrorMessage(ErrorCode code)
+        {
+            return bios.ReadBiosData(code.ToString(), "Error code " + (int)code);
+        }
+
+        protected virtual void LoadError(Dictionary<string, string> metaData)
+        {
+            var tool = bios.ReadBiosData("ErrorTool", "/PixelVisionOS/Tools/ErrorTool/");
+
+            workspaceService.UpdateLog(metaData["errorMessage"], LogType.Error,
+                metaData.ContainsKey("exceptionMessage") ? metaData["exceptionMessage"] : null);
+
+            Load(tool, RunnerMode.Error, metaData);
+        }
+
+        public virtual void StartNextPreload()
+        {
+            //            Print("Start Next Preload");
+
+            if (nextPathToLoad != null)
+            {
+                var success = Load(nextPathToLoad, nextMode, nextMetaData);
+
+                //TODO this needs to be tested more
+                if (success == false)
+                {
+                    //                    loading = false;
+                    DisplayError(ErrorCode.LoadError, new Dictionary<string, string> { { "@{path}", nextPathToLoad } });
+                }
+                else
+                {
+                    // Clear the old data
+                    nextPathToLoad = null;
+                    nextMetaData = null;
+
+                    loadService.StartLoading();
+                }
+            }
+        }
+
+        public virtual void BootDone(bool safeMode = false)
+        {
+            // Only call BootDone when the runner is booting.
+            if (mode != RunnerMode.Booting)
+                return;
+
+            // Test to see if we are in save mode before loading the bios
+            if (safeMode)
+            {
+                // Clear the current bios
+                bios.Clear();
+
+                // Read the bios text
+                var biosText = workspaceService.ReadTextFromFile(biosPath);
+
+                // Reparse the bios text
+                bios.ParseBiosText(biosText);
+
+                // Reset all the default values from the bios
+                ConfigureDisplayTarget();
+            }
+
+            AutoLoadDefaultGame();
+        }
+
+        public virtual void AutoLoadDefaultGame()
+        {
+            loadHistory.Clear();
+            //            metaDataHistory.Clear();
+
+            // Look to see if we have the bios default tool in the OS folder
+            try
+            {
+                var biosAutoRun = bios.ReadBiosData("AutoRun");
+
+                // Check to see if this path exists
+                if (biosAutoRun != "" && workspaceService.Exists(WorkspacePath.Parse(biosAutoRun)))
+                    // Validate that the path is actually a game
+                    if (workspaceService.ValidateGameInDir(WorkspacePath.Parse(biosAutoRun)))
+                    {
+                        // Attempt to load the game
+                        Load(biosAutoRun, RunnerMode.Loading);
+                        return;
+                    }
+            }
+            catch
+            {
+                // ignored
+            }
+
+            DisplayError(ErrorCode.NoAutoRun);
+
+        }
+    
+    public override void ConfigureDisplayTarget()
         {
             // Get the virtual monitor resolution
             var tmpRes = bios.ReadBiosData(BiosSettings.Resolution.ToString(), "512x480")
@@ -259,18 +593,20 @@ namespace PixelVision8.Runner
         /// </summary>
         protected virtual void LoadDefaultGame()
         {
-            var autoRunPath = bios.ReadBiosData("AutoRun", "/App/DefaultGame/");
-
-            // Create a new dictionary to store the file binary data
-            var gameFiles = workspaceService.LoadGame(autoRunPath); //gamePath)));
-
-            // Configure a new PV8 engine to play the game
-            ConfigureEngine();
-
-            // Process the files
-            ProcessFiles(tmpEngine, gameFiles);
-
-            tmpEngine.name = autoRunPath;
+            Load(bios.ReadBiosData("BootTool", "/PixelVisionOS/Tools/BootTool/"), RunnerMode.Booting);
+//
+//            var autoRunPath = bios.ReadBiosData("AutoRun", "/App/DefaultGame/");
+//
+//            // Create a new dictionary to store the file binary data
+//            var gameFiles = workspaceService.LoadGame(autoRunPath); //gamePath)));
+//
+//            // Configure a new PV8 engine to play the game
+//            ConfigureEngine();
+//
+//            // Process the files
+//            ProcessFiles(tmpEngine, gameFiles);
+//
+//            tmpEngine.name = autoRunPath;
         }
 
         public virtual void SaveGameData(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
