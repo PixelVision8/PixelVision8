@@ -99,7 +99,7 @@ namespace PixelVision8.Engine.Chips
 
         private Keys? repChar;
 
-        public void Update(float timeDelta)
+        public void Update(int timeDelta)
         {
             // Save the one and only (if available) keyboardstate 
             previousKeyboardState = currentKeyboardState;

@@ -127,7 +127,7 @@ namespace PixelVision8.Runner
         protected IServiceLocator serviceManager;
 
         //        protected bool stretchScreen;
-        protected float timeDelta;
+        protected int timeDelta;
         protected IEngine tmpEngine;
 
         public GameRunner()
@@ -383,7 +383,7 @@ namespace PixelVision8.Runner
                 return;
 
 
-            timeDelta = (float) gameTime.ElapsedGameTime.TotalSeconds;
+            timeDelta = (int)(gameTime.ElapsedGameTime.TotalSeconds * 1000);
 
             elapsedTime += gameTime.ElapsedGameTime;
 
@@ -394,15 +394,11 @@ namespace PixelVision8.Runner
                 // Make sure the game chip has the current fps value
                 activeEngine.gameChip.fps = frameCounter;
 
-                // Save this to the runner
-                //                frameRate = frameCounter;
-
                 frameCounter = 0;
             }
 
             // Before trying to update the PixelVisionEngine instance, we need to make sure it exists. The guard clause protects us from throwing an 
             // error when the Runner loads up and starts before we've had a chance to instantiate the new engine instance.
-
             activeEngine.Update(timeDelta);
 
             // It's important that we pass in the Time.deltaTime to the PixelVisionEngine. It is passed along to any Chip that registers itself with 

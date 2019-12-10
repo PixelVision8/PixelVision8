@@ -78,7 +78,7 @@ namespace PixelVision8.Engine.Chips
         //        
         public int fps;
         public Dictionary<string, string> savedData = new Dictionary<string, string>();
-        public Dictionary<string, string> textFiles = new Dictionary<string, string>();
+        
         private int[] tmpFontData = new int[0];
 
         private int[] tmpSpriteData = new int[0];
@@ -86,22 +86,6 @@ namespace PixelVision8.Engine.Chips
 
 
         public int CurrentSprites { get; set; }
-
-        /// <summary>
-        ///     This allows you to add your Lua scripts at runtime to a game from a string. This could be useful for
-        ///     dynamically generating code such as level data or other custom Lua objects in memory. Simply give the
-        ///     script a name and pass in a string with valid Lua code. If a script with the same name exists, this will
-        ///     override it. Make sure to call LoadScript() after to parse it.
-        /// </summary>
-        /// <param name="name">Name of the script. This should contain the .lua extension.</param>
-        /// <param name="file">The string text representing the Lua script data.</param>
-        public void AddTextFile(string name, string file)
-        {
-            if (textFiles.ContainsKey(name))
-                textFiles[name] = file;
-            else
-                textFiles.Add(name, file);
-        }
 
         #region GameChip Properties
 
@@ -169,7 +153,7 @@ namespace PixelVision8.Engine.Chips
         ///     Runner
         /// </label>
         /// <param name="timeDelta">A float value representing the time in milliseconds since the last Draw() call was completed.</param>
-        public virtual void Update(float timeDelta)
+        public virtual void Update(int timeDelta)
         {
             // Overwrite this method and add your own draw logic.
         }

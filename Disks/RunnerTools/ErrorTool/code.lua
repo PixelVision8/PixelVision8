@@ -69,6 +69,9 @@ end
 
 function Update(timeDelta)
 
+  -- Convert timeDelta to a float
+  timeDelta = timeDelta / 1000
+
   animTime = animTime + timeDelta
   if(animTime > animDelay) then
     animTime = 0

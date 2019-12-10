@@ -201,9 +201,10 @@ namespace PixelVision8.Engine.Chips
         ///     move the play head to the next beat and play that note.
         /// </summary>
         /// <param name="timeDelta"></param>
-        public void Update(float timeDelta)
+        public void Update(int timeDelta)
         {
-            time += timeDelta;
+            // Need to conver the time to a float
+            time += timeDelta / 1000f;
 
             songData["playing"] = Convert.ToInt32(songCurrentlyPlaying);
 

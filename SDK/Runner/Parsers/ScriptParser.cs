@@ -26,13 +26,13 @@ namespace PixelVision8.Runner.Parsers
     {
         private readonly string name;
         private readonly string script;
-        private readonly GameChip target;
+        private readonly LuaGameChip target;
 
         public ScriptParser(string name, string script, GameChip target)
         {
             this.name = name;
             this.script = script;
-            this.target = target;
+            this.target = target as LuaGameChip;
         }
 
         public override void CalculateSteps()
@@ -44,7 +44,7 @@ namespace PixelVision8.Runner.Parsers
 
         protected void LoadScript()
         {
-            target.AddTextFile(name, script);
+            target?.AddScript(name, script);
             currentStep++;
         }
     }

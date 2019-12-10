@@ -32,6 +32,6 @@ namespace PixelVision8.Engine.Chips
         ///     input.
         /// </summary>
         /// <param name="timeDelta"></param>
-        void Update(float timeDelta);
+        void Update(int timeDelta);
     }
 }

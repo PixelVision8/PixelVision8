@@ -1875,7 +1875,7 @@ namespace PixelVision8.Runner.Editors
         ///     Manually update the sequencer
         /// </summary>
         /// <param name="timeDelta"></param>
-        public void UpdateSequencer(float timeDelta)
+        public void UpdateSequencer(int timeDelta)
         {
             musicChip.Update(timeDelta);
         }

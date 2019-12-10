@@ -7,7 +7,8 @@
   a new game.  Simply delete the following code and implement your own Init(),
   Update() and Draw() logic.
 
-  Learn more about making Pixel Vision 8 games at https://www.gitbook.com/@pixelvision8
+  Learn more about making Pixel Vision 8 games at
+  https://www.pixelvision8.com/getting-started
 ]]--
 
 -- This this is an empty game, we will the following text. We combined two sets of fonts into

@@ -99,6 +99,9 @@ end
 
 function Update(timeDelta)
 
+  -- Convert timeDelta to a float
+  timeDelta = timeDelta / 1000
+
   -- Track time of animation
   time = time + timeDelta
 

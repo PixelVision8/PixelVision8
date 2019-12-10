@@ -32,7 +32,7 @@ namespace PixelVision8.Engine.Chips
     public class LuaGameChip : GameChip
     {
         protected Script _luaScript;
-
+        public Dictionary<string, string> textFiles = new Dictionary<string, string>();
         public Script luaScript
         {
             get
@@ -58,7 +58,7 @@ namespace PixelVision8.Engine.Chips
             luaScript.Call(luaScript.Globals["Init"]);
         }
 
-        public override void Update(float timeDelta)
+        public override void Update(int timeDelta)
         {
             base.Update(timeDelta);
 
@@ -140,6 +140,7 @@ namespace PixelVision8.Engine.Chips
 
             #region File IO APIs
 
+            luaScript.Globals["AddScript"] = new Action<string, string>(AddScript);
             luaScript.Globals["LoadScript"] = new Action<string>(LoadScript);
             luaScript.Globals["ReadSaveData"] = new Func<string, string, string>(ReadSaveData);
             luaScript.Globals["WriteSaveData"] = new Action<string, string>(WriteSaveData);

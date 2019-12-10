@@ -160,12 +160,8 @@ namespace PixelVision8.Engine
         /// </summary>
         /// <param name="timeDelta"></param>
         /// <tocexclude />
-        public virtual void Update(float timeDelta)
+        public virtual void Update(int timeDelta)
         {
-//            int delta = (int)(timeDelta * 1000);
-//
-//            Console.WriteLine(timeDelta + " " + delta + " " + delta/1000);
-
             // Reset the sprite counter on each frame
             gameChip.CurrentSprites = 0;
 
