@@ -523,7 +523,7 @@ namespace PixelVision8.Engine
             for (var i = 0; i < total; i++)
             {
                 MergePixels(nextX, nextY, spriteSize.X, spriteSize.Y,
-                    gameChip.ConvertCharacterToPixelData(text[i], font), false, false, colorOffset);
+                    gameChip.CharacterToPixelData(text[i], font), false, false, colorOffset);
 
 
 //                DrawSprite(ids[i], nextX, nextY, false, false, colorOffset);

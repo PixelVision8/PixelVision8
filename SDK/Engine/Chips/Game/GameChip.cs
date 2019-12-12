@@ -473,14 +473,11 @@ namespace PixelVision8.Engine.Chips
                     UpdateCachedTilemap(pixelData, x, y, width, height, flipH, flipV, colorOffset);
 
                     break;
-
+                
                 default:
 
-                    // Need to flip the y position to draw correctly
-                    //                    y = displayChip.height - height - y;
-
                     displayChip.NewDrawCall(pixelData, x, y, width, height, (int) drawMode, flipH, flipV, colorOffset);
-
+                    
                     break;
             }
         }
@@ -1068,7 +1065,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="fontName"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public int[] ConvertCharacterToPixelData(char character, string fontName)
+        public int[] CharacterToPixelData(char character, string fontName)
         {
             var fontMap = fontChip.ReadFont(fontName);
 

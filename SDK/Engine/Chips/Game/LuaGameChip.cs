@@ -226,8 +226,8 @@ namespace PixelVision8.Engine.Chips
             #region Text
 
 //            luaScript.Globals["ConvertTextToSprites"] = new Func<string, string, int[]>(ConvertTextToSprites);
-            luaScript.Globals["ConvertCharacterToPixelData"] =
-                new Func<char, string, int[]>(ConvertCharacterToPixelData);
+            luaScript.Globals["CharacterToPixelData"] =
+                new Func<char, string, int[]>(CharacterToPixelData);
 
             #endregion
 
