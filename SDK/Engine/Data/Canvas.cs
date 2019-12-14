@@ -54,10 +54,10 @@ namespace PixelVision8.Engine
             spriteSize = gameChip.SpriteSize();
         }
 
-        public void LinePattern(int a, int b)
+        public void LinePattern(int x, int y)
         {
-            linePattern.X = a;
-            linePattern.Y = b;
+            linePattern.X = x;
+            linePattern.Y = y;
         }
 
         public bool DrawCentered(bool? newValue = null)

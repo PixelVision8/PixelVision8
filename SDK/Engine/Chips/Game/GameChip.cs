@@ -1502,9 +1502,9 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         /// <param name="total"></param>
         /// <returns>Returns an int representing the total number of sprites on the screen at once.</returns>
-        public int MaxSpriteCount(int? total = null)
+        public int MaxSpriteCount()
         {
-            if (total.HasValue) spriteChip.maxSpriteCount = total.Value;
+//            if (total.HasValue) spriteChip.maxSpriteCount = total.Value;
 
             return spriteChip.maxSpriteCount;
         }

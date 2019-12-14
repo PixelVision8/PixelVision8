@@ -498,7 +498,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int MaxSpriteCount(int? total)
         {
-            if (total.HasValue) gameChip.MaxSpriteCount(total.Value);
+            if (total.HasValue) targetGame.spriteChip.maxSpriteCount = total.Value;
 
             return gameChip.MaxSpriteCount();
         }

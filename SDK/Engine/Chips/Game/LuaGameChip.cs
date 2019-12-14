@@ -173,6 +173,7 @@ namespace PixelVision8.Engine.Chips
             luaScript.Globals["PlaySound"] = new Action<int, int>(PlaySound);
             luaScript.Globals["PlayRawSound"] = new Action<string, int, float>(soundChip.PlayRawSound);
 
+            luaScript.Globals["IsChannelPlaying"] = new Func<int, bool>(IsChannelPlaying);
             luaScript.Globals["PlayPattern"] = new Action<int, bool>(PlayPattern);
             luaScript.Globals["PlayPatterns"] = new Action<int[], bool>(PlayPatterns);
             luaScript.Globals["PlaySong"] = new Action<int, bool, int>(PlaySong);
@@ -189,6 +190,7 @@ namespace PixelVision8.Engine.Chips
             luaScript.Globals["Sprites"] = new Func<int[], int, int[]>(Sprites);
             luaScript.Globals["SpriteSize"] = new Func<int?, int?, Point>(SpriteSize);
             luaScript.Globals["TotalSprites"] = new Func<bool, int>(TotalSprites);
+            luaScript.Globals["MaxSpriteCount"] = new Func<int>(MaxSpriteCount); 
 
             #endregion
 
