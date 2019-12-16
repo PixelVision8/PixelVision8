@@ -315,7 +315,7 @@ namespace PixelVision8.Runner.Editors
 
             for (var i = 0; i < flags.Length; i++) saveFlags |= flags[i];
 
-            targetGame.SetMetaData("version", runner.systemVersion);
+            targetGame.SetMetadata("version", runner.systemVersion);
 //            gameChip.version = ;
 
             // TODO saving games doesn't work
@@ -408,13 +408,13 @@ namespace PixelVision8.Runner.Editors
             // If a new name is supplied, set it on the game chip
             if (name != null)
             {
-                targetGame.GetMetaData("name", name);
+                targetGame.GetMetadata("name", name);
                 Invalidate();
             }
 
 
             // Return the latest name value from the gameChip
-            return targetGame.GetMetaData("name", GetType().Name);
+            return targetGame.GetMetadata("name", GetType().Name);
         }
 
         /// <summary>
@@ -423,18 +423,18 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public string Version()
         {
-            return targetGame.GetMetaData("version", runner.systemVersion);
+            return targetGame.GetMetadata("version", runner.systemVersion);
         }
 
         public string Ext(string value = null)
         {
             if (value != null)
             {
-                targetGame.SetMetaData("ext", value);
+                targetGame.SetMetadata("ext", value);
                 Invalidate();
             }
 
-            return targetGame.GetMetaData("ext", ".pv8");
+            return targetGame.GetMetadata("ext", ".pv8");
         }
 
         public int BackgroundColor(int? id = null)
@@ -1284,14 +1284,14 @@ namespace PixelVision8.Runner.Editors
             return fontPath.EntityName;
         }
 
-        public string ReadMetaData(string key, string defaultValue = "")
+        public string ReadMetadata(string key, string defaultValue = "")
         {
-            return targetGame.GetMetaData(key, defaultValue);
+            return targetGame.GetMetadata(key, defaultValue);
         }
 
-        public void WriteMetaData(string key, string value)
+        public void WriteMetadata(string key, string value)
         {
-            targetGame.SetMetaData(key, value);
+            targetGame.SetMetadata(key, value);
         }
 
 

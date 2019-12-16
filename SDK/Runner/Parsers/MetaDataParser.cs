@@ -40,15 +40,7 @@ namespace PixelVision8.Runner.Parsers
         public void ApplySettings()
         {
             foreach (var d in data)
-                engine.SetMetaData(d.Key, d.Value as string);
-
-//                if (d.Key == "name" || d.Key == "gameName")
-//                {
-//                    engine.gameChip.name = d.Value as string;
-//                }else if (d.Key == "ext" || d.Key == "gameExt")
-//                {
-//                    engine.gameChip.ext = d.Value as string;
-//                }
+                engine.SetMetadata(d.Key, d.Value as string);
 
             currentStep++;
         }

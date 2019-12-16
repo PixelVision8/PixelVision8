@@ -669,9 +669,15 @@ namespace PixelVision8.Runner
 
             // Make sure we stop recording when loading a new game
             if (recording) StopRecording();
-
-            if (newMode == RunnerMode.Loading && metaData != null)
+            
+            if (newMode == RunnerMode.Loading)
             {
+                // Create metadata if it doesn't exists so we can store the eject value for the loader
+                if (metaData == null)
+                {
+                    metaData = new Dictionary<string, string>();
+                }
+
                 // Tell the loader to show eject animation
                 if (metaData.ContainsKey("showEjectAnimation"))
                     metaData["showEjectAnimation"] = ejectingDisk.ToString().ToLower();

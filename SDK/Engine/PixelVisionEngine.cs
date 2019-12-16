@@ -203,7 +203,7 @@ namespace PixelVision8.Engine
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public string GetMetaData(string key, string defaultValue = "")
+        public string GetMetadata(string key, string defaultValue = "")
         {
             if (!_metaData.ContainsKey(key))
                 _metaData.Add(key, defaultValue);
@@ -215,7 +215,7 @@ namespace PixelVision8.Engine
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public void SetMetaData(string key, string value)
+        public void SetMetadata(string key, string value)
         {
             if (!_metaData.ContainsKey(key))
             {
@@ -234,13 +234,12 @@ namespace PixelVision8.Engine
         /// </summary>
         /// <param name="target"></param>
         /// <param name="ignoreKeys"></param>
-        public void DumpMetaData(Dictionary<string, string> target, string[] ignoreKeys)
+        public void ReadAllMetadata(Dictionary<string, string> target)
         {
             target.Clear();
 
             foreach (var data in _metaData)
-                if (Array.IndexOf(ignoreKeys, data.Key) == -1)
-                    target.Add(data.Key, data.Value);
+                target.Add(data.Key, data.Value);
         }
 
 

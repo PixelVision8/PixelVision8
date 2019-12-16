@@ -465,7 +465,7 @@ namespace PixelVision8.Runner
             // Pass all meta data into the engine instance
             if (metaData != null)
                 foreach (var entry in metaData)
-                    tmpEngine.SetMetaData(entry.Key, entry.Value);
+                    tmpEngine.SetMetadata(entry.Key, entry.Value);
 
             ConfigureKeyboard();
 
@@ -481,7 +481,7 @@ namespace PixelVision8.Runner
 
                 var keyValue = rawValue;
 
-                tmpEngine.SetMetaData(keyMap.Key.ToString(), keyValue.ToString());
+                tmpEngine.SetMetadata(keyMap.Key.ToString(), keyValue.ToString());
             }
 
             tmpEngine.controllerChip.RegisterKeyInput();

@@ -250,6 +250,16 @@ namespace PixelVision8.Runner
                     {
                         //                        Console.WriteLine("History " + loadHistory.Last().Key + " " + path);
                         // Only add the history if the last item is not the same
+
+                        // Loop through the history and see if the path already exists
+                        for (int i = loadHistory.Count-1; i >= 0 ; i--)
+                        {
+                            if (loadHistory[i].Key == path)
+                            {
+                                loadHistory.RemoveAt(i);
+                            }
+                        }
+
                         if (loadHistory.Last().Key != path)
                             loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaDataCopy));
                     }
@@ -257,7 +267,7 @@ namespace PixelVision8.Runner
                     {
                         loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaDataCopy));
                     }
-                }
+                }   
 
                 // Create a new tmpEngine
                 ConfigureEngine(metaData);
@@ -490,7 +500,7 @@ namespace PixelVision8.Runner
 
                 var keyValue = rawValue;
 
-                tmpEngine.SetMetaData(keyMap.Key.ToString(), keyValue.ToString());
+                tmpEngine.SetMetadata(keyMap.Key.ToString(), keyValue.ToString());
             }
 
             tmpEngine.controllerChip.RegisterKeyInput();

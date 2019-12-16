@@ -116,12 +116,12 @@ function Init()
   -- Set the background an rebuild the screen buffer
   BackgroundColor(tonumber(ReadBiosData("DefaultBackgroundColor", "5")))
 
-  if(ReadMetaData("showEjectAnimation") == "true") then
+  if(ReadMetadata("showEjectAnimation") == "true") then
     currentAnimation = ejectAnimation
     mode = "ejecting"
     totalFrames = #currentAnimation
     loopKeyframe = totalFrames - 2
-  elseif(ReadMetaData("showDiskAnimation") == "true") then
+  elseif(ReadMetadata("showDiskAnimation") == "true") then
     mode = "inserting"
     currentAnimation = insertAnimation
     totalFrames = #currentAnimation

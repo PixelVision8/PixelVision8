@@ -48,18 +48,18 @@ namespace PixelVision8.Engine
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        string GetMetaData(string key, string defaultValue = "");
+        string GetMetadata(string key, string defaultValue = "");
 
         /// <summary>
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        void SetMetaData(string key, string value);
+        void SetMetadata(string key, string value);
 
         /// <summary>
         /// </summary>
         /// <param name="target"></param>
         /// <param name="ignoreKeys"></param>
-        void DumpMetaData(Dictionary<string, string> target, string[] ignoreKeys = null);
+        void ReadAllMetadata(Dictionary<string, string> target);
     }
 }

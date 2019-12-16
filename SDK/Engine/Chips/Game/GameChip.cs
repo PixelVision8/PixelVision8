@@ -1385,10 +1385,10 @@ namespace PixelVision8.Engine.Chips
         /// <param name="position">
         ///     Position in the loop to start playing at.
         /// </param>
-        /// <param name="loopID">
+        /// <param name="patternID">
         ///     The loop to rewind too.
         /// </param>
-        public void RewindSong(int position = 0, int loopID = 0)
+        public void RewindSong(int position = 0, int patternID = 0)
         {
             //TODO need to add in better support for rewinding a song across multiple loops
             musicChip.RewindSong();
@@ -1817,15 +1817,15 @@ namespace PixelVision8.Engine.Chips
             //            Invalidate();
         }
 
-        public void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0)
-        {
-            // Test if we need to rebuild the cached tilemap
-            if (tilemapChip.invalid)
-                RebuildCache(cachedTileMap);
-
-            // Return the requested pixel data
-            cachedTileMap.CopyPixels(ref pixelData, offsetX, offsetY, width, height);
-        }
+//        public void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0)
+//        {
+//            // Test if we need to rebuild the cached tilemap
+//            if (tilemapChip.invalid)
+//                RebuildCache(cachedTileMap);
+//
+//            // Return the requested pixel data
+//            cachedTileMap.CopyPixels(ref pixelData, offsetX, offsetY, width, height);
+//        }
 
         private int[] tilemapCachePixels;
 
@@ -2067,10 +2067,10 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         /// <param name="paletteID">The palette number, 1 - 8</param>
         /// <returns></returns>
-        public int PaletteOffset(int paletteID, int paletteColor = 0)
+        public int PaletteOffset(int paletteID, int paletteColorID = 0)
         {
             // TODO this is hardcoded right now but there are 8 palettes with a max of 16 colors each
-            return 128 + Clamp(paletteID, 0, 7) * 16 + Clamp(paletteColor, 0, ColorsPerSprite() - 1);
+            return 128 + Clamp(paletteID, 0, 7) * 16 + Clamp(paletteColorID, 0, ColorsPerSprite() - 1);
         }
 
         public struct MetaSpriteData
@@ -2203,9 +2203,9 @@ namespace PixelVision8.Engine.Chips
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public string ReadMetaData(string key, string defaultValue = "undefined")
+        public string ReadMetadata(string key, string defaultValue = "undefined")
         {
-            return engine.GetMetaData(key, defaultValue);
+            return engine.GetMetadata(key, defaultValue);
         }
 
         /// <summary>
@@ -2213,9 +2213,18 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public void WriteMetaData(string key, string value)
+        public void WriteMetadata(string key, string value)
         {
-            engine.SetMetaData(key, value);
+            engine.SetMetadata(key, value);
+        }
+
+        public Dictionary<string, string> ReadAllMetadata()
+        {
+            var tmpMetadata = new Dictionary<string, string>();
+
+            engine.ReadAllMetadata(tmpMetadata);
+
+            return tmpMetadata;
         }
 
         #endregion

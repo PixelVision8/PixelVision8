@@ -144,8 +144,9 @@ namespace PixelVision8.Engine.Chips
             luaScript.Globals["LoadScript"] = new Action<string>(LoadScript);
             luaScript.Globals["ReadSaveData"] = new Func<string, string, string>(ReadSaveData);
             luaScript.Globals["WriteSaveData"] = new Action<string, string>(WriteSaveData);
-            luaScript.Globals["ReadMetaData"] = new Func<string, string, string>(ReadMetaData);
-            luaScript.Globals["WriteMetaData"] = new Action<string, string>(WriteMetaData);
+            luaScript.Globals["ReadMetadata"] = new Func<string, string, string>(ReadMetadata);
+            luaScript.Globals["WriteMetadata"] = new Action<string, string>(WriteMetadata);
+            luaScript.Globals["ReadAllMetadata"] = new Func< Dictionary<string, string>>(ReadAllMetadata);
 
             #endregion
 

@@ -45,7 +45,7 @@ end
   -- Set the background an rebuild the screen buffer
   BackgroundColor(tonumber(ReadBiosData("DefaultBackgroundColor", "5")))
 
-  local message = ReadMetaData("errorMessage")
+  local message = ReadMetadata("errorMessage")
 
   local display = Display()
 
