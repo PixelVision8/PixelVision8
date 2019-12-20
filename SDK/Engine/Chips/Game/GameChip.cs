@@ -412,10 +412,10 @@ namespace PixelVision8.Engine.Chips
         ///     Returns the visible bounds of the display as a Rectangle.
         /// </summary>
         /// <returns></returns>
-        public Rectangle VisibleBounds()
-        {
-            return displayChip.visibleBounds;
-        }
+//        public Rectangle VisibleBounds()
+//        {
+//            return displayChip.visibleBounds;
+//        }
 
         /// <summary>
         ///     This method allows you to draw raw pixel data directly to the display. Depending on which draw mode you
@@ -1410,11 +1410,9 @@ namespace PixelVision8.Engine.Chips
         /// <returns>
         ///     Returns a vector where the X and Y for the sprite's width and height.
         /// </returns>
-        public Point SpriteSize(int? width = 8, int? height = 8)
+        public Point SpriteSize()
         {
             var size = new Point(spriteChip.width, spriteChip.height);
-
-            // TODO you can't resize sprites at runtime
 
             return size;
         }
@@ -1453,29 +1451,6 @@ namespace PixelVision8.Engine.Chips
         }
 
         /// <summary>
-        ///     This allows you to get the pixel data of multiple sprites. This is a read only method but
-        ///     can be used to copy a collection of sprites into memory and draw them to the display in a
-        ///     single pass.
-        /// </summary>
-        /// <param name="ids"></param>
-        /// <param name="width"></param>
-        /// <returns></returns>
-        public int[] Sprites(int[] ids, int width)
-        {
-            var spriteSize = SpriteSize();
-            var realWidth = width * spriteSize.X;
-            var realHeight = (int) Math.Ceiling((float) ids.Length / width) * spriteSize.Y;
-
-            var textureData = new TextureData(realWidth, realHeight);
-
-            var pixelData = new int[realWidth * realHeight];
-
-            textureData.CopyPixels(ref pixelData);
-
-            return pixelData;
-        }
-
-        /// <summary>
         ///     Returns the total number of sprites in the system. You can pass in an optional argument to
         ///     get a total number of sprites the Sprite Chip can store by passing in false for ignoreEmpty.
         ///     By default, only sprites with pixel data will be included in the total return.
@@ -1490,9 +1465,9 @@ namespace PixelVision8.Engine.Chips
         ///     This method returns the total number of sprites in the color chip based on the ignoreEmpty
         ///     argument's value.
         /// </returns>
-        public int TotalSprites(bool ignoreEmpty = true)
+        public int TotalSprites(bool ignoreEmpty = false)
         {
-            return ignoreEmpty ? spriteChip.totalSprites : spriteChip.spritesInRam;
+            return ignoreEmpty ? spriteChip.spritesInRam : spriteChip.totalSprites;
         }
 
         /// <summary>
@@ -1689,9 +1664,10 @@ namespace PixelVision8.Engine.Chips
         /// <param name="flag">
         ///     An optional flag int value to be applied to each updated tile.
         /// </param>
-        public void UpdateTiles(int column, int row, int columns, int[] ids, int? colorOffset = null, int? flag = null)
+        public void UpdateTiles(int[] ids, int? colorOffset = null, int? flag = null)
         {
             var total = ids.Length;
+            var width = TilemapSize().X;
 
             int id, newX, newY;
 
@@ -1701,10 +1677,9 @@ namespace PixelVision8.Engine.Chips
             {
                 id = ids[i];
 
-                newX = MathUtil.FloorToInt(i % columns) + column;
-                newY = MathUtil.FloorToInt(i / (float) columns) + row;
+                var pos = CalculatePosition(id, width);
 
-                Tile(newX, newY, id, colorOffset, flag);
+                Tile(pos.X, pos.Y, null, colorOffset, flag);
             }
         }
 

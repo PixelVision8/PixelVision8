@@ -186,7 +186,8 @@ function Update(timeDelta)
         -- Not done with animation, go to next frame
         frame = frame + 1
         local sprite = bootSprites[frame]
-        UpdateTiles(10, 12, sprite.width, sprite.spriteIDs)
+        DrawSprites(sprite.spriteIDs, 10, 12, sprite.width, false, false, DrawMode.Tile)
+        -- UpdateTiles(, )
 
       elseif(done == false) then
 
@@ -272,7 +273,7 @@ function FindEditors()
     return {}
   end
 
-  local paths =
+  local paths = 
   {
     NewWorkspacePath("/PixelVisionOS/Tools/"),
   }

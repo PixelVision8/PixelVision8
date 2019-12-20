@@ -171,7 +171,9 @@ namespace PixelVision8.Engine.Chips
 
             #region Sound APIs
 
+            luaScript.Globals["Sound"] = new Func<int, string, string>(Sound);
             luaScript.Globals["PlaySound"] = new Action<int, int>(PlaySound);
+            luaScript.Globals["StopSound"] = new Action<int>(StopSound);
             luaScript.Globals["PlayRawSound"] = new Action<string, int, float>(soundChip.PlayRawSound);
 
             luaScript.Globals["IsChannelPlaying"] = new Func<int, bool>(IsChannelPlaying);
@@ -188,8 +190,8 @@ namespace PixelVision8.Engine.Chips
             #region Sprite APIs
 
             luaScript.Globals["Sprite"] = new Func<int, int[], int[]>(Sprite);
-            luaScript.Globals["Sprites"] = new Func<int[], int, int[]>(Sprites);
-            luaScript.Globals["SpriteSize"] = new Func<int?, int?, Point>(SpriteSize);
+//            luaScript.Globals["Sprites"] = new Func<int[], int, int[]>(Sprites);
+            luaScript.Globals["SpriteSize"] = new Func<Point>(SpriteSize);
             luaScript.Globals["TotalSprites"] = new Func<bool, int>(TotalSprites);
             luaScript.Globals["MaxSpriteCount"] = new Func<int>(MaxSpriteCount); 
 
@@ -201,7 +203,7 @@ namespace PixelVision8.Engine.Chips
 
             luaScript.Globals["TilemapSize"] = new Func<int?, int?, bool, Point>(TilemapSize);
             luaScript.Globals["Tile"] = new Func<int, int, int?, int?, int?, bool?, bool?, TileData>(Tile);
-            luaScript.Globals["UpdateTiles"] = new Action<int, int, int, int[], int?, int?>(UpdateTiles);
+            luaScript.Globals["UpdateTiles"] = new Action<int[], int?, int?>(UpdateTiles);
             luaScript.Globals["Flag"] = new Func<int, int, int?, int>(Flag);
 
 

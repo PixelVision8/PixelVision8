@@ -713,9 +713,9 @@ namespace PixelVision8.Runner.Editors
             gameChip.RewindSong();
         }
 
-        public Point SpriteSize(int? width, int? height)
+        public Point SpriteSize()
         {
-            return gameChip.SpriteSize(width, height);
+            return gameChip.SpriteSize();
         }
 
         public int[] Sprite(int id, int[] data = null)
@@ -739,10 +739,10 @@ namespace PixelVision8.Runner.Editors
             return data;
         }
 
-        public int[] Sprites(int[] ids, int width)
-        {
-            return gameChip.Sprites(ids, width);
-        }
+//        public int[] Sprites(int[] ids, int width)
+//        {
+//            return gameChip.Sprites(ids, width);
+//        }
 
         public int TotalSprites(bool ignoreEmpty = true)
         {
@@ -774,9 +774,9 @@ namespace PixelVision8.Runner.Editors
             return gameChip.TilemapSize(width, height, clear);
         }
 
-        public void UpdateTiles(int column, int row, int columns, int[] ids, int? colorOffset = null, int? flag = null)
+        public void UpdateTiles(int[] ids, int? colorOffset = null, int? flag = null)
         {
-            gameChip.UpdateTiles(column, row, columns, ids, colorOffset, flag);
+            gameChip.UpdateTiles(ids, colorOffset, flag);
         }
 
         /// <summary>
