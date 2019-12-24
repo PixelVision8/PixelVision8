@@ -49,25 +49,6 @@ namespace PixelVision8.Runner
         }
 
         /// <summary>
-        ///     The base runner contains a list of the core chips. Here you'll want to add the game chip to the list so it can run.
-        ///     This is called when a new game is created by the runner.
-        /// </summary>
-        public override List<string> defaultChips
-        {
-            get
-            {
-                // Get the list of default chips
-                var chips = base.defaultChips;
-
-                // Add the custom C# game chip
-                chips.Add(typeof(LuaGameChip).FullName);
-
-                // Return the list of chips
-                return chips;
-            }
-        }
-
-        /// <summary>
         ///     This is called when the runner first starts up.
         /// </summary>
         protected override void Initialize()
@@ -77,6 +58,11 @@ namespace PixelVision8.Runner
 
             // Load the game
             LoadDefaultGame();
+        }
+
+        public override void CreateLoadService()
+        {
+            loadService = new LuaLoadService();
         }
 
         public override void ConfigureServices()
@@ -115,6 +101,9 @@ namespace PixelVision8.Runner
 
             // Configure a new PV8 engine to play the game
             ConfigureEngine();
+
+            // Manually activate the custom game chip
+            tmpEngine.ActivateChip("GameChip", new LuaGameChip());
 
             // Process the files
             ProcessFiles(tmpEngine, gameFiles);

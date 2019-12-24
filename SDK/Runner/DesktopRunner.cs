@@ -126,6 +126,11 @@ namespace PixelVision8.Runner
                 bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner");
         }
 
+        public override void CreateLoadService()
+        {
+            loadService = new LuaLoadService();
+        }
+
         public override void ActivateEngine(IEngine engine)
         {
 

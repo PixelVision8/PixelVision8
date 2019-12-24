@@ -48,7 +48,7 @@
     <Compile Include="CSharpRunner.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ExampleGameChip.cs" />
+    <Compile Include="EmptyTemplateDemoChip.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework, Version=3.7.1.189, Culture=neutral, PublicKeyToken=null">
@@ -73,8 +73,48 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\Disks\PixelVision8System\*.*">
-      <Link>Content\%(FileName)%(Extension)</Link>
+    <Content Include="..\..\Disks\PixelVision8System\code.lua">
+      <Link>Content\code.lua</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\PixelVision8System\colors.png">
+      <Link>Content\colors.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\PixelVision8System\data.json">
+      <Link>Content\data.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\PixelVision8System\info.json">
+      <Link>Content\info.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\PixelVision8System\large.font.png">
+      <Link>Content\large.font.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\PixelVision8System\medium.font.png">
+      <Link>Content\medium.font.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\PixelVision8System\music.json">
+      <Link>Content\music.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\PixelVision8System\small.font.png">
+      <Link>Content\small.font.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\PixelVision8System\sounds.json">
+      <Link>Content\sounds.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\PixelVision8System\sprites.png">
+      <Link>Content\sprites.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Disks\PixelVision8System\tilemap.json">
+      <Link>Content\tilemap.json</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

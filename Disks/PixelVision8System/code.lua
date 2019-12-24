@@ -13,7 +13,7 @@
 
 -- This this is an empty game, we will the following text. We combined two sets of fonts into
 -- the default.font.png. Use uppercase for larger characters and lowercase for a smaller one.
-local message = "EMPTY GAME\n\n\nThis is an empty game template. Press Esc to exit the game. \n\n\nVisit 'pixelvision8.com' to learn more about creating games from scratch."
+local message = "EMPTY GAME\n\n\nThis is an empty game template.\n\n\nVisit 'pixelvision8.com' to learn more about creating games from scratch."
 
 -- The Init() method is part of the game's lifecycle and called a game starts. We are going to
 -- use this method to configure background color, ScreenBufferChip and draw a text box.

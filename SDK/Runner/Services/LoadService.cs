@@ -51,14 +51,14 @@ namespace PixelVision8.Runner.Services
 //            
 //        }
 
-        private readonly List<IAbstractParser> parsers = new List<IAbstractParser>();
+        protected readonly List<IAbstractParser> parsers = new List<IAbstractParser>();
 
-        private int currentParserID;
+        protected int currentParserID;
 
 //        public ITextureFactory textureFactory;
 //        public ColorFactory colorFactory;
         public int currentStep;
-        private BackgroundWorker loadingWorker;
+        protected BackgroundWorker loadingWorker;
         protected Color maskColor = ColorUtils.HexToColor("#ff00ff"); // TODO this shouldn't be hard coded 
 
 //        protected bool microSteps = true;
@@ -73,7 +73,7 @@ namespace PixelVision8.Runner.Services
             ".lua"
         };
 
-        private int totalParsers;
+        protected int totalParsers;
         public int totalSteps;
 
         public bool completed => currentParserID >= totalParsers;
@@ -99,7 +99,7 @@ namespace PixelVision8.Runner.Services
 ////            this.colorFactory = colorFactory;
 //        }
 
-        public void ParseFiles(Dictionary<string, byte[]> files, IEngine engine, SaveFlags saveFlags)
+        public virtual void ParseFiles(Dictionary<string, byte[]> files, IEngine engine, SaveFlags saveFlags)
         {
             Reset();
 
@@ -112,19 +112,7 @@ namespace PixelVision8.Runner.Services
             if ((saveFlags & SaveFlags.System) == SaveFlags.System)
                 LoadSystem(files);
 
-            // Step 2 (optional). Load up the Lua script
-            if ((saveFlags & SaveFlags.Code) == SaveFlags.Code)
-            {
-                //var scriptExtension = ".lua";
-
-                var paths = files.Keys.Where(s => textExtensions.Any(x => s.EndsWith(x))).ToList();
-
-                foreach (var fileName in paths)
-                {
-                    parser = LoadScript(fileName, files[fileName]);
-                    AddParser(parser);
-                }
-            }
+            
 
             // Step 3 (optional). Look for new colors
             if ((saveFlags & SaveFlags.Colors) == SaveFlags.Colors)
@@ -204,6 +192,7 @@ namespace PixelVision8.Runner.Services
             // Step 11 (optional). Look for meta data and override the game
             if ((saveFlags & SaveFlags.SaveData) == SaveFlags.SaveData) LoadSaveData(files);
 
+            ParseExtraFileTypes(files, engine, saveFlags);
 
             totalParsers = parsers.Count;
             currentParserID = 0;
@@ -213,6 +202,10 @@ namespace PixelVision8.Runner.Services
 //            UnityEngine.Debug.Log("Parser Setup Time - " + watch.ElapsedMilliseconds);
         }
 
+        public virtual void ParseExtraFileTypes(Dictionary<string, byte[]> files, IEngine engine, SaveFlags saveFlags)
+        {
+            // TODO Override and add extra file parsers here.
+        }
 
         public void AddParser(IAbstractParser parser)
         {
@@ -264,7 +257,7 @@ namespace PixelVision8.Runner.Services
             loadingWorker.RunWorkerAsync();
         }
 
-        private void WorkerLoaderSteps(object sender, DoWorkEventArgs e)
+        protected void WorkerLoaderSteps(object sender, DoWorkEventArgs e)
         {
 //            var result = e.Result;
 
@@ -278,7 +271,7 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        private void WorkerLoaderCompleted(object sender, RunWorkerCompletedEventArgs e)
+        protected void WorkerLoaderCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             // TODO need a way to tell if this failed
 
@@ -288,7 +281,7 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        private AbstractParser LoadMetaData(Dictionary<string, byte[]> files)
+        protected AbstractParser LoadMetaData(Dictionary<string, byte[]> files)
         {
             var fileName = "info.json";
 
@@ -302,7 +295,7 @@ namespace PixelVision8.Runner.Services
             return null;
         }
 
-        private AbstractParser LoadFont(string fontName, byte[] data)
+        protected AbstractParser LoadFont(string fontName, byte[] data)
         {
 //            var tex = ReadTexture(data);
 
@@ -314,7 +307,7 @@ namespace PixelVision8.Runner.Services
             return new FontParser(imageParser, targetEngine, fontName);
         }
 
-//        private void LoadFlagColors(Dictionary<string, byte[]> files)
+//        protected void LoadFlagColors(Dictionary<string, byte[]> files)
 //        {
 //            // First thing we do is check for any custom tilemap flag colors
 //            byte[] flagTex = null;
@@ -329,7 +322,7 @@ namespace PixelVision8.Runner.Services
 //            AddParser(new FlagColorParser(imageParser, targetEngine));
 //        }
 
-        private void LoadTilemap(Dictionary<string, byte[]> files)
+        protected void LoadTilemap(Dictionary<string, byte[]> files)
         {
             var tilemapFile = "tilemap.png";
             var tilemapJsonFile = "tilemap.json";
@@ -389,7 +382,7 @@ namespace PixelVision8.Runner.Services
 //            return null;
         }
 
-        private AbstractParser LoadSprites(Dictionary<string, byte[]> files)
+        protected AbstractParser LoadSprites(Dictionary<string, byte[]> files)
         {
             // TODO need to tell if the cache should be ignore, important when in tools
             var srcFile = "sprites.png";
@@ -414,7 +407,7 @@ namespace PixelVision8.Runner.Services
             return null;
         }
 
-        private AbstractParser LoadColorMap(Dictionary<string, byte[]> files)
+        protected AbstractParser LoadColorMap(Dictionary<string, byte[]> files)
         {
             var fileName = "color-map.png";
 
@@ -441,7 +434,7 @@ namespace PixelVision8.Runner.Services
             return null;
         }
 
-//        private AbstractParser LoadColorPalette(Dictionary<string, byte[]> files)
+//        protected AbstractParser LoadColorPalette(Dictionary<string, byte[]> files)
 //        {
 //            var fileName = "color-palette.png";
 //
@@ -470,7 +463,7 @@ namespace PixelVision8.Runner.Services
 //            return null;
 //        }
 
-//        private AbstractParser LoadSystemColors(Dictionary<string, byte[]> files)
+//        protected AbstractParser LoadSystemColors(Dictionary<string, byte[]> files)
 //        {
 //            var fileName = "system-colors.png";
 //
@@ -499,7 +492,7 @@ namespace PixelVision8.Runner.Services
 //            return null;
 //        }
 
-        private AbstractParser LoadColors(Dictionary<string, byte[]> files)
+        protected AbstractParser LoadColors(Dictionary<string, byte[]> files)
         {
             var fileName = "colors.png";
 
@@ -514,15 +507,9 @@ namespace PixelVision8.Runner.Services
             return null;
         }
 
-        private ScriptParser LoadScript(string fileName, byte[] data)
-        {
-            var script = Encoding.UTF8.GetString(data);
-            var scriptParser = new ScriptParser(fileName, script, targetEngine.gameChip);
+       
 
-            return scriptParser;
-        }
-
-        private void LoadSystem(Dictionary<string, byte[]> files)
+        protected void LoadSystem(Dictionary<string, byte[]> files)
         {
             var fileName = "data.json";
 
@@ -562,7 +549,7 @@ namespace PixelVision8.Runner.Services
 //            return tex;
 //        }
 
-        private void LoadSounds(Dictionary<string, byte[]> files)
+        protected void LoadSounds(Dictionary<string, byte[]> files)
         {
             var fileName = "sounds.json";
 
@@ -582,7 +569,7 @@ namespace PixelVision8.Runner.Services
 //            Console.WriteLine("Selecting wavs " + wav.ToList().Count);
         }
 
-        private void LoadMusic(Dictionary<string, byte[]> files)
+        protected void LoadMusic(Dictionary<string, byte[]> files)
         {
             var fileName = "music.json";
 
@@ -600,7 +587,7 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        private void LoadSaveData(Dictionary<string, byte[]> files)
+        protected void LoadSaveData(Dictionary<string, byte[]> files)
         {
             var fileName = "saves.json";
 

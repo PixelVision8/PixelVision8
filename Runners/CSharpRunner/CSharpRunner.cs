@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using PixelVision8.Runner;
-using PixelVisionRunner.EmptyTemplateDemo;
+using PixelVisionRunner.Games;
 
 namespace Desktop
 {
@@ -39,24 +39,6 @@ namespace Desktop
         public CSharpRunner(string gamePath) : base()
         {
             this.gamePath = gamePath;
-        }
-        
-        /// <summary>
-        ///     The base runner contains a list of the core chips. Here you'll want to add the game chip to the list so it can run. This is called when a new game is created by the runner.
-        /// </summary>
-        public override List<string> defaultChips {
-            get
-            {
-                
-                // Get the list of default chips
-                var chips = base.defaultChips;
-                
-                // Add the custom C# game chip
-                chips.Add(typeof(EmptyTemplateDemoChip).FullName);
-                
-                // Return the list of chips
-                return chips;
-            }
         }
         
         /// <summary>
@@ -105,6 +87,8 @@ namespace Desktop
 
             // Configure a new PV8 engine to play the game
             ConfigureEngine();
+
+            tmpEngine.ActivateChip("GameChip",  new EmptyTemplateDemoChip());
 
             // Process the files
             ProcessFiles(tmpEngine, gameFiles);
