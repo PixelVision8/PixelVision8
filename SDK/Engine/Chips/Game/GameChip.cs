@@ -2203,5 +2203,40 @@ namespace PixelVision8.Engine.Chips
         }
 
         #endregion
+
+        #region Factories
+
+        /// <summary>
+        ///     A Rect is a Pixel Vision 8 primitive used for defining the bounds of an object on the display. It
+        ///     contains an x, y, width and height property. The Rect class also has some additional methods to aid with
+        ///     collision detection such as Intersect(rect, rect), IntersectsWidth(rect) and Contains(x,y).
+        /// </summary>
+        /// <param name="x">The x position of the rect as an int.</param>
+        /// <param name="y">The y position of the rect as an int.</param>
+        /// <param name="w">The width value of the rect as an int.</param>
+        /// <param name="h">The height value of the rect as an int.</param>
+        /// <returns>Returns a new instance of a Rect to be used as a Lua object.</returns>
+        public Rectangle NewRect(int x = 0, int y = 0, int w = 0, int h = 0)
+        {
+            return new Rectangle(x, y, w, h);
+        }
+
+        /// <summary>
+        ///     A Vector is a Pixel Vision 8 primitive used for defining a position on the display as an x,y value.
+        /// </summary>
+        /// <param name="x">The x position of the Vector as an int.</param>
+        /// <param name="y">The y position of the Vector as an int.</param>
+        /// <returns>Returns a new instance of a Vector to be used as a Lua object.</returns>
+        public Point NewPoint(int x = 0, int y = 0)
+        {
+            return new Point(x, y);
+        }
+
+        public Canvas NewCanvas(int width, int height)
+        {
+            return new Canvas(width, height, this);
+        }
+
+        #endregion
     }
 }
