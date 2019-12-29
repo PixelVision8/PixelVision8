@@ -301,7 +301,6 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public int TotalColors(bool ignoreEmpty = false)
         {
-            // TODO this shouldn't use the supported colors
             return ignoreEmpty ? colorChip.totalUsedColors : colorChip.total;
         }
 

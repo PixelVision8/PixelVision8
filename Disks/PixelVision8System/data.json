@@ -6,8 +6,7 @@
 		"backgroundColor": 0,
 		"maskColor": "#FF00FF",
 		"unique": false,
-		"debug": false,
-
+		"debug": false
 	},
 	"DisplayChip":
 	{
@@ -16,14 +15,13 @@
 		"overscanX": 1,
 		"overscanY": 1,
 		"layers": 6
-
 	},
 	"FontChip":
 	{
 	},
 	"GameChip":
 	{
-		"lockSpecs": false,
+		"lockSpecs": true,
 		"maxSize": 512,
 		"saveSlots": 8
 	},
@@ -40,7 +38,6 @@
 		"totalSounds": 32,
 		"channelTypes": [-1, -1, -1, -1, -1]
 	},
-
 	"SpriteChip": {
 		"maxSpriteCount": 0,
 		"unique": false,
@@ -54,7 +51,6 @@
 		"columns": 256,
 		"rows": 256,
 		"totalFlags": 16,
-		"autoImport": false,
-
+		"autoImport": false
 	}
 }

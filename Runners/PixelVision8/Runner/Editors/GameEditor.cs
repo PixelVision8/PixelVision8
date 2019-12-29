@@ -744,7 +744,7 @@ namespace PixelVision8.Runner.Editors
 //            return gameChip.Sprites(ids, width);
 //        }
 
-        public int TotalSprites(bool ignoreEmpty = true)
+        public int TotalSprites(bool ignoreEmpty = false)
         {
             return gameChip.TotalSprites(ignoreEmpty);
         }
