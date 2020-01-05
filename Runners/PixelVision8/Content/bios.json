@@ -8,7 +8,7 @@
 	"AutoRun": "/PixelVisionOS/System/OSInstaller/",
 
 	"SystemName": "Pixel Vision 8",
-	"SystemVersion": "v0.9.7",
+	"SystemVersion": "v0.9.8",
 	"FileDiskMounting": "True",
 
 	"NoAutoRun":
