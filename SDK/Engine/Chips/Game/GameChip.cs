@@ -2050,43 +2050,92 @@ namespace PixelVision8.Engine.Chips
         public struct MetaSpriteData
         {
             public int id;
+            public byte x;
+            public byte y;
             public bool flipH;
             public bool flipV;
             public int colorOffset;
 
-            public MetaSpriteData(int id, bool flipH = false, bool flipV = false, int colorOffset = 0)
+            public MetaSpriteData(int id, byte x = 0, byte y = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
             {
                 this.id = id;
                 this.flipH = flipH;
                 this.flipV = flipV;
+                this.x = x;
+                this.y = y;
                 this.colorOffset = colorOffset;
             }
         }
 
-        public struct MetaSprite
+        public class MetaSprite
         {
             public string name;
-            public int width;
-            public MetaSpriteData[] sprites;
+            public List<MetaSpriteData> sprites = new List<MetaSpriteData>();
+            public Rectangle bounds = Rectangle.Empty;
 
-            public MetaSprite(string name, int width, MetaSpriteData[] sprites)
+            public MetaSprite(string name, List<MetaSpriteData> sprites = null)
             {
                 this.name = name;
-                this.width = width;
-                this.sprites = sprites;
+
+                if (sprites != null)
+                {
+                    foreach (var sprite in sprites)
+                    {
+                        AddSprite(sprite);
+                    }
+                }
+
             }
+
+            public void AddSprite(int id, byte x = 0, byte y = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
+            {
+                sprites.Add(new MetaSpriteData(id, x, y, flipH, flipV, colorOffset));
+            }
+
+            public void AddSprite(MetaSpriteData data)
+            {
+                AddSprite(data.id, data.x, data.y, data.flipH, data.flipV, data.colorOffset);
+            }
+
+            public void Clear()
+            {
+                sprites.Clear();
+            }
+
         }
 
         protected Dictionary<string, MetaSprite> metaSprites = new Dictionary<string, MetaSprite>();
 
-        public void RegisterMetaSprite(string name, int width, MetaSpriteData[] sprites)
+        public MetaSprite RegisterMetaSprite(string name, List<MetaSpriteData> sprites)
         {
-            var metaSprite = new MetaSprite(name, width, sprites);
+            var metaSprite = new MetaSprite(name, sprites);
 
             if (metaSprites.ContainsKey(name))
                 metaSprites[name] = metaSprite;
             else
                 metaSprites.Add(name, metaSprite);
+
+            return metaSprites[name];
+        }
+
+        public MetaSprite ReadMetaSprite(string name)
+        {
+            if (!metaSprites.ContainsKey(name))
+                throw new Exception(
+                    "Meta Sprite '" + name + "' doesn't exist.");
+
+            // TODO should this be a clone of the data so it' can't be modified?
+            return metaSprites[name];
+        }
+
+        public Rectangle ReadMetaSpriteBounds(string name)
+        {
+            if (!metaSprites.ContainsKey(name))
+                throw new Exception(
+                    "Meta Sprite '" + name + "' doesn't exist.");
+
+
+            return metaSprites[name].bounds;
         }
 
         public void DeleteMetaSprite(string name)
@@ -2098,77 +2147,42 @@ namespace PixelVision8.Engine.Chips
             metaSprites.Remove(name);
         }
 
-        public void DrawMetaSprite(string name, int x, int y, bool flipH, bool flipV,
+        protected int[] tmpMetaSpriteID = new int[1];
+
+        public void DrawMetaSprite(string name, int x, int y, bool flipH = false, bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
             Rectangle? bounds = null)
         {
             if (!metaSprites.ContainsKey(name)) throw new Exception("Meta Sprite '" + name + "' doesn't exist.");
 
-            // Get all of the sprites we'll need to draw
-            var metaSpriteData = metaSprites[name];
+            var sprites = metaSprites[name].sprites;
+            var total = sprites.Count;
 
-            var sprites = metaSpriteData.sprites;
-
-            total = sprites.Length;
-
-            // We are going to build a list of sprite IDs we can use as reference for each meta sprite child
-            if (tmpIDs.Length != total)
-                Array.Resize(ref tmpIDs, total);
-
-            // Fill in each ID to match the index of the meta sprite child's array position
-            for (var i = 0; i < total; i++) tmpIDs[i] = i;
-
-            // Calculate the width and height of the meta sprite
-            width = metaSpriteData.width;
-            height = MathUtil.CeilToInt(total / width);
-
-            var tmpBounds = bounds ?? displayChip.visibleBounds;
-
-            // Get the bounds of the screen
-            //            if (bounds == null)
-            //                bounds = displayChip.visibleBounds;
-
-            startX = x - (useScrollPos ? _scrollX : 0);
-            startY = y - (useScrollPos ? _scrollY : 0);
-
-            var paddingW = spriteChip.width;
-            var paddingH = spriteChip.height;
-
-            if (drawMode == DrawMode.Tile)
+            for (int i = 0; i < total; i++)
             {
-                paddingW = 1;
-                paddingH = 1;
+                var sprite = sprites[i];
+
+                // TODO need to adjust this based on the flip values
+                var newX = sprite.x + x;
+                var newY = sprite.y + y;
+
+                tmpMetaSpriteID[0] = sprite.id;
+
+                DrawSprites(
+                    tmpMetaSpriteID, 
+                    newX, 
+                    newY, 
+                    1, 
+                    sprite.flipH, 
+                    sprite.flipV,
+                    drawMode,
+                    sprite.colorOffset + colorOffset, 
+                    onScreen,
+                    useScrollPos,
+                    bounds
+                    );
             }
 
-            if (flipH || flipV)
-                SpriteChipUtil.FlipSpriteData(ref tmpIDs, width, height, flipH, flipV);
-
-            // TODO need to offset the bounds based on the scroll position before testing against it
-
-            for (var i = 0; i < total; i++)
-            {
-                // Get the meta sprite child's data
-                var tmpSpriteData = sprites[tmpIDs[i]];
-
-                // Set the sprite id
-                id = tmpSpriteData.id;
-
-                // Test to see if the sprite is within range
-                if (id > -1)
-                {
-                    x = MathUtil.FloorToInt(i % width) * paddingW + startX;
-                    y = MathUtil.FloorToInt(i / width) * paddingH + startY;
-
-                    // Check to see if we need to test the bounds
-                    if (onScreen)
-                        render = x >= tmpBounds.X && x <= tmpBounds.Width && y >= tmpBounds.Y && y <= tmpBounds.Height;
-                    else
-                        render = true;
-
-                    // If the sprite should be rendered, call DrawSprite()
-                    if (render) DrawSprite(id, x, y, flipH, flipV, drawMode, tmpSpriteData.colorOffset + colorOffset);
-                }
-            }
         }
 
         /// <summary>

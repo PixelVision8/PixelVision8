@@ -241,7 +241,9 @@ namespace PixelVision8.Engine.Chips
             luaScript.Globals["PaletteOffset"] = new Func<int, int, int>(PaletteOffset);
 
 
-            luaScript.Globals["RegisterMetaSprite"] = new Action<string, int, MetaSpriteData[]>(RegisterMetaSprite);
+            luaScript.Globals["RegisterMetaSprite"] = new Func<string, List<MetaSpriteData>, MetaSprite>(RegisterMetaSprite);
+            luaScript.Globals["ReadMetaSprite"] = new Func<string, MetaSprite>(ReadMetaSprite);
+            luaScript.Globals["ReadMetaSpriteBounds"] = new Func<string, Rectangle>(ReadMetaSpriteBounds);
             luaScript.Globals["DeleteMetaSprite"] = new Action<string>(DeleteMetaSprite);
             luaScript.Globals["DrawMetaSprite"] =
                 new Action<string, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawMetaSprite);
@@ -249,9 +251,10 @@ namespace PixelVision8.Engine.Chips
             UserData.RegisterType<MetaSpriteData>();
             luaScript.Globals["MetaSpriteData"] = UserData.CreateStatic<MetaSpriteData>();
 
+            // Create new meta sprites
             UserData.RegisterType<MetaSprite>();
             luaScript.Globals["MetaSprite"] = UserData.CreateStatic<MetaSprite>();
-
+            
             #endregion
 
             // Enums
