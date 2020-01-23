@@ -520,7 +520,8 @@ namespace PixelVision8.Engine.Chips
         ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
         /// </param>
         public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
+            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
+            Rectangle? bounds = null)
         {
             // Only apply the max sprite count to sprite draw modes
 
@@ -544,17 +545,40 @@ namespace PixelVision8.Engine.Chips
                 if (spriteChip.maxSpriteCount > 0 && CurrentSprites >= spriteChip.maxSpriteCount)
                     return;
 
-                //TODO flipping H, V and colorOffset should all be passed into reading a sprite
-                if (id != tmpSpriteDataID)
+                // Check to see if we need to test the bounds
+                if (onScreen)
                 {
-                    spriteChip.ReadSpriteAt(id, tmpSpriteData);
-                    tmpSpriteDataID = id;
+                    var tmpBounds = bounds ?? displayChip.visibleBounds;
+
+                    //                        if (bounds == null)
+                    //                            bounds = displayChip.visibleBounds;
+
+                    // This can set the render flag to true or false based on it's location
+                    //TODO need to take into account the current bounds of the screen
+                    render = x >= tmpBounds.X && x <= tmpBounds.Width && y >= tmpBounds.Y && y <= tmpBounds.Height;
+                }
+                else
+                {
+                    // If we are not testing to see if the sprite is onscreen it will always render and wrap based on its position
+                    render = true;
                 }
 
-                DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, flipH, flipV, drawMode,
-                    colorOffset);
+                // If the sprite should be rendered, call DrawSprite()
+                if (render)
+                {
 
-                CurrentSprites++;
+                    //TODO flipping H, V and colorOffset should all be passed into reading a sprite
+                    if (id != tmpSpriteDataID)
+                    {
+                        spriteChip.ReadSpriteAt(id, tmpSpriteData);
+                        tmpSpriteDataID = id;
+                    }
+
+                    DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, flipH, flipV, drawMode,
+                        colorOffset);
+
+                    CurrentSprites++;
+                }
             }
         }
 
@@ -661,27 +685,8 @@ namespace PixelVision8.Engine.Chips
                     //
                     //                    var render = true;
 
-                    // Check to see if we need to test the bounds
-                    if (onScreen)
-                    {
-                        var tmpBounds = bounds ?? displayChip.visibleBounds;
-
-                        //                        if (bounds == null)
-                        //                            bounds = displayChip.visibleBounds;
-
-                        // This can set the render flag to true or false based on it's location
-                        //TODO need to take into account the current bounds of the screen
-                        render = x >= tmpBounds.X && x <= tmpBounds.Width && y >= tmpBounds.Y && y <= tmpBounds.Height;
-                    }
-                    else
-                    {
-                        // If we are not testing to see if the sprite is onscreen it will always render and wrap based on its position
-                        render = true;
-                    }
-
-                    // If the sprite should be rendered, call DrawSprite()
-                    if (render)
-                        DrawSprite(id, x, y, flipH, flipV, drawMode, colorOffset);
+                    
+                        DrawSprite(id, x, y, flipH, flipV, drawMode, colorOffset, onScreen, useScrollPos, bounds);
                 }
             }
         }
@@ -2050,13 +2055,13 @@ namespace PixelVision8.Engine.Chips
         public struct MetaSpriteData
         {
             public int id;
-            public byte x;
-            public byte y;
+            public int x;
+            public int y;
             public bool flipH;
             public bool flipV;
             public int colorOffset;
 
-            public MetaSpriteData(int id, byte x = 0, byte y = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
+            public MetaSpriteData(int id, int x = 0, int y = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
             {
                 this.id = id;
                 this.flipH = flipH;
@@ -2072,6 +2077,12 @@ namespace PixelVision8.Engine.Chips
             public string name;
             public List<MetaSpriteData> sprites = new List<MetaSpriteData>();
             public Rectangle bounds = Rectangle.Empty;
+            public int spriteMax = 1024;
+            public Rectangle maxBoundary = new Rectangle(0,0,128,128);
+
+            // TODO sprite size is hard coded but should be passed in somehow
+            public int spriteWidth = 8;
+            public int spriteHeight = 8;
 
             public MetaSprite(string name, List<MetaSpriteData> sprites = null)
             {
@@ -2087,9 +2098,15 @@ namespace PixelVision8.Engine.Chips
 
             }
 
-            public void AddSprite(int id, byte x = 0, byte y = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
+            public void AddSprite(int id, int x = 0, int y = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
             {
-                sprites.Add(new MetaSpriteData(id, x, y, flipH, flipV, colorOffset));
+                var newX = MathHelper.Clamp(x, maxBoundary.X, maxBoundary.Width);
+                var newY = MathHelper.Clamp(y, maxBoundary.Y, maxBoundary.Height);
+
+                bounds.Width = Math.Max(bounds.Width, newX + spriteWidth);
+                bounds.Height = Math.Max(bounds.Height, newX + spriteHeight);
+
+                sprites.Add(new MetaSpriteData(MathHelper.Clamp(id, 0, spriteMax), newX, newY, flipH, flipV, colorOffset));
             }
 
             public void AddSprite(MetaSpriteData data)
@@ -2106,9 +2123,22 @@ namespace PixelVision8.Engine.Chips
 
         protected Dictionary<string, MetaSprite> metaSprites = new Dictionary<string, MetaSprite>();
 
+        public Rectangle metaSpriteMaxBounds = new Rectangle(0,0,64,64);
+
         public MetaSprite RegisterMetaSprite(string name, List<MetaSpriteData> sprites)
         {
-            var metaSprite = new MetaSprite(name, sprites);
+
+            // TODO need to add a limit to how many meta sprites the game chip can handle in the data.json file
+
+            var metaSprite = new MetaSprite(name, sprites)
+            {
+                spriteMax = TotalSprites(),
+                maxBoundary = new Rectangle(metaSpriteMaxBounds.X, metaSpriteMaxBounds.Y, metaSpriteMaxBounds.Width - SpriteSize().X,
+                    metaSpriteMaxBounds.Height - SpriteSize().Y)
+            };
+
+            // Configure metaSprite
+            // TODO this should come from the data.json file
 
             if (metaSprites.ContainsKey(name))
                 metaSprites[name] = metaSprite;
@@ -2147,8 +2177,6 @@ namespace PixelVision8.Engine.Chips
             metaSprites.Remove(name);
         }
 
-        protected int[] tmpMetaSpriteID = new int[1];
-
         public void DrawMetaSprite(string name, int x, int y, bool flipH = false, bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
             Rectangle? bounds = null)
@@ -2162,25 +2190,48 @@ namespace PixelVision8.Engine.Chips
             {
                 var sprite = sprites[i];
 
-                // TODO need to adjust this based on the flip values
-                var newX = sprite.x + x;
-                var newY = sprite.y + y;
+                if (!spriteChip.IsEmptyAt(sprite.id))
+                {
+                    // TODO need to adjust this based on the flip values
+                    var newX = sprite.x;
+                    var newY = sprite.y;
 
-                tmpMetaSpriteID[0] = sprite.id;
 
-                DrawSprites(
-                    tmpMetaSpriteID, 
-                    newX, 
-                    newY, 
-                    1, 
-                    sprite.flipH, 
-                    sprite.flipV,
-                    drawMode,
-                    sprite.colorOffset + colorOffset, 
-                    onScreen,
-                    useScrollPos,
-                    bounds
+                    var tmpFlipH = sprite.flipH;
+                    var tmpFlipV = sprite.flipV;
+
+                    // TODO using max boundary for now, need to switch this over to the real boundary
+                    var metaSpriteBoundary = metaSprites[name].bounds;
+
+                    if (flipH)
+                    {
+                        newX = metaSpriteBoundary.Width - newX - 8;
+                        tmpFlipH = !tmpFlipH;
+                    }
+
+                    if (flipV)
+                    {
+                        newY = metaSpriteBoundary.Height - newY - 8;
+                        tmpFlipV = !tmpFlipV;
+                    }
+
+                    newX += x;
+                    newY += y;
+
+                    DrawSprite(
+                        sprite.id,
+                        newX,
+                        newY,
+                        tmpFlipH,
+                        tmpFlipV,
+                        drawMode,
+                        sprite.colorOffset + colorOffset,
+                        onScreen,
+                        useScrollPos,
+                        bounds
                     );
+
+                }
             }
 
         }

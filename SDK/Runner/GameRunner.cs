@@ -379,12 +379,11 @@ namespace PixelVision8.Runner
 
         protected override void Update(GameTime gameTime)
         {
-            if (activeEngine == null || !RunnerActive)
+            // Before trying to update the PixelVisionEngine instance, we need to make sure it exists. The guard clause protects us from throwing an 
+            // error when the Runner loads up and starts before we've had a chance to instantiate the new engine instance.
+            if (activeEngine == null)
                 return;
-
-
-            timeDelta = (int)(gameTime.ElapsedGameTime.TotalSeconds * 1000);
-
+            
             elapsedTime += gameTime.ElapsedGameTime;
 
             if (elapsedTime > TimeSpan.FromSeconds(1))
@@ -397,13 +396,17 @@ namespace PixelVision8.Runner
                 frameCounter = 0;
             }
 
-            // Before trying to update the PixelVisionEngine instance, we need to make sure it exists. The guard clause protects us from throwing an 
-            // error when the Runner loads up and starts before we've had a chance to instantiate the new engine instance.
-            activeEngine.Update(timeDelta);
+            if (RunnerActive)
+            {
+                timeDelta = (int) (gameTime.ElapsedGameTime.TotalSeconds * 1000);
 
-            // It's important that we pass in the Time.deltaTime to the PixelVisionEngine. It is passed along to any Chip that registers itself with 
-            // the ChipManager to be updated. The ControlsChip, GamesChip, and others use this time delta to synchronize their actions based on the 
-            // current framerate.
+                // It's important that we pass in the Time.deltaTime to the PixelVisionEngine. It is passed along to any Chip that registers itself with 
+                // the ChipManager to be updated. The ControlsChip, GamesChip, and others use this time delta to synchronize their actions based on the 
+                // current framerate.
+                activeEngine.Update(timeDelta);
+            }
+
+            
         }
 
         protected override void Draw(GameTime gameTime)

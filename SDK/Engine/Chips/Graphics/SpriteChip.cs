@@ -35,6 +35,7 @@ namespace PixelVision8.Engine.Chips
     {
         // TODO these are hard coded assuming the sprites are always 8x8
         protected readonly int[] emptySpriteData = Enumerable.Repeat(-1, 64).ToArray();
+        protected readonly string emptySpriteDataString = SpriteChipUtil.SpriteDataToString(Enumerable.Repeat(-1, 64).ToArray());
         protected int _colorsPerSprite = 8;
         protected int _pages = 4;
 
@@ -177,6 +178,11 @@ namespace PixelVision8.Engine.Chips
             return true;
         }
 
+        public bool IsEmptyAt(int index)
+        {
+            return string.IsNullOrEmpty(cache[index]);
+        }
+
         /// <summary>
         ///     Returns the next empty id in the <see cref="cache" /> index. Used for
         ///     building tools to modify the <see cref="SpriteChip" /> like importers
@@ -263,6 +269,8 @@ namespace PixelVision8.Engine.Chips
             if (index < 0 || index >= cache.Length)
                 return;
 
+            // TODO need to test to see if the sprite is empty first (no need to cache)
+
             cache[index] = SpriteChipUtil.SpriteDataToString(data);
 
             var totalPixels = width * height;
@@ -298,6 +306,8 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public void ReadSpriteAt(int index, int[] pixelData)
         {
+
+            // TODO check to see if the cache doesn't exist and return the empty sprite as well
             if (index == -1)
             {
                 var size = width * height;

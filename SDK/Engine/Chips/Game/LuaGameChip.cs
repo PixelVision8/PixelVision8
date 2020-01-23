@@ -122,7 +122,7 @@ namespace PixelVision8.Engine.Chips
             luaScript.Globals["Display"] = new Func<bool, Point>(Display);
             luaScript.Globals["DrawPixels"] =
                 new Action<int[], int, int, int, int, bool, bool, DrawMode, int>(DrawPixels);
-            luaScript.Globals["DrawSprite"] = new Action<int, int, int, bool, bool, DrawMode, int>(DrawSprite);
+            luaScript.Globals["DrawSprite"] = new Action<int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprite);
             luaScript.Globals["DrawSprites"] =
                 new Action<int[], int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprites);
             luaScript.Globals["DrawSpriteBlock"] =
