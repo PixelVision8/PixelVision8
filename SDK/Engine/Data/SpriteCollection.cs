@@ -85,8 +85,6 @@ namespace PixelVisionSDK.Engine
             Bounds.Width = Math.Max(Bounds.Width, newX + SpriteWidth);
             Bounds.Height = Math.Max(Bounds.Height, newX + SpriteHeight);
 
-            Console.WriteLine($"\"id\":{id}, \"x\":{newX}, \"y\":{newY}, \"flipH\":{flipH}, \"flipV\":{flipV}, \"colorOffset\":{colorOffset}");
-
             Sprites.Add(new SpriteData(MathHelper.Clamp(id, 0, SpriteMax), newX, newY, flipH, flipV, colorOffset));
         }
 

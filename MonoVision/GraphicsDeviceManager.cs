@@ -21,7 +21,7 @@ namespace Microsoft.Xna.Framework
         private int _preferredBackBufferWidth;
         private SurfaceFormat _preferredBackBufferFormat;
         //        private DepthFormat _preferredDepthStencilFormat;
-        private bool _preferMultiSampling;
+        // private bool _preferMultiSampling;
         private DisplayOrientation _supportedOrientations;
         private bool _synchronizedWithVerticalRetrace = true;
         private bool _drawBegun;
@@ -249,7 +249,7 @@ namespace Microsoft.Xna.Framework
 
         partial void PlatformApplyChanges();
 
-        partial void PlatformPreparePresentationParameters(PresentationParameters presentationParameters);
+        // partial void PlatformPreparePresentationParameters(PresentationParameters presentationParameters);
 
         private void PreparePresentationParameters(PresentationParameters presentationParameters)
         {
@@ -263,21 +263,21 @@ namespace Microsoft.Xna.Framework
             presentationParameters.DisplayOrientation = _game.Window.CurrentOrientation;
             presentationParameters.DeviceWindowHandle = _game.Window.Handle;
 
-            if (_preferMultiSampling)
-            {
-                // always initialize MultiSampleCount to the maximum, if users want to overwrite
-                // this they have to respond to the PreparingDeviceSettingsEvent and modify
-                // args.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount
-                presentationParameters.MultiSampleCount = GraphicsDevice != null
-                    ? GraphicsDevice.GraphicsCapabilities.MaxMultiSampleCount
-                    : 32;
-            }
-            else
-            {
+            // if (_preferMultiSampling)
+            // {
+            //     // always initialize MultiSampleCount to the maximum, if users want to overwrite
+            //     // this they have to respond to the PreparingDeviceSettingsEvent and modify
+            //     // args.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount
+            //     presentationParameters.MultiSampleCount = GraphicsDevice != null
+            //         ? GraphicsDevice.GraphicsCapabilities.MaxMultiSampleCount
+            //         : 32;
+            // }
+            // else
+            // {
                 presentationParameters.MultiSampleCount = 0;
-            }
+            // }
 
-            PlatformPreparePresentationParameters(presentationParameters);
+            // PlatformPreparePresentationParameters(presentationParameters);
         }
 
         private void PrepareGraphicsDeviceInformation(GraphicsDeviceInformation gdi)

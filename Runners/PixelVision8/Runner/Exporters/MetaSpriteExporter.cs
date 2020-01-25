@@ -66,7 +66,7 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.indentLevel++;
             JsonUtil.GetLineBreak(sb, 1);
 
-            var savedData = gameChip.savedData;
+            // var savedData = gameChip.savedData;
 
             for (int i = 0; i < gameChip.TotalMetaSprites; i++)
             {
@@ -97,7 +97,7 @@ namespace PixelVision8.Runner.Exporters
                     }
                         
                     // Hack to remove the last comma from the sprite list
-                    sb.Length = sb.Length - 1;
+                    sb.Length -= 1;
 
                     JsonUtil.GetLineBreak(sb, 1);
                     JsonUtil.indentLevel--;
@@ -122,7 +122,7 @@ namespace PixelVision8.Runner.Exporters
             }
 
             // Hack to remove the last comma
-            sb.Length = sb.Length - 1;
+            sb.Length -= 1;
 
             currentStep++;
         }

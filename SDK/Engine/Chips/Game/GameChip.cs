@@ -1707,10 +1707,8 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void UpdateTiles(int[] ids, int? colorOffset = null, int? flag = null)
         {
-            var total = ids.Length;
-            var width = TilemapSize().X;
-
-            int id, newX, newY;
+            total = ids.Length;
+            width = TilemapSize().X;
 
             //TODO need to get offset and flags working
 

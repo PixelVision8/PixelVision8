@@ -10,14 +10,14 @@ namespace Microsoft.Xna.Framework.Audio
     public partial class WaveBank : IDisposable
     {
         private readonly SoundEffect[] _sounds;
-        private readonly StreamInfo[] _streams;
+        // private readonly StreamInfo[] _streams;
 
-        private readonly bool _streaming;
+        // private readonly bool _streaming;
 
-        struct StreamInfo
-        {
-            public int Format;
-        }
+        // struct StreamInfo
+        // {
+        //     public int Format;
+        // }
 
         /// <summary>
         /// </summary>
@@ -29,18 +29,19 @@ namespace Microsoft.Xna.Framework.Audio
 
         internal SoundEffectInstance GetSoundEffectInstance(int trackIndex, out bool streaming)
         {
-            if (_streaming)
-            {
-                streaming = true;
-                var stream = _streams[trackIndex];
-                return PlatformCreateStream(stream);
-            }
-            else
-            {
+
+            // if (_streaming)
+            // {
+            //     streaming = true;
+            //     var stream = _streams[trackIndex];
+            //     return PlatformCreateStream(stream);
+            // }
+            // else
+            // {
                 streaming = false;
                 var sound = _sounds[trackIndex];
                 return sound.GetPooledInstance(true);
-            }
+            // }
         }
 
         /// <summary>
