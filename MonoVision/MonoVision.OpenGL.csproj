@@ -163,29 +163,6 @@
     </Compile>
     <Compile Include="Audio\SoundEffectInstancePool.cs" />
     <Compile Include="Audio\SoundState.cs" />
-    <Compile Include="Audio\Xact\AudioCategory.cs" />
-    <Compile Include="Audio\Xact\AudioEngine.cs" />
-    <Compile Include="Audio\Xact\AudioStopOptions.cs" />
-    <Compile Include="Audio\Xact\ClipEvent.cs" />
-    <Compile Include="Audio\Xact\CrossfadeType.cs" />
-    <Compile Include="Audio\Xact\Cue.cs" />
-    <Compile Include="Audio\Xact\DspParameter.cs" />
-    <Compile Include="Audio\Xact\FilterMode.cs" />
-    <Compile Include="Audio\Xact\MaxInstanceBehavior.cs" />
-    <Compile Include="Audio\Xact\MiniFormatTag.cs" />
-    <Compile Include="Audio\Xact\PlayWaveEvent.cs" />
-    <Compile Include="Audio\Xact\ReverbSettings.cs" />
-    <Compile Include="Audio\Xact\RpcCurve.cs" />
-    <Compile Include="Audio\Xact\RpcParameter.cs" />
-    <Compile Include="Audio\Xact\RpcPoint.cs" />
-    <Compile Include="Audio\Xact\RpcPointType.cs" />
-    <Compile Include="Audio\Xact\RpcVariable.cs" />
-    <Compile Include="Audio\Xact\SoundBank.cs" />
-    <Compile Include="Audio\Xact\VolumeEvent.cs" />
-    <Compile Include="Audio\Xact\WaveBank.cs" />
-    <Compile Include="Audio\Xact\XactClip.cs" />
-    <Compile Include="Audio\Xact\XactHelpers.cs" />
-    <Compile Include="Audio\Xact\XactSound.cs" />
     <Compile Include="GraphicsDeviceInformation.cs" />
     <Compile Include="GraphicsDeviceManager.cs">
       <Platforms>Windows,WindowsGL,Linux,WindowsUniversal,Web,MacOS</Platforms>

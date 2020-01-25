@@ -14,11 +14,11 @@ namespace Microsoft.Xna.Framework.Audio
         private float _alVolume = 1f;
 
         internal int SourceId;
-        private float reverb = 0f;
-        bool applyFilter = false;
-        EfxFilterType filterType;
-        float filterQ;
-        float frequency;
+        // private float reverb = 0f;
+        // bool applyFilter = false;
+        // EfxFilterType filterType;
+        // float filterQ;
+        // float frequency;
         int pauseCount;
 
         internal OpenALSoundController controller;
@@ -136,8 +136,8 @@ namespace Microsoft.Xna.Framework.Audio
             AL.Source(SourceId, ALSourcef.Pitch, XnaPitchToAlPitch(_pitch));
             ALHelper.CheckError("Failed to set source pitch.");
 
-            ApplyReverb();
-            ApplyFilter();
+            // ApplyReverb();
+            // ApplyFilter();
 
             AL.SourcePlay(SourceId);
             ALHelper.CheckError("Failed to play source.");
@@ -261,96 +261,96 @@ namespace Microsoft.Xna.Framework.Audio
             }
         }
 
-        internal void PlatformSetReverbMix(float mix)
-        {
-            if (!OpenALSoundController.Efx.IsInitialized)
-                return;
-            reverb = mix;
-            if (State == SoundState.Playing)
-            {
-                ApplyReverb();
-                reverb = 0f;
-            }
-        }
+        // internal void PlatformSetReverbMix(float mix)
+        // {
+        //     if (!OpenALSoundController.Efx.IsInitialized)
+        //         return;
+        //     reverb = mix;
+        //     if (State == SoundState.Playing)
+        //     {
+        //         ApplyReverb();
+        //         reverb = 0f;
+        //     }
+        // }
+        //
+        // void ApplyReverb()
+        // {
+        //     if (reverb > 0f && SoundEffect.ReverbSlot != 0)
+        //     {
+        //         OpenALSoundController.Efx.BindSourceToAuxiliarySlot(SourceId, (int)SoundEffect.ReverbSlot, 0, 0);
+        //         ALHelper.CheckError("Failed to set reverb.");
+        //     }
+        // }
 
-        void ApplyReverb()
-        {
-            if (reverb > 0f && SoundEffect.ReverbSlot != 0)
-            {
-                OpenALSoundController.Efx.BindSourceToAuxiliarySlot(SourceId, (int)SoundEffect.ReverbSlot, 0, 0);
-                ALHelper.CheckError("Failed to set reverb.");
-            }
-        }
+        // void ApplyFilter()
+        // {
+            // if (applyFilter && controller.Filter > 0)
+            // {
+            //     var freq = frequency / 20000f;
+            //     var lf = 1.0f - freq;
+            //     var efx = OpenALSoundController.Efx;
+            //     efx.Filter(controller.Filter, EfxFilteri.FilterType, (int)filterType);
+            //     ALHelper.CheckError("Failed to set filter.");
+            //     switch (filterType)
+            //     {
+            //         case EfxFilterType.Lowpass:
+            //             efx.Filter(controller.Filter, EfxFilterf.LowpassGainHF, freq);
+            //             ALHelper.CheckError("Failed to set LowpassGainHF.");
+            //             break;
+            //         case EfxFilterType.Highpass:
+            //             efx.Filter(controller.Filter, EfxFilterf.HighpassGainLF, freq);
+            //             ALHelper.CheckError("Failed to set HighpassGainLF.");
+            //             break;
+            //         case EfxFilterType.Bandpass:
+            //             efx.Filter(controller.Filter, EfxFilterf.BandpassGainHF, freq);
+            //             ALHelper.CheckError("Failed to set BandpassGainHF.");
+            //             efx.Filter(controller.Filter, EfxFilterf.BandpassGainLF, lf);
+            //             ALHelper.CheckError("Failed to set BandpassGainLF.");
+            //             break;
+            //     }
+            //     AL.Source(SourceId, ALSourcei.EfxDirectFilter, controller.Filter);
+            //     ALHelper.CheckError("Failed to set DirectFilter.");
+            // }
+        // }
 
-        void ApplyFilter()
-        {
-            if (applyFilter && controller.Filter > 0)
-            {
-                var freq = frequency / 20000f;
-                var lf = 1.0f - freq;
-                var efx = OpenALSoundController.Efx;
-                efx.Filter(controller.Filter, EfxFilteri.FilterType, (int)filterType);
-                ALHelper.CheckError("Failed to set filter.");
-                switch (filterType)
-                {
-                    case EfxFilterType.Lowpass:
-                        efx.Filter(controller.Filter, EfxFilterf.LowpassGainHF, freq);
-                        ALHelper.CheckError("Failed to set LowpassGainHF.");
-                        break;
-                    case EfxFilterType.Highpass:
-                        efx.Filter(controller.Filter, EfxFilterf.HighpassGainLF, freq);
-                        ALHelper.CheckError("Failed to set HighpassGainLF.");
-                        break;
-                    case EfxFilterType.Bandpass:
-                        efx.Filter(controller.Filter, EfxFilterf.BandpassGainHF, freq);
-                        ALHelper.CheckError("Failed to set BandpassGainHF.");
-                        efx.Filter(controller.Filter, EfxFilterf.BandpassGainLF, lf);
-                        ALHelper.CheckError("Failed to set BandpassGainLF.");
-                        break;
-                }
-                AL.Source(SourceId, ALSourcei.EfxDirectFilter, controller.Filter);
-                ALHelper.CheckError("Failed to set DirectFilter.");
-            }
-        }
+        // internal void PlatformSetFilter(FilterMode mode, float filterQ, float frequency)
+        // {
+        //     if (!OpenALSoundController.Efx.IsInitialized)
+        //         return;
+        //
+        //     applyFilter = true;
+        //     switch (mode)
+        //     {
+        //         case FilterMode.BandPass:
+        //             filterType = EfxFilterType.Bandpass;
+        //             break;
+        //         case FilterMode.LowPass:
+        //             filterType = EfxFilterType.Lowpass;
+        //             break;
+        //         case FilterMode.HighPass:
+        //             filterType = EfxFilterType.Highpass;
+        //             break;
+        //     }
+        //     this.filterQ = filterQ;
+        //     this.frequency = frequency;
+        //     if (State == SoundState.Playing)
+        //     {
+        //         ApplyFilter();
+        //         applyFilter = false;
+        //     }
+        // }
 
-        internal void PlatformSetFilter(FilterMode mode, float filterQ, float frequency)
-        {
-            if (!OpenALSoundController.Efx.IsInitialized)
-                return;
-
-            applyFilter = true;
-            switch (mode)
-            {
-                case FilterMode.BandPass:
-                    filterType = EfxFilterType.Bandpass;
-                    break;
-                case FilterMode.LowPass:
-                    filterType = EfxFilterType.Lowpass;
-                    break;
-                case FilterMode.HighPass:
-                    filterType = EfxFilterType.Highpass;
-                    break;
-            }
-            this.filterQ = filterQ;
-            this.frequency = frequency;
-            if (State == SoundState.Playing)
-            {
-                ApplyFilter();
-                applyFilter = false;
-            }
-        }
-
-        internal void PlatformClearFilter()
-        {
-            if (!OpenALSoundController.Efx.IsInitialized)
-                return;
-
-            applyFilter = false;
-        }
-
+        // internal void PlatformClearFilter()
+        // {
+        //     if (!OpenALSoundController.Efx.IsInitialized)
+        //         return;
+        //
+        //     applyFilter = false;
+        // }
+        //
         private void PlatformDispose(bool disposing)
         {
-
+        
         }
     }
 }
