@@ -100,7 +100,7 @@ namespace PixelVision8.Runner
         protected string Documents => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
         public ExportService ExportService { get; private set; }
-        public bool recording { get; set; }
+        public bool Recording { get; set; }
 
         protected override void ConfigureRunner()
         {
@@ -210,7 +210,7 @@ namespace PixelVision8.Runner
             var game = engine.gameChip as LuaGameChip;
 
             // Get the script
-            var luaScript = game.luaScript;
+            var luaScript = game.LuaScript;
 
             // Inject the PV8 runner special global function
             luaScript.Globals["IsExporting"] = new Func<bool>(ExportService.IsExporting);
@@ -382,7 +382,7 @@ namespace PixelVision8.Runner
                 }
                 else if (controllerChip.GetKeyUp(actionKeys[ActionKeys.RecordKey]))
                 {
-                    if (recording)
+                    if (Recording)
                         StopRecording();
                     else
                         StartRecording();
@@ -447,7 +447,7 @@ namespace PixelVision8.Runner
                 {
                     base.Draw(gameTime);
 
-                    if (recording) gifEncoder.AddFrame(activeEngine.displayChip);
+                    if (Recording) gifEncoder.AddFrame(activeEngine.displayChip);
                 }
             }
             catch (Exception e)
@@ -667,7 +667,7 @@ namespace PixelVision8.Runner
             Dictionary<string, string> metaData = null)
         {
             // Make sure we stop recording when loading a new game
-            if (recording) StopRecording();
+            if (Recording) StopRecording();
             
             if (newMode == RunnerMode.Loading)
             {
@@ -845,9 +845,9 @@ namespace PixelVision8.Runner
         
         public void StartRecording()
         {
-            if (!recording)
+            if (!Recording)
             {
-                recording = true;
+                Recording = true;
 
                 if (workspaceService.Exists(tmpGifPath)) workspaceServicePlus.Delete(tmpGifPath);
 
@@ -862,10 +862,10 @@ namespace PixelVision8.Runner
 
         public void StopRecording()
         {
-            if (!recording || gifEncoder == null)
+            if (!Recording || gifEncoder == null)
                 return;
 
-            recording = false;
+            Recording = false;
             gifEncoder.Finish();
 
             // Add the encoder to the list to watch for exporting

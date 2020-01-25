@@ -122,42 +122,42 @@ namespace PixelVision8.Engine.Chips
 
         #region Chip References
 
-        protected ColorChip colorChip
+        protected ColorChip ColorChip
         {
             get => engine.colorChip;
         }
 
-        protected IControllerChip controllerChip
+        protected IControllerChip ControllerChip
         {
             get => engine.controllerChip;
         }
 
-        protected DisplayChip displayChip
+        protected DisplayChip DisplayChip
         {
             get => engine.displayChip;
         }
 
-        protected SoundChip soundChip
+        protected SoundChip SoundChip
         { 
             get => engine.soundChip;
         }
 
-        protected SpriteChip spriteChip
+        protected SpriteChip SpriteChip
         {
             get => engine.spriteChip;
         }
 
-        protected TilemapChip tilemapChip
+        protected TilemapChip TilemapChip
         {
             get => engine.tilemapChip;
         }
 
-        protected FontChip fontChip
+        protected FontChip FontChip
         {
             get => engine.fontChip;
         }
 
-        protected MusicChip musicChip
+        protected MusicChip MusicChip
         {
             get => engine.musicChip;
         }
@@ -226,19 +226,19 @@ namespace PixelVision8.Engine.Chips
             _scrollX = 0;
             _scrollY = 0;
 
-            _spriteSize.X = spriteChip.width;
-            _spriteSize.Y = spriteChip.height;
+            _spriteSize.X = SpriteChip.width;
+            _spriteSize.Y = SpriteChip.height;
 
             // Create a new canvas for the tilemap cache
             if (cachedTileMap == null)
-                cachedTileMap = new Canvas(displayChip.width, displayChip.height, this);
+                cachedTileMap = new Canvas(DisplayChip.width, DisplayChip.height, this);
 
             // Build tilemap cache
             RebuildCache(cachedTileMap);
 
             // Resize the tmpSpriteData so it mateches the sprite's width and height
-            Array.Resize(ref tmpSpriteData, spriteChip.width * spriteChip.height);
-            Array.Resize(ref tmpFontData, spriteChip.width * spriteChip.height);
+            Array.Resize(ref tmpSpriteData, SpriteChip.width * SpriteChip.height);
+            Array.Resize(ref tmpFontData, SpriteChip.width * SpriteChip.height);
 
             base.Reset();
         }
@@ -282,9 +282,9 @@ namespace PixelVision8.Engine.Chips
         public virtual int BackgroundColor(int? id = null)
         {
             if (id.HasValue)
-                colorChip.backgroundColor = id.Value;
+                ColorChip.backgroundColor = id.Value;
 
-            return colorChip.backgroundColor;
+            return ColorChip.backgroundColor;
         }
 
         /// <summary>
@@ -310,9 +310,9 @@ namespace PixelVision8.Engine.Chips
         public string Color(int id, string value = null)
         {
             if (value == null)
-                return colorChip.ReadColorAt(id);
+                return ColorChip.ReadColorAt(id);
 
-            colorChip.UpdateColorAt(id, value);
+            ColorChip.UpdateColorAt(id, value);
 
             return value;
         }
@@ -334,7 +334,7 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public int TotalColors(bool ignoreEmpty = false)
         {
-            return ignoreEmpty ? colorChip.totalUsedColors : colorChip.total;
+            return ignoreEmpty ? ColorChip.totalUsedColors : ColorChip.total;
         }
 
         /// <summary>
@@ -352,7 +352,7 @@ namespace PixelVision8.Engine.Chips
         public int ColorsPerSprite()
         {
             // This can not be changed at run time so it will never need to be invalidated
-            return spriteChip.colorsPerSprite; //colorsPerSpriteCached;//;
+            return SpriteChip.colorsPerSprite; //colorsPerSpriteCached;//;
         }
 
         /// <summary>
@@ -367,7 +367,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="id">The ID of the color you want to replace it with.</param>
         public void ReplaceColor(int index, int id)
         {
-            colorChip.UpdateColorAt(index, colorChip.ReadColorAt(id));
+            ColorChip.UpdateColorAt(index, ColorChip.ReadColorAt(id));
         }
 
         #endregion
@@ -412,10 +412,10 @@ namespace PixelVision8.Engine.Chips
         {
             //            displayChip.Clear();
 
-            w = width ?? displayChip.width - x;
-            h = height ?? displayChip.height - y;
+            w = width ?? DisplayChip.width - x;
+            h = height ?? DisplayChip.height - y;
 
-            DrawRect(x, y, w, h, colorChip.backgroundColor);
+            DrawRect(x, y, w, h, ColorChip.backgroundColor);
         }
 
         protected Point display;
@@ -431,11 +431,11 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public Point Display(bool visible = true)
         {
-            offsetX = visible ? displayChip.overscanXPixels : 0;
-            offsetY = visible ? displayChip.overscanYPixels : 0;
+            offsetX = visible ? DisplayChip.overscanXPixels : 0;
+            offsetY = visible ? DisplayChip.overscanYPixels : 0;
 
-            display.X = displayChip.width - offsetX;
-            display.Y = displayChip.height - offsetY;
+            display.X = DisplayChip.width - offsetX;
+            display.Y = DisplayChip.height - offsetY;
 
             return display;
         }
@@ -508,7 +508,7 @@ namespace PixelVision8.Engine.Chips
                 
                 default:
 
-                    displayChip.NewDrawCall(pixelData, x, y, width, height, (int) drawMode, flipH, flipV, colorOffset);
+                    DisplayChip.NewDrawCall(pixelData, x, y, width, height, (int) drawMode, flipH, flipV, colorOffset);
                     
                     break;
             }
@@ -566,22 +566,22 @@ namespace PixelVision8.Engine.Chips
             {
                 if (id != tmpSpriteDataID)
                 {
-                    spriteChip.ReadSpriteAt(id, tmpSpriteData);
+                    SpriteChip.ReadSpriteAt(id, tmpSpriteData);
                     tmpSpriteDataID = id;
                 }
 
-                DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, flipH, flipV, drawMode,
+                DrawPixels(tmpSpriteData, x, y, SpriteChip.width, SpriteChip.height, flipH, flipV, drawMode,
                     colorOffset);
             }
             else
             {
-                if (spriteChip.maxSpriteCount > 0 && CurrentSprites >= spriteChip.maxSpriteCount)
+                if (SpriteChip.maxSpriteCount > 0 && CurrentSprites >= SpriteChip.maxSpriteCount)
                     return;
 
                 // Check to see if we need to test the bounds
                 if (onScreen)
                 {
-                    var tmpBounds = bounds ?? displayChip.visibleBounds;
+                    var tmpBounds = bounds ?? DisplayChip.visibleBounds;
 
                     //                        if (bounds == null)
                     //                            bounds = displayChip.visibleBounds;
@@ -603,11 +603,11 @@ namespace PixelVision8.Engine.Chips
                     //TODO flipping H, V and colorOffset should all be passed into reading a sprite
                     if (id != tmpSpriteDataID)
                     {
-                        spriteChip.ReadSpriteAt(id, tmpSpriteData);
+                        SpriteChip.ReadSpriteAt(id, tmpSpriteData);
                         tmpSpriteDataID = id;
                     }
 
-                    DrawPixels(tmpSpriteData, x, y, spriteChip.width, spriteChip.height, flipH, flipV, drawMode,
+                    DrawPixels(tmpSpriteData, x, y, SpriteChip.width, SpriteChip.height, flipH, flipV, drawMode,
                         colorOffset);
 
                     CurrentSprites++;
@@ -685,8 +685,8 @@ namespace PixelVision8.Engine.Chips
             startX = x - (useScrollPos ? _scrollX : 0);
             startY = y - (useScrollPos ? _scrollY : 0);
 
-            var paddingW = spriteChip.width;
-            var paddingH = spriteChip.height;
+            var paddingW = SpriteChip.width;
+            var paddingH = SpriteChip.height;
 
             if (drawMode == DrawMode.Tile)
             {
@@ -771,7 +771,7 @@ namespace PixelVision8.Engine.Chips
 
             var sprites = new int[total];
 
-            var sW = MathUtil.CeilToInt((float) spriteChip.textureWidth / spriteChip.width);
+            var sW = MathUtil.CeilToInt((float) SpriteChip.textureWidth / SpriteChip.width);
 
             var startC = id % sW;
             var tmpC = id % sW;
@@ -896,15 +896,15 @@ namespace PixelVision8.Engine.Chips
                         drawMode == DrawMode.SpriteBelow)
                     {
                         // If the sprite counter has been met, exit out of the draw call
-                        if (spriteChip.maxSpriteCount > 0 && CurrentSprites >= spriteChip.maxSpriteCount)
+                        if (SpriteChip.maxSpriteCount > 0 && CurrentSprites >= SpriteChip.maxSpriteCount)
                             return;
 
                         CurrentSprites++;
                     }
 
-                    fontChip.ReadSpriteAt(spriteIDs[j], tmpFontData);
+                    FontChip.ReadSpriteAt(spriteIDs[j], tmpFontData);
 
-                    DrawPixels(tmpFontData, nextX, nextY, spriteChip.width, spriteChip.height, false, false, drawMode,
+                    DrawPixels(tmpFontData, nextX, nextY, SpriteChip.width, SpriteChip.height, false, false, drawMode,
                         colorOffset);
                 }
 
@@ -957,8 +957,8 @@ namespace PixelVision8.Engine.Chips
         {
             viewPort.X = offsetX ?? _scrollX;
             viewPort.Y = offsetY ?? _scrollY;
-            viewPort.Width = columns == 0 ? displayChip.width : columns * spriteChip.width;
-            viewPort.Height = rows == 0 ? displayChip.height : rows * spriteChip.height;
+            viewPort.Width = columns == 0 ? DisplayChip.width : columns * SpriteChip.width;
+            viewPort.Height = rows == 0 ? DisplayChip.height : rows * SpriteChip.height;
 
             // Grab the correct cached pixel data
             GetCachedPixels(viewPort.X, viewPort.Y, viewPort.Width, viewPort.Height, ref tmpTilemapCache);
@@ -1072,7 +1072,7 @@ namespace PixelVision8.Engine.Chips
 
             //            int spriteID, index;
 
-            var fontMap = fontChip.ReadFont(fontName);
+            var fontMap = FontChip.ReadFont(fontName);
 
             // Test to make sure font exists
             if (fontMap == null)
@@ -1104,7 +1104,7 @@ namespace PixelVision8.Engine.Chips
         /// <exception cref="Exception"></exception>
         public int[] CharacterToPixelData(char character, string fontName)
         {
-            var fontMap = fontChip.ReadFont(fontName);
+            var fontMap = FontChip.ReadFont(fontName);
 
             // Test to make sure font exists
             if (fontMap == null)
@@ -1120,7 +1120,7 @@ namespace PixelVision8.Engine.Chips
 
             if (spriteID > -1)
             {
-                fontChip.ReadSpriteAt(spriteID, tmpSpriteData);
+                FontChip.ReadSpriteAt(spriteID, tmpSpriteData);
                 return tmpSpriteData;
             }
 
@@ -1201,8 +1201,8 @@ namespace PixelVision8.Engine.Chips
         public bool Key(Keys key, InputState state = InputState.Down)
         {
             return state == InputState.Released
-                ? controllerChip.GetKeyUp(key)
-                : controllerChip.GetKeyDown(key);
+                ? ControllerChip.GetKeyUp(key)
+                : ControllerChip.GetKeyDown(key);
         }
 
         /// <summary>
@@ -1225,8 +1225,8 @@ namespace PixelVision8.Engine.Chips
         public bool MouseButton(int button, InputState state = InputState.Down)
         {
             return state == InputState.Released
-                ? controllerChip.GetMouseButtonUp(button)
-                : controllerChip.GetMouseButtonDown(button);
+                ? ControllerChip.GetMouseButtonUp(button)
+                : ControllerChip.GetMouseButtonDown(button);
         }
 
         /// <summary>
@@ -1253,8 +1253,8 @@ namespace PixelVision8.Engine.Chips
         public bool Button(Buttons button, InputState state = InputState.Down, int controllerID = 0)
         {
             return state == InputState.Released
-                ? controllerChip.ButtonReleased(button, controllerID)
-                : controllerChip.ButtonDown(button, controllerID);
+                ? ControllerChip.ButtonReleased(button, controllerID)
+                : ControllerChip.ButtonDown(button, controllerID);
         }
 
         /// <summary>
@@ -1267,9 +1267,9 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public Point MousePosition()
         {
-            var pos = controllerChip.ReadMousePosition();
+            var pos = ControllerChip.ReadMousePosition();
 
-            var bounds = displayChip.visibleBounds;
+            var bounds = DisplayChip.visibleBounds;
 
             // Make sure that the mouse x position is inside of the display width
             if (pos.X < 0 || pos.X > bounds.Width) pos.X = -1;
@@ -1289,7 +1289,7 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public string InputString()
         {
-            return controllerChip.ReadInputString();
+            return ControllerChip.ReadInputString();
         }
 
         #endregion
@@ -1309,7 +1309,7 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void PlaySound(int id, int channel = 0)
         {
-            soundChip.PlaySound(id, channel);
+            SoundChip.PlaySound(id, channel);
         }
 
         /// <summary>
@@ -1319,9 +1319,9 @@ namespace PixelVision8.Engine.Chips
         /// <param name="data"></param>
         public string Sound(int id, string data = null)
         {
-            if (data != null) soundChip.UpdateSound(id, data);
+            if (data != null) SoundChip.UpdateSound(id, data);
 
-            return soundChip.ReadSound(id).param;
+            return SoundChip.ReadSound(id).param;
         }
 
         /// <summary>
@@ -1330,7 +1330,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="channel">The channel ID to stop a sound on.</param>
         public void StopSound(int channel = 0)
         {
-            soundChip.StopSound(channel);
+            SoundChip.StopSound(channel);
         }
 
         /// <summary>
@@ -1340,7 +1340,7 @@ namespace PixelVision8.Engine.Chips
         /// <returns></returns>
         public bool IsChannelPlaying(int channel)
         {
-            return soundChip.IsChannelPlaying(channel);
+            return SoundChip.IsChannelPlaying(channel);
         }
 
         /// <summary>
@@ -1351,7 +1351,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="startAt"></param>
         public void PlaySong(int id, bool loop = true, int startAt = 0)
         {
-            musicChip.PlaySong(id, loop, startAt);
+            MusicChip.PlaySong(id, loop, startAt);
         }
 
         /// <summary>
@@ -1368,7 +1368,7 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void PlayPattern(int id, bool loop = true)
         {
-            musicChip.PlayPatterns(new[] {id}, loop);
+            MusicChip.PlayPatterns(new[] {id}, loop);
         }
 
         /// <summary>
@@ -1385,7 +1385,7 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void PlayPatterns(int[] loopIDs, bool loop = true)
         {
-            musicChip.PlayPatterns(loopIDs, loop);
+            MusicChip.PlayPatterns(loopIDs, loop);
         }
 
         /// <summary>
@@ -1394,7 +1394,7 @@ namespace PixelVision8.Engine.Chips
         /// <returns></returns>
         public Dictionary<string, int> SongData()
         {
-            return musicChip.songData;
+            return MusicChip.songData;
         }
 
         /// <summary>
@@ -1403,7 +1403,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public void PauseSong()
         {
-            musicChip.PauseSong();
+            MusicChip.PauseSong();
         }
 
         /// <summary>
@@ -1411,7 +1411,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public void StopSong()
         {
-            musicChip.StopSong();
+            MusicChip.StopSong();
         }
 
         /// <summary>
@@ -1428,7 +1428,7 @@ namespace PixelVision8.Engine.Chips
         public void RewindSong(int position = 0, int patternID = 0)
         {
             //TODO need to add in better support for rewinding a song across multiple loops
-            musicChip.RewindSong();
+            MusicChip.RewindSong();
         }
 
         #endregion
@@ -1479,14 +1479,14 @@ namespace PixelVision8.Engine.Chips
         {
             if (data != null)
             {
-                spriteChip.UpdateSpriteAt(id, data);
+                SpriteChip.UpdateSpriteAt(id, data);
 
-                tilemapChip.InvalidateTileID(id);
+                TilemapChip.InvalidateTileID(id);
 
                 return data;
             }
 
-            spriteChip.ReadSpriteAt(id, tmpSpriteData);
+            SpriteChip.ReadSpriteAt(id, tmpSpriteData);
 
             return tmpSpriteData;
         }
@@ -1508,7 +1508,7 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public int TotalSprites(bool ignoreEmpty = false)
         {
-            return ignoreEmpty ? spriteChip.spritesInRam : spriteChip.totalSprites;
+            return ignoreEmpty ? SpriteChip.spritesInRam : SpriteChip.totalSprites;
         }
 
         /// <summary>
@@ -1522,7 +1522,7 @@ namespace PixelVision8.Engine.Chips
         {
 //            if (total.HasValue) spriteChip.maxSpriteCount = total.Value;
 
-            return spriteChip.maxSpriteCount;
+            return SpriteChip.maxSpriteCount;
         }
 
         #endregion
@@ -1547,7 +1547,7 @@ namespace PixelVision8.Engine.Chips
         /// <returns></returns>
         public int Flag(int column, int row, int? value = null)
         {
-            var tile = tilemapChip.GetTile(column, row);
+            var tile = TilemapChip.GetTile(column, row);
 
             if (value.HasValue)
                 tile.flag = value.Value;
@@ -1589,7 +1589,7 @@ namespace PixelVision8.Engine.Chips
         {
             var invalidateTileMap = false;
 
-            var tile = tilemapChip.GetTile(column, row);
+            var tile = TilemapChip.GetTile(column, row);
 
             if (spriteID.HasValue)
             {
@@ -1623,7 +1623,7 @@ namespace PixelVision8.Engine.Chips
             }
 
             if (invalidateTileMap)
-                tilemapChip.Invalidate();
+                TilemapChip.Invalidate();
 
             return tile;
             //            return new TileData(CalculateIndex(column, row, tilemapChip.columns), tilemapChip.ReadSpriteAt(column, row), tilemapChip.ReadTileColorAt(column, row), tilemapChip.ReadFlagAt(column, row));
@@ -1637,7 +1637,7 @@ namespace PixelVision8.Engine.Chips
         {
             cachedTileMap.Clear();
 
-            tilemapChip.InvalidateAll();
+            TilemapChip.InvalidateAll();
         }
 
         /// <summary>
@@ -1658,7 +1658,7 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public Point TilemapSize(int? width = null, int? height = null, bool clear = false)
         {
-            var size = new Point(tilemapChip.columns, tilemapChip.rows);
+            var size = new Point(TilemapChip.columns, TilemapChip.rows);
 
             var resize = false;
 
@@ -1675,7 +1675,7 @@ namespace PixelVision8.Engine.Chips
             }
 
             if (resize)
-                tilemapChip.Resize(size.X, size.Y, clear);
+                TilemapChip.Resize(size.X, size.Y, clear);
 
             return size;
         }
@@ -1748,11 +1748,11 @@ namespace PixelVision8.Engine.Chips
         /// <ignore />
         protected void RebuildCache(Canvas targetTextureData)
         {
-            if (tilemapChip.invalid != true)
+            if (TilemapChip.invalid != true)
                 return;
 
-            var realWidth = spriteChip.width * tilemapChip.columns;
-            var realHeight = spriteChip.height * tilemapChip.rows;
+            var realWidth = SpriteChip.width * TilemapChip.columns;
+            var realHeight = SpriteChip.height * TilemapChip.rows;
 
             if (realWidth != cachedTileMap.width || realHeight != cachedTileMap.height)
                 cachedTileMap.Resize(realWidth, realHeight);
@@ -1763,14 +1763,14 @@ namespace PixelVision8.Engine.Chips
             int x, y, spriteID;
 
             // Get a local reference to the total number of tiles
-            var totalTiles = tilemapChip.total;
+            var totalTiles = TilemapChip.total;
 
             // var totalTilesUpdated = 0;
 
             // Loop through all of the tiles in the tilemap
             for (var i = 0; i < totalTiles; i++)
             {
-                var tile = tilemapChip.tiles[i];
+                var tile = TilemapChip.tiles[i];
 
                 if (tile.invalid)
                 {
@@ -1778,17 +1778,17 @@ namespace PixelVision8.Engine.Chips
                     spriteID = tile.spriteID;
 
                     // Calculate the new position of the tile;
-                    x = i % tilemapChip.columns * tileSize.X;
-                    y = i / tilemapChip.columns * tileSize.Y;
+                    x = i % TilemapChip.columns * tileSize.X;
+                    y = i / TilemapChip.columns * tileSize.Y;
 
-                    spriteChip.ReadSpriteAt(spriteID, tmpPixelData);
+                    SpriteChip.ReadSpriteAt(spriteID, tmpPixelData);
 
                     // TODO need to see if the tile is flipped
                     //                    var flipH = tile.flipH;
                     //                    var flipV = flipVLayer[i] == 1;
 
                     if (tile.flipH || tile.flipV)
-                        SpriteChipUtil.FlipSpriteData(ref tmpPixelData, spriteChip.width, spriteChip.height, tile.flipH,
+                        SpriteChipUtil.FlipSpriteData(ref tmpPixelData, SpriteChip.width, SpriteChip.height, tile.flipH,
                             tile.flipH);
 
                     //                    targetTextureData.DrawSprite(spriteID, x, y);
@@ -1801,12 +1801,12 @@ namespace PixelVision8.Engine.Chips
             }
 
             // Reset the invalidation state
-            tilemapChip.ResetValidation();
+            TilemapChip.ResetValidation();
         }
 
         public void GetCachedPixels(int x, int y, int blockWidth, int blockHeight, ref int[] pixelData)
         {
-            if (tilemapChip.invalid) RebuildCache(cachedTileMap);
+            if (TilemapChip.invalid) RebuildCache(cachedTileMap);
 
             cachedTileMap.CopyPixels(ref pixelData, x, y, blockWidth, blockHeight);
         }
@@ -1815,7 +1815,7 @@ namespace PixelVision8.Engine.Chips
             bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
             // Check to see if the tilemap cache is invalide before drawing to it
-            if (tilemapChip.invalid) RebuildCache(cachedTileMap);
+            if (TilemapChip.invalid) RebuildCache(cachedTileMap);
 
             // Flip the y axis 
             //            y = cachedTileMap.height - y - blockHeight;
@@ -2134,7 +2134,7 @@ namespace PixelVision8.Engine.Chips
             {
                 _currentSpriteData = tmpSpritesData[i];
                 
-                if (!spriteChip.IsEmptyAt(_currentSpriteData.Id))
+                if (!SpriteChip.IsEmptyAt(_currentSpriteData.Id))
                 {
                     // Get sprite values
                     startX = _currentSpriteData.X;

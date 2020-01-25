@@ -56,8 +56,8 @@ namespace PixelVision8.Runner
         protected string tmpPath;
         public WorkspaceService workspaceService;
         public string systemName;
-        public string systemVersion;
-        public string sessionID { get; protected set; }
+        public string SystemVersion;
+        public string SessionId { get; protected set; }
 
         public List<KeyValuePair<string, Dictionary<string, string>>> loadHistory =
             new List<KeyValuePair<string, Dictionary<string, string>>>();
@@ -108,9 +108,9 @@ namespace PixelVision8.Runner
         {
 
             // Save the session ID
-            sessionID = DateTime.Now.ToString("yyyyMMddHHmmssffff");
+            SessionId = DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
-            systemVersion = bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
+            SystemVersion = bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
             systemName = bios.ReadBiosData("SystemName", "PixelVision8");
 
             base.ConfigureRunner();
@@ -138,7 +138,7 @@ namespace PixelVision8.Runner
             var game = engine.gameChip as LuaGameChip;
 
             // Get the script
-            var luaScript = game.luaScript;
+            var luaScript = game.LuaScript;
 
             luaScript.Globals["StartNextPreload"] = new Action(StartNextPreload);
             luaScript.Globals["PreloaderComplete"] = new Action(RunGame);
@@ -150,9 +150,9 @@ namespace PixelVision8.Runner
             luaScript.Globals["LoadGame"] =
                 new Func<string, Dictionary<string, string>, bool>((path, metadata) =>
                     Load(path, RunnerMode.Loading, metadata));
-            luaScript.Globals["SystemVersion"] = new Func<string>(() => systemVersion);
+            luaScript.Globals["SystemVersion"] = new Func<string>(() => SystemVersion);
             luaScript.Globals["SystemName"] = new Func<string>(() => systemName);
-            luaScript.Globals["SessionID"] = new Func<string>(() => sessionID);
+            luaScript.Globals["SessionID"] = new Func<string>(() => SessionId);
 
             // Expose Bios APIs
             luaScript.Globals["ReadBiosData"] = new Func<string, string, string>((key, defaultValue) =>

@@ -34,7 +34,7 @@ namespace PixelVision8.Engine.Chips
     {
         protected Script _luaScript;
         public Dictionary<string, string> textFiles = new Dictionary<string, string>();
-        public Script luaScript
+        public Script LuaScript
         {
             get
             {
@@ -53,36 +53,36 @@ namespace PixelVision8.Engine.Chips
 
         public override void Init()
         {
-            if (luaScript?.Globals["Init"] == null)
+            if (LuaScript?.Globals["Init"] == null)
                 return;
 
-            luaScript.Call(luaScript.Globals["Init"]);
+            LuaScript.Call(LuaScript.Globals["Init"]);
         }
 
         public override void Update(int timeDelta)
         {
             base.Update(timeDelta);
 
-            if (luaScript?.Globals["Update"] == null)
+            if (LuaScript?.Globals["Update"] == null)
                 return;
 
-            luaScript.Call(luaScript.Globals["Update"], timeDelta);
+            LuaScript.Call(LuaScript.Globals["Update"], timeDelta);
         }
 
         public override void Draw()
         {
-            if (luaScript?.Globals["Draw"] == null)
+            if (LuaScript?.Globals["Draw"] == null)
                 return;
 
-            luaScript.Call(luaScript.Globals["Draw"]);
+            LuaScript.Call(LuaScript.Globals["Draw"]);
         }
 
         public override void Shutdown()
         {
-            if (luaScript?.Globals["Shutdown"] == null)
+            if (LuaScript?.Globals["Shutdown"] == null)
                 return;
 
-            luaScript.Call(luaScript.Globals["Shutdown"]);
+            LuaScript.Call(LuaScript.Globals["Shutdown"]);
         }
 
         public override void Reset()
@@ -90,7 +90,7 @@ namespace PixelVision8.Engine.Chips
             // Setup the GameChip
             base.Reset();
 
-            if (luaScript == null)
+            if (LuaScript == null)
                 return;
 
             try
@@ -99,7 +99,7 @@ namespace PixelVision8.Engine.Chips
                 var luaService = engine.GetService(typeof(LuaService).FullName) as LuaService;
 
                 // Run the lua service to configure the script
-                luaService.ConfigureScript(luaScript);
+                luaService.ConfigureScript(LuaScript);
             }
             catch
             {
@@ -109,191 +109,191 @@ namespace PixelVision8.Engine.Chips
 
             #region Color APIs
 
-            luaScript.Globals["BackgroundColor"] = new Func<int?, int>(BackgroundColor);
-            luaScript.Globals["Color"] = new Func<int, string, string>(Color);
-            luaScript.Globals["ColorsPerSprite"] = new Func<int>(ColorsPerSprite);
-            luaScript.Globals["TotalColors"] = new Func<bool, int>(TotalColors);
-            luaScript.Globals["ReplaceColor"] = new Action<int, int>(ReplaceColor);
+            LuaScript.Globals["BackgroundColor"] = new Func<int?, int>(BackgroundColor);
+            LuaScript.Globals["Color"] = new Func<int, string, string>(Color);
+            LuaScript.Globals["ColorsPerSprite"] = new Func<int>(ColorsPerSprite);
+            LuaScript.Globals["TotalColors"] = new Func<bool, int>(TotalColors);
+            LuaScript.Globals["ReplaceColor"] = new Action<int, int>(ReplaceColor);
 
             #endregion
 
             #region Display APIs
 
-            luaScript.Globals["Clear"] = new Action<int, int, int?, int?>(Clear);
-            luaScript.Globals["Display"] = new Func<bool, Point>(Display);
-            luaScript.Globals["DrawPixels"] =
+            LuaScript.Globals["Clear"] = new Action<int, int, int?, int?>(Clear);
+            LuaScript.Globals["Display"] = new Func<bool, Point>(Display);
+            LuaScript.Globals["DrawPixels"] =
                 new Action<int[], int, int, int, int, bool, bool, DrawMode, int>(DrawPixels);
-            luaScript.Globals["DrawSprite"] = new Action<int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprite);
-            luaScript.Globals["DrawSprites"] =
+            LuaScript.Globals["DrawSprite"] = new Action<int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprite);
+            LuaScript.Globals["DrawSprites"] =
                 new Action<int[], int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprites);
-            luaScript.Globals["DrawSpriteBlock"] =
+            LuaScript.Globals["DrawSpriteBlock"] =
                 new Action<int, int, int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSpriteBlock);
 
-            luaScript.Globals["DrawText"] =
+            LuaScript.Globals["DrawText"] =
                 new Action<string, int, int, DrawMode, string, int, int, Rectangle?>(DrawText);
-            luaScript.Globals["DrawTilemap"] = new Action<int, int, int, int, int?, int?>(DrawTilemap);
+            LuaScript.Globals["DrawTilemap"] = new Action<int, int, int, int, int?, int?>(DrawTilemap);
 
-            luaScript.Globals["DrawRect"] = new Action<int, int, int, int, int, DrawMode>(DrawRect);
-            luaScript.Globals["RedrawDisplay"] = new Action(RedrawDisplay);
-            luaScript.Globals["ScrollPosition"] = new Func<int?, int?, Point>(ScrollPosition);
+            LuaScript.Globals["DrawRect"] = new Action<int, int, int, int, int, DrawMode>(DrawRect);
+            LuaScript.Globals["RedrawDisplay"] = new Action(RedrawDisplay);
+            LuaScript.Globals["ScrollPosition"] = new Func<int?, int?, Point>(ScrollPosition);
 
             #endregion
 
             #region File IO APIs
 
-            luaScript.Globals["AddScript"] = new Action<string, string>(AddScript);
-            luaScript.Globals["LoadScript"] = new Action<string>(LoadScript);
-            luaScript.Globals["ReadSaveData"] = new Func<string, string, string>(ReadSaveData);
-            luaScript.Globals["WriteSaveData"] = new Action<string, string>(WriteSaveData);
-            luaScript.Globals["ReadMetadata"] = new Func<string, string, string>(ReadMetadata);
-            luaScript.Globals["WriteMetadata"] = new Action<string, string>(WriteMetadata);
-            luaScript.Globals["ReadAllMetadata"] = new Func< Dictionary<string, string>>(ReadAllMetadata);
+            LuaScript.Globals["AddScript"] = new Action<string, string>(AddScript);
+            LuaScript.Globals["LoadScript"] = new Action<string>(LoadScript);
+            LuaScript.Globals["ReadSaveData"] = new Func<string, string, string>(ReadSaveData);
+            LuaScript.Globals["WriteSaveData"] = new Action<string, string>(WriteSaveData);
+            LuaScript.Globals["ReadMetadata"] = new Func<string, string, string>(ReadMetadata);
+            LuaScript.Globals["WriteMetadata"] = new Action<string, string>(WriteMetadata);
+            LuaScript.Globals["ReadAllMetadata"] = new Func< Dictionary<string, string>>(ReadAllMetadata);
 
             #endregion
 
             #region Input APIs
 
-            luaScript.Globals["Key"] = new Func<Keys, InputState, bool>(Key);
-            luaScript.Globals["Button"] = new Func<Buttons, InputState, int, bool>(Button);
-            luaScript.Globals["MouseButton"] = new Func<int, InputState, bool>(MouseButton);
-            luaScript.Globals["MousePosition"] = new Func<Point>(MousePosition);
-            luaScript.Globals["InputString"] = new Func<string>(InputString);
+            LuaScript.Globals["Key"] = new Func<Keys, InputState, bool>(Key);
+            LuaScript.Globals["Button"] = new Func<Buttons, InputState, int, bool>(Button);
+            LuaScript.Globals["MouseButton"] = new Func<int, InputState, bool>(MouseButton);
+            LuaScript.Globals["MousePosition"] = new Func<Point>(MousePosition);
+            LuaScript.Globals["InputString"] = new Func<string>(InputString);
 
             #endregion
 
             #region Math APIs
 
-            luaScript.Globals["CalculateIndex"] = new Func<int, int, int, int>(CalculateIndex);
-            luaScript.Globals["CalculatePosition"] = new Func<int, int, Point>(CalculatePosition);
-            luaScript.Globals["Clamp"] = new Func<int, int, int, int>(Clamp);
-            luaScript.Globals["Repeat"] = new Func<int, int, int>(Repeat);
+            LuaScript.Globals["CalculateIndex"] = new Func<int, int, int, int>(CalculateIndex);
+            LuaScript.Globals["CalculatePosition"] = new Func<int, int, Point>(CalculatePosition);
+            LuaScript.Globals["Clamp"] = new Func<int, int, int, int>(Clamp);
+            LuaScript.Globals["Repeat"] = new Func<int, int, int>(Repeat);
 
             #endregion
 
             #region Sound APIs
 
-            luaScript.Globals["Sound"] = new Func<int, string, string>(Sound);
-            luaScript.Globals["PlaySound"] = new Action<int, int>(PlaySound);
-            luaScript.Globals["StopSound"] = new Action<int>(StopSound);
-            luaScript.Globals["PlayRawSound"] = new Action<string, int, float>(soundChip.PlayRawSound);
+            LuaScript.Globals["Sound"] = new Func<int, string, string>(Sound);
+            LuaScript.Globals["PlaySound"] = new Action<int, int>(PlaySound);
+            LuaScript.Globals["StopSound"] = new Action<int>(StopSound);
+            LuaScript.Globals["PlayRawSound"] = new Action<string, int, float>(SoundChip.PlayRawSound);
 
-            luaScript.Globals["IsChannelPlaying"] = new Func<int, bool>(IsChannelPlaying);
-            luaScript.Globals["PlayPattern"] = new Action<int, bool>(PlayPattern);
-            luaScript.Globals["PlayPatterns"] = new Action<int[], bool>(PlayPatterns);
-            luaScript.Globals["PlaySong"] = new Action<int, bool, int>(PlaySong);
-            luaScript.Globals["PauseSong"] = new Action(PauseSong);
-            luaScript.Globals["RewindSong"] = new Action<int, int>(RewindSong);
-            luaScript.Globals["StopSong"] = new Action(StopSong);
-            luaScript.Globals["SongData"] = new Func<Dictionary<string, int>>(SongData);
+            LuaScript.Globals["IsChannelPlaying"] = new Func<int, bool>(IsChannelPlaying);
+            LuaScript.Globals["PlayPattern"] = new Action<int, bool>(PlayPattern);
+            LuaScript.Globals["PlayPatterns"] = new Action<int[], bool>(PlayPatterns);
+            LuaScript.Globals["PlaySong"] = new Action<int, bool, int>(PlaySong);
+            LuaScript.Globals["PauseSong"] = new Action(PauseSong);
+            LuaScript.Globals["RewindSong"] = new Action<int, int>(RewindSong);
+            LuaScript.Globals["StopSong"] = new Action(StopSong);
+            LuaScript.Globals["SongData"] = new Func<Dictionary<string, int>>(SongData);
 
             #endregion
 
             #region Sprite APIs
 
-            luaScript.Globals["Sprite"] = new Func<int, int[], int[]>(Sprite);
+            LuaScript.Globals["Sprite"] = new Func<int, int[], int[]>(Sprite);
 //            luaScript.Globals["Sprites"] = new Func<int[], int, int[]>(Sprites);
-            luaScript.Globals["SpriteSize"] = new Func<Point>(SpriteSize);
-            luaScript.Globals["TotalSprites"] = new Func<bool, int>(TotalSprites);
-            luaScript.Globals["MaxSpriteCount"] = new Func<int>(MaxSpriteCount); 
+            LuaScript.Globals["SpriteSize"] = new Func<Point>(SpriteSize);
+            LuaScript.Globals["TotalSprites"] = new Func<bool, int>(TotalSprites);
+            LuaScript.Globals["MaxSpriteCount"] = new Func<int>(MaxSpriteCount); 
 
             #endregion
 
             #region Tilemap
 
-            luaScript.Globals["RebuildTilemap"] = new Action(RebuildTilemap);
+            LuaScript.Globals["RebuildTilemap"] = new Action(RebuildTilemap);
 
-            luaScript.Globals["TilemapSize"] = new Func<int?, int?, bool, Point>(TilemapSize);
-            luaScript.Globals["Tile"] = new Func<int, int, int?, int?, int?, bool?, bool?, TileData>(Tile);
-            luaScript.Globals["UpdateTiles"] = new Action<int[], int?, int?>(UpdateTiles);
-            luaScript.Globals["Flag"] = new Func<int, int, int?, int>(Flag);
+            LuaScript.Globals["TilemapSize"] = new Func<int?, int?, bool, Point>(TilemapSize);
+            LuaScript.Globals["Tile"] = new Func<int, int, int?, int?, int?, bool?, bool?, TileData>(Tile);
+            LuaScript.Globals["UpdateTiles"] = new Action<int[], int?, int?>(UpdateTiles);
+            LuaScript.Globals["Flag"] = new Func<int, int, int?, int>(Flag);
 
 
-            luaScript.Globals["SaveTilemapCache"] = new Action(SaveTilemapCache);
-            luaScript.Globals["RestoreTilemapCache"] = new Action(RestoreTilemapCache);
+            LuaScript.Globals["SaveTilemapCache"] = new Action(SaveTilemapCache);
+            LuaScript.Globals["RestoreTilemapCache"] = new Action(RestoreTilemapCache);
 
             #endregion
 
             #region Utils
 
-            luaScript.Globals["WordWrap"] = new Func<string, int, string>(WordWrap);
-            luaScript.Globals["SplitLines"] = new Func<string, string[]>(SplitLines);
-            luaScript.Globals["BitArray"] = new Func<int, int[]>(BitArray);
-            luaScript.Globals["CalculateDistance"] = new Func<int, int, int, int, int>(CalculateDistance);
+            LuaScript.Globals["WordWrap"] = new Func<string, int, string>(WordWrap);
+            LuaScript.Globals["SplitLines"] = new Func<string, string[]>(SplitLines);
+            LuaScript.Globals["BitArray"] = new Func<int, int[]>(BitArray);
+            LuaScript.Globals["CalculateDistance"] = new Func<int, int, int, int, int>(CalculateDistance);
 
             #endregion
 
             #region Debug
 
-            luaScript.Globals["ReadFPS"] = new Func<int>(() => fps);
-            luaScript.Globals["ReadTotalSprites"] = new Func<int>(() => CurrentSprites);
+            LuaScript.Globals["ReadFPS"] = new Func<int>(() => fps);
+            LuaScript.Globals["ReadTotalSprites"] = new Func<int>(() => CurrentSprites);
 
             #endregion
 
             #region Text
 
 //            luaScript.Globals["ConvertTextToSprites"] = new Func<string, string, int[]>(ConvertTextToSprites);
-            luaScript.Globals["CharacterToPixelData"] =
+            LuaScript.Globals["CharacterToPixelData"] =
                 new Func<char, string, int[]>(CharacterToPixelData);
 
             #endregion
 
             #region Experimental APIs
 
-            luaScript.Globals["PaletteOffset"] = new Func<int, int, int>(PaletteOffset);
+            LuaScript.Globals["PaletteOffset"] = new Func<int, int, int>(PaletteOffset);
 
-            luaScript.Globals["MetaSprite"] = new Func<int, SpriteCollection, SpriteCollection>(MetaSprite);
-            luaScript.Globals["DrawMetaSprite"] = new Action<int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawMetaSprite);
+            LuaScript.Globals["MetaSprite"] = new Func<int, SpriteCollection, SpriteCollection>(MetaSprite);
+            LuaScript.Globals["DrawMetaSprite"] = new Action<int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawMetaSprite);
 
             UserData.RegisterType<SpriteData>();
-            luaScript.Globals["SpriteData"] = UserData.CreateStatic<SpriteData>();
+            LuaScript.Globals["SpriteData"] = UserData.CreateStatic<SpriteData>();
 
             // Create new meta sprites
             UserData.RegisterType<SpriteCollection>();
-            luaScript.Globals["SpriteCollection"] = UserData.CreateStatic<SpriteCollection>();
+            LuaScript.Globals["SpriteCollection"] = UserData.CreateStatic<SpriteCollection>();
             
             #endregion
 
             // Enums
             UserData.RegisterType<WaveType>();
-            luaScript.Globals["WaveType"] = UserData.CreateStatic<WaveType>();
+            LuaScript.Globals["WaveType"] = UserData.CreateStatic<WaveType>();
 
             UserData.RegisterType<DrawMode>();
-            luaScript.Globals["DrawMode"] = UserData.CreateStatic<DrawMode>();
+            LuaScript.Globals["DrawMode"] = UserData.CreateStatic<DrawMode>();
 
             UserData.RegisterType<Buttons>();
-            luaScript.Globals["Buttons"] = UserData.CreateStatic<Buttons>();
+            LuaScript.Globals["Buttons"] = UserData.CreateStatic<Buttons>();
 
             UserData.RegisterType<Keys>();
-            luaScript.Globals["Keys"] = UserData.CreateStatic<Keys>();
+            LuaScript.Globals["Keys"] = UserData.CreateStatic<Keys>();
 
             UserData.RegisterType<InputState>();
-            luaScript.Globals["InputState"] = UserData.CreateStatic<InputState>();
+            LuaScript.Globals["InputState"] = UserData.CreateStatic<InputState>();
 
             UserData.RegisterType<SaveFlags>();
-            luaScript.Globals["SaveFlags"] = UserData.CreateStatic<SaveFlags>();
+            LuaScript.Globals["SaveFlags"] = UserData.CreateStatic<SaveFlags>();
 
             // Register PV8's vector type
             UserData.RegisterType<Point>();
-            luaScript.Globals["NewPoint"] = new Func<int, int, Point>(NewPoint);
+            LuaScript.Globals["NewPoint"] = new Func<int, int, Point>(NewPoint);
 
             // Register PV8's TileData type
             UserData.RegisterType<TileData>();
 
             // Register PV8's rect type
             UserData.RegisterType<Rectangle>();
-            luaScript.Globals["NewRect"] = new Func<int, int, int, int, Rectangle>(NewRect);
+            LuaScript.Globals["NewRect"] = new Func<int, int, int, int, Rectangle>(NewRect);
 
             // Register PV8's rect type
             UserData.RegisterType<Canvas>();
-            luaScript.Globals["NewCanvas"] =
+            LuaScript.Globals["NewCanvas"] =
                 new Func<int, int, Canvas>(NewCanvas);
 
             UserData.RegisterType<SpriteData>();
-            luaScript.Globals["NewSpriteData"] =
+            LuaScript.Globals["NewSpriteData"] =
                 new Func<int, int, int, bool, bool, int, SpriteData>(NewSpriteData);
 
             UserData.RegisterType<SpriteCollection>();
-            luaScript.Globals["NewSpriteCollection"] =
+            LuaScript.Globals["NewSpriteCollection"] =
                 new Func<string, SpriteData[], SpriteCollection>(NewSpriteCollection);
 
             // Load the default script
@@ -303,8 +303,8 @@ namespace PixelVision8.Engine.Chips
             RegisterLuaServices();
 
             // Reset the game
-            if (luaScript.Globals["Reset"] != null)
-                luaScript.Call(luaScript.Globals["Reset"]);
+            if (LuaScript.Globals["Reset"] != null)
+                LuaScript.Call(LuaScript.Globals["Reset"]);
         }
 
         #endregion
@@ -348,7 +348,7 @@ namespace PixelVision8.Engine.Chips
                     replacement = "~=";
                     script = Regex.Replace(script, pattern, replacement, RegexOptions.Multiline);
 
-                    luaScript.DoString(script, null, name);
+                    LuaScript.DoString(script, null, name);
                 }
             }
         }

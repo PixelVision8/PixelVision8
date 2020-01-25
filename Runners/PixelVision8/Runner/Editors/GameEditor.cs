@@ -314,7 +314,7 @@ namespace PixelVision8.Runner.Editors
 
             for (var i = 0; i < flags.Length; i++) saveFlags |= flags[i];
 
-            targetGame.SetMetadata("version", runner.systemVersion);
+            targetGame.SetMetadata("version", runner.SystemVersion);
 //            gameChip.version = ;
 
             // TODO saving games doesn't work
@@ -422,7 +422,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public string Version()
         {
-            return targetGame.GetMetadata("version", runner.systemVersion);
+            return targetGame.GetMetadata("version", runner.SystemVersion);
         }
 
         public string Ext(string value = null)
@@ -1970,7 +1970,7 @@ namespace PixelVision8.Runner.Editors
 
         /// <summary>
         /// </summary>
-        public int pcgDensity
+        public int PcgDensity
         {
             get => songGenerator.pcgDensity;
             set => songGenerator.pcgDensity = value;
@@ -1978,7 +1978,7 @@ namespace PixelVision8.Runner.Editors
 
         /// <summary>
         /// </summary>
-        public int pcgFunk
+        public int PcgFunk
         {
             get => songGenerator.pcgFunk;
             set => songGenerator.pcgFunk = value;
@@ -1986,7 +1986,7 @@ namespace PixelVision8.Runner.Editors
 
         /// <summary>
         /// </summary>
-        public int pcgLayering
+        public int PcgLayering
         {
             get => songGenerator.pcgLayering;
             set => songGenerator.pcgLayering = value;
@@ -1994,7 +1994,7 @@ namespace PixelVision8.Runner.Editors
 
         /// <summary>
         /// </summary>
-        public int pcgMinTempo
+        public int PcgMinTempo
         {
             get => songGenerator.pcgMinTempo;
             set => songGenerator.pcgMinTempo = value;
@@ -2002,7 +2002,7 @@ namespace PixelVision8.Runner.Editors
 
         /// <summary>
         /// </summary>
-        public int pcgMaxTempo
+        public int PcgMaxTempo
         {
             get => songGenerator.pcgMaxTempo;
             set => songGenerator.pcgMaxTempo = value;
@@ -2010,7 +2010,7 @@ namespace PixelVision8.Runner.Editors
 
         /// <summary>
         /// </summary>
-        public int scale
+        public int Scale
         {
             get => songGenerator.scale;
             set => songGenerator.scale = value;
