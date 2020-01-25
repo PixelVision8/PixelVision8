@@ -196,32 +196,10 @@ namespace PixelVision8.Runner.Services
                     }
                 }
 
-
-//                var fontExtension = ".font.png";
-//
-//                var paths = files.Keys.Where(s => s.EndsWith(fontExtension)).ToArray();
-//
-//                foreach (var fileName in paths)
-//                {
-//                    var fontName = fileName.Split('.')[0];
-//
-//                    parser = LoadFont(fontName, files[fileName]);
-//                    if (parser != null)
-//                        AddExporter(parser);
-//                }
             }
-//
 
-
-//                if ((saveFlags & SaveFlags.TilemapFlags) == SaveFlags.TilemapFlags)
-//                {
-////                    ExportUtil.CreateTileMapFlagTexture(ref tex, engine);
-////                    SaveTextureToFile(path, "tilemap-flags", tex);
-//                }
-//    
             if ((saveFlags & SaveFlags.Tilemap) == SaveFlags.Tilemap)
                 AddExporter(new TilemapJsonExporter(path + "tilemap.json", targetEngine));
-
 
             // Step 8 (optional). Look for meta data and override the game
             if ((saveFlags & SaveFlags.Meta) == SaveFlags.Meta)
@@ -239,6 +217,10 @@ namespace PixelVision8.Runner.Services
             if ((saveFlags & SaveFlags.SaveData) == SaveFlags.SaveData)
                 AddExporter(new SavedDataExporter(path + "saves.json", targetEngine));
 
+            // Step 11 (optional). Look for meta data and override the game
+            if ((saveFlags & SaveFlags.MetaSprites) == SaveFlags.MetaSprites)
+                AddExporter(new MetaSpriteExporter(path + "meta-sprites.json", targetEngine));
+            
             totalParsers = exporters.Count;
             currentParserID = 0;
 

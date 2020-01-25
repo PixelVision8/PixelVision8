@@ -191,6 +191,9 @@ namespace PixelVision8.Runner.Services
 
             // Step 11 (optional). Look for meta data and override the game
             if ((saveFlags & SaveFlags.SaveData) == SaveFlags.SaveData) LoadSaveData(files);
+            
+            // Step 12 (optional). Look for meta sprites
+            if ((saveFlags & SaveFlags.MetaSprites) == SaveFlags.MetaSprites) LoadMetaSprites(files);
 
             ParseExtraFileTypes(files, engine, saveFlags);
 
@@ -578,12 +581,19 @@ namespace PixelVision8.Runner.Services
                 var fileContents = Encoding.UTF8.GetString(files[fileName]);
 
                 AddParser(new SystemParser(targetEngine, fileContents));
+            }
+        }
 
-//                var jsonParser = new SystemParser(fileContents, targetEngine);
-//                jsonParser.CalculateSteps();
-//                
-//                while (jsonParser.completed == false)
-//                    jsonParser.NextStep();
+        protected void LoadMetaSprites(Dictionary<string, byte[]> files)
+        {
+            var fileName = "meta-sprites.json";
+
+            if (files.ContainsKey(fileName))
+            {
+                var fileContents = Encoding.UTF8.GetString(files[fileName]);
+
+                AddParser(new SystemParser(targetEngine, fileContents));
+
             }
         }
 

@@ -26,6 +26,7 @@ using MoonSharp.Interpreter;
 using PixelVision8.Engine.Audio;
 using PixelVision8.Runner;
 using PixelVision8.Runner.Services;
+using PixelVisionSDK.Engine;
 
 namespace PixelVision8.Engine.Chips
 {
@@ -240,20 +241,15 @@ namespace PixelVision8.Engine.Chips
 
             luaScript.Globals["PaletteOffset"] = new Func<int, int, int>(PaletteOffset);
 
+            luaScript.Globals["MetaSprite"] = new Func<int, SpriteCollection, SpriteCollection>(MetaSprite);
+            luaScript.Globals["DrawMetaSprite"] = new Action<int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawMetaSprite);
 
-            luaScript.Globals["RegisterMetaSprite"] = new Func<string, List<MetaSpriteData>, MetaSprite>(RegisterMetaSprite);
-            luaScript.Globals["ReadMetaSprite"] = new Func<string, MetaSprite>(ReadMetaSprite);
-            luaScript.Globals["ReadMetaSpriteBounds"] = new Func<string, Rectangle>(ReadMetaSpriteBounds);
-            luaScript.Globals["DeleteMetaSprite"] = new Action<string>(DeleteMetaSprite);
-            luaScript.Globals["DrawMetaSprite"] =
-                new Action<string, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawMetaSprite);
-
-            UserData.RegisterType<MetaSpriteData>();
-            luaScript.Globals["MetaSpriteData"] = UserData.CreateStatic<MetaSpriteData>();
+            UserData.RegisterType<SpriteData>();
+            luaScript.Globals["SpriteData"] = UserData.CreateStatic<SpriteData>();
 
             // Create new meta sprites
-            UserData.RegisterType<MetaSprite>();
-            luaScript.Globals["MetaSprite"] = UserData.CreateStatic<MetaSprite>();
+            UserData.RegisterType<SpriteCollection>();
+            luaScript.Globals["SpriteCollection"] = UserData.CreateStatic<SpriteCollection>();
             
             #endregion
 
@@ -291,6 +287,14 @@ namespace PixelVision8.Engine.Chips
             UserData.RegisterType<Canvas>();
             luaScript.Globals["NewCanvas"] =
                 new Func<int, int, Canvas>(NewCanvas);
+
+            UserData.RegisterType<SpriteData>();
+            luaScript.Globals["NewSpriteData"] =
+                new Func<int, int, int, bool, bool, int, SpriteData>(NewSpriteData);
+
+            UserData.RegisterType<SpriteCollection>();
+            luaScript.Globals["NewSpriteCollection"] =
+                new Func<string, SpriteData[], SpriteCollection>(NewSpriteCollection);
 
             // Load the default script
             LoadScript("code.lua");

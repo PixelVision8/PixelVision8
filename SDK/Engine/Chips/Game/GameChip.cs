@@ -25,6 +25,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Utils;
+using PixelVisionSDK.Engine;
 
 namespace PixelVision8.Engine.Chips
 {
@@ -121,15 +122,52 @@ namespace PixelVision8.Engine.Chips
 
         #region Chip References
 
-        protected ColorChip colorChip;
+        protected ColorChip colorChip
+        {
+            get => engine.colorChip;
+        }
 
-        protected IControllerChip controllerChip;
-        protected DisplayChip displayChip;
-        protected SoundChip soundChip;
-        protected SpriteChip spriteChip;
-        protected TilemapChip tilemapChip;
-        protected FontChip fontChip;
-        protected MusicChip musicChip;
+        protected IControllerChip controllerChip
+        {
+            get => engine.controllerChip;
+        }
+
+        protected DisplayChip displayChip
+        {
+            get => engine.displayChip;
+        }
+
+        protected SoundChip soundChip
+        { 
+            get => engine.soundChip;
+        }
+
+        protected SpriteChip spriteChip
+        {
+            get => engine.spriteChip;
+        }
+
+        protected TilemapChip tilemapChip
+        {
+            get => engine.tilemapChip;
+        }
+
+        protected FontChip fontChip
+        {
+            get => engine.fontChip;
+        }
+
+        protected MusicChip musicChip
+        {
+            get => engine.musicChip;
+        }
+
+        public int TotalMetaSprites
+        {
+            // TODO do we need to save the previous values?
+            set => Array.Resize(ref metaSprites, MathHelper.Clamp(value,0,96));
+            get => metaSprites.Length;
+        }
 
 //        private readonly int[] _singlePixel = { 0 };
 
@@ -141,6 +179,8 @@ namespace PixelVision8.Engine.Chips
         {
             // Set the engine's game to this instance
             engine.gameChip = this;
+
+            metaSprites = new SpriteCollection[96];
         }
 
         /// <summary>
@@ -186,15 +226,8 @@ namespace PixelVision8.Engine.Chips
             _scrollX = 0;
             _scrollY = 0;
 
-            // Get references to each of the chips
-            colorChip = engine.colorChip;
-            controllerChip = engine.controllerChip;
-            displayChip = engine.displayChip;
-            soundChip = engine.soundChip;
-            spriteChip = engine.spriteChip;
-            tilemapChip = engine.tilemapChip;
-            fontChip = engine.fontChip;
-            musicChip = engine.musicChip;
+            _spriteSize.X = spriteChip.width;
+            _spriteSize.Y = spriteChip.height;
 
             // Create a new canvas for the tilemap cache
             if (cachedTileMap == null)
@@ -1402,6 +1435,8 @@ namespace PixelVision8.Engine.Chips
 
         #region Sprite
 
+        protected Point _spriteSize = Point.Zero;
+
         /// <summary>
         ///     Returns the size of the sprite as a Vector where X and Y represent the width and height.
         /// </summary>
@@ -1416,9 +1451,11 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public Point SpriteSize()
         {
-            var size = new Point(spriteChip.width, spriteChip.height);
 
-            return size;
+            
+            // var size = new Point(spriteChip.width, spriteChip.height);
+
+            return _spriteSize;
         }
 
         /// <summary>
@@ -1730,7 +1767,7 @@ namespace PixelVision8.Engine.Chips
             // Get a local reference to the total number of tiles
             var totalTiles = tilemapChip.total;
 
-            var totalTilesUpdated = 0;
+            // var totalTilesUpdated = 0;
 
             // Loop through all of the tiles in the tilemap
             for (var i = 0; i < totalTiles; i++)
@@ -1761,7 +1798,7 @@ namespace PixelVision8.Engine.Chips
                     targetTextureData.MergePixels(x, y, tileSize.X, tileSize.Y, tmpPixelData, false, false,
                         tile.colorOffset, false);
 
-                    totalTilesUpdated++;
+                    // totalTilesUpdated++;
                 }
             }
 
@@ -2051,181 +2088,89 @@ namespace PixelVision8.Engine.Chips
             // TODO this is hardcoded right now but there are 8 palettes with a max of 16 colors each
             return 128 + Clamp(paletteID, 0, 7) * 16 + Clamp(paletteColorID, 0, ColorsPerSprite() - 1);
         }
+        
+        protected SpriteCollection[] metaSprites;
 
-        public struct MetaSpriteData
+        protected Rectangle metaSpriteMaxBounds = new Rectangle(0,0,64,64);
+        
+        public SpriteCollection MetaSprite(int id, SpriteCollection spriteCollection = null)
         {
-            public int id;
-            public int x;
-            public int y;
-            public bool flipH;
-            public bool flipV;
-            public int colorOffset;
-
-            public MetaSpriteData(int id, int x = 0, int y = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
+            if (spriteCollection != null)
             {
-                this.id = id;
-                this.flipH = flipH;
-                this.flipV = flipV;
-                this.x = x;
-                this.y = y;
-                this.colorOffset = colorOffset;
+                metaSprites[id] = spriteCollection;
             }
-        }
-
-        public class MetaSprite
-        {
-            public string name;
-            public List<MetaSpriteData> sprites = new List<MetaSpriteData>();
-            public Rectangle bounds = Rectangle.Empty;
-            public int spriteMax = 1024;
-            public Rectangle maxBoundary = new Rectangle(0,0,128,128);
-
-            // TODO sprite size is hard coded but should be passed in somehow
-            public int spriteWidth = 8;
-            public int spriteHeight = 8;
-
-            public MetaSprite(string name, List<MetaSpriteData> sprites = null)
+            else if (metaSprites[id] == null)
             {
-                this.name = name;
-
-                if (sprites != null)
+                metaSprites[id] = new SpriteCollection("MetaSprite" + id.ToString().PadLeft(metaSprites.Length.ToString().Length, '0'))
                 {
-                    foreach (var sprite in sprites)
-                    {
-                        AddSprite(sprite);
-                    }
-                }
-
+                    SpriteWidth = SpriteSize().X,
+                    SpriteHeight = SpriteSize().Y,
+                    SpriteMax = TotalSprites(),
+                    MaxBoundary = new Rectangle(metaSpriteMaxBounds.X, metaSpriteMaxBounds.Y, metaSpriteMaxBounds.Width - SpriteSize().X,
+                        metaSpriteMaxBounds.Height - SpriteSize().Y)
+                };
             }
 
-            public void AddSprite(int id, int x = 0, int y = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
-            {
-                var newX = MathHelper.Clamp(x, maxBoundary.X, maxBoundary.Width);
-                var newY = MathHelper.Clamp(y, maxBoundary.Y, maxBoundary.Height);
-
-                bounds.Width = Math.Max(bounds.Width, newX + spriteWidth);
-                bounds.Height = Math.Max(bounds.Height, newX + spriteHeight);
-
-                sprites.Add(new MetaSpriteData(MathHelper.Clamp(id, 0, spriteMax), newX, newY, flipH, flipV, colorOffset));
-            }
-
-            public void AddSprite(MetaSpriteData data)
-            {
-                AddSprite(data.id, data.x, data.y, data.flipH, data.flipV, data.colorOffset);
-            }
-
-            public void Clear()
-            {
-                sprites.Clear();
-            }
-
+            return metaSprites[id];
         }
+        
+        private bool _tmpFlipH;
+        private bool _tmpFlipV;
+        private SpriteData _currentSpriteData;
+        private List<SpriteData> tmpSpritesData;
 
-        protected Dictionary<string, MetaSprite> metaSprites = new Dictionary<string, MetaSprite>();
-
-        public Rectangle metaSpriteMaxBounds = new Rectangle(0,0,64,64);
-
-        public MetaSprite RegisterMetaSprite(string name, List<MetaSpriteData> sprites)
-        {
-
-            // TODO need to add a limit to how many meta sprites the game chip can handle in the data.json file
-
-            var metaSprite = new MetaSprite(name, sprites)
-            {
-                spriteMax = TotalSprites(),
-                maxBoundary = new Rectangle(metaSpriteMaxBounds.X, metaSpriteMaxBounds.Y, metaSpriteMaxBounds.Width - SpriteSize().X,
-                    metaSpriteMaxBounds.Height - SpriteSize().Y)
-            };
-
-            // Configure metaSprite
-            // TODO this should come from the data.json file
-
-            if (metaSprites.ContainsKey(name))
-                metaSprites[name] = metaSprite;
-            else
-                metaSprites.Add(name, metaSprite);
-
-            return metaSprites[name];
-        }
-
-        public MetaSprite ReadMetaSprite(string name)
-        {
-            if (!metaSprites.ContainsKey(name))
-                throw new Exception(
-                    "Meta Sprite '" + name + "' doesn't exist.");
-
-            // TODO should this be a clone of the data so it' can't be modified?
-            return metaSprites[name];
-        }
-
-        public Rectangle ReadMetaSpriteBounds(string name)
-        {
-            if (!metaSprites.ContainsKey(name))
-                throw new Exception(
-                    "Meta Sprite '" + name + "' doesn't exist.");
-
-
-            return metaSprites[name].bounds;
-        }
-
-        public void DeleteMetaSprite(string name)
-        {
-            if (!metaSprites.ContainsKey(name))
-                throw new Exception(
-                    "Meta Sprite '" + name + "' doesn't exist.");
-
-            metaSprites.Remove(name);
-        }
-
-        public void DrawMetaSprite(string name, int x, int y, bool flipH = false, bool flipV = false,
+        public void DrawMetaSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
             Rectangle? bounds = null)
         {
-            if (!metaSprites.ContainsKey(name)) throw new Exception("Meta Sprite '" + name + "' doesn't exist.");
+            // This draw method doesn't support background or tile draw modes
+            if (drawMode == DrawMode.Background || drawMode == DrawMode.Tile)
+                return;
 
-            var sprites = metaSprites[name].sprites;
-            var total = sprites.Count;
-
+            // Get the sprite data for the meta sprite
+            tmpSpritesData = metaSprites[id].Sprites;
+            total = tmpSpritesData.Count;
+            
+            // Loop through each of the sprites
             for (int i = 0; i < total; i++)
             {
-                var sprite = sprites[i];
-
-                if (!spriteChip.IsEmptyAt(sprite.id))
+                _currentSpriteData = tmpSpritesData[i];
+                
+                if (!spriteChip.IsEmptyAt(_currentSpriteData.Id))
                 {
-                    // TODO need to adjust this based on the flip values
-                    var newX = sprite.x;
-                    var newY = sprite.y;
+                    // Get sprite values
+                    startX = _currentSpriteData.X;
+                    startY = _currentSpriteData.Y;
+                    _tmpFlipH = _currentSpriteData.FlipH;
+                    _tmpFlipV = _currentSpriteData.FlipV;
 
-
-                    var tmpFlipH = sprite.flipH;
-                    var tmpFlipV = sprite.flipV;
-
-                    // TODO using max boundary for now, need to switch this over to the real boundary
-                    var metaSpriteBoundary = metaSprites[name].bounds;
+                    // Get the width and height of the meta sprite's bounds
+                    width = metaSprites[id].Bounds.Width;
+                    height = metaSprites[id].Bounds.Height;
 
                     if (flipH)
                     {
-                        newX = metaSpriteBoundary.Width - newX - 8;
-                        tmpFlipH = !tmpFlipH;
+                        startX = width - startX - SpriteSize().X;
+                        _tmpFlipH = !_tmpFlipH;
                     }
 
                     if (flipV)
                     {
-                        newY = metaSpriteBoundary.Height - newY - 8;
-                        tmpFlipV = !tmpFlipV;
+                        startY = height - startY - SpriteSize().Y;
+                        _tmpFlipV = !_tmpFlipV;
                     }
 
-                    newX += x;
-                    newY += y;
+                    startX += x;
+                    startY += y;
 
                     DrawSprite(
-                        sprite.id,
-                        newX,
-                        newY,
-                        tmpFlipH,
-                        tmpFlipV,
+                        _currentSpriteData.Id,
+                        startX,
+                        startY,
+                        _tmpFlipH,
+                        _tmpFlipV,
                         drawMode,
-                        sprite.colorOffset + colorOffset,
+                        _currentSpriteData.ColorOffset + colorOffset,
                         onScreen,
                         useScrollPos,
                         bounds
@@ -2299,6 +2244,16 @@ namespace PixelVision8.Engine.Chips
         public Canvas NewCanvas(int width, int height)
         {
             return new Canvas(width, height, this);
+        }
+
+        public SpriteData NewSpriteData(int id, int x = 0, int y = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
+        {
+            return new SpriteData(id, x, y, flipH, flipV, colorOffset);
+        }
+
+        public SpriteCollection NewSpriteCollection(string name, SpriteData[] sprites = null)
+        {
+            return new SpriteCollection(name, sprites);
         }
 
         #endregion

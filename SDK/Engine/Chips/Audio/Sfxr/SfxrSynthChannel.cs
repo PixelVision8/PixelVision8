@@ -25,8 +25,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework.Audio;
-using PixelVision8.Engine.Data;
-using PixelVision8.Runner.Data;
 
 namespace PixelVision8.Engine.Audio
 {

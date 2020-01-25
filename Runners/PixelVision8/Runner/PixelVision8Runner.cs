@@ -663,10 +663,9 @@ namespace PixelVision8.Runner
             base.RunGame();
         }
 
-        public virtual bool Load(string path, RunnerMode newMode = RunnerMode.Playing,
+        public override bool Load(string path, RunnerMode newMode = RunnerMode.Playing,
             Dictionary<string, string> metaData = null)
         {
-
             // Make sure we stop recording when loading a new game
             if (recording) StopRecording();
             

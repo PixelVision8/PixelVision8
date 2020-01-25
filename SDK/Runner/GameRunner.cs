@@ -567,6 +567,7 @@ namespace PixelVision8.Runner
                 flags |= SaveFlags.Sounds;
                 flags |= SaveFlags.Music;
                 flags |= SaveFlags.SaveData;
+                flags |= SaveFlags.MetaSprites;
             }
 
             loadService.ParseFiles(files, tmpEngine, flags.Value);

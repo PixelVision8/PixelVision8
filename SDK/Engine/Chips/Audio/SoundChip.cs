@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Audio;
-using PixelVision8.Engine.Data;
 
 namespace PixelVision8.Engine.Chips
 {

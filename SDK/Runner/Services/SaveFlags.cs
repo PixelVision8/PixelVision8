@@ -37,11 +37,11 @@ namespace PixelVision8.Runner
         Music = 256,
         Sounds = 512,
         SaveData = 1024,
-
+        MetaSprites = 2048
         // TODO deprecated, need to remove these
-        TilemapFlags = 2048,
-        TilemapCache = 4096,
-        TileColorOffset = 8192,
-        FlagColors = 16384
+        // TilemapFlags = 2048,
+        // TilemapCache = 4096,
+        // TileColorOffset = 8192,
+        // FlagColors = 16384
     }
 }

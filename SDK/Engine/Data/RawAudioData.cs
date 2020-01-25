@@ -19,9 +19,8 @@
 //
 
 using System;
-using PixelVision8.Engine;
 
-namespace PixelVision8.Runner.Data
+namespace PixelVision8.Engine
 {
     public class RawAudioData : AbstractData
     {

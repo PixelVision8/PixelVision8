@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Audio;
+using PixelVisionSDK.Engine;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -70,7 +71,6 @@ namespace PixelVision8.Runner.Parsers
                             break;
                         case "GameChip":
                         case "LuaGameChip":
-                        case "LuaToolChip":
                             ConfigureGameChip(chipData);
                             break;
                         case "MusicChip":
@@ -190,7 +190,16 @@ namespace PixelVision8.Runner.Parsers
 
         public void ConfigureFontChip(Dictionary<string, object> data)
         {
-            // TODO does this chip need to be parsed?
+
+            var fontChip = target.fontChip;
+
+            if (data.ContainsKey("pages"))
+                fontChip.pages = (int)(long)data["pages"];
+
+            if (data.ContainsKey("unique"))
+                fontChip.unique = Convert.ToBoolean(data["unique"]);
+
+            fontChip.Resize(fontChip.pageWidth, fontChip.pageHeight * fontChip.pages);
         }
 
         public void ConfigureGameChip(Dictionary<string, object> data)
@@ -231,6 +240,67 @@ namespace PixelVision8.Runner.Parsers
                     var value = entry.Value as string;
                     gameChip.WriteSaveData(name, value);
                 }
+
+
+            // TODO need to look for MetaSprite properties
+            if (data.ContainsKey("totalMetaSprites"))
+            {
+                gameChip.TotalMetaSprites = (int) (long) data["totalMetaSprites"];
+            }
+
+            if (data.ContainsKey("metaSprites"))
+            {
+                var metaSprites = data["metaSprites"] as List<object>;
+
+                var total = MathHelper.Clamp(metaSprites.Count, 0, gameChip.TotalMetaSprites);
+
+                for (int i = 0; i < total; i++)
+                {
+                    var metaSprite = gameChip.MetaSprite(i);
+                    var spriteData = metaSprites[i] as Dictionary<string, object>;
+
+                    if (spriteData.ContainsKey("name"))
+                        metaSprite.Name = spriteData["name"] as string;
+
+                    if (spriteData.ContainsKey("sprites"))
+                    {
+                        if (spriteData["sprites"] is List<object> childSprites)
+                        {
+                            var subTotal = childSprites.Count;
+                            for (int j = 0; j < subTotal; j++)
+                            {
+                                var childData = childSprites[j] as Dictionary<string, object>;
+
+                                metaSprite.AddSprite(
+                                
+                                    childData.ContainsKey("id") ? (int)(long)childData["id"] : 0,
+                                    childData.ContainsKey("x") ? (int)(long)childData["x"] : 0,
+                                    childData.ContainsKey("y") ? (int)(long)childData["y"] : 0,
+                                    childData.ContainsKey("flipH") && Convert.ToBoolean(childData["flipH"]),
+                                    childData.ContainsKey("flipV") && Convert.ToBoolean(childData["flipV"]),
+                                    childData.ContainsKey("colorOffset") ? (int)(long)childData["colorOffset"] : 0
+                                );
+                            }
+                        }
+                    }
+
+                }
+
+                // var total = metaSprites.Length;
+                // for (int i = 0; i < UPPER; i++)
+                // {
+                //     
+                //         var metaSprite = gameChip.MetaSprite()
+                //
+                //         // TODO need a way to parse this out
+                //         Console.WriteLine("Found Sprites");
+                //         // var name = entry.Key;
+                //         // var value = entry.Value as string;
+                //         // gameChip.WriteSaveData(name, value);
+                //     }
+            }
+
+
         }
 
         public void ConfigureMusicChip(Dictionary<string, object> data)

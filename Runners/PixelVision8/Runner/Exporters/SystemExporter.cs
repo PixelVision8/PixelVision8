@@ -152,10 +152,6 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("\"layers\":");
             sb.Append(display.layers);
 
-//            sb.Append(",");
-
-            JsonUtil.GetLineBreak(sb, 1);
-
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
 
@@ -201,8 +197,6 @@ namespace PixelVision8.Runner.Exporters
 
             sb.Append("\"debug\":");
             sb.Append(colorChip.debugMode.ToString().ToLower());
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
 
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
@@ -238,6 +232,15 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("\"FontChip\":");
             JsonUtil.GetLineBreak(sb);
             sb.Append("{");
+            JsonUtil.GetLineBreak(sb, 1);
+            // Mode
+            sb.Append("\"unique\":");
+            sb.Append(fontChip.unique.ToString().ToLower());
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+
+            sb.Append("\"pages\":");
+            sb.Append(fontChip.pages);
 
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
@@ -255,38 +258,11 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-            // Name
-//            sb.Append("\"name\":");
-//            sb.Append("\"");
-//            sb.Append(gameChip.name);
-//            sb.Append("\"");
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
-//            
-//            // Description
-//            sb.Append("\"description\":");
-//            sb.Append("\"");
-//            sb.Append(gameChip.description);
-//            sb.Append("\"");
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
-//            
-//            // Version
-//            sb.Append("\"version\":");
-//            sb.Append("\"");
-//            sb.Append(gameChip.version);
-//            sb.Append("\"");
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
-//            
-//            
-//            // ext
-//            sb.Append("\"ext\":");
-//            sb.Append("\"");
-//            sb.Append(gameChip.ext);
-//            sb.Append("\"");
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
+            // Total Meta Sprites
+            sb.Append("\"totalMetaSprites\":");
+            sb.Append(gameChip.TotalMetaSprites);
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
 
             // Lock Specs
             sb.Append("\"lockSpecs\":");
@@ -491,8 +467,6 @@ namespace PixelVision8.Runner.Exporters
 
             sb.Append("\"autoImport\":");
             sb.Append(tilemapChip.autoImport.ToString().ToLower());
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
 
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
@@ -500,5 +474,6 @@ namespace PixelVision8.Runner.Exporters
 
             currentStep++;
         }
+
     }
 }
