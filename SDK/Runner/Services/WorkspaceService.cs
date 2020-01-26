@@ -42,12 +42,12 @@ namespace PixelVision8.Runner.Services
             "wav"
         };
 
-//        protected FileSystemMounter fileSystem;
+        //        protected FileSystemMounter fileSystem;
         protected WorkspacePath logFilePath;
         protected LogService logService;
 
         public WorkspacePath osLibPath;
-//        public WorkspacePath workspaceLibPath;
+        //        public WorkspacePath workspaceLibPath;
 
         public List<string> requiredFiles = new List<string>
         {
@@ -60,9 +60,9 @@ namespace PixelVision8.Runner.Services
         /// </summary>
         public WorkspaceService(KeyValuePair<WorkspacePath, IFileSystem> mountPoint) : base(mountPoint)
         {
-//            fileSystem = new FileSystemMounter(mountPoint);
-//            EntityMovers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityMover());
-//            EntityCopiers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityCopier());
+            //            fileSystem = new FileSystemMounter(mountPoint);
+            //            EntityMovers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityMover());
+            //            EntityCopiers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityCopier());
         }
 
         #region Default paths
@@ -96,8 +96,7 @@ namespace PixelVision8.Runner.Services
 
         public bool ValidateGameInDir(WorkspacePath filePath)
         {
-            if (!Exists(filePath))
-                return false;
+            if (!Exists(filePath)) return false;
 
             var flag = 0;
 
@@ -149,7 +148,7 @@ namespace PixelVision8.Runner.Services
                 savePath = "/Tmp" + gamePath;
             }
 
-//            Console.WriteLine("Save Path " + savePath);
+            //            Console.WriteLine("Save Path " + savePath);
 
             return savePath;
         }
@@ -165,7 +164,7 @@ namespace PixelVision8.Runner.Services
                     // Anything that is not in the "/Workspace/" root is routed to save into the tmp directory
                     var path = WorkspacePath.Parse(file.Key);
 
-//                    Console.WriteLine("Save Exported file " + file.Key + " to " + path);
+                    //                    Console.WriteLine("Save Exported file " + file.Key + " to " + path);
 
                     Stream stream;
 
@@ -206,7 +205,7 @@ namespace PixelVision8.Runner.Services
                 }
                 catch
                 {
-//                    Console.WriteLine("Couldn't save " + file.Key + "\n" + e.Message);
+                    //                    Console.WriteLine("Couldn't save " + file.Key + "\n" + e.Message);
                 }
         }
 
@@ -249,7 +248,7 @@ namespace PixelVision8.Runner.Services
                 else
                     filePath = filePath.AppendFile(string.Format("{0}{1}{2}", name, ix, fileSplit[1]));
 
-//                Console.WriteLine("Path " + filePath.Path);
+                //                Console.WriteLine("Path " + filePath.Path);
             } while (Exists(filePath));
 
             return filePath;
@@ -282,15 +281,15 @@ namespace PixelVision8.Runner.Services
                     }
                     catch
                     {
-//                        runner.DisplayWarning("'"+path+"' does not have write access");
+                        //                        runner.DisplayWarning("'"+path+"' does not have write access");
                         // Can't write a file
                     }
             }
             catch
             {
-//                Console.WriteLine("Workspace Write Error:\n"+e.Message);
-//                Console.WriteLine(e);
-//                throw;
+                //                Console.WriteLine("Workspace Write Error:\n"+e.Message);
+                //                Console.WriteLine(e);
+                //                throw;
             }
 
 
@@ -390,8 +389,8 @@ namespace PixelVision8.Runner.Services
                         {
                             tmpFilePath = tmpFilePath.AppendFile("saves.json");
 
-//                        if (WriteAccess(tmpFilePath) == false)
-//                        {
+                            //                        if (WriteAccess(tmpFilePath) == false)
+                            //                        {
                             // Check if save file is in tmp directory
                             var saveFile = WorkspacePath.Parse(FindValidSavePath(tmpFilePath.Path));
 
@@ -417,7 +416,7 @@ namespace PixelVision8.Runner.Services
                         }
 
 
-//                        }
+                        //                        }
                     }
                     catch (Exception e)
                     {
@@ -425,12 +424,12 @@ namespace PixelVision8.Runner.Services
                     }
 
 
-//                    return true;
+                    //                    return true;
                 }
                 catch
                 {
                     //		        // TODO need to have a clearer messgae, like not a mount point or can't load from X because of Y
-//                    Console.WriteLine("System Error: Could not load from path " + filePath.Path);
+                    //                    Console.WriteLine("System Error: Could not load from path " + filePath.Path);
                 }
 
             return files;
@@ -465,7 +464,7 @@ namespace PixelVision8.Runner.Services
                         disk = stream;
 
                         // TODO need to see how we can close the stream?
-//                        stream.Close();
+                        //                        stream.Close();
                     }
 
             return disk;
@@ -485,14 +484,14 @@ namespace PixelVision8.Runner.Services
             // Look for any wav files in the samples folder
 
             // Samples Directory
-//            var samplesPath = WorkspacePath.Root.AppendDirectory("Samples"); // TODO this should probably not be hard coded
-//            
-//            // Check if the directory exists
-//            if (disk.Exists(samplesPath))
-//            {
-//                // Get all the wav files in the samples folder
-//                list = list.Concat(from p in disk.GetEntities(samplesPath) where p.EntityName.EndsWith("wav") select p).ToList();
-//            }
+            //            var samplesPath = WorkspacePath.Root.AppendDirectory("Samples"); // TODO this should probably not be hard coded
+            //            
+            //            // Check if the directory exists
+            //            if (disk.Exists(samplesPath))
+            //            {
+            //                // Get all the wav files in the samples folder
+            //                list = list.Concat(from p in disk.GetEntities(samplesPath) where p.EntityName.EndsWith("wav") select p).ToList();
+            //            }
 
             // Loop through all the files and convert them into binary data to be used by other parser
 
@@ -506,7 +505,7 @@ namespace PixelVision8.Runner.Services
                         fileStream.Close();
                     }
 
-//                    Console.WriteLine("Add File " + file.Path.Substring(1));
+                    //                    Console.WriteLine("Add File " + file.Path.Substring(1));
 
                     files.Add(file.Path.Substring(1), memoryStream.ToArray());
                 }
@@ -528,7 +527,7 @@ namespace PixelVision8.Runner.Services
                             where p.EntityName.EndsWith("lua")
                             select p;
 
-//                        Print("Loading", luaFiles.Count(), "Libs from", path.Path);
+                        //                        Print("Loading", luaFiles.Count(), "Libs from", path.Path);
 
                         foreach (var luaFile in luaFiles)
                             if (!files.ContainsKey(luaFile.EntityName))
@@ -545,14 +544,14 @@ namespace PixelVision8.Runner.Services
                                     else
                                         libs.Add(luaFile.EntityName, memoryStream.ToArray());
 
-//                                    Print("Adding Lua File", luaFile.EntityName);
+                                    //                                    Print("Adding Lua File", luaFile.EntityName);
                                 }
                     }
                 }
                 catch
                 {
-//                    Console.WriteLine(e);
-//                    throw;
+                    //                    Console.WriteLine(e);
+                    //                    throw;
                 }
 
 
@@ -564,7 +563,7 @@ namespace PixelVision8.Runner.Services
 
         public virtual void ShutdownSystem()
         {
-//            var tmpPath = FileSystemPath.Parse("/Tmp/");
+            //            var tmpPath = FileSystemPath.Parse("/Tmp/");
 
             if (Exists(TmpFileSystemPath))
                 foreach (var entities in GetEntities(TmpFileSystemPath))
@@ -575,7 +574,7 @@ namespace PixelVision8.Runner.Services
 
         public string ReadTextFromFile(WorkspacePath filePath)
         {
-//            var filePath = FileSystemPath.Parse(path);
+            //            var filePath = FileSystemPath.Parse(path);
 
             if (Exists(filePath))
             {

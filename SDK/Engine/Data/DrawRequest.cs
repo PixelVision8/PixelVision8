@@ -55,8 +55,7 @@ namespace PixelVision8.Engine
                 // ... except we set it to null to draw a solid rectangle
                 if (value == null) return;
 
-                if (_pixelData.Length < totalPixels)
-                    Array.Resize(ref _pixelData, totalPixels);
+                if (_pixelData.Length < totalPixels) Array.Resize(ref _pixelData, totalPixels);
 
                 Array.Copy(value, _pixelData, totalPixels);
             }

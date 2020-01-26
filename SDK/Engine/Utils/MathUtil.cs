@@ -44,23 +44,23 @@ namespace PixelVision8.Engine.Utils
             return (int) Math.Floor(value);
         }
 
-//        /// <summary>
-//        ///     Returns Round value as an int.
-//        /// </summary>
-//        /// <param name="value"></param>
-//        public static int RoundToInt(float value)
-//        {
-//            return (int) Math.Round(value);
-//        }
-//
-//        public static int RandomRange(int min, int max)
-//        {
-//            return random.Next(min, max);
-//        }
-//
-//        public static float RandomValue()
-//        {
-//            return random.Next(0, 100) / 100f;
-//        }
+        //        /// <summary>
+        //        ///     Returns Round value as an int.
+        //        /// </summary>
+        //        /// <param name="value"></param>
+        //        public static int RoundToInt(float value)
+        //        {
+        //            return (int) Math.Round(value);
+        //        }
+        //
+        //        public static int RandomRange(int min, int max)
+        //        {
+        //            return random.Next(min, max);
+        //        }
+        //
+        //        public static float RandomValue()
+        //        {
+        //            return random.Next(0, 100) / 100f;
+        //        }
     }
 }

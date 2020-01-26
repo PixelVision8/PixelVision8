@@ -69,25 +69,24 @@ namespace PixelVision8.Engine
             set => _end = MathHelper.Clamp(value, start + 1, totalPatternsPerSong);
         }
 
-//        public SongData(int[] patterns, int start, int end, bool loops = true)
-//        {
-//            
-//        }
+        //        public SongData(int[] patterns, int start, int end, bool loops = true)
+        //        {
+        //            
+        //        }
 
         public int NextPattern()
         {
             currentPos++;
 
-            if (AtEnd())
-                currentPos = 0;
+            if (AtEnd()) currentPos = 0;
 
-//            Console.WriteLine("Load pattern " + currentPos);
+            //            Console.WriteLine("Load pattern " + currentPos);
             return _patterns[currentPos];
         }
 
         public bool AtEnd()
         {
-//            Console.WriteLine("End "+ end + " " + currentPos);
+            //            Console.WriteLine("End "+ end + " " + currentPos);
 
             return currentPos >= end;
         }
@@ -96,7 +95,7 @@ namespace PixelVision8.Engine
         {
             currentPos = -1;
 
-//            return NextPattern();
+            //            return NextPattern();
         }
 
         public int SeekTo(int index)

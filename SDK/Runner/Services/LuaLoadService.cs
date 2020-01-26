@@ -1,8 +1,8 @@
-﻿using PixelVision8.Engine;
-using PixelVision8.Runner.Parsers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PixelVision8.Engine;
+using PixelVision8.Runner.Parsers;
 
 namespace PixelVision8.Runner.Services
 {
@@ -10,7 +10,6 @@ namespace PixelVision8.Runner.Services
     {
         public override void ParseExtraFileTypes(Dictionary<string, byte[]> files, IEngine engine, SaveFlags saveFlags)
         {
-
             // Step 2 (optional). Load up the Lua script
             if ((saveFlags & SaveFlags.Code) == SaveFlags.Code)
             {
@@ -34,6 +33,4 @@ namespace PixelVision8.Runner.Services
             return scriptParser;
         }
     }
-    
-    
 }

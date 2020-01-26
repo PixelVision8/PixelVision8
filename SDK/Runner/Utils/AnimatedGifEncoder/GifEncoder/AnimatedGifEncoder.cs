@@ -13,6 +13,7 @@ namespace GifEncoder
 {
     public class AnimatedGifEncoder
     {
+        private readonly List<Color[]> frameData = new List<Color[]>();
         public byte[] bytes;
         protected int colorDepth; // number of bit planes
         protected byte[] colorTab; // RGB palette
@@ -23,8 +24,6 @@ namespace GifEncoder
         public bool exportingDone;
         private BackgroundWorker exportWorker;
         protected bool firstFrame = true;
-
-        private readonly List<Color[]> frameData = new List<Color[]>();
         public MemoryStream fs;
         protected int height;
         protected byte[] indexedPixels; // converted frame indexed to palette
@@ -80,8 +79,8 @@ namespace GifEncoder
 
 
             currentFramePixels = displayChip.VisiblePixels();
-            width = displayChip.visibleBounds.Width;
-            height = displayChip.visibleBounds.Height;
+            width = displayChip.VisibleBounds.Width;
+            height = displayChip.VisibleBounds.Height;
             sizeSet = true;
 
             GetImagePixels();
@@ -279,12 +278,13 @@ namespace GifEncoder
 
         public void StartExport()
         {
-            exportWorker = new BackgroundWorker();
+            exportWorker = new BackgroundWorker
+            {
+                // TODO need a way to of locking this.
 
-            // TODO need a way to of locking this.
-
-            exportWorker.WorkerSupportsCancellation = true;
-            exportWorker.WorkerReportsProgress = true;
+                WorkerSupportsCancellation = true,
+                WorkerReportsProgress = true
+            };
 
 
             //                Console.WriteLine("Start export " + exportService.totalSteps + " steps");

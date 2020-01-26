@@ -1,4 +1,4 @@
-﻿    //   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -61,15 +61,13 @@ namespace PixelVision8.Runner.Data
         {
             get
             {
-                if (crtShader == null || shaderEffect == null)
-                    return false;
+                if (crtShader == null || shaderEffect == null) return false;
 
                 return _useCRT;
             }
             set
             {
-                if (crtShader == null)
-                    return;
+                if (crtShader == null) return;
 
                 _useCRT = value;
 
@@ -93,7 +91,7 @@ namespace PixelVision8.Runner.Data
         {
             set
             {
-//                Effect tmpEffect;
+                //                Effect tmpEffect;
 
                 using (var reader = new BinaryReader(value))
                 {
@@ -199,7 +197,7 @@ namespace PixelVision8.Runner.Data
                 offset.Y = 0;
             }
 
-//            Console.WriteLine("Reset Res Fullscreen " + fullscreen + " "+displayWidth+"x"+displayHeight);
+            //            Console.WriteLine("Reset Res Fullscreen " + fullscreen + " "+displayWidth+"x"+displayHeight);
 
 
             // Apply changes
@@ -229,16 +227,16 @@ namespace PixelVision8.Runner.Data
             spriteBatch.End();
         }
 
-//        public void CaptureScreenshot()
-//        {
-//            var gd = graphicManager.GraphicsDevice;
-//            
-//            Color[] colors = new Color[gd.Viewport.Width * gd.Viewport.Height];
-//
-//            gd.GetBackBufferData<Color>(colors);
-//            
-//            
-//            
-//        }
+        //        public void CaptureScreenshot()
+        //        {
+        //            var gd = graphicManager.GraphicsDevice;
+        //            
+        //            Color[] colors = new Color[gd.Viewport.Width * gd.Viewport.Height];
+        //
+        //            gd.GetBackBufferData<Color>(colors);
+        //            
+        //            
+        //            
+        //        }
     }
 }

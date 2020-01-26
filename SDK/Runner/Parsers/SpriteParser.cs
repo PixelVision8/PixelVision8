@@ -193,8 +193,7 @@ namespace PixelVision8.Runner.Parsers
             var total = blockWidth * blockHeight;
             var data = new Color[total];
 
-            if (data.Length < total)
-                Array.Resize(ref data, total);
+            if (data.Length < total) Array.Resize(ref data, total);
 
             // Per-line copy, as there is no special per-pixel logic required.
 
@@ -237,8 +236,7 @@ namespace PixelVision8.Runner.Parsers
             var total = tmpPixels.Length;
 
             // Adjust the size of the index array to match the pixel
-            if (spriteData.Length != total)
-                Array.Resize(ref spriteData, total);
+            if (spriteData.Length != total) Array.Resize(ref spriteData, total);
 
             // Create a tmp color for the loop
             Color tmpColor;
@@ -272,8 +270,7 @@ namespace PixelVision8.Runner.Parsers
                         }
 
                     // if the index is still empty (we ran out of colors, then make transparent)
-                    if (indexed == -1)
-                        tmpRefID = -1;
+                    if (indexed == -1) tmpRefID = -1;
                 }
 
                 // Update the value in the indexes array

@@ -34,7 +34,7 @@ namespace PixelVision8.Runner.Exporters
         // TODO this should be a step in the exporter
         public override void ConfigurePixelData()
         {
-//            var spriteChip = engine.fontChip;
+            //            var spriteChip = engine.fontChip;
 
             var width = 96; //spriteChip.textureWidth;
             var height = 64; //spriteChip.textureHeight;
@@ -42,7 +42,7 @@ namespace PixelVision8.Runner.Exporters
 
             var textureData = new TextureData(width, height);
 
-//            var pixelData = new int[width * height];
+            //            var pixelData = new int[width * height];
 
             // Go through all of the sprites in the font
 

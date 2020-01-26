@@ -35,7 +35,7 @@ namespace PixelVision8.Runner.Workspace
 
         private ZipFileSystem(ZipFile zf, string extractPath)
         {
-//            var entities = zf.GetEnumerator();
+            //            var entities = zf.GetEnumerator();
 
             using (zf)
             {
@@ -53,8 +53,7 @@ namespace PixelVision8.Runner.Workspace
                     if (!filePath.Path.StartsWith("/__"))
                         try
                         {
-                            if (!Exists(filePath.ParentPath))
-                                this.CreateDirectoryRecursive(filePath.ParentPath);
+                            if (!Exists(filePath.ParentPath)) this.CreateDirectoryRecursive(filePath.ParentPath);
 
                             // 4K is optimum
                             var buffer = new byte[4096];
@@ -81,8 +80,10 @@ namespace PixelVision8.Runner.Workspace
 
         public static ZipFileSystem Open(FileStream s)
         {
-            var fileSystem = new ZipFileSystem(new ZipFile(s), Path.GetFullPath(s.Name));
-            fileSystem.PhysicalRoot = Path.GetFullPath(s.Name);
+            var fileSystem = new ZipFileSystem(new ZipFile(s), Path.GetFullPath(s.Name))
+            {
+                PhysicalRoot = Path.GetFullPath(s.Name)
+            };
             return fileSystem;
         }
 
@@ -93,8 +94,7 @@ namespace PixelVision8.Runner.Workspace
 
         public void Save()
         {
-            if (PhysicalRoot == null)
-                return;
+            if (PhysicalRoot == null) return;
 
 
             // TODO need to save the contents of the memory system back to a zip file
@@ -108,8 +108,8 @@ namespace PixelVision8.Runner.Workspace
 
             var files = disk.GetEntitiesRecursive(WorkspacePath.Root);
 
-//            using (var fileStream = new FileStream(fileNameZip, FileMode.Create))
-//            {
+            //            using (var fileStream = new FileStream(fileNameZip, FileMode.Create))
+            //            {
             using (var archive = new ZipOutputStream(new FileStream(fileNameZip, FileMode.Create)))
             {
                 // Define the compression level
@@ -127,10 +127,11 @@ namespace PixelVision8.Runner.Workspace
 
                             // Using GetFileName makes the result compatible with XP
                             // as the resulting path is not absolute.
-                            var entry = new ZipEntry(tmpPath);
-
-                            // Could also use the last write time or similar for the file.
-                            entry.DateTime = DateTime.Now;
+                            var entry = new ZipEntry(tmpPath)
+                            {
+                                // Could also use the last write time or similar for the file.
+                                DateTime = DateTime.Now
+                            };
                             archive.PutNextEntry(entry);
 
                             using (var fs = OpenFile(file, FileAccess.Read))

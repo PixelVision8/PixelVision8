@@ -27,12 +27,12 @@ namespace PixelVision8.Runner.Parsers
 {
     public class FontParser : SpriteParser
     {
-//        private readonly bool autoImport;
+        //        private readonly bool autoImport;
 
         private readonly FontChip fontChip;
         private readonly string name;
-        private int[] fontMap;
         private readonly List<Color> uniqueFontColors = new List<Color>();
+        private int[] fontMap;
 
         public FontParser(IImageParser imageParser, IEngineChips chips, string name = "Default") : base(imageParser,
             chips, true, chips.FontChip)
@@ -47,7 +47,7 @@ namespace PixelVision8.Runner.Parsers
             base.CalculateBounds();
 
             fontMap = new int[totalSprites];
-//            base.PreCutOutSprites();
+            //            base.PreCutOutSprites();
         }
 
         protected override void PostCutOutSprites()
@@ -59,8 +59,7 @@ namespace PixelVision8.Runner.Parsers
         public override bool IsEmpty(Color[] pixels)
         {
             // Hack to make sure if the space is empty we still save it
-            if (index == 0)
-                return false;
+            if (index == 0) return false;
 
             return base.IsEmpty(pixels);
         }
@@ -89,8 +88,7 @@ namespace PixelVision8.Runner.Parsers
             var total = tmpPixels.Length;
 
             // Adjust the size of the index array to match the pixel
-            if (spriteData.Length != total)
-                Array.Resize(ref spriteData, total);
+            if (spriteData.Length != total) Array.Resize(ref spriteData, total);
 
             // Create a tmp color for the loop     
             Color tmpColor;
@@ -118,29 +116,29 @@ namespace PixelVision8.Runner.Parsers
                     }
                 }
 
-//                tmpRefID = Equals(tmpColor, maskColor) ? -1 : Array.IndexOf(colorData, tmpColor);
+                //                tmpRefID = Equals(tmpColor, maskColor) ? -1 : Array.IndexOf(colorData, tmpColor);
 
                 // Look to see if color is not transparent
-//                if (tmpRefID > -1)
-//                {
-//                    // compare against the color index
-//                    var indexed = colorIndex.IndexOf(tmpRefID);
-//
-//                    // if the color is not found let's index it
-//                    if (indexed == -1)
-//                        if (colorIndex.Count < totalColors)
-//                        {
-//                            // Add the color
-//                            colorIndex.Add(tmpRefID);
-//
-//                            // Update the index
-//                            indexed = colorIndex.Count - 1;
-//                        }
-//
-//                    // if the index is still empty (we ran out of colors, then make transparent)
-//                    if (indexed == -1)
-//                        tmpRefID = -1;
-//                }
+                //                if (tmpRefID > -1)
+                //                {
+                //                    // compare against the color index
+                //                    var indexed = colorIndex.IndexOf(tmpRefID);
+                //
+                //                    // if the color is not found let's index it
+                //                    if (indexed == -1)
+                //                        if (colorIndex.Count < totalColors)
+                //                        {
+                //                            // Add the color
+                //                            colorIndex.Add(tmpRefID);
+                //
+                //                            // Update the index
+                //                            indexed = colorIndex.Count - 1;
+                //                        }
+                //
+                //                    // if the index is still empty (we ran out of colors, then make transparent)
+                //                    if (indexed == -1)
+                //                        tmpRefID = -1;
+                //                }
 
                 // Update the value in the indexes array
                 spriteData[i] = tmpRefID;

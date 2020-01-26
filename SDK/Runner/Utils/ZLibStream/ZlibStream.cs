@@ -476,6 +476,7 @@ namespace PixelVisionRunner.Utils
             set
             {
                 if (_disposed) throw new ObjectDisposedException("ZlibStream");
+
                 _baseStream._flushMode = value;
             }
         }
@@ -501,12 +502,14 @@ namespace PixelVisionRunner.Utils
             set
             {
                 if (_disposed) throw new ObjectDisposedException("ZlibStream");
-                if (_baseStream._workingBuffer != null)
-                    throw new ZlibException("The working buffer is already set.");
+
+                if (_baseStream._workingBuffer != null) throw new ZlibException("The working buffer is already set.");
+
                 if (value < ZlibConstants.WorkingBufferSizeMin)
                     throw new ZlibException(string.Format(
                         "Don't be silly. {0} bytes?? Use a bigger buffer, at least {1}.", value,
                         ZlibConstants.WorkingBufferSizeMin));
+
                 _baseStream._bufferSize = value;
             }
         }
@@ -550,8 +553,8 @@ namespace PixelVisionRunner.Utils
             {
                 if (!_disposed)
                 {
-                    if (disposing && _baseStream != null)
-                        _baseStream.Dispose();
+                    if (disposing && _baseStream != null) _baseStream.Dispose();
+
                     _disposed = true;
                 }
             }
@@ -573,6 +576,7 @@ namespace PixelVisionRunner.Utils
             get
             {
                 if (_disposed) throw new ObjectDisposedException("ZlibStream");
+
                 return _baseStream._stream.CanRead;
             }
         }
@@ -596,6 +600,7 @@ namespace PixelVisionRunner.Utils
             get
             {
                 if (_disposed) throw new ObjectDisposedException("ZlibStream");
+
                 return _baseStream._stream.CanWrite;
             }
         }
@@ -606,6 +611,7 @@ namespace PixelVisionRunner.Utils
         public override void Flush()
         {
             if (_disposed) throw new ObjectDisposedException("ZlibStream");
+
             _baseStream.Flush();
         }
 
@@ -630,10 +636,10 @@ namespace PixelVisionRunner.Utils
         {
             get
             {
-                if (_baseStream._streamMode == ZlibBaseStream.StreamMode.Writer)
-                    return _baseStream._z.TotalBytesOut;
-                if (_baseStream._streamMode == ZlibBaseStream.StreamMode.Reader)
-                    return _baseStream._z.TotalBytesIn;
+                if (_baseStream._streamMode == ZlibBaseStream.StreamMode.Writer) return _baseStream._z.TotalBytesOut;
+
+                if (_baseStream._streamMode == ZlibBaseStream.StreamMode.Reader) return _baseStream._z.TotalBytesIn;
+
                 return 0;
             }
 
@@ -670,6 +676,7 @@ namespace PixelVisionRunner.Utils
         public override int Read(byte[] buffer, int offset, int count)
         {
             if (_disposed) throw new ObjectDisposedException("ZlibStream");
+
             return _baseStream.Read(buffer, offset, count);
         }
 
@@ -728,6 +735,7 @@ namespace PixelVisionRunner.Utils
         public override void Write(byte[] buffer, int offset, int count)
         {
             if (_disposed) throw new ObjectDisposedException("ZlibStream");
+
             _baseStream.Write(buffer, offset, count);
         }
 
@@ -1028,6 +1036,7 @@ namespace PixelVisionRunner.Utils
             WindowBits = windowBits;
             if (dstate != null)
                 throw new ZlibException("You may not call InitializeInflate() after calling InitializeDeflate().");
+
             istate = new InflateManager(expectRfc1950Header);
             return istate.Initialize(this, windowBits);
         }
@@ -1097,8 +1106,8 @@ namespace PixelVisionRunner.Utils
         /// <returns>Z_OK if everything goes well.</returns>
         internal int Inflate(FlushType flush)
         {
-            if (istate == null)
-                throw new ZlibException("No Inflate State!");
+            if (istate == null) throw new ZlibException("No Inflate State!");
+
             return istate.Inflate(flush);
         }
 
@@ -1114,8 +1123,8 @@ namespace PixelVisionRunner.Utils
         /// <returns>Z_OK if everything goes well.</returns>
         internal int EndInflate()
         {
-            if (istate == null)
-                throw new ZlibException("No Inflate State!");
+            if (istate == null) throw new ZlibException("No Inflate State!");
+
             var ret = istate.End();
             istate = null;
             return ret;
@@ -1127,8 +1136,8 @@ namespace PixelVisionRunner.Utils
         /// <returns>Z_OK if everything goes well.</returns>
         internal int SyncInflate()
         {
-            if (istate == null)
-                throw new ZlibException("No Inflate State!");
+            if (istate == null) throw new ZlibException("No Inflate State!");
+
             return istate.Sync();
         }
 
@@ -1255,8 +1264,11 @@ namespace PixelVisionRunner.Utils
         {
             if (istate != null)
                 throw new ZlibException("You may not call InitializeDeflate() after calling InitializeInflate().");
-            dstate = new DeflateManager();
-            dstate.WantRfc1950HeaderBytes = wantRfc1950Header;
+
+            dstate = new DeflateManager
+            {
+                WantRfc1950HeaderBytes = wantRfc1950Header
+            };
 
             return dstate.Initialize(this, CompressLevel, WindowBits, Strategy);
         }
@@ -1332,8 +1344,8 @@ namespace PixelVisionRunner.Utils
         /// <returns>Z_OK if all goes well.</returns>
         internal int Deflate(FlushType flush)
         {
-            if (dstate == null)
-                throw new ZlibException("No Deflate State!");
+            if (dstate == null) throw new ZlibException("No Deflate State!");
+
             return dstate.Deflate(flush);
         }
 
@@ -1346,8 +1358,7 @@ namespace PixelVisionRunner.Utils
         /// <returns>Z_OK if all goes well.</returns>
         internal int EndDeflate()
         {
-            if (dstate == null)
-                throw new ZlibException("No Deflate State!");
+            if (dstate == null) throw new ZlibException("No Deflate State!");
             // TODO: dinoch Tue, 03 Nov 2009  15:39 (test this)
             //int ret = dstate.End();
             dstate = null;
@@ -1365,8 +1376,8 @@ namespace PixelVisionRunner.Utils
         /// <returns>Z_OK if all goes well.</returns>
         internal void ResetDeflate()
         {
-            if (dstate == null)
-                throw new ZlibException("No Deflate State!");
+            if (dstate == null) throw new ZlibException("No Deflate State!");
+
             dstate.Reset();
         }
 
@@ -1379,8 +1390,8 @@ namespace PixelVisionRunner.Utils
         /// <returns>Z_OK if all goes well.</returns>
         internal int SetDeflateParams(CompressionLevel level, CompressionStrategy strategy)
         {
-            if (dstate == null)
-                throw new ZlibException("No Deflate State!");
+            if (dstate == null) throw new ZlibException("No Deflate State!");
+
             return dstate.SetParams(level, strategy);
         }
 
@@ -1392,11 +1403,9 @@ namespace PixelVisionRunner.Utils
         /// <returns>Z_OK if all goes well.</returns>
         internal int SetDictionary(byte[] dictionary)
         {
-            if (istate != null)
-                return istate.SetDictionary(dictionary);
+            if (istate != null) return istate.SetDictionary(dictionary);
 
-            if (dstate != null)
-                return dstate.SetDictionary(dictionary);
+            if (dstate != null) return dstate.SetDictionary(dictionary);
 
             throw new ZlibException("No Inflate or Deflate state!");
         }
@@ -1409,10 +1418,9 @@ namespace PixelVisionRunner.Utils
         {
             var len = dstate.pendingCount;
 
-            if (len > AvailableBytesOut)
-                len = AvailableBytesOut;
-            if (len == 0)
-                return;
+            if (len > AvailableBytesOut) len = AvailableBytesOut;
+
+            if (len == 0) return;
 
             if (dstate.pending.Length <= dstate.nextPending ||
                 OutputBuffer.Length <= NextOut ||
@@ -1440,14 +1448,14 @@ namespace PixelVisionRunner.Utils
         {
             var len = AvailableBytesIn;
 
-            if (len > size)
-                len = size;
-            if (len == 0)
-                return 0;
+            if (len > size) len = size;
+
+            if (len == 0) return 0;
 
             AvailableBytesIn -= len;
 
             if (dstate.WantRfc1950HeaderBytes) _Adler32 = Adler.Adler32(_Adler32, InputBuffer, NextIn, len);
+
             Array.Copy(InputBuffer, NextIn, buf, start, len);
             NextIn += len;
             TotalBytesIn += len;
@@ -1491,6 +1499,7 @@ namespace PixelVisionRunner.Utils
             get
             {
                 if (crc == null) return 0;
+
                 return crc.Crc32Result;
             }
         }
@@ -1543,8 +1552,8 @@ namespace PixelVisionRunner.Utils
         {
             get
             {
-                if (_workingBuffer == null)
-                    _workingBuffer = new byte[_bufferSize];
+                if (_workingBuffer == null) _workingBuffer = new byte[_bufferSize];
+
                 return _workingBuffer;
             }
         }
@@ -1553,16 +1562,13 @@ namespace PixelVisionRunner.Utils
         {
             // workitem 7159
             // calculate the CRC on the unccompressed data  (before writing)
-            if (crc != null)
-                crc.SlurpBlock(buffer, offset, count);
+            if (crc != null) crc.SlurpBlock(buffer, offset, count);
 
             if (_streamMode == StreamMode.Undefined)
                 _streamMode = StreamMode.Writer;
-            else if (_streamMode != StreamMode.Writer)
-                throw new ZlibException("Cannot Write after Reading.");
+            else if (_streamMode != StreamMode.Writer) throw new ZlibException("Cannot Write after Reading.");
 
-            if (count == 0)
-                return;
+            if (count == 0) return;
 
             // first reference of z property will initialize the private var _z
             z.InputBuffer = buffer;
@@ -1611,8 +1617,8 @@ namespace PixelVisionRunner.Utils
                     if (rc != ZlibConstants.Z_STREAM_END && rc != ZlibConstants.Z_OK)
                     {
                         var verb = (_wantCompress ? "de" : "in") + "flating";
-                        if (_z.Message == null)
-                            throw new ZlibException(string.Format("{0}: (rc = {1})", verb, rc));
+                        if (_z.Message == null) throw new ZlibException(string.Format("{0}: (rc = {1})", verb, rc));
+
                         throw new ZlibException(verb + ": " + _z.Message);
                     }
 
@@ -1652,8 +1658,7 @@ namespace PixelVisionRunner.Utils
                     if (!_wantCompress)
                     {
                         // workitem 8501: handle edge case (decompress empty stream)
-                        if (_z.TotalBytesOut == 0L)
-                            return;
+                        if (_z.TotalBytesOut == 0L) return;
 
                         // Read and potentially verify the GZIP trailer:
                         // CRC32 and size mod 2^32
@@ -1704,12 +1709,13 @@ namespace PixelVisionRunner.Utils
 
         private void end()
         {
-            if (z == null)
-                return;
+            if (z == null) return;
+
             if (_wantCompress)
                 _z.EndDeflate();
             else
                 _z.EndInflate();
+
             _z = null;
         }
 
@@ -1774,14 +1780,11 @@ namespace PixelVisionRunner.Utils
             var n = _stream.Read(header, 0, header.Length);
 
             // workitem 8501: handle edge case (decompress empty stream)
-            if (n == 0)
-                return 0;
+            if (n == 0) return 0;
 
-            if (n != 10)
-                throw new ZlibException("Not a valid GZIP stream.");
+            if (n != 10) throw new ZlibException("Not a valid GZIP stream.");
 
-            if (header[0] != 0x1F || header[1] != 0x8B || header[2] != 8)
-                throw new ZlibException("Bad GZIP header.");
+            if (header[0] != 0x1F || header[1] != 0x8B || header[2] != 8) throw new ZlibException("Bad GZIP header.");
 
             var timet = BitConverter.ToInt32(header, 4);
             _GzipMtime = GZipStream._unixEpoch.AddSeconds(timet);
@@ -1795,17 +1798,16 @@ namespace PixelVisionRunner.Utils
                 var extraLength = (short) (header[0] + header[1] * 256);
                 var extra = new byte[extraLength];
                 n = _stream.Read(extra, 0, extra.Length);
-                if (n != extraLength)
-                    throw new ZlibException("Unexpected end-of-file reading GZIP header.");
+                if (n != extraLength) throw new ZlibException("Unexpected end-of-file reading GZIP header.");
+
                 totalBytesRead += n;
             }
 
-            if ((header[3] & 0x08) == 0x08)
-                _GzipFileName = ReadZeroTerminatedString();
-            if ((header[3] & 0x10) == 0x010)
-                _GzipComment = ReadZeroTerminatedString();
-            if ((header[3] & 0x02) == 0x02)
-                Read(_buf1, 0, 1); // CRC16, ignore
+            if ((header[3] & 0x08) == 0x08) _GzipFileName = ReadZeroTerminatedString();
+
+            if ((header[3] & 0x10) == 0x010) _GzipComment = ReadZeroTerminatedString();
+
+            if ((header[3] & 0x02) == 0x02) Read(_buf1, 0, 1); // CRC16, ignore
 
             return totalBytesRead;
         }
@@ -1831,19 +1833,22 @@ namespace PixelVisionRunner.Utils
                 {
                     _gzipHeaderByteCount = _ReadAndValidateGzipHeader();
                     // workitem 8501: handle edge case (decompress empty stream)
-                    if (_gzipHeaderByteCount == 0)
-                        return 0;
+                    if (_gzipHeaderByteCount == 0) return 0;
                 }
             }
 
-            if (_streamMode != StreamMode.Reader)
-                throw new ZlibException("Cannot Read after Writing.");
+            if (_streamMode != StreamMode.Reader) throw new ZlibException("Cannot Read after Writing.");
 
             if (count == 0) return 0;
+
             if (nomoreinput && _wantCompress) return 0; // workitem 8557
+
             if (buffer == null) throw new ArgumentNullException("buffer");
+
             if (count < 0) throw new ArgumentOutOfRangeException("count");
+
             if (offset < buffer.GetLowerBound(0)) throw new ArgumentOutOfRangeException("offset");
+
             if (offset + count > buffer.GetLength(0)) throw new ArgumentOutOfRangeException("count");
 
             var rc = 0;
@@ -1866,8 +1871,7 @@ namespace PixelVisionRunner.Utils
                     // No data available, so try to Read data from the captive stream.
                     _z.NextIn = 0;
                     _z.AvailableBytesIn = _stream.Read(_workingBuffer, 0, _workingBuffer.Length);
-                    if (_z.AvailableBytesIn == 0)
-                        nomoreinput = true;
+                    if (_z.AvailableBytesIn == 0) nomoreinput = true;
                 }
 
                 // we have data in InputBuffer; now compress or decompress as appropriate
@@ -1875,8 +1879,7 @@ namespace PixelVisionRunner.Utils
                     ? _z.Deflate(_flushMode)
                     : _z.Inflate(_flushMode);
 
-                if (nomoreinput && rc == ZlibConstants.Z_BUF_ERROR)
-                    return 0;
+                if (nomoreinput && rc == ZlibConstants.Z_BUF_ERROR) return 0;
 
                 if (rc != ZlibConstants.Z_OK && rc != ZlibConstants.Z_STREAM_END)
                     throw new ZlibException(string.Format("{0}flating:  rc={1}  msg={2}", _wantCompress ? "de" : "in",
@@ -1915,8 +1918,7 @@ namespace PixelVisionRunner.Utils
             rc = count - _z.AvailableBytesOut;
 
             // calculate CRC after reading
-            if (crc != null)
-                crc.SlurpBlock(buffer, offset, rc);
+            if (crc != null) crc.SlurpBlock(buffer, offset, rc);
 
             return rc;
         }
@@ -2242,8 +2244,7 @@ namespace PixelVisionRunner.Utils
             // Returns -1 if EOF
             if (bytesRead == 0) return -1;
 
-            for (var index = start; index < start + bytesRead; index++)
-                target[index] = (byte) charArray[index];
+            for (var index = start; index < start + bytesRead; index++) target[index] = (byte) charArray[index];
 
             return bytesRead;
         }
@@ -2403,8 +2404,7 @@ namespace PixelVisionRunner.Utils
         /// </example>
         internal static uint Adler32(uint adler, byte[] buf, int index, int len)
         {
-            if (buf == null)
-                return 1;
+            if (buf == null) return 1;
 
             var s1 = adler & 0xffff;
             var s2 = (adler >> 16) & 0xffff;
@@ -2609,8 +2609,7 @@ namespace PixelVisionRunner.Utils
             short f; // frequency
             var overflow = 0; // number of elements with bit length too large
 
-            for (bits = 0; bits <= InternalConstants.MAX_BITS; bits++)
-                s.bl_count[bits] = 0;
+            for (bits = 0; bits <= InternalConstants.MAX_BITS; bits++) s.bl_count[bits] = 0;
 
             // In a first pass, compute the optimal bit lengths (which may
             // overflow in the case of the bit length tree).
@@ -2629,29 +2628,26 @@ namespace PixelVisionRunner.Utils
                 tree[n * 2 + 1] = (short) bits;
                 // We overwrite tree[n*2+1] which is no longer needed
 
-                if (n > max_code)
-                    continue; // not a leaf node
+                if (n > max_code) continue; // not a leaf node
 
                 s.bl_count[bits]++;
                 xbits = 0;
-                if (n >= base_Renamed)
-                    xbits = extra[n - base_Renamed];
+                if (n >= base_Renamed) xbits = extra[n - base_Renamed];
+
                 f = tree[n * 2];
                 s.opt_len += f * (bits + xbits);
-                if (stree != null)
-                    s.static_len += f * (stree[n * 2 + 1] + xbits);
+                if (stree != null) s.static_len += f * (stree[n * 2 + 1] + xbits);
             }
 
-            if (overflow == 0)
-                return;
+            if (overflow == 0) return;
 
             // This happens for example on obj2 and pic of the Calgary corpus
             // Find the first bit length which could increase:
             do
             {
                 bits = max_length - 1;
-                while (s.bl_count[bits] == 0)
-                    bits--;
+                while (s.bl_count[bits] == 0) bits--;
+
                 s.bl_count[bits]--; // move one leaf down the tree
                 s.bl_count[bits + 1] = (short) (s.bl_count[bits + 1] + 2); // move one overflow item as its brother
                 s.bl_count[max_length]--;
@@ -2666,8 +2662,8 @@ namespace PixelVisionRunner.Utils
                 while (n != 0)
                 {
                     m = s.heap[--h];
-                    if (m > max_code)
-                        continue;
+                    if (m > max_code) continue;
+
                     if (tree[m * 2 + 1] != bits)
                     {
                         s.opt_len = (int) (s.opt_len + (bits - (long) tree[m * 2 + 1]) * tree[m * 2]);
@@ -2721,8 +2717,7 @@ namespace PixelVisionRunner.Utils
                 tree[node * 2] = 1;
                 s.depth[node] = 0;
                 s.opt_len--;
-                if (stree != null)
-                    s.static_len -= stree[node * 2 + 1];
+                if (stree != null) s.static_len -= stree[node * 2 + 1];
                 // node is 0 or 1 so it does not have extra bits
             }
 
@@ -2731,8 +2726,7 @@ namespace PixelVisionRunner.Utils
             // The elements heap[heap_len/2+1 .. heap_len] are leaves of the tree,
             // establish sub-heaps of increasing lengths:
 
-            for (n = s.heap_len / 2; n >= 1; n--)
-                s.pqdownheap(tree, n);
+            for (n = s.heap_len / 2; n >= 1; n--) s.pqdownheap(tree, n);
 
             // Construct the Huffman tree by repeatedly combining the least two
             // frequent nodes.
@@ -2800,8 +2794,7 @@ namespace PixelVisionRunner.Utils
             for (n = 0; n <= max_code; n++)
             {
                 int len = tree[n * 2 + 1];
-                if (len == 0)
-                    continue;
+                if (len == 0) continue;
                 // Now reverse the bits
                 tree[n * 2] = unchecked((short) bi_reverse(next_code[len]++, len));
             }
@@ -2990,20 +2983,26 @@ namespace PixelVisionRunner.Utils
             for (j = 1; j <= BMAX; j++)
                 if (c[j] != 0)
                     break;
+
             k = j; // minimum code length
             if (l < j) l = j;
+
             for (i = BMAX; i != 0; i--)
                 if (c[i] != 0)
                     break;
+
             g = i; // maximum code length
             if (l > i) l = i;
+
             m[0] = l;
 
             // Adjust last length count to fill out codes, if needed
             for (y = 1 << j; j < i; j++, y <<= 1)
                 if ((y -= c[j]) < 0)
                     return Z_DATA_ERROR;
+
             if ((y -= c[i]) < 0) return Z_DATA_ERROR;
+
             c[i] += y;
 
             // Generate starting offsets into the value table for each length
@@ -3024,6 +3023,7 @@ namespace PixelVisionRunner.Utils
             do
             {
                 if ((j = b[bindex + p]) != 0) v[x[j]++] = i;
+
                 p++;
             } while (++i < n);
 
@@ -3063,8 +3063,8 @@ namespace PixelVisionRunner.Utils
                                 while (++j < z)
                                 {
                                     // try smaller tables up to z bits
-                                    if ((f <<= 1) <= c[++xp])
-                                        break; // enough codes to use up j bits
+                                    if ((f <<= 1) <= c[++xp]) break; // enough codes to use up j bits
+
                                     f -= c[xp]; // else deduct codes from patterns
                                 }
                         }
@@ -3073,6 +3073,7 @@ namespace PixelVisionRunner.Utils
 
                         // allocate new table
                         if (hn[0] + z > MANY) return Z_DATA_ERROR; // overflow of MANY
+
                         u[h] = q = hn[0]; // DEBUG
                         hn[0] += z;
 
@@ -3115,6 +3116,7 @@ namespace PixelVisionRunner.Utils
 
                     // backwards increment the k-bit code i
                     for (j = 1 << (k - 1); (i & j) != 0; j = SharedUtils.URShift(j, 1)) i ^= j;
+
                     i ^= j;
 
                     // backup over finished tables
@@ -3226,6 +3228,7 @@ namespace PixelVisionRunner.Utils
             else
             {
                 if (v.Length < vsize) v = new int[vsize];
+
                 Array.Clear(v, 0, vsize);
                 Array.Clear(c, 0, BMAX + 1);
                 r[0] = 0;
@@ -3296,8 +3299,8 @@ namespace PixelVisionRunner.Utils
             bitb = 0;
             readAt = writeAt = 0;
 
-            if (checkfn != null)
-                _codec._Adler32 = check = Adler.Adler32(0, null, 0, 0);
+            if (checkfn != null) _codec._Adler32 = check = Adler.Adler32(0, null, 0, 0);
+
             return oldCheck;
         }
 
@@ -3494,17 +3497,17 @@ namespace PixelVisionRunner.Utils
                         r = ZlibConstants.Z_OK;
 
                         t = left;
-                        if (t > n)
-                            t = n;
-                        if (t > m)
-                            t = m;
+                        if (t > n) t = n;
+
+                        if (t > m) t = m;
+
                         Array.Copy(_codec.InputBuffer, p, window, q, t);
                         p += t;
                         n -= t;
                         q += t;
                         m -= t;
-                        if ((left -= t) != 0)
-                            break;
+                        if ((left -= t) != 0) break;
+
                         mode = last != 0 ? InflateBlockMode.DRY : InflateBlockMode.TYPE;
                         break;
 
@@ -3877,24 +3880,21 @@ namespace PixelVisionRunner.Utils
                 // workitem 8870
                 if (nBytes == 0)
                 {
-                    if (r == ZlibConstants.Z_BUF_ERROR)
-                        r = ZlibConstants.Z_OK;
+                    if (r == ZlibConstants.Z_BUF_ERROR) r = ZlibConstants.Z_OK;
+
                     return r;
                 }
 
-                if (nBytes > _codec.AvailableBytesOut)
-                    nBytes = _codec.AvailableBytesOut;
+                if (nBytes > _codec.AvailableBytesOut) nBytes = _codec.AvailableBytesOut;
 
-                if (nBytes != 0 && r == ZlibConstants.Z_BUF_ERROR)
-                    r = ZlibConstants.Z_OK;
+                if (nBytes != 0 && r == ZlibConstants.Z_BUF_ERROR) r = ZlibConstants.Z_OK;
 
                 // update counters
                 _codec.AvailableBytesOut -= nBytes;
                 _codec.TotalBytesOut += nBytes;
 
                 // update check information
-                if (checkfn != null)
-                    _codec._Adler32 = check = Adler.Adler32(check, window, readAt, nBytes);
+                if (checkfn != null) _codec._Adler32 = check = Adler.Adler32(check, window, readAt, nBytes);
 
                 // copy as far as end of window
                 Array.Copy(window, readAt, _codec.OutputBuffer, _codec.NextOut, nBytes);
@@ -3906,8 +3906,7 @@ namespace PixelVisionRunner.Utils
                 {
                     // wrap pointers
                     readAt = 0;
-                    if (writeAt == end)
-                        writeAt = 0;
+                    if (writeAt == end) writeAt = 0;
                 }
                 else
                 {
@@ -4270,6 +4269,7 @@ namespace PixelVisionRunner.Utils
                         while (f < 0)
                             // modulo window size-"while" instead
                             f += blocks.end; // of "if" handles invalid distances
+
                         while (len != 0)
                         {
                             if (m == 0)
@@ -4309,8 +4309,8 @@ namespace PixelVisionRunner.Utils
                             blocks.window[q++] = blocks.window[f++];
                             m--;
 
-                            if (f == blocks.end)
-                                f = 0;
+                            if (f == blocks.end) f = 0;
+
                             len--;
                         }
 
@@ -4766,8 +4766,8 @@ namespace PixelVisionRunner.Utils
 
         internal int End()
         {
-            if (blocks != null)
-                blocks.Free();
+            if (blocks != null) blocks.Free();
+
             blocks = null;
             return ZlibConstants.Z_OK;
         }
@@ -4811,8 +4811,7 @@ namespace PixelVisionRunner.Utils
         {
             int b;
 
-            if (_codec.InputBuffer == null)
-                throw new ZlibException("InputBuffer is null. ");
+            if (_codec.InputBuffer == null) throw new ZlibException("InputBuffer is null. ");
 
             //             int f = (flush == FlushType.Finish)
             //                 ? ZlibConstants.Z_BUF_ERROR
@@ -4827,6 +4826,7 @@ namespace PixelVisionRunner.Utils
                 {
                     case InflateManagerMode.METHOD:
                         if (_codec.AvailableBytesIn == 0) return r;
+
                         r = f;
                         _codec.AvailableBytesIn--;
                         _codec.TotalBytesIn++;
@@ -4852,6 +4852,7 @@ namespace PixelVisionRunner.Utils
 
                     case InflateManagerMode.FLAG:
                         if (_codec.AvailableBytesIn == 0) return r;
+
                         r = f;
                         _codec.AvailableBytesIn--;
                         _codec.TotalBytesIn++;
@@ -4872,6 +4873,7 @@ namespace PixelVisionRunner.Utils
 
                     case InflateManagerMode.DICT4:
                         if (_codec.AvailableBytesIn == 0) return r;
+
                         r = f;
                         _codec.AvailableBytesIn--;
                         _codec.TotalBytesIn++;
@@ -4881,6 +4883,7 @@ namespace PixelVisionRunner.Utils
 
                     case InflateManagerMode.DICT3:
                         if (_codec.AvailableBytesIn == 0) return r;
+
                         r = f;
                         _codec.AvailableBytesIn--;
                         _codec.TotalBytesIn++;
@@ -4891,6 +4894,7 @@ namespace PixelVisionRunner.Utils
                     case InflateManagerMode.DICT2:
 
                         if (_codec.AvailableBytesIn == 0) return r;
+
                         r = f;
                         _codec.AvailableBytesIn--;
                         _codec.TotalBytesIn++;
@@ -4901,6 +4905,7 @@ namespace PixelVisionRunner.Utils
 
                     case InflateManagerMode.DICT1:
                         if (_codec.AvailableBytesIn == 0) return r;
+
                         r = f;
                         _codec.AvailableBytesIn--;
                         _codec.TotalBytesIn++;
@@ -4928,8 +4933,7 @@ namespace PixelVisionRunner.Utils
 
                         if (r == ZlibConstants.Z_OK) r = f;
 
-                        if (r != ZlibConstants.Z_STREAM_END)
-                            return r;
+                        if (r != ZlibConstants.Z_STREAM_END) return r;
 
                         r = f;
                         computedCheck = blocks.Reset();
@@ -4944,6 +4948,7 @@ namespace PixelVisionRunner.Utils
 
                     case InflateManagerMode.CHECK4:
                         if (_codec.AvailableBytesIn == 0) return r;
+
                         r = f;
                         _codec.AvailableBytesIn--;
                         _codec.TotalBytesIn++;
@@ -4953,6 +4958,7 @@ namespace PixelVisionRunner.Utils
 
                     case InflateManagerMode.CHECK3:
                         if (_codec.AvailableBytesIn == 0) return r;
+
                         r = f;
                         _codec.AvailableBytesIn--;
                         _codec.TotalBytesIn++;
@@ -4962,6 +4968,7 @@ namespace PixelVisionRunner.Utils
 
                     case InflateManagerMode.CHECK2:
                         if (_codec.AvailableBytesIn == 0) return r;
+
                         r = f;
                         _codec.AvailableBytesIn--;
                         _codec.TotalBytesIn++;
@@ -4971,6 +4978,7 @@ namespace PixelVisionRunner.Utils
 
                     case InflateManagerMode.CHECK1:
                         if (_codec.AvailableBytesIn == 0) return r;
+
                         r = f;
                         _codec.AvailableBytesIn--;
                         _codec.TotalBytesIn++;
@@ -5002,8 +5010,7 @@ namespace PixelVisionRunner.Utils
         {
             var index = 0;
             var length = dictionary.Length;
-            if (mode != InflateManagerMode.DICT0)
-                throw new ZlibException("Stream error.");
+            if (mode != InflateManagerMode.DICT0) throw new ZlibException("Stream error.");
 
             if (Adler.Adler32(1, dictionary, 0, dictionary.Length) != _codec._Adler32)
                 return ZlibConstants.Z_DATA_ERROR;
@@ -5035,8 +5042,8 @@ namespace PixelVisionRunner.Utils
                 marker = 0;
             }
 
-            if ((n = _codec.AvailableBytesIn) == 0)
-                return ZlibConstants.Z_BUF_ERROR;
+            if ((n = _codec.AvailableBytesIn) == 0) return ZlibConstants.Z_BUF_ERROR;
+
             p = _codec.NextIn;
             m = marker;
 
@@ -5049,6 +5056,7 @@ namespace PixelVisionRunner.Utils
                     m = 0;
                 else
                     m = 4 - m;
+
                 p++;
                 n--;
             }
@@ -5061,6 +5069,7 @@ namespace PixelVisionRunner.Utils
 
             // return no joy or set up to restart on a new block
             if (m != 4) return ZlibConstants.Z_DATA_ERROR;
+
             r = _codec.TotalBytesIn;
             w = _codec.TotalBytesOut;
             Reset();
@@ -5515,6 +5524,7 @@ namespace PixelVisionRunner.Utils
             set
             {
                 if (_disposed) throw new ObjectDisposedException("GZipStream");
+
                 _Comment = value;
             }
         }
@@ -5545,11 +5555,14 @@ namespace PixelVisionRunner.Utils
             set
             {
                 if (_disposed) throw new ObjectDisposedException("GZipStream");
+
                 _FileName = value;
                 if (_FileName == null) return;
+
                 if (_FileName.IndexOf("/") != -1) _FileName = _FileName.Replace("/", "\\");
-                if (_FileName.EndsWith("\\"))
-                    throw new Exception("Illegal filename");
+
+                if (_FileName.EndsWith("\\")) throw new Exception("Illegal filename");
+
                 if (_FileName.IndexOf("\\") != -1) _FileName = Path.GetFileName(_FileName);
             }
         }
@@ -5580,16 +5593,16 @@ namespace PixelVisionRunner.Utils
             // compression method
             header[i++] = 8;
             byte flag = 0;
-            if (Comment != null)
-                flag ^= 0x10;
-            if (FileName != null)
-                flag ^= 0x8;
+            if (Comment != null) flag ^= 0x10;
+
+            if (FileName != null) flag ^= 0x8;
 
             // flag
             header[i++] = flag;
 
             // mtime
             if (!LastModified.HasValue) LastModified = DateTime.Now;
+
             var delta = LastModified.Value - _unixEpoch;
             var timet = (int) delta.TotalSeconds;
             Array.Copy(BitConverter.GetBytes(timet), 0, header, i, 4);
@@ -5679,7 +5692,7 @@ namespace PixelVisionRunner.Utils
         /// <summary>
         ///     Uncompress a GZip'ed byte array into a single string.
         /// </summary>
-        /// <seealso cref="GZipStream.CompressString(String)" />
+        /// <seealso cref="GZipStream.CompressString(string)" />
         /// <seealso cref="GZipStream.UncompressBuffer(byte[])" />
         /// <param name="compressed">
         ///     A buffer containing GZIP-compressed data.
@@ -5726,6 +5739,7 @@ namespace PixelVisionRunner.Utils
             set
             {
                 if (_disposed) throw new ObjectDisposedException("GZipStream");
+
                 _baseStream._flushMode = value;
             }
         }
@@ -5751,12 +5765,14 @@ namespace PixelVisionRunner.Utils
             set
             {
                 if (_disposed) throw new ObjectDisposedException("GZipStream");
-                if (_baseStream._workingBuffer != null)
-                    throw new ZlibException("The working buffer is already set.");
+
+                if (_baseStream._workingBuffer != null) throw new ZlibException("The working buffer is already set.");
+
                 if (value < ZlibConstants.WorkingBufferSizeMin)
                     throw new ZlibException(string.Format(
                         "Don't be silly. {0} bytes?? Use a bigger buffer, at least {1}.", value,
                         ZlibConstants.WorkingBufferSizeMin));
+
                 _baseStream._bufferSize = value;
             }
         }
@@ -5828,6 +5844,7 @@ namespace PixelVisionRunner.Utils
             get
             {
                 if (_disposed) throw new ObjectDisposedException("GZipStream");
+
                 return _baseStream._stream.CanRead;
             }
         }
@@ -5852,6 +5869,7 @@ namespace PixelVisionRunner.Utils
             get
             {
                 if (_disposed) throw new ObjectDisposedException("GZipStream");
+
                 return _baseStream._stream.CanWrite;
             }
         }
@@ -5862,6 +5880,7 @@ namespace PixelVisionRunner.Utils
         public override void Flush()
         {
             if (_disposed) throw new ObjectDisposedException("GZipStream");
+
             _baseStream.Flush();
         }
 
@@ -5888,8 +5907,10 @@ namespace PixelVisionRunner.Utils
             {
                 if (_baseStream._streamMode == ZlibBaseStream.StreamMode.Writer)
                     return _baseStream._z.TotalBytesOut + _headerByteCount;
+
                 if (_baseStream._streamMode == ZlibBaseStream.StreamMode.Reader)
                     return _baseStream._z.TotalBytesIn + _baseStream._gzipHeaderByteCount;
+
                 return 0;
             }
 
@@ -5928,6 +5949,7 @@ namespace PixelVisionRunner.Utils
         public override int Read(byte[] buffer, int offset, int count)
         {
             if (_disposed) throw new ObjectDisposedException("GZipStream");
+
             var n = _baseStream.Read(buffer, offset, count);
 
             // Console.WriteLine("GZipStream::Read(buffer, off({0}), c({1}) = {2}", offset, count, n);
@@ -5986,6 +6008,7 @@ namespace PixelVisionRunner.Utils
         public override void Write(byte[] buffer, int offset, int count)
         {
             if (_disposed) throw new ObjectDisposedException("GZipStream");
+
             if (_baseStream._streamMode == ZlibBaseStream.StreamMode.Undefined)
             {
                 //Console.WriteLine("GZipStream: First write");
@@ -6316,12 +6339,11 @@ namespace PixelVisionRunner.Utils
         internal void _InitializeBlocks()
         {
             // Initialize the trees.
-            for (var i = 0; i < InternalConstants.L_CODES; i++)
-                dyn_ltree[i * 2] = 0;
-            for (var i = 0; i < InternalConstants.D_CODES; i++)
-                dyn_dtree[i * 2] = 0;
-            for (var i = 0; i < InternalConstants.BL_CODES; i++)
-                bl_tree[i * 2] = 0;
+            for (var i = 0; i < InternalConstants.L_CODES; i++) dyn_ltree[i * 2] = 0;
+
+            for (var i = 0; i < InternalConstants.D_CODES; i++) dyn_dtree[i * 2] = 0;
+
+            for (var i = 0; i < InternalConstants.BL_CODES; i++) bl_tree[i * 2] = 0;
 
             dyn_ltree[END_BLOCK * 2] = 1;
             opt_len = static_len = 0;
@@ -6341,8 +6363,7 @@ namespace PixelVisionRunner.Utils
                 // Set j to the smallest of the two sons:
                 if (j < heap_len && _IsSmaller(tree, heap[j + 1], heap[j], depth)) j++;
                 // Exit if v is smaller than both sons
-                if (_IsSmaller(tree, v, heap[j], depth))
-                    break;
+                if (_IsSmaller(tree, v, heap[j], depth)) break;
 
                 // Exchange v with the smallest son
                 heap[k] = heap[j];
@@ -6369,7 +6390,7 @@ namespace PixelVisionRunner.Utils
             int n; // iterates over all tree elements
             var prevlen = -1; // last emitted length
             int curlen; // length of current code
-            var nextlen = (int) tree[0 * 2 + 1]; // length of next code
+            int nextlen = tree[0 * 2 + 1]; // length of next code
             var count = 0; // repeat count of the current code
             var max_count = 7; // max repeat count
             var min_count = 4; // min repeat count
@@ -6394,8 +6415,8 @@ namespace PixelVisionRunner.Utils
                 }
                 else if (curlen != 0)
                 {
-                    if (curlen != prevlen)
-                        bl_tree[curlen * 2]++;
+                    if (curlen != prevlen) bl_tree[curlen * 2]++;
+
                     bl_tree[InternalConstants.REP_3_6 * 2]++;
                 }
                 else if (count <= 10)
@@ -6466,6 +6487,7 @@ namespace PixelVisionRunner.Utils
             send_bits(dcodes - 1, 5);
             send_bits(blcodes - 4, 4); // not -3 as stated in appnote.txt
             for (rank = 0; rank < blcodes; rank++) send_bits(bl_tree[Tree.bl_order[rank] * 2 + 1], 3);
+
             send_tree(dyn_ltree, lcodes - 1); // literal tree
             send_tree(dyn_dtree, dcodes - 1); // distance tree
         }
@@ -6670,9 +6692,9 @@ namespace PixelVisionRunner.Utils
                 int dcode;
                 for (dcode = 0; dcode < InternalConstants.D_CODES; dcode++)
                     out_length = (int) (out_length + dyn_dtree[dcode * 2] * (5L + Tree.ExtraDistanceBits[dcode]));
+
                 out_length >>= 3;
-                if (matches < last_lit / 2 && out_length < in_length / 2)
-                    return true;
+                if (matches < last_lit / 2 && out_length < in_length / 2) return true;
             }
 
             return last_lit == lit_bufsize - 1 || last_lit == lit_bufsize;
@@ -6864,10 +6886,9 @@ namespace PixelVisionRunner.Utils
                 if (lookahead <= 1)
                 {
                     _fillWindow();
-                    if (lookahead == 0 && flush == FlushType.None)
-                        return BlockState.NeedMore;
-                    if (lookahead == 0)
-                        break; // flush the current block
+                    if (lookahead == 0 && flush == FlushType.None) return BlockState.NeedMore;
+
+                    if (lookahead == 0) break; // flush the current block
                 }
 
                 strstart += lookahead;
@@ -6882,8 +6903,7 @@ namespace PixelVisionRunner.Utils
                     strstart = max_start;
 
                     flush_block_only(false);
-                    if (_codec.AvailableBytesOut == 0)
-                        return BlockState.NeedMore;
+                    if (_codec.AvailableBytesOut == 0) return BlockState.NeedMore;
                 }
 
                 // Flush if we may have to slide, otherwise block_start may become
@@ -6891,8 +6911,7 @@ namespace PixelVisionRunner.Utils
                 if (strstart - block_start >= w_size - MIN_LOOKAHEAD)
                 {
                     flush_block_only(false);
-                    if (_codec.AvailableBytesOut == 0)
-                        return BlockState.NeedMore;
+                    if (_codec.AvailableBytesOut == 0) return BlockState.NeedMore;
                 }
             }
 
@@ -6922,8 +6941,7 @@ namespace PixelVisionRunner.Utils
             if (compressionLevel > 0)
             {
                 // Check if the file is ascii or binary
-                if (data_type == Z_UNKNOWN)
-                    set_data_type();
+                if (data_type == Z_UNKNOWN) set_data_type();
 
                 // Construct the literal and distance trees
                 treeLiterals.build_tree(this);
@@ -6941,8 +6959,7 @@ namespace PixelVisionRunner.Utils
                 opt_lenb = (opt_len + 3 + 7) >> 3;
                 static_lenb = (static_len + 3 + 7) >> 3;
 
-                if (static_lenb <= opt_lenb)
-                    opt_lenb = static_lenb;
+                if (static_lenb <= opt_lenb) opt_lenb = static_lenb;
             }
             else
             {
@@ -7045,8 +7062,7 @@ namespace PixelVisionRunner.Utils
                     more += w_size;
                 }
 
-                if (_codec.AvailableBytesIn == 0)
-                    return;
+                if (_codec.AvailableBytesIn == 0) return;
 
                 // If there was no sliding:
                 //    strstart <= WSIZE+MAX_DIST-1 && lookahead <= MIN_LOOKAHEAD - 1 &&
@@ -7095,8 +7111,8 @@ namespace PixelVisionRunner.Utils
                 {
                     _fillWindow();
                     if (lookahead < MIN_LOOKAHEAD && flush == FlushType.None) return BlockState.NeedMore;
-                    if (lookahead == 0)
-                        break; // flush the current block
+
+                    if (lookahead == 0) break; // flush the current block
                 }
 
                 // Insert the string window[strstart .. strstart+2] in the
@@ -7117,6 +7133,7 @@ namespace PixelVisionRunner.Utils
                 if (hash_head != 0L && ((strstart - hash_head) & 0xffff) <= w_size - MIN_LOOKAHEAD)
                     if (compressionStrategy != CompressionStrategy.HuffmanOnly)
                         match_length = longest_match(hash_head);
+
                 if (match_length >= MIN_MATCH)
                 {
                     //        check_match(strstart, match_start, match_length);
@@ -7169,16 +7186,15 @@ namespace PixelVisionRunner.Utils
                 if (bflush)
                 {
                     flush_block_only(false);
-                    if (_codec.AvailableBytesOut == 0)
-                        return BlockState.NeedMore;
+                    if (_codec.AvailableBytesOut == 0) return BlockState.NeedMore;
                 }
             }
 
             flush_block_only(flush == FlushType.Finish);
             if (_codec.AvailableBytesOut == 0)
             {
-                if (flush == FlushType.Finish)
-                    return BlockState.FinishStarted;
+                if (flush == FlushType.Finish) return BlockState.FinishStarted;
+
                 return BlockState.NeedMore;
             }
 
@@ -7205,11 +7221,9 @@ namespace PixelVisionRunner.Utils
                 if (lookahead < MIN_LOOKAHEAD)
                 {
                     _fillWindow();
-                    if (lookahead < MIN_LOOKAHEAD && flush == FlushType.None)
-                        return BlockState.NeedMore;
+                    if (lookahead < MIN_LOOKAHEAD && flush == FlushType.None) return BlockState.NeedMore;
 
-                    if (lookahead == 0)
-                        break; // flush the current block
+                    if (lookahead == 0) break; // flush the current block
                 }
 
                 // Insert the string window[strstart .. strstart+2] in the
@@ -7280,8 +7294,7 @@ namespace PixelVisionRunner.Utils
                     if (bflush)
                     {
                         flush_block_only(false);
-                        if (_codec.AvailableBytesOut == 0)
-                            return BlockState.NeedMore;
+                        if (_codec.AvailableBytesOut == 0) return BlockState.NeedMore;
                     }
                 }
                 else if (match_available != 0)
@@ -7293,10 +7306,10 @@ namespace PixelVisionRunner.Utils
                     bflush = _tr_tally(0, window[strstart - 1] & 0xff);
 
                     if (bflush) flush_block_only(false);
+
                     strstart++;
                     lookahead--;
-                    if (_codec.AvailableBytesOut == 0)
-                        return BlockState.NeedMore;
+                    if (_codec.AvailableBytesOut == 0) return BlockState.NeedMore;
                 }
                 else
                 {
@@ -7319,8 +7332,8 @@ namespace PixelVisionRunner.Utils
 
             if (_codec.AvailableBytesOut == 0)
             {
-                if (flush == FlushType.Finish)
-                    return BlockState.FinishStarted;
+                if (flush == FlushType.Finish) return BlockState.FinishStarted;
+
                 return BlockState.NeedMore;
             }
 
@@ -7356,8 +7369,7 @@ namespace PixelVisionRunner.Utils
 
             // Do not look for matches beyond the end of the input. This is necessary
             // to make deflate deterministic.
-            if (niceLength > lookahead)
-                niceLength = lookahead;
+            if (niceLength > lookahead) niceLength = lookahead;
 
             do
             {
@@ -7399,15 +7411,15 @@ namespace PixelVisionRunner.Utils
                 {
                     match_start = cur_match;
                     best_len = len;
-                    if (len >= niceLength)
-                        break;
+                    if (len >= niceLength) break;
+
                     scan_end1 = window[scan + best_len - 1];
                     scan_end = window[scan + best_len];
                 }
             } while ((cur_match = prev[cur_match & wmask] & 0xffff) > limit && --chain_length != 0);
 
-            if (best_len <= lookahead)
-                return best_len;
+            if (best_len <= lookahead) return best_len;
+
             return lookahead;
         }
 
@@ -7439,8 +7451,7 @@ namespace PixelVisionRunner.Utils
             _codec.Message = null;
 
             // validation
-            if (windowBits < 9 || windowBits > 15)
-                throw new ZlibException("windowBits must be in the range 9..15.");
+            if (windowBits < 9 || windowBits > 15) throw new ZlibException("windowBits must be in the range 9..15.");
 
             if (memLevel < 1 || memLevel > MEM_LEVEL_MAX)
                 throw new ZlibException(string.Format("memLevel must be in the range 1.. {0}", MEM_LEVEL_MAX));
@@ -7563,16 +7574,15 @@ namespace PixelVisionRunner.Utils
 
         internal int SetDictionary(byte[] dictionary)
         {
-            if (dictionary == null || status != INIT_STATE)
-                throw new ZlibException("Stream error.");
+            if (dictionary == null || status != INIT_STATE) throw new ZlibException("Stream error.");
 
             var length = dictionary.Length;
             var index = 0;
 
             _codec._Adler32 = Adler.Adler32(_codec._Adler32, dictionary, 0, dictionary.Length);
 
-            if (length < MIN_MATCH)
-                return ZlibConstants.Z_OK;
+            if (length < MIN_MATCH) return ZlibConstants.Z_OK;
+
             if (length > w_size - MIN_LOOKAHEAD)
             {
                 length = w_size - MIN_LOOKAHEAD;
@@ -7628,11 +7638,11 @@ namespace PixelVisionRunner.Utils
                 var header = (Z_DEFLATED + ((w_bits - 8) << 4)) << 8;
                 var level_flags = (((int) compressionLevel - 1) & 0xff) >> 1;
 
-                if (level_flags > 3)
-                    level_flags = 3;
+                if (level_flags > 3) level_flags = 3;
+
                 header |= level_flags << 6;
-                if (strstart != 0)
-                    header |= PRESET_DICT;
+                if (strstart != 0) header |= PRESET_DICT;
+
                 header += 31 - header % 31;
 
                 status = BUSY_STATE;
@@ -7705,9 +7715,11 @@ namespace PixelVisionRunner.Utils
                 var bstate = DeflateFunction(flush);
 
                 if (bstate == BlockState.FinishStarted || bstate == BlockState.FinishDone) status = FINISH_STATE;
+
                 if (bstate == BlockState.NeedMore || bstate == BlockState.FinishStarted)
                 {
                     if (_codec.AvailableBytesOut == 0) last_flush = -1; // avoid BUF_ERROR next call, see above
+
                     return ZlibConstants.Z_OK;
                     // If flush != Z_NO_FLUSH && avail_out == 0, the next call
                     // of deflate should use the same flush parameter to make sure
@@ -7743,11 +7755,9 @@ namespace PixelVisionRunner.Utils
                 }
             }
 
-            if (flush != FlushType.Finish)
-                return ZlibConstants.Z_OK;
+            if (flush != FlushType.Finish) return ZlibConstants.Z_OK;
 
-            if (!WantRfc1950HeaderBytes || Rfc1950BytesEmitted)
-                return ZlibConstants.Z_STREAM_END;
+            if (!WantRfc1950HeaderBytes || Rfc1950BytesEmitted) return ZlibConstants.Z_STREAM_END;
 
             // Write the zlib trailer (adler32)
             pending[pendingCount++] = (byte) ((_codec._Adler32 & 0xFF000000) >> 24);
@@ -7880,8 +7890,7 @@ namespace PixelVisionRunner.Utils
         /// <returns>the CRC32 calculation</returns>
         internal int GetCrc32AndCopy(Stream input, Stream output)
         {
-            if (input == null)
-                throw new Exception("The input stream must not be null.");
+            if (input == null) throw new Exception("The input stream must not be null.");
 
             unchecked
             {
@@ -7891,12 +7900,14 @@ namespace PixelVisionRunner.Utils
                 TotalBytesRead = 0;
                 var count = input.Read(buffer, 0, readSize);
                 if (output != null) output.Write(buffer, 0, count);
+
                 TotalBytesRead += count;
                 while (count > 0)
                 {
                     SlurpBlock(buffer, 0, count);
                     count = input.Read(buffer, 0, readSize);
                     if (output != null) output.Write(buffer, 0, count);
+
                     TotalBytesRead += count;
                 }
 
@@ -7932,8 +7943,7 @@ namespace PixelVisionRunner.Utils
         /// <param name="count">how many bytes within the block to slurp</param>
         internal void SlurpBlock(byte[] block, int offset, int count)
         {
-            if (block == null)
-                throw new Exception("The data buffer must not be null.");
+            if (block == null) throw new Exception("The data buffer must not be null.");
 
             // bzip algorithm
             for (var i = 0; i < count; i++)
@@ -8049,10 +8059,12 @@ namespace PixelVisionRunner.Utils
                             dwCrc = (dwCrc >> 1) ^ dwPolynomial;
                         else
                             dwCrc >>= 1;
+
                     if (reverseBits)
                         crc32Table[ReverseBits(i)] = ReverseBits(dwCrc);
                     else
                         crc32Table[i] = dwCrc;
+
                     i++;
                 } while (i != 0);
             }
@@ -8081,8 +8093,8 @@ namespace PixelVisionRunner.Utils
             var i = 0;
             while (vec != 0)
             {
-                if ((vec & 0x01) == 0x01)
-                    sum ^= matrix[i];
+                if ((vec & 0x01) == 0x01) sum ^= matrix[i];
+
                 vec >>= 1;
                 i++;
             }
@@ -8092,8 +8104,7 @@ namespace PixelVisionRunner.Utils
 
         private void gf2_matrix_square(uint[] square, uint[] mat)
         {
-            for (var i = 0; i < 32; i++)
-                square[i] = gf2_matrix_times(mat, mat[i]);
+            for (var i = 0; i < 32; i++) square[i] = gf2_matrix_times(mat, mat[i]);
         }
 
 
@@ -8113,8 +8124,7 @@ namespace PixelVisionRunner.Utils
             var even = new uint[32]; // even-power-of-two zeros operator
             var odd = new uint[32]; // odd-power-of-two zeros operator
 
-            if (length == 0)
-                return;
+            if (length == 0) return;
 
             var crc1 = ~_register;
             var crc2 = (uint) crc;
@@ -8143,17 +8153,16 @@ namespace PixelVisionRunner.Utils
                 // apply zeros operator for this bit of len2
                 gf2_matrix_square(even, odd);
 
-                if ((len2 & 1) == 1)
-                    crc1 = gf2_matrix_times(even, crc1);
+                if ((len2 & 1) == 1) crc1 = gf2_matrix_times(even, crc1);
+
                 len2 >>= 1;
 
-                if (len2 == 0)
-                    break;
+                if (len2 == 0) break;
 
                 // another iteration of the loop with odd and even swapped
                 gf2_matrix_square(odd, even);
-                if ((len2 & 1) == 1)
-                    crc1 = gf2_matrix_times(odd, crc1);
+                if ((len2 & 1) == 1) crc1 = gf2_matrix_times(odd, crc1);
+
                 len2 >>= 1;
             } while (len2 != 0);
 
@@ -8260,8 +8269,7 @@ namespace PixelVisionRunner.Utils
         internal CrcCalculatorStream(Stream stream, long length)
             : this(true, length, stream, null)
         {
-            if (length < 0)
-                throw new ArgumentException("length");
+            if (length < 0) throw new ArgumentException("length");
         }
 
         /// <summary>
@@ -8284,8 +8292,7 @@ namespace PixelVisionRunner.Utils
         internal CrcCalculatorStream(Stream stream, long length, bool leaveOpen)
             : this(leaveOpen, length, stream, null)
         {
-            if (length < 0)
-                throw new ArgumentException("length");
+            if (length < 0) throw new ArgumentException("length");
         }
 
         /// <summary>
@@ -8310,8 +8317,7 @@ namespace PixelVisionRunner.Utils
             CRC32 crc32)
             : this(leaveOpen, length, stream, crc32)
         {
-            if (length < 0)
-                throw new ArgumentException("length");
+            if (length < 0) throw new ArgumentException("length");
         }
 
 
@@ -8389,8 +8395,8 @@ namespace PixelVisionRunner.Utils
         {
             get
             {
-                if (_lengthLimit == UnsetLengthLimit)
-                    return _innerStream.Length;
+                if (_lengthLimit == UnsetLengthLimit) return _innerStream.Length;
+
                 return _lengthLimit;
             }
         }
@@ -8434,12 +8440,14 @@ namespace PixelVisionRunner.Utils
             if (_lengthLimit != UnsetLengthLimit)
             {
                 if (_Crc32.TotalBytesRead >= _lengthLimit) return 0; // EOF
+
                 var bytesRemaining = _lengthLimit - _Crc32.TotalBytesRead;
                 if (bytesRemaining < count) bytesToRead = (int) bytesRemaining;
             }
 
             var n = _innerStream.Read(buffer, offset, bytesToRead);
             if (n > 0) _Crc32.SlurpBlock(buffer, offset, n);
+
             return n;
         }
 
@@ -8452,6 +8460,7 @@ namespace PixelVisionRunner.Utils
         public override void Write(byte[] buffer, int offset, int count)
         {
             if (count > 0) _Crc32.SlurpBlock(buffer, offset, count);
+
             _innerStream.Write(buffer, offset, count);
         }
 
@@ -9123,8 +9132,7 @@ namespace PixelVisionRunner.Utils
             for (var i = 0; i < charCount; i++)
             {
                 var character = chars[i + charIndex];
-                byte byteValue;
-                var status = charToByte.TryGetValue(character, out byteValue);
+                var status = charToByte.TryGetValue(character, out var byteValue);
 
                 bytes[byteIndex + i] = status ? byteValue : FallbackByte.Value;
             }
@@ -9137,8 +9145,7 @@ namespace PixelVisionRunner.Utils
             for (var i = 0; i < charCount; i++)
             {
                 var character = chars[i + charIndex];
-                byte byteValue;
-                var status = charToByte.TryGetValue(character, out byteValue);
+                var status = charToByte.TryGetValue(character, out var byteValue);
 
                 if (!status)
                 {

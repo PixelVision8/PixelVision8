@@ -42,8 +42,7 @@ namespace PixelVision8.Runner.Parsers
 
         public virtual void NextStep()
         {
-            if (completed)
-                return;
+            if (completed) return;
 
             steps[currentStep]();
         }

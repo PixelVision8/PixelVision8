@@ -87,11 +87,9 @@ namespace PixelVision8.Runner.Parsers
                                 var tmpCol = columns > tilemapChip.columns ? tilemapChip.columns : columns;
                                 var tmpRow = rows > tilemapChip.rows ? tilemapChip.rows : rows;
 
-                                if (tmpCol > columns)
-                                    tmpCol = columns;
+                                if (tmpCol > columns) tmpCol = columns;
 
-                                if (tmpRow > rows)
-                                    tmpRow = rows;
+                                if (tmpRow > rows) tmpRow = rows;
 
                                 var tmpData = new int[tmpCol * tmpRow];
 
@@ -113,7 +111,7 @@ namespace PixelVision8.Runner.Parsers
                                     tile.spriteID = dataValues[j];
                                 else if ((string) layer["name"] == "Flags") tile.flag = dataValues[j];
 
-                                tile.Invalidate();
+                                // tile.Invalidate();
                             }
                         }
                         else if (layerType == "objectgroup")
@@ -149,8 +147,8 @@ namespace PixelVision8.Runner.Parsers
 
                                 var properties = tileObject["properties"] as List<object>;
 
-//								int flagID = -1;
-//								int colorOffset = 0;
+                                //								int flagID = -1;
+                                //								int colorOffset = 0;
 
                                 for (var k = 0; k < properties.Count; k++)
                                 {
@@ -163,7 +161,7 @@ namespace PixelVision8.Runner.Parsers
                                     else if (propName == "colorOffset") tile.colorOffset = (int) (long) prop["value"];
                                 }
 
-                                tile.Invalidate();
+                                // tile.Invalidate();
                             }
                         }
 

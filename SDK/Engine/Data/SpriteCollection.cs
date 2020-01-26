@@ -24,7 +24,6 @@ using Microsoft.Xna.Framework;
 
 namespace PixelVisionSDK.Engine
 {
-
     public struct SpriteData
     {
         public int Id;
@@ -47,18 +46,18 @@ namespace PixelVisionSDK.Engine
 
     public class SpriteCollection
     {
-        public string Name;
         public readonly List<SpriteData> Sprites;
         public Rectangle Bounds;
-        public int SpriteMax;
         public Rectangle MaxBoundary;
+        public string Name;
+        public int SpriteHeight;
+        public int SpriteMax;
 
         public int SpriteWidth;
-        public int SpriteHeight;
 
         public SpriteCollection(string name, SpriteData[] sprites = null)
         {
-            this.Name = name;
+            Name = name;
             Sprites = new List<SpriteData>();
             Bounds = Rectangle.Empty;
             SpriteMax = 1024;
@@ -67,13 +66,11 @@ namespace PixelVisionSDK.Engine
             SpriteHeight = 8;
 
             if (sprites != null)
-            {
-                for (int i = 0; i < sprites.Length; i++)
+                for (var i = 0; i < sprites.Length; i++)
                 {
                     var sprite = sprites[i];
                     AddSprite(sprite.Id, sprite.X, sprite.Y, sprite.FlipH, sprite.FlipH, sprite.ColorOffset);
                 }
-            }
         }
 
         public void AddSprite(int id, int x = 0, int y = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
@@ -92,6 +89,5 @@ namespace PixelVisionSDK.Engine
         {
             Sprites.Clear();
         }
-
     }
 }

@@ -32,13 +32,13 @@ namespace PixelVision8.Engine
         private readonly TextureData pattern;
         private readonly Point spriteSize;
         private readonly TextureData stroke;
+
+        private readonly int[] tmpPixelData = new int[0];
         private bool canDraw;
         private bool drawCentered;
         private Point linePattern = new Point(1, 0);
 
         protected int[] tmpIDs = new int[0];
-
-        private int[] tmpPixelData = new int[0];
         public bool wrap = false;
 
         public Canvas(int width, int height, GameChip gameChip = null) : base(width, height)
@@ -68,7 +68,7 @@ namespace PixelVision8.Engine
 
         public void SetStroke(int[] pixels, int width, int height)
         {
-//            var total = width * height;
+            //            var total = width * height;
 
             if (stroke.width != width || pattern.height != height) stroke.Resize(width, height);
 
@@ -77,7 +77,7 @@ namespace PixelVision8.Engine
 
         public void SetPattern(int[] pixels, int width, int height)
         {
-//            var total = width * height;
+            //            var total = width * height;
 
             if (pattern.width != width || pattern.height != height) pattern.Resize(width, height);
 
@@ -92,12 +92,11 @@ namespace PixelVision8.Engine
             int maskColor = -1, int maskColorID = -1)
         {
             // This only works when the canvas has a reference to the gameChip
-            if (gameChip == null)
-                return;
+            if (gameChip == null) return;
 
             // TODO need to rescale the pixel data if scale is larger than 1
-//            if (scale != 1)
-//            {
+            //            if (scale != 1)
+            //            {
 
             var newWidth = width * scale;
             var newHeight = height * scale;
@@ -122,11 +121,11 @@ namespace PixelVision8.Engine
             }
 
             gameChip.DrawPixels(newColors, x, y, newWidth, newHeight, false, false, drawMode);
-//            }
-//            else
-//            {
-//                gameChip.DrawPixels(pixels, x, y, _width, _height, false, false, drawMode);
-//            }
+            //            }
+            //            else
+            //            {
+            //                gameChip.DrawPixels(pixels, x, y, _width, _height, false, false, drawMode);
+            //            }
         }
 
 
@@ -137,9 +136,8 @@ namespace PixelVision8.Engine
         public void SetStrokePixel(int x, int y)
         {
             canDraw = wrap || x >= 0 && x <= _width - stroke.width && y >= 0 && y <= _height - stroke.height;
-//            
-            if (canDraw)
-                SetPixels(x, y, stroke.width, stroke.height, stroke.pixels);
+            //            
+            if (canDraw) SetPixels(x, y, stroke.width, stroke.height, stroke.pixels);
         }
 
         /// <summary>
@@ -183,6 +181,7 @@ namespace PixelVision8.Engine
 
                 counter++;
                 if (x0 == x1 && y0 == y1) break;
+
                 e2 = err;
                 if (e2 > -dx)
                 {
@@ -287,9 +286,9 @@ namespace PixelVision8.Engine
                 radius = radius / 2;
             }
 
-//            SetStrokePixel(center.x, center.y);
-//            
-//            SetStrokePixel(tl.x, tl.y);
+            //            SetStrokePixel(center.x, center.y);
+            //            
+            //            SetStrokePixel(tl.x, tl.y);
 
             x0 = center.X;
             y0 = center.Y;
@@ -306,7 +305,7 @@ namespace PixelVision8.Engine
             {
                 // 1 O'Clock
                 SetStrokePixel(x0 + x, y0 - y);
-//                 3 O'Clock
+                //                 3 O'Clock
                 SetStrokePixel(x0 + y, y0 - x);
 
                 // 4 O' Clock
@@ -450,8 +449,7 @@ namespace PixelVision8.Engine
         public void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
             // This only works when the canvas has a reference to the gameChip
-            if (gameChip == null)
-                return;
+            if (gameChip == null) return;
 
             // TODO need to add flip to DrawSprite method
             MergePixels(x, y, spriteSize.X, spriteSize.Y, gameChip.Sprite(id), flipH, flipV, colorOffset);
@@ -463,8 +461,7 @@ namespace PixelVision8.Engine
             var total = ids.Length;
 
             // TODO added this so C# code isn't corrupted, need to check performance impact
-            if (tmpIDs.Length != total)
-                Array.Resize(ref tmpIDs, total);
+            if (tmpIDs.Length != total) Array.Resize(ref tmpIDs, total);
 
             Array.Copy(ids, tmpIDs, total);
 
@@ -489,8 +486,8 @@ namespace PixelVision8.Engine
                 {
                     x = MathUtil.FloorToInt(i % width) * paddingW + startX;
                     y = MathUtil.FloorToInt(i / width) * paddingH + startY;
-//
-//                    var render = true;
+                    //
+                    //                    var render = true;
 
                     // Check to see if we need to test the bounds
 
@@ -510,10 +507,9 @@ namespace PixelVision8.Engine
         public void DrawText(string text, int x, int y, string font = "default", int colorOffset = 0, int spacing = 0)
         {
             // This only works when the canvas has a reference to the gameChip
-            if (gameChip == null)
-                return;
+            if (gameChip == null) return;
 
-//            var ids = gameChip.ConvertTextToSprites(text, font);
+            //            var ids = gameChip.ConvertTextToSprites(text, font);
             var total = text.Length;
             var nextX = x;
             var nextY = y;
@@ -525,7 +521,7 @@ namespace PixelVision8.Engine
                     gameChip.CharacterToPixelData(text[i], font), false, false, colorOffset);
 
 
-//                DrawSprite(ids[i], nextX, nextY, false, false, colorOffset);
+                //                DrawSprite(ids[i], nextX, nextY, false, false, colorOffset);
                 nextX += spriteSize.X + spacing;
             }
         }
@@ -536,8 +532,7 @@ namespace PixelVision8.Engine
         /// <param name="y"></param>
         public void FloodFill(int x, int y)
         {
-            if (x < 0 || y < 0 || x > _width || y > _height)
-                return;
+            if (x < 0 || y < 0 || x > _width || y > _height) return;
 
             // Get the color at the point where we are trying to fill and use that to match all the color inside the shape
             var targetColor = GetPixel(x, y);
@@ -551,6 +546,7 @@ namespace PixelVision8.Engine
                 var temp = pixels.Pop();
                 var y1 = temp.Y;
                 while (y1 >= 0 && GetPixel(temp.X, y1) == targetColor) y1--;
+
                 y1++;
                 var spanLeft = false;
                 var spanRight = false;
@@ -574,6 +570,7 @@ namespace PixelVision8.Engine
                     {
                         if (GetPixel(temp.X + 1, y1) != pattern.GetPixel(temp.X, y1))
                             pixels.Push(new Point(temp.X + 1, y1));
+
                         spanRight = true;
                     }
                     else if (spanRight && temp.X < _width - 1 && GetPixel(temp.X + 1, y1) != targetColor)

@@ -33,8 +33,8 @@ namespace PixelVision8.Runner.Exporters
         public MetadataExporter(string fileName, IEngine engine) : base(fileName)
         {
             this.engine = engine;
-//            
-//            CalculateSteps();
+            //            
+            //            CalculateSteps();
         }
 
         public override void CalculateSteps()
@@ -75,36 +75,36 @@ namespace PixelVision8.Runner.Exporters
         private void SerializeGameChip(GameChip gameChip)
         {
             // Name
-//            sb.Append("\"gameName\":");
-//            sb.Append("\"");
-//            sb.Append(gameChip.name);
-//            sb.Append("\"");
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
-//            
-//            // Description
-//            sb.Append("\"gameDescription\":");
-//            sb.Append("\"");
-//            sb.Append(gameChip.description);
-//            sb.Append("\"");
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
-//            
-//            // Version
-//            sb.Append("\"gameVersion\":");
-//            sb.Append("\"");
-//            sb.Append(gameChip.version);
-//            sb.Append("\"");
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
-//            
-//            // ext
-//            sb.Append("\"gameExt\":");
-//            sb.Append("\"");
-//            sb.Append(gameChip.ext);
-//            sb.Append("\"");
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
+            //            sb.Append("\"gameName\":");
+            //            sb.Append("\"");
+            //            sb.Append(gameChip.name);
+            //            sb.Append("\"");
+            //            sb.Append(",");
+            //            JsonUtil.GetLineBreak(sb, 1);
+            //            
+            //            // Description
+            //            sb.Append("\"gameDescription\":");
+            //            sb.Append("\"");
+            //            sb.Append(gameChip.description);
+            //            sb.Append("\"");
+            //            sb.Append(",");
+            //            JsonUtil.GetLineBreak(sb, 1);
+            //            
+            //            // Version
+            //            sb.Append("\"gameVersion\":");
+            //            sb.Append("\"");
+            //            sb.Append(gameChip.version);
+            //            sb.Append("\"");
+            //            sb.Append(",");
+            //            JsonUtil.GetLineBreak(sb, 1);
+            //            
+            //            // ext
+            //            sb.Append("\"gameExt\":");
+            //            sb.Append("\"");
+            //            sb.Append(gameChip.ext);
+            //            sb.Append("\"");
+            //            sb.Append(",");
+            //            JsonUtil.GetLineBreak(sb, 1);
 
             // Loop through all the meta data and save it
             var metaData = engine.MetaData;

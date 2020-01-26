@@ -52,12 +52,6 @@ namespace PixelVision8.Runner
         //        private IControllerChip controllerChip;
         public BiosService bios;
         protected WorkspacePath biosPath = WorkspacePath.Root.AppendDirectory("App").AppendFile("bios.json");
-        protected string rootPath;
-        protected string tmpPath;
-        public WorkspaceService workspaceService;
-        public string systemName;
-        public string SystemVersion;
-        public string SessionId { get; protected set; }
 
         public List<KeyValuePair<string, Dictionary<string, string>>> loadHistory =
             new List<KeyValuePair<string, Dictionary<string, string>>>();
@@ -65,9 +59,11 @@ namespace PixelVision8.Runner
         protected Dictionary<string, string> nextMetaData;
         protected RunnerMode nextMode;
         protected string nextPathToLoad;
-        protected delegate bool EnableCRTDelegator(bool? toggle);
-        protected delegate float BrightnessDelegator(float? brightness = null);
-        protected delegate float SharpnessDelegator(float? sharpness = null);
+        protected string rootPath;
+        public string systemName;
+        public string SystemVersion;
+        protected string tmpPath;
+        public WorkspaceService workspaceService;
 
         /// <summary>
         ///     This constructor saves the path to the game's files and kicks off the base constructor
@@ -82,6 +78,8 @@ namespace PixelVision8.Runner
         {
             throw new NotImplementedException();
         }
+
+        public string SessionId { get; protected set; }
 
         protected WorkspacePath userBiosPath => WorkspacePath.Parse("/Storage/user-bios.json");
 
@@ -106,7 +104,6 @@ namespace PixelVision8.Runner
 
         protected override void ConfigureRunner()
         {
-
             // Save the session ID
             SessionId = DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
@@ -133,7 +130,6 @@ namespace PixelVision8.Runner
 
         public override void ActivateEngine(IEngine engine)
         {
-
             // Get a reference to the Lua game
             var game = engine.GameChip as LuaGameChip;
 
@@ -142,11 +138,11 @@ namespace PixelVision8.Runner
 
             luaScript.Globals["StartNextPreload"] = new Action(StartNextPreload);
             luaScript.Globals["PreloaderComplete"] = new Action(RunGame);
-            luaScript.Globals["EnableCRT"] = (EnableCRTDelegator)EnableCRT;
-            luaScript.Globals["Brightness"] = (BrightnessDelegator)Brightness;
-            luaScript.Globals["Sharpness"] = (SharpnessDelegator)Sharpness;
+            luaScript.Globals["EnableCRT"] = (EnableCRTDelegator) EnableCRT;
+            luaScript.Globals["Brightness"] = (BrightnessDelegator) Brightness;
+            luaScript.Globals["Sharpness"] = (SharpnessDelegator) Sharpness;
             luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
-            luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int)(loadService.percent * 100));
+            luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int) (loadService.percent * 100));
             luaScript.Globals["LoadGame"] =
                 new Func<string, Dictionary<string, string>, bool>((path, metadata) =>
                     Load(path, RunnerMode.Loading, metadata));
@@ -167,16 +163,14 @@ namespace PixelVision8.Runner
             base.ActivateEngine(engine);
         }
 
-//        protected void LoadDefaultGame()
-//        {
-//            // Boot the game
-//        }
+        //        protected void LoadDefaultGame()
+        //        {
+        //            // Boot the game
+        //        }
 
         public virtual bool Load(string path, RunnerMode newMode = RunnerMode.Playing,
             Dictionary<string, string> metaData = null)
         {
-
-
             try
             {
                 if (newMode == RunnerMode.Loading)
@@ -257,13 +251,9 @@ namespace PixelVision8.Runner
                         // Only add the history if the last item is not the same
 
                         // Loop through the history and see if the path already exists
-                        for (int i = loadHistory.Count-1; i >= 0 ; i--)
-                        {
+                        for (var i = loadHistory.Count - 1; i >= 0; i--)
                             if (loadHistory[i].Key == path)
-                            {
                                 loadHistory.RemoveAt(i);
-                            }
-                        }
 
                         if (loadHistory.Last().Key != path)
                             loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaDataCopy));
@@ -272,7 +262,7 @@ namespace PixelVision8.Runner
                     {
                         loadHistory.Add(new KeyValuePair<string, Dictionary<string, string>>(path, metaDataCopy));
                     }
-                }   
+                }
 
                 // Create a new tmpEngine
                 ConfigureEngine(metaData);
@@ -294,7 +284,7 @@ namespace PixelVision8.Runner
                 }
                 else
                 {
-                    DisplayError(ErrorCode.LoadError, new Dictionary<string, string> { { "@{path}", path } });
+                    DisplayError(ErrorCode.LoadError, new Dictionary<string, string> {{"@{path}", path}});
                     success = false;
                 }
 
@@ -329,8 +319,7 @@ namespace PixelVision8.Runner
         public virtual void DisplayError(ErrorCode code, Dictionary<string, string> tokens = null,
             Exception exception = null)
         {
-            if (mode == RunnerMode.Error)
-                return;
+            if (mode == RunnerMode.Error) return;
 
             //            // TODO should this only work on special cases?
             //            autoRunEnabled = true;
@@ -362,7 +351,7 @@ namespace PixelVision8.Runner
 
         protected string GetErrorMessage(ErrorCode code)
         {
-            return bios.ReadBiosData(code.ToString(), "Error code " + (int)code);
+            return bios.ReadBiosData(code.ToString(), "Error code " + (int) code);
         }
 
         protected virtual void LoadError(Dictionary<string, string> metaData)
@@ -387,7 +376,7 @@ namespace PixelVision8.Runner
                 if (success == false)
                 {
                     //                    loading = false;
-                    DisplayError(ErrorCode.LoadError, new Dictionary<string, string> { { "@{path}", nextPathToLoad } });
+                    DisplayError(ErrorCode.LoadError, new Dictionary<string, string> {{"@{path}", nextPathToLoad}});
                 }
                 else
                 {
@@ -403,8 +392,7 @@ namespace PixelVision8.Runner
         public virtual void BootDone(bool safeMode = false)
         {
             // Only call BootDone when the runner is booting.
-            if (mode != RunnerMode.Booting)
-                return;
+            if (mode != RunnerMode.Booting) return;
 
             // Test to see if we are in save mode before loading the bios
             if (safeMode)
@@ -451,18 +439,16 @@ namespace PixelVision8.Runner
             }
 
             DisplayError(ErrorCode.NoAutoRun);
-
         }
-    
-    public override void ConfigureDisplayTarget()
+
+        public override void ConfigureDisplayTarget()
         {
             // Get the virtual monitor resolution
             var tmpRes = bios.ReadBiosData(BiosSettings.Resolution.ToString(), "512x480")
                 .Split('x').Select(int.Parse)
                 .ToArray();
 
-            if (displayTarget == null)
-                displayTarget = new DisplayTarget(graphics, tmpRes[0], tmpRes[1]);
+            if (displayTarget == null) displayTarget = new DisplayTarget(graphics, tmpRes[0], tmpRes[1]);
 
             Fullscreen(Convert.ToBoolean(
                 bios.ReadBiosData(BiosSettings.FullScreen.ToString(), "False")));
@@ -528,7 +514,7 @@ namespace PixelVision8.Runner
             // Create the workspace starting at the App's directory
             CreateWorkspaceService();
 
-//            var biosPath = WorkspacePath.Root.AppendDirectory("App").AppendFile("bios.json");//Path.Combine(rootPath, "bios.json")));
+            //            var biosPath = WorkspacePath.Root.AppendDirectory("App").AppendFile("bios.json");//Path.Combine(rootPath, "bios.json")));
 
             // Test if a bios file exists
             if (workspaceService.Exists(biosPath))
@@ -609,19 +595,19 @@ namespace PixelVision8.Runner
         protected virtual void LoadDefaultGame()
         {
             Load(bios.ReadBiosData("BootTool", "/PixelVisionOS/Tools/BootTool/"), RunnerMode.Booting);
-//
-//            var autoRunPath = bios.ReadBiosData("AutoRun", "/App/DefaultGame/");
-//
-//            // Create a new dictionary to store the file binary data
-//            var gameFiles = workspaceService.LoadGame(autoRunPath); //gamePath)));
-//
-//            // Configure a new PV8 engine to play the game
-//            ConfigureEngine();
-//
-//            // Process the files
-//            ProcessFiles(tmpEngine, gameFiles);
-//
-//            tmpEngine.name = autoRunPath;
+            //
+            //            var autoRunPath = bios.ReadBiosData("AutoRun", "/App/DefaultGame/");
+            //
+            //            // Create a new dictionary to store the file binary data
+            //            var gameFiles = workspaceService.LoadGame(autoRunPath); //gamePath)));
+            //
+            //            // Configure a new PV8 engine to play the game
+            //            ConfigureEngine();
+            //
+            //            // Process the files
+            //            ProcessFiles(tmpEngine, gameFiles);
+            //
+            //            tmpEngine.name = autoRunPath;
         }
 
         public virtual void SaveGameData(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
@@ -676,9 +662,7 @@ namespace PixelVision8.Runner
         public override void ShutdownActiveEngine()
         {
             // Look to see if there is an active engine
-            if (activeEngine == null)
-                return;
-
+            if (activeEngine == null) return;
 
             base.ShutdownActiveEngine();
 
@@ -732,6 +716,12 @@ namespace PixelVision8.Runner
         {
             workspaceService.UpdateLog(message);
         }
+
+        protected delegate bool EnableCRTDelegator(bool? toggle);
+
+        protected delegate float BrightnessDelegator(float? brightness = null);
+
+        protected delegate float SharpnessDelegator(float? sharpness = null);
 
         #region Runner settings
 

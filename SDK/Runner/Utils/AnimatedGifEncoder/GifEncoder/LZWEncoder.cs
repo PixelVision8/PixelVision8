@@ -134,8 +134,7 @@ namespace GifEncoder
         private void Add(byte c, Stream outs)
         {
             accum[a_count++] = c;
-            if (a_count >= 254)
-                Flush(outs);
+            if (a_count >= 254) Flush(outs);
         }
 
         // Clear out the hash table
@@ -153,8 +152,7 @@ namespace GifEncoder
         // reset code table
         private void ResetCodeTable(int hsize)
         {
-            for (var i = 0; i < hsize; ++i)
-                htab[i] = -1;
+            for (var i = 0; i < hsize; ++i) htab[i] = -1;
         }
 
         private void Compress(int init_bits, Stream outs)
@@ -184,8 +182,8 @@ namespace GifEncoder
             ent = NextPixel();
 
             hshift = 0;
-            for (fcode = hsize; fcode < 65536; fcode *= 2)
-                ++hshift;
+            for (fcode = hsize; fcode < 65536; fcode *= 2) ++hshift;
+
             hshift = 8 - hshift; // set hash code range bound
 
             hsize_reg = hsize;
@@ -193,7 +191,7 @@ namespace GifEncoder
 
             Output(ClearCode, outs);
 
-            outer_loop :
+            outer_loop:
             while ((c = NextPixel()) != EOF)
             {
                 fcode = (c << maxbits) + ent;
@@ -208,12 +206,11 @@ namespace GifEncoder
                 if (htab[i] >= 0) // non-empty slot
                 {
                     disp = hsize_reg - i; // secondary hash (after G. Knott)
-                    if (i == 0)
-                        disp = 1;
+                    if (i == 0) disp = 1;
+
                     do
                     {
-                        if ((i -= disp) < 0)
-                            i += hsize_reg;
+                        if ((i -= disp) < 0) i += hsize_reg;
 
                         if (htab[i] == fcode)
                         {
@@ -275,8 +272,7 @@ namespace GifEncoder
         //----------------------------------------------------------------------------
         private int NextPixel()
         {
-            if (remaining == 0)
-                return EOF;
+            if (remaining == 0) return EOF;
 
             --remaining;
 

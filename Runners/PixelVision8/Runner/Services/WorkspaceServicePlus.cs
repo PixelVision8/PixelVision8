@@ -31,14 +31,14 @@ namespace PixelVision8.Runner.Services
 {
     public class WorkspaceServicePlus : WorkspaceService
     {
-//        private bool disksInvalid = true;
+        //        private bool disksInvalid = true;
         private readonly List<WorkspacePath> _disks = new List<WorkspacePath>();
 
         public WorkspaceServicePlus(KeyValuePair<WorkspacePath, IFileSystem> mountPoint) : base(mountPoint)
         {
         }
 
-//        private SortedList<WorkspacePath, IFileSystem> DiskMount => Mounts as SortedList<WorkspacePath, IFileSystem>;
+        //        private SortedList<WorkspacePath, IFileSystem> DiskMount => Mounts as SortedList<WorkspacePath, IFileSystem>;
         public int TotalDisks => _disks.Count;
         public int MaxDisks { get; set; } = 2;
 
@@ -54,8 +54,7 @@ namespace PixelVision8.Runner.Services
                 filePath = filePath.AppendDirectory(name);
 
                 // If the filesystem doesn't exit, we want to create it
-                if (!Exists(filePath))
-                    CreateDirectory(filePath);
+                if (!Exists(filePath)) CreateDirectory(filePath);
             }
 
             var workspaceDisk = new SubFileSystem(this, filePath);
@@ -129,9 +128,9 @@ namespace PixelVision8.Runner.Services
                 }
 
                 // TODO saving song doesn't work
-//                runner.exportService.ExportSong(filePath.Path, musicChip, soundChip);
-//
-//                runner.StartExport();
+                //                runner.exportService.ExportSong(filePath.Path, musicChip, soundChip);
+                //
+                //                runner.StartExport();
             }
         }
 
@@ -180,8 +179,7 @@ namespace PixelVision8.Runner.Services
             else
                 disk = new PhysicalFileSystem(path);
 
-            if (disk == null)
-                return null;
+            if (disk == null) return null;
 
             // Test to see if the disk is a valid game
             if (ValidateGameInDir(disk) == false &&
@@ -294,8 +292,8 @@ namespace PixelVision8.Runner.Services
         public override void ShutdownSystem()
         {
             // make sure we have the current list of disks in the bios
-//            UpdateDiskInBios();
-//            var disks = disks;
+            //            UpdateDiskInBios();
+            //            var disks = disks;
 
             foreach (var disk in Disks) SaveDisk(disk);
 
@@ -352,7 +350,7 @@ namespace PixelVision8.Runner.Services
                         fileData.Add(name, bytes);
 
                     count++;
-//                    Console.WriteLine("Parse File " + name);
+                    //                    Console.WriteLine("Parse File " + name);
                 }
 
                 try
@@ -388,7 +386,7 @@ namespace PixelVision8.Runner.Services
             Mounts.Add(new KeyValuePair<WorkspacePath, IFileSystem>(path, disk));
 
             if (!_disks.Contains(path)) _disks.Add(path);
-//            InvalidateDisks();
+            //            InvalidateDisks();
         }
 
         public void RemoveDisk(WorkspacePath path)
@@ -402,8 +400,8 @@ namespace PixelVision8.Runner.Services
                 Mounts.Remove(Get(path));
 
                 if (_disks.Contains(path)) _disks.Remove(path);
-//                
-//                InvalidateDisks();
+                //                
+                //                InvalidateDisks();
             }
         }
 

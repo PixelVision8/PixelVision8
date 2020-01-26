@@ -134,7 +134,7 @@ namespace PixelVision8.Engine
 
             CopyPixels(ref tmpPixels, x, y, blockWidth, blockHeight);
 
-//            Array.Copy(pixels, tmpPixels, pixels.Length);
+            //            Array.Copy(pixels, tmpPixels, pixels.Length);
 
             return tmpPixels;
         }
@@ -167,8 +167,7 @@ namespace PixelVision8.Engine
         {
             total = blockWidth * blockHeight;
 
-            if (total == 0)
-                return;
+            if (total == 0) return;
 
             // Per-line copy, as there is no special per-pixel logic required.
 
@@ -288,26 +287,24 @@ namespace PixelVision8.Engine
 
                 if (pixel != -1 || ignoreTransparent != true)
                 {
-                    if (colorOffset > 0 && pixel != -1)
-                        pixel += colorOffset;
+                    if (colorOffset > 0 && pixel != -1) pixel += colorOffset;
 
                     srcX = i % blockWidth;
                     srcY = i / blockWidth;
 
-                    if (flipH)
-                        srcX = blockWidth - 1 - srcX;
-                    if (flipV)
-                        srcY = blockWidth - 1 - srcY;
+                    if (flipH) srcX = blockWidth - 1 - srcX;
+
+                    if (flipV) srcY = blockWidth - 1 - srcY;
 
                     SetPixel(srcX + x, srcY + y, pixel);
                 }
 
 
-//                
-//                if (pixel != -1 && ignoreTransparent == false)
-//                {
-//                    
-//                }
+                //                
+                //                if (pixel != -1 && ignoreTransparent == false)
+                //                {
+                //                    
+                //                }
             }
 
             Invalidate();
@@ -325,8 +322,7 @@ namespace PixelVision8.Engine
         {
             total = _width * _height;
 
-            if (data.Length < total)
-                Array.Resize(ref data, total);
+            if (data.Length < total) Array.Resize(ref data, total);
 
             int color;
 
@@ -336,8 +332,7 @@ namespace PixelVision8.Engine
                 for (var i = 0; i < total; i++)
                 {
                     color = pixels[i];
-                    if (color != transparentColor)
-                        data[i] = color;
+                    if (color != transparentColor) data[i] = color;
                 }
         }
 
@@ -366,8 +361,7 @@ namespace PixelVision8.Engine
         {
             total = blockWidth * blockHeight;
 
-            if (data.Length < total)
-                Array.Resize(ref data, total);
+            if (data.Length < total) Array.Resize(ref data, total);
 
             // Per-line copy, as there is no special per-pixel logic required.
 

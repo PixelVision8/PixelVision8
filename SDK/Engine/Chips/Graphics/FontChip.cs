@@ -41,8 +41,8 @@ namespace PixelVision8.Engine.Chips
         {
             engine.FontChip = this;
 
-//            colorsPerSprite = 2;
-//            pages = 2;
+            //            colorsPerSprite = 2;
+            //            pages = 2;
             width = 8;
             height = 8;
             pages = 2;

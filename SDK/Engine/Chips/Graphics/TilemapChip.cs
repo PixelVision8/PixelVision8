@@ -83,8 +83,7 @@ namespace PixelVision8.Engine.Chips
         {
             //            cachedTileMap.Clear();
 
-            for (var i = 0; i < total; i++)
-                tiles[i].Invalidate();
+            for (var i = 0; i < total; i++) tiles[i].Invalidate();
             //                layers[(int) Layer.Invalid][i] = -1;
 
             Invalidate();
@@ -143,7 +142,7 @@ namespace PixelVision8.Engine.Chips
                 if (c < this.columns && r < this.rows && clear == false)
                 {
                     newTiles[i] = GetTile(c, r);
-                    newTiles[i].index = i;
+                    newTiles[i].Index = i;
                 }
                 else
                 {

@@ -20,7 +20,7 @@
 
 namespace PixelVision8.Engine
 {
-    public class TileData : AbstractData
+    public sealed class TileData : AbstractData
     {
         private int _colorOffset;
         private int _flag = -1;
@@ -28,13 +28,12 @@ namespace PixelVision8.Engine
         private bool _flipV;
         private int _spriteID;
 
-        public int index;
-
+        private int _index;
 
         public TileData(int index, int spriteID = -1, int colorOffset = 0, int flag = -1, bool flipH = false,
             bool flipV = false)
         {
-            this.index = index;
+            Index = index;
             this.spriteID = spriteID;
             this.colorOffset = colorOffset;
             this.flag = flag;
@@ -42,6 +41,16 @@ namespace PixelVision8.Engine
             this.flipH = flipH;
             this.flipV = flipV;
             Invalidate();
+        }
+
+        public int Index
+        {
+            get => _index;
+            set
+            {
+                _index = value;
+                Invalidate();
+            }
         }
 
         public int spriteID

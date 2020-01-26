@@ -20,7 +20,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
+// using System.Diagnostics;
 using System.Threading;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
@@ -34,12 +34,12 @@ namespace PixelVision8.Runner.Services
     {
         private readonly List<IAbstractExporter> exporters = new List<IAbstractExporter>();
 
-//        private ITextureFactory textureFactory;
-//        private readonly IAudioClipFactory audioClipFactory;
+        //        private ITextureFactory textureFactory;
+        //        private readonly IAudioClipFactory audioClipFactory;
 
         private int currentParserID;
 
-//        protected bool microSteps = true;
+        //        protected bool microSteps = true;
         protected int currentStep;
         private bool exporting;
         protected BackgroundWorker exportWorker;
@@ -77,16 +77,16 @@ namespace PixelVision8.Runner.Services
         {
             Reset();
 
-//            exporting = true;
+            //            exporting = true;
 
             // Make sure that the texture factory has the current mask color if any images are going to be exported.
-//            textureFactory.maskColor = new ColorData(engine.colorChip.maskColor);
+            //            textureFactory.maskColor = new ColorData(engine.colorChip.maskColor);
 
-//            Console.WriteLine("MASK COLOR " + engine.colorChip.maskColor);
+            //            Console.WriteLine("MASK COLOR " + engine.colorChip.maskColor);
 
-//            Console.WriteLine("Export Game " + path);
+            //            Console.WriteLine("Export Game " + path);
 
-            var watch = Stopwatch.StartNew();
+            // var watch = Stopwatch.StartNew();
 
             // Save the engine so we can work with it during loading
             targetEngine = engine;
@@ -98,15 +98,15 @@ namespace PixelVision8.Runner.Services
             // Step 2 (optional). Load up the Lua script
             if ((saveFlags & SaveFlags.Code) == SaveFlags.Code)
             {
-//                //var scriptExtension = ".lua";
-//                    
-//                var paths = files.Keys.Where(s => textExtensions.Any(x => s.EndsWith(x))).ToList();
-//
-//                foreach (var fileName in paths)
-//                {
-//                    parser = LoadScript(fileName, files[fileName]);
-//                    AddExporter(parser);
-//                }
+                //                //var scriptExtension = ".lua";
+                //                    
+                //                var paths = files.Keys.Where(s => textExtensions.Any(x => s.EndsWith(x))).ToList();
+                //
+                //                foreach (var fileName in paths)
+                //                {
+                //                    parser = LoadScript(fileName, files[fileName]);
+                //                    AddExporter(parser);
+                //                }
             }
 
             // Step 3 (optional). Look for new colors
@@ -125,53 +125,53 @@ namespace PixelVision8.Runner.Services
             // Step 5 (optional). Look for new sprites
             if ((saveFlags & SaveFlags.Sprites) == SaveFlags.Sprites)
             {
-//                Console.WriteLine("Export Sprite");
+                //                Console.WriteLine("Export Sprite");
 
                 var imageExporter = new PNGWriter();
 
                 AddExporter(new SpriteExporter(path + "sprites.png", targetEngine, imageExporter));
-//                var spriteChip = targetEngine.spriteChip;
-//
-//                var pixelData = spriteChip.texture.GetPixels();
-//                
-//                //TODO need to crop the pixel data so we only save out what we need
-//                
-//                AddExporter(new ImageExporter("sprite.cache.png", pixelData, spriteChip.textureWidth, spriteChip.textureHeight, targetEngine.colorChip.colors, textureFactory));
-////
-////                
-//                parser = LoadSprites(files);
-//                if (parser != null)
-//                    AddExporter(parser);
+                //                var spriteChip = targetEngine.spriteChip;
+                //
+                //                var pixelData = spriteChip.texture.GetPixels();
+                //                
+                //                //TODO need to crop the pixel data so we only save out what we need
+                //                
+                //                AddExporter(new ImageExporter("sprite.cache.png", pixelData, spriteChip.textureWidth, spriteChip.textureHeight, targetEngine.colorChip.colors, textureFactory));
+                ////
+                ////                
+                //                parser = LoadSprites(files);
+                //                if (parser != null)
+                //                    AddExporter(parser);
             }
 
             // Step 6 (optional). Look for tile map to load
-//            if ((saveFlags & SaveFlags.Tilemap) == SaveFlags.Tilemap)
-//            {
-//                var imageExporter = new PNGWriter();
-//                
-//                var tmp = new TilemapExporter(path + "tilemap.png", targetEngine, imageExporter);
-//                AddExporter(tmp);
-//            }
-//            
-//            if ((saveFlags & SaveFlags.TilemapFlags) == SaveFlags.TilemapFlags)
-//            {
-//                var imageExporter = new PNGWriter();
-//
-//                AddExporter(new TilemapFlagExporter(path + "tilemap-flags.png", targetEngine, imageExporter));
-//            }
+            //            if ((saveFlags & SaveFlags.Tilemap) == SaveFlags.Tilemap)
+            //            {
+            //                var imageExporter = new PNGWriter();
+            //                
+            //                var tmp = new TilemapExporter(path + "tilemap.png", targetEngine, imageExporter);
+            //                AddExporter(tmp);
+            //            }
+            //            
+            //            if ((saveFlags & SaveFlags.TilemapFlags) == SaveFlags.TilemapFlags)
+            //            {
+            //                var imageExporter = new PNGWriter();
+            //
+            //                AddExporter(new TilemapFlagExporter(path + "tilemap-flags.png", targetEngine, imageExporter));
+            //            }
 
-//            if ((saveFlags & SaveFlags.FlagColors) == SaveFlags.FlagColors)
-//            {
-//                AddExporter(new FlagColorExporter(path + "flags.png", targetEngine, textureFactory));
-//                //AddExporter(new FlagTileExporter(path + "flags.png", targetEngine, textureFactory));
-//            }
+            //            if ((saveFlags & SaveFlags.FlagColors) == SaveFlags.FlagColors)
+            //            {
+            //                AddExporter(new FlagColorExporter(path + "flags.png", targetEngine, textureFactory));
+            //                //AddExporter(new FlagTileExporter(path + "flags.png", targetEngine, textureFactory));
+            //            }
 
-//            if ((saveFlags & SaveFlags.TileColorOffset) == SaveFlags.TileColorOffset)
-//            {
-//                AddExporter(new TileColorOffsetExporter(path + "tile-color-offsets.json", targetEngine));
-//            }
+            //            if ((saveFlags & SaveFlags.TileColorOffset) == SaveFlags.TileColorOffset)
+            //            {
+            //                AddExporter(new TileColorOffsetExporter(path + "tile-color-offsets.json", targetEngine));
+            //            }
 
-//
+            //
             // Step 7 (optional). Look for fonts to load
             if ((saveFlags & SaveFlags.Fonts) == SaveFlags.Fonts)
             {
@@ -195,7 +195,6 @@ namespace PixelVision8.Runner.Services
                     {
                     }
                 }
-
             }
 
             if ((saveFlags & SaveFlags.Tilemap) == SaveFlags.Tilemap)
@@ -220,13 +219,13 @@ namespace PixelVision8.Runner.Services
             // Step 11 (optional). Look for meta data and override the game
             if ((saveFlags & SaveFlags.MetaSprites) == SaveFlags.MetaSprites)
                 AddExporter(new MetaSpriteExporter(path + "meta-sprites.json", targetEngine));
-            
+
             totalParsers = exporters.Count;
             currentParserID = 0;
 
-            watch.Stop();
+            // watch.Stop();
 
-//            UnityEngine.Debug.Log("Game Exporter Setup Time - " + watch.ElapsedMilliseconds);
+            //            UnityEngine.Debug.Log("Game Exporter Setup Time - " + watch.ElapsedMilliseconds);
         }
 
         public void AddExporter(IAbstractExporter exporter)
@@ -244,8 +243,8 @@ namespace PixelVision8.Runner.Services
             Reset();
 
             // TODO this should just use the active engine?
-//            var name = targetEngine.musicChip.activeSongData.songName;
-//            UnityEngine.Debug.Log("Export Song " + path);
+            //            var name = targetEngine.musicChip.activeSongData.songName;
+            //            UnityEngine.Debug.Log("Export Song " + path);
             // TODO need to add a base path to the file name so we can create folders.
             AddExporter(new SongExporter(path, musicChip, soundChip, patterns));
         }
@@ -271,7 +270,7 @@ namespace PixelVision8.Runner.Services
         public void StartExport(bool useSteps = true)
         {
             // TODO saving should be fast enough to do without threading
-//            useSteps = false;
+            //            useSteps = false;
 
             if (useSteps == false)
             {
@@ -281,21 +280,22 @@ namespace PixelVision8.Runner.Services
             }
             else
             {
-                exportWorker = new BackgroundWorker();
+                exportWorker = new BackgroundWorker
+                {
+                    // TODO need a way to of locking this.
 
-                // TODO need a way to of locking this.
+                    WorkerSupportsCancellation = true,
+                    WorkerReportsProgress = true
+                };
 
-                exportWorker.WorkerSupportsCancellation = true;
-                exportWorker.WorkerReportsProgress = true;
 
-
-//                Console.WriteLine("Start export " + exportService.totalSteps + " steps");
+                //                Console.WriteLine("Start export " + exportService.totalSteps + " steps");
 
                 exportWorker.DoWork += WorkerExportSteps;
-//            bgw.ProgressChanged += WorkerLoaderProgressChanged;
+                //            bgw.ProgressChanged += WorkerLoaderProgressChanged;
                 exportWorker.RunWorkerCompleted += WorkerExporterCompleted;
 
-//            bgw.WorkerReportsProgress = true;
+                //            bgw.WorkerReportsProgress = true;
                 exportWorker.RunWorkerAsync();
 
                 exporting = true;
@@ -304,7 +304,7 @@ namespace PixelVision8.Runner.Services
 
         private void WorkerExportSteps(object sender, DoWorkEventArgs e)
         {
-//            var result = e.Result;
+            //            var result = e.Result;
 
             var total = totalSteps; //some number (this is your variable to change)!!
 
@@ -316,8 +316,8 @@ namespace PixelVision8.Runner.Services
                 }
                 catch
                 {
-//                    DisplayError(RunnerGame.ErrorCode.Exception, new Dictionary<string, string>(){{"@{error}",exception.Message}}, exception);
-//                    throw;
+                    //                    DisplayError(RunnerGame.ErrorCode.Exception, new Dictionary<string, string>(){{"@{error}",exception.Message}}, exception);
+                    //                    throw;
                 }
 
                 Thread.Sleep(1);
@@ -341,8 +341,7 @@ namespace PixelVision8.Runner.Services
 
         public void ExportAll()
         {
-            while (completed == false)
-                NextExporter();
+            while (completed == false) NextExporter();
         }
 
 

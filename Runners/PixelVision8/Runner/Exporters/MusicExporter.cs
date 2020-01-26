@@ -33,7 +33,7 @@ namespace PixelVision8.Runner.Exporters
         {
             this.targetEngine = targetEngine;
 
-//            CalculateSteps();
+            //            CalculateSteps();
         }
 
         public override void CalculateSteps()
@@ -69,8 +69,7 @@ namespace PixelVision8.Runner.Exporters
                     JsonUtil.indentLevel--;
                 }
 
-                if (i < total - 1)
-                    sb.Append(",");
+                if (i < total - 1) sb.Append(",");
             }
 
             JsonUtil.indentLevel--;
@@ -91,8 +90,7 @@ namespace PixelVision8.Runner.Exporters
                     JsonUtil.indentLevel--;
                 }
 
-                if (i < total - 1)
-                    sb.Append(",");
+                if (i < total - 1) sb.Append(",");
             }
 
             JsonUtil.indentLevel--;

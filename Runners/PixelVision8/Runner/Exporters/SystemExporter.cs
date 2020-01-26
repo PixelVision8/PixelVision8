@@ -34,7 +34,7 @@ namespace PixelVision8.Runner.Exporters
         {
             this.engine = engine;
 
-//            CalculateSteps();
+            //            CalculateSteps();
         }
 
         public override void CalculateSteps()
@@ -52,7 +52,7 @@ namespace PixelVision8.Runner.Exporters
             if (engine.DisplayChip != null && engine.DisplayChip.export)
                 steps.Add(delegate { SerializeDisplay(engine.DisplayChip); });
 
-//             Serialize Controller
+            //             Serialize Controller
             if (engine.ControllerChip != null && engine.ControllerChip.export)
                 steps.Add(delegate { SerializeControllerChip(engine.ControllerChip); });
 
@@ -109,7 +109,7 @@ namespace PixelVision8.Runner.Exporters
             // Close the object
             sb.Append("}");
 
-//            Debug.Log("Save bytes");
+            //            Debug.Log("Save bytes");
             bytes = Encoding.UTF8.GetBytes(sb.ToString());
 
             currentStep++;
@@ -117,8 +117,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void SerializeDisplay(DisplayChip display)
         {
-            if (display.export == false)
-                return;
+            if (display.export == false) return;
 
             JsonUtil.GetLineBreak(sb);
             sb.Append("\"DisplayChip\":");
@@ -129,23 +128,23 @@ namespace PixelVision8.Runner.Exporters
 
             // Width Value
             sb.Append("\"width\":");
-            sb.Append(display.width);
+            sb.Append(display.Width);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
             // Height Value
             sb.Append("\"height\":");
-            sb.Append(display.height);
+            sb.Append(display.Height);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"overscanX\":");
-            sb.Append(display.overscanX);
+            sb.Append(display.OverscanX);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"overscanY\":");
-            sb.Append(display.overscanY);
+            sb.Append(display.OverscanY);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
@@ -162,8 +161,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void SerializeColorChip(ColorChip colorChip)
         {
-            if (colorChip.export == false)
-                return;
+            if (colorChip.export == false) return;
 
             // TODO this needs to be moved into the chip so it can be correctly overriden
 
@@ -207,8 +205,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void SerializeControllerChip(IControllerChip controllerChip)
         {
-            if (controllerChip.export == false)
-                return;
+            if (controllerChip.export == false) return;
 
             JsonUtil.GetLineBreak(sb);
             sb.Append("\"ControllerChip\":");
@@ -225,8 +222,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void SerializeFontChip(FontChip fontChip)
         {
-            if (fontChip.export == false)
-                return;
+            if (fontChip.export == false) return;
 
             JsonUtil.GetLineBreak(sb);
             sb.Append("\"FontChip\":");
@@ -279,8 +275,8 @@ namespace PixelVision8.Runner.Exporters
             // Save Slots
             sb.Append("\"saveSlots\":");
             sb.Append(gameChip.SaveSlots);
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
+            //            sb.Append(",");
+            //            JsonUtil.GetLineBreak(sb, 1);
 
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
@@ -298,10 +294,10 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-//            sb.Append("\"totalTracks\":");
-//            sb.Append(musicChip.totalTracks);
-//            sb.Append(",");
-//            JsonUtil.GetLineBreak(sb, 1);
+            //            sb.Append("\"totalTracks\":");
+            //            sb.Append(musicChip.totalTracks);
+            //            sb.Append(",");
+            //            JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"totalSongs\":");
             sb.Append(musicChip.totalSongs);
@@ -354,7 +350,7 @@ namespace PixelVision8.Runner.Exporters
 
             for (var i = 0; i < total; i++)
             {
-//                Console.WriteLine("Channel "+i +" type "+soundChip.ChannelType(i));
+                //                Console.WriteLine("Channel "+i +" type "+soundChip.ChannelType(i));
 
                 sb.Append((int) soundChip.ChannelType(i));
                 if (i < total - 1) sb.Append(",");
@@ -371,7 +367,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void SerializeSpriteChip(SpriteChip spriteChip)
         {
-//            var sb = new StringBuilder();
+            //            var sb = new StringBuilder();
             JsonUtil.GetLineBreak(sb);
 
             JsonUtil.GetLineBreak(sb);
@@ -412,24 +408,24 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("\"cps\":");
             sb.Append(spriteChip.colorsPerSprite);
 
-//            if (serializePixelData)
-//            {
-//                sb.Append(",");
-//                JsonUtil.GetLineBreak(sb, 1);
-//
-//                //TODO this should just use the TextureData's
-//                // serializePixelData
-//                sb.Append("\"serializePixelData\":");
-//                sb.Append(Convert.ToInt32(serializePixelData));
-//
-//                sb.Append(",");
-//
-//                //TODO this should capture all of the texture settings
-//                sb.Append("\"pixelData\":");
-//                sb.Append(DataUtil.SerializedTextureData(_texture));
-//
-//                //sb.Append(_texture.SerializeData());
-//            }
+            //            if (serializePixelData)
+            //            {
+            //                sb.Append(",");
+            //                JsonUtil.GetLineBreak(sb, 1);
+            //
+            //                //TODO this should just use the TextureData's
+            //                // serializePixelData
+            //                sb.Append("\"serializePixelData\":");
+            //                sb.Append(Convert.ToInt32(serializePixelData));
+            //
+            //                sb.Append(",");
+            //
+            //                //TODO this should capture all of the texture settings
+            //                sb.Append("\"pixelData\":");
+            //                sb.Append(DataUtil.SerializedTextureData(_texture));
+            //
+            //                //sb.Append(_texture.SerializeData());
+            //            }
 
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
@@ -474,6 +470,5 @@ namespace PixelVision8.Runner.Exporters
 
             currentStep++;
         }
-
     }
 }

@@ -37,7 +37,7 @@ namespace PixelVision8.Runner.Parsers
         {
             currentStep = 0;
             steps.Add(ParseImageData);
-//            steps.Add(IndexColors);
+            //            steps.Add(IndexColors);
             steps.Add(ReadColors);
             steps.Add(BuildColorMap);
         }
@@ -48,7 +48,7 @@ namespace PixelVision8.Runner.Parsers
             colorChip.total = totalColors;
 
 
-//            colorChip.RebuildColorPages(totalColors);
+            //            colorChip.RebuildColorPages(totalColors);
 
             for (var i = 0; i < totalColors; i++)
             {

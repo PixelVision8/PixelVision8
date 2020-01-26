@@ -77,8 +77,7 @@ namespace PixelVision8.Engine
         public void Reset(bool autoClear = true)
         {
             totalNotes = maxNotes;
-            if (autoClear)
-                Clear();
+            if (autoClear) Clear();
         }
 
         /// <summary>
@@ -86,8 +85,7 @@ namespace PixelVision8.Engine
         /// </summary>
         public void Clear()
         {
-            for (var i = 0; i < totalNotes; i++)
-                notes[i] = 0;
+            for (var i = 0; i < totalNotes; i++) notes[i] = 0;
         }
 
         public string SerializeData()

@@ -85,8 +85,7 @@ namespace PixelVision8.Runner.Services
             if (!biosData.ContainsKey(key))
             {
                 // If the key doesn't exist, test if we should save the default value
-                if (autoSave)
-                    UpdateBiosData(key, defaultValue);
+                if (autoSave) UpdateBiosData(key, defaultValue);
 
                 // return the default value
                 return defaultValue;

@@ -31,9 +31,8 @@ namespace PixelVision8.Engine.Chips
     /// </summary>
     public class SoundChip : AbstractChip
     {
-        protected IChannel[] Channels = new IChannel[0];
-
         private readonly Dictionary<string, byte[]> soundBank = new Dictionary<string, byte[]>();
+        protected IChannel[] Channels = new IChannel[0];
 
         protected SoundData[] Sounds;
 
@@ -82,8 +81,8 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public virtual void UpdateSound(int index, string param)
         {
-//            var synth = sounds[index];
-//            synth.UpdateSettings(param);
+            //            var synth = sounds[index];
+            //            synth.UpdateSettings(param);
 
             Sounds[index].param = param;
         }
@@ -92,11 +91,11 @@ namespace PixelVision8.Engine.Chips
         ///     Clear all the <see cref="sounds" /> in the collection.
         /// </summary>
         /// <param name="index"></param>
-//        public void ClearSound(int index)
-//        {
-//            // TODO need to see if there is a better way to revert a sound
-//            sounds[index] = new SoundData("Untitled" + index.ToString("D2"));
-//        }
+        //        public void ClearSound(int index)
+        //        {
+        //            // TODO need to see if there is a better way to revert a sound
+        //            sounds[index] = new SoundData("Untitled" + index.ToString("D2"));
+        //        }
 
         /// <summary>
         ///     This stub methods is designed to be overridden with a Factory to
@@ -135,8 +134,7 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void PlaySound(int index, int channelID = 0, float? frequency = null)
         {
-            if (index > Sounds.Length)
-                return;
+            if (index > Sounds.Length) return;
 
             channelID = MathHelper.Clamp(channelID, 0, totalChannels - 1);
 
@@ -144,7 +142,7 @@ namespace PixelVision8.Engine.Chips
 
             channel?.Stop();
 
-//            channel = sounds[index];
+            //            channel = sounds[index];
 
             channel.Play(Sounds[index], frequency);
         }
@@ -175,13 +173,13 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-//        public IChannel ReadChannel(int index)
-//        {
-//            if (index < 0 || index >= totalChannels)
-//                return null;
-//
-//            return channels[index];
-//        }
+        //        public IChannel ReadChannel(int index)
+        //        {
+        //            if (index < 0 || index >= totalChannels)
+        //                return null;
+        //
+        //            return channels[index];
+        //        }
         public string ReadLabel(int id)
         {
             return ReadSound(id).name;

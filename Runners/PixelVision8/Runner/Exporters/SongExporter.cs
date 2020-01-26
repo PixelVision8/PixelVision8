@@ -27,6 +27,8 @@ namespace PixelVision8.Runner.Exporters
     public class SongExporter : AbstractExporter
     {
         private readonly MusicChip musicChip;
+
+        private readonly int[] patterns;
         private readonly SoundChip soundChip;
         private int currentPattern;
 
@@ -34,8 +36,6 @@ namespace PixelVision8.Runner.Exporters
         public float mixdownTrackVolume = 0.6f;
         public float note_tick_s = 30.0f / 120.0f; // (30.0f/120.0f) = 120BPM eighth notes
         public float note_tick_s_odd;
-
-        private readonly int[] patterns;
         private RawAudioData result;
 
 
@@ -120,9 +120,7 @@ namespace PixelVision8.Runner.Exporters
 
             for (tracknum = 0; tracknum < tcount; tracknum++)
             {
-                if (instrument[tracknum] == null)
-                    instrument[tracknum] = new SfxrSynth();
-
+                if (instrument[tracknum] == null) instrument[tracknum] = new SfxrSynth();
 
                 var songdataCurrentPos = newStartPos;
                 trackresult[tracknum].Resize(newLength);
@@ -238,8 +236,7 @@ namespace PixelVision8.Runner.Exporters
 
             for (var i = 0; i < clips.Length; i++)
             {
-                if (clips[i] == null)
-                    continue;
+                if (clips[i] == null) continue;
 
                 buffer = clips[i].data; //.GetData(buffer);
 
@@ -254,8 +251,8 @@ namespace PixelVision8.Runner.Exporters
                     if (data[loop] > 1f) // too loud?
                     {
                         clipWarnings++;
-                        if (data[loop] - 1f > redlineMax)
-                            redlineMax = data[loop] - 1f;
+                        if (data[loop] - 1f > redlineMax) redlineMax = data[loop] - 1f;
+
                         data[loop] = 1f;
                     }
                 }

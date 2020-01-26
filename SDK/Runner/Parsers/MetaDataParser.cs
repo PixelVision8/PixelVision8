@@ -39,8 +39,7 @@ namespace PixelVision8.Runner.Parsers
 
         public void ApplySettings()
         {
-            foreach (var d in data)
-                engine.SetMetadata(d.Key, d.Value as string);
+            foreach (var d in data) engine.SetMetadata(d.Key, d.Value as string);
 
             currentStep++;
         }

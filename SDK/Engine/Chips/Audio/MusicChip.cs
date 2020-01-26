@@ -55,7 +55,7 @@ namespace PixelVision8.Engine.Chips
         public int preRenderBitrate = 44100; //48000; // should be 44100; FIXME TODO EXPERIMENTING W BUGFIX
 
 
-//        protected int sequencerLoopNum;
+        //        protected int sequencerLoopNum;
         public bool songCurrentlyPlaying;
 
 
@@ -68,17 +68,17 @@ namespace PixelVision8.Engine.Chips
             {"patterns", -1},
             {"loop", 0}
         };
-//        private int currentLoopID;
+        //        private int currentLoopID;
 
         public SongData[] songs = new SongData[1];
-//        protected int songLoopCount = 0;
+        //        protected int songLoopCount = 0;
 
         protected float swingRhythmFactor = 0.7f;
 
         protected float time;
 
         public TrackerData[] trackerDataCollection = new TrackerData[0];
-//        public int tracksPerLoop = 8;
+        //        public int tracksPerLoop = 8;
 
         public int
             SequencerBeatNumber
@@ -119,12 +119,12 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
-//        public SongData[] songDataCollection = new SongData[0];
+        //        public SongData[] songDataCollection = new SongData[0];
 
-//        public int CurrentLoopId
-//        {
-//            get { return currentLoop; }
-//        }
+        //        public int CurrentLoopId
+        //        {
+        //            get { return currentLoop; }
+        //        }
 
         /// <summary>
         ///     Total number of Loop stored in the music chip. There is a maximum
@@ -156,29 +156,27 @@ namespace PixelVision8.Engine.Chips
             get => maxNoteNum;
             set
             {
-                if (maxNoteNum == value)
-                    return;
+                if (maxNoteNum == value) return;
 
                 var total = TotalLoops;
-                for (var i = 0; i < total; i++)
-                    trackerDataCollection[i].totalNotes = value;
+                for (var i = 0; i < total; i++) trackerDataCollection[i].totalNotes = value;
             }
         }
 
         public int totalTracks => SoundChip.totalChannels;
-//        {
-//            get => _totalTracks;
-//            set
-//            {
-//                value = MathHelper.Clamp(value, 1, maxTracks);
-//
-//                var total = trackerDataCollection.Length;
-//                for (var i = 0; i < total; i++)
-//                    trackerDataCollection[i].totalTracks = value;
-//
-//                _totalTracks = value;
-//            }
-//        }
+        //        {
+        //            get => _totalTracks;
+        //            set
+        //            {
+        //                value = MathHelper.Clamp(value, 1, maxTracks);
+        //
+        //                var total = trackerDataCollection.Length;
+        //                for (var i = 0; i < total; i++)
+        //                    trackerDataCollection[i].totalTracks = value;
+        //
+        //                _totalTracks = value;
+        //            }
+        //        }
 
         /// <summary>
         ///     The active song's data that was loaded into memory.
@@ -187,8 +185,7 @@ namespace PixelVision8.Engine.Chips
         {
             get
             {
-                if (trackerDataCollection == null)
-                    return null;
+                if (trackerDataCollection == null) return null;
 
                 return trackerDataCollection[currentPattern];
             }
@@ -257,7 +254,7 @@ namespace PixelVision8.Engine.Chips
             noteHZ = new float[maxNoteNum];
             noteStartFrequency = new float[maxNoteNum];
             noteStartFrequency[0] = 0f; // since we never set it below
-//            var SR = 44100.0f; // hmm preRenderBitrate? nah
+            //            var SR = 44100.0f; // hmm preRenderBitrate? nah
             float hertz;
 
             for (var x = 0; x < maxNoteNum; ++x)
@@ -278,8 +275,8 @@ namespace PixelVision8.Engine.Chips
             }
 
             TotalLoops = 16;
-//            maxTracks = 4;
-//            totalTracks = maxTracks;
+            //            maxTracks = 4;
+            //            totalTracks = maxTracks;
             totalSongs = 16;
         }
 
@@ -290,7 +287,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="id"></param>
         public void LoadPattern(int id)
         {
-//            Console.WriteLine("Load pattern " + id);
+            //            Console.WriteLine("Load pattern " + id);
 
             // Rewind the playhead
             SequencerBeatNumber = 0;
@@ -302,9 +299,9 @@ namespace PixelVision8.Engine.Chips
             UpdateNoteTickLengths();
 
             // Updates the tracks per loop
-//            tracksPerLoop = activeTrackerData.tracks.Length;
+            //            tracksPerLoop = activeTrackerData.tracks.Length;
 
-//            Console.WriteLine("Load Pattern Track " + tracksPerLoop);
+            //            Console.WriteLine("Load Pattern Track " + tracksPerLoop);
             // Update the music notes?
             UpdateMusicNotes();
         }
@@ -344,51 +341,51 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         protected void OnBeat()
         {
-//            Console.WriteLine("On Beat "+ sequencerBeatNumber +" "+notesPerTrack + " " + currentSong.AtEnd());
+            //            Console.WriteLine("On Beat "+ sequencerBeatNumber +" "+notesPerTrack + " " + currentSong.AtEnd());
 
 
             if (SequencerBeatNumber >= NotesPerTrack) // at end of a loop?
             {
-//                Console.WriteLine("End of song Looping " + loopSong);
+                //                Console.WriteLine("End of song Looping " + loopSong);
 
                 // Finished Loop;
 
                 // Increase the next loop value
-//                sequencerLoopNum++;
-//    
-//                if (sequencerLoopNum >= currentSong.Length)
-//                {
-//                    if (loopSong)
-//                    {    
-//                        sequencerLoopNum = 0;
-//                    }
-//                    else
-//                    {
-//                        songCurrentlyPlaying = false;
-//                        return;
-//                    }
-//                }
+                //                sequencerLoopNum++;
+                //    
+                //                if (sequencerLoopNum >= currentSong.Length)
+                //                {
+                //                    if (loopSong)
+                //                    {    
+                //                        sequencerLoopNum = 0;
+                //                    }
+                //                    else
+                //                    {
+                //                        songCurrentlyPlaying = false;
+                //                        return;
+                //                    }
+                //                }
 
 
                 // Look to see if the next pattern is -1 and if looping is false
                 if (loopSong == false)
                 {
-//                    Console.WriteLine("End of song " + loopSong + " " + songCurrentlyPlaying);
-//
-//                    if (loopSong == false)
-//                    {
-//                        Console.WriteLine("Stop song");
+                    //                    Console.WriteLine("End of song " + loopSong + " " + songCurrentlyPlaying);
+                    //
+                    //                    if (loopSong == false)
+                    //                    {
+                    //                        Console.WriteLine("Stop song");
                     // Stop the song and return
                     songCurrentlyPlaying = false;
                     return;
-//                    }
+                    //                    }
 
                     //RewindSong();
                 }
 
-//                Console.WriteLine("Load new pattern");
+                //                Console.WriteLine("Load new pattern");
 
-//                    RewindSong();
+                //                    RewindSong();
 
                 // Get the next pattern
                 var nextPattern = currentSong.NextPattern();
@@ -397,7 +394,7 @@ namespace PixelVision8.Engine.Chips
                 // Load the next song in the playlist
                 LoadPattern(nextPattern);
 
-//                }
+                //                }
             }
 
             var total = ActiveTrackerData.tracks.Length;
@@ -411,9 +408,9 @@ namespace PixelVision8.Engine.Chips
                 // what note is it?
                 var gotANote = tmpTrack.notes[SequencerBeatNumber % NotesPerTrack];
 
-//                var instrument = soundChip.ReadChannel(trackNum);
+                //                var instrument = soundChip.ReadChannel(trackNum);
 
-//                if (instrument != null)
+                //                if (instrument != null)
                 if (gotANote > 0 && gotANote < maxNoteNum && tmpTrack.mute == false)
                 {
                     var frequency = noteStartFrequency[gotANote];
@@ -443,7 +440,7 @@ namespace PixelVision8.Engine.Chips
 
             currentSong.Rewind();
 
-//            sequencerLoopNum = 0;
+            //            sequencerLoopNum = 0;
             SequencerBeatNumber = 0;
         }
 
@@ -475,8 +472,7 @@ namespace PixelVision8.Engine.Chips
 
         public void UpdateSong(int id, int[] patterns, int startAt = 0, int? endAt = null)
         {
-            if (id < 0 || id > songs.Length)
-                return;
+            if (id < 0 || id > songs.Length) return;
 
             var songData = songs[id];
 
@@ -488,13 +484,11 @@ namespace PixelVision8.Engine.Chips
 
         public void PlaySong(int id, bool loop = false, int seekTo = 0)
         {
-            if (id < 0 || id > songs.Length)
-                return;
-
+            if (id < 0 || id > songs.Length) return;
 
             PlaySong(songs[id], loop, seekTo);
 
-//            PlayPatterns(songs[id]);
+            //            PlayPatterns(songs[id]);
         }
 
         public void PlaySong(SongData songData, bool loop = false, int seekTo = 0)
@@ -511,9 +505,9 @@ namespace PixelVision8.Engine.Chips
             LoadPattern(currentSong.NextPattern());
 
             // Toggle the song playing value
-//            if (songCurrentlyPlaying)
-//                songCurrentlyPlaying = false;
-//            else
+            //            if (songCurrentlyPlaying)
+            //                songCurrentlyPlaying = false;
+            //            else
             songCurrentlyPlaying = true;
         }
     }

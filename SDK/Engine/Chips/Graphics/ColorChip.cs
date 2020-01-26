@@ -101,8 +101,7 @@ namespace PixelVision8.Engine.Chips
             get => _maskColor;
             set
             {
-                if (ValidateHexColor(value))
-                    _maskColor = value.ToUpper();
+                if (ValidateHexColor(value)) _maskColor = value.ToUpper();
             }
         }
 
@@ -113,10 +112,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         /// <value>Int</value>
         // TODO need to change this to totalSet colors or something more descriptive
-        public int totalUsedColors
-        {
-            get { return hexColors.Length - hexColors.ToList().RemoveAll(c => c == maskColor); }
-        }
+        public int totalUsedColors => hexColors.Length - hexColors.ToList().RemoveAll(c => c == maskColor);
 
         //TODO need to figure out a better way to set this up?
         //        public int maxColors
@@ -212,8 +208,7 @@ namespace PixelVision8.Engine.Chips
         {
             invalid = false;
             var total = invalidColors.Length;
-            for (var i = 0; i < total; i++)
-                invalidColors[i] = value;
+            for (var i = 0; i < total; i++) invalidColors[i] = value;
         }
 
         public string ReadColorAt(int index)
@@ -229,14 +224,12 @@ namespace PixelVision8.Engine.Chips
         public void Clear()
         {
             var t = _colors.Length;
-            for (var i = 0; i < t; i++)
-                UpdateColorAt(i, maskColor);
+            for (var i = 0; i < t; i++) UpdateColorAt(i, maskColor);
         }
 
         public virtual void UpdateColorAt(int index, string color)
         {
-            if (index >= _colors.Length || index < 0)
-                return;
+            if (index >= _colors.Length || index < 0) return;
 
             // Make sure that all colors are uppercase
             color = color.ToUpper();

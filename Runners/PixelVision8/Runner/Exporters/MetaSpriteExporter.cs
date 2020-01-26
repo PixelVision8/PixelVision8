@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Linq;
 using System.Text;
 using PixelVision8.Engine;
 using PixelVision8.Runner.Utils;
@@ -39,8 +38,7 @@ namespace PixelVision8.Runner.Exporters
 
         public override void CalculateSteps()
         {
-            if (targetEngine.GameChip.TotalMetaSprites < 1)
-                return;
+            if (targetEngine.GameChip.TotalMetaSprites < 1) return;
 
             base.CalculateSteps();
 
@@ -68,15 +66,14 @@ namespace PixelVision8.Runner.Exporters
 
             // var savedData = gameChip.savedData;
 
-            for (int i = 0; i < gameChip.TotalMetaSprites; i++)
+            for (var i = 0; i < gameChip.TotalMetaSprites; i++)
             {
                 var metaSprite = gameChip.MetaSprite(i);
                 var childrenSprites = metaSprite.Sprites;
                 var totalChildrenSprites = childrenSprites.Count;
-                
+
                 if (totalChildrenSprites > 0)
                 {
-
                     sb.Append("{");
                     JsonUtil.indentLevel++;
                     JsonUtil.GetLineBreak(sb, 1);
@@ -87,15 +84,16 @@ namespace PixelVision8.Runner.Exporters
 
                     sb.Append("\"sprites\":[");
                     JsonUtil.indentLevel++;
-                    for (int j = 0; j < totalChildrenSprites; j++)
+                    for (var j = 0; j < totalChildrenSprites; j++)
                     {
                         JsonUtil.GetLineBreak(sb, 1);
                         var childSprite = childrenSprites[j];
                         sb.Append("{");
-                        sb.Append($"\"id\":{childSprite.Id},\"x\":{childSprite.X},\"y\":{childSprite.Y},\"flipH\":{childSprite.FlipH.ToString().ToLower()},\"flipV\":{childSprite.FlipV.ToString().ToLower()},\"colorOffset\":{childSprite.ColorOffset}");
+                        sb.Append(
+                            $"\"id\":{childSprite.Id},\"x\":{childSprite.X},\"y\":{childSprite.Y},\"flipH\":{childSprite.FlipH.ToString().ToLower()},\"flipV\":{childSprite.FlipV.ToString().ToLower()},\"colorOffset\":{childSprite.ColorOffset}");
                         sb.Append("},");
                     }
-                        
+
                     // Hack to remove the last comma from the sprite list
                     sb.Length -= 1;
 
@@ -118,7 +116,6 @@ namespace PixelVision8.Runner.Exporters
                     JsonUtil.GetLineBreak(sb, 1);
                     sb.Append("},");
                 }
-
             }
 
             // Hack to remove the last comma

@@ -41,10 +41,9 @@ namespace PixelVision8.Engine
 
         public PixelVisionEngine(IServiceLocator serviceLocator, string[] chips = null, string name = "Engine")
         {
-            if (chips != null)
-                DefaultChips = chips;
+            if (chips != null) DefaultChips = chips;
 
-            this.Name = name;
+            Name = name;
             ServiceLocator = serviceLocator;
             //this.canWrite = readOnly;
 
@@ -124,20 +123,17 @@ namespace PixelVision8.Engine
         /// <tocexclude />
         public virtual void RunGame()
         {
-            if (GameChip == null)
-                return;
+            if (GameChip == null) return;
 
             // Make sure all chips are reset to their default values
             //            chipManager.Reset();
-            foreach (var chip in Chips)
-                chip.Value.Reset();
+            foreach (var chip in Chips) chip.Value.Reset();
 
             // Call init on all chips
             //            chipManager.Init();
             var chipNames = Chips.Keys.ToList();
 
-            foreach (var chipName in chipNames)
-                Chips[chipName].Init();
+            foreach (var chipName in chipNames) Chips[chipName].Init();
 
             //            running = true;
         }
@@ -154,8 +150,7 @@ namespace PixelVision8.Engine
             // Reset the sprite counter on each frame
             GameChip.CurrentSprites = 0;
 
-            foreach (var chip in UpdateChips)
-                chip.Update(timeDelta); //delta / 1000f);
+            foreach (var chip in UpdateChips) chip.Update(timeDelta); //delta / 1000f);
         }
 
         /// <summary>
@@ -166,8 +161,7 @@ namespace PixelVision8.Engine
         /// <tocexclude />
         public virtual void Draw()
         {
-            foreach (var chip in DrawChips)
-                chip.Draw();
+            foreach (var chip in DrawChips) chip.Draw();
         }
 
         /// <summary>
@@ -177,8 +171,7 @@ namespace PixelVision8.Engine
         public virtual void Shutdown()
         {
             // Shutdown chips
-            foreach (var chip in Chips)
-                chip.Value.Shutdown();
+            foreach (var chip in Chips) chip.Value.Shutdown();
 
             //            // Remove chips
             //            chips.Clear();
@@ -194,8 +187,7 @@ namespace PixelVision8.Engine
         /// <returns></returns>
         public string GetMetadata(string key, string defaultValue = "")
         {
-            if (!MetaData.ContainsKey(key))
-                MetaData.Add(key, defaultValue);
+            if (!MetaData.ContainsKey(key)) MetaData.Add(key, defaultValue);
 
             return MetaData[key];
         }
@@ -227,8 +219,7 @@ namespace PixelVision8.Engine
         {
             target.Clear();
 
-            foreach (var data in MetaData)
-                target.Add(data.Key, data.Value);
+            foreach (var data in MetaData) target.Add(data.Key, data.Value);
         }
 
 
@@ -240,17 +231,13 @@ namespace PixelVision8.Engine
         /// <tocexclude />
         public virtual void Init()
         {
-            //            chipManager = new ChipManager(this);
-
             //apiBridge = new APIBridge(this);
-            if (DefaultChips != null)
-                CreateChips(DefaultChips);
+            if (DefaultChips != null) CreateChips(DefaultChips);
         }
 
         public void CreateChips(string[] chips)
         {
-            foreach (var chip in chips)
-                GetChip(chip);
+            foreach (var chip in chips) GetChip(chip);
         }
 
         #region Chip Manager
@@ -277,8 +264,6 @@ namespace PixelVision8.Engine
 
         public AbstractChip GetChip(string id, bool activeOnCreate = true)
         {
-            //Debug.Log("Chip Manager: Get Chip " + id);
-
             if (HasChip(id)) return Chips[id];
 
             var type = Type.GetType(id);
@@ -315,34 +300,28 @@ namespace PixelVision8.Engine
                 //TODO fixed bug here but need to make sure we don't need to do this above
                 Chips.Add(id, chip);
 
-                if (chip is IUpdate)
-                    UpdateChips.Add(chip as IUpdate);
+                if (chip is IUpdate) UpdateChips.Add(chip as IUpdate);
 
-                if (chip is IDraw)
-                    DrawChips.Add(chip as IDraw);
+                if (chip is IDraw) DrawChips.Add(chip as IDraw);
             }
 
-            if (autoActivate)
-                chip.Activate(this);
+            if (autoActivate) chip.Activate(this);
         }
 
         public void DeactivateChip(string id, AbstractChip chip)
         {
             chip.Deactivate();
 
-            if (chip is IUpdate)
-                UpdateChips.Remove(chip as IUpdate);
+            if (chip is IUpdate update) UpdateChips.Remove(update);
 
-            if (chip is IDraw)
-                DrawChips.Remove(chip as IDraw);
+            if (chip is IDraw draw) DrawChips.Remove(draw);
 
             Chips.Remove(id);
         }
 
         public void RemoveInactiveChips()
         {
-            foreach (var item in Chips.Where(c => c.Value.active == false).ToArray())
-                Chips.Remove(item.Key);
+            foreach (var item in Chips.Where(c => c.Value.active == false).ToArray()) Chips.Remove(item.Key);
         }
 
         #endregion

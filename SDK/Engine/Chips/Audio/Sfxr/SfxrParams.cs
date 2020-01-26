@@ -424,19 +424,6 @@ namespace PixelVision8.Engine.Audio
         }
 
         /// <summary>
-        ///     Shift in note, either up or down (-1 to 1)
-        /// </summary>
-        //        public float changeAmount2
-        //        {
-        //            get => _changeAmount2;
-        //            set
-        //            {
-        //                _changeAmount2 = MathHelper.Clamp(value, -1, 1);
-        //                Invalidate();
-        //            }
-        //        }
-
-        /// <summary>
         ///     How fast the note shift happens (only happens once) (0 to 1)
         /// </summary>
         public float changeSpeed2
@@ -462,59 +449,6 @@ namespace PixelVision8.Engine.Audio
                 Invalidate();
             }
         }
-
-        /// <summary>
-        ///     Harmonics: overlays copies of the waveform with copies and multiples of its frequency. Good for bulking out or
-        ///     otherwise enriching the texture of the sounds (warning: this is the number 1 cause of bfxr slowdown!) (0 to 1)
-        /// </summary>
-        //        public float overtones
-        //        {
-        //            get => _overtones;
-        //            set
-        //            {
-        //                _overtones = MathHelper.Clamp(value, 0, 1);
-        //                Invalidate();
-        //            }
-        //        }
-        //
-        //        /// <summary>
-        //        ///     Harmonics falloff: The rate at which higher overtones should decay (0 to 1)
-        //        /// </summary>
-        //        public float overtoneFalloff
-        //        {
-        //            get => _overtoneFalloff;
-        //            set
-        //            {
-        //                _overtoneFalloff = MathHelper.Clamp(value, 0, 1);
-        //                Invalidate();
-        //            }
-        //        }
-
-        /// <summary>
-        ///     Bit crush: resamples the audio at a lower frequency (0 to 1)
-        /// </summary>
-        //        public float bitCrush
-        //        {
-        //            get => _bitCrush;
-        //            set
-        //            {
-        //                _bitCrush = MathHelper.Clamp(value, 0, 1);
-        //                Invalidate();
-        //            }
-        //        }
-        //
-        //        /// <summary>
-        //        ///     Bit crush sweep: sweeps the Bit Crush filter up or down (-1 to 1)
-        //        /// </summary>
-        //        public float bitCrushSweep
-        //        {
-        //            get => _bitCrushSweep;
-        //            set
-        //            {
-        //                _bitCrushSweep = MathHelper.Clamp(value, -1, 1);
-        //                Invalidate();
-        //            }
-        //        }
 
         /// <summary>
         ///     Sets the parameters to generate a pickup/coin sound
@@ -610,6 +544,7 @@ namespace PixelVision8.Engine.Audio
             _startFrequency *= _startFrequency;
 
             if (GetRandom() < 0.2f) _slide = 0.0f;
+
             if (GetRandom() < 0.33f) _repeatSpeed = 0.3f + GetRandom() * 0.5f;
 
             _sustainTime = 0.1f + GetRandom() * 0.3f;
@@ -700,6 +635,7 @@ namespace PixelVision8.Engine.Audio
             _decayTime = 0.1f + GetRandom() * 0.2f;
 
             if (GetRandomBool()) _hpFilterCutoff = GetRandom() * 0.3f;
+
             if (GetRandomBool()) _lpFilterCutoff = 1.0f - GetRandom() * 0.6f;
         }
 
@@ -778,32 +714,54 @@ namespace PixelVision8.Engine.Audio
         public void Mutate(float __mutation = 0.05f)
         {
             if (GetRandomBool()) startFrequency += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) minFrequency += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) slide += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) deltaSlide += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) squareDuty += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) dutySweep += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) vibratoDepth += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) vibratoSpeed += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) attackTime += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) sustainTime += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) decayTime += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) sustainPunch += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) lpFilterCutoff += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) lpFilterCutoffSweep += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) lpFilterResonance += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) hpFilterCutoff += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) hpFilterCutoffSweep += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) phaserOffset += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) phaserSweep += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) repeatSpeed += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) changeSpeed += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) changeAmount += GetRandom() * __mutation * 2f - __mutation;
 
             // From BFXR
             if (GetRandomBool()) changeRepeat += GetRandom() * __mutation * 2f - __mutation;
             //            if (GetRandomBool()) changeAmount2 += GetRandom() * __mutation * 2f - __mutation;
             if (GetRandomBool()) changeSpeed2 += GetRandom() * __mutation * 2f - __mutation;
+
             if (GetRandomBool()) compressionAmount += GetRandom() * __mutation * 2f - __mutation;
         }
 
@@ -1004,6 +962,7 @@ namespace PixelVision8.Engine.Audio
         private string To4DP(float __value)
         {
             if (__value < 0.0001f && __value > -0.0001f) return "";
+
             return __value.ToString("#.####");
         }
 
@@ -1015,6 +974,7 @@ namespace PixelVision8.Engine.Audio
         private uint ParseUint(string __value)
         {
             if (__value.Length == 0) return 0;
+
             return uint.Parse(__value);
         }
 
@@ -1026,6 +986,7 @@ namespace PixelVision8.Engine.Audio
         private float ParseFloat(string __value)
         {
             if (__value.Length == 0) return 0;
+
             return float.Parse(__value);
         }
 

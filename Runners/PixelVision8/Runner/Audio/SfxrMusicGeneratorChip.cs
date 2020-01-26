@@ -352,7 +352,8 @@ namespace PixelVision8.Runner.Chips
                 if (trackSettings[trackNum] == null)
                     trackSettings[trackNum] = new TrackSettings
                     {
-                        InstrumentType = (InstrumentType) trackNum, SfxId = trackNum
+                        InstrumentType = (InstrumentType) trackNum,
+                        SfxId = trackNum
                     };
 
                 // Get the current track settings
@@ -405,21 +406,20 @@ namespace PixelVision8.Runner.Chips
                     // bass likes the first beat
                     if (instrument == InstrumentType.Bass && beginBar)
                         noteChangeBoost = 1.0f; // always play
-                    else if (instrument == InstrumentType.Bass)
-                        noteChangeBoost = -0.2f; // less bass except at beat 1
+                    else if (instrument == InstrumentType.Bass) noteChangeBoost = -0.2f; // less bass except at beat 1
 
                     // which octaves sound most appropriate?
                     noteTranspose = 0;
-                    if (instrument == InstrumentType.Bass)
-                        noteTranspose = -24; // bass is low
-                    if (instrument == InstrumentType.Drums)
-                        noteTranspose = 24; // high hat
+                    if (instrument == InstrumentType.Bass) noteTranspose = -24; // bass is low
+
+                    if (instrument == InstrumentType.Drums) noteTranspose = 24; // high hat
+
                     if (instrument == InstrumentType.Kick)
                         noteTranspose = -24; // kick drum is atonal, but not mega low either
-                    if (instrument == InstrumentType.Lead)
-                        noteTranspose = 24; // lead solo is often one octave higher
-                    if (instrument == InstrumentType.Pad)
-                        noteTranspose = 12; // pad is really just lead-like here
+
+                    if (instrument == InstrumentType.Lead) noteTranspose = 24; // lead solo is often one octave higher
+
+                    if (instrument == InstrumentType.Pad) noteTranspose = 12; // pad is really just lead-like here
 
                     // drums: kick likes beat 1
                     if (instrument == InstrumentType.Kick && beginBar)
@@ -428,26 +428,22 @@ namespace PixelVision8.Runner.Chips
                         noteChangeBoost = -0.3f; // kick drum less often if not beat 1
 
                     // drums: snare likes beat 3 but otherwise is more quiet
-                    if (instrument == InstrumentType.Snare)
-                        noteChangeBoost = -0.4f; // less often
-                    if (instrument == InstrumentType.Snare && noteNum % 4 == 2)
-                        noteChangeBoost = 1.0f; // always play
+                    if (instrument == InstrumentType.Snare) noteChangeBoost = -0.4f; // less often
+
+                    if (instrument == InstrumentType.Snare && noteNum % 4 == 2) noteChangeBoost = 1.0f; // always play
 
                     // drums: hat loves to play a lot
-                    if (instrument == InstrumentType.Drums)
-                        noteChangeBoost = 0.4f; // play often
+                    if (instrument == InstrumentType.Drums) noteChangeBoost = 0.4f; // play often
 
                     // lead is good for sustained notes: we don't want too many
-                    if (instrument == InstrumentType.Lead)
-                        noteChangeBoost = -0.4f; // much less often
+                    if (instrument == InstrumentType.Lead) noteChangeBoost = -0.4f; // much less often
 
                     // the pad is very slow, held notes like a string orchestra
-                    if (instrument == InstrumentType.Pad)
-                        noteChangeBoost = -0.5f; // very rare
-                    if (instrument == InstrumentType.Pad && beginPhrase)
-                        noteChangeBoost = 0.8f; // except at the start
-                    if (instrument == InstrumentType.Pad && beginBar)
-                        noteChangeBoost = 0.3f; // except at the start
+                    if (instrument == InstrumentType.Pad) noteChangeBoost = -0.5f; // very rare
+
+                    if (instrument == InstrumentType.Pad && beginPhrase) noteChangeBoost = 0.8f; // except at the start
+
+                    if (instrument == InstrumentType.Pad && beginBar) noteChangeBoost = 0.3f; // except at the start
 
                     // is silence appropriate for this moment?
                     //restHere = UnityEngine.Random.Range(0f,1f - noteChangeBoost) > pcgComplexity;
@@ -455,8 +451,7 @@ namespace PixelVision8.Runner.Chips
                     restHere = randy + noteChangeBoost < pcgComplexity;
 
                     // never rest the first beat of the song on bass
-                    if (instrument == InstrumentType.Bass && beginPhrase)
-                        restHere = false;
+                    if (instrument == InstrumentType.Bass && beginPhrase) restHere = false;
 
                     if (!restHere) // play something?
                     {
@@ -485,8 +480,7 @@ namespace PixelVision8.Runner.Chips
                                     pcgHarmonySuggestion + noteTranspose;
 
                             // BASS: always sound nice with the harmony on beat 1 of other bars
-                            if (beginBar)
-                                trackData.notes[noteNum] = pcgBassSuggestion + noteTranspose;
+                            if (beginBar) trackData.notes[noteNum] = pcgBassSuggestion + noteTranspose;
                         }
                         else if (instrument == InstrumentType.Harmony)
                         {
@@ -511,10 +505,13 @@ namespace PixelVision8.Runner.Chips
                                 // either stay the same, or jump higher or lower by an entire octave
                                 var funkyOffset = 12;
                                 if ((float) r.NextDouble() > 0.5f) // octave higher half the time
+                                {
                                     if ((float) r.NextDouble() > 0.5f) // stay same 25% of the time
                                         funkyOffset = 0;
                                     else // octave lower %25 of the time
                                         funkyOffset = -12;
+                                }
+
                                 trackData.notes[noteNum] = pcgPreviousNote + funkyOffset +
                                                            noteTranspose;
                             }
@@ -556,8 +553,7 @@ namespace PixelVision8.Runner.Chips
             var aNote = 0;
             var noteDistance = r.Next(pcgNoteDistanceMin, pcgNoteDistanceMax); // 0,1,2
             var noteDir = 1; // +1 or -1 only
-            if ((float) r.NextDouble() > 0.5f)
-                noteDir = -1; // down
+            if ((float) r.NextDouble() > 0.5f) noteDir = -1; // down
 
             // pure random noise - works
             // aNote = Mathf.CeilToInt(UnityEngine.Random.Range(32f,64f));
@@ -570,10 +566,9 @@ namespace PixelVision8.Runner.Chips
                 // modulo "%" won't work with negative deltas so we check bound manually
                 //pcgPreviousScaleIndex = ((pcgPreviousScaleIndex + noteDir) % pcgScale.Length);
                 pcgPreviousScaleIndex = pcgPreviousScaleIndex + noteDir;
-                if (pcgPreviousScaleIndex > pcgScale.Length - 1)
-                    pcgPreviousScaleIndex -= pcgScale.Length;
-                if (pcgPreviousScaleIndex < 0)
-                    pcgPreviousScaleIndex += pcgScale.Length;
+                if (pcgPreviousScaleIndex > pcgScale.Length - 1) pcgPreviousScaleIndex -= pcgScale.Length;
+
+                if (pcgPreviousScaleIndex < 0) pcgPreviousScaleIndex += pcgScale.Length;
 
                 if (noteDir > 0)
                     aNote += pcgScale[pcgPreviousScaleIndex];
@@ -598,10 +593,10 @@ namespace PixelVision8.Runner.Chips
 
             // watch super high notes
             // simply mute note rather than reverse shift in key
-            if (aNote > MAX_NOTE_NUM)
-                aNote = 0;
-            if (pcgHarmonySuggestion > MAX_NOTE_NUM)
-                pcgHarmonySuggestion = 0;
+            if (aNote > MAX_NOTE_NUM) aNote = 0;
+
+            if (pcgHarmonySuggestion > MAX_NOTE_NUM) pcgHarmonySuggestion = 0;
+
             if (aNote < 0)
             {
                 aNote = 0;
@@ -609,8 +604,7 @@ namespace PixelVision8.Runner.Chips
                 pcgBassSuggestion = 0;
             }
 
-            if (pcgBassSuggestion < 1)
-                pcgBassSuggestion = aNote;
+            if (pcgBassSuggestion < 1) pcgBassSuggestion = aNote;
 
             pcgPreviousNote = aNote;
             return aNote;

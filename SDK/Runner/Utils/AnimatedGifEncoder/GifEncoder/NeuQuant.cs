@@ -130,8 +130,8 @@ namespace GifEncoder
         {
             var map = new byte[3 * PaletteSize];
             var index = new int[PaletteSize];
-            for (var i = 0; i < PaletteSize; i++)
-                index[network[i][3]] = i;
+            for (var i = 0; i < PaletteSize; i++) index[network[i][3]] = i;
+
             var k = 0;
             for (var i = 0; i < PaletteSize; i++)
             {
@@ -194,16 +194,15 @@ namespace GifEncoder
                 if (smallval != previouscol)
                 {
                     netindex[previouscol] = (startpos + i) >> 1;
-                    for (j = previouscol + 1; j < smallval; j++)
-                        netindex[j] = i;
+                    for (j = previouscol + 1; j < smallval; j++) netindex[j] = i;
+
                     previouscol = smallval;
                     startpos = i;
                 }
             }
 
             netindex[previouscol] = (startpos + maxnetpos) >> 1;
-            for (j = previouscol + 1; j < 256; j++)
-                netindex[j] = maxnetpos; /* really 256 */
+            for (j = previouscol + 1; j < 256; j++) netindex[j] = maxnetpos; /* really 256 */
         }
 
         /* Main Learning Loop
@@ -215,8 +214,8 @@ namespace GifEncoder
             byte[] p;
             int pix, lim;
 
-            if (lengthcount < minpicturebytes)
-                samplefac = 1;
+            if (lengthcount < minpicturebytes) samplefac = 1;
+
             alphadec = 30 + (samplefac - 1) / 3;
             p = thepicture;
             pix = 0;
@@ -227,8 +226,8 @@ namespace GifEncoder
             radius = initradius;
 
             rad = radius >> radiusbiasshift;
-            if (rad <= 1)
-                rad = 0;
+            if (rad <= 1) rad = 0;
+
             for (i = 0; i < rad; i++)
                 radpower[i] =
                     alpha * ((rad * rad - i * i) * radbias / (rad * rad));
@@ -267,23 +266,21 @@ namespace GifEncoder
                 j = Contest(b, g, r);
 
                 Altersingle(alpha, j, b, g, r);
-                if (rad != 0)
-                    Alterneigh(rad, j, b, g, r); /* alter neighbours */
+                if (rad != 0) Alterneigh(rad, j, b, g, r); /* alter neighbours */
 
                 pix += step;
-                if (pix >= lim)
-                    pix -= lengthcount;
+                if (pix >= lim) pix -= lengthcount;
 
                 i++;
-                if (delta == 0)
-                    delta = 1;
+                if (delta == 0) delta = 1;
+
                 if (i % delta == 0)
                 {
                     alpha -= alpha / alphadec;
                     radius -= radius / radiusdec;
                     rad = radius >> radiusbiasshift;
-                    if (rad <= 1)
-                        rad = 0;
+                    if (rad <= 1) rad = 0;
+
                     for (j = 0; j < rad; j++)
                         radpower[j] =
                             alpha * ((rad * rad - j * j) * radbias / (rad * rad));
@@ -319,17 +316,17 @@ namespace GifEncoder
                     else
                     {
                         i++;
-                        if (dist < 0)
-                            dist = -dist;
+                        if (dist < 0) dist = -dist;
+
                         a = p[0] - b;
-                        if (a < 0)
-                            a = -a;
+                        if (a < 0) a = -a;
+
                         dist += a;
                         if (dist < bestd)
                         {
                             a = p[2] - r;
-                            if (a < 0)
-                                a = -a;
+                            if (a < 0) a = -a;
+
                             dist += a;
                             if (dist < bestd)
                             {
@@ -351,17 +348,17 @@ namespace GifEncoder
                     else
                     {
                         j--;
-                        if (dist < 0)
-                            dist = -dist;
+                        if (dist < 0) dist = -dist;
+
                         a = p[0] - b;
-                        if (a < 0)
-                            a = -a;
+                        if (a < 0) a = -a;
+
                         dist += a;
                         if (dist < bestd)
                         {
                             a = p[2] - r;
-                            if (a < 0)
-                                a = -a;
+                            if (a < 0) a = -a;
+
                             dist += a;
                             if (dist < bestd)
                             {
@@ -407,11 +404,10 @@ namespace GifEncoder
             int[] p;
 
             lo = i - rad;
-            if (lo < -1)
-                lo = -1;
+            if (lo < -1) lo = -1;
+
             hi = i + rad;
-            if (hi > PaletteSize)
-                hi = PaletteSize;
+            if (hi > PaletteSize) hi = PaletteSize;
 
             j = i + 1;
             k = i - 1;
@@ -482,15 +478,15 @@ namespace GifEncoder
             {
                 n = network[i];
                 dist = n[0] - b;
-                if (dist < 0)
-                    dist = -dist;
+                if (dist < 0) dist = -dist;
+
                 a = n[1] - g;
-                if (a < 0)
-                    a = -a;
+                if (a < 0) a = -a;
+
                 dist += a;
                 a = n[2] - r;
-                if (a < 0)
-                    a = -a;
+                if (a < 0) a = -a;
+
                 dist += a;
                 if (dist < bestd)
                 {

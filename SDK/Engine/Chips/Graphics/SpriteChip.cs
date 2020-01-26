@@ -35,7 +35,10 @@ namespace PixelVision8.Engine.Chips
     {
         // TODO these are hard coded assuming the sprites are always 8x8
         protected readonly int[] emptySpriteData = Enumerable.Repeat(-1, 64).ToArray();
-        protected readonly string emptySpriteDataString = SpriteChipUtil.SpriteDataToString(Enumerable.Repeat(-1, 64).ToArray());
+
+        protected readonly string emptySpriteDataString =
+            SpriteChipUtil.SpriteDataToString(Enumerable.Repeat(-1, 64).ToArray());
+
         protected int _colorsPerSprite = 8;
         protected int _pages = 4;
 
@@ -54,7 +57,7 @@ namespace PixelVision8.Engine.Chips
         //protected Vector2 pageSize = new Vector2(128, 128);
         public int pageWidth = 128;
 
-//        protected int[][] pixelDataCache;
+        //        protected int[][] pixelDataCache;
         protected int tmpX;
         protected int tmpY;
 
@@ -62,12 +65,12 @@ namespace PixelVision8.Engine.Chips
 
         public bool unique = false;
 
-//        protected int height1;
+        //        protected int height1;
         protected int w;
 
-//        protected int[] cachedSprite;
-//        protected int totalSpritePixels;
-//        protected int[] tmpPixelData;
+        //        protected int[] cachedSprite;
+        //        protected int totalSpritePixels;
+        //        protected int[] tmpPixelData;
 
         protected int width1;
 
@@ -100,7 +103,7 @@ namespace PixelVision8.Engine.Chips
         {
             get => _texture;
             set => SpriteChipUtil.CloneTextureData(value, _texture);
-//TODO do we need this?
+            //TODO do we need this?
         }
 
         /// <summary>
@@ -124,8 +127,7 @@ namespace PixelVision8.Engine.Chips
             get => _pages;
             set
             {
-                if (_pages == value)
-                    return;
+                if (_pages == value) return;
 
                 _pages = MathHelper.Clamp(value, 1, 8);
                 Resize(pageWidth, pageHeight * pages);
@@ -145,10 +147,7 @@ namespace PixelVision8.Engine.Chips
         /// <summary>
         ///     Total number of sprites that exist in memory.
         /// </summary>
-        public int spritesInRam
-        {
-            get { return cache.Count(x => x != null); }
-        }
+        public int spritesInRam => cache.Count(x => x != null);
 
         /// <summary>
         ///     Number of colors per sprite.
@@ -266,8 +265,7 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         protected void CacheSprite(int index, int[] data)
         {
-            if (index < 0 || index >= cache.Length)
-                return;
+            if (index < 0 || index >= cache.Length) return;
 
             // TODO need to test to see if the sprite is empty first (no need to cache)
 
@@ -277,7 +275,7 @@ namespace PixelVision8.Engine.Chips
 
             var tmpPixels = new int[totalPixels];
             Array.Copy(data, tmpPixels, totalPixels);
-//            pixelDataCache[index] = tmpPixels;
+            //            pixelDataCache[index] = tmpPixels;
         }
 
         /// <summary>
@@ -287,10 +285,10 @@ namespace PixelVision8.Engine.Chips
         public void Clear()
         {
             cache = new string[totalSprites];
-//            pixelDataCache = new int[totalSprites][];
+            //            pixelDataCache = new int[totalSprites][];
             _texture.Clear();
         }
-//        protected readonly int totalSpritePixels = 64;
+        //        protected readonly int totalSpritePixels = 64;
 
         /// <summary>
         ///     Returns an array of ints that represent a sprite. Each
@@ -306,7 +304,6 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public void ReadSpriteAt(int index, int[] pixelData)
         {
-
             // TODO check to see if the cache doesn't exist and return the empty sprite as well
             if (index == -1)
             {
@@ -319,7 +316,7 @@ namespace PixelVision8.Engine.Chips
             else
             {
                 width1 = _texture.width;
-//                height1 = _texture.height;
+                //                height1 = _texture.height;
 
                 w = width1 / width;
 
@@ -341,17 +338,16 @@ namespace PixelVision8.Engine.Chips
         /// <param name="pixels"></param>
         public void UpdateSpriteAt(int index, int[] pixels)
         {
-            if (index < 0)
-                return;
+            if (index < 0) return;
 
-//            int spriteWidth = width;
-//            int spriteHeight = height;
-//            int x;
-//            int y;
-//            int index1 = index;
-//            int width2 = _texture.width;
-//            int height2 = _texture.height;
-//            var totalSprites2 = SpriteChipUtil.CalculateTotalSprites(width2, height2, spriteWidth, spriteHeight);
+            //            int spriteWidth = width;
+            //            int spriteHeight = height;
+            //            int x;
+            //            int y;
+            //            int index1 = index;
+            //            int width2 = _texture.width;
+            //            int height2 = _texture.height;
+            //            var totalSprites2 = SpriteChipUtil.CalculateTotalSprites(width2, height2, spriteWidth, spriteHeight);
 
             // Make sure we stay in bounds
             index = MathHelper.Clamp(index, 0, totalSprites1 - 1);
@@ -361,8 +357,8 @@ namespace PixelVision8.Engine.Chips
             x = index % w1 * width;
             y = index / w1 * height;
 
-//            if (true)
-//                y = _texture.height - y - height;
+            //            if (true)
+            //                y = _texture.height - y - height;
 
             _texture.SetPixels(x, y, width, height, pixels);
 

@@ -182,8 +182,7 @@ namespace PixelVision8.Runner
         {
             get
             {
-                if (autoShutdown && mode != RunnerMode.Loading)
-                    return IsActive;
+                if (autoShutdown && mode != RunnerMode.Loading) return IsActive;
 
                 return true;
             }
@@ -301,8 +300,7 @@ namespace PixelVision8.Runner
 
         public void ToggleLayers(int value)
         {
-            if (!debugLayers)
-                return;
+            if (!debugLayers) return;
 
             //                if (mode == RunnerMode.Play)
             activeEngine.DisplayChip.layers = value - 1;
@@ -381,9 +379,8 @@ namespace PixelVision8.Runner
         {
             // Before trying to update the PixelVisionEngine instance, we need to make sure it exists. The guard clause protects us from throwing an 
             // error when the Runner loads up and starts before we've had a chance to instantiate the new engine instance.
-            if (activeEngine == null)
-                return;
-            
+            if (activeEngine == null) return;
+
             elapsedTime += gameTime.ElapsedGameTime;
 
             if (elapsedTime > TimeSpan.FromSeconds(1))
@@ -405,14 +402,11 @@ namespace PixelVision8.Runner
                 // current framerate.
                 activeEngine.Update(timeDelta);
             }
-
-            
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            if (activeEngine == null)
-                return;
+            if (activeEngine == null) return;
 
             frameCounter++;
 
@@ -425,7 +419,7 @@ namespace PixelVision8.Runner
             // Only call draw if the window has focus
             if (RunnerActive) activeEngine.Draw();
 
-            displayTarget.Render(activeEngine.DisplayChip.pixels);
+            displayTarget.Render(activeEngine.DisplayChip.Pixels);
 
             if (resolutionInvalid)
             {
@@ -439,8 +433,7 @@ namespace PixelVision8.Runner
         {
             loadService.ParseFiles(files, engine, saveFlags);
 
-            if (autoLoad)
-                loadService.LoadAll();
+            if (autoLoad) loadService.LoadAll();
         }
 
         public virtual void ConfigureEngine(Dictionary<string, string> metaData = null)
@@ -517,8 +510,7 @@ namespace PixelVision8.Runner
 
         public virtual void ActivateEngine(IEngine engine)
         {
-            if (engine == null)
-                return;
+            if (engine == null) return;
 
             // Make the loaded engine active
             activeEngine = engine;
@@ -535,15 +527,14 @@ namespace PixelVision8.Runner
 
         public void ResetResolution()
         {
-            if (activeEngine == null)
-                return;
+            if (activeEngine == null) return;
 
             var displayChip = activeEngine.DisplayChip;
 
-            var gameWidth = displayChip.width;
-            var gameHeight = displayChip.height;
-            var overScanX = displayChip.overscanXPixels;
-            var overScanY = displayChip.overscanYPixels;
+            var gameWidth = displayChip.Width;
+            var gameHeight = displayChip.Height;
+            var overScanX = displayChip.OverscanXPixels;
+            var overScanY = displayChip.OverscanYPixels;
 
             displayTarget.ResetResolution(gameWidth, gameHeight, overScanX, overScanY);
             IsMouseVisible = false;

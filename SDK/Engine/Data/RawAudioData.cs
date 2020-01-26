@@ -50,10 +50,10 @@ namespace PixelVision8.Engine
             }
         }
 
-//        public void GetData(float[] data)
-//        {
-//            Array.Copy(this.data, data, samples);
-//        }
+        //        public void GetData(float[] data)
+        //        {
+        //            Array.Copy(this.data, data, samples);
+        //        }
 
         public void Resize(int samples)
         {
@@ -76,6 +76,7 @@ namespace PixelVision8.Engine
 
             var soundLength = Convert.ToUInt32(samples);
             if (__bitDepth == 16) soundLength *= 2;
+
             if (__sampleRate == 22050) soundLength /= 2;
 
             var fileSize = 36 + soundLength;

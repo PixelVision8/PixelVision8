@@ -24,7 +24,7 @@ namespace PixelVision8.Runner.Exporters
 {
     public class AbstractExporter : AbstractParser, IAbstractExporter
     {
-//        public byte[] bytes { get; protected set; }
+        //        public byte[] bytes { get; protected set; }
 
         public AbstractExporter(string fileName)
         {

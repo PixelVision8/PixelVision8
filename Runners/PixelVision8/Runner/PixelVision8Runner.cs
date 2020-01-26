@@ -34,7 +34,7 @@ namespace PixelVision8.Runner
 {
     public enum ActionKeys
     {
-//            RunKey,
+        //            RunKey,
         ScreenShotKey,
         RecordKey,
         RestartKey,
@@ -68,18 +68,18 @@ namespace PixelVision8.Runner
 
         protected AnimatedGifEncoder gifEncoder;
 
-        
+
         protected bool screenShotActive;
 
         protected float screenshotDelay = .2f;
 
-//        private MergedFileSystem osFileSystem;
+        //        private MergedFileSystem osFileSystem;
         private ScreenshotService screenshotService;
         protected float screenshotTime;
 
-//        protected string rootPath;
+        //        protected string rootPath;
         protected bool shutdown;
-        
+
 
         private string windowTitle;
 
@@ -92,11 +92,11 @@ namespace PixelVision8.Runner
 
         public PixelVision8Runner()
         {
-//            throw new NotImplementedException();
+            //            throw new NotImplementedException();
         }
 
-//        public List<string> loadHistory = new List<string>();
-//        protected List<Dictionary<string, string>> metaDataHistory = new List<Dictionary<string, string>>();
+        //        public List<string> loadHistory = new List<string>();
+        //        protected List<Dictionary<string, string>> metaDataHistory = new List<Dictionary<string, string>>();
         protected string Documents => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
         public ExportService ExportService { get; private set; }
@@ -105,7 +105,7 @@ namespace PixelVision8.Runner
         protected override void ConfigureRunner()
         {
             base.ConfigureRunner();
-            
+
             screenshotService = new ScreenshotService(workspaceServicePlus);
             ExportService = new ExportService(); //TODO Need to create a new AudioClipAdaptor
 
@@ -196,7 +196,6 @@ namespace PixelVision8.Runner
             workspaceServicePlus.MountWorkspace(workspaceName);
 
             workspaceServicePlus.RebuildWorkspace();
-
         }
 
         public override void ActivateEngine(IEngine engine)
@@ -253,7 +252,7 @@ namespace PixelVision8.Runner
                     path.IsDirectory ? Path.PathSeparator.ToString() : path.EntityName);
 
 
-//                Console.WriteLine("Mount Disk From " + systemPath);
+                //                Console.WriteLine("Mount Disk From " + systemPath);
 
                 MountDisk(systemPath);
             });
@@ -312,8 +311,7 @@ namespace PixelVision8.Runner
 
         protected override void Update(GameTime gameTime)
         {
-            if (activeEngine == null || shutdown)
-                return;
+            if (activeEngine == null || shutdown) return;
 
             // TODO make sure this order is correct or maybe it can be cleaned up
             if (screenShotActive)
@@ -393,7 +391,6 @@ namespace PixelVision8.Runner
                         AutoLoadDefaultGame();
                     else
                         ResetGame();
-
                 }
             }
             else if (controllerChip.GetKeyUp(Keys.Escape) && backKeyEnabled)
@@ -424,7 +421,6 @@ namespace PixelVision8.Runner
             }
             catch (Exception e)
             {
-
                 DisplayError(ErrorCode.Exception,
                     new Dictionary<string, string>
                         {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message}},
@@ -434,7 +430,6 @@ namespace PixelVision8.Runner
 
         protected override void Draw(GameTime gameTime)
         {
-
             try
             {
                 // If we are taking a screenshot, clear with white and don't draw the runner.
@@ -462,8 +457,7 @@ namespace PixelVision8.Runner
         public override void BootDone(bool safeMode = false)
         {
             // Only call BootDone when the runner is booting.
-            if (mode != RunnerMode.Booting)
-                return;
+            if (mode != RunnerMode.Booting) return;
 
             // Test to see if we are in save mode before loading the bios
             if (safeMode)
@@ -500,14 +494,12 @@ namespace PixelVision8.Runner
             }
 
             AutoLoadDefaultGame();
-            
         }
 
-        public override void DisplayError(ErrorCode code, Dictionary<string, string> tokens = null, Exception exception = null)
+        public override void DisplayError(ErrorCode code, Dictionary<string, string> tokens = null,
+            Exception exception = null)
         {
-
-            if (mode == RunnerMode.Error)
-                return;
+            if (mode == RunnerMode.Error) return;
 
             // TODO should this only work on special cases?
             autoRunEnabled = true;
@@ -545,7 +537,7 @@ namespace PixelVision8.Runner
             {
                 // ignored
             }
-            
+
             // Try to boot from the first disk
             try
             {
@@ -559,15 +551,13 @@ namespace PixelVision8.Runner
             {
                 // ignored
             }
-            
-            DisplayError(ErrorCode.NoAutoRun);
 
-            return;
+            DisplayError(ErrorCode.NoAutoRun);
         }
 
         public void MountDisk(string path)
         {
-//            Console.WriteLine("Load File - " + path + " Auto Run " + autoRunEnabled);
+            //            Console.WriteLine("Load File - " + path + " Auto Run " + autoRunEnabled);
             try
             {
                 var diskName = workspaceServicePlus.MountDisk(path);
@@ -599,13 +589,13 @@ namespace PixelVision8.Runner
             }
             catch
             {
-//                autoRunEnabled = true;
+                //                autoRunEnabled = true;
                 // TODO need to make sure we show a better error to explain why the disk couldn't load
                 DisplayError(ErrorCode.NoAutoRun);
             }
 
             // Only update the bios when we need  to
-//            if (updateBios) UpdateDiskInBios();
+            //            if (updateBios) UpdateDiskInBios();
         }
 
         public void AutoRunGameFromDisk(string diskName)
@@ -633,8 +623,8 @@ namespace PixelVision8.Runner
         public override void ShutdownActiveEngine()
         {
             // Look to see if there is an active engine
-//            if (activeEngine == null)
-//                return;
+            //            if (activeEngine == null)
+            //                return;
 
             try
             {
@@ -668,25 +658,20 @@ namespace PixelVision8.Runner
         {
             // Make sure we stop recording when loading a new game
             if (Recording) StopRecording();
-            
+
             if (newMode == RunnerMode.Loading)
             {
                 // Create metadata if it doesn't exists so we can store the eject value for the loader
-                if (metaData == null)
-                {
-                    metaData = new Dictionary<string, string>();
-                }
+                if (metaData == null) metaData = new Dictionary<string, string>();
 
                 // Tell the loader to show eject animation
                 if (metaData.ContainsKey("showEjectAnimation"))
                     metaData["showEjectAnimation"] = ejectingDisk.ToString().ToLower();
                 else
                     metaData.Add("showEjectAnimation", ejectingDisk.ToString().ToLower());
-
             }
 
             return base.Load(path, newMode, metaData);
-
         }
 
         public override void SaveGameData(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
@@ -714,16 +699,13 @@ namespace PixelVision8.Runner
 
         public void OnFileDropped(object gameWindow, string path)
         {
-            if (shutdown == false)
-                MountDisk(path);
-
+            if (shutdown == false) MountDisk(path);
         }
 
         public override void ResetGame()
         {
             // Make sure we don't reload when booting or loading
-            if (mode == RunnerMode.Booting || mode == RunnerMode.Loading || loadHistory.Count == 0)
-                return;
+            if (mode == RunnerMode.Booting || mode == RunnerMode.Loading || loadHistory.Count == 0) return;
 
             //TODO this nees to also pass in the last metaData state
             // Load the last game from the history
@@ -776,7 +758,6 @@ namespace PixelVision8.Runner
 
         public virtual void Back(Dictionary<string, string> metaData = null)
         {
-
             if (loadHistory.Count > 0)
                 try
                 {
@@ -820,8 +801,7 @@ namespace PixelVision8.Runner
         public override void ShutdownSystem()
         {
             // We only want to call this once so don't run if shutdown is true
-            if (shutdown)
-                return;
+            if (shutdown) return;
 
             // Toggle the shutdown flag
             shutdown = true;
@@ -842,7 +822,7 @@ namespace PixelVision8.Runner
                 bios.UpdateBiosData("Disk" + i,
                     i < totalDisks ? workspaceServicePlus.DiskPhysicalRoot(disks[i]) : "none");
         }
-        
+
         public void StartRecording()
         {
             if (!Recording)
@@ -862,8 +842,7 @@ namespace PixelVision8.Runner
 
         public void StopRecording()
         {
-            if (!Recording || gifEncoder == null)
-                return;
+            if (!Recording || gifEncoder == null) return;
 
             Recording = false;
             gifEncoder.Finish();

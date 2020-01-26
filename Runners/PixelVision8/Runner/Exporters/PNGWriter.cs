@@ -29,7 +29,7 @@ namespace PixelVision8.Runner.Exporters
 {
     public class PNGWriter : IImageExporter
     {
-//          private const int bitsPerSample = 8;
+        //          private const int bitsPerSample = 8;
         private readonly ColorType colorType;
         private Color[] colorData;
 
@@ -42,8 +42,8 @@ namespace PixelVision8.Runner.Exporters
         public int height { get; private set; }
         public int width { get; private set; }
 
-//        private int width;
-//        private int height;
+        //        private int width;
+        //        private int height;
 
         public void Write(int width1, int height1, Stream outputStream, Color[] colors)
         {
@@ -52,12 +52,12 @@ namespace PixelVision8.Runner.Exporters
 
             colorData = colors;
 
-//        switch (texture2D.Format)
-//        {
-//          case SurfaceFormat.Color:
-//        texture2D.GetData(colorData);
-//        
-//        GetColorData(texture2D);
+            //        switch (texture2D.Format)
+            //        {
+            //          case SurfaceFormat.Color:
+            //        texture2D.GetData(colorData);
+            //        
+            //        GetColorData(texture2D);
 
 
             outputStream.Write(HeaderChunk.PngSignature, 0, HeaderChunk.PngSignature.Length);
@@ -86,8 +86,10 @@ namespace PixelVision8.Runner.Exporters
                 throw new Exception("An error occurred during DEFLATE compression.", ex);
             }
 
-            var dataChunk = new DataChunk();
-            dataChunk.Data = memoryStream.ToArray();
+            var dataChunk = new DataChunk
+            {
+                Data = memoryStream.ToArray()
+            };
             var buffer3 = dataChunk.Encode();
             outputStream.Write(buffer3, 0, buffer3.Length);
             var buffer4 = new EndChunk().Encode();
@@ -108,8 +110,8 @@ namespace PixelVision8.Runner.Exporters
             }
 
             var byteList = new List<byte>();
-            foreach (var numArray in numArrayList)
-                byteList.AddRange(numArray);
+            foreach (var numArray in numArrayList) byteList.AddRange(numArray);
+
             return byteList.ToArray();
         }
 
@@ -153,8 +155,8 @@ namespace PixelVision8.Runner.Exporters
         private int CalculateTotalVariation(byte[] input)
         {
             var num = 0;
-            for (var index = 1; index < input.Length; ++index)
-                num += Math.Abs(input[index] - input[index - 1]);
+            for (var index = 1; index < input.Length; ++index) num += Math.Abs(input[index] - input[index - 1]);
+
             return num;
         }
 
@@ -165,7 +167,7 @@ namespace PixelVision8.Runner.Exporters
             {
                 var color = colorData[y * width + index];
 
-//          if(color.a < 0) color = new ColorData("#FF00FF");
+                //          if(color.a < 0) color = new ColorData("#FF00FF");
 
                 numArray[4 * index] = color.R; //Convert.ToByte(color.R * byte.MaxValue);
                 numArray[4 * index + 1] = color.G; //Convert.ToByte(color.G * byte.MaxValue);
@@ -195,100 +197,100 @@ namespace PixelVision8.Runner.Exporters
             }
         }
 
-//      private void GetColorData(Texture2D texture2D)
-//      {
-//        int length = texture2D.Width * texture2D.Height;
-//        colorData = new Color[length];
-////        switch (texture2D.Format)
-////        {
-////          case SurfaceFormat.Color:
-//            texture2D.GetData(colorData);
-//            break;
-//          case SurfaceFormat.Bgr565:
-//            Bgr565[] data1 = new Bgr565[length];
-//            texture2D.GetData<Bgr565>(data1);
-//            for (int index = 0; index < length; ++index)
-//              this.colorData[index] = new Color(((IPackedVector) data1[index]).ToVector4());
-//            break;
-//          case SurfaceFormat.Bgra5551:
-//            Bgra5551[] data2 = new Bgra5551[length];
-//            texture2D.GetData<Bgra5551>(data2);
-//            for (int index = 0; index < length; ++index)
-//              this.colorData[index] = new Color(((IPackedVector) data2[index]).ToVector4());
-//            break;
-//          case SurfaceFormat.Bgra4444:
-//            Bgra4444[] data3 = new Bgra4444[length];
-//            texture2D.GetData<Bgra4444>(data3);
-//            for (int index = 0; index < length; ++index)
-//              this.colorData[index] = new Color(((IPackedVector) data3[index]).ToVector4());
-//            break;
-//          case SurfaceFormat.NormalizedByte2:
-//            NormalizedByte2[] data4 = new NormalizedByte2[length];
-//            texture2D.GetData<NormalizedByte2>(data4);
-//            for (int index = 0; index < length; ++index)
-//              this.colorData[index] = new Color(((IPackedVector) data4[index]).ToVector4());
-//            break;
-//          case SurfaceFormat.NormalizedByte4:
-//            NormalizedByte4[] data5 = new NormalizedByte4[length];
-//            texture2D.GetData<NormalizedByte4>(data5);
-//            for (int index = 0; index < length; ++index)
-//              this.colorData[index] = new Color(((IPackedVector) data5[index]).ToVector4());
-//            break;
-//          case SurfaceFormat.Rgba1010102:
-//            Rgba1010102[] data6 = new Rgba1010102[length];
-//            texture2D.GetData<Rgba1010102>(data6);
-//            for (int index = 0; index < length; ++index)
-//              this.colorData[index] = new Color(((IPackedVector) data6[index]).ToVector4());
-//            break;
-//          case SurfaceFormat.Rg32:
-//            Rg32[] data7 = new Rg32[length];
-//            texture2D.GetData<Rg32>(data7);
-//            for (int index = 0; index < length; ++index)
-//              this.colorData[index] = new Color(((IPackedVector) data7[index]).ToVector4());
-//            break;
-//          case SurfaceFormat.Rgba64:
-//            Rgba64[] data8 = new Rgba64[length];
-//            texture2D.GetData<Rgba64>(data8);
-//            for (int index = 0; index < length; ++index)
-//              this.colorData[index] = new Color(((IPackedVector) data8[index]).ToVector4());
-//            break;
-//          case SurfaceFormat.Alpha8:
-//            Alpha8[] data9 = new Alpha8[length];
-//            texture2D.GetData<Alpha8>(data9);
-//            for (int index = 0; index < length; ++index)
-//              this.colorData[index] = new Color(((IPackedVector) data9[index]).ToVector4());
-//            break;
-//          case SurfaceFormat.Single:
-//            float[] data10 = new float[length];
-//            texture2D.GetData<float>(data10);
-//            for (int index = 0; index < length; ++index)
-//            {
-//              float num = data10[index];
-//              this.colorData[index] = new Color(num, num, num);
-//            }
-//
-//            break;
-//          case SurfaceFormat.HalfSingle:
-//            HalfSingle[] data11 = new HalfSingle[length];
-//            texture2D.GetData<HalfSingle>(data11);
-//            for (int index = 0; index < length; ++index)
-//              this.colorData[index] = new Color(((IPackedVector) data11[index]).ToVector4());
-//            break;
-//          case SurfaceFormat.HalfVector2:
-//            HalfVector2[] data12 = new HalfVector2[length];
-//            texture2D.GetData<HalfVector2>(data12);
-//            for (int index = 0; index < length; ++index)
-//              this.colorData[index] = new Color(((IPackedVector) data12[index]).ToVector4());
-//            break;
-//          case SurfaceFormat.HalfVector4:
-//            HalfVector4[] data13 = new HalfVector4[length];
-//            texture2D.GetData<HalfVector4>(data13);
-//            for (int index = 0; index < length; ++index)
-//              this.colorData[index] = new Color(((IPackedVector) data13[index]).ToVector4());
-//            break;
-//          default:
-//            throw new Exception("Texture surface format not supported");
-//        }
-//    }
+        //      private void GetColorData(Texture2D texture2D)
+        //      {
+        //        int length = texture2D.Width * texture2D.Height;
+        //        colorData = new Color[length];
+        ////        switch (texture2D.Format)
+        ////        {
+        ////          case SurfaceFormat.Color:
+        //            texture2D.GetData(colorData);
+        //            break;
+        //          case SurfaceFormat.Bgr565:
+        //            Bgr565[] data1 = new Bgr565[length];
+        //            texture2D.GetData<Bgr565>(data1);
+        //            for (int index = 0; index < length; ++index)
+        //              this.colorData[index] = new Color(((IPackedVector) data1[index]).ToVector4());
+        //            break;
+        //          case SurfaceFormat.Bgra5551:
+        //            Bgra5551[] data2 = new Bgra5551[length];
+        //            texture2D.GetData<Bgra5551>(data2);
+        //            for (int index = 0; index < length; ++index)
+        //              this.colorData[index] = new Color(((IPackedVector) data2[index]).ToVector4());
+        //            break;
+        //          case SurfaceFormat.Bgra4444:
+        //            Bgra4444[] data3 = new Bgra4444[length];
+        //            texture2D.GetData<Bgra4444>(data3);
+        //            for (int index = 0; index < length; ++index)
+        //              this.colorData[index] = new Color(((IPackedVector) data3[index]).ToVector4());
+        //            break;
+        //          case SurfaceFormat.NormalizedByte2:
+        //            NormalizedByte2[] data4 = new NormalizedByte2[length];
+        //            texture2D.GetData<NormalizedByte2>(data4);
+        //            for (int index = 0; index < length; ++index)
+        //              this.colorData[index] = new Color(((IPackedVector) data4[index]).ToVector4());
+        //            break;
+        //          case SurfaceFormat.NormalizedByte4:
+        //            NormalizedByte4[] data5 = new NormalizedByte4[length];
+        //            texture2D.GetData<NormalizedByte4>(data5);
+        //            for (int index = 0; index < length; ++index)
+        //              this.colorData[index] = new Color(((IPackedVector) data5[index]).ToVector4());
+        //            break;
+        //          case SurfaceFormat.Rgba1010102:
+        //            Rgba1010102[] data6 = new Rgba1010102[length];
+        //            texture2D.GetData<Rgba1010102>(data6);
+        //            for (int index = 0; index < length; ++index)
+        //              this.colorData[index] = new Color(((IPackedVector) data6[index]).ToVector4());
+        //            break;
+        //          case SurfaceFormat.Rg32:
+        //            Rg32[] data7 = new Rg32[length];
+        //            texture2D.GetData<Rg32>(data7);
+        //            for (int index = 0; index < length; ++index)
+        //              this.colorData[index] = new Color(((IPackedVector) data7[index]).ToVector4());
+        //            break;
+        //          case SurfaceFormat.Rgba64:
+        //            Rgba64[] data8 = new Rgba64[length];
+        //            texture2D.GetData<Rgba64>(data8);
+        //            for (int index = 0; index < length; ++index)
+        //              this.colorData[index] = new Color(((IPackedVector) data8[index]).ToVector4());
+        //            break;
+        //          case SurfaceFormat.Alpha8:
+        //            Alpha8[] data9 = new Alpha8[length];
+        //            texture2D.GetData<Alpha8>(data9);
+        //            for (int index = 0; index < length; ++index)
+        //              this.colorData[index] = new Color(((IPackedVector) data9[index]).ToVector4());
+        //            break;
+        //          case SurfaceFormat.Single:
+        //            float[] data10 = new float[length];
+        //            texture2D.GetData<float>(data10);
+        //            for (int index = 0; index < length; ++index)
+        //            {
+        //              float num = data10[index];
+        //              this.colorData[index] = new Color(num, num, num);
+        //            }
+        //
+        //            break;
+        //          case SurfaceFormat.HalfSingle:
+        //            HalfSingle[] data11 = new HalfSingle[length];
+        //            texture2D.GetData<HalfSingle>(data11);
+        //            for (int index = 0; index < length; ++index)
+        //              this.colorData[index] = new Color(((IPackedVector) data11[index]).ToVector4());
+        //            break;
+        //          case SurfaceFormat.HalfVector2:
+        //            HalfVector2[] data12 = new HalfVector2[length];
+        //            texture2D.GetData<HalfVector2>(data12);
+        //            for (int index = 0; index < length; ++index)
+        //              this.colorData[index] = new Color(((IPackedVector) data12[index]).ToVector4());
+        //            break;
+        //          case SurfaceFormat.HalfVector4:
+        //            HalfVector4[] data13 = new HalfVector4[length];
+        //            texture2D.GetData<HalfVector4>(data13);
+        //            for (int index = 0; index < length; ++index)
+        //              this.colorData[index] = new Color(((IPackedVector) data13[index]).ToVector4());
+        //            break;
+        //          default:
+        //            throw new Exception("Texture surface format not supported");
+        //        }
+        //    }
     }
 }

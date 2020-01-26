@@ -33,7 +33,7 @@ namespace PixelVision8.Runner.Exporters
         {
             this.targetEngine = targetEngine;
 
-//            CalculateSteps();
+            //            CalculateSteps();
         }
 
         public override void CalculateSteps()
@@ -64,15 +64,15 @@ namespace PixelVision8.Runner.Exporters
             for (var i = 0; i < total; i++)
             {
                 var sound = soundChip.ReadSound(i);
-//                if (sound != null)
-//                {
+                //                if (sound != null)
+                //                {
                 JsonUtil.indentLevel++;
 
 
-//                {
-//                    "name":"Melody",
-//                    "settings":"0,.5,,.2,,.2,.3,.1266,,,,,,,,,,,,,,,,,,1,,,,,,"
-//                },
+                //                {
+                //                    "name":"Melody",
+                //                    "settings":"0,.5,,.2,,.2,.3,.1266,,,,,,,,,,,,,,,,,,1,,,,,,"
+                //                },
 
 
                 sb.Append("{");
@@ -87,13 +87,12 @@ namespace PixelVision8.Runner.Exporters
                 JsonUtil.GetLineBreak(sb, 1);
                 sb.Append("}");
 
-//                    sb.Append(sound.ReadSettings());
-                if (i < total - 1)
-                    sb.Append(",");
+                //                    sb.Append(sound.ReadSettings());
+                if (i < total - 1) sb.Append(",");
 
                 JsonUtil.GetLineBreak(sb, 1);
                 JsonUtil.indentLevel--;
-//                }
+                //                }
             }
 
             JsonUtil.indentLevel--;
@@ -117,7 +116,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-//            JsonUtil.indentLevel++;
+            //            JsonUtil.indentLevel++;
 
             currentStep++;
         }

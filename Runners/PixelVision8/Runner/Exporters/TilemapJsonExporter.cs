@@ -417,7 +417,7 @@ namespace PixelVision8.Runner.Exporters
                 }
             }
 
-//            sb.Append(String.Join("", new List<int>(layers[(int)Layer.Sprites]).ConvertAll(i => i.ToString()).ToArray()));
+            //            sb.Append(String.Join("", new List<int>(layers[(int)Layer.Sprites]).ConvertAll(i => i.ToString()).ToArray()));
 
             //                var layerEnum = (TilemapChip.Layer) Enum.Parse(typeof(TilemapChip.Layer), layerName);
             //                    
@@ -468,12 +468,9 @@ namespace PixelVision8.Runner.Exporters
         {
             var gid = (uint) id;
 
-            if (flipH)
-                gid |= 1U << 31;
+            if (flipH) gid |= 1U << 31;
 
-            if (flipV)
-                gid |= 1U << 30;
-
+            if (flipV) gid |= 1U << 30;
 
             return gid;
         }

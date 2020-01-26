@@ -79,7 +79,7 @@ namespace PixelVision8.Runner
         private void LoadDefaultGame()
         {
             // Create a list of valid files we want to load from the game directory
-            var fileExtensions = new[]
+            string[] fileExtensions =
             {
                 "lua",
                 "png",

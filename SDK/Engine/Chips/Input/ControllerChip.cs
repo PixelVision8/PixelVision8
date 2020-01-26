@@ -464,8 +464,7 @@ namespace PixelVision8.Engine.Chips
         {
             if (key.ToString().Length == 1) // TODO: Optmize by checking if its in range instead
             {
-                if (shift || caps)
-                    return key.ToString();
+                if (shift || caps) return key.ToString();
 
                 return key.ToString().ToLower();
             }

@@ -45,8 +45,7 @@ namespace PixelVision8.Runner.Workspace
 
         public void Dispose()
         {
-            foreach (var fs in FileSystems)
-                fs.Dispose();
+            foreach (var fs in FileSystems) fs.Dispose();
         }
 
         public ICollection<WorkspacePath> GetEntities(WorkspacePath path)
@@ -56,6 +55,7 @@ namespace PixelVision8.Runner.Workspace
             foreach (var entity in fs.GetEntities(path))
                 if (!entities.ContainsKey(entity))
                     entities.Add(entity, entity);
+
             return entities.Values;
         }
 
@@ -73,25 +73,24 @@ namespace PixelVision8.Runner.Workspace
         public Stream OpenFile(WorkspacePath path, FileAccess access)
         {
             var fs = GetFirst(path);
-            if (fs == null)
-                throw new FileNotFoundException();
+            if (fs == null) throw new FileNotFoundException();
+
             return fs.OpenFile(path, access);
         }
 
         public void CreateDirectory(WorkspacePath path)
         {
-            if (Exists(path))
-                throw new ArgumentException("The specified directory already exists.");
+            if (Exists(path)) throw new ArgumentException("The specified directory already exists.");
+
             var fs = GetFirst(path.ParentPath);
-            if (fs == null)
-                throw new ArgumentException("The directory-parent does not exist.");
+            if (fs == null) throw new ArgumentException("The directory-parent does not exist.");
+
             fs.CreateDirectory(path);
         }
 
         public void Delete(WorkspacePath path)
         {
-            foreach (var fs in FileSystems.Where(fs => fs.Exists(path)))
-                fs.Delete(path);
+            foreach (var fs in FileSystems.Where(fs => fs.Exists(path))) fs.Delete(path);
         }
 
         public IFileSystem GetFirst(WorkspacePath path)

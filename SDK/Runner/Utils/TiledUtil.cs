@@ -26,12 +26,9 @@ namespace PixelVision8.Runner.Utils
         {
             var gid = (uint) id;
 
-            if (flipH)
-                gid |= 1U << 31;
+            if (flipH) gid |= 1U << 31;
 
-            if (flipV)
-                gid |= 1U << 30;
-
+            if (flipV) gid |= 1U << 30;
 
             return gid;
         }

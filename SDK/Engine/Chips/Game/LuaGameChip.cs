@@ -34,12 +34,12 @@ namespace PixelVision8.Engine.Chips
     {
         protected Script _luaScript;
         public Dictionary<string, string> textFiles = new Dictionary<string, string>();
+
         public Script LuaScript
         {
             get
             {
                 if (_luaScript == null) _luaScript = new Script(CoreModules.Preset_SoftSandbox);
-
 
                 return _luaScript;
             }
@@ -53,8 +53,7 @@ namespace PixelVision8.Engine.Chips
 
         public override void Init()
         {
-            if (LuaScript?.Globals["Init"] == null)
-                return;
+            if (LuaScript?.Globals["Init"] == null) return;
 
             LuaScript.Call(LuaScript.Globals["Init"]);
         }
@@ -63,24 +62,21 @@ namespace PixelVision8.Engine.Chips
         {
             base.Update(timeDelta);
 
-            if (LuaScript?.Globals["Update"] == null)
-                return;
+            if (LuaScript?.Globals["Update"] == null) return;
 
             LuaScript.Call(LuaScript.Globals["Update"], timeDelta);
         }
 
         public override void Draw()
         {
-            if (LuaScript?.Globals["Draw"] == null)
-                return;
+            if (LuaScript?.Globals["Draw"] == null) return;
 
             LuaScript.Call(LuaScript.Globals["Draw"]);
         }
 
         public override void Shutdown()
         {
-            if (LuaScript?.Globals["Shutdown"] == null)
-                return;
+            if (LuaScript?.Globals["Shutdown"] == null) return;
 
             LuaScript.Call(LuaScript.Globals["Shutdown"]);
         }
@@ -90,8 +86,7 @@ namespace PixelVision8.Engine.Chips
             // Setup the GameChip
             base.Reset();
 
-            if (LuaScript == null)
-                return;
+            // if (LuaScript == null) return;
 
             try
             {
@@ -123,7 +118,8 @@ namespace PixelVision8.Engine.Chips
             LuaScript.Globals["Display"] = new Func<bool, Point>(Display);
             LuaScript.Globals["DrawPixels"] =
                 new Action<int[], int, int, int, int, bool, bool, DrawMode, int>(DrawPixels);
-            LuaScript.Globals["DrawSprite"] = new Action<int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprite);
+            LuaScript.Globals["DrawSprite"] =
+                new Action<int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprite);
             LuaScript.Globals["DrawSprites"] =
                 new Action<int[], int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprites);
             LuaScript.Globals["DrawSpriteBlock"] =
@@ -147,7 +143,7 @@ namespace PixelVision8.Engine.Chips
             LuaScript.Globals["WriteSaveData"] = new Action<string, string>(WriteSaveData);
             LuaScript.Globals["ReadMetadata"] = new Func<string, string, string>(ReadMetadata);
             LuaScript.Globals["WriteMetadata"] = new Action<string, string>(WriteMetadata);
-            LuaScript.Globals["ReadAllMetadata"] = new Func< Dictionary<string, string>>(ReadAllMetadata);
+            LuaScript.Globals["ReadAllMetadata"] = new Func<Dictionary<string, string>>(ReadAllMetadata);
 
             #endregion
 
@@ -191,10 +187,10 @@ namespace PixelVision8.Engine.Chips
             #region Sprite APIs
 
             LuaScript.Globals["Sprite"] = new Func<int, int[], int[]>(Sprite);
-//            luaScript.Globals["Sprites"] = new Func<int[], int, int[]>(Sprites);
+            //            luaScript.Globals["Sprites"] = new Func<int[], int, int[]>(Sprites);
             LuaScript.Globals["SpriteSize"] = new Func<Point>(SpriteSize);
             LuaScript.Globals["TotalSprites"] = new Func<bool, int>(TotalSprites);
-            LuaScript.Globals["MaxSpriteCount"] = new Func<int>(MaxSpriteCount); 
+            LuaScript.Globals["MaxSpriteCount"] = new Func<int>(MaxSpriteCount);
 
             #endregion
 
@@ -231,7 +227,7 @@ namespace PixelVision8.Engine.Chips
 
             #region Text
 
-//            luaScript.Globals["ConvertTextToSprites"] = new Func<string, string, int[]>(ConvertTextToSprites);
+            //            luaScript.Globals["ConvertTextToSprites"] = new Func<string, string, int[]>(ConvertTextToSprites);
             LuaScript.Globals["CharacterToPixelData"] =
                 new Func<char, string, int[]>(CharacterToPixelData);
 
@@ -242,7 +238,8 @@ namespace PixelVision8.Engine.Chips
             LuaScript.Globals["PaletteOffset"] = new Func<int, int, int>(PaletteOffset);
 
             LuaScript.Globals["MetaSprite"] = new Func<int, SpriteCollection, SpriteCollection>(MetaSprite);
-            LuaScript.Globals["DrawMetaSprite"] = new Action<int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawMetaSprite);
+            LuaScript.Globals["DrawMetaSprite"] =
+                new Action<int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawMetaSprite);
 
             UserData.RegisterType<SpriteData>();
             LuaScript.Globals["SpriteData"] = UserData.CreateStatic<SpriteData>();
@@ -250,7 +247,7 @@ namespace PixelVision8.Engine.Chips
             // Create new meta sprites
             UserData.RegisterType<SpriteCollection>();
             LuaScript.Globals["SpriteCollection"] = UserData.CreateStatic<SpriteCollection>();
-            
+
             #endregion
 
             // Enums
@@ -303,8 +300,7 @@ namespace PixelVision8.Engine.Chips
             RegisterLuaServices();
 
             // Reset the game
-            if (LuaScript.Globals["Reset"] != null)
-                LuaScript.Call(LuaScript.Globals["Reset"]);
+            if (LuaScript.Globals["Reset"] != null) LuaScript.Call(LuaScript.Globals["Reset"]);
         }
 
         #endregion
@@ -324,8 +320,7 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void LoadScript(string name)
         {
-            if (!name.EndsWith(".lua"))
-                name += ".lua";
+            if (!name.EndsWith(".lua")) name += ".lua";
             //            var split = name.Split('.');
             //            
             //            if (split.Last() != "lua")
@@ -363,8 +358,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="script">The string text representing the Lua script data.</param>
         public void AddScript(string name, string script)
         {
-            if (!name.EndsWith(".lua"))
-                name += ".lua";
+            if (!name.EndsWith(".lua")) name += ".lua";
 
             if (textFiles.ContainsKey(name))
                 textFiles[name] = script;
@@ -373,6 +367,5 @@ namespace PixelVision8.Engine.Chips
         }
 
         #endregion
-
     }
 }

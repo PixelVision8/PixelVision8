@@ -38,23 +38,23 @@ namespace PixelVision8.Engine.Utils
             return cols * rows;
         }
 
-//        public static void CalculateSpritePos(int index, int width, int height, int spriteWidth, int spriteHeight,
-//            out int x, out int y,
-//            bool flipY = true)
-//        {
-//            var totalSprites = CalculateTotalSprites(width, height, spriteWidth, spriteHeight);
-//
-//            // Make sure we stay in bounds
-//            index = MathHelper.Clamp(index, 0, totalSprites - 1);
-//
-//            var w = width / spriteWidth;
-//
-//            x = index % w * spriteWidth;
-//            y = index / w * spriteHeight;
-//
-//            if (flipY)
-//                y = height - y - spriteHeight;
-//        }
+        //        public static void CalculateSpritePos(int index, int width, int height, int spriteWidth, int spriteHeight,
+        //            out int x, out int y,
+        //            bool flipY = true)
+        //        {
+        //            var totalSprites = CalculateTotalSprites(width, height, spriteWidth, spriteHeight);
+        //
+        //            // Make sure we stay in bounds
+        //            index = MathHelper.Clamp(index, 0, totalSprites - 1);
+        //
+        //            var w = width / spriteWidth;
+        //
+        //            x = index % w * spriteWidth;
+        //            y = index / w * spriteHeight;
+        //
+        //            if (flipY)
+        //                y = height - y - spriteHeight;
+        //        }
 
         public static void CloneTextureData(TextureData source, TextureData target)
         {
@@ -66,8 +66,7 @@ namespace PixelVision8.Engine.Utils
             bool flipV = false)
         {
             var total = pixelData.Length;
-            if (pixels.Length < total)
-                Array.Resize(ref pixels, total);
+            if (pixels.Length < total) Array.Resize(ref pixels, total);
 
             Array.Copy(pixelData, pixels, total);
 
@@ -76,10 +75,9 @@ namespace PixelVision8.Engine.Utils
             {
                 var newx = ix;
                 var newY = iy;
-                if (flipH)
-                    newx = sWidth - 1 - ix;
-                if (flipV)
-                    newY = sHeight - 1 - iy;
+                if (flipH) newx = sWidth - 1 - ix;
+
+                if (flipV) newY = sHeight - 1 - iy;
 
                 pixelData[ix + iy * sWidth] = pixels[newx + newY * sWidth];
             }
@@ -95,8 +93,7 @@ namespace PixelVision8.Engine.Utils
             tmpSB.Length = 0;
             var total = data.Length;
 
-            for (var i = 0; i < total; i++)
-                tmpSB.Append(data[i]);
+            for (var i = 0; i < total; i++) tmpSB.Append(data[i]);
 
             return tmpSB.ToString(); //string.Join(",", data.Select(x => x.ToString()).ToArray()));
         }

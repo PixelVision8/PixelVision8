@@ -34,8 +34,7 @@ namespace PixelVision8.Runner.Workspace
         {
             Mounts = new SortedList<WorkspacePath, IFileSystem>(
                 new InverseComparer<WorkspacePath>(Comparer<WorkspacePath>.Default));
-            foreach (var mount in mounts)
-                Mounts.Add(mount);
+            foreach (var mount in mounts) Mounts.Add(mount);
         }
 
         public FileSystemMounter(params KeyValuePair<WorkspacePath, IFileSystem>[] mounts)
@@ -47,8 +46,7 @@ namespace PixelVision8.Runner.Workspace
 
         public void Dispose()
         {
-            foreach (var mount in Mounts.Select(p => p.Value))
-                mount.Dispose();
+            foreach (var mount in Mounts.Select(p => p.Value)) mount.Dispose();
         }
 
         public ICollection<WorkspacePath> GetEntities(WorkspacePath path)
