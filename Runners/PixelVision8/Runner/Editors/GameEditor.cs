@@ -183,7 +183,7 @@ namespace PixelVision8.Runner.Editors
 //            targetGame = new PixelVisionEngine(null, null, runner.defaultChips.ToArray());
 
             // Configure the game editor now that all the chips have been loaded
-            gameChip = targetGame.gameChip;
+            gameChip = targetGame.GameChip;
 
             // Since the game is not attached to a runner it will throw an error when trying to load lua serivce
             try
@@ -200,16 +200,16 @@ namespace PixelVision8.Runner.Editors
 //
 //            // Get references to all of the chips
 //            controllerChip = targetGame.controllerChip as GCControllerChip;
-            colorChip = targetGame.colorChip;
+            colorChip = targetGame.ColorChip;
 //            colorMapChip = targetGame.chipManager.GetChip(ColorMapParser.chipName, false) as ColorChip;
 //
 //            colorMapChip = targetGame.colorMapChip;
-            displayChip = targetGame.displayChip;
-            spriteChip = targetGame.spriteChip;
-            fontChip = targetGame.fontChip;
-            tilemapChip = targetGame.tilemapChip;
-            soundChip = targetGame.soundChip;
-            musicChip = targetGame.musicChip; // TODO need to create a SfxrMusicChip
+            displayChip = targetGame.DisplayChip;
+            spriteChip = targetGame.SpriteChip;
+            fontChip = targetGame.FontChip;
+            tilemapChip = targetGame.TilemapChip;
+            soundChip = targetGame.SoundChip;
+            musicChip = targetGame.MusicChip; // TODO need to create a SfxrMusicChip
 
 //            Console.WriteLine("MC Tracks " + musicChip.totalTracks);
             songGenerator = new SfxrMusicGeneratorChip();
@@ -497,7 +497,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int MaxSpriteCount(int? total)
         {
-            if (total.HasValue) targetGame.spriteChip.maxSpriteCount = total.Value;
+            if (total.HasValue) targetGame.SpriteChip.maxSpriteCount = total.Value;
 
             return gameChip.MaxSpriteCount();
         }
@@ -973,7 +973,7 @@ namespace PixelVision8.Runner.Editors
 //            }
             else
             {
-                activeColorChip = targetGame.colorChip;
+                activeColorChip = targetGame.ColorChip;
             }
         }
 
@@ -1096,22 +1096,22 @@ namespace PixelVision8.Runner.Editors
 
 
                 // Only save unique colors
-                targetGame.colorChip.unique = true;
+                targetGame.ColorChip.unique = true;
 
                 // 
 //                targetGame.colorChip.TotalDisks = 256;
-                targetGame.colorChip.Clear();
+                targetGame.ColorChip.Clear();
 
                 // Make sure we only have unique sprites
-                targetGame.spriteChip.unique = true;
-                targetGame.spriteChip.colorsPerSprite = 16;
-                targetGame.spriteChip.pages = 8;
+                targetGame.SpriteChip.unique = true;
+                targetGame.SpriteChip.colorsPerSprite = 16;
+                targetGame.SpriteChip.pages = 8;
 
                 // Set this flag so it auto imports all tiles into the sprite memeory
-                targetGame.tilemapChip.autoImport = true;
+                targetGame.TilemapChip.autoImport = true;
 
                 // Resize the tilemap
-                targetGame.tilemapChip.Resize(tmpParser.width / 8, tmpParser.height / 8);
+                targetGame.TilemapChip.Resize(tmpParser.width / 8, tmpParser.height / 8);
 
 
                 runner.ParseFiles(files, targetGame, saveFlags);
@@ -1182,7 +1182,7 @@ namespace PixelVision8.Runner.Editors
                 targetGame = new PixelVisionEngine(serviceManager, chips);
 
                 // Only save unique colors
-                targetGame.colorChip.unique = true;
+                targetGame.ColorChip.unique = true;
 
                 // 
 //                targetGame.colorChip.TotalDisks =
@@ -1190,10 +1190,10 @@ namespace PixelVision8.Runner.Editors
 
                 // Make sure we only have unique sprites
 //                targetGame.spriteChip.unique = false;
-                targetGame.fontChip.unique = false;
-                targetGame.fontChip.pages = 1;
+                targetGame.FontChip.unique = false;
+                targetGame.FontChip.pages = 1;
 
-                targetGame.name = path;
+                targetGame.Name = path;
 
                 runner.ParseFiles(files, targetGame, saveFlags);
             }
@@ -1238,7 +1238,7 @@ namespace PixelVision8.Runner.Editors
         /// <param name="oldName"></param>
         public string SaveFont(string fontName)
         {
-            var engineName = targetGame.name;
+            var engineName = targetGame.Name;
 
             var oldName = fontChip.fonts.Keys.First();
 
@@ -1445,7 +1445,7 @@ namespace PixelVision8.Runner.Editors
         /// </summary>
         public void ResizeToolColorMemory()
         {
-            runner.activeEngine.colorChip.total = 512;
+            runner.activeEngine.ColorChip.total = 512;
         }
 
         /// <summary>
@@ -1552,9 +1552,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int TotalSounds(int? total = null)
         {
-            if (total.HasValue) soundChip.totalSounds = total.Value;
+            if (total.HasValue) soundChip.TotalSounds = total.Value;
 
-            return soundChip.totalSounds;
+            return soundChip.TotalSounds;
         }
 
         /// <summary>
@@ -1808,7 +1808,7 @@ namespace PixelVision8.Runner.Editors
         {
             if (sfxID.HasValue)
                 musicChip.ActiveTrackerData.tracks[track].sfxID =
-                    MathHelper.Clamp(sfxID.Value, 0, soundChip.totalSounds);
+                    MathHelper.Clamp(sfxID.Value, 0, soundChip.TotalSounds);
 
             return musicChip.ActiveTrackerData.tracks[track].sfxID;
         }
@@ -2055,7 +2055,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int[] ReadToolSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
         {
-            return ReadSpriteData(runner.activeEngine.spriteChip, id, scaleX, scaleY, flipH, flipV);
+            return ReadSpriteData(runner.activeEngine.SpriteChip, id, scaleX, scaleY, flipH, flipV);
         }
 
         private int[] ReadSpriteData(SpriteChip spriteChip, int id, int scaleX = 1, int scaleY = 1, bool flipH = false,
@@ -2294,7 +2294,7 @@ namespace PixelVision8.Runner.Editors
 //            }
 
             // Copy to the active game's tilemap layer
-            runner.activeEngine.gameChip.DrawPixels(tmpPixelData, x, y, width, height, false, false,
+            runner.activeEngine.GameChip.DrawPixels(tmpPixelData, x, y, width, height, false, false,
                 DrawMode.TilemapCache, colorOffset);
         }
 
@@ -2339,7 +2339,7 @@ namespace PixelVision8.Runner.Editors
 //            }
 
             // Copy to the active game's tilemap layer
-            runner.activeEngine.gameChip.DrawPixels(tmpPixelData, x, y, width, height, false, false,
+            runner.activeEngine.GameChip.DrawPixels(tmpPixelData, x, y, width, height, false, false,
                 DrawMode.TilemapCache, colorOffset);
         }
 
@@ -2356,7 +2356,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public string[] ToolColors()
         {
-            return runner.activeEngine.colorChip.hexColors;
+            return runner.activeEngine.ColorChip.hexColors;
         }
 
         /// <summary>
@@ -2365,7 +2365,7 @@ namespace PixelVision8.Runner.Editors
         /// <param name="total"></param>
         public void ToolRebuildColorPages(int total)
         {
-            runner.activeEngine.colorChip.total = total;
+            runner.activeEngine.ColorChip.total = total;
         }
 
         /// <summary>

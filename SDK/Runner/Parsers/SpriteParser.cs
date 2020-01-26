@@ -59,7 +59,7 @@ namespace PixelVision8.Runner.Parsers
 
 
             this.chips = chips;
-            this.spriteChip = spriteChip ?? chips.spriteChip;
+            this.spriteChip = spriteChip ?? chips.SpriteChip;
 
             spriteWidth = this.spriteChip.width;
             spriteHeight = this.spriteChip.height;
@@ -95,9 +95,9 @@ namespace PixelVision8.Runner.Parsers
 
             colorData = chips.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip
                 ? colorMapChip.colors
-                : chips.colorChip.colors;
+                : chips.ColorChip.colors;
 
-            maskColor = ColorUtils.HexToColor(chips.colorChip.maskColor);
+            maskColor = ColorUtils.HexToColor(chips.ColorChip.maskColor);
             maxSprites = SpriteChipUtil.CalculateTotalSprites(spriteChip.textureWidth, spriteChip.textureHeight,
                 spriteWidth, spriteHeight);
 

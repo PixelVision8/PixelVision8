@@ -29,7 +29,7 @@ namespace PixelVision8.Runner.Services
         private ScriptParser LoadScript(string fileName, byte[] data)
         {
             var script = Encoding.UTF8.GetString(data);
-            var scriptParser = new ScriptParser(fileName, script, targetEngine.gameChip);
+            var scriptParser = new ScriptParser(fileName, script, targetEngine.GameChip);
 
             return scriptParser;
         }

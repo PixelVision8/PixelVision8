@@ -124,42 +124,42 @@ namespace PixelVision8.Engine.Chips
 
         protected ColorChip ColorChip
         {
-            get => engine.colorChip;
+            get => engine.ColorChip;
         }
 
         protected IControllerChip ControllerChip
         {
-            get => engine.controllerChip;
+            get => engine.ControllerChip;
         }
 
         protected DisplayChip DisplayChip
         {
-            get => engine.displayChip;
+            get => engine.DisplayChip;
         }
 
         protected SoundChip SoundChip
         { 
-            get => engine.soundChip;
+            get => engine.SoundChip;
         }
 
         protected SpriteChip SpriteChip
         {
-            get => engine.spriteChip;
+            get => engine.SpriteChip;
         }
 
         protected TilemapChip TilemapChip
         {
-            get => engine.tilemapChip;
+            get => engine.TilemapChip;
         }
 
         protected FontChip FontChip
         {
-            get => engine.fontChip;
+            get => engine.FontChip;
         }
 
         protected MusicChip MusicChip
         {
-            get => engine.musicChip;
+            get => engine.MusicChip;
         }
 
         public int TotalMetaSprites
@@ -178,7 +178,7 @@ namespace PixelVision8.Engine.Chips
         public override void Configure()
         {
             // Set the engine's game to this instance
-            engine.gameChip = this;
+            engine.GameChip = this;
 
             metaSprites = new SpriteCollection[96];
         }
@@ -246,7 +246,7 @@ namespace PixelVision8.Engine.Chips
         public override void Deactivate()
         {
             base.Deactivate();
-            engine.gameChip = null;
+            engine.GameChip = null;
         }
 
         /// <summary>

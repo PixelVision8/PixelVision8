@@ -35,9 +35,9 @@ namespace PixelVision8.Runner.Parsers
         private readonly List<Color> uniqueFontColors = new List<Color>();
 
         public FontParser(IImageParser imageParser, IEngineChips chips, string name = "Default") : base(imageParser,
-            chips, true, chips.fontChip)
+            chips, true, chips.FontChip)
         {
-            fontChip = chips.fontChip;
+            fontChip = chips.FontChip;
 
             this.name = name;
         }

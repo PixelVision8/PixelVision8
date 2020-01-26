@@ -11,7 +11,7 @@ namespace PixelVision8.Runner.Parsers
 
         public WavParser(IEngine engine, Dictionary<string, byte[]> files)
         {
-            soundChip = engine.soundChip;
+            soundChip = engine.SoundChip;
             this.files = files;
         }
 

@@ -30,9 +30,9 @@ namespace PixelVision8.Engine
     /// </summary>
     public interface IEngine : IEngineChips, IUpdate, IDraw
     {
-        string name { get; set; }
+        string Name { get; set; }
 
-        Dictionary<string, string> metaData { get; }
+        Dictionary<string, string> MetaData { get; }
 
         /// <summary>
         ///     Run the game in memory

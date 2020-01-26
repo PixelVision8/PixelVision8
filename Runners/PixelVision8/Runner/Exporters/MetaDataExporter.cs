@@ -45,7 +45,7 @@ namespace PixelVision8.Runner.Exporters
             steps.Add(CreateStringBuilder);
 
             // Serialize Game
-            if (engine.gameChip != null) steps.Add(delegate { SerializeGameChip(engine.gameChip); });
+            if (engine.GameChip != null) steps.Add(delegate { SerializeGameChip(engine.GameChip); });
 
             // Save the final string builder
             steps.Add(CloseStringBuilder);
@@ -107,7 +107,7 @@ namespace PixelVision8.Runner.Exporters
 //            JsonUtil.GetLineBreak(sb, 1);
 
             // Loop through all the meta data and save it
-            var metaData = engine.metaData;
+            var metaData = engine.MetaData;
 
             foreach (var data in metaData)
             {

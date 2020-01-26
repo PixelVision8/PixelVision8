@@ -37,12 +37,12 @@ namespace PixelVision8.Runner.Parsers
         public TilemapParser(IImageParser imageParser, byte[] tileFlagData, IEngineChips chips) :
             base(imageParser, chips)
         {
-            tilemapChip = chips.tilemapChip;
+            tilemapChip = chips.TilemapChip;
 
             autoImport = tilemapChip.autoImport;
 
 //            clear = new ColorData(0f){a = 0f};
-            maskColor = ColorUtils.HexToColor(chips.colorChip.maskColor);
+            maskColor = ColorUtils.HexToColor(chips.ColorChip.maskColor);
         }
 
         protected override void CalculateBounds()

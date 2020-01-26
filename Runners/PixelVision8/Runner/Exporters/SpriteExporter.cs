@@ -42,11 +42,11 @@ namespace PixelVision8.Runner.Exporters
             this.engine = engine;
             this.imageExporter = imageExporter;
 
-            this.spriteChip = spriteChip ?? engine.spriteChip;
+            this.spriteChip = spriteChip ?? engine.SpriteChip;
 
             var colorMapChip = engine.GetChip(ColorMapParser.chipName, false) as ColorChip;
 
-            colors = colorMapChip == null ? engine.colorChip.colors : colorMapChip.colors;
+            colors = colorMapChip == null ? engine.ColorChip.colors : colorMapChip.colors;
         }
 
         public int totalSteps => exporter.totalSteps;
@@ -80,7 +80,7 @@ namespace PixelVision8.Runner.Exporters
             spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
 
             exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, imageExporter,
-                engine.colorChip.maskColor);
+                engine.ColorChip.maskColor);
         }
     }
 }

@@ -204,7 +204,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public override void Configure()
         {
-            engine.spriteChip = this;
+            engine.SpriteChip = this;
 
             //_texture.wrapMode = false;
             width = 8;
@@ -217,7 +217,7 @@ namespace PixelVision8.Engine.Chips
         public override void Deactivate()
         {
             base.Deactivate();
-            engine.spriteChip = null;
+            engine.SpriteChip = null;
         }
 
         /// <summary>

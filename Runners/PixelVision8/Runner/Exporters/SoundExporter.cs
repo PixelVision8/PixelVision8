@@ -52,7 +52,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void SaveGameData()
         {
-            var soundChip = targetEngine.soundChip;
+            var soundChip = targetEngine.SoundChip;
 
             sb.Append("\"version\":\"v2\",");
             JsonUtil.GetLineBreak(sb, 1);
@@ -60,7 +60,7 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.indentLevel++;
             sb.Append("\"sounds\": [");
 
-            var total = soundChip.totalSounds;
+            var total = soundChip.TotalSounds;
             for (var i = 0; i < total; i++)
             {
                 var sound = soundChip.ReadSound(i);

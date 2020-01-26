@@ -181,7 +181,7 @@ namespace PixelVision8.Engine.Chips
         public override void Configure()
         {
             //ppu.tileMap = this;
-            engine.tilemapChip = this;
+            engine.TilemapChip = this;
 
             // Resize to default nes resolution
             Resize(32, 30);
@@ -190,7 +190,7 @@ namespace PixelVision8.Engine.Chips
         public override void Deactivate()
         {
             base.Deactivate();
-            engine.tilemapChip = null;
+            engine.TilemapChip = null;
         }
     }
 }

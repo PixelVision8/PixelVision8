@@ -57,9 +57,9 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
-        public int overscanXPixels => overscanX * engine.spriteChip.width;
+        public int overscanXPixels => overscanX * engine.SpriteChip.width;
 
-        public int overscanYPixels => overscanY * engine.spriteChip.height;
+        public int overscanYPixels => overscanY * engine.SpriteChip.height;
 
 //        public bool displayMaskColor;
 
@@ -84,7 +84,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public void Draw()
         {
-            cachedColors = engine.colorChip.colors;
+            cachedColors = engine.ColorChip.colors;
 
             // Loop through all draw requests
             for (var layer = 0; layer < drawRequestLayers.Length; layer++)
@@ -176,7 +176,7 @@ namespace PixelVision8.Engine.Chips
         public override void Configure()
         {
             //Debug.Log("Pixel Data Renderer: Configure ");
-            engine.displayChip = this;
+            engine.DisplayChip = this;
 
             ResetResolution(256, 240);
 
@@ -187,7 +187,7 @@ namespace PixelVision8.Engine.Chips
         public override void Deactivate()
         {
             base.Deactivate();
-            engine.displayChip = null;
+            engine.DisplayChip = null;
         }
 
         public void ResetDrawCalls()
@@ -271,13 +271,13 @@ namespace PixelVision8.Engine.Chips
 
         public Color[] VisiblePixels()
         {
-            var pixels = engine.displayChip.pixels;
+            var pixels = engine.DisplayChip.pixels;
 
-            var displaySize = engine.gameChip.Display();
+            var displaySize = engine.GameChip.Display();
 
             var visibleWidth = displaySize.X;
             var visibleHeight = displaySize.Y;
-            var width = engine.displayChip.width;
+            var width = engine.DisplayChip.width;
 
             // Need to crop the image
             var newPixels = new Color[visibleWidth * visibleHeight];

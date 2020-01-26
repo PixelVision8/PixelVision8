@@ -27,7 +27,7 @@ namespace PixelVision8.Runner.Exporters
     public class FontExporter : SpriteExporter
     {
         public FontExporter(string fileName, IEngine engine, IImageExporter imageExporter) : base(fileName, engine,
-            imageExporter, engine.fontChip)
+            imageExporter, engine.FontChip)
         {
         }
 
@@ -56,7 +56,7 @@ namespace PixelVision8.Runner.Exporters
 
             for (var i = 0; i < total; i++)
             {
-                var pos = engine.gameChip.CalculatePosition(i, maxCol);
+                var pos = engine.GameChip.CalculatePosition(i, maxCol);
 
                 spriteChip.ReadSpriteAt(i, tmpPixelData);
 
@@ -65,13 +65,13 @@ namespace PixelVision8.Runner.Exporters
             }
 
             var colors = !(engine.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip)
-                ? engine.colorChip.colors
+                ? engine.ColorChip.colors
                 : colorMapChip.colors;
 
             var imageExporter = new PNGWriter();
 
             exporter = new PixelDataExporter(fullFileName, textureData.pixels, width, height, colors, imageExporter,
-                engine.colorChip.maskColor);
+                engine.ColorChip.maskColor);
         }
     }
 }

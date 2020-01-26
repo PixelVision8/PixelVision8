@@ -68,10 +68,10 @@ namespace PixelVision8.Runner.Exporters
         {
             JsonUtil.compressJson = true;
 
-            var spriteChip = targetEngine.spriteChip;
-            var tilemapChip = targetEngine.tilemapChip;
-            var colorChip = targetEngine.colorChip;
-            var gameChip = targetEngine.gameChip;
+            var spriteChip = targetEngine.SpriteChip;
+            var tilemapChip = targetEngine.TilemapChip;
+            var colorChip = targetEngine.ColorChip;
+            var gameChip = targetEngine.GameChip;
 
             var spriteSize = gameChip.SpriteSize();
 
@@ -230,7 +230,7 @@ namespace PixelVision8.Runner.Exporters
 
                 // transparentcolor
                 sb.Append("\"transparentcolor\":");
-                sb.Append("\"" + targetEngine.colorChip.maskColor + "\"");
+                sb.Append("\"" + targetEngine.ColorChip.maskColor + "\"");
                 JsonUtil.GetLineBreak(sb, 2);
 
                 // tilesets end

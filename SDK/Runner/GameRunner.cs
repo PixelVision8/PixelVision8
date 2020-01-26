@@ -305,7 +305,7 @@ namespace PixelVision8.Runner
                 return;
 
             //                if (mode == RunnerMode.Play)
-            activeEngine.displayChip.layers = value - 1;
+            activeEngine.DisplayChip.layers = value - 1;
         }
 
         /// <summary>
@@ -391,7 +391,7 @@ namespace PixelVision8.Runner
                 elapsedTime -= TimeSpan.FromSeconds(1);
 
                 // Make sure the game chip has the current fps value
-                activeEngine.gameChip.fps = frameCounter;
+                activeEngine.GameChip.fps = frameCounter;
 
                 frameCounter = 0;
             }
@@ -425,7 +425,7 @@ namespace PixelVision8.Runner
             // Only call draw if the window has focus
             if (RunnerActive) activeEngine.Draw();
 
-            displayTarget.Render(activeEngine.displayChip.pixels);
+            displayTarget.Render(activeEngine.DisplayChip.pixels);
 
             if (resolutionInvalid)
             {
@@ -487,12 +487,12 @@ namespace PixelVision8.Runner
                 tmpEngine.SetMetadata(keyMap.Key.ToString(), keyValue.ToString());
             }
 
-            tmpEngine.controllerChip.RegisterKeyInput();
+            tmpEngine.ControllerChip.RegisterKeyInput();
         }
 
         protected virtual void ConfiguredControllers()
         {
-            tmpEngine.controllerChip.RegisterControllers();
+            tmpEngine.ControllerChip.RegisterControllers();
         }
 
         public virtual void ShutdownActiveEngine()
@@ -530,7 +530,7 @@ namespace PixelVision8.Runner
             ResetResolution();
 
             // Make sure that the first frame is cleared with the default color
-            activeEngine.gameChip.Clear();
+            activeEngine.GameChip.Clear();
         }
 
         public void ResetResolution()
@@ -538,7 +538,7 @@ namespace PixelVision8.Runner
             if (activeEngine == null)
                 return;
 
-            var displayChip = activeEngine.displayChip;
+            var displayChip = activeEngine.DisplayChip;
 
             var gameWidth = displayChip.width;
             var gameHeight = displayChip.height;
@@ -550,7 +550,7 @@ namespace PixelVision8.Runner
 
             // Update the mouse to use the new monitor scale
             var scale = displayTarget.scale;
-            activeEngine.controllerChip.MouseScale(scale.X, scale.Y);
+            activeEngine.ControllerChip.MouseScale(scale.X, scale.Y);
         }
 
         protected void ParseFiles(Dictionary<string, byte[]> files, SaveFlags? flags = null)

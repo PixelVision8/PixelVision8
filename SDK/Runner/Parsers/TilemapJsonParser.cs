@@ -42,7 +42,7 @@ namespace PixelVision8.Runner.Parsers
 
         public virtual void ConfigureTilemap()
         {
-            var tilemapChip = target.tilemapChip;
+            var tilemapChip = target.TilemapChip;
 
 
             if (data.ContainsKey("layers"))

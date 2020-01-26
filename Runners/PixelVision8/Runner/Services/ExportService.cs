@@ -112,7 +112,7 @@ namespace PixelVision8.Runner.Services
             // Step 3 (optional). Look for new colors
             if ((saveFlags & SaveFlags.Colors) == SaveFlags.Colors)
             {
-                var colorChip = targetEngine.colorChip;
+                var colorChip = targetEngine.ColorChip;
 
                 AddExporter(new ColorPaletteExporter(path + "colors.png", colorChip, new PNGWriter()));
             }
@@ -175,8 +175,8 @@ namespace PixelVision8.Runner.Services
             // Step 7 (optional). Look for fonts to load
             if ((saveFlags & SaveFlags.Fonts) == SaveFlags.Fonts)
             {
-                var fontChip = targetEngine.fontChip;
-                var spriteChip = targetEngine.spriteChip;
+                var fontChip = targetEngine.FontChip;
+                var spriteChip = targetEngine.SpriteChip;
                 var tmpTextureData = new TextureData(96, 64);
 
                 var fonts = fontChip.fonts;
@@ -264,8 +264,8 @@ namespace PixelVision8.Runner.Services
 
             var imageExporter = new PNGWriter();
 
-            AddExporter(new PixelDataExporter(path, pixelData, width, height, engine.colorChip.colors, imageExporter,
-                engine.colorChip.maskColor));
+            AddExporter(new PixelDataExporter(path, pixelData, width, height, engine.ColorChip.colors, imageExporter,
+                engine.ColorChip.maskColor));
         }
 
         public void StartExport(bool useSteps = true)

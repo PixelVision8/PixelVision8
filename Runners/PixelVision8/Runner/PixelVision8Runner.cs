@@ -204,10 +204,10 @@ namespace PixelVision8.Runner
             // At this point this game is fully configured so all chips are accessible for extra configuring
 
             // Save a reference to the controller chip so we can listen for special key events
-            controllerChip = engine.controllerChip;
+            controllerChip = engine.ControllerChip;
 
             // Get a reference to the Lua game
-            var game = engine.gameChip as LuaGameChip;
+            var game = engine.GameChip as LuaGameChip;
 
             // Get the script
             var luaScript = game.LuaScript;
@@ -447,7 +447,7 @@ namespace PixelVision8.Runner
                 {
                     base.Draw(gameTime);
 
-                    if (Recording) gifEncoder.AddFrame(activeEngine.displayChip);
+                    if (Recording) gifEncoder.AddFrame(activeEngine.DisplayChip);
                 }
             }
             catch (Exception e)
@@ -735,7 +735,7 @@ namespace PixelVision8.Runner
             var metaData = lastGameRef.Value;
 
             // Merge values from the active game
-            foreach (var entry in activeEngine.metaData)
+            foreach (var entry in activeEngine.MetaData)
                 if (metaData.ContainsKey(entry.Key))
                     metaData[entry.Key] = entry.Value;
                 else
@@ -854,7 +854,7 @@ namespace PixelVision8.Runner
                 gifEncoder = new AnimatedGifEncoder();
                 gifEncoder.SetDelay(1000 / 60);
 
-                gifEncoder.CreatePalette(activeEngine.displayChip, activeEngine.colorChip);
+                gifEncoder.CreatePalette(activeEngine.DisplayChip, activeEngine.ColorChip);
 
                 Window.Title = windowTitle + " (REC)";
             }

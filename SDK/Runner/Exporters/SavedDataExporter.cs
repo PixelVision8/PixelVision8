@@ -39,7 +39,7 @@ namespace PixelVision8.Runner.Exporters
 
         public override void CalculateSteps()
         {
-            if (targetEngine.gameChip.SaveSlots < 1)
+            if (targetEngine.GameChip.SaveSlots < 1)
                 return;
 
             base.CalculateSteps();
@@ -56,7 +56,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void SaveGameData()
         {
-            var gameChip = targetEngine.gameChip;
+            var gameChip = targetEngine.GameChip;
 
             // Save Data
             sb.Append("\"savedData\":");

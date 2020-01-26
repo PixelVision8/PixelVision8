@@ -150,7 +150,7 @@ namespace PixelVision8.Engine.Audio
         /// </summary>
         public SfxrParams parameters { get; } = new SfxrParams();
 
-        public bool playing
+        public bool Playing
         {
             get
             {

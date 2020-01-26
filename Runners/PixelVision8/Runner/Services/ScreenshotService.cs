@@ -98,14 +98,14 @@ namespace PixelVision8.Runner.Services
 
             try
             {
-                var pixels = engine.displayChip.pixels;
+                var pixels = engine.DisplayChip.pixels;
 
-                var displaySize = engine.gameChip.Display();
+                var displaySize = engine.GameChip.Display();
 
 
                 var visibleWidth = displaySize.X;
                 var visibleHeight = displaySize.Y;
-                var width = engine.displayChip.width;
+                var width = engine.DisplayChip.width;
 
 
                 // Need to crop the image

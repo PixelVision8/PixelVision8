@@ -305,7 +305,7 @@ namespace PixelVision8.Runner.Services
             //var fontName = fileSystem.GetFileNameWithoutExtension(file);
             //fontName = fontName.Substring(0, fontName.Length - 5);
 
-            var imageParser = new PNGReader(data, targetEngine.colorChip.maskColor);
+            var imageParser = new PNGReader(data, targetEngine.ColorChip.maskColor);
 
             return new FontParser(imageParser, targetEngine, fontName);
         }
@@ -361,7 +361,7 @@ namespace PixelVision8.Runner.Services
 //                if (files.ContainsKey(tileFlags)) tileFlagTex = files[tileFlags];
 
 
-                var imageParser = new PNGReader(files[tilemapFile], targetEngine.colorChip.maskColor);
+                var imageParser = new PNGReader(files[tilemapFile], targetEngine.ColorChip.maskColor);
                 AddParser(new TilemapParser(imageParser, tileFlagTex, targetEngine));
 
 //                var colorFile = "tile-color-offsets.json";
@@ -402,7 +402,7 @@ namespace PixelVision8.Runner.Services
             if (fileName != null)
             {
 //                var tex = ReadTexture(files[fileName]);
-                var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
+                var imageParser = new PNGReader(files[fileName], targetEngine.ColorChip.maskColor);
 
                 return new SpriteParser(imageParser, targetEngine);
             }
@@ -428,7 +428,7 @@ namespace PixelVision8.Runner.Services
 
 //                targetEngine.colorMapChip = colorMapChip;
 
-                var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
+                var imageParser = new PNGReader(files[fileName], targetEngine.ColorChip.maskColor);
 
                 // Pass the chip to the new parser
                 return new ColorMapParser(imageParser, colorMapChip, maskColor);
@@ -502,9 +502,9 @@ namespace PixelVision8.Runner.Services
             if (files.ContainsKey(fileName))
             {
 //                var tex = ReadTexture(files[fileName]);
-                var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
+                var imageParser = new PNGReader(files[fileName], targetEngine.ColorChip.maskColor);
 
-                return new ColorParser(imageParser, targetEngine.colorChip);
+                return new ColorParser(imageParser, targetEngine.ColorChip);
             }
 
             return null;

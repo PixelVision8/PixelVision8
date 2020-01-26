@@ -282,8 +282,8 @@ namespace PixelVision8.Runner.Chips
             var randy = 0f; // for debugging random number generator
             bool wasFunkyLastNote;
 
-            var musicChip = chips.musicChip;
-            var soundChip = chips.soundChip;
+            var musicChip = chips.MusicChip;
+            var soundChip = chips.SoundChip;
 
             var activeTrackerData = musicChip.ActiveTrackerData;
 

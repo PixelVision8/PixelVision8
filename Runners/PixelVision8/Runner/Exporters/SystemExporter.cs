@@ -45,40 +45,40 @@ namespace PixelVision8.Runner.Exporters
             steps.Add(CreateStringBuilder);
 
             // Serialize Color Chip
-            if (engine.colorChip != null && engine.colorChip.export)
-                steps.Add(delegate { SerializeColorChip(engine.colorChip); });
+            if (engine.ColorChip != null && engine.ColorChip.export)
+                steps.Add(delegate { SerializeColorChip(engine.ColorChip); });
 
             // Serialize Display
-            if (engine.displayChip != null && engine.displayChip.export)
-                steps.Add(delegate { SerializeDisplay(engine.displayChip); });
+            if (engine.DisplayChip != null && engine.DisplayChip.export)
+                steps.Add(delegate { SerializeDisplay(engine.DisplayChip); });
 
 //             Serialize Controller
-            if (engine.controllerChip != null && engine.controllerChip.export)
-                steps.Add(delegate { SerializeControllerChip(engine.controllerChip); });
+            if (engine.ControllerChip != null && engine.ControllerChip.export)
+                steps.Add(delegate { SerializeControllerChip(engine.ControllerChip); });
 
             // Serialize Font
-            if (engine.fontChip != null && engine.fontChip.export)
-                steps.Add(delegate { SerializeFontChip(engine.fontChip); });
+            if (engine.FontChip != null && engine.FontChip.export)
+                steps.Add(delegate { SerializeFontChip(engine.FontChip); });
 
             // Serialize Game
-            if (engine.gameChip != null && engine.gameChip.export)
-                steps.Add(delegate { SerializeGameChip(engine.gameChip); });
+            if (engine.GameChip != null && engine.GameChip.export)
+                steps.Add(delegate { SerializeGameChip(engine.GameChip); });
 
             // Serialize Music
-            if (engine.musicChip != null && engine.musicChip.export)
-                steps.Add(delegate { SerializeMusicChip(engine.musicChip); });
+            if (engine.MusicChip != null && engine.MusicChip.export)
+                steps.Add(delegate { SerializeMusicChip(engine.MusicChip); });
 
             // Serialize Sound
-            if (engine.soundChip != null && engine.soundChip.export)
-                steps.Add(delegate { SerializeSoundChip(engine.soundChip); });
+            if (engine.SoundChip != null && engine.SoundChip.export)
+                steps.Add(delegate { SerializeSoundChip(engine.SoundChip); });
 
             // Serialize Sprite
-            if (engine.spriteChip != null && engine.spriteChip.export)
-                steps.Add(delegate { SerializeSpriteChip(engine.spriteChip); });
+            if (engine.SpriteChip != null && engine.SpriteChip.export)
+                steps.Add(delegate { SerializeSpriteChip(engine.SpriteChip); });
 
             // Serialize Tilemap
-            if (engine.tilemapChip != null && engine.tilemapChip.export)
-                steps.Add(delegate { SerializeTilemapChip(engine.tilemapChip); });
+            if (engine.TilemapChip != null && engine.TilemapChip.export)
+                steps.Add(delegate { SerializeTilemapChip(engine.TilemapChip); });
 
             // Save the final string builder
             steps.Add(CloseStringBuilder);
@@ -344,7 +344,7 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"totalSounds\":");
-            sb.Append(soundChip.totalSounds);
+            sb.Append(soundChip.TotalSounds);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 

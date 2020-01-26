@@ -31,45 +31,45 @@ namespace PixelVision8.Engine.Chips
     /// </summary>
     public class SoundChip : AbstractChip
     {
-        protected IChannel[] channels = new IChannel[0];
+        protected IChannel[] Channels = new IChannel[0];
 
         private readonly Dictionary<string, byte[]> soundBank = new Dictionary<string, byte[]>();
 
-        protected SoundData[] sounds;
+        protected SoundData[] Sounds;
 
         /// <summary>
-        ///     The total number of <see cref="channels" /> available for playing
+        ///     The total number of <see cref="Channels" /> available for playing
         ///     back sounds.
         /// </summary>
         public int totalChannels
         {
-            get => channels.Length;
+            get => Channels.Length;
             set
             {
                 value = MathHelper.Clamp(value, 1, 5);
-                Array.Resize(ref channels, value);
+                Array.Resize(ref Channels, value);
                 for (var i = 0; i < value; i++)
-                    if (channels[i] == null)
-                        channels[i] = CreateSoundChannel();
+                    if (Channels[i] == null)
+                        Channels[i] = CreateSoundChannel();
             }
         }
 
         /// <summary>
-        ///     The total number of <see cref="sounds" /> in the collection.
+        ///     The total number of <see cref="Sounds" /> in the collection.
         /// </summary>
-        public int totalSounds
+        public int TotalSounds
         {
-            get => sounds.Length;
+            get => Sounds.Length;
             set
             {
                 // TODO need to copy over existing sounds
                 value = MathHelper.Clamp(value, 1, 96);
 
-                Array.Resize(ref sounds, value);
+                Array.Resize(ref Sounds, value);
 
                 for (var i = 0; i < value; i++)
-                    if (sounds[i] == null)
-                        sounds[i] = new SoundData("Untitled" + i.ToString("D2"));
+                    if (Sounds[i] == null)
+                        Sounds[i] = new SoundData("Untitled" + i.ToString("D2"));
             }
         }
 
@@ -85,7 +85,7 @@ namespace PixelVision8.Engine.Chips
 //            var synth = sounds[index];
 //            synth.UpdateSettings(param);
 
-            sounds[index].param = param;
+            Sounds[index].param = param;
         }
 
         /// <summary>
@@ -111,18 +111,18 @@ namespace PixelVision8.Engine.Chips
         /// <summary>
         ///     Configures the <see cref="SoundChip" /> by registering itself with
         ///     the engine and setting up the default values for total
-        ///     <see cref="sounds" /> and total channels.
+        ///     <see cref="Sounds" /> and total channels.
         /// </summary>
         public override void Configure()
         {
-            engine.soundChip = this;
-            totalSounds = 16;
+            engine.SoundChip = this;
+            TotalSounds = 16;
             totalChannels = 5;
         }
 
         /// <summary>
         ///     This method plays back a sound on a specific channel. The
-        ///     <see cref="SoundChip" /> has a limit of active <see cref="channels" />
+        ///     <see cref="SoundChip" /> has a limit of active <see cref="Channels" />
         ///     so playing a sound effect while another was is playing on the same
         ///     <paramref name="channel" /> will cancel it out and replace with the
         ///     new sound.
@@ -135,30 +135,30 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void PlaySound(int index, int channelID = 0, float? frequency = null)
         {
-            if (index > sounds.Length)
+            if (index > Sounds.Length)
                 return;
 
             channelID = MathHelper.Clamp(channelID, 0, totalChannels - 1);
 
-            var channel = channels[channelID];
+            var channel = Channels[channelID];
 
             channel?.Stop();
 
 //            channel = sounds[index];
 
-            channel.Play(sounds[index], frequency);
+            channel.Play(Sounds[index], frequency);
         }
 
         public bool IsChannelPlaying(int channelID)
         {
-            return channels[channelID] != null && channels[channelID].playing;
+            return Channels[channelID] != null && Channels[channelID].Playing;
         }
 
         /// <summary>
         ///     Returns a Sfxr Synth to be played back at run time by the SoundChip.
         /// </summary>
         /// <param name="index">
-        ///     The index where the sound is stored in the <see cref="sounds" />
+        ///     The index where the sound is stored in the <see cref="Sounds" />
         ///     array.
         /// </param>
         /// <returns>
@@ -166,7 +166,7 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public SoundData ReadSound(int id)
         {
-            return sounds[id];
+            return Sounds[id];
         }
 
         /// <summary>
@@ -194,13 +194,13 @@ namespace PixelVision8.Engine.Chips
 
         public void StopSound(int channel)
         {
-            if (channels[channel] != null) channels[channel].Stop();
+            if (Channels[channel] != null) Channels[channel].Stop();
         }
 
         public override void Shutdown()
         {
-            foreach (var channel in channels)
-                if (channel.playing)
+            foreach (var channel in Channels)
+                if (channel.Playing)
                     channel.Stop();
 
             base.Shutdown();
@@ -209,7 +209,7 @@ namespace PixelVision8.Engine.Chips
         public WaveType ChannelType(int id, WaveType? type = null)
         {
             // The channel will handle this so pass the values over to its API.
-            return channels[id].ChannelType(type);
+            return Channels[id].ChannelType(type);
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void PlayRawSound(string data, int channelID = 0, float frequency = 0.1266f)
         {
-            var channel = channels[channelID];
+            var channel = Channels[channelID];
 
             channel.Play(new SoundData("untitled", data), frequency);
         }
@@ -247,10 +247,10 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public void RefreshSamples()
         {
-            for (var i = 0; i < totalSounds; i++)
+            for (var i = 0; i < TotalSounds; i++)
             {
-                var name = sounds[i].name;
-                sounds[i].bytes = soundBank.ContainsKey(name) ? soundBank[name] : null;
+                var name = Sounds[i].name;
+                Sounds[i].bytes = soundBank.ContainsKey(name) ? soundBank[name] : null;
             }
         }
     }

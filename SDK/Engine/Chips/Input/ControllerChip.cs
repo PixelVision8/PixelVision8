@@ -344,7 +344,7 @@ namespace PixelVision8.Engine.Chips
 
         public override void Configure()
         {
-            engine.controllerChip = this;
+            engine.ControllerChip = this;
 
             //            inputValues = Enum.GetValues(typeof(Buttons));
             players = new List<Controller>
@@ -366,7 +366,7 @@ namespace PixelVision8.Engine.Chips
         public override void Deactivate()
         {
             base.Deactivate();
-            engine.controllerChip = null;
+            engine.ControllerChip = null;
         }
 
         private void BuildInputString(Keys key)

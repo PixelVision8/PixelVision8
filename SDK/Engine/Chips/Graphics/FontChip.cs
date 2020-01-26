@@ -39,7 +39,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public override void Configure()
         {
-            engine.fontChip = this;
+            engine.FontChip = this;
 
 //            colorsPerSprite = 2;
 //            pages = 2;
@@ -57,7 +57,7 @@ namespace PixelVision8.Engine.Chips
         public override void Deactivate()
         {
             base.Deactivate();
-            engine.fontChip = null;
+            engine.FontChip = null;
         }
 
         /// <summary>

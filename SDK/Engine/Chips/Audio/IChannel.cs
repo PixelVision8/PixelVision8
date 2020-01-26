@@ -28,7 +28,7 @@ namespace PixelVision8.Engine.Audio
     /// </summary>
     public interface IChannel
     {
-        bool playing { get; }
+        bool Playing { get; }
 
         /// <summary>
         ///     Plays the sound at a specific frequency.

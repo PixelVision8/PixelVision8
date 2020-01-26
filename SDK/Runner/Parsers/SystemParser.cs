@@ -23,17 +23,16 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Audio;
-using PixelVisionSDK.Engine;
 
 namespace PixelVision8.Runner.Parsers
 {
     public class SystemParser : JsonParser
     {
-        protected IEngine target;
+        protected IEngine Target;
 
         public SystemParser(IEngine target, string jsonString = "") : base(jsonString)
         {
-            this.target = target;
+            Target = target;
         }
 
         public override void CalculateSteps()
@@ -44,9 +43,9 @@ namespace PixelVision8.Runner.Parsers
 
         public virtual void ApplySettings()
         {
-            if (target != null)
+            if (Target != null)
             {
-                var chipManager = target;
+                var chipManager = Target;
 
                 foreach (var entry in data)
                 {
@@ -97,7 +96,7 @@ namespace PixelVision8.Runner.Parsers
 
         public void ConfigureColorChip(Dictionary<string, object> data)
         {
-            var colorChip = target.colorChip;
+            var colorChip = Target.ColorChip;
 
             // Flag chip to export
             colorChip.export = true;
@@ -162,7 +161,7 @@ namespace PixelVision8.Runner.Parsers
 
         public void ConfigureDisplayChip(Dictionary<string, object> data)
         {
-            var displayChip = target.displayChip;
+            var displayChip = Target.DisplayChip;
 
             // Flag chip to export
             displayChip.export = true;
@@ -190,11 +189,10 @@ namespace PixelVision8.Runner.Parsers
 
         public void ConfigureFontChip(Dictionary<string, object> data)
         {
-
-            var fontChip = target.fontChip;
+            var fontChip = Target.FontChip;
 
             if (data.ContainsKey("pages"))
-                fontChip.pages = (int)(long)data["pages"];
+                fontChip.pages = (int) (long) data["pages"];
 
             if (data.ContainsKey("unique"))
                 fontChip.unique = Convert.ToBoolean(data["unique"]);
@@ -204,7 +202,7 @@ namespace PixelVision8.Runner.Parsers
 
         public void ConfigureGameChip(Dictionary<string, object> data)
         {
-            var gameChip = target.gameChip;
+            var gameChip = Target.GameChip;
 
             // Flag chip to export
             gameChip.export = true;
@@ -243,10 +241,7 @@ namespace PixelVision8.Runner.Parsers
 
 
             // TODO need to look for MetaSprite properties
-            if (data.ContainsKey("totalMetaSprites"))
-            {
-                gameChip.TotalMetaSprites = (int) (long) data["totalMetaSprites"];
-            }
+            if (data.ContainsKey("totalMetaSprites")) gameChip.TotalMetaSprites = (int) (long) data["totalMetaSprites"];
 
             if (data.ContainsKey("metaSprites"))
             {
@@ -254,7 +249,7 @@ namespace PixelVision8.Runner.Parsers
 
                 var total = MathHelper.Clamp(metaSprites.Count, 0, gameChip.TotalMetaSprites);
 
-                for (int i = 0; i < total; i++)
+                for (var i = 0; i < total; i++)
                 {
                     var metaSprite = gameChip.MetaSprite(i);
                     var spriteData = metaSprites[i] as Dictionary<string, object>;
@@ -263,27 +258,23 @@ namespace PixelVision8.Runner.Parsers
                         metaSprite.Name = spriteData["name"] as string;
 
                     if (spriteData.ContainsKey("sprites"))
-                    {
                         if (spriteData["sprites"] is List<object> childSprites)
                         {
                             var subTotal = childSprites.Count;
-                            for (int j = 0; j < subTotal; j++)
+                            for (var j = 0; j < subTotal; j++)
                             {
                                 var childData = childSprites[j] as Dictionary<string, object>;
 
                                 metaSprite.AddSprite(
-                                
-                                    childData.ContainsKey("id") ? (int)(long)childData["id"] : 0,
-                                    childData.ContainsKey("x") ? (int)(long)childData["x"] : 0,
-                                    childData.ContainsKey("y") ? (int)(long)childData["y"] : 0,
+                                    childData.ContainsKey("id") ? (int) (long) childData["id"] : 0,
+                                    childData.ContainsKey("x") ? (int) (long) childData["x"] : 0,
+                                    childData.ContainsKey("y") ? (int) (long) childData["y"] : 0,
                                     childData.ContainsKey("flipH") && Convert.ToBoolean(childData["flipH"]),
                                     childData.ContainsKey("flipV") && Convert.ToBoolean(childData["flipV"]),
-                                    childData.ContainsKey("colorOffset") ? (int)(long)childData["colorOffset"] : 0
+                                    childData.ContainsKey("colorOffset") ? (int) (long) childData["colorOffset"] : 0
                                 );
                             }
                         }
-                    }
-
                 }
 
                 // var total = metaSprites.Length;
@@ -299,13 +290,11 @@ namespace PixelVision8.Runner.Parsers
                 //         // gameChip.WriteSaveData(name, value);
                 //     }
             }
-
-
         }
 
         public void ConfigureMusicChip(Dictionary<string, object> data)
         {
-            var musicChip = target.musicChip;
+            var musicChip = Target.MusicChip;
 
             if (musicChip == null)
                 return;
@@ -439,7 +428,7 @@ namespace PixelVision8.Runner.Parsers
 
         public void ConfigureSoundChip(Dictionary<string, object> data)
         {
-            var soundChip = target.soundChip;
+            var soundChip = Target.SoundChip;
 
             if (soundChip == null)
                 return;
@@ -451,7 +440,7 @@ namespace PixelVision8.Runner.Parsers
                 soundChip.totalChannels = (int) (long) data["totalChannels"];
 
             if (data.ContainsKey("totalSounds"))
-                soundChip.totalSounds = (int) (long) data["totalSounds"];
+                soundChip.TotalSounds = (int) (long) data["totalSounds"];
 
             if (data.ContainsKey("channelTypes"))
             {
@@ -468,7 +457,7 @@ namespace PixelVision8.Runner.Parsers
             {
                 var sounds = (List<object>) data["sounds"];
 
-                var total = MathHelper.Clamp(sounds.Count, 0, soundChip.totalSounds);
+                var total = MathHelper.Clamp(sounds.Count, 0, soundChip.TotalSounds);
 
                 for (var i = 0; i < total; i++)
                 {
@@ -577,7 +566,7 @@ namespace PixelVision8.Runner.Parsers
 
         public void ConfigureSpriteChip(Dictionary<string, object> data)
         {
-            var spriteChip = target.spriteChip;
+            var spriteChip = Target.SpriteChip;
 
             // Flag chip to export
             spriteChip.export = true;
@@ -605,7 +594,7 @@ namespace PixelVision8.Runner.Parsers
 
         public void ConfigureTilemapChip(Dictionary<string, object> data)
         {
-            var tilemapChip = target.tilemapChip;
+            var tilemapChip = Target.TilemapChip;
 
             // Flag chip to export
             tilemapChip.export = true;

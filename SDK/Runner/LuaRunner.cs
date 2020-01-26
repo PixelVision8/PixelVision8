@@ -108,7 +108,7 @@ namespace PixelVision8.Runner
             // Process the files
             ProcessFiles(tmpEngine, gameFiles);
 
-            controllerChip = activeEngine.controllerChip;
+            controllerChip = activeEngine.ControllerChip;
         }
 
         protected override void Update(GameTime gameTime)

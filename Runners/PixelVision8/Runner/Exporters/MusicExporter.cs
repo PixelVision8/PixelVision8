@@ -52,7 +52,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void SaveGameData()
         {
-            var musicChip = targetEngine.musicChip;
+            var musicChip = targetEngine.MusicChip;
             sb.Append("\"version\":\"v2\",");
             JsonUtil.GetLineBreak(sb, 1);
 

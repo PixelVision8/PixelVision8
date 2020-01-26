@@ -194,7 +194,7 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
-        protected SoundChip SoundChip => engine.soundChip;
+        protected SoundChip SoundChip => engine.SoundChip;
 
         /// <summary>
         ///     Updates the sequencer if it is in playback mode. This will
@@ -245,7 +245,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public override void Configure()
         {
-            engine.musicChip = this;
+            engine.MusicChip = this;
 
             //engine.chipManager.AddToUpdateList(this);
 

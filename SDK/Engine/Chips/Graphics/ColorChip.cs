@@ -258,7 +258,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public override void Configure()
         {
-            engine.colorChip = this;
+            engine.ColorChip = this;
             backgroundColor = -1;
             total = 256;
 
@@ -268,7 +268,7 @@ namespace PixelVision8.Engine.Chips
         public override void Deactivate()
         {
             base.Deactivate();
-            engine.colorChip = null;
+            engine.ColorChip = null;
         }
 
         public bool ValidateHexColor(string inputColor)

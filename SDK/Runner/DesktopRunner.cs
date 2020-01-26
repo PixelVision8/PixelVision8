@@ -135,7 +135,7 @@ namespace PixelVision8.Runner
         {
 
             // Get a reference to the Lua game
-            var game = engine.gameChip as LuaGameChip;
+            var game = engine.GameChip as LuaGameChip;
 
             // Get the script
             var luaScript = game.LuaScript;
@@ -279,7 +279,7 @@ namespace PixelVision8.Runner
 
 
                 // Path the full path to the engine's name
-                tmpEngine.name = path;
+                tmpEngine.Name = path;
 
                 bool success;
 
@@ -508,7 +508,7 @@ namespace PixelVision8.Runner
                 tmpEngine.SetMetadata(keyMap.Key.ToString(), keyValue.ToString());
             }
 
-            tmpEngine.controllerChip.RegisterKeyInput();
+            tmpEngine.ControllerChip.RegisterKeyInput();
         }
 
         protected virtual void CreateWorkspaceService()
@@ -682,10 +682,10 @@ namespace PixelVision8.Runner
 
             base.ShutdownActiveEngine();
 
-            if (activeEngine.gameChip.SaveSlots > 0)
+            if (activeEngine.GameChip.SaveSlots > 0)
                 //Print("Active Engine To Save", activeEngine.name);
 
-                SaveGameData(workspaceService.FindValidSavePath(activeEngine.name), activeEngine, SaveFlags.SaveData,
+                SaveGameData(workspaceService.FindValidSavePath(activeEngine.Name), activeEngine, SaveFlags.SaveData,
                     false);
 
             // Save the active disk
