@@ -1116,7 +1116,7 @@ namespace PixelVision8.Runner.Editors
                 loadService.targetEngine = targetGame;
 
                 loadService.AddParser(new ColorParser(pngReader, targetGame.ColorChip));
-                loadService.AddParser(new TilemapParser(pngReader, null, targetGame));
+                loadService.AddParser(new TilemapParser(pngReader, targetGame));
 
                 loadService.LoadAll();
 

@@ -28,13 +28,8 @@ namespace PixelVision8.Runner.Parsers
         private readonly bool autoImport;
 
         private readonly TilemapChip tilemapChip;
-        //        private ITexture2D tileFlagTex;
-        //        private IColor clear;
-        //        
-        //        private int flag;
-        //        private int offset;
 
-        public TilemapParser(IImageParser imageParser, byte[] tileFlagData, IEngineChips chips) :
+        public TilemapParser(IImageParser imageParser, IEngineChips chips) :
             base(imageParser, chips)
         {
             tilemapChip = chips.TilemapChip;
@@ -74,8 +69,7 @@ namespace PixelVision8.Runner.Parsers
             var tile = tilemapChip.GetTile(x, y);
 
             tile.spriteID = id;
-            //            tile.flag = flag;
-            //            tile.colorOffset = offset;
+
         }
     }
 }

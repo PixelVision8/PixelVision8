@@ -81,8 +81,8 @@ namespace PixelVision8.Runner
                 "json"
             };
 
-            // Create a new dictionary to store the file binary data
-            var gameFiles = new Dictionary<string, string>();
+            // Create a new list to store the file paths
+            var gameFiles = new List<string>();
 
             // Get only the files we need from the directory base on their extension above.
             var files = from p in Directory.EnumerateFiles(gamePath)
@@ -92,7 +92,7 @@ namespace PixelVision8.Runner
             // Loop through each file in the list
             foreach (var file in files)
                 // Read the binary data and save it along with the file name to the dictionary.
-                gameFiles.Add(Path.GetFileName(file), file);
+                gameFiles.Add(file);
 
             // Configure a new PV8 engine to play the game
             ConfigureEngine();
@@ -101,7 +101,7 @@ namespace PixelVision8.Runner
             tmpEngine.ActivateChip("GameChip", new LuaGameChip { DefaultScriptPath = "Content/code.lua" });
 
             // Process the files
-            ProcessFiles(tmpEngine, gameFiles);
+            ProcessFiles(tmpEngine, gameFiles.ToArray(), false, Path.DirectorySeparatorChar);
 
             controllerChip = activeEngine.ControllerChip;
         }

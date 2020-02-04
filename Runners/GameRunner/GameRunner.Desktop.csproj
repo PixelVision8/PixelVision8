@@ -70,15 +70,15 @@
     <Content Include="Icon.icns" />
   </ItemGroup>
   <ItemGroup>
-      <Content Include="Content\bios.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
+    <Content Include="Content\bios.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <!-- Shader Effects -->
     <Content Include="..\..\Effects\*.*">
       <Link>Content\Effects\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  <!-- Core Runner Tools -->
+    <!-- Core Runner Tools -->
     <Content Include="..\..\Disks\RunnerTools\BootTool\*.*">
       <Link>Content\BootTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -103,6 +103,10 @@
     <ProjectReference Include="..\..\MonoVision\MonoVision.OpenGL.csproj">
       <Project>{6d75e618-19ca-4c51-9546-f10965fbc0b8}</Project>
       <Name>MonoVision.OpenGL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PixelVision8\PixelVision8Runner.Desktop.csproj">
+      <Project>{CC887541-6129-484B-8122-009F54E21AD1}</Project>
+      <Name>PixelVision8Runner.Desktop</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

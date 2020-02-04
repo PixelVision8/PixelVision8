@@ -76,7 +76,7 @@ namespace PixelVision8.Runner.Services
         }
 
 
-        public virtual void ParseFiles(Dictionary<string, string> files, IEngine engine, SaveFlags saveFlags)
+        public virtual void ParseFiles(string[] files, IEngine engine, SaveFlags saveFlags, char directorySeparatorChar = '/')
         {
             Reset();
 
@@ -118,16 +118,16 @@ namespace PixelVision8.Runner.Services
             // Step 7 (optional). Look for fonts to load
             if ((saveFlags & SaveFlags.Fonts) == SaveFlags.Fonts)
             {
-                var fontExtension = ".font.png";
-
-                var paths = files.Keys.Where(s => s.EndsWith(fontExtension)).ToArray();
+                
+                var paths = files.Where(s => s.EndsWith(".font.png")).ToArray();
 
                 foreach (var fileName in paths)
                 {
-                    var fontName = fileName.Split('.')[0];
+                    var fontName = fileName.Split(directorySeparatorChar).Last().Split('.').First();
 
-                    parser = LoadFont(fontName, ReadAllBytes(files[fileName]));
-                    if (parser != null) AddParser(parser);
+                    parser = LoadFont(fontName, ReadAllBytes(fileName));
+                    if (parser != null)
+                        AddParser(parser);
                 }
             }
 
@@ -139,7 +139,15 @@ namespace PixelVision8.Runner.Services
             }
 
             // Step 9 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.Sounds) == SaveFlags.Sounds) LoadSounds(files);
+            if ((saveFlags & SaveFlags.Sounds) == SaveFlags.Sounds)
+            {
+                LoadSounds(files);
+
+                // Get all of the wav files
+                var wavFiles = files.Where(x => x.EndsWith(".wav")).ToDictionary(x => x.Split(directorySeparatorChar).Last(), ReadAllBytes);
+
+                AddParser(new WavParser(targetEngine, wavFiles));
+            }
 
             // Step 10 (optional). Look for meta data and override the game
             if ((saveFlags & SaveFlags.Music) == SaveFlags.Music) LoadMusic(files);
@@ -154,7 +162,7 @@ namespace PixelVision8.Runner.Services
 
         }
 
-        public virtual void ParseExtraFileTypes(Dictionary<string, string> files, IEngine engine, SaveFlags saveFlags)
+        public virtual void ParseExtraFileTypes(string[] files, IEngine engine, SaveFlags saveFlags)
         {
             // TODO Override and add extra file parsers here.
         }
@@ -225,13 +233,14 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        protected AbstractParser LoadMetaData(Dictionary<string, string> files)
+        protected AbstractParser LoadMetaData(string[] files)
         {
-            var fileName = "info.json";
+            
+            var file = files.FirstOrDefault(x => x.EndsWith("info.json"));
 
-            if (files.ContainsKey(fileName))
+            if (!string.IsNullOrEmpty(file))
             {
-                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(files[fileName]));
+                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
                 return new MetaDataParser(fileContents, targetEngine);
             }
@@ -247,52 +256,60 @@ namespace PixelVision8.Runner.Services
             return new FontParser(imageParser, targetEngine, fontName);
         }
 
-        protected void LoadTilemap(Dictionary<string, string> files)
+        protected void LoadTilemap(string[] files)
         {
-            var tilemapFile = "tilemap.png";
-            var tilemapJsonFile = "tilemap.json";
-
+            
             // If a tilemap json file exists, try to load that
-            if (files.ContainsKey(tilemapJsonFile))
+            var file = files.FirstOrDefault(x => x.EndsWith("tilemap.json"));
+
+            if (!string.IsNullOrEmpty(file))
             {
-                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(files[tilemapJsonFile]));
+                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
                 var jsonParser = new TilemapJsonParser(fileContents, targetEngine);
 
                 AddParser(jsonParser);
 
-                //                tilemapExists = true;
+                return;
             }
-            else if (files.ContainsKey(tilemapFile))
+
+            // Try to load the tilemap png file next
+            file = files.FirstOrDefault(x => x.EndsWith("tilemap.png"));
+
+            if (!string.IsNullOrEmpty(file))
             {
-
-                byte[] tileFlagTex = null;
-
-                var imageParser = new PNGReader(ReadAllBytes(files[tilemapFile]), targetEngine.ColorChip.maskColor);
-                AddParser(new TilemapParser(imageParser, tileFlagTex, targetEngine));
+                
+                var imageParser = new PNGReader(ReadAllBytes(file), targetEngine.ColorChip.maskColor);
+                AddParser(new TilemapParser(imageParser, targetEngine));
 
             }
+            
 
         }
 
-        protected AbstractParser LoadSprites(Dictionary<string, string> files)
+        protected AbstractParser LoadSprites(string[] files)
         {
-            // TODO need to tell if the cache should be ignore, important when in tools
-            var srcFile = "sprites.png";
+            // // TODO need to tell if the cache should be ignore, important when in tools
+            // var srcFile = "sprites.png";
+            //
+            // // TODO this in here to support legacy games but can be removed in future releases
+            // var cacheFile = "sprites.cache.png";
 
-            // TODO this in here to support legacy games but can be removed in future releases
-            var cacheFile = "sprites.cache.png";
+            // string fileName = null;
+            
+            // TODO need to depricate this
+            var file = files.FirstOrDefault(x => x.EndsWith("sprites.png"));
 
-            string fileName = null;
+            // If there is no sprites cache file, load the png file instead
+            // if (string.IsNullOrEmpty(file))
+            // {
+            //     file = files.FirstOrDefault(x => x.EndsWith("sprites.png"));
+            // }
 
-            if (files.ContainsKey(cacheFile))
-                fileName = cacheFile;
-            else if (files.ContainsKey(srcFile)) fileName = srcFile;
-
-            if (fileName != null)
+            if (!string.IsNullOrEmpty(file))
             {
-                //                var tex = ReadTexture(ReadAllBytes(files[fileName]));
-                var imageParser = new PNGReader(ReadAllBytes(files[fileName]), targetEngine.ColorChip.maskColor);
+                
+                var imageParser = new PNGReader(ReadAllBytes(file), targetEngine.ColorChip.maskColor);
 
                 return new SpriteParser(imageParser, targetEngine);
             }
@@ -300,13 +317,15 @@ namespace PixelVision8.Runner.Services
             return null;
         }
 
-        protected AbstractParser LoadColorMap(Dictionary<string, string> files)
+        protected AbstractParser LoadColorMap(string[] files)
         {
-            var fileName = "color-map.png";
+            // var fileName = "color-map.png";
 
-            if (files.ContainsKey(fileName))
+            var file = files.FirstOrDefault(x => x.EndsWith("color-map.png"));
+
+            if (!string.IsNullOrEmpty(file))
             {
-                
+
                 // Create new color map chip
                 var colorMapChip = new ColorChip();
 
@@ -315,7 +334,7 @@ namespace PixelVision8.Runner.Services
 
                 //                targetEngine.colorMapChip = colorMapChip;
 
-                var imageParser = new PNGReader(ReadAllBytes(files[fileName]), targetEngine.ColorChip.maskColor);
+                var imageParser = new PNGReader(ReadAllBytes(file), targetEngine.ColorChip.maskColor);
 
                 // Pass the chip to the new parser
                 return new ColorMapParser(imageParser, colorMapChip, maskColor);
@@ -324,27 +343,32 @@ namespace PixelVision8.Runner.Services
             return null;
         }
 
-        protected AbstractParser LoadColors(Dictionary<string, string> files)
+        protected AbstractParser LoadColors(string[] files)
         {
-            var fileName = "colors.png";
+            // var fileName = "colors.png";
 
-            if (files.ContainsKey(fileName))
+
+            var file = files.FirstOrDefault(x => x.EndsWith("colors.png"));
+
+            if (!string.IsNullOrEmpty(file))
             {
-                //                var tex = ReadTexture(ReadAllBytes(files[fileName]));
-                var imageParser = new PNGReader(ReadAllBytes(files[fileName]), targetEngine.ColorChip.maskColor);
+                //                var tex = ReadTexture(ReadAllBytes(file));
+                var imageParser = new PNGReader(ReadAllBytes(file), targetEngine.ColorChip.maskColor);
 
                 return new ColorParser(imageParser, targetEngine.ColorChip);
             }
 
             return null;
         }
-        protected void LoadSystem(Dictionary<string, string> files)
+        protected void LoadSystem(string[] files)
         {
-            var fileName = "data.json";
+            // var fileName = ;
 
-            if (files.ContainsKey(fileName))
+            var file = files.FirstOrDefault(x => x.EndsWith("data.json"));
+
+            if (!string.IsNullOrEmpty(file))
             {
-                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(files[fileName]));
+                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
                 var jsonParser = new SystemParser(targetEngine, fileContents);
 
@@ -355,56 +379,57 @@ namespace PixelVision8.Runner.Services
 
         }
 
-        protected void LoadSounds(Dictionary<string, string> files)
+        protected void LoadSounds(string[] files)
         {
-            var fileName = "sounds.json";
+            
+            var file = files.FirstOrDefault(x => x.EndsWith("sounds.json"));
 
-            if (files.ContainsKey(fileName))
+
+            if (!string.IsNullOrEmpty(file))
             {
-                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(files[fileName]));
+                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
                 AddParser(new SystemParser(targetEngine, fileContents));
             }
-
-            // TODO go through all wav files that were loaded and pass them off to the Sample parser
-            var wavFiles =
-                (from p in files where p.Key.EndsWith("wav") select p).ToDictionary(x => x.Key, x => (ReadAllBytes(x.Value)));
-
-            AddParser(new WavParser(targetEngine, wavFiles));
-
+            
         }
 
-        protected void LoadMusic(Dictionary<string, string> files)
+        protected void LoadMusic(string[] files)
         {
-            var fileName = "music.json";
+            // var fileName = ;
 
-            if (files.ContainsKey(fileName))
+            var file = files.FirstOrDefault(x => x.EndsWith("music.json"));
+
+
+            if (!string.IsNullOrEmpty(file))
             {
-                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(files[fileName]));
-
-                AddParser(new SystemParser(targetEngine, fileContents));
-            }
-        }
-
-        protected void LoadMetaSprites(Dictionary<string, string> files)
-        {
-            var fileName = "meta-sprites.json";
-
-            if (files.ContainsKey(fileName))
-            {
-                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(files[fileName]));
+                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
                 AddParser(new SystemParser(targetEngine, fileContents));
             }
         }
 
-        protected void LoadSaveData(Dictionary<string, string> files)
+        protected void LoadMetaSprites(string[] files)
         {
-            var fileName = "saves.json";
+            // var fileName = ;
+            var file = files.FirstOrDefault(x => x.EndsWith("meta-sprites.json"));
 
-            if (files.ContainsKey(fileName))
+            if (!string.IsNullOrEmpty(file))
             {
-                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(files[fileName]));
+                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
+
+                AddParser(new SystemParser(targetEngine, fileContents));
+            }
+        }
+
+        protected void LoadSaveData(string[] files)
+        {
+            
+            var file = files.FirstOrDefault(x => x.EndsWith("saves.json"));
+
+            if (!string.IsNullOrEmpty(file))
+            {
+                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
                 AddParser(new SystemParser(targetEngine, fileContents));
                 

@@ -328,14 +328,14 @@ namespace PixelVision8.Runner
         /// <param name="tmpEngine"></param>
         /// <param name="files"></param>
         /// <param name="displayProgress"></param>
-        public virtual void ProcessFiles(IEngine tmpEngine, Dictionary<string, string> files,
-            bool displayProgress = false)
+        public virtual void ProcessFiles(IEngine tmpEngine, string[] files,
+            bool displayProgress = false, char directorySeparatorChar = '/')
         {
             this.displayProgress = displayProgress;
 
             this.tmpEngine = tmpEngine;
 
-            ParseFiles(files);
+            ParseFiles(files, null, directorySeparatorChar);
 
             if (!displayProgress)
             {
@@ -428,7 +428,7 @@ namespace PixelVision8.Runner
             }
         }
 
-        public void ParseFiles(Dictionary<string, string> files, IEngine engine, SaveFlags saveFlags,
+        public void ParseFiles(string[] files, IEngine engine, SaveFlags saveFlags,
             bool autoLoad = true)
         {
             loadService.ParseFiles(files, engine, saveFlags);
@@ -544,7 +544,7 @@ namespace PixelVision8.Runner
             activeEngine.ControllerChip.MouseScale(scale.X, scale.Y);
         }
 
-        protected void ParseFiles(Dictionary<string, string> files, SaveFlags? flags = null)
+        protected void ParseFiles(string[] files, SaveFlags? flags = null, char directorySeparatorChar = '/')
         {
             if (!flags.HasValue)
             {
@@ -560,7 +560,7 @@ namespace PixelVision8.Runner
                 flags |= SaveFlags.MetaSprites;
             }
 
-            loadService.ParseFiles(files, tmpEngine, flags.Value);
+            loadService.ParseFiles(files, tmpEngine, flags.Value, directorySeparatorChar);
         }
 
         public virtual void RunGame()

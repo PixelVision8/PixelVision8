@@ -256,12 +256,12 @@ namespace PixelVision8.Runner.Services
         }
 
 
-        public Dictionary<string, string> LoadGame(string path)
+        public string[] LoadGame(string path)
         {
             var filePath = WorkspacePath.Parse(path); //FileSystemPath.Root.AppendPath(fullPath);
             var exits = Exists(filePath);
 
-            Dictionary<string, string>files = null;
+            string[]files = null;
 
             if (exits)
             {
@@ -306,9 +306,9 @@ namespace PixelVision8.Runner.Services
             return files;
         }
 
-        public virtual Dictionary<string, string> GetGameEntities(WorkspacePath path) => (from p in GetEntities(path)
+        public virtual string[] GetGameEntities(WorkspacePath path) => (from p in GetEntities(path)
                 where fileExtensions.Any(val => p.EntityName.EndsWith(val))
-                select p).ToDictionary(p => p.EntityName, p => p.Path);
+                select p.Path).ToArray();
         
         public virtual List<WorkspacePath> SharedLibDirectories()
         {
