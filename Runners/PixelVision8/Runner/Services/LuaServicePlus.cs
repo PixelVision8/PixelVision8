@@ -353,7 +353,9 @@ namespace PixelVision8.Runner.Services
                     {
                         var libFileData = new Dictionary<string, byte[]>();
 
-                        workspace.IncludeLibDirectoryFiles(libFileData);
+                        // TODO NEED TO INCLUDE LIB FILES HERE 
+
+                        //workspace.IncludeLibDirectoryFiles(libFileData);
 
                         var total = libFileNames.Length;
 
@@ -639,7 +641,8 @@ namespace PixelVision8.Runner.Services
                             {
                                 var libFileData = new Dictionary<string, byte[]>();
 
-                                workspace.IncludeLibDirectoryFiles(libFileData);
+                                // TODO NEED TO INCLUDE LIB FILES HERE 
+                                //workspace.IncludeLibDirectoryFiles(libFileData);
 
                                 var total = libFileNames.Length;
 

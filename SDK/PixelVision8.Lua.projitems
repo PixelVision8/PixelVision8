@@ -11,8 +11,9 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Game\LuaGameChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\LuaRunner.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LuaLoadService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ScriptParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LuaService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Runner\Parsers\" />
   </ItemGroup>
 </Project>

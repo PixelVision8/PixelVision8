@@ -60,11 +60,6 @@ namespace PixelVision8.Runner
             LoadDefaultGame();
         }
 
-        public override void CreateLoadService()
-        {
-            loadService = new LuaLoadService();
-        }
-
         public override void ConfigureServices()
         {
             var luaService = new LuaService(this);
@@ -87,7 +82,7 @@ namespace PixelVision8.Runner
             };
 
             // Create a new dictionary to store the file binary data
-            var gameFiles = new Dictionary<string, byte[]>();
+            var gameFiles = new Dictionary<string, string>();
 
             // Get only the files we need from the directory base on their extension above.
             var files = from p in Directory.EnumerateFiles(gamePath)
@@ -97,13 +92,13 @@ namespace PixelVision8.Runner
             // Loop through each file in the list
             foreach (var file in files)
                 // Read the binary data and save it along with the file name to the dictionary.
-                gameFiles.Add(Path.GetFileName(file), File.ReadAllBytes(file));
+                gameFiles.Add(Path.GetFileName(file), file);
 
             // Configure a new PV8 engine to play the game
             ConfigureEngine();
 
             // Manually activate the custom game chip
-            tmpEngine.ActivateChip("GameChip", new LuaGameChip());
+            tmpEngine.ActivateChip("GameChip", new LuaGameChip { DefaultScriptPath = "Content/code.lua" });
 
             // Process the files
             ProcessFiles(tmpEngine, gameFiles);

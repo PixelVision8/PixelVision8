@@ -119,7 +119,7 @@ namespace PixelVision8.Runner
 
         protected GraphicsDeviceManager graphics;
         protected RunnerMode lastMode;
-        protected LoadService loadService;
+        public LoadService loadService;
         protected RunnerMode mode;
 
         protected bool resolutionInvalid = true;
@@ -328,7 +328,7 @@ namespace PixelVision8.Runner
         /// <param name="tmpEngine"></param>
         /// <param name="files"></param>
         /// <param name="displayProgress"></param>
-        public virtual void ProcessFiles(IEngine tmpEngine, Dictionary<string, byte[]> files,
+        public virtual void ProcessFiles(IEngine tmpEngine, Dictionary<string, string> files,
             bool displayProgress = false)
         {
             this.displayProgress = displayProgress;
@@ -428,7 +428,7 @@ namespace PixelVision8.Runner
             }
         }
 
-        public void ParseFiles(Dictionary<string, byte[]> files, IEngine engine, SaveFlags saveFlags,
+        public void ParseFiles(Dictionary<string, string> files, IEngine engine, SaveFlags saveFlags,
             bool autoLoad = true)
         {
             loadService.ParseFiles(files, engine, saveFlags);
@@ -544,7 +544,7 @@ namespace PixelVision8.Runner
             activeEngine.ControllerChip.MouseScale(scale.X, scale.Y);
         }
 
-        protected void ParseFiles(Dictionary<string, byte[]> files, SaveFlags? flags = null)
+        protected void ParseFiles(Dictionary<string, string> files, SaveFlags? flags = null)
         {
             if (!flags.HasValue)
             {

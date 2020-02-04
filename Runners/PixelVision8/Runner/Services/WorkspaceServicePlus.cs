@@ -275,19 +275,19 @@ namespace PixelVision8.Runner.Services
             // Make sure we don't have a disk with the same name
             if (Exists(rootPath)) Mounts.Remove(Get(rootPath));
         }
-
-        public override void IncludeLibDirectoryFiles(Dictionary<string, byte[]> files)
-        {
-            base.IncludeLibDirectoryFiles(files);
-
-            var paths = new List<WorkspacePath>();
-
-            var diskPaths = Disks;
-
-            foreach (var disk in diskPaths) paths.Add(disk.AppendDirectory("System").AppendDirectory("Libs"));
-
-            AddExtraFiles(files, paths);
-        }
+        //
+        // public override void IncludeLibDirectoryFiles(Dictionary<string, byte[]> files)
+        // {
+        //     base.IncludeLibDirectoryFiles(files);
+        //
+        //     var paths = new List<WorkspacePath>();
+        //
+        //     var diskPaths = Disks;
+        //
+        //     foreach (var disk in diskPaths) paths.Add(disk.AppendDirectory("System").AppendDirectory("Libs"));
+        //
+        //     AddExtraFiles(files, paths);
+        // }
 
         public override void ShutdownSystem()
         {
@@ -425,6 +425,23 @@ namespace PixelVision8.Runner.Services
             if (path == WorkspacePath.Root.AppendDirectory("Disks")) return MaxDisks > 0;
 
             return base.Exists(path);
+        }
+
+        public override List<WorkspacePath> SharedLibDirectories()
+        {
+            // Create paths to the System/Libs and Workspace/Libs folder
+            var paths = base.SharedLibDirectories();
+
+            // Add disks
+            for (int i = 0; i < TotalDisks; i++)
+            {
+                var tmpPath = Disks[i].AppendDirectory("System").AppendDirectory("Libs");
+
+                if(Exists(tmpPath))
+                    paths.Insert(0, tmpPath);
+            }
+
+            return paths;
         }
     }
 }

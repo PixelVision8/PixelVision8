@@ -55,16 +55,6 @@ namespace PixelVision8.Runner.Services
             "info.json"
         };
 
-        /// <summary>
-        ///     This class manages all of the logic Pixel Vision 8 needs to create and manage the workspace.
-        /// </summary>
-        public WorkspaceService(KeyValuePair<WorkspacePath, IFileSystem> mountPoint) : base(mountPoint)
-        {
-            //            fileSystem = new FileSystemMounter(mountPoint);
-            //            EntityMovers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityMover());
-            //            EntityCopiers.Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), new StandardEntityCopier());
-        }
-
         #region Default paths
 
         public WorkspacePath TmpFileSystemPath { get; set; } = WorkspacePath.Root.AppendDirectory("Tmp");
@@ -72,6 +62,10 @@ namespace PixelVision8.Runner.Services
         #endregion
 
         public IServiceLocator locator { get; set; }
+
+        public WorkspaceService(KeyValuePair<WorkspacePath, IFileSystem> mountPoint) : base(mountPoint)
+        {
+        }
 
         /// <summary>
         ///     This method registers the service with the service locator.
@@ -124,33 +118,6 @@ namespace PixelVision8.Runner.Services
 
 
             return flag == requiredFiles.Count;
-        }
-
-        public string FindValidSavePath(string gamePath)
-        {
-            string savePath;
-
-            var filePath = WorkspacePath.Parse(gamePath);
-
-
-            var parentFilePath = filePath.ParentPath;
-
-            var writeAccess = WriteAccess(parentFilePath);
-
-            if (writeAccess)
-            {
-                savePath = "/Game/";
-
-                if (filePath.IsFile) savePath += filePath.EntityName;
-            }
-            else
-            {
-                savePath = "/Tmp" + gamePath;
-            }
-
-            //            Console.WriteLine("Save Path " + savePath);
-
-            return savePath;
         }
 
         public void SaveExporterFiles(Dictionary<string, byte[]> files)
@@ -248,52 +215,9 @@ namespace PixelVision8.Runner.Services
                 else
                     filePath = filePath.AppendFile(string.Format("{0}{1}{2}", name, ix, fileSplit[1]));
 
-                //                Console.WriteLine("Path " + filePath.Path);
             } while (Exists(filePath));
 
             return filePath;
-        }
-
-        public bool WriteAccess(WorkspacePath path)
-        {
-            var canWrite = false;
-
-            try
-            {
-                // We need to make sure we have a directory to write to
-                var filePath = path.IsDirectory ? path : path.ParentPath;
-
-                // Make sure the directory exists first
-                if (Exists(filePath))
-                    try
-                    {
-                        // Create a unique folder path name
-                        var uniqueFolderPath = filePath.AppendDirectory(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
-
-                        // Create the unique folder
-                        CreateDirectory(uniqueFolderPath);
-
-                        // If we don't throw an error (which is caught above) we have written to the directory
-                        canWrite = true;
-
-                        // Delete the folder we just created
-                        Delete(uniqueFolderPath);
-                    }
-                    catch
-                    {
-                        //                        runner.DisplayWarning("'"+path+"' does not have write access");
-                        // Can't write a file
-                    }
-            }
-            catch
-            {
-                //                Console.WriteLine("Workspace Write Error:\n"+e.Message);
-                //                Console.WriteLine(e);
-                //                throw;
-            }
-
-
-            return canWrite;
         }
 
         public void SetupLogFile(WorkspacePath filePath)
@@ -301,7 +225,7 @@ namespace PixelVision8.Runner.Services
             if (logService == null)
             {
                 var
-                    total = 100; //MathHelper.Clamp(Convert.ToInt32((long) ReadBiosData("TotalLogItems", 100L, true)), 1, 500);
+                    total = 500; //MathHelper.Clamp(Convert.ToInt32((long) ReadBiosData("TotalLogItems", 100L, true)), 1, 500);
 
                 logService = new LogService(total);
             }
@@ -335,33 +259,37 @@ namespace PixelVision8.Runner.Services
         }
 
 
-        public Dictionary<string, byte[]> LoadGame(string path)
+        public Dictionary<string, string> LoadGame(string path)
         {
             var filePath = WorkspacePath.Parse(path); //FileSystemPath.Root.AppendPath(fullPath);
             var exits = Exists(filePath);
 
-            Dictionary<string, byte[]> files = null;
+            Dictionary<string, string>files = null;
 
             if (exits)
-                try
+            {
+                // Found disk to load
+                if (filePath.IsDirectory)
+                    currentDisk = new SubFileSystem(this, filePath);
+                else if (filePath.IsFile)
                 {
-                    // Found disk to load
-                    if (filePath.IsDirectory)
-                        currentDisk = new SubFileSystem(this, filePath);
-                    else if (filePath.IsFile)
-                        if (archiveExtensions.IndexOf(filePath.Path.Split('.').Last()) > -1)
-                            using (var stream = OpenFile(filePath, FileAccess.ReadWrite))
-                            {
-                                if (stream is FileStream)
-                                    currentDisk = ZipFileSystem.Open((FileStream) stream);
-                                else
-                                    currentDisk = ZipFileSystem.Open(stream, path);
+                    // TODO need to figure out how to do this from a disk now without the currentDisk drive?
+                    if (archiveExtensions.IndexOf(filePath.Path.Split('.').Last()) > -1)
+                        using (var stream = OpenFile(filePath, FileAccess.ReadWrite))
+                        {
+                            if (stream is FileStream)
+                                currentDisk = ZipFileSystem.Open((FileStream) stream);
+                            else
+                                currentDisk = ZipFileSystem.Open(stream, path);
 
-                                stream.Close();
-                            }
+                            stream.Close();
+                        }
+                }
+                
+                // We need to get a list of the current mounts
 
-                    // We need to get a list of the current mounts
-                    var mounts = Mounts as SortedList<WorkspacePath, IFileSystem>;
+                if (Mounts is SortedList<WorkspacePath, IFileSystem> mounts)
+                {
 
                     // Create a new mount point for the current game
                     var rootPath = WorkspacePath.Root.AppendDirectory("Game");
@@ -371,195 +299,31 @@ namespace PixelVision8.Runner.Services
 
                     mounts.Add(rootPath, currentDisk);
 
-                    files = ConvertDiskFilesToBytes(currentDisk);
+                    // Filter out only the files we can use and convert this into a dictionary with the file name as the key and the path as the value
+                    files = GetGameEntities(rootPath);
 
-                    IncludeLibDirectoryFiles(files);
-
-
-                    try
-                    {
-                        // Convert the path to a system path
-                        var tmpFilePath = WorkspacePath.Parse(path);
-
-
-                        // TODO should we still try to load the saves file from a zip?
-
-                        // If the path is a directory we are going to look for a save file in it
-                        if (tmpFilePath.IsDirectory)
-                        {
-                            tmpFilePath = tmpFilePath.AppendFile("saves.json");
-
-                            //                        if (WriteAccess(tmpFilePath) == false)
-                            //                        {
-                            // Check if save file is in tmp directory
-                            var saveFile = WorkspacePath.Parse(FindValidSavePath(tmpFilePath.Path));
-
-                            if (saveFile.Path != "/" && Exists(saveFile))
-                                using (var memoryStream = new MemoryStream())
-                                {
-                                    using (var file = OpenFile(saveFile, FileAccess.Read))
-                                    {
-                                        file.CopyTo(memoryStream);
-                                        file.Close();
-                                    }
-
-                                    var fileName = saveFile.EntityName;
-                                    var data = memoryStream.ToArray();
-
-                                    if (files.ContainsKey(fileName))
-                                        files[fileName] = data;
-                                    else
-                                        files.Add(fileName, data);
-
-                                    memoryStream.Close();
-                                }
-                        }
-
-
-                        //                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-
-
-                    //                    return true;
                 }
-                catch
-                {
-                    //		        // TODO need to have a clearer messgae, like not a mount point or can't load from X because of Y
-                    //                    Console.WriteLine("System Error: Could not load from path " + filePath.Path);
-                }
+
+            }
 
             return files;
         }
 
-        public virtual void IncludeLibDirectoryFiles(Dictionary<string, byte[]> files)
+        public virtual Dictionary<string, string> GetGameEntities(WorkspacePath path) => (from p in GetEntities(path)
+                where fileExtensions.Any(val => p.EntityName.EndsWith(val))
+                select p).ToDictionary(p => p.EntityName, p => p.Path);
+        
+        public virtual List<WorkspacePath> SharedLibDirectories()
         {
             // Create paths to the System/Libs and Workspace/Libs folder
             var paths = new List<WorkspacePath>
             {
                 // Look in the system folder
                 osLibPath
-//                ,
-//                workspaceLibPath
-                // Look in the workspace folder
             };
 
-            AddExtraFiles(files, paths);
+            return paths;
         }
-
-        public IFileSystem ReadDisk(WorkspacePath path)
-        {
-            IFileSystem disk = null;
-
-            // Found disk to load
-            if (path.IsDirectory)
-                disk = new SubFileSystem(this, path);
-            else if (path.IsFile)
-                if (archiveExtensions.IndexOf(path.Path.Split('.').Last()) > -1)
-                    using (var stream = ZipFileSystem.Open(OpenFile(path, FileAccess.Read) as FileStream))
-                    {
-                        disk = stream;
-
-                        // TODO need to see how we can close the stream?
-                        //                        stream.Close();
-                    }
-
-            return disk;
-        }
-
-        public Dictionary<string, byte[]> ConvertDiskFilesToBytes(IFileSystem disk)
-        {
-            var files = new Dictionary<string, byte[]>();
-
-            // Get the root files
-            var list = (from p in disk.GetEntities(WorkspacePath.Root)
-                where fileExtensions.Any(val => p.EntityName.EndsWith(val))
-                select p).ToList();
-
-            // TODO this is an example of how we can have other files in folders and import them in.
-
-            // Look for any wav files in the samples folder
-
-            // Samples Directory
-            //            var samplesPath = WorkspacePath.Root.AppendDirectory("Samples"); // TODO this should probably not be hard coded
-            //            
-            //            // Check if the directory exists
-            //            if (disk.Exists(samplesPath))
-            //            {
-            //                // Get all the wav files in the samples folder
-            //                list = list.Concat(from p in disk.GetEntities(samplesPath) where p.EntityName.EndsWith("wav") select p).ToList();
-            //            }
-
-            // Loop through all the files and convert them into binary data to be used by other parser
-
-            foreach (var file in list)
-                // TODO Track if file is critical
-                using (var memoryStream = new MemoryStream())
-                {
-                    using (var fileStream = disk.OpenFile(file, FileAccess.Read))
-                    {
-                        fileStream.CopyTo(memoryStream);
-                        fileStream.Close();
-                    }
-
-                    //                    Console.WriteLine("Add File " + file.Path.Substring(1));
-
-                    files.Add(file.Path.Substring(1), memoryStream.ToArray());
-                }
-
-            return files;
-        }
-
-        public void AddExtraFiles(Dictionary<string, byte[]> files, List<WorkspacePath> paths)
-        {
-            var libs = new Dictionary<string, byte[]>();
-
-            foreach (var path in paths)
-                try
-                {
-                    if (Exists(path))
-                    {
-                        var tmpFiles = GetEntities(path);
-                        var luaFiles = from p in tmpFiles
-                            where p.EntityName.EndsWith("lua")
-                            select p;
-
-                        //                        Print("Loading", luaFiles.Count(), "Libs from", path.Path);
-
-                        foreach (var luaFile in luaFiles)
-                            if (!files.ContainsKey(luaFile.EntityName))
-                                using (var memoryStream = new MemoryStream())
-                                {
-                                    using (var fileStream = OpenFile(luaFile, FileAccess.Read))
-                                    {
-                                        fileStream.CopyTo(memoryStream);
-                                        fileStream.Close();
-                                    }
-
-                                    if (libs.ContainsKey(luaFile.EntityName))
-                                        libs[luaFile.EntityName] = memoryStream.ToArray();
-                                    else
-                                        libs.Add(luaFile.EntityName, memoryStream.ToArray());
-
-                                    //                                    Print("Adding Lua File", luaFile.EntityName);
-                                }
-                    }
-                }
-                catch
-                {
-                    //                    Console.WriteLine(e);
-                    //                    throw;
-                }
-
-
-            // Add the libs to the file list
-
-            libs.ToList().ForEach(x => files.Add(x.Key, x.Value));
-        }
-
 
         public virtual void ShutdownSystem()
         {

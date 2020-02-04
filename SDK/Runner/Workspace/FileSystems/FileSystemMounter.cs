@@ -94,7 +94,7 @@ namespace PixelVision8.Runner.Workspace
             pair.Value.Delete(path.RemoveParent(pair.Key));
         }
 
-        protected KeyValuePair<WorkspacePath, IFileSystem> Get(WorkspacePath path)
+        public KeyValuePair<WorkspacePath, IFileSystem> Get(WorkspacePath path)
         {
             return Mounts.First(pair => pair.Key == path || pair.Key.IsParentOf(path));
         }

@@ -27,7 +27,7 @@ namespace PixelVision8.Runner
     {
         None = 0,
         System = 1,
-        Code = 2,
+        Code = 2, // TODO need to remove this
         Colors = 4,
         ColorMap = 8,
         Sprites = 16,

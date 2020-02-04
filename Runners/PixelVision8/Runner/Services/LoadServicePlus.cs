@@ -18,9 +18,40 @@
 // Shawn Rakowski - @shwany
 //
 
+using System.IO;
+using PixelVision8.Runner.Workspace;
+
 namespace PixelVision8.Runner.Services
 {
     public class LoadServicePlus : LoadService
     {
+        protected WorkspaceService WorkspaceService;
+
+        public LoadServicePlus(WorkspaceService workspaceService)
+        {
+            WorkspaceService = workspaceService;
+        }
+
+        public override byte[] ReadAllBytes(string file)
+        {
+            
+            var path = WorkspacePath.Parse(file);
+
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var fileStream = WorkspaceService.OpenFile(path, FileAccess.Read))
+                {
+                    fileStream.CopyTo(memoryStream);
+                    fileStream.Close();
+                }
+
+                //                    Console.WriteLine("Add File " + file.Path.Substring(1));
+
+                return memoryStream.ToArray();
+                // files.Add(file.Path.Substring(1), file.Path);//memoryStream.ToArray());
+            }
+
+            // return base.ReadAllBytes(file);
+        }
     }
 }

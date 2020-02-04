@@ -34,12 +34,13 @@ namespace PixelVision8.Engine.Chips
     {
         protected Script _luaScript;
         public Dictionary<string, string> textFiles = new Dictionary<string, string>();
+        public string DefaultScriptPath = "code";
 
         public Script LuaScript
         {
             get
             {
-                if (_luaScript == null) _luaScript = new Script(CoreModules.Preset_SoftSandbox);
+                if (_luaScript == null) _luaScript = new Script(CoreModules.Preset_Default);
 
                 return _luaScript;
             }
@@ -293,12 +294,12 @@ namespace PixelVision8.Engine.Chips
             LuaScript.Globals["NewSpriteCollection"] =
                 new Func<string, SpriteData[], SpriteCollection>(NewSpriteCollection);
 
-            // Load the default script
-            LoadScript("code.lua");
-
             // Register any extra services
             RegisterLuaServices();
 
+            // Kick off the first game script file
+            LuaScript.DoFile(DefaultScriptPath);
+            
             // Reset the game
             if (LuaScript.Globals["Reset"] != null) LuaScript.Call(LuaScript.Globals["Reset"]);
         }
@@ -306,6 +307,8 @@ namespace PixelVision8.Engine.Chips
         #endregion
 
         #region Scripts
+
+        // TODO need to update the docs on both of these APIs. Load is for a file and Add is for a string. Both automatically parse the script.
 
         /// <summary>
         ///     This allows you to load a script into memory. External scripts can be located in the System/Libs/,
@@ -318,34 +321,9 @@ namespace PixelVision8.Engine.Chips
         ///     Name of the Lua file. You can drop the .lua extension since only Lua files will be accessible to this
         ///     method.
         /// </param>
-        public void LoadScript(string name)
+        public virtual void LoadScript(string name)
         {
-            if (!name.EndsWith(".lua")) name += ".lua";
-            //            var split = name.Split('.');
-            //            
-            //            if (split.Last() != "lua")
-            //                name += ".lua";
-
-            if (textFiles.ContainsKey(name))
-            {
-                var script = textFiles[name];
-                if (script != "")
-                {
-                    // Patch script to run in vanilla lua vm
-
-                    // Replace short hand math oporators
-                    var pattern = @"(\S+)\s*([+\-*/%])\s*=";
-                    var replacement = "$1 = $1 $2 ";
-                    script = Regex.Replace(script, pattern, replacement, RegexOptions.Multiline);
-
-                    // Replace != conditions
-                    pattern = @"!\s*=";
-                    replacement = "~=";
-                    script = Regex.Replace(script, pattern, replacement, RegexOptions.Multiline);
-
-                    LuaScript.DoString(script, null, name);
-                }
-            }
+            LuaScript.DoFile(name);
         }
 
         /// <summary>
@@ -358,12 +336,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="script">The string text representing the Lua script data.</param>
         public void AddScript(string name, string script)
         {
-            if (!name.EndsWith(".lua")) name += ".lua";
-
-            if (textFiles.ContainsKey(name))
-                textFiles[name] = script;
-            else
-                textFiles.Add(name, script);
+            LuaScript.DoString(script, null, name);
         }
 
         #endregion

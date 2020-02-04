@@ -20,6 +20,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 // using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -64,7 +65,7 @@ namespace PixelVision8.Runner.Services
         //        protected bool microSteps = true;
         protected AbstractParser parser;
 
-        protected IEngine targetEngine;
+        public IEngine targetEngine;
 
         public List<string> textExtensions = new List<string>
         {
@@ -73,12 +74,13 @@ namespace PixelVision8.Runner.Services
             ".lua"
         };
 
-        protected int totalParsers;
-        public int totalSteps;
+        protected int TotalParsers => parsers.Count;
 
-        public bool completed => currentParserID >= totalParsers;
+        public int TotalSteps;
 
-        public float percent => currentStep / (float) totalSteps;
+        public bool Completed => currentParserID >= TotalParsers;
+
+        public float Percent => currentStep / (float) TotalSteps;
 
         /// <summary>
         ///     This can be used to display a message while preloading
@@ -89,17 +91,12 @@ namespace PixelVision8.Runner.Services
         {
             parsers.Clear();
             currentParserID = 0;
-            totalSteps = 0;
+            TotalSteps = 0;
             currentStep = 0;
         }
 
-        //        public LoadService()
-        //        {
-        ////            this.textureFactory = textureFactory;
-        ////            this.colorFactory = colorFactory;
-        //        }
 
-        public virtual void ParseFiles(Dictionary<string, byte[]> files, IEngine engine, SaveFlags saveFlags)
+        public virtual void ParseFiles(Dictionary<string, string> files, IEngine engine, SaveFlags saveFlags)
         {
             Reset();
 
@@ -164,7 +161,7 @@ namespace PixelVision8.Runner.Services
                 {
                     var fontName = fileName.Split('.')[0];
 
-                    parser = LoadFont(fontName, files[fileName]);
+                    parser = LoadFont(fontName, ReadAllBytes(files[fileName]));
                     if (parser != null) AddParser(parser);
                 }
             }
@@ -190,15 +187,14 @@ namespace PixelVision8.Runner.Services
 
             ParseExtraFileTypes(files, engine, saveFlags);
 
-            totalParsers = parsers.Count;
-            currentParserID = 0;
+            // TotalParsers = ;
 
             // watch.Stop();
 
             //            UnityEngine.Debug.Log("Parser Setup Time - " + watch.ElapsedMilliseconds);
         }
 
-        public virtual void ParseExtraFileTypes(Dictionary<string, byte[]> files, IEngine engine, SaveFlags saveFlags)
+        public virtual void ParseExtraFileTypes(Dictionary<string, string> files, IEngine engine, SaveFlags saveFlags)
         {
             // TODO Override and add extra file parsers here.
         }
@@ -209,17 +205,17 @@ namespace PixelVision8.Runner.Services
 
             parsers.Add(parser);
 
-            totalSteps += parser.totalSteps;
+            TotalSteps += parser.totalSteps;
         }
 
         public void LoadAll()
         {
-            while (completed == false) NextParser();
+            while (Completed == false) NextParser();
         }
 
         public void NextParser()
         {
-            if (completed) return;
+            if (Completed) return;
 
             var parser = parsers[currentParserID];
 
@@ -258,11 +254,11 @@ namespace PixelVision8.Runner.Services
 
             //            int total = loadService.totalSteps; //some number (this is your variable to change)!!
 
-            for (var i = 0; i <= totalSteps; i++) //some number (total)
+            for (var i = 0; i <= TotalSteps; i++) //some number (total)
             {
                 NextParser();
                 Thread.Sleep(1);
-                loadingWorker.ReportProgress((int) (percent * 100), i);
+                loadingWorker.ReportProgress((int) (Percent * 100), i);
             }
         }
 
@@ -276,13 +272,13 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        protected AbstractParser LoadMetaData(Dictionary<string, byte[]> files)
+        protected AbstractParser LoadMetaData(Dictionary<string, string> files)
         {
             var fileName = "info.json";
 
             if (files.ContainsKey(fileName))
             {
-                var fileContents = Encoding.UTF8.GetString(files[fileName]);
+                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(files[fileName]));
 
                 return new MetaDataParser(fileContents, targetEngine);
             }
@@ -302,7 +298,7 @@ namespace PixelVision8.Runner.Services
             return new FontParser(imageParser, targetEngine, fontName);
         }
 
-        //        protected void LoadFlagColors(Dictionary<string, byte[]> files)
+        //        protected void LoadFlagColors(Dictionary<string, string> files)
         //        {
         //            // First thing we do is check for any custom tilemap flag colors
         //            byte[] flagTex = null;
@@ -317,7 +313,7 @@ namespace PixelVision8.Runner.Services
         //            AddParser(new FlagColorParser(imageParser, targetEngine));
         //        }
 
-        protected void LoadTilemap(Dictionary<string, byte[]> files)
+        protected void LoadTilemap(Dictionary<string, string> files)
         {
             var tilemapFile = "tilemap.png";
             var tilemapJsonFile = "tilemap.json";
@@ -332,7 +328,7 @@ namespace PixelVision8.Runner.Services
             // If a tilemap json file exists, try to load that
             if (files.ContainsKey(tilemapJsonFile))
             {
-                var fileContents = Encoding.UTF8.GetString(files[tilemapJsonFile]);
+                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(files[tilemapJsonFile]));
 
                 var jsonParser = new TilemapJsonParser(fileContents, targetEngine);
 
@@ -352,8 +348,8 @@ namespace PixelVision8.Runner.Services
                 //
                 //                if (files.ContainsKey(tileFlags)) tileFlagTex = files[tileFlags];
 
-
-                var imageParser = new PNGReader(files[tilemapFile], targetEngine.ColorChip.maskColor);
+                
+                var imageParser = new PNGReader(ReadAllBytes(files[tilemapFile]), targetEngine.ColorChip.maskColor);
                 AddParser(new TilemapParser(imageParser, tileFlagTex, targetEngine));
 
                 //                var colorFile = "tile-color-offsets.json";
@@ -377,7 +373,7 @@ namespace PixelVision8.Runner.Services
             //            return null;
         }
 
-        protected AbstractParser LoadSprites(Dictionary<string, byte[]> files)
+        protected AbstractParser LoadSprites(Dictionary<string, string> files)
         {
             // TODO need to tell if the cache should be ignore, important when in tools
             var srcFile = "sprites.png";
@@ -393,8 +389,8 @@ namespace PixelVision8.Runner.Services
 
             if (fileName != null)
             {
-                //                var tex = ReadTexture(files[fileName]);
-                var imageParser = new PNGReader(files[fileName], targetEngine.ColorChip.maskColor);
+                //                var tex = ReadTexture(ReadAllBytes(files[fileName]));
+                var imageParser = new PNGReader(ReadAllBytes(files[fileName]), targetEngine.ColorChip.maskColor);
 
                 return new SpriteParser(imageParser, targetEngine);
             }
@@ -402,7 +398,7 @@ namespace PixelVision8.Runner.Services
             return null;
         }
 
-        protected AbstractParser LoadColorMap(Dictionary<string, byte[]> files)
+        protected AbstractParser LoadColorMap(Dictionary<string, string> files)
         {
             var fileName = "color-map.png";
 
@@ -410,7 +406,7 @@ namespace PixelVision8.Runner.Services
             {
                 //                UnityEngine.Debug.Log("Create color map");
 
-                //                var tex = ReadTexture(files[fileName]);
+                //                var tex = ReadTexture(ReadAllBytes(files[fileName]));
 
                 // Create new color map chip
                 var colorMapChip = new ColorChip();
@@ -420,7 +416,7 @@ namespace PixelVision8.Runner.Services
 
                 //                targetEngine.colorMapChip = colorMapChip;
 
-                var imageParser = new PNGReader(files[fileName], targetEngine.ColorChip.maskColor);
+                var imageParser = new PNGReader(ReadAllBytes(files[fileName]), targetEngine.ColorChip.maskColor);
 
                 // Pass the chip to the new parser
                 return new ColorMapParser(imageParser, colorMapChip, maskColor);
@@ -429,7 +425,7 @@ namespace PixelVision8.Runner.Services
             return null;
         }
 
-        //        protected AbstractParser LoadColorPalette(Dictionary<string, byte[]> files)
+        //        protected AbstractParser LoadColorPalette(Dictionary<string, string> files)
         //        {
         //            var fileName = "color-palette.png";
         //
@@ -438,7 +434,7 @@ namespace PixelVision8.Runner.Services
         //                
         ////                UnityEngine.Debug.Log("Create color map");
         //                
-        ////                var tex = ReadTexture(files[fileName]);
+        ////                var tex = ReadTexture(ReadAllBytes(files[fileName]));
         //                
         //                // Create new color map chip
         //                var colorMapChip = new ColorChip();
@@ -448,7 +444,7 @@ namespace PixelVision8.Runner.Services
         //                
         ////                targetEngine.colorMapChip = colorMapChip;
         //                
-        //                var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
+        //                var imageParser = new PNGReader(ReadAllBytes(files[fileName]), targetEngine.colorChip.maskColor);
         //
         //                
         //                // Pass the chip to the new parser
@@ -458,7 +454,7 @@ namespace PixelVision8.Runner.Services
         //            return null;
         //        }
 
-        //        protected AbstractParser LoadSystemColors(Dictionary<string, byte[]> files)
+        //        protected AbstractParser LoadSystemColors(Dictionary<string, string> files)
         //        {
         //            var fileName = "system-colors.png";
         //
@@ -467,7 +463,7 @@ namespace PixelVision8.Runner.Services
         //                
         ////                UnityEngine.Debug.Log("Create color map");
         //                
-        ////                var tex = ReadTexture(files[fileName]);
+        ////                var tex = ReadTexture(ReadAllBytes(files[fileName]));
         //                
         //                // Create new color map chip
         ////                var systemColorChip = new ColorChip();
@@ -477,7 +473,7 @@ namespace PixelVision8.Runner.Services
         ////                
         ////                targetEngine.colorMapChip = colorMapChip;
         //                
-        //                var imageParser = new PNGReader(files[fileName], targetEngine.colorChip.maskColor);
+        //                var imageParser = new PNGReader(ReadAllBytes(files[fileName]), targetEngine.colorChip.maskColor);
         //
         //                
         //                // Pass the chip to the new parser
@@ -487,14 +483,14 @@ namespace PixelVision8.Runner.Services
         //            return null;
         //        }
 
-        protected AbstractParser LoadColors(Dictionary<string, byte[]> files)
+        protected AbstractParser LoadColors(Dictionary<string, string> files)
         {
             var fileName = "colors.png";
 
             if (files.ContainsKey(fileName))
             {
-                //                var tex = ReadTexture(files[fileName]);
-                var imageParser = new PNGReader(files[fileName], targetEngine.ColorChip.maskColor);
+                //                var tex = ReadTexture(ReadAllBytes(files[fileName]));
+                var imageParser = new PNGReader(ReadAllBytes(files[fileName]), targetEngine.ColorChip.maskColor);
 
                 return new ColorParser(imageParser, targetEngine.ColorChip);
             }
@@ -503,13 +499,13 @@ namespace PixelVision8.Runner.Services
         }
 
 
-        protected void LoadSystem(Dictionary<string, byte[]> files)
+        protected void LoadSystem(Dictionary<string, string> files)
         {
             var fileName = "data.json";
 
             if (files.ContainsKey(fileName))
             {
-                var fileContents = Encoding.UTF8.GetString(files[fileName]);
+                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(files[fileName]));
 
                 //                AddParser(new SystemParser(fileContents, targetEngine));
                 var jsonParser = new SystemParser(targetEngine, fileContents);
@@ -542,57 +538,57 @@ namespace PixelVision8.Runner.Services
         //            return tex;
         //        }
 
-        protected void LoadSounds(Dictionary<string, byte[]> files)
+        protected void LoadSounds(Dictionary<string, string> files)
         {
             var fileName = "sounds.json";
 
             if (files.ContainsKey(fileName))
             {
-                var fileContents = Encoding.UTF8.GetString(files[fileName]);
+                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(files[fileName]));
 
                 AddParser(new SystemParser(targetEngine, fileContents));
             }
 
             // TODO go through all wav files that were loaded and pass them off to the Sample parser
             var wavFiles =
-                (from p in files where p.Key.EndsWith("wav") select p).ToDictionary(x => x.Key, x => x.Value);
+                (from p in files where p.Key.EndsWith("wav") select p).ToDictionary(x => x.Key, x => (ReadAllBytes(x.Value)));
 
             AddParser(new WavParser(targetEngine, wavFiles));
 
             //            Console.WriteLine("Selecting wavs " + wav.ToList().Count);
         }
 
-        protected void LoadMusic(Dictionary<string, byte[]> files)
+        protected void LoadMusic(Dictionary<string, string> files)
         {
             var fileName = "music.json";
 
             if (files.ContainsKey(fileName))
             {
-                var fileContents = Encoding.UTF8.GetString(files[fileName]);
+                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(files[fileName]));
 
                 AddParser(new SystemParser(targetEngine, fileContents));
             }
         }
 
-        protected void LoadMetaSprites(Dictionary<string, byte[]> files)
+        protected void LoadMetaSprites(Dictionary<string, string> files)
         {
             var fileName = "meta-sprites.json";
 
             if (files.ContainsKey(fileName))
             {
-                var fileContents = Encoding.UTF8.GetString(files[fileName]);
+                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(files[fileName]));
 
                 AddParser(new SystemParser(targetEngine, fileContents));
             }
         }
 
-        protected void LoadSaveData(Dictionary<string, byte[]> files)
+        protected void LoadSaveData(Dictionary<string, string> files)
         {
             var fileName = "saves.json";
 
             if (files.ContainsKey(fileName))
             {
-                var fileContents = Encoding.UTF8.GetString(files[fileName]);
+                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(files[fileName]));
 
                 AddParser(new SystemParser(targetEngine, fileContents));
                 //                
@@ -602,6 +598,14 @@ namespace PixelVision8.Runner.Services
                 //                while (jsonParser.completed == false)
                 //                    jsonParser.NextStep();
             }
+        }
+
+
+        public virtual byte[] ReadAllBytes(string file)
+        {
+            
+            // TODO this should be a service
+            return File.ReadAllBytes(file);
         }
     }
 }

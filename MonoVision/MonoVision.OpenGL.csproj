@@ -110,7 +110,7 @@
     <Compile Include="Game.cs" />
     <Compile Include="GamePlatform.cs" />
     <Compile Include="GamePlatform.Desktop.cs">
-      <Platforms>Angle,Linux,MacOS,Windows,WindowsGL,WindowsUniversal</Platforms>
+      <!-- <Platforms>Angle,Linux,MacOS,Windows,WindowsGL,WindowsUniversal</Platforms> -->
     </Compile>
     <Compile Include="GameRunBehavior.cs" />
     <Compile Include="GameServiceContainer.cs" />
@@ -388,16 +388,16 @@
       <Platforms>Angle,Linux,WindowsGL,MacOS</Platforms>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
+  <!-- <ItemGroup>
     <Folder Include="x64\" />
     <Folder Include="x86\" />
-  </ItemGroup>
+  </ItemGroup> -->
   <ItemGroup>
-    <None Include="ThirdParty\Dependencies\MonoGame.Framework.dll.config">
+    <!-- <None Include="ThirdParty\Dependencies\MonoGame.Framework.dll.config">
       <Platforms>WindowsGL,Linux,MacOS</Platforms>
       <Link>MonoGame.Framework.dll.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </None> -->
     <None Include="ThirdParty\Dependencies\SDL\Windows\x86\SDL2.dll">
       <Platforms>WindowsGL,Linux</Platforms>
       <Link>x86\SDL2.dll</Link>
@@ -477,6 +477,7 @@
       <Services>_GLCompatible</Services>
     </EmbeddedResource>
   </ItemGroup>
+  <!-- <ItemGroup />
   <ItemGroup />
   <ItemGroup />
   <ItemGroup />
@@ -489,8 +490,7 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup />
-  <ItemGroup />
-  <ItemGroup />
+  <ItemGroup /> -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <_PostBuildHookTimestamp>@(IntermediateAssembly->'%(FullPath).timestamp')</_PostBuildHookTimestamp>

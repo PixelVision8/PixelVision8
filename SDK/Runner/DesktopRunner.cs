@@ -25,6 +25,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
+using MoonSharp.Interpreter.Loaders;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Data;
@@ -125,7 +126,10 @@ namespace PixelVision8.Runner
 
         public override void CreateLoadService()
         {
-            loadService = new LuaLoadService();
+            
+            loadService = new LoadServicePlus(workspaceService);
+        
+            Script.DefaultOptions.ScriptLoader = new ScriptLoaderUtil(workspaceService);
         }
 
         public override void ActivateEngine(IEngine engine)
@@ -142,7 +146,7 @@ namespace PixelVision8.Runner
             luaScript.Globals["Brightness"] = (BrightnessDelegator) Brightness;
             luaScript.Globals["Sharpness"] = (SharpnessDelegator) Sharpness;
             luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
-            luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int) (loadService.percent * 100));
+            luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int) (loadService.Percent * 100));
             luaScript.Globals["LoadGame"] =
                 new Func<string, Dictionary<string, string>, bool>((path, metadata) =>
                     Load(path, RunnerMode.Loading, metadata));
@@ -158,6 +162,9 @@ namespace PixelVision8.Runner
             //            luaScript.Globals["NewWorkspacePath"] = new Func<string, WorkspacePath>(WorkspacePath.Parse);
 
             //            UserData.RegisterType<WorkspacePath>();
+
+
+            
 
             // Activate the game
             base.ActivateEngine(engine);
@@ -669,7 +676,7 @@ namespace PixelVision8.Runner
             if (activeEngine.GameChip.SaveSlots > 0)
                 //Print("Active Engine To Save", activeEngine.name);
 
-                SaveGameData(workspaceService.FindValidSavePath(activeEngine.Name), activeEngine, SaveFlags.SaveData,
+                SaveGameData("/Game/", activeEngine, SaveFlags.SaveData,
                     false);
 
             // Save the active disk

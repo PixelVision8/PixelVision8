@@ -63,7 +63,7 @@ namespace PixelVision8.Runner
         public bool autoRunEnabled = true;
         public bool backKeyEnabled = true;
         protected IControllerChip controllerChip;
-        private string documentsPath;
+        protected string documentsPath;
         private bool ejectingDisk;
 
         protected AnimatedGifEncoder gifEncoder;
@@ -94,6 +94,8 @@ namespace PixelVision8.Runner
         {
             //            throw new NotImplementedException();
         }
+
+        
 
         //        public List<string> loadHistory = new List<string>();
         //        protected List<Dictionary<string, string>> metaDataHistory = new List<Dictionary<string, string>>();
