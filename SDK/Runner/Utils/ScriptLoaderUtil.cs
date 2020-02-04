@@ -65,8 +65,9 @@ namespace PixelVision8.Runner.Utils
 
             _workspace.UpdateLog($"Could not load '{file}' file because it is either missing or empty.", LogType.Warning);
 
-
             return script;
+
+            // TODO need to throw an error when a script is not found
             // if (string.IsNullOrEmpty(script))
             // { 
             // If script is empty or null then throw error
@@ -76,7 +77,6 @@ namespace PixelVision8.Runner.Utils
 
             // return script;
 
-            // return string.Format("print ([[A request to load '{0}' has been made]])", file);
         }
 
         public string ResolveFileName(string filename, Table globalContext)

@@ -27,6 +27,7 @@ using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
+using PixelVision8.Runner.Editors;
 using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Workspace;
 
@@ -643,6 +644,32 @@ namespace PixelVision8.Runner
             }
         }
 
+
+        private GameEditor _editor;
+
+        public GameEditor Editor
+        {
+            get
+            {
+                if (_editor == null)
+                {
+                    _editor = new GameEditor(this, serviceManager);
+                }
+
+                return _editor;
+            }
+        }
+
+        public override void ConfigureEngine(Dictionary<string, string> metaData = null)
+        {
+            base.ConfigureEngine(metaData);
+
+            var luaGameChip = tmpEngine.GameChip as LuaGameChip;
+            
+            // Register the game editor with  the lua service
+            UserData.RegisterType<GameEditor>();
+            luaGameChip.LuaScript.Globals["gameEditor"] = Editor;
+        }
 
         public override void RunGame()
         {

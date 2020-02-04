@@ -45,7 +45,6 @@ namespace PixelVision8.Engine
 
             Name = name;
             ServiceLocator = serviceLocator;
-            //this.canWrite = readOnly;
 
             Init();
         }
@@ -173,11 +172,6 @@ namespace PixelVision8.Engine
             // Shutdown chips
             foreach (var chip in Chips) chip.Value.Shutdown();
 
-            //            // Remove chips
-            //            chips.Clear();
-            //            
-            //            // Removed references to services
-            //            _services.Clear();
         }
 
         /// <summary>

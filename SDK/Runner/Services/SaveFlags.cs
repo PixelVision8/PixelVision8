@@ -27,18 +27,22 @@ namespace PixelVision8.Runner
     {
         None = 0,
         System = 1,
-        Code = 2, // TODO need to remove this
-        Colors = 4,
-        ColorMap = 8,
-        Sprites = 16,
-        Tilemap = 32,
-        Fonts = 64,
-        Meta = 128,
-        Music = 256,
-        Sounds = 512,
-        SaveData = 1024,
+        Colors = 2,
+        ColorMap = 4,
+        Sprites = 8,
+        Tilemap = 16,
+        Fonts = 32,
+        Meta = 64,
+        Music = 128,
+        Sounds = 256,
+        SaveData = 512,
+        MetaSprites = 1024
+        // = 2048
+        //
+        // Code = 2, // TODO need to remove this
 
-        MetaSprites = 2048
+
+
         // TODO deprecated, need to remove these
         // TilemapFlags = 2048,
         // TilemapCache = 4096,

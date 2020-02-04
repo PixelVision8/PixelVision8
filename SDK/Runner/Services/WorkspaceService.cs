@@ -42,13 +42,10 @@ namespace PixelVision8.Runner.Services
             "wav"
         };
 
-        //        protected FileSystemMounter fileSystem;
         protected WorkspacePath logFilePath;
         protected LogService logService;
-
         public WorkspacePath osLibPath;
-        //        public WorkspacePath workspaceLibPath;
-
+        
         public List<string> requiredFiles = new List<string>
         {
             "data.json",

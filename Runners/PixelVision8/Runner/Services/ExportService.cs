@@ -96,18 +96,18 @@ namespace PixelVision8.Runner.Services
                 AddExporter(new SystemExporter(path + "data.json", targetEngine));
 
             // Step 2 (optional). Load up the Lua script
-            if ((saveFlags & SaveFlags.Code) == SaveFlags.Code)
-            {
-                //                //var scriptExtension = ".lua";
-                //                    
-                //                var paths = files.Keys.Where(s => textExtensions.Any(x => s.EndsWith(x))).ToList();
-                //
-                //                foreach (var fileName in paths)
-                //                {
-                //                    parser = LoadScript(fileName, files[fileName]);
-                //                    AddExporter(parser);
-                //                }
-            }
+            // if ((saveFlags & SaveFlags.Code) == SaveFlags.Code)
+            // {
+            //     //                //var scriptExtension = ".lua";
+            //     //                    
+            //     //                var paths = files.Keys.Where(s => textExtensions.Any(x => s.EndsWith(x))).ToList();
+            //     //
+            //     //                foreach (var fileName in paths)
+            //     //                {
+            //     //                    parser = LoadScript(fileName, files[fileName]);
+            //     //                    AddExporter(parser);
+            //     //                }
+            // }
 
             // Step 3 (optional). Look for new colors
             if ((saveFlags & SaveFlags.Colors) == SaveFlags.Colors)

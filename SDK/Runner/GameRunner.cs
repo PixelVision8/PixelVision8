@@ -549,7 +549,6 @@ namespace PixelVision8.Runner
             if (!flags.HasValue)
             {
                 flags = SaveFlags.System;
-                flags |= SaveFlags.Code;
                 flags |= SaveFlags.Colors;
                 flags |= SaveFlags.ColorMap;
                 flags |= SaveFlags.Sprites;

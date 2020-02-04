@@ -124,23 +124,11 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["SaveText"] = new Action<WorkspacePath, string>(SaveText);
             luaScript.Globals["SaveImage"] = new Action<WorkspacePath, Image>(SaveImage);
 
-            //
-            //            // Expose Bios APIs
-            //            luaScript.Globals["ReadBiosData"] = new Func<string, string, string>((key, defaultValue) =>
-            //                desktopRunner.bios.ReadBiosData(key, defaultValue));
-            //            luaScript.Globals["WriteBiosData"] = new Action<string, string>(desktopRunner.bios.UpdateBiosData);
-
-            //            luaScript.Globals["RemapKey"] = new Action<string, int>(RemapKey);
-
             luaScript.Globals["NewWorkspacePath"] = new Func<string, WorkspacePath>(WorkspacePath.Parse);
 
             UserData.RegisterType<WorkspacePath>();
             UserData.RegisterType<Image>();
 
-            // Register the game editor with  the lua service
-            gameEditor = new GameEditor(desktopRunner, locator);
-            UserData.RegisterType<GameEditor>();
-            luaScript.Globals["gameEditor"] = gameEditor;
         }
 
         public void PlayWav(WorkspacePath workspacePath)

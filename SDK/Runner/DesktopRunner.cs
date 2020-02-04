@@ -25,7 +25,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
-using MoonSharp.Interpreter.Loaders;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Data;
