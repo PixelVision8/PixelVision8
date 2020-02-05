@@ -60,6 +60,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ImageParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\JsonParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\MetaDataParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\PNGFileReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\PNGReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\SpriteParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\SystemParser.cs" />
