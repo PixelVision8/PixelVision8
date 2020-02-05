@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
 
@@ -34,17 +35,17 @@ namespace PixelVision8.Runner.Parsers
         private readonly List<Color> uniqueFontColors = new List<Color>();
         private int[] fontMap;
 
-        public FontParser(IImageParser imageParser, IEngineChips chips, string name = "Default") : base(imageParser,
+        public FontParser(IImageParser imageParser, IEngineChips chips) : base(imageParser,
             chips, true, chips.FontChip)
         {
             fontChip = chips.FontChip;
-
-            this.name = name;
+            imageParser.ReadStream();
+            name = imageParser.FileName.Split('.').First();
         }
 
-        protected override void CalculateBounds()
+        public override void PrepareSprites()
         {
-            base.CalculateBounds();
+            base.PrepareSprites();
 
             fontMap = new int[totalSprites];
             //            base.PreCutOutSprites();

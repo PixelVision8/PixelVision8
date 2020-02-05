@@ -35,7 +35,7 @@ namespace PixelVision8.Runner.Importers
         protected List<Color> _colorPalette;
         protected Color[] _colors;
         protected int bitsPerSample;
-        protected byte[] bytes;
+        // protected byte[] bytes;
         protected int bytesPerPixel;
         protected int bytesPerSample;
         protected int bytesPerScanline;
@@ -65,9 +65,11 @@ namespace PixelVision8.Runner.Importers
         public Color[] colorPixels => _colors;
         public List<Color> colorPalette => _colorPalette;
 
+        public virtual string FileName { get; set; } = "untitled.png";
+
         public void ReadBytes(byte[] bytes)
         {
-            this.bytes = bytes;
+            // this.bytes = bytes;
 
             //            this.inputStream = inputStream;
 
@@ -78,7 +80,7 @@ namespace PixelVision8.Runner.Importers
             ReadHeader();
         }
 
-        public void ReadStream()
+        public virtual void ReadStream()
         {
             if (!IsImage()) throw new Exception("File does not have PNG signature.");
 
@@ -103,7 +105,7 @@ namespace PixelVision8.Runner.Importers
         public bool IsImage()
         {
             // If we don't have byte data, return false
-            if (bytes == null) return false;
+            // if (bytes == null) return false;
 
             memoryStream.Position = 0L;
             var buffer = new byte[8];
@@ -363,7 +365,7 @@ namespace PixelVision8.Runner.Importers
         {
             _colorPalette.Clear();
             _colors = null;
-            bytes = null;
+            // bytes = null;
             chunks.Clear();
             dataChunks.Clear();
             memoryStream.Dispose();

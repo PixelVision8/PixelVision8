@@ -33,31 +33,22 @@ namespace PixelVision8.Runner.Parsers
         protected int cps;
         protected int index;
         protected Color maskColor;
-        protected int maxPerLoop = 100;
         protected int maxSprites;
         protected SpriteChip spriteChip;
         protected int[] spriteData;
         protected int spriteHeight;
         protected int spritesAdded;
         protected int spriteWidth;
-
         protected Color[] srcColors;
-
-        //        protected ITexture2D tex;
         protected Color[] tmpPixels;
         protected int totalPixels;
         protected int totalSprites;
         protected int x, y, columns, rows;
 
-        //        protected ITextureFactory textureFactory;
-        //        protected byte[] data;
-
         public SpriteParser(IImageParser imageParser, IEngineChips chips, bool unique = true,
             SpriteChip spriteChip = null) : base(imageParser)
         {
-            //            this.textureFactory = textureFactory;
-
-
+            
             this.chips = chips;
             this.spriteChip = spriteChip ?? chips.SpriteChip;
 
@@ -65,32 +56,26 @@ namespace PixelVision8.Runner.Parsers
             spriteHeight = this.spriteChip.height;
         }
 
-        protected virtual void CalculateBounds()
-        {
-            columns = MathUtil.CeilToInt(imageParser.width / spriteWidth);
-            rows = MathUtil.CeilToInt(imageParser.height / spriteHeight);
-
-            // Find the total from the width and height
-            totalSprites = columns * rows;
-        }
-
         public override void CalculateSteps()
         {
             base.CalculateSteps();
 
-            CalculateBounds();
-
             steps.Add(PrepareSprites);
 
-            var loops = MathUtil.CeilToInt((float) totalSprites / maxPerLoop);
-
-            for (var i = 0; i < loops; i++) steps.Add(CutOutSprites);
+            steps.Add(CutOutSprites);
 
             steps.Add(PostCutOutSprites);
         }
 
         public virtual void PrepareSprites()
         {
+
+            columns = MathUtil.CeilToInt(imageParser.width / spriteWidth);
+            rows = MathUtil.CeilToInt(imageParser.height / spriteHeight);
+
+            // Find the total from the width and height
+            totalSprites = columns * rows;
+
             cps = spriteChip.colorsPerSprite;
 
             colorData = chips.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip
@@ -117,7 +102,8 @@ namespace PixelVision8.Runner.Parsers
 
         public virtual void CutOutSprites()
         {
-            for (var i = 0; i < maxPerLoop; i++)
+
+            for (var i = 0; i < totalSprites; i++)
             {
                 // Cut out the sprite from the texture
                 CutOutSpriteFromTexture2D();
@@ -132,7 +118,6 @@ namespace PixelVision8.Runner.Parsers
 
                 index++;
 
-                if (index >= totalSprites) break;
             }
 
             currentStep++;

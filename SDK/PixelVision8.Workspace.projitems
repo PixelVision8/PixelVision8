@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\AbstractExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\IAbstractExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SavedDataExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\PNGFileReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\ScriptLoaderUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\BiosService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\WorkspaceService.cs" />

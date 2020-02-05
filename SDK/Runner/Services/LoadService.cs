@@ -133,11 +133,15 @@ namespace PixelVision8.Runner.Services
 
                 foreach (var fileName in paths)
                 {
-                    var fontName = GetFileName(fileName).Split('.').First();
+                    // var fontName = GetFileName(fileName).Split('.').First();
 
-                    parser = LoadFont(fontName, ReadAllBytes(fileName));
-                    if (parser != null)
-                        AddParser(parser);
+                    var imageParser = new PNGFileReader(fileName, _fileLoadHelper, targetEngine.ColorChip.maskColor);
+
+                    AddParser(new FontParser(imageParser, targetEngine));
+
+                    // parser = LoadFont(fontName, ReadAllBytes(fileName));
+                    // if (parser != null)
+                    //     AddParser(parser);
                 }
             }
 
@@ -268,13 +272,13 @@ namespace PixelVision8.Runner.Services
             return null;
         }
 
-        protected AbstractParser LoadFont(string fontName, byte[] data)
-        {
-
-            var imageParser = new PNGReader(data, targetEngine.ColorChip.maskColor);
-
-            return new FontParser(imageParser, targetEngine, fontName);
-        }
+        // protected AbstractParser LoadFont(string fontName, byte[] data)
+        // {
+        //
+        //     var imageParser = new PNGReader(data, targetEngine.ColorChip.maskColor);
+        //
+        //     return new FontParser(imageParser, targetEngine, fontName);
+        // }
 
         protected void LoadTilemap(string[] files)
         {

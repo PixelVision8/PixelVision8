@@ -40,10 +40,10 @@ namespace PixelVision8.Runner.Parsers
             maskColor = ColorUtils.HexToColor(chips.ColorChip.maskColor);
         }
 
-        protected override void CalculateBounds()
+        public override void PrepareSprites()
         {
             // Calculate the texture's bounds
-            base.CalculateBounds();
+            base.PrepareSprites();
 
             columns = columns > tilemapChip.columns ? tilemapChip.columns : columns;
 

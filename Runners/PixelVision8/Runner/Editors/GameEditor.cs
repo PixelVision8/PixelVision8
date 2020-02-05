@@ -1181,7 +1181,8 @@ namespace PixelVision8.Runner.Editors
                     ColorChip = {unique = true}, FontChip = {unique = false, pages = 1}, Name = path
                 };
 
-                var pngReader = new PNGReader(imageBytes, targetGame.ColorChip.maskColor);
+                var pngReader = new PNGReader(imageBytes, targetGame.ColorChip.maskColor)
+                    {FileName = filePath.EntityName };
 
                 var loadService = runner.loadService;
 
@@ -1189,7 +1190,7 @@ namespace PixelVision8.Runner.Editors
 
                 loadService.targetEngine = targetGame;
 
-                loadService.AddParser(new FontParser(pngReader, targetGame, filePath.EntityName));
+                loadService.AddParser(new FontParser(pngReader, targetGame));
 
                 loadService.LoadAll();
 
