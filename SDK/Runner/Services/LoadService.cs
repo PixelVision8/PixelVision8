@@ -189,11 +189,17 @@ namespace PixelVision8.Runner.Services
         public void LoadAll()
         {
             while (Completed == false) NextParser();
+
+            parsers.Clear();
         }
 
         public void NextParser()
         {
-            if (Completed) return;
+            if (Completed)
+            {
+                parsers.Clear(); 
+                return;
+            }
 
             var parser = parsers[currentParserID];
 
@@ -201,7 +207,11 @@ namespace PixelVision8.Runner.Services
 
             currentStep++;
 
-            if (parser.completed) currentParserID++;
+            if (parser.completed)
+            {
+                parser.Dispose();
+                currentParserID++;
+            }
         }
 
         public void StartLoading()

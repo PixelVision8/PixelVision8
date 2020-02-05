@@ -277,5 +277,12 @@ namespace PixelVision8.Runner.Parsers
                 spriteData[i] = tmpRefID;
             }
         }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            chips = null;
+            spriteChip = null;
+        }
     }
 }

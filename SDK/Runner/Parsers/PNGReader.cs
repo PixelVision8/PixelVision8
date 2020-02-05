@@ -358,5 +358,17 @@ namespace PixelVision8.Runner.Importers
                     throw new Exception("Unknown color type.");
             }
         }
+
+        public void Dispose()
+        {
+            _colorPalette.Clear();
+            _colors = null;
+            bytes = null;
+            chunks.Clear();
+            dataChunks.Clear();
+            memoryStream.Dispose();
+            palette = null;
+            pixels = null;
+        }
     }
 }

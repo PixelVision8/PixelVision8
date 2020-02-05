@@ -70,5 +70,12 @@ namespace PixelVision8.Runner.Parsers
         {
             currentStep++;
         }
+
+        public virtual void Dispose()
+        {
+            bytes = null;
+            FileLoadHelper = null;
+            steps.Clear();
+        }
     }
 }

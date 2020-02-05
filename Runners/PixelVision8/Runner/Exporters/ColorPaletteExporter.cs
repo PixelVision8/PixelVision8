@@ -78,6 +78,18 @@ namespace PixelVision8.Runner.Exporters
             exporter.NextStep();
         }
 
+        public void StepCompleted()
+        {
+            exporter.StepCompleted();
+        }
+
+        public void Dispose()
+        {
+            exporter.Dispose();
+            colorChip = null;
+            exporter = null;
+        }
+
         public byte[] bytes => exporter.bytes;
 
         public string fileName => exporter.fileName;

@@ -48,5 +48,11 @@ namespace PixelVision8.Runner.Parsers
 
             currentStep++;
         }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            imageParser = null;
+        }
     }
 }

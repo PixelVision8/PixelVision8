@@ -33,5 +33,6 @@ namespace PixelVision8.Runner.Parsers
         void ReadHeader();
         void ReadStream();
         void ReadBytes(byte[] bytes);
+        void Dispose();
     }
 }
