@@ -22,15 +22,15 @@ namespace PixelVision8.Runner.Parsers
 {
     public class ImageParser : AbstractParser
     {
-        protected IImageParser imageParser;
+        protected IImageParser Parser;
         
-        public ImageParser(IImageParser imageParser, string maskHex = "#FF00FF")
+        public ImageParser(IImageParser parser, string maskHex = "#FF00FF")
         { 
-            this.imageParser = imageParser;
+            this.Parser = parser;
         }
 
-        public int imageWidth => imageParser.width;
-        public int imageHeight => imageParser.height;
+        public int ImageWidth => Parser.width;
+        public int ImageHeight => Parser.height;
 
         public override void CalculateSteps()
         {
@@ -40,7 +40,7 @@ namespace PixelVision8.Runner.Parsers
 
         public void ParseImageData()
         {
-            imageParser.ReadStream();
+            Parser.ReadStream();
 
             currentStep++;
         }
@@ -48,7 +48,7 @@ namespace PixelVision8.Runner.Parsers
         public override void Dispose()
         {
             base.Dispose();
-            imageParser = null;
+            Parser = null;
         }
     }
 }

@@ -29,8 +29,8 @@ namespace PixelVision8.Runner.Parsers
 
         private readonly TilemapChip tilemapChip;
 
-        public TilemapParser(IImageParser imageParser, IEngineChips chips) :
-            base(imageParser, chips)
+        public TilemapParser(IImageParser parser, IEngineChips chips) :
+            base(parser, chips)
         {
             tilemapChip = chips.TilemapChip;
 

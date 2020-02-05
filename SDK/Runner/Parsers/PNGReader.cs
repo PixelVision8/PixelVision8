@@ -35,7 +35,6 @@ namespace PixelVision8.Runner.Importers
         protected List<Color> _colorPalette;
         protected Color[] _colors;
         protected int bitsPerSample;
-        // protected byte[] bytes;
         protected int bytesPerPixel;
         protected int bytesPerSample;
         protected int bytesPerScanline;
@@ -365,7 +364,6 @@ namespace PixelVision8.Runner.Importers
         {
             _colorPalette.Clear();
             _colors = null;
-            // bytes = null;
             chunks.Clear();
             dataChunks.Clear();
             memoryStream.Dispose();

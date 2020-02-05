@@ -28,19 +28,17 @@ namespace PixelVision8.Runner.Parsers
 {
     public class FontParser : SpriteParser
     {
-        //        private readonly bool autoImport;
-
         private readonly FontChip fontChip;
         private readonly string name;
         private readonly List<Color> uniqueFontColors = new List<Color>();
         private int[] fontMap;
 
-        public FontParser(IImageParser imageParser, IEngineChips chips) : base(imageParser,
+        public FontParser(IImageParser parser, IEngineChips chips) : base(parser,
             chips, true, chips.FontChip)
         {
             fontChip = chips.FontChip;
             // imageParser.ReadStream();
-            name = imageParser.FileName.Split('.').First();
+            name = parser.FileName.Split('.').First();
         }
 
         public override void PrepareSprites()
@@ -116,30 +114,6 @@ namespace PixelVision8.Runner.Parsers
                         uniqueFontColors.Add(tmpColor);
                     }
                 }
-
-                //                tmpRefID = Equals(tmpColor, maskColor) ? -1 : Array.IndexOf(colorData, tmpColor);
-
-                // Look to see if color is not transparent
-                //                if (tmpRefID > -1)
-                //                {
-                //                    // compare against the color index
-                //                    var indexed = colorIndex.IndexOf(tmpRefID);
-                //
-                //                    // if the color is not found let's index it
-                //                    if (indexed == -1)
-                //                        if (colorIndex.Count < totalColors)
-                //                        {
-                //                            // Add the color
-                //                            colorIndex.Add(tmpRefID);
-                //
-                //                            // Update the index
-                //                            indexed = colorIndex.Count - 1;
-                //                        }
-                //
-                //                    // if the index is still empty (we ran out of colors, then make transparent)
-                //                    if (indexed == -1)
-                //                        tmpRefID = -1;
-                //                }
 
                 // Update the value in the indexes array
                 spriteData[i] = tmpRefID;

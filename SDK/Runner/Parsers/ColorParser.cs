@@ -37,7 +37,7 @@ namespace PixelVision8.Runner.Parsers
         protected Color tmpColor;
         protected int totalColors;
 
-        public ColorParser(IImageParser imageParser, ColorChip colorChip) : base(imageParser)
+        public ColorParser(IImageParser parser, ColorChip colorChip) : base(parser)
         {
             this.colorChip = colorChip;
             unique = colorChip.unique;
@@ -76,8 +76,8 @@ namespace PixelVision8.Runner.Parsers
 
             var srcColors =
                 unique
-                    ? imageParser.colorPalette.ToArray()
-                    : imageParser.colorPixels; //data.Select(c => new ColorAdapter(c) as Color).ToArray();
+                    ? Parser.colorPalette.ToArray()
+                    : Parser.colorPixels; //data.Select(c => new ColorAdapter(c) as Color).ToArray();
             var total = srcColors.Length;
 
             // Loop through each color and find the unique ones
