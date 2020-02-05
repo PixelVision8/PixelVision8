@@ -1004,10 +1004,9 @@ namespace PixelVision8.Runner.Editors
 
             var tmpPixelData = new int[8 * 8];
             var nextSpriteID = 0;
-            var i = 0;
-
+            
             // Copy the sprites to the temp chip
-            for (i = 0; i < total; i++)
+            for (var i = 0; i < total; i++)
             {
                 spriteChip.ReadSpriteAt(i, tmpPixelData);
 
@@ -1023,7 +1022,7 @@ namespace PixelVision8.Runner.Editors
 
             total = tmpSpriteChip.spritesInRam;
 
-            for (i = 0; i < total; i++)
+            for (var i = 0; i < total; i++)
             {
                 tmpSpriteChip.ReadSpriteAt(i, tmpPixelData);
                 spriteChip.UpdateSpriteAt(i, tmpPixelData);
@@ -1441,7 +1440,7 @@ namespace PixelVision8.Runner.Editors
         /// </summary>
         public void ResizeToolColorMemory()
         {
-            runner.activeEngine.ColorChip.total = 512;
+            runner.ActiveEngine.ColorChip.total = 512;
         }
 
         /// <summary>
@@ -2048,7 +2047,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int[] ReadToolSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
         {
-            return ReadSpriteData(runner.activeEngine.SpriteChip, id, scaleX, scaleY, flipH, flipV);
+            return ReadSpriteData(runner.ActiveEngine.SpriteChip, id, scaleX, scaleY, flipH, flipV);
         }
 
         private int[] ReadSpriteData(SpriteChip spriteChip, int id, int scaleX = 1, int scaleY = 1, bool flipH = false,
@@ -2285,7 +2284,7 @@ namespace PixelVision8.Runner.Editors
             //            }
 
             // Copy to the active game's tilemap layer
-            runner.activeEngine.GameChip.DrawPixels(tmpPixelData, x, y, width, height, false, false,
+            runner.ActiveEngine.GameChip.DrawPixels(tmpPixelData, x, y, width, height, false, false,
                 DrawMode.TilemapCache, colorOffset);
         }
 
@@ -2330,7 +2329,7 @@ namespace PixelVision8.Runner.Editors
             //            }
 
             // Copy to the active game's tilemap layer
-            runner.activeEngine.GameChip.DrawPixels(tmpPixelData, x, y, width, height, false, false,
+            runner.ActiveEngine.GameChip.DrawPixels(tmpPixelData, x, y, width, height, false, false,
                 DrawMode.TilemapCache, colorOffset);
         }
 
@@ -2347,7 +2346,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public string[] ToolColors()
         {
-            return runner.activeEngine.ColorChip.hexColors;
+            return runner.ActiveEngine.ColorChip.hexColors;
         }
 
         /// <summary>
@@ -2356,7 +2355,7 @@ namespace PixelVision8.Runner.Editors
         /// <param name="total"></param>
         public void ToolRebuildColorPages(int total)
         {
-            runner.activeEngine.ColorChip.total = total;
+            runner.ActiveEngine.ColorChip.total = total;
         }
 
         /// <summary>

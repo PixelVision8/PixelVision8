@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using PixelVision8.Runner.Services;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -27,7 +28,11 @@ namespace PixelVision8.Runner.Parsers
     {
         protected List<Action> steps = new List<Action>();
 
+        public IFileLoadHelper FileLoadHelper;
+
         public int currentStep { get; protected set; }
+
+        public string SourcePath;
 
         public virtual byte[] bytes { get; set; }
 
@@ -38,6 +43,20 @@ namespace PixelVision8.Runner.Parsers
         public virtual void CalculateSteps()
         {
             currentStep = 0;
+
+            // First step will always be to get the data needed to parse
+            if(!string.IsNullOrEmpty(SourcePath))
+                steps.Add(LoadSourceData);
+        }
+
+        public virtual void LoadSourceData()
+        {
+            if (FileLoadHelper != null)
+            {
+                bytes = FileLoadHelper.ReadAllBytes(SourcePath);
+            }
+
+            StepCompleted();
         }
 
         public virtual void NextStep()
@@ -45,6 +64,11 @@ namespace PixelVision8.Runner.Parsers
             if (completed) return;
 
             steps[currentStep]();
+        }
+
+        public virtual void StepCompleted()
+        {
+            currentStep++;
         }
     }
 }

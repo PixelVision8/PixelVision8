@@ -87,12 +87,12 @@ namespace PixelVision8.Runner
         ///     The base runner contains a list of the core chips. Here you'll want to add the game chip to the list so it can run.
         ///     This is called when a new game is created by the runner.
         /// </summary>
-        public override List<string> defaultChips
+        public override List<string> DefaultChips
         {
             get
             {
                 // Get the list of default chips
-                var chips = base.defaultChips;
+                var chips = base.DefaultChips;
 
                 // Add the custom C# game chip
                 chips.Add(typeof(LuaGameChip).FullName);
@@ -126,7 +126,7 @@ namespace PixelVision8.Runner
         public override void CreateLoadService()
         {
             
-            loadService = new LoadServicePlus(workspaceService);
+            loadService = new LoadService(new WorkspaceFileLoadHelper(workspaceService));
         
             Script.DefaultOptions.ScriptLoader = new ScriptLoaderUtil(workspaceService);
         }
@@ -668,14 +668,14 @@ namespace PixelVision8.Runner
         public override void ShutdownActiveEngine()
         {
             // Look to see if there is an active engine
-            if (activeEngine == null) return;
+            if (ActiveEngine == null) return;
 
             base.ShutdownActiveEngine();
 
-            if (activeEngine.GameChip.SaveSlots > 0)
+            if (ActiveEngine.GameChip.SaveSlots > 0)
                 //Print("Active Engine To Save", activeEngine.name);
 
-                SaveGameData("/Game/", activeEngine, SaveFlags.SaveData,
+                SaveGameData("/Game/", ActiveEngine, SaveFlags.SaveData,
                     false);
 
             // Save the active disk

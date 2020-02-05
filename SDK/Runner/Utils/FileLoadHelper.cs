@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,33 +18,25 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Text;
-using PixelVision8.Engine;
+using System.IO;
 using PixelVision8.Runner.Services;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner.Utils
 {
-    public class MetaDataParser : JsonParser
+    
+    public class FileLoadHelper : IFileLoadHelper
     {
-        private readonly IEngine engine;
-
-        public MetaDataParser(string filePath, IFileLoadHelper fileLoadHelper, IEngine target) : base(filePath, fileLoadHelper)
+        public string GetFileName(string path)
         {
-            engine = target;
+            return Path.GetFileName(path);
         }
 
-        public override void CalculateSteps()
+        public byte[] ReadAllBytes(string file)
         {
-            base.CalculateSteps();
-            steps.Add(ApplySettings);
-        }
 
-        public void ApplySettings()
-        {
-            foreach (var d in Data) engine.SetMetadata(d.Key, d.Value as string);
-
-            StepCompleted();
+            // TODO this should be a service
+            return File.ReadAllBytes(file);
         }
-        
     }
+
 }

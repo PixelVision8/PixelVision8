@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Audio;
+using PixelVision8.Runner.Services;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -30,7 +31,7 @@ namespace PixelVision8.Runner.Parsers
     {
         protected IEngine Target;
 
-        public SystemParser(IEngine target, string jsonString = "") : base(jsonString)
+        public SystemParser(string filePath, IFileLoadHelper fileLoadHelper, IEngine target) : base(filePath, fileLoadHelper)
         {
             Target = target;
         }
@@ -47,7 +48,7 @@ namespace PixelVision8.Runner.Parsers
             {
                 var chipManager = Target;
 
-                foreach (var entry in data)
+                foreach (var entry in Data)
                 {
                     var fullName = entry.Key;
                     var split = fullName.Split('.');
@@ -91,7 +92,7 @@ namespace PixelVision8.Runner.Parsers
                 chipManager.RemoveInactiveChips();
             }
 
-            currentStep++;
+            StepCompleted();
         }
 
         public void ConfigureColorChip(Dictionary<string, object> data)

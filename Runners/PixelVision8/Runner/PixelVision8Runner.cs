@@ -314,7 +314,7 @@ namespace PixelVision8.Runner
 
         protected override void Update(GameTime gameTime)
         {
-            if (activeEngine == null || shutdown) return;
+            if (ActiveEngine == null || shutdown) return;
 
             // TODO make sure this order is correct or maybe it can be cleaned up
             if (screenShotActive)
@@ -379,7 +379,7 @@ namespace PixelVision8.Runner
                     if (!screenShotActive)
                         //                            Console.WriteLine("Take Picture");
 
-                        screenShotActive = screenshotService.TakeScreenshot(activeEngine);
+                        screenShotActive = screenshotService.TakeScreenshot(ActiveEngine);
                 }
                 else if (controllerChip.GetKeyUp(actionKeys[ActionKeys.RecordKey]))
                 {
@@ -445,7 +445,7 @@ namespace PixelVision8.Runner
                 {
                     base.Draw(gameTime);
 
-                    if (Recording) gifEncoder.AddFrame(activeEngine.DisplayChip);
+                    if (Recording) gifEncoder.AddFrame(ActiveEngine.DisplayChip);
                 }
             }
             catch (Exception e)
@@ -746,7 +746,7 @@ namespace PixelVision8.Runner
             var metaData = lastGameRef.Value;
 
             // Merge values from the active game
-            foreach (var entry in activeEngine.MetaData)
+            foreach (var entry in ActiveEngine.MetaData)
                 if (metaData.ContainsKey(entry.Key))
                     metaData[entry.Key] = entry.Value;
                 else
@@ -863,7 +863,7 @@ namespace PixelVision8.Runner
                 gifEncoder = new AnimatedGifEncoder();
                 gifEncoder.SetDelay(1000 / 60);
 
-                gifEncoder.CreatePalette(activeEngine.DisplayChip, activeEngine.ColorChip);
+                gifEncoder.CreatePalette(ActiveEngine.DisplayChip, ActiveEngine.ColorChip);
 
                 Window.Title = windowTitle + " (REC)";
             }

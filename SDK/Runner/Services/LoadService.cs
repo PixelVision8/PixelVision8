@@ -20,9 +20,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
@@ -34,6 +32,12 @@ using PixelVision8.Runner.Parsers;
 
 namespace PixelVision8.Runner.Services
 {
+    public interface IFileLoadHelper
+    {
+        string GetFileName(string path);
+        byte[] ReadAllBytes(string file);
+    }
+    
     public class LoadService : AbstractService
     {
         
@@ -57,6 +61,12 @@ namespace PixelVision8.Runner.Services
         protected int TotalParsers => parsers.Count;
 
         public int TotalSteps;
+        private readonly IFileLoadHelper _fileLoadHelper;
+
+        public LoadService(IFileLoadHelper fileLoadHelper)
+        {
+            _fileLoadHelper = fileLoadHelper;
+        }
 
         public bool Completed => currentParserID >= TotalParsers;
 
@@ -65,7 +75,7 @@ namespace PixelVision8.Runner.Services
         /// <summary>
         ///     This can be used to display a message while preloading
         /// </summary>
-        public string message { get; protected set; }
+        public string Message { get; protected set; }
 
         public void Reset()
         {
@@ -76,7 +86,7 @@ namespace PixelVision8.Runner.Services
         }
 
 
-        public virtual void ParseFiles(string[] files, IEngine engine, SaveFlags saveFlags, char directorySeparatorChar = '/')
+        public virtual void ParseFiles(string[] files, IEngine engine, SaveFlags saveFlags)
         {
             Reset();
 
@@ -123,7 +133,7 @@ namespace PixelVision8.Runner.Services
 
                 foreach (var fileName in paths)
                 {
-                    var fontName = fileName.Split(directorySeparatorChar).Last().Split('.').First();
+                    var fontName = GetFileName(fileName).Split('.').First();
 
                     parser = LoadFont(fontName, ReadAllBytes(fileName));
                     if (parser != null)
@@ -144,7 +154,7 @@ namespace PixelVision8.Runner.Services
                 LoadSounds(files);
 
                 // Get all of the wav files
-                var wavFiles = files.Where(x => x.EndsWith(".wav")).ToDictionary(x => x.Split(directorySeparatorChar).Last(), ReadAllBytes);
+                var wavFiles = files.Where(x => x.EndsWith(".wav")).ToDictionary(GetFileName, ReadAllBytes);
 
                 AddParser(new WavParser(targetEngine, wavFiles));
             }
@@ -240,9 +250,9 @@ namespace PixelVision8.Runner.Services
 
             if (!string.IsNullOrEmpty(file))
             {
-                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
+                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
-                return new MetaDataParser(fileContents, targetEngine);
+                return new MetaDataParser(file, _fileLoadHelper, targetEngine);
             }
 
             return null;
@@ -264,9 +274,9 @@ namespace PixelVision8.Runner.Services
 
             if (!string.IsNullOrEmpty(file))
             {
-                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
+                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
-                var jsonParser = new TilemapJsonParser(fileContents, targetEngine);
+                var jsonParser = new TilemapJsonParser(file, _fileLoadHelper, targetEngine);
 
                 AddParser(jsonParser);
 
@@ -368,9 +378,9 @@ namespace PixelVision8.Runner.Services
 
             if (!string.IsNullOrEmpty(file))
             {
-                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
+                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
-                var jsonParser = new SystemParser(targetEngine, fileContents);
+                var jsonParser = new SystemParser(file, _fileLoadHelper, targetEngine);
 
                 jsonParser.CalculateSteps();
 
@@ -387,9 +397,9 @@ namespace PixelVision8.Runner.Services
 
             if (!string.IsNullOrEmpty(file))
             {
-                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
+                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
-                AddParser(new SystemParser(targetEngine, fileContents));
+                AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
             }
             
         }
@@ -403,9 +413,9 @@ namespace PixelVision8.Runner.Services
 
             if (!string.IsNullOrEmpty(file))
             {
-                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
+                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
-                AddParser(new SystemParser(targetEngine, fileContents));
+                AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
             }
         }
 
@@ -416,9 +426,9 @@ namespace PixelVision8.Runner.Services
 
             if (!string.IsNullOrEmpty(file))
             {
-                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
+                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
-                AddParser(new SystemParser(targetEngine, fileContents));
+                AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
             }
         }
 
@@ -429,19 +439,21 @@ namespace PixelVision8.Runner.Services
 
             if (!string.IsNullOrEmpty(file))
             {
-                var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
+                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
-                AddParser(new SystemParser(targetEngine, fileContents));
+                AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
                 
             }
         }
 
+        public virtual string GetFileName(string path)
+        {
+            return _fileLoadHelper.GetFileName(path);
+        }
 
         public virtual byte[] ReadAllBytes(string file)
         {
-            
-            // TODO this should be a service
-            return File.ReadAllBytes(file);
+            return _fileLoadHelper.ReadAllBytes(file);
         }
     }
 }

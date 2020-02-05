@@ -16,6 +16,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\ScriptLoaderUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\BiosService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\WorkspaceService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\WorkspaceFileLoadHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\Collections\EnumerableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\Collections\InverseComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystemExtensions.cs" />

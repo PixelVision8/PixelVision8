@@ -25,8 +25,8 @@ namespace PixelVision8.Runner
 {
     public interface IRunner
     {
-        IEngine activeEngine { get; }
-        void ProcessFiles(IEngine tmpEngine, string[] files, bool displayProgress = false, char directorySeparatorChar = '/');
+        IEngine ActiveEngine { get; }
+        void ProcessFiles(IEngine tmpEngine, string[] files, bool displayProgress = false);
         void DisplayWarning(string message);
         int Volume(int? value = null);
         bool Mute(bool? value = null);

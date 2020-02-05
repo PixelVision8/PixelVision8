@@ -101,9 +101,9 @@ namespace PixelVision8.Runner
             tmpEngine.ActivateChip("GameChip", new LuaGameChip { DefaultScriptPath = "Content/code.lua" });
 
             // Process the files
-            ProcessFiles(tmpEngine, gameFiles.ToArray(), false, Path.DirectorySeparatorChar);
+            ProcessFiles(tmpEngine, gameFiles.ToArray());
 
-            controllerChip = activeEngine.ControllerChip;
+            controllerChip = ActiveEngine.ControllerChip;
         }
 
         protected override void Update(GameTime gameTime)

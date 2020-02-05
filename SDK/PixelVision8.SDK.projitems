@@ -73,6 +73,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\AnimatedGifEncoder\GifEncoder\AnimatedGifEncoder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\AnimatedGifEncoder\GifEncoder\LZWEncoder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\AnimatedGifEncoder\GifEncoder\NeuQuant.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\FileLoadHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\JsonUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\MiniJSON.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\PNGUtils.cs" />

@@ -91,7 +91,7 @@ namespace Desktop
             tmpEngine.ActivateChip("GameChip",  new EmptyTemplateDemoChip());
 
             // Process the files
-            ProcessFiles(tmpEngine, gameFiles.ToArray(), false, Path.DirectorySeparatorChar);
+            ProcessFiles(tmpEngine, gameFiles.ToArray());
 
         }
 

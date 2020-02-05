@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PixelVision8.Engine;
+using PixelVision8.Runner.Services;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -29,7 +30,7 @@ namespace PixelVision8.Runner.Parsers
     {
         protected IEngine target;
 
-        public TilemapJsonParser(string jsonString, IEngine target) : base(jsonString)
+        public TilemapJsonParser(string filePath, IFileLoadHelper fileLoadHelper, IEngine target) : base(filePath, fileLoadHelper)
         {
             this.target = target;
         }
@@ -45,10 +46,10 @@ namespace PixelVision8.Runner.Parsers
             var tilemapChip = target.TilemapChip;
 
 
-            if (data.ContainsKey("layers"))
+            if (Data.ContainsKey("layers"))
             {
-                var layers = data["layers"] as List<object>;
-                var tileSets = data["tilesets"] as List<object>;
+                var layers = Data["layers"] as List<object>;
+                var tileSets = Data["tilesets"] as List<object>;
 
                 var total = layers.Count;
 
@@ -178,7 +179,7 @@ namespace PixelVision8.Runner.Parsers
                     }
             }
 
-            currentStep++;
+            StepCompleted();
         }
     }
 }
