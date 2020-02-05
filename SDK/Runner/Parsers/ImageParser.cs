@@ -23,13 +23,9 @@ namespace PixelVision8.Runner.Parsers
     public class ImageParser : AbstractParser
     {
         protected IImageParser imageParser;
-        //        public IColor[] colorPixels => imageParser.colorPixels;
-        //        public List<IColor> colorPalette => imageParser.colorPalette;
-
+        
         public ImageParser(IImageParser imageParser, string maskHex = "#FF00FF")
-        {
-            // bytes = bytes;
-
+        { 
             this.imageParser = imageParser;
         }
 
@@ -44,7 +40,7 @@ namespace PixelVision8.Runner.Parsers
 
         public void ParseImageData()
         {
-            if (imageParser.IsImage()) imageParser.ReadStream();
+            imageParser.ReadStream();
 
             currentStep++;
         }

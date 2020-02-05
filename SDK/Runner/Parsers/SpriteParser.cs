@@ -60,6 +60,8 @@ namespace PixelVision8.Runner.Parsers
         {
             base.CalculateSteps();
 
+            
+
             steps.Add(PrepareSprites);
 
             steps.Add(CutOutSprites);

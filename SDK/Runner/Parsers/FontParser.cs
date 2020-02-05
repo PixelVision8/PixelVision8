@@ -39,7 +39,7 @@ namespace PixelVision8.Runner.Parsers
             chips, true, chips.FontChip)
         {
             fontChip = chips.FontChip;
-            imageParser.ReadStream();
+            // imageParser.ReadStream();
             name = imageParser.FileName.Split('.').First();
         }
 

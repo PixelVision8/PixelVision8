@@ -158,9 +158,10 @@ namespace PixelVision8.Runner.Services
                 LoadSounds(files);
 
                 // Get all of the wav files
-                var wavFiles = files.Where(x => x.EndsWith(".wav")).ToDictionary(GetFileName, ReadAllBytes);
-
-                AddParser(new WavParser(targetEngine, wavFiles));
+                var wavFiles = files.Where(x => x.EndsWith(".wav")).ToArray();
+                
+                if(wavFiles.Length > 0)
+                    AddParser(new WavParser(wavFiles, _fileLoadHelper, targetEngine ));
             }
 
             // Step 10 (optional). Look for meta data and override the game
@@ -272,14 +273,6 @@ namespace PixelVision8.Runner.Services
             return null;
         }
 
-        // protected AbstractParser LoadFont(string fontName, byte[] data)
-        // {
-        //
-        //     var imageParser = new PNGReader(data, targetEngine.ColorChip.maskColor);
-        //
-        //     return new FontParser(imageParser, targetEngine, fontName);
-        // }
-
         protected void LoadTilemap(string[] files)
         {
             
@@ -303,7 +296,7 @@ namespace PixelVision8.Runner.Services
             if (!string.IsNullOrEmpty(file))
             {
                 
-                var imageParser = new PNGReader(ReadAllBytes(file), targetEngine.ColorChip.maskColor);
+                var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
                 AddParser(new TilemapParser(imageParser, targetEngine));
 
             }
@@ -333,7 +326,7 @@ namespace PixelVision8.Runner.Services
             if (!string.IsNullOrEmpty(file))
             {
                 
-                var imageParser = new PNGReader(ReadAllBytes(file), targetEngine.ColorChip.maskColor);
+                var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
 
                 return new SpriteParser(imageParser, targetEngine);
             }
@@ -358,7 +351,7 @@ namespace PixelVision8.Runner.Services
 
                 //                targetEngine.colorMapChip = colorMapChip;
 
-                var imageParser = new PNGReader(ReadAllBytes(file), targetEngine.ColorChip.maskColor);
+                var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
 
                 // Pass the chip to the new parser
                 return new ColorMapParser(imageParser, colorMapChip, maskColor);
@@ -377,7 +370,7 @@ namespace PixelVision8.Runner.Services
             if (!string.IsNullOrEmpty(file))
             {
                 //                var tex = ReadTexture(ReadAllBytes(file));
-                var imageParser = new PNGReader(ReadAllBytes(file), targetEngine.ColorChip.maskColor);
+                var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
 
                 return new ColorParser(imageParser, targetEngine.ColorChip);
             }
@@ -460,14 +453,14 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        public virtual string GetFileName(string path)
-        {
-            return _fileLoadHelper.GetFileName(path);
-        }
+        // public virtual string GetFileName(string path)
+        // {
+        //     return _fileLoadHelper.GetFileName(path);
+        // }
 
-        public virtual byte[] ReadAllBytes(string file)
-        {
-            return _fileLoadHelper.ReadAllBytes(file);
-        }
+        // public virtual byte[] ReadAllBytes(string file)
+        // {
+        //     return _fileLoadHelper.ReadAllBytes(file);
+        // }
     }
 }
