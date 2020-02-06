@@ -173,6 +173,84 @@ namespace PixelVision8.Runner.Services
                 }
         }
 
+        internal string GetPhysicalPath(WorkspacePath filePath)
+        {
+            string path = filePath.Path;
+
+            var segments = filePath.GetDirectorySegments();
+
+            if (segments[0] == "Game")
+            {
+                return GetPhysicalPath(((SubFileSystem) currentDisk).Root.AppendFile(filePath.EntityName));
+            }
+            else if (segments[0] == "Disks")
+            {
+                var diskRoot = WorkspacePath.Root.AppendDirectory("Disks").AppendDirectory(segments[1]);
+
+                foreach (var keyValuePair in Mounts)
+                {
+                    if (keyValuePair.Key == diskRoot)
+                    {
+                        if (keyValuePair.Value is PhysicalFileSystem mount)
+                        {
+                            var realPath = mount.PhysicalRoot;
+
+                            for (int i = 2; i < segments.Length; i++)
+                            {
+                                realPath = Path.Combine(realPath, segments[i]);
+                            }
+
+                            realPath = Path.Combine(realPath, filePath.EntityName);
+
+                            return realPath;
+                        }
+                    }
+                }
+
+                // TODO need to find the mount point
+
+            }
+            else if (segments[0] == "Workspace")
+            {
+                var userRoot = WorkspacePath.Root.AppendDirectory("User");
+                // string userSystemPath;
+                foreach (var keyValuePair in Mounts)
+                {
+                    if (keyValuePair.Key == userRoot)
+                    {
+                        if (keyValuePair.Value is PhysicalFileSystem mount)
+                        {
+                            path = mount
+                                .PhysicalRoot; //Path.Combine(mount.PhysicalRoot, segments[1], filePath.EntityName);
+                            break;
+                        }
+                    }
+                }
+
+                foreach (var segment in segments)
+                {
+                    path = Path.Combine(path, segment);
+                }
+
+                path = Path.Combine(path, filePath.EntityName);
+            }
+            else if (segments[0] == "PixelVisionOS")
+            {
+                // Look through all of the share libraries to find the correct path
+                foreach (var sharedLibDirectory in SharedLibDirectories())
+                {
+                    if(Exists(sharedLibDirectory.AppendFile(filePath.EntityName)))
+                    {
+                        // TODO still need to find the correct system path to any of the shared lib folders
+                        return sharedLibDirectory.AppendFile(filePath.EntityName).Path;
+                    }
+                }
+
+            }
+
+            return path;
+        }
+
         public string[] SplitFileName(WorkspacePath filePath)
         {
             var split = filePath.EntityName.Split('.').ToList();
@@ -255,6 +333,7 @@ namespace PixelVision8.Runner.Services
             return logService.ReadLogItems();
         }
 
+        private WorkspacePath currentDiskPath;
 
         public string[] LoadGame(string path)
         {

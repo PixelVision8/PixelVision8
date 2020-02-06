@@ -9,76 +9,77 @@
 ]]--
 
 LoadScript("sb-sprites")
+LoadScript("attach-debugger")
 
 local currentAnimation = {}
 
 -- Game boot animation frames
 local insertAnimation = {
-  loadingframe1,
-  loadingframe2,
-  loadingframe3,
-  loadingframe4,
-  loadingframe5,
-  loadingframe6,
-  loadingframe7,
-  loadingframe8,
-  loadingframe9,
-  loadingframe9,
-  loadingframe10,
-  loadingframe11,
-  loadingframe12,
-  loadingframe13,
-  loadingframe14,
-  loadingframe15,
-  loadingframe16,
-  loadingframe17,
-  loadingframe18,
-  loadingframe19,
-  loadingframe20,
-  loadingframe21,
-  loadingframe22,
-  loadingframe23,
-  loadingframe24,
-  loadingframe25,
+    loadingframe1,
+    loadingframe2,
+    loadingframe3,
+    loadingframe4,
+    loadingframe5,
+    loadingframe6,
+    loadingframe7,
+    loadingframe8,
+    loadingframe9,
+    loadingframe9,
+    loadingframe10,
+    loadingframe11,
+    loadingframe12,
+    loadingframe13,
+    loadingframe14,
+    loadingframe15,
+    loadingframe16,
+    loadingframe17,
+    loadingframe18,
+    loadingframe19,
+    loadingframe20,
+    loadingframe21,
+    loadingframe22,
+    loadingframe23,
+    loadingframe24,
+    loadingframe25,
 }
 
 local loadAnimation = {
-  loadingframe17,
-  loadingframe18,
-  loadingframe19,
-  loadingframe20,
-  loadingframe21,
-  loadingframe22,
-  loadingframe23,
-  loadingframe24,
-  loadingframe25,
+    loadingframe17,
+    loadingframe18,
+    loadingframe19,
+    loadingframe20,
+    loadingframe21,
+    loadingframe22,
+    loadingframe23,
+    loadingframe24,
+    loadingframe25,
 }
 
 local ejectAnimation = {
-  loadingframe25,
-  loadingframe24,
-  loadingframe23,
-  loadingframe22,
-  loadingframe21,
-  loadingframe20,
-  loadingframe19,
-  loadingframe18,
-  loadingframe17,
-  loadingframe16,
-  loadingframe15,
-  loadingframe14,
-  loadingframe13,
-  loadingframe12,
-  loadingframe11,
-  loadingframe10,
-  loadingframe10,
-  loadingframe25,
-  loadingframe24,
-  loadingframe23,
-  loadingframe22,
-  loadingframe21,
-  loadingframe20,
-  loadingframe19,
+    loadingframe25,
+    loadingframe24,
+    loadingframe23,
+    loadingframe22,
+    loadingframe21,
+    loadingframe20,
+    loadingframe19,
+    loadingframe18,
+    loadingframe17,
+    loadingframe16,
+    loadingframe15,
+    loadingframe14,
+    loadingframe13,
+    loadingframe12,
+    loadingframe11,
+    loadingframe10,
+    loadingframe10,
+    loadingframe25,
+    loadingframe24,
+    loadingframe23,
+    loadingframe22,
+    loadingframe21,
+    loadingframe20,
+    loadingframe19,
 }
 
 -- Animation properties
@@ -103,151 +104,168 @@ local loopKeyframe = 0
 
 function Init()
 
-  if(EnableAutoRun ~= nil) then
-    EnableAutoRun(false)
-  end
+    if(EnableAutoRun ~= nil) then
+        EnableAutoRun(false)
+    end
 
-  if(EnableBackKey ~= nil) then
-    EnableBackKey(false)
-  end
+    if(EnableBackKey ~= nil) then
+        EnableBackKey(false)
+    end
 
-  playSounds = ReadBiosData("PlaySystemSounds", "True") == "True"
+    playSounds = ReadBiosData("PlaySystemSounds", "True") == "True"
 
-  -- Set the background an rebuild the screen buffer
-  BackgroundColor(tonumber(ReadBiosData("DefaultBackgroundColor", "5")))
+    -- Set the background an rebuild the screen buffer
+    BackgroundColor(tonumber(ReadBiosData("DefaultBackgroundColor", "5")))
 
-  if(ReadMetadata("showEjectAnimation") == "true") then
-    currentAnimation = ejectAnimation
-    mode = "ejecting"
-    totalFrames = #currentAnimation
-    loopKeyframe = totalFrames - 2
-  elseif(ReadMetadata("showDiskAnimation") == "true") then
-    mode = "inserting"
-    currentAnimation = insertAnimation
-    totalFrames = #currentAnimation
-    loopKeyframe = totalFrames - 7
-  else
-    currentAnimation = loadAnimation
-    mode = "loading"
-    totalFrames = #currentAnimation
-    loopKeyframe = totalFrames - 7
-  end
+    if(ReadMetadata("showEjectAnimation") == "true") then
+        currentAnimation = ejectAnimation
+        mode = "ejecting"
+        totalFrames = #currentAnimation
+        loopKeyframe = totalFrames - 2
+    elseif(ReadMetadata("showDiskAnimation") == "true") then
+        mode = "inserting"
+        currentAnimation = insertAnimation
+        totalFrames = #currentAnimation
+        loopKeyframe = totalFrames - 7
+    else
+        currentAnimation = loadAnimation
+        mode = "loading"
+        totalFrames = #currentAnimation
+        loopKeyframe = totalFrames - 7
+    end
 
 end
 
 function Update(timeDelta)
 
-  -- Convert timeDelta to a float
-  timeDelta = timeDelta / 1000
+    -- Convert timeDelta to a float
+    timeDelta = timeDelta / 1000
 
-  -- Calculate start delay
-  delayTime = delayTime + timeDelta
+    -- Calculate start delay
+    delayTime = delayTime + timeDelta
 
-  -- Test for the start delay before beginning the animation
-  if(delayTime < startDelay) then
-    return
-  end
+    -- Test for the start delay before beginning the animation
+    if(delayTime < startDelay) then
+        return
+    end
 
-  -- Increase frame animation
-  animTime = animTime + timeDelta
+    -- Increase frame animation
+    animTime = animTime + timeDelta
 
-  -- If preloading is set to true, read the percentage
-  if(preloading == true) then
+    -- If preloading is set to true, read the percentage
+    if(preloading == true) then
 
-    percent = ReadPreloaderPercent()
+        percent = ReadPreloaderPercent()
 
-    -- If the percent is 100, call PreloaderComplete()
-    if(percent >= 100) then
+        -- If the percent is 100, call PreloaderComplete()
+        if(percent >= 100) then
 
-      if(preloadComplete == false) then
-        preloadComplete = true
-        delayTime = 0
-        frame = 1
-      else
-        PreloaderComplete()
+            if(preloadComplete == false) then
+                preloadComplete = true
+                delayTime = 0
+                frame = 1
+            elseif(connectDebugger == true) then
 
-      end
+                -- check to see if the debugger has been connected yet
+                debuggerTime = debuggerTime + timeDelta
+
+                -- print("DebuggerAttached", DebuggerAttached())
+
+                if(debuggerTime > debuggerDelay or Key(Keys.Escape)) then
+                    connectDebugger = false
+                    return
+                end
+
+            else
+                PreloaderComplete()
+
+            end
+
+        end
 
     end
 
-  end
+    -- Test to see if animation is greater than delay
+    if(animTime > animDelay and preloadComplete == false) then
 
-  -- Test to see if animation is greater than delay
-  if(animTime > animDelay and preloadComplete == false) then
+        -- Reset time
+        animTime = 0
 
-    -- Reset time
-    animTime = 0
+        -- Increment frame by 1
+        frame = frame + 1
 
-    -- Increment frame by 1
-    frame = frame + 1
+        if(mode == "ejecting" and frame == 15) then
 
-    if(mode == "ejecting" and frame == 15) then
+            -- Once disk is ejected, it needs to load the next game
+            mode = "loading"
+            -- -- PlaySound(0)
+            -- readTime = 0
+        end
 
-      -- Once disk is ejected, it needs to load the next game
-      mode = "loading"
-      -- -- PlaySound(0)
-      -- readTime = 0
+        if((mode == "inserting" and frame > 17) or (mode == "ejecting" and frame < 8) or (mode == "loading") ) then
+            readTime = readTime + timeDelta
+
+            if(readTime > readDelay and playSounds) then
+                PlaySound(1)
+                readTime = 0
+            end
+        end
+
+        -- Test to see if we are out of frames
+        if(frame >= totalFrames) then
+
+            -- Restart the loop 6 frames from the end
+            frame = loopKeyframe
+
+            -- If we are not preloading, trigger that process
+            if(preloading == false) then
+
+                -- Start the engine's preloader
+                StartNextPreload()
+
+                -- Change the preloading flag
+                preloading = true
+
+                -- Make the totalFrames include the last frames so it loops properly
+                totalFrames = #currentAnimation
+
+            end
+
+        end
+
     end
-
-    if((mode == "inserting" and frame > 17) or (mode == "ejecting" and frame < 8) or (mode == "loading") ) then
-      readTime = readTime + timeDelta
-
-      if(readTime > readDelay and playSounds) then
-        PlaySound(1)
-        readTime = 0
-      end
-    end
-
-    -- Test to see if we are out of frames
-    if(frame >= totalFrames) then
-
-      -- Restart the loop 6 frames from the end
-      frame = loopKeyframe
-
-      -- If we are not preloading, trigger that process
-      if(preloading == false) then
-
-        -- Start the engine's preloader
-        StartNextPreload()
-
-        -- Change the preloading flag
-        preloading = true
-
-        -- Make the totalFrames include the last frames so it loops properly
-        totalFrames = #currentAnimation
-
-      end
-
-    end
-
-  end
 
 end
 
 function Draw()
 
-  -- Copy over screen buffer
-  RedrawDisplay()
+    -- Copy over screen buffer
+    RedrawDisplay()
 
-  -- Get current sprite data
-  local sprite = currentAnimation[frame]
+    -- Get current sprite data
+    local sprite = currentAnimation[frame]
 
-  if(sprite ~= nil) then
-    -- Draw sprite to the display
-    DrawSprites(sprite.spriteIDs, 112, 96, sprite.width, false, false, DrawMode.Sprite, 0)
-  end
+    if(sprite ~= nil) then
+        -- Draw sprite to the display
+        DrawSprites(sprite.spriteIDs, 112, 96, sprite.width, false, false, DrawMode.Sprite, 0)
+    end
 
-  if((preloading == true or mode == "loading") and mode ~= "ejecting") then
+    if(preloadComplete == true and connectDebugger == true) then
 
-    -- Draw percent as sprites
-    local percentString = string.rpad(tostring(percent), 3, "0")
-    DrawText("LOADING " ..percentString .."%", offset * 8, 27 * 8, DrawMode.Sprite, "large", 15)
+        local countdown = string.rpad(tostring(debuggerDelay - math.ceil(debuggerTime)), 2, "0")
 
-  end
+        DrawText("WAITING FOR DEBUGGER " ..countdown, 5 * 8, 27 * 8, DrawMode.Sprite, "large", 15)
+
+
+    elseif((preloading == true or mode == "loading") and mode ~= "ejecting") then
+        -- Draw percent as sprites
+        local percentString = string.rpad(tostring(percent), 3, "0")
+        DrawText("LOADING " ..percentString .."%", offset * 8, 27 * 8, DrawMode.Sprite, "large", 15)
+    end
 
 end
 
 string.rpad = function(str, len, char)
-  if char == nil then char = ' ' end
-  return string.rep(char, len - #str) .. str
+    if char == nil then char = ' ' end
+    return string.rep(char, len - #str) .. str
 end

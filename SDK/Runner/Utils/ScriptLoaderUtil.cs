@@ -54,8 +54,8 @@ namespace PixelVision8.Runner.Utils
 
             for (int i = 0; i < sharedLibPaths.Count; i++)
             {
-
-                var scripts = _workspace.GetEntities(sharedLibPaths[i]);
+                //
+                // var scripts = _workspace.GetEntities(sharedLibPaths[i]);
 
                 script = _workspace.ReadTextFromFile(sharedLibPaths[i].AppendFile(file));
 
@@ -97,6 +97,34 @@ namespace PixelVision8.Runner.Utils
 
         public string ResolveModuleName(string modname, Table globalContext)
         {
+
+            if (!modname.EndsWith(".lua"))
+            {
+                modname = modname + ".lua";
+            }
+
+            if (modname.StartsWith("/"))
+            {
+                // TODO need to make sure this is an relative path
+            }
+
+            List<WorkspacePath> sharedLibPaths = _workspace.SharedLibDirectories();
+
+            sharedLibPaths.Insert(0, WorkspacePath.Root.AppendDirectory("Game"));
+            WorkspacePath filePath;
+
+            foreach (var path in sharedLibPaths)
+            {
+                filePath = path.AppendFile(modname);
+                if (_workspace.Exists(filePath))
+                {
+                    modname = _workspace.GetPhysicalPath(filePath);
+                    break;
+                }
+            }
+
+            // _workspace.GetPhysicalPath()
+
             return modname;
         }
     }

@@ -70,7 +70,6 @@ namespace PixelVision8.Runner.Services
 
         private SoundEffectInstance currentSound;
         protected PixelVision8Runner desktopRunner;
-        protected GameEditor gameEditor;
 
         public LuaServicePlus(PixelVision8Runner runner) : base(runner)
         {
@@ -155,13 +154,6 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        public virtual void WriteBiosSafeMode(string key, string value)
-        {
-            // TODO should there be a set of safe keys and values types that can be accepted?
-            desktopRunner.bios.UpdateBiosData(key, value);
-        }
-        //        readonly PNGReader _pngReader = new PNGReader();
-
         public Image NewImage(int width, int height, string[] colors, int[] pixelData = null)
         {
             return new Image(width, height, colors, pixelData);
@@ -191,8 +183,7 @@ namespace PixelVision8.Runner.Services
 
         public Image ReadImage(WorkspacePath src, string maskHex = "#ff00ff")
         {
-            //            throw new NotImplementedException();
-
+            
             PNGReader reader = null;
 
             using (var memoryStream = new MemoryStream())

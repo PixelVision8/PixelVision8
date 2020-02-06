@@ -20,7 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
 using PixelVision8.Engine.Audio;
@@ -33,7 +32,6 @@ namespace PixelVision8.Engine.Chips
     public class LuaGameChip : GameChip
     {
         protected Script _luaScript;
-        public Dictionary<string, string> textFiles = new Dictionary<string, string>();
         public string DefaultScriptPath = "code";
 
         public Script LuaScript
@@ -298,7 +296,7 @@ namespace PixelVision8.Engine.Chips
             RegisterLuaServices();
 
             // Kick off the first game script file
-            LuaScript.DoFile(DefaultScriptPath);
+            LoadScript(DefaultScriptPath);
             
             // Reset the game
             if (LuaScript.Globals["Reset"] != null) LuaScript.Call(LuaScript.Globals["Reset"]);
