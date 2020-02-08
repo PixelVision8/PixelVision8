@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ICSharpCode.SharpZipLib.Zip;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Utils;
@@ -238,6 +239,7 @@ namespace PixelVision8.Runner.Services
                 // Add the remaining disks
                 foreach (var disk in Disks) diskPaths.Add(DiskPhysicalRoot(disk));
 
+                // TODO this shouldn't eject the disk  that is about to be loaded since it  could force a zip file to be rewritten before it is loaded
                 // Remove the old disks
                 EjectAll();
 
@@ -267,34 +269,20 @@ namespace PixelVision8.Runner.Services
 
         public void SaveActiveDisk()
         {
-            if (currentDisk is ZipFileSystem disk) disk.Save();
 
             // Create a new mount point for the current game
             var rootPath = WorkspacePath.Root.AppendDirectory("Game");
 
+            // Save the active disk if it is a zip file system
+            if (currentDisk is ZipFileSystem disk) SaveDisk(rootPath);
+
             // Make sure we don't have a disk with the same name
             if (Exists(rootPath)) Mounts.Remove(Get(rootPath));
         }
-        //
-        // public override void IncludeLibDirectoryFiles(Dictionary<string, byte[]> files)
-        // {
-        //     base.IncludeLibDirectoryFiles(files);
-        //
-        //     var paths = new List<WorkspacePath>();
-        //
-        //     var diskPaths = Disks;
-        //
-        //     foreach (var disk in diskPaths) paths.Add(disk.AppendDirectory("System").AppendDirectory("Libs"));
-        //
-        //     AddExtraFiles(files, paths);
-        // }
 
         public override void ShutdownSystem()
         {
-            // make sure we have the current list of disks in the bios
-            //            UpdateDiskInBios();
-            //            var disks = disks;
-
+            
             foreach (var disk in Disks) SaveDisk(disk);
 
             base.ShutdownSystem();
@@ -410,8 +398,132 @@ namespace PixelVision8.Runner.Services
             if (Exists(path))
             {
                 var mount = Get(path);
-                if (mount.Value is ZipFileSystem zipFileSystem) zipFileSystem.Save();
+
+                // We only need to save a disk if it is actually a zip file
+                if (mount.Value is ZipFileSystem zipFileSystem)
+                {
+
+                    if (zipFileSystem.PhysicalRoot == null) return;
+
+
+                    // TODO need to save the contents of the memory system back to a zip file
+
+                    // var disk = this;
+
+                    var fileNameZip = zipFileSystem.PhysicalRoot;
+
+                    // Move the original file so we keep it safe
+                    if (File.Exists(fileNameZip)) File.Move(fileNameZip, fileNameZip + ".bak");
+                    
+                    var files = zipFileSystem.GetEntitiesRecursive(WorkspacePath.Root).ToArray();
+                    
+                    //            using (var fileStream = new FileStream(fileNameZip, FileMode.Create))
+                    //            {
+                    
+                    var response = CreateZipFile(new FileStream(fileNameZip, FileMode.Create), files, path);
+                    if (((bool)response["success"]))
+                    {
+                        File.Delete(fileNameZip + ".bak");
+                    }
+                    else
+                    {
+                        Console.WriteLine((string)response["error"]);
+                        if (File.Exists(fileNameZip + ".bak")) File.Move(fileNameZip + ".bak", fileNameZip);
+                    }
+                        
+                }
             }
+        }
+
+        public Dictionary<string, object> CreateZipFile(Stream zipFS, WorkspacePath[] files,  WorkspacePath sourceRoot = default)
+        {
+            var response = new Dictionary<string, object>
+            {
+                {"success", false},
+                {"message", ""}
+            };
+
+            using (zipFS)
+            {
+                using (var archive = new ZipOutputStream(zipFS))
+                {
+                    // Define the compression level
+                    // 0 - store only to 9 - means best compression
+                    archive.SetLevel(4);
+
+                    var buffer = new byte[4096];
+                    try
+                    {
+                        foreach (var file in files)
+                            // We can only save files
+                            if (file.IsFile && !file.EntityName.StartsWith("."))
+                            {
+                                var tmpPath = file.Path.Substring(1);
+
+                                // Using GetFileName makes the result compatible with XP
+                                // as the resulting path is not absolute.
+                                var entry = new ZipEntry(tmpPath)
+                                {
+                                    // Could also use the last write time or similar for the file.
+                                    DateTime = DateTime.Now
+                                };
+                                archive.PutNextEntry(entry);
+
+                                using (var fs = OpenFile(sourceRoot.AppendPath(file), FileAccess.Read))
+                                {
+                                    // Using a fixed size buffer here makes no noticeable difference for output
+                                    // but keeps a lid on memory usage.
+                                    int sourceBytes;
+
+                                    do
+                                    {
+                                        sourceBytes = fs.Read(buffer, 0, buffer.Length);
+                                        archive.Write(buffer, 0, sourceBytes);
+                                    } while (sourceBytes > 0);
+                                }
+
+                                archive.CloseEntry();
+                            }
+
+                        var fileSize = zipFS.Length / 1024;
+
+                        // Finish is important to ensure trailing information for a Zip file is appended.  Without this
+                        // the created file would be invalid.
+                        archive.Finish();
+
+                        // Close is important to wrap things up and unlock the file.
+                        archive.Close();
+
+                        response.Add("fileSize", fileSize);
+                        response["success"] = true;
+                    }
+                    catch (Exception e)
+                    {
+                        // Console.WriteLine("Archive Error: " + e);
+                        response["error"] = e.Message;
+                        response["success"] = false;
+                    }
+                }
+            }
+
+            return response;
+        }
+
+        public bool AddFilesToZip(WorkspacePath path, Dictionary<WorkspacePath, WorkspacePath> files)
+        {
+            var success = false;
+
+            // TODO get the zip file
+
+            // TODO open up the zip
+
+            // TODO loop through all the files and copy from src  to dest
+
+            // TODO close the zip
+            
+            
+            return success;
+
         }
 
         public void EjectAll()

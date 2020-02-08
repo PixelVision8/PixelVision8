@@ -18,14 +18,9 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
 using System.IO;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
-
-//using System.IO.Compression;
-
-// TODO need to remove dependency on System.IO.File
 
 namespace PixelVision8.Runner.Workspace
 {
@@ -35,8 +30,7 @@ namespace PixelVision8.Runner.Workspace
 
         private ZipFileSystem(ZipFile zf, string extractPath)
         {
-            //            var entities = zf.GetEnumerator();
-
+            
             using (zf)
             {
                 foreach (ZipEntry zipEntry in zf)
@@ -92,80 +86,5 @@ namespace PixelVision8.Runner.Workspace
             return new ZipFileSystem(new ZipFile(s), Path.GetFullPath(name));
         }
 
-        public void Save()
-        {
-            if (PhysicalRoot == null) return;
-
-
-            // TODO need to save the contents of the memory system back to a zip file
-
-            var disk = this;
-
-            var fileNameZip = disk.PhysicalRoot;
-
-            // Move the original file so we keep it safe
-            if (File.Exists(fileNameZip)) File.Move(fileNameZip, fileNameZip + ".bak");
-
-            var files = disk.GetEntitiesRecursive(WorkspacePath.Root);
-
-            //            using (var fileStream = new FileStream(fileNameZip, FileMode.Create))
-            //            {
-            using (var archive = new ZipOutputStream(new FileStream(fileNameZip, FileMode.Create)))
-            {
-                // Define the compression level
-                // 0 - store only to 9 - means best compression
-                archive.SetLevel(0);
-
-                var buffer = new byte[4096];
-                try
-                {
-                    foreach (var file in files)
-                        // We can only save files
-                        if (file.IsFile && !file.EntityName.StartsWith("."))
-                        {
-                            var tmpPath = file.Path.Substring(1);
-
-                            // Using GetFileName makes the result compatible with XP
-                            // as the resulting path is not absolute.
-                            var entry = new ZipEntry(tmpPath)
-                            {
-                                // Could also use the last write time or similar for the file.
-                                DateTime = DateTime.Now
-                            };
-                            archive.PutNextEntry(entry);
-
-                            using (var fs = OpenFile(file, FileAccess.Read))
-                            {
-                                // Using a fixed size buffer here makes no noticeable difference for output
-                                // but keeps a lid on memory usage.
-                                int sourceBytes;
-
-                                do
-                                {
-                                    sourceBytes = fs.Read(buffer, 0, buffer.Length);
-                                    archive.Write(buffer, 0, sourceBytes);
-                                } while (sourceBytes > 0);
-                            }
-
-                            archive.CloseEntry();
-                        }
-
-                    // Finish is important to ensure trailing information for a Zip file is appended.  Without this
-                    // the created file would be invalid.
-                    archive.Finish();
-
-                    // Close is important to wrap things up and unlock the file.
-                    archive.Close();
-
-                    File.Delete(fileNameZip + ".bak");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Archive Error: " + e);
-
-                    if (File.Exists(fileNameZip + ".bak")) File.Move(fileNameZip + ".bak", fileNameZip);
-                }
-            }
-        }
     }
 }
