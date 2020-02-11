@@ -241,8 +241,13 @@ namespace PixelVision8.Runner.Services
                 {
                     if(Exists(sharedLibDirectory.AppendFile(filePath.EntityName)))
                     {
+
+                        path = sharedLibDirectory.AppendFile(filePath.EntityName).Path;
                         // TODO still need to find the correct system path to any of the shared lib folders
-                        return sharedLibDirectory.AppendFile(filePath.EntityName).Path;
+                        if (path.StartsWith("/Disks/"))
+                        {
+                            path = GetPhysicalPath(sharedLibDirectory.AppendFile(filePath.EntityName));
+                        }
                     }
                 }
 

@@ -1,4 +1,4 @@
-//   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -72,7 +72,7 @@ namespace PixelVision8.Runner
 
         protected bool screenShotActive;
 
-        protected float screenshotDelay = .2f;
+        protected float screenshotDelay = 200f;
 
         //        private MergedFileSystem osFileSystem;
         private ScreenshotService screenshotService;
@@ -82,7 +82,7 @@ namespace PixelVision8.Runner
         protected bool shutdown;
 
 
-        private string windowTitle;
+        // protected string windowTitle;
 
         protected WorkspaceServicePlus workspaceServicePlus;
 
@@ -116,13 +116,16 @@ namespace PixelVision8.Runner
 
             RefreshActionKeys();
 
-            // Replace title with version
+            UpdateTitle();
+        }
 
-            windowTitle = bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner") + " " +
-                          bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
-
-            // Offset the title by 2 for the record icon
-            Window.Title = windowTitle;
+        protected string DefaultWindowTitle
+        {
+            get
+            {
+                return bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner") + " " +
+                    bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
+            }
         }
 
         public void RefreshActionKeys()
@@ -326,6 +329,8 @@ namespace PixelVision8.Runner
                     screenShotActive = false;
                     screenshotTime = 0;
                 }
+
+                UpdateTitle();
             }
 
             // Save any gifs that have been encoded
@@ -865,8 +870,13 @@ namespace PixelVision8.Runner
 
                 gifEncoder.CreatePalette(ActiveEngine.DisplayChip, ActiveEngine.ColorChip);
 
-                Window.Title = windowTitle + " (REC)";
+                UpdateTitle();
             }
+        }
+
+        public virtual void UpdateTitle()
+        {
+            Window.Title = DefaultWindowTitle + (Recording ? " ⚫" : "") + (screenShotActive ? " 📷" : "");
         }
 
         public void StopRecording()
@@ -883,7 +893,7 @@ namespace PixelVision8.Runner
             gifEncoder = null;
 
             // Change the title
-            Window.Title = windowTitle;
+            UpdateTitle();
         }
 
         private delegate void QuitCurrentToolDelagator(Dictionary<string, string> metaData, string tool = null);

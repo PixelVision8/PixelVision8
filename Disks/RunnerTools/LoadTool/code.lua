@@ -169,9 +169,7 @@ function Update(timeDelta)
                 -- check to see if the debugger has been connected yet
                 debuggerTime = debuggerTime + timeDelta
 
-                -- print("DebuggerAttached", DebuggerAttached())
-
-                if(debuggerTime > debuggerDelay or Key(Keys.Escape)) then
+                if(debuggerTime > debuggerDelay or Key(Keys.Escape) or DebuggerAttached()) then
                     connectDebugger = false
                     return
                 end
