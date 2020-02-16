@@ -516,6 +516,8 @@ namespace PixelVision8.Runner
             // Make the loaded engine active
             ActiveEngine = engine;
 
+            ActiveEngine.ResetGame();
+
             // After loading the game, we are ready to run it.
             ActiveEngine.RunGame();
 

@@ -113,6 +113,14 @@ namespace PixelVision8.Engine
         /// <tocexclude />
         public GameChip GameChip { get; set; }
 
+        public virtual void ResetGame()
+        {
+            if (GameChip == null) return;
+
+            foreach (var chip in Chips) chip.Value.Reset();
+
+        }
+
         /// <summary>
         ///     Attempts to run a game that has been loaded into memory via the
         ///     LoadGame() method. It resets the display and game as well as calling
@@ -124,17 +132,8 @@ namespace PixelVision8.Engine
         {
             if (GameChip == null) return;
 
-            // Make sure all chips are reset to their default values
-            //            chipManager.Reset();
-            foreach (var chip in Chips) chip.Value.Reset();
+            foreach (var chip in Chips) chip.Value.Init();
 
-            // Call init on all chips
-            //            chipManager.Init();
-            var chipNames = Chips.Keys.ToList();
-
-            foreach (var chipName in chipNames) Chips[chipName].Init();
-
-            //            running = true;
         }
 
         /// <summary>

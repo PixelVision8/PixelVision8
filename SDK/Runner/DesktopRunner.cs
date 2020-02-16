@@ -133,40 +133,30 @@ namespace PixelVision8.Runner
 
         public override void ActivateEngine(IEngine engine)
         {
-            // Get a reference to the Lua game
-            var game = engine.GameChip as LuaGameChip;
-
-            // Get the script
-            var luaScript = game.LuaScript;
-
-            luaScript.Globals["StartNextPreload"] = new Action(StartNextPreload);
-            luaScript.Globals["PreloaderComplete"] = new Action(RunGame);
-            luaScript.Globals["EnableCRT"] = (EnableCRTDelegator) EnableCRT;
-            luaScript.Globals["Brightness"] = (BrightnessDelegator) Brightness;
-            luaScript.Globals["Sharpness"] = (SharpnessDelegator) Sharpness;
-            luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
-            luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int) (loadService.Percent * 100));
-            luaScript.Globals["LoadGame"] =
-                new Func<string, Dictionary<string, string>, bool>((path, metadata) =>
-                    Load(path, RunnerMode.Loading, metadata));
-            luaScript.Globals["SystemVersion"] = new Func<string>(() => SystemVersion);
-            luaScript.Globals["SystemName"] = new Func<string>(() => systemName);
-            luaScript.Globals["SessionID"] = new Func<string>(() => SessionId);
-
-            // Expose Bios APIs
-            luaScript.Globals["ReadBiosData"] = new Func<string, string, string>((key, defaultValue) =>
-                bios.ReadBiosData(key, defaultValue));
-            luaScript.Globals["WriteBiosData"] = new Action<string, string>(bios.UpdateBiosData);
-
-            //            luaScript.Globals["NewWorkspacePath"] = new Func<string, WorkspacePath>(WorkspacePath.Parse);
-
-            //            UserData.RegisterType<WorkspacePath>();
-
+            
+            // Activate the game
+            BaseActivateEngine(engine);
 
             
+        }
 
-            // Activate the game
-            base.ActivateEngine(engine);
+        public virtual void BaseActivateEngine(IEngine engine)
+        {
+            if (engine == null) return;
+
+            // Make the loaded engine active
+            ActiveEngine = engine;
+
+            ActiveEngine.ResetGame();
+
+            // After loading the game, we are ready to run it.
+            ActiveEngine.RunGame();
+
+            // Reset the game's resolution
+            ResetResolution();
+
+            // Make sure that the first frame is cleared with the default color
+            ActiveEngine.GameChip.Clear();
         }
 
         //        protected void LoadDefaultGame()
@@ -320,6 +310,37 @@ namespace PixelVision8.Runner
 
 
             return false;
+        }
+
+        public override void ConfigureEngine(Dictionary<string, string> metaData = null)
+        {
+            base.ConfigureEngine(metaData);
+
+            // Get a reference to the Lua game
+            var game = tmpEngine.GameChip as LuaGameChip;
+
+            // Get the script
+            var luaScript = game.LuaScript;
+
+            luaScript.Globals["StartNextPreload"] = new Action(StartNextPreload);
+            luaScript.Globals["PreloaderComplete"] = new Action(RunGame);
+            luaScript.Globals["EnableCRT"] = (EnableCRTDelegator)EnableCRT;
+            luaScript.Globals["Brightness"] = (BrightnessDelegator)Brightness;
+            luaScript.Globals["Sharpness"] = (SharpnessDelegator)Sharpness;
+            luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
+            luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int)(loadService.Percent * 100));
+            luaScript.Globals["LoadGame"] =
+                new Func<string, Dictionary<string, string>, bool>((path, metadata) =>
+                    Load(path, RunnerMode.Loading, metadata));
+            luaScript.Globals["SystemVersion"] = new Func<string>(() => SystemVersion);
+            luaScript.Globals["SystemName"] = new Func<string>(() => systemName);
+            luaScript.Globals["SessionID"] = new Func<string>(() => SessionId);
+
+            // Expose Bios APIs
+            luaScript.Globals["ReadBiosData"] = new Func<string, string, string>((key, defaultValue) =>
+                bios.ReadBiosData(key, defaultValue));
+            luaScript.Globals["WriteBiosData"] = new Action<string, string>(bios.UpdateBiosData);
+
         }
 
         public virtual void DisplayError(ErrorCode code, Dictionary<string, string> tokens = null,
@@ -589,10 +610,19 @@ namespace PixelVision8.Runner
 
         public override void ConfigureServices()
         {
-            var luaService = new LuaService(this);
+            if (luaService == null)
+                CreateLuaService();
+        }
+
+        protected LuaService luaService;
+
+        public virtual void CreateLuaService()
+        {
+            
+            luaService = new LuaService(this);
 
             // Register Lua Service
-            tmpEngine.AddService(typeof(LuaService).FullName, luaService);
+            serviceManager.AddService(typeof(LuaService).FullName, luaService);
         }
 
         /// <summary>

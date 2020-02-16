@@ -211,63 +211,12 @@ namespace PixelVision8.Runner
             // Save a reference to the controller chip so we can listen for special key events
             controllerChip = engine.ControllerChip;
 
-            // Get a reference to the Lua game
-            var game = engine.GameChip as LuaGameChip;
-
-            // Get the script
-            var luaScript = game.LuaScript;
-
-            // Inject the PV8 runner special global function
-            luaScript.Globals["IsExporting"] = new Func<bool>(ExportService.IsExporting);
-            luaScript.Globals["ReadExportPercent"] = new Func<int>(ExportService.ReadExportPercent);
-            luaScript.Globals["ReadExportMessage"] = new Func<string>(ExportService.ReadExportMessage);
-            luaScript.Globals["ShutdownSystem"] = new Action(ShutdownSystem);
-            luaScript.Globals["QuitCurrentTool"] = (QuitCurrentToolDelagator) QuitCurrentTool;
-            luaScript.Globals["RefreshActionKeys"] = new Action(RefreshActionKeys);
-            luaScript.Globals["DocumentPath"] = new Func<string>(() => documentsPath);
-            luaScript.Globals["TmpPath"] = new Func<string>(() => tmpPath);
-            luaScript.Globals["DiskPaths"] = new Func<WorkspacePath[]>(() => workspaceServicePlus.Disks);
-            luaScript.Globals["SaveActiveDisks"] = new Action(() =>
-            {
-                var disks = workspaceServicePlus.Disks;
-
-                foreach (var disk in disks) workspaceServicePlus.SaveDisk(disk);
-            });
-            luaScript.Globals["EjectDisk"] = new Action<string>(EjectDisk);
-            luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
-            luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
-            luaScript.Globals["RebuildWorkspace"] = new Action(workspaceServicePlus.RebuildWorkspace);
-            luaScript.Globals["MountDisk"] = new Action<WorkspacePath>(path =>
-            {
-                var segments = path.GetDirectorySegments();
-
-                var systemPath = Path.PathSeparator.ToString();
-
-                if (segments[0] == "Disk")
-                {
-                }
-                else if (segments[0] == "Workspace")
-                {
-                    // TODO the workspace could have a different name so we should check the bios
-                    systemPath = Path.Combine(documentsPath, segments[0]);
-                }
-
-                for (var i = 1; i < segments.Length; i++) systemPath = Path.Combine(systemPath, segments[i]);
-
-                systemPath = Path.Combine(systemPath,
-                    path.IsDirectory ? Path.PathSeparator.ToString() : path.EntityName);
-
-
-                //                Console.WriteLine("Mount Disk From " + systemPath);
-
-                MountDisk(systemPath);
-            });
+            
 
             // Activate the game
             base.ActivateEngine(engine);
 
-            // Force the lua script to use this boot done logic instead
-            luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
+            
         }
 
         public void EjectDisk(string path)
@@ -669,11 +618,69 @@ namespace PixelVision8.Runner
         {
             base.ConfigureEngine(metaData);
 
-            var luaGameChip = tmpEngine.GameChip as LuaGameChip;
+            // Get a reference to the Lua game
+            var game = tmpEngine.GameChip as LuaGameChip;
+
+            // Get the script
+            var luaScript = game.LuaScript;
+
+            // Inject the PV8 runner special global function
+            luaScript.Globals["IsExporting"] = new Func<bool>(ExportService.IsExporting);
+            luaScript.Globals["ReadExportPercent"] = new Func<int>(ExportService.ReadExportPercent);
+            luaScript.Globals["ReadExportMessage"] = new Func<string>(ExportService.ReadExportMessage);
+            luaScript.Globals["ShutdownSystem"] = new Action(ShutdownSystem);
+            luaScript.Globals["QuitCurrentTool"] = (QuitCurrentToolDelagator)QuitCurrentTool;
+            luaScript.Globals["RefreshActionKeys"] = new Action(RefreshActionKeys);
+            luaScript.Globals["DocumentPath"] = new Func<string>(() => documentsPath);
+            luaScript.Globals["TmpPath"] = new Func<string>(() => tmpPath);
+            luaScript.Globals["DiskPaths"] = new Func<WorkspacePath[]>(() => workspaceServicePlus.Disks);
+            luaScript.Globals["SaveActiveDisks"] = new Action(() =>
+            {
+                var disks = workspaceServicePlus.Disks;
+
+                foreach (var disk in disks) workspaceServicePlus.SaveDisk(disk);
+            });
+            luaScript.Globals["EjectDisk"] = new Action<string>(EjectDisk);
+            luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
+            luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
+            luaScript.Globals["RebuildWorkspace"] = new Action(workspaceServicePlus.RebuildWorkspace);
+            luaScript.Globals["MountDisk"] = new Action<WorkspacePath>(path =>
+            {
+                var segments = path.GetDirectorySegments();
+
+                var systemPath = Path.PathSeparator.ToString();
+
+                if (segments[0] == "Disk")
+                {
+                }
+                else if (segments[0] == "Workspace")
+                {
+                    // TODO the workspace could have a different name so we should check the bios
+                    systemPath = Path.Combine(documentsPath, segments[0]);
+                }
+
+                for (var i = 1; i < segments.Length; i++) systemPath = Path.Combine(systemPath, segments[i]);
+
+                systemPath = Path.Combine(systemPath,
+                    path.IsDirectory ? Path.PathSeparator.ToString() : path.EntityName);
+
+
+                //                Console.WriteLine("Mount Disk From " + systemPath);
+
+                MountDisk(systemPath);
+            });
+
+            if (mode == RunnerMode.Loading)
+            {
+                // Force the lua script to use this boot done logic instead
+                luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
+            }
+
+            // var luaGameChip = tmpEngine.GameChip as LuaGameChip;
             
             // Register the game editor with  the lua service
             UserData.RegisterType<GameEditor>();
-            luaGameChip.LuaScript.Globals["gameEditor"] = Editor;
+            luaScript.Globals["gameEditor"] = Editor;
         }
 
         public override void RunGame()
@@ -721,14 +728,19 @@ namespace PixelVision8.Runner
 
         public override void ConfigureServices()
         {
+
             base.ConfigureServices();
 
-            var luaService = new LuaServicePlus(this);
+            serviceManager.AddService(typeof(ExportService).FullName, ExportService);
+        }
+
+        public override void CreateLuaService()
+        {
+            
+            luaService = new LuaServicePlus(this);
 
             // Register Lua Service
-            tmpEngine.AddService(typeof(LuaService).FullName, luaService);
-
-            tmpEngine.AddService(typeof(ExportService).FullName, ExportService);
+            serviceManager.AddService(typeof(LuaService).FullName, luaService);
         }
 
         public void OnFileDropped(object gameWindow, string path)

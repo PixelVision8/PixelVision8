@@ -38,55 +38,14 @@ namespace PixelVision8.Engine.Chips
         {
             get
             {
-                if (_luaScript == null) _luaScript = new Script(CoreModules.Preset_Default);
+                if (_luaScript == null) _luaScript = new Script(CoreModules.Preset_SoftSandbox);
 
                 return _luaScript;
             }
         }
-
+        
         protected virtual void RegisterLuaServices()
         {
-        }
-
-        #region Lifecycle
-
-        public override void Init()
-        {
-            if (LuaScript?.Globals["Init"] == null) return;
-
-            LuaScript.Call(LuaScript.Globals["Init"]);
-        }
-
-        public override void Update(int timeDelta)
-        {
-            base.Update(timeDelta);
-
-            if (LuaScript?.Globals["Update"] == null) return;
-
-            LuaScript.Call(LuaScript.Globals["Update"], timeDelta);
-        }
-
-        public override void Draw()
-        {
-            if (LuaScript?.Globals["Draw"] == null) return;
-
-            LuaScript.Call(LuaScript.Globals["Draw"]);
-        }
-
-        public override void Shutdown()
-        {
-            if (LuaScript?.Globals["Shutdown"] == null) return;
-
-            LuaScript.Call(LuaScript.Globals["Shutdown"]);
-        }
-
-        public override void Reset()
-        {
-            // Setup the GameChip
-            base.Reset();
-
-            // if (LuaScript == null) return;
-
             try
             {
                 // Look to see if there are any lua services registered in the game engine
@@ -292,15 +251,65 @@ namespace PixelVision8.Engine.Chips
             LuaScript.Globals["NewSpriteCollection"] =
                 new Func<string, SpriteData[], SpriteCollection>(NewSpriteCollection);
 
+        }
+
+        #region Lifecycle
+
+        public override void Init()
+        {
+            if (LuaScript?.Globals["Init"] == null) return;
+
+            LuaScript.Call(LuaScript.Globals["Init"]);
+        }
+
+        public override void Update(int timeDelta)
+        {
+            base.Update(timeDelta);
+
+            if (LuaScript?.Globals["Update"] == null) return;
+
+            LuaScript.Call(LuaScript.Globals["Update"], timeDelta);
+        }
+
+        public override void Draw()
+        {
+            if (LuaScript?.Globals["Draw"] == null) return;
+
+            LuaScript.Call(LuaScript.Globals["Draw"]);
+        }
+
+        public override void Shutdown()
+        {
+            if (LuaScript?.Globals["Shutdown"] == null) return;
+
+            LuaScript.Call(LuaScript.Globals["Shutdown"]);
+        }
+
+        public override void Reset()
+        {
+            // Setup the GameChip
+            base.Reset();
+            
+            if (LuaScript.Globals["Reset"] != null) LuaScript.Call(LuaScript.Globals["Reset"]);
+
+        }
+
+        public override void Configure()
+        {
+            base.Configure();
+
             // Register any extra services
             RegisterLuaServices();
-
-            // Kick off the first game script file
-            LoadScript(DefaultScriptPath);
-            
-            // Reset the game
-            if (LuaScript.Globals["Reset"] != null) LuaScript.Call(LuaScript.Globals["Reset"]);
         }
+
+        // public virtual void LoadDefaultScript()
+        // {
+        //     // Kick off the first game script file
+        //     LoadScript(DefaultScriptPath);
+        //
+        //     // Reset the game
+        //
+        // }
 
         #endregion
 

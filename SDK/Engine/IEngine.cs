@@ -35,6 +35,11 @@ namespace PixelVision8.Engine
         Dictionary<string, string> MetaData { get; }
 
         /// <summary>
+        ///     Reset the game in memory
+        /// </summary>
+        void ResetGame();
+
+        /// <summary>
         ///     Run the game in memory
         /// </summary>
         void RunGame();
