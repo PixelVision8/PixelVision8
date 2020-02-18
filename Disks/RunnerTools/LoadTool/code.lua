@@ -88,8 +88,6 @@ local animTime = 0
 local readDelay = .04
 local readTime = readDelay
 local frame = 1
-local loopAnimation = false
-local message = "LOADING    %"
 local offset = 10
 local percent = 0
 local startDelay = .08
@@ -97,6 +95,7 @@ local delayTime = 0
 local preloading = false
 local preloadComplete = false
 local playSounds = true
+local showDebugger = false
 
 -- We are going to reduce the count by 6 to start preloading once the disk insertion animation is done
 local totalFrames = 0
@@ -134,6 +133,10 @@ function Init()
         loopKeyframe = totalFrames - 7
     end
 
+    if(connectDebugger == true) then
+        showDebugger = ReadMetadata( "showDebugger", "false" ) == "true"
+    end
+
 end
 
 function Update(timeDelta)
@@ -157,6 +160,12 @@ function Update(timeDelta)
 
         percent = ReadPreloaderPercent()
 
+        if(connectDebugger == true and showDebugger == false) then
+            if(Key(Keys.LeftShift, InputState.Down)) then
+                showDebugger = true
+            end
+        end
+
         -- If the percent is 100, call PreloaderComplete()
         if(percent >= 100) then
 
@@ -164,7 +173,7 @@ function Update(timeDelta)
                 preloadComplete = true
                 delayTime = 0
                 frame = 1
-            elseif(connectDebugger == true) then
+            elseif(connectDebugger == true and showDebugger) then
 
                 -- check to see if the debugger has been connected yet
                 debuggerTime = debuggerTime + timeDelta
@@ -176,7 +185,6 @@ function Update(timeDelta)
 
             else
                 PreloaderComplete()
-               
             end
 
         end
@@ -196,8 +204,7 @@ function Update(timeDelta)
 
             -- Once disk is ejected, it needs to load the next game
             mode = "loading"
-            -- -- PlaySound(0)
-            -- readTime = 0
+            
         end
 
         if((mode == "inserting" and frame > 17) or (mode == "ejecting" and frame < 8) or (mode == "loading") ) then
@@ -248,7 +255,7 @@ function Draw()
         DrawSprites(sprite.spriteIDs, 112, 96, sprite.width, false, false, DrawMode.Sprite, 0)
     end
 
-    if(preloadComplete == true and connectDebugger == true) then
+    if(preloadComplete == true and showDebugger == true) then
 
         local countdown = string.rpad(tostring(debuggerDelay - math.ceil(debuggerTime)), 2, "0")
 

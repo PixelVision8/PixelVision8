@@ -211,7 +211,7 @@ namespace PixelVision8.Engine
         {
             _width = MathHelper.Clamp(width, 1, 2048);
             _height = MathHelper.Clamp(height, 1, 2048);
-            ;
+            
 
             Array.Resize(ref pixels, width * height);
 

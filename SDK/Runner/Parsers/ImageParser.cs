@@ -23,7 +23,7 @@ namespace PixelVision8.Runner.Parsers
     public class ImageParser : AbstractParser
     {
         protected IImageParser Parser;
-        
+
         public ImageParser(IImageParser parser, string maskHex = "#FF00FF")
         { 
             this.Parser = parser;
@@ -42,12 +42,13 @@ namespace PixelVision8.Runner.Parsers
         {
             Parser.ReadStream();
 
-            currentStep++;
+            StepCompleted();
         }
 
         public override void Dispose()
         {
             base.Dispose();
+            Parser.Dispose();
             Parser = null;
         }
     }

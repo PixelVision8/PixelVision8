@@ -23,14 +23,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Runner.Parsers
 {
-    public class FontParser : SpriteParser
+    public class FontParser : SpriteImageParser
     {
         private readonly FontChip fontChip;
         private readonly string name;
-        private readonly List<Color> uniqueFontColors = new List<Color>();
+        private List<string> uniqueFontColors;
         private int[] fontMap;
 
         public FontParser(IImageParser parser, IEngineChips chips) : base(parser,
@@ -39,6 +40,28 @@ namespace PixelVision8.Runner.Parsers
             fontChip = chips.FontChip;
             // imageParser.ReadStream();
             name = parser.FileName.Split('.').First();
+        }
+
+        protected override void CreateImage()
+        {
+
+            // Get all the colors from the image
+            uniqueFontColors = Parser.colorPalette.Select(c => ColorUtils.RgbToHex(c.R, c.G, c.B)).ToList();
+
+            // Remove the mask color
+            uniqueFontColors.Remove(chips.ColorChip.maskColor);
+
+            // Convert into an array
+            var colorRefs = uniqueFontColors.ToArray();
+
+            // Convert all of the pixels into color ids
+            var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorRefs, ColorUtils.RgbToHex(c.R, c.G, c.B))).ToArray();
+
+            // Create new image
+            image = new Image(Parser.width, Parser.height, colorRefs, pixelIDs, new Point(spriteWidth, spriteHeight));
+
+            StepCompleted();
+
         }
 
         public override void PrepareSprites()
@@ -53,14 +76,6 @@ namespace PixelVision8.Runner.Parsers
         {
             fontChip.AddFont(name, fontMap);
             base.PostCutOutSprites();
-        }
-
-        public override bool IsEmpty(Color[] pixels)
-        {
-            // Hack to make sure if the space is empty we still save it
-            if (index == 0) return false;
-
-            return base.IsEmpty(pixels);
         }
 
         protected override void ProcessSpriteData()
@@ -80,44 +95,5 @@ namespace PixelVision8.Runner.Parsers
             fontMap[index] = id;
         }
 
-
-        public override void ConvertColorsToIndexes(int totalColors)
-        {
-            // Calculate the total number of pixels
-            var total = tmpPixels.Length;
-
-            // Adjust the size of the index array to match the pixel
-            if (spriteData.Length != total) Array.Resize(ref spriteData, total);
-
-            // Create a tmp color for the loop     
-            Color tmpColor;
-
-            var colorIndex = new List<int>();
-
-            // Loop through all the pixels and match up to color references
-            for (var i = 0; i < total; i++)
-            {
-                // Find the current color in the loop
-                tmpColor = tmpPixels[i];
-
-                var tmpRefID = -1;
-
-                if (!Equals(tmpColor, maskColor))
-                {
-                    var test = Equals(tmpColor, maskColor);
-
-                    tmpRefID = uniqueFontColors.IndexOf(tmpColor);
-
-                    if (tmpRefID == -1)
-                    {
-                        tmpRefID = uniqueFontColors.Count;
-                        uniqueFontColors.Add(tmpColor);
-                    }
-                }
-
-                // Update the value in the indexes array
-                spriteData[i] = tmpRefID;
-            }
-        }
     }
 }

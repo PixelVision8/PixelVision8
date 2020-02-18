@@ -38,27 +38,7 @@ using PixelVision8.Runner.Workspace;
 
 namespace PixelVision8.Runner.Services
 {
-    // Wrapper for texture data that includes Hex color data to rebuild colors when exporting
-    public class Image : TextureData
-    {
-        public string[] colors;
-
-        public Image(int width, int height, string[] colors, int[] pixelData = null) : base(width, height)
-        {
-            this.colors = colors;
-
-            if (pixelData == null)
-            {
-                var total = width * height;
-
-                pixelData = new int[total];
-
-                for (var i = 0; i < total; i++) pixelData[i] = -1;
-            }
-
-            pixels = pixelData;
-        }
-    }
+    
 
     public class LuaServicePlus : LuaService //, IPlatformAccessor // TODO need to map to these APIs
     {

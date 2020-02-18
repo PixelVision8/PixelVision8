@@ -18,6 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -325,10 +326,9 @@ namespace PixelVision8.Runner.Services
 
             if (!string.IsNullOrEmpty(file))
             {
-                
                 var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
 
-                return new SpriteParser(imageParser, targetEngine);
+                return new SpriteImageParser(imageParser, targetEngine);
             }
 
             return null;

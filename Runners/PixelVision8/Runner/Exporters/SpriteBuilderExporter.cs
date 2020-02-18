@@ -33,6 +33,7 @@ namespace PixelVision8.Runner.Exporters
     /// <summary>
     ///     Leverage the built in sprite parser to do the cutting up and indexing work for us
     /// </summary>
+    ///  TODO this needs to extend Sprite Data Parser
     internal class SpriteDataParser : SpriteParser
     {
         public int[] ids;

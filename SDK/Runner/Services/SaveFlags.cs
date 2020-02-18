@@ -36,15 +36,10 @@ namespace PixelVision8.Runner
         Music = 128,
         Sounds = 256,
         SaveData = 512,
-        MetaSprites = 1024
-        // = 2048
-        //
-        // Code = 2, // TODO need to remove this
+        MetaSprites = 1024,
+        TilemapFlags = 2048
 
-
-
-        // TODO deprecated, need to remove these
-        // TilemapFlags = 2048,
+        
         // TilemapCache = 4096,
         // TileColorOffset = 8192,
         // FlagColors = 16384

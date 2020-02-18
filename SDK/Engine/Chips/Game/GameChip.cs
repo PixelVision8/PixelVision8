@@ -1849,7 +1849,7 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public int Repeat(int val, int max)
         {
-            return (int) (val - Math.Floor(val / (float) max) * max);
+            return MathUtil.Repeat(val, max);
         }
 
         /// <summary>
@@ -1870,9 +1870,9 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public int CalculateIndex(int x, int y, int width)
         {
-            int index;
-            index = x + y * width;
-            return index;
+            // int index;
+            // index = x + y * width;
+            return MathUtil.CalculateIndex(x, y, width);
         }
 
         /// <summary>
@@ -1890,7 +1890,7 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public Point CalculatePosition(int index, int width)
         {
-            return new Point(index % width, index / width);
+            return MathUtil.CalculatePosition(index, width);
         }
 
         #endregion
