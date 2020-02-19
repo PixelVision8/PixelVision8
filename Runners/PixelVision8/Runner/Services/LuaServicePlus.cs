@@ -100,6 +100,8 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["SaveText"] = new Action<WorkspacePath, string>(SaveText);
             luaScript.Globals["SaveImage"] = new Action<WorkspacePath, Image>(SaveImage);
 
+            luaScript.Globals["AddExporter"] = new Action<WorkspacePath, Image>(SaveImage);
+
             luaScript.Globals["NewWorkspacePath"] = new Func<string, WorkspacePath>(WorkspacePath.Parse);
 
             UserData.RegisterType<WorkspacePath>();

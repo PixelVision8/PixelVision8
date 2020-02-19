@@ -71,7 +71,7 @@ namespace PixelVision8.Runner.Services
 
         public bool Completed => currentParserID >= TotalParsers;
 
-        public float Percent => currentStep / (float) TotalSteps;
+        public float Percent => TotalSteps == 0 ? 1f : currentStep / (float) TotalSteps;
 
         /// <summary>
         ///     This can be used to display a message while preloading
@@ -222,7 +222,7 @@ namespace PixelVision8.Runner.Services
 
         public void StartLoading()
         {
-            
+
             loadingWorker = new BackgroundWorker
             {
                 // TODO need a way to of locking this.
@@ -446,6 +446,8 @@ namespace PixelVision8.Runner.Services
 
             if (!string.IsNullOrEmpty(file))
             {
+
+                
                 // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
                 AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));

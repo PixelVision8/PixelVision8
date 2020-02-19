@@ -20,7 +20,6 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
-// using System.Diagnostics;
 using System.Threading;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
@@ -77,37 +76,12 @@ namespace PixelVision8.Runner.Services
         {
             Reset();
 
-            //            exporting = true;
-
-            // Make sure that the texture factory has the current mask color if any images are going to be exported.
-            //            textureFactory.maskColor = new ColorData(engine.colorChip.maskColor);
-
-            //            Console.WriteLine("MASK COLOR " + engine.colorChip.maskColor);
-
-            //            Console.WriteLine("Export Game " + path);
-
-            // var watch = Stopwatch.StartNew();
-
             // Save the engine so we can work with it during loading
             targetEngine = engine;
 
             // Step 1. Load the system snapshot
             if ((saveFlags & SaveFlags.System) == SaveFlags.System)
                 AddExporter(new SystemExporter(path + "data.json", targetEngine));
-
-            // Step 2 (optional). Load up the Lua script
-            // if ((saveFlags & SaveFlags.Code) == SaveFlags.Code)
-            // {
-            //     //                //var scriptExtension = ".lua";
-            //     //                    
-            //     //                var paths = files.Keys.Where(s => textExtensions.Any(x => s.EndsWith(x))).ToList();
-            //     //
-            //     //                foreach (var fileName in paths)
-            //     //                {
-            //     //                    parser = LoadScript(fileName, files[fileName]);
-            //     //                    AddExporter(parser);
-            //     //                }
-            // }
 
             // Step 3 (optional). Look for new colors
             if ((saveFlags & SaveFlags.Colors) == SaveFlags.Colors)
@@ -130,48 +104,9 @@ namespace PixelVision8.Runner.Services
                 var imageExporter = new PNGWriter();
 
                 AddExporter(new SpriteExporter(path + "sprites.png", targetEngine, imageExporter));
-                //                var spriteChip = targetEngine.spriteChip;
-                //
-                //                var pixelData = spriteChip.texture.GetPixels();
-                //                
-                //                //TODO need to crop the pixel data so we only save out what we need
-                //                
-                //                AddExporter(new ImageExporter("sprite.cache.png", pixelData, spriteChip.textureWidth, spriteChip.textureHeight, targetEngine.colorChip.colors, textureFactory));
-                ////
-                ////                
-                //                parser = LoadSprites(files);
-                //                if (parser != null)
-                //                    AddExporter(parser);
+                
             }
 
-            // Step 6 (optional). Look for tile map to load
-            //            if ((saveFlags & SaveFlags.Tilemap) == SaveFlags.Tilemap)
-            //            {
-            //                var imageExporter = new PNGWriter();
-            //                
-            //                var tmp = new TilemapExporter(path + "tilemap.png", targetEngine, imageExporter);
-            //                AddExporter(tmp);
-            //            }
-            //            
-            //            if ((saveFlags & SaveFlags.TilemapFlags) == SaveFlags.TilemapFlags)
-            //            {
-            //                var imageExporter = new PNGWriter();
-            //
-            //                AddExporter(new TilemapFlagExporter(path + "tilemap-flags.png", targetEngine, imageExporter));
-            //            }
-
-            //            if ((saveFlags & SaveFlags.FlagColors) == SaveFlags.FlagColors)
-            //            {
-            //                AddExporter(new FlagColorExporter(path + "flags.png", targetEngine, textureFactory));
-            //                //AddExporter(new FlagTileExporter(path + "flags.png", targetEngine, textureFactory));
-            //            }
-
-            //            if ((saveFlags & SaveFlags.TileColorOffset) == SaveFlags.TileColorOffset)
-            //            {
-            //                AddExporter(new TileColorOffsetExporter(path + "tile-color-offsets.json", targetEngine));
-            //            }
-
-            //
             // Step 7 (optional). Look for fonts to load
             if ((saveFlags & SaveFlags.Fonts) == SaveFlags.Fonts)
             {
@@ -222,10 +157,7 @@ namespace PixelVision8.Runner.Services
 
             totalParsers = exporters.Count;
             currentParserID = 0;
-
-            // watch.Stop();
-
-            //            UnityEngine.Debug.Log("Game Exporter Setup Time - " + watch.ElapsedMilliseconds);
+            
         }
 
         public void AddExporter(IAbstractExporter exporter)
@@ -304,8 +236,7 @@ namespace PixelVision8.Runner.Services
 
         private void WorkerExportSteps(object sender, DoWorkEventArgs e)
         {
-            //            var result = e.Result;
-
+            
             var total = totalSteps; //some number (this is your variable to change)!!
 
             for (var i = 0; i <= total; i++) //some number (total)

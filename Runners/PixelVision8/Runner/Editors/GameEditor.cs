@@ -893,6 +893,37 @@ namespace PixelVision8.Runner.Editors
             workspace.ExportPattern(path, musicChip, soundChip, id);
         }
 
+        public bool ExportScript(string scriptName, string outputFileName)
+        {
+
+            try
+            {
+                // filePath = UniqueFilePath(filePath.AppendFile("pattern+" + id + ".wav"));
+
+                // TODO exporting sprites doesn't work
+                if (serviceManager.GetService(typeof(ExportService).FullName) is ExportService exportService)
+                {
+                    exportService.Reset();
+
+                    exportService.AddExporter(new LuaExporter(scriptName, outputFileName));
+                    //
+                    exportService.StartExport();
+
+                    return true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                // TODO this needs to go through the error system?
+                Console.WriteLine(e);
+                
+            }
+
+            return false;
+
+        }
+
         /// <summary>
         ///     Change the value if unique sprites are loaded in
         /// </summary>
