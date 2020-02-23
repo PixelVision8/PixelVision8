@@ -315,13 +315,22 @@ namespace PixelVision8.Runner.Services
             UpdateLog("Debug Log Created " + DateTime.Now.ToString("yyyyMMddHHmmssfff"));
         }
 
+        protected bool LogInvalidated = false;
+
         public virtual void UpdateLog(string logString, LogType type = LogType.Log, string stackTrace = "")
         {
             if (logService == null) return;
 
             logService.UpdateLog(logString, type, stackTrace);
 
-            SaveTextToFile(logFilePath, logService.ReadLog(), true);
+            LogInvalidated = true;
+
+        }
+
+        public void SaveLog()
+        {
+            if(LogInvalidated)
+                SaveTextToFile(logFilePath, logService.ReadLog(), true);
         }
 
         public void ClearLog()

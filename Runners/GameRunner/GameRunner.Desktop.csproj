@@ -104,10 +104,6 @@
       <Project>{6d75e618-19ca-4c51-9546-f10965fbc0b8}</Project>
       <Name>MonoVision.OpenGL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PixelVision8\PixelVision8Runner.Desktop.csproj">
-      <Project>{CC887541-6129-484B-8122-009F54E21AD1}</Project>
-      <Name>PixelVision8Runner.Desktop</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\SDK\PixelVision8.SDK.projitems" Label="Shared" />

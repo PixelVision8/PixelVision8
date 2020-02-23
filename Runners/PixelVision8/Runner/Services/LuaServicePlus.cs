@@ -181,10 +181,22 @@ namespace PixelVision8.Runner.Services
 
             while (imageParser.completed == false) imageParser.NextStep();
 
-            // TODO need to convert the image data to colors and pixel data
+            var colorRefs = reader.colorPalette.Select(c => ColorUtils.RgbToHex(c.R, c.G, c.B)).ToArray();
 
-            // TODO need to finish this parser 
-            return new Image(reader.width, reader.height, new[] {"ff00ff"});
+            // Convert all of the pixels into color ids
+            var pixelIDs = reader.colorPixels.Select(c => Array.IndexOf(colorRefs, ColorUtils.RgbToHex(c.R, c.G, c.B))).ToArray();
+
+            return new Image(reader.width, reader.height, colorRefs, pixelIDs);
+
+
+            // var colors = reader.colorPalette;
+            //
+            // var pixels = 
+            //
+            // // TODO need to convert the image data to colors and pixel data
+            //
+            // // TODO need to finish this parser 
+            // return new Image(reader.width, reader.height, new[] {"ff00ff"});
         }
 
         public void SaveImage(WorkspacePath dest, Image image)

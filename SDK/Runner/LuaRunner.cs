@@ -106,6 +106,15 @@ namespace PixelVision8.Runner
             controllerChip = ActiveEngine.ControllerChip;
         }
 
+        public override void ActivateEngine(IEngine engine)
+        {
+            LuaGameChip gameChip = ((LuaGameChip)engine.GameChip);
+
+            gameChip.LoadScript(gameChip.DefaultScriptPath);
+
+            base.ActivateEngine(engine);
+        }
+
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);

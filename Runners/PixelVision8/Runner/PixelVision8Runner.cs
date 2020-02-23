@@ -401,6 +401,8 @@ namespace PixelVision8.Runner
 
                     if (Recording) gifEncoder.AddFrame(ActiveEngine.DisplayChip);
                 }
+
+                workspaceServicePlus.SaveLog();
             }
             catch (Exception e)
             {

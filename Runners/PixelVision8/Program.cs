@@ -21,7 +21,6 @@
 using System;
 using System.Globalization;
 using System.IO;
-using PixelVision8.Runner;
 
 namespace Desktop
 {
@@ -46,7 +45,7 @@ namespace Desktop
             if (root.EndsWith("/MonoBundle/Content")) root = root.Replace("/MonoBundle/Content", "/Resources/Content");
 
             // TODO there is a bug where this will not go to the boot error
-            using (var game = new PixelVision8DebuggerRunner(root))
+            using (var game = new PixelVision8.Runner.PixelVision8Runner(root))
             {
                 game.Run();
             }

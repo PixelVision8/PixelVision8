@@ -147,6 +147,10 @@ namespace PixelVision8.Runner
             // Make the loaded engine active
             ActiveEngine = engine;
 
+            LuaGameChip tempQualifier = ((LuaGameChip)ActiveEngine.GameChip);
+
+            tempQualifier.LoadScript(tempQualifier.DefaultScriptPath);
+
             ActiveEngine.ResetGame();
 
             // After loading the game, we are ready to run it.

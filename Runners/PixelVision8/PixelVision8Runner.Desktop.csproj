@@ -90,6 +90,7 @@
     <Compile Include="Runner\Exporters\IExport.cs" />
     <Compile Include="Runner\Exporters\IImageExporter.cs" />
     <Compile Include="Runner\Exporters\ImageExporter.cs" />
+    <Compile Include="Runner\Exporters\LuaScriptExporter.cs" />
     <Compile Include="Runner\Exporters\MetaDataExporter.cs" />
     <Compile Include="Runner\Exporters\MetaSpriteExporter.cs" />
     <Compile Include="Runner\Exporters\MusicExporter.cs" />

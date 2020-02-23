@@ -905,7 +905,7 @@ namespace PixelVision8.Runner.Editors
                 {
                     exportService.Reset();
 
-                    exportService.AddExporter(new LuaExporter(scriptName, outputFileName));
+                    exportService.AddExporter(new LuaScriptExporter(scriptName, outputFileName, serviceManager.GetService(typeof(LuaService).FullName) as LuaServicePlus));
                     //
                     exportService.StartExport();
 
