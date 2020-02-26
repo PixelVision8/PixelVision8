@@ -626,63 +626,68 @@ namespace PixelVision8.Runner
             // Get the script
             var luaScript = game.LuaScript;
 
-            // Inject the PV8 runner special global function
-            luaScript.Globals["IsExporting"] = new Func<bool>(ExportService.IsExporting);
-            luaScript.Globals["ReadExportPercent"] = new Func<int>(ExportService.ReadExportPercent);
-            luaScript.Globals["ReadExportMessage"] = new Func<string>(ExportService.ReadExportMessage);
-            luaScript.Globals["ShutdownSystem"] = new Action(ShutdownSystem);
-            luaScript.Globals["QuitCurrentTool"] = (QuitCurrentToolDelagator)QuitCurrentTool;
-            luaScript.Globals["RefreshActionKeys"] = new Action(RefreshActionKeys);
-            luaScript.Globals["DocumentPath"] = new Func<string>(() => documentsPath);
-            luaScript.Globals["TmpPath"] = new Func<string>(() => tmpPath);
-            luaScript.Globals["DiskPaths"] = new Func<WorkspacePath[]>(() => workspaceServicePlus.Disks);
-            luaScript.Globals["SaveActiveDisks"] = new Action(() =>
+            if (mode == RunnerMode.Playing)
             {
-                var disks = workspaceServicePlus.Disks;
-
-                foreach (var disk in disks) workspaceServicePlus.SaveDisk(disk);
-            });
-            luaScript.Globals["EjectDisk"] = new Action<string>(EjectDisk);
-            luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
-            luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
-            luaScript.Globals["RebuildWorkspace"] = new Action(workspaceServicePlus.RebuildWorkspace);
-            luaScript.Globals["MountDisk"] = new Action<WorkspacePath>(path =>
-            {
-                var segments = path.GetDirectorySegments();
-
-                var systemPath = Path.PathSeparator.ToString();
-
-                if (segments[0] == "Disk")
+                // Inject the PV8 runner special global function
+                luaScript.Globals["IsExporting"] = new Func<bool>(ExportService.IsExporting);
+                luaScript.Globals["ReadExportPercent"] = new Func<int>(ExportService.ReadExportPercent);
+                luaScript.Globals["ReadExportMessage"] = new Func<string>(ExportService.ReadExportMessage);
+                luaScript.Globals["ShutdownSystem"] = new Action(ShutdownSystem);
+                luaScript.Globals["QuitCurrentTool"] = (QuitCurrentToolDelagator) QuitCurrentTool;
+                luaScript.Globals["RefreshActionKeys"] = new Action(RefreshActionKeys);
+                luaScript.Globals["DocumentPath"] = new Func<string>(() => documentsPath);
+                luaScript.Globals["TmpPath"] = new Func<string>(() => tmpPath);
+                luaScript.Globals["DiskPaths"] = new Func<WorkspacePath[]>(() => workspaceServicePlus.Disks);
+                luaScript.Globals["SaveActiveDisks"] = new Action(() =>
                 {
-                }
-                else if (segments[0] == "Workspace")
+                    var disks = workspaceServicePlus.Disks;
+
+                    foreach (var disk in disks) workspaceServicePlus.SaveDisk(disk);
+                });
+                luaScript.Globals["EjectDisk"] = new Action<string>(EjectDisk);
+                luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
+                luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
+                luaScript.Globals["RebuildWorkspace"] = new Action(workspaceServicePlus.RebuildWorkspace);
+                luaScript.Globals["MountDisk"] = new Action<WorkspacePath>(path =>
                 {
-                    // TODO the workspace could have a different name so we should check the bios
-                    systemPath = Path.Combine(documentsPath, segments[0]);
-                }
+                    var segments = path.GetDirectorySegments();
 
-                for (var i = 1; i < segments.Length; i++) systemPath = Path.Combine(systemPath, segments[i]);
+                    var systemPath = Path.PathSeparator.ToString();
 
-                systemPath = Path.Combine(systemPath,
-                    path.IsDirectory ? Path.PathSeparator.ToString() : path.EntityName);
+                    if (segments[0] == "Disk")
+                    {
+                    }
+                    else if (segments[0] == "Workspace")
+                    {
+                        // TODO the workspace could have a different name so we should check the bios
+                        systemPath = Path.Combine(documentsPath, segments[0]);
+                    }
+
+                    for (var i = 1; i < segments.Length; i++) systemPath = Path.Combine(systemPath, segments[i]);
+
+                    systemPath = Path.Combine(systemPath,
+                        path.IsDirectory ? Path.PathSeparator.ToString() : path.EntityName);
 
 
-                //                Console.WriteLine("Mount Disk From " + systemPath);
+                    //                Console.WriteLine("Mount Disk From " + systemPath);
 
-                MountDisk(systemPath);
-            });
+                    MountDisk(systemPath);
+                });
 
-            if (mode == RunnerMode.Loading)
+
+
+                // var luaGameChip = tmpEngine.GameChip as LuaGameChip;
+
+                // Register the game editor with  the lua service
+                UserData.RegisterType<GameEditor>();
+                luaScript.Globals["gameEditor"] = Editor;
+            }
+
+            if (mode == RunnerMode.Booting)
             {
                 // Force the lua script to use this boot done logic instead
                 luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
             }
-
-            // var luaGameChip = tmpEngine.GameChip as LuaGameChip;
-            
-            // Register the game editor with  the lua service
-            UserData.RegisterType<GameEditor>();
-            luaScript.Globals["gameEditor"] = Editor;
         }
 
         public override void RunGame()
@@ -738,7 +743,10 @@ namespace PixelVision8.Runner
 
         public override void CreateLuaService()
         {
-            
+            // Make sure we only have one instance of the lua service
+            if (luaService != null)
+                return;
+
             luaService = new LuaServicePlus(this);
 
             // Register Lua Service

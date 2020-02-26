@@ -107,6 +107,10 @@ namespace PixelVision8.Runner.Services
             UserData.RegisterType<WorkspacePath>();
             UserData.RegisterType<Image>();
 
+            // Experimental
+            luaScript.Globals["DebugLayers"] = new Action<bool>(runner.DebugLayers);
+            luaScript.Globals["ToggleLayers"] = new Action<int>(runner.ToggleLayers);
+
         }
 
         public void PlayWav(WorkspacePath workspacePath)

@@ -56,9 +56,8 @@ namespace PixelVision8.Engine.Chips
             }
             catch
             {
-                // ignored
+                // Do nothing if the lua service isn't found
             }
-
 
             #region Color APIs
 

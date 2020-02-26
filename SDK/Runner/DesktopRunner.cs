@@ -318,6 +318,8 @@ namespace PixelVision8.Runner
 
         public override void ConfigureEngine(Dictionary<string, string> metaData = null)
         {
+            CreateLuaService();
+
             base.ConfigureEngine(metaData);
 
             // Get a reference to the Lua game
@@ -339,6 +341,8 @@ namespace PixelVision8.Runner
             luaScript.Globals["SystemVersion"] = new Func<string>(() => SystemVersion);
             luaScript.Globals["SystemName"] = new Func<string>(() => systemName);
             luaScript.Globals["SessionID"] = new Func<string>(() => SessionId);
+
+            //
 
             // Expose Bios APIs
             luaScript.Globals["ReadBiosData"] = new Func<string, string, string>((key, defaultValue) =>
@@ -614,7 +618,6 @@ namespace PixelVision8.Runner
 
         public override void ConfigureServices()
         {
-            if (luaService == null)
                 CreateLuaService();
         }
 
@@ -622,7 +625,10 @@ namespace PixelVision8.Runner
 
         public virtual void CreateLuaService()
         {
-            
+            // Make sure we only have one instance of the lua service
+            if (luaService != null)
+                return;
+
             luaService = new LuaService(this);
 
             // Register Lua Service
