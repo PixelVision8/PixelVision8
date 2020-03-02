@@ -65,7 +65,8 @@ namespace PixelVision8.Runner
         public bool backKeyEnabled = true;
         protected IControllerChip controllerChip;
         protected string documentsPath;
-        private bool ejectingDisk;
+        protected bool mountingDisk;
+        protected bool ejectingDisk;
 
         protected AnimatedGifEncoder gifEncoder;
 
@@ -483,7 +484,8 @@ namespace PixelVision8.Runner
                 var biosAutoRun = bios.ReadBiosData("AutoRun");
 
                 // Check to see if this path exists
-                if (biosAutoRun != "" && workspaceService.Exists(WorkspacePath.Parse(biosAutoRun)))
+                if (workspaceServicePlus.Exists(WorkspacePath.Parse(biosAutoRun)))
+                {
                     // Validate that the path is actually a game
                     if (workspaceService.ValidateGameInDir(WorkspacePath.Parse(biosAutoRun)))
                     {
@@ -491,10 +493,11 @@ namespace PixelVision8.Runner
                         Load(biosAutoRun, RunnerMode.Loading);
                         return;
                     }
+                }
             }
             catch
             {
-                // ignored
+                // Do nothing
             }
 
             // Try to boot from the first disk
@@ -516,9 +519,11 @@ namespace PixelVision8.Runner
 
         public void MountDisk(string path)
         {
-            //            Console.WriteLine("Load File - " + path + " Auto Run " + autoRunEnabled);
+
             try
             {
+                mountingDisk = true;
+
                 var diskName = workspaceServicePlus.MountDisk(path);
 
                 // Only try to auto run a game if this is enabled in the runner
@@ -526,35 +531,24 @@ namespace PixelVision8.Runner
                 {
                     // If we are running this disk clear the previous history
                     loadHistory.Clear();
-
+                    
                     // Run the disk
                     AutoRunGameFromDisk(diskName);
+
                 }
                 else
                 {
-                    // Need to force the disk animation to show
-                    var lastGameRef = loadHistory.Last();
-
-                    var metaData = lastGameRef.Value;
-
-                    if (metaData.ContainsKey("showDiskAnimation"))
-                        metaData["showDiskAnimation"] = "true";
-                    else
-                        metaData.Add("showDiskAnimation", "true");
-
-                    // TODO sometimes we don't wan to do this
                     ResetGame();
                 }
+
+                mountingDisk = false;
             }
             catch
             {
-                //                autoRunEnabled = true;
                 // TODO need to make sure we show a better error to explain why the disk couldn't load
                 DisplayError(ErrorCode.NoAutoRun);
             }
 
-            // Only update the bios when we need  to
-            //            if (updateBios) UpdateDiskInBios();
         }
 
         public void AutoRunGameFromDisk(string diskName)
@@ -566,7 +560,8 @@ namespace PixelVision8.Runner
                 // Create new meta data for the game. We wan to display the disk insert animation.
                 var metaData = new Dictionary<string, string>
                 {
-                    {"showDiskAnimation", "true"}
+                    {"showDiskAnimation",  mountingDisk.ToString().ToLower()},
+                    {"showEjectAnimation",  ejectingDisk.ToString().ToLower()}
                 };
 
                 // Load the disk path and play the game
@@ -626,6 +621,9 @@ namespace PixelVision8.Runner
             // Get the script
             var luaScript = game.LuaScript;
 
+            luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
+            luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
+
             if (mode == RunnerMode.Playing)
             {
                 // Inject the PV8 runner special global function
@@ -645,8 +643,6 @@ namespace PixelVision8.Runner
                     foreach (var disk in disks) workspaceServicePlus.SaveDisk(disk);
                 });
                 luaScript.Globals["EjectDisk"] = new Action<string>(EjectDisk);
-                luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
-                luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
                 luaScript.Globals["RebuildWorkspace"] = new Action(workspaceServicePlus.RebuildWorkspace);
                 luaScript.Globals["MountDisk"] = new Action<WorkspacePath>(path =>
                 {
@@ -673,10 +669,6 @@ namespace PixelVision8.Runner
 
                     MountDisk(systemPath);
                 });
-
-
-
-                // var luaGameChip = tmpEngine.GameChip as LuaGameChip;
 
                 // Register the game editor with  the lua service
                 UserData.RegisterType<GameEditor>();
@@ -717,6 +709,11 @@ namespace PixelVision8.Runner
                     metaData["showEjectAnimation"] = ejectingDisk.ToString().ToLower();
                 else
                     metaData.Add("showEjectAnimation", ejectingDisk.ToString().ToLower());
+                
+                if (metaData.ContainsKey("showDiskAnimation"))
+                    metaData["showDiskAnimation"] = mountingDisk.ToString().ToLower();
+                else
+                    metaData.Add("showDiskAnimation", mountingDisk.ToString().ToLower());
             }
 
             return base.Load(path, newMode, metaData);
@@ -798,13 +795,13 @@ namespace PixelVision8.Runner
                 // Reload the game
                 Load(lastURI.Path, RunnerMode.Loading, metaData);
 
-                if (metaData != null)
-                {
-                    if (metaData.ContainsKey("showDiskAnimation"))
-                        metaData["showDiskAnimation"] = "false";
-                    else
-                        metaData.Add("showDiskAnimation", "false");
-                }
+                // if (metaData != null)
+                // {
+                //     if (metaData.ContainsKey("showDiskAnimation"))
+                //         metaData["showDiskAnimation"] = "false";
+                //     else
+                //         metaData.Add("showDiskAnimation", "false");
+                // }
 
                 return;
             }
@@ -832,8 +829,8 @@ namespace PixelVision8.Runner
                                 lastGameRef.Value.Add(key, metaData[key]);
 
                     // Clear the disk animation
-                    if (lastGameRef.Value.ContainsKey("showDiskAnimation"))
-                        lastGameRef.Value["showDiskAnimation"] = "false";
+                    // if (lastGameRef.Value.ContainsKey("showDiskAnimation"))
+                    //     lastGameRef.Value["showDiskAnimation"] = "false";
 
                     // Remove that game from history since we are about to load it
                     loadHistory.RemoveAt(loadHistory.Count - 1);

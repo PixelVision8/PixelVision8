@@ -299,12 +299,6 @@ namespace PixelVision8.Engine
                     SetPixel(srcX + x, srcY + y, pixel);
                 }
 
-
-                //                
-                //                if (pixel != -1 && ignoreTransparent == false)
-                //                {
-                //                    
-                //                }
             }
 
             Invalidate();

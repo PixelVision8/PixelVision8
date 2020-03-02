@@ -2032,7 +2032,6 @@ namespace PixelVision8.Engine.Chips
             return 128 + Clamp(paletteID, 0, 7) * 16 + Clamp(paletteColorID, 0, ColorsPerSprite() - 1);
         }
         
-
         public SpriteCollection MetaSprite(int id, SpriteCollection spriteCollection = null)
         {
             if (spriteCollection != null)

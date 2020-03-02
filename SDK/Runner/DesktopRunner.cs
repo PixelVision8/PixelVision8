@@ -187,16 +187,24 @@ namespace PixelVision8.Runner
                     metaData = new Dictionary<string, string>
                     {
                         {"nextMode", nextMode.ToString()},
-                        {"showDiskAnimation", "false"}
                     };
 
-                    // Look to see if the game's meta data changes the disk animation flag
-                    if (nextMetaData != null && nextMetaData.ContainsKey("showDiskAnimation"))
-                        metaData["showDiskAnimation"] = nextMetaData["showDiskAnimation"];
-
-
-                    // TODO this was where the eject animation flag was set
-
+                    // Copy over any previous properties
+                    if (nextMetaData != null)
+                    {
+                        foreach (var property in nextMetaData)
+                        {
+                            if (metaData.ContainsKey(property.Key))
+                            {
+                                metaData[property.Key] = property.Value;
+                            }
+                            else
+                            {
+                                metaData.Add(property.Key, property.Value);
+                            }
+                        }
+                    }
+                    
                     // Get the default path to the load tool from the bios
                     path = bios.ReadBiosData("LoadTool", "/PixelVisionOS/Tools/LoadTool/");
 
@@ -287,16 +295,6 @@ namespace PixelVision8.Runner
                     DisplayError(ErrorCode.LoadError, new Dictionary<string, string> {{"@{path}", path}});
                     success = false;
                 }
-
-                // TODO need to remove old load disk animation?
-                //                if (metaDataCopy.ContainsKey("showDiskAnimation"))
-                //                {
-                //                    metaData["showDiskAnimation"] = "false";
-                //                }
-
-                // If the game is unable to run, display an error
-                //            if (success == false) 
-
 
                 // Create new FileSystemPath
                 return success;

@@ -83,11 +83,6 @@ namespace PixelVision8.Engine.Chips
         private readonly StringBuilder inputStringBuilder = new StringBuilder();
         private readonly float timeUntilRepInMillis = 500f;
 
-        //        private Array inputValues;
-        //        private Array mouseValues;
-        //        private List<int> gamepadIndices = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7 };
-        //        private const int KEYBOARD_INDEX = -1;
-        //        private const int MOUSE_INDEX = -2;
         public KeyboardState currentKeyboardState;
         public MouseState currentMouseState;
         private DateTime downSince = DateTime.Now;
@@ -128,24 +123,18 @@ namespace PixelVision8.Engine.Chips
             {
                 if (JustPressed(key))
                 {
-                    //                    KeyDown?.Invoke(null, new KeyEventArgs(key), keyState);
-                    //                    if (KeyPressed != null)
-                    //                    {
+                    
                     downSince = DateTime.Now;
                     repChar = key;
 
                     BuildInputString(key);
-                    //                        KeyPressed(null, new KeyEventArgs(key), keyState);
-                    //                    }
+                    
                 }
                 else if (GetKeyUp(key))
                 {
-                    //                    if (KeyUp != null)
-                    //                    {
+                    
                     if (repChar == key) repChar = null;
 
-                    //                        KeyUp(null, new KeyEventArgs(key), keyState);
-                    //                    }
                 }
 
                 var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
@@ -160,18 +149,13 @@ namespace PixelVision8.Engine.Chips
                         if (repeatSince.CompareTo(TimeSpan.FromMilliseconds(1000f / repsPerSec)) > 0)
                         {
                             // Time for another key-stroke.
-                            //                            if (KeyPressed != null)
-                            //                            {
                             lastRep = now;
                             BuildInputString(key);
-                            //                                KeyPressed(null, new KeyEventArgs(key), keyState);
-                            //                            }
                         }
                     }
                 }
             }
 
-            //            base.Update(gameTime);
         }
 
         public string ReadInputString()
@@ -246,10 +230,7 @@ namespace PixelVision8.Engine.Chips
             var player1 = getPlayer(0);
 
             var test = engine.GetMetadata(InputMap.Player1UpKey.ToString());
-            //            Console.WriteLine("Key test up - "+test + " - " + InputMap.Player1UpKey.ToString());
-            //(Keys) Enum.Parse(typeof(Keys), 
-            //            player1.GamePadIndex = KEYBOARD_INDEX;
-
+            
             try
             {
                 player1.KeyboardMap = new Dictionary<Buttons, Keys>
@@ -314,12 +295,7 @@ namespace PixelVision8.Engine.Chips
                 throw;
             }
         }
-        //        public void UpdateControllerKey(int controllerID, PixelVisionSDK.ButtonState state)
-        //        {
-        //            
-        //            //throw new NotImplementedException();
-        //        }
-
+        
         public void RegisterControllers()
         {
             var state = GamePad.GetState(0, gamePadDeadZone);
@@ -338,15 +314,11 @@ namespace PixelVision8.Engine.Chips
                 player2.CurrentState = state;
             }
         }
-        //        public float DeadzoneSticks = 0.25f;
-        //        public float DeadzoneTriggers = 0.25f;
-        //        public int PlayerCount = 1;
-
+        
         public override void Configure()
         {
             engine.ControllerChip = this;
 
-            //            inputValues = Enum.GetValues(typeof(Buttons));
             players = new List<Controller>
             {
                 new Controller(),
@@ -358,9 +330,6 @@ namespace PixelVision8.Engine.Chips
             currentMouseState = Mouse.GetState();
             previousMouseState = currentMouseState;
 
-            //            RegisterKeyInput();
-            //            RegisterControllers();
-            //            FindNewGamepads();
         }
 
         public override void Deactivate()
@@ -549,32 +518,7 @@ namespace PixelVision8.Engine.Chips
 
             return string.Empty;
         }
-
-        public bool GetKey(int key)
-        {
-            return false; //throw new NotImplementedException();
-        }
-
-        public void InputMapping(string key, string value = null)
-        {
-            // TODO need to parse the type
-
-            // Remove player
-            key = key.Remove(0, "Player".Length);
-
-            var player = key.Substring(0, "Player2".Length);
-
-            //            getPlayer(0).KeyboardMap
-        }
-
-        public override void Shutdown()
-        {
-            //            Console.WriteLine("Save keys");
-
-            // TODO loop through all the keys and save them back to the bios
-            base.Shutdown();
-        }
-
+        
         private class Controller
         {
             //            public int GamePadIndex;
@@ -583,7 +527,6 @@ namespace PixelVision8.Engine.Chips
 
             public GamePadState PreviousState;
 
-            //            public Dictionary<Buttons, MouseInput> MouseMap;
             public bool IsConnected()
             {
                 return CurrentState.IsConnected;
@@ -591,8 +534,6 @@ namespace PixelVision8.Engine.Chips
         }
 
         #region Mouse APIs
-
-        //        private bool mouseInputActive => mouseInput != null;
 
         public bool GetMouseButtonDown(int id = 0)
         {
@@ -610,31 +551,12 @@ namespace PixelVision8.Engine.Chips
             return new Point(pos.X, pos.Y);
         }
 
-
-        //        public void ConvertMousePosition(Vector pos)
-        //        {
-        //           
-        ////            var state = InputStates.CurrMouseState;
-        //            var newPoint = PointToScreen(new Point(pos.x, pos.y));
-        //            pos.x = newPoint.X;
-        //            pos.y = newPoint.Y;
-        //            
-        ////            return new Vector(pos.X, pos.Y);
-        //        }
-
         private Matrix scaleMatrix = Matrix.CreateScale(1, 1, 1);
 
         public void MouseScale(float x, float y)
         {
             scaleMatrix = Matrix.CreateScale(x, y, 1.0f);
         }
-
-        //        public Matrix GetScaleMatrix()
-        //        {
-        ////            var scaleX = (float)GraphicsDeviceManager.DefaultBackBufferWidth / (engine.displayChip.width - engine.displayChip.overscanXPixels);
-        ////            var scaleY = (float)GraphicsDeviceManager.DefaultBackBufferHeight/ (engine.displayChip.height - engine.displayChip.overscanYPixels);
-        //            return ;
-        //        }
 
         public Point PointToScreen(Point point)
         {
@@ -643,25 +565,11 @@ namespace PixelVision8.Engine.Chips
 
         public Point PointToScreen(int x, int y)
         {
-            //            var viewport = GraphicsDevice.Viewport;
-            var vx = x; // - viewport.X;
-            var vy = y; // - viewport.Y;
-            //            var scaleMatrix = GetScaleMatrix();
+            var vx = x;
+            var vy = y;
             var invertedMatrix = Matrix.Invert(scaleMatrix);
             return Vector2.Transform(new Vector2(vx, vy), invertedMatrix).ToPoint();
         }
-
-        //        private IMouseInput mouseInput;
-
-        //        public void RegisterMouseInput()
-        //        {
-        //            
-        ////            mouseValues = Enum.GetValues(typeof(MouseInput));
-        //
-        //            
-        //            
-        ////            mouseInput = target;
-        //        }
 
         #endregion
     }

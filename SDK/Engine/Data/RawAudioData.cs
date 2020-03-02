@@ -50,11 +50,6 @@ namespace PixelVision8.Engine
             }
         }
 
-        //        public void GetData(float[] data)
-        //        {
-        //            Array.Copy(this.data, data, samples);
-        //        }
-
         public void Resize(int samples)
         {
             Array.Resize(ref data, samples);

@@ -56,7 +56,7 @@ function Init()
         EnableAutoRun(false)
     end
 
-    if(EnableAutoRun ~= nil) then
+    if(EnableBackKey ~= nil) then
         EnableBackKey(false)
     end
 
