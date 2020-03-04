@@ -1,3 +1,22 @@
+//   
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
+//  
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
+// 
+// Contributors
+// --------------------------------------------------------
+// This is the official list of Pixel Vision 8 contributors:
+//  
+// Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
+//
 
 using System;
 using System.Linq;
@@ -13,16 +32,12 @@ namespace PixelVision8.Runner.Parsers
         protected Color[] colorData;
         protected int cps;
         protected int index;
-        // protected Color maskColor;
         protected int maxSprites;
         protected SpriteChip spriteChip;
         protected int[] spriteData;
         protected int spriteHeight;
         protected int spritesAdded;
         protected int spriteWidth;
-        // protected Color[] srcColors;
-        protected Color[] tmpPixels;
-        // protected int totalPixels;
         protected int totalSprites;
         protected int x, y;
         protected Image image;
@@ -98,8 +113,7 @@ namespace PixelVision8.Runner.Parsers
                 ConvertColorsToIndexes(cps);
 
                 ProcessSpriteData();
-                // }
-
+                
                 index++;
 
             }
@@ -136,23 +150,9 @@ namespace PixelVision8.Runner.Parsers
             }
         }
 
-        public virtual bool IsEmpty(Color[] pixels)
-        {
-            var total = pixels.Length;
-            var transPixels = 0;
-
-            for (var i = 0; i < total; i++)
-                if (pixels[i].A < 1)
-                    transPixels++;
-
-            return transPixels == total;
-        }
-
         public virtual void ConvertColorsToIndexes(int totalColors)
         {
-
             spriteData = image.GetSpriteData(index, totalColors);
-            
         }
 
         public override void Dispose()

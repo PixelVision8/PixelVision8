@@ -415,12 +415,15 @@ namespace PixelVision8.Runner.Services
                     // Move the original file so we keep it safe
                     if (File.Exists(fileNameZip)) File.Move(fileNameZip, fileNameZip + ".bak");
                     
-                    var files = zipFileSystem.GetEntitiesRecursive(WorkspacePath.Root).ToArray();
-                    
-                    //            using (var fileStream = new FileStream(fileNameZip, FileMode.Create))
-                    //            {
-                    
-                    var response = CreateZipFile(new FileStream(fileNameZip, FileMode.Create), files, path);
+                    var srcFiles = zipFileSystem.GetEntitiesRecursive(WorkspacePath.Root).ToArray();
+
+                    var files = new Dictionary<WorkspacePath, WorkspacePath>();
+                    foreach (var file in srcFiles)
+                    {
+                        files.Add(path.AppendPath(file), file);
+                    }
+
+                    var response = CreateZipFile(new FileStream(fileNameZip, FileMode.Create), files);
                     if (((bool)response["success"]))
                     {
                         File.Delete(fileNameZip + ".bak");
@@ -428,14 +431,24 @@ namespace PixelVision8.Runner.Services
                     else
                     {
                         Console.WriteLine((string)response["error"]);
-                        if (File.Exists(fileNameZip + ".bak")) File.Move(fileNameZip + ".bak", fileNameZip);
+                        if (File.Exists(fileNameZip + ".bak"))
+                        {
+                            // Delete the failed zip
+                            if (File.Exists(fileNameZip))
+                            {
+                                File.Delete(fileNameZip);
+                            }
+
+                            // Rename the old zip back to its original name
+                            File.Move(fileNameZip + ".bak", fileNameZip);
+                        }
                     }
                         
                 }
             }
         }
 
-        public Dictionary<string, object> CreateZipFile(Stream zipFS, WorkspacePath[] files,  WorkspacePath sourceRoot = default)
+        public Dictionary<string, object> CreateZipFile(Stream zipFS, Dictionary<WorkspacePath, WorkspacePath> files)
         {
             var response = new Dictionary<string, object>
             {
@@ -454,22 +467,25 @@ namespace PixelVision8.Runner.Services
                     var buffer = new byte[4096];
                     try
                     {
-                        foreach (var file in files)
-                            // We can only save files
-                            if (file.IsFile && !file.EntityName.StartsWith("."))
-                            {
-                                var tmpPath = file.Path.Substring(1);
+                        foreach (var filePaths in files)
+                        {
+                            var srcFile = filePaths.Key;
+                            var destFile = filePaths.Value;
 
+                            // We can only save files
+                            if (srcFile.IsFile && !srcFile.EntityName.StartsWith(".") && destFile.IsFile)
+                            {
+                                
                                 // Using GetFileName makes the result compatible with XP
                                 // as the resulting path is not absolute.
-                                var entry = new ZipEntry(tmpPath)
+                                var entry = new ZipEntry(destFile.Path.Substring(1))
                                 {
                                     // Could also use the last write time or similar for the file.
                                     DateTime = DateTime.Now
                                 };
                                 archive.PutNextEntry(entry);
 
-                                using (var fs = OpenFile(sourceRoot.AppendPath(file), FileAccess.Read))
+                                using (var fs = OpenFile(srcFile, FileAccess.Read))
                                 {
                                     // Using a fixed size buffer here makes no noticeable difference for output
                                     // but keeps a lid on memory usage.
@@ -485,6 +501,8 @@ namespace PixelVision8.Runner.Services
                                 archive.CloseEntry();
                             }
 
+                        }
+
                         var fileSize = zipFS.Length / 1024;
 
                         // Finish is important to ensure trailing information for a Zip file is appended.  Without this
@@ -499,7 +517,6 @@ namespace PixelVision8.Runner.Services
                     }
                     catch (Exception e)
                     {
-                        // Console.WriteLine("Archive Error: " + e);
                         response["error"] = e.Message;
                         response["success"] = false;
                     }

@@ -177,8 +177,8 @@ namespace PixelVision8.Engine.Chips
 
             #region Debug
 
-            LuaScript.Globals["ReadFPS"] = new Func<int>(() => fps);
-            LuaScript.Globals["ReadTotalSprites"] = new Func<int>(() => CurrentSprites);
+            LuaScript.Globals["ReadFPS"] = new Func<int>(ReadFPS);
+            LuaScript.Globals["ReadTotalSprites"] = new Func<int>(ReadTotalSprites);
 
             #endregion
 

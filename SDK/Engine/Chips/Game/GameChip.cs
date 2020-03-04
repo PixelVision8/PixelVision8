@@ -445,15 +445,6 @@ namespace PixelVision8.Engine.Chips
         }
 
         /// <summary>
-        ///     Returns the visible bounds of the display as a Rectangle.
-        /// </summary>
-        /// <returns></returns>
-        //        public Rectangle VisibleBounds()
-        //        {
-        //            return displayChip.visibleBounds;
-        //        }
-
-        /// <summary>
         ///     This method allows you to draw raw pixel data directly to the display. Depending on which draw mode you
         ///     use, the pixel data could be rendered as a sprite or drawn directly onto the tilemap cache. Sprites drawn
         ///     with this method still count against the total number the display can render but you can draw irregularly
@@ -931,9 +922,6 @@ namespace PixelVision8.Engine.Chips
         /// <param name="offsetY">
         ///     An optional int value to override the scroll Y position. This is useful when you need to change the top y position
         ///     from where to sample the tilemap data from.
-        /// </param>
-        /// <param name="DrawMode">
-        ///     This accepts DrawMode Tile and TilemapCache.
         /// </param>
         public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null,
             int? offsetY = null)
@@ -1898,6 +1886,16 @@ namespace PixelVision8.Engine.Chips
         #region Utils
         
         private StringBuilder _sb = new StringBuilder();
+
+        public int ReadFPS()
+        {
+            return fps;
+        }
+
+        public int ReadTotalSprites()
+        {
+            return CurrentSprites;
+        }
 
         /// <summary>
         ///     This allows you to call the TextUtil's WordWrap helper to wrap a string of text to a specified character

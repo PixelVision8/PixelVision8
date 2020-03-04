@@ -77,7 +77,7 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["StopWav"] = new Action(StopWav);
 
             luaScript.Globals["CreateDisk"] =
-                new Func<string, WorkspacePath[], WorkspacePath, int, string[], Dictionary<string, object>>(CreateDisk);
+                new Func<string, Dictionary<WorkspacePath, WorkspacePath>, WorkspacePath, int, Dictionary<string, object>>(CreateDisk);
             luaScript.Globals["CreateExe"] =
                 new Func<string, WorkspacePath[], WorkspacePath, WorkspacePath, string[], Dictionary<string, object>>(
                     CreateExe);
@@ -259,9 +259,15 @@ namespace PixelVision8.Runner.Services
             return workspace.OpenFile(workspacePath, FileAccess.Read).ReadAllBytes().Length / 1024;
         }
 
-        public Dictionary<string, object> CreateDisk(string gameName, WorkspacePath[] filePaths,
-            WorkspacePath exportPath, int maxFileSize = 512, string[] libFileNames = null)
+
+        public Dictionary<string, object> CreateDisk(string name, Dictionary<WorkspacePath, WorkspacePath> files, WorkspacePath dest, int maxFileSize = 512)
         {
+
+        // }
+
+        // public Dictionary<string, object> CreateDisk(string gameName, WorkspacePath[] filePaths,
+        //     WorkspacePath exportPath, int maxFileSize = 512, string[] libFileNames = null)
+        // {
 
             var response = new Dictionary<string, object>
             {
@@ -269,38 +275,23 @@ namespace PixelVision8.Runner.Services
                 {"message", ""}
             };
 
-            // try
-            // {
-                // Create a path to the temp directory for the builds
-                var tmpExportPath = WorkspacePath.Root.AppendDirectory("Tmp").AppendDirectory("Builds");
+            // Create a path to the temp directory for the builds
+            var tmpExportPath = WorkspacePath.Root.AppendDirectory("Tmp").AppendDirectory("Builds");
 
-                // Make sure there is a builds folder in the Tmp directory
-                if (workspace.Exists(tmpExportPath) == false) workspace.CreateDirectory(tmpExportPath);
+            // Make sure there is a builds folder in the Tmp directory
+            if (workspace.Exists(tmpExportPath) == false) workspace.CreateDirectory(tmpExportPath);
 
-                // Create a folder with the timestamp
-                tmpExportPath = tmpExportPath.AppendDirectory(DateTime.Now.ToString("yyyyMMddHHmmss"));
-                workspace.CreateDirectory(tmpExportPath);
+            // Create a folder with the timestamp
+            tmpExportPath = tmpExportPath.AppendDirectory(DateTime.Now.ToString("yyyyMMddHHmmss"));
+            workspace.CreateDirectory(tmpExportPath);
 
-                // Add the zip filename to it
-                var tmpZipPath = tmpExportPath.AppendFile(gameName + ".pv8");
-
-            // var oldLength = filePaths.Length;
-            // // TODO need to add all the lib files in
-            //
-            // Array.Resize(ref filePaths, oldLength + libFileNames.Length);
-            // var j = 0;
-            //
-            // for (int i = oldLength; i < filePaths.Length; i++)
-            // {
-            //     filePaths[i] = Work
-            //         j++;
-            // }
-
+            // Add the zip filename to it
+            var tmpZipPath = tmpExportPath.AppendFile(name + ".pv8");
 
             // TODO make sure using is ok here so it closes out the stream when done
             var stream = workspace.CreateFile(tmpZipPath);
             
-            response = workspace.CreateZipFile(stream, filePaths);
+            response = workspace.CreateZipFile(stream, files);
             
             if ((bool)response["success"])
             {
@@ -328,25 +319,25 @@ namespace PixelVision8.Runner.Services
                 }
 
                 // Move the new build over 
-                exportPath = workspace.UniqueFilePath(exportPath.AppendDirectory("Build"));
+                dest = workspace.UniqueFilePath(dest.AppendDirectory("Build"));
 
                 // Create the directory for the new file
-                workspace.CreateDirectoryRecursive(exportPath);
+                workspace.CreateDirectoryRecursive(dest);
 
-                exportPath = exportPath.AppendFile(tmpZipPath.EntityName);
+                dest = dest.AppendFile(tmpZipPath.EntityName);
 
                 // Copy over the file
-                workspace.Copy(tmpZipPath, exportPath);
+                workspace.Copy(tmpZipPath, dest);
 
                 // Update the response
                 response["success"] = true;
-                response["message"] = "A new build was created in " + exportPath + ".";
-                response["path"] = exportPath.Path;
+                response["message"] = "A new build was created in " + dest + ".";
+                response["path"] = dest.Path;
             }
             else
             {
                 // Update the message for the failed build
-                response["message"] = "Unable to create a build for '" + gameName + "'.";
+                response["message"] = "Unable to create a build for '" + name + "'.";
             }
             
 
