@@ -326,23 +326,31 @@ namespace PixelVision8.Runner
             // Get the script
             var luaScript = game.LuaScript;
 
-            luaScript.Globals["StartNextPreload"] = new Action(StartNextPreload);
-            luaScript.Globals["PreloaderComplete"] = new Action(RunGame);
-            luaScript.Globals["EnableCRT"] = (EnableCRTDelegator)EnableCRT;
-            luaScript.Globals["Brightness"] = (BrightnessDelegator)Brightness;
-            luaScript.Globals["Sharpness"] = (SharpnessDelegator)Sharpness;
-            luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
-            luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int)(loadService.Percent * 100));
-            luaScript.Globals["LoadGame"] =
-                new Func<string, Dictionary<string, string>, bool>((path, metadata) =>
-                    Load(path, RunnerMode.Loading, metadata));
+            // Limit which APIs are exposed based on the mode for security
+            if (mode == RunnerMode.Loading)
+            {
+                luaScript.Globals["StartNextPreload"] = new Action(StartNextPreload);
+                luaScript.Globals["PreloaderComplete"] = new Action(RunGame);
+                luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int)(loadService.Percent * 100));
+
+            }else if (mode == RunnerMode.Booting)
+            {
+                luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
+            }
+            else
+            {
+                luaScript.Globals["LoadGame"] =
+                    new Func<string, Dictionary<string, string>, bool>((path, metadata) =>
+                        Load(path, RunnerMode.Loading, metadata));
+            }
+            
+            // Global System APIs
+            luaScript.Globals["EnableCRT"] = new Func<bool?, bool>(EnableCRT);
+            luaScript.Globals["Brightness"] = new Func<float?, float>(Brightness);
+            luaScript.Globals["Sharpness"] = new Func<float?, float>(Sharpness);
             luaScript.Globals["SystemVersion"] = new Func<string>(() => SystemVersion);
             luaScript.Globals["SystemName"] = new Func<string>(() => systemName);
             luaScript.Globals["SessionID"] = new Func<string>(() => SessionId);
-
-            //
-
-            // Expose Bios APIs
             luaScript.Globals["ReadBiosData"] = new Func<string, string, string>((key, defaultValue) =>
                 bios.ReadBiosData(key, defaultValue));
             luaScript.Globals["WriteBiosData"] = new Action<string, string>(bios.UpdateBiosData);
@@ -761,11 +769,11 @@ namespace PixelVision8.Runner
             workspaceService.UpdateLog(message);
         }
 
-        protected delegate bool EnableCRTDelegator(bool? toggle);
-
-        protected delegate float BrightnessDelegator(float? brightness = null);
-
-        protected delegate float SharpnessDelegator(float? sharpness = null);
+        // protected delegate bool EnableCRTDelegator(bool? toggle);
+        //
+        // protected delegate float BrightnessDelegator(float? brightness = null);
+        //
+        // protected delegate float SharpnessDelegator(float? sharpness = null);
 
         #region Runner settings
 

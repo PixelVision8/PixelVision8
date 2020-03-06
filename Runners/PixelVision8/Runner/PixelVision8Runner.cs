@@ -636,12 +636,12 @@ namespace PixelVision8.Runner
                 luaScript.Globals["DocumentPath"] = new Func<string>(() => documentsPath);
                 luaScript.Globals["TmpPath"] = new Func<string>(() => tmpPath);
                 luaScript.Globals["DiskPaths"] = new Func<WorkspacePath[]>(() => workspaceServicePlus.Disks);
-                luaScript.Globals["SaveActiveDisks"] = new Action(() =>
-                {
-                    var disks = workspaceServicePlus.Disks;
-
-                    foreach (var disk in disks) workspaceServicePlus.SaveDisk(disk);
-                });
+                // luaScript.Globals["SaveActiveDisks"] = new Action(() =>
+                // {
+                //     var disks = workspaceServicePlus.Disks;
+                //
+                //     foreach (var disk in disks) workspaceServicePlus.SaveDisk(disk);
+                // });
                 luaScript.Globals["EjectDisk"] = new Action<string>(EjectDisk);
                 luaScript.Globals["RebuildWorkspace"] = new Action(workspaceServicePlus.RebuildWorkspace);
                 luaScript.Globals["MountDisk"] = new Action<WorkspacePath>(path =>

@@ -25,6 +25,7 @@ using System.Linq;
 using ICSharpCode.SharpZipLib.Zip;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
+using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Utils;
 using PixelVision8.Runner.Workspace;
 
@@ -395,152 +396,46 @@ namespace PixelVision8.Runner.Services
 
         public void SaveDisk(WorkspacePath path)
         {
-            if (Exists(path))
+            
+            var diskExporter = new ZipDiskExporter(path.Path, this);
+            diskExporter.CalculateSteps();
+
+            while (diskExporter.completed == false)
             {
-                var mount = Get(path);
-
-                // We only need to save a disk if it is actually a zip file
-                if (mount.Value is ZipFileSystem zipFileSystem)
-                {
-
-                    if (zipFileSystem.PhysicalRoot == null) return;
-
-
-                    // TODO need to save the contents of the memory system back to a zip file
-
-                    // var disk = this;
-
-                    var fileNameZip = zipFileSystem.PhysicalRoot;
-
-                    // Move the original file so we keep it safe
-                    if (File.Exists(fileNameZip)) File.Move(fileNameZip, fileNameZip + ".bak");
-                    
-                    var srcFiles = zipFileSystem.GetEntitiesRecursive(WorkspacePath.Root).ToArray();
-
-                    var files = new Dictionary<WorkspacePath, WorkspacePath>();
-                    foreach (var file in srcFiles)
-                    {
-                        files.Add(path.AppendPath(file), file);
-                    }
-
-                    var response = CreateZipFile(new FileStream(fileNameZip, FileMode.Create), files);
-                    if (((bool)response["success"]))
-                    {
-                        File.Delete(fileNameZip + ".bak");
-                    }
-                    else
-                    {
-                        Console.WriteLine((string)response["error"]);
-                        if (File.Exists(fileNameZip + ".bak"))
-                        {
-                            // Delete the failed zip
-                            if (File.Exists(fileNameZip))
-                            {
-                                File.Delete(fileNameZip);
-                            }
-
-                            // Rename the old zip back to its original name
-                            File.Move(fileNameZip + ".bak", fileNameZip);
-                        }
-                    }
-                        
-                }
-            }
-        }
-
-        public Dictionary<string, object> CreateZipFile(Stream zipFS, Dictionary<WorkspacePath, WorkspacePath> files)
-        {
-            var response = new Dictionary<string, object>
-            {
-                {"success", false},
-                {"message", ""}
-            };
-
-            using (zipFS)
-            {
-                using (var archive = new ZipOutputStream(zipFS))
-                {
-                    // Define the compression level
-                    // 0 - store only to 9 - means best compression
-                    archive.SetLevel(4);
-
-                    var buffer = new byte[4096];
-                    try
-                    {
-                        foreach (var filePaths in files)
-                        {
-                            var srcFile = filePaths.Key;
-                            var destFile = filePaths.Value;
-
-                            // We can only save files
-                            if (srcFile.IsFile && !srcFile.EntityName.StartsWith(".") && destFile.IsFile)
-                            {
-                                
-                                // Using GetFileName makes the result compatible with XP
-                                // as the resulting path is not absolute.
-                                var entry = new ZipEntry(destFile.Path.Substring(1))
-                                {
-                                    // Could also use the last write time or similar for the file.
-                                    DateTime = DateTime.Now
-                                };
-                                archive.PutNextEntry(entry);
-
-                                using (var fs = OpenFile(srcFile, FileAccess.Read))
-                                {
-                                    // Using a fixed size buffer here makes no noticeable difference for output
-                                    // but keeps a lid on memory usage.
-                                    int sourceBytes;
-
-                                    do
-                                    {
-                                        sourceBytes = fs.Read(buffer, 0, buffer.Length);
-                                        archive.Write(buffer, 0, sourceBytes);
-                                    } while (sourceBytes > 0);
-                                }
-
-                                archive.CloseEntry();
-                            }
-
-                        }
-
-                        var fileSize = zipFS.Length / 1024;
-
-                        // Finish is important to ensure trailing information for a Zip file is appended.  Without this
-                        // the created file would be invalid.
-                        archive.Finish();
-
-                        // Close is important to wrap things up and unlock the file.
-                        archive.Close();
-
-                        response.Add("fileSize", fileSize);
-                        response["success"] = true;
-                    }
-                    catch (Exception e)
-                    {
-                        response["error"] = e.Message;
-                        response["success"] = false;
-                    }
-                }
+                diskExporter.NextStep();
             }
 
-            return response;
         }
 
-        public bool AddFilesToZip(WorkspacePath path, Dictionary<WorkspacePath, WorkspacePath> files)
+        public Dictionary<string, object> CreateZipFile(WorkspacePath path, Dictionary<WorkspacePath, WorkspacePath> files)
         {
-            var success = false;
+            var fileHelper = new WorkspaceFileLoadHelper(this);
+            var zipExporter = new ZipExporter(path.Path, fileHelper, files);
+            zipExporter.CalculateSteps();
 
-            // TODO get the zip file
+            while (zipExporter.completed == false)
+            {
+                zipExporter.NextStep();
+            }
 
-            // TODO open up the zip
+            try
+            {
+                if ((bool)zipExporter.Response["success"])
+                {
+                    var zipPath = WorkspacePath.Parse(zipExporter.fileName);
 
-            // TODO loop through all the files and copy from src  to dest
-
-            // TODO close the zip
+                    SaveExporterFiles(new Dictionary<string, byte[]>() { { zipExporter.fileName, zipExporter.bytes } });
+                }
+            }
+            catch (Exception e)
+            {
+                // Change the success to false
+                zipExporter.Response["success"] = false;
+                zipExporter.Response["message"] = e.Message;
+            }
             
             
-            return success;
-
+            return zipExporter.Response;
         }
 
         public void EjectAll()

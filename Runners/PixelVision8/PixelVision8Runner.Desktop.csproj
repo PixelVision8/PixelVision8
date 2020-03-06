@@ -86,6 +86,7 @@
     <Compile Include="Runner\Audio\SfxrMusicGeneratorChip.cs" />
     <Compile Include="Runner\Editors\GameEditor.cs" />
     <Compile Include="Runner\Exporters\ColorPaletteExporter.cs" />
+    <Compile Include="Runner\Exporters\DiskExporter.cs" />
     <Compile Include="Runner\Exporters\FontExporter.cs" />
     <Compile Include="Runner\Exporters\IExport.cs" />
     <Compile Include="Runner\Exporters\IImageExporter.cs" />
@@ -102,6 +103,8 @@
     <Compile Include="Runner\Exporters\SpriteExporter.cs" />
     <Compile Include="Runner\Exporters\SystemExporter.cs" />
     <Compile Include="Runner\Exporters\TilemapJsonExporter.cs" />
+    <Compile Include="Runner\Exporters\ZipDiskExporter.cs" />
+    <Compile Include="Runner\Exporters\ZipExporter.cs" />
     <Compile Include="Runner\PixelVision8Runner.cs" />
     <Compile Include="Runner\Services\ExportService.cs" />
     <Compile Include="Runner\Services\LoadServicePlus.cs" />
