@@ -18,6 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -45,7 +46,7 @@ namespace PixelVision8.Runner.Services
 
         public Dictionary<string, byte[]> files = new Dictionary<string, byte[]>();
 
-        protected string message;
+        protected Dictionary<string, object> message = new Dictionary<string, object>();
         private IEngine targetEngine;
         private int totalParsers;
 
@@ -67,7 +68,7 @@ namespace PixelVision8.Runner.Services
             return (int) (percent * 100);
         }
 
-        public string ReadExportMessage()
+        public Dictionary<string, object> ReadExportMessage()
         {
             return message;
         }
@@ -245,10 +246,10 @@ namespace PixelVision8.Runner.Services
                 {
                     NextExporter();
                 }
-                catch
+                catch (Exception exception)
                 {
-                    //                    DisplayError(RunnerGame.ErrorCode.Exception, new Dictionary<string, string>(){{"@{error}",exception.Message}}, exception);
-                    //                    throw;
+                    Console.WriteLine(exception);
+                    // throw;
                 }
 
                 Thread.Sleep(1);
@@ -263,6 +264,16 @@ namespace PixelVision8.Runner.Services
                 workspaceService.SaveExporterFiles(files);
 
                 files.Clear();
+
+                // Aggregate all Get all the messages
+                foreach (var exporter in exporters)
+                {
+                    foreach (var response in exporter.Response)
+                    {
+                        message.Add(exporter.GetType().Name + "_" + response.Key, response.Value);
+                    }
+                }
+
             }
 
             exporting = false;
@@ -300,6 +311,8 @@ namespace PixelVision8.Runner.Services
             currentParserID = 0;
             totalSteps = 0;
             currentStep = 0;
+            message.Clear();
+
         }
 
         #endregion

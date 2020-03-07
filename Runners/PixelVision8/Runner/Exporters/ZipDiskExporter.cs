@@ -37,12 +37,6 @@ namespace PixelVision8.Runner.Exporters
         private ZipFileSystem zipFileSystem;
         private WorkspaceService workspaceService;
 
-        public Dictionary<string, object> Response = new Dictionary<string, object>
-        {
-            {"success", false},
-            {"message", ""}
-        };
-
         public ZipDiskExporter(string fileName, WorkspaceService workspaceService) : base(fileName)
         {
 

@@ -261,39 +261,55 @@ namespace PixelVision8.Runner.Services
 
         public Dictionary<string, object> CreateDisk(string name, Dictionary<WorkspacePath, WorkspacePath> files, WorkspacePath dest, int maxFileSize = 512)
         {
+
             var fileLoader = new WorkspaceFileLoadHelper(workspace);
 
             dest = workspace.UniqueFilePath(dest.AppendDirectory("Build")).AppendPath(name + ".pv8");
             var diskExporter = new DiskExporter(dest.Path, fileLoader, files, maxFileSize);
 
-            diskExporter.CalculateSteps();
-
-            while (diskExporter.completed == false)
+            if (((PixelVision8Runner) runner).ExportService is ExportService exportService)
             {
-                diskExporter.NextStep();
+
+                ((PixelVision8Runner) runner).ExportService.Reset();
+
+                ((PixelVision8Runner) runner).ExportService.AddExporter(diskExporter);
+
+                ((PixelVision8Runner) runner).ExportService.StartExport();
+
+                // diskExporter.CalculateSteps();
+                //
+                // while (diskExporter.completed == false)
+                // {
+                //     diskExporter.NextStep();
+                // }
+                //
+                // try
+                // {
+                //     if ((bool)diskExporter.Response["success"])
+                //     {
+                //         workspace.SaveExporterFiles(new Dictionary<string, byte[]>() { { diskExporter.fileName, diskExporter.bytes } });
+
+                // Update the response
+                diskExporter.Response["success"] = true;
+                diskExporter.Response["message"] = "A new build was created in " + dest + ".";
+                diskExporter.Response["path"] = dest.Path;
             }
-
-            try
+            else
             {
-                if ((bool)diskExporter.Response["success"])
-                {
-                    workspace.SaveExporterFiles(new Dictionary<string, byte[]>() { { diskExporter.fileName, diskExporter.bytes } });
-
-                    // Update the response
-                    diskExporter.Response["success"] = true;
-                    diskExporter.Response["message"] = "A new build was created in " + dest + ".";
-                    diskExporter.Response["path"] = dest.Path;
-                }
-
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
                 diskExporter.Response["success"] = false;
-                diskExporter.Response["message"] = "Unable to create a build for '" + name + "'. " + e.Message;
-
+                diskExporter.Response["message"] = "Couldn't find the service to save a disk.";
             }
+            //     }
+            //
+            //
+            // }
+            // catch (Exception e)
+            // {
+            //     Console.WriteLine(e);
+            //     diskExporter.Response["success"] = false;
+            //     diskExporter.Response["message"] = "Unable to create a build for '" + name + "'. " + e.Message;
+            //
+            // }
 
             //
             // // Create a path to the temp directory for the builds

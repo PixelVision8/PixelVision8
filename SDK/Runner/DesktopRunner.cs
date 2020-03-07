@@ -647,19 +647,7 @@ namespace PixelVision8.Runner
         protected virtual void LoadDefaultGame()
         {
             Load(bios.ReadBiosData("BootTool", "/PixelVisionOS/Tools/BootTool/"), RunnerMode.Booting);
-            //
-            //            var autoRunPath = bios.ReadBiosData("AutoRun", "/App/DefaultGame/");
-            //
-            //            // Create a new dictionary to store the file binary data
-            //            var gameFiles = workspaceService.LoadGame(autoRunPath); //gamePath)));
-            //
-            //            // Configure a new PV8 engine to play the game
-            //            ConfigureEngine();
-            //
-            //            // Process the files
-            //            ProcessFiles(tmpEngine, gameFiles);
-            //
-            //            tmpEngine.name = autoRunPath;
+            
         }
 
         public virtual void SaveGameData(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
@@ -679,11 +667,6 @@ namespace PixelVision8.Runner
             workspaceService.SaveExporterFiles(saveFile);
         }
 
-        //        public override void ResetGame()
-        //        {
-        //            LoadDefaultGame();
-        //        }
-
 
         protected override void OnExiting(object sender, EventArgs args)
         {
@@ -694,17 +677,10 @@ namespace PixelVision8.Runner
 
         public virtual void ShutdownSystem()
         {
-            // We only want to call this once so don't run if shutdown is true
-            //            if (shutdown)
-            //                return;
-
+           
             // Shutdown the active game
             ShutdownActiveEngine();
 
-            // Toggle the shutdown flag
-            //            shutdown = true;
-
-            //            UpdateDiskInBios();
             SaveBiosChanges();
 
             // Save any changes to the bios to the user's custom bios file
@@ -719,13 +695,9 @@ namespace PixelVision8.Runner
             base.ShutdownActiveEngine();
 
             if (ActiveEngine.GameChip.SaveSlots > 0)
-                //Print("Active Engine To Save", activeEngine.name);
-
                 SaveGameData("/Game/", ActiveEngine, SaveFlags.SaveData,
                     false);
 
-            // Save the active disk
-            //                workspaceService.SaveActiveDisk();
         }
 
         public void SaveBiosChanges()
@@ -768,12 +740,6 @@ namespace PixelVision8.Runner
         {
             workspaceService.UpdateLog(message);
         }
-
-        // protected delegate bool EnableCRTDelegator(bool? toggle);
-        //
-        // protected delegate float BrightnessDelegator(float? brightness = null);
-        //
-        // protected delegate float SharpnessDelegator(float? sharpness = null);
 
         #region Runner settings
 

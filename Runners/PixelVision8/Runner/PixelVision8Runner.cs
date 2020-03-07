@@ -1,16 +1,16 @@
-﻿//   
-// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
-//  
+﻿//
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.
+//
 // Licensed under the Microsoft Public License (MS-PL) except for a few
-// portions of the code. See LICENSE file in the project root for full 
-// license information. Third-party libraries used by Pixel Vision 8 are 
-// under their own licenses. Please refer to those libraries for details 
+// portions of the code. See LICENSE file in the project root for full
+// license information. Third-party libraries used by Pixel Vision 8 are
+// under their own licenses. Please refer to those libraries for details
 // on the license they use.
 //
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
-//  
+//
 // Jesse Freeman - @JesseFreeman
 // Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
@@ -97,7 +97,7 @@ namespace PixelVision8.Runner
             //            throw new NotImplementedException();
         }
 
-        
+
 
         //        public List<string> loadHistory = new List<string>();
         //        protected List<Dictionary<string, string>> metaDataHistory = new List<Dictionary<string, string>>();
@@ -147,7 +147,7 @@ namespace PixelVision8.Runner
                 )
             );
 
-            // Pass the new service back to the base class    
+            // Pass the new service back to the base class
             workspaceService = workspaceServicePlus;
 
             serviceManager.AddService(typeof(WorkspaceService).FullName, workspaceService);
@@ -199,7 +199,7 @@ namespace PixelVision8.Runner
                 WorkspacePath.Root.AppendDirectory("User"),
                 new PhysicalFileSystem(documentsPath)));
 
-            // Mount the workspace drive    
+            // Mount the workspace drive
             workspaceServicePlus.MountWorkspace(workspaceName);
 
             workspaceServicePlus.RebuildWorkspace();
@@ -212,12 +212,12 @@ namespace PixelVision8.Runner
             // Save a reference to the controller chip so we can listen for special key events
             controllerChip = engine.ControllerChip;
 
-            
+
 
             // Activate the game
             base.ActivateEngine(engine);
 
-            
+
         }
 
         public void EjectDisk(string path)
@@ -531,7 +531,7 @@ namespace PixelVision8.Runner
                 {
                     // If we are running this disk clear the previous history
                     loadHistory.Clear();
-                    
+
                     // Run the disk
                     AutoRunGameFromDisk(diskName);
 
@@ -629,7 +629,8 @@ namespace PixelVision8.Runner
                 // Inject the PV8 runner special global function
                 luaScript.Globals["IsExporting"] = new Func<bool>(ExportService.IsExporting);
                 luaScript.Globals["ReadExportPercent"] = new Func<int>(ExportService.ReadExportPercent);
-                luaScript.Globals["ReadExportMessage"] = new Func<string>(ExportService.ReadExportMessage);
+                luaScript.Globals["ReadExportMessage"] =
+                    new Func<Dictionary<string, object>>(ExportService.ReadExportMessage);
                 luaScript.Globals["ShutdownSystem"] = new Action(ShutdownSystem);
                 luaScript.Globals["QuitCurrentTool"] = (QuitCurrentToolDelagator) QuitCurrentTool;
                 luaScript.Globals["RefreshActionKeys"] = new Action(RefreshActionKeys);
@@ -680,6 +681,30 @@ namespace PixelVision8.Runner
                 // Force the lua script to use this boot done logic instead
                 luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
             }
+
+            if (mode == RunnerMode.Loading)
+            {
+                luaScript.Globals["StartUnload"] = new Action(StartUnload);
+                luaScript.Globals["UnloadProgress"] = new Func<int>(UnloadProgress);
+                luaScript.Globals["EndUnload"] = new Action(EndUnload);
+            }
+        }
+
+        protected void StartUnload()
+        {
+            Console.WriteLine("StartUnload");
+        }
+
+        protected int UnloadProgress()
+        {
+            Console.WriteLine("UnloadProgress");
+
+            return 0;
+        }
+
+        protected void EndUnload()
+        {
+            Console.WriteLine("EndUnload");
         }
 
         public override void RunGame()
@@ -709,7 +734,7 @@ namespace PixelVision8.Runner
                     metaData["showEjectAnimation"] = ejectingDisk.ToString().ToLower();
                 else
                     metaData.Add("showEjectAnimation", ejectingDisk.ToString().ToLower());
-                
+
                 if (metaData.ContainsKey("showDiskAnimation"))
                     metaData["showDiskAnimation"] = mountingDisk.ToString().ToLower();
                 else

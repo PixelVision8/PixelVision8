@@ -19,6 +19,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
 
@@ -90,6 +91,7 @@ namespace PixelVision8.Runner.Exporters
             exporter = null;
         }
 
+        public Dictionary<string, object> Response => exporter.Response;
         public byte[] bytes => exporter.bytes;
 
         public string fileName => exporter.fileName;

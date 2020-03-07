@@ -121,6 +121,10 @@ function Init()
         mode = "ejecting"
         totalFrames = #currentAnimation
         loopKeyframe = totalFrames - 2
+
+        -- Start the unload process
+        StartUnload()
+
     elseif(ReadMetadata("showDiskAnimation") == "true") then
         mode = "inserting"
         currentAnimation = insertAnimation
@@ -200,10 +204,20 @@ function Update(timeDelta)
         -- Increment frame by 1
         frame = frame + 1
 
-        if(mode == "ejecting" and frame == 15) then
+        if(mode == "ejecting") then
+        
+            -- if(frame == 8 and UnloadProgress() < 99) then
 
-            -- Once disk is ejected, it needs to load the next game
-            mode = "loading"
+            --     frame = 1
+            --     print("UnloadProgress", UnloadProgress())
+
+            -- else
+            if(frame == 15) then
+            
+                EndUnload()
+                -- Once disk is ejected, it needs to load the next game
+                mode = "loading"
+            end
             
         end
 

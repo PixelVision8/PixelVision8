@@ -35,14 +35,8 @@ namespace PixelVision8.Runner.Exporters
         protected int CurrentFile;
         protected ZipOutputStream Archive;
         protected byte[] Buffer;
-
         protected int compressionLevel;
 
-        public Dictionary<string, object> Response = new Dictionary<string, object>
-        {
-            {"success", false},
-            {"message", ""}
-        };
 
         public ZipExporter(string fileName, IFileLoadHelper fileLoadHelper, Dictionary<WorkspacePath, WorkspacePath> srcFiles, int compressionLevel = 4) : base(fileName)
         {

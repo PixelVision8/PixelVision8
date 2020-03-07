@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ICSharpCode.SharpZipLib.Zip;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Exporters;
@@ -293,7 +292,7 @@ namespace PixelVision8.Runner.Services
         public void EjectDisk(WorkspacePath filePath)
         {
             RemoveDisk(filePath);
-
+            
             // What happens when there are no disks
             if (TotalDisks > 1)
                 try

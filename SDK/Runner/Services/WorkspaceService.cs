@@ -59,6 +59,7 @@ namespace PixelVision8.Runner.Services
         #endregion
 
         public IServiceLocator locator { get; set; }
+        protected bool LogInvalidated = false;
 
         public WorkspaceService(KeyValuePair<WorkspacePath, IFileSystem> mountPoint) : base(mountPoint)
         {
@@ -315,8 +316,6 @@ namespace PixelVision8.Runner.Services
             UpdateLog("Debug Log Created " + DateTime.Now.ToString("yyyyMMddHHmmssfff"));
         }
 
-        protected bool LogInvalidated = false;
-
         public virtual void UpdateLog(string logString, LogType type = LogType.Log, string stackTrace = "")
         {
             if (logService == null) return;
@@ -347,11 +346,9 @@ namespace PixelVision8.Runner.Services
             return logService.ReadLogItems();
         }
 
-        private WorkspacePath currentDiskPath;
-
         public string[] LoadGame(string path)
         {
-            var filePath = WorkspacePath.Parse(path); //FileSystemPath.Root.AppendPath(fullPath);
+            var filePath = WorkspacePath.Parse(path);
             var exits = Exists(filePath);
 
             string[]files = null;
