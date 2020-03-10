@@ -901,9 +901,9 @@ namespace PixelVision8.Runner.Editors
                 // filePath = UniqueFilePath(filePath.AppendFile("pattern+" + id + ".wav"));
 
                 // TODO exporting sprites doesn't work
-                if (serviceManager.GetService(typeof(ExportService).FullName) is ExportService exportService)
+                if (serviceManager.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
                 {
-                    exportService.Reset();
+                    exportService.Restart();
 
                     exportService.AddExporter(new LuaScriptExporter(scriptName, outputFileName, serviceManager.GetService(typeof(LuaService).FullName) as LuaServicePlus));
                     //

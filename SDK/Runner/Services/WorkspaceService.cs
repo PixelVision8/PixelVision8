@@ -161,17 +161,18 @@ namespace PixelVision8.Runner.Services
                         stream.SetLength(0);
 
                         // Write the byte data to it
-                        stream.Write(file.Value);
+                        StreamExtensions.Write(stream, file.Value);
 
                         stream.Close();
                         // TODO make sure we dispose of the stream?
                         stream.Dispose();
                     }
                 }
-                catch
-                {
-                    //                    Console.WriteLine("Couldn't save " + file.Key + "\n" + e.Message);
-                }
+                
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         internal string GetPhysicalPath(WorkspacePath filePath)
@@ -433,7 +434,7 @@ namespace PixelVision8.Runner.Services
 
                 using (var file = OpenFile(filePath, FileAccess.Read))
                 {
-                    text = file.ReadAllText();
+                    text = StreamExtensions.ReadAllText(file);
                     file.Close();
                     file.Dispose();
                 }
@@ -455,7 +456,7 @@ namespace PixelVision8.Runner.Services
             if (file != null)
             {
                 var bytes = Encoding.ASCII.GetBytes(text);
-                file.Write(bytes);
+                StreamExtensions.Write(file, bytes);
 
                 file.Close();
 

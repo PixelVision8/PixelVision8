@@ -103,7 +103,7 @@ namespace PixelVision8.Runner
         //        protected List<Dictionary<string, string>> metaDataHistory = new List<Dictionary<string, string>>();
         protected string Documents => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
-        public ExportService ExportService { get; private set; }
+        public GameDataExportService ExportService { get; protected set; }
         public bool Recording { get; set; }
 
         protected override void ConfigureRunner()
@@ -111,7 +111,7 @@ namespace PixelVision8.Runner
             base.ConfigureRunner();
 
             screenshotService = new ScreenshotService(workspaceServicePlus);
-            ExportService = new ExportService(); //TODO Need to create a new AudioClipAdaptor
+            ExportService = new GameDataExportService(); //TODO Need to create a new AudioClipAdaptor
 
             autoShutdown = bios.ReadBiosData("AutoShutdown", "True") == "True";
 
@@ -749,10 +749,8 @@ namespace PixelVision8.Runner
             // Export the current game
 
             // TODO exporter needs a callback when its completed
-            ExportService.ExportGame(path, engine, saveFlags);
+            ExportService.ExportGame(path, engine, saveFlags, useSteps);
 
-            // TODO this should be moved into the ExportGame class
-            ExportService.StartExport(useSteps);
         }
 
         public override void ConfigureServices()
@@ -760,7 +758,7 @@ namespace PixelVision8.Runner
 
             base.ConfigureServices();
 
-            serviceManager.AddService(typeof(ExportService).FullName, ExportService);
+            serviceManager.AddService(typeof(GameDataExportService).FullName, ExportService);
         }
 
         public override void CreateLuaService()

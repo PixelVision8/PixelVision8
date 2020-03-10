@@ -88,7 +88,6 @@
     <Compile Include="Runner\Exporters\ColorPaletteExporter.cs" />
     <Compile Include="Runner\Exporters\DiskExporter.cs" />
     <Compile Include="Runner\Exporters\FontExporter.cs" />
-    <Compile Include="Runner\Exporters\IExport.cs" />
     <Compile Include="Runner\Exporters\IImageExporter.cs" />
     <Compile Include="Runner\Exporters\ImageExporter.cs" />
     <Compile Include="Runner\Exporters\LuaScriptExporter.cs" />
@@ -106,7 +105,8 @@
     <Compile Include="Runner\Exporters\ZipDiskExporter.cs" />
     <Compile Include="Runner\Exporters\ZipExporter.cs" />
     <Compile Include="Runner\PixelVision8Runner.cs" />
-    <Compile Include="Runner\Services\ExportService.cs" />
+    <Compile Include="Runner\Services\BaseExportService.cs" />
+    <Compile Include="Runner\Services\GameDataExportService.cs" />
     <Compile Include="Runner\Services\LoadServicePlus.cs" />
     <Compile Include="Runner\Services\LuaPlatformAccessorService.cs" />
     <Compile Include="Runner\Services\LuaServicePlus.cs" />

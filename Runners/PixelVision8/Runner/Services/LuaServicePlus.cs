@@ -258,7 +258,6 @@ namespace PixelVision8.Runner.Services
             return workspace.OpenFile(workspacePath, FileAccess.Read).ReadAllBytes().Length / 1024;
         }
 
-
         public Dictionary<string, object> CreateDisk(string name, Dictionary<WorkspacePath, WorkspacePath> files, WorkspacePath dest, int maxFileSize = 512)
         {
 
@@ -267,10 +266,10 @@ namespace PixelVision8.Runner.Services
             dest = workspace.UniqueFilePath(dest.AppendDirectory("Build")).AppendPath(name + ".pv8");
             var diskExporter = new DiskExporter(dest.Path, fileLoader, files, maxFileSize);
 
-            if (((PixelVision8Runner) runner).ExportService is ExportService exportService)
+            if (((PixelVision8Runner) runner).ExportService is GameDataExportService exportService)
             {
 
-                ((PixelVision8Runner) runner).ExportService.Reset();
+                ((PixelVision8Runner) runner).ExportService.Restart();
 
                 ((PixelVision8Runner) runner).ExportService.AddExporter(diskExporter);
 

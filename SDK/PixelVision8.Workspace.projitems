@@ -14,7 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\IAbstractExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SavedDataExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\SpriteExportData.cs" />
-    
+
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\ScriptLoaderUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\BiosService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\WorkspaceService.cs" />
@@ -27,6 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\MemoryFileSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\MergedFileSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\PhysicalFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\ReadOnlyFileSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\SubFileSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\ZipFileSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\IFileSystem.cs" />

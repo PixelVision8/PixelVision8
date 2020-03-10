@@ -114,7 +114,7 @@ namespace PixelVision8.Runner.Services
 
 
                     // TODO exporting sprites doesn't work
-                    if (locator.GetService(typeof(ExportService).FullName) is ExportService exportService)
+                    if (locator.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
                     {
                         exportService.ExportSong(filePath.Path, musicChip, soundChip, selectedPatterns);
                         //
@@ -147,7 +147,7 @@ namespace PixelVision8.Runner.Services
 
 
                 // TODO exporting sprites doesn't work
-                if (locator.GetService(typeof(ExportService).FullName) is ExportService exportService)
+                if (locator.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
                 {
                     exportService.ExportSong(filePath.Path, musicChip, soundChip, selectedPatterns);
                     //
@@ -344,7 +344,7 @@ namespace PixelVision8.Runner.Services
                 try
                 {
                     // TODO exporting sprites doesn't work
-                    if (locator.GetService(typeof(ExportService).FullName) is ExportService exportService)
+                    if (locator.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
                     {
                         exportService.ExportSpriteBuilder(path + "sb-sprites.lua", targetGame, fileData);
                         //

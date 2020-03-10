@@ -18,64 +18,23 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Services;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Parsers;
 
 namespace PixelVision8.Runner.Services
 {
-    public class ExportService : AbstractService
+    public class GameDataExportService : BaseExportService
     {
-        private readonly List<IAbstractExporter> exporters = new List<IAbstractExporter>();
-
-        //        private ITextureFactory textureFactory;
-        //        private readonly IAudioClipFactory audioClipFactory;
-
-        private int currentParserID;
-
-        //        protected bool microSteps = true;
-        protected int currentStep;
-        private bool exporting;
-        protected BackgroundWorker exportWorker;
-
-        public Dictionary<string, byte[]> files = new Dictionary<string, byte[]>();
-
-        protected Dictionary<string, object> message = new Dictionary<string, object>();
+        
         private IEngine targetEngine;
-        private int totalParsers;
-
-        public int totalSteps;
-
-        public bool completed => currentParserID >= totalParsers;
-
-        protected float percent => currentStep / (float) totalSteps;
-
-
-        public bool IsExporting()
+        
+        public void ExportGame(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
         {
-            return exporting;
-        }
 
-        // TODO need to make this work like loading does
-        public int ReadExportPercent()
-        {
-            return (int) (percent * 100);
-        }
-
-        public Dictionary<string, object> ReadExportMessage()
-        {
-            return message;
-        }
-
-        public void ExportGame(string path, IEngine engine, SaveFlags saveFlags)
-        {
-            Reset();
+            Clear();
 
             // Save the engine so we can work with it during loading
             targetEngine = engine;
@@ -156,24 +115,12 @@ namespace PixelVision8.Runner.Services
             if ((saveFlags & SaveFlags.MetaSprites) == SaveFlags.MetaSprites)
                 AddExporter(new MetaSpriteExporter(path + "meta-sprites.json", targetEngine));
 
-            totalParsers = exporters.Count;
-            currentParserID = 0;
-            
-        }
-
-        public void AddExporter(IAbstractExporter exporter)
-        {
-            // Calculate the steps for the exporter
-            exporter.CalculateSteps();
-
-            exporters.Add(exporter);
-
-            totalSteps += exporter.totalSteps;
+            StartExport(useSteps);
         }
 
         public void ExportSong(string path, MusicChip musicChip, SoundChip soundChip, int[] patterns)
         {
-            Reset();
+            Restart();
 
             // TODO this should just use the active engine?
             //            var name = targetEngine.musicChip.activeSongData.songName;
@@ -184,14 +131,14 @@ namespace PixelVision8.Runner.Services
 
         public void ExportSpriteBuilder(string path, IEngine engine, Dictionary<string, byte[]> files)
         {
-            Reset();
+            Restart();
             // TODO need to create a new Sprite Builder Exporter
             AddExporter(new SpriteBuilderExporter(path, engine, files));
         }
 
         public void ExportImage(string path, int[] pixelData, IEngine engine, int width, int height)
         {
-            Reset();
+            Restart();
 
 
             var imageExporter = new PNGWriter();
@@ -200,121 +147,5 @@ namespace PixelVision8.Runner.Services
                 engine.ColorChip.maskColor));
         }
 
-        public void StartExport(bool useSteps = true)
-        {
-            // TODO saving should be fast enough to do without threading
-            //            useSteps = false;
-
-            if (useSteps == false)
-            {
-                while (completed == false) NextExporter();
-
-                WorkerExporterCompleted(null, null);
-            }
-            else
-            {
-                exportWorker = new BackgroundWorker
-                {
-                    // TODO need a way to of locking this.
-
-                    WorkerSupportsCancellation = true,
-                    WorkerReportsProgress = true
-                };
-
-
-                //                Console.WriteLine("Start export " + exportService.totalSteps + " steps");
-
-                exportWorker.DoWork += WorkerExportSteps;
-                //            bgw.ProgressChanged += WorkerLoaderProgressChanged;
-                exportWorker.RunWorkerCompleted += WorkerExporterCompleted;
-
-                //            bgw.WorkerReportsProgress = true;
-                exportWorker.RunWorkerAsync();
-
-                exporting = true;
-            }
-        }
-
-        private void WorkerExportSteps(object sender, DoWorkEventArgs e)
-        {
-            
-            var total = totalSteps; //some number (this is your variable to change)!!
-
-            for (var i = 0; i <= total; i++) //some number (total)
-            {
-                try
-                {
-                    NextExporter();
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine(exception);
-                    // throw;
-                }
-
-                Thread.Sleep(1);
-                exportWorker.ReportProgress((int) (percent * 100), i);
-            }
-        }
-
-        public void WorkerExporterCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (locator.GetService(typeof(WorkspaceService).FullName) is WorkspaceService workspaceService)
-            {
-                workspaceService.SaveExporterFiles(files);
-
-                files.Clear();
-
-                // Aggregate all Get all the messages
-                foreach (var exporter in exporters)
-                {
-                    foreach (var response in exporter.Response)
-                    {
-                        message.Add(exporter.GetType().Name + "_" + response.Key, response.Value);
-                    }
-                }
-
-            }
-
-            exporting = false;
-        }
-
-        #region Main APIs
-
-        public void ExportAll()
-        {
-            while (completed == false) NextExporter();
-        }
-
-
-        public void NextExporter()
-        {
-            if (completed) return;
-
-            var parser = exporters[currentParserID];
-
-            parser.NextStep();
-
-            currentStep++;
-
-            if (parser.completed)
-            {
-                currentParserID++;
-                files.Add(parser.fileName, parser.bytes);
-            }
-        }
-
-        public void Reset()
-        {
-            files.Clear();
-            exporters.Clear();
-            currentParserID = 0;
-            totalSteps = 0;
-            currentStep = 0;
-            message.Clear();
-
-        }
-
-        #endregion
     }
 }
