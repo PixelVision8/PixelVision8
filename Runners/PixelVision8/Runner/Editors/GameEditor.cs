@@ -223,38 +223,34 @@ namespace PixelVision8.Runner.Editors
         ///     Returns a list of library paths
         /// </summary>
         /// <returns></returns>
-        public string[] LibraryPaths()
-        {
-
-            var sharedLibPaths = workspace.SharedLibDirectories();
-
-            var files = new List<string>();
-
-            for (int i = 0; i < sharedLibPaths.Count; i++)
-            {
-                
-                var path = from p in workspace.GetEntities(sharedLibPaths[i])
-                           where p.EntityName.EndsWith("lua") select p;
-
-                foreach (var file in files)
-                {
-                    files.Add(file);
-                }
-
-            }
-
-            // // TODO need to go through and find all of the included libraries from the workspace
-            //
-            // // workspace.IncludeLibDirectoryFiles(files);
-            //
-            // var fileList = new List<string>();
-            //
-            // // TODO need to get the real paths
-            //
-            // // foreach (var file in files) fileList.Add(file.Key);
-
-            return files.ToArray();
-        }
+        // public string[] LibraryPaths()
+        // {
+        //
+        //     var sharedLibPaths = workspace.SharedLibDirectories();
+        //
+        //     var luaFiles = new List<string>();
+        //
+        //     for (int i = 0; i < sharedLibPaths.Count; i++)
+        //     {
+        //         
+        //         var files = from p in workspace.GetEntities(sharedLibPaths[i])
+        //                    where p.EntityName.EndsWith("lua") select p;
+        //
+        //         foreach (var file in files)
+        //         {
+        //             if (luaFiles.IndexOf(file.Path) == -1)
+        //             {
+        //                 var text = workspace.ReadTextFromFile(file);
+        //
+        //                 luaFiles.Add(file.Path);
+        //             }
+        //             
+        //         }
+        //
+        //     }
+        //
+        //     return luaFiles.ToArray();
+        // }
 
         //
         //        /// <summary>
@@ -319,7 +315,7 @@ namespace PixelVision8.Runner.Editors
         ///     Allows you to save the current game you are editing. Pass in SaveFlags to define which files should be exported.
         /// </summary>
         /// <param name="flags"></param>
-        public void Save(string path, SaveFlags[] flags)
+        public void Save(string path, SaveFlags[] flags, bool useSteps = false)
         {
             // TODO need to get the export service
 
@@ -333,7 +329,7 @@ namespace PixelVision8.Runner.Editors
             //            gameChip.version = ;
 
             // TODO saving games doesn't work
-            runner.SaveGameData(path, targetGame, saveFlags);
+            runner.SaveGameData(path, targetGame, saveFlags, useSteps);
             //            workspace.SaveCart(workspace.WorkspacePath(WorkspaceFolders.CurrentGameDir), targetGame, saveFlags);
 
             ResetValidation();
@@ -1157,6 +1153,7 @@ namespace PixelVision8.Runner.Editors
 
                 return false;
             }
+
 
             Reset();
 

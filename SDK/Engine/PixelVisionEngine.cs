@@ -193,14 +193,15 @@ namespace PixelVision8.Engine
         {
             if (!MetaData.ContainsKey(key))
             {
+                MetaData.Add(key, value);
+            }
+            else
+            {
                 if (value == "")
                     MetaData.Remove(key);
-                else
-                    MetaData.Add(key, value);
-            }
-            else if (value != "")
-            {
-                MetaData[key] = value;
+                else 
+                    MetaData[key] = value;
+
             }
         }
 

@@ -124,7 +124,6 @@ namespace PixelVision8.Runner.Services
         {
             if (locator.GetService(typeof(WorkspaceService).FullName) is WorkspaceService workspaceService)
             {
-                
 
                 // Aggregate all Get all the messages
                 foreach (var exporter in exporters)
@@ -136,7 +135,13 @@ namespace PixelVision8.Runner.Services
 
                     foreach (var response in exporter.Response)
                     {
-                        message.Add(exporter.GetType().Name + "_" + response.Key, response.Value);
+                        var tmpKey = exporter.GetType().Name + "_" + response.Key;
+                        var tmpValue = response.Value;
+
+                        if (message.ContainsKey(tmpKey))
+                            message[tmpKey] = tmpValue;
+                        else
+                            message.Add(tmpKey, tmpValue);
                     }
                 }
 
@@ -178,7 +183,6 @@ namespace PixelVision8.Runner.Services
         public virtual void Restart()
         {
             currentParserID = 0;
-            totalSteps = 0;
             currentStep = 0;
             message.Clear();
         }
@@ -187,6 +191,7 @@ namespace PixelVision8.Runner.Services
         {
             exporters.Clear();
             files.Clear();
+            totalSteps = 0;
         }
 
         #endregion

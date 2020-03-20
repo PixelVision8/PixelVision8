@@ -410,6 +410,12 @@ namespace PixelVision8.Runner.Services
                 osLibPath
             };
 
+            var workspaceLibsPath = WorkspacePath.Root.AppendDirectory("Workspace").AppendDirectory("System")
+                .AppendDirectory("Libs");
+
+            if(Exists(workspaceLibsPath))
+                paths.Insert(0, workspaceLibsPath);
+
             return paths;
         }
 

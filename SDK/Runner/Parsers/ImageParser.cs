@@ -48,7 +48,7 @@ namespace PixelVision8.Runner.Parsers
         public override void Dispose()
         {
             base.Dispose();
-            Parser.Dispose();
+            // Parser.Dispose();
             Parser = null;
         }
     }

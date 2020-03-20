@@ -25,6 +25,8 @@ using System.Linq;
 using GifEncoder;
 using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
+using MoonSharp.VsCodeDebugger;
+using MoonSharp.VsCodeDebugger.DebuggerLogic;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Editors;
@@ -82,6 +84,29 @@ namespace PixelVision8.Runner
         //        protected string rootPath;
         protected bool shutdown;
 
+        private MoonSharpVsCodeDebugServer server;
+        private bool attachScript = true;
+
+        public override List<string> DefaultChips
+        {
+            get
+            {
+                var chips = new List<string>
+                {
+                    typeof(ColorChip).FullName,
+                    typeof(SpriteChip).FullName,
+                    typeof(TilemapChip).FullName,
+                    typeof(FontChip).FullName,
+                    typeof(ControllerChip).FullName,
+                    typeof(DisplayChip).FullName,
+                    typeof(SoundChip).FullName,
+                    typeof(MusicChip).FullName,
+                    typeof(LuaDebugGameChip).FullName
+                };
+
+                return chips;
+            }
+        }
 
         // protected string windowTitle;
 
@@ -90,6 +115,8 @@ namespace PixelVision8.Runner
         // Default path to where PV8 workspaces will go
         public PixelVision8Runner(string rootPath) : base(rootPath)
         {
+            server = new MoonSharpVsCodeDebugServer(1985);
+            server.Start();
         }
 
         public PixelVision8Runner()
@@ -212,11 +239,73 @@ namespace PixelVision8.Runner
             // Save a reference to the controller chip so we can listen for special key events
             controllerChip = engine.ControllerChip;
 
-
+            if (mode == RunnerMode.Loading)
+            {
+                ((LuaGameChip)engine.GameChip).LuaScript.Globals["DebuggerAttached"] = new Func<bool>(AwaitDebuggerAttach);
+            }
 
             // Activate the game
             base.ActivateEngine(engine);
 
+
+        }
+
+        public override void BaseActivateEngine(IEngine engine)
+        {
+            if (engine == null) return;
+
+            // Make the loaded engine active
+            ActiveEngine = engine;
+
+            LuaGameChip tempQualifier = ((LuaGameChip)ActiveEngine.GameChip);
+            // Kick off the first game script file
+
+            if (server.Current == null)
+            {
+                tempQualifier.LoadScript(tempQualifier.DefaultScriptPath);
+
+                var scriptPath = workspaceService.GetPhysicalPath(WorkspacePath.Parse(ActiveEngine.Name + "code.lua"));
+
+                server.AttachToScript(tempQualifier.LuaScript, scriptPath);
+            }
+
+            ActiveEngine.ResetGame();
+
+            // Reset the game
+            if (tempQualifier.LuaScript.Globals["Reset"] != null) tempQualifier.LuaScript.Call(tempQualifier.LuaScript.Globals["Reset"]);
+
+            // After loading the game, we are ready to run it.
+            ActiveEngine.RunGame();
+
+            // Reset the game's resolution
+            ResetResolution();
+
+            // Make sure that the first frame is cleared with the default color
+            ActiveEngine.GameChip.Clear();
+        }
+
+        private bool AwaitDebuggerAttach()
+        {
+
+            var connected = server.Connected;
+
+            if (connected == false && attachScript)
+            {
+
+                LuaGameChip tempQualifier = ((LuaGameChip)tmpEngine.GameChip);
+                // Kick off the first game script file
+                tempQualifier.LoadScript(tempQualifier.DefaultScriptPath);
+
+                var scriptPath = workspaceService.GetPhysicalPath(WorkspacePath.Parse(ActiveEngine.Name + "code.lua"));
+
+                server.AttachToScript(tempQualifier.LuaScript, scriptPath);
+
+                attachScript = false;
+            }
+
+            UpdateTitle();
+
+            return connected;
 
         }
 
@@ -455,6 +544,16 @@ namespace PixelVision8.Runner
 
             AutoLoadDefaultGame();
         }
+        public override void DisplayWarning(string message)
+        {
+            base.DisplayWarning(message);
+
+            if (server?.GetDebugger() is AsyncDebugger debugger)
+            {
+                ((MoonSharpDebugSession)debugger.Client)?.SendText(message);
+            }
+
+        }
 
         public override void DisplayError(ErrorCode code, Dictionary<string, string> tokens = null,
             Exception exception = null)
@@ -586,6 +685,13 @@ namespace PixelVision8.Runner
 
                 // Save the active disk
                 workspaceServicePlus.SaveActiveDisk();
+
+                if (server.Current != null)
+                {
+                    server.Detach(server.Current);
+                }
+
+                attachScript = true;
             }
             catch (Exception e)
             {
@@ -624,6 +730,7 @@ namespace PixelVision8.Runner
             luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
             luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
 
+
             if (mode == RunnerMode.Playing)
             {
                 // Inject the PV8 runner special global function
@@ -637,6 +744,7 @@ namespace PixelVision8.Runner
                 luaScript.Globals["DocumentPath"] = new Func<string>(() => documentsPath);
                 luaScript.Globals["TmpPath"] = new Func<string>(() => tmpPath);
                 luaScript.Globals["DiskPaths"] = new Func<WorkspacePath[]>(() => workspaceServicePlus.Disks);
+                luaScript.Globals["SharedLibPaths"] = new Func<WorkspacePath[]>(() => workspaceServicePlus.SharedLibDirectories().ToArray());
                 // luaScript.Globals["SaveActiveDisks"] = new Action(() =>
                 // {
                 //     var disks = workspaceServicePlus.Disks;
@@ -918,7 +1026,8 @@ namespace PixelVision8.Runner
 
         public virtual void UpdateTitle()
         {
-            Window.Title = DefaultWindowTitle + (Recording ? " ⚫" : "") + (screenShotActive ? " 📷" : "");
+            // Window.Title = DefaultWindowTitle + (Recording ? " ⚫" : "") + (screenShotActive ? " 📷" : "");
+            Window.Title = DefaultWindowTitle + ((server != null && server.Connected) ? " 🐞" : "") + (Recording ? " ⚫" : "") + (screenShotActive ? " 📷" : "");
         }
 
         public void StopRecording()

@@ -12,6 +12,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Game\LuaGameChip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\LuaRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LuaService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Debugger\AsyncDebugger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Debugger\DebugSession.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Debugger\EmptyDebugSession.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Debugger\IAsyncDebuggerClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Debugger\MoonSharpDebugSession.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Debugger\MoonSharpVsCodeDebugServer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Debugger\Protocol.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Debugger\Utilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Debugger\VariableInspector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Game\LuaDebugGameChip.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Runner\Parsers\" />

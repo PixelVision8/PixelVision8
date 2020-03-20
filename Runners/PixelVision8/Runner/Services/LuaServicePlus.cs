@@ -269,11 +269,11 @@ namespace PixelVision8.Runner.Services
             if (((PixelVision8Runner) runner).ExportService is GameDataExportService exportService)
             {
 
-                ((PixelVision8Runner) runner).ExportService.Restart();
+                exportService.Clear();
 
-                ((PixelVision8Runner) runner).ExportService.AddExporter(diskExporter);
+                exportService.AddExporter(diskExporter);
 
-                ((PixelVision8Runner) runner).ExportService.StartExport();
+                exportService.StartExport();
 
                 // diskExporter.CalculateSteps();
                 //

@@ -327,13 +327,14 @@ namespace PixelVision8.Runner
             var luaScript = game.LuaScript;
 
             // Limit which APIs are exposed based on the mode for security
-            if (mode == RunnerMode.Loading)
-            {
+            // if (mode == RunnerMode.Loading)
+            // {
                 luaScript.Globals["StartNextPreload"] = new Action(StartNextPreload);
                 luaScript.Globals["PreloaderComplete"] = new Action(RunGame);
                 luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int)(loadService.Percent * 100));
 
-            }else if (mode == RunnerMode.Booting)
+            // }else 
+            if (mode == RunnerMode.Booting)
             {
                 luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
             }

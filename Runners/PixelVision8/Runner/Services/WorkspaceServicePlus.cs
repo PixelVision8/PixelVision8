@@ -74,7 +74,7 @@ namespace PixelVision8.Runner.Services
             var systemPaths = new List<IFileSystem>
             {
                 new SubFileSystem(this,
-                    WorkspacePath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS"))
+                    WorkspacePath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS").AppendDirectory("System"))
             };
 
             // Create a path to the workspace system folder
@@ -87,6 +87,7 @@ namespace PixelVision8.Runner.Services
 
             // Mount the PixelVisionOS directory
             AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(osPath, new MergedFileSystem(systemPaths)));
+
         }
 
         // Exports the active song in the music chip

@@ -282,6 +282,7 @@ namespace PixelVision8.Engine.Chips
             if (LuaScript?.Globals["Shutdown"] == null) return;
 
             LuaScript.Call(LuaScript.Globals["Shutdown"]);
+
         }
 
         public override void Reset()
