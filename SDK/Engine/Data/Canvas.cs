@@ -84,29 +84,52 @@ namespace PixelVision8.Engine
             pattern.SetPixels(pixels);
         }
 
+        private int tmpX = 0;
+        private int tmpY = 0;
+        private int tmpW = 0;
+        private int tmpH = 0;
+
         /// <summary>
         ///     Fast blit to the display through the draw request API
         /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         /// <param name="drawMode"></param>
+        /// <param name="scale"></param>
+        /// <param name="maskColor"></param>
+        /// <param name="maskColorID"></param>
+        /// <param name="viewport"></param>
         public void DrawPixels(int x = 0, int y = 0, DrawMode drawMode = DrawMode.TilemapCache, int scale = 1,
-            int maskColor = -1, int maskColorID = -1)
+            int maskColor = -1, int maskColorID = -1, Rectangle? viewport = null)
         {
             // This only works when the canvas has a reference to the gameChip
             if (gameChip == null) return;
 
-            // TODO need to rescale the pixel data if scale is larger than 1
-            //            if (scale != 1)
-            //            {
+            if (viewport.HasValue)
+            {
+                tmpX = viewport.Value.X;
+                tmpY = viewport.Value.Y;
+                tmpW = viewport.Value.Width;
+                tmpH = viewport.Value.Height;
+            }
+            else
+            {
+                tmpX = 0;
+                tmpY = 0;
+                tmpW = width;
+                tmpH = height;
+            }
 
-            var newWidth = width * scale;
-            var newHeight = height * scale;
+            
+            var newWidth = tmpW * scale;
+            var newHeight = tmpH * scale;
 
-            var w = width;
+            var w = tmpW;
             var w2 = newWidth;
-            var texColors = GetPixels();
+            var texColors = GetPixels(tmpX, tmpY, tmpW, tmpH);
             var newColors = new int[newWidth * newHeight];
-            var ratioX = (float) width / newWidth;
-            var ratioY = (float) height / newHeight;
+            var ratioX = (float)tmpW / newWidth;
+            var ratioY = (float)tmpH / newHeight;
 
             for (var y1 = 0; y1 < newHeight; y1++)
             {
@@ -121,11 +144,7 @@ namespace PixelVision8.Engine
             }
 
             gameChip.DrawPixels(newColors, x, y, newWidth, newHeight, false, false, drawMode);
-            //            }
-            //            else
-            //            {
-            //                gameChip.DrawPixels(pixels, x, y, _width, _height, false, false, drawMode);
-            //            }
+            
         }
 
 

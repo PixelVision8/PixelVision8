@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;

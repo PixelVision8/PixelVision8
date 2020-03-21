@@ -74,7 +74,7 @@ namespace PixelVision8.Engine.Chips
         {
             //TODO this is not used in the chip and is here for the color tool.
             get => _maxColors == -1 ? colors.Length : _maxColors;
-            set => _maxColors = MathHelper.Clamp(value, 2, 256);
+            set => _maxColors = value == -1 ? -1 : MathHelper.Clamp(value, 2, 256);
         }
 
 
