@@ -19,6 +19,7 @@
 //
 
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Loaders;
 using PixelVision8.Runner.Services;
@@ -60,7 +61,21 @@ namespace PixelVision8.Runner.Utils
                 script = _workspace.ReadTextFromFile(sharedLibPaths[i].AppendFile(file));
 
                 if (!string.IsNullOrEmpty(script))
+                {
+
+                    // Replace math operators
+                    var pattern = @"(\S+)\s*([+\-*/%])\s*=";
+                    var replacement = "$1 = $1 $2 ";
+                    script = Regex.Replace(script, pattern, replacement, RegexOptions.Multiline);
+
+                    // Replace != conditions
+                    pattern = @"!\s*=";
+                    replacement = "~=";
+                    script = Regex.Replace(script, pattern, replacement, RegexOptions.Multiline);
+
                     return script;
+                }
+                    
             }
 
             _workspace.UpdateLog($"Could not load '{file}' file because it is either missing or empty.", LogType.Warning);
