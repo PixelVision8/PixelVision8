@@ -220,7 +220,7 @@ namespace MoonSharp.VsCodeDebugger
 				SpawnThread("VsCodeDebugServer_" + m_Port.ToString(), () => ListenThread(serverSocket));
 
 				m_Started = true;
-
+				 
 				return this;
 			}
 		}
