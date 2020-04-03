@@ -29,7 +29,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\AbstractData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Canvas.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\DrawRequest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Keys.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\SpriteCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\RawAudioData.cs" />

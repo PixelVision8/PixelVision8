@@ -237,16 +237,16 @@ function KeyPressCheck()
         Fullscreen(not Fullscreen())
         InvalidateKeys()
     else
-        if(Key(Keys.Alpha1)) then
+        if(Key(Keys.D1)) then
             Scale(1)
             InvalidateKeys()
-        elseif(Key(Keys.Alpha2)) then
+        elseif(Key(Keys.D2)) then
             Scale(2)
             InvalidateKeys()
-        elseif(Key(Keys.Alpha3)) then
+        elseif(Key(Keys.D3)) then
             Scale(3)
             InvalidateKeys()
-        elseif(Key(Keys.Alpha4)) then
+        elseif(Key(Keys.D4)) then
             Scale(4)
             InvalidateKeys()
         elseif(Key(Keys.LeftShift) or Key(Keys.RightShift)) then

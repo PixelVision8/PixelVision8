@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using MoonSharp.Interpreter;
 using PixelVision8.Engine.Audio;
 using PixelVision8.Runner;

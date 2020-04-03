@@ -445,102 +445,11 @@ namespace PixelVision8.Engine.Chips
 
         public bool JustPressed(Keys key)
         {
-            var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
+            var tmpKey = (Keys) (int) key;
 
             return currentKeyboardState.IsKeyDown(tmpKey) && !previousKeyboardState.IsKeyDown(tmpKey);
         }
 
-        // private string GetChar(Keys key, bool caps, bool num, bool shift)
-        // {
-        //
-        //     if (key.ToString().Length == 1) // TODO: Optmize by checking if its in range instead
-        //     {
-        //         if (shift || caps) return key.ToString();
-        //
-        //         return key.ToString().ToLower();
-        //     }
-        //
-        //     switch (key)
-        //     {
-        //         case Keys.Space:
-        //             return " ";
-        //         case Keys.Tilde:
-        //             return shift ? "~" : "`";
-        //         case Keys.Alpha1:
-        //             return shift ? "!" : "1";
-        //         case Keys.Alpha2:
-        //             return shift ? "@" : "2";
-        //         case Keys.Alpha3:
-        //             return shift ? "#" : "3";
-        //         case Keys.Alpha4:
-        //             return shift ? "$" : "4";
-        //         case Keys.Alpha5:
-        //             return shift ? "%" : "5";
-        //         case Keys.Alpha6:
-        //             return shift ? "^" : "6";
-        //         case Keys.Alpha7:
-        //             return shift ? "&" : "7";
-        //         case Keys.Alpha8:
-        //             return shift ? "*" : "8";
-        //         case Keys.Alpha9:
-        //             return shift ? "(" : "9";
-        //         case Keys.Alpha0:
-        //             return shift ? ")" : "0";
-        //         case Keys.Minus:
-        //             return shift ? "_" : "-";
-        //         case Keys.Plus:
-        //             return shift ? "+" : "=";
-        //         case Keys.OpenBrackets:
-        //             return shift ? "{" : "[";
-        //         case Keys.CloseBrackets:
-        //             return shift ? "}" : "]";
-        //         case Keys.Semicolon:
-        //             return shift ? ":" : ";";
-        //         case Keys.Pipe:
-        //             return shift ? "|" : "\\";
-        //         case Keys.Quotes:
-        //             return shift ? "\"" : "'";
-        //         case Keys.Backslash:
-        //             return shift ? "|" : "\\";
-        //         case Keys.Comma:
-        //             return shift ? "<" : ",";
-        //         case Keys.Period:
-        //             return shift ? ">" : ".";
-        //         case Keys.Question:
-        //             return shift ? "?" : "/";
-        //         case Keys.NumPad0:
-        //             return num ? "0" : "";
-        //         case Keys.NumPad1:
-        //             return num ? "1" : "";
-        //         case Keys.NumPad2:
-        //             return num ? "2" : "";
-        //         case Keys.NumPad3:
-        //             return num ? "3" : "";
-        //         case Keys.NumPad4:
-        //             return num ? "4" : "";
-        //         case Keys.NumPad5:
-        //             return num ? "5" : "";
-        //         case Keys.NumPad6:
-        //             return num ? "6" : "";
-        //         case Keys.NumPad7:
-        //             return num ? "7" : "";
-        //         case Keys.NumPad8:
-        //             return num ? "8" : "";
-        //         case Keys.NumPad9:
-        //             return num ? "9" : "";
-        //         case Keys.Add:
-        //             return "+";
-        //         case Keys.Divide:
-        //             return "/";
-        //         case Keys.Multiply:
-        //             return "*";
-        //         case Keys.Decimal:
-        //             return num ? "." : "";
-        //     }
-        //
-        //     return string.Empty;
-        // }
-        
         private class Controller
         {
             //            public int GamePadIndex;

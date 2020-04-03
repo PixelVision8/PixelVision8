@@ -23,12 +23,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Input;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Services;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Utils;
+using Buttons = PixelVision8.Engine.Chips.Buttons;
 
 namespace PixelVision8.Runner
 {
@@ -91,8 +93,8 @@ namespace PixelVision8.Runner
             {InputMap.Player2DownKey, (int) Keys.K},
             {InputMap.Player2RightKey, (int) Keys.L},
             {InputMap.Player2LeftKey, (int) Keys.J},
-            {InputMap.Player2SelectKey, (int) Keys.Semicolon},
-            {InputMap.Player2StartKey, (int) Keys.Comma},
+            {InputMap.Player2SelectKey, (int) Keys.OemSemicolon},
+            {InputMap.Player2StartKey, (int) Keys.OemComma},
             {InputMap.Player2AKey, (int) Keys.Enter},
             {InputMap.Player2BKey, (int) Keys.RightShift},
             {InputMap.Player2UpButton, (int) Buttons.Up},
