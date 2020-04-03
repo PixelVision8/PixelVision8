@@ -65,7 +65,7 @@ namespace PixelVision8.Runner
 
         public bool autoRunEnabled = true;
         public bool backKeyEnabled = true;
-        protected IControllerChip controllerChip;
+        // protected IControllerChip controllerChip;
         protected string documentsPath;
         protected bool mountingDisk;
         protected bool ejectingDisk;
@@ -189,32 +189,32 @@ namespace PixelVision8.Runner
 
             // Define PV8 disk extensions from the bios
             workspaceServicePlus.archiveExtensions =
-                bios.ReadBiosData("ArchiveExtensions", "zip,pv8,pvt,pvs,pva,pvr").Split(',')
+                bios.ReadBiosData("ArchiveExtensions", "zip,pv8,pvt,pvs,pva,pvr", true).Split(',')
                     .ToList();
 
             //  Define the valid file extensions from the bios
             workspaceServicePlus.fileExtensions =
-                bios.ReadBiosData("FileExtensions", "png,lua,json,txt,wav").Split(',')
+                bios.ReadBiosData("FileExtensions", "png,lua,json,txt,wav", true).Split(',')
                     .ToList();
 
             // Define the files required to make a game valid from the bios
             workspaceServicePlus.requiredFiles =
-                bios.ReadBiosData("RequiredFiles", "data.json,info.json").Split(',')
+                bios.ReadBiosData("RequiredFiles", "data.json,info.json", true).Split(',')
                     .ToList();
 
             // Include any library files in the OS mount point
             workspaceServicePlus.osLibPath = WorkspacePath.Root.AppendDirectory("PixelVisionOS")
-                .AppendDirectory(bios.ReadBiosData("LibsDir", "Libs"));
+                .AppendDirectory(bios.ReadBiosData("LibsDir", "Libs", true));
 
 
             // Look for the workspace name
-            var workspaceName = bios.ReadBiosData("WorkspaceDir", "Workspace");
+            var workspaceName = bios.ReadBiosData("WorkspaceDir", "Workspace", true);
 
             // PV8 Needs to access the documents folder so it can create the workspace drive
-            var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8");
+            var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8", true);
 
             // Set the TotalDisks disks
-            workspaceServicePlus.MaxDisks = int.Parse(bios.ReadBiosData("MaxDisks", "2"));
+            workspaceServicePlus.MaxDisks = int.Parse(bios.ReadBiosData("MaxDisks", "2", true));
 
             // Create the real system path to the documents folder
             documentsPath = Path.Combine(Documents, baseDir);
@@ -236,9 +236,6 @@ namespace PixelVision8.Runner
         {
             // At this point this game is fully configured so all chips are accessible for extra configuring
 
-            // Save a reference to the controller chip so we can listen for special key events
-            controllerChip = engine.ControllerChip;
-
             if (mode == RunnerMode.Loading)
             {
                 ((LuaGameChip)engine.GameChip).LuaScript.Globals["DebuggerAttached"] = new Func<bool>(AwaitDebuggerAttach);
@@ -247,8 +244,10 @@ namespace PixelVision8.Runner
             // Activate the game
             base.ActivateEngine(engine);
 
-
         }
+        
+
+        
 
         public override void BaseActivateEngine(IEngine engine)
         {
@@ -525,7 +524,7 @@ namespace PixelVision8.Runner
             }
 
             // We only activate this if there is not bios setting to disable it
-            if (bios.ReadBiosData("FileDiskMounting", "True") != "False")
+            if (bios.ReadBiosData("FileDiskMounting", "True", true) != "False")
             {
                 // Setup Drag and drop support
                 Window.FileDropped += (o, e) => OnFileDropped(o, e);
@@ -535,13 +534,13 @@ namespace PixelVision8.Runner
 
                 for (var i = 0; i < workspaceServicePlus.MaxDisks; i++)
                 {
-                    var diskPath = bios.ReadBiosData("Disk" + i, "none");
+                    var diskPath = bios.ReadBiosData("Disk" + i, "none", true);
                     if (diskPath != "none" && diskPath != "")
                         // manually mount each disk since we are not going to load from them
                         workspaceServicePlus.MountDisk(diskPath);
                 }
             }
-
+            
             AutoLoadDefaultGame();
         }
         public override void DisplayWarning(string message)

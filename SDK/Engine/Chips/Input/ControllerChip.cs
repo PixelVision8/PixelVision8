@@ -94,8 +94,23 @@ namespace PixelVision8.Engine.Chips
 
         private Keys? repChar;
 
+        public void SetInputText(char character, Microsoft.Xna.Framework.Input.Keys key)
+        {
+            var value = Convert.ToInt32(character);
+
+            if (value > 31 && value != 127 && value < 169) // TODO we don't support all the characters to need to define a limit
+            {
+                inputStringBuilder.Append(character);
+            }
+                
+        }
+
+
         public void Update(int timeDelta)
         {
+            // Build the input string
+            // inputStringBuilder.Clear();
+
             // Save the one and only (if available) keyboardstate 
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
@@ -116,29 +131,29 @@ namespace PixelVision8.Engine.Chips
                 }
             }
 
-            // Build the input string
-            inputStringBuilder.Clear();
-
-            foreach (var key in (Keys[]) Enum.GetValues(typeof(Keys)))
+            foreach (var key in currentKeyboardState.GetPressedKeys())
             {
-                if (JustPressed(key))
+
+                var pv8Key = (Keys) (int) key;
+
+                if (JustPressed(pv8Key))
                 {
                     
                     downSince = DateTime.Now;
-                    repChar = key;
+                    repChar = pv8Key;
 
-                    BuildInputString(key);
+                    // BuildInputString(pv8Key);
                     
                 }
-                else if (GetKeyUp(key))
+                else if (GetKeyUp(pv8Key))
                 {
                     
-                    if (repChar == key) repChar = null;
+                    if (repChar == pv8Key) repChar = null;
 
                 }
 
                 var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
-                if (repChar != null && repChar == key && currentKeyboardState.IsKeyDown(tmpKey))
+                if (repChar != null && repChar == pv8Key && currentKeyboardState.IsKeyDown(tmpKey))
                 {
                     var now = DateTime.Now;
                     var downFor = now.Subtract(downSince);
@@ -150,7 +165,7 @@ namespace PixelVision8.Engine.Chips
                         {
                             // Time for another key-stroke.
                             lastRep = now;
-                            BuildInputString(key);
+                            // BuildInputString(pv8Key);
                         }
                     }
                 }
@@ -160,7 +175,13 @@ namespace PixelVision8.Engine.Chips
 
         public string ReadInputString()
         {
-            return inputStringBuilder.ToString(); //throw new NotImplementedException();
+            // Get the text value of the string builder
+            var text = inputStringBuilder.ToString();
+
+            // Clear the string builder
+            inputStringBuilder.Clear();
+
+            return text;
         }
 
         public bool GetKeyDown(Keys key)
@@ -338,12 +359,12 @@ namespace PixelVision8.Engine.Chips
             engine.ControllerChip = null;
         }
 
-        private void BuildInputString(Keys key)
-        {
-            inputStringBuilder.Append(GetChar(key, currentKeyboardState.CapsLock, currentKeyboardState.NumLock,
-                currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) ||
-                currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift)));
-        }
+        // private void BuildInputString(Keys key)
+        // {
+        //     inputStringBuilder.Append(GetChar(key, currentKeyboardState.CapsLock, currentKeyboardState.NumLock,
+        //         currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) ||
+        //         currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift)));
+        // }
 
         private Controller getPlayer(int index)
         {
@@ -429,95 +450,96 @@ namespace PixelVision8.Engine.Chips
             return currentKeyboardState.IsKeyDown(tmpKey) && !previousKeyboardState.IsKeyDown(tmpKey);
         }
 
-        private string GetChar(Keys key, bool caps, bool num, bool shift)
-        {
-            if (key.ToString().Length == 1) // TODO: Optmize by checking if its in range instead
-            {
-                if (shift || caps) return key.ToString();
-
-                return key.ToString().ToLower();
-            }
-
-            switch (key)
-            {
-                case Keys.Space:
-                    return " ";
-                case Keys.Tilde:
-                    return shift ? "~" : "`";
-                case Keys.Alpha1:
-                    return shift ? "!" : "1";
-                case Keys.Alpha2:
-                    return shift ? "@" : "2";
-                case Keys.Alpha3:
-                    return shift ? "#" : "3";
-                case Keys.Alpha4:
-                    return shift ? "$" : "4";
-                case Keys.Alpha5:
-                    return shift ? "%" : "5";
-                case Keys.Alpha6:
-                    return shift ? "^" : "6";
-                case Keys.Alpha7:
-                    return shift ? "&" : "7";
-                case Keys.Alpha8:
-                    return shift ? "*" : "8";
-                case Keys.Alpha9:
-                    return shift ? "(" : "9";
-                case Keys.Alpha0:
-                    return shift ? ")" : "0";
-                case Keys.Minus:
-                    return shift ? "_" : "-";
-                case Keys.Plus:
-                    return shift ? "+" : "=";
-                case Keys.OpenBrackets:
-                    return shift ? "{" : "[";
-                case Keys.CloseBrackets:
-                    return shift ? "}" : "]";
-                case Keys.Semicolon:
-                    return shift ? ":" : ";";
-                case Keys.Pipe:
-                    return shift ? "|" : "\\";
-                case Keys.Quotes:
-                    return shift ? "\"" : "'";
-                case Keys.Backslash:
-                    return shift ? "|" : "\\";
-                case Keys.Comma:
-                    return shift ? "<" : ",";
-                case Keys.Period:
-                    return shift ? ">" : ".";
-                case Keys.Question:
-                    return shift ? "?" : "/";
-                case Keys.NumPad0:
-                    return num ? "0" : "";
-                case Keys.NumPad1:
-                    return num ? "1" : "";
-                case Keys.NumPad2:
-                    return num ? "2" : "";
-                case Keys.NumPad3:
-                    return num ? "3" : "";
-                case Keys.NumPad4:
-                    return num ? "4" : "";
-                case Keys.NumPad5:
-                    return num ? "5" : "";
-                case Keys.NumPad6:
-                    return num ? "6" : "";
-                case Keys.NumPad7:
-                    return num ? "7" : "";
-                case Keys.NumPad8:
-                    return num ? "8" : "";
-                case Keys.NumPad9:
-                    return num ? "9" : "";
-                case Keys.Add:
-                    return "+";
-                case Keys.Divide:
-                    return "/";
-                case Keys.Multiply:
-                    return "*";
-                case Keys.Decimal:
-                    return num ? "." : "";
-            }
-
-            return string.Empty;
-        }
+        // private string GetChar(Keys key, bool caps, bool num, bool shift)
+        // {
+        //
+        //     if (key.ToString().Length == 1) // TODO: Optmize by checking if its in range instead
+        //     {
+        //         if (shift || caps) return key.ToString();
+        //
+        //         return key.ToString().ToLower();
+        //     }
+        //
+        //     switch (key)
+        //     {
+        //         case Keys.Space:
+        //             return " ";
+        //         case Keys.Tilde:
+        //             return shift ? "~" : "`";
+        //         case Keys.Alpha1:
+        //             return shift ? "!" : "1";
+        //         case Keys.Alpha2:
+        //             return shift ? "@" : "2";
+        //         case Keys.Alpha3:
+        //             return shift ? "#" : "3";
+        //         case Keys.Alpha4:
+        //             return shift ? "$" : "4";
+        //         case Keys.Alpha5:
+        //             return shift ? "%" : "5";
+        //         case Keys.Alpha6:
+        //             return shift ? "^" : "6";
+        //         case Keys.Alpha7:
+        //             return shift ? "&" : "7";
+        //         case Keys.Alpha8:
+        //             return shift ? "*" : "8";
+        //         case Keys.Alpha9:
+        //             return shift ? "(" : "9";
+        //         case Keys.Alpha0:
+        //             return shift ? ")" : "0";
+        //         case Keys.Minus:
+        //             return shift ? "_" : "-";
+        //         case Keys.Plus:
+        //             return shift ? "+" : "=";
+        //         case Keys.OpenBrackets:
+        //             return shift ? "{" : "[";
+        //         case Keys.CloseBrackets:
+        //             return shift ? "}" : "]";
+        //         case Keys.Semicolon:
+        //             return shift ? ":" : ";";
+        //         case Keys.Pipe:
+        //             return shift ? "|" : "\\";
+        //         case Keys.Quotes:
+        //             return shift ? "\"" : "'";
+        //         case Keys.Backslash:
+        //             return shift ? "|" : "\\";
+        //         case Keys.Comma:
+        //             return shift ? "<" : ",";
+        //         case Keys.Period:
+        //             return shift ? ">" : ".";
+        //         case Keys.Question:
+        //             return shift ? "?" : "/";
+        //         case Keys.NumPad0:
+        //             return num ? "0" : "";
+        //         case Keys.NumPad1:
+        //             return num ? "1" : "";
+        //         case Keys.NumPad2:
+        //             return num ? "2" : "";
+        //         case Keys.NumPad3:
+        //             return num ? "3" : "";
+        //         case Keys.NumPad4:
+        //             return num ? "4" : "";
+        //         case Keys.NumPad5:
+        //             return num ? "5" : "";
+        //         case Keys.NumPad6:
+        //             return num ? "6" : "";
+        //         case Keys.NumPad7:
+        //             return num ? "7" : "";
+        //         case Keys.NumPad8:
+        //             return num ? "8" : "";
+        //         case Keys.NumPad9:
+        //             return num ? "9" : "";
+        //         case Keys.Add:
+        //             return "+";
+        //         case Keys.Divide:
+        //             return "/";
+        //         case Keys.Multiply:
+        //             return "*";
+        //         case Keys.Decimal:
+        //             return num ? "." : "";
+        //     }
+        //
+        //     return string.Empty;
+        // }
         
         private class Controller
         {

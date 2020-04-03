@@ -49,7 +49,7 @@ namespace PixelVision8.Runner
     public class DesktopRunner : GameRunner
     {
         // Store the path to the game's files
-        //        private IControllerChip controllerChip;
+        protected IControllerChip controllerChip;
         public BiosService bios;
         protected WorkspacePath biosPath = WorkspacePath.Root.AppendDirectory("App").AppendFile("bios.json");
 
@@ -107,20 +107,23 @@ namespace PixelVision8.Runner
             // Save the session ID
             SessionId = DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
-            SystemVersion = bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
-            systemName = bios.ReadBiosData("SystemName", "PixelVision8");
+            SystemVersion = bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0", true);
+            systemName = bios.ReadBiosData("SystemName", "PixelVision8", true);
 
             base.ConfigureRunner();
 
             // TODO This may be a string
             Volume(MathHelper.Clamp(
-                Convert.ToInt32(bios.ReadBiosData(BiosSettings.Volume.ToString(), "40")),
+                Convert.ToInt32(bios.ReadBiosData(BiosSettings.Volume.ToString(), "40", true)),
                 0, 100));
 
-            Mute(Convert.ToBoolean(bios.ReadBiosData(BiosSettings.Mute.ToString(), "False")));
+            Mute(Convert.ToBoolean(bios.ReadBiosData(BiosSettings.Mute.ToString(), "False", true)));
 
             Window.Title =
-                bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner");
+                bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner", true);
+
+            // Capture text input from the window
+            Window.TextInput += OnTextInput;
         }
 
         public override void CreateLoadService()
@@ -133,11 +136,19 @@ namespace PixelVision8.Runner
 
         public override void ActivateEngine(IEngine engine)
         {
-            
+
+            // Save a reference to the controller chip so we can listen for special key events
+            controllerChip = engine.ControllerChip;
+
             // Activate the game
             BaseActivateEngine(engine);
-
             
+        }
+
+        protected void OnTextInput(object sender, TextInputEventArgs e)
+        {
+            // Pass this to the input chip            
+            controllerChip.SetInputText(e.Character, e.Key);
         }
 
         public virtual void BaseActivateEngine(IEngine engine)
@@ -206,7 +217,7 @@ namespace PixelVision8.Runner
                     }
                     
                     // Get the default path to the load tool from the bios
-                    path = bios.ReadBiosData("LoadTool", "/PixelVisionOS/Tools/LoadTool/");
+                    path = bios.ReadBiosData("LoadTool", "/PixelVisionOS/Tools/LoadTool/", true);
 
                     // Change the mode to loading
                     newMode = RunnerMode.Loading;
