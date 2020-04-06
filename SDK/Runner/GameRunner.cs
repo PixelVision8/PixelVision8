@@ -127,7 +127,7 @@ namespace PixelVision8.Runner
 
         protected bool resolutionInvalid = true;
 
-        protected IServiceLocator serviceManager;
+        public IServiceLocator ServiceManager { get; protected set; }
 
         //        protected bool stretchScreen;
         protected int timeDelta;
@@ -141,7 +141,7 @@ namespace PixelVision8.Runner
 
             graphics = new GraphicsDeviceManager(this);
 
-            serviceManager = new ServiceManager();
+            ServiceManager = new ServiceManager();
             //            IsFixedTimeStep = true;
         }
 
@@ -503,7 +503,7 @@ namespace PixelVision8.Runner
 
         public IEngine CreateNewEngine(List<string> chips)
         {
-            return new PixelVisionEngine(serviceManager, chips.ToArray());
+            return new PixelVisionEngine(ServiceManager, chips.ToArray());
         }
 
         public virtual void ConfigureServices()

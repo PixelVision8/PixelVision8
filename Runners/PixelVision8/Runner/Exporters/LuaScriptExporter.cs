@@ -44,7 +44,7 @@ namespace PixelVision8
             }
         }
 
-        public LuaScriptExporter(string scriptName, string outputFileName, LuaServicePlus luaService) : base(outputFileName)
+        public LuaScriptExporter(string scriptName, string outputFileName, LuaServicePlus luaService, string[] args = null) : base(outputFileName)
         {
 
             LuaScript.DoFile(scriptName);
@@ -52,9 +52,11 @@ namespace PixelVision8
             // Add all of the core File System APIs to the scrip
             luaService.ConfigureScript(LuaScript);
 
+            LuaScript.Globals["args"] = args.Clone();
             LuaScript.Globals["AddStep"] = new Action<string>(AddStep);
             LuaScript.Globals["SetStringAsData"] = new Action<string>(SetStringAsData);
             LuaScript.Globals["SetImageAsData"] = new Action<Image, string>(SetImageAsData);
+
         }
 
         public override void CalculateSteps()

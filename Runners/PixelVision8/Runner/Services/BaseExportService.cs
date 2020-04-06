@@ -194,6 +194,11 @@ namespace PixelVision8.Runner.Services
             totalSteps = 0;
         }
 
+        public virtual void Cancel()
+        {
+            currentStep = totalSteps;
+        }
+
         #endregion
     }
 }

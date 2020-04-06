@@ -20,6 +20,7 @@
 
 using System.Collections.Generic;
 using PixelVision8.Engine;
+using PixelVision8.Engine.Services;
 
 namespace PixelVision8.Runner
 {
@@ -37,5 +38,7 @@ namespace PixelVision8.Runner
         void DebugLayers(bool value);
         void ToggleLayers(int value);
         void ResetGame();
+        IServiceLocator ServiceManager { get;}
+
     }
 }

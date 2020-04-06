@@ -178,7 +178,7 @@ namespace PixelVision8.Runner
             // Pass the new service back to the base class
             workspaceService = workspaceServicePlus;
 
-            serviceManager.AddService(typeof(WorkspaceService).FullName, workspaceService);
+            ServiceManager.AddService(typeof(WorkspaceService).FullName, workspaceService);
         }
 
         protected override void ConfigureWorkspace()
@@ -710,7 +710,7 @@ namespace PixelVision8.Runner
             {
                 if (_editor == null)
                 {
-                    _editor = new GameEditor(this, serviceManager);
+                    _editor = new GameEditor(this, ServiceManager);
                 }
 
                 return _editor;
@@ -866,7 +866,7 @@ namespace PixelVision8.Runner
 
             base.ConfigureServices();
 
-            serviceManager.AddService(typeof(GameDataExportService).FullName, ExportService);
+            ServiceManager.AddService(typeof(GameDataExportService).FullName, ExportService);
         }
 
         public override void CreateLuaService()
@@ -878,7 +878,7 @@ namespace PixelVision8.Runner
             luaService = new LuaServicePlus(this);
 
             // Register Lua Service
-            serviceManager.AddService(typeof(LuaService).FullName, luaService);
+            ServiceManager.AddService(typeof(LuaService).FullName, luaService);
         }
 
         public void OnFileDropped(object gameWindow, string path)

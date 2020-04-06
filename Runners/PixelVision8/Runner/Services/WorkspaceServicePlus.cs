@@ -63,6 +63,7 @@ namespace PixelVision8.Runner.Services
             Mounts.Add(
                 new KeyValuePair<WorkspacePath, IFileSystem>(WorkspacePath.Root.AppendDirectory("Workspace"),
                     workspaceDisk));
+            
         }
 
         public void RebuildWorkspace()

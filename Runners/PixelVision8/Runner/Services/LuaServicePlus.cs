@@ -72,6 +72,9 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["GetEntitiesRecursive"] = new Func<WorkspacePath, List<WorkspacePath>>(path =>
                 workspace.GetEntitiesRecursive(path).ToList());
 
+            luaScript.Globals["ExportScript"] = new Func<string, string , string[], bool>(ExportScript);
+            luaScript.Globals["CancelExport"] = new Action(CancelExport);
+            
             luaScript.Globals["PlayWav"] = new Action<WorkspacePath>(PlayWav);
             luaScript.Globals["StopWav"] = new Action(StopWav);
 
@@ -129,6 +132,46 @@ namespace PixelVision8.Runner.Services
                 }
 
                 currentSound.Play();
+            }
+        }
+
+        public bool ExportScript(string scriptName, string outputFileName, string[] args = null)
+        {
+
+            try
+            {
+                // filePath = UniqueFilePath(filePath.AppendFile("pattern+" + id + ".wav"));
+
+                // TODO exporting sprites doesn't work
+                if (runner.ServiceManager.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
+                {
+                    exportService.Restart();
+
+                    exportService.AddExporter(new LuaScriptExporter(scriptName, outputFileName, this, args));
+                    //
+                    exportService.StartExport();
+
+                    return true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                // TODO this needs to go through the error system?
+                Console.WriteLine(e);
+
+            }
+
+            return false;
+
+        }
+
+        public void CancelExport()
+        {
+            if (runner.ServiceManager.GetService(typeof(GameDataExportService).FullName) is GameDataExportService
+                exportService)
+            {
+                exportService.Cancel();
             }
         }
 

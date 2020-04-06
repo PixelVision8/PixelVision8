@@ -556,7 +556,7 @@ namespace PixelVision8.Runner
                 WorkspacePath.Root.AppendDirectory("App"),
                 new PhysicalFileSystem(rootPath)));
 
-            serviceManager.AddService(typeof(WorkspaceService).FullName, workspaceService);
+            ServiceManager.AddService(typeof(WorkspaceService).FullName, workspaceService);
         }
 
         /// <summary>
@@ -650,7 +650,7 @@ namespace PixelVision8.Runner
             luaService = new LuaService(this);
 
             // Register Lua Service
-            serviceManager.AddService(typeof(LuaService).FullName, luaService);
+            ServiceManager.AddService(typeof(LuaService).FullName, luaService);
         }
 
         /// <summary>

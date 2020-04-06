@@ -210,8 +210,9 @@ namespace PixelVision8.Engine.Chips
             {
                 if (time >= nextBeatTimestamp)
                 {
-                    nextBeatTimestamp = time + (SequencerBeatNumber % 2 == 1 ? noteTickSOdd : noteTickSEven);
+                    nextBeatTimestamp = noteTickSOdd;//(SequencerBeatNumber % 2 == 1 ?  : noteTickSEven);
                     OnBeat();
+                    time = 0;
                 }
 
                 // If song is playing, update songData values
@@ -426,7 +427,7 @@ namespace PixelVision8.Engine.Chips
 
         public void UpdateNoteTickLengths()
         {
-            noteTickS = 30.0f / ActiveTrackerData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
+            noteTickS = 45.0f / ActiveTrackerData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
             noteTickSOdd = noteTickS * swingRhythmFactor; // small beat
             noteTickSEven = noteTickS * 2 - noteTickSOdd; // long beat
         }
