@@ -39,6 +39,12 @@ namespace PixelVision8.Engine.Chips
         None
     }
 
+    public enum ScrollDirection
+    {
+        Vertical,
+        Horizontal
+    }
+
     public enum InputMap
     {
         Player1UpKey,
@@ -448,9 +454,15 @@ namespace PixelVision8.Engine.Chips
                     return state.LeftButton == ButtonState.Pressed;
                 case 1:
                     return state.RightButton == ButtonState.Pressed;
+                case 2:
+                    return state.MiddleButton == ButtonState.Pressed;
+                case 3:
+                    return state.XButton1 == ButtonState.Pressed;
+                case 4:
+                    return state.XButton2 == ButtonState.Pressed;
+                default:
+                    return false;
             }
-
-            return false;
         }
 
         public bool JustPressed(Keys key)
@@ -611,6 +623,18 @@ namespace PixelVision8.Engine.Chips
             return new Point(pos.X, pos.Y);
         }
 
+        public int ReadMouseWheel(ScrollDirection direction = ScrollDirection.Vertical)
+        {
+            switch (direction)
+            {
+                case ScrollDirection.Vertical:
+                    return currentMouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue;
+                case ScrollDirection.Horizontal:
+                    return currentMouseState.HorizontalScrollWheelValue - previousMouseState.HorizontalScrollWheelValue;
+                default:
+                    return 0;
+            }
+        }
 
         //        public void ConvertMousePosition(Vector pos)
         //        {

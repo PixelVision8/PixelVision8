@@ -1243,6 +1243,24 @@ namespace PixelVision8.Engine.Chips
         }
 
         /// <summary>
+        ///     The MouseWheel() method returns an int for how far the scroll wheel has moved since the last frame.
+        ///     This value is read-only. Generally speaking, one "tick" of the scroll wheel is 120.
+        ///     The returned value is positive for up, and negative for down.
+        /// </summary>
+        /// <param name="direction">
+        ///     Optional ScrollDirection enum. Uses ScrollDirection.Vertical by default.
+        ///     Determines whether to detect vertical or horizontal scrolling.
+        /// </param>
+        /// <returns>
+        ///     Returns an int for how far the scroll wheel has moved since the last frame.
+        /// </returns>
+        /// 
+        public int MouseWheel(ScrollDirection direction = ScrollDirection.Vertical)
+        {
+            return controllerChip.ReadMouseWheel(direction);
+        }
+
+        /// <summary>
         ///     The InputString() method returns the keyboard input entered this frame. This method is
         ///     useful for capturing keyboard text input.
         /// </summary>

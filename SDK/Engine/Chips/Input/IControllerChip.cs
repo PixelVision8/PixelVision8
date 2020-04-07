@@ -32,6 +32,7 @@ namespace PixelVision8.Engine
         string ReadInputString();
         bool GetMouseButtonUp(int button);
         bool GetMouseButtonDown(int button);
+        int ReadMouseWheel(ScrollDirection direction);
         bool GetKeyUp(Keys key);
         bool GetKeyDown(Keys key);
         void MouseScale(float x, float y);
