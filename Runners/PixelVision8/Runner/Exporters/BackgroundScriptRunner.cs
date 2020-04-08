@@ -29,7 +29,7 @@ using PixelVision8.Runner.Services;
 
 namespace PixelVision8
 {
-    class LuaScriptExporter : AbstractExporter
+    class BackgroundScriptRunner : AbstractExporter
     {
         protected Script _luaScript;
         protected List<string> stepQueue = new List<string>();
@@ -44,7 +44,7 @@ namespace PixelVision8
             }
         }
 
-        public LuaScriptExporter(string scriptName, string outputFileName, LuaServicePlus luaService, string[] args = null) : base(outputFileName)
+        public BackgroundScriptRunner(string scriptName, LuaServicePlus luaService, string[] args = null) : base(null)
         {
 
             LuaScript.DoFile(scriptName);

@@ -825,7 +825,7 @@ namespace PixelVision8.Runner.Editors
             workspace.ExportPattern(path, musicChip, soundChip, id);
         }
 
-        public bool ExportScript(string scriptName, string outputFileName)
+        public bool RunBackgroundScript(string scriptName, string[] args = null)
         {
 
             try
@@ -837,7 +837,7 @@ namespace PixelVision8.Runner.Editors
                 {
                     exportService.Restart();
 
-                    exportService.AddExporter(new LuaScriptExporter(scriptName, outputFileName, serviceManager.GetService(typeof(LuaService).FullName) as LuaServicePlus));
+                    exportService.AddExporter(new BackgroundScriptRunner(scriptName, serviceManager.GetService(typeof(LuaService).FullName) as LuaServicePlus, args));
                     //
                     exportService.StartExport();
 

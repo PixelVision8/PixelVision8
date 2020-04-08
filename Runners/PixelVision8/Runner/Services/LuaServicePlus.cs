@@ -72,7 +72,7 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["GetEntitiesRecursive"] = new Func<WorkspacePath, List<WorkspacePath>>(path =>
                 workspace.GetEntitiesRecursive(path).ToList());
 
-            luaScript.Globals["ExportScript"] = new Func<string, string , string[], bool>(ExportScript);
+            luaScript.Globals["RunBackgroundScript"] = new Func<string, string[], bool>(RunBackgroundScript);
             luaScript.Globals["CancelExport"] = new Action(CancelExport);
             
             luaScript.Globals["PlayWav"] = new Action<WorkspacePath>(PlayWav);
@@ -135,7 +135,7 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        public bool ExportScript(string scriptName, string outputFileName, string[] args = null)
+        public bool RunBackgroundScript(string scriptName, string[] args = null)
         {
 
             try
@@ -147,7 +147,7 @@ namespace PixelVision8.Runner.Services
                 {
                     exportService.Restart();
 
-                    exportService.AddExporter(new LuaScriptExporter(scriptName, outputFileName, this, args));
+                    exportService.AddExporter(new BackgroundScriptRunner(scriptName, this, args));
                     //
                     exportService.StartExport();
 
