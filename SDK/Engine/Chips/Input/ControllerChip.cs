@@ -91,7 +91,7 @@ namespace PixelVision8.Engine.Chips
 
         private Keys? repChar;
 
-        public void SetInputText(char character, Microsoft.Xna.Framework.Input.Keys key)
+        public void SetInputText(char character, Keys key)
         {
             var value = Convert.ToInt32(character);
 

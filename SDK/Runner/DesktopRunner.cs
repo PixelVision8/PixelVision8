@@ -68,6 +68,7 @@ namespace PixelVision8.Runner
         protected delegate bool EnableCRTDelegator(bool? toggle);
         protected delegate float BrightnessDelegator(float? brightness = null);
         protected delegate float SharpnessDelegator(float? sharpness = null);
+        protected IControllerChip controllerChip;
 
         /// <summary>
         ///     This constructor saves the path to the game's files and kicks off the base constructor
@@ -81,6 +82,12 @@ namespace PixelVision8.Runner
         public DesktopRunner()
         {
             throw new NotImplementedException();
+        }
+
+        protected void OnTextInput(object sender, TextInputEventArgs e)
+        {
+            // Pass this to the input chip            
+            controllerChip.SetInputText(e.Character, e.Key);
         }
 
         protected WorkspacePath userBiosPath => WorkspacePath.Parse("/Storage/user-bios.json");
@@ -124,6 +131,9 @@ namespace PixelVision8.Runner
 
             Window.Title =
                 bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner");
+
+            // Capture text input from the window
+            Window.TextInput += OnTextInput;
         }
 
         public override void CreateLoadService()
@@ -162,6 +172,9 @@ namespace PixelVision8.Runner
             //            luaScript.Globals["NewWorkspacePath"] = new Func<string, WorkspacePath>(WorkspacePath.Parse);
 
             //            UserData.RegisterType<WorkspacePath>();
+
+            // Save a reference to the controller chip so we can listen for special key events
+            controllerChip = engine.controllerChip;
 
             // Activate the game
             base.ActivateEngine(engine);

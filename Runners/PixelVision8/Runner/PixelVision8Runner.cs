@@ -72,7 +72,7 @@ namespace PixelVision8.Runner
         
         protected bool screenShotActive;
 
-        protected float screenshotDelay = .2f;
+        protected float screenshotDelay = 200f;
 
 //        private MergedFileSystem osFileSystem;
         private ScreenshotService screenshotService;
@@ -450,6 +450,7 @@ namespace PixelVision8.Runner
 
                     if (recording) gifEncoder.AddFrame(activeEngine.displayChip);
                 }
+
             }
             catch (Exception e)
             {
