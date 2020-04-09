@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using MoonSharp.Interpreter;
 using PixelVision8.Engine.Audio;
 using PixelVision8.Runner;

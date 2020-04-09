@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Audio;
 using PixelVision8.Engine.Chips;
@@ -35,6 +36,7 @@ using PixelVision8.Runner.Importers;
 using PixelVision8.Runner.Parsers;
 using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Workspace;
+using Buttons = PixelVision8.Engine.Chips.Buttons;
 
 namespace PixelVision8.Runner.Editors
 {

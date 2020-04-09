@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using GifEncoder;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using MoonSharp.Interpreter;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
@@ -50,9 +51,9 @@ namespace PixelVision8.Runner
         {
             // TODO need to add the other action keys here so they are mapped in the bios
             {ActionKeys.BackKey, Keys.Escape},
-            {ActionKeys.ScreenShotKey, Keys.Alpha2},
-            {ActionKeys.RecordKey, Keys.Alpha3},
-            {ActionKeys.RestartKey, Keys.Alpha4}
+            {ActionKeys.ScreenShotKey, Keys.D2},
+            {ActionKeys.RecordKey, Keys.D3},
+            {ActionKeys.RestartKey, Keys.D4}
         };
 
         private readonly List<AnimatedGifEncoder> gifEncoders = new List<AnimatedGifEncoder>();
@@ -402,19 +403,19 @@ namespace PixelVision8.Runner
             }
             else
             {
-                if (controllerChip.GetKeyUp(Keys.Alpha1))
+                if (controllerChip.GetKeyUp(Keys.D1))
                     ToggleLayers(2);
-                else if (controllerChip.GetKeyUp(Keys.Alpha2))
+                else if (controllerChip.GetKeyUp(Keys.D2))
                     ToggleLayers(3);
-                else if (controllerChip.GetKeyUp(Keys.Alpha3))
+                else if (controllerChip.GetKeyUp(Keys.D3))
                     ToggleLayers(4);
-                else if (controllerChip.GetKeyUp(Keys.Alpha4))
+                else if (controllerChip.GetKeyUp(Keys.D4))
                     ToggleLayers(5);
-                else if (controllerChip.GetKeyUp(Keys.Alpha5))
+                else if (controllerChip.GetKeyUp(Keys.D5))
                     ToggleLayers(6);
-                else if (controllerChip.GetKeyUp(Keys.Alpha6))
+                else if (controllerChip.GetKeyUp(Keys.D6))
                     ToggleLayers(7);
-                else if (controllerChip.GetKeyUp(Keys.Alpha0)) ToggleLayers(Enum.GetNames(typeof(DrawMode)).Length);
+                else if (controllerChip.GetKeyUp(Keys.D7)) ToggleLayers(Enum.GetNames(typeof(DrawMode)).Length);
             }
 
             // Capture Script errors

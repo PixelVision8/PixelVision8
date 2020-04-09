@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Services;
@@ -117,7 +118,7 @@ namespace PixelVision8.Runner
 
             if (controllerChip.GetKeyDown(Keys.LeftControl) ||
                 controllerChip.GetKeyDown(Keys.LeftControl))
-                if (controllerChip.GetKeyUp(Keys.R) || controllerChip.GetKeyUp(Keys.Alpha4))
+                if (controllerChip.GetKeyUp(Keys.R) || controllerChip.GetKeyUp(Keys.D4))
                     ResetGame();
         }
 

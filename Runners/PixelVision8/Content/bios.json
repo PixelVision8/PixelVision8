@@ -4,11 +4,12 @@
 	"Resolution": "512x480",
 	"BootTool": "/PixelVisionOS/System/Tools/BootTool/",
 	"LoadTool": "/PixelVisionOS/System/Tools/LoadTool/",
+	"UnloadTool": "/PixelVisionOS/System/Tools/UnloadTool/",
 	"ErrorTool": "/PixelVisionOS/System/Tools/ErrorTool/",
-	"AutoRun": "/PixelVisionOS/System/OSInstaller/",
+	"AutoRun": "/PixelVisionOS/System/Tools/WorkspaceTool/",
 
 	"SystemName": "Pixel Vision 8",
-	"SystemVersion": "v0.9.7",
+	"SystemVersion": "v0.9.7+",
 	"FileDiskMounting": "True",
 
 	"NoAutoRun":
@@ -17,8 +18,4 @@
 	"Exception": "@{error}\nPress Ctrl + 4 to reload the current game.",
 	"LoadError": "There was an issue loading from '@{path}'.",
 	"Warning": "@{error}"
-
-
-
-
 }

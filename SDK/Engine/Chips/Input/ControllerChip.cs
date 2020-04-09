@@ -24,9 +24,6 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-//using Microsoft.Xna.Framework.Input;
-//using Keys = PixelVisionSDK.Keys;
-
 namespace PixelVision8.Engine.Chips
 {
     public enum MouseInput
@@ -83,11 +80,6 @@ namespace PixelVision8.Engine.Chips
         private readonly StringBuilder inputStringBuilder = new StringBuilder();
         private readonly float timeUntilRepInMillis = 500f;
 
-        //        private Array inputValues;
-        //        private Array mouseValues;
-        //        private List<int> gamepadIndices = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7 };
-        //        private const int KEYBOARD_INDEX = -1;
-        //        private const int MOUSE_INDEX = -2;
         public KeyboardState currentKeyboardState;
         public MouseState currentMouseState;
         private DateTime downSince = DateTime.Now;
@@ -99,8 +91,23 @@ namespace PixelVision8.Engine.Chips
 
         private Keys? repChar;
 
+        public void SetInputText(char character, Microsoft.Xna.Framework.Input.Keys key)
+        {
+            var value = Convert.ToInt32(character);
+
+            if (value > 31 && value != 127 && value < 169) // TODO we don't support all the characters to need to define a limit
+            {
+                inputStringBuilder.Append(character);
+            }
+
+        }
+
+
         public void Update(int timeDelta)
         {
+            // Build the input string
+            // inputStringBuilder.Clear();
+
             // Save the one and only (if available) keyboardstate 
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
@@ -121,35 +128,29 @@ namespace PixelVision8.Engine.Chips
                 }
             }
 
-            // Build the input string
-            inputStringBuilder.Clear();
-
-            foreach (var key in (Keys[]) Enum.GetValues(typeof(Keys)))
+            foreach (var key in currentKeyboardState.GetPressedKeys())
             {
-                if (JustPressed(key))
+
+                var pv8Key = (Keys)(int)key;
+
+                if (JustPressed(pv8Key))
                 {
-                    //                    KeyDown?.Invoke(null, new KeyEventArgs(key), keyState);
-                    //                    if (KeyPressed != null)
-                    //                    {
+
                     downSince = DateTime.Now;
-                    repChar = key;
+                    repChar = pv8Key;
 
-                    BuildInputString(key);
-                    //                        KeyPressed(null, new KeyEventArgs(key), keyState);
-                    //                    }
+                    // BuildInputString(pv8Key);
+
                 }
-                else if (GetKeyUp(key))
+                else if (GetKeyUp(pv8Key))
                 {
-                    //                    if (KeyUp != null)
-                    //                    {
-                    if (repChar == key) repChar = null;
 
-                    //                        KeyUp(null, new KeyEventArgs(key), keyState);
-                    //                    }
+                    if (repChar == pv8Key) repChar = null;
+
                 }
 
-                var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
-                if (repChar != null && repChar == key && currentKeyboardState.IsKeyDown(tmpKey))
+                var tmpKey = (Microsoft.Xna.Framework.Input.Keys)(int)key;
+                if (repChar != null && repChar == pv8Key && currentKeyboardState.IsKeyDown(tmpKey))
                 {
                     var now = DateTime.Now;
                     var downFor = now.Subtract(downSince);
@@ -160,35 +161,36 @@ namespace PixelVision8.Engine.Chips
                         if (repeatSince.CompareTo(TimeSpan.FromMilliseconds(1000f / repsPerSec)) > 0)
                         {
                             // Time for another key-stroke.
-                            //                            if (KeyPressed != null)
-                            //                            {
                             lastRep = now;
-                            BuildInputString(key);
-                            //                                KeyPressed(null, new KeyEventArgs(key), keyState);
-                            //                            }
+                            // BuildInputString(pv8Key);
                         }
                     }
                 }
             }
 
-            //            base.Update(gameTime);
         }
 
         public string ReadInputString()
         {
-            return inputStringBuilder.ToString(); //throw new NotImplementedException();
+            // Get the text value of the string builder
+            var text = inputStringBuilder.ToString();
+
+            // Clear the string builder
+            inputStringBuilder.Clear();
+
+            return text;
         }
 
         public bool GetKeyDown(Keys key)
         {
-            var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
+            var tmpKey = (Microsoft.Xna.Framework.Input.Keys)(int)key;
 
             return currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey);
         }
 
         public bool GetKeyUp(Keys key)
         {
-            var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
+            var tmpKey = (Microsoft.Xna.Framework.Input.Keys)(int)key;
 
             return !currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey);
         }
@@ -207,7 +209,7 @@ namespace PixelVision8.Engine.Chips
             {
                 Keys key = player.KeyboardMap.TryGetValue(button, out key) ? key : default;
 
-                var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
+                var tmpKey = (Microsoft.Xna.Framework.Input.Keys)(int)key;
 
                 // Test the keyboard or the controller
                 value = !currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey) ||
@@ -227,7 +229,7 @@ namespace PixelVision8.Engine.Chips
             {
                 Keys key = player.KeyboardMap.TryGetValue(button, out key) ? key : default;
 
-                var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
+                var tmpKey = (Microsoft.Xna.Framework.Input.Keys)(int)key;
 
                 // Test the keyboard or the controller
                 value = currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey) ||
@@ -246,9 +248,6 @@ namespace PixelVision8.Engine.Chips
             var player1 = getPlayer(0);
 
             var test = engine.GetMetadata(InputMap.Player1UpKey.ToString());
-            //            Console.WriteLine("Key test up - "+test + " - " + InputMap.Player1UpKey.ToString());
-            //(Keys) Enum.Parse(typeof(Keys), 
-            //            player1.GamePadIndex = KEYBOARD_INDEX;
 
             try
             {
@@ -314,11 +313,6 @@ namespace PixelVision8.Engine.Chips
                 throw;
             }
         }
-        //        public void UpdateControllerKey(int controllerID, PixelVisionSDK.ButtonState state)
-        //        {
-        //            
-        //            //throw new NotImplementedException();
-        //        }
 
         public void RegisterControllers()
         {
@@ -338,15 +332,11 @@ namespace PixelVision8.Engine.Chips
                 player2.CurrentState = state;
             }
         }
-        //        public float DeadzoneSticks = 0.25f;
-        //        public float DeadzoneTriggers = 0.25f;
-        //        public int PlayerCount = 1;
 
         public override void Configure()
         {
             engine.controllerChip = this;
 
-            //            inputValues = Enum.GetValues(typeof(Buttons));
             players = new List<Controller>
             {
                 new Controller(),
@@ -358,9 +348,6 @@ namespace PixelVision8.Engine.Chips
             currentMouseState = Mouse.GetState();
             previousMouseState = currentMouseState;
 
-            //            RegisterKeyInput();
-            //            RegisterControllers();
-            //            FindNewGamepads();
         }
 
         public override void Deactivate()
@@ -369,12 +356,12 @@ namespace PixelVision8.Engine.Chips
             engine.controllerChip = null;
         }
 
-        private void BuildInputString(Keys key)
-        {
-            inputStringBuilder.Append(GetChar(key, currentKeyboardState.CapsLock, currentKeyboardState.NumLock,
-                currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) ||
-                currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift)));
-        }
+        // private void BuildInputString(Keys key)
+        // {
+        //     inputStringBuilder.Append(GetChar(key, currentKeyboardState.CapsLock, currentKeyboardState.NumLock,
+        //         currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) ||
+        //         currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift)));
+        // }
 
         private Controller getPlayer(int index)
         {
@@ -407,34 +394,34 @@ namespace PixelVision8.Engine.Chips
                     return state.Buttons.A == ButtonState.Pressed;
                 case Buttons.B:
                     return state.Buttons.B == ButtonState.Pressed;
-                //                case Buttons.LeftShoulder:
-                //                    return state.Buttons.LeftShoulder == ButtonState.Pressed;
-                //                case Buttons.RightShoulder:
-                //                    return state.Buttons.RightShoulder == ButtonState.Pressed;
-                //                case Buttons.LeftTrigger:
-                //                    return state.Triggers.Left > DeadzoneTriggers;
-                //                case Buttons.RightTrigger:
-                //                    return state.Triggers.Right > DeadzoneTriggers;
-                //                case Buttons.LeftStick:
-                //                    return state.Buttons.LeftStick == ButtonState.Pressed;
-                //                case Buttons.LeftStickUp:
-                //                    return state.ThumbSticks.Left.Y > DeadzoneSticks;
-                //                case Buttons.LeftStickLeft:
-                //                    return state.ThumbSticks.Left.X < -DeadzoneSticks;
-                //                case Buttons.LeftStickDown:
-                //                    return state.ThumbSticks.Left.Y < -DeadzoneSticks;
-                //                case Buttons.LeftStickRight:
-                //                    return state.ThumbSticks.Left.X > DeadzoneSticks;
-                //                case Buttons.RightStick:
-                //                    return state.Buttons.RightStick == ButtonState.Pressed;
-                //                case Buttons.RightStickUp:
-                //                    return state.ThumbSticks.Right.Y > DeadzoneSticks;
-                //                case Buttons.RightStickLeft:
-                //                    return state.ThumbSticks.Right.X < -DeadzoneSticks;
-                //                case Buttons.RightStickDown:
-                //                    return state.ThumbSticks.Right.Y < -DeadzoneSticks;
-                //                case Buttons.RightStickRight:
-                //                    return state.ThumbSticks.Right.X > DeadzoneSticks;
+                    //                case Buttons.LeftShoulder:
+                    //                    return state.Buttons.LeftShoulder == ButtonState.Pressed;
+                    //                case Buttons.RightShoulder:
+                    //                    return state.Buttons.RightShoulder == ButtonState.Pressed;
+                    //                case Buttons.LeftTrigger:
+                    //                    return state.Triggers.Left > DeadzoneTriggers;
+                    //                case Buttons.RightTrigger:
+                    //                    return state.Triggers.Right > DeadzoneTriggers;
+                    //                case Buttons.LeftStick:
+                    //                    return state.Buttons.LeftStick == ButtonState.Pressed;
+                    //                case Buttons.LeftStickUp:
+                    //                    return state.ThumbSticks.Left.Y > DeadzoneSticks;
+                    //                case Buttons.LeftStickLeft:
+                    //                    return state.ThumbSticks.Left.X < -DeadzoneSticks;
+                    //                case Buttons.LeftStickDown:
+                    //                    return state.ThumbSticks.Left.Y < -DeadzoneSticks;
+                    //                case Buttons.LeftStickRight:
+                    //                    return state.ThumbSticks.Left.X > DeadzoneSticks;
+                    //                case Buttons.RightStick:
+                    //                    return state.Buttons.RightStick == ButtonState.Pressed;
+                    //                case Buttons.RightStickUp:
+                    //                    return state.ThumbSticks.Right.Y > DeadzoneSticks;
+                    //                case Buttons.RightStickLeft:
+                    //                    return state.ThumbSticks.Right.X < -DeadzoneSticks;
+                    //                case Buttons.RightStickDown:
+                    //                    return state.ThumbSticks.Right.Y < -DeadzoneSticks;
+                    //                case Buttons.RightStickRight:
+                    //                    return state.ThumbSticks.Right.X > DeadzoneSticks;
             }
 
             return false;
@@ -455,125 +442,9 @@ namespace PixelVision8.Engine.Chips
 
         public bool JustPressed(Keys key)
         {
-            var tmpKey = (Microsoft.Xna.Framework.Input.Keys) (int) key;
+            var tmpKey = (Keys)(int)key;
 
             return currentKeyboardState.IsKeyDown(tmpKey) && !previousKeyboardState.IsKeyDown(tmpKey);
-        }
-
-        private string GetChar(Keys key, bool caps, bool num, bool shift)
-        {
-            if (key.ToString().Length == 1) // TODO: Optmize by checking if its in range instead
-            {
-                if (shift || caps)
-                    return key.ToString();
-
-                return key.ToString().ToLower();
-            }
-
-            switch (key)
-            {
-                case Keys.Space:
-                    return " ";
-                case Keys.Tilde:
-                    return shift ? "~" : "`";
-                case Keys.Alpha1:
-                    return shift ? "!" : "1";
-                case Keys.Alpha2:
-                    return shift ? "@" : "2";
-                case Keys.Alpha3:
-                    return shift ? "#" : "3";
-                case Keys.Alpha4:
-                    return shift ? "$" : "4";
-                case Keys.Alpha5:
-                    return shift ? "%" : "5";
-                case Keys.Alpha6:
-                    return shift ? "^" : "6";
-                case Keys.Alpha7:
-                    return shift ? "&" : "7";
-                case Keys.Alpha8:
-                    return shift ? "*" : "8";
-                case Keys.Alpha9:
-                    return shift ? "(" : "9";
-                case Keys.Alpha0:
-                    return shift ? ")" : "0";
-                case Keys.Minus:
-                    return shift ? "_" : "-";
-                case Keys.Plus:
-                    return shift ? "+" : "=";
-                case Keys.OpenBrackets:
-                    return shift ? "{" : "[";
-                case Keys.CloseBrackets:
-                    return shift ? "}" : "]";
-                case Keys.Semicolon:
-                    return shift ? ":" : ";";
-                case Keys.Pipe:
-                    return shift ? "|" : "\\";
-                case Keys.Quotes:
-                    return shift ? "\"" : "'";
-                case Keys.Backslash:
-                    return shift ? "|" : "\\";
-                case Keys.Comma:
-                    return shift ? "<" : ",";
-                case Keys.Period:
-                    return shift ? ">" : ".";
-                case Keys.Question:
-                    return shift ? "?" : "/";
-                case Keys.NumPad0:
-                    return num ? "0" : "";
-                case Keys.NumPad1:
-                    return num ? "1" : "";
-                case Keys.NumPad2:
-                    return num ? "2" : "";
-                case Keys.NumPad3:
-                    return num ? "3" : "";
-                case Keys.NumPad4:
-                    return num ? "4" : "";
-                case Keys.NumPad5:
-                    return num ? "5" : "";
-                case Keys.NumPad6:
-                    return num ? "6" : "";
-                case Keys.NumPad7:
-                    return num ? "7" : "";
-                case Keys.NumPad8:
-                    return num ? "8" : "";
-                case Keys.NumPad9:
-                    return num ? "9" : "";
-                case Keys.Add:
-                    return "+";
-                case Keys.Divide:
-                    return "/";
-                case Keys.Multiply:
-                    return "*";
-                case Keys.Decimal:
-                    return num ? "." : "";
-            }
-
-            return string.Empty;
-        }
-
-        public bool GetKey(int key)
-        {
-            return false; //throw new NotImplementedException();
-        }
-
-        public void InputMapping(string key, string value = null)
-        {
-            // TODO need to parse the type
-
-            // Remove player
-            key = key.Remove(0, "Player".Length);
-
-            var player = key.Substring(0, "Player2".Length);
-
-            //            getPlayer(0).KeyboardMap
-        }
-
-        public override void Shutdown()
-        {
-            //            Console.WriteLine("Save keys");
-
-            // TODO loop through all the keys and save them back to the bios
-            base.Shutdown();
         }
 
         private class Controller
@@ -584,7 +455,6 @@ namespace PixelVision8.Engine.Chips
 
             public GamePadState PreviousState;
 
-            //            public Dictionary<Buttons, MouseInput> MouseMap;
             public bool IsConnected()
             {
                 return CurrentState.IsConnected;
@@ -592,8 +462,6 @@ namespace PixelVision8.Engine.Chips
         }
 
         #region Mouse APIs
-
-        //        private bool mouseInputActive => mouseInput != null;
 
         public bool GetMouseButtonDown(int id = 0)
         {
@@ -611,31 +479,12 @@ namespace PixelVision8.Engine.Chips
             return new Point(pos.X, pos.Y);
         }
 
-
-        //        public void ConvertMousePosition(Vector pos)
-        //        {
-        //           
-        ////            var state = InputStates.CurrMouseState;
-        //            var newPoint = PointToScreen(new Point(pos.x, pos.y));
-        //            pos.x = newPoint.X;
-        //            pos.y = newPoint.Y;
-        //            
-        ////            return new Vector(pos.X, pos.Y);
-        //        }
-
         private Matrix scaleMatrix = Matrix.CreateScale(1, 1, 1);
 
         public void MouseScale(float x, float y)
         {
             scaleMatrix = Matrix.CreateScale(x, y, 1.0f);
         }
-
-        //        public Matrix GetScaleMatrix()
-        //        {
-        ////            var scaleX = (float)GraphicsDeviceManager.DefaultBackBufferWidth / (engine.displayChip.width - engine.displayChip.overscanXPixels);
-        ////            var scaleY = (float)GraphicsDeviceManager.DefaultBackBufferHeight/ (engine.displayChip.height - engine.displayChip.overscanYPixels);
-        //            return ;
-        //        }
 
         public Point PointToScreen(Point point)
         {
@@ -644,25 +493,11 @@ namespace PixelVision8.Engine.Chips
 
         public Point PointToScreen(int x, int y)
         {
-            //            var viewport = GraphicsDevice.Viewport;
-            var vx = x; // - viewport.X;
-            var vy = y; // - viewport.Y;
-            //            var scaleMatrix = GetScaleMatrix();
+            var vx = x;
+            var vy = y;
             var invertedMatrix = Matrix.Invert(scaleMatrix);
             return Vector2.Transform(new Vector2(vx, vy), invertedMatrix).ToPoint();
         }
-
-        //        private IMouseInput mouseInput;
-
-        //        public void RegisterMouseInput()
-        //        {
-        //            
-        ////            mouseValues = Enum.GetValues(typeof(MouseInput));
-        //
-        //            
-        //            
-        ////            mouseInput = target;
-        //        }
 
         #endregion
     }
