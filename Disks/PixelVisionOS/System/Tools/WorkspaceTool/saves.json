@@ -3,11 +3,11 @@
     "GameChip":
     {
         "savedData":{
-            "showUpgrade": "false",
-            "selection": "2",
+            "lastPath": "/Workspace/",
+            "sessionID": "202004111939290316",
             "scrollPos": "0",
-            "sessionID": "202004091352400543",
-            "lastPath": "/Disks/PixelVisionOS/"
+            "selection": "0",
+            "showUpgrade": "false"
         }
     }
 }

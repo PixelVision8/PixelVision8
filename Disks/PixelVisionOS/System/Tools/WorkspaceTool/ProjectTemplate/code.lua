@@ -16,7 +16,7 @@
   of fonts into the default.font.png. Use uppercase for larger characters and
   lowercase for a smaller one.
 ]]--
-local message = "EMPTY GAME\n\n\nThis is an empty game template.\n\n\nVisit 'pixelvision8.com' to learn more about creating games from scratch."
+local message = "EMPTY GAME\n\n\nThis is an empty game template.\n\n\nVisit 'www.pixelvision8.com' to learn more about creating games from scratch."
 
 --[[
   The Init() method is part of the game's lifecycle and called a game starts.
@@ -25,23 +25,23 @@ local message = "EMPTY GAME\n\n\nThis is an empty game template.\n\n\nVisit 'pix
 ]]--
 function Init()
 
-    -- Here we are manually changing the background color
-    BackgroundColor(0)
+  -- Here we are manually changing the background color
+  BackgroundColor(0)
 
-    local display = Display()
+  local display = Display()
 
-    -- We are going to render the message in a box as tiles. To do this, we
-    -- need to wrap the text, then split it into lines and draw each line.
-    local wrap = WordWrap(message, (display.x / 8) - 2)
-    local lines = SplitLines(wrap)
-    local total = #lines
-    local startY = ((display.y / 8) - 1) - total
+  -- We are going to render the message in a box as tiles. To do this, we
+  -- need to wrap the text, then split it into lines and draw each line.
+  local wrap = WordWrap(message, (display.x / 8) - 2)
+  local lines = SplitLines(wrap)
+  local total = #lines
+  local startY = ((display.y / 8) - 1) - total
 
-    -- We want to render the text from the bottom of the screen so we offset
-    -- it and loop backwards.
-    for i = total, 1, - 1 do
-        DrawText(lines[i], 1, startY + (i - 1), DrawMode.Tile, "large", 15)
-    end
+  -- We want to render the text from the bottom of the screen so we offset
+  -- it and loop backwards.
+  for i = total, 1, - 1 do
+    DrawText(lines[i], 1, startY + (i - 1), DrawMode.Tile, "large", 15)
+  end
 
 end
 
@@ -52,7 +52,7 @@ end
 ]]--
 function Update(timeDelta)
 
-    -- TODO add your own update logic here
+  -- TODO add your own update logic here
 
 end
 
@@ -63,10 +63,10 @@ end
 ]]--
 function Draw()
 
-    -- We can use the RedrawDisplay() method to clear the screen and redraw
-    -- the tilemap in a single call.
-    RedrawDisplay()
+  -- We can use the RedrawDisplay() method to clear the screen and redraw
+  -- the tilemap in a single call.
+  RedrawDisplay()
 
-    -- TODO add your own draw logic here.
+  -- TODO add your own draw logic here.
 
 end

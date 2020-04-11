@@ -91,7 +91,7 @@
       <Link>Content\LoadTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\Disks\PixelVision8System\*.*">
+    <Content Include="..\..\Disks\PixelVisionOS\System\Tools\WorkspaceTool\ProjectTemplate\*.*">
       <Link>Content\DefaultGame\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

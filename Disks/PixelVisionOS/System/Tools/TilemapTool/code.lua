@@ -93,7 +93,7 @@ function Init()
     newFileModal = NewFileModal:Init(editorUI)
     newFileModal.editorUI = editorUI
 
-    print(dump(ReadAllMetadata()))
+    -- print(dump(ReadAllMetadata()))
 
     rootDirectory = ReadMetadata("directory", nil)
 

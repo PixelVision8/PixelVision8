@@ -85,6 +85,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runner\Audio\SfxrMusicGeneratorChip.cs" />
     <Compile Include="Runner\Editors\GameEditor.cs" />
+    <Compile Include="Runner\Exporters\GifExporter.cs" />
     <Compile Include="Runner\Exporters\ColorPaletteExporter.cs" />
     <Compile Include="Runner\Exporters\FontExporter.cs" />
     <Compile Include="Runner\Exporters\IExport.cs" />
@@ -135,17 +136,17 @@
       <Link>Content\Effects\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  <!-- Core Runner Tools -->
+    <!-- Core Runner Tools -->
     <Content Include="..\..\Disks\RunnerTools\BootTool\*.*">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\%(FileName)%(Extension)</Link>
+      <Link>Content\PixelVisionOS\Tools\BootTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\..\Disks\RunnerTools\ErrorTool\*.*">
-      <Link>Content\PixelVisionOS\System\Tools\ErrorTool\%(FileName)%(Extension)</Link>
+      <Link>Content\PixelVisionOS\Tools\ErrorTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\..\Disks\RunnerTools\LoadTool\*.*">
-      <Link>Content\PixelVisionOS\System\Tools\LoadTool\%(FileName)%(Extension)</Link>
+      <Link>Content\PixelVisionOS\Tools\LoadTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

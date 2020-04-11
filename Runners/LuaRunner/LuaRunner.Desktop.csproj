@@ -73,12 +73,12 @@
       <LogicalName>Icon.icns</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\Disks\PixelVision8System\*.*">
-      <Link>Content\%(FileName)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+    <ItemGroup>
+      <Content Include="..\..\Disks\PixelVisionOS\System\Tools\WorkspaceTool\ProjectTemplate\*.*">
+        <Link>Content\%(FileName)%(Extension)</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
