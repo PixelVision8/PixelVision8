@@ -85,6 +85,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runner\Audio\SfxrMusicGeneratorChip.cs" />
     <Compile Include="Runner\Editors\GameEditor.cs" />
+    <Compile Include="Runner\Exporters\GifExporter.cs" />
     <Compile Include="Runner\Exporters\ColorPaletteExporter.cs" />
     <Compile Include="Runner\Exporters\DiskExporter.cs" />
     <Compile Include="Runner\Exporters\FontExporter.cs" />
@@ -114,11 +115,11 @@
     <Compile Include="Runner\Services\WorkspaceServicePlus.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="MoonSharp.Interpreter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=921e73ce94aa17f8, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\MoonSharp.2.0.0.0\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
+    <Reference Include="MoonSharp.Interpreter">
+      <HintPath>..\..\packages\MoonSharp.2.0.0.0\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
@@ -142,15 +143,15 @@
     </Content>
     <!-- Core Runner Tools -->
     <Content Include="..\..\Disks\RunnerTools\BootTool\*.*">
-      <Link>Content\PixelVisionOS\System\Tools\BootTool\%(FileName)%(Extension)</Link>
+      <Link>Content\PixelVisionOS\Tools\BootTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\..\Disks\RunnerTools\ErrorTool\*.*">
-      <Link>Content\PixelVisionOS\System\Tools\ErrorTool\%(FileName)%(Extension)</Link>
+      <Link>Content\PixelVisionOS\Tools\ErrorTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\..\Disks\RunnerTools\LoadTool\*.*">
-      <Link>Content\PixelVisionOS\System\Tools\LoadTool\%(FileName)%(Extension)</Link>
+      <Link>Content\PixelVisionOS\Tools\LoadTool\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

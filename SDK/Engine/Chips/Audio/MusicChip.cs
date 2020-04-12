@@ -211,6 +211,7 @@ namespace PixelVision8.Engine.Chips
                 if (time >= nextBeatTimestamp)
                 {
                     nextBeatTimestamp = noteTickSOdd;//(SequencerBeatNumber % 2 == 1 ?  : noteTickSEven);
+
                     OnBeat();
                     time = 0;
                 }

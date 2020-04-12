@@ -3,7 +3,6 @@
   "BaseDir" : "GameRunner",
   "SystemName": "PV8 Game Runner",
   "SystemVersion": "v0.9.8",
-
   "Resolution" : "512x480",
   "BootTool": "/App/BootTool/",
   "LoadTool": "/App/LoadTool/",

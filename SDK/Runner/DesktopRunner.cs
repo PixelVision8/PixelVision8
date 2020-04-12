@@ -1,16 +1,16 @@
-﻿//   
-// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
-//  
+﻿//
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.
+//
 // Licensed under the Microsoft Public License (MS-PL) except for a few
-// portions of the code. See LICENSE file in the project root for full 
-// license information. Third-party libraries used by Pixel Vision 8 are 
-// under their own licenses. Please refer to those libraries for details 
+// portions of the code. See LICENSE file in the project root for full
+// license information. Third-party libraries used by Pixel Vision 8 are
+// under their own licenses. Please refer to those libraries for details
 // on the license they use.
-// 
+//
 // Contributors
 // --------------------------------------------------------
 // This is the official list of Pixel Vision 8 contributors:
-//  
+//
 // Jesse Freeman - @JesseFreeman
 // Christina-Antoinette Neofotistou @CastPixel
 // Christer Kaitila - @McFunkypants
@@ -64,6 +64,10 @@ namespace PixelVision8.Runner
         public string SystemVersion;
         protected string tmpPath;
         public WorkspaceService workspaceService;
+        // protected delegate bool EnableCRTDelegator(bool? toggle);
+        // protected delegate float BrightnessDelegator(float? brightness = null);
+        // protected delegate float SharpnessDelegator(float? sharpness = null);
+        // protected IControllerChip controllerChip;
 
         /// <summary>
         ///     This constructor saves the path to the game's files and kicks off the base constructor
@@ -80,6 +84,12 @@ namespace PixelVision8.Runner
         }
 
         public string SessionId { get; protected set; }
+
+        // protected void OnTextInput(object sender, TextInputEventArgs e)
+        // {
+        //     // Pass this to the input chip
+        //     controllerChip.SetInputText(e.Character, e.Key);
+        // }
 
         protected WorkspacePath userBiosPath => WorkspacePath.Parse("/Storage/user-bios.json");
 
@@ -128,9 +138,9 @@ namespace PixelVision8.Runner
 
         public override void CreateLoadService()
         {
-            
+
             loadService = new LoadService(new WorkspaceFileLoadHelper(workspaceService));
-        
+
             Script.DefaultOptions.ScriptLoader = new ScriptLoaderUtil(workspaceService);
         }
 
@@ -142,12 +152,12 @@ namespace PixelVision8.Runner
 
             // Activate the game
             BaseActivateEngine(engine);
-            
+
         }
 
         protected void OnTextInput(object sender, TextInputEventArgs e)
         {
-            // Pass this to the input chip            
+            // Pass this to the input chip
             controllerChip.SetInputText(e.Character, e.Key);
         }
 
@@ -172,6 +182,11 @@ namespace PixelVision8.Runner
 
             // Make sure that the first frame is cleared with the default color
             ActiveEngine.GameChip.Clear();
+            // Save a reference to the controller chip so we can listen for special key events
+            controllerChip = engine.ControllerChip;
+
+            // Activate the game
+            base.ActivateEngine(engine);
         }
 
         //        protected void LoadDefaultGame()
@@ -215,7 +230,7 @@ namespace PixelVision8.Runner
                             }
                         }
                     }
-                    
+
                     // Get the default path to the load tool from the bios
                     path = bios.ReadBiosData("LoadTool", "/PixelVisionOS/Tools/LoadTool/", true);
 
@@ -344,7 +359,7 @@ namespace PixelVision8.Runner
                 luaScript.Globals["PreloaderComplete"] = new Action(RunGame);
                 luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int)(loadService.Percent * 100));
 
-            // }else 
+            // }else
             if (mode == RunnerMode.Booting)
             {
                 luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
@@ -355,7 +370,7 @@ namespace PixelVision8.Runner
                     new Func<string, Dictionary<string, string>, bool>((path, metadata) =>
                         Load(path, RunnerMode.Loading, metadata));
             }
-            
+
             // Global System APIs
             luaScript.Globals["EnableCRT"] = new Func<bool?, bool>(EnableCRT);
             luaScript.Globals["Brightness"] = new Func<float?, float>(Brightness);
@@ -574,7 +589,7 @@ namespace PixelVision8.Runner
             {
                 // Read the bios text
                 var biosText = workspaceService.ReadTextFromFile(biosPath);
-                //                
+                //
                 bios = new BiosService();
 
                 try
@@ -659,7 +674,7 @@ namespace PixelVision8.Runner
         protected virtual void LoadDefaultGame()
         {
             Load(bios.ReadBiosData("BootTool", "/PixelVisionOS/Tools/BootTool/"), RunnerMode.Booting);
-            
+
         }
 
         public virtual void SaveGameData(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
@@ -689,7 +704,7 @@ namespace PixelVision8.Runner
 
         public virtual void ShutdownSystem()
         {
-           
+
             // Shutdown the active game
             ShutdownActiveEngine();
 

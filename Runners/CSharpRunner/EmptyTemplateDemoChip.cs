@@ -25,7 +25,7 @@ namespace PixelVisionRunner.Games
     public class EmptyTemplateDemoChip : GameChip
     {
         private readonly string message =
-            "EMPTY GAME\n\n\nThis is an empty game template.\n\n\nVisit 'pixelvision8.com' to learn more about creating games from scratch.";
+            "EMPTY GAME\n\n\nThis is an empty game template.\n\n\nVisit 'www.pixelvision8.com' to learn more about creating games from scratch.";
 
         public override void Init()
         {

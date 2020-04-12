@@ -1,0 +1,12 @@
+{
+  "name": "SoundEditor",
+  "description": "",
+  "version": "v0.9.4",
+  "ext": ".pvt",
+  "gpuChip": "PV8",
+  "cartChip": "PV8",
+  "soundChip": "PV8",
+  "editType": "sounds",
+  "paletteMode": "false",
+
+}

@@ -39,7 +39,6 @@ namespace PixelVision8.Engine
         void MouseScale(float x, float y);
         void RegisterKeyInput();
         void RegisterControllers();
-
-        void SetInputText(char character, Microsoft.Xna.Framework.Input.Keys key);
+        void SetInputText(char character, Keys key);
     }
 }

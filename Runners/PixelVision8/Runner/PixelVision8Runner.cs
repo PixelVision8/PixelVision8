@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GifEncoder;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MoonSharp.Interpreter;
@@ -59,10 +58,10 @@ namespace PixelVision8.Runner
             {ActionKeys.RestartKey, Keys.D4}
         };
 
-        private readonly List<AnimatedGifEncoder> gifEncoders = new List<AnimatedGifEncoder>();
-
-        private readonly WorkspacePath tmpGifPath =
-            WorkspacePath.Root.AppendDirectory("Tmp").AppendFile("tmp-recording.gif");
+        // private readonly List<GifExporter> gifEncoders = new List<GifExporter>();
+        //
+        // private readonly WorkspacePath tmpGifPath =
+        //     WorkspacePath.Root.AppendDirectory("Tmp").AppendFile("tmp-recording.gif");
 
         public bool autoRunEnabled = true;
         public bool backKeyEnabled = true;
@@ -71,7 +70,7 @@ namespace PixelVision8.Runner
         protected bool mountingDisk;
         protected bool ejectingDisk;
 
-        protected AnimatedGifEncoder gifEncoder;
+        protected GifExporter gifEncoder;
 
 
         protected bool screenShotActive;
@@ -246,9 +245,9 @@ namespace PixelVision8.Runner
             base.ActivateEngine(engine);
 
         }
-        
 
-        
+
+
 
         public override void BaseActivateEngine(IEngine engine)
         {
@@ -373,46 +372,46 @@ namespace PixelVision8.Runner
             }
 
             // Save any gifs that have been encoded
-            if (gifEncoders.Count > 0)
-                for (var i = gifEncoders.Count - 1; i >= 0; i--)
-                {
-                    var encoder = gifEncoders[i];
-
-                    // Do processing here, then...
-                    if (encoder.exportingDone)
-                    {
-                        // Get the gif directory
-                        var gifDirectory = WorkspacePath.Root.AppendDirectory("Workspace")
-                            .AppendDirectory("Recordings");
-
-                        // Create the directory if it doesn't exist
-                        if (!workspaceService.Exists(gifDirectory))
-                            workspaceServicePlus.CreateDirectoryRecursive(gifDirectory);
-
-                        // Get the path to the new file
-                        var path = workspaceService.UniqueFilePath(gifDirectory.AppendFile("recording.gif"));
-
-                        // Create a new file in the workspace
-                        var fileStream = workspaceService.CreateFile(path);
-
-                        // Get the memory stream from the gif encoder
-                        var memoryStream = encoder.fs;
-
-                        memoryStream.Position = 0;
-                        memoryStream.CopyTo(fileStream);
-
-                        // Close the file stream
-                        fileStream.Close();
-                        fileStream.Dispose();
-
-                        // Close the memory stream
-                        memoryStream.Close();
-                        memoryStream.Dispose();
-
-                        // Remove the encoder
-                        gifEncoders.RemoveAt(i);
-                    }
-                }
+            // if (gifEncoders.Count > 0)
+            //     for (var i = gifEncoders.Count - 1; i >= 0; i--)
+            //     {
+            //         var encoder = gifEncoders[i];
+            //
+            //         // Do processing here, then...
+            //         if (encoder.ExportingFinished)
+            //         {
+            //             // Get the gif directory
+            //             var gifDirectory = WorkspacePath.Root.AppendDirectory("Workspace")
+            //                 .AppendDirectory("Recordings");
+            //
+            //             // Create the directory if it doesn't exist
+            //             if (!workspaceService.Exists(gifDirectory))
+            //                 workspaceServicePlus.CreateDirectoryRecursive(gifDirectory);
+            //
+            //             // Get the path to the new file
+            //             var path = workspaceService.UniqueFilePath(gifDirectory.AppendFile("recording.gif"));
+            //
+            //             // Create a new file in the workspace
+            //             var fileStream = workspaceService.CreateFile(path);
+            //
+            //             // Get the memory stream from the gif encoder
+            //             var memoryStream = new MemoryStream(encoder.bytes);
+            //
+            //             memoryStream.Position = 0;
+            //             memoryStream.CopyTo(fileStream);
+            //
+            //             // Close the file stream
+            //             fileStream.Close();
+            //             fileStream.Dispose();
+            //
+            //             // Close the memory stream
+            //             memoryStream.Close();
+            //             memoryStream.Dispose();
+            //
+            //             // Remove the encoder
+            //             gifEncoders.RemoveAt(i);
+            //         }
+            //     }
 
             if (controllerChip.GetKeyDown(Keys.LeftControl) ||
                 controllerChip.GetKeyDown(Keys.LeftControl))
@@ -489,7 +488,7 @@ namespace PixelVision8.Runner
                 {
                     base.Draw(gameTime);
 
-                    if (Recording) gifEncoder.AddFrame(ActiveEngine.DisplayChip);
+                    if (Recording) gifEncoder.AddFrame(timeDelta/1000f);
                 }
 
                 workspaceServicePlus.SaveLog();
@@ -541,7 +540,7 @@ namespace PixelVision8.Runner
                         workspaceServicePlus.MountDisk(diskPath);
                 }
             }
-            
+
             AutoLoadDefaultGame();
         }
         public override void DisplayWarning(string message)
@@ -1013,12 +1012,25 @@ namespace PixelVision8.Runner
             {
                 Recording = true;
 
-                if (workspaceService.Exists(tmpGifPath)) workspaceServicePlus.Delete(tmpGifPath);
+                // if (workspaceService.Exists(tmpGifPath)) workspaceServicePlus.Delete(tmpGifPath);
 
-                gifEncoder = new AnimatedGifEncoder();
-                gifEncoder.SetDelay(1000 / 60);
+                var gifDirectory = WorkspacePath.Root.AppendDirectory("Workspace")
+                    .AppendDirectory("Recordings");
 
-                gifEncoder.CreatePalette(ActiveEngine.DisplayChip, ActiveEngine.ColorChip);
+                // Create the directory if it doesn't exist
+                if (!workspaceService.Exists(gifDirectory))
+                    workspaceServicePlus.CreateDirectoryRecursive(gifDirectory);
+
+                // Get the path to the new file
+                var destPath = workspaceService.UniqueFilePath(gifDirectory.AppendFile("recording.gif"));
+
+                gifEncoder = new GifExporter(destPath.Path, ActiveEngine);
+
+                // gifEncoder.Start();
+                // gifEncoder = new AnimatedGifEncoder();
+                // gifEncoder.SetDelay(1000 / 60);
+                //
+                // gifEncoder.CreatePalette(activeEngine.displayChip, activeEngine.colorChip);
 
                 UpdateTitle();
             }
@@ -1035,13 +1047,18 @@ namespace PixelVision8.Runner
             if (!Recording || gifEncoder == null) return;
 
             Recording = false;
-            gifEncoder.Finish();
+
+            ExportService.Clear();
+            ExportService.AddExporter(gifEncoder);
+            ExportService.StartExport();
+
+            // gifEncoder.Finish();
 
             // Add the encoder to the list to watch for exporting
-            gifEncoders.Add(gifEncoder);
-
-            // Clear the current encoder
-            gifEncoder = null;
+            // gifEncoders.Add(gifEncoder);
+            //
+            // // Clear the current encoder
+            // gifEncoder = null;
 
             // Change the title
             UpdateTitle();

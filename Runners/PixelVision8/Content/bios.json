@@ -1,21 +1,16 @@
 {
-  "BaseDir": "PixelVision8",
-
-  "Resolution": "512x480",
-  "BootTool": "/PixelVisionOS/Tools/BootTool/",
-  "LoadTool": "/PixelVisionOS/Tools/LoadTool/",
-  "ErrorTool": "/PixelVisionOS/Tools/ErrorTool/",
-
-  "SystemName": "Pixel Vision 8",
-  "SystemVersion": "v0.9.8",
-  "FileDiskMounting": "True",
-
-  "NoAutoRun":
-    "Could not find an OS to boot. Insert a disk or restart in 'safe mode' by holding down the Shift key to reinstall Pixel Vision OS.",
-  "NoDefaultTool": "Could not find a default tool to load.",
-  "Exception": "@{error}\nPress Ctrl + 4 to reload the current game.",
-  "LoadError": "There was an issue loading from '@{path}'.",
-  "Warning": "@{error}"
-
-
+	"BaseDir": "PixelVision8",
+	"Resolution": "512x480",
+	"BootTool": "/PixelVisionOS/Tools/BootTool/",
+	"LoadTool": "/PixelVisionOS/Tools/LoadTool/",
+	"UnloadTool": "/PixelVisionOS/Tools/UnloadTool/",
+	"ErrorTool": "/PixelVisionOS/Tools/ErrorTool/",
+	"SystemName": "Pixel Vision 8",
+	"SystemVersion": "v0.9.8",
+	"FileDiskMounting": "True",
+	"NoAutoRun":"Could not find an OS to boot. Insert a disk or restart in 'safe mode' by holding down the Shift key to reinstall Pixel Vision OS.",
+	"NoDefaultTool": "Could not find a default tool to load.",
+	"Exception": "@{error}\nPress Ctrl + 4 to reload the current game.",
+	"LoadError": "There was an issue loading from '@{path}'.",
+	"Warning": "@{error}"
 }

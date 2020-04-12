@@ -75,7 +75,7 @@ namespace PixelVision8.Runner.Services
             var systemPaths = new List<IFileSystem>
             {
                 new SubFileSystem(this,
-                    WorkspacePath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS").AppendDirectory("System"))
+                    WorkspacePath.Root.AppendDirectory("App").AppendDirectory("PixelVisionOS"))
             };
 
             // Create a path to the workspace system folder

@@ -54,6 +54,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ColorMapParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ColorParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\FontParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\GifReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\IAbstractParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\IImageParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ImageParser.cs" />
@@ -70,17 +71,33 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LoadService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LogService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SaveFlags.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\AnimatedGifEncoder\GifEncoder\AnimatedGifEncoder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\AnimatedGifEncoder\GifEncoder\LZWEncoder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\AnimatedGifEncoder\GifEncoder\NeuQuant.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\FileLoadHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\JsonUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\MiniJSON.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\PNGUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\Data\GifFrame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\Data\Texture2D.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\Enums\DisposalMethod.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\Enums\MasterPalette.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\BitHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\Blocks\ApplicationExtension.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\Blocks\Block.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\Blocks\ColorTable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\Blocks\CommentExtension.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\Blocks\GraphicControlExtension.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\Blocks\ImageDescriptor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\Blocks\PlainTextExtension.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\ByteArrayComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\GifParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\LogicalScreenDescriptor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\LzwDecoder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\LzwEncoder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\TableBasedImageData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\TextureConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\TiledUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\ZLibStream\ZlibStream.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)Runner\Utils\AnimatedGifEncoder\LICENSE.txt" />
+    <Content Include="$(MSBuildThisFileDirectory)Runner\Utils\GifUtils\GifCore\spec-gif89a.txt" />
   </ItemGroup>
 </Project>

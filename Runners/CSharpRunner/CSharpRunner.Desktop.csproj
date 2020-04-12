@@ -73,50 +73,11 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\Disks\PixelVision8System\code.lua">
-      <Link>Content\code.lua</Link>
+    <Content Include="..\..\Disks\PixelVisionOS\System\Tools\WorkspaceTool\ProjectTemplate\*.*">
+      <Link>Content\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\Disks\PixelVision8System\colors.png">
-      <Link>Content\colors.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\PixelVision8System\data.json">
-      <Link>Content\data.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\PixelVision8System\info.json">
-      <Link>Content\info.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\PixelVision8System\large.font.png">
-      <Link>Content\large.font.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\PixelVision8System\medium.font.png">
-      <Link>Content\medium.font.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\PixelVision8System\music.json">
-      <Link>Content\music.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\PixelVision8System\small.font.png">
-      <Link>Content\small.font.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\PixelVision8System\sounds.json">
-      <Link>Content\sounds.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\PixelVision8System\sprites.png">
-      <Link>Content\sprites.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\PixelVision8System\tilemap.json">
-      <Link>Content\tilemap.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Remove="..\..\Disks\PixelVisionOS\System\Tools\WorkspaceTool\ProjectTemplate\code.lua"/>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
