@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9030D2E9-3B2C-47D9-8AF0-82874CB00C24}</ProjectGuid>
+    <ProjectGuid>{67DDBF2E-24FE-4DE0-9D94-4A1B7B198255}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GameRuner</RootNamespace>
