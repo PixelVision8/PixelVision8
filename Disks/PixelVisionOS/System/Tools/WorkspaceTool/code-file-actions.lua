@@ -12,10 +12,10 @@ extToTypeMap =
   wav = ".wav"
 }
 
--- Helper utility to delete files by moving them to the trash
+-- Helper utility to delete files by moving them to the throw out
 function WorkspaceTool:DeleteFile(path)
 
-  -- Create the base trash path for the file
+  -- Create the base throw out path for the file
   local newPath = self.trashPath
 
   -- See if this is a directory or a file and add the entity name
@@ -28,7 +28,7 @@ function WorkspaceTool:DeleteFile(path)
   -- Make sure the path is unique
   newPath = UniqueFilePath(newPath)
 
-  -- Move to the new trash path
+  -- Move to the new throw out path
   MoveTo(path, newPath)
 
 end
@@ -56,50 +56,61 @@ function WorkspaceTool:OnDeleteFile()
     -- Make sure the selected directory is included
     table.insert(self.filesToCopy, srcPath)
 
-    if(srcPath.IsDirectory) then
-
-      -- Add all of the files that need to be copied to the list
-      local childEntities = GetEntitiesRecursive(srcPath)
-
-      -- Loop through each of the children and add them to the list
-      for j = 1, #childEntities do
-        table.insert(self.filesToCopy, childEntities[i])
-      end
-
-    end
-
   end
 
-  print("Files", dump(self.filesToCopy))
+  -- print("Files", dump(self.filesToCopy))
 
-  -- Always make sure anything going into the trash has a unique file name
+  -- Always make sure anything going into the throw out has a unique file name
   self:StartFileOperation(self.trashPath, "throw out")
 
 end
 
 function WorkspaceTool:StartFileOperation(destPath, action)
 
-  -- Clear the path filter (used to change base path if there is a duplicate)
-  local fileActionPathFilter = nil
-
-  local fileActionSrc = self.currentPath
-
+  -- Test to see if the action is delete
   if(action == "delete") then
+
+    -- Go right into the file action
     self:OnRunFileAction(destPath, action)
-    -- invalidateTrashIcon = true
-    -- fileActionActive = true
+
+    -- Exit out of the function
     return
   end
 
-  -- Modify the destPath with the first item for testing
-  destPath = destPath.AppendPath(self.filesToCopy[1].Path:sub( #fileActionSrc.Path + 1))
+  -- Set a modal flag so we know what warning to display
+  local fileActionFlag = 0
 
-  if(action == "throw out") then
-    fileActionPathFilter = UniqueFilePath(destPath)
-    -- invalidateTrashIcon = true
-  end
+  -- TODO need to loop through all of the files do pre-check
+    for i = 1, #self.filesToCopy do
 
-  if(self.filesToCopy[1].IsChildOf(destPath)) then
+      -- Get the file to test
+      local filePath = self.filesToCopy[i]
+
+      -- Figure out the final path for the file
+      local finalDestPath = NewWorkspacePath(destPath.Path .. filePath.Path:sub(#self.currentPath.Path + 1))
+
+      -- Check to see if file is child of the destination path
+      if(filePath.IsChildOf(finalDestPath)) then
+        
+        -- Set flag to 1 for a child path error
+        fileActionFlag = 1
+        break
+
+      -- Test the final path only if it's not being moved to the throw out
+      elseif(PathExists(finalDestPath) and action ~= "throw out") then
+
+        -- Set flag to 2 for a douplicate file warning
+        fileActionFlag = 2
+
+        break
+
+      end
+
+    end
+
+    -- print("File Action Flag", fileActionFlag)
+
+  if(fileActionFlag == 1) then
 
     pixelVisionOS:ShowMessageModal(
       "Workspace Path Conflict",
@@ -108,36 +119,29 @@ function WorkspaceTool:StartFileOperation(destPath, action)
     )
     return
 
-  elseif(PathExists(destPath) and fileActionPathFilter == nil) then
+  elseif(fileActionFlag == 2) then
 
-    local duplicate = destPath.Path == self.filesToCopy[1].Path
+    -- local duplicate = destPath.Path == self.filesToCopy[1].Path
 
     -- Ask if the file first item should be duplicated
     pixelVisionOS:ShowMessageModal(
       "Workspace Path Conflict",
-      "Looks like there is an existing file with the same name in '".. destPath.Path .. "'. Do you want to " .. (duplicate and "duplicate" or "replace") .. " '"..destPath.EntityName.."'?",
+
+      -- TODO this should give you all 3 options (duplicate, replace, cancel)
+      "Looks like there is an existing file with the same name in '".. destPath.Path .. "'. Do you want to replace any duplicates?",-- .. (duplicate and "duplicate" or "replace") .. " '"..destPath.EntityName.."'?",
       200,
       true,
       function()
 
+        -- TODO there should be an option to duplicate or replace and cancel when the models are redesigned
+
         -- Only perform the copy if the user selects OK from the modal
         if(pixelVisionOS.messageModal.selectionValue) then
 
-          if(duplicate == true) then
+          -- Set the duplicate flag if we are throwing the files out
+          -- duplicate = action == "throw out"
 
-            fileActionPathFilter = UniqueFilePath(destPath)
-
-          else
-            -- print("Delete", destPath)
-            self:SafeDelete(destPath)
-          end
-          -- Start the file action process
-          -- fileActionActive = true
-          self:OnRunFileAction(destPath, action, fileActionPathFilter)
-
-        else
-          self:CancelFileActions()
-          self:RefreshWindow(true)
+          self:OnRunFileAction(destPath, action)
 
         end
 
@@ -158,7 +162,7 @@ function WorkspaceTool:StartFileOperation(destPath, action)
 
           -- Start the file action process
           -- fileActionActive = true
-          self:OnRunFileAction(destPath, action, fileActionPathFilter)
+          self:OnRunFileAction(destPath, action)
 
         else
           self:CancelFileActions()
@@ -172,19 +176,30 @@ function WorkspaceTool:StartFileOperation(destPath, action)
 
 end
 
-function WorkspaceTool:OnRunFileAction(destPath, action, fileActionPathFilter)
+function WorkspaceTool:OnRunFileAction(destPath, action, duplicate)
 
-  local args = { self.currentPath, destPath, action, fileActionPathFilter or "" }
+  -- If the duplicate flag is not set, test to see if this action is to move to the trash
+  duplicate = duplicate or action == "throw out"
 
-  for i = 1, #self.filesToCopy do
-    table.insert(args, self.filesToCopy[i].Path)
+  -- Replace the throw out action with move since this was only used to display a friendly action lable
+  if(action == "throw out") then
+    action = "move"
   end
 
-  print("args", dump(args))
+  -- Build the arguments
+  local args = { self.currentPath, destPath, action, duplicate}
+
+  for i = 1, #self.filesToCopy do
+
+    table.insert(args, self.filesToCopy[i])
+
+  end
+
+  -- print("args", dump(args))
 
   local success = RunBackgroundScript("code-process-file-actions.lua", args)
 
-  print("success", success)
+  -- print("success", success)
 
   if(success) then
 
@@ -211,7 +226,7 @@ end
 
 function WorkspaceTool:UpdateFileActionProgress(data)
 
-  print("UpdateFileActionProgress running", IsExporting())
+  -- print("UpdateFileActionProgress running", IsExporting())
 
   -- Check to see if exporting is done
   if(IsExporting() == false) then
@@ -419,7 +434,7 @@ function WorkspaceTool:CreateNewProject(name, path)
   end
 
   name = name or "Untitled"
-  path = UniqueFilePath((path or workspacePath).AppendDirectory(name))
+  path = UniqueFilePath((path or self.workspacePath).AppendDirectory(name))
 
   -- Copy the contents of the template path to the new unique path
   CopyTo(self.fileTemplatePath, path)
@@ -444,9 +459,9 @@ function WorkspaceTool:OnNewProject()
 
       if(newFileModal.selectionValue == true) then
 
-        local newPath = CreateNewProject(newFileModal.inputField.text, currentDirectory)
+        local newPath = self:CreateNewProject(newFileModal.inputField.text, self.currentPath)
 
-        RefreshWindow(true)
+        self:RefreshWindow(true)
 
         self:SelectFile(newPath)
       end
@@ -531,11 +546,11 @@ end
 
 function WorkspaceTool:OnEmptyTrash()
 
-  -- pixelVisionOS:ShowMessageModal("Empty Trash", "Are you sure you want to empty the trash? This can not be undone.", 160, true,
+  -- pixelVisionOS:ShowMessageModal("Empty Trash", "Are you sure you want to empty the throw out? This can not be undone.", 160, true,
   --     function()
   --         if(pixelVisionOS.messageModal.selectionValue == true) then
 
-  --             -- Get all the files in the trash
+  --             -- Get all the files in the throw out
   --             filesToCopy = GetEntitiesRecursive(trashPath)
 
   --             StartFileOperation(trashPath, "delete")

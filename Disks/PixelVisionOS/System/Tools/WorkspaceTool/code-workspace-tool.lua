@@ -16,7 +16,7 @@ function WorkspaceTool:Init()
   pixelVisionOS = PixelVisionOS:Init()
 
   -- Used for debugging
-  pixelVisionOS.displayFPS = true
+  -- pixelVisionOS.displayFPS = true
 
   -- Get a global reference to the Editor UI
   editorUI = pixelVisionOS.editorUI
