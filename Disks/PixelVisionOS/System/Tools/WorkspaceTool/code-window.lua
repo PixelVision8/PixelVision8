@@ -218,7 +218,7 @@ function WorkspaceTool:UpdateFileList()
     self.hiddenRows = self.totalRows - math.ceil(self.totalPerPage / self.totalPerColumn)
 
     -- Enable the scroll bar if needed
-    editorUI:Enable(self.vSliderData, self.fileCount > self.totalPerWindow)
+    editorUI:Enable(self.vSliderData, (self.fileCount - self.desktopIconCount) > self.totalPerWindow)
 
 end
 
@@ -354,6 +354,8 @@ function WorkspaceTool:OnWindowIconSelect(id)
     -- TODO test for shift or ctrl
 
     -- TODO need to clear all selected files
+
+    print("selection", id, self.desktopIconCount)
 
     local selections = self:CurrentlySelectedFiles()
   
@@ -990,47 +992,51 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
             -- Get the current entity
             tmpEntity = srcEntities[i]
 
-            -- Create the new file
-            local tmpFile = {
-                fullName = tmpEntity.EntityName,
-                isDirectory = tmpEntity.IsDirectory,
-                parentPath = tmpEntity.ParentPath,
-                path = tmpEntity,
-                selected = false,
-                ext = "",
-                type = "none"
-            }
+            print(tmpEntity.Path)
+            if(string.starts(tmpEntity.EntityName, ".") == false) then
+                -- Create the new file
+                local tmpFile = {
+                    fullName = tmpEntity.EntityName,
+                    isDirectory = tmpEntity.IsDirectory,
+                    parentPath = tmpEntity.ParentPath,
+                    path = tmpEntity,
+                    selected = false,
+                    ext = "",
+                    type = "none"
+                }
 
-            -- Split the file name by .
-            local nameSplit = string.split(tmpFile.fullName, ".")
+                -- Split the file name by .
+                local nameSplit = string.split(tmpFile.fullName, ".")
 
-            -- The file name is the first item in the array
-            tmpFile.name = nameSplit[1]
+                -- The file name is the first item in the array
+                tmpFile.name = nameSplit[1]
 
-            -- Check to see if this is a directory
-            if(tmpFile.isDirectory) then
+                -- Check to see if this is a directory
+                if(tmpFile.isDirectory) then
 
-                tmpFile.type = "folder"
+                    tmpFile.type = "folder"
 
-                -- Insert the table
-                table.insert(entities, tmpFile)
-
-            else
-
-                -- Get the entity's exenstion
-                tmpFile.ext = tmpEntity.GetExtension()
-
-                -- make sure that the extension is valid
-                if(table.indexOf(self.validFiles, tmpFile.ext) > - 1) then
-
-                    -- Remove the first item from the name split since it's already used as the name
-                    table.remove(nameSplit, 1)
-
-                    -- Join the nameSplit table with . to create the type
-                    tmpFile.type = table.concat(nameSplit, ".")
-
-                    -- Add theh entity
+                    -- Insert the table
                     table.insert(entities, tmpFile)
+
+                else
+
+                    -- Get the entity's exenstion
+                    tmpFile.ext = tmpEntity.GetExtension()
+
+                    -- make sure that the extension is valid
+                    if(table.indexOf(self.validFiles, tmpFile.ext) > - 1) then
+
+                        -- Remove the first item from the name split since it's already used as the name
+                        table.remove(nameSplit, 1)
+
+                        -- Join the nameSplit table with . to create the type
+                        tmpFile.type = table.concat(nameSplit, ".")
+
+                        -- Add theh entity
+                        table.insert(entities, tmpFile)
+                    end
+
                 end
 
             end

@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "debugServer" : 41912,
+    "configurations": [
+        {
+            "name": "PV8 Debugger Attach",
+            "type": "pv8-debug",
+            "request": "attach",
+            "debugServer": 1985
+        }
+    ]
+}

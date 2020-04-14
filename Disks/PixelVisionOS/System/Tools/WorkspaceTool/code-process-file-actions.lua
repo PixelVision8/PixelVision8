@@ -104,7 +104,7 @@ function OnFileActionNextStep()
 
         table.insert(fileCleanup, filePath)
 
-    end
+    end 
 
     fileActionCounter = fileActionCounter + 1
 

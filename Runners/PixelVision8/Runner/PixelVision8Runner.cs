@@ -246,9 +246,6 @@ namespace PixelVision8.Runner
 
         }
 
-
-
-
         public override void BaseActivateEngine(IEngine engine)
         {
             if (engine == null) return;

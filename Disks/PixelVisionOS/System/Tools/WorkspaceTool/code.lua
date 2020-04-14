@@ -136,6 +136,7 @@ function Init()
     -- Create new workspace tool instance
     workspaceTool = WorkspaceTool:Init()
 
+    -- pixelVisionOS:EnableClipboard(true)
 
     -- TODO legacy code
 

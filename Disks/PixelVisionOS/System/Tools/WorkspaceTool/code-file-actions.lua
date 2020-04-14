@@ -262,7 +262,7 @@ end
 
 function WorkspaceTool:CanCopy(file)
 
-  return (file.name ~= "Run" and file.type ~= "updirectory")
+  return (file.name ~= "Run" and file.type ~= "updirectory" and file.type ~= "trash" and file.type ~= "workspace")
 
 end
 
@@ -283,6 +283,50 @@ function WorkspaceTool:SafeDelete(srcPath)
 end
 
 function WorkspaceTool:OnCopy()
+
+  -- Get the current selections
+  local selections = self:CurrentlySelectedFiles()
+
+  -- Make sure there are selections
+  if(selections ~= nil) then
+
+    local clipboardData = {
+      type = "paths", 
+      value = {}
+    }
+
+    for i = 1, #selections do
+        
+      local tmpItem = self.files[selections[i]]
+
+      if(self:CanCopy(tmpItem)) then
+
+        table.insert(clipboardData.value, tmpItem.path)
+
+      end
+
+    end
+
+    if(#clipboardData.value > 0) then
+      
+      -- Save the cliboard data
+      pixelVisionOS:SystemCopy(clipboardData)
+
+      -- Toggle the paste menu itme to true so it can be used
+      pixelVisionOS:EnableMenuItemByName(PasteShortcut, true)
+
+      local total = #clipboardData.value
+
+      pixelVisionOS:DisplayMessage(total .. " file" .. (total == 1 and " has" or "s have") .." been copied.", 2)
+      
+      -- Exit out of the function so the paste menu isn't set back to false
+      return
+      
+    end
+
+    pixelVisionOS:EnableMenuItemByName(PasteShortcut, false)
+
+  end
 
   -- if(windowIconButtons ~= nil) then
 
@@ -333,9 +377,43 @@ end
 
 function WorkspaceTool:OnPaste(dest)
 
-  -- -- Get the destination directory
-  -- dest = dest or self.currentPath
+  if(pixelVisionOS:ClipboardFull() == false) then
+    return
+  end
 
+  -- Get the destination directory
+  dest = dest or self.currentPath
+
+  if(PathExists(dest)) then
+
+    local data = pixelVisionOS:SystemPaste()
+
+    if(data.type == "paths") then
+
+      local paths = data.value
+
+      self.filesToCopy = {}
+
+      for i = 1, #paths do
+        
+        if(PathExists(paths[i])) then
+          table.insert(self.filesToCopy, paths[i])
+        end
+
+      end
+
+      if(#self.filesToCopy) then
+      
+        pixelVisionOS:ClearClipboard()
+        self:StartFileOperation(dest, "copy")
+
+      end
+
+    end
+
+    pixelVisionOS:EnableMenuItemByName(PasteShortcut, false)
+
+  end
   -- local destPath = NewWorkspacePath(dest)
 
   -- -- If there are no files to copy, exit out of this function
