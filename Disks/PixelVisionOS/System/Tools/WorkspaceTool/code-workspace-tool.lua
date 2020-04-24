@@ -8,6 +8,7 @@ LoadScript("code-drop-down-menu")
 LoadScript("code-icon-button")
 LoadScript("code-process-file-actions")
 LoadScript("code-file-actions")
+LoadScript("code-export")
 LoadScript("pixel-vision-os-item-picker-v1")
 
 function WorkspaceTool:Init()

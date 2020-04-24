@@ -3,12 +3,12 @@
     "GameChip":
     {
         "savedData":{
-            "editing": "undefined",
-            "sessionID": "202004051355426146",
-            "rootDirectory": "/Workspace/MyGame/",
-            "selectedSprite": "0",
+            "spriteSize": "2",
             "SpriteSize": "undefined",
-            "spriteSize": "1"
+            "selectedSprite": "238",
+            "rootDirectory": "/Disks/LD46/",
+            "sessionID": "202004191246340803",
+            "editing": "undefined"
         }
     }
 }

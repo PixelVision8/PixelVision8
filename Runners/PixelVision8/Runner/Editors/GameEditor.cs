@@ -693,13 +693,13 @@ namespace PixelVision8.Runner.Editors
             return gameChip.TotalSprites(ignoreEmpty);
         }
 
-        public int Flag(int column, int row, int? value = null)
+        public int Flag(int column, int row, byte? value = null)
         {
             return gameChip.Flag(column, row, value);
         }
 
         public TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null,
-            int? flag = null)
+            byte? flag = null)
         {
             var tileData = gameChip.Tile(column, row, spriteID, colorOffset, flag);
 
@@ -718,7 +718,7 @@ namespace PixelVision8.Runner.Editors
             return gameChip.TilemapSize(width, height, clear);
         }
 
-        public void UpdateTiles(int[] ids, int? colorOffset = null, int? flag = null)
+        public void UpdateTiles(int[] ids, int? colorOffset = null, byte? flag = null)
         {
             gameChip.UpdateTiles(ids, colorOffset, flag);
         }
@@ -793,7 +793,7 @@ namespace PixelVision8.Runner.Editors
                 }
                 else if (mode == 1)
                 {
-                    tiles[i].flag = canvas.pixels[i];
+                    tiles[i].flag = unchecked((byte)canvas.pixels[i]);
                 }
 
             tilemapChip.Invalidate();
@@ -2173,7 +2173,7 @@ namespace PixelVision8.Runner.Editors
 
             if (layerCache[1] != null)
             {
-                flagData = Enumerable.Repeat(tileData.flag, spriteChip.width * spriteChip.height).ToArray();
+                flagData = Enumerable.Repeat((int)tileData.flag, spriteChip.width * spriteChip.height).ToArray();
 
                 layerCache[1].SetPixels(col, row, spriteChip.width, spriteChip.height, flagData);
             }

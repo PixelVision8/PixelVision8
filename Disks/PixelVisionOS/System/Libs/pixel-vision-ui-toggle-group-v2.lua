@@ -233,7 +233,9 @@ function EditorUI:ClearGroupSelections(data)
     buttonData = data.buttons[i]
     if(buttonData ~= nil)then
       -- TODO this will accidentally enable disabled buttons. Need to check that they are selected and disabled
-      self:Enable(buttonData, true)
+      if(buttonData.selected and buttonData.enabled == false) then
+        self:Enable(buttonData, true)
+      end
       buttonData.selected = false
       buttonData.invalid = true
     end

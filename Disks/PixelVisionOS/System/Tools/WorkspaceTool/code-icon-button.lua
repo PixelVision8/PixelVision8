@@ -659,7 +659,6 @@ function PixelVisionOS:SelectIconButton(data, id, trigger)
     -- TODO need to make sure we handle multiple selections vs one at a time
     -- Get the new button to select
     local buttonData = data.buttons[id]
-    --print("Select", id, #data.buttons)
 
     -- #1
 
@@ -667,6 +666,8 @@ function PixelVisionOS:SelectIconButton(data, id, trigger)
     if(buttonData == nil or buttonData.enabled == false)then
         return
     end
+
+    print("Select", id, #data.buttons)
 
     -- if the button is already selected, just ignore the request
     if(id == buttonData.selected) then

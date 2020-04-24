@@ -1,6 +1,6 @@
-function OnExportGame()
+function WorkspaceTool:OnExportGame()
 
-    local srcPath = currentDirectory
+    local srcPath = self.currentPath
     local destPath = srcPath.AppendDirectory("Builds")
     local infoFile = srcPath.AppendFile("info.json")
     local dataFile = srcPath.AppendFile("data.json")
@@ -83,6 +83,53 @@ function OnExportGame()
         -- Open the modal
         pixelVisionOS:OpenModal(progressModal)
 
+        self:RegisterUI({name = "ExportUpdate"}, "UpdateExport", self, true)
+
     end
 
+end
+
+function WorkspaceTool:UpdateExport()
+
+    if(buildingDisk) then
+
+        local total = ReadExportPercent()
+
+        print("total", total)
+        if(total >=100) then
+            
+            buildingDisk = false
+            
+            pixelVisionOS:CloseModal()
+            
+            local response = ReadExportMessage()
+            local success = response.DiskExporter_success
+            local message = response.DiskExporter_message
+            local path = response.DiskExporter_path
+
+            -- print("Disk Message", dump(response), success, message, path)
+
+            progressModal = nil
+
+            -- Remove the callback from the UI update loop
+            self:RemoveUI("ExportUpdate")
+
+            pixelVisionOS:ShowMessageModal("Build " .. (success == true and "Complete" or "Failed"), message, 160, false,
+
+                function()
+                    if(success == true) then
+                        self:OpenWindow(NewWorkspacePath(path).ParentPath)
+                    end
+                end
+            )
+        else
+            if(progressModal ~= nil) then
+
+                local message = "Building new disk.\n\n\nDo not restart or shut down Pixel Vision 8."
+
+                progressModal:UpdateMessage(message, total/100)
+            end
+        end
+
+    end
 end

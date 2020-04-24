@@ -52,6 +52,11 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     self.totalPerColumn = 3
     self.totalPerPage = 12
     self.pathHistory = {}
+    self.focus = true
+    self.maxChars = 43
+    self.windowRect = NewRect(8, 8, windowchrome.width * 8, math.floor(#windowchrome.spriteIDs/windowchrome.width * 8))
+
+    print("window chrome", self.windowRect)
     
     self.totalDisk = tonumber(ReadBiosData("MaxDisks", 2))
 
@@ -171,7 +176,7 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     -- Update the slider
     editorUI:ChangeSlider(self.vSliderData, scrollTo)
     
-    self:ChangeWindowTitle(self.currentPath.Path)
+    self:ChangeWindowTitle()
 
     -- make sure the correct desktop icon is open
 
@@ -218,19 +223,49 @@ function WorkspaceTool:UpdateFileList()
     self.hiddenRows = self.totalRows - math.ceil(self.totalPerPage / self.totalPerColumn)
 
     -- Enable the scroll bar if needed
-    editorUI:Enable(self.vSliderData, (self.fileCount - self.desktopIconCount) > self.totalPerWindow)
+    editorUI:Enable(self.vSliderData, self:EnableScrollBar())
 
 end
 
+function WorkspaceTool:EnableScrollBar()
+    return self.focus == true and ((self.fileCount - self.desktopIconCount) > self.totalPerWindow)
+end
+
 function WorkspaceTool:UpdateWindow()
+
+    if(MouseButton(0, InputState.Released )) then
+        
+        self:ChangeFocus()
+
+
+    end
 
     editorUI:UpdateSlider(self.vSliderData)
 
     pixelVisionOS:UpdateIconGroup(self.windowIconButtons)
 
+    
+    
     -- Call draw window after each update
     self:DrawWindow()
     
+end
+
+function WorkspaceTool:ChangeFocus(value)
+    
+    self.focus = value or (self.windowRect.contains(MousePosition()))
+
+    print("find focus", self.focus)
+
+    -- redraw window chrome
+    self:ChangeWindowTitle()
+
+    if(editorUI.mouseCursor.cursorID == 1) then
+        pixelVisionOS:ClearIconGroupSelections(self.windowIconButtons)
+    end
+
+    -- TODO need to test if the slider should be active
+    editorUI:Enable(self.vSliderData, self:EnableScrollBar())
 end
 
 function WorkspaceTool:CurrentlySelectedFiles()
@@ -274,7 +309,13 @@ function WorkspaceTool:RefreshWindow(updateFileList)
 end
 
 -- This is a helper for changing the text on the title bar
-function WorkspaceTool:ChangeWindowTitle(pathTitle)
+function WorkspaceTool:ChangeWindowTitle()
+
+    -- Get the window path
+    local pathTitle = self.currentPath.Path
+
+    -- Set the color based on focus
+    local colorID = self.focus == true and 15 or 5
 
     -- Clean up the path
     if(pathTitle:sub(1, 7) == "/Disks/") then
@@ -283,16 +324,18 @@ function WorkspaceTool:ChangeWindowTitle(pathTitle)
         pathTitle = pathTitle:sub(5, #pathTitle)
     end
 
+    -- Clear the title bar text
     DrawRect(24, 16, 168, 8, 0, DrawMode.TilemapCache)
 
-    local maxChars = 43
-    if(#pathTitle > maxChars) then
-        pathTitle = pathTitle:sub(0, maxChars - 3) .. "..."
+    -- Clip the title if it's to long
+    if(#pathTitle > self.maxChars) then
+        pathTitle = pathTitle:sub(0, self.maxChars - 3) .. "..."
     else
-        pathTitle = string.rpad(pathTitle, maxChars, "")
+        pathTitle = string.rpad(pathTitle,self.maxChars, "")
     end
 
-    DrawText(pathTitle:upper(), 19, 17, DrawMode.TilemapCache, "medium", 15, - 4)
+    -- Draw the new title bar text   
+    DrawText(pathTitle:upper(), 19, 17, DrawMode.TilemapCache, "medium", colorID, - 4)
 
 end
 
@@ -349,6 +392,10 @@ function WorkspaceTool:OnWindowIconSelect(id)
     local realFileID = id + (self.lastStartID)
     local selectedFile = self.files[realFileID]
 
+    if(selectedFile == nil) then
+        return
+    end
+    
     local selectionFlag = true
     local clearSelections = false
     -- TODO test for shift or ctrl
@@ -703,7 +750,15 @@ function WorkspaceTool:DrawWindow()
         button.onDropTarget = nil 
         button.dragDelay = item ~= nil and item.dragDelay or .5
 
-        editorUI:Enable(button, item ~= nil)
+        local enable = item ~= nil
+
+        if(spriteName == "empty") then
+            enable = false
+        end
+        
+        editorUI:Enable(button, enable)
+
+        print(button.name, item ~= nil, button, spriteName)
 
         if(item ~= nil) then
 
@@ -992,7 +1047,7 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
             -- Get the current entity
             tmpEntity = srcEntities[i]
 
-            print(tmpEntity.Path)
+            -- print(tmpEntity.Path)
             if(string.starts(tmpEntity.EntityName, ".") == false) then
                 -- Create the new file
                 local tmpFile = {
@@ -1021,7 +1076,7 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
 
                 else
 
-                    -- Get the entity's exenstion
+                    -- Get the entity's extension
                     tmpFile.ext = tmpEntity.GetExtension()
 
                     -- make sure that the extension is valid

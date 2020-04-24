@@ -271,20 +271,13 @@ function Draw()
 
     if(preloadComplete == true and showDebugger == true) then
 
-        local countdown = string.rpad(tostring(debuggerDelay - math.ceil(debuggerTime)), 2, "0")
+        local countdown = debuggerDelay - math.ceil(debuggerTime)
 
-        DrawText("WAITING FOR DEBUGGER " ..countdown, 5 * 8, 27 * 8, DrawMode.Sprite, "large", 15)
-
+        DrawText(string.format("WAITING FOR DEBUGGER %02d", countdown), 5 * 8, 27 * 8, DrawMode.Sprite, "large", 15)
 
     elseif((preloading == true or mode == "loading") and mode ~= "ejecting") then
-        -- Draw percent as sprites
-        local percentString = string.rpad(tostring(percent), 3, "0")
-        DrawText("LOADING " ..percentString .."%", offset * 8, 27 * 8, DrawMode.Sprite, "large", 15)
+        
+        DrawText(string.format("LOADING %03d%s", percent, "%"), offset * 8, 27 * 8, DrawMode.Sprite, "large", 15)
     end
 
-end
-
-string.rpad = function(str, len, char)
-    if char == nil then char = ' ' end
-    return string.rep(char, len - #str) .. str
 end

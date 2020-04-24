@@ -152,6 +152,8 @@ namespace PixelVision8.Engine.Chips
                 if (c == columns - 1) row++;
             }
 
+            
+
             // Save the new tilemap data
             this.columns = columns;
             this.rows = rows;

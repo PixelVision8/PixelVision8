@@ -29,7 +29,7 @@ namespace PixelVision8.Engine
     ///     reference colors in the ColorChip when rendering to a display. The
     ///     <see cref="TextureData" /> class provides a set of APIs to make it easier
     ///     to work with this data. It also allows you to perform more advanced
-    ///     operations around getting and setting pixel data including support for
+    ///     operations around getting and setti ng pixel data including support for
     ///     wrapping.
     /// </summary>
     public class TextureData : AbstractData

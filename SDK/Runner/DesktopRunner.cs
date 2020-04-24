@@ -357,7 +357,7 @@ namespace PixelVision8.Runner
             // {
                 luaScript.Globals["StartNextPreload"] = new Action(StartNextPreload);
                 luaScript.Globals["PreloaderComplete"] = new Action(RunGame);
-                luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int)(loadService.Percent * 100));
+                luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int)(MathHelper.Clamp(loadService.Percent * 100, 0, 100)));
 
             // }else
             if (mode == RunnerMode.Booting)
@@ -543,7 +543,6 @@ namespace PixelVision8.Runner
             displayTarget.ResetResolution(tmpRes[0], tmpRes[1]);
 
             // Configure the shader from the bios
-            EnableCRT(Convert.ToBoolean(bios.ReadBiosData(CRTBiosSettings.CRT.ToString(), "False")));
             Brightness(Convert.ToSingle(bios.ReadBiosData(CRTBiosSettings.Brightness.ToString(), "100")) / 100F);
             Sharpness(Convert.ToSingle(bios.ReadBiosData(CRTBiosSettings.Sharpness.ToString(), "-6")));
         }
@@ -608,6 +607,10 @@ namespace PixelVision8.Runner
 
                 // Load the game
                 LoadDefaultGame();
+
+                // Reset the filter based from bios after everything loads up
+                EnableCRT(Convert.ToBoolean(bios.ReadBiosData(CRTBiosSettings.CRT.ToString(), "False")));
+
             }
         }
 

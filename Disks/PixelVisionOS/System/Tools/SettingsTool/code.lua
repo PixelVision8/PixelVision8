@@ -11,159 +11,19 @@
 -- Load in the editor framework script to access tool components
 LoadScript("sb-sprites")
 LoadScript("pixel-vision-os-v2")
+LoadScript("code-key-code-map")
 
 local toolName = "System Settings"
-
--- List of all the valid keys
-local keyCodeMap = {
-  {name = None, keyCode = 0, char = ""},
-  {name = Backspace, keyCode = 8, char = "!"},
-  {name = Tab, keyCode = 9, char = "@"},
-  {name = Enter, keyCode = 13, char = "#"},
-  {name = Space, keyCode = 32, char = "%"},
-  {name = Left, keyCode = 37, char = "^"},
-  {name = Up, keyCode = 38, char = "&"},
-  {name = Right, keyCode = 39, char = "*"},
-  {name = Down, keyCode = 40, char = "("},
-  {name = Delete, keyCode = 46, char = ")"},
-  {name = Alpha0, keyCode = 48, char = "0"},
-  {name = Alpha1, keyCode = 49, char = "1"},
-  {name = Alpha2, keyCode = 50, char = "2"},
-  {name = Alpha3, keyCode = 51, char = "3"},
-  {name = Alpha4, keyCode = 52, char = "4"},
-  {name = Alpha5, keyCode = 53, char = "5"},
-  {name = Alpha6, keyCode = 54, char = "6"},
-  {name = Alpha7, keyCode = 55, char = "7"},
-  {name = Alpha8, keyCode = 56, char = "8"},
-  {name = Alpha9, keyCode = 57, char = "9"},
-  {name = A, keyCode = 65, char = "A"},
-  {name = B, keyCode = 66, char = "B"},
-  {name = C, keyCode = 67, char = "C"},
-  {name = D, keyCode = 68, char = "D"},
-  {name = E, keyCode = 69, char = "E"},
-  {name = F, keyCode = 70, char = "F"},
-  {name = G, keyCode = 71, char = "G"},
-  {name = H, keyCode = 72, char = "H"},
-  {name = I, keyCode = 73, char = "I"},
-  {name = J, keyCode = 74, char = "J"},
-  {name = K, keyCode = 75, char = "K"},
-  {name = L, keyCode = 76, char = "L"},
-  {name = M, keyCode = 77, char = "M"},
-  {name = N, keyCode = 78, char = "N"},
-  {name = O, keyCode = 79, char = "O"},
-  {name = P, keyCode = 80, char = "P"},
-  {name = Q, keyCode = 81, char = "Q"},
-  {name = R, keyCode = 82, char = "R"},
-  {name = S, keyCode = 83, char = "S"},
-  {name = T, keyCode = 84, char = "T"},
-  {name = U, keyCode = 85, char = "U"},
-  {name = V, keyCode = 86, char = "V"},
-  {name = W, keyCode = 87, char = "W"},
-  {name = X, keyCode = 88, char = "X"},
-  {name = Y, keyCode = 89, char = "Y"},
-  {name = Z, keyCode = 90, char = "Z"},
-  {name = LeftShift, keyCode = 160, char = "}"},
-  {name = RightShift, keyCode = 161, char = "~"},
-  {name = Semicolon, keyCode = 186, char = ";"},
-  {name = Plus, keyCode = 187, char = "+"},
-  {name = Comma, keyCode = 188, char = ","},
-  {name = Minus, keyCode = 189, char = "-"},
-  {name = Period, keyCode = 190, char = "."},
-  {name = Question, keyCode = 191, char = "/"},
-  {name = Tilde, keyCode = 192, char = "`"},
-  {name = OpenBrackets, keyCode = 219, char = "["},
-  {name = Pipe, keyCode = 220, char = "\\"},
-  {name = CloseBrackets, keyCode = 221, char = "]"},
-  {name = Quotes, keyCode = 222, char = "'"},
-}
 
 local pixelVisionOS = nil
 local editorUI = nil
 
-local shortcutKeys = {
-  "RunGameKey",
-  "ScreenshotKey",
-  "RecordKey",
-  "RestartKey"
-}
-
-player1Keys = {
-  "Player1UpKey",
-  "Player1DownKey",
-  "Player1LeftKey",
-  "Player1RightKey",
-  "Player1SelectKey",
-  "Player1StartKey",
-  "Player1AKey",
-  "Player1BKey"
-}
-
-player2Keys = {
-  "Player2UpKey",
-  "Player2DownKey",
-  "Player2LeftKey",
-  "Player2RightKey",
-  "Player2SelectKey",
-  "Player2StartKey",
-  "Player2AKey",
-  "Player2BKey"
-}
-
-player1Buttons = {
-  "Player1UpButton",
-  "Player1DownButton",
-  "Player1LeftButton",
-  "Player1RightButton",
-  "Player1SelectButton",
-  "Player1StartButton",
-  "Player1AButton",
-  "Player1BButton"
-}
-
-player2Buttons = {
-  "Player2UpButton",
-  "Player2DownButton",
-  "Player2LeftButton",
-  "Player2RightButton",
-  "Player2SelectButton",
-  "Player2StartButton",
-  "Player2AButton",
-  "Player2BButton",
-}
-
-
-
--- This this is an empty game, we will the following text. We combined two sets of fonts into
--- the default.font.png. Use uppercase for larger characters and lowercase for a smaller one.
-local title = "EMPTY TOOL"
-local messageTxt = "This is an empty tool template. Press Ctrl + 1 to open the editor or modify the files found in your workspace game folder."
-
--- Container for horizontal slider data
-local hSliderData = nil
-local vSliderData = nil
-local backBtnData = nil
-local nextBtnData = nil
--- local muteBtnData = nil
-local paginationBtnData = nil
-local volumeInputData = nil
-local nameInputData = nil
 local scaleInputData = nil
 local playSound = false
 local selectedInputID = 1
 
 local DrawVersion, TuneVersion = "Pixel Vision 8 Draw", "Pixel Vision 8 Tune"
 local runnerName = SystemName()
-
-local buttonTypes = {
-  "Up",
-  "Down",
-  "Left",
-  "Right",
-  "A",
-  "B",
-  "Select",
-  "Start"
-}
 
 local buttonSpriteMap = {}
 buttonSpriteMap["Up"] = {spriteData = dpadup, x = 96, y = 72}
@@ -176,12 +36,12 @@ buttonSpriteMap["Select"] = {spriteData = startbtndown, x = 124, y = 90}
 buttonSpriteMap["Start"] = {spriteData = startbtndown, x = 136, y = 90}
 
 local totalButtons = #buttonTypes
-
+local usedKeysInvalid = true
 local blinkTime = 0
 local blinkDelay = .1
 local blinkActive = false
 
-local SaveShortcut = 6
+local SaveShortcut = 5
 
 function InvalidateData()
 
@@ -242,12 +102,6 @@ function Init()
     {name = "Quit", key = Keys.Q, action = OnQuit, toolTip = "Quit the current game."}, -- Quit the current game
   }
 
-  if(PathExists(NewWorkspacePath("/PixelVisionOS/System/OSInstaller/"))) then
-
-    table.insert(menuOptions, 4, {name = "Install OS", action = function() LoadGame("/PixelVisionOS/System/OSInstaller/") end, toolTip = "Open OS Installer tool to reformat the Workspace."})
-
-  end
-
   pixelVisionOS:CreateTitleBarMenu(menuOptions, "See menu options for this tool.")
 
   -- Change the title
@@ -273,27 +127,45 @@ function Init()
   scaleInputData.onAction = OnChangeScale
 
 
-  -- Check boxes
-  checkboxGroupData = editorUI:CreateToggleGroup(7, false)
-  checkboxGroupData.onAction = OnCheckbox
+  fullScreenCheckBoxData = editorUI:CreateToggleButton({x = 128, y = 192, w = 8, h = 8}, "checkbox", "Toggle full screen mode.")
+  fullScreenCheckBoxData.hitRect = {x = 131, y = 192, w = 8, h = 8}
+  fullScreenCheckBoxData.onAction = function(value)
+    Fullscreen(value)
 
-  local tmpCheckbox = editorUI:ToggleGroupButton(checkboxGroupData, {x = 128, y = 192, w = 8, h = 8}, "checkbox", "Toggle fullscreen mode.")
-  tmpCheckbox.hitRect = {x = 131, y = 192, w = 8, h = 8}
-  tmpCheckbox.selected = Fullscreen()
+    WriteBiosData("FullScreen", value == true and "True" or "False")
+  end
+  editorUI:ToggleButton(fullScreenCheckBoxData, Fullscreen(), false)
+  
+  cropCheckBoxData = editorUI:CreateToggleButton({x = 128, y = 200, w = 8, h = 8}, "checkbox", "Enable the window to crop.")
+  cropCheckBoxData.onAction = function (value)
+    CropScreen(value)
 
-  tmpCheckbox = editorUI:ToggleGroupButton(checkboxGroupData, {x = 128, y = 200, w = 8, h = 8}, "checkbox", "Enable the window to crop.")
-  tmpCheckbox.selected = CropScreen()
+    WriteBiosData("CropScreen", value == true and "True" or "False")
+  end
+  
+  editorUI:ToggleButton(cropCheckBoxData, CropScreen())
+  
+  stretchCheckBoxData = editorUI:CreateToggleButton({x = 128, y = 208, w = 8, h = 8}, "checkbox", "Stretch the display to fit the window.")
+  
+  stretchCheckBoxData.onAction = function (value)
+    StretchScreen(value)
 
-  tmpCheckbox = editorUI:ToggleGroupButton(checkboxGroupData, {x = 128, y = 208, w = 8, h = 8}, "checkbox", "Stretch the display to fit the window.")
-  tmpCheckbox.selected = StretchScreen()
-  --
-  tmpCheckbox = editorUI:ToggleGroupButton(checkboxGroupData, {x = 128, y = 216, w = 8, h = 8}, "checkbox", "Toggle the CRT effect.")
-  OnToggleCRT(EnableCRT())
-  tmpCheckbox.selected = EnableCRT()
+    WriteBiosData("StretchScreen", value == true and "True" or "False")
+  end
+  
+  editorUI:ToggleButton(stretchCheckBoxData, StretchScreen())
+  
+  crtToggleButton = editorUI:CreateToggleButton({x = 128, y = 216, w = 8, h = 8}, "checkbox", "Toggle the CRT effect.")
+  
+  crtToggleButton.onAction = function (value)
+    OnToggleCRT(value)
 
-
-  -- UpdateCheckBoxes()
-
+    WriteBiosData("CRT", value == true and "True" or "False")
+  end
+  
+  editorUI:ToggleButton(crtToggleButton, EnableCRT())
+  
+  
   playerButtonGroupData = editorUI:CreateToggleGroup(true)
   playerButtonGroupData.onAction = OnPlayerSelection
 
@@ -306,15 +178,11 @@ function Init()
   editorUI:ToggleGroupButton(inputButtonGroupData, {x = 96, y = 152, w = 8, h = 8}, "radiobutton", "This is radio button 1.")
   editorUI:ToggleGroupButton(inputButtonGroupData, {x = 144, y = 152, w = 8, h = 8}, "radiobutton", "This is radio button 2.")
 
-
-
   shortcutFields = {
     editorUI:CreateInputField({x = 176, y = 200, w = 8}, "", "ScreenShot"),
     editorUI:CreateInputField({x = 200, y = 200, w = 8}, "", "Record"),
     editorUI:CreateInputField({x = 224, y = 200, w = 8}, "", "Restart"),
   }
-
-
 
   usedShortcutKeys = {}
   for i = 1, #shortcutFields do
@@ -370,7 +238,71 @@ function Init()
       editorUI:CreateInputField({x = 208, y = 120, w = 8}, "", "B")
     }
 
-    -- We need to manually store values for all of the keys
+    -- -- We need to manually store values for all of the keys
+    -- usedControllerKeys = {}
+
+    -- -- Player 1 Keys
+    -- for i = 1, #player1Keys do
+
+    --   local key = player1Keys[i]
+
+    --   usedControllerKeys[key] = ConvertKeyCodeToChar(tonumber(ReadMetadata(key)))
+
+    -- end
+
+    -- -- Player 2 Keys
+    -- for i = 1, #player2Keys do
+
+    --   local key = player2Keys[i]
+
+    --   usedControllerKeys[key] = ConvertKeyCodeToChar(tonumber(ReadMetadata(key)))
+
+    -- end
+
+    -- TODO need to create a map for player 1 & 2 controller
+
+    usedControllerButtons = {}
+
+    for i = 1, #inputFields do
+      local field = inputFields[i]
+      field.type = field.toolTip
+
+      field.toolTip = "Remap the " .. field.type .. " key."
+      field.captureInput = function()
+
+        -- TODO need to see what mode we are in and pass the correct used keys
+        -- local usedKeys = usedControllerKeys
+
+        return ValidateInput(field, GetUsedKeys(), field.text)
+
+      end
+      field.onAction = function(value)
+
+        DrawInputSprite(field.type)
+
+        InvalidateData()
+
+      end
+
+    end
+
+    editorUI:SelectToggleButton(playerButtonGroupData, 1)
+
+  else
+    DrawRect(4, 16, 248, 156, BackgroundColor(), DrawMode.TilemapCache)
+  end
+end
+
+function GetUsedKeys()
+
+
+--   selectedPlayerID
+-- ConvertKeyToKeyCode
+
+  if(usedKeysInvalid == true) then 
+
+    print("rebuild used keys", selectedInputID)
+
     usedControllerKeys = {}
 
     -- Player 1 Keys
@@ -391,38 +323,12 @@ function Init()
 
     end
 
-    -- TODO need to create a map for player 1 & 2 controller
+    usedKeysInvalid = false
 
-    usedControllerButtons = {}
-
-    for i = 1, #inputFields do
-      local field = inputFields[i]
-      field.type = field.toolTip
-
-      field.toolTip = "Remap the " .. field.type .. " key."
-      field.captureInput = function()
-
-        -- TODO need to see what mode we are in and pass the correct used keys
-        local usedKeys = usedControllerKeys
-
-        return ValidateInput(field, usedKeys, field.text)
-
-      end
-      field.onAction = function(value)
-
-        DrawInputSprite(field.type)
-
-        InvalidateData()
-
-      end
-
-    end
-
-    editorUI:SelectToggleButton(playerButtonGroupData, 1)
-
-  else
-    DrawRect(4, 16, 248, 156, BackgroundColor(), DrawMode.TilemapCache)
   end
+
+  return usedControllerKeys
+
 end
 
 function RemapKey(keyName, keyCode)
@@ -478,7 +384,9 @@ function ValidateInput(field, useKeys, defaultValue)
   end
 
   -- If the key is valid, save a local reference to it
-  useKeys[field.type] = key
+  useKeys[string.format("Player%d%sKey", selectedInputID, field.type)] = key
+
+  print("useKeys", dump(useKeys))
 
   -- Return the new key to the input field
   return key
@@ -585,32 +493,32 @@ function OnVolumeChange(value)
 
 end
 
-function OnCheckbox(id, value)
+-- function OnCheckbox(id, value)
 
-  -- TODO need to disable some settings depending on which mode is set
-  if(id == 1) then
-    Fullscreen(value)
+--   -- TODO need to disable some settings depending on which mode is set
+--   if(id == 1) then
+--     Fullscreen(value)
 
-    WriteBiosData("FullScreen", value == true and "True" or "False")
+--     WriteBiosData("FullScreen", value == true and "True" or "False")
 
-  elseif(id == 2) then
-    CropScreen(value)
+--   elseif(id == 2) then
+--     CropScreen(value)
 
-    WriteBiosData("CropScreen", value == true and "True" or "False")
+--     WriteBiosData("CropScreen", value == true and "True" or "False")
 
-  elseif(id == 3) then
-    StretchScreen(value)
+--   elseif(id == 3) then
+--     StretchScreen(value)
 
-    WriteBiosData("StretchScreen", value == true and "True" or "False")
+--     WriteBiosData("StretchScreen", value == true and "True" or "False")
 
-  elseif(id == 4) then
-    OnToggleCRT(value)
+--   elseif(id == 4) then
+--     OnToggleCRT(value)
 
-    WriteBiosData("CRT", value == true and "True" or "False")
+--     WriteBiosData("CRT", value == true and "True" or "False")
 
-  end
+--   end
 
-end
+-- end
 
 function OnPlayerSelection(value)
 
@@ -749,9 +657,13 @@ function Update(timeDelta)
     editorUI:UpdateKnob(sharpnessKnobData)
 
     -- Update toggle groups
-    editorUI:UpdateToggleGroup(checkboxGroupData)
-
-
+    editorUI:UpdateButton(fullScreenCheckBoxData)
+    editorUI:UpdateButton(cropCheckBoxData)
+    editorUI:UpdateButton(stretchCheckBoxData)
+    editorUI:UpdateButton(crtToggleButton)
+    
+    
+    
     editorUI:UpdateInputField(scaleInputData)
 
     for i = 1, #shortcutFields do
@@ -934,5 +846,63 @@ function ToggleSoundEffects()
 
   pixelVisionOS:DisplayMessage("Turning " .. (playSounds and "off" or "on") .. " system sound effects.", 5)
 
+
+end
+
+function Reset()
+
+  
+  -- {InputMap.Player1UpKey, (int) Keys.Up},
+  -- {InputMap.Player1DownKey, (int) Keys.Down},
+  -- {InputMap.Player1RightKey, (int) Keys.Right},
+  -- {InputMap.Player1LeftKey, (int) Keys.Left},
+  -- {InputMap.Player1SelectKey, (int) Keys.A},
+  -- {InputMap.Player1StartKey, (int) Keys.S},
+  -- {InputMap.Player1AKey, (int) Keys.X},
+  -- {InputMap.Player1BKey, (int) Keys.C},
+  -- {InputMap.Player1UpButton, (int) Buttons.Up},
+  -- {InputMap.Player1DownButton, (int) Buttons.Down},
+  -- {InputMap.Player1RightButton, (int) Buttons.Right},
+  -- {InputMap.Player1LeftButton, (int) Buttons.Left},
+  -- {InputMap.Player1SelectButton, (int) Buttons.Select},
+  -- {InputMap.Player1StartButton, (int) Buttons.Start},
+  -- {InputMap.Player1AButton, (int) Buttons.A},
+  -- {InputMap.Player1BButton, (int) Buttons.B},
+  -- {InputMap.Player2UpKey, (int) Keys.I},
+  -- {InputMap.Player2DownKey, (int) Keys.K},
+  -- {InputMap.Player2RightKey, (int) Keys.L},
+  -- {InputMap.Player2LeftKey, (int) Keys.J},
+  -- {InputMap.Player2SelectKey, (int) Keys.OemSemicolon},
+  -- {InputMap.Player2StartKey, (int) Keys.OemComma},
+  -- {InputMap.Player2AKey, (int) Keys.Enter},
+  -- {InputMap.Player2BKey, (int) Keys.RightShift},
+  -- {InputMap.Player2UpButton, (int) Buttons.Up},
+  -- {InputMap.Player2DownButton, (int) Buttons.Down},
+  -- {InputMap.Player2RightButton, (int) Buttons.Right},
+  -- {InputMap.Player2LeftButton, (int) Buttons.Left},
+  -- {InputMap.Player2SelectButton, (int) Buttons.Select},
+  -- {InputMap.Player2StartButton, (int) Buttons.Start},
+  -- {InputMap.Player2AButton, (int) Buttons.A},
+  -- {InputMap.Player2BButton, (int) Buttons.B}
+
+  
+    -- "Player1UpKey",
+    -- "Player1DownKey",
+    -- "Player1LeftKey",
+    -- "Player1RightKey",
+    -- "Player1SelectKey",
+    -- "Player1StartKey",
+    -- "Player1AKey",
+    -- "Player1BKey"
+   
+    -- "Player2UpKey",
+    -- "Player2DownKey",
+    -- "Player2LeftKey",
+    -- "Player2RightKey",
+    -- "Player2SelectKey",
+    -- "Player2StartKey",
+    -- "Player2AKey",
+    -- "Player2BKey"
+       
 
 end

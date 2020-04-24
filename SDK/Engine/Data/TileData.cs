@@ -18,19 +18,22 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
+
 namespace PixelVision8.Engine
 {
+    
     public sealed class TileData : AbstractData
     {
         private int _colorOffset;
-        private int _flag = -1;
+        private byte _flag = 0;
         private bool _flipH;
         private bool _flipV;
         private int _spriteID;
 
         private int _index;
 
-        public TileData(int index, int spriteID = -1, int colorOffset = 0, int flag = -1, bool flipH = false,
+        public TileData(int index, int spriteID = -1, int colorOffset = 0, byte flag = 0, bool flipH = false,
             bool flipV = false)
         {
             Index = index;
@@ -73,7 +76,7 @@ namespace PixelVision8.Engine
             }
         }
 
-        public int flag
+        public byte flag
         {
             get => _flag;
             set
@@ -108,12 +111,13 @@ namespace PixelVision8.Engine
         {
             spriteID = -1;
             colorOffset = 0;
-            flag = -1;
+            flag = 0;
 
             flipH = false;
             flipV = false;
 
             Invalidate();
         }
+
     }
 }

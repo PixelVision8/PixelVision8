@@ -1488,7 +1488,7 @@ namespace PixelVision8.Engine.Chips
         ///     The new value for the flag. Setting the flag to -1 means no collision.
         /// </param>
         /// <returns></returns>
-        public int Flag(int column, int row, int? value = null)
+        public byte Flag(int column, int row, byte? value = null)
         {
             var tile = TilemapChip.GetTile(column, row);
 
@@ -1526,7 +1526,7 @@ namespace PixelVision8.Engine.Chips
         ///     Returns a dictionary containing the spriteID, colorOffset, and flag for an individual tile.
         /// </returns>
         //TODO this should return a custom class not a Dictionary
-        public TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null,
+        public TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null, byte? flag = null,
             bool? flipH = null, bool? flipV = null)
         {
             var invalidateTileMap = false;
@@ -1651,7 +1651,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="flag">
         ///     An optional flag int value to be applied to each updated tile.
         /// </param>
-        public void UpdateTiles(int[] ids, int? colorOffset = null, int? flag = null)
+        public void UpdateTiles(int[] ids, int? colorOffset = null, byte? flag = null)
         {
             total = ids.Length;
             _width = TilemapSize().X;
