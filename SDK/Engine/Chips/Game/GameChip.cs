@@ -113,7 +113,7 @@ namespace PixelVision8.Engine.Chips
         private char character;
 
         protected int charOffset = 32;
-        protected Point _spriteSize = Point.Zero;
+        protected Point _spriteSize = new Point(8,8);
         protected int[] tmpPixelData = new int[8 * 8];
         private int[] tilemapCachePixels;
         private readonly string newline = "\n";
@@ -1173,6 +1173,20 @@ namespace PixelVision8.Engine.Chips
             return state == InputState.Released
                 ? ControllerChip.GetMouseButtonUp(button)
                 : ControllerChip.GetMouseButtonDown(button);
+        }
+
+        /// <summary>
+        ///     The MouseWheel() method returns an int for how far the scroll wheel has moved since the last frame.
+        ///     This value is read-only. Generally speaking, one "tick" of the scroll wheel is 120.
+        ///     The returned value is positive for up, and negative for down.
+        /// </summary>
+        /// <returns>
+        ///     Returns a Point representing a vector with how far the scroll wheel has moved since the last frame.
+        /// </returns>
+        /// 
+        public Point MouseWheel()
+        {
+            return ControllerChip.ReadMouseWheel();
         }
 
         /// <summary>

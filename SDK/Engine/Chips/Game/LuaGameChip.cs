@@ -111,6 +111,7 @@ namespace PixelVision8.Engine.Chips
             LuaScript.Globals["Button"] = new Func<Buttons, InputState, int, bool>(Button);
             LuaScript.Globals["MouseButton"] = new Func<int, InputState, bool>(MouseButton);
             LuaScript.Globals["MousePosition"] = new Func<Point>(MousePosition);
+            LuaScript.Globals["MouseWheel"] = new Func<Point>(MouseWheel);
             LuaScript.Globals["InputString"] = new Func<string>(InputString);
 
             #endregion

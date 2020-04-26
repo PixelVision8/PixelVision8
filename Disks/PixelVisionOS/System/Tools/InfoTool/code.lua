@@ -77,11 +77,8 @@ function Init()
     -- Disable the back key in this tool
     EnableBackKey(false)
 
-    -- Create an instance of the Pixel Vision OS
-    pixelVisionOS = PixelVisionOS:Init()
-
-    -- Get a reference to the Editor UI
-    editorUI = pixelVisionOS.editorUI
+    -- Create an global instance of the Pixel Vision OS
+    _G["pixelVisionOS"] = PixelVisionOS:Init()
 
     -- Get a list of all the editors
     local editorMapping = pixelVisionOS:FindEditors()

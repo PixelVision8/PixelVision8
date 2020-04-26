@@ -34,11 +34,13 @@ namespace PixelVision8.Engine
         string ReadInputString();
         bool GetMouseButtonUp(int button);
         bool GetMouseButtonDown(int button);
+        Point ReadMouseWheel();
         bool GetKeyUp(Keys key);
         bool GetKeyDown(Keys key);
         void MouseScale(float x, float y);
         void RegisterKeyInput();
         void RegisterControllers();
         void SetInputText(char character, Keys key);
+        bool IsConnected(int id);
     }
 }

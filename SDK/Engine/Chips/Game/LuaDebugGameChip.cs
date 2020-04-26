@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
 using MoonSharp.Interpreter;
 
 namespace PixelVision8.Engine.Chips
@@ -47,7 +46,7 @@ namespace PixelVision8.Engine.Chips
         public void TriggerShutdown()
         {
             // TODO this needs to tell the runner when it is ready to actually shutdown
-            Console.WriteLine("Ready to shutdown game");
+            // Console.WriteLine("Ready to shutdown game");
         }
     }
 }

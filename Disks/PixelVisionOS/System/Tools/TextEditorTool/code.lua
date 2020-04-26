@@ -12,11 +12,10 @@
 LoadScript("sb-sprites")
 LoadScript("pixel-vision-os-v2")
 
+-- Create an global instance of the Pixel Vision OS
+_G["pixelVisionOS"] = PixelVisionOS:Init()
+
 local toolName = "Text Editor"
-
-
-local pixelVisionOS = nil
-local editorUI = nil
 
 -- local fileSize = "000k"
 local invalid = true
@@ -35,12 +34,6 @@ function Init()
   EnableBackKey(false)
 
   EnableAutoRun(false)
-
-  -- Create an instance of the Pixel Vision OS
-  pixelVisionOS = PixelVisionOS:Init()
-
-  -- Get a reference to the Editor UI
-  editorUI = pixelVisionOS.editorUI
 
   rootDirectory = ReadMetadata("directory", nil)
 
@@ -411,20 +404,41 @@ function Update(timeDelta)
   -- Only update the tool's UI when the modal isn't active
   if(pixelVisionOS:IsModalActive() == false and targetFile ~= nil and pixelVisionOS.titleBar.menu.showMenu == false) then
 
-    editorUI:UpdateInputArea(inputAreaData)
+    
 
-    -- TODO need a better way to check if the text has been changed in the editor
-    if(inputAreaData.invalidText == true) then
-      InvalidateData()
-      InvalidateLineNumbers()
-    end
+    
+
+    
+    -- hSliderData
+
+    -- print("Scroll", MouseWheel())
 
     -- Check to see if we should show the horizontal slider
     local showVSlider = #inputAreaData.buffer > inputAreaData.tiles.h
 
+    -- Check for mouse wheel scrolling
+    local wheelDir = MouseWheel()
+    
     -- Test if we need to show or hide the slider
     if(vSliderData.enabled ~= showVSlider) then
+      
       editorUI:Enable(vSliderData, showVSlider)
+    end
+
+    if(wheelDir.Y ~= 0) then
+    
+      local scrollValue = Clamp(wheelDir.y, -1, 1) * -5
+      
+      if(Key(Keys.LeftControl) == true or Key( Keys.RightControl)) then
+        OnHorizontalScroll((Clamp(hSliderData.value * 100 + scrollValue, 0, 100)/100))
+      else
+        OnVerticalScroll((Clamp(vSliderData.value * 100 + scrollValue, 0, 100)/100))
+      end
+    
+    elseif(wheelDir.X ~= 0) then
+
+      OnHorizontalScroll((Clamp(hSliderData.value * 100 + (Clamp(wheelDir.y, -1, 1) * -5), 0, 100)/100))
+
     end
 
     if(vSliderData.enabled == true) then
@@ -432,9 +446,12 @@ function Update(timeDelta)
 
       if(vSliderData.value ~= inputAreaData.scrollValue.y) then
 
+        -- print("scroll", wheelDir, , inputAreaData.scrollValue.y)
         InvalidateLineNumbers()
 
-        editorUI:ChangeSlider(vSliderData, inputAreaData.scrollValue.y, false)
+        -- inputAreaData.scrollValue.y = inputAreaData.scrollValue.y + Clamp(wheelDir.y, -1, 1)/100
+
+        editorUI:ChangeSlider(vSliderData, inputAreaData.scrollValue.y , false)
       end
 
     end
@@ -453,11 +470,13 @@ function Update(timeDelta)
     if(hSliderData.enabled == true) then
       inputAreaData.scrollValue.x = (inputAreaData.vx - 1) / ((inputAreaData.maxLineWidth + 1) - inputAreaData.tiles.w)
 
-      if(hSliderData.value ~= inputAreaData.scrollValue.x) then
+    if(hSliderData.value ~= inputAreaData.scrollValue.x or wheelDir.x ~= 0) then
+
+      -- OnHorizontalScroll(Clamp(hSliderData.value ))
         -- print(inputAreaData.vx, inputAreaData.maxLineWidth, inputAreaData.tiles.w)
         -- print("inputAreaData.scrollValue.x", inputAreaData.scrollValue.x)
 
-        editorUI:ChangeSlider(hSliderData, inputAreaData.scrollValue.x, false)
+        editorUI:ChangeSlider(hSliderData, inputAreaData.scrollValue.x + Clamp(wheelDir.x, -1, 1), false)
       end
 
     end
@@ -468,6 +487,14 @@ function Update(timeDelta)
     -- Reset focus back to the text editor
     if(hSliderData.inFocus == false and vSliderData.inFocus == false and inputAreaData.inFocus == false and pixelVisionOS.titleBar.menu.showMenu == false) then
       editorUI:EditTextEditor(inputAreaData, true, false)
+    end
+
+    editorUI:UpdateInputArea(inputAreaData)
+
+    -- TODO need a better way to check if the text has been changed in the editor
+    if(inputAreaData.invalidText == true) then
+      InvalidateData()
+      InvalidateLineNumbers()
     end
 
   end

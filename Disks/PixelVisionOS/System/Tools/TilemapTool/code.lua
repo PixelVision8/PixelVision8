@@ -81,14 +81,14 @@ function Init()
     -- Disable the back key in this tool
     EnableBackKey(false)
 
-    -- Create an instance of the Pixel Vision OS
-    pixelVisionOS = PixelVisionOS:Init()
+    -- Create an global instance of the Pixel Vision OS
+    _G["pixelVisionOS"] = PixelVisionOS:Init()
 
     -- Reset the undo history so it's ready for the tool
     pixelVisionOS:ResetUndoHistory()
 
     -- Get a reference to the Editor UI
-    editorUI = pixelVisionOS.editorUI
+    -- editorUI = pixelVisionOS.editorUI
 
     newFileModal = NewFileModal:Init(editorUI)
     newFileModal.editorUI = editorUI

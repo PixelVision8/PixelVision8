@@ -94,7 +94,7 @@ function MessageModal:Open()
     -- Fix the button to the bottom of the window
     local bY = math.floor(((self.rect.y + self.rect.h) - buttonSize.y - 8) / 8) * 8
 
-    local backBtnData = self.editorUI:CreateButton({x = bX, y = bY}, "modalokbutton", "")
+    local backBtnData = editorUI:CreateButton({x = bX, y = bY}, "modalokbutton", "")
 
     backBtnData.onAction = function()
 
@@ -113,7 +113,7 @@ function MessageModal:Open()
       -- Offset the bX value and snap to the grid
       bX = math.floor((bX - buttonSize.x - 8) / 8) * 8
 
-      local cancelBtnData = self.editorUI:CreateButton({x = bX, y = bY}, "modalcancelbutton", "")
+      local cancelBtnData = editorUI:CreateButton({x = bX, y = bY}, "modalcancelbutton", "")
 
       cancelBtnData.onAction = function()
 
@@ -135,7 +135,7 @@ function MessageModal:Open()
   end
 
   for i = 1, #self.buttons do
-    self.editorUI:Invalidate(self.buttons[i])
+    editorUI:Invalidate(self.buttons[i])
   end
 
   self.canvas:DrawPixels(self.rect.x, self.rect.y, DrawMode.TilemapCache)
@@ -145,7 +145,7 @@ end
 function MessageModal:Update(timeDelta)
 
   for i = 1, #self.buttons do
-    self.editorUI:UpdateButton(self.buttons[i])
+    editorUI:UpdateButton(self.buttons[i])
   end
 
   if(Key(Keys.Enter, InputState.Released)) then

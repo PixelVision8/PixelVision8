@@ -31,10 +31,16 @@ LoadScript("pixel-vision-os-clipboard-v2")
 LoadScript("pixel-vision-os-version")
 
 function PixelVisionOS:Init()
+
+    -- Get a global reference to the Editor UI
+    _G["editorUI"] = EditorUI:Init()
+
     -- Create a new object for the instance and register it
     local _pixelVisionOS = {
-        editorUI = EditorUI:Init(),
-        version = _G["PixelVisionOSVersion"] or "v2.6"
+        editorUI = editorUI,
+        version = _G["PixelVisionOSVersion"] or "v2.6",
+        uiComponents = {},
+        uiTotal = 0
     }
     setmetatable(_pixelVisionOS, PixelVisionOS)
 
@@ -62,6 +68,26 @@ function PixelVisionOS:Update(timeDelta)
     -- if(self:IsModalActive() == true) then
     self:UpdateModal(timeDelta)
     -- end
+
+    -- Loop through all of the registered UI and update them
+    for i = 1, self.uiTotal do
+
+        -- Get a reference to the UI data
+        local ref = self.uiComponents[i]
+
+        if(ref ~= nil) then
+
+            -- Only update UI when the modal is not active
+            if(pixelVisionOS:IsModalActive() == false or ref.ignoreModal) then
+
+                -- Call the UI scope's update and pass back in the UI data
+                ref.uiScope[ref.uiUpdate](ref.uiScope, ref.uiData)
+
+            end
+
+        end
+
+    end
 
 end
 
@@ -226,12 +252,6 @@ function PixelVisionOS:ValidateGameInDir(workspacePath, requiredFiles)
 
     requiredFiles = requiredFiles or {"data.json", "info.json"}
 
-    -- if(extraFiles ~= nil) then
-    --   for i = 1, #extraFiles do
-    --     table.insert(requiredFiles, extraFiles[i])
-    --   end
-    -- end
-
     local flag = 0
 
     local total = #requiredFiles
@@ -245,3 +265,59 @@ function PixelVisionOS:ValidateGameInDir(workspacePath, requiredFiles)
     return flag == total
 
 end
+
+function PixelVisionOS:RegisterUI(data, updateCall, scope, ignoreModal)
+
+    scope = scope or self
+  
+    -- Try to remove an existing instance of the component
+    self:RemoveUI(data.name)
+  
+    table.insert(self.uiComponents, {uiData = data, uiUpdate = updateCall, uiScope = scope, ignoreModal = ignoreModal or false})
+  
+    self.uiTotal = #self.uiComponents
+  
+    -- Return an instance of the component
+    return data
+  
+  end
+  
+  function PixelVisionOS:RemoveUI(name)
+  
+    local i
+    local removeItem = -1
+  
+    for i = 1, self.uiTotal do
+  
+      if(self.uiComponents[i].uiData.name == name) then
+  
+        -- Set the remove flag to true
+        removeItem = i
+  
+        -- Exit out of the loop
+        break
+  
+      end
+  
+    end
+  
+    -- If there is nothing to remove than exit out of the function
+    if(removeItem == -1) then
+      return
+    end
+  
+    -- Remove item
+    table.remove(self.uiComponents, removeItem)
+  
+    -- Update the total
+    self.uiTotal = #self.uiComponents
+  
+    -- For debugging
+  
+    print("Remove", removeItem, "total", self.uiTotal)
+  
+    for i = 1, #self.uiComponents do
+      print("Left over", self.uiComponents[i].uiData.name)
+    end
+  
+  end

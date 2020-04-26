@@ -83,7 +83,7 @@ function WorkspaceTool:OnExportGame()
         -- Open the modal
         pixelVisionOS:OpenModal(progressModal)
 
-        self:RegisterUI({name = "ExportUpdate"}, "UpdateExport", self, true)
+        pixelVisionOS:RegisterUI({name = "ExportUpdate"}, "UpdateExport", self, true)
 
     end
 
@@ -112,7 +112,7 @@ function WorkspaceTool:UpdateExport()
             progressModal = nil
 
             -- Remove the callback from the UI update loop
-            self:RemoveUI("ExportUpdate")
+            pixelVisionOS:RemoveUI("ExportUpdate")
 
             pixelVisionOS:ShowMessageModal("Build " .. (success == true and "Complete" or "Failed"), message, 160, false,
 

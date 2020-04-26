@@ -22,7 +22,7 @@ function PixelVisionOS:OpenModal(modal, callBack)
   self.closeTime = -1
 
   -- Clear the previous mouse focus
-  self.editorUI:ClearFocus()
+  editorUI:ClearFocus()
 
   -- Set the active modal
   self.activeModal = modal
@@ -38,7 +38,7 @@ function PixelVisionOS:OpenModal(modal, callBack)
   self.activeModal:Open()
 
   -- Disable the menu button in the toolbar
-  self.editorUI:Enable(self.titleBar.iconButton, false)
+  editorUI:Enable(self.titleBar.iconButton, false)
 
 end
 
@@ -49,7 +49,7 @@ function PixelVisionOS:CloseModal()
       self.activeModal:Close()
     end
 
-    self.editorUI:ClearFocus()
+    editorUI:ClearFocus()
 
     RestoreTilemapCache()
 
@@ -65,9 +65,9 @@ function PixelVisionOS:CloseModal()
   end
 
   -- Enable the menu button in the toolbar
-  self.editorUI:Enable(self.titleBar.iconButton, true)
+  editorUI:Enable(self.titleBar.iconButton, true)
 
-  self.editorUI:Invalidate(self.titleBar)
+  editorUI:Invalidate(self.titleBar)
 
 end
 

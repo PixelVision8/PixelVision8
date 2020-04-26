@@ -22,18 +22,20 @@ MouseCursor.__index = MouseCursor
 function MouseCursor:Init()
 
     -- Create a new object for the instance and register it
-    local _mouseCursor = {}
+    local _mouseCursor = {
+        cursorID = -1,
+        animationTime = 0,
+        animationDelay = .2,
+        animationFrame = 0,
+        colorOffset = 0,
+        lock = false,
+        pos = NewPoint(-1, -1)
+    }
+
     setmetatable(_mouseCursor, MouseCursor)
 
     -- This defines which set of data to use when drawing the cursor
-    _mouseCursor.cursorID = -1
-
-    _mouseCursor.animationTime = 0
-    _mouseCursor.animationDelay = .2
-    _mouseCursor.animationFrame = 0
-    _mouseCursor.colorOffset = 0
-    _mouseCursor.lock = false
-
+    
     -- Reference data for each of the different mouse cursors
     _mouseCursor.cursors = {
         -- Pointer
@@ -106,10 +108,10 @@ function MouseCursor:Init()
         },
     }
 
-    _mouseCursor.pos = {x = -1, y = -1}
 
     _mouseCursor:SetCursor(1)
     -- Return the new instance of the editor ui
+    
     return _mouseCursor
 
 end

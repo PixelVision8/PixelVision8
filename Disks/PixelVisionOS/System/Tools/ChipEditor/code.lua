@@ -14,8 +14,9 @@ LoadScript("pixel-vision-os-v2")
 LoadScript("code-chip-picker")
 LoadScript("code-chip-templates")
 
-local pixelVisionOS = nil
-local editorUI = nil
+-- Create an global instance of the Pixel Vision OS
+-- _G["pixelVisionOS"] = PixelVisionOS:Init()
+
 local editorMode = -1
 local toolName = "Chip Editor"
 local inputFields = {}
@@ -122,11 +123,14 @@ function Init()
   -- Disable the back key in this tool
   EnableBackKey(false)
 
-  -- Create an instance of the Pixel Vision OS
-  pixelVisionOS = PixelVisionOS:Init()
+  -- Create an global instance of the Pixel Vision OS
+  _G["pixelVisionOS"] = PixelVisionOS:Init()
 
-  -- Get a reference to the Editor UI
-  editorUI = pixelVisionOS.editorUI
+  -- -- Create an instance of the Pixel Vision OS
+  -- pixelVisionOS = PixelVisionOS:Init()
+
+  -- -- Get a reference to the Editor UI
+  -- editorUI = pixelVisionOS.editorUI
 
   rootDirectory = ReadMetadata("directory", nil)
 

@@ -2,6 +2,10 @@
 WorkspaceTool = {}
 WorkspaceTool.__index = WorkspaceTool
 
+
+LoadScript("pixel-vision-os-progress-modal-v1")
+LoadScript("pixel-vision-os-file-modal-v1")
+
 -- Import scripts needed by the workspace tool
 LoadScript("code-window")
 LoadScript("code-drop-down-menu")
@@ -13,14 +17,14 @@ LoadScript("pixel-vision-os-item-picker-v1")
 
 function WorkspaceTool:Init()
 
-  -- Create an global instance of the Pixel Vision OS
-  pixelVisionOS = PixelVisionOS:Init()
+  -- -- Create an global instance of the Pixel Vision OS
+  -- pixelVisionOS = PixelVisionOS:Init()
 
   -- Used for debugging
   -- pixelVisionOS.displayFPS = true
 
   -- Get a global reference to the Editor UI
-  editorUI = pixelVisionOS.editorUI
+  -- editorUI = pixelVisionOS.editorUI
 
   -- Create a new table for the instance with default properties
   local _workspaceTool = {
@@ -69,25 +73,25 @@ function WorkspaceTool:Update(timeDelta)
 
 
 
-  -- Loop through all of the registered UI and update them
-  for i = 1, self.uiTotal do
+  -- -- Loop through all of the registered UI and update them
+  -- for i = 1, self.uiTotal do
 
-    -- Get a reference to the UI data
-    local ref = self.uiComponents[i]
+  --   -- Get a reference to the UI data
+  --   local ref = self.uiComponents[i]
 
-    if(ref ~= nil) then
+  --   if(ref ~= nil) then
 
-      -- Only update UI when the modal is not active
-      if(pixelVisionOS:IsModalActive() == false or ref.ignoreModal) then
+  --     -- Only update UI when the modal is not active
+  --     if(pixelVisionOS:IsModalActive() == false or ref.ignoreModal) then
 
-        -- Call the UI scope's update and pass back in the UI data
-        ref.uiScope[ref.uiUpdate](ref.uiScope, ref.uiData)
+  --       -- Call the UI scope's update and pass back in the UI data
+  --       ref.uiScope[ref.uiUpdate](ref.uiScope, ref.uiData)
 
-      end
+  --     end
 
-    end
+  --   end
 
-  end
+  -- end
 
 end
 
@@ -98,61 +102,61 @@ function WorkspaceTool:Draw()
 
 end
 
-function WorkspaceTool:RegisterUI(data, updateCall, scope, ignoreModal)
+-- function WorkspaceTool:RegisterUI(data, updateCall, scope, ignoreModal)
 
-  scope = scope or pixelVisionOS
+--   scope = scope or pixelVisionOS
 
-  -- Try to remove an existing instance of the component
-  self:RemoveUI(data.name)
+--   -- Try to remove an existing instance of the component
+--   self:RemoveUI(data.name)
 
-  table.insert(self.uiComponents, {uiData = data, uiUpdate = updateCall, uiScope = scope, ignoreModal = ignoreModal or false})
+--   table.insert(self.uiComponents, {uiData = data, uiUpdate = updateCall, uiScope = scope, ignoreModal = ignoreModal or false})
 
-  self.uiTotal = #self.uiComponents
+--   self.uiTotal = #self.uiComponents
 
-  -- Return an instance of the component
-  return data
+--   -- Return an instance of the component
+--   return data
 
-end
+-- end
 
-function WorkspaceTool:RemoveUI(name)
+-- function WorkspaceTool:RemoveUI(name)
 
-  local i
-  local removeItem = -1
+--   local i
+--   local removeItem = -1
 
-  for i = 1, self.uiTotal do
+--   for i = 1, self.uiTotal do
 
-    if(self.uiComponents[i].uiData.name == name) then
+--     if(self.uiComponents[i].uiData.name == name) then
 
-      -- Set the remove flag to true
-      removeItem = i
+--       -- Set the remove flag to true
+--       removeItem = i
 
-      -- Exit out of the loop
-      break
+--       -- Exit out of the loop
+--       break
 
-    end
+--     end
 
-  end
+--   end
 
-  -- If there is nothing to remove than exit out of the function
-  if(removeItem == -1) then
-    return
-  end
+--   -- If there is nothing to remove than exit out of the function
+--   if(removeItem == -1) then
+--     return
+--   end
 
-  -- Remove item
-  table.remove(self.uiComponents, removeItem)
+--   -- Remove item
+--   table.remove(self.uiComponents, removeItem)
 
-  -- Update the total
-  self.uiTotal = #self.uiComponents
+--   -- Update the total
+--   self.uiTotal = #self.uiComponents
 
-  -- For debugging
+--   -- For debugging
 
-  print("Remove", removeItem, "total", self.uiTotal)
+--   print("Remove", removeItem, "total", self.uiTotal)
 
-  for i = 1, #self.uiComponents do
-    print("Left over", self.uiComponents[i].uiData.name)
-  end
+--   for i = 1, #self.uiComponents do
+--     print("Left over", self.uiComponents[i].uiData.name)
+--   end
 
-end
+-- end
 
 function WorkspaceTool:Shutdown()
 

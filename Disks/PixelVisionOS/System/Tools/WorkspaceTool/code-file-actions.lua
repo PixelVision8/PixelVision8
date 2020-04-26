@@ -215,7 +215,7 @@ function WorkspaceTool:OnRunFileAction(destPath, action, duplicate)
     -- Open the modal
     pixelVisionOS:OpenModal(self.progressModal)
 
-    self:RegisterUI({name = "ProgressUpdate"}, "UpdateFileActionProgress", self, true)
+    pixelVisionOS:RegisterUI({name = "ProgressUpdate"}, "UpdateFileActionProgress", self, true)
 
   end
 
@@ -239,7 +239,7 @@ function WorkspaceTool:UpdateFileActionProgress(data)
     self:RefreshWindow(true)
 
     -- Remove the callback from the UI update loop
-    self:RemoveUI("ProgressUpdate")
+    pixelVisionOS:RemoveUI("ProgressUpdate")
 
     -- Exit out of the function
     return

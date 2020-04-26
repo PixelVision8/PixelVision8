@@ -1,11 +1,11 @@
 {
-
-"GameChip":
-{
-    "savedData":{
-        "currentID": "4",
-        "rootDirectory": "/Workspace/FileSystemTest/ManualProject/",
-        "sessionID": "202004031232539809"
+    
+    "GameChip":
+    {
+        "savedData":{
+            "currentID": "0",
+            "rootDirectory": "/Workspace/MyFirstGame/",
+            "sessionID": "202004241019252252"
+        }
     }
-}
 }

@@ -182,8 +182,6 @@ namespace PixelVision8.Runner
 
             // Make sure that the first frame is cleared with the default color
             ActiveEngine.GameChip.Clear();
-            // Save a reference to the controller chip so we can listen for special key events
-            controllerChip = engine.ControllerChip;
 
             // Activate the game
             base.ActivateEngine(engine);
@@ -346,7 +344,7 @@ namespace PixelVision8.Runner
 
             base.ConfigureEngine(metaData);
 
-            // Get a reference to the Lua game
+            // Get a reference to the    Lua game
             var game = tmpEngine.GameChip as LuaGameChip;
 
             // Get the script
@@ -381,6 +379,8 @@ namespace PixelVision8.Runner
             luaScript.Globals["ReadBiosData"] = new Func<string, string, string>((key, defaultValue) =>
                 bios.ReadBiosData(key, defaultValue));
             luaScript.Globals["WriteBiosData"] = new Action<string, string>(bios.UpdateBiosData);
+
+            luaScript.Globals["ControllerConnected"] = new Func<int, bool>(tmpEngine.ControllerChip.IsConnected);
 
         }
 

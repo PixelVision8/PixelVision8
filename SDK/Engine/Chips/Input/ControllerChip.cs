@@ -72,6 +72,20 @@ namespace PixelVision8.Engine.Chips
         Player2BButton
     }
 
+    public class Controller
+    {
+        //            public int GamePadIndex;
+        public GamePadState CurrentState;
+        public Dictionary<Buttons, Keys> KeyboardMap;
+
+        public GamePadState PreviousState;
+
+        public bool IsConnected()
+        {
+            return CurrentState.IsConnected;
+        }
+    }
+
     public class ControllerChip : AbstractChip, IControllerChip
     {
         private static readonly int repsPerSec = 20;
@@ -88,6 +102,19 @@ namespace PixelVision8.Engine.Chips
         private List<Controller> players;
         public KeyboardState previousKeyboardState;
         public MouseState previousMouseState;
+
+        public bool IsConnected(int id)
+        {
+            return players[id].IsConnected();
+        }
+
+        // public bool CaptureButtonInput()
+        // {
+        //     var buttons = players[0].CurrentState.Buttons;
+        //     
+        // }
+
+        // public Dictionary<string, string>
 
         private Keys? repChar;
 
@@ -184,14 +211,14 @@ namespace PixelVision8.Engine.Chips
 
         public bool GetKeyDown(Keys key)
         {
-            var tmpKey = (Microsoft.Xna.Framework.Input.Keys)(int)key;
+            var tmpKey = (Keys)(int)key;
 
             return currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey);
         }
 
         public bool GetKeyUp(Keys key)
         {
-            var tmpKey = (Microsoft.Xna.Framework.Input.Keys)(int)key;
+            var tmpKey = (Keys)(int)key;
 
             return !currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey);
         }
@@ -210,7 +237,7 @@ namespace PixelVision8.Engine.Chips
             {
                 Keys key = player.KeyboardMap.TryGetValue(button, out key) ? key : default;
 
-                var tmpKey = (Microsoft.Xna.Framework.Input.Keys)(int)key;
+                var tmpKey = (Keys)(int)key;
 
                 // Test the keyboard or the controller
                 value = !currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey) ||
@@ -230,7 +257,7 @@ namespace PixelVision8.Engine.Chips
             {
                 Keys key = player.KeyboardMap.TryGetValue(button, out key) ? key : default;
 
-                var tmpKey = (Microsoft.Xna.Framework.Input.Keys)(int)key;
+                var tmpKey = (Keys)(int)key;
 
                 // Test the keyboard or the controller
                 value = currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey) ||
@@ -360,8 +387,8 @@ namespace PixelVision8.Engine.Chips
         // private void BuildInputString(Keys key)
         // {
         //     inputStringBuilder.Append(GetChar(key, currentKeyboardState.CapsLock, currentKeyboardState.NumLock,
-        //         currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) ||
-        //         currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift)));
+        //         currentKeyboardState.IsKeyDown(Keys.LeftShift) ||
+        //         currentKeyboardState.IsKeyDown(Keys.RightShift)));
         // }
 
         private Controller getPlayer(int index)
@@ -449,19 +476,7 @@ namespace PixelVision8.Engine.Chips
             return currentKeyboardState.IsKeyDown(tmpKey) && !previousKeyboardState.IsKeyDown(tmpKey);
         }
 
-        private class Controller
-        {
-            //            public int GamePadIndex;
-            public GamePadState CurrentState;
-            public Dictionary<Buttons, Keys> KeyboardMap;
-
-            public GamePadState PreviousState;
-
-            public bool IsConnected()
-            {
-                return CurrentState.IsConnected;
-            }
-        }
+        
 
         #region Mouse APIs
 
@@ -479,6 +494,16 @@ namespace PixelVision8.Engine.Chips
         {
             var pos = PointToScreen(currentMouseState.Position);
             return new Point(pos.X, pos.Y);
+        }
+
+        protected Point mouseWheelPos = new Point();
+
+        public Point ReadMouseWheel()
+        {
+            mouseWheelPos.X = currentMouseState.HorizontalScrollWheelValue - previousMouseState.HorizontalScrollWheelValue;
+            mouseWheelPos.Y = currentMouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue;
+            
+            return mouseWheelPos;
         }
 
         private Matrix scaleMatrix = Matrix.CreateScale(1, 1, 1);

@@ -198,7 +198,7 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     -- end
 
     -- Registere the window with the tool so it updates
-    self:RegisterUI({name = "Window"}, "UpdateWindow", self)
+    pixelVisionOS:RegisterUI({name = "Window"}, "UpdateWindow", self)
 
 
     self:UpdateContextMenu(WindowFocus)

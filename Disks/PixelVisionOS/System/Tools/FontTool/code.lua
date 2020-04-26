@@ -204,11 +204,14 @@ function Init()
     EnableBackKey(false)
     EnableAutoRun(false)
 
-    -- Create an instance of the Pixel Vision OS
-    pixelVisionOS = PixelVisionOS:Init()
+    -- Create an global instance of the Pixel Vision OS
+    _G["pixelVisionOS"] = PixelVisionOS:Init()
+    
+    -- -- Create an instance of the Pixel Vision OS
+    -- pixelVisionOS = PixelVisionOS:Init()
 
-    -- Get a reference to the Editor UI
-    editorUI = pixelVisionOS.editorUI
+    -- -- Get a reference to the Editor UI
+    -- editorUI = pixelVisionOS.editorUI
 
     rootDirectory = ReadMetadata("directory", nil)
 

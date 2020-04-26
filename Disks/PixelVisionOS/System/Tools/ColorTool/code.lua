@@ -82,10 +82,13 @@ function Init()
     BackgroundColor(5)
 
     -- Create an instance of the Pixel Vision OS
-    pixelVisionOS = PixelVisionOS:Init()
+    -- Create an global instance of the Pixel Vision OS
 
-    -- Get a reference to the Editor UI
-    editorUI = pixelVisionOS.editorUI
+    -- TODO need to see why this can't be moved up top
+    _G["pixelVisionOS"] = PixelVisionOS:Init()
+
+    -- -- Get a reference to the Editor UI
+    -- editorUI = pixelVisionOS.editorUI
 
     -- Reset the undo history so it's ready for the tool
     pixelVisionOS:ResetUndoHistory()

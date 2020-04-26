@@ -3,11 +3,11 @@
     "GameChip":
     {
         "savedData":{
-            "spriteSize": "2",
+            "spriteSize": "1",
             "SpriteSize": "undefined",
-            "selectedSprite": "238",
-            "rootDirectory": "/Disks/LD46/",
-            "sessionID": "202004191246340803",
+            "selectedSprite": "0",
+            "rootDirectory": "/Workspace/MyFirstGame/",
+            "sessionID": "202004241019252252",
             "editing": "undefined"
         }
     }

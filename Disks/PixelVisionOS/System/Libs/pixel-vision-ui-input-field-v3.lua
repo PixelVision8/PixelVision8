@@ -74,35 +74,8 @@ function EditorUI:CreateInputField(rect, text, toolTip, pattern, font, colorOffs
 
   data.captureInput = function(targetData)
 
-    local inputString = InputString()
-    local outputString = ""
+    return self:ValidateInputFieldText(targetData, InputString())
 
-    for char in inputString:gmatch"." do
-
-      local pattern = targetData.patterns[targetData.pattern]
-
-      if(pattern ~= nil) then
-        char = string.match(char, pattern)
-      end
-
-      if(char ~= nil) then
-
-        if(targetData.forceCase ~= nil) then
-          char = string[targetData.forceCase](char)
-        end
-
-        -- Text to see if the input field is a single character and clear it
-        if(targetData.tiles.w == 1) then
-          targetData.buffer[1] = char
-        else
-          outputString = outputString .. char
-        end
-
-      end
-
-    end
-
-    return outputString
   end
 
   data.onEdit = function(targetData, value)
@@ -121,9 +94,40 @@ function EditorUI:CreateInputField(rect, text, toolTip, pattern, font, colorOffs
 
 end
 
+function EditorUI:ValidateInputFieldText(targetData,inputString)
+
+  -- local inputString = InputString()
+  local outputString = ""
+
+  for char in inputString:gmatch"." do
+
+    local pattern = targetData.patterns[targetData.pattern]
+
+    if(pattern ~= nil) then
+      char = string.match(char, pattern)
+    end
+
+    if(char ~= nil) then
+
+      if(targetData.forceCase ~= nil) then
+        char = string[targetData.forceCase](char)
+      end
+
+      -- Text to see if the input field is a single character and clear it
+      if(targetData.tiles.w == 1) then
+        targetData.buffer[1] = char
+      else
+        outputString = outputString .. char
+      end
+
+    end
+
+  end
+
+  return outputString
+end
+
 function EditorUI:OnEditTextInputField(data, value)
-
-
 
   -- Test to see if we are entering edit mode
   if(value == true) then
@@ -171,6 +175,8 @@ end
 
 function EditorUI:ChangeInputField(data, text, trigger)
   -- Input fields need to process the text before setting it
+
+  print(data.name, "ChangeInputField", text)
 
   -- Look for any custom validation
   if(data.onValidate ~= nil) then

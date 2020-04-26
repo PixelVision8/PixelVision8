@@ -9,113 +9,114 @@
 ]]--
 
 -- Load in the editor framework script to access tool components
-LoadScript("sb-sprites")
-LoadScript("pixel-vision-os-v2")
-LoadScript("pixel-vision-os-progress-modal-v1")
-LoadScript("pixel-vision-os-file-modal-v1")
+
 
 -- new code modules
+LoadScript("sb-sprites")
+LoadScript("pixel-vision-os-v2")
 LoadScript("code-workspace-tool")
 
+-- Create an global instance of the Pixel Vision OS
+_G["pixelVisionOS"] = PixelVisionOS:Init()
 
 -- Reference to the workspace tool
 local workspaceTool = nil
 
-local toolName = "Workspace Explorer V2"
+-- local toolName = "Workspace Explorer V2"
 local filesToCopy = nil
-local pixelVisionOS = nil
-local editorUI = nil
-local lastStartID = nil
-local windowInvalidated = false
-local DrawVersion, TuneVersion = "Pixel Vision 8 Draw", "Pixel Vision 8 Tune"
-local runnerName = SystemName()
-local totalPerWindow = 12
-local currentDirectory = nil
-local shuttingDown = false
-local files = nil
+-- local pixelVisionOS = nil
+-- local editorUI = nil
+-- local lastStartID = nil
+-- local windowInvalidated = false
+-- local DrawVersion, TuneVersion = "Pixel Vision 8 Draw", "Pixel Vision 8 Tune"
+-- local runnerName = SystemName()
+-- local totalPerWindow = 12
+-- local currentDirectory = nil
+-- local shuttingDown = false
+-- local files = nil
 local windowIconButtons = nil
-local trashPath = NewWorkspacePath("/Tmp/Trash/")
-local refreshTime = 0
-local refreshDelay = 5
-local fileCount = 0
-local overTarget = nil
-local shutdownScreen = false
+-- local trashPath = NewWorkspacePath("/Tmp/Trash/")
+-- local refreshTime = 0
+-- local refreshDelay = 5
+-- local fileCount = 0
+-- local overTarget = nil
+-- local shutdownScreen = false
 
-local fileTypeMap = 
-{
-    folder = "filefolder",
-    updirectory = "fileparentfolder",
-    lua = "filecode",
-    json = "filejson",
-    png = "filepng",
-    run = "filerun", -- TODO need to change this to run
-    txt = "filetext",
-    installer = "fileinstaller", -- TODO need a custom icon
-    info = "fileinfo",
-    pv8 = "diskempty",
-    pvr = "disksystem",
-    wav = "filewav",
+-- local fileTypeMap = 
+-- {
+--     folder = "filefolder",
+--     updirectory = "fileparentfolder",
+--     lua = "filecode",
+--     json = "filejson",
+--     png = "filepng",
+--     run = "filerun", -- TODO need to change this to run
+--     txt = "filetext",
+--     installer = "fileinstaller", -- TODO need a custom icon
+--     info = "fileinfo",
+--     pv8 = "diskempty",
+--     pvr = "disksystem",
+--     wav = "filewav",
 
-    -- TODO these are not core file types
-    unknown = "fileunknown",
-    colors = "filecolor",
-    system = "filesettings",
-    font = "filefont",
-    music = "filemusic",
-    sounds = "filesound",
-    sprites = "filesprites",
-    tilemap = "filetilemap",
-    pvt = "filerun",
-    new = "filenewfile",
-    gif = "filegif",
-    tiles = "filetiles"
-}
+--     -- TODO these are not core file types
+--     unknown = "fileunknown",
+--     colors = "filecolor",
+--     system = "filesettings",
+--     font = "filefont",
+--     music = "filemusic",
+--     sounds = "filesound",
+--     sprites = "filesprites",
+--     tilemap = "filetilemap",
+--     pvt = "filerun",
+--     new = "filenewfile",
+--     gif = "filegif",
+--     tiles = "filetiles"
+-- }
 
-local extToTypeMap = 
-{
-    colors = ".png",
-    system = ".json",
-    font = ".font.png",
-    music = ".json",
-    sounds = ".json",
-    sprites = ".png",
-    tilemap = ".json",
-    installer = ".txt",
-    info = ".json",
-    wav = ".wav"
-}
+-- local extToTypeMap = 
+-- {
+--     colors = ".png",
+--     system = ".json",
+--     font = ".font.png",
+--     music = ".json",
+--     sounds = ".json",
+--     sprites = ".png",
+--     tilemap = ".json",
+--     installer = ".txt",
+--     info = ".json",
+--     wav = ".wav"
+-- }
 
-local rootPath = ReadMetadata("RootPath", "/")
-local gameName = ReadMetadata("GameName", "FilePickerTool")
+-- local rootPath = ReadMetadata("RootPath", "/")
+-- local gameName = ReadMetadata("GameName", "FilePickerTool")
 
-local windowScrollHistory = {}
+-- local windowScrollHistory = {}
 
-local newFileModal = nil
+-- local newFileModal = nil
 
-local fileTemplatePath = nil
+-- local fileTemplatePath = nil
 
-local tmpProjectPath = ReadBiosData("ProjectTemplate")
+-- local tmpProjectPath = ReadBiosData("ProjectTemplate")
 
-fileTemplatePath = tmpProjectPath == nil and NewWorkspacePath(rootPath .. gameName .. "/ProjectTemplate/") or NewWorkspacePath(tmpProjectPath)
+-- fileTemplatePath = tmpProjectPath == nil and NewWorkspacePath(rootPath .. gameName .. "/ProjectTemplate/") or NewWorkspacePath(tmpProjectPath)
 
--- This this is an empty game, we will the following text. We combined two sets of fonts into
--- the default.font.png. Use uppercase for larger characters and lowercase for a smaller one.
-local title = "EMPTY TOOL"
-local messageTxt = "This is an empty tool template. Press Ctrl + 1 to open the editor or modify the files found in your workspace game folder."
+-- -- This this is an empty game, we will the following text. We combined two sets of fonts into
+-- -- the default.font.png. Use uppercase for larger characters and lowercase for a smaller one.
+-- local title = "EMPTY TOOL"
+-- local messageTxt = "This is an empty tool template. Press Ctrl + 1 to open the editor or modify the files found in your workspace game folder."
 
--- Container for horizontal slider data
+-- -- Container for horizontal slider data
 
-local desktopIcons = nil
-local vSliderData = nil
+-- local desktopIcons = nil
+-- local vSliderData = nil
 
-local currentSelectedFile = nil
+-- local currentSelectedFile = nil
 
--- Flags for managing focus
-local WindowFocus, DesktopIconFocus, WindowIconFocus, NoFocus = 1, 2, 3, 4
+-- -- Flags for managing focus
+-- local WindowFocus, DesktopIconFocus, WindowIconFocus, NoFocus = 1, 2, 3, 4
 
-local desktopIcons = {}
+-- local desktopIcons = {}
 
-NewFolderShortcut, EditShortcut, RenameShortcut, CopyShortcut, PasteShortcut, DeleteShortcut, EmptyTrashShortcut, EjectDiskShortcut = "New Folder", "Edit", "Rename", "Copy", "Paste", "Delete", "Empty Trash", "Eject Disk"
+-- NewFolderShortcut, EditShortcut, RenameShortcut, CopyShortcut, PasteShortcut, DeleteShortcut, EmptyTrashShortcut, EjectDiskShortcut = "New Folder", "Edit", "Rename", "Copy", "Paste", "Delete", "Empty Trash", "Eject Disk"
 
 
 
