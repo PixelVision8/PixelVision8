@@ -44,9 +44,9 @@ function WorkspaceTool:OnDeleteFile()
   end
 
   -- TODO how should this be handled if there are multiple selections
-  self.fileActionSrc = self.currentPath
+  -- self.fileActionSrc = self.currentPath
 
-  self.filesToCopy = {}
+  self.targetFiles = {}
 
   -- Loop through all of the selections
   for i = 1, #selections do
@@ -54,11 +54,11 @@ function WorkspaceTool:OnDeleteFile()
     local srcPath = self.files[selections[i]].path
 
     -- Make sure the selected directory is included
-    table.insert(self.filesToCopy, srcPath)
+    table.insert(self.targetFiles, srcPath)
 
   end
 
-  -- print("Files", dump(self.filesToCopy))
+  -- print("Files", dump(self.targetFiles))
 
   -- Always make sure anything going into the throw out has a unique file name
   self:StartFileOperation(self.trashPath, "throw out")
@@ -75,32 +75,39 @@ function WorkspaceTool:StartFileOperation(destPath, action)
 
     -- Exit out of the function
     return
+
   end
 
   -- Set a modal flag so we know what warning to display
   local fileActionFlag = 0
 
   -- TODO need to loop through all of the files do pre-check
-    for i = 1, #self.filesToCopy do
+    for i = 1, #self.targetFiles do
 
       -- Get the file to test
-      local filePath = self.filesToCopy[i]
+      local filePath = self.targetFiles[i]
 
       -- Figure out the final path for the file
       local finalDestPath = NewWorkspacePath(destPath.Path .. filePath.Path:sub(#self.currentPath.Path + 1))
 
-      -- Check to see if file is child of the destination path
-      if(filePath.IsChildOf(finalDestPath)) then
-        
-        -- Set flag to 1 for a child path error
+      print("filePath", filePath.Path, destPath.Path, finalDestPath.Path)
+
+      if(filePath.isDirectory and filePath.Path == destPath.Path) then
+
         fileActionFlag = 1
+        break
+
+      elseif(filePath.IsChildOf(finalDestPath)) then
+        
+        -- Set flag to 2 for a child path error
+        fileActionFlag = 2
         break
 
       -- Test the final path only if it's not being moved to the throw out
       elseif(PathExists(finalDestPath) and action ~= "throw out") then
 
-        -- Set flag to 2 for a douplicate file warning
-        fileActionFlag = 2
+        -- Set flag to 3 for a douplicate file warning
+        fileActionFlag = 3
 
         break
 
@@ -114,14 +121,22 @@ function WorkspaceTool:StartFileOperation(destPath, action)
 
     pixelVisionOS:ShowMessageModal(
       "Workspace Path Conflict",
+      "Can't perform a file action on a path that is the same as the destination path.",
+      128 + 16, false, function() self:CancelFileActions() end
+    )
+    return
+  elseif(fileActionFlag == 2) then
+
+    pixelVisionOS:ShowMessageModal(
+      "Workspace Path Conflict",
       "Can't perform a file action on a path that is the child of the destination path.",
       128 + 16, false, function() self:CancelFileActions() end
     )
     return
 
-  elseif(fileActionFlag == 2) then
+  elseif(fileActionFlag == 3) then
 
-    -- local duplicate = destPath.Path == self.filesToCopy[1].Path
+    -- local duplicate = destPath.Path == self.targetFiles[1].Path
 
     -- Ask if the file first item should be duplicated
     pixelVisionOS:ShowMessageModal(
@@ -152,7 +167,7 @@ function WorkspaceTool:StartFileOperation(destPath, action)
 
     pixelVisionOS:ShowMessageModal(
       "Workspace ".. action .." Action",
-      "Do you want to ".. action .. " " .. #self.filesToCopy .. " files?",
+      "Do you want to ".. action .. " " .. #self.targetFiles .. " files?",
       160,
       true,
       function()
@@ -189,9 +204,9 @@ function WorkspaceTool:OnRunFileAction(destPath, action, duplicate)
   -- Build the arguments
   local args = { self.currentPath, destPath, action, duplicate}
 
-  for i = 1, #self.filesToCopy do
+  for i = 1, #self.targetFiles do
 
-    table.insert(args, self.filesToCopy[i])
+    table.insert(args, self.targetFiles[i])
 
   end
 
@@ -209,7 +224,7 @@ function WorkspaceTool:OnRunFileAction(destPath, action, duplicate)
       self.progressModal = ProgressModal:Init("File Action ", editorUI, function() self:CancelFileActions() end)
 
       self.progressModal.fileAction = action
-      self.progressModal.totalFiles = (#self.filesToCopy - 2)
+      self.progressModal.totalFiles = (#self.targetFiles - 2)
     end
 
     -- Open the modal
@@ -237,6 +252,8 @@ function WorkspaceTool:UpdateFileActionProgress(data)
 
     -- Refresh the window and get the new file list
     self:RefreshWindow(true)
+
+    self.selectedFiles = nil
 
     -- Remove the callback from the UI update loop
     pixelVisionOS:RemoveUI("ProgressUpdate")
@@ -392,17 +409,17 @@ function WorkspaceTool:OnPaste(dest)
 
       local paths = data.value
 
-      self.filesToCopy = {}
+      self.targetFiles = {}
 
       for i = 1, #paths do
         
         if(PathExists(paths[i])) then
-          table.insert(self.filesToCopy, paths[i])
+          table.insert(self.targetFiles, paths[i])
         end
 
       end
 
-      if(#self.filesToCopy) then
+      if(#self.targetFiles) then
       
         pixelVisionOS:ClearClipboard()
         self:StartFileOperation(dest, "copy")
@@ -649,13 +666,14 @@ end
 function WorkspaceTool:CanEject()
 
   local selections = self:CurrentlySelectedFiles()
+  print("selections", dump(selections))
 
   if(selections == nil) then
     return
   end
-
+  
   for i = 1, #selections do
-    if(selections[i].type == "disk") then
+    if(self.files[selections[i]].type == "disk") then
       return true
     end
   end

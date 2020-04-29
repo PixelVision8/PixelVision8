@@ -143,7 +143,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
 
                 for i = 1, #text do
 
-                    lines[#lines] = lines[#lines] .. text:sub(i, i):upper()
+                    lines[#lines] = lines[#lines] .. text:sub(i, i)--:upper()
 
                     if(i % maxWidth == 0 and i ~= #text)then
                         table.insert(lines, "")
@@ -186,7 +186,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
                     end
 
                     -- Draw the text
-                    canvas:DrawText(line, x, y, "medium", textColor, - 4)
+                    canvas:DrawText(line, x, y, "medium5", textColor, - 4)
 
                 end
 
@@ -386,7 +386,7 @@ function PixelVisionOS:ToggleIconButton(data, value, callAction)
         end
 
         -- invert the selected value
-        data.selected = true
+        -- data.selected = true
 
         -- Invalidate the button so it redraws
         self.editorUI:Invalidate(data)
@@ -545,6 +545,8 @@ function PixelVisionOS:UpdateIconGroup(data)
         return
     end
 
+    data.isDragging = false
+
     -- Set data for the total number of buttons for the loop
     local total = #data.buttons
     local btn = nil
@@ -558,6 +560,8 @@ function PixelVisionOS:UpdateIconGroup(data)
         if(btn ~= nil) then
             if(btn.dragging == true) then
 
+                data.isDragging = true
+                
                 -- Look for drop targets
                 for i = 1, #self.editorUI.collisionManager.dragTargets do
 
@@ -643,6 +647,9 @@ function PixelVisionOS:UpdateIconGroup(data)
 
                     -- DrawPixels(btn.cachedPixelData["up"], 0,0)
                     self.editorUI:NewDraw("DrawPixels", data.drawIconArgs)
+                    
+                    -- TODO need a file count when dragging
+                    -- self.editorUI:NewDraw("DrawText", {string.format("%02d", 1), data.drawIconArgs[2], data.drawIconArgs[3], DrawMode.Sprite, "small", 15, -4})
                 end
 
             end
@@ -676,7 +683,7 @@ function PixelVisionOS:SelectIconButton(data, id, trigger)
     
     if(data.singleSelection == true) then
         -- Make sure that the button is selected before we disable it
-        buttonData.selected = true
+        -- buttonData.selected = true
         -- self:Enable(buttonData, false)
 
     end

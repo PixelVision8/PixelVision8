@@ -40,6 +40,8 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
 
     end
 
+    
+
     print("Loading Path", path)
 
     -- Configure window settings
@@ -55,8 +57,14 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     self.focus = true
     self.maxChars = 43
     self.windowRect = NewRect(8, 8, windowchrome.width * 8, math.floor(#windowchrome.spriteIDs/windowchrome.width * 8))
+    self.dragCountBGArgs = {0, 0, 9, 6, 0, DrawMode.SpriteAbove}
+    self.dragCountTextArgs = {"00", 0, 0, DrawMode.SpriteAbove, "small", 15, -4}
+    self.fileCount = 0
+    
+    -- Make sure the last selections are cleared
+    self:ClearSelections()
 
-    print("window chrome", self.windowRect)
+    -- print("window chrome", self.windowRect)
     
     self.totalDisk = tonumber(ReadBiosData("MaxDisks", 2))
 
@@ -171,8 +179,6 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
 
     self:UpdateFileList()
 
-    
-
     -- Update the slider
     editorUI:ChangeSlider(self.vSliderData, scrollTo)
     
@@ -244,8 +250,24 @@ function WorkspaceTool:UpdateWindow()
 
     pixelVisionOS:UpdateIconGroup(self.windowIconButtons)
 
-    
-    
+    if(self.windowIconButtons.isDragging == true) then
+
+        local total = #self:CurrentlySelectedFiles()
+        
+        if(total > 1) then
+
+            self.dragCountBGArgs[1] = self.windowIconButtons.drawIconArgs[2] + 30
+            self.dragCountBGArgs[2] = self.windowIconButtons.drawIconArgs[3] - 2
+        
+            editorUI:NewDraw("DrawRect", self.dragCountBGArgs)
+
+            self.dragCountTextArgs[1] = string.format("%02d", total)
+            self.dragCountTextArgs[2] = self.dragCountBGArgs[1] + 1
+            self.dragCountTextArgs[3] = self.dragCountBGArgs[2] - 1
+            editorUI:NewDraw("DrawText", self.dragCountTextArgs)
+        end
+    end
+
     -- Call draw window after each update
     self:DrawWindow()
     
@@ -253,43 +275,101 @@ end
 
 function WorkspaceTool:ChangeFocus(value)
     
-    self.focus = value or (self.windowRect.contains(MousePosition()))
+    local lastValue = self.focus
 
-    print("find focus", self.focus)
+    value = value or (self.windowRect.contains(MousePosition()))
+
+    -- if(self.focus ~= value) then
+        
+    --     local selections = self:CurrentlySelectedFiles()
+
+    --     print("Clear selection new value", self.focus, value, dump(selections))
+
+        
+    --     -- self:ClearSelections()
+    -- end
+
+    self.focus = value
+
+    -- print("find focus", self.focus, "Last value", lastFocus)
 
     -- redraw window chrome
     self:ChangeWindowTitle()
 
     if(editorUI.mouseCursor.cursorID == 1) then
         pixelVisionOS:ClearIconGroupSelections(self.windowIconButtons)
+        self:ClearSelections()
+        -- print("Clear selection not icon")
     end
 
     -- TODO need to test if the slider should be active
     editorUI:Enable(self.vSliderData, self:EnableScrollBar())
+
+    -- if(lastValue ~= value) then 
+    self:UpdateContextMenu()
+    -- end
+    --     print("Clear Focus")
+    --     local selections = self:CurrentlySelectedFiles()
+
+    --     -- clear selections when loosing focus
+    --     if(selections ~= nil) then
+
+    --         for i = 1, #selections do
+    --             self.files[selections[i]].selected = false
+    --         end
+
+    --     end
+    -- end
+
 end
+
 
 function WorkspaceTool:CurrentlySelectedFiles()
 
-    -- Create containers for selected files and temp file
-    local selectedFiles = {}
-    local tmpFile = nil
+    if(self.selectedFiles == nil) then
 
-    -- Loop through all of the files
-    for i = 1, self.fileCount do
+        print("Build selected file list")
         
-        -- Get the current file
-        tmpFile = self.files[i]
-        
-        -- check to see if the file is selected
-        if(tmpFile.selected) then
+        self.selectedFiles = {}
+
+        local tmpFile = nil
+
+        -- Loop through all of the files
+        for i = 1, self.fileCount do
             
-            -- Insert the selected file into the array
-            table.insert(selectedFiles, i)
+            -- Get the current file
+            tmpFile = self.files[i]
+            
+            -- check to see if the file is selected
+            if(tmpFile.selected) then
+                
+                -- Insert the selected file into the array
+                table.insert(self.selectedFiles, i)
+            end
         end
+        
     end
+        
+    -- -- Create containers for selected files and temp file
+    -- local selectedFiles = {}
+    
+
+    -- -- Loop through all of the files
+    -- for i = 1, self.fileCount do
+        
+    --     -- Get the current file
+    --     tmpFile = self.files[i]
+        
+    --     -- check to see if the file is selected
+    --     if(tmpFile.selected) then
+            
+    --         -- Insert the selected file into the array
+    --         table.insert(selectedFiles, i)
+    --     end
+    -- end
 
     -- Return all of the selected files or nil if there are no selections
-    return #selectedFiles > 0 and selectedFiles or nil
+    return #self.selectedFiles > 0 and self.selectedFiles or nil
     
 end
 
@@ -335,7 +415,7 @@ function WorkspaceTool:ChangeWindowTitle()
     end
 
     -- Draw the new title bar text   
-    DrawText(pathTitle:upper(), 19, 17, DrawMode.TilemapCache, "medium", colorID, - 4)
+    DrawText(pathTitle, 19, 17, DrawMode.TilemapCache, "medium5", colorID, - 4)
 
 end
 
@@ -402,18 +482,21 @@ function WorkspaceTool:OnWindowIconSelect(id)
 
     -- TODO need to clear all selected files
 
-    print("selection", id, self.desktopIconCount)
-
     local selections = self:CurrentlySelectedFiles()
-  
+    self:InvalidateSelectedFiles()
+
+    local totalSelections = selections == nil and 0 or #selections
+
+    local specialFile = selectedFile.type == "updirectory" or selectedFile.type == "run"  or selectedFile.type == "run"
+    
     if(Key(Keys.LeftShift, InputState.Down) or Key( Keys.RightShift, InputState.Down )) then
 
         -- Find the first selection and select all files all the way down to the current selection
-
+       
         if(selections ~= nil) then
 
             -- Create the range between the first selected file and the one that was just selected
-            local range = {realFileID, selections[1]}
+            local range = {Clamp(realFileID, self.totalSingleSelectFiles + 1, #self.files), Clamp(selections[1], self.totalSingleSelectFiles + 1, #self.files)}
 
             -- TODO should we test for the total disks?
 
@@ -426,7 +509,7 @@ function WorkspaceTool:OnWindowIconSelect(id)
                 for i = 1, self.fileCount do
                     
                     -- Change the value based on if it is within the range
-                    self.files[i].selected = i >= range[1] and i <= range[2]
+                    self.files[i].selected = (i >= range[1] and i <= range[2])
 
                 end
 
@@ -438,28 +521,51 @@ function WorkspaceTool:OnWindowIconSelect(id)
 
         end
 
+        -- Make sure that we don't select the current file if it can't be selected in a group
+        if(realFileID <= self.totalSingleSelectFiles) then
+            selectionFlag = false
+        end
+
         -- Update the selection
         selections = self:CurrentlySelectedFiles()
 
     elseif(Key(Keys.LeftControl, InputState.Down) or Key( Keys.RightControl, InputState.Down )) then
 
-        -- change the selection flag to the opposet of the current file's selection value
+        -- change the selection flag to the opposite of the current file's selection value
         selectionFlag = not selectedFile.selected
 
-        print("crt select", selectionFlag)
-    
+        -- Check to see if we need to clear the selections
+        if(totalSelections > 0) then
+            local lastSelection = selections[#selections]
+
+        --     print("Last Selections", lastSelection)
+
+            if(specialFile == true or id <= self.totalSingleSelectFiles or (id <= self.totalSingleSelectFiles and lastSelection > self.totalSingleSelectFiles) or (lastSelection <= self.totalSingleSelectFiles and id > self.totalSingleSelectFiles)) then
+                self:ClearSelections()
+                
+        --         -- Force deselect on all previous selections
+        --         for i = 1, #selections do
+        --             self.files[selections[i]].selected = false
+        --         end
+                self:RefreshWindow()
+
+                print("Clear Selection CTRL")
+        --         -- clearSelections = true
+            end
+        end
+
     else
 
-        clearSelections = true
+        if(selectedFile.selected == false) then 
+            clearSelections = true
+        end
 
     end
     
     -- Deselect all the files
     if(selections ~= nil and clearSelections == true) then
 
-        for i = 1, #selections do
-            self.files[selections[i]].selected = false
-        end
+        self:ClearSelections()
 
     end
 
@@ -673,10 +779,10 @@ function WorkspaceTool:DrawWindow()
         local item = nil
         local spriteName = "none"
 
-        -- Determin which index to use for the pathParts
+        -- Determine which index to use for the pathParts
         local pathOffset = pathParts[1] == "Workspace" and 1 or 2
 
-        -- We'll use this name to figure out which desktopp icon to show as open
+        -- We'll use this name to figure out which desktop icon to show as open
         local desktopName = pathParts[ pathOffset ]
 
         -- Make sure the index is less than the maximum icon count
@@ -758,7 +864,7 @@ function WorkspaceTool:DrawWindow()
         
         editorUI:Enable(button, enable)
 
-        print(button.name, item ~= nil, button, spriteName)
+        -- print(button.name, item ~= nil, button, spriteName)
 
         if(item ~= nil) then
 
@@ -770,21 +876,15 @@ function WorkspaceTool:DrawWindow()
                     button.dragDelay = -1
                 end
 
-                -- button.onPress = function()
-                --   -- print("Starting Drag")
-                -- end
-
                 button.onOverDropTarget = function(src, dest) self:OnOverDropTarget(src, dest) end
 
                 -- -- Add on drop target code to each folder type
                 button.onDropTarget = function(src, dest) self:FileDropAction(src, dest) end
 
+            elseif(item.type == "run" or item.type == "installer") then
 
-            elseif(item.type == "run" or item.type == "unknown" or item.type == "installer") then
-
-                editorUI.collisionManager:DisableDragging(button)
-                button.onDropTarget = nil
-
+                button.dragDelay = -1
+                
             end
 
         end
@@ -808,38 +908,45 @@ end
 
 function WorkspaceTool:FileDropAction(src, dest)
 
-    -- if src and dest paths are the same, exit
-    if(src == dest) then
+    -- build a list of files to process
+    local destPath = dest.iconPath
+
+    -- Get the current selections
+    local selections = self:CurrentlySelectedFiles()
+
+    -- Exit out of this if there are no selected files
+    if(selections == nil) then
         return
     end
 
-    filesToCopy = {}
+    print(self.files[selections[1]].path, destPath)
 
-    fileActionSrc = currentDirectory
+    -- do a quick test to make sure you don't just drop the same folder on itself and get an error
+    if(#selections == 1 and self.files[selections[1]].isDirectory and self.files[selections[1]].path == destPath) then
+         return
+    end
+    -- Clear the target file list
+    self.targetFiles = {}
 
-    -- TODO need to find the base path
-    local srcPath = NewWorkspacePath(src.iconPath)
-    if(srcPath.IsDirectory) then
+    -- Loop through all of the selections
+    for i = 1, #selections do
 
-        -- Add all of the files that need to be copied to the list
-        filesToCopy = GetEntitiesRecursive(srcPath)
+        -- Make sure the selected directory is included
+        table.insert(self.targetFiles, self.files[selections[i]].path)
 
     end
 
-    -- Make sure the selected directory is included
-    table.insert(filesToCopy, 1, srcPath)
-
-
-    local destPath = NewWorkspacePath(dest.iconPath)
-
     local action = "move"
 
-    local srcSeg = srcPath.GetDirectorySegments()
+    local srcSeg = self.currentPath.GetDirectorySegments()
     local destSeg = destPath.GetDirectorySegments()
 
     if(srcSeg[1] == "Tmp" and srcSeg[2] == "Trash") then
         -- print("Trash")
         action = "move"
+    elseif(destSeg[1] == "Tmp" and destSeg[2] == "Trash") then
+        -- print("Trash")
+        action = "throw out"
     elseif(srcSeg[1] == "Disks" and destSeg[1] == "Disks") then
         if(srcSeg[2] ~= destSeg[2]) then
             action = "copy"
@@ -847,13 +954,14 @@ function WorkspaceTool:FileDropAction(src, dest)
     elseif(srcSeg[1] ~= destSeg[1]) then
         action = "copy"
     end
+    
+    -- -- print(action, dump(srcSeg), dump(destSeg))
 
-    -- print(action, dump(srcSeg), dump(destSeg))
+    -- print("Drop Action", action, destPath.Path, dump(self.targetFiles))
 
-    -- print("Drop Action", action, srcPath, destPath, srcSeg[1], srcSeg[2])
-
+    
     -- Perform the file action
-    StartFileOperation(destPath, action)
+    self:StartFileOperation(destPath, action)
 
 end
 
@@ -863,7 +971,7 @@ function WorkspaceTool:UpdateFileType(item, isGameFile)
 
     key = item.type
 
-    -- TODO support legacy files
+    -- TODO support legacy files and test new extensions
     if(key == "png" and isGameFile == true) then
         -- -- print("Is PNG")
         if(item.name == "sprites" and self.editorMapping["sprites"] ~= nil) then
@@ -873,6 +981,12 @@ function WorkspaceTool:UpdateFileType(item, isGameFile)
         elseif(item.name == "colors" and self.editorMapping["colors"] ~= nil) then
             key = "colors"
         end
+    elseif(key == "sprites.png" and self.editorMapping["sprites"] ~= nil and isGameFile == true) then
+        key = "sprites"
+    elseif(key == "tiles.png" and self.editorMapping["tilemap"] ~= nil and isGameFile == true) then
+        key = "tiles"
+    elseif(key == "tilemap.json" and self.editorMapping["tilemap"] ~= nil and isGameFile == true) then
+        key = "tilemap"
     elseif(key == "font.png") then
 
         if(isGameFile == false or self.editorMapping["font"] == nil) then
@@ -930,6 +1044,8 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
     -- Create empty entities table
     local entities = {}
 
+    self.totalSingleSelectFiles = self.desktopIconCount
+    
     -- Create the workspace desktop icon
     table.insert(
             entities,
@@ -1011,6 +1127,8 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
             }
         )
 
+        self.totalSingleSelectFiles = self.totalSingleSelectFiles + 1
+
     end
 
     -- Check to see if this is a game directory
@@ -1028,6 +1146,8 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
                 selected = false
             }
         )
+
+        self.totalSingleSelectFiles = self.totalSingleSelectFiles + 1
 
     end
 
@@ -1149,6 +1269,8 @@ function WorkspaceTool:ClearSelections()
     -- Get the current selections
     local selections = self:CurrentlySelectedFiles()
 
+    print("Clearing", dump(selections))
+    
     -- Make sure there are selections
     if(selections ~= nil) then
 
@@ -1159,4 +1281,13 @@ function WorkspaceTool:ClearSelections()
 
     end
 
+    self:InvalidateSelectedFiles()
+
+    -- self:RefreshWindow(false)
+
+end
+
+function WorkspaceTool:InvalidateSelectedFiles()
+
+    self.selectedFiles = nil
 end

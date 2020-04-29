@@ -173,189 +173,277 @@ end
 
 function WorkspaceTool:UpdateContextMenu(inFocus)
 
-    -- Set a flag to enable any item that is dependant on the trash being closed
-    local enable = not self:TrashOpen()
+    local selections = self:CurrentlySelectedFiles()
 
-    if(inFocus == WindowFocus) then
+    -- Check to see if the selection is empty
+    -- if(selections == nil) then
 
-        local canRun = pixelVisionOS:ValidateGameInDir(self.currentPath, {"code.lua"}) and enable
+    --     -- -- Change the focus to the window
+    --     -- self:UpdateContextMenu(WindowFocus)
+    --     -- return
 
-        if(self.runnerName == DrawVersion or self.runnerName == TuneVersion) then
-            canRun = false
-        end
+    -- -- Check  to see if there are multiple files
+    -- elseif(#selections > 1) then
 
-        -- New File options
-        -- if(runnerName ~= PlayVersion) then
-            pixelVisionOS:EnableMenuItemByName(NewGameShortcut, not canRun and enable)
-        -- end
+    --     -- Chnage the context menu to multiple files
+    --     self:UpdateContextMenu(MultipleFiles)
+    --     return
 
-        pixelVisionOS:EnableMenuItemByName(NewFolderShortcut, enable)
-        -- pixelVisionOS:EnableMenuItemByName(NewFileShortcut, not TrashOpen())
+    -- end
+
+    -- Check to see if currentPath is a game
+    local canRun = pixelVisionOS:ValidateGameInDir(self.currentPath, {"code.lua"})-- and selections
+
+
+    -- Get the first file which is the current selection
+    local currentSelection = selections == nil or self.files[selections[1]]
+
+    -- -- Look to see if the selection is a special file (parent dir or run)
+    local specialFile = currentSelection == nil-- and false or currentSelection.name == ".." --or currentSelection.name == "Run" or currentSelection.name == "Trash" or currentSelection.name == "Workspace")
+
+    print("specialFile", specialFile, "canRun", canRun)
+        -- pixelVisionOS:EnableMenuItemByName(RenameShortcut, false)
+
+        -- pixelVisionOS:EnableMenuItemByName(CopyShortcut, false)
         
-        self:ToggleOptions(enable)
-
-        -- File options
-        pixelVisionOS:EnableMenuItemByName(EditShortcut, false)
-
-        if(RunShortcut ~= nil) then
-            pixelVisionOS:EnableMenuItemByName(RunShortcut, canRun)
-        end
-
-        pixelVisionOS:EnableMenuItemByName(RenameShortcut, false)
-        pixelVisionOS:EnableMenuItemByName(CopyShortcut, false)
-        pixelVisionOS:EnableMenuItemByName(DeleteShortcut, false)
-
-        if(BuildShortcut ~= nil) then
-            pixelVisionOS:EnableMenuItemByName(BuildShortcut, canRun and string.starts(self.currentPath.Path, "/Disks/") == false)
-        end
-
-        pixelVisionOS:EnableMenuItemByName(EjectDiskShortcut, self:CanEject())
-
-        -- Special cases
-
-        -- Only active paste if there is something to paste
-        pixelVisionOS:EnableMenuItemByName(PasteShortcut, self.filesToCopy ~= nil and #self.filesToCopy > 0)
-
-        -- -- Clear the desktop selction
-        -- self:ClearDesktopSelection()
+        -- pixelVisionOS:EnableMenuItemByName(PasteShortcut, false)
         
-    elseif(inFocus == WindowIconFocus) then
+        -- pixelVisionOS:EnableMenuItemByName(DeleteShortcut, false)
 
-        local selections = self:CurrentlySelectedFiles()
+        -- pixelVisionOS:EnableMenuItemByName(BuildShortcut, canRun and string.starts(self.currentPath.Path, "/Disks/") == false)
 
-        -- Check to see if the selction is empty
-        if(selections == nil) then
+        -- pixelVisionOS:EnableMenuItemByName(NewGameShortcut, not canRun and enable)
 
-            -- Change the focus to the window
-            self:UpdateContextMenu(WindowFocus)
+        -- pixelVisionOS:EnableMenuItemByName(NewFolderShortcut, enable)
 
-        -- Check  to see if there are multiple files
-        elseif(#selections > 1) then
+        -- self:ToggleOptions(enable)
 
-            -- Chnage the context menu to multiple files
-            self:UpdateContextMenu(MultipleFiles)
+        -- pixelVisionOS:EnableMenuItemByName(EditShortcut, enable and not specialFile)
 
-        end
+        -- pixelVisionOS:EnableMenuItemByName(RunShortcut, canRun)
 
-        -- Get the first file which is the current selection
-        local currentSelection = self.files[selections[1]]
+        -- pixelVisionOS:EnableMenuItemByName(CopyShortcut, enable and not specialFile)
 
-        -- Look to see if the selection is a special file (parent dir or run)
-        local specialFile = currentSelection.name == ".." or currentSelection.name == "Run"
+        -- pixelVisionOS:EnableMenuItemByName(DeleteShortcut, enable and not specialFile)
 
-        -- Check to see if currentPath is a game
-        local canRun = pixelVisionOS:ValidateGameInDir(self.currentPath, {"code.lua"}) and selections
+        -- pixelVisionOS:EnableMenuItemByName(EjectDiskShortcut, false)
 
-        -- if(runnerName == DrawVersion or runnerName == TuneVersion) then
-        --     canRun = false
-        -- end
 
+        
         -- Check to see if the build option is available
         if(BuildShortcut ~= nil) then
-            pixelVisionOS:EnableMenuItemByName(BuildShortcut, canRun and string.starts(self.currentPath.Path, "/Disks/") == false)
         end
 
         -- Check to see if the new project file is available
         -- if(runnerName ~= PlayVersion) then
-            pixelVisionOS:EnableMenuItemByName(NewGameShortcut, not canRun and enable)
         -- end
 
         -- Enable the new folder option if this file is not in the trash
-        pixelVisionOS:EnableMenuItemByName(NewFolderShortcut, enable)
 
-        self:ToggleOptions(enable)
+        
 
 
-        pixelVisionOS:EnableMenuItemByName(EditShortcut, enable and not specialFile)
 
         -- TODO Can't rename up directory?
-        pixelVisionOS:EnableMenuItemByName(RenameShortcut, enable and not specialFile)
 
         if(RunShortcut ~= nil) then
-            pixelVisionOS:EnableMenuItemByName(RunShortcut, canRun)
         end
 
-        pixelVisionOS:EnableMenuItemByName(CopyShortcut, enable and not specialFile)
 
         -- TODO need to makes sure the file can be deleted
-        pixelVisionOS:EnableMenuItemByName(DeleteShortcut, enable and not specialFile)
 
         -- Disk options
-        pixelVisionOS:EnableMenuItemByName(EjectDiskShortcut, false)
 
-        -- Clear the desktop selction
-        -- self:ClearDesktopSelection()
+
+    -- -- Set a flag to enable any item that is dependant on the trash being closed
+    -- local enable = not self:TrashOpen()
+
+    -- if(inFocus == WindowFocus) then
+
+    --     local canRun = pixelVisionOS:ValidateGameInDir(self.currentPath, {"code.lua"}) and enable
+
+    --     if(self.runnerName == DrawVersion or self.runnerName == TuneVersion) then
+    --         canRun = false
+    --     end
+
+    --     -- New File options
+    --     -- if(runnerName ~= PlayVersion) then
+    --         pixelVisionOS:EnableMenuItemByName(NewGameShortcut, not canRun and enable)
+    --     -- end
+
+    --     pixelVisionOS:EnableMenuItemByName(NewFolderShortcut, enable)
+    --     -- pixelVisionOS:EnableMenuItemByName(NewFileShortcut, not TrashOpen())
         
-    elseif(inFocus == DesktopIconFocus) then
+    --     self:ToggleOptions(enable)
 
-        -- New File options
-        -- if(runnerName ~= PlayVersion) then
-            pixelVisionOS:EnableMenuItemByName(NewGameShortcut, false)
-        -- end
+    --     -- File options
+    --     pixelVisionOS:EnableMenuItemByName(EditShortcut, false)
 
-        pixelVisionOS:EnableMenuItemByName(NewFolderShortcut, false)
-        -- pixelVisionOS:EnableMenuItemByName(NewFileShortcut, false)
-        -- for i = 1, #self.newFileOptions do
-        --     pixelVisionOS:EnableMenuItemByName(self.newFileOptions[i].name, false)
-        -- end
+    --     if(RunShortcut ~= nil) then
+    --         pixelVisionOS:EnableMenuItemByName(RunShortcut, canRun)
+    --     end
 
-        self:ToggleOptions(false)
+    --     pixelVisionOS:EnableMenuItemByName(RenameShortcut, false)
+    --     pixelVisionOS:EnableMenuItemByName(CopyShortcut, false)
+    --     pixelVisionOS:EnableMenuItemByName(DeleteShortcut, false)
 
-        -- File options
-        -- pixelVisionOS:EnableMenuItemByName(EditShortcut, false)
-        pixelVisionOS:EnableMenuItemByName(EditShortcut, false)
+    --     if(BuildShortcut ~= nil) then
+    --         pixelVisionOS:EnableMenuItemByName(BuildShortcut, canRun and string.starts(self.currentPath.Path, "/Disks/") == false)
+    --     end
 
-        if(RunShortcut ~= nil) then
-            pixelVisionOS:EnableMenuItemByName(RunShortcut, false)
-        end
+    --     pixelVisionOS:EnableMenuItemByName(EjectDiskShortcut, self:CanEject())
 
-        pixelVisionOS:EnableMenuItemByName(RenameShortcut, false)
-        pixelVisionOS:EnableMenuItemByName(CopyShortcut, false)
-        pixelVisionOS:EnableMenuItemByName(PasteShortcut, false)
-        pixelVisionOS:EnableMenuItemByName(DeleteShortcut, false)
-        if(BuildShortcut ~= nil) then
-            pixelVisionOS:EnableMenuItemByName(BuildShortcut, false)
-        end
-        -- Disk options
-        pixelVisionOS:EnableMenuItemByName(EjectDiskShortcut, self:CanEject())
+    --     -- Special cases
+
+    --     -- Only active paste if there is something to paste
+    --     pixelVisionOS:EnableMenuItemByName(PasteShortcut, self.filesToCopy ~= nil and #self.filesToCopy > 0)
+
+    --     -- -- Clear the desktop selction
+    --     -- self:ClearDesktopSelection()
+        
+    -- elseif(inFocus == WindowIconFocus) then
+
+    --     local selections = self:CurrentlySelectedFiles()
+
+        
+
+    --     -- Check to see if the selction is empty
+    --     if(selections == nil) then
+
+    --         -- Change the focus to the window
+    --         self:UpdateContextMenu(WindowFocus)
+    --         return
+
+    --     -- Check  to see if there are multiple files
+    --     elseif(#selections > 1) then
+
+    --         -- Chnage the context menu to multiple files
+    --         self:UpdateContextMenu(MultipleFiles)
+    --         return
+
+    --     end
+
+    --     print("test", dump(selections))
+
+    --     -- Get the first file which is the current selection
+    --     local currentSelection = self.files[selections[1]]
+
+    --     -- Look to see if the selection is a special file (parent dir or run)
+    --     local specialFile = currentSelection.name == ".." or currentSelection.name == "Run"
+
+    --     -- Check to see if currentPath is a game
+    --     local canRun = pixelVisionOS:ValidateGameInDir(self.currentPath, {"code.lua"}) and selections
+
+    --     -- if(runnerName == DrawVersion or runnerName == TuneVersion) then
+    --     --     canRun = false
+    --     -- end
+
+    --     -- Check to see if the build option is available
+    --     if(BuildShortcut ~= nil) then
+    --         pixelVisionOS:EnableMenuItemByName(BuildShortcut, canRun and string.starts(self.currentPath.Path, "/Disks/") == false)
+    --     end
+
+    --     -- Check to see if the new project file is available
+    --     -- if(runnerName ~= PlayVersion) then
+    --         pixelVisionOS:EnableMenuItemByName(NewGameShortcut, not canRun and enable)
+    --     -- end
+
+    --     -- Enable the new folder option if this file is not in the trash
+    --     pixelVisionOS:EnableMenuItemByName(NewFolderShortcut, enable)
+
+    --     self:ToggleOptions(enable)
+
+
+    --     pixelVisionOS:EnableMenuItemByName(EditShortcut, enable and not specialFile)
+
+    --     -- TODO Can't rename up directory?
+    --     pixelVisionOS:EnableMenuItemByName(RenameShortcut, enable and not specialFile)
+
+    --     if(RunShortcut ~= nil) then
+    --         pixelVisionOS:EnableMenuItemByName(RunShortcut, canRun)
+    --     end
+
+    --     pixelVisionOS:EnableMenuItemByName(CopyShortcut, enable and not specialFile)
+
+    --     -- TODO need to makes sure the file can be deleted
+    --     pixelVisionOS:EnableMenuItemByName(DeleteShortcut, enable and not specialFile)
+
+    --     -- Disk options
+    --     pixelVisionOS:EnableMenuItemByName(EjectDiskShortcut, false)
+
+    --     -- Clear the desktop selction
+    --     -- self:ClearDesktopSelection()
+        
+    -- elseif(inFocus == DesktopIconFocus) then
+
+    --     -- New File options
+    --     -- if(runnerName ~= PlayVersion) then
+    --         pixelVisionOS:EnableMenuItemByName(NewGameShortcut, false)
+    --     -- end
+
+    --     pixelVisionOS:EnableMenuItemByName(NewFolderShortcut, false)
+    --     -- pixelVisionOS:EnableMenuItemByName(NewFileShortcut, false)
+    --     -- for i = 1, #self.newFileOptions do
+    --     --     pixelVisionOS:EnableMenuItemByName(self.newFileOptions[i].name, false)
+    --     -- end
+
+    --     self:ToggleOptions(false)
+
+    --     -- File options
+    --     -- pixelVisionOS:EnableMenuItemByName(EditShortcut, false)
+    --     pixelVisionOS:EnableMenuItemByName(EditShortcut, false)
+
+    --     if(RunShortcut ~= nil) then
+    --         pixelVisionOS:EnableMenuItemByName(RunShortcut, false)
+    --     end
+
+    --     pixelVisionOS:EnableMenuItemByName(RenameShortcut, false)
+    --     pixelVisionOS:EnableMenuItemByName(CopyShortcut, false)
+    --     pixelVisionOS:EnableMenuItemByName(PasteShortcut, false)
+    --     pixelVisionOS:EnableMenuItemByName(DeleteShortcut, false)
+    --     if(BuildShortcut ~= nil) then
+    --         pixelVisionOS:EnableMenuItemByName(BuildShortcut, false)
+    --     end
+    --     -- Disk options
+    --     pixelVisionOS:EnableMenuItemByName(EjectDiskShortcut, self:CanEject())
 
     
-    else
+    -- else
 
-        -- New File options
-        if(runnerName ~= PlayVersion) then
-            pixelVisionOS:EnableMenuItemByName(NewGameShortcut, false)
-        end
+    --     -- New File options
+    --     if(runnerName ~= PlayVersion) then
+    --         pixelVisionOS:EnableMenuItemByName(NewGameShortcut, false)
+    --     end
 
-        pixelVisionOS:EnableMenuItemByName(NewFolderShortcut, false)
-        -- pixelVisionOS:EnableMenuItemByName(NewFileShortcut, false)
+    --     pixelVisionOS:EnableMenuItemByName(NewFolderShortcut, false)
+    --     -- pixelVisionOS:EnableMenuItemByName(NewFileShortcut, false)
 
-        -- for i = 1, #self.newFileOptions do
-        --     pixelVisionOS:EnableMenuItemByName(self.newFileOptions[i].name, false)
-        -- end
+    --     -- for i = 1, #self.newFileOptions do
+    --     --     pixelVisionOS:EnableMenuItemByName(self.newFileOptions[i].name, false)
+    --     -- end
 
-        self:ToggleOptions(false)
+    --     self:ToggleOptions(false)
 
-        -- File options
-        -- pixelVisionOS:EnableMenuItemByName(EditShortcut, false)
-        pixelVisionOS:EnableMenuItemByName(EditShortcut, false)
+    --     -- File options
+    --     -- pixelVisionOS:EnableMenuItemByName(EditShortcut, false)
+    --     pixelVisionOS:EnableMenuItemByName(EditShortcut, false)
 
-        if(RunShortcut ~= nil) then
-            pixelVisionOS:EnableMenuItemByName(RunShortcut, false)
-        end
+    --     if(RunShortcut ~= nil) then
+    --         pixelVisionOS:EnableMenuItemByName(RunShortcut, false)
+    --     end
 
-        pixelVisionOS:EnableMenuItemByName(RenameShortcut, false)
-        pixelVisionOS:EnableMenuItemByName(CopyShortcut, false)
-        pixelVisionOS:EnableMenuItemByName(PasteShortcut, false)
-        pixelVisionOS:EnableMenuItemByName(DeleteShortcut, false)
+    --     pixelVisionOS:EnableMenuItemByName(RenameShortcut, false)
+    --     pixelVisionOS:EnableMenuItemByName(CopyShortcut, false)
+    --     pixelVisionOS:EnableMenuItemByName(PasteShortcut, false)
+    --     pixelVisionOS:EnableMenuItemByName(DeleteShortcut, false)
 
-        if(BuildShortcut ~= nil) then
-            pixelVisionOS:EnableMenuItemByName(BuildShortcut, false)
-        end
-        -- Disk options
-        pixelVisionOS:EnableMenuItemByName(EjectDiskShortcut, false)
+    --     if(BuildShortcut ~= nil) then
+    --         pixelVisionOS:EnableMenuItemByName(BuildShortcut, false)
+    --     end
+    --     -- Disk options
+    --     pixelVisionOS:EnableMenuItemByName(EjectDiskShortcut, false)
 
-    end
+    -- end
 
 end
 
