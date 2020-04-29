@@ -30,7 +30,7 @@ FileTypeMap =
     
 function WorkspaceTool:OpenWindow(path, scrollTo, selection)
 
-    print("Open", path)
+    -- print("Open", path)
 
     -- Make sure the path exists before loading it up
     if(PathExists(path) == false) then
@@ -42,7 +42,7 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
 
     
 
-    print("Loading Path", path)
+    -- print("Loading Path", path)
 
     -- Configure window settings
     self.iconPadding = 16
@@ -328,7 +328,7 @@ function WorkspaceTool:CurrentlySelectedFiles()
 
     if(self.selectedFiles == nil) then
 
-        print("Build selected file list")
+        -- print("Build selected file list")
         
         self.selectedFiles = {}
 
@@ -549,7 +549,7 @@ function WorkspaceTool:OnWindowIconSelect(id)
         --         end
                 self:RefreshWindow()
 
-                print("Clear Selection CTRL")
+                -- print("Clear Selection CTRL")
         --         -- clearSelections = true
             end
         end
@@ -614,7 +614,7 @@ function WorkspaceTool:OnWindowIconClick(id)
     local type = tmpItem.type
     local path = tmpItem.path
 
-    print("OnWindowIconClick", id, type, path)
+    -- print("OnWindowIconClick", id, type, path)
 
 
     -- TODO need a list of things we can't delete
@@ -919,7 +919,7 @@ function WorkspaceTool:FileDropAction(src, dest)
         return
     end
 
-    print(self.files[selections[1]].path, destPath)
+    -- print(self.files[selections[1]].path, destPath)
 
     -- do a quick test to make sure you don't just drop the same folder on itself and get an error
     if(#selections == 1 and self.files[selections[1]].isDirectory and self.files[selections[1]].path == destPath) then
@@ -1269,7 +1269,7 @@ function WorkspaceTool:ClearSelections()
     -- Get the current selections
     local selections = self:CurrentlySelectedFiles()
 
-    print("Clearing", dump(selections))
+    -- print("Clearing", dump(selections))
     
     -- Make sure there are selections
     if(selections ~= nil) then

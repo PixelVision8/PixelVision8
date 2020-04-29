@@ -90,7 +90,7 @@ function WorkspaceTool:StartFileOperation(destPath, action)
       -- Figure out the final path for the file
       local finalDestPath = NewWorkspacePath(destPath.Path .. filePath.Path:sub(#self.currentPath.Path + 1))
 
-      print("filePath", filePath.Path, destPath.Path, finalDestPath.Path)
+      -- print("filePath", filePath.Path, destPath.Path, finalDestPath.Path)
 
       if(filePath.isDirectory and filePath.Path == destPath.Path) then
 
@@ -224,7 +224,7 @@ function WorkspaceTool:OnRunFileAction(destPath, action, duplicate)
       self.progressModal = ProgressModal:Init("File Action ", editorUI, function() self:CancelFileActions() end)
 
       self.progressModal.fileAction = action
-      self.progressModal.totalFiles = (#self.targetFiles - 2)
+      self.progressModal.totalFiles = #self.targetFiles
     end
 
     -- Open the modal
@@ -267,13 +267,12 @@ function WorkspaceTool:UpdateFileActionProgress(data)
   local percent = ReadExportPercent()
 
   local fileActionActiveTotal = self.progressModal.totalFiles
-  local fileActionCounter = math.ceil(fileActionActiveTotal * (percent / 100))
+  local fileActionCounter = math.floor(fileActionActiveTotal * (percent / 100))
+  local pad = #tostring(fileActionActiveTotal)
 
-  local message = "test"--self.progressModal.fileAction .. " "..string.lpad(tostring(fileActionCounter), string.len(tostring(fileActionActiveTotal)), "0") .. " of " .. fileActionActiveTotal .. ".\n\n\nDo not restart or shut down Pixel Vision 8."
+  local message = string.format("%s %0" .. pad .. "d of %0" .. pad .. "d.\n\n\nDo not restart or shut down Pixel Vision 8.", self.progressModal.fileAction, fileActionCounter, fileActionActiveTotal)
 
   self.progressModal:UpdateMessage(message, percent)
-
-
 
 end
 
@@ -345,51 +344,6 @@ function WorkspaceTool:OnCopy()
 
   end
 
-  -- if(windowIconButtons ~= nil) then
-
-  --     -- Remove previous files to be copied
-  --     filesToCopy = {}
-  --     fileActionSrc = self.currentPath
-
-  --     -- TODO this needs to eventually support multiple selections
-
-  --     local file = CurrentlySelectedFile()
-
-  --     if(CanCopy(file)) then
-
-  --         local tmpPath = NewWorkspacePath(file.path)
-
-  --         -- Test if the path is a directory
-  --         if(tmpPath.IsDirectory) then
-
-  --             -- Add all of the files that need to be copied to the list
-  --             filesToCopy = GetEntitiesRecursive(tmpPath)
-
-  --         end
-
-  --         -- Make sure the selected directory is included
-  --         table.insert(filesToCopy, 1, NewWorkspacePath(file.path))
-
-  --         -- print("Copy File", file.name, file.path, #filesToCopy, dump(filesToCopy))
-
-  --         -- Enable the paste shortcut
-  --         pixelVisionOS:EnableMenuItemByName(PasteShortcut, true)
-
-  --         -- TODO eventually need to change the message to handle multiple files
-  --         pixelVisionOS:DisplayMessage(#filesToCopy .. " file" .. (#filesToCopy == 1 and " has" or "s have") .." been copied.", 2)
-
-  --     else
-
-  --         -- Display a message that the file can not be copied
-  --         pixelVisionOS:ShowMessageModal(toolName .. "Error", "'".. file.name .. "' can not be copied.", 160, false)
-
-  --         -- Make sure we can't activate paste
-  --         pixelVisionOS:EnableMenuItemByName(PasteShortcut, false)
-
-  --     end
-
-  -- end
-
 end
 
 function WorkspaceTool:OnPaste(dest)
@@ -431,18 +385,7 @@ function WorkspaceTool:OnPaste(dest)
     pixelVisionOS:EnableMenuItemByName(PasteShortcut, false)
 
   end
-  -- local destPath = NewWorkspacePath(dest)
-
-  -- -- If there are no files to copy, exit out of this function
-  -- if(filesToCopy == nil) then
-  --     return
-  -- end
-
-  -- -- Perform the file action validation
-  -- StartFileOperation(destPath, "copy")
-
-  -- pixelVisionOS:DisplayMessage("Entit" .. (#filesToCopy > 1 and "ies have" or "y has") .. " has been pasted.", 2)
-
+  
 end
 
 function WorkspaceTool:OnNewFolder(name)
@@ -666,7 +609,7 @@ end
 function WorkspaceTool:CanEject()
 
   local selections = self:CurrentlySelectedFiles()
-  print("selections", dump(selections))
+  -- print("selections", dump(selections))
 
   if(selections == nil) then
     return
