@@ -824,40 +824,40 @@ end
 
 -- end
 
-function OnEjectDisk(diskName)
+-- function OnEjectDisk(diskName)
 
-    if(diskName == nil) then
-        local id = desktopIconButtons.currentSelection
-        diskName = desktopIcons[id].name
-    end
+--     if(diskName == nil) then
+--         local id = desktopIconButtons.currentSelection
+--         diskName = desktopIcons[id].name
+--     end
 
-    pixelVisionOS:ShowMessageModal("Eject Disk", "Do you want to eject the '".. diskName.."'disk?", 160, true,
-        function()
+--     pixelVisionOS:ShowMessageModal("Eject Disk", "Do you want to eject the '".. diskName.."'disk?", 160, true,
+--         function()
 
-            -- Only perform the copy if the user selects OK from the modal
-            if(pixelVisionOS.messageModal.selectionValue) then
+--             -- Only perform the copy if the user selects OK from the modal
+--             if(pixelVisionOS.messageModal.selectionValue) then
 
-                if(currentDirectory ~= nil) then
+--                 if(currentDirectory ~= nil) then
 
-                    -- Close the window of the disk you are trying to eject
-                    if(currentDirectory.GetDirectorySegments()[1] == "disk" and currentDirectory.GetDirectorySegments()[2] == diskName) then
-                        CloseWindow()
-                    end
+--                     -- Close the window of the disk you are trying to eject
+--                     if(currentDirectory.GetDirectorySegments()[1] == "disk" and currentDirectory.GetDirectorySegments()[2] == diskName) then
+--                         CloseWindow()
+--                     end
 
-                end
+--                 end
 
-                EjectDisk(NewWorkspacePath("/Disks/" .. diskName .. "/"))
+--                 EjectDisk(NewWorkspacePath("/Disks/" .. diskName .. "/"))
 
-                ResetGame()
+--                 ResetGame()
 
-            end
+--             end
 
-        end
-    )
+--         end
+--     )
 
 
 
-end
+-- end
 
 -- function OnShutdown()
 

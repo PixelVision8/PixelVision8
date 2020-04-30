@@ -47,7 +47,7 @@ function EditorUI:CreateInputField(rect, text, toolTip, pattern, font, colorOffs
   data.patterns = {
     hex = '%x',
     number = '%d',
-    file = '[_%-%w]',
+    file = '[_%-%w ]',
     keys = '%a',
     note = '[A-G#]'
   }

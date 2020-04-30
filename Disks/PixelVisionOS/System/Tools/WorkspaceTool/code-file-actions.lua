@@ -67,6 +67,8 @@ end
 
 function WorkspaceTool:StartFileOperation(destPath, action)
 
+  print("StartFileOperation", destPath)
+
   -- Test to see if the action is delete
   if(action == "delete") then
 
@@ -90,7 +92,7 @@ function WorkspaceTool:StartFileOperation(destPath, action)
       -- Figure out the final path for the file
       local finalDestPath = NewWorkspacePath(destPath.Path .. filePath.Path:sub(#self.currentPath.Path + 1))
 
-      -- print("filePath", filePath.Path, destPath.Path, finalDestPath.Path)
+      print("filePath", filePath.Path, destPath.Path, finalDestPath.Path)
 
       if(filePath.isDirectory and filePath.Path == destPath.Path) then
 
@@ -111,11 +113,13 @@ function WorkspaceTool:StartFileOperation(destPath, action)
 
         break
 
+        -- TODO need to make sure you don't copy a disk into another disk
+
       end
 
     end
 
-    -- print("File Action Flag", fileActionFlag)
+    print("File Action Flag", fileActionFlag)
 
   if(fileActionFlag == 1) then
 
@@ -201,6 +205,10 @@ function WorkspaceTool:OnRunFileAction(destPath, action, duplicate)
     action = "move"
   end
 
+  -- local parentPath = self.targetFiles[1].isDirectory and self.targetFiles[1] or self.targetFiles[i].parentPath
+
+  -- print("path", parentPath, self.targetFiles[1].Path)
+  
   -- Build the arguments
   local args = { self.currentPath, destPath, action, duplicate}
 
@@ -210,7 +218,7 @@ function WorkspaceTool:OnRunFileAction(destPath, action, duplicate)
 
   end
 
-  -- print("args", dump(args))
+  print("args", dump(args))
 
   local success = RunBackgroundScript("code-process-file-actions.lua", args)
 
@@ -317,6 +325,7 @@ function WorkspaceTool:OnCopy()
 
       if(self:CanCopy(tmpItem)) then
 
+        print("copy", tmpItem.path)
         table.insert(clipboardData.value, tmpItem.path)
 
       end
@@ -369,6 +378,7 @@ function WorkspaceTool:OnPaste(dest)
         
         if(PathExists(paths[i])) then
           table.insert(self.targetFiles, paths[i])
+          print("paste", paths[i])
         end
 
       end
@@ -376,6 +386,7 @@ function WorkspaceTool:OnPaste(dest)
       if(#self.targetFiles) then
       
         pixelVisionOS:ClearClipboard()
+
         self:StartFileOperation(dest, "copy")
 
       end
@@ -602,7 +613,9 @@ end
 
 function WorkspaceTool:TrashOpen()
 
-  return self.currentPath.Path == self.trashPath.Path
+  -- print("test", self.currentPath.Path, self.trashPath.Path)
+
+  return string.starts(self.currentPath.Path, self.trashPath.Path) 
 
 end
 

@@ -674,7 +674,7 @@ function PixelVisionOS:SelectIconButton(data, id, trigger)
         return
     end
 
-    print("Select", id, #data.buttons)
+    -- print("Select", id, #data.buttons)
 
     -- if the button is already selected, just ignore the request
     if(id == buttonData.selected) then

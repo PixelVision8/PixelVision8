@@ -40,8 +40,6 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
 
     end
 
-    
-
     -- print("Loading Path", path)
 
     -- Configure window settings
@@ -56,7 +54,7 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     self.pathHistory = {}
     self.focus = true
     self.maxChars = 43
-    self.windowRect = NewRect(8, 8, windowchrome.width * 8, math.floor(#windowchrome.spriteIDs/windowchrome.width * 8))
+    self.windowRect = NewRect(8, 16, windowchrome.width * 8, math.floor(#windowchrome.spriteIDs/windowchrome.width * 8))
     self.dragCountBGArgs = {0, 0, 9, 6, 0, DrawMode.SpriteAbove}
     self.dragCountTextArgs = {"00", 0, 0, DrawMode.SpriteAbove, "small", 15, -4}
     self.fileCount = 0
@@ -207,7 +205,7 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     pixelVisionOS:RegisterUI({name = "Window"}, "UpdateWindow", self)
 
 
-    self:UpdateContextMenu(WindowFocus)
+    self:UpdateContextMenu("OpenWindow")
 
     -- TODO restore any selections
 
@@ -274,24 +272,20 @@ function WorkspaceTool:UpdateWindow()
 end
 
 function WorkspaceTool:ChangeFocus(value)
-    
-    local lastValue = self.focus
+
+    if(MousePosition().Y < 12) then
+        return
+    end
 
     value = value or (self.windowRect.contains(MousePosition()))
 
-    -- if(self.focus ~= value) then
-        
-    --     local selections = self:CurrentlySelectedFiles()
-
-    --     print("Clear selection new value", self.focus, value, dump(selections))
-
-        
-    --     -- self:ClearSelections()
+    -- if(value == self.focus) then
+    --     return
     -- end
 
-    self.focus = value
+    print("ChangeFocus", value, self.focus)
 
-    -- print("find focus", self.focus, "Last value", lastFocus)
+    self.focus = value
 
     -- redraw window chrome
     self:ChangeWindowTitle()
@@ -299,27 +293,13 @@ function WorkspaceTool:ChangeFocus(value)
     if(editorUI.mouseCursor.cursorID == 1) then
         pixelVisionOS:ClearIconGroupSelections(self.windowIconButtons)
         self:ClearSelections()
-        -- print("Clear selection not icon")
     end
 
-    -- TODO need to test if the slider should be active
+    -- Test if the slider should be active
     editorUI:Enable(self.vSliderData, self:EnableScrollBar())
 
     -- if(lastValue ~= value) then 
-    self:UpdateContextMenu()
-    -- end
-    --     print("Clear Focus")
-    --     local selections = self:CurrentlySelectedFiles()
-
-    --     -- clear selections when loosing focus
-    --     if(selections ~= nil) then
-
-    --         for i = 1, #selections do
-    --             self.files[selections[i]].selected = false
-    --         end
-
-    --     end
-    -- end
+    self:UpdateContextMenu("ChangeFocus")
 
 end
 
@@ -461,7 +441,7 @@ end
 
 function WorkspaceTool:OnWindowIconSelect(id)
 
-    -- print("OnWindowIconSelect", id)
+    print("Click", id, self.lastStartID, id + self.lastStartID)
 
     -- #3
     if(self.playingWav) then
@@ -469,7 +449,7 @@ function WorkspaceTool:OnWindowIconSelect(id)
         self.playingWav = false
     end
 
-    local realFileID = id + (self.lastStartID)
+    local realFileID = id > self.desktopIconCount and id + (self.lastStartID) or id
     local selectedFile = self.files[realFileID]
 
     if(selectedFile == nil) then
@@ -556,7 +536,7 @@ function WorkspaceTool:OnWindowIconSelect(id)
 
     else
 
-        if(selectedFile.selected == false) then 
+        if(selectedFile.selected == false or self.focus == false) then 
             clearSelections = true
         end
 
@@ -596,12 +576,11 @@ function WorkspaceTool:OnWindowIconSelect(id)
     end
 
     -- #4
-    self:UpdateContextMenu(WindowIconFocus)
+    -- self:UpdateContextMenu("OnWindowIconSelect")
 
 end
 
 function WorkspaceTool:OnWindowIconClick(id)
-
     
 
     -- Make sure desktop icons are not selected
@@ -609,7 +588,11 @@ function WorkspaceTool:OnWindowIconClick(id)
 
     -- -- local index = id + (lastStartID)-- TODO need to add the scrolling offset
 
-    local tmpItem = self.files[id + self.lastStartID]--CurrentlySelectedFiles()-- files[index]
+    local realFileID = id > self.desktopIconCount and id + (self.lastStartID) or id
+
+
+    print("Click", id, self.lastStartID, id + self.lastStartID)
+    local tmpItem = self.files[realFileID]--CurrentlySelectedFiles()-- files[index]
 
     local type = tmpItem.type
     local path = tmpItem.path
@@ -748,6 +731,7 @@ end
 
 function WorkspaceTool:DrawWindow()
 
+    -- DrawRect( self.windowRect.x, self.windowRect.y, self.windowRect.width, self.windowRect.height, 2, DrawMode.Sprite )
     -- Check to see if the window has been invalidated before drawing it
     if(self.invalid ~= true or self.files == nil or self.fileActionActive == true) then
         return
@@ -756,9 +740,9 @@ function WorkspaceTool:DrawWindow()
     local requiredFiles = {"data.json"}
 
     -- TODO this may be redundant
-    if(self.runnerName ~= DrawVersion and self.runnerName ~= TuneVersion) then
-        table.insert(requiredFiles, "info.json")
-    end
+    -- if(self.runnerName ~= DrawVersion and self.runnerName ~= TuneVersion) then
+    --     table.insert(requiredFiles, "info.json")
+    -- end
 
     -- TODO make sure the trash path check is valid
     local isGameDir = pixelVisionOS:ValidateGameInDir(self.currentPath, requiredFiles) and self:TrashOpen() == false
