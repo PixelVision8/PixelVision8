@@ -58,6 +58,7 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     self.dragCountBGArgs = {0, 0, 9, 6, 0, DrawMode.SpriteAbove}
     self.dragCountTextArgs = {"00", 0, 0, DrawMode.SpriteAbove, "small", 15, -4}
     self.fileCount = 0
+    self.totalSelections = 0
     
     -- Make sure the last selections are cleared
     self:ClearSelections()
@@ -117,20 +118,6 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
 
     end
 
-    -- Register the slider
-    
-
-    -- Create the close button
-    -- if(self.closeButton == nil) then
-    --     print("Create new window closeButton")
-        
-    --     self.closeButton = editorUI:CreateButton({x = 192, y = 16}, "closewindow", "Close the window.")
-    --     self.closeButton.hitRect = {x = self.closeButton.rect.x + 2, y = self.closeButton.rect.y + 2, w = 10, h = 10}
-    --     self.closeButton.onAction = function() self:CloseWindow() end
-
-    -- end
-
-    -- -- Register the close button
     -- self:RegisterUI(self.closeButton, "UpdateButton", editorUI)
     self.desktopIconCount = 2 + self.totalDisk
     
@@ -182,25 +169,6 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     
     self:ChangeWindowTitle()
 
-    -- make sure the correct desktop icon is open
-
-    
-    
-    -- TODO this needs to look through the top buttons
-
-    -- Try to find the icon button if we open a window and its not selected beforehand
-    -- if(self.currentOpenIconButton == nil and iconID > 0) then
-
-    --     self.currentOpenIconButton = self.desktopIconButtons.buttons[iconID]
-
-    --     if(self.currentOpenIconButton.open == false) then
-    --         print("Open desktop icon", self.currentOpenIconButton.name)
-
-    --         pixelVisionOS:OpenIconButton(self.currentOpenIconButton)
-    --     end
-
-    -- end
-
     -- Registere the window with the tool so it updates
     pixelVisionOS:RegisterUI({name = "Window"}, "UpdateWindow", self)
 
@@ -226,23 +194,27 @@ function WorkspaceTool:UpdateFileList()
     self.totalRows = math.ceil((self.fileCount- self.desktopIconCount) / self.totalPerColumn) + 1
     self.hiddenRows = self.totalRows - math.ceil(self.totalPerPage / self.totalPerColumn)
 
-    -- Enable the scroll bar if needed
-    editorUI:Enable(self.vSliderData, self:EnableScrollBar())
+    self:EnableScrollBar()
 
 end
 
 function WorkspaceTool:EnableScrollBar()
-    return self.focus == true and ((self.fileCount - self.desktopIconCount) > self.totalPerWindow)
+
+    local moreFiles = ((self.fileCount - self.desktopIconCount) > self.totalPerWindow)
+    local value = self.focus == true and moreFiles == true
+    
+    -- print("EnableScrollBar", value, self.focus, self.fileCount, self.desktopIconCount, self.totalPerWindow)
+
+    if(value == false and moreFiles == false ) then
+        editorUI:ChangeSlider(self.vSliderData, 0)
+    end
+    
+    -- Enable the scroll bar if needed
+    editorUI:Enable(self.vSliderData, value)
+
 end
 
 function WorkspaceTool:UpdateWindow()
-
-    if(MouseButton(0, InputState.Released )) then
-        
-        self:ChangeFocus()
-
-
-    end
 
     editorUI:UpdateSlider(self.vSliderData)
 
@@ -250,20 +222,36 @@ function WorkspaceTool:UpdateWindow()
 
     if(self.windowIconButtons.isDragging == true) then
 
-        local total = #self:CurrentlySelectedFiles()
+        -- TODO update the selection list
+        self:CurrentlySelectedFiles()
+
+        -- local total = #self:CurrentlySelectedFiles()
         
-        if(total > 1) then
+        if(self.totalSelections > 1) then
 
             self.dragCountBGArgs[1] = self.windowIconButtons.drawIconArgs[2] + 30
             self.dragCountBGArgs[2] = self.windowIconButtons.drawIconArgs[3] - 2
         
             editorUI:NewDraw("DrawRect", self.dragCountBGArgs)
 
-            self.dragCountTextArgs[1] = string.format("%02d", total)
+            self.dragCountTextArgs[1] = string.format("%02d", self.totalSelections)
             self.dragCountTextArgs[2] = self.dragCountBGArgs[1] + 1
             self.dragCountTextArgs[3] = self.dragCountBGArgs[2] - 1
             editorUI:NewDraw("DrawText", self.dragCountTextArgs)
         end
+    end
+
+    if(self.firstPress ~= true and editorUI.collisionManager.mouseDown) then
+        
+        -- Change the flag so we don't trigger first press again
+        self.firstPress = true
+
+        self:ChangeFocus()
+
+    elseif(self.firstPress == true and editorUI.collisionManager.mouseReleased) then
+
+        self.firstPress = false
+
     end
 
     -- Call draw window after each update
@@ -283,7 +271,7 @@ function WorkspaceTool:ChangeFocus(value)
     --     return
     -- end
 
-    print("ChangeFocus", value, self.focus)
+    -- print("ChangeFocus", value, self.focus)
 
     self.focus = value
 
@@ -296,7 +284,8 @@ function WorkspaceTool:ChangeFocus(value)
     end
 
     -- Test if the slider should be active
-    editorUI:Enable(self.vSliderData, self:EnableScrollBar())
+    -- editorUI:Enable(self.vSliderData, 
+    self:EnableScrollBar()--)
 
     -- if(lastValue ~= value) then 
     self:UpdateContextMenu("ChangeFocus")
@@ -327,29 +316,13 @@ function WorkspaceTool:CurrentlySelectedFiles()
                 table.insert(self.selectedFiles, i)
             end
         end
+
+        self.totalSelections = #self.selectedFiles
         
     end
         
-    -- -- Create containers for selected files and temp file
-    -- local selectedFiles = {}
-    
-
-    -- -- Loop through all of the files
-    -- for i = 1, self.fileCount do
-        
-    --     -- Get the current file
-    --     tmpFile = self.files[i]
-        
-    --     -- check to see if the file is selected
-    --     if(tmpFile.selected) then
-            
-    --         -- Insert the selected file into the array
-    --         table.insert(selectedFiles, i)
-    --     end
-    -- end
-
     -- Return all of the selected files or nil if there are no selections
-    return #self.selectedFiles > 0 and self.selectedFiles or nil
+    return self.totalSelections > 0 and self.selectedFiles or nil
     
 end
 
@@ -399,49 +372,9 @@ function WorkspaceTool:ChangeWindowTitle()
 
 end
 
--- function WorkspaceTool:CloseWindow()
-
---     -- Clear the previous scroll history
---     self.pathHistory = {}
-
---     -- self:RemoveUI(self.closeButton.name)
---     -- self.closeButton = nil
-
---     self:RemoveUI(self.vSliderData.name)
---     -- self.vSliderData = nil
-
---     self:RemoveUI(self.windowIconButtons.name)
---     self.windowIconButtons = nil
-
---     self.currentSelectedFile = nil
-
---     self.currentPath = nil
-
---     DrawRect(8, 16, windowchrome.width * 8, math.floor(#windowchrome.spriteIDs / windowchrome.width) * 8, BackgroundColor(), DrawMode.TilemapCache)
-
---     self:DrawWallpaper()
-
---     pixelVisionOS:ClearIconGroupSelections(self.desktopIconButtons)
-
---     if(self.currentOpenIconButton ~= nil) then
---         pixelVisionOS:CloseIconButton(self.currentOpenIconButton)
---     end
-
---     editorUI:ClearFocus()
-
---     -- Update the drop down menu
---     self:UpdateContextMenu(NoFocus)
-
---     -- Remvoe the window UI elements
---     self:RemoveUI("Window")
-
-    
-
--- end
-
 function WorkspaceTool:OnWindowIconSelect(id)
 
-    print("Click", id, self.lastStartID, id + self.lastStartID)
+    -- print("Click", id, self.lastStartID, id + self.lastStartID)
 
     -- #3
     if(self.playingWav) then
@@ -465,7 +398,7 @@ function WorkspaceTool:OnWindowIconSelect(id)
     local selections = self:CurrentlySelectedFiles()
     self:InvalidateSelectedFiles()
 
-    local totalSelections = selections == nil and 0 or #selections
+    -- local totalSelections = selections == nil and 0 or #selections
 
     local specialFile = selectedFile.type == "updirectory" or selectedFile.type == "run"  or selectedFile.type == "run"
     
@@ -515,7 +448,7 @@ function WorkspaceTool:OnWindowIconSelect(id)
         selectionFlag = not selectedFile.selected
 
         -- Check to see if we need to clear the selections
-        if(totalSelections > 0) then
+        if(self.totalSelections > 0) then
             local lastSelection = selections[#selections]
 
         --     print("Last Selections", lastSelection)
@@ -591,7 +524,7 @@ function WorkspaceTool:OnWindowIconClick(id)
     local realFileID = id > self.desktopIconCount and id + (self.lastStartID) or id
 
 
-    print("Click", id, self.lastStartID, id + self.lastStartID)
+    -- print("Click", id, self.lastStartID, id + self.lastStartID)
     local tmpItem = self.files[realFileID]--CurrentlySelectedFiles()-- files[index]
 
     local type = tmpItem.type
@@ -939,13 +872,8 @@ function WorkspaceTool:FileDropAction(src, dest)
         action = "copy"
     end
     
-    -- -- print(action, dump(srcSeg), dump(destSeg))
-
-    -- print("Drop Action", action, destPath.Path, dump(self.targetFiles))
-
-    
     -- Perform the file action
-    self:StartFileOperation(destPath, action)
+    self:StartFileOperation(self.currentPath, destPath, action)
 
 end
 
@@ -1274,4 +1202,6 @@ end
 function WorkspaceTool:InvalidateSelectedFiles()
 
     self.selectedFiles = nil
+    self.totalSelections = 0
+
 end

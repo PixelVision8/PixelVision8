@@ -204,6 +204,7 @@ function WorkspaceTool:OnEjectDisk()
 
                 -- ResetGame()
 
+                
                 self:OpenWindow(self.workspacePath)
 
                 -- self:RefreshWindow(true)
@@ -220,7 +221,7 @@ end
 
 function WorkspaceTool:UpdateContextMenu(inFocus)
 
-    print("UpdateContextMenu", inFocus)
+    -- print("UpdateContextMenu", inFocus)
     
     local selections = self:CurrentlySelectedFiles()
 
@@ -263,7 +264,7 @@ function WorkspaceTool:UpdateContextMenu(inFocus)
 
     local canCreateProject = canCreateFile == true and canRun == false
 
-    local canBuild = canCreateProject == true and string.starts(self.currentPath.Path, "/Disks/") == false
+    local canBuild = canRun == true and string.starts(self.currentPath.Path, "/Disks/") == false
 
     local canCopy = self.focus == true and selections ~= nil and #selections > 0 and specialFile == false and trashOpen == false
     local canPaste = canCreateFile == true and pixelVisionOS:ClipboardFull() == true
@@ -283,6 +284,8 @@ function WorkspaceTool:UpdateContextMenu(inFocus)
     pixelVisionOS:EnableMenuItemByName(NewFolderShortcut, canCreateFile)
 
     pixelVisionOS:EnableMenuItemByName(RunShortcut, canRun)
+
+    pixelVisionOS:EnableMenuItemByName(EmptyTrashShortcut, #GetEntities(self.trashPath) > 0)
 
     pixelVisionOS:EnableMenuItemByName(EjectDiskShortcut, canEject)
 

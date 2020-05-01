@@ -6,8 +6,8 @@ function NewFileModal:Init()
   local _renameModal = {} -- our new object
   setmetatable(_renameModal, NewFileModal) -- make Account handle lookup
 
-  width = 224
-  height = 72
+  local width = 224
+  local height = 72
 
   _renameModal.canvas = NewCanvas(width, height)
 

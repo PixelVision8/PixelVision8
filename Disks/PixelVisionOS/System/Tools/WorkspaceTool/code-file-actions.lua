@@ -61,19 +61,19 @@ function WorkspaceTool:OnDeleteFile()
   -- print("Files", dump(self.targetFiles))
 
   -- Always make sure anything going into the throw out has a unique file name
-  self:StartFileOperation(self.trashPath, "throw out")
+  self:StartFileOperation(self.currentPath, self.trashPath, "throw out")
 
 end
 
-function WorkspaceTool:StartFileOperation(destPath, action)
+function WorkspaceTool:StartFileOperation(srcPath, destPath, action)
 
-  print("StartFileOperation", destPath)
+  -- print("StartFileOperation", srcPath, destPath)
 
   -- Test to see if the action is delete
   if(action == "delete") then
 
     -- Go right into the file action
-    self:OnRunFileAction(destPath, action)
+    self:OnRunFileAction(srcPath, destPath, action)
 
     -- Exit out of the function
     return
@@ -90,9 +90,9 @@ function WorkspaceTool:StartFileOperation(destPath, action)
       local filePath = self.targetFiles[i]
 
       -- Figure out the final path for the file
-      local finalDestPath = NewWorkspacePath(destPath.Path .. filePath.Path:sub(#self.currentPath.Path + 1))
+      local finalDestPath = NewWorkspacePath(destPath.Path .. filePath.Path:sub(#srcPath.Path + 1))
 
-      print("filePath", filePath.Path, destPath.Path, finalDestPath.Path)
+      -- print("filePath", filePath.Path, destPath.Path, finalDestPath.Path)
 
       if(filePath.isDirectory and filePath.Path == destPath.Path) then
 
@@ -119,7 +119,7 @@ function WorkspaceTool:StartFileOperation(destPath, action)
 
     end
 
-    print("File Action Flag", fileActionFlag)
+    -- print("File Action Flag", fileActionFlag)
 
   if(fileActionFlag == 1) then
 
@@ -160,7 +160,7 @@ function WorkspaceTool:StartFileOperation(destPath, action)
           -- Set the duplicate flag if we are throwing the files out
           -- duplicate = action == "throw out"
 
-          self:OnRunFileAction(destPath, action)
+          self:OnRunFileAction(srcPath, destPath, action)
 
         end
 
@@ -181,7 +181,7 @@ function WorkspaceTool:StartFileOperation(destPath, action)
 
           -- Start the file action process
           -- fileActionActive = true
-          self:OnRunFileAction(destPath, action)
+          self:OnRunFileAction(srcPath, destPath, action)
 
         else
           self:CancelFileActions()
@@ -195,7 +195,7 @@ function WorkspaceTool:StartFileOperation(destPath, action)
 
 end
 
-function WorkspaceTool:OnRunFileAction(destPath, action, duplicate)
+function WorkspaceTool:OnRunFileAction(srcPath, destPath, action, duplicate)
 
   -- If the duplicate flag is not set, test to see if this action is to move to the trash
   duplicate = duplicate or action == "throw out"
@@ -210,7 +210,7 @@ function WorkspaceTool:OnRunFileAction(destPath, action, duplicate)
   -- print("path", parentPath, self.targetFiles[1].Path)
   
   -- Build the arguments
-  local args = { self.currentPath, destPath, action, duplicate}
+  local args = { srcPath, destPath, action, duplicate}
 
   for i = 1, #self.targetFiles do
 
@@ -218,7 +218,7 @@ function WorkspaceTool:OnRunFileAction(destPath, action, duplicate)
 
   end
 
-  print("args", dump(args))
+  -- print("args", dump(args))
 
   local success = RunBackgroundScript("code-process-file-actions.lua", args)
 
@@ -315,6 +315,7 @@ function WorkspaceTool:OnCopy()
   if(selections ~= nil) then
 
     local clipboardData = {
+      srcPath = self.currentPath,
       type = "paths", 
       value = {}
     }
@@ -325,7 +326,7 @@ function WorkspaceTool:OnCopy()
 
       if(self:CanCopy(tmpItem)) then
 
-        print("copy", tmpItem.path)
+        -- print("copy", tmpItem.path)
         table.insert(clipboardData.value, tmpItem.path)
 
       end
@@ -368,6 +369,8 @@ function WorkspaceTool:OnPaste(dest)
 
     local data = pixelVisionOS:SystemPaste()
 
+    local srcPath = data.srcPath
+
     if(data.type == "paths") then
 
       local paths = data.value
@@ -378,24 +381,26 @@ function WorkspaceTool:OnPaste(dest)
         
         if(PathExists(paths[i])) then
           table.insert(self.targetFiles, paths[i])
-          print("paste", paths[i])
+          -- print("paste", paths[i])
         end
 
       end
 
       if(#self.targetFiles) then
-      
-        pixelVisionOS:ClearClipboard()
 
-        self:StartFileOperation(dest, "copy")
+        self:StartFileOperation(srcPath, dest, "copy")
 
       end
 
+      
+
     end
 
-    pixelVisionOS:EnableMenuItemByName(PasteShortcut, false)
-
   end
+
+  pixelVisionOS:ClearClipboard()
+
+  pixelVisionOS:EnableMenuItemByName(srcPath, PasteShortcut, false)
   
 end
 
@@ -595,19 +600,21 @@ end
 
 function WorkspaceTool:OnEmptyTrash()
 
-  -- pixelVisionOS:ShowMessageModal("Empty Trash", "Are you sure you want to empty the throw out? This can not be undone.", 160, true,
-  --     function()
-  --         if(pixelVisionOS.messageModal.selectionValue == true) then
+  pixelVisionOS:ShowMessageModal("Empty Trash", "Are you sure you want to empty the throw out? This can not be undone.", 160, true,
+      function()
+          if(pixelVisionOS.messageModal.selectionValue == true) then
 
-  --             -- Get all the files in the throw out
-  --             filesToCopy = GetEntitiesRecursive(trashPath)
+              -- Get all the files in the throw out
+              self.targetFiles = GetEntitiesRecursive(self.trashPath)
 
-  --             StartFileOperation(trashPath, "delete")
+              self:StartFileOperation(self.currentPath, self.trashPath, "delete")
 
-  --         end
+              self:RefreshWindow(false)
 
-  --     end
-  -- )
+          end
+
+      end
+  )
 
 end
 

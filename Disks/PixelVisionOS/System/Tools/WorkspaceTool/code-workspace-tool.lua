@@ -31,7 +31,7 @@ function WorkspaceTool:Init()
     toolName = "Workspace Explorer",
     runnerName = SystemName(),
     rootPath = ReadMetadata("RootPath", "/"),
-    gameName = ReadMetadata("GameName", "FilePickerTool"),
+    gameName = ReadMetadata("GameName", "WorkspaceTool"),
     workspacePath = NewWorkspacePath("/Workspace/"),
     trashPath = NewWorkspacePath("/Tmp/Trash/"),
     editorMapping = pixelVisionOS:FindEditors(),

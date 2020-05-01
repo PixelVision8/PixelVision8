@@ -34,7 +34,7 @@ function CalculateSteps()
             
             local finalDestPath = NewWorkspacePath(destPath.Path .. filePath.Path:sub(#srcPath.Path + 1))
             
-            print("Action", filePath.Path, finalDestPath.Path)
+            -- print("Action", filePath.Path, finalDestPath.Path)
 
             if(duplicate == true and PathExists(finalDestPath)) then
 
