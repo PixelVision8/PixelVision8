@@ -294,7 +294,7 @@ namespace PixelVision8.Runner.Services
         public void EjectDisk(WorkspacePath filePath)
         {
             RemoveDisk(filePath);
-            
+
             // What happens when there are no disks
             if (TotalDisks > 1)
                 try

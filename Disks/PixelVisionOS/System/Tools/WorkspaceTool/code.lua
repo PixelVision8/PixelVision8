@@ -48,8 +48,8 @@ function Update(timeDelta)
         return
     end
 
-    -- Update the workspace tool
-    workspaceTool:Update(timeDelta)
+    -- This needs to be the first call to make sure all of the OS and editor UI is updated first
+    pixelVisionOS:Update(timeDelta)
 
 
 end
@@ -85,7 +85,8 @@ function Draw()
         return
     end
 
-    workspaceTool:Draw()
+    -- The UI should be the last thing to draw after your own custom draw calls
+    pixelVisionOS:Draw()
 
 end
 

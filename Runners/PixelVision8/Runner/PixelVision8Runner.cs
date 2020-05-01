@@ -307,17 +307,15 @@ namespace PixelVision8.Runner
 
         public void EjectDisk(string path)
         {
-            // ejectingDisk = true;
+            ejectingDisk = true;
 
-            workspaceServicePlus.RemoveDisk(WorkspacePath.Parse(path));
-
-            // workspaceServicePlus.EjectDisk(WorkspacePath.Parse(path));
+            workspaceServicePlus.EjectDisk(WorkspacePath.Parse(path));
 
             UpdateDiskInBios();
 
-            // AutoLoadDefaultGame();
+            AutoLoadDefaultGame();
 
-            // ejectingDisk = false;
+            ejectingDisk = false;
         }
 
         public void EnableAutoRun(bool value)

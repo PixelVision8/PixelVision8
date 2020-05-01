@@ -862,8 +862,17 @@ function WorkspaceTool:FileDropAction(src, dest)
         -- print("Trash")
         action = "move"
     elseif(destSeg[1] == "Tmp" and destSeg[2] == "Trash") then
-        -- print("Trash")
-        action = "throw out"
+
+        if(#selections == 1 and self.files[selections[1]].type == "disk") then
+
+            self:OnEjectDisk(self.files[selections[1]].path)
+            
+            return
+
+        else
+            -- print("Trash")
+            action = "throw out"
+        end
     elseif(srcSeg[1] == "Disks" and destSeg[1] == "Disks") then
         if(srcSeg[2] ~= destSeg[2]) then
             action = "copy"
@@ -873,7 +882,7 @@ function WorkspaceTool:FileDropAction(src, dest)
     end
     
     -- Perform the file action
-    self:StartFileOperation(self.currentPath, destPath, action)
+    -- self:StartFileOperation(self.currentPath, destPath, action)
 
 end
 

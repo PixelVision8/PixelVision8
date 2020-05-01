@@ -3,12 +3,12 @@
     "GameChip":
     {
         "savedData":{
-            "targetFile": "/Workspace/NewProjectB/code.lua",
-            "sessionID": "202004300651588082",
-            "rootDirectory": "/Workspace/HelloWorld/",
-            "cursor": "1,1",
+            "scroll": "1,1",
             "selectedSprite": "0",
-            "scroll": "1,1"
+            "cursor": "1,1",
+            "rootDirectory": "/Workspace/HelloWorld/",
+            "sessionID": "202005011328585504",
+            "targetFile": "/Workspace/MouseWheelTest/code.lua"
         }
     }
 }

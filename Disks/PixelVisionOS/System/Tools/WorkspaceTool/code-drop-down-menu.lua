@@ -170,51 +170,33 @@ function WorkspaceTool:CreateDropDownMenu()
 
 end
 
-function WorkspaceTool:OnEjectDisk()
+function WorkspaceTool:OnEjectDisk(diskPath)
 
-    local selections = self:CurrentlySelectedFiles()
+    if(diskPath == nil) then
 
-    if(#selections > 1) then
-        return
+        local selections = self:CurrentlySelectedFiles()
+
+        if(#selections > 1) then
+            return
+        end
+        
+        diskPath = self.files[selections[1]].name
     end
 
-    local diskName = self.files[selections[1]].name
-
-    -- if(diskName == nil) then
-    --     local id = desktopIconButtons.currentSelection
-    --     diskName = desktopIcons[id].name
-    -- end
-
-    pixelVisionOS:ShowMessageModal("Eject Disk", "Do you want to eject the '".. diskName.."'disk?", 160, true,
+    pixelVisionOS:ShowMessageModal("Eject Disk", "Do you want to eject the '".. diskPath.EntityName .."'disk?", 160, true,
         function()
 
             -- Only perform the copy if the user selects OK from the modal
             if(pixelVisionOS.messageModal.selectionValue) then
 
-                -- if(currentDirectory ~= nil) then
+                EjectDisk(diskPath)
 
-                --     -- Close the window of the disk you are trying to eject
-                --     if(currentDirectory.GetDirectorySegments()[1] == "disk" and currentDirectory.GetDirectorySegments()[2] == diskName) then
-                --         CloseWindow()
-                --     end
-
-                -- end
-
-                EjectDisk(NewWorkspacePath("/Disks/" .. diskName .. "/"))
-
-                -- ResetGame()
-
-                
-                self:OpenWindow(self.workspacePath)
-
-                -- self:RefreshWindow(true)
+                ResetGame()
 
             end
 
         end
     )
-
-
 
 end
 
