@@ -80,17 +80,13 @@ function SettingsTool:CreateControllerPanel()
         field.onAction = function(value)
  
             self.showBlinker = false
-            local inputLabel = self.selectedInputID == 1 and "Key" and "Buttons"
+            local inputLabel = self.selectedInputID == 1 and "Key" or "Button"
 
-            self:RemapKey("Player" ..tostring(self.selectedPlayerID) .. field.type .. inputLabel, self:ConvertKeyToKeyCode(value))
+            local success = self:RemapKey("Player" ..tostring(self.selectedPlayerID) .. field.type .. inputLabel, self:ConvertKeyToKeyCode(value))
             
-
-            self.usedKeysInvalid = true
-
-
-            -- self:DrawInputSprite(field.type)
-
-            -- InvalidateData()
+            if(success == true) then
+                pixelVisionOS:DisplayMessage(string.format("Player %d %s remapping was saved.", self.selectedInputID, inputLabel))
+            end
 
         end
 
@@ -134,7 +130,7 @@ function SettingsTool:UpdateControllerPanel()
             
             for i = 1, #inputMap do
                 local field = self.inputFields[i]
-                editorUI:ChangeInputField(field, self:ConvertKeyCodeToChar(tonumber(ReadMetadata(inputMap[i]))), false)
+                editorUI:ChangeInputField(field, self:ConvertKeyCodeToChar(tonumber(ReadBiosData(inputMap[i]))), false)
             end
 
         else
@@ -214,31 +210,6 @@ function SettingsTool:DrawBlinkSprite()
   DrawSprites(inputbuttonon.spriteIDs, 154, 62, inputbuttonon.width)
 end
 
--- function SettingsTool:OnPlayerSelection(value)
-
---   if(self.invalid == true) then
-
---     pixelVisionOS:ShowMessageModal("Unsaved Changes", "You have not saved your changes for this controller. Do you want to save them before switching to a different player?", 160, true,
---       function()
---         if(pixelVisionOS.messageModal.selectionValue == true) then
---           -- Save changes
---           self:OnSave()
-
---         end
-
---         -- Quit the tool
---         self:TriggerPlayerSelection(value)
-
---       end
---     )
-
---   else
-    -- Quit the tool
-    -- self:TriggerPlayerSelection(value)
---   end
-
--- end
-
 function SettingsTool:TriggerPlayerSelection(value)
     self.selectedPlayerID = value
 
@@ -264,33 +235,6 @@ function SettingsTool:TriggerPlayerSelection(value)
     self:OnTriggerInputSelection(self.selectedInputID)
 
 end
-
--- function SettingsTool:OnInputSelection(value)
-
--- --   if(self.invalid == true) then
-
--- --     pixelVisionOS:ShowMessageModal("Unsaved Changes", "You have not saved your changes for this controller. Do you want to save them before switching to a different input mode?", 160, true,
--- --       function()
--- --         if(pixelVisionOS.messageModal.selectionValue == true) then
--- --           -- Save changes
--- --           OnSave()
-
--- --         end
-
--- --         -- TODO looks like there may be a race condition when switching between players here and selection is not displayed correctly from tilemap cache
-
--- --         -- Quit the tool
--- --         self:OnTriggerInputSelection(value)
-
--- --       end
--- --     )
-
--- --   else
---     -- Quit the tool
---     self:OnTriggerInputSelection(value)
--- --   end
-
--- end
 
 function SettingsTool:OnTriggerInputSelection(value)
 
@@ -348,8 +292,6 @@ function SettingsTool:GetUsedKeys()
 
   if(self.usedKeysInvalid ~= false) then
 
-    
-
     self.usedControllerKeys = {}
 
     -- Player 1 Keys
@@ -357,7 +299,7 @@ function SettingsTool:GetUsedKeys()
 
       local key = player1Keys[i]
 
-      self.usedControllerKeys[key] = self:ConvertKeyCodeToChar(tonumber(ReadMetadata(key)))
+      self.usedControllerKeys[key] = self:ConvertKeyCodeToChar(tonumber(ReadBiosData(key)))
 
     end
 
@@ -366,7 +308,7 @@ function SettingsTool:GetUsedKeys()
 
       local key = player2Keys[i]
 
-      self.usedControllerKeys[key] = self:ConvertKeyCodeToChar(tonumber(ReadMetadata(key)))
+      self.usedControllerKeys[key] = self:ConvertKeyCodeToChar(tonumber(ReadBiosData(key)))
 
     end
 

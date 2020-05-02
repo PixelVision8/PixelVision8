@@ -476,6 +476,7 @@ namespace PixelVision8.Runner
 
                 // Reset all the default values from the bios
                 ConfigureDisplayTarget();
+
             }
 
             AutoLoadDefaultGame();
@@ -607,6 +608,8 @@ namespace PixelVision8.Runner
 
                 // Load the game
                 LoadDefaultGame();
+
+                // Console.WriteLine("CRT "+ Convert.ToBoolean(bios.ReadBiosData(CRTBiosSettings.CRT.ToString(), "False")));
 
                 // Reset the filter based from bios after everything loads up
                 EnableCRT(Convert.ToBoolean(bios.ReadBiosData(CRTBiosSettings.CRT.ToString(), "False")));

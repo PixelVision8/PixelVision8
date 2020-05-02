@@ -79,6 +79,14 @@ function Draw()
             DrawText(runnerName:upper(), startX, 10, DrawMode.Tile, "large", 15)
             DrawText("IS READY FOR SHUTDOWN.", 5, 11, DrawMode.Tile, "large", 15)
 
+            if(Fullscreen() == true) then 
+
+                local closeString = string.format("Press %s to close", OperatingSystem() == "Windows" and "Alt + F4" or "Command + Q")
+
+                DrawText(closeString:upper(), (Display().X - (#closeString*4)) * .5, Display().Y - 16, DrawMode.TilemapCache, "small", 15, -4)
+               
+            end
+            
             workspaceTool.shutdownScreen = true
         end
 

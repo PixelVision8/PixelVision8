@@ -171,7 +171,7 @@ function WorkspaceTool:StartFileOperation(srcPath, destPath, action)
 
     pixelVisionOS:ShowMessageModal(
       "Workspace ".. action .." Action",
-      "Do you want to ".. action .. " " .. #self.targetFiles .. " files?",
+      string.format("Do you want to %s %s?", action, #self.targetFiles > 1 and "these files" or "this file"),
       160,
       true,
       function()

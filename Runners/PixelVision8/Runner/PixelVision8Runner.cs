@@ -518,6 +518,7 @@ namespace PixelVision8.Runner
 
                 // Reset all the default values from the bios
                 ConfigureDisplayTarget();
+
             }
 
             // We only activate this if there is not bios setting to disable it
@@ -775,6 +776,8 @@ namespace PixelVision8.Runner
                     MountDisk(systemPath);
                 });
 
+                luaScript.Globals["OperatingSystem"] = new Func<string>(OperatingSystem);
+
                 // Register the game editor with  the lua service
                 UserData.RegisterType<GameEditor>();
                 luaScript.Globals["gameEditor"] = Editor;
@@ -792,6 +795,28 @@ namespace PixelVision8.Runner
                 luaScript.Globals["UnloadProgress"] = new Func<int>(UnloadProgress);
                 luaScript.Globals["EndUnload"] = new Action(EndUnload);
             }
+        }
+
+        protected string OperatingSystem()
+        {
+            OperatingSystem os = Environment.OSVersion;
+            PlatformID pid = os.Platform;
+            switch (pid)
+            {
+                case PlatformID.Win32NT:
+                case PlatformID.Win32S:
+                case PlatformID.Win32Windows:
+                case PlatformID.WinCE:
+                    return "Windows";
+
+                case PlatformID.Unix:
+                    return "Linux";
+                case PlatformID.MacOSX:
+                    return "Mac";
+                default:
+                    return "Unknown";
+            }
+
         }
 
         protected void StartUnload()
