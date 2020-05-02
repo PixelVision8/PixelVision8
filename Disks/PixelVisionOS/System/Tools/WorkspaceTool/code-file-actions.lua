@@ -222,6 +222,7 @@ function WorkspaceTool:OnRunFileAction(srcPath, destPath, action, duplicate)
 
   local success = RunBackgroundScript("code-process-file-actions.lua", args)
 
+  print("Total Files", ReadMetadata("tmpFileCount"))
   -- print("success", success)
 
   if(success) then

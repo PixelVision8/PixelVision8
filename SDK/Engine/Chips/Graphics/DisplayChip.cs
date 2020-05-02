@@ -242,8 +242,7 @@ namespace PixelVision8.Engine.Chips
             // int index;
 
             _total = width * height;
-
-
+            
             for (i1 = 0; i1 < _total; i1++)
             {
                 _colorID = pixelData?[i1] ?? 0;

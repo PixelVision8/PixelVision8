@@ -66,7 +66,7 @@ function CalculateSteps()
                         }
                     )
 
-                    print("Action", childPath.Path, childDest.Path)
+                    -- print("Action", childPath.Path, childDest.Path)
 
                     -- Add a new file action to the task
                     AddStep("OnFileActionNextStep")
@@ -83,6 +83,8 @@ function CalculateSteps()
 
         end
 
+        -- WriteMetadata( "tmpFileCount", tostring(#filesToCopy) )
+
     end
 
     fileActionCounter = 1
@@ -96,19 +98,31 @@ end
 
 function OnFileActionNextStep()
 
+
     -- Get the src and dest paths from the files list
     local filePath = filesToCopy[fileActionCounter].src
     local finalDestPath = filesToCopy[fileActionCounter].dest
+
+    -- print("OnFileActionNextStep", filePath, finalDestPath)
+
     
     if(filePath.IsFile) then
 
         TriggerSingleFileAction(filePath, finalDestPath)
 
-    elseif(action ~= "copy") then
+    else
 
-        table.insert(fileCleanup, filePath)
+        -- print("Make Folder", filePath, finalDestPath.Path)
 
-    end 
+        if(action ~= "delete" and PathExists(finalDestPath) == false) then
+            CreateDirectory(finalDestPath)
+        end
+
+        if(action ~= "copy") then
+            table.insert(fileCleanup, filePath)
+        end
+
+    end
 
     fileActionCounter = fileActionCounter + 1
 

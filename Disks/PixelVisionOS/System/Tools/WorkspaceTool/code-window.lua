@@ -811,6 +811,8 @@ function WorkspaceTool:DrawWindow()
     -- Reset the component's validation once drwaing is done
     editorUI:ResetValidation(self)
 
+    self:UpdateContextMenu()
+
 end
 
 function WorkspaceTool:OnOverDropTarget(src, dest)
@@ -870,7 +872,7 @@ function WorkspaceTool:FileDropAction(src, dest)
             return
 
         else
-            -- print("Trash")
+            print("Trash")
             action = "throw out"
         end
     elseif(srcSeg[1] == "Disks" and destSeg[1] == "Disks") then
@@ -882,7 +884,7 @@ function WorkspaceTool:FileDropAction(src, dest)
     end
     
     -- Perform the file action
-    -- self:StartFileOperation(self.currentPath, destPath, action)
+    self:StartFileOperation(self.currentPath, destPath, action)
 
 end
 
@@ -1052,24 +1054,40 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
 
     end
 
-    -- Check to see if this is a game directory
+    local srcSeg = workspacePath.GetDirectorySegments()
+
+    print("ValidateGameInDir", dump(srcSeg))
+    
+    local totalSeg = #srcSeg
+    
+    -- Check to see if this is a game directory and we should display the run exe
     if(pixelVisionOS:ValidateGameInDir(workspacePath, {"code.lua"}) and self:TrashOpen() == false) then
 
-        -- Add an entity to run the game
-        table.insert(
-            entities,
-            {
-                name = "Run",
-                type = "run",
-                ext = "run",
-                path = self.currentPath,
-                isDirectory = false,
-                selected = false
-            }
-        )
+        if((srcSeg[1] == "Disks" and totalSeg < 3) or (srcSeg[1] == "Workspace" and totalSeg ~= 1)) then
+            
+            -- Add an entity to run the game
+            table.insert(
+                entities,
+                {
+                    name = "Run",
+                    type = "run",
+                    ext = "run",
+                    path = self.currentPath,
+                    isDirectory = false,
+                    selected = false
+                }
+            )
 
-        self.totalSingleSelectFiles = self.totalSingleSelectFiles + 1
+            self.totalSingleSelectFiles = self.totalSingleSelectFiles + 1
+            
+            self.isGameDir = true
 
+        else
+            self.isGameDir = false
+
+        end
+
+        
     end
 
     -- Get all of the entities in the directory

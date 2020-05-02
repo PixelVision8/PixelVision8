@@ -201,14 +201,14 @@ function WorkspaceTool:OnEjectDisk(diskPath)
 end
 
 
-function WorkspaceTool:UpdateContextMenu(inFocus)
+function WorkspaceTool:UpdateContextMenu()
 
     -- print("UpdateContextMenu", inFocus)
     
     local selections = self:CurrentlySelectedFiles()
 
     -- Check to see if currentPath is a game
-    local canRun = pixelVisionOS:ValidateGameInDir(self.currentPath, {"code.lua"})-- and selections
+    local canRun = self.focus == true and self.isGameDir--and pixelVisionOS:ValidateGameInDir(self.currentPath, {"code.lua"})-- and selections
     
     -- Look to see if the selection is a special file (parent dir or run)
     local specialFile = false

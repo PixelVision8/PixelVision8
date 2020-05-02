@@ -17,15 +17,6 @@ LoadScript("pixel-vision-os-item-picker-v1")
 
 function WorkspaceTool:Init()
 
-  -- -- Create an global instance of the Pixel Vision OS
-  -- pixelVisionOS = PixelVisionOS:Init()
-
-  -- Used for debugging
-  -- pixelVisionOS.displayFPS = true
-
-  -- Get a global reference to the Editor UI
-  -- editorUI = pixelVisionOS.editorUI
-
   -- Create a new table for the instance with default properties
   local _workspaceTool = {
     toolName = "Workspace Explorer",
@@ -49,12 +40,6 @@ function WorkspaceTool:Init()
 
   -- Change the title
   pixelVisionOS:ChangeTitle(_workspaceTool.toolName, "toolbaricontool")
-
-  -- Create background
-  -- _workspaceTool:DrawWallpaper()
-  -- _workspaceTool:RebuildDesktopIcons()
-
-
 
   -- Create dropdown menu
   _workspaceTool:CreateDropDownMenu()
@@ -84,6 +69,7 @@ end
 
 function WorkspaceTool:RestoreLastPath()
 
+  -- TODO ned  to restore selections correctly
   local newPath = SessionID() == ReadSaveData("sessionID", "") and ReadSaveData("lastPath", "none") or "none"
   local lastScrollPos = tonumber(ReadSaveData("scrollPos", "0"))
   local lastSelection = tonumber(ReadSaveData("selection", "0"))
