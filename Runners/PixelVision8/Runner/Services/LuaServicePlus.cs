@@ -56,6 +56,31 @@ namespace PixelVision8.Runner.Services
 
         //public WorkspaceService workspace => desktopRunner.workspaceService;
 
+        private Dictionary<string, string> bgScriptData = new Dictionary<string, string>();
+
+        public string BackgroundScriptData(string key, string value = null)
+        {
+
+            if (value != null)
+            {
+                if (bgScriptData.ContainsKey(key))
+                {
+                    bgScriptData[key] = value;
+                }
+                else
+                {
+                    bgScriptData.Add(key, value);
+                }
+            }
+
+            if (bgScriptData.ContainsKey(key))
+            {
+                return bgScriptData[key];
+            }
+
+            return "undefined";
+        }
+
         public override void ConfigureScript(Script luaScript)
         {
             base.ConfigureScript(luaScript);
@@ -73,6 +98,7 @@ namespace PixelVision8.Runner.Services
                 workspace.GetEntitiesRecursive(path).ToList());
 
             luaScript.Globals["RunBackgroundScript"] = new Func<string, string[], bool>(RunBackgroundScript);
+            luaScript.Globals["BackgroundScriptData"] = new Func<string, string, string>(BackgroundScriptData);
             luaScript.Globals["CancelExport"] = new Action(CancelExport);
             
             luaScript.Globals["PlayWav"] = new Action<WorkspacePath>(PlayWav);
@@ -146,6 +172,8 @@ namespace PixelVision8.Runner.Services
                 if (runner.ServiceManager.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
                 {
                     exportService.Restart();
+
+                    bgScriptData.Clear();
 
                     exportService.AddExporter(new BackgroundScriptRunner(scriptName, this, args));
                     //

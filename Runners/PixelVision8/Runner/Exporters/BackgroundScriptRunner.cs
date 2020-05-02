@@ -56,6 +56,7 @@ namespace PixelVision8
             LuaScript.Globals["AddStep"] = new Action<string>(AddStep);
             LuaScript.Globals["SetStringAsData"] = new Action<string>(SetStringAsData);
             LuaScript.Globals["SetImageAsData"] = new Action<Image, string>(SetImageAsData);
+            LuaScript.Globals["BackgroundScriptData"] = new Func<string, string, string>(luaService.BackgroundScriptData);
 
         }
 

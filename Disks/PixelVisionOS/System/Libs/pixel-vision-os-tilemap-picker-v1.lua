@@ -23,7 +23,7 @@ function PixelVisionOS:CreateTilemapPicker(rect, itemSize, columns, rows, colorO
     data.name = "TilemapPicker" .. data.name
     data.mode = 1
     data.layerCache = {}
-    data.maxPerLoop = 100
+    data.maxPerLoop = 400
     data.paintTileIndex = 0
     data.paintFlagIndex = 0
     data.paintColorOffset = 0

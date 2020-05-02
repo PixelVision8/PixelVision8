@@ -1,15 +1,1 @@
-{
-    
-    "GameChip":
-    {
-        "savedData":{
-            "selectedPalettePage": "0",
-            "selectedSpritePage": "1",
-            "sessionID": "202004300651588082",
-            "rootDirectory": "/Workspace/NewProjectB/",
-            "selectedColor": "-1",
-            "selectedPalette": "-1",
-            "selectedSprite": "-1"
-        }
-    }
-}
+{"GameChip":{"savedData":{"selectedSprite": "-1","selectedPalette": "-1","selectedColor": "-1","rootDirectory": "/Workspace/Test/TestB/","sessionID": "202005020933213666","selectedSpritePage": "1","selectedPalettePage": "0"}}}

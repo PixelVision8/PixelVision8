@@ -222,7 +222,6 @@ function WorkspaceTool:OnRunFileAction(srcPath, destPath, action, duplicate)
 
   local success = RunBackgroundScript("code-process-file-actions.lua", args)
 
-  print("Total Files", ReadMetadata("tmpFileCount"))
   -- print("success", success)
 
   if(success) then
@@ -273,10 +272,10 @@ function WorkspaceTool:UpdateFileActionProgress(data)
   end
 
   -- Get the current percentage
-  local percent = ReadExportPercent()
+  local percent = ReadExportPercent()/100
 
-  local fileActionActiveTotal = self.progressModal.totalFiles
-  local fileActionCounter = math.floor(fileActionActiveTotal * (percent / 100))
+  local fileActionActiveTotal = tonumber(BackgroundScriptData("tmpFileCount"))
+  local fileActionCounter = math.floor(fileActionActiveTotal * percent)
   local pad = #tostring(fileActionActiveTotal)
 
   local message = string.format("%s %0" .. pad .. "d of %0" .. pad .. "d.\n\n\nDo not restart or shut down Pixel Vision 8.", self.progressModal.fileAction, fileActionCounter, fileActionActiveTotal)

@@ -83,7 +83,7 @@ function CalculateSteps()
 
         end
 
-        -- WriteMetadata( "tmpFileCount", tostring(#filesToCopy) )
+        BackgroundScriptData( "tmpFileCount", tostring(#filesToCopy) )
 
     end
 
