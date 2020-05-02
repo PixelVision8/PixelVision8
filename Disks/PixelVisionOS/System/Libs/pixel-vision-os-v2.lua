@@ -40,7 +40,8 @@ function PixelVisionOS:Init()
         editorUI = editorUI,
         version = _G["PixelVisionOSVersion"] or "v2.6",
         uiComponents = {},
-        uiTotal = 0
+        uiTotal = 0, 
+        displayFPS = true
     }
     setmetatable(_pixelVisionOS, PixelVisionOS)
 
