@@ -827,6 +827,9 @@ end
 
 function WorkspaceTool:FileDropAction(src, dest)
 
+    -- print("drop",self.currentPath.path, src.iconPath, src.iconPath.parentPath, dest.iconPath)
+
+    local srcPath = src.iconPath.parentPath
     -- build a list of files to process
     local destPath = dest.iconPath
 
@@ -857,7 +860,7 @@ function WorkspaceTool:FileDropAction(src, dest)
 
     local action = "move"
 
-    local srcSeg = self.currentPath.GetDirectorySegments()
+    local srcSeg = srcPath.GetDirectorySegments()
     local destSeg = destPath.GetDirectorySegments()
 
     if(srcSeg[1] == "Tmp" and srcSeg[2] == "Trash") then
@@ -872,11 +875,12 @@ function WorkspaceTool:FileDropAction(src, dest)
             return
 
         else
-            print("Trash")
+            -- print("Trash")
             action = "throw out"
         end
     elseif(srcSeg[1] == "Disks" and destSeg[1] == "Disks") then
         if(srcSeg[2] ~= destSeg[2]) then
+            -- print("Copy")
             action = "copy"
         end
     elseif(srcSeg[1] ~= destSeg[1]) then
@@ -884,7 +888,7 @@ function WorkspaceTool:FileDropAction(src, dest)
     end
     
     -- Perform the file action
-    self:StartFileOperation(self.currentPath, destPath, action)
+    self:StartFileOperation(srcPath, destPath, action)
 
 end
 
@@ -1056,7 +1060,7 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
 
     local srcSeg = workspacePath.GetDirectorySegments()
 
-    print("ValidateGameInDir", dump(srcSeg))
+    -- print("ValidateGameInDir", dump(srcSeg))
     
     local totalSeg = #srcSeg
     

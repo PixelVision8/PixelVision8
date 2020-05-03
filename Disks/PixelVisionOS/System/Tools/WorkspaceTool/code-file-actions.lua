@@ -67,7 +67,7 @@ end
 
 function WorkspaceTool:StartFileOperation(srcPath, destPath, action)
 
-  -- print("StartFileOperation", srcPath, destPath)
+  -- print("StartFileOperation", srcPath, destPath, action)
 
   -- Test to see if the action is delete
   if(action == "delete") then
@@ -92,7 +92,7 @@ function WorkspaceTool:StartFileOperation(srcPath, destPath, action)
       -- Figure out the final path for the file
       local finalDestPath = NewWorkspacePath(destPath.Path .. filePath.Path:sub(#srcPath.Path + 1))
 
-      -- print("filePath", filePath.Path, destPath.Path, finalDestPath.Path)
+      print("filePath", filePath.Path, destPath.Path, finalDestPath.Path)
 
       if(filePath.isDirectory and filePath.Path == destPath.Path) then
 

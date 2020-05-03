@@ -105,7 +105,7 @@ namespace PixelVision8
 
             try
             {
-                Console.WriteLine("calling " + stepQueue[currentStep]);
+                // Console.WriteLine("calling " + stepQueue[currentStep]);
                 LuaScript.Call(LuaScript.Globals[stepQueue[currentStep]]);
                 StepCompleted();
             }

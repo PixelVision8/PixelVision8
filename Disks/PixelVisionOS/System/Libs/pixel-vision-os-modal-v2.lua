@@ -54,7 +54,7 @@ function PixelVisionOS:CloseModal()
 
   RestoreTilemapCache()
 
-  self.modalCloseDelay = .25
+  self.modalCloseDelay = .15
   self.modalCloseTime = 0
 
   self.activeModal = nil
