@@ -253,7 +253,13 @@ function KeyPressCheck()
       if(safeMode == false) then
         safeMode = true
         DrawText("SAFE MODE", 8, 225, DrawMode.TilemapCache, "small", 11, - 4)
-        print("Safe mode")
+        
+        -- Reset the display
+        Fullscreen(false)
+        EnableCRT(false)
+        Scale(1)
+
+        --print("Safe mode")
       end
     end
   end

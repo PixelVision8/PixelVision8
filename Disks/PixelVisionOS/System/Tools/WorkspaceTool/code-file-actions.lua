@@ -247,7 +247,7 @@ function WorkspaceTool:OnRunFileAction(srcPath, destPath, action, duplicate)
 
 end
 
-function WorkspaceTool:UpdateFileActionProgress(data)
+function WorkspaceTool:UpdateFileActionProgress()
 
   -- print("UpdateFileActionProgress running", IsExporting())
 
@@ -266,6 +266,23 @@ function WorkspaceTool:UpdateFileActionProgress(data)
     -- Remove the callback from the UI update loop
     pixelVisionOS:RemoveUI("ProgressUpdate")
 
+    -- Check to see if we should select anything
+    if(self.autoSelect == true) then
+      
+      self.autoSelect = false
+
+      for i = 1, #self.files do
+        
+        for j = 1, #self.targetFiles do
+            if(self.files[i].fullName == self.targetFiles[j].EntityName) then
+              self.files[i].selected = true
+            end
+        end
+
+      end
+
+    end
+    
     -- Exit out of the function
     return
 
@@ -389,6 +406,8 @@ function WorkspaceTool:OnPaste(dest)
       if(#self.targetFiles) then
 
         self:StartFileOperation(srcPath, dest, "copy")
+
+        self.autoSelect = true
 
       end
 

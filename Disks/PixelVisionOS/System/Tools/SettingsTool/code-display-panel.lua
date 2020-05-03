@@ -33,6 +33,7 @@ function SettingsTool:CreateDisplayPanel()
 
         WriteBiosData("FullScreen", value == true and "True" or "False")
 
+        editorUI:Enable(self.scaleInputData, not value)
 
         editorUI:Enable(self.cropCheckBoxData, not value)
         editorUI:ToggleButton(self.cropCheckBoxData, value == false and CropScreen() or false, false)

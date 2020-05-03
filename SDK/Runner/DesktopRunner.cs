@@ -475,7 +475,7 @@ namespace PixelVision8.Runner
                 bios.ParseBiosText(biosText);
 
                 // Reset all the default values from the bios
-                ConfigureDisplayTarget();
+                // ConfigureDisplayTarget();
 
             }
 
@@ -529,17 +529,18 @@ namespace PixelVision8.Runner
 
             Scale(Convert.ToInt32(bios.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
 
-            // Configure CRT shader
-            var shaderPath = WorkspacePath.Parse(bios.ReadBiosData(CRTBiosSettings.CRTEffectPath.ToString(),
-                "/App/Effects/crt-lottes-mg.ogl.mgfxo"));
-
-            if (workspaceService.Exists(shaderPath))
+            if(displayTarget.HasShader() == false)
             {
-                displayTarget.shaderPath = workspaceService.OpenFile(shaderPath, FileAccess.Read);
+                // Configure CRT shader
+                var shaderPath = WorkspacePath.Parse(bios.ReadBiosData(CRTBiosSettings.CRTEffectPath.ToString(),
+                    "/App/Effects/crt-lottes-mg.ogl.mgfxo"));
 
-                // Force the display to load the shader
-                displayTarget.useCRT = true;
+                if (workspaceService.Exists(shaderPath))
+                {
+                    displayTarget.shaderPath = workspaceService.OpenFile(shaderPath, FileAccess.Read);
+                }
             }
+            
 
             displayTarget.ResetResolution(tmpRes[0], tmpRes[1]);
 

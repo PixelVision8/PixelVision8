@@ -17,15 +17,11 @@ LoadScript("pixel-vision-os-canvas-v2")
 LoadScript("code-characters")
 
 local toolName = "Color Tool"
-local systemColorsPerPage = 64
-local success = false
-local emptyColorID = -1
 local colorOffset = 50
 local imageLoaded = false
 local toolLoaded = false
 local fontName = "untitled"
 local currentCharID = -1
-local lastCharID = -2
 local characterWindow = {x = 152, y = 72, w = 96, h = 64}
 local originalPixelData = nil
 local WHITE = 15
@@ -198,7 +194,7 @@ end
 
 function Init()
 
-    BackgroundColor(22)
+    BackgroundColor(5)
 
     -- Disable the back key in this tool
     EnableBackKey(false)
@@ -218,10 +214,7 @@ function Init()
     -- Get the target file
     targetFile = ReadMetadata("file", nil)
 
-
-
     if(targetFile ~= nil) then
-
 
         -- print("targetFile", targetFile)
 
@@ -355,11 +348,9 @@ function OnFontLoaded()
         -- Change the tool bases on what color the mouse is over
         editorUI:ChangeCanvasTool(canvasData, tmpColor == 0 and "pen" or "eraser", 6)
 
-        local pixelData = gameEditor:FlipPixelData(editorUI:GetCanvasPixelData(canvasData), flipH, flipV)
-
         canvasData.inDrawMode = true
 
-        UpdateHistory(pixelData)
+        UpdateHistory(editorUI:GetCanvasPixelData(canvasData))
     end
 
     canvasData.onAction = OnSaveCanvasChanges
@@ -435,7 +426,7 @@ end
 function OnSaveCanvasChanges()
 
     local pixelData = editorUI:GetCanvasPixelData(canvasData)
-    local canvasSize = editorUI:GetCanvasSize(canvasData)
+    -- local canvasSize = editorUI:GetCanvasSize(canvasData)
 
     local total = #pixelData
 
@@ -556,8 +547,7 @@ function OnSelectChar(value)
 
     if(lastCharID ~= currentCharID) then
         -- Clear the original pixel data
-        originalPixelData = {}
-
+        
         -- Need to loop through the pixel data and change the offset
         local total = #tmpPixelData
         for i = 1, total do
@@ -566,11 +556,9 @@ function OnSelectChar(value)
 
                 -- Convert the pixel data to white
                 tmpPixelData[i] = WHITE
-
+            else
+                tmpPixelData[i] = -1
             end
-
-            -- Copy pixel data over to original pixel data array
-            originalPixelData[i] = tmpPixelData[i]
 
         end
 

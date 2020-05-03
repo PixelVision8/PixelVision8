@@ -87,6 +87,11 @@ namespace PixelVision8.Runner.Data
             set => shaderEffect?.Parameters["hardPix"]?.SetValue(value);
         }
 
+        public bool HasShader()
+        {
+            return crtShader != null;
+        }
+
         public Stream shaderPath
         {
             set
@@ -106,10 +111,26 @@ namespace PixelVision8.Runner.Data
                 crtShader.Parameters["brightboost"]?.SetValue(1f); // 1.0f (.5 - 1.5)
 
 
-                crtShader.Parameters["hardScan"]?.SetValue(-4.0f); // -8.0f
+                crtShader.Parameters["hardScan"]?.SetValue(-6.0f); // -8.0f
                 crtShader.Parameters["warpX"]?.SetValue(0.008f); // 0.031f
                 crtShader.Parameters["warpY"]?.SetValue(0.01f); // 0.041f
                 crtShader.Parameters["shape"]?.SetValue(2f); // 2.0f
+
+
+
+                // crtShader.Parameters["hardScan"]?.SetValue(-8.0f);
+                // crtShader.Parameters["hardPix"]?.SetValue(-3.0f);
+                // crtShader.Parameters["warpX"]?.SetValue(0.031f);
+                // crtShader.Parameters["warpY"]?.SetValue(0.041f);
+                // crtShader.Parameters["maskDark"]?.SetValue(0.5f);
+                // crtShader.Parameters["maskLight"]?.SetValue(1.5f);
+                // crtShader.Parameters["scaleInLinearGamma"]?.SetValue(1.0f);
+                // crtShader.Parameters["shadowMask"]?.SetValue(3.0f);
+                // crtShader.Parameters["brightboost"]?.SetValue(1.0f);
+                // crtShader.Parameters["hardBloomScan"]?.SetValue(-1.5f);
+                // crtShader.Parameters["hardBloomPix"]?.SetValue(-2.0f);
+                // crtShader.Parameters["bloomAmount"]?.SetValue(0.15f);
+                // crtShader.Parameters["shape"]?.SetValue(2.0f);
 
                 useCRT = true;
             }
