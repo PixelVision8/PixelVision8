@@ -176,7 +176,7 @@ end
 function EditorUI:ChangeInputField(data, text, trigger)
   -- Input fields need to process the text before setting it
 
-  print(data.name, "ChangeInputField", text)
+  -- print(data.name, "ChangeInputField", text)
 
   -- Look for any custom validation
   if(data.onValidate ~= nil) then

@@ -70,6 +70,8 @@ function PixelVisionOS:CreateItemPicker(rect, itemSize, columns, rows, colorOffs
 
     data.scrollShift = NewPoint()
 
+    data.ctrlCopyEnabled = true
+
     -- Force the display to invalidate
     data.invalidateDisplay = true
 
@@ -198,22 +200,49 @@ function PixelVisionOS:CreateItemPicker(rect, itemSize, columns, rows, colorOffs
 
     data.UpdateToolTip = function(tmpData)
 
+        local action = ""
+        local label = tmpData.toolTipLabel
+        local index = 0
+        local ending = ""
+        
+        local toolTipMessage = "%s %s ID %0" .. tmpData.totalItemStringPadding .. "d %s"
+        
+        
         if(tmpData.dragging) then
 
             if(tmpData.overPos.index ~= nil and tmpData.overPos.index ~= -1 and tmpData.overPos.index < tmpData.picker.total) then
-                tmpData.picker.toolTip = "Swap "..tmpData.toolTipLabel.." ID " .. string.lpad(tostring(tmpData.pressSelection.index), tmpData.totalItemStringPadding, "0") .. " with ".. string.lpad(tostring(tmpData.overPos.index), tmpData.totalItemStringPadding, "0")
+                
+                
+
+                action = tmpData.copyDrag == true and "Copy" or "Swap"
+               
+                index = tmpData.pressSelection.index
+                ending = (tmpData.copyDrag == true and "to" or "width") .. " ".. string.lpad(tostring(tmpData.overPos.index), tmpData.totalItemStringPadding, "0")
+
+                -- tmpData.picker.toolTip = string.format(toolTipMessage, "swap", tmpData.toolTipLabel, tmpData.pressSelection.index, "with ".. string.lpad(tostring(tmpData.overPos.index), tmpData.totalItemStringPadding, "0"))--"Swap "..tmpData.toolTipLabel.." ID " .. string.lpad(tostring(tmpData.pressSelection.index), tmpData.totalItemStringPadding, "0") .. " with ".. string.lpad(tostring(tmpData.overPos.index), tmpData.totalItemStringPadding, "0")
+            
             else
-                tmpData.picker.toolTip = "Dragging "..tmpData.toolTipLabel.." ID " .. string.lpad(tostring(tmpData.pressSelection.index), tmpData.totalItemStringPadding, "0")
+            
+                action = "Dragging"
+                index = tmpData.pressSelection.index
+
+                -- tmpData.picker.toolTip = "Dragging "..tmpData.toolTipLabel.." ID " .. string.lpad(tostring(tmpData.pressSelection.index), tmpData.totalItemStringPadding, "0")
+            
             end
 
         elseif(tmpData.overPos.index ~= nil and tmpData.overPos.index ~= -1) then
 
+            action = "Select"
+            index = tmpData.overPos.index
+
             -- Update the tooltip with the index and position
-            tmpData.picker.toolTip = "Select "..tmpData.toolTipLabel.." ID " .. string.lpad(tostring(tmpData.overPos.index), tmpData.totalItemStringPadding, "0")
+            -- tmpData.picker.toolTip = "Select "..tmpData.toolTipLabel.." ID " .. string.lpad(tostring(tmpData.overPos.index), tmpData.totalItemStringPadding, "0")
 
         else
-            tmpData.picker.toolTip = ""
+            toolTipMessage = ""
         end
+
+        tmpData.picker.toolTip = string.format(toolTipMessage, action, label, index, ending)
 
     end
 
@@ -356,7 +385,13 @@ function PixelVisionOS:UpdateItemPicker(data)
 
         data.overPos = self:CalculateItemPickerPosition(data)
 
+        -- Reset copy drag flag
+        data.copyDrag = false
+        
         if(data.dragging == true) then
+
+            -- See if control is down while dragging
+            data.copyDrag = (Key(Keys.LeftControl) == true or Key(Keys.RightControl) == true) and data.ctrlCopyEnabled == true
 
             if(self.editorUI.collisionManager:MouseInRect(data.visibleRect) and data.overPos.index < data.total) then
 

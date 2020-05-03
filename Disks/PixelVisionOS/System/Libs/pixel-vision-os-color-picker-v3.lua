@@ -206,6 +206,13 @@ function PixelVisionOS:OnNextColorPickerCacheStep(data)
 
 end
 
+function PixelVisionOS:ColorPickerChangeColor(data, index, color)
+
+  -- print("Change Color", index, color)
+  Color(index, color)
+
+end
+
 function PixelVisionOS:DrawColorPickerColorItem(data, id)
 
   local totalPixels = data.itemSize.x * data.itemSize.y
@@ -221,10 +228,9 @@ function PixelVisionOS:DrawColorPickerColorItem(data, id)
     if(Color(colorID) == self.maskColor) then
       data.canvas.DrawSprites(emptymaskcolor.spriteIDs, x, y, emptymaskcolor.width, false, false)
     else
-
       data.canvas.Clear(colorID, x, y, data.itemSize.x, data.itemSize.y)
-
     end
+    
   else
     data.canvas.DrawSprites(emptycolor.spriteIDs, x, y, emptycolor.width, false, false)
   end

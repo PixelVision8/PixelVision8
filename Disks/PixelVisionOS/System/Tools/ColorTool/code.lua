@@ -211,6 +211,8 @@ function Init()
             true -- drag between pages
         )
 
+        systemColorPickerData.ctrlCopyEnabled = false
+
         systemColorPickerData.onPageAction = function(value)
 
             local bgColor = gameEditor:BackgroundColor()
@@ -403,7 +405,7 @@ function OnAddDroppedColor(id, dest, color)
 
     local index = pixelVisionOS.colorOffset + pixelVisionOS.totalPaletteColors + (id)
 
-    Color(index, color)
+    pixelVisionOS:ColorPickerChangeColor(picker, index, color)
 
     InvalidateData()
 
@@ -415,24 +417,29 @@ function OnSystemColorDropTarget(src, dest)
     if(src.name == dest.name) then
 
         -- Get the source color ID
-        srcPos = src.pressSelection
+        local srcPos = src.pressSelection
 
         -- Get the destination color ID
         local destPos = pixelVisionOS:CalculateItemPickerPosition(src)
 
         local pageOffset = (systemColorPickerData.pages.currentSelection - 1) * systemColorPickerData.totalPerPage
 
-        if((destPos.index - pageOffset) < dest.picker.total) then
+        -- if((destPos.index - pageOffset) < dest.picker.total) then
 
-            -- Need to shift src and dest ids based onthe color offset
+            -- Need to shift src and dest ids based on the color offset
             local realSrcID = srcPos.index + src.altColorOffset
             local realDestID = destPos.index + dest.altColorOffset
+
             -- Make sure the colors are not the same
             if(realSrcID ~= realDestID) then
 
                 -- Get the src and dest color hex value
                 local srcColor = Color(realSrcID)
-                local destColor = Color(realDestID)
+                local destColor = src.copyDrag == true and srcColor or Color(realDestID)
+                
+                if(Key(Keys.LeftControl) == true or Key(Keys.RightControl) == true) then
+                    print("Copy")
+                end
 
                 -- Make sure we are not moving a transparent color
                 if(srcColor == pixelVisionOS.maskColor or destColor == pixelVisionOS.maskColor) then
@@ -448,8 +455,8 @@ function OnSystemColorDropTarget(src, dest)
                 end
 
                 -- Swap the colors in the tool's color memory
-                Color(realSrcID, destColor)
-                Color(realDestID, srcColor)
+                pixelVisionOS:ColorPickerChangeColor(picker, realSrcID, destColor)
+                pixelVisionOS:ColorPickerChangeColor(picker, realDestID, srcColor)
 
                 -- Update just the colors that changed
                 local srcPixelData = pixelVisionOS:ReadItemPickerOverPixelData(src, srcPos.x, srcPos.y)
@@ -471,7 +478,7 @@ function OnSystemColorDropTarget(src, dest)
 
             end
 
-        end
+        -- end
 
     end
 
@@ -585,7 +592,7 @@ function OnPaste()
 
     -- print("Paste", lastMode, src.name, colorID, src.currentSelection, src.altColorOffset)
 
-    Color(colorID, copyValue)
+    pixelVisionOS:ColorPickerChangeColor(picker, colorID, copyValue)
     pixelVisionOS:EnableMenuItem(CopyShortcut, true)
     pixelVisionOS:EnableMenuItem(PasteShortcut, false)
     copyValue = nil
@@ -783,7 +790,7 @@ function OnAdd()
                             for i = 1, pixelVisionOS.totalSystemColors do
 
                                 local index = (i - 1) + pixelVisionOS.colorOffset
-                                Color(index, colors[i])
+                                pixelVisionOS:ColorPickerChangeColor(picker, index, colors[i])
 
                             end
 
@@ -829,9 +836,13 @@ function OnClear()
     -- Get the real color ID from the offset
     local realColorID = picker.currentSelection + picker.altColorOffset
 
-    -- Set the color to the mask value
-    Color(realColorID, pixelVisionOS.maskColor)
+    print("Clear", picker.currentSelection, picker.altColorOffset, realColorID, pixelVisionOS.maskColor)
 
+
+    -- Set the color to the mask value
+    pixelVisionOS:ColorPickerChangeColor(picker, realColorID, pixelVisionOS.maskColor)
+
+    -- pixelVisionOS:RebuildColorPickerCache(picker)
     pixelVisionOS:DrawColorPickerColorItem(picker, picker.currentSelection)
 
     -- Redraw the pickers current page
@@ -920,7 +931,7 @@ function UpdateHexColor(value)
         -- end
 
         -- Update the editor's color
-        local newColor = Color(realColorID, value)
+        local newColor = pixelVisionOS:ColorPickerChangeColor(picker, realColorID, value)
 
 
         -- TODO this should be used in the palette not the system colors
@@ -941,7 +952,7 @@ function UpdateHexColor(value)
                 if(tmpColor == currentColor and tmpColor ~= pixelVisionOS.maskColor) then
 
                     -- Set the color to equal the new color
-                    Color(index, value)
+                    pixelVisionOS:ColorPickerChangeColor(picker, index, value)
 
                 end
 
@@ -993,7 +1004,7 @@ function DeleteSystemColor(value)
     local realColorID = value + systemColorPickerData.altColorOffset
 
     -- Set the current tool's color to the mask value
-    Color(realColorID, pixelVisionOS.maskColor)
+    pixelVisionOS:ColorPickerChangeColor(picker,realColorID, pixelVisionOS.maskColor)
 
     -- Copy all the colors to the game
     pixelVisionOS:CopyToolColorsToGameMemory()
