@@ -166,7 +166,6 @@ function Init()
             colorMemoryCanvas:SetPixels(pixels)
         end
 
-
         -- We need to modify the color selection sprite so we start with a reference to it
         local selectionPixelData = colorselection
 
@@ -405,7 +404,7 @@ function OnAddDroppedColor(id, dest, color)
 
     local index = pixelVisionOS.colorOffset + pixelVisionOS.totalPaletteColors + (id)
 
-    pixelVisionOS:ColorPickerChangeColor(picker, index, color)
+    pixelVisionOS:ColorPickerChangeColor(dest, index, color)
 
     InvalidateData()
 
@@ -455,8 +454,8 @@ function OnSystemColorDropTarget(src, dest)
                 end
 
                 -- Swap the colors in the tool's color memory
-                pixelVisionOS:ColorPickerChangeColor(picker, realSrcID, destColor)
-                pixelVisionOS:ColorPickerChangeColor(picker, realDestID, srcColor)
+                pixelVisionOS:ColorPickerChangeColor(dest, realSrcID, destColor)
+                pixelVisionOS:ColorPickerChangeColor(dest, realDestID, srcColor)
 
                 -- Update just the colors that changed
                 local srcPixelData = pixelVisionOS:ReadItemPickerOverPixelData(src, srcPos.x, srcPos.y)
@@ -592,9 +591,11 @@ function OnPaste()
 
     -- print("Paste", lastMode, src.name, colorID, src.currentSelection, src.altColorOffset)
 
-    pixelVisionOS:ColorPickerChangeColor(picker, colorID, copyValue)
+    pixelVisionOS:ColorPickerChangeColor(paletteColorPickerData, colorID, copyValue)
+
     pixelVisionOS:EnableMenuItem(CopyShortcut, true)
     pixelVisionOS:EnableMenuItem(PasteShortcut, false)
+
     copyValue = nil
 
     InvalidateData()
@@ -790,10 +791,9 @@ function OnAdd()
                             for i = 1, pixelVisionOS.totalSystemColors do
 
                                 local index = (i - 1) + pixelVisionOS.colorOffset
-                                pixelVisionOS:ColorPickerChangeColor(picker, index, colors[i])
+                                pixelVisionOS:ColorPickerChangeColor(systemColorPickerData, index, colors[i])
 
                             end
-
 
                             pixelVisionOS:AddNewColorToPicker(systemColorPickerData)
                             --
@@ -843,7 +843,7 @@ function OnClear()
     pixelVisionOS:ColorPickerChangeColor(picker, realColorID, pixelVisionOS.maskColor)
 
     -- pixelVisionOS:RebuildColorPickerCache(picker)
-    pixelVisionOS:DrawColorPickerColorItem(picker, picker.currentSelection)
+    -- pixelVisionOS:DrawColorPickerColorItem(picker, picker.currentSelection)
 
     -- Redraw the pickers current page
     -- pixelVisionOS:DrawColorPage(picker)
@@ -931,7 +931,7 @@ function UpdateHexColor(value)
         -- end
 
         -- Update the editor's color
-        local newColor = pixelVisionOS:ColorPickerChangeColor(picker, realColorID, value)
+        pixelVisionOS:ColorPickerChangeColor(systemColorPickerData, realColorID, value)
 
 
         -- TODO this should be used in the palette not the system colors
@@ -940,7 +940,7 @@ function UpdateHexColor(value)
         -- After updating the color, check to see if in palette mode and replace all matching colors in the palettes
         if(usePalettes == true) then
 
-            -- Loop through the palette color memery to remove replace all matching colors
+            -- Loop through the palette color memory to remove replace all matching colors
             for i = 127, pixelVisionOS.totalColors do
 
                 local index = (i - 1) + pixelVisionOS.colorOffset
@@ -952,7 +952,7 @@ function UpdateHexColor(value)
                 if(tmpColor == currentColor and tmpColor ~= pixelVisionOS.maskColor) then
 
                     -- Set the color to equal the new color
-                    pixelVisionOS:ColorPickerChangeColor(picker, index, value)
+                    pixelVisionOS:ColorPickerChangeColor(paletteColorPickerData, index, value)
 
                 end
 
@@ -1004,7 +1004,7 @@ function DeleteSystemColor(value)
     local realColorID = value + systemColorPickerData.altColorOffset
 
     -- Set the current tool's color to the mask value
-    pixelVisionOS:ColorPickerChangeColor(picker,realColorID, pixelVisionOS.maskColor)
+    pixelVisionOS:ColorPickerChangeColor(systemColorPickerData, realColorID, pixelVisionOS.maskColor)
 
     -- Copy all the colors to the game
     pixelVisionOS:CopyToolColorsToGameMemory()

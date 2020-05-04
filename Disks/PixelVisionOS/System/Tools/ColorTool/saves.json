@@ -3,13 +3,13 @@
     "GameChip":
     {
         "savedData":{
-            "selectedPalettePage": "1",
-            "selectedSpritePage": "1",
-            "sessionID": "202005031040599195",
-            "rootDirectory": "/Workspace/NewProjectB/",
-            "selectedColor": "-1",
+            "selectedSprite": "-1",
             "selectedPalette": "-1",
-            "selectedSprite": "-1"
+            "selectedColor": "-1",
+            "rootDirectory": "/Workspace/NewProjectB/",
+            "sessionID": "202005040745344036",
+            "selectedSpritePage": "1",
+            "selectedPalettePage": "1"
         }
     }
 }

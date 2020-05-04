@@ -126,6 +126,7 @@ end
 
 function PixelVisionOS:ConfigureEmptyDragColorPickerSprites(data, spriteID, width)
 
+  -- TODO need to cancel this if the ctrl key is down
   local scale = width or data.itemSize.x / 8
 
   -- Update the emptySpriteList
@@ -154,7 +155,7 @@ end
 
 function PixelVisionOS:RebuildColorPickerCache(data)
 
-  -- Recaluclate the number of pages
+  -- Recalculate the number of pages
   self:RebuildPickerPages(data)
 
   -- TODO needed to do a hack here to keep the canvas from crashing if totalPages is 0
@@ -185,7 +186,7 @@ function PixelVisionOS:OnNextColorPickerCacheStep(data)
   for i = data.nextCacheIndex, data.nextLoopTotal do
 
     -- Lua loops start at 1 but we need to start at 0
-    index = i - 1
+    local index = i - 1
 
     self:DrawColorPickerColorItem(data, index)
 
@@ -208,15 +209,29 @@ end
 
 function PixelVisionOS:ColorPickerChangeColor(data, index, color)
 
-  -- print("Change Color", index, color)
+  print("Change Color", data.name, index, color, data.altColorOffset, index- data.altColorOffset)
   Color(index, color)
+  
+  self:DrawColorPickerColorItem(data, index- data.altColorOffset)
+  -- self:InvalidateColorPickerCache(data)
 
+  -- self:DrawColorPickerColorItem(data,index- data.altColorOffset + 1)
+
+  self:InvalidateItemPickerDisplay(data)
+
+end
+
+function PixelVisionOS:InvalidateColorPickerPage(data)
+
+  data.invalidPage = true
+  
 end
 
 function PixelVisionOS:DrawColorPickerColorItem(data, id)
 
-  local totalPixels = data.itemSize.x * data.itemSize.y
-  local pixelData = {}
+  print("DrawColorPickerColorItem", data.name, id)
+  -- local totalPixels = data.itemSize.x * data.itemSize.y
+  -- local pixelData = {}
 
   local pos = CalculatePosition(id, data.columns)
   x = pos.x * data.itemSize.x
@@ -254,6 +269,13 @@ function PixelVisionOS:UpdateColorPicker(data)
     self:RebuildColorPickerCache(data)
 
     data.invalidPixelCache = false
+  end
+
+  if(data.invalidPage == true) then 
+
+    self:OnColorPickerPage(data, data.currentPage)
+    data.invalidPage = false
+    
   end
 
   editorUI:UpdateToggleGroup(data.pages)
@@ -310,6 +332,8 @@ function PixelVisionOS:UpdateColorPicker(data)
 end
 
 function PixelVisionOS:OnColorPickerPage(data, value)
+
+  print("OnColorPickerPage", data.name, value)
 
   value = value or 0
 
