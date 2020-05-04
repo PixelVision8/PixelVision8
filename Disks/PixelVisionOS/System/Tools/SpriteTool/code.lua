@@ -19,14 +19,29 @@ LoadScript("pixel-vision-os-item-picker-v1")
 local toolName = "Sprite Tool"
 
 local colorOffset = 0
-local systemColorsPerPage = 64
+local spriteIDInputData = nil
+local rootDirectory = "/"
+local sizeBtnData = nil
+local toolBtnData = nil
+local canvasData = nil
+local flipHButton = nil
+local flipVButton = nil
+local usePalettes = false
+-- local spritePickerData = nil
+-- local paletteColorPickerData = nil
+local lastSystemColorSelection = nil
+local toolTitle = nil
+local colorPreviewInvalid = false
+local showBGColor = false
+
+-- local systemColorsPerPage = 64
 local success = false
-local emptyColorID = -1
+-- local emptyColorID = -1
 local originalPixelData = nil
 local lastSelection = -1
 local lastColorID = 0
 local colorEditorPath = "/"
-local colorCountInvalid = false
+-- local colorCountInvalid = false
 -- local flipH = false
 -- local flipV = false
 local spriteSize = 1
@@ -591,7 +606,7 @@ function OnSpritePickerDrop(src, dest)
     if(src.name == dest.name) then
 
         -- Get the source color ID
-        srcSpriteID = src.pressSelection.index
+        local srcSpriteID = src.pressSelection.index
 
         -- Exit this swap if there is no src selection
         if(srcSpriteID == nil) then

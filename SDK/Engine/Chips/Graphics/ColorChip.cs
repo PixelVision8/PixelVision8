@@ -221,10 +221,13 @@ namespace PixelVision8.Engine.Chips
         //            return Array.IndexOf(_colors, color);
         //        }
 
-        public void Clear()
+        public void Clear(string color = null)
         {
+            if (color == null)
+                color = maskColor;
+
             var t = _colors.Length;
-            for (var i = 0; i < t; i++) UpdateColorAt(i, maskColor);
+            for (var i = 0; i < t; i++) UpdateColorAt(i, color);
         }
 
         public virtual void UpdateColorAt(int index, string color)

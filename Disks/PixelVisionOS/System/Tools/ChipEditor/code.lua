@@ -1039,7 +1039,7 @@ function ReplaceChip(chipData, chipID)
 
   if(chipData.colors ~= nil) then
 
-    gameEditor:ClearColors()
+    gameEditor:ClearColors(chipData.colors[1])
 
     local totalColors = #chipData.colors
 

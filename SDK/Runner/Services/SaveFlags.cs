@@ -37,9 +37,7 @@ namespace PixelVision8.Runner
         Sounds = 256,
         SaveData = 512,
         MetaSprites = 1024,
-        TilemapFlags = 2048
-
-        
+        // TilemapFlags = 2048
         // TilemapCache = 4096,
         // TileColorOffset = 8192,
         // FlagColors = 16384

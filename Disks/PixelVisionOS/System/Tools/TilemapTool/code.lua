@@ -99,7 +99,7 @@ function Init()
 
     if(rootDirectory ~= nil) then
         -- Load only the game data we really need
-        success = gameEditor:Load(rootDirectory, {SaveFlags.System, SaveFlags.Meta, SaveFlags.Colors, SaveFlags.ColorMap, SaveFlags.Sprites, SaveFlags.Tilemap, SaveFlags.TilemapFlags})
+        success = gameEditor:Load(rootDirectory, {SaveFlags.System, SaveFlags.Meta, SaveFlags.Colors, SaveFlags.ColorMap, SaveFlags.Sprites, SaveFlags.Tilemap})
     end
 
     -- Set the tool name with an error message

@@ -407,9 +407,9 @@ namespace PixelVision8.Runner.Editors
             return value;
         }
 
-        public void ClearColors()
+        public void ClearColors(string color = null)
         {
-            colorChip.Clear();
+            colorChip.Clear(color);
         }
 
         /// <summary>

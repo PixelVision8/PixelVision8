@@ -363,100 +363,141 @@ namespace PixelVision8.Engine
                     FloodFill(center.X, center.Y);
         }
 
+        // public void DrawEllipse_old(int x0, int y0, int x1, int y1, bool fill = false)
+        // {
+        //     // Create a box to draw the circle inside of
+        //
+        //     var w = x1 - x0;
+        //     var h = y1 - y0;
+        //
+        //     var tl = new Point(x0, y0);
+        //     var tr = new Point(x0 + w, y0);
+        //     // var br = new Point(x0 + w, y0 + h);
+        //     var bl = new Point(x0, y0 + h);
+        //
+        //     var center = new Point();
+        //     // var radius = (int) Math.Sqrt(w * w + h * h);
+        //     if (drawCentered)
+        //     {
+        //         tl.X -= w;
+        //         tl.Y -= h;
+        //         tr.Y -= h;
+        //         bl.X -= w;
+        //
+        //         center.X = tl.X + w;
+        //         center.Y = tl.Y + h;
+        //     }
+        //     else
+        //     {
+        //         center.X = tl.X + w / 2;
+        //         center.Y = tl.Y + h / 2;
+        //         // radius = radius / 2;
+        //         w = w / 2;
+        //         h = h / 2;
+        //     }
+        //
+        //     if (y1 < y0)
+        //     {
+        //         w *= -1;
+        //         h *= -1;
+        //     }
+        //
+        //     var xc = center.X;
+        //     var yc = center.Y;
+        //     var rx = w;
+        //     var ry = h;
+        //
+        //     var x = 0;
+        //     var y = ry;
+        //     var p = ry * ry - rx * rx * ry + rx * rx / 4;
+        //
+        //     while (2 * x * ry * ry < 2 * y * rx * rx)
+        //     {
+        //         SetStrokePixel(xc + x, yc - y);
+        //         SetStrokePixel(xc - x, yc + y);
+        //         SetStrokePixel(xc + x, yc + y);
+        //         SetStrokePixel(xc - x, yc - y);
+        //
+        //         if (p < 0)
+        //         {
+        //             x ++;
+        //             p = p + 2 * ry * ry * x + ry * ry;
+        //         }
+        //         else
+        //         {
+        //             x ++;
+        //             y --;
+        //             p = p + 2 * ry * ry * x + ry * ry - 2 * rx * rx * y;
+        //         }
+        //     }
+        //
+        //     p = (int) ((x + 0.5) * (x + 0.5) * ry * ry + (y - 1) * (y - 1) * rx * rx - rx * rx * ry * ry);
+        //
+        //     while (y >= 0)
+        //     {
+        //         SetStrokePixel(xc + x, yc - y);
+        //         SetStrokePixel(xc - x, yc + y);
+        //         SetStrokePixel(xc + x, yc + y);
+        //         SetStrokePixel(xc - x, yc - y);
+        //
+        //         if (p > 0)
+        //         {
+        //             y --;
+        //             p = p - 2 * rx * rx * y + rx * rx;
+        //         }
+        //         else
+        //         {
+        //             y --;
+        //             x ++;
+        //             p = p + 2 * ry * ry * x - 2 * rx * rx * y - rx * rx;
+        //         }
+        //     }
+        //
+        //     if (fill)
+        //         if (Math.Abs(w) > stroke.width && Math.Abs(h) > stroke.height)
+        //             FloodFill(center.X, center.Y);
+        // }
+
         public void DrawEllipse(int x0, int y0, int x1, int y1, bool fill = false)
-        {
-            // Create a box to draw the circle inside of
-
-            var w = x1 - x0;
-            var h = y1 - y0;
-
-            var tl = new Point(x0, y0);
-            var tr = new Point(x0 + w, y0);
-            var br = new Point(x0 + w, y0 + h);
-            var bl = new Point(x0, y0 + h);
-
-            var center = new Point();
-            var radius = (int) Math.Sqrt(w * w + h * h);
-            if (drawCentered)
+        { /* rectangular parameter enclosing the ellipse */
+            long a = Math.Abs(x1 - x0), b = Math.Abs(y1 - y0), b1 = b & 1; /* diameter */
+            double dx = 4 * (1.0 - a) * b * b, dy = 4 * (b1 + 1) * a * a; /* error increment */
+            double err = dx + dy + b1 * a * a, e2; /* error of 1.step */
+            
+            if (x0 > x1)
             {
-                tl.X -= w;
-                tl.Y -= h;
-                tr.Y -= h;
-                bl.X -= w;
+                x0 = x1; 
+                x1 += (int)(a);
+            } /* if called with swapped points */
 
-                center.X = tl.X + w;
-                center.Y = tl.Y + h;
-            }
-            else
-            {
-                center.X = tl.X + w / 2;
-                center.Y = tl.Y + h / 2;
-                radius = radius / 2;
-                w = w / 2;
-                h = h / 2;
-            }
+            if (y0 > y1)
+                y0 = y1; /* .. exchange them */
 
-            if (y1 < y0)
+            y0 += (int)((b + 1) / 2);
+            // y1 = y0–b1; /* starting pixel */
+            y1 = (int) (y0 - b1); /* starting pixel */
+            a = 8 * a * a; b1 = 8 * b * b;
+            do
             {
-                w *= -1;
-                h *= -1;
+                SetStrokePixel(x1, y0); /* I. Quadrant */
+                SetStrokePixel(x0, y0); /* II. Quadrant */
+                SetStrokePixel(x0, y1); /* III. Quadrant */
+                SetStrokePixel(x1, y1); /* IV. Quadrant */
+                e2 = 2 * err;
+                if (e2 <= dy) { y0++; y1--; err += dy += a; } /* y step */
+                if (e2 >= dx || 2 * err > dy) { x0++; x1--; err += dx += b1; } /* x */
+            } while (x0 <= x1);
+            while (y0 - y1 <= b)
+            { /* to early stop of flat ellipses a=1 */
+                SetStrokePixel(x0 - 1, y0); /* -> finish tip of ellipse */
+                SetStrokePixel(x1 + 1, y0++);
+                SetStrokePixel(x0 - 1, y1);
+                SetStrokePixel(x1 + 1, y1--);
             }
 
-            var xc = center.X;
-            var yc = center.Y;
-            var rx = w;
-            var ry = h;
-
-            int x, y, p;
-
-            x = 0;
-            y = ry;
-            p = ry * ry - rx * rx * ry + rx * rx / 4;
-            while (2 * x * ry * ry < 2 * y * rx * rx)
-            {
-                SetStrokePixel(xc + x, yc - y);
-                SetStrokePixel(xc - x, yc + y);
-                SetStrokePixel(xc + x, yc + y);
-                SetStrokePixel(xc - x, yc - y);
-
-                if (p < 0)
-                {
-                    x = x + 1;
-                    p = p + 2 * ry * ry * x + ry * ry;
-                }
-                else
-                {
-                    x = x + 1;
-                    y = y - 1;
-                    p = p + 2 * ry * ry * x + ry * ry - 2 * rx * rx * y;
-                }
-            }
-
-            p = (int) ((x + 0.5) * (x + 0.5) * ry * ry + (y - 1) * (y - 1) * rx * rx - rx * rx * ry * ry);
-
-            while (y >= 0)
-            {
-                SetStrokePixel(xc + x, yc - y);
-                SetStrokePixel(xc - x, yc + y);
-                SetStrokePixel(xc + x, yc + y);
-                SetStrokePixel(xc - x, yc - y);
-
-                if (p > 0)
-                {
-                    y = y - 1;
-                    p = p - 2 * rx * rx * y + rx * rx;
-                }
-                else
-                {
-                    y = y - 1;
-                    x = x + 1;
-                    p = p + 2 * ry * ry * x - 2 * rx * rx * y - rx * rx;
-                }
-            }
-
-            if (fill)
-                if (Math.Abs(w) > stroke.width && Math.Abs(h) > stroke.height)
-                    FloodFill(center.X, center.Y);
+            // if (fill)
+            //     if (Math.Abs(w) > stroke.width && Math.Abs(h) > stroke.height)
+            //         FloodFill(center.X, center.Y);
         }
 
         /// <summary>
