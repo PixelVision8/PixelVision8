@@ -19,6 +19,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
@@ -86,19 +87,115 @@ namespace PixelVision8.Runner.Parsers
 
         protected virtual void CreateImage()
         {
-            colorData = chips.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip
-                ? colorMapChip.colors
-                : chips.ColorChip.colors;
+
+            var colorChip = chips.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip
+                ? colorMapChip
+                : chips.ColorChip;
+
+            colorData = colorChip.colors;
 
             var colorRefs = colorData.Select(c => ColorUtils.RgbToHex(c.R, c.G, c.B)).ToArray();
 
             // Remove the colors that are not supported
             Array.Resize(ref colorRefs, chips.ColorChip.totalUsedColors);
 
-            // Convert all of the pixels into color ids
-            var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorRefs, ColorUtils.RgbToHex(c.R, c.G, c.B))).ToArray();
+            var imageColors = Parser.colorPalette.Select(c => ColorUtils.RgbToHex(c.R, c.G, c.B)).ToArray();
 
-            image = new Image(Parser.width, Parser.height, colorRefs, pixelIDs, new Point(spriteWidth, spriteHeight));
+            var colorMap = new string[colorRefs.Length];
+
+            var orphanColors = new List<string>();
+
+            var totalImageColors = imageColors.Length;
+            var totalColorRefs = colorRefs.Length;
+
+            for (int i = 0; i < totalImageColors; i++)
+            {
+
+                // var color = imageColors[i];
+                var color = imageColors[i];
+                
+                if (color == colorChip.maskColor) continue;
+
+                var id = Array.IndexOf(colorRefs, color);
+
+                if (id > -1)
+                {
+                    colorMap[id] = color;
+                }
+                else
+                {
+                    orphanColors.Add(color);
+                }
+                
+
+                
+                //
+                // if (index > -1 && colorMap[index] == null)
+                // {
+                //     colorMap[index] = color;
+                // }
+                // else
+                // {
+                //     orphanColors.Add(color);
+                // }
+
+            }
+
+            var indexes = new List<int>();
+            
+            // find open slots
+            for (int i = 0; i < colorMap.Length; i++)
+            {
+                if (colorMap[i] == null)
+                {
+                    indexes.Add(i);
+                }
+            }
+
+            var totalOrphanColors = orphanColors.Count;
+            
+            for (int i = 0; i < indexes.Count; i++)
+            {
+                if (i < totalOrphanColors)
+                {
+                    colorMap[indexes[i]] = orphanColors[i];
+                }
+            }
+
+            // clean up the color map
+            for (int i = 0; i < colorMap.Length; i++)
+            {
+                if (colorMap[i] == null)
+                {
+                    colorMap[i] = colorRefs[i];
+                }
+            }
+
+            // var indexes = new List<int>();
+            //
+            // // find open slots
+            // for (int i = 0; i < colorMap.Length; i++)
+            // {
+            //     if (colorMap[i] == null)
+            //     {
+            //         indexes.Add(i);
+            //     }
+            // }
+            //
+            // var totalOrphanColors = orphanColors.Count;
+            //
+            // for (int i = 0; i < index; i++)
+            // {
+            //     if (i < totalOrphanColors)
+            //     {
+            //         colorMap[indexes[i]] = orphanColors[i];
+            //     }
+            // }
+
+            // Convert all of the pixels into color ids
+            var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorMap, ColorUtils.RgbToHex(c.R, c.G, c.B))).ToArray();
+
+            image = new Image(Parser.width, Parser.height, colorMap, pixelIDs, new Point(spriteWidth, spriteHeight));
 
             StepCompleted();
         }

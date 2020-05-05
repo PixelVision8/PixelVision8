@@ -1,1 +1,14 @@
-{"GameChip":{"savedData":{"editing": "undefined","sessionID": "202005041118313943","rootDirectory": "/Workspace/NewProjectB/","selectedSprite": "0","SpriteSize": "undefined","spriteSize": "1"}}}
+{
+    
+    "GameChip":
+    {
+        "savedData":{
+            "editing": "undefined",
+            "sessionID": "202005042130457172",
+            "rootDirectory": "/Workspace/NewProject/",
+            "selectedSprite": "0",
+            "SpriteSize": "undefined",
+            "spriteSize": "1"
+        }
+    }
+}

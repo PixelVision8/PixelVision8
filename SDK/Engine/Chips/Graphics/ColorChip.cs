@@ -226,6 +226,7 @@ namespace PixelVision8.Engine.Chips
             if (color == null)
                 color = maskColor;
 
+            Console.WriteLine("Clear " + color);
             var t = _colors.Length;
             for (var i = 0; i < t; i++) UpdateColorAt(i, color);
         }

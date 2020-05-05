@@ -3,10 +3,10 @@
     "GameChip":
     {
         "savedData":{
-            "targetFile": "/Disks/PixelVisionOS/info.json",
-            "sessionID": "202005020908199470",
+            "targetFile": "/Workspace/SpaceRanger/info.json",
+            "sessionID": "202005042115013442",
             "rootDirectory": "/Workspace/HelloWorld/",
-            "cursor": "1,1",
+            "cursor": "25,7",
             "selectedSprite": "0",
             "scroll": "1,1"
         }
