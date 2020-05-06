@@ -28,6 +28,14 @@ function EditorUI:CreateCanvas(rect, size, scale, colorOffset, toolTip, emptyCol
   data.borderOffset = 2
   data.gridSize = 8
   data.showBGColor = false
+  data.selectionCounter = 0
+  data.selectionDelay = .2
+  data.selectionTime = 0
+  data.selectRect = nil
+
+  -- Create a selection canvas
+  data.selectionCanvas = NewCanvas(data.rect.w, data.rect.h)
+  data.selectionCanvas:SetStroke({0}, 1, 1)
 
   local spriteData = _G["pixelselection1x"]
 
@@ -165,6 +173,48 @@ function EditorUI:UpdateCanvas(data, hitRect)
   -- Ready to test finer collision if needed
   if(inRect == true or overrideFocus) then
 
+    -- Draw a selection rect on top of everything
+    -- if(data.selectRect ~= nil) then
+
+    --   data.selectionTime = data.selectionTime + self.timeDelta
+
+    --   if(data.selectionTime > data.selectionDelay) then
+    --     data.selectionCounter = data.selectionCounter + 1
+    --     if(data.selectionCounter > 1) then
+    --       data.selectionCounter = 0
+    --     end
+
+    --     data.selectionTime = 0
+        
+
+    --   -- data.selectionCanvas:Clear()
+
+    --   -- -- local lastCenteredValue = data.selectionCanvas:DrawCentered()
+
+    --   -- -- data.selectionCanvas:DrawCentered(false)
+
+    --   -- -- Change the stroke to a single pixel
+      
+
+    --   -- -- data.selectionCanvas:LinePattern(2, data.selectionCounter)
+
+    --   -- data.selectionCanvas:DrawSquare(data.selectRect.x, data.selectRect.y, data.selectRect.width, data.selectRect.height, false)
+
+    --   -- -- Loop through pixels and invert if needed
+
+    --   -- -- Draw the canvas to the display
+    --   -- data.selectionCanvas:DrawPixels(data.rect.x, data.rect.y, DrawMode.UI, 1, -1, data.emptyColorID)
+
+      
+    --   -- data.selectionCanvas:LinePattern(1, 0)
+
+    --   -- data.selectionCanvas:DrawCentered(lastCenteredValue)
+
+    -- end
+    
+    
+    -- end
+
     -- If we are in the collision area, set the focus
     self:SetFocus(data, data.currentCursorID)
 
@@ -209,7 +259,7 @@ function EditorUI:UpdateCanvas(data, hitRect)
 
 
       -- Only update the over rect if the mouse is over the canvas
-      if(inRect == true) then
+      if(inRect == true and data.tool ~= "select") then
 
         -- Update over rect position
         data.overDrawArgs[2] = (position.x * data.gridSize) + data.rect.x - data.borderOffset
@@ -230,6 +280,7 @@ function EditorUI:UpdateCanvas(data, hitRect)
 
     elseif(self.collisionManager.mouseDown) then
 
+      data.mouseState = "dragging"
 
 
       if(data.firstPress ~= false) then
@@ -241,6 +292,8 @@ function EditorUI:UpdateCanvas(data, hitRect)
         -- Call the onPress method for the button
         data.triggerOnFirstPress(data)
         -- end
+
+        data.mouseState = "pressed"
 
         -- Change the flag so we don't trigger first press again
         data.firstPress = false
@@ -370,9 +423,39 @@ function EditorUI:DrawOnCanvas(data, mousePos, toolID)
 
     elseif(data.tool == "select") then
 
+      print("data.mouseState" , data.mouseState)
+
+    -- if(data.selectRect ~= nil and data.firstPress == false) then
+
+    --   if(data.selectRect:Contains(mousePos)) then
+
+    --     print("Move")
+
+    --     -- TODO see if the selection was moved
+    --     -- TODO move the selection with the mouse
+        
+      
+    --   else
+    --     data.selectRect = nil
+    --   end
+
+    -- else
+
+      
+    --   print(data.startPos.x, data.startPos.y, mousePos.x, mousePos.y, data.scale)
+
+        
+    --   data.selectRect = NewRect(data.startPos.x, data.startPos.y, mousePos.x, mousePos.y)
+    
+    --   -- clear selection if it's not big enough
+    --   if(math.abs(data.selectRect.x - data.selectRect.width) <= 2 or math.abs(data.selectRect.y - data.selectRect.width) <= 2) then
+    --     data.selectRect = nil
+
+    -- end
+
       -- Save start position
       -- if(data.selectRect == nil) then
-      data.selectRect = NewRect(data.startPos.x, data.startPos.y, mousePos.x, mousePos.y)
+      
       -- else
       --
       -- end
@@ -382,12 +465,11 @@ function EditorUI:DrawOnCanvas(data, mousePos, toolID)
 
       -- print("Rect", data.selectRect.x, data.selectRect.y, data.selectRect.width, data.selectRect.height)
 
-      if(math.abs(data.selectRect.x - data.selectRect.width) <= 2 or math.abs(data.selectRect.y - data.selectRect.width) <= 2) then
-        data.selectRect = nil
+      
 
-        data.tmpPaintCanvas:Clear()
+        -- data.tmpPaintCanvas:Clear()
 
-      end
+      -- end
 
     elseif(data.tool == "circle") then
 
@@ -473,34 +555,26 @@ function EditorUI:RedrawCanvas(data)
 
     -- data.tmpPaintCanvas:ResetValidation()
 
-
   end
 
-  -- Draw a selection rect on top of everything
-  if(data.selectRect ~= nil) then
+  if(data.selectionCanvas.invalid == true) then
+    
+    if(data.selectRect  ~= nil) then
 
-    data.tmpPaintCanvas:Clear()
+      data.selectionCanvas:Clear()
 
-    local lastCenteredValue = data.tmpPaintCanvas:DrawCentered()
+      -- Loop through pixels and invert if needed
 
-    data.tmpPaintCanvas:DrawCentered(false)
+      -- Draw the canvas to the display
+      
 
-    -- Change the stroke to a single pixel
-    data.tmpPaintCanvas:SetStroke({0}, 1, 1)
+      data.selectionCanvas:DrawSquare(data.selectRect.x, data.selectRect.y, data.selectRect.width, data.selectRect.height, false)
 
-    data.tmpPaintCanvas:LinePattern(2, data.selectionCounter)
+      data.selectionCanvas:DrawPixels(data.rect.x, data.rect.y, DrawMode.UI, 1, -1, data.emptyColorID)
 
-    data.tmpPaintCanvas:DrawSquare(data.selectRect.x, data.selectRect.y, data.selectRect.width, data.selectRect.height, false)
-
-    -- Draw the canvas to the display
-    data.tmpPaintCanvas:DrawPixels(data.paintCanvasPos.x, data.paintCanvasPos.y, false, false, DrawMode.UI)
-
-    data.tmpPaintCanvas:LinePattern(1, 0)
-
-    data.tmpPaintCanvas:DrawCentered(lastCenteredValue)
+    end
 
   end
-
 
 end
 
@@ -513,10 +587,12 @@ function EditorUI:CanvasRelease(data, callAction)
   -- Clear the start position
   data.startPos = nil
 
+  data.mouseState = data.mouseState == "released" and "up" or "released"
+
   -- Return if the selection rect is nil
-  if(data.selectRect ~= nil) then
-    return
-  end
+  -- if(data.selectRect ~= nil) then
+  --   return
+  -- end
 
   if(data.tmpPaintCanvas.invalid == true) then
 
@@ -528,6 +604,13 @@ function EditorUI:CanvasRelease(data, callAction)
 
     -- Normally clearing the canvas invalidates it but se want to reset it until its drawn in again
     data.tmpPaintCanvas:ResetValidation()
+
+  end
+
+  if(data.selectionCanvas.invalid == true) then
+
+    
+    data.selectionCanvas:ResetValidation()
 
   end
 

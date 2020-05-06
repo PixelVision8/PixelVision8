@@ -3,12 +3,12 @@
     "GameChip":
     {
         "savedData":{
-            "targetFile": "/Workspace/SpaceRanger/info.json",
-            "sessionID": "202005042115013442",
-            "rootDirectory": "/Workspace/HelloWorld/",
-            "cursor": "25,7",
+            "scroll": "1,1",
             "selectedSprite": "0",
-            "scroll": "1,1"
+            "cursor": "1,1",
+            "rootDirectory": "/Workspace/HelloWorld/",
+            "sessionID": "202005060752334240",
+            "targetFile": "/Disks/LuaDemoscene/Demoscene/Julio-Choy/Demo-05/code.lua"
         }
     }
 }

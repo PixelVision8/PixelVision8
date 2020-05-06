@@ -41,6 +41,7 @@ function EditorUI:CreateButton(rect, spriteName, toolTip, forceDraw)
     if(self.currentButtonDown == tmpData.name) then
       self:ClickButton(tmpData, true, tmpData.doubleClickActive and tmpData.doubleClickTime < tmpData.doubleClickDelay)
 
+      self.currentButtonDown = nil
       tmpData.doubleClickTime = 0
       tmpData.doubleClickActive = true
       tmpData.doubleClick = true

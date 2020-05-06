@@ -3,12 +3,15 @@
     "GameChip":
     {
         "savedData":{
+            "spriteSize": "1",
             "editing": "undefined",
-            "sessionID": "202005042130457172",
+            "selectedPalettePage": "1",
+            "selectedSpritePage": "1",
+            "sessionID": "202005051245326336",
             "rootDirectory": "/Workspace/NewProject/",
-            "selectedSprite": "0",
-            "SpriteSize": "undefined",
-            "spriteSize": "1"
+            "selectedColor": "-1",
+            "selectedPalette": "-1",
+            "selectedSprite": "0"
         }
     }
 }

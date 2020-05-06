@@ -117,24 +117,32 @@ function PixelVisionOS:CreateItemPicker(rect, itemSize, columns, rows, colorOffs
 
     data.picker.onAction = function(value, doubleClick)
 
-        data.pressSelection = nil
+        if(self.currentButtonDown == data.name) then
+            
+            self.currentButtonDown = nil
+            data.pressSelection = nil
 
-        value = self:CalculateItemPickerPosition(data).index
+            value = self:CalculateItemPickerPosition(data).index
 
-        self:SelectItemPickerIndex(data, value, true, false)
+            self:SelectItemPickerIndex(data, value, true, false)
 
-        if(data.onAction ~= nil) then
-            data.onAction(value)
+            if(data.onAction ~= nil) then
+                
+                data.onAction(value)
+            end
         end
 
     end
 
     data.picker.onPress = function()
 
+        self.currentButtonDown = data.name
+
         -- Store the current ID being pressed
         data.pressSelection = self:CalculateItemPickerPosition(data)
 
         if(data.onPress ~= nil) then
+            
             data.onPress(data.pressSelection.index)
         end
 

@@ -36,9 +36,7 @@ function PixelVisionOS:CreateSpritePicker(rect, itemSize, columns, rows, colorOf
   data.pages = editorUI:CreateToggleGroup()
 
   data.pages.onAction = function(value)
-
     self:OnSpritePickerPage(data, value)
-
   end
 
   data.pageToolTipTemplate = "Select sprite page "

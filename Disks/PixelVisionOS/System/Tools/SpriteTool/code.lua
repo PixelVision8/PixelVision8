@@ -49,7 +49,7 @@ local maxSpriteSize = 4
 local uniqueColors = {}
 local cps = 16
 
-local tools = {"pen", "line", "box", "circle", "eyedropper", "fill"}--, "select"}
+local tools = {"pen", "line", "box", "circle", "eyedropper", "fill", "select"}
 
 local toolKeys = {Keys.P, Keys.L, Keys.B, Keys.C, Keys.I, Keys.F}
 
@@ -231,12 +231,13 @@ function Init()
         flipHButton = editorUI:CreateButton({x = 152, y = offsetY + 16 + 8, w = 16, h = 16}, "hflip", "Preview the sprite flipped horizontally.")
 
         flipHButton.onAction = function(value)
+            -- Save the new pixel data to history
+            SaveCanvasState()
 
             -- Update the canvas and flip the H value
             UpdateCanvas(lastSelection, true, false)
 
-            -- Save the new pixel data to history
-            UpdateHistory(editorUI:GetCanvasPixelData(canvasData))
+            
 
             -- Save the new pixel data back to the sprite chip
             OnSaveCanvasChanges()
@@ -246,13 +247,15 @@ function Init()
         flipVButton = editorUI:CreateButton({x = 152, y = offsetY + 32 + 8, w = 16, h = 16}, "vflip", "Preview the sprite flipped vertically.")
 
         flipVButton.onAction = function(value)
+            
+            -- Save the new pixel data to history
+            SaveCanvasState()
 
             -- Update the canvas and flip the H value
             UpdateCanvas(lastSelection, false, true)
-
-            -- Save the new pixel data to history
-            UpdateHistory(editorUI:GetCanvasPixelData(canvasData))
-
+            
+            
+ 
             -- Save the new pixel data back to the sprite chip
             OnSaveCanvasChanges()
 
@@ -261,11 +264,13 @@ function Init()
 
 
         canvasData.onPress = function()
-            local pixelData = editorUI:GetCanvasPixelData(canvasData)
+            
+            SaveCanvasState()
+            -- local pixelData = editorUI:GetCanvasPixelData(canvasData)
 
             canvasData.inDrawMode = true
 
-            UpdateHistory(pixelData)
+            -- UpdateHistory(pixelData)
         end
 
         editorUI.collisionManager:EnableDragging(canvasData, .5, "SpritePicker")
@@ -681,6 +686,12 @@ function OnCopySprite()
 
 end
 
+function SaveCanvasState()
+
+    UpdateHistory(editorUI:GetCanvasPixelData(canvasData))
+
+end
+
 function OnPasteSprite()
 
     if(copiedSpriteData == nil) then
@@ -691,6 +702,8 @@ function OnPasteSprite()
     for i = 1, #copiedSpriteData do
         copiedSpriteData[i] = copiedSpriteData[i] + canvasData.colorOffset
     end
+
+    SaveCanvasState()
 
     -- Update the canvas with the new pixel data
     editorUI:SetCanvasPixels(canvasData, copiedSpriteData)
@@ -757,40 +770,16 @@ function OnClear()
 
 end
 
-
-
 function ClearSprite()
+
+    -- Save the new pixel data to history
+    SaveCanvasState()
 
     editorUI:ClearCanvas(canvasData)
     OnSaveCanvasChanges()
-    --
-    -- -- TODO need to link this up to the size
-    -- -- get the total number of pixels in the current sprite selection
-    -- local total = 8 * 8
-    --
-    --
-    -- -- TODO we should calculate an empty sprite when changing sizes instead of doing it over and over again on clear sprite
-    --
-    -- -- Create an empty table for the pixel data
-    -- tmpPixelData = {}
-    --
-    -- -- Loop through the total pixels and set them to -1
-    -- for i = 1, total do
-    --   tmpPixelData[i] = - 1
-    -- end
-    --
-    -- -- Find the currents sprite index
-    -- local index = spritePickerData.currentSelection
-    --
-    -- -- Update the currently selected sprite
-    -- gameEditor:Sprite(index, tmpPixelData)
-    --
-    -- -- Select the current sprite to update the canvas
-    -- pixelVisionOS:SelectSpritePickerIndex(spritePickerData, index)
-    --
-    -- -- Redraw the sprite picker page
-    -- -- pixelVisionOS:RedrawSpritePickerPage(spritePickerData)
-    --
+   
+    UpdateCanvas(spritePickerData.currentSelection)
+    
     -- Invalidate the tool's data
     InvalidateData()
 
