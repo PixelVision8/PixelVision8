@@ -38,7 +38,7 @@ function MouseCursor:Init()
     
     -- Reference data for each of the different mouse cursors
     _mouseCursor.cursors = {
-        -- Pointer
+        -- Pointer 1
         {
             spriteData = cursorpointer,
             offset = {
@@ -46,7 +46,7 @@ function MouseCursor:Init()
                 y = -1
             }
         },
-        -- Hand (for interaction)
+        -- Hand (for interaction) 2
         {
             spriteData = cursorhand,
             offset = {
@@ -54,7 +54,7 @@ function MouseCursor:Init()
                 y = -1
             }
         },
-        -- Input
+        -- Input 3
         {
             spriteData = cursortext,
             offset = {
@@ -63,7 +63,7 @@ function MouseCursor:Init()
             }
         },
 
-        -- Help (for showing tool tips)
+        -- Help (for showing tool tips) 4
         {
             spriteData = cursorhelp,
             offset = {
@@ -71,7 +71,7 @@ function MouseCursor:Init()
                 y = -3
             }
         },
-        -- Wait
+        -- Wait 5
         {
             spriteData = cursorwait1,
             offset = {
@@ -82,7 +82,7 @@ function MouseCursor:Init()
             frames = 10,
             spriteName = "cursorwait"
         },
-        -- Pencil
+        -- Pencil 6
         {
             spriteData = cursorpen,
             offset = {
@@ -90,7 +90,7 @@ function MouseCursor:Init()
                 y = -15
             }
         },
-        -- Eraser
+        -- Eraser 7
         {
             spriteData = cursoreraser,
             offset = {
@@ -98,9 +98,17 @@ function MouseCursor:Init()
                 y = -15
             }
         },
-        -- Cross
+        -- Cross 8
         {
             spriteData = cursorcross,
+            offset = {
+                x = -8,
+                y = -8
+            }
+        },
+        -- Move Hand 9
+        {
+            spriteData = cursorhandmove,
             offset = {
                 x = -8,
                 y = -8

@@ -51,9 +51,9 @@ local cps = 16
 
 local tools = {"pen", "line", "box", "circle", "eyedropper", "fill", "select"}
 
-local toolKeys = {Keys.P, Keys.L, Keys.B, Keys.C, Keys.I, Keys.F}
+local toolKeys = {Keys.P, Keys.L, Keys.B, Keys.C, Keys.I, Keys.F, Keys.M}
 
-local ClearShortcut, SaveShortcut, RevertShortcut, UndoShortcut, RedoShortcut, CopyShortcut, PasteShortcut, SpriteBuilderShortcut = 4, 5, 6, 8, 9, 10, 11, 12, 15
+local ClearShortcut, SaveShortcut, RevertShortcut, UndoShortcut, RedoShortcut, CopyShortcut, PasteShortcut = 4, 5, 6, 8, 9, 10, 11
 
 function InvalidateData()
 
@@ -140,6 +140,8 @@ function Init()
             {name = "Redo", action = OnRedo, enabled = false, key = Keys.Y, toolTip = "Redo the last undo."}, -- Reset all the values
             {name = "Copy", action = OnCopySprite, enabled = false, key = Keys.C, toolTip = "Copy the currently selected sprite."}, -- Reset all the values
             {name = "Paste", action = OnPasteSprite, enabled = false, key = Keys.V, toolTip = "Paste the last copied sprite."}, -- Reset all the values
+            {name = "Fill", action = OnFill, enabled = true, key = Keys.F, toolTip = "Paste the last copied sprite."}, -- Reset all the values
+            {name = "Select All", action = OnSelectAll, enabled = true, key = Keys.A, toolTip = "Paste the last copied sprite."}, -- Reset all the values
 
             {divider = true},
             {name = "BG Color", action = function() ToggleBackgroundColor(not showBGColor) end, key = Keys.B, toolTip = "Toggle background color."},
@@ -210,7 +212,7 @@ function Init()
             editorUI:ToggleGroupButton(toolBtnData, rect, tools[i], "Select the '" .. tools[i] .. "' (".. tostring(toolKeys[i]) .. ") tool.")
         end
 
-        canvasData = editorUI:CreateCanvas(
+        canvasData = pixelVisionOS:CreateCanvas(
             {
                 x = 16,
                 y = 32,
@@ -340,7 +342,7 @@ function Init()
             editorUI:Enable(canvasData, enableCanvas)
 
             -- Set the canvas brush color
-            editorUI:CanvasBrushColor(canvasData, value)
+            pixelVisionOS:CanvasBrushColor(canvasData, value)
 
         end
 
@@ -371,7 +373,7 @@ function Init()
 
                     pixelVisionOS:SelectColorPickerColor(paletteColorPickerData, lastColorID + pageOffset)
 
-                    editorUI:CanvasBrushColor(canvasData, lastColorID)
+                    pixelVisionOS:CanvasBrushColor(canvasData, lastColorID)
                     -- pixelVisionOS:SelectItemPickerIndex(paletteColorPickerData, lastColorID + pageOffset, true, false)
 
                 end
@@ -422,7 +424,7 @@ function Init()
 
         ChangeSpriteID(startSprite)
 
-        editorUI:ChangeCanvasPixelSize(canvasData, spriteSize)
+        pixelVisionOS:ChangeCanvasPixelSize(canvasData, spriteSize)
 
         -- OnSelectSprite(startSprite)
         -- local tmpPixelData = gameEditor:Sprite(0)
@@ -462,6 +464,15 @@ function Init()
     end
 
 
+
+end
+
+function OnFill()
+
+    print("Fill")
+    
+    local colorID = 0
+    pixelVisionOS:FillCanvasSelection(canvasData)
 
 end
 
@@ -688,7 +699,7 @@ end
 
 function SaveCanvasState()
 
-    UpdateHistory(editorUI:GetCanvasPixelData(canvasData))
+    UpdateHistory(pixelVisionOS:GetCanvasPixelData(canvasData))
 
 end
 
@@ -706,7 +717,7 @@ function OnPasteSprite()
     SaveCanvasState()
 
     -- Update the canvas with the new pixel data
-    editorUI:SetCanvasPixels(canvasData, copiedSpriteData)
+    pixelVisionOS:SetCanvasPixels(canvasData, copiedSpriteData)
 
     -- Save the canvas
     OnSaveCanvasChanges()
@@ -775,7 +786,7 @@ function ClearSprite()
     -- Save the new pixel data to history
     SaveCanvasState()
 
-    editorUI:ClearCanvas(canvasData)
+    pixelVisionOS:ClearCanvas(canvasData)
     OnSaveCanvasChanges()
    
     UpdateCanvas(spritePickerData.currentSelection)
@@ -850,10 +861,10 @@ function OnSaveCanvasChanges()
     canvasData.inDrawMode = false
 
     -- Get the raw pixel data
-    local pixelData = editorUI:GetCanvasPixelData(canvasData)
+    local pixelData = pixelVisionOS:GetCanvasPixelData(canvasData)
 
     -- Get the canvas size
-    local canvasSize = editorUI:GetCanvasSize(canvasData)
+    local canvasSize = pixelVisionOS:GetCanvasSize(canvasData)
 
     -- Get the total number of pixel
     local total = #pixelData
@@ -902,7 +913,7 @@ function OnSelectTool(value)
 
     local toolName = tools[value]
 
-    editorUI:ChangeCanvasTool(canvasData, toolName)
+    pixelVisionOS:ChangeCanvasTool(canvasData, toolName)
 
     -- We disable the color selection when switching over to the eraser
     if(toolName == "eraser") then
@@ -1003,7 +1014,7 @@ function OnNextSpriteSize(reverse)
 
     editorUI:Invalidate(sizeBtnData)
 
-    editorUI:ChangeCanvasPixelSize(canvasData, spriteSize)
+    pixelVisionOS:ChangeCanvasPixelSize(canvasData, spriteSize)
 
     -- Force the sprite editor to update to the new selection from the sprite picker
     ChangeSpriteID(spritePickerData.currentSelection)
@@ -1084,7 +1095,7 @@ function UpdateCanvas(value, flipH, flipV)
 
     lastCanvasSize = NewPoint(8 * spriteSize, 8 * spriteSize)
 
-    editorUI:ResizeCanvas(canvasData, lastCanvasSize, lastCanvasScale, tmpPixelData)
+    pixelVisionOS:ResizeCanvas(canvasData, lastCanvasSize, lastCanvasScale, tmpPixelData)
 
     originalPixelData = {}
 
@@ -1224,7 +1235,7 @@ function Update(timeDelta)
             editorUI:UpdateButton(flipHButton)
             editorUI:UpdateButton(flipVButton)
 
-            editorUI:UpdateCanvas(canvasData)
+            pixelVisionOS:UpdateCanvas(canvasData)
 
             if(canvasData.tool == "eyedropper" and canvasData.inFocus and MouseButton(0)) then
 
@@ -1244,7 +1255,7 @@ function Update(timeDelta)
 
                     else
 
-                        editorUI:CanvasBrushColor(canvasData, lastColorID)
+                        pixelVisionOS:CanvasBrushColor(canvasData, lastColorID)
 
                         local selectionID = lastColorID
 
@@ -1425,7 +1436,7 @@ function ToggleBackgroundColor(value)
         canvasData.emptyColorID = pixelVisionOS.emptyColorID
     end
 
-    editorUI:InvalidateCanvas(canvasData)
+    pixelVisionOS:InvalidateCanvas(canvasData)
 
     -- spritePickerData.showBGColor = value
 

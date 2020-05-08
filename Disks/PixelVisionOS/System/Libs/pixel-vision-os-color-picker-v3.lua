@@ -209,7 +209,7 @@ end
 
 function PixelVisionOS:ColorPickerChangeColor(data, index, color)
 
-  print("Change Color", data.name, index, color, data.altColorOffset, index- data.altColorOffset)
+  -- print("Change Color", data.name, index, color, data.altColorOffset, index- data.altColorOffset)
   Color(index, color)
   
   self:DrawColorPickerColorItem(data, index- data.altColorOffset)
@@ -229,7 +229,7 @@ end
 
 function PixelVisionOS:DrawColorPickerColorItem(data, id)
 
-  print("DrawColorPickerColorItem", data.name, id)
+  -- print("DrawColorPickerColorItem", data.name, id)
   -- local totalPixels = data.itemSize.x * data.itemSize.y
   -- local pixelData = {}
 
@@ -333,7 +333,7 @@ end
 
 function PixelVisionOS:OnColorPickerPage(data, value)
 
-  print("OnColorPickerPage", data.name, value)
+  -- print("OnColorPickerPage", data.name, value)
 
   value = value or 0
 
@@ -450,7 +450,7 @@ function PixelVisionOS:RebuildPickerPages(data, totalPages)
     if(pageID <= 0) then
       DrawSprites(pagebuttonempty.spriteIDs, rect.x, rect.y, pagebuttonempty.width, false, false, DrawMode.TilemapCache)
     else
-      editorUI:ToggleGroupButton(data.pages, rect, "pagebutton" .. tostring(pageID), toolTipTemplate .. tostring(pageID))
+      editorUI:ToggleGroupButton(data.pages, rect, "pagebutton" .. tostring(pageID - 1), toolTipTemplate .. tostring(pageID))
     end
   end
 

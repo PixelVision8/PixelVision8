@@ -710,6 +710,7 @@ function TogglePaletteMode(value, callback)
                     -- Update the palette mode in the meta data
                     gameEditor:WriteMetadata("paletteMode", "true")
 
+                    -- TODO this can be done here instead of with the game editor.
                     -- Reindex the sprites so they will work in palette mode
                     gameEditor:ReindexSprites()
 

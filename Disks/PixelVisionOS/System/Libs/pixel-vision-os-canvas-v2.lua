@@ -15,15 +15,15 @@
 -- Shawn Rakowski - @shwany
 --
 
-function EditorUI:CreateCanvas(rect, size, scale, colorOffset, toolTip, emptyColorID, forceDraw)
+function PixelVisionOS:CreateCanvas(rect, size, scale, colorOffset, toolTip, emptyColorID, forceDraw)
 
   -- Create the button's default data
-  local data = self:CreateData(rect, nil, toolTip, forceDraw)
+  local data = editorUI:CreateData(rect, nil, toolTip, forceDraw)
 
   -- Customize the default name by adding Button to it
   data.name = "Canvas" .. data.name
 
-  data.showPixelSelection = true
+  -- data.showPixelSelection = true
   data.pixelSelectionSize = 1
   data.borderOffset = 2
   data.gridSize = 8
@@ -32,6 +32,7 @@ function EditorUI:CreateCanvas(rect, size, scale, colorOffset, toolTip, emptyCol
   data.selectionDelay = .2
   data.selectionTime = 0
   data.selectRect = nil
+  data.selectedPixelData = nil
 
   -- Create a selection canvas
   data.selectionCanvas = NewCanvas(data.rect.w, data.rect.h)
@@ -63,7 +64,7 @@ function EditorUI:CreateCanvas(rect, size, scale, colorOffset, toolTip, emptyCol
 
       data.paintCanvas:FloodFill(data.startPos.x, data.startPos.y)
 
-      self:Invalidate(data)
+      editorUI:Invalidate(data)
     end
 
     if(data.onFirstPress ~= nil) then
@@ -89,17 +90,22 @@ function EditorUI:CreateCanvas(rect, size, scale, colorOffset, toolTip, emptyCol
 
   -- data.currentTool = 1 -- default tool
 
-  self:ResetValidation(data)
+  editorUI:ResetValidation(data)
 
   return data
 
 end
 
-function EditorUI:ChangeCanvasTool(data, toolName, cursorID)
+function PixelVisionOS:ChangeCanvasTool(data, toolName, cursorID)
 
   -- print("Change canvas tool", toolName)
 
   data.tool = toolName
+
+  -- Clear the selection when changing tools/
+  if(data.tool ~= "selection" and data.selectRect ~= nil) then
+    self:CancelCanvasSelection(data)
+  end
 
   -- TODO change the cursor
   if(data.tool == "pen") then
@@ -117,8 +123,10 @@ function EditorUI:ChangeCanvasTool(data, toolName, cursorID)
     data.currentCursorID = 8
     self:ResetCanvasStroke(data)
 
-
   end
+
+  -- Save the new cursor for tools that need to restore
+  data.defaultCursorID = data.currentCursorID
 
   -- data.showPixelSelection = data.tool ~= "eyedropper" and data.tool ~= "fill"
 
@@ -127,11 +135,11 @@ function EditorUI:ChangeCanvasTool(data, toolName, cursorID)
 
 end
 
-function EditorUI:SetCanvasPixels(data, pixelData)
+function PixelVisionOS:SetCanvasPixels(data, pixelData)
   data.paintCanvas:SetPixels(pixelData)
 end
 
-function EditorUI:UpdateCanvas(data, hitRect)
+function PixelVisionOS:UpdateCanvas(data, hitRect)
 
   -- Make sure we have data to work with and the component isn't disabled, if not return out of the update method
   if(data == nil) then
@@ -143,7 +151,7 @@ function EditorUI:UpdateCanvas(data, hitRect)
 
     -- If the button is disabled but still in focus we need to remove focus
     if(data.inFocus == true) then
-      self:ClearFocus(data)
+      editorUI:ClearFocus(data)
     end
 
     -- See if the button needs to be redrawn.
@@ -155,7 +163,7 @@ function EditorUI:UpdateCanvas(data, hitRect)
   end
 
   -- Make sure we don't detect a collision if the mouse is down but not over this button
-  if(self.collisionManager.mouseDown and data.inFocus == false) then
+  if(editorUI.collisionManager.mouseDown and data.inFocus == false) then
     -- See if the button needs to be redrawn.
     self:RedrawCanvas(data)
     return
@@ -166,119 +174,117 @@ function EditorUI:UpdateCanvas(data, hitRect)
     hitRect = data.hitRect or data.rect
   end
 
-  local overrideFocus = (data.inFocus == true and self.collisionManager.mouseDown)
+  local overrideFocus = (data.inFocus == true and editorUI.collisionManager.mouseDown)
 
-  local inRect = self.collisionManager:MouseInRect(hitRect)
+  local inRect = editorUI.collisionManager:MouseInRect(hitRect)
 
   -- Ready to test finer collision if needed
   if(inRect == true or overrideFocus) then
 
     -- Draw a selection rect on top of everything
-    -- if(data.selectRect ~= nil) then
+    if(data.selectRect ~= nil) then
 
-    --   data.selectionTime = data.selectionTime + self.timeDelta
+      data.selectionTime = data.selectionTime + editorUI.timeDelta
 
-    --   if(data.selectionTime > data.selectionDelay) then
-    --     data.selectionCounter = data.selectionCounter + 1
-    --     if(data.selectionCounter > 1) then
-    --       data.selectionCounter = 0
-    --     end
-
-    --     data.selectionTime = 0
-        
-
-    --   -- data.selectionCanvas:Clear()
-
-    --   -- -- local lastCenteredValue = data.selectionCanvas:DrawCentered()
-
-    --   -- -- data.selectionCanvas:DrawCentered(false)
-
-    --   -- -- Change the stroke to a single pixel
-      
-
-    --   -- -- data.selectionCanvas:LinePattern(2, data.selectionCounter)
-
-    --   -- data.selectionCanvas:DrawSquare(data.selectRect.x, data.selectRect.y, data.selectRect.width, data.selectRect.height, false)
-
-    --   -- -- Loop through pixels and invert if needed
-
-    --   -- -- Draw the canvas to the display
-    --   -- data.selectionCanvas:DrawPixels(data.rect.x, data.rect.y, DrawMode.UI, 1, -1, data.emptyColorID)
-
-      
-    --   -- data.selectionCanvas:LinePattern(1, 0)
-
-    --   -- data.selectionCanvas:DrawCentered(lastCenteredValue)
-
-    -- end
-    
-    
-    -- end
-
-    -- If we are in the collision area, set the focus
-    self:SetFocus(data, data.currentCursorID)
-
-    local tmpPos = NewPoint(
-      Clamp(self.collisionManager.mousePos.x - data.rect.x, 0, data.rect.w - 1),
-      Clamp(self.collisionManager.mousePos.y - data.rect.y, 0, data.rect.h - 1)
-    )
-
-    -- Modify scale
-    tmpPos.x = tmpPos.x / data.scale
-    tmpPos.y = tmpPos.y / data.scale
-
-    if(data.showPixelSelection) then
-
-      local position = 
-      {
-        x = math.floor((self.collisionManager.mousePos.x - data.rect.x) / data.gridSize),
-        y = math.floor((self.collisionManager.mousePos.y - data.rect.y) / data.gridSize),
-      }
-
-      data.toolTip = "Over pixel (" .. string.lpad(tostring(position.x + 1), 2, "0") .. "," .. string.lpad(tostring(position.y + 1), 2, "0") ..")"
-
-      if(data.tool == "eyedropper") then
-
-        local tmpColor = data.paintCanvas:ReadPixelAt(tmpPos.x, tmpPos.y) - data.colorOffset
-
-        -- TODO this is duplicated below
-
-        -- Update over color if using eye picker
-        if(pixelVisionOS.paletteMode == true) then
-
-          -- TODO this is hard coded to look for a palette color picker
-
-          -- Shift the value to offset for the palette
-          tmpColor = tmpColor + PaletteOffset(paletteColorPickerData.pages.currentSelection - 1)
-
+      if(data.selectionTime > data.selectionDelay) then
+        data.selectionCounter = data.selectionCounter + 1
+        if(data.selectionCounter > 1) then
+          data.selectionCounter = 0
         end
 
-        ReplaceColor(54, tmpColor + 256)
+        data.selectionTime = 0
+          
+        data.selectionCanvas:LinePattern(2, data.selectionCounter)
+
+        end
+      
+      
+      end
+
+      local tmpPos = NewPoint(
+        editorUI.collisionManager.mousePos.x - data.rect.x,
+        editorUI.collisionManager.mousePos.y - data.rect.y
+      )
+
+      -- Modify scale
+      tmpPos.x = tmpPos.x / data.scale
+      tmpPos.y = tmpPos.y / data.scale
+
+    
+
+      if(data.selectRect ~= nil) then
+        
+        if(data.selectRect:Contains(tmpPos) == true) then
+
+          data.currentCursorID = 9
+
+        else
+
+          data.currentCursorID = data.defaultCursorID
+         
+        end
+
+      else
+
+        data.currentCursorID = data.defaultCursorID
 
       end
 
+    -- If we are in the collision area, set the focus
+    editorUI:SetFocus(data, data.currentCursorID)
 
-      -- Only update the over rect if the mouse is over the canvas
-      if(inRect == true and data.tool ~= "select") then
+    -- if(data.showPixelSelection) then
 
-        -- Update over rect position
-        data.overDrawArgs[2] = (position.x * data.gridSize) + data.rect.x - data.borderOffset
-        data.overDrawArgs[3] = (position.y * data.gridSize) + data.rect.y - data.borderOffset
+    local position = 
+    {
+      x = Clamp(math.floor((editorUI.collisionManager.mousePos.x - data.rect.x) / data.gridSize), 0, editorUI.spriteSize.X - 1),
+      y = Clamp(math.floor((editorUI.collisionManager.mousePos.y - data.rect.y) / data.gridSize), 0, editorUI.spriteSize.y -1 ),
+    }
 
-        -- Draw over rect
-        self:NewDraw("DrawSprites", data.overDrawArgs)
+    data.toolTip = string.format("Over pixel (%02d,%02d)", position.x, position.y)
+
+    if(data.tool == "eyedropper") then
+
+      local tmpColor = data.paintCanvas:ReadPixelAt(tmpPos.x, tmpPos.y) - data.colorOffset
+
+      -- TODO this is duplicated below
+
+      -- Update over color if using eye picker
+      if(pixelVisionOS.paletteMode == true) then
+
+        -- TODO this is hard coded to look for a palette color picker
+
+        -- Shift the value to offset for the palette
+        tmpColor = tmpColor + PaletteOffset(paletteColorPickerData.pages.currentSelection - 1)
+
       end
+
+      ReplaceColor(54, tmpColor + 256)
 
     end
 
+
+    -- Only update the over rect if the mouse is over the canvas
+    if(inRect == true and data.tool ~= "select") then
+
+      -- Update over rect position
+      data.overDrawArgs[2] = (position.x * data.gridSize) + data.rect.x - data.borderOffset
+      data.overDrawArgs[3] = (position.y * data.gridSize) + data.rect.y - data.borderOffset
+
+      -- Draw over rect
+      editorUI:NewDraw("DrawSprites", data.overDrawArgs)
+    end
+
+    -- end
+
     -- Check to see if the button is pressed and has an onAction callback
-    if(self.collisionManager.mouseReleased == true) then
+    if(editorUI.collisionManager.mouseReleased == true) then
 
       -- Click the button
       data.onClick(data)
       data.firstPress = true
 
-    elseif(self.collisionManager.mouseDown) then
+    elseif(editorUI.collisionManager.mouseDown) then
 
       data.mouseState = "dragging"
 
@@ -298,7 +304,7 @@ function EditorUI:UpdateCanvas(data, hitRect)
         -- Change the flag so we don't trigger first press again
         data.firstPress = false
 
-
+        
 
       end
 
@@ -311,47 +317,52 @@ function EditorUI:UpdateCanvas(data, hitRect)
     if(data.inFocus == true) then
       data.firstPress = true
       -- If we are not in the button's rect, clear the focus
-      self:ClearFocus(data)
+      editorUI:ClearFocus(data)
+
+      
 
     end
 
   end
 
-  -- Capture keys to switch between different tools and options
-  if( Key(Keys.Back, InputState.Released) ) then
+  if(data.inFocus == false and data.selectRect ~= nil) then
 
-    if(self.selectRect ~= nil) then
+    -- print("Clear", MouseButton(0) == true)
 
-      -- Remove the pixel data from the temp canvas's selection
-      self.tmpPaintCanvas:Clear()
-
-      -- Change the stroke to a single pixel of white
-      self.tmpPaintCanvas:SetStroke({1}, 1, 1)
-
-      -- Change the stroke to a single pixel of white
-      self.tmpPaintCanvas:SetPattern({1}, 1, 1)
-
-      -- Draw a square to mask off the selected area on the main canvas
-      self.tmpPaintCanvas:DrawSquare(self.selectRect.x, self.selectRect.y, self.selectRect.width, self.selectRect.height, true)
-
-      -- Clear the selection
-      self.selectRect = nil
-
-      -- Merge the pixel data from the tmp canvas into the main canvas before it renders
-      self.paintCanvas:Merge(self.tmpPaintCanvas, 0, true)
-
+    if(MouseButton(0) == true) then
+      self:CancelCanvasSelection(data)
     end
 
   end
 
+  -- TODO need to make sure we have focus
 
+  if(data.selectRect ~= nil) then
+
+    -- Capture keys to switch between different tools and options
+    if( Key(Keys.Back, InputState.Released)) then
+      
+        print("Selection - Delete", self.selectRect)
+
+        self:CutPixels(data)
+
+        -- Clear the selection
+        self:CancelCanvasSelection(data, false)        
+    
+    elseif(Key(Keys.Escape, InputState.Released)) then
+
+      self:CancelCanvasSelection(data)
+
+    end
+
+  end
 
   -- Make sure we don't need to redraw the button.
   self:RedrawCanvas(data)
 
 end
 
-function EditorUI:DrawOnCanvas(data, mousePos, toolID)
+function PixelVisionOS:DrawOnCanvas(data, mousePos, toolID)
 
   -- Get the start position for a new drawing
   if(data.startPos ~= nil) then
@@ -382,7 +393,7 @@ function EditorUI:DrawOnCanvas(data, mousePos, toolID)
 
       data.startPos = NewPoint(mousePos.x, mousePos.y)
 
-      self:Invalidate(data)
+      editorUI:Invalidate(data)
 
     elseif(data.tool == "eraser") then
 
@@ -392,7 +403,7 @@ function EditorUI:DrawOnCanvas(data, mousePos, toolID)
       data.tmpPaintCanvas:DrawLine(data.startPos.x, data.startPos.y, mousePos.x, mousePos.y)
       data.startPos = NewPoint(mousePos.x, mousePos.y)
 
-      self:Invalidate(data)
+      editorUI:Invalidate(data)
 
     elseif(data.tool == "line") then
 
@@ -405,7 +416,7 @@ function EditorUI:DrawOnCanvas(data, mousePos, toolID)
       -- force the paint canvas to redraw
       data.paintCanvas:Invalidate()
 
-      self:Invalidate(data)
+      editorUI:Invalidate(data)
 
     elseif(data.tool == "box") then
 
@@ -419,57 +430,93 @@ function EditorUI:DrawOnCanvas(data, mousePos, toolID)
       -- force the paint canvas to redraw
       data.paintCanvas:Invalidate()
 
-      self:Invalidate(data)
+      editorUI:Invalidate(data)
 
     elseif(data.tool == "select") then
 
-      print("data.mouseState" , data.mouseState)
+      if(data.mouseState == "pressed") then
 
-    -- if(data.selectRect ~= nil and data.firstPress == false) then
+        if(data.selectRect == nil) then
 
-    --   if(data.selectRect:Contains(mousePos)) then
+            data.selectionState = "new"
+  
+            data.selectRect = NewRect(data.startPos.x, data.startPos.y, 0, 0)
+  
+        else
+          
+          if(data.selectRect:Contains(mousePos) == true) then
 
-    --     print("Move")
+            data.selectionState = "newmove"
 
-    --     -- TODO see if the selection was moved
-    --     -- TODO move the selection with the mouse
-        
-      
-    --   else
-    --     data.selectRect = nil
-    --   end
+            data.moveOffset = NewPoint(data.selectRect.X - mousePos.X, data.selectRect.Y - mousePos.Y)
 
-    -- else
+            if(data.selectedPixelData == nil) then
+            
+              data.selectedPixelData = self:CutPixels(data)--data.paintCanvas:GetPixels(data.selectRect.Left, data.selectRect.Top, data.selectRect.Right, data.selectRect.Bottom)
+              print("selectedPixelData",  #data.selectedPixelData.pixelData, dump(data.selectedPixelData))
+            
+            end
+            -- print("data.moveOffset", data.moveOffset)
 
-      
-    --   print(data.startPos.x, data.startPos.y, mousePos.x, mousePos.y, data.scale)
+            -- TODO copy pixel data from selection into memory
+            -- TODO delete pixel data from selection
 
-        
-    --   data.selectRect = NewRect(data.startPos.x, data.startPos.y, mousePos.x, mousePos.y)
-    
-    --   -- clear selection if it's not big enough
-    --   if(math.abs(data.selectRect.x - data.selectRect.width) <= 2 or math.abs(data.selectRect.y - data.selectRect.width) <= 2) then
-    --     data.selectRect = nil
+          else
 
-    -- end
+            self:CancelCanvasSelection(data)
+            -- data.selectionState = "none"
 
-      -- Save start position
-      -- if(data.selectRect == nil) then
-      
-      -- else
-      --
-      -- end
-      --
-      -- data.selectRect.width = mousePos.x - data.selectRect.x
-      -- data.selectRect.height = mousePos.y - data.selectRect.y
+            -- data.selectRect = nil
+            -- data.selectionSize = nil
 
-      -- print("Rect", data.selectRect.x, data.selectRect.y, data.selectRect.width, data.selectRect.height)
+          end
 
-      
+        end
 
-        -- data.tmpPaintCanvas:Clear()
+      elseif(data.mouseState == "dragging")  then
 
-      -- end
+        if(data.selectRect ~= nil) then
+          if(data.selectionState == "new" or data.selectionState == "resize") then
+
+            data.selectionState = "resize"
+
+            -- print("resize", data.selectRect, mousePos, , )
+
+            data.selectRect.X = math.min(data.startPos.X, mousePos.X)
+            data.selectRect.Y = math.min(data.startPos.Y, mousePos.Y)
+            data.selectRect.Width = Clamp(math.abs(mousePos.X - data.startPos.X), 0, data.paintCanvas.width)
+            data.selectRect.Height = Clamp(math.abs(mousePos.Y - data.startPos.Y), 0, data.paintCanvas.height)
+
+          else
+
+            -- print("data.selectionState", data.selectionState)
+
+            
+
+            editorUI.cursorID = 2
+
+            data.selectRect.X = mousePos.X + data.moveOffset.X --  data.selectionSize.X
+            data.selectRect.Y = mousePos.Y + data.moveOffset.Y --  data.selectionSize.Y
+            
+            -- if(data.selectionState == "move" and data.selectedPixelData == nil) then
+              
+            --   data.selectedPixelData = self:CutPixels(data)--data.paintCanvas:GetPixels(data.selectRect.Left, data.selectRect.Top, data.selectRect.Right, data.selectRect.Bottom)
+
+            --   print("Selected pixels", #data.selectedPixelData.pixelData, dump(data.selectedPixelData))
+
+
+
+
+            -- end
+
+            data.selectionState = "move"
+
+          end
+        end
+
+      end
+
+      -- print("Selection", data.selectionState)
 
     elseif(data.tool == "circle") then
 
@@ -482,7 +529,7 @@ function EditorUI:DrawOnCanvas(data, mousePos, toolID)
       -- force the paint canvas to redraw
       data.paintCanvas:Invalidate()
 
-      self:Invalidate(data)
+      editorUI:Invalidate(data)
 
     elseif(data.tool == "eyedropper") then
 
@@ -501,7 +548,77 @@ function EditorUI:DrawOnCanvas(data, mousePos, toolID)
 
 end
 
-function EditorUI:ResetCanvasStroke(data)
+function PixelVisionOS:CutPixels(data)
+
+  if(data.selectRect == nil) then
+    return
+  end
+
+  local selection =
+  {
+    size = NewRect(data.selectRect.X, data.selectRect.Y, data.selectRect.Width, data.selectRect.Height)
+  }
+
+  selection.pixelData = data.paintCanvas:GetPixels(selection.size.X, selection.size.Y, selection.size.Width, selection.size.Height)
+
+  -- Change the stroke to a single pixel of white
+  data.tmpPaintCanvas:SetStroke({data.emptyColorID}, 1, 1)
+
+  -- Change the stroke to a single pixel of white
+  data.tmpPaintCanvas:SetPattern({data.emptyColorID}, 1, 1)
+
+  -- Adjust right and bottom to account for 1 px border
+  data.tmpPaintCanvas:DrawSquare(selection.size.Left, selection.size.Top, selection.size.Right - 1, selection.size.Bottom -1, true)
+
+  return selection
+    
+end
+
+function PixelVisionOS:FillCanvasSelection(data, colorID)
+
+  if(data.selectRect == nil) then
+    return
+  end
+  
+  if(data.selectedPixelData == nil) then
+    data.selectedPixelData = self:CutPixels(data)
+
+  end
+
+  for i = 1, #data.selectedPixelData.pixelData do
+    data.selectedPixelData.pixelData[i] = colorID or (data.brushColor + data.colorOffset)
+  end
+
+  --Fire a release event
+  self:CanvasRelease(data, true)
+
+end
+
+function PixelVisionOS:CancelCanvasSelection(data, mergeSelection, action)
+
+  if(mergeSelection ~= false and data.selectedPixelData ~= nil) then
+    data.paintCanvas:SetPixels(data.selectRect.Left, data.selectRect.Top, data.selectedPixelData.size.Width, data.selectedPixelData.size.Height, data.selectedPixelData.pixelData)
+    data.paintCanvas:Invalidate()
+  end
+
+  data.selectedPixelData = nil
+  data.selectionState = "none"
+  data.selectRect = nil
+  -- data.defaultCursorID = 7
+  -- self.cursorID = 7
+  -- self.mouseCursor:SetCursor(data.defaultCursorID)
+
+
+  -- print("Cursor", data.defaultCursorID)
+
+  if(action ~= false) then
+    --Fire a release event
+    self:CanvasRelease(data, true)
+  end
+
+end
+
+function PixelVisionOS:ResetCanvasStroke(data)
 
   local tmpColor = data.brushColor
 
@@ -524,13 +641,13 @@ function EditorUI:ResetCanvasStroke(data)
 
 end
 
-function EditorUI:InvalidateCanvas(data)
+function PixelVisionOS:InvalidateCanvas(data)
 
   data.paintCanvas:Invalidate()
 
 end
 
-function EditorUI:RedrawCanvas(data)
+function PixelVisionOS:RedrawCanvas(data)
 
 
   if(data == nil) then
@@ -557,29 +674,41 @@ function EditorUI:RedrawCanvas(data)
 
   end
 
-  if(data.selectionCanvas.invalid == true) then
+  if(data.selectedPixelData ~= nil) then
+    data.tmpLayerCanvas:Clear()
+    data.tmpLayerCanvas:SetPixels(data.selectRect.Left, data.selectRect.Top, data.selectedPixelData.size.Width, data.selectedPixelData.size.Height, data.selectedPixelData.pixelData)
+    data.tmpLayerCanvas:DrawPixels(data.rect.x, data.rect.y, DrawMode.TilemapCache, data.scale, bgColor, data.emptyColorID)
+    data.paintCanvas.Invalidate()
+    -- data.tmpLayerCanvas.ResetValidation()
+  end
+
+
+
+  -- if(data.selectionCanvas.invalid == true) then
     
-    if(data.selectRect  ~= nil) then
+  if(data.selectRect  ~= nil) then
 
-      data.selectionCanvas:Clear()
+    data.selectionCanvas:Clear()
 
-      -- Loop through pixels and invert if needed
+  -- Loop through pixels and invert if needed
 
-      -- Draw the canvas to the display
-      
+  -- Draw the canvas to the display
+  if(math.abs(data.selectRect.Width) > 0 and math.abs(data.selectRect.Height) > 0) then
 
-      data.selectionCanvas:DrawSquare(data.selectRect.x, data.selectRect.y, data.selectRect.width, data.selectRect.height, false)
+    -- Adjust right and bottom by 1 so selection is inside of selected pixels
+    data.selectionCanvas:DrawSquare(data.selectRect.Left * data.scale, data.selectRect.Top * data.scale, data.selectRect.Right * data.scale - 1, data.selectRect.Bottom * data.scale -1, false)
 
-      data.selectionCanvas:DrawPixels(data.rect.x, data.rect.y, DrawMode.UI, 1, -1, data.emptyColorID)
-
-    end
+    data.selectionCanvas:DrawPixels(data.rect.x, data.rect.y, DrawMode.Sprite, 1, -1, data.emptyColorID)
+  end
 
   end
+
+  -- end
 
 end
 
 -- Use this to perform a click action on a button. It's used internally when a mouse click is detected.
-function EditorUI:CanvasRelease(data, callAction)
+function PixelVisionOS:CanvasRelease(data, callAction)
 
   -- print("Canvas Release")
 
@@ -607,9 +736,27 @@ function EditorUI:CanvasRelease(data, callAction)
 
   end
 
+  -- if(data.selectedPixelData ~= nil) then
+  --   data.tmpLayerCanvas:Clear()
+  --   print("Draw" , data.selectRect)
+  --   -- data.tmpLayerCanvas:SetPixels(data.selectRect.Left, data.selectRect.Top, 1, 1, data.selectedPixelData)
+  --   data.tmpLayerCanvas.Invalidate()
+  -- end
+
+  -- if(data.tmpLayerCanvas.invalid == true) then
+
+  --   print("Copy layer to paint canvas")
+
+  --   data.paintCanvas:MergeCanvas(data.tmpLayerCanvas, 0, true)
+
+  --   data.tmpLayerCanvas.Clear()
+
+  --   data.tmpLayerCanvas:ResetValidation()
+
+  -- end
+
   if(data.selectionCanvas.invalid == true) then
 
-    
     data.selectionCanvas:ResetValidation()
 
   end
@@ -624,7 +771,7 @@ function EditorUI:CanvasRelease(data, callAction)
 
 end
 
-function EditorUI:CanvasPress(data, callAction)
+function PixelVisionOS:CanvasPress(data, callAction)
 
   -- print("onPress", "Update canvas")
 
@@ -639,18 +786,20 @@ function EditorUI:CanvasPress(data, callAction)
 
 end
 
-function EditorUI:ResizeCanvas(data, size, scale, pixelData)
+function PixelVisionOS:ResizeCanvas(data, size, scale, pixelData)
 
-  -- data.canvas = NewCanvas(rect.w, rect.h)
-
-  -- Create a new canvas for drawing into
-  data.mergedCanvas = NewCanvas(size.x, size.y)
-
+  if(data.selectRect ~= nil) then
+    self:CancelCanvasSelection(data, true, false)
+  end
+  
   -- Create a new canvas for drawing into
   data.paintCanvas = NewCanvas(size.x, size.y)
 
   -- Create a temporary canvas
   data.tmpPaintCanvas = NewCanvas(size.x, size.y)
+
+  -- Create a layer canvas
+  data.tmpLayerCanvas = NewCanvas(size.x, size.y)
 
   -- Set scale for calculation
   data.scale = scale or 1
@@ -675,12 +824,12 @@ function EditorUI:ResizeCanvas(data, size, scale, pixelData)
 
 end
 
-function EditorUI:GetCanvasSize(data)
+function PixelVisionOS:GetCanvasSize(data)
 
   return NewRect(data.rect.x, data.rect.y, data.paintCanvas.width, data.paintCanvas.height)
 end
 
-function EditorUI:ToggleCanvasFill(data, value)
+function PixelVisionOS:ToggleCanvasFill(data, value)
 
   data.fill = value or not data.fill
 
@@ -688,7 +837,7 @@ function EditorUI:ToggleCanvasFill(data, value)
 
 end
 
-function EditorUI:ToggleCanvasCentered(data, value)
+function PixelVisionOS:ToggleCanvasCentered(data, value)
 
   value = value or not data.tmpPaintCanvas:DrawCentered()
 
@@ -698,7 +847,7 @@ function EditorUI:ToggleCanvasCentered(data, value)
 
 end
 
-function EditorUI:CanvasBrushColor(data, value)
+function PixelVisionOS:CanvasBrushColor(data, value)
 
   -- print("Value", value)
 
@@ -708,7 +857,7 @@ function EditorUI:CanvasBrushColor(data, value)
 
 end
 
-function EditorUI:GetCanvasPixelData(data)
+function PixelVisionOS:GetCanvasPixelData(data)
 
   -- TODO should this subtract the color offset?
 
@@ -716,13 +865,13 @@ function EditorUI:GetCanvasPixelData(data)
 
 end
 
-function EditorUI:ClearCanvas(data)
+function PixelVisionOS:ClearCanvas(data)
 
   data.paintCanvas:Clear()
 
 end
 
-function EditorUI:ChangeCanvasPixelSize(data, size)
+function PixelVisionOS:ChangeCanvasPixelSize(data, size)
 
   data.pixelSelectionSize = size
   -- data.borderOffset = 2

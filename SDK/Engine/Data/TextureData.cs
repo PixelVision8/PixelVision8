@@ -121,7 +121,7 @@ namespace PixelVision8.Engine
         /// <returns></returns>
         public virtual int[] GetPixels()
         {
-            tmpPixels = new int[pixels.Length];
+            var tmpPixels = new int[pixels.Length];
 
             Array.Copy(pixels, tmpPixels, pixels.Length);
 
@@ -130,7 +130,7 @@ namespace PixelVision8.Engine
 
         public virtual int[] GetPixels(int x, int y, int blockWidth, int blockHeight)
         {
-            tmpPixels = new int[blockWidth * blockHeight];
+            var tmpPixels = new int[blockWidth * blockHeight];
 
             CopyPixels(ref tmpPixels, x, y, blockWidth, blockHeight);
 

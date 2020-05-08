@@ -58,7 +58,8 @@ namespace PixelVision8.Runner.Exporters
             steps.Add(CreateStringBuilder);
 
             // TODO need to see if there is a legacy flag
-            steps.Add(SaveMapDataV2);
+            steps.Add(SaveMapDataV1);
+            // steps.Add(SaveMapDataV2);
             
             // steps.Add(SaveMapDataV1);
 
