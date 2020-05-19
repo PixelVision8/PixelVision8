@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <BaseOutputPath>..\..\Artifacts\MonoGame.Content.Builder</BaseOutputPath>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>mgcb</ToolCommandName>
+    <PackageId>dotnet-mgcb</PackageId>
+    <AppendTargetFrameworkToOutputPath>False</AppendTargetFrameworkToOutputPath>
+    <AssemblyName>mgcb</AssemblyName>
+    <UseAppHost>true</UseAppHost>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\MonoGame.Framework\MonoGame.Framework.DesktopGL.csproj" />
+    <ProjectReference Include="..\..\MonoGame.Framework.Content.Pipeline\MonoGame.Framework.Content.Pipeline.csproj" />
+  </ItemGroup>
+
+  <!-- Build and copy MGFXC, just don't reference it! -->
+  <PropertyGroup>
+    <!-- NuGet warns if we copy assemblies but don't reference them; we suppress those warnings. -->
+    <NoWarn>NU5100</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="..\..\Artifacts\MonoGame.Effect.Compiler\Release\*"
+             Exclude="..\..\Artifacts\MonoGame.Effect.Compiler\Release\*.nupkg"
+             Visible="false">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Target Name="BuildMFGXC" BeforeTargets="Restore">
+    <MSBuild Projects="..\MonoGame.Effect.Compiler\MonoGame.Effect.Compiler.csproj" Properties="Configuration=Release;UseAppHost=False" Targets="Restore" />
+    <MSBuild Projects="..\MonoGame.Effect.Compiler\MonoGame.Effect.Compiler.csproj" Properties="Configuration=Release;UseAppHost=False" Targets="Build" />
+  </Target>
+
+</Project>
+

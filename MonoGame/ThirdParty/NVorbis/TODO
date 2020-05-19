@@ -1,0 +1,12 @@
+﻿* RTP support
+	- Implement the same interface for RTP (non-seekable)
+	- Add a constructor for VorbisReader that accepts a NetworkStream
+		- Possibly another System.Net member?  Needs thought.
+
+* Matroska support
+	- Needs a base EBML reader
+
+* More optimization?  Currently running at > 105x realtime on a Core i7 M 620
+	- more profiling
+
+* Test with a lot more Vorbis streams

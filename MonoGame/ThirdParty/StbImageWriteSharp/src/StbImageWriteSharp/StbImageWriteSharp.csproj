@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Authors>StbImageWriteSharpTeam</Authors>
+    <Product>StbImageWriteSharp</Product>
+    <PackageId>StbImageWriteSharp</PackageId>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <Description>C# port of the stb_image.h</Description>
+    <PackageLicenseUrl>Public Domain</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/StbSharp/StbImageWriteSharp</PackageProjectUrl>
+    <NoWarn>NU1701</NoWarn>
+    <AssemblyName>StbImageWriteSharp</AssemblyName>
+    <RootNamespace>StbImageWriteSharp</RootNamespace>
+    <Version>1.0.0.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+</Project>

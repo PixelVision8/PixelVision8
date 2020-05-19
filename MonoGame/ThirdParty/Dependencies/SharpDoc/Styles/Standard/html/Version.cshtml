@@ -1,0 +1,64 @@
+﻿@*
+// Copyright (c) 2010-2013 SharpDoc - Alexandre Mutel
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.       
+// -------------------------------------------------------------------------------
+// Override this template to modify the global behavior for each Dump functions
+// -------------------------------------------------------------------------------
+*@
+@using SharpDoc.Model
+@using System.Text;
+@model SharpDoc.TemplateContext
+@Import("Section")
+
+@functions {
+
+    public string GetVersionAndPlatform(NModelBase member)
+    {
+        var text = new StringBuilder();
+
+        text.Append("Supported in:<br/><br/>");
+
+        for (int i = 0; i < member.Groups.Count; i++)
+        {
+            var groupName = member.Groups[i];
+            var groupIconName = groupName;
+            var groupMessageName = groupName;
+            int indexOf = groupName.IndexOf('|');
+            if (indexOf > 0)
+            {
+                groupIconName = groupName.Substring(0, indexOf);
+                groupMessageName = groupName.Substring(indexOf + 1, groupName.Length - indexOf - 1);
+            }
+            text.AppendFormat(@"&nbsp;&nbsp;&nbsp;&nbsp;<div class=""icon {0}"" title=""{1}""></div>&nbsp;{1}<br/>", groupIconName, groupMessageName);
+            text.AppendLine();
+        }
+
+        return text.ToString();
+    }
+}
+
+@*// Dumps members*@
+@helper Dump(NModelBase element)
+{
+   if (element.Groups.Count > 0)
+   {
+       @Helpers.Section.Dump("Version and Platform Information", GetVersionAndPlatform(element))
+   }
+}

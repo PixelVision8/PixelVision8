@@ -1,0 +1,290 @@
+﻿@*
+// Copyright (c) 2010-2013 SharpDoc - Alexandre Mutel
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.       
+// -------------------------------------------------------------------------------
+// Override this template to modify the generated C# syntax of a member
+// -------------------------------------------------------------------------------
+*@
+@model SharpDoc.TemplateContext
+@using System.Text
+@using SharpDoc.Model
+
+@functions {
+
+    /// <summary>
+    /// Dump the C# syntax of a type (class, interface, struct, enum)
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    protected string DumpType(NType type) {
+        var text = new StringBuilder();
+
+        // Append attributes        
+        foreach(var attribute in type.Attributes)
+            text.Append("[").Append(attribute).Append("]").AppendLine();
+        
+        // Append visibility
+        text.Append(type.VisibilityName).Append(" ");
+        if (type.IsStatic) text.Append("static ");
+        if (type.IsAbstract && !(type is NInterface)) text.Append("abstract ");
+        if (type.IsFinal) text.Append("sealed ");
+
+        // Append type (class, struct, interface, enum, delegate)
+        text.Append(type.TypeName).Append(" ");
+
+        var deleg = type as NDelegate;
+
+		if (deleg != null)
+        {
+            text.Append(EscapeForSyntaxBox(deleg.Invoke.ReturnType.Name));
+            text.Append(" ");
+        }
+
+        // Append the name
+        text.Append(type.Name);
+
+		if (deleg != null)
+        {
+            DumpParameters(text, deleg.Invoke.Parameters, false);
+        }
+
+        bool hasBase = type is NClass && type.Bases.Count > 1;
+        if (hasBase)
+            text.Append(" : ").Append(EscapeForSyntaxBox(type.Bases[0].Name));
+        
+        if (type.Interfaces.Count > 0) {
+            if (!hasBase)
+                text.Append(" : ");
+            for(int i = 0; i < type.Interfaces.Count; i++) {
+                if (i > 0 || hasBase)
+                    text.Append(", ");
+                text.Append(EscapeForSyntaxBox(type.Interfaces[i].Name));                
+            }
+        }
+        
+        DumpGenericParametersConstraints(text, type);
+            
+        return text.ToString();
+    }
+
+    /// <summary>
+    /// Dump the C# syntax of a type property
+    /// </summary>
+    /// <param name="prop"></param>
+    /// <returns></returns>
+    protected string DumpProperty(NProperty prop)
+    {
+        var text = new StringBuilder();
+
+        // Append visibility
+        text.Append(prop.VisibilityFullName).Append(" ");
+		
+		// Append Type
+        text.Append(prop.PropertyType.Name).Append(" ");
+
+		// Append Name
+		text.Append(prop.Name).Append(" { ");
+
+		if (prop.HasGetMethod)
+        {
+			if (prop.Visibility != prop.GetMethod.Visibility)
+                text.Append(prop.GetMethod.VisibilityName).Append(" ");
+            text.Append("get;");
+        }
+
+		if (prop.HasSetMethod)
+        {
+			if (prop.HasGetMethod)
+			    text.Append(" ");
+			if (prop.Visibility != prop.SetMethod.Visibility)
+                text.Append(prop.SetMethod.VisibilityName).Append(" ");
+            text.Append("set;");
+        }
+
+        text.Append(" }").AppendLine();
+
+        return text.ToString();
+    }
+
+
+    /// <summary>
+    /// Dump the C# syntax of an event
+    /// </summary>
+    /// <param name="nEvent"></param>
+    /// <returns></returns>
+    protected string DumpEvent(NEvent nEvent)
+    {
+        var text = new StringBuilder();
+
+        // Append visibility
+        text.Append(nEvent.VisibilityFullName).Append(" ");
+
+        // Append Type
+        text.Append(EscapeForSyntaxBox(nEvent.EventType.Name)).Append(" ");
+
+        // Append Name
+        text.Append(EscapeForSyntaxBox(nEvent.Name));
+
+        return text.ToString();
+    }        
+
+    /// <summary>
+    /// Dump the C# syntax of a type property
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    protected string DumpField(NField field)
+    {
+        var text = new StringBuilder();
+
+        // Append visibility
+        text.Append(field.VisibilityFullName).Append(" ");
+
+        // Append the return type
+	    text.Append(EscapeForSyntaxBox(field.FieldType.Name)).Append(" ");
+        
+        // Append the name
+        text.Append(EscapeForSyntaxBox(field.Name));
+		
+        // TODO add generic constraints here
+
+        return text.ToString();
+    }    
+
+    /// <summary>
+    /// Dump the C# syntax of a type method
+    /// </summary>
+    /// <param name="method"></param>
+    /// <returns></returns>
+    protected string DumpMethod(NMethod method)
+    {
+        var text = new StringBuilder();
+
+        // Append attributes        
+        foreach (var attribute in method.Attributes)
+            text.Append("[").Append(attribute).Append("]").AppendLine();
+
+        // Append visibility
+        text.Append(method.VisibilityFullName).Append(" ");
+
+        // Append the return type
+		if (!(method is NConstructor))
+	        text.Append(EscapeForSyntaxBox(method.ReturnType.Name)).Append(" ");
+        
+        // Append the name
+        text.Append(EscapeForSyntaxBox(method.Name));
+
+        DumpParameters(text, method.Parameters, method.IsExtensionDefinition);
+
+        DumpGenericParametersConstraints(text, method);
+
+        return text.ToString();
+    }    
+
+    /// <summary>
+    /// Dump the C# syntax of a type method
+    /// </summary>
+    /// <param name="method"></param>
+    /// <returns></returns>
+    protected void DumpParameters(StringBuilder text, List<NParameter> parameters, bool IsExtensionDefinition)
+    {
+        text.Append("(");
+        if (parameters.Count > 0)
+        {
+            text.AppendLine();
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                if (i > 0)
+                    text.Append(", ").AppendLine();
+                var parameter = parameters[i];
+                text.Append("\t");
+                if(i == 0 && IsExtensionDefinition)
+                    text.Append("this ");
+                text.Append(EscapeForSyntaxBox(parameter.ParameterTypeName)).Append(" ").Append(EscapeForSyntaxBox(parameter.Name));
+            }
+            text.AppendLine();
+        }
+        text.Append(")");
+    }
+
+    /// <summary>
+    /// Dump the C# syntax of generic parameters constraints
+    /// </summary>
+    /// <returns></returns>
+    protected void DumpGenericParametersConstraints(StringBuilder text, INMemberReference member)
+    {
+        if(member.GenericParameters.Count > 0)
+        {
+            List<NGenericParameter> constraintsParameters = new List<NGenericParameter>();
+            for(int i = 0; i < member.GenericParameters.Count; i++)
+            {
+                var param = member.GenericParameters[i];
+                if(param.HasConstraints || param.HasDefaultConstructorConstraint)
+                    constraintsParameters.Add(param);
+            }
+            bool needNewLine = (constraintsParameters.Count > 1);
+                
+            for(int i = 0; i < constraintsParameters.Count; i++)
+            {
+                var param = constraintsParameters[i];
+                if(needNewLine)
+                    text.AppendLine().Append("\t");
+                text.Append(" where ");
+                text.Append(EscapeForSyntaxBox(param.Name));
+                text.Append(" : ");
+                for(int j = 0; j < param.Constraints.Count; j++)
+                {
+                    if(j > 0) 
+                        text.Append(", ");
+                    text.Append(EscapeForSyntaxBox(param.Constraints[j].Name));
+                }
+                if(param.HasDefaultConstructorConstraint)
+                {
+                    if(param.HasConstraints)
+                        text.Append(", ");
+                    text.Append("new()");
+                }
+            }
+        }
+    }
+}
+
+@helper Dump(NMember member)
+{
+    if (member is NType)
+    {
+        @Raw(DumpType((NType)member))
+    } else if (member is NMethod)
+    {
+        @Raw(DumpMethod((NMethod)member))
+    }
+    else if (member is NEvent)
+    {
+        @Raw(DumpEvent((NEvent)member))
+    }
+	else if (member is NProperty)
+	{
+	    @Raw(DumpProperty((NProperty) member))
+	}
+	else if (member is NField)
+	{
+	    @Raw(DumpField((NField) member))
+	}
+}

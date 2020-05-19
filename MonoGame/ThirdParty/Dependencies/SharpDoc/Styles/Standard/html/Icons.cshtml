@@ -1,0 +1,147 @@
+﻿@*
+// Copyright (c) 2010-2013 SharpDoc - Alexandre Mutel
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.       
+// -------------------------------------------------------------------------------
+// Override this template to modify the global behavior for each Dump functions
+// -------------------------------------------------------------------------------
+*@
+@model SharpDoc.TemplateContext
+@using SharpDoc.Model
+@functions {
+
+    /// <summary>
+    /// Get icon html class and title from a member (private/public...etc.)
+    /// </summary>
+    /// <param name="member"></param>
+    /// <returns></returns>
+    public static IEnumerable<Tuple<string, string>> GetIconList(NModelBase memberRef)
+    {
+        if (!(memberRef is NMember))
+            return Enumerable.Empty<Tuple<string, string>>();
+        var member = (NMember)memberRef;
+        
+        var icon = "";
+        var name = "";
+        switch (member.Visibility)
+        {
+            case NVisibility.Public:
+                icon = "pub";
+                name = "Public";
+                break;
+            case NVisibility.Protected:
+                icon = "prot";
+                name = "Protected";
+                break;
+            case NVisibility.Private:
+                icon = "priv";
+                name = "Private";
+                break;
+            case NVisibility.ProtectedInternal:
+                icon = "priv";
+                name = "Protected Internal";
+                break;
+            case NVisibility.Internal:
+                icon = "priv";
+                name = "Internal";
+                break;
+        }
+
+        switch (member.MemberType)
+        {
+            case NMemberType.Class:
+                icon += "class";
+                break;
+            case NMemberType.Struct:
+                icon += "structure";
+                break;
+            case NMemberType.Enum:
+                icon += "enum";
+                break;
+            case NMemberType.Interface:
+                icon += "interface";
+                break;
+            case NMemberType.Constructor:
+            case NMemberType.Method:
+                icon += "method";
+                break;
+            case NMemberType.Extension:
+                icon += "extension";
+                break;
+            case NMemberType.Operator:
+                icon += "operator";
+                break;
+            case NMemberType.Property:
+                icon += "property";
+                break;
+            case NMemberType.Field:
+                icon += "field";
+                break;
+            case NMemberType.Event:
+                icon += "event";
+                break;
+            case NMemberType.Delegate:
+                icon += "delegate";
+                break;
+        }
+
+        name += " " + member.TypeMember;
+
+        var icons = new List<Tuple<string, string>> {new Tuple<string, string>(icon, name)};
+        if (member.IsStatic)
+            icons.Add(new Tuple<string, string>("static", "Static"));
+        return icons;
+    }
+
+    /// <summary>
+    /// Get icon html class and title from a member (private/public...etc.)
+    /// </summary>
+    /// <returns></returns>
+    public static IEnumerable<Tuple<string, string>> GetPlatformIconList(NModelBase member)
+    {
+        var icons = new List<Tuple<string, string>>();
+
+        foreach (var groupName in member.Groups)
+        {
+            var groupIconName = groupName;
+            var groupMessageName = groupName;
+            int indexOf = groupName.IndexOf('|');
+			if (indexOf > 0)
+            {
+                groupIconName = groupName.Substring(0, indexOf);
+                groupMessageName = groupName.Substring(indexOf + 1, groupName.Length - indexOf - 1);
+            }
+			icons.Add(new Tuple<string, string>(groupIconName, groupMessageName));                
+        }
+        return icons;
+    }
+}
+@*// Returns an icon div element from a member*@
+@helper GetIcons(NModelBase member) {
+    foreach (var iconName in GetIconList(member))
+    {
+        <div class="icon @iconName.Item1" title="@iconName.Item2"></div>
+    }
+}
+@helper GetPlatformIcons(NModelBase member) {
+    foreach (var iconName in GetPlatformIconList(member))
+    {
+        <div class="icon @iconName.Item1" title="@iconName.Item2"></div>
+    }
+}

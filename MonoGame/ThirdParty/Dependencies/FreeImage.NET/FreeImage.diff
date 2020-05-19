@@ -1,0 +1,94 @@
+diff --git a/FreeImage-2/Wrapper/FreeImage.NET/cs/Library/FreeImageStaticImports.cs b/FreeImage/Wrapper/FreeImage.NET/cs/Library/FreeImageStaticImports.cs
+index 54c8f7f..88e1903 100755
+--- a/FreeImage-2/Wrapper/FreeImage.NET/cs/Library/FreeImageStaticImports.cs
++++ b/FreeImage/Wrapper/FreeImage.NET/cs/Library/FreeImageStaticImports.cs
+@@ -302,7 +302,7 @@ namespace FreeImageAPI
+ 		/// <param name="filename">Name of the file to decode.</param>
+ 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
+ 		/// <returns>Handle to a FreeImage bitmap.</returns>
+-		[DllImport(FreeImageLibrary, CharSet = CharSet.Unicode, EntryPoint = "FreeImage_LoadU")]
++		[DllImport(FreeImageLibrary, CharSet = CharSet.Auto, EntryPoint = "FreeImage_Load")]
+ 		public static extern FIBITMAP Load(FREE_IMAGE_FORMAT fif, string filename, FREE_IMAGE_LOAD_FLAGS flags);
+ 
+ 		/// <summary>
+@@ -313,7 +313,7 @@ namespace FreeImageAPI
+ 		/// <param name="filename">Name of the file to decode.</param>
+ 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
+ 		/// <returns>Handle to a FreeImage bitmap.</returns>
+-		[DllImport(FreeImageLibrary, CharSet = CharSet.Unicode, EntryPoint = "FreeImage_LoadU")]
++		[DllImport(FreeImageLibrary, CharSet = CharSet.Auto, EntryPoint = "FreeImage_Load")]
+ 		private static extern FIBITMAP LoadU(FREE_IMAGE_FORMAT fif, string filename, FREE_IMAGE_LOAD_FLAGS flags);
+ 
+ 		/// <summary>
+@@ -335,7 +335,7 @@ namespace FreeImageAPI
+ 		/// <param name="filename">Name of the file to save to.</param>
+ 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
+ 		/// <returns>Returns true on success, false on failure.</returns>
+-		[DllImport(FreeImageLibrary, CharSet = CharSet.Unicode, EntryPoint = "FreeImage_SaveU")]
++		[DllImport(FreeImageLibrary, CharSet = CharSet.Auto, EntryPoint = "FreeImage_Save")]
+ 		public static extern bool Save(FREE_IMAGE_FORMAT fif, FIBITMAP dib, string filename, FREE_IMAGE_SAVE_FLAGS flags);
+ 
+ 		/// <summary>
+@@ -347,7 +347,7 @@ namespace FreeImageAPI
+ 		/// <param name="filename">Name of the file to save to.</param>
+ 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
+ 		/// <returns>Returns true on success, false on failure.</returns>
+-		[DllImport(FreeImageLibrary, CharSet = CharSet.Unicode, EntryPoint = "FreeImage_SaveU")]
++		[DllImport(FreeImageLibrary, CharSet = CharSet.Auto, EntryPoint = "FreeImage_Save")]
+ 		private static extern bool SaveU(FREE_IMAGE_FORMAT fif, FIBITMAP dib, string filename, FREE_IMAGE_SAVE_FLAGS flags);
+ 
+ 		/// <summary>
+@@ -596,7 +596,7 @@ namespace FreeImageAPI
+ 		/// </summary>
+ 		/// <param name="filename">The filename or -extension.</param>
+ 		/// <returns>The <see cref="FREE_IMAGE_FORMAT"/> of the plugin.</returns>
+-		[DllImport(FreeImageLibrary, CharSet = CharSet.Unicode, EntryPoint = "FreeImage_GetFIFFromFilenameU")]
++		[DllImport(FreeImageLibrary, CharSet = CharSet.Auto, EntryPoint = "FreeImage_GetFIFFromFilename")]
+ 		public static extern FREE_IMAGE_FORMAT GetFIFFromFilename(string filename);
+ 
+ 		/// <summary>
+@@ -606,7 +606,7 @@ namespace FreeImageAPI
+ 		/// </summary>
+ 		/// <param name="filename">The filename or -extension.</param>
+ 		/// <returns>The <see cref="FREE_IMAGE_FORMAT"/> of the plugin.</returns>
+-		[DllImport(FreeImageLibrary, CharSet = CharSet.Unicode, EntryPoint = "FreeImage_GetFIFFromFilenameU")]
++		[DllImport(FreeImageLibrary, CharSet = CharSet.Auto, EntryPoint = "FreeImage_GetFIFFromFilename")]
+ 		private static extern FREE_IMAGE_FORMAT GetFIFFromFilenameU(string filename);
+ 
+ 		/// <summary>
+@@ -785,7 +785,7 @@ namespace FreeImageAPI
+ 		/// <param name="filename">Name of the file to analyze.</param>
+ 		/// <param name="size">Reserved parameter - use 0.</param>
+ 		/// <returns>Type of the bitmap.</returns>
+-		[DllImport(FreeImageLibrary, CharSet = CharSet.Unicode, EntryPoint = "FreeImage_GetFileTypeU")]
++		[DllImport(FreeImageLibrary, CharSet = CharSet.Auto, EntryPoint = "FreeImage_GetFileType")]
+ 		public static extern FREE_IMAGE_FORMAT GetFileType(string filename, int size);
+ 
+ 
+@@ -796,7 +796,7 @@ namespace FreeImageAPI
+ 		/// <param name="filename">Name of the file to analyze.</param>
+ 		/// <param name="size">Reserved parameter - use 0.</param>
+ 		/// <returns>Type of the bitmap.</returns>
+-		[DllImport(FreeImageLibrary, CharSet = CharSet.Unicode, EntryPoint = "FreeImage_GetFileTypeU")]
++		[DllImport(FreeImageLibrary, CharSet = CharSet.Auto, EntryPoint = "FreeImage_GetFileType")]
+ 		private static extern FREE_IMAGE_FORMAT GetFileTypeU(string filename, int size);
+ 
+ 		/// <summary>
+@@ -1889,7 +1889,7 @@ namespace FreeImageAPI
+ 		/// <param name="operation">The operation to apply.</param>
+ 		/// <param name="perfect">To avoid lossy transformation, you can set the perfect parameter to true.</param>
+ 		/// <returns>Returns true on success, false on failure.</returns>
+-		[DllImport(FreeImageLibrary, CharSet = CharSet.Unicode, EntryPoint = "FreeImage_JPEGTransformU")]
++		[DllImport(FreeImageLibrary, CharSet = CharSet.Auto, EntryPoint = "FreeImage_JPEGTransform")]
+ 		public static extern bool JPEGTransform(string src_file, string dst_file,
+ 			FREE_IMAGE_JPEG_OPERATION operation, bool perfect);
+ 
+@@ -2098,7 +2098,7 @@ namespace FreeImageAPI
+ 		/// <param name="right">Specifies the right position of the cropped rectangle.</param>
+ 		/// <param name="bottom">Specifies the bottom position of the cropped rectangle.</param>
+ 		/// <returns>Returns true on success, false on failure.</returns>
+-		[DllImport(FreeImageLibrary, CharSet = CharSet.Unicode, EntryPoint = "FreeImage_JPEGCropU")]
++		[DllImport(FreeImageLibrary, CharSet = CharSet.Auto, EntryPoint = "FreeImage_JPEGCrop")]
+ 		public static extern bool JPEGCrop(string src_file, string dst_file, int left, int top, int right, int bottom);
+ 
+ 		/// <summary>

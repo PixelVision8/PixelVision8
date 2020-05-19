@@ -1,0 +1,246 @@
+﻿@*
+// Copyright (c) 2010-2013 SharpDoc - Alexandre Mutel
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.       
+// -------------------------------------------------------------------------------
+// Override this template to modify the global behavior for replacing tags.
+// This template must be included once from a top template.
+// Tags currently supported:
+// see cref/href
+// seealso
+// note
+// code
+// c
+// -------------------------------------------------------------------------------
+*@
+@model SharpDoc.TemplateContext
+@using SharpDoc.Model
+@using SharpDoc;
+@using System.Text;
+@using System.Text.RegularExpressions;
+@using System.Xml;
+@using System.IO;
+@using System.Globalization;
+
+@functions {
+    public string ReplaceSee(Match match)
+    {
+        string id = match.Groups[1].Value;
+        if (match.Groups.Count == 3) {
+            return ToUrl(id, match.Groups[2].Value);
+        }
+        return ToUrl(id);
+    }
+
+    public string ReplaceParamref(Match match)
+    {
+        string id = match.Groups[1].Value;
+        return @"<span class='sdoc-parameter'>" + id + "</span>";
+    }
+
+    public string ReplaceWebdoc(Match match)
+    {
+        string xmlCode = match.ToString();
+        
+        var document = new XmlDocument();
+        try
+        {
+            document.LoadXml(xmlCode);
+            var correspondingNode = document.DocumentElement;
+            return Model.GetWebDocContent(correspondingNode, true);
+        }
+        catch(XmlException)
+        {
+            return string.Empty;
+        }
+    }
+
+    public string ReplaceCodeSection(Match match)
+    {
+        string xmlCode = match.ToString();
+        
+        var document = new XmlDocument();
+        try
+        {
+            document.LoadXml(xmlCode);
+            var correspondingNode = document.DocumentElement;
+
+            var title = correspondingNode.Attributes["title"];
+            var text = new StringBuilder();
+
+            text.Append("<div class='code panel pdl'>").AppendLine();
+                if(title != null)
+                    text.AppendFormat("<div class='code_section title'>{0}</div>", title.Value).AppendLine();
+                text.Append("<div class='codeContent panelContent pdl'>").AppendLine();
+                    text.Append(correspondingNode.InnerXml).AppendLine();
+                text.Append("</div>").AppendLine();
+            text.Append("</div>").AppendLine();
+            return text.ToString();
+        }
+        catch(XmlException)
+        {
+            return string.Empty;
+        }
+    }
+
+    public string ReplaceCode(Match match)
+    {
+        string xmlCode = match.ToString();
+        
+        var document = new XmlDocument();
+        try
+        {
+            document.LoadXml(xmlCode);
+            var correspondingNode = document.DocumentElement;
+
+            var gutter = correspondingNode.Attributes["gutter"];
+            var gutterValue = (gutter != null && gutter.Value == "true") ? "true" : "false";
+
+            var highlight = correspondingNode.Attributes["highlight"];
+            var highlightValue = (highlight != null) ? highlight.Value : "null";
+
+            return string.Format("<pre class='brush: csharp; gutter: {0}; highlight: {1}'>{2}</pre>", gutterValue, highlightValue, correspondingNode.InnerXml);
+        }
+        catch(XmlException)
+        {
+            return string.Empty;
+        }
+    }
+
+    public string ReplaceInsert(Match match)
+    {
+        string xmlCode = match.ToString();
+        
+        var document = new XmlDocument();
+        try
+        {
+            document.LoadXml(xmlCode);
+            var correspondingNode = document.DocumentElement;
+
+            var type = correspondingNode.Attributes["type"];
+            string typeTxt = null;
+            string imgUrl = null;
+            bool imgExist = false;
+
+            if(type != null)
+            {
+                typeTxt = type.Value;
+                imgUrl = Path.Combine(Model.Param.LinkToImg, typeTxt + ".gif");
+                imgExist = File.Exists(Path.Combine(Model.OutputDirectory, "html", imgUrl));
+            }
+            if(!imgExist)
+            {
+                typeTxt = "note";
+                imgUrl = Path.Combine(Model.Param.LinkToImg, "note.gif");
+            }
+            
+            var title = correspondingNode.Attributes["title"];
+            string titleText = null;
+
+            if(title != null)
+                titleText = title.Value;
+            else
+            {
+                var context = new CultureInfo("en-US",false).TextInfo;
+                titleText = context.ToTitleCase(typeTxt);
+            }
+
+            var text = new StringBuilder();
+
+            text.Append("<table class='members insert'>").AppendLine();
+                text.Append("<tbody>").AppendLine();
+                    text.Append("<tr>").AppendLine();
+                        text.Append("<th>").AppendLine();
+                            text.Append("<span class='insert_title'>").AppendLine();
+                                text.AppendFormat("<img alt='{0}' src='{1}' title='{0}'> {2}", typeTxt, imgUrl, titleText).AppendLine();
+                            text.Append("</span>").AppendLine();
+                        text.Append("</th>").AppendLine();
+                    text.Append("</tr>").AppendLine();
+                    text.Append("<tr>").AppendLine();
+                        text.Append("<td>").AppendLine();
+                            text.Append(correspondingNode.InnerXml).AppendLine();
+                        text.Append("</td>").AppendLine();
+                    text.Append("</tr>").AppendLine();
+                text.Append("</tbody>").AppendLine();
+            text.Append("</table>").AppendLine();
+            return text.ToString();
+        }
+        catch(XmlException)
+        {
+            return string.Empty;
+        }
+    }
+
+    public string ReplaceTxt(Match match)
+    {
+        return string.Format("{0}</pre>{1}<pre {2}>", match.Groups["code"], match.Groups["text"], match.Groups["options"]); 
+    }
+
+    
+
+
+
+    public string ReplaceClassLink(Match match)
+    {
+        string xmlCode = match.ToString();
+        
+        var document = new XmlDocument();
+        try
+        {
+            document.LoadXml(xmlCode);
+            var correspondingNode = document.DocumentElement;
+
+            var page = correspondingNode.Attributes["page"];
+            var name = correspondingNode.Attributes["name"];
+            if(page != null && name != null)
+            {
+                var correspondingLink = new LinkDescriptor();
+                correspondingLink.PageId = Path.GetFileNameWithoutExtension(page.Value);
+                correspondingLink.Name = name.Value;
+                correspondingLink.Attributes = null;
+                correspondingLink.Type = LinkType.Local;
+                correspondingLink.LocalReference = new NTopic();
+                correspondingLink.LocalReference.PageId = correspondingLink.PageId;
+
+                return Model.LinkResolver(correspondingLink);
+            }
+            else
+                return string.Empty;
+        }
+        catch(XmlException)
+        {
+            return string.Empty;
+        }
+    }
+}
+
+
+@{    
+    Model.RegisterTagResolver(@"<a\s+href=""(.*?)""\s*>(.*?)</a>", ReplaceSee, true);
+    
+    
+    Model.RegisterTagResolver(@"<see\s+cref=""(.*?)""\s*/>", ReplaceSee);
+    Model.RegisterTagResolver(@"<see\s+cref=""(.*?)""\s*>(.*?)</see>", ReplaceSee);
+    Model.RegisterTagResolver(@"<paramref\s+name=""(.*?)""\s*/>", ReplaceParamref);
+    Model.RegisterTagResolver(@"<webdoc(.*?)>(.*?)</webdoc>", ReplaceWebdoc);
+    Model.RegisterTagResolver(@"<codesection(.*?)>([\w\W]*?)</codesection>", ReplaceCodeSection);
+    //Model.RegisterTagResolver(@"<code(.*?)>([\w\W]*?)</code>", ReplaceCode);
+    Model.RegisterTagResolver(@"<insert(.*?)>([\w\W]*?)</insert>", ReplaceInsert);
+    Model.RegisterTagResolver(@"<a class=""classLink""(.*?)>([\w\W]*?)</a>", ReplaceClassLink);
+}

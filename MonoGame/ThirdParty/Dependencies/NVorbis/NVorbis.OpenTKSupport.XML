@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NVorbis.OpenTKSupport</name>
+    </assembly>
+    <members>
+        <member name="M:NVorbis.OpenTKSupport.OggStreamer.#ctor(System.Int32,System.Single,System.Boolean)">
+            <summary>
+            Constructs an OggStreamer that plays ogg files in the background
+            </summary>
+            <param name="bufferSize">Buffer size</param>
+            <param name="updateRate">Number of times per second to update</param>
+            <param name="internalThread">True to use an internal thread, false to use your own thread, in which case use must call EnsureBuffersFilled periodically</param>
+        </member>
+    </members>
+</doc>

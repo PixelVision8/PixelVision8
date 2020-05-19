@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A372E591-DFEF-49C4-9C82-98C4361EFCCD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NVorbis</RootNamespace>
+    <AssemblyName>NVorbis</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\NVorbis.XML</DocumentationFile>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BufferedReadStream.cs" />
+    <Compile Include="Huffman.cs" />
+    <Compile Include="IContainerReader.cs" />
+    <Compile Include="IPacketProvider.cs" />
+    <Compile Include="Mdct.cs" />
+    <Compile Include="NewStreamEventArgs.cs" />
+    <Compile Include="Ogg\OggContainerReader.cs" />
+    <Compile Include="DataPacket.cs" />
+    <Compile Include="Ogg\OggCrc.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ogg\OggPacket.cs" />
+    <Compile Include="Ogg\OggPacketReader.cs" />
+    <Compile Include="Ogg\OggPageFlags.cs" />
+    <Compile Include="ParameterChangeEventArgs.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RingBuffer.cs" />
+    <Compile Include="StreamReadBuffer.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="VorbisCodebook.cs" />
+    <Compile Include="VorbisFloor.cs" />
+    <Compile Include="VorbisMapping.cs" />
+    <Compile Include="VorbisMode.cs" />
+    <Compile Include="VorbisReader.cs" />
+    <Compile Include="VorbisResidue.cs" />
+    <Compile Include="VorbisStreamDecoder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IVorbisStreamStatus.cs" />
+    <Compile Include="VorbisTime.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

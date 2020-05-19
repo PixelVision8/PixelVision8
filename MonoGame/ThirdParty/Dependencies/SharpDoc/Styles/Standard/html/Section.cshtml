@@ -1,0 +1,81 @@
+﻿@*
+// Copyright (c) 2010-2013 SharpDoc - Alexandre Mutel
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.       
+// -------------------------------------------------------------------------------
+// Override this template to modify the global behavior for each Section
+// -------------------------------------------------------------------------------
+*@
+@model SharpDoc.TemplateContext
+@using SharpDoc.Model
+@Import("Members")
+@Import("Syntax")
+@*
+ * ------------------------------------------------------------------
+ * Dump a section
+ * ------------------------------------------------------------------
+ * sectionId: id for the section
+ * name: display name
+ * content: html content of the section
+ * ------------------------------------------------------------------ 
+*@
+@helper Dump(string sectionId, string name, string content)
+    {
+    <script language="javascript">
+        window.addEvent('domready', function() {           
+            var @(sectionId)_slider = new Fx.Slide('@(sectionId)_content');
+            $('@(sectionId)_toggle').addEvent('click', function (event) {
+                $('@(sectionId)_icon').setProperty('class', {'true': 'toggle_icon in', 'false': 'toggle_icon out'}[@(sectionId)_slider.open]);
+                event.stop();
+                @(sectionId)_slider.toggle();
+            });
+        });
+    </script>        
+    <div id="@sectionId" class="section">
+        <div class="title"><a id="@(sectionId)_toggle" href="#" class="title"><div id="@(sectionId)_icon" class="toggle_icon out"></div><span class="title">@Escape(name)</span></a><div class="hr"><hr/></div></div>
+        <div id="@(sectionId)_content" class="block">
+        @Raw(content)
+        </div>
+    </div>    
+}
+
+@helper Dump(string name, string content)
+{
+    @Dump("section_" + name.Replace(" ",""), name, content)
+}
+
+@helper Dump(string sectionId, string name, IEnumerable<NModelBase> members, bool showIcons)
+{
+    @Dump(sectionId, name, Helpers.Members.Dump(members, showIcons).ToString())
+}
+
+@helper Dump(string name, IEnumerable<NModelBase> members, bool showIcons)
+{
+    @Dump(name, Helpers.Members.Dump(members, showIcons).ToString())
+}
+
+@helper Dump(string name, IEnumerable<NModelBase> members, bool showIcons, IModelReference context)
+{
+    @Dump(name, Helpers.Members.Dump(members, showIcons, context).ToString())
+}
+
+@helper DumpSyntax(NMember member)
+{
+    @Dump("Syntax", Helpers.Syntax.Dump(member).ToString())   
+}

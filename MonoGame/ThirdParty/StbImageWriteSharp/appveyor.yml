@@ -1,0 +1,21 @@
+version: 1.13.{build}
+configuration: Release
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
+build_script:
+- cmd: >-
+    build_all.bat
+artifacts:
+  - path: src/StbImageWriteSharp/bin/Release/StbImageWriteSharp.$(appveyor_build_version).nupkg
+    name: StbImageWriteSharp.nupkg
+deploy:
+  - provider: NuGet	
+    api_key:
+      secure: o02Abc+1Pg/C7FVPnbCA9i4RIakmOUcKjMBBCHDCbEhS69b+N05mV0xBe0ne2/Y4
+    artifact: /.*\.nupkg/

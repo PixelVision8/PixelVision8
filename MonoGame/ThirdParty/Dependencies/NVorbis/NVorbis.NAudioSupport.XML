@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NVorbis.NAudioSupport</name>
+    </assembly>
+    <members>
+        <member name="P:NVorbis.NAudioSupport.VorbisWaveReader.UpperBitrate">
+            <summary>
+            Gets the encoder's upper bitrate of the current selected Vorbis stream
+            </summary>
+        </member>
+        <member name="P:NVorbis.NAudioSupport.VorbisWaveReader.NominalBitrate">
+            <summary>
+            Gets the encoder's nominal bitrate of the current selected Vorbis stream
+            </summary>
+        </member>
+        <member name="P:NVorbis.NAudioSupport.VorbisWaveReader.LowerBitrate">
+            <summary>
+            Gets the encoder's lower bitrate of the current selected Vorbis stream
+            </summary>
+        </member>
+        <member name="P:NVorbis.NAudioSupport.VorbisWaveReader.Vendor">
+            <summary>
+            Gets the encoder's vendor string for the current selected Vorbis stream
+            </summary>
+        </member>
+        <member name="P:NVorbis.NAudioSupport.VorbisWaveReader.Comments">
+            <summary>
+            Gets the comments in the current selected Vorbis stream
+            </summary>
+        </member>
+        <member name="P:NVorbis.NAudioSupport.VorbisWaveReader.ContainerOverheadBits">
+            <summary>
+            Gets the number of bits read that are related to framing and transport alone
+            </summary>
+        </member>
+        <member name="P:NVorbis.NAudioSupport.VorbisWaveReader.Stats">
+            <summary>
+            Gets stats from each decoder stream available
+            </summary>
+        </member>
+    </members>
+</doc>

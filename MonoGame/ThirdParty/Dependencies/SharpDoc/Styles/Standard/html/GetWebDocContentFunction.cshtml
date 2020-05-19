@@ -1,0 +1,131 @@
+﻿@*
+// Copyright (c) 2010-2013 SharpDX - Alexandre Mutel
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.       
+// -------------------------------------------------------------------------------
+// Override this template to modify the global behavior for each Dump functions
+// -------------------------------------------------------------------------------
+*@
+@model SharpDoc.TemplateContext
+@using System
+@using SharpDoc.Model
+@using System.Text;
+@using System.Xml;
+@using System.Net;
+
+@using SharpDoc;
+
+@functions
+{
+    public string FormatCredentialForAuthentification(NetworkCredential loginData)
+    {
+        // Format the loginData to match the site log formular
+        return String.Format("os_username={0}&os_password={1}", loginData.UserName, loginData.Password);
+    }
+
+    public string GetWikiContent(XmlNode webDocNode, bool useIdTitle)
+    {
+        string page = webDocNode.InnerText;
+
+        var otherUrlAttribute = webDocNode.Attributes["url"];
+        string otherUrl = (otherUrlAttribute != null) ? otherUrlAttribute.Value : null;
+
+        var webDoc = Model.WebDocumentation;
+        if(webDoc.Load(page, otherUrl))
+        {
+            var cssFiles = webDoc.InternalizeCss(Model.OutputDirectory, Model.Param.LinkToCss, ".externDoc");
+            string content = webDoc.GetContentByClass("wiki-content");
+            
+            if(!string.IsNullOrEmpty(content))
+            {
+                webDoc.LimitDocumentToElement(content);
+                webDoc.InternalizeImages(Model.OutputDirectory, Model.Param.LinkToImg);
+                webDoc.InternalizeUrls();
+
+                var idAttr = webDocNode.Attributes["id"];
+                var titleAttr = webDocNode.Attributes["title"];
+            
+                StringBuilder externContent = new StringBuilder();
+
+                if(cssFiles.Count > 0)
+                {
+                    externContent.Append("<script type='text/javascript' language='javascript'>").AppendLine();
+                        externContent.Append("window.addEvent('domready', function () {").AppendLine();
+                            externContent.Append("var head = document.getElementsByTagName('head')[0];").AppendLine();
+                            foreach(var cssFile in cssFiles)
+                            {
+                                externContent.AppendFormat("head.grab(new Element('link', {{href: '{0}', rel: 'stylesheet', type: 'text/css'}}));", cssFile).AppendLine();
+                            }
+                        externContent.Append("});").AppendLine();
+                    externContent.Append("</script>").AppendLine();
+                }
+
+                if(useIdTitle)
+                {
+                    if(idAttr != null)
+                        externContent.AppendFormat("<div id='{0}'>", idAttr.Value).AppendLine();
+                    if(titleAttr != null)
+                        externContent.AppendFormat("<div class='sub_section title'>{0}</div>", titleAttr.Value).AppendLine();
+                }         
+
+                externContent.Append("<div class='externDoc'>").AppendLine();
+                    externContent.Append("<div id='com-atlassian-confluence' class='theme-documentation  aui-theme-default aui-layout splitter-invoked'>").AppendLine();
+                        externContent.Append("<div id='full-height-container'>").AppendLine();
+                            externContent.Append("<div id='splitter'>").AppendLine();
+                                externContent.Append("<div id='splitter-content'>").AppendLine();
+                                    externContent.Append("<div class='aui-page-panel'>").AppendLine();
+                                        externContent.Append("<div id='content' class='page view'>").AppendLine();
+
+                                            externContent.Append(TagExpand(webDoc.Content, true)).AppendLine();
+
+                                        externContent.Append("</div>").AppendLine();
+                                    externContent.Append("</div>").AppendLine();
+                                externContent.Append("</div>").AppendLine();
+                            externContent.Append("</div>").AppendLine();
+                        externContent.Append("</div>").AppendLine();
+                    externContent.Append("</div>").AppendLine();
+                externContent.Append("</div>").AppendLine();
+
+                if(useIdTitle && idAttr != null)
+                    externContent.Append("</div>").AppendLine();
+
+                return externContent.ToString();
+            }
+            else
+            {
+                string notFoundUri = (otherUrl != null) ? otherUrl + page : webDoc.GetAbsoluteUri(page).ToString();
+                return string.Format("<div class='warning webNotFound'><div class='icon'></div>The content of the page <a href='{0}'>{1}</a> doesn't match the content extraction scheme.</div>", notFoundUri, page);
+            }
+        }
+        else
+        {
+            string notFoundUri = (otherUrl != null) ? otherUrl + page : webDoc.GetAbsoluteUri(page).ToString();
+            return string.Format("<div class='warning webNotFound'><div class='icon'></div>The page <a href='{0}'>{1}</a> could not be found in the extern web documentation.</div>", notFoundUri, page);
+        }
+    }
+}
+
+@{ 
+    Model.GetWebDocContent = GetWikiContent;
+    if (Model.WebDocumentation != null)
+    {
+        Model.WebDocumentation.FormatCredential = FormatCredentialForAuthentification;
+        Model.WebDocumentation.Authentify();
+    }
+}

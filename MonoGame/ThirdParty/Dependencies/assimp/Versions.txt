@@ -1,0 +1,7 @@
+Assimp64.dll
+https://github.com/MonoGame/assimp/tree/monogame
+http://teamcity.monogame.net/viewLog.html?buildId=63567
+
+AssimpNet.dll
+http://code.google.com/p/assimp-net/ revision 101
+

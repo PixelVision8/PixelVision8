@@ -1,0 +1,14 @@
+Downloaded from http://www.evermeet.cx/ffmpeg/ and http://www.evermeet.cx/ffprobe/ on June 13, 2014
+
+ffmpeg version 2.2.3-tessus Copyright (c) 2000-2014 the FFmpeg developers
+  built on Jun  4 2014 21:31:51 with clang version 3.3 (tags/RELEASE_33/final)
+  configuration: --cc=/opt/local/bin/clang-mp-3.3 --prefix=/Users/tessus/data/ext/ffmpeg/sw --as=yasm --extra-version=tessus --disable-shared --enable-static --disable-ffplay --enable-gpl --enable-pthreads --enable-postproc --enable-libmp3lame --enable-libtheora --enable-libvorbis --enable-libx264 --enable-libx265 --enable-libxvid --enable-libspeex --enable-bzlib --enable-zlib --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libxavs --enable-version3 --enable-libvo-aacenc --enable-libvo-amrwbenc --enable-libvpx --enable-libgsm --enable-libopus --enable-libmodplug --enable-fontconfig --enable-libfreetype --enable-libass --enable-libbluray --enable-filters --disable-indev=qtkit --enable-runtime-cpudetect
+  libavutil      52. 66.100 / 52. 66.100
+  libavcodec     55. 52.102 / 55. 52.102
+  libavformat    55. 33.100 / 55. 33.100
+  libavdevice    55. 10.100 / 55. 10.100
+  libavfilter     4.  2.100 /  4.  2.100
+  libswscale      2.  5.102 /  2.  5.102
+  libswresample   0. 18.100 /  0. 18.100
+  libpostproc    52.  3.100 / 52.  3.100
+

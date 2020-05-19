@@ -1,0 +1,8 @@
+SharpDX
+SharpDX.D3DCompiler
+SharpDX.Direct2D1
+SharpDX.Direct3D11
+SharpDX.DXGI
+SharpDX.MediaFoundation
+SharpDX.XAudio2
+SharpDX.XInput

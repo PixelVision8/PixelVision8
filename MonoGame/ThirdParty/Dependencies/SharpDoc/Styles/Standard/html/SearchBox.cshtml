@@ -1,0 +1,71 @@
+﻿@*
+// Copyright (c) 2010-2013 SharpDoc - Alexandre Mutel
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.       
+// -------------------------------------------------------------------------------
+// Override this template to modify the generated html body for a Type
+// -------------------------------------------------------------------------------
+*@
+@using SharpDoc.Model
+@using System.Text;
+@model SharpDoc.TemplateContext                
+<form name="sharpdoc-search" id="sharpdoc-search" class="sharpdoc-search" action="@Model.SearchTopic.PageId@Param.FileExt" method="get">
+	<div class="sharpdoc-search-wrapper">
+		<input id="sharpdoc-search-str" name="query" type="text" class="inputbox" value="@Param.SearchBox" onclick="SearchBoxFocus(this,true);" onblur="SearchBoxFocus(this,false);" />
+	</div>
+    <div id='sharpdoc-search-opt'></div>
+	<div style="clear:both"></div>
+</form>
+<script language="javascript" type="text/javascript">
+
+    // Show search options when entering the input box
+    // Hide search options when leaving the pane_toc
+    window.addEvent('domready', function () {
+        if (location.href.indexOf("file:") === 0) {
+            $('sharpdoc-search').setStyle('display', 'none');
+            return;
+        }
+        var searchSlider = new Fx.Slide('sharpdoc-search-opt');
+        searchSlider.hide();
+        var pane_toc = $('pane_toc');
+        pane_toc.addEvent('mouseout', function (e) {
+            e.stop();
+            var tg = e.target;
+            var reltg = e.relatedTarget;
+            if (reltg) {
+                if (reltg.id == 'sharpdoc-search-str' && !searchSlider.open) {
+                    searchSlider.cancel();
+                    searchSlider.slideIn();
+                } else {
+                    while (reltg.nodeName != 'BODY' && reltg != pane_toc)
+                        reltg = reltg.parentNode;
+                    if (reltg != pane_toc) {
+                        searchSlider.cancel();
+                        searchSlider.slideOut();
+                    }
+                }
+            }
+        });
+    });
+
+    function SearchBoxFocus(elt, isFocus) {
+        if (isFocus && elt.value == '@Param.SearchBox') elt.value = '';
+        if (!isFocus && elt.value == '') elt.value = '@Param.SearchBox';
+    }
+</script>           

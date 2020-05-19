@@ -648,8 +648,7 @@ namespace PixelVision8.Runner
             // Mount the filesystem
             workspaceService.MountFileSystems(mounts);
 
-            var userBios =
-                workspaceService.ReadTextFromFile(userBiosPath);
+            var userBios =  workspaceService.ReadTextFromFile(userBiosPath);
 
             bios.ParseBiosText(userBios);
 

@@ -27,8 +27,8 @@ namespace PixelVision8.Runner.Data
 {
     public class DisplayTarget : IDisplayTarget
     {
-        private readonly int _monitorHeight = 640;
-        private readonly int _monitorWidth = 640;
+        private readonly int _monitorHeight;
+        private readonly int _monitorWidth;
         private readonly GraphicsDeviceManager graphicManager;
         public readonly SpriteBatch spriteBatch;
         private int _monitorScale = 1;
@@ -41,7 +41,6 @@ namespace PixelVision8.Runner.Data
         public Vector2 scale = new Vector2(1, 1);
         private Effect shaderEffect;
         public bool stretchScreen;
-        private int totalPixels;
         private Rectangle visibleRect;
 
         // TODO think we just need to pass in the active game and not the entire runner?
@@ -96,41 +95,12 @@ namespace PixelVision8.Runner.Data
         {
             set
             {
-                //                Effect tmpEffect;
-
+                
                 using (var reader = new BinaryReader(value))
                 {
                     crtShader = new Effect(graphicManager.GraphicsDevice,
                         reader.ReadBytes((int) reader.BaseStream.Length));
                 }
-
-                // Sharpness
-                crtShader.Parameters["hardPix"]?.SetValue(-10.0f); // -3.0f (4 - 6)
-
-                // Brightness
-                crtShader.Parameters["brightboost"]?.SetValue(1f); // 1.0f (.5 - 1.5)
-
-
-                crtShader.Parameters["hardScan"]?.SetValue(-6.0f); // -8.0f
-                crtShader.Parameters["warpX"]?.SetValue(0.008f); // 0.031f
-                crtShader.Parameters["warpY"]?.SetValue(0.01f); // 0.041f
-                crtShader.Parameters["shape"]?.SetValue(2f); // 2.0f
-
-
-
-                // crtShader.Parameters["hardScan"]?.SetValue(-8.0f);
-                // crtShader.Parameters["hardPix"]?.SetValue(-3.0f);
-                // crtShader.Parameters["warpX"]?.SetValue(0.031f);
-                // crtShader.Parameters["warpY"]?.SetValue(0.041f);
-                // crtShader.Parameters["maskDark"]?.SetValue(0.5f);
-                // crtShader.Parameters["maskLight"]?.SetValue(1.5f);
-                // crtShader.Parameters["scaleInLinearGamma"]?.SetValue(1.0f);
-                // crtShader.Parameters["shadowMask"]?.SetValue(3.0f);
-                // crtShader.Parameters["brightboost"]?.SetValue(1.0f);
-                // crtShader.Parameters["hardBloomScan"]?.SetValue(-1.5f);
-                // crtShader.Parameters["hardBloomPix"]?.SetValue(-2.0f);
-                // crtShader.Parameters["bloomAmount"]?.SetValue(0.15f);
-                // crtShader.Parameters["shape"]?.SetValue(2.0f);
 
                 useCRT = true;
             }
@@ -172,11 +142,9 @@ namespace PixelVision8.Runner.Data
 
                 shaderEffect?.Parameters["textureSize"].SetValue(new Vector2(gameWidth, gameHeight));
                 shaderEffect?.Parameters["videoSize"].SetValue(new Vector2(gameWidth, gameHeight));
-                shaderEffect?.Parameters["outputSize"].SetValue(new Vector2(graphicManager.PreferredBackBufferWidth,
-                    graphicManager.PreferredBackBufferHeight));
-
+                
                 // Set the new number of pixels
-                totalPixels = renderTexture.Width * renderTexture.Height;
+                // totalPixels = renderTexture.Width * renderTexture.Height;
             }
 
             // Calculate the game's resolution
@@ -218,8 +186,6 @@ namespace PixelVision8.Runner.Data
                 offset.Y = 0;
             }
 
-            //            Console.WriteLine("Reset Res Fullscreen " + fullscreen + " "+displayWidth+"x"+displayHeight);
-
 
             // Apply changes
             graphicManager.IsFullScreen = fullscreen;
@@ -236,7 +202,7 @@ namespace PixelVision8.Runner.Data
         public void Render(Color[] pixels)
         {
             // TODO didn't have to check length before service refactoring
-            if (totalPixels != pixels.Length) return;
+            // if (totalPixels != pixels.Length) return;
 
             renderTexture.SetData(pixels);
 
@@ -248,16 +214,5 @@ namespace PixelVision8.Runner.Data
             spriteBatch.End();
         }
 
-        //        public void CaptureScreenshot()
-        //        {
-        //            var gd = graphicManager.GraphicsDevice;
-        //            
-        //            Color[] colors = new Color[gd.Viewport.Width * gd.Viewport.Height];
-        //
-        //            gd.GetBackBufferData<Color>(colors);
-        //            
-        //            
-        //            
-        //        }
     }
 }

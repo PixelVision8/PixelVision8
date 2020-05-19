@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>NVorbis.OpenTKSupport</id>
+        <version>1.1.0</version>
+        <title />
+        <authors>Renaud Bedard</authors>
+        <owners />
+        <licenseUrl>https://nvorbis.codeplex.com/SourceControl/BrowseLatest#OpenTKSupport%2freadme.txt</licenseUrl>
+        <projectUrl>http://nvorbis.codeplex.com/</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>OpenTK support for NVorbis</description>
+        <summary>OpenTK support for NVorbis</summary>
+        <releaseNotes>- Make Ready and CastBuffer public.  Allow the user to take charge of calling EnsureBuffersFilled().
+- Provide a callback to notify when OggStream is finished</releaseNotes>
+        <language>en-US</language>
+        <tags>audio c# .NET sound vorbis OpenTK OpenAL</tags>
+        <dependencies>
+            <dependency id="opentk_unoffical" version="1.1.788.3121" />
+            <dependency id="NVorbis" version="0.7.2" />
+        </dependencies>
+        <frameworkAssemblies>
+            <frameworkAssembly assemblyName="System" />
+        </frameworkAssemblies>
+    </metadata>
+    <files>
+        <file src="bin\NVorbis.OpenTKSupport.dll" target="lib" />
+        <file src="bin\NVorbis.OpenTKSupport.xml" target="lib" />
+        <file src="OpenTKSupport\readme.txt" />
+    </files>
+</package>

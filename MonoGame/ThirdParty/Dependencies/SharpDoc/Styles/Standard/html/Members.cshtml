@@ -1,0 +1,131 @@
+﻿@*
+// Copyright (c) 2010-2013 SharpDoc - Alexandre Mutel
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.       
+// -------------------------------------------------------------------------------
+// Override this template to modify the global behavior for each Dump functions
+// -------------------------------------------------------------------------------
+*@
+@model SharpDoc.TemplateContext
+@using System.Collections.Generic
+@using System.Linq
+@using System.Dynamic
+@using System.Text
+@using SharpDoc.Model
+@Import("MembersRow")
+
+@*// Dumps members*@
+@helper Dump(IEnumerable<NModelBase> members, bool showIcons)
+{
+    @Dump(members, showIcons, null)
+}
+
+@*// Dumps members*@
+@helper Dump(IEnumerable<NModelBase> membersIt, bool showIcons, IModelReference context)
+    {
+    if (membersIt == null)
+    {
+        throw new ArgumentNullException("membersIt");
+    }
+
+    dynamic rowContext = new ExpandoObject();
+    var members = membersIt.ToList();
+    @Helpers.MembersRow.Prepare(members, rowContext)
+    <div class="members">
+        <table class="members">
+            <tr>@Helpers.MembersRow.DumpHeader(showIcons, rowContext)</tr>
+            @foreach (var member in members)
+            {
+                string displayName = member.Name;
+                StringBuilder postDesc = new StringBuilder("(");
+                var memberRef = member as INMemberReference;
+
+                if (context != null && memberRef != null)
+                {
+                    if (memberRef.IsExtensionMethod)
+                    {
+                        var extensionMethod = memberRef as NMethod;
+
+                        if (extensionMethod != null && extensionMethod.ExtensionSource != null && extensionMethod.ExtensionSource.Id != context.Id)
+                        {
+                            if (postDesc.Length > 1)
+                            {
+                                postDesc.Append(", ");
+                            }
+                            postDesc.AppendFormat("Defined by {0}", ToUrl(extensionMethod.ExtensionSource, extensionMethod.ExtensionSource.Name, true));
+                        }
+                    }
+                    else if (memberRef.DeclaringType != null && memberRef.DeclaringType.Id != context.Id)
+                    {
+                        postDesc.AppendFormat("Inherited from {0}", ToUrl(memberRef.DeclaringType, memberRef.DeclaringType.Name, true));
+                    }
+                }
+
+                var overridable = member as IOverridable;
+                if (overridable != null)
+                {
+                    if (overridable.HasOverrides && overridable is NMethod)
+                    {
+                        var overridedMethod = overridable as NMethod;
+                        displayName = overridedMethod.Signature;
+                    }
+
+                    if (postDesc.Length == 1)
+                    {
+                        if (overridable.Overrides != null)
+                        {
+                            string overriddename = null;
+                            if (overridable.Overrides.DeclaringType != null)
+                            {
+                                overriddename = string.Format("{0}.{1}()", overridable.Overrides.DeclaringType.Name, overridable.Overrides.Name);
+                            }
+                            else
+                            {
+                                overriddename = string.Format("{0}()", overridable.Overrides.Name);
+                            }
+                            postDesc.AppendFormat("Overrides {0}", ToUrl(overridable.Overrides, overriddename, true));
+                        }
+                        else if (overridable.Implements != null)
+                        {
+                            string implementName = null;
+                            if (overridable.Implements.DeclaringType != null)
+                            {
+                                implementName = string.Format("{0}.{1}()", overridable.Implements.DeclaringType.Name, overridable.Implements.Name);
+                            }
+                            else
+                            {
+                                implementName = string.Format("{0}()", overridable.Implements.Name);
+                            }
+                            postDesc.AppendFormat("Implements {0}", ToUrl(overridable.Implements, implementName, true));
+                        }
+                    }
+                }
+
+                string finalPostDesc = postDesc.Length > 1 ? postDesc.Append(".)").ToString() : string.Empty;
+
+                <tr>@Helpers.MembersRow.DumpRow(member, showIcons, displayName, finalPostDesc, rowContext)</tr>
+            }            
+        </table>
+        <a href="#top">Top</a>
+    </div>
+}
+
+
+
+

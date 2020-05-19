@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ouya.Console.Api</name>
+    </assembly>
+    <members>
+        <member name="M:Ouya.Console.Api.OuyaController.ButtonChangedThisFrame(Ouya.Console.Api.Buttons)">
+            <summary>
+            Checks if a button state changed within the current frame loop (as signaled by calling startOfFrame).
+            </summary>
+            <param name="button">The button to check.</param>
+            <returns>True if the button state changed this frame</returns>
+        </member>
+        <member name="M:Ouya.Console.Api.OuyaController.ButtonPressedThisFrame(Ouya.Console.Api.Buttons)">
+            <summary>
+            Checks if a button has been pressed within the current frame loop (as signaled by calling startOfFrame).
+            </summary>
+            <param name="button">The button to check.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Ouya.Console.Api.OuyaController.ButtonReleasedThisFrame(Ouya.Console.Api.Buttons)">
+            <summary>
+            Checks if a button has been released within the current frame loop (as signaled by calling startOfFrame).
+            </summary>
+            <param name="button">The button to check.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Ouya.Console.Api.OuyaController.GetAxisValue(Ouya.Console.Api.AxisType)">
+            <summary>
+            Gets the current axis value.
+            </summary>
+            <param name="axis">The axis to check.</param>
+            <returns>The current axis value.</returns>
+        </member>
+        <member name="M:Ouya.Console.Api.OuyaController.GetButton(Ouya.Console.Api.Buttons)">
+            <summary>
+            Gets the current pressed state of the button.
+            </summary>
+            <param name="button">The button to check.</param>
+            <returns>True if the button is pressed.</returns>
+        </member>
+        <member name="M:Ouya.Console.Api.OuyaController.GetButtonData(Ouya.Console.Api.Buttons)">
+            <summary>
+            Queries the OUYA framework to get the appropriate image/name for a specific button. The returned drawable will be 160px high.
+            </summary>
+            <param name="button">The button to get data for.</param>
+            <returns>The button data.</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:Ouya.Console.Api.OuyaController.ButtonData" -->
+        <member name="M:Ouya.Console.Api.OuyaController.ButtonData.GetAsPng">
+            <summary>
+            Gets the button image as a PNG.
+            </summary>
+            <returns>A stream containing the PNG image.</returns>
+        </member>
+        <member name="T:Ouya.Console.Api.OuyaFacade">
+            <summary>
+            Entry point for the OUYA API. Applications should use the singleton instance.
+            </summary>
+        </member>
+        <member name="M:Ouya.Console.Api.OuyaFacade.Init(Android.Content.Context,System.String)">
+            <summary>
+            Initializes the facade. Should only be called once.
+            </summary>
+            <param name="context">An Android Context object. Usually the Activity object.</param>
+            <param name="developerUuid">The developer UUID, which is obtained from the developer portal.</param>
+        </member>
+        <member name="M:Ouya.Console.Api.OuyaFacade.RequestGamerInfoAsync">
+            <summary>
+            Requests the current gamer's info.
+            </summary>
+            <returns>The GamerInfo of the user to whom the console is currently registered.</returns>
+        </member>
+        <member name="M:Ouya.Console.Api.OuyaFacade.RequestGamerUuidAsync">
+            <summary>
+            Requests the current gamer's UUID.
+            </summary>
+            <returns>The UUID of the gamer to whom the console is currently registered.</returns>
+        </member>
+        <member name="M:Ouya.Console.Api.OuyaFacade.RequestProductListAsync(System.String[])">
+            <summary>
+            Returns a list of Product objects that describe the products (including current price) associated with the specified list of Purchasables.
+            </summary>
+            <param name="purchasables">One or more string IDs that identify the products to be returned.</param>
+            <returns>The list of Product objects.</returns>
+        </member>
+        <member name="M:Ouya.Console.Api.OuyaFacade.RequestProductListAsync(System.Collections.Generic.IList{Ouya.Console.Api.Purchasable})">
+            <summary>
+            Returns a list of Product objects that describe the products (including current price) associated with the specified list of Purchasables.
+            </summary>
+            <param name="purchasables">A list of Purchasable objects that identify the products to be returned.</param>
+            <returns>The list of Product objects.</returns>
+        </member>
+        <member name="M:Ouya.Console.Api.OuyaFacade.RequestPurchaseAsync(Ouya.Console.Api.Product)">
+            <summary>
+            Requests that the specified Purchasable be purchased on behalf of the current user.
+            The IAP client service is responsible for identifying the user and requesting credentials as appropriate,
+            as well as providing all of the UI for the purchase flow. When purchases are successful, a Product object
+            is returned that describes the product that was purchased.
+            </summary>
+            <param name="product">The Purchasable object that describes the item to be purchased.</param>
+            <returns>Returns true if the purchase was successful.</returns>
+        </member>
+        <member name="M:Ouya.Console.Api.OuyaFacade.RequestReceiptsAsync">
+            <summary>
+            Requests the current receipts from the Store. If the Store is not available, the cached
+            receipts from a previous call are returned.
+            </summary>
+            <returns>The list of Receipt objects.</returns>
+        </member>
+        <member name="P:Ouya.Console.Api.OuyaFacade.Timeout">
+            <summary>
+            The timeout for the asynchronous requests, specified in milliseconds.
+            </summary>
+        </member>
+        <member name="T:Ouya.Console.Api.OuyaAuthenticationHelper">
+            <summary>
+            Async support for the OuyaAuthenticationHelper class.
+            </summary>
+        </member>
+        <member name="M:Ouya.Console.Api.OuyaAuthenticationHelper.HandleErrorAsync(Android.App.Activity,System.Int32,System.String,Android.OS.Bundle,System.Int32,System.Boolean@)">
+            <summary>
+            Handles errors asynchronously.
+            </summary>
+            <param name="activity">Reference to the current Android activity.</param>
+            <param name="errorCode">The error code returned by the previous operation.</param>
+            <param name="errorMessage">An error message to be displayed to the user.</param>
+            <param name="bundle">The bundle holding any additional error information.</param>
+            <param name="authActivityId">The ID to give the re-authentication activity if it needs to be started.</param>
+            <param name="handled">Set to true if the OUYA system handled the error.</param>
+            <returns>The task object for asynchronous operation.</returns>
+        </member>
+        <member name="T:Ouya.Console.Api.OuyaRequestException">
+            <summary>
+            Exception thrown by OUYA requests when errors occur.
+            </summary>
+        </member>
+        <member name="M:Ouya.Console.Api.OuyaRequestException.#ctor(System.Int32,System.String,Android.OS.Bundle)">
+            <summary>
+            Internal constructor to create the OuyaRequestionException object.
+            </summary>
+            <param name="errorCode">The error code associated with the error.</param>
+            <param name="errorMessage">The error message associated with the error.</param>
+            <param name="bundle">The bundle that may hold additional error information.</param>
+        </member>
+        <member name="P:Ouya.Console.Api.OuyaRequestException.ErrorCode">
+            <summary>
+            Gets the error code associated with the error.
+            </summary>
+        </member>
+        <member name="P:Ouya.Console.Api.OuyaRequestException.Bundle">
+            <summary>
+            Gets the bundle that may hold additional error information.
+            </summary>
+        </member>
+        <member name="M:Ouya.Console.Api.TaskExtensions.TimeoutAfter(System.Threading.Tasks.Task,System.Int32)">
+            <summary>
+            Starts a task that will complete within the timeout period, or fail with a TimeoutException if the timeout is exceeded.
+            </summary>
+            <param name="millisecondsTimeout">The timeout in milliseconds</param>
+            <returns>The task to wait on</returns>
+        </member>
+        <member name="M:Ouya.Console.Api.TaskExtensions.TimeoutAfter``1(System.Threading.Tasks.Task{``0},System.Int32)">
+            <summary>
+            Starts a task that will complete within the timeout period, or fail with a TimeoutException if the timeout is exceeded.
+            </summary>
+            <typeparam name="T">The return type of the task</typeparam>
+            <param name="millisecondsTimeout">The timeout in milliseconds</param>
+            <returns>The task to wait on</returns>
+        </member>
+    </members>
+</doc>

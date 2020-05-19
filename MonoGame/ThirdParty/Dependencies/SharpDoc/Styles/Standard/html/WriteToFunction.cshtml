@@ -1,0 +1,85 @@
+﻿@*
+// Copyright (c) 2010-2013 SharpDoc - Alexandre Mutel
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.       
+*@
+@model SharpDoc.TemplateContext
+@using SharpDoc.Model
+@using System.IO;
+@using SharpDoc;
+@functions {
+    public void WriteToFile(IModelReference member, string content)
+    {
+        var model = (TemplateContext)Model;
+
+		if (member == null && content == null)
+        {
+            model.IndexFile.Close();
+            return;
+        }
+
+		// When writing root, we are also copying directories and resources attached to topics
+		if (member == null)
+        {
+
+			// Copy directories
+			model.CopyStyleContent("css");
+			model.CopyStyleContent("js");
+			model.CopyStyleContent("images");
+			model.CopyStyleContent("syntaxhighlighter");
+
+			// Copy resource from topics
+            var rootTopic = model.RootTopic;
+            rootTopic.ForEachTopic(topic =>
+                {
+                    foreach (var resource in topic.Resources)
+                    {
+						model.CopyLocalContent(resource, "html");
+                    }
+                }
+                );
+        }
+
+        string pageId = (member != null) ? member.PageId : "index";
+        string pageTitle = (member != null) ? (member.PageTitle != null) ? member.PageTitle : "index" : "index";
+
+        string path = Path.Combine(member == null ? model.OutputDirectory : Path.Combine(model.OutputDirectory, "html"), pageId) + Param.FileExt;
+
+		string dirPath = Path.GetDirectoryName(path);
+		if (!Directory.Exists(dirPath))
+			Directory.CreateDirectory(dirPath);
+
+        if(model.IndexFile == null)
+            model.IndexFile = new StreamWriter(Path.Combine(model.OutputDirectory, "index.txt"));
+        if(member != null)
+        {
+            var method = member as NMethod;
+            if(method != null)
+                model.IndexFile.WriteLine(string.Format("{0}{1}|{2}|{3}", pageId, Param.FileExt, pageTitle, method.Signature));
+            else
+                model.IndexFile.WriteLine(string.Format("{0}{1}|{2}", pageId, Param.FileExt, pageTitle));
+        }
+
+		File.WriteAllText(path, content);
+    }
+}
+
+@{    
+    Model.WriteTo = WriteToFile;
+}

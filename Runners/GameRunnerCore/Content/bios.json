@@ -1,0 +1,18 @@
+{
+
+  "BaseDir" : "GameRunner",
+  "SystemName": "PV8 Game Runner",
+  "SystemVersion": "v0.9.8",
+  "Resolution" : "512x480",
+  "BootTool": "/App/BootTool/",
+  "LoadTool": "/App/LoadTool/",
+  "ErrorTool": "/App/ErrorTool/",
+  "AutoRun": "/App/DefaultGame/",
+
+  "NoAutoRun": "Could not find a game to run.",
+  "NoDefaultTool": "Could not find a default tool to load.",
+  "Exception": "@{error}\nPress Ctrl + 4 to reload the current game.",
+  "LoadError": "There was an issue loading from '@{path}'.",
+  "Warning": "@{error}"
+
+}
