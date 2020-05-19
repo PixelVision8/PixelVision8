@@ -329,8 +329,11 @@ namespace PixelVision8.Runner.Services
 
         public void SaveLog()
         {
-            if(LogInvalidated)
+            if (LogInvalidated)
+            {
                 SaveTextToFile(logFilePath, logService.ReadLog(), true);
+                LogInvalidated = false;
+            }
         }
 
         public void ClearLog()

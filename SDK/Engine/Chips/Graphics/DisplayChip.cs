@@ -240,6 +240,8 @@ namespace PixelVision8.Engine.Chips
             // int colorID;
             // // int i;
             // int index;
+            var tmpWidth = Width;
+            var tmpHeight = Height;
 
             _total = width * height;
             
@@ -263,14 +265,12 @@ namespace PixelVision8.Engine.Chips
 
                     // Make sure x & y are wrapped around the display
                     // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                    var size = this.Height;
-                    _srcY = (_srcY % size + size) % size;
-                    size = this.Width;
-                    _srcX = (_srcX % size + size) % size;
+                    _srcY = (_srcY % tmpHeight + tmpHeight) % tmpHeight;
+                    _srcX = (_srcX % tmpWidth + tmpWidth) % tmpWidth;
                     // size is still == _width from the previous operation - let's reuse the local
 
                     // Find the index
-                    _index = _srcX + size * _srcY;
+                    _index = _srcX + tmpWidth * _srcY;
 
                     // Set the pixel
                     Pixels[_index] = cachedColors[_colorID];
