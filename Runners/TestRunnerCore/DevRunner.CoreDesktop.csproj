@@ -4,10 +4,10 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
-    <AssemblyName>PixelVision8</AssemblyName>
-    <RootNamespace>PixelVision8</RootNamespace>
+    <AssemblyName>DevRunner</AssemblyName>
+    <RootNamespace>DevRunner</RootNamespace>
     <Version>1.9.8</Version>
-    <PackageId>PixelVision8</PackageId>
+    <PackageId>DevRunner</PackageId>
     <PackageIcon>Icon.png</PackageIcon>
     <Copyright>Jesse Freeman 2020</Copyright>
   </PropertyGroup>
@@ -36,41 +36,34 @@
       <Link>Content\Effects\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\PixelVision8Core\Runner\**\*.cs">
+      <Link>Runner\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\**\*.cs">
+      <Link>SDK\Editor\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Engine\**\*.cs">
+      <Link>SDK\Engine\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\**\*.cs">
+      <Link>SDK\Lua\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\**\*.cs">
+      <Link>SDK\Runner\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\**\*.cs">
+      <Link>SDK\Workspace\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
     <Content Include="..\..\Disks\RunnerTools\**\*.*">
       <Link>Content\PixelVisionOS\Tools\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\Disks\PixelVisionOS\System\**\*.*">
-      <Link>Content\PixelVisionOS\%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\Disks\PixelVisionOS\README.txt">
-      <Link>Content\PixelVisionOS\README.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\SDK\Editor\**\*.cs">
-      <Link>SDK\%(RecursiveDir)%(Filename)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Engine\**\*.cs">
-      <Link>SDK\%(RecursiveDir)%(Filename)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Lua\**\*.cs">
-      <Link>SDK\%(RecursiveDir)%(Filename)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Runner\**\*.cs">
-      <Link>SDK\%(RecursiveDir)%(Filename)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Workspace\**\*.cs">
-      <Link>SDK\%(RecursiveDir)%(Filename)%(Extension)</Link>
-    </Compile>
-
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="..\..\Effects\crt-lottes-mg.fx" />
     <Content Remove="..\..\Effects\crt-lottes-mg.ogl.mgfxc" />
   </ItemGroup>
 
@@ -81,15 +74,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\MonoGame\MonoGame.Framework\MonoGame.Framework.DesktopGL.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="..\..\Effects\QuickDraw.fx">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Update="..\..\Effects\QuickDrawBytes.fx">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
 </Project>
