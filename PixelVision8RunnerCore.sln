@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{615E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{9B9746A4-C928-40B6-A626-E54FAEC69141}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevRunner.CoreDesktop", "Runners\TestRunnerCore\DevRunner.CoreDesktop.csproj", "{8F832271-B3CB-4772-BD7A-042CD86DD77D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevRunner.CoreDesktop", "Runners\DevRunnerCore\DevRunner.CoreDesktop.csproj", "{8F832271-B3CB-4772-BD7A-042CD86DD77D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
