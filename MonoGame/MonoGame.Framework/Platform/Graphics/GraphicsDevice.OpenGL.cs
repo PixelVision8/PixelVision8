@@ -391,27 +391,27 @@ namespace Microsoft.Xna.Framework.Graphics
                 }
                 bufferMask = bufferMask | ClearBufferMask.ColorBufferBit;
             }
-			if ((options & ClearOptions.Stencil) == ClearOptions.Stencil)
-            {
-                if (stencil != _lastClearStencil)
-                {
-				    GL.ClearStencil(stencil);
-                    GraphicsExtensions.CheckGLError();
-                    _lastClearStencil = stencil;
-                }
-                bufferMask = bufferMask | ClearBufferMask.StencilBufferBit;
-			}
-
-			if ((options & ClearOptions.DepthBuffer) == ClearOptions.DepthBuffer) 
-            {
-                if (depth != _lastClearDepth)
-                {
-                    GL.ClearDepth(depth);
-                    GraphicsExtensions.CheckGLError();
-                    _lastClearDepth = depth;
-                }
-				bufferMask = bufferMask | ClearBufferMask.DepthBufferBit;
-			}
+			// if ((options & ClearOptions.Stencil) == ClearOptions.Stencil)
+   //          {
+   //              if (stencil != _lastClearStencil)
+   //              {
+			// 	    GL.ClearStencil(stencil);
+   //                  GraphicsExtensions.CheckGLError();
+   //                  _lastClearStencil = stencil;
+   //              }
+   //              bufferMask = bufferMask | ClearBufferMask.StencilBufferBit;
+			// }
+   //
+			// if ((options & ClearOptions.DepthBuffer) == ClearOptions.DepthBuffer) 
+   //          {
+   //              if (depth != _lastClearDepth)
+   //              {
+   //                  GL.ClearDepth(depth);
+   //                  GraphicsExtensions.CheckGLError();
+   //                  _lastClearDepth = depth;
+   //              }
+			// 	bufferMask = bufferMask | ClearBufferMask.DepthBufferBit;
+			// }
 
 #if MONOMAC || IOS
             if (GL.CheckFramebufferStatus(FramebufferTarget.FramebufferExt) == FramebufferErrorCode.FramebufferComplete)

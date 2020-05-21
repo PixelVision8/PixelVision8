@@ -19,11 +19,11 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Depth buffer.
         /// </summary>
-        DepthBuffer = 2,
+        // DepthBuffer = 2,
         /// <summary>
         /// Stencil buffer.
         /// </summary>
-        Stencil = 4        
+        // Stencil = 4        
     }
 }
 

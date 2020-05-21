@@ -382,42 +382,42 @@ namespace Microsoft.Xna.Framework.Graphics
                 throw new ArgumentException("The data array is too small.");
 
             int dataByteSize;
-            if (Format.IsCompressedFormat())
-            {
-                int blockWidth, blockHeight;
-                Format.GetBlockSize(out blockWidth, out blockHeight);
-                int blockWidthMinusOne = blockWidth - 1;
-                int blockHeightMinusOne = blockHeight - 1;
-                // round x and y down to next multiple of block size; width and height up to next multiple of block size
-                var roundedWidth = (checkedRect.Width + blockWidthMinusOne) & ~blockWidthMinusOne;
-                var roundedHeight = (checkedRect.Height + blockHeightMinusOne) & ~blockHeightMinusOne;
-                checkedRect = new Rectangle(checkedRect.X & ~blockWidthMinusOne, checkedRect.Y & ~blockHeightMinusOne,
-#if OPENGL
-                    // OpenGL only: The last two mip levels require the width and height to be
-                    // passed as 2x2 and 1x1, but there needs to be enough data passed to occupy
-                    // a full block.
-                    checkedRect.Width < blockWidth && textureBounds.Width < blockWidth ? textureBounds.Width : roundedWidth,
-                    checkedRect.Height < blockHeight && textureBounds.Height < blockHeight ? textureBounds.Height : roundedHeight);
-#else
-                    roundedWidth, roundedHeight);
-#endif
-                if (Format == SurfaceFormat.RgbPvrtc2Bpp || Format == SurfaceFormat.RgbaPvrtc2Bpp)
-                {
-                    dataByteSize = (Math.Max(checkedRect.Width, 16) * Math.Max(checkedRect.Height, 8) * 2 + 7) / 8;
-                }
-                else if (Format == SurfaceFormat.RgbPvrtc4Bpp || Format == SurfaceFormat.RgbaPvrtc4Bpp)
-                {
-                    dataByteSize = (Math.Max(checkedRect.Width, 8) * Math.Max(checkedRect.Height, 8) * 4 + 7) / 8;
-                }
-                else
-                {
-                    dataByteSize = roundedWidth * roundedHeight * fSize / (blockWidth * blockHeight);
-                }
-            }
-            else
-            {
+//             if (Format.IsCompressedFormat())
+//             {
+//                 int blockWidth, blockHeight;
+//                 Format.GetBlockSize(out blockWidth, out blockHeight);
+//                 int blockWidthMinusOne = blockWidth - 1;
+//                 int blockHeightMinusOne = blockHeight - 1;
+//                 // round x and y down to next multiple of block size; width and height up to next multiple of block size
+//                 var roundedWidth = (checkedRect.Width + blockWidthMinusOne) & ~blockWidthMinusOne;
+//                 var roundedHeight = (checkedRect.Height + blockHeightMinusOne) & ~blockHeightMinusOne;
+//                 checkedRect = new Rectangle(checkedRect.X & ~blockWidthMinusOne, checkedRect.Y & ~blockHeightMinusOne,
+// #if OPENGL
+//                     // OpenGL only: The last two mip levels require the width and height to be
+//                     // passed as 2x2 and 1x1, but there needs to be enough data passed to occupy
+//                     // a full block.
+//                     checkedRect.Width < blockWidth && textureBounds.Width < blockWidth ? textureBounds.Width : roundedWidth,
+//                     checkedRect.Height < blockHeight && textureBounds.Height < blockHeight ? textureBounds.Height : roundedHeight);
+// #else
+//                     roundedWidth, roundedHeight);
+// #endif
+//                 if (Format == SurfaceFormat.RgbPvrtc2Bpp || Format == SurfaceFormat.RgbaPvrtc2Bpp)
+//                 {
+//                     dataByteSize = (Math.Max(checkedRect.Width, 16) * Math.Max(checkedRect.Height, 8) * 2 + 7) / 8;
+//                 }
+//                 else if (Format == SurfaceFormat.RgbPvrtc4Bpp || Format == SurfaceFormat.RgbaPvrtc4Bpp)
+//                 {
+//                     dataByteSize = (Math.Max(checkedRect.Width, 8) * Math.Max(checkedRect.Height, 8) * 4 + 7) / 8;
+//                 }
+//                 else
+//                 {
+//                     dataByteSize = roundedWidth * roundedHeight * fSize / (blockWidth * blockHeight);
+//                 }
+//             }
+//             else
+//             {
                 dataByteSize = checkedRect.Width * checkedRect.Height * fSize;
-            }
+            // }
             if (elementCount * tSize != dataByteSize)
                 throw new ArgumentException(string.Format("elementCount is not the right size, " +
                                             "elementCount * sizeof(T) is {0}, but data size is {1}.",

@@ -543,8 +543,8 @@ namespace Microsoft.Xna.Framework.Graphics
         public void Clear(Color color)
         {
             var options = ClearOptions.Target;
-            options |= ClearOptions.DepthBuffer;
-            options |= ClearOptions.Stencil;
+            // options |= ClearOptions.DepthBuffer;
+            // options |= ClearOptions.Stencil;
             PlatformClear(options, color.ToVector4(), _viewport.MaxDepth, 0);
 
             unchecked
@@ -1311,12 +1311,12 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="primitiveCount">The number of primitives in a single instance.</param>
         /// <param name="instanceCount">The number of instances to render.</param>
         /// <remarks>Note that minVertexIndex and numVertices are unused in MonoGame and will be ignored.</remarks>
-        [Obsolete("Use DrawInstancedPrimitives(PrimitiveType primitiveType, int baseVertex, int startIndex, int primitiveCount, int instanceCount) instead. In future versions this method can be removed.")]
-        public void DrawInstancedPrimitives(PrimitiveType primitiveType, int baseVertex, int minVertexIndex,
-                                            int numVertices, int startIndex, int primitiveCount, int instanceCount)
-        {
-            DrawInstancedPrimitives(primitiveType, baseVertex, startIndex, primitiveCount, instanceCount, 0);
-        }
+        // [Obsolete("Use DrawInstancedPrimitives(PrimitiveType primitiveType, int baseVertex, int startIndex, int primitiveCount, int instanceCount) instead. In future versions this method can be removed.")]
+        // public void DrawInstancedPrimitives(PrimitiveType primitiveType, int baseVertex, int minVertexIndex,
+        //                                     int numVertices, int startIndex, int primitiveCount, int instanceCount)
+        // {
+        //     DrawInstancedPrimitives(primitiveType, baseVertex, startIndex, primitiveCount, instanceCount, 0);
+        // }
 
         /// <summary>
         /// Draw instanced geometry from the bound vertex buffers and index buffer.
@@ -1327,10 +1327,10 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="primitiveCount">The number of primitives in a single instance.</param>
         /// <param name="instanceCount">The number of instances to render.</param>
         /// <remarks>Draw geometry with data from multiple bound vertex streams at different frequencies.</remarks>
-        public void DrawInstancedPrimitives(PrimitiveType primitiveType, int baseVertex, int startIndex, int primitiveCount, int instanceCount)
-        {
-            DrawInstancedPrimitives(primitiveType, baseVertex, startIndex, primitiveCount, instanceCount, 0);
-        }
+        // public void DrawInstancedPrimitives(PrimitiveType primitiveType, int baseVertex, int startIndex, int primitiveCount, int instanceCount)
+        // {
+        //     DrawInstancedPrimitives(primitiveType, baseVertex, startIndex, primitiveCount, instanceCount, 0);
+        // }
 
         /// <summary>
         /// Draw instanced geometry from the bound vertex buffers and index buffer.
@@ -1370,17 +1370,17 @@ namespace Microsoft.Xna.Framework.Graphics
         /// The format is whatever the current format of the backbuffer is.
         /// </summary>
         /// <typeparam name="T">A byte[] of size (ViewPort.Width * ViewPort.Height * 4)</typeparam>
-        public void GetBackBufferData<T>(T[] data) where T : struct
-        {
-            if (data == null)
-                throw new ArgumentNullException("data");
-            GetBackBufferData(null, data, 0, data.Length);
-        }
+        // public void GetBackBufferData<T>(T[] data) where T : struct
+        // {
+        //     if (data == null)
+        //         throw new ArgumentNullException("data");
+        //     GetBackBufferData(null, data, 0, data.Length);
+        // }
 
-        public void GetBackBufferData<T>(T[] data, int startIndex, int elementCount) where T : struct
-        {
-            GetBackBufferData(null, data, startIndex, elementCount);
-        }
+        // public void GetBackBufferData<T>(T[] data, int startIndex, int elementCount) where T : struct
+        // {
+        //     GetBackBufferData(null, data, startIndex, elementCount);
+        // }
 
         public void GetBackBufferData<T>(Rectangle? rect, T[] data, int startIndex, int elementCount)
             where T : struct

@@ -184,16 +184,17 @@ namespace Microsoft.Xna.Framework.Graphics
             selectedMultiSampleCount = multiSampleCount;
 
             // fallback for unsupported renderTarget surface formats.
-            if (selectedFormat == SurfaceFormat.Alpha8 ||
-                selectedFormat == SurfaceFormat.NormalizedByte2 ||
-                selectedFormat == SurfaceFormat.NormalizedByte4 ||
-                selectedFormat == SurfaceFormat.Dxt1 ||
-                selectedFormat == SurfaceFormat.Dxt3 ||
-                selectedFormat == SurfaceFormat.Dxt5 ||
-                selectedFormat == SurfaceFormat.Dxt1a ||
-                selectedFormat == SurfaceFormat.Dxt1SRgb ||
-                selectedFormat == SurfaceFormat.Dxt3SRgb ||
-                selectedFormat == SurfaceFormat.Dxt5SRgb)
+            // if (
+            //     selectedFormat == SurfaceFormat.Alpha8 ||
+            //     selectedFormat == SurfaceFormat.NormalizedByte2 ||
+            //     selectedFormat == SurfaceFormat.NormalizedByte4 ||
+            //     selectedFormat == SurfaceFormat.Dxt1 ||
+            //     selectedFormat == SurfaceFormat.Dxt3 ||
+            //     selectedFormat == SurfaceFormat.Dxt5 ||
+            //     selectedFormat == SurfaceFormat.Dxt1a ||
+            //     selectedFormat == SurfaceFormat.Dxt1SRgb ||
+            //     selectedFormat == SurfaceFormat.Dxt3SRgb ||
+            //     selectedFormat == SurfaceFormat.Dxt5SRgb)
                 selectedFormat = SurfaceFormat.Color;
 
 
