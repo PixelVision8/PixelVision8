@@ -137,7 +137,7 @@ namespace Microsoft.Xna.Framework
                         Platform = null;
                     }
 
-                    ContentTypeReaderManager.ClearTypeCreators();
+                    // ContentTypeReaderManager.ClearTypeCreators();
 
                     if (SoundEffect._systemState == SoundEffect.SoundSystemState.Initialized)
                         SoundEffect.PlatformShutdown();

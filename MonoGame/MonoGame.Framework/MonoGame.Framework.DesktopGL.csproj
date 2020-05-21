@@ -23,26 +23,25 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
 
   <ItemGroup>
     <Compile Remove="bin\**\*" />
+    <Compile Remove="Content\**" />
     <Compile Remove="obj\**\*" />
     <Compile Remove="Platform\**\*" />
     <Compile Remove="Properties\**\*" />
+    <Compile Remove="Utilities\LzxStream\**" />
+    <EmbeddedResource Remove="Content\**" />
+    <EmbeddedResource Remove="Utilities\LzxStream\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Content\**" />
     <None Remove="Platform\**\*" />
+    <None Remove="Utilities\LzxStream\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="BoundingBox.cs" />
     <Compile Remove="BoundingFrustum.cs" />
     <Compile Remove="BoundingSphere.cs" />
-    <Compile Remove="Content\ContentReaders\BoundingBoxReader.cs" />
-    <Compile Remove="Content\ContentReaders\BoundingFrustumReader.cs" />
-    <Compile Remove="Content\ContentReaders\BoundingSphereReader.cs" />
-    <Compile Remove="Content\ContentReaders\CurveReader.cs" />
-    <Compile Remove="Content\ContentReaders\PlaneReader.cs" />
-    <Compile Remove="Content\ContentReaders\QuaternionReader.cs" />
-    <Compile Remove="Content\ContentReaders\RayReader.cs" />
     <Compile Remove="Curve.cs" />
     <Compile Remove="CurveContinuity.cs" />
     <Compile Remove="CurveKey.cs" />
@@ -60,7 +59,6 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
     <Compile Remove="IUpdateable.cs" />
     <Compile Remove="Media\Video.cs" />
     <Compile Remove="Media\VideoPlayer.cs" />
-    <Compile Remove="Content\ContentReaders\VideoReader.cs" />
     <Compile Remove="Input\MessageBox.cs" />
     <Compile Remove="Input\KeyboardInput.cs" />
     <Compile Remove="Plane.cs" />
