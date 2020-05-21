@@ -236,14 +236,14 @@ namespace Microsoft.Xna.Framework.Graphics
 		    return ret;
 		}
 
-		public Quaternion GetValueQuaternion ()
-		{
-            if (ParameterClass != EffectParameterClass.Vector || ParameterType != EffectParameterType.Single)
-                throw new InvalidCastException();
-
-            var vecInfo = (float[])Data;
-            return new Quaternion(vecInfo[0], vecInfo[1], vecInfo[2], vecInfo[3]);
-        }
+		// public Quaternion GetValueQuaternion ()
+		// {
+  //           if (ParameterClass != EffectParameterClass.Vector || ParameterType != EffectParameterType.Single)
+  //               throw new InvalidCastException();
+  //
+  //           var vecInfo = (float[])Data;
+  //           return new Quaternion(vecInfo[0], vecInfo[1], vecInfo[2], vecInfo[3]);
+  //       }
 
         /*
 		public Quaternion[] GetValueQuaternionArray ()
@@ -768,18 +768,18 @@ namespace Microsoft.Xna.Framework.Graphics
             StateKey = unchecked(NextStateKey++);
 		}
 
-		public void SetValue (Quaternion value)
-		{
-            if (ParameterClass != EffectParameterClass.Vector || ParameterType != EffectParameterType.Single)
-                throw new InvalidCastException();
-
-            var fData = (float[])Data;
-            fData[0] = value.X;
-            fData[1] = value.Y;
-            fData[2] = value.Z;
-            fData[3] = value.W;
-            StateKey = unchecked(NextStateKey++);
-		}
+		// public void SetValue (Quaternion value)
+		// {
+  //           if (ParameterClass != EffectParameterClass.Vector || ParameterType != EffectParameterType.Single)
+  //               throw new InvalidCastException();
+  //
+  //           var fData = (float[])Data;
+  //           fData[0] = value.X;
+  //           fData[1] = value.Y;
+  //           fData[2] = value.Z;
+  //           fData[3] = value.W;
+  //           StateKey = unchecked(NextStateKey++);
+		// }
 
         /*
 		public void SetValue (Quaternion[] value)

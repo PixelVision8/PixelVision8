@@ -33,6 +33,22 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="BoundingBox.cs" />
+    <Compile Remove="BoundingFrustum.cs" />
+    <Compile Remove="BoundingSphere.cs" />
+    <Compile Remove="Content\ContentReaders\BoundingBoxReader.cs" />
+    <Compile Remove="Content\ContentReaders\BoundingFrustumReader.cs" />
+    <Compile Remove="Content\ContentReaders\BoundingSphereReader.cs" />
+    <Compile Remove="Content\ContentReaders\CurveReader.cs" />
+    <Compile Remove="Content\ContentReaders\PlaneReader.cs" />
+    <Compile Remove="Content\ContentReaders\QuaternionReader.cs" />
+    <Compile Remove="Content\ContentReaders\RayReader.cs" />
+    <Compile Remove="Curve.cs" />
+    <Compile Remove="CurveContinuity.cs" />
+    <Compile Remove="CurveKey.cs" />
+    <Compile Remove="CurveKeyCollection.cs" />
+    <Compile Remove="CurveLoopType.cs" />
+    <Compile Remove="CurveTangent.cs" />
     <Compile Remove="DrawableGameComponent.cs" />
     <Compile Remove="GameComponent.cs" />
     <Compile Remove="GameComponentCollection.cs" />
@@ -47,6 +63,10 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
     <Compile Remove="Content\ContentReaders\VideoReader.cs" />
     <Compile Remove="Input\MessageBox.cs" />
     <Compile Remove="Input\KeyboardInput.cs" />
+    <Compile Remove="Plane.cs" />
+    <Compile Remove="PlaneIntersectionType.cs" />
+    <Compile Remove="Quaternion.cs" />
+    <Compile Remove="Ray.cs" />
     <Compile Remove="ReusableItemList.cs" />
   </ItemGroup>
 

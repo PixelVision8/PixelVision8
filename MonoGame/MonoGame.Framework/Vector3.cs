@@ -1068,12 +1068,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value">Source <see cref="Vector3"/>.</param>
         /// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
         /// <returns>Transformed <see cref="Vector3"/>.</returns>
-        public static Vector3 Transform(Vector3 value, Quaternion rotation)
-        {
-            Vector3 result;
-            Transform(ref value, ref rotation, out result);
-            return result;
-        }
+        // public static Vector3 Transform(Vector3 value, Quaternion rotation)
+        // {
+        //     Vector3 result;
+        //     Transform(ref value, ref rotation, out result);
+        //     return result;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector3"/> that contains a transformation of 3d-vector by the specified <see cref="Quaternion"/>, representing the rotation.
@@ -1081,16 +1081,16 @@ namespace Microsoft.Xna.Framework
         /// <param name="value">Source <see cref="Vector3"/>.</param>
         /// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
         /// <param name="result">Transformed <see cref="Vector3"/> as an output parameter.</param>
-        public static void Transform(ref Vector3 value, ref Quaternion rotation, out Vector3 result)
-        {
-            float x = 2 * (rotation.Y * value.Z - rotation.Z * value.Y);
-            float y = 2 * (rotation.Z * value.X - rotation.X * value.Z);
-            float z = 2 * (rotation.X * value.Y - rotation.Y * value.X);
-
-            result.X = value.X + x * rotation.W + (rotation.Y * z - rotation.Z * y);
-            result.Y = value.Y + y * rotation.W + (rotation.Z * x - rotation.X * z);
-            result.Z = value.Z + z * rotation.W + (rotation.X * y - rotation.Y * x);
-        }
+        // public static void Transform(ref Vector3 value, ref Quaternion rotation, out Vector3 result)
+        // {
+        //     float x = 2 * (rotation.Y * value.Z - rotation.Z * value.Y);
+        //     float y = 2 * (rotation.Z * value.X - rotation.X * value.Z);
+        //     float z = 2 * (rotation.X * value.Y - rotation.Y * value.X);
+        //
+        //     result.X = value.X + x * rotation.W + (rotation.Y * z - rotation.Z * y);
+        //     result.Y = value.Y + y * rotation.W + (rotation.Z * x - rotation.X * z);
+        //     result.Z = value.Z + z * rotation.W + (rotation.X * y - rotation.Y * x);
+        // }
 
         /// <summary>
         /// Apply transformation on vectors within array of <see cref="Vector3"/> by the specified <see cref="Matrix"/> and places the results in an another array.
@@ -1134,34 +1134,34 @@ namespace Microsoft.Xna.Framework
         /// <param name="destinationArray">Destination array.</param>
         /// <param name="destinationIndex">The starting index in the destination array, where the first <see cref="Vector3"/> should be written.</param>
         /// <param name="length">The number of vectors to be transformed.</param>
-        public static void Transform(Vector3[] sourceArray, int sourceIndex, ref Quaternion rotation, Vector3[] destinationArray, int destinationIndex, int length)
-        {
-            if (sourceArray == null)
-                throw new ArgumentNullException("sourceArray");
-            if (destinationArray == null)
-                throw new ArgumentNullException("destinationArray");
-            if (sourceArray.Length < sourceIndex + length)
-                throw new ArgumentException("Source array length is lesser than sourceIndex + length");
-            if (destinationArray.Length < destinationIndex + length)
-                throw new ArgumentException("Destination array length is lesser than destinationIndex + length");
-
-            // TODO: Are there options on some platforms to implement a vectorized version of this?
-
-            for (var i = 0; i < length; i++)
-            {
-                var position = sourceArray[sourceIndex + i];
-
-                float x = 2 * (rotation.Y * position.Z - rotation.Z * position.Y);
-                float y = 2 * (rotation.Z * position.X - rotation.X * position.Z);
-                float z = 2 * (rotation.X * position.Y - rotation.Y * position.X);
-
-                destinationArray[destinationIndex + i] =
-                    new Vector3(
-                        position.X + x * rotation.W + (rotation.Y * z - rotation.Z * y),
-                        position.Y + y * rotation.W + (rotation.Z * x - rotation.X * z),
-                        position.Z + z * rotation.W + (rotation.X * y - rotation.Y * x));
-            }
-        }
+        // public static void Transform(Vector3[] sourceArray, int sourceIndex, ref Quaternion rotation, Vector3[] destinationArray, int destinationIndex, int length)
+        // {
+        //     if (sourceArray == null)
+        //         throw new ArgumentNullException("sourceArray");
+        //     if (destinationArray == null)
+        //         throw new ArgumentNullException("destinationArray");
+        //     if (sourceArray.Length < sourceIndex + length)
+        //         throw new ArgumentException("Source array length is lesser than sourceIndex + length");
+        //     if (destinationArray.Length < destinationIndex + length)
+        //         throw new ArgumentException("Destination array length is lesser than destinationIndex + length");
+        //
+        //     // TODO: Are there options on some platforms to implement a vectorized version of this?
+        //
+        //     for (var i = 0; i < length; i++)
+        //     {
+        //         var position = sourceArray[sourceIndex + i];
+        //
+        //         float x = 2 * (rotation.Y * position.Z - rotation.Z * position.Y);
+        //         float y = 2 * (rotation.Z * position.X - rotation.X * position.Z);
+        //         float z = 2 * (rotation.X * position.Y - rotation.Y * position.X);
+        //
+        //         destinationArray[destinationIndex + i] =
+        //             new Vector3(
+        //                 position.X + x * rotation.W + (rotation.Y * z - rotation.Z * y),
+        //                 position.Y + y * rotation.W + (rotation.Z * x - rotation.X * z),
+        //                 position.Z + z * rotation.W + (rotation.X * y - rotation.Y * x));
+        //     }
+        // }
 
         /// <summary>
         /// Apply transformation on all vectors within array of <see cref="Vector3"/> by the specified <see cref="Matrix"/> and places the results in an another array.
@@ -1197,32 +1197,32 @@ namespace Microsoft.Xna.Framework
         /// <param name="sourceArray">Source array.</param>
         /// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
         /// <param name="destinationArray">Destination array.</param>
-        public static void Transform(Vector3[] sourceArray, ref Quaternion rotation, Vector3[] destinationArray)
-        {
-            if (sourceArray == null)
-                throw new ArgumentNullException("sourceArray");
-            if (destinationArray == null)
-                throw new ArgumentNullException("destinationArray");
-            if (destinationArray.Length < sourceArray.Length)
-                throw new ArgumentException("Destination array length is lesser than source array length");
-
-            // TODO: Are there options on some platforms to implement a vectorized version of this?
-
-            for (var i = 0; i < sourceArray.Length; i++)
-            {
-                var position = sourceArray[i];
-
-                float x = 2 * (rotation.Y * position.Z - rotation.Z * position.Y);
-                float y = 2 * (rotation.Z * position.X - rotation.X * position.Z);
-                float z = 2 * (rotation.X * position.Y - rotation.Y * position.X);
-
-                destinationArray[i] =
-                    new Vector3(
-                        position.X + x * rotation.W + (rotation.Y * z - rotation.Z * y),
-                        position.Y + y * rotation.W + (rotation.Z * x - rotation.X * z),
-                        position.Z + z * rotation.W + (rotation.X * y - rotation.Y * x));
-            }
-        }
+        // public static void Transform(Vector3[] sourceArray, ref Quaternion rotation, Vector3[] destinationArray)
+        // {
+        //     if (sourceArray == null)
+        //         throw new ArgumentNullException("sourceArray");
+        //     if (destinationArray == null)
+        //         throw new ArgumentNullException("destinationArray");
+        //     if (destinationArray.Length < sourceArray.Length)
+        //         throw new ArgumentException("Destination array length is lesser than source array length");
+        //
+        //     // TODO: Are there options on some platforms to implement a vectorized version of this?
+        //
+        //     for (var i = 0; i < sourceArray.Length; i++)
+        //     {
+        //         var position = sourceArray[i];
+        //
+        //         float x = 2 * (rotation.Y * position.Z - rotation.Z * position.Y);
+        //         float y = 2 * (rotation.Z * position.X - rotation.X * position.Z);
+        //         float z = 2 * (rotation.X * position.Y - rotation.Y * position.X);
+        //
+        //         destinationArray[i] =
+        //             new Vector3(
+        //                 position.X + x * rotation.W + (rotation.Y * z - rotation.Z * y),
+        //                 position.Y + y * rotation.W + (rotation.Z * x - rotation.X * z),
+        //                 position.Z + z * rotation.W + (rotation.X * y - rotation.Y * x));
+        //     }
+        // }
 
         #endregion
 

@@ -41,7 +41,7 @@ namespace Microsoft.Xna.Framework.Graphics
 		
 		// Summary:
 		//     Gets the BoundingSphere that contains this mesh.
-		public BoundingSphere BoundingSphere { get; set; }
+		// public BoundingSphere BoundingSphere { get; set; }
 		//
 		// Summary:
 		//     Gets a collection of effects associated with this mesh.

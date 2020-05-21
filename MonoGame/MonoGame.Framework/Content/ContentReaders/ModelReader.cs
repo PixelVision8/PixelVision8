@@ -111,7 +111,7 @@ namespace Microsoft.Xna.Framework.Content
                 //Debug.WriteLine("Mesh {0}", i);
                 string name = reader.ReadObject<string>();
                 var parentBoneIndex = ReadBoneReference(reader, boneCount);
-				var boundingSphere = reader.ReadBoundingSphere();
+				// var boundingSphere = reader.ReadBoundingSphere();
 
                 // Tag
                 var meshTag = reader.ReadObject<object>();
@@ -168,7 +168,7 @@ namespace Microsoft.Xna.Framework.Content
 				mesh.Name = name;
 				mesh.ParentBone = bones[parentBoneIndex];
 				mesh.ParentBone.AddMesh(mesh);
-				mesh.BoundingSphere = boundingSphere;
+				// mesh.BoundingSphere = boundingSphere;
 				meshes.Add(mesh);
             }
 

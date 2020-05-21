@@ -193,15 +193,15 @@ namespace Microsoft.Xna.Framework.Content
             return result;
         }
 
-        public Quaternion ReadQuaternion()
-        {
-            Quaternion result = new Quaternion();
-            result.X = ReadSingle();
-            result.Y = ReadSingle();
-            result.Z = ReadSingle();
-            result.W = ReadSingle();
-            return result;
-        }
+        // public Quaternion ReadQuaternion()
+        // {
+        //     Quaternion result = new Quaternion();
+        //     result.X = ReadSingle();
+        //     result.Y = ReadSingle();
+        //     result.Z = ReadSingle();
+        //     result.W = ReadSingle();
+        //     return result;
+        // }
 
         public T ReadRawObject<T>()
         {
@@ -287,11 +287,11 @@ namespace Microsoft.Xna.Framework.Content
             return base.Read7BitEncodedInt();
         }
 		
-		internal BoundingSphere ReadBoundingSphere()
-		{
-			var position = ReadVector3();
-            var radius = ReadSingle();
-            return new BoundingSphere(position, radius);
-		}
+		// internal BoundingSphere ReadBoundingSphere()
+		// {
+		// 	var position = ReadVector3();
+  //           var radius = ReadSingle();
+  //           return new BoundingSphere(position, radius);
+		// }
     }
 }

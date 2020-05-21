@@ -56,9 +56,9 @@ namespace Microsoft.Xna.Framework.Content
                 var hSByteReader = new SByteReader();
                 var hDateTimeReader = new DateTimeReader();
                 var hDecimalReader = new DecimalReader();
-                var hBoundingSphereReader = new BoundingSphereReader();
-                var hBoundingFrustumReader = new BoundingFrustumReader();
-                var hRayReader = new RayReader();
+                // var hBoundingSphereReader = new BoundingSphereReader();
+                // var hBoundingFrustumReader = new BoundingFrustumReader();
+                // var hRayReader = new RayReader();
                 var hCharListReader = new ListReader<Char>();
                 var hRectangleListReader = new ListReader<Rectangle>();
                 var hRectangleArrayReader = new ArrayReader<Rectangle>();
@@ -73,9 +73,9 @@ namespace Microsoft.Xna.Framework.Content
                 var hVector2Reader = new Vector2Reader();
                 var hVector3Reader = new Vector3Reader();
                 var hVector4Reader = new Vector4Reader();
-                var hCurveReader = new CurveReader();
+                // var hCurveReader = new CurveReader();
                 var hIndexBufferReader = new IndexBufferReader();
-                var hBoundingBoxReader = new BoundingBoxReader();
+                // var hBoundingBoxReader = new BoundingBoxReader();
                 var hMatrixReader = new MatrixReader();
                 var hBasicEffectReader = new BasicEffectReader();
                 var hVertexBufferReader = new VertexBufferReader();

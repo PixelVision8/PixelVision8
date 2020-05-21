@@ -64,9 +64,9 @@ namespace Microsoft.Xna.Framework.Content
 					else if (ReflectionHelpers.IsAssignableFromType(typeof(Matrix []), itemType)) {
 						parameter.SetValue((Matrix[]) item.Value);
 					}
-					else if (ReflectionHelpers.IsAssignableFromType(typeof(Quaternion), itemType)) {
-						parameter.SetValue((Quaternion) item.Value);
-					}
+					// else if (ReflectionHelpers.IsAssignableFromType(typeof(Quaternion), itemType)) {
+					// 	parameter.SetValue((Quaternion) item.Value);
+					// }
 					else {
 						throw new NotSupportedException ("Parameter type is not supported");
 					}

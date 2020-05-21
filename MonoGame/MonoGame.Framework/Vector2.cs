@@ -1018,11 +1018,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value">Source <see cref="Vector2"/>.</param>
         /// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
         /// <returns>Transformed <see cref="Vector2"/>.</returns>
-        public static Vector2 Transform(Vector2 value, Quaternion rotation)
-        {
-            Transform(ref value, ref rotation, out value);
-            return value;
-        }
+        // public static Vector2 Transform(Vector2 value, Quaternion rotation)
+        // {
+        //     Transform(ref value, ref rotation, out value);
+        //     return value;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains a transformation of 2d-vector by the specified <see cref="Quaternion"/>, representing the rotation.
@@ -1030,20 +1030,20 @@ namespace Microsoft.Xna.Framework
         /// <param name="value">Source <see cref="Vector2"/>.</param>
         /// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
         /// <param name="result">Transformed <see cref="Vector2"/> as an output parameter.</param>
-        public static void Transform(ref Vector2 value, ref Quaternion rotation, out Vector2 result)
-        {
-            var rot1 = new Vector3(rotation.X + rotation.X, rotation.Y + rotation.Y, rotation.Z + rotation.Z);
-            var rot2 = new Vector3(rotation.X, rotation.X, rotation.W);
-            var rot3 = new Vector3(1, rotation.Y, rotation.Z);
-            var rot4 = rot1*rot2;
-            var rot5 = rot1*rot3;
-
-            var v = new Vector2();
-            v.X = (float)((double)value.X * (1.0 - (double)rot5.Y - (double)rot5.Z) + (double)value.Y * ((double)rot4.Y - (double)rot4.Z));
-            v.Y = (float)((double)value.X * ((double)rot4.Y + (double)rot4.Z) + (double)value.Y * (1.0 - (double)rot4.X - (double)rot5.Z));
-            result.X = v.X;
-            result.Y = v.Y;
-        }
+        // public static void Transform(ref Vector2 value, ref Quaternion rotation, out Vector2 result)
+        // {
+        //     var rot1 = new Vector3(rotation.X + rotation.X, rotation.Y + rotation.Y, rotation.Z + rotation.Z);
+        //     var rot2 = new Vector3(rotation.X, rotation.X, rotation.W);
+        //     var rot3 = new Vector3(1, rotation.Y, rotation.Z);
+        //     var rot4 = rot1*rot2;
+        //     var rot5 = rot1*rot3;
+        //
+        //     var v = new Vector2();
+        //     v.X = (float)((double)value.X * (1.0 - (double)rot5.Y - (double)rot5.Z) + (double)value.Y * ((double)rot4.Y - (double)rot4.Z));
+        //     v.Y = (float)((double)value.X * ((double)rot4.Y + (double)rot4.Z) + (double)value.Y * (1.0 - (double)rot4.X - (double)rot5.Z));
+        //     result.X = v.X;
+        //     result.Y = v.Y;
+        // }
 
         /// <summary>
         /// Apply transformation on vectors within array of <see cref="Vector2"/> by the specified <see cref="Matrix"/> and places the results in an another array.
@@ -1090,39 +1090,39 @@ namespace Microsoft.Xna.Framework
         /// <param name="destinationArray">Destination array.</param>
         /// <param name="destinationIndex">The starting index in the destination array, where the first <see cref="Vector2"/> should be written.</param>
         /// <param name="length">The number of vectors to be transformed.</param>
-        public static void Transform
-        (
-            Vector2[] sourceArray,
-            int sourceIndex,
-            ref Quaternion rotation,
-            Vector2[] destinationArray,
-            int destinationIndex,
-            int length
-        )
-        {
-            if (sourceArray == null)
-                throw new ArgumentNullException("sourceArray");
-            if (destinationArray == null)
-                throw new ArgumentNullException("destinationArray");
-            if (sourceArray.Length < sourceIndex + length)
-                throw new ArgumentException("Source array length is lesser than sourceIndex + length");
-            if (destinationArray.Length < destinationIndex + length)
-                throw new ArgumentException("Destination array length is lesser than destinationIndex + length");
-
-            for (int x = 0; x < length; x++)
-            {
-                var position = sourceArray[sourceIndex + x];
-                var destination = destinationArray[destinationIndex + x];
-
-                Vector2 v;
-                Transform(ref position,ref rotation,out v); 
-
-                destination.X = v.X;
-                destination.Y = v.Y;
-
-                destinationArray[destinationIndex + x] = destination;
-            }
-        }
+        // public static void Transform
+        // (
+        //     Vector2[] sourceArray,
+        //     int sourceIndex,
+        //     ref Quaternion rotation,
+        //     Vector2[] destinationArray,
+        //     int destinationIndex,
+        //     int length
+        // )
+        // {
+        //     if (sourceArray == null)
+        //         throw new ArgumentNullException("sourceArray");
+        //     if (destinationArray == null)
+        //         throw new ArgumentNullException("destinationArray");
+        //     if (sourceArray.Length < sourceIndex + length)
+        //         throw new ArgumentException("Source array length is lesser than sourceIndex + length");
+        //     if (destinationArray.Length < destinationIndex + length)
+        //         throw new ArgumentException("Destination array length is lesser than destinationIndex + length");
+        //
+        //     for (int x = 0; x < length; x++)
+        //     {
+        //         var position = sourceArray[sourceIndex + x];
+        //         var destination = destinationArray[destinationIndex + x];
+        //
+        //         Vector2 v;
+        //         Transform(ref position,ref rotation,out v); 
+        //
+        //         destination.X = v.X;
+        //         destination.Y = v.Y;
+        //
+        //         destinationArray[destinationIndex + x] = destination;
+        //     }
+        // }
 
         /// <summary>
         /// Apply transformation on all vectors within array of <see cref="Vector2"/> by the specified <see cref="Matrix"/> and places the results in an another array.
@@ -1144,15 +1144,15 @@ namespace Microsoft.Xna.Framework
         /// <param name="sourceArray">Source array.</param>
         /// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
         /// <param name="destinationArray">Destination array.</param>
-        public static void Transform
-        (
-            Vector2[] sourceArray,
-            ref Quaternion rotation,
-            Vector2[] destinationArray
-        )
-        {
-            Transform(sourceArray, 0, ref rotation, destinationArray, 0, sourceArray.Length);
-        }
+        // public static void Transform
+        // (
+        //     Vector2[] sourceArray,
+        //     ref Quaternion rotation,
+        //     Vector2[] destinationArray
+        // )
+        // {
+        //     Transform(sourceArray, 0, ref rotation, destinationArray, 0, sourceArray.Length);
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains a transformation of the specified normal by the specified <see cref="Matrix"/>.

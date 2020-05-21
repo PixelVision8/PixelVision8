@@ -984,12 +984,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value">Source <see cref="Vector2"/>.</param>
         /// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
         /// <returns>Transformed <see cref="Vector4"/>.</returns>
-        public static Vector4 Transform(Vector2 value, Quaternion rotation)
-        {
-            Vector4 result;
-            Transform(ref value, ref rotation, out result);
-            return result;
-        }
+        // public static Vector4 Transform(Vector2 value, Quaternion rotation)
+        // {
+        //     Vector4 result;
+        //     Transform(ref value, ref rotation, out result);
+        //     return result;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector4"/> that contains a transformation of 3d-vector by the specified <see cref="Matrix"/>.
@@ -1010,12 +1010,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value">Source <see cref="Vector3"/>.</param>
         /// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
         /// <returns>Transformed <see cref="Vector4"/>.</returns>
-        public static Vector4 Transform(Vector3 value, Quaternion rotation)
-        {
-            Vector4 result;
-            Transform(ref value, ref rotation, out result);
-            return result;
-        }
+        // public static Vector4 Transform(Vector3 value, Quaternion rotation)
+        // {
+        //     Vector4 result;
+        //     Transform(ref value, ref rotation, out result);
+        //     return result;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector4"/> that contains a transformation of 4d-vector by the specified <see cref="Matrix"/>.
@@ -1035,12 +1035,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value">Source <see cref="Vector4"/>.</param>
         /// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
         /// <returns>Transformed <see cref="Vector4"/>.</returns>
-        public static Vector4 Transform(Vector4 value, Quaternion rotation)
-        {
-            Vector4 result;
-            Transform(ref value, ref rotation, out result);
-            return result;
-        }
+        // public static Vector4 Transform(Vector4 value, Quaternion rotation)
+        // {
+        //     Vector4 result;
+        //     Transform(ref value, ref rotation, out result);
+        //     return result;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector4"/> that contains a transformation of 2d-vector by the specified <see cref="Matrix"/>.
@@ -1062,10 +1062,10 @@ namespace Microsoft.Xna.Framework
         /// <param name="value">Source <see cref="Vector2"/>.</param>
         /// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
         /// <param name="result">Transformed <see cref="Vector4"/> as an output parameter.</param>
-        public static void Transform(ref Vector2 value, ref Quaternion rotation, out Vector4 result)
-        {
-            throw new NotImplementedException();
-        }
+        // public static void Transform(ref Vector2 value, ref Quaternion rotation, out Vector4 result)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector4"/> that contains a transformation of 3d-vector by the specified <see cref="Matrix"/>.
@@ -1087,10 +1087,10 @@ namespace Microsoft.Xna.Framework
         /// <param name="value">Source <see cref="Vector3"/>.</param>
         /// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
         /// <param name="result">Transformed <see cref="Vector4"/> as an output parameter.</param>
-        public static void Transform(ref Vector3 value, ref Quaternion rotation, out Vector4 result)
-        {
-            throw new NotImplementedException();
-        }
+        // public static void Transform(ref Vector3 value, ref Quaternion rotation, out Vector4 result)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector4"/> that contains a transformation of 4d-vector by the specified <see cref="Matrix"/>.
@@ -1116,10 +1116,10 @@ namespace Microsoft.Xna.Framework
         /// <param name="value">Source <see cref="Vector4"/>.</param>
         /// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
         /// <param name="result">Transformed <see cref="Vector4"/> as an output parameter.</param>
-        public static void Transform(ref Vector4 value, ref Quaternion rotation, out Vector4 result)
-        {
-            throw new NotImplementedException();
-        }
+        // public static void Transform(ref Vector4 value, ref Quaternion rotation, out Vector4 result)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
         /// <summary>
         /// Apply transformation on vectors within array of <see cref="Vector4"/> by the specified <see cref="Matrix"/> and places the results in an another array.
@@ -1165,30 +1165,30 @@ namespace Microsoft.Xna.Framework
         /// <param name="destinationArray">Destination array.</param>
         /// <param name="destinationIndex">The starting index in the destination array, where the first <see cref="Vector4"/> should be written.</param>
         /// <param name="length">The number of vectors to be transformed.</param>
-        public static void Transform(
-            Vector4[] sourceArray,
-            int sourceIndex,
-            ref Quaternion rotation,
-            Vector4[] destinationArray,
-            int destinationIndex,
-            int length
-            )
-        {
-            if (sourceArray == null)
-                throw new ArgumentNullException("sourceArray");
-            if (destinationArray == null)
-                throw new ArgumentNullException("destinationArray");
-            if (sourceArray.Length < sourceIndex + length)
-                throw new ArgumentException("Source array length is lesser than sourceIndex + length");
-            if (destinationArray.Length < destinationIndex + length)
-                throw new ArgumentException("Destination array length is lesser than destinationIndex + length");
-
-            for (var i = 0; i < length; i++)
-            {
-                var value = sourceArray[sourceIndex + i];
-                destinationArray[destinationIndex + i] = Transform(value, rotation);
-            }
-        }
+        // public static void Transform(
+        //     Vector4[] sourceArray,
+        //     int sourceIndex,
+        //     ref Quaternion rotation,
+        //     Vector4[] destinationArray,
+        //     int destinationIndex,
+        //     int length
+        //     )
+        // {
+        //     if (sourceArray == null)
+        //         throw new ArgumentNullException("sourceArray");
+        //     if (destinationArray == null)
+        //         throw new ArgumentNullException("destinationArray");
+        //     if (sourceArray.Length < sourceIndex + length)
+        //         throw new ArgumentException("Source array length is lesser than sourceIndex + length");
+        //     if (destinationArray.Length < destinationIndex + length)
+        //         throw new ArgumentException("Destination array length is lesser than destinationIndex + length");
+        //
+        //     for (var i = 0; i < length; i++)
+        //     {
+        //         var value = sourceArray[sourceIndex + i];
+        //         destinationArray[destinationIndex + i] = Transform(value, rotation);
+        //     }
+        // }
 
         /// <summary>
         /// Apply transformation on all vectors within array of <see cref="Vector4"/> by the specified <see cref="Matrix"/> and places the results in an another array.
@@ -1218,21 +1218,21 @@ namespace Microsoft.Xna.Framework
         /// <param name="sourceArray">Source array.</param>
         /// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
         /// <param name="destinationArray">Destination array.</param>
-        public static void Transform(Vector4[] sourceArray, ref Quaternion rotation, Vector4[] destinationArray)
-        {
-            if (sourceArray == null)
-                throw new ArgumentNullException("sourceArray");
-            if (destinationArray == null)
-                throw new ArgumentNullException("destinationArray");
-            if (destinationArray.Length < sourceArray.Length)
-                throw new ArgumentException("Destination array length is lesser than source array length");
-
-            for (var i = 0; i < sourceArray.Length; i++)
-            {
-                var value = sourceArray[i];
-                destinationArray[i] = Transform(value, rotation);
-            }
-        }
+        // public static void Transform(Vector4[] sourceArray, ref Quaternion rotation, Vector4[] destinationArray)
+        // {
+        //     if (sourceArray == null)
+        //         throw new ArgumentNullException("sourceArray");
+        //     if (destinationArray == null)
+        //         throw new ArgumentNullException("destinationArray");
+        //     if (destinationArray.Length < sourceArray.Length)
+        //         throw new ArgumentException("Destination array length is lesser than source array length");
+        //
+        //     for (var i = 0; i < sourceArray.Length; i++)
+        //     {
+        //         var value = sourceArray[i];
+        //         destinationArray[i] = Transform(value, rotation);
+        //     }
+        // }
 
         #endregion
 
