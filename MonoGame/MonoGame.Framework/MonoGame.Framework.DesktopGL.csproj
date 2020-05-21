@@ -71,6 +71,17 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
     <Compile Remove="Graphics\Effect\SkinnedEffect.cs" />
     <Compile Remove="Graphics\GraphicsAdapter.cs" />
     <Compile Remove="Graphics\Model.cs" />
+    <Compile Remove="Graphics\ModelBone.cs" />
+    <Compile Remove="Graphics\ModelBoneCollection.cs" />
+    <Compile Remove="Graphics\ModelEffectCollection.cs" />
+    <Compile Remove="Graphics\ModelMesh.cs" />
+    <Compile Remove="Graphics\ModelMeshCollection.cs" />
+    <Compile Remove="Graphics\ModelMeshPart.cs" />
+    <Compile Remove="Graphics\ModelMeshPartCollection.cs" />
+    <Compile Remove="Graphics\OcclusionQuery.cs" />
+    <Compile Remove="Graphics\RenderTargetCube.cs" />
+    <Compile Remove="Graphics\Texture3D.cs" />
+    <Compile Remove="Graphics\TextureCube.cs" />
     <Compile Remove="IDrawable.cs" />
     <Compile Remove="IGameComponent.cs" />
     <Compile Remove="IPlatformBackButton.cs" />

@@ -795,18 +795,18 @@ namespace Microsoft.Xna.Framework.Graphics
 			}
 		}
 
-        public void SetRenderTarget(RenderTargetCube renderTarget, CubeMapFace cubeMapFace)
-        {
-            if (renderTarget == null)
-            {
-                SetRenderTargets(null);
-            }
-            else
-            {
-                _tempRenderTargetBinding[0] = new RenderTargetBinding(renderTarget, cubeMapFace);
-                SetRenderTargets(_tempRenderTargetBinding);
-            }
-        }
+        // public void SetRenderTarget(RenderTargetCube renderTarget, CubeMapFace cubeMapFace)
+        // {
+        //     if (renderTarget == null)
+        //     {
+        //         SetRenderTargets(null);
+        //     }
+        //     else
+        //     {
+        //         _tempRenderTargetBinding[0] = new RenderTargetBinding(renderTarget, cubeMapFace);
+        //         SetRenderTargets(_tempRenderTargetBinding);
+        //     }
+        // }
 
 		public void SetRenderTargets(params RenderTargetBinding[] renderTargets)
 		{

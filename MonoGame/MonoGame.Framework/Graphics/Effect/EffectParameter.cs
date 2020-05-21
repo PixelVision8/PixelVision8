@@ -306,23 +306,23 @@ namespace Microsoft.Xna.Framework.Graphics
 			return (Texture2D)Data;
 		}
 
-#if !GLES
-	    public Texture3D GetValueTexture3D ()
-	    {
-            if (ParameterClass != EffectParameterClass.Object || ParameterType != EffectParameterType.Texture3D)
-                throw new InvalidCastException();
-
-            return (Texture3D)Data;
-	    }
-#endif
-
-		public TextureCube GetValueTextureCube ()
-		{
-            if (ParameterClass != EffectParameterClass.Object || ParameterType != EffectParameterType.TextureCube)
-                throw new InvalidCastException();
-
-            return (TextureCube)Data;
-		}
+// #if !GLES
+// 	    public Texture3D GetValueTexture3D ()
+// 	    {
+//             if (ParameterClass != EffectParameterClass.Object || ParameterType != EffectParameterType.Texture3D)
+//                 throw new InvalidCastException();
+//
+//             return (Texture3D)Data;
+// 	    }
+// #endif
+//
+// 		public TextureCube GetValueTextureCube ()
+// 		{
+//             if (ParameterClass != EffectParameterClass.Object || ParameterType != EffectParameterType.TextureCube)
+//                 throw new InvalidCastException();
+//
+//             return (TextureCube)Data;
+// 		}
 
 		public Vector2 GetValueVector2 ()
 		{
