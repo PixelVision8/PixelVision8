@@ -91,8 +91,12 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
     <Compile Remove="Graphics\States\Blend.cs" />
     <Compile Remove="Graphics\States\BlendFunction.cs" />
     <Compile Remove="Graphics\States\BlendState.cs" />
+    <Compile Remove="Graphics\States\CullMode.cs" />
+    <Compile Remove="Graphics\States\DepthFormat.cs" />
     <Compile Remove="Graphics\States\DepthStencilState.cs" />
+    <Compile Remove="Graphics\States\FillMode.cs" />
     <Compile Remove="Graphics\States\RasterizerState.cs" />
+    <Compile Remove="Graphics\States\StencilOperation.cs" />
     <Compile Remove="Graphics\States\TargetBlendState.cs" />
     <Compile Remove="Graphics\Texture3D.cs" />
     <Compile Remove="Graphics\TextureCube.cs" />
