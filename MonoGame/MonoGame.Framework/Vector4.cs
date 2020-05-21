@@ -11,9 +11,9 @@ namespace Microsoft.Xna.Framework
     /// <summary>
     /// Describes a 4D-vector.
     /// </summary>
-#if XNADESIGNPROVIDED
-    [System.ComponentModel.TypeConverter(typeof(Microsoft.Xna.Framework.Design.Vector4TypeConverter))]
-#endif
+// #if XNADESIGNPROVIDED
+//     [System.ComponentModel.TypeConverter(typeof(Microsoft.Xna.Framework.Design.Vector4TypeConverter))]
+// #endif
     [DataContract]
     [DebuggerDisplay("{DebugDisplayString,nq}")]
     public struct Vector4 : IEquatable<Vector4>

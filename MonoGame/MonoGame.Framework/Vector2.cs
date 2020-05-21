@@ -12,9 +12,9 @@ namespace Microsoft.Xna.Framework
     /// <summary>
     /// Describes a 2D-vector.
     /// </summary>
-#if XNADESIGNPROVIDED
-    [System.ComponentModel.TypeConverter(typeof(Microsoft.Xna.Framework.Design.Vector2TypeConverter))]
-#endif
+// #if XNADESIGNPROVIDED
+//     [System.ComponentModel.TypeConverter(typeof(Microsoft.Xna.Framework.Design.Vector2TypeConverter))]
+// #endif
     [DataContract]
     [DebuggerDisplay("{DebugDisplayString,nq}")]
     public struct Vector2 : IEquatable<Vector2>
