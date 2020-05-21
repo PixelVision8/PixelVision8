@@ -103,6 +103,7 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
     <Compile Remove="Graphics\OcclusionQuery.cs" />
     <Compile Remove="Graphics\RenderTarget2D.cs" />
     <Compile Remove="Graphics\RenderTargetCube.cs" />
+    <Compile Remove="Graphics\SpriteFont.cs" />
     <Compile Remove="Graphics\States\Blend.cs" />
     <Compile Remove="Graphics\States\BlendFunction.cs" />
     <Compile Remove="Graphics\States\BlendState.cs" />

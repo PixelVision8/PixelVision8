@@ -137,60 +137,60 @@ namespace Microsoft.Xna.Framework.Graphics
             });
         }
 
-        private void PlatformSetData<T>(int level, int arraySlice, Rectangle rect, T[] data, int startIndex, int elementCount) where T : struct
-        {
-            Threading.BlockOnUIThread(() =>
-            {
-                var elementSizeInByte = ReflectionHelpers.SizeOf<T>.Get();
-                var dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-                // Use try..finally to make sure dataHandle is freed in case of an error
-                try
-                {
-                    var startBytes = startIndex * elementSizeInByte;
-                    var dataPtr = new IntPtr(dataHandle.AddrOfPinnedObject().ToInt64() + startBytes);
-                    // Store the current bound texture.
-                    var prevTexture = GraphicsExtensions.GetBoundTexture2D();
-
-                    if (prevTexture != glTexture)
-                    {
-                        GL.BindTexture(TextureTarget.Texture2D, glTexture);
-                        GraphicsExtensions.CheckGLError();
-                    }
-
-                    GenerateGLTextureIfRequired();
-                    GL.PixelStore(PixelStoreParameter.UnpackAlignment, Math.Min(_format.GetSize(), 8));
-
-                    if (glFormat == (PixelFormat)GLPixelFormat.CompressedTextureFormats)
-                    {
-                        GL.CompressedTexSubImage2D(TextureTarget.Texture2D, level, rect.X, rect.Y, rect.Width, rect.Height,
-                            (PixelInternalFormat)glInternalFormat, elementCount * elementSizeInByte, dataPtr);
-                    }
-                    else
-                    {
-                        GL.TexSubImage2D(TextureTarget.Texture2D, level, rect.X, rect.Y,
-                            rect.Width, rect.Height, glFormat, glType, dataPtr);
-                    }
-                    GraphicsExtensions.CheckGLError();
-
-#if !ANDROID
-                    // Required to make sure that any texture uploads on a thread are completed
-                    // before the main thread tries to use the texture.
-                    GL.Finish();
-                    GraphicsExtensions.CheckGLError();
-#endif
-                    // Restore the bound texture.
-                    if (prevTexture != glTexture)
-                    {
-                        GL.BindTexture(TextureTarget.Texture2D, prevTexture);
-                        GraphicsExtensions.CheckGLError();
-                    }
-                }
-                finally
-                {
-                    dataHandle.Free();
-                }
-            });
-        }
+//         private void PlatformSetData<T>(int level, int arraySlice, Rectangle rect, T[] data, int startIndex, int elementCount) where T : struct
+//         {
+//             Threading.BlockOnUIThread(() =>
+//             {
+//                 var elementSizeInByte = ReflectionHelpers.SizeOf<T>.Get();
+//                 var dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+//                 // Use try..finally to make sure dataHandle is freed in case of an error
+//                 try
+//                 {
+//                     var startBytes = startIndex * elementSizeInByte;
+//                     var dataPtr = new IntPtr(dataHandle.AddrOfPinnedObject().ToInt64() + startBytes);
+//                     // Store the current bound texture.
+//                     var prevTexture = GraphicsExtensions.GetBoundTexture2D();
+//
+//                     if (prevTexture != glTexture)
+//                     {
+//                         GL.BindTexture(TextureTarget.Texture2D, glTexture);
+//                         GraphicsExtensions.CheckGLError();
+//                     }
+//
+//                     GenerateGLTextureIfRequired();
+//                     GL.PixelStore(PixelStoreParameter.UnpackAlignment, Math.Min(_format.GetSize(), 8));
+//
+//                     if (glFormat == (PixelFormat)GLPixelFormat.CompressedTextureFormats)
+//                     {
+//                         GL.CompressedTexSubImage2D(TextureTarget.Texture2D, level, rect.X, rect.Y, rect.Width, rect.Height,
+//                             (PixelInternalFormat)glInternalFormat, elementCount * elementSizeInByte, dataPtr);
+//                     }
+//                     else
+//                     {
+//                         GL.TexSubImage2D(TextureTarget.Texture2D, level, rect.X, rect.Y,
+//                             rect.Width, rect.Height, glFormat, glType, dataPtr);
+//                     }
+//                     GraphicsExtensions.CheckGLError();
+//
+// #if !ANDROID
+//                     // Required to make sure that any texture uploads on a thread are completed
+//                     // before the main thread tries to use the texture.
+//                     GL.Finish();
+//                     GraphicsExtensions.CheckGLError();
+// #endif
+//                     // Restore the bound texture.
+//                     if (prevTexture != glTexture)
+//                     {
+//                         GL.BindTexture(TextureTarget.Texture2D, prevTexture);
+//                         GraphicsExtensions.CheckGLError();
+//                     }
+//                 }
+//                 finally
+//                 {
+//                     dataHandle.Free();
+//                 }
+//             });
+//         }
 
         private void PlatformGetData<T>(int level, int arraySlice, Rectangle rect, T[] data, int startIndex, int elementCount) where T : struct
         {
@@ -386,15 +386,15 @@ namespace Microsoft.Xna.Framework.Graphics
 
         // This method allows games that use Texture2D.FromStream
         // to reload their textures after the GL context is lost.
-        private void PlatformReload(Stream textureStream)
-        {
-            var prev = GraphicsExtensions.GetBoundTexture2D();
-
-            GenerateGLTextureIfRequired();
-            FillTextureFromStream(textureStream);
-
-            GL.BindTexture(TextureTarget.Texture2D, prev);
-        }
+        // private void PlatformReload(Stream textureStream)
+        // {
+        //     var prev = GraphicsExtensions.GetBoundTexture2D();
+        //
+        //     GenerateGLTextureIfRequired();
+        //     FillTextureFromStream(textureStream);
+        //
+        //     GL.BindTexture(TextureTarget.Texture2D, prev);
+        // }
 
         private void GenerateGLTextureIfRequired()
         {

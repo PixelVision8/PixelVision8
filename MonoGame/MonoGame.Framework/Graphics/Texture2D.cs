@@ -29,13 +29,13 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Gets the dimensions of the texture
         /// </summary>
-        public Rectangle Bounds
-        {
-            get
-            {
-				return new Rectangle(0, 0, this.width, this.height);
-            }
-        }
+    //     public Rectangle Bounds
+    //     {
+    //         get
+    //         {
+				// return new Rectangle(0, 0, this.width, this.height);
+    //         }
+    //     }
 
         /// <summary>
         /// Creates a new texture of the given size
@@ -56,10 +56,10 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="height"></param>
         /// <param name="mipmap"></param>
         /// <param name="format"></param>
-        public Texture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipmap, SurfaceFormat format)
-            : this(graphicsDevice, width, height, mipmap, format, SurfaceType.Texture, false, 1)
-        {
-        }
+        // public Texture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipmap, SurfaceFormat format)
+        //     : this(graphicsDevice, width, height, mipmap, format, SurfaceType.Texture, false, 1)
+        // {
+        // }
 
         /// <summary>
         /// Creates a new texture array of a given size with a surface format and optional mipmaps.
@@ -71,11 +71,11 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="mipmap"></param>
         /// <param name="format"></param>
         /// <param name="arraySize"></param>
-        public Texture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipmap, SurfaceFormat format, int arraySize)
-            : this(graphicsDevice, width, height, mipmap, format, SurfaceType.Texture, false, arraySize)
-        {
-            
-        }
+        // public Texture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipmap, SurfaceFormat format, int arraySize)
+        //     : this(graphicsDevice, width, height, mipmap, format, SurfaceType.Texture, false, arraySize)
+        // {
+        //     
+        // }
 
         /// <summary>
         ///  Creates a new texture of a given size with a surface format and optional mipmaps.
@@ -86,10 +86,10 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="mipmap"></param>
         /// <param name="format"></param>
         /// <param name="type"></param>
-        internal Texture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipmap, SurfaceFormat format, SurfaceType type)
-            : this(graphicsDevice, width, height, mipmap, format, type, false, 1)
-        {
-        }
+        // internal Texture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipmap, SurfaceFormat format, SurfaceType type)
+        //     : this(graphicsDevice, width, height, mipmap, format, type, false, 1)
+        // {
+        // }
         
         protected Texture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipmap, SurfaceFormat format, SurfaceType type, bool shared, int arraySize)
 		{
@@ -153,12 +153,12 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="data">New data for the texture</param>
         /// <param name="startIndex">Start position of data</param>
         /// <param name="elementCount"></param>
-        public void SetData<T>(int level, int arraySlice, Rectangle? rect, T[] data, int startIndex, int elementCount) where T : struct
-        {
-            Rectangle checkedRect;
-            ValidateParams(level, arraySlice, rect, data, startIndex, elementCount, out checkedRect);
-            PlatformSetData(level, arraySlice, checkedRect, data, startIndex, elementCount);
-        }
+        // public void SetData<T>(int level, int arraySlice, Rectangle? rect, T[] data, int startIndex, int elementCount) where T : struct
+        // {
+        //     Rectangle checkedRect;
+        //     ValidateParams(level, arraySlice, rect, data, startIndex, elementCount, out checkedRect);
+        //     PlatformSetData(level, arraySlice, checkedRect, data, startIndex, elementCount);
+        // }
 
         /// <summary>
         /// Changes the pixels of the texture
@@ -169,15 +169,15 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="data">New data for the texture</param>
         /// <param name="startIndex">Start position of data</param>
         /// <param name="elementCount"></param>
-        public void SetData<T>(int level, Rectangle? rect, T[] data, int startIndex, int elementCount) where T : struct 
-        {
-            Rectangle checkedRect;
-            ValidateParams(level, 0, rect, data, startIndex, elementCount, out checkedRect);
-            if (rect.HasValue)
-                PlatformSetData(level, 0, checkedRect, data, startIndex, elementCount);
-            else
-                PlatformSetData(level, data, startIndex, elementCount);
-        }
+        // public void SetData<T>(int level, Rectangle? rect, T[] data, int startIndex, int elementCount) where T : struct 
+        // {
+        //     Rectangle checkedRect;
+        //     ValidateParams(level, 0, rect, data, startIndex, elementCount, out checkedRect);
+        //     if (rect.HasValue)
+        //         PlatformSetData(level, 0, checkedRect, data, startIndex, elementCount);
+        //     else
+        //         PlatformSetData(level, data, startIndex, elementCount);
+        // }
 
         /// <summary>
         /// Changes the texture's pixels
@@ -186,12 +186,12 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="data">New data for the texture</param>
         /// <param name="startIndex">Start position of data</param>
         /// <param name="elementCount"></param>
-		public void SetData<T>(T[] data, int startIndex, int elementCount) where T : struct
-        {
-            Rectangle checkedRect;
-            ValidateParams(0, 0, null, data, startIndex, elementCount, out checkedRect);
-            PlatformSetData(0, data, startIndex, elementCount);
-        }
+		// public void SetData<T>(T[] data, int startIndex, int elementCount) where T : struct
+  //       {
+  //           Rectangle checkedRect;
+  //           ValidateParams(0, 0, null, data, startIndex, elementCount, out checkedRect);
+  //           PlatformSetData(0, data, startIndex, elementCount);
+  //       }
 
 		/// <summary>
         /// Changes the texture's pixels
@@ -249,10 +249,10 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="data">Destination array for the texture data</param>
         /// <param name="startIndex">First position in data where to write the pixel data</param>
         /// <param name="elementCount">Number of pixels to read</param>
-		public void GetData<T>(T[] data, int startIndex, int elementCount) where T : struct
-		{
-			this.GetData(0, null, data, startIndex, elementCount);
-		}
+		// public void GetData<T>(T[] data, int startIndex, int elementCount) where T : struct
+		// {
+		// 	this.GetData(0, null, data, startIndex, elementCount);
+		// }
 
         /// <summary>
         /// Retrieves the contents of the texture
@@ -280,14 +280,14 @@ namespace Microsoft.Xna.Framework.Graphics
         /// the images should be identical.  This call does not premultiply the image alpha, but areas of zero alpha will
         /// result in black color data.
         /// </remarks>
-        public static Texture2D FromFile(GraphicsDevice graphicsDevice, string path)
-        {
-            if (path == null)
-                throw new ArgumentNullException("path");
-
-            using (var stream = File.OpenRead(path))
-                return FromStream(graphicsDevice, stream);
-        }
+        // public static Texture2D FromFile(GraphicsDevice graphicsDevice, string path)
+        // {
+        //     if (path == null)
+        //         throw new ArgumentNullException("path");
+        //
+        //     using (var stream = File.OpenRead(path))
+        //         return FromStream(graphicsDevice, stream);
+        // }
 
         /// <summary>
         /// Creates a <see cref="Texture2D"/> from a stream, supported formats bmp, gif, jpg, png, tif and dds (only for simple textures).
@@ -323,10 +323,10 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="stream">Destination for the image</param>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        public void SaveAsJpeg(Stream stream, int width, int height)
-        {
-            PlatformSaveAsJpeg(stream, width, height);
-        }
+        // public void SaveAsJpeg(Stream stream, int width, int height)
+        // {
+        //     PlatformSaveAsJpeg(stream, width, height);
+        // }
 
         /// <summary>
         /// Converts the texture to a PNG image
@@ -334,28 +334,28 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="stream">Destination for the image</param>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        public void SaveAsPng(Stream stream, int width, int height)
-        {
-            PlatformSaveAsPng(stream, width, height);
-        }
+        // public void SaveAsPng(Stream stream, int width, int height)
+        // {
+        //     PlatformSaveAsPng(stream, width, height);
+        // }
 
         // This method allows games that use Texture2D.FromStream 
         // to reload their textures after the GL context is lost.
-        public void Reload(Stream textureStream)
-        {
-            PlatformReload(textureStream);
-        }
+        // public void Reload(Stream textureStream)
+        // {
+        //     PlatformReload(textureStream);
+        // }
 
         //Converts Pixel Data from ARGB to ABGR
-        private static void ConvertToABGR(int pixelHeight, int pixelWidth, int[] pixels)
-        {
-            int pixelCount = pixelWidth * pixelHeight;
-            for (int i = 0; i < pixelCount; ++i)
-            {
-                uint pixel = (uint)pixels[i];
-                pixels[i] = (int)((pixel & 0xFF00FF00) | ((pixel & 0x00FF0000) >> 16) | ((pixel & 0x000000FF) << 16));
-            }
-        }
+        // private static void ConvertToABGR(int pixelHeight, int pixelWidth, int[] pixels)
+        // {
+        //     int pixelCount = pixelWidth * pixelHeight;
+        //     for (int i = 0; i < pixelCount; ++i)
+        //     {
+        //         uint pixel = (uint)pixels[i];
+        //         pixels[i] = (int)((pixel & 0xFF00FF00) | ((pixel & 0x00FF0000) >> 16) | ((pixel & 0x000000FF) << 16));
+        //     }
+        // }
 
         private void ValidateParams<T>(int level, int arraySlice, Rectangle? rect, T[] data,
             int startIndex, int elementCount, out Rectangle checkedRect) where T : struct

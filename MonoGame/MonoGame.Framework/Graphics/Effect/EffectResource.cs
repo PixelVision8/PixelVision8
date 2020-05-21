@@ -12,11 +12,11 @@ namespace Microsoft.Xna.Framework.Graphics
     /// </summary>
     internal partial class EffectResource
     {
-        public static readonly EffectResource AlphaTestEffect = new EffectResource(AlphaTestEffectName);
-        public static readonly EffectResource BasicEffect = new EffectResource(BasicEffectName);
-        public static readonly EffectResource DualTextureEffect = new EffectResource(DualTextureEffectName);
-        public static readonly EffectResource EnvironmentMapEffect = new EffectResource(EnvironmentMapEffectName);
-        public static readonly EffectResource SkinnedEffect = new EffectResource(SkinnedEffectName);
+        // public static readonly EffectResource AlphaTestEffect = new EffectResource(AlphaTestEffectName);
+        // public static readonly EffectResource BasicEffect = new EffectResource(BasicEffectName);
+        // public static readonly EffectResource DualTextureEffect = new EffectResource(DualTextureEffectName);
+        // public static readonly EffectResource EnvironmentMapEffect = new EffectResource(EnvironmentMapEffectName);
+        // public static readonly EffectResource SkinnedEffect = new EffectResource(SkinnedEffectName);
         public static readonly EffectResource SpriteEffect = new EffectResource(SpriteEffectName);
 
         private readonly object _locker = new object();
