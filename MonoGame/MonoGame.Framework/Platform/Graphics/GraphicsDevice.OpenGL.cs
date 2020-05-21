@@ -342,7 +342,7 @@ namespace Microsoft.Xna.Framework.Graphics
             framebufferHelper = FramebufferHelper.Create(this);
 
             // Force resetting states
-            this.PlatformApplyBlend(true);
+            // this.PlatformApplyBlend(true);
             // this.DepthStencilState.PlatformApplyState(this, true);
             // this.RasterizerState.PlatformApplyState(this, true);
 
@@ -371,13 +371,13 @@ namespace Microsoft.Xna.Framework.Graphics
             //
 		    var prevScissorRect = ScissorRectangle;
 		    // var prevDepthStencilState = DepthStencilState;
-            var prevBlendState = BlendState;
+            // var prevBlendState = BlendState;
             ScissorRectangle = _viewport.Bounds;
             // DepthStencilState.Default has the Stencil Test disabled; 
             // make sure stencil test is enabled before we clear since
             // some drivers won't clear with stencil test disabled
             // DepthStencilState = this.clearDepthStencilState;
-		    BlendState = BlendState.Opaque;
+		    // BlendState = BlendState.Opaque;
             ApplyState(false);
 
             ClearBufferMask bufferMask = 0;
@@ -426,7 +426,7 @@ namespace Microsoft.Xna.Framework.Graphics
             // Restore the previous render state.
 		    ScissorRectangle = prevScissorRect;
 		    // DepthStencilState = prevDepthStencilState;
-		    BlendState = prevBlendState;
+		    // BlendState = prevBlendState;
         }
 
         private void PlatformDispose()
@@ -962,25 +962,25 @@ namespace Microsoft.Xna.Framework.Graphics
             Threading.EnsureUIThread();
         }
 
-        private void PlatformApplyBlend(bool force = false)
-        {
-            _actualBlendState.PlatformApplyState(this, force);
-            ApplyBlendFactor(force);
-        }
+        // private void PlatformApplyBlend(bool force = false)
+        // {
+        //     _actualBlendState.PlatformApplyState(this, force);
+        //     ApplyBlendFactor(force);
+        // }
 
-        private void ApplyBlendFactor(bool force)
-        {
-            if (force || BlendFactor != _lastBlendState.BlendFactor)
-            {
-                GL.BlendColor(
-                    this.BlendFactor.R/255.0f,
-                    this.BlendFactor.G/255.0f,
-                    this.BlendFactor.B/255.0f,
-                    this.BlendFactor.A/255.0f);
-                GraphicsExtensions.CheckGLError();
-                _lastBlendState.BlendFactor = this.BlendFactor;
-            }
-        }
+        // private void ApplyBlendFactor(bool force)
+        // {
+        //     if (force || BlendFactor != _lastBlendState.BlendFactor)
+        //     {
+        //         GL.BlendColor(
+        //             this.BlendFactor.R/255.0f,
+        //             this.BlendFactor.G/255.0f,
+        //             this.BlendFactor.B/255.0f,
+        //             this.BlendFactor.A/255.0f);
+        //         GraphicsExtensions.CheckGLError();
+        //         _lastBlendState.BlendFactor = this.BlendFactor;
+        //     }
+        // }
 
         internal void PlatformApplyState(bool applyShaders)
         {

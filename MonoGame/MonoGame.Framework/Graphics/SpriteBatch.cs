@@ -92,7 +92,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
             // defaults
             _sortMode = sortMode;
-            _blendState = blendState ?? BlendState.AlphaBlend;
+            // _blendState = blendState ?? BlendState.AlphaBlend;
             _samplerState = samplerState ?? SamplerState.LinearClamp;
             // _depthStencilState = depthStencilState ?? DepthStencilState.None;
             _rasterizerState = rasterizerState ?? RasterizerState.CullCounterClockwise;
@@ -128,7 +128,7 @@ namespace Microsoft.Xna.Framework.Graphics
 		void Setup() 
         {
             var gd = GraphicsDevice;
-			gd.BlendState = _blendState;
+			// gd.BlendState = _blendState;
 			// gd.DepthStencilState = _depthStencilState;
 			gd.RasterizerState = _rasterizerState;
 			gd.SamplerStates[0] = _samplerState;

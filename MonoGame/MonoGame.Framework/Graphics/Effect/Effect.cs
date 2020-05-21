@@ -329,21 +329,21 @@ namespace Microsoft.Xna.Framework.Graphics
 				RasterizerState raster = null;
 				if (reader.ReadBoolean())
 				{
-					blend = new BlendState
-					{
-						AlphaBlendFunction = (BlendFunction)reader.ReadByte(),
-						AlphaDestinationBlend = (Blend)reader.ReadByte(),
-						AlphaSourceBlend = (Blend)reader.ReadByte(),
-						BlendFactor = new Color(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte()),
-						ColorBlendFunction = (BlendFunction)reader.ReadByte(),
-						ColorDestinationBlend = (Blend)reader.ReadByte(),
-						ColorSourceBlend = (Blend)reader.ReadByte(),
-						ColorWriteChannels = (ColorWriteChannels)reader.ReadByte(),
-						ColorWriteChannels1 = (ColorWriteChannels)reader.ReadByte(),
-						ColorWriteChannels2 = (ColorWriteChannels)reader.ReadByte(),
-						ColorWriteChannels3 = (ColorWriteChannels)reader.ReadByte(),
-						MultiSampleMask = reader.ReadInt32(),
-					};
+					// blend = new BlendState
+					// {
+					// 	AlphaBlendFunction = (BlendFunction)reader.ReadByte(),
+					// 	AlphaDestinationBlend = (Blend)reader.ReadByte(),
+					// 	AlphaSourceBlend = (Blend)reader.ReadByte(),
+					// 	BlendFactor = new Color(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte()),
+					// 	ColorBlendFunction = (BlendFunction)reader.ReadByte(),
+					// 	ColorDestinationBlend = (Blend)reader.ReadByte(),
+					// 	ColorSourceBlend = (Blend)reader.ReadByte(),
+					// 	ColorWriteChannels = (ColorWriteChannels)reader.ReadByte(),
+					// 	ColorWriteChannels1 = (ColorWriteChannels)reader.ReadByte(),
+					// 	ColorWriteChannels2 = (ColorWriteChannels)reader.ReadByte(),
+					// 	ColorWriteChannels3 = (ColorWriteChannels)reader.ReadByte(),
+					// 	MultiSampleMask = reader.ReadInt32(),
+					// };
 				}
 				if (reader.ReadBoolean())
 				{

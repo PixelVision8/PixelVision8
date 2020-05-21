@@ -302,12 +302,12 @@ namespace Microsoft.Xna.Framework.Graphics
             Textures = new TextureCollection(this, MaxTextureSlots, false);
             SamplerStates = new SamplerStateCollection(this, MaxTextureSlots, false);
 
-            _blendStateAdditive = BlendState.Additive.Clone();
-            _blendStateAlphaBlend = BlendState.AlphaBlend.Clone();
-            _blendStateNonPremultiplied = BlendState.NonPremultiplied.Clone();
-            _blendStateOpaque = BlendState.Opaque.Clone();
-
-            BlendState = BlendState.Opaque;
+            // _blendStateAdditive = BlendState.Additive.Clone();
+            // _blendStateAlphaBlend = BlendState.AlphaBlend.Clone();
+            // _blendStateNonPremultiplied = BlendState.NonPremultiplied.Clone();
+            // _blendStateOpaque = BlendState.Opaque.Clone();
+            //
+            // BlendState = BlendState.Opaque;
 
             // _depthStencilStateDefault = DepthStencilState.Default.Clone();
             // _depthStencilStateDepthRead = DepthStencilState.DepthRead.Clone();
@@ -358,7 +358,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
             // Force set the default render states.
             // _blendStateDirty = _depthStencilStateDirty = _rasterizerStateDirty = true;
-            BlendState = BlendState.Opaque;
+            // BlendState = BlendState.Opaque;
             // DepthStencilState = DepthStencilState.Default;
             RasterizerState = RasterizerState.CullCounterClockwise;
 
@@ -446,46 +446,46 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
-        public BlendState BlendState
-        {
-			get { return _blendState; }
-			set
-            {
-                if (value == null)
-                    throw new ArgumentNullException("value");
-
-                // Don't set the same state twice!
-                if (_blendState == value)
-                    return;
-
-				_blendState = value;
-
-                // Static state properties never actually get bound;
-                // instead we use our GraphicsDevice-specific version of them.
-                var newBlendState = _blendState;
-                if (ReferenceEquals(_blendState, BlendState.Additive))
-                    newBlendState = _blendStateAdditive;
-                else if (ReferenceEquals(_blendState, BlendState.AlphaBlend))
-                    newBlendState = _blendStateAlphaBlend;
-                else if (ReferenceEquals(_blendState, BlendState.NonPremultiplied))
-                    newBlendState = _blendStateNonPremultiplied;
-                else if (ReferenceEquals(_blendState, BlendState.Opaque))
-                    newBlendState = _blendStateOpaque;
-
-                if (newBlendState.IndependentBlendEnable && !GraphicsCapabilities.SupportsSeparateBlendStates)
-                    throw new PlatformNotSupportedException("Independent blend states requires at least OpenGL 4.0 or GL_ARB_draw_buffers_blend. Try upgrading your graphics drivers.");
-
-                // Blend state is now bound to a device... no one should
-                // be changing the state of the blend state object now!
-                newBlendState.BindToGraphicsDevice(this);
-
-                _actualBlendState = newBlendState;
-
-                BlendFactor = _actualBlendState.BlendFactor;
-
-                _blendStateDirty = true;
-            }
-		}
+  //       public BlendState BlendState
+  //       {
+		// 	get { return _blendState; }
+		// 	set
+  //           {
+  //               if (value == null)
+  //                   throw new ArgumentNullException("value");
+  //
+  //               // Don't set the same state twice!
+  //               if (_blendState == value)
+  //                   return;
+  //
+		// 		_blendState = value;
+  //
+  //               // Static state properties never actually get bound;
+  //               // instead we use our GraphicsDevice-specific version of them.
+  //               var newBlendState = _blendState;
+  //               if (ReferenceEquals(_blendState, BlendState.Additive))
+  //                   newBlendState = _blendStateAdditive;
+  //               else if (ReferenceEquals(_blendState, BlendState.AlphaBlend))
+  //                   newBlendState = _blendStateAlphaBlend;
+  //               else if (ReferenceEquals(_blendState, BlendState.NonPremultiplied))
+  //                   newBlendState = _blendStateNonPremultiplied;
+  //               else if (ReferenceEquals(_blendState, BlendState.Opaque))
+  //                   newBlendState = _blendStateOpaque;
+  //
+  //               if (newBlendState.IndependentBlendEnable && !GraphicsCapabilities.SupportsSeparateBlendStates)
+  //                   throw new PlatformNotSupportedException("Independent blend states requires at least OpenGL 4.0 or GL_ARB_draw_buffers_blend. Try upgrading your graphics drivers.");
+  //
+  //               // Blend state is now bound to a device... no one should
+  //               // be changing the state of the blend state object now!
+  //               newBlendState.BindToGraphicsDevice(this);
+  //
+  //               _actualBlendState = newBlendState;
+  //
+  //               BlendFactor = _actualBlendState.BlendFactor;
+  //
+  //               _blendStateDirty = true;
+  //           }
+		// }
 
         // public DepthStencilState DepthStencilState
         // {
@@ -523,7 +523,7 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             PlatformBeginApplyState();
 
-            PlatformApplyBlend();
+            // PlatformApplyBlend();
 
             // if (_depthStencilStateDirty)
             // {
@@ -602,10 +602,10 @@ namespace Microsoft.Xna.Framework.Graphics
 
                     _blendState = null;
                     _actualBlendState = null;
-                    _blendStateAdditive.Dispose();
-                    _blendStateAlphaBlend.Dispose();
-                    _blendStateNonPremultiplied.Dispose();
-                    _blendStateOpaque.Dispose();
+                    // _blendStateAdditive.Dispose();
+                    // _blendStateAlphaBlend.Dispose();
+                    // _blendStateNonPremultiplied.Dispose();
+                    // _blendStateOpaque.Dispose();
 
                     // _depthStencilState = null;
                     // _actualDepthStencilState = null;

@@ -109,8 +109,8 @@ namespace Microsoft.Xna.Framework.Graphics
             // Set the render states if we have some.
             if (_rasterizerState != null)
                 device.RasterizerState = _rasterizerState;
-            if (_blendState != null)
-                device.BlendState = _blendState;
+            // if (_blendState != null)
+            //     device.BlendState = _blendState;
             // if (_depthStencilState != null)
             //     device.DepthStencilState = _depthStencilState;
         }
