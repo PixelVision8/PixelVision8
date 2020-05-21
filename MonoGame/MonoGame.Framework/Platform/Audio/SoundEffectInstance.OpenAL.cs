@@ -57,36 +57,36 @@ namespace Microsoft.Xna.Framework.Audio
             return (float)Math.Pow(2, xnaPitch);
         }
 
-        private void PlatformApply3D(AudioListener listener, AudioEmitter emitter)
-        {
-            if (!HasSourceId)
-                return;
-            // get AL's listener position
-            float x, y, z;
-            AL.GetListener(ALListener3f.Position, out x, out y, out z);
-            ALHelper.CheckError("Failed to get source position.");
-
-            // get the emitter offset from origin
-            Vector3 posOffset = emitter.Position - listener.Position;
-            // set up orientation matrix
-            Matrix orientation = Matrix.CreateWorld(Vector3.Zero, listener.Forward, listener.Up);
-            // set up our final position and velocity according to orientation of listener
-            Vector3 finalPos = new Vector3(x + posOffset.X, y + posOffset.Y, z + posOffset.Z);
-            finalPos = Vector3.Transform(finalPos, orientation);
-            Vector3 finalVel = emitter.Velocity;
-            finalVel = Vector3.Transform(finalVel, orientation);
-
-            // set the position based on relative positon
-            AL.Source(SourceId, ALSource3f.Position, finalPos.X, finalPos.Y, finalPos.Z);
-            ALHelper.CheckError("Failed to set source position.");
-            AL.Source(SourceId, ALSource3f.Velocity, finalVel.X, finalVel.Y, finalVel.Z);
-            ALHelper.CheckError("Failed to set source velocity.");
-
-            AL.Source(SourceId, ALSourcef.ReferenceDistance, SoundEffect.DistanceScale);
-            ALHelper.CheckError("Failed to set source distance scale.");
-            AL.DopplerFactor(SoundEffect.DopplerScale);
-            ALHelper.CheckError("Failed to set Doppler scale.");
-        }
+        // private void PlatformApply3D(AudioListener listener, AudioEmitter emitter)
+        // {
+        //     if (!HasSourceId)
+        //         return;
+        //     // get AL's listener position
+        //     float x, y, z;
+        //     AL.GetListener(ALListener3f.Position, out x, out y, out z);
+        //     ALHelper.CheckError("Failed to get source position.");
+        //
+        //     // get the emitter offset from origin
+        //     Vector3 posOffset = emitter.Position - listener.Position;
+        //     // set up orientation matrix
+        //     Matrix orientation = Matrix.CreateWorld(Vector3.Zero, listener.Forward, listener.Up);
+        //     // set up our final position and velocity according to orientation of listener
+        //     Vector3 finalPos = new Vector3(x + posOffset.X, y + posOffset.Y, z + posOffset.Z);
+        //     finalPos = Vector3.Transform(finalPos, orientation);
+        //     Vector3 finalVel = emitter.Velocity;
+        //     finalVel = Vector3.Transform(finalVel, orientation);
+        //
+        //     // set the position based on relative positon
+        //     AL.Source(SourceId, ALSource3f.Position, finalPos.X, finalPos.Y, finalPos.Z);
+        //     ALHelper.CheckError("Failed to set source position.");
+        //     AL.Source(SourceId, ALSource3f.Velocity, finalVel.X, finalVel.Y, finalVel.Z);
+        //     ALHelper.CheckError("Failed to set source velocity.");
+        //
+        //     AL.Source(SourceId, ALSourcef.ReferenceDistance, SoundEffect.DistanceScale);
+        //     ALHelper.CheckError("Failed to set source distance scale.");
+        //     AL.DopplerFactor(SoundEffect.DopplerScale);
+        //     ALHelper.CheckError("Failed to set Doppler scale.");
+        // }
 
         private void PlatformPause()
         {
