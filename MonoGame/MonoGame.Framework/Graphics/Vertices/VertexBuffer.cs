@@ -13,9 +13,9 @@ namespace Microsoft.Xna.Framework.Graphics
 
 		public int VertexCount { get; private set; }
 		public VertexDeclaration VertexDeclaration { get; private set; }
-		public BufferUsage BufferUsage { get; private set; }
+		// public BufferUsage BufferUsage { get; private set; }
 		
-		protected VertexBuffer(GraphicsDevice graphicsDevice, VertexDeclaration vertexDeclaration, int vertexCount, BufferUsage bufferUsage, bool dynamic)
+		protected VertexBuffer(GraphicsDevice graphicsDevice, VertexDeclaration vertexDeclaration, int vertexCount, /*BufferUsage bufferUsage,*/ bool dynamic)
 		{
 		    if (graphicsDevice == null)
 		    {
@@ -24,7 +24,7 @@ namespace Microsoft.Xna.Framework.Graphics
 		    this.GraphicsDevice = graphicsDevice;
             this.VertexDeclaration = vertexDeclaration;
             this.VertexCount = vertexCount;
-            this.BufferUsage = bufferUsage;
+            // this.BufferUsage = bufferUsage;
 
             // Make sure the graphics device is assigned in the vertex declaration.
             if (vertexDeclaration.GraphicsDevice != graphicsDevice)
@@ -35,15 +35,15 @@ namespace Microsoft.Xna.Framework.Graphics
             PlatformConstruct();
 		}
 
-        public VertexBuffer(GraphicsDevice graphicsDevice, VertexDeclaration vertexDeclaration, int vertexCount, BufferUsage bufferUsage) :
-			this(graphicsDevice, vertexDeclaration, vertexCount, bufferUsage, false)
-        {
-        }
-		
-		public VertexBuffer(GraphicsDevice graphicsDevice, Type type, int vertexCount, BufferUsage bufferUsage) :
-			this(graphicsDevice, VertexDeclaration.FromType(type), vertexCount, bufferUsage, false)
-		{
-        }
+  //       public VertexBuffer(GraphicsDevice graphicsDevice, VertexDeclaration vertexDeclaration, int vertexCount, BufferUsage bufferUsage) :
+		// 	this(graphicsDevice, vertexDeclaration, vertexCount, bufferUsage, false)
+  //       {
+  //       }
+		//
+		// public VertexBuffer(GraphicsDevice graphicsDevice, Type type, int vertexCount, BufferUsage bufferUsage) :
+		// 	this(graphicsDevice, VertexDeclaration.FromType(type), vertexCount, bufferUsage, false)
+		// {
+  //       }
 
         /// <summary>
         /// The GraphicsDevice is resetting, so GPU resources must be recreated.
@@ -91,8 +91,8 @@ namespace Microsoft.Xna.Framework.Graphics
                 throw new ArgumentNullException("data");
             if (data.Length < (startIndex + elementCount))
                 throw new ArgumentOutOfRangeException("elementCount", "This parameter must be a valid index within the array.");
-            if (BufferUsage == BufferUsage.WriteOnly)
-                throw new NotSupportedException("Calling GetData on a resource that was created with BufferUsage.WriteOnly is not supported.");
+            // if (BufferUsage == BufferUsage.WriteOnly)
+            //     throw new NotSupportedException("Calling GetData on a resource that was created with BufferUsage.WriteOnly is not supported.");
 			if (elementCount > 1 && elementCount * vertexStride > vertexByteSize)
                 throw new InvalidOperationException("The array is not the correct size for the amount of data requested.");
 

@@ -1000,11 +1000,11 @@ namespace Microsoft.Xna.Framework.Graphics
 
             if (_indexBufferDirty)
             {
-                if (_indexBuffer != null)
-                {
-                    GL.BindBuffer(BufferTarget.ElementArrayBuffer, _indexBuffer.ibo);
-                    GraphicsExtensions.CheckGLError();
-                }
+                // if (_indexBuffer != null)
+                // {
+                //     GL.BindBuffer(BufferTarget.ElementArrayBuffer, _indexBuffer.ibo);
+                //     GraphicsExtensions.CheckGLError();
+                // }
                 _indexBufferDirty = false;
             }
 
@@ -1047,20 +1047,20 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             ApplyState(true);
 
-            var shortIndices = _indexBuffer.IndexElementSize == IndexElementSize.SixteenBits;
+            // var shortIndices = _indexBuffer.IndexElementSize == IndexElementSize.SixteenBits;
 
-			var indexElementType = shortIndices ? DrawElementsType.UnsignedShort : DrawElementsType.UnsignedInt;
-            var indexElementSize = shortIndices ? 2 : 4;
-			var indexOffsetInBytes = (IntPtr)(startIndex * indexElementSize);
+			// var indexElementType = shortIndices ? DrawElementsType.UnsignedShort : DrawElementsType.UnsignedInt;
+            // var indexElementSize = shortIndices ? 2 : 4;
+			// var indexOffsetInBytes = (IntPtr)(startIndex * indexElementSize);
 			var indexElementCount = GetElementCountArray(primitiveType, primitiveCount);
 			var target = PrimitiveTypeGL(primitiveType);
 
             ApplyAttribs(_vertexShader, baseVertex);
 
-            GL.DrawElements(target,
-                                     indexElementCount,
-                                     indexElementType,
-                                     indexOffsetInBytes);
+            // GL.DrawElements(target,
+                                     // indexElementCount,
+                                     // indexElementType,
+                                     // indexOffsetInBytes);
             GraphicsExtensions.CheckGLError();
         }
 
@@ -1179,11 +1179,11 @@ namespace Microsoft.Xna.Framework.Graphics
                 throw new PlatformNotSupportedException("Instanced geometry drawing requires at least OpenGL 3.2 or GLES 3.2. Try upgrading your graphics card drivers.");
             ApplyState(true);
 
-            var shortIndices = _indexBuffer.IndexElementSize == IndexElementSize.SixteenBits;
+            // var shortIndices = _indexBuffer.IndexElementSize == IndexElementSize.SixteenBits;
 
-            var indexElementType = shortIndices ? DrawElementsType.UnsignedShort : DrawElementsType.UnsignedInt;
-            var indexElementSize = shortIndices ? 2 : 4;
-            var indexOffsetInBytes = (IntPtr)(startIndex * indexElementSize);
+            // var indexElementType = shortIndices ? DrawElementsType.UnsignedShort : DrawElementsType.UnsignedInt;
+            // var indexElementSize = shortIndices ? 2 : 4;
+            // var indexOffsetInBytes = (IntPtr)(startIndex * indexElementSize);
             var indexElementCount = GetElementCountArray(primitiveType, primitiveCount);
             var target = PrimitiveTypeGL(primitiveType);
 
@@ -1194,19 +1194,19 @@ namespace Microsoft.Xna.Framework.Graphics
                 if (!GraphicsCapabilities.SupportsBaseIndexInstancing)
                     throw new PlatformNotSupportedException("Instanced geometry drawing with base instance requires at least OpenGL 4.2. Try upgrading your graphics card drivers.");
 
-                GL.DrawElementsInstancedBaseInstance(target,
-                                          indexElementCount,
-                                          indexElementType,
-                                          indexOffsetInBytes,
-                                          instanceCount,
-                                          baseInstance);
+                // GL.DrawElementsInstancedBaseInstance(target,
+                //                           indexElementCount,
+                //                           indexElementType,
+                //                           indexOffsetInBytes,
+                //                           instanceCount,
+                //                           baseInstance);
             }
             else
-                GL.DrawElementsInstanced(target,
-                                     indexElementCount,
-                                     indexElementType,
-                                     indexOffsetInBytes,
-                                     instanceCount);
+                // GL.DrawElementsInstanced(target,
+                //                      indexElementCount,
+                //                      indexElementType,
+                //                      indexOffsetInBytes,
+                //                      instanceCount);
 
             GraphicsExtensions.CheckGLError();
         }

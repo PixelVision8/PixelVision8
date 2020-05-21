@@ -77,7 +77,7 @@ namespace Microsoft.Xna.Framework.Graphics
         private VertexBufferBindings _vertexBuffers;
         private bool _vertexBuffersDirty;
 
-        private IndexBuffer _indexBuffer;
+        // private IndexBuffer _indexBuffer;
         private bool _indexBufferDirty;
 
         private readonly RenderTargetBinding[] _currentRenderTargetBindings = new RenderTargetBinding[4];
@@ -960,16 +960,16 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
-        private void SetIndexBuffer(IndexBuffer indexBuffer)
-        {
-            if (_indexBuffer == indexBuffer)
-                return;
+        // private void SetIndexBuffer(IndexBuffer indexBuffer)
+        // {
+        //     if (_indexBuffer == indexBuffer)
+        //         return;
+        //
+        //     _indexBuffer = indexBuffer;
+        //     _indexBufferDirty = true;
+        // }
 
-            _indexBuffer = indexBuffer;
-            _indexBufferDirty = true;
-        }
-
-        public IndexBuffer Indices { set { SetIndexBuffer(value); } get { return _indexBuffer; } }
+        // public IndexBuffer Indices { set { SetIndexBuffer(value); } get { return _indexBuffer; } }
 
         internal Shader VertexShader
         {
@@ -1042,8 +1042,8 @@ namespace Microsoft.Xna.Framework.Graphics
             if (_vertexBuffers.Count == 0)
                 throw new InvalidOperationException("Vertex buffer must be set before calling DrawIndexedPrimitives.");
 
-            if (_indexBuffer == null)
-                throw new InvalidOperationException("Index buffer must be set before calling DrawIndexedPrimitives.");
+            // if (_indexBuffer == null)
+            //     throw new InvalidOperationException("Index buffer must be set before calling DrawIndexedPrimitives.");
 
             if (primitiveCount <= 0)
                 throw new ArgumentOutOfRangeException("primitiveCount");
@@ -1350,8 +1350,8 @@ namespace Microsoft.Xna.Framework.Graphics
             if (_vertexBuffers.Count == 0)
                 throw new InvalidOperationException("Vertex buffer must be set before calling DrawInstancedPrimitives.");
 
-            if (_indexBuffer == null)
-                throw new InvalidOperationException("Index buffer must be set before calling DrawInstancedPrimitives.");
+            // if (_indexBuffer == null)
+            //     throw new InvalidOperationException("Index buffer must be set before calling DrawInstancedPrimitives.");
 
             if (primitiveCount <= 0)
                 throw new ArgumentOutOfRangeException("primitiveCount");
