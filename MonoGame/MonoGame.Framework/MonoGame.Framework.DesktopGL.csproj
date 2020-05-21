@@ -45,6 +45,8 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Audio\Microphone.cs" />
+    <Compile Remove="Audio\NoMicrophoneConnectedException.cs" />
     <Compile Remove="BoundingBox.cs" />
     <Compile Remove="BoundingFrustum.cs" />
     <Compile Remove="BoundingSphere.cs" />

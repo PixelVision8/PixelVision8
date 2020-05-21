@@ -116,8 +116,8 @@ namespace Microsoft.Xna.Framework.Audio
                 throw new NoAudioHardwareException("OpenAL device could not be initialized, see console output for details.");
             }
 
-            if (Alc.IsExtensionPresent(_device, "ALC_EXT_CAPTURE"))
-                Microphone.PopulateCaptureDevices();
+            // if (Alc.IsExtensionPresent(_device, "ALC_EXT_CAPTURE"))
+            //     Microphone.PopulateCaptureDevices();
 
             // We have hardware here and it is ready
 
@@ -395,7 +395,7 @@ namespace Microsoft.Xna.Framework.Audio
                     if (Filter != 0 && Efx.IsInitialized)
                         Efx.DeleteFilter(Filter);
 
-                    Microphone.StopMicrophones();
+                    // Microphone.StopMicrophones();
                     CleanUpOpenAL();                    
                 }
                 _isDisposed = true;
