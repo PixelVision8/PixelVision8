@@ -33,12 +33,21 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="DrawableGameComponent.cs" />
+    <Compile Remove="GameComponent.cs" />
+    <Compile Remove="GameComponentCollection.cs" />
+    <Compile Remove="GameComponentCollectionEventArgs.cs" />
     <Compile Remove="Graphics\GraphicsAdapter.cs" />
+    <Compile Remove="IDrawable.cs" />
+    <Compile Remove="IGameComponent.cs" />
+    <Compile Remove="IPlatformBackButton.cs" />
+    <Compile Remove="IUpdateable.cs" />
     <Compile Remove="Media\Video.cs" />
     <Compile Remove="Media\VideoPlayer.cs" />
     <Compile Remove="Content\ContentReaders\VideoReader.cs" />
     <Compile Remove="Input\MessageBox.cs" />
     <Compile Remove="Input\KeyboardInput.cs" />
+    <Compile Remove="ReusableItemList.cs" />
   </ItemGroup>
 
   <ItemGroup>
