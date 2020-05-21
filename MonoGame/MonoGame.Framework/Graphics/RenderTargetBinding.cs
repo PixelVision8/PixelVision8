@@ -48,7 +48,7 @@ namespace Microsoft.Xna.Framework.Graphics
 	public struct RenderTargetBinding
 	{
         private readonly Texture _renderTarget;
-        private readonly int _arraySlice;
+        // private readonly int _arraySlice;
         // private DepthFormat _depthFormat;
 
 		public Texture RenderTarget 
@@ -56,10 +56,10 @@ namespace Microsoft.Xna.Framework.Graphics
 			get { return _renderTarget; }
 		}
 
-        public int ArraySlice
-        {
-            get { return _arraySlice; }
-        }
+        // public int ArraySlice
+        // {
+        //     get { return _arraySlice; }
+        // }
 
         // internal DepthFormat DepthFormat
         // {
@@ -72,7 +72,7 @@ namespace Microsoft.Xna.Framework.Graphics
 				throw new ArgumentNullException("renderTarget");
 
 			_renderTarget = renderTarget;
-            _arraySlice = (int)CubeMapFace.PositiveX;
+            // _arraySlice = (int)CubeMapFace.PositiveX;
             // _depthFormat = renderTarget.DepthStencilFormat;
 		}
 

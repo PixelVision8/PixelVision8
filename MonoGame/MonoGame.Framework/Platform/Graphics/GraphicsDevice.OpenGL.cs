@@ -593,7 +593,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
                 for (var i = 0; i < first.Length; ++i)
                 {
-                    if ((first[i].RenderTarget != second[i].RenderTarget) || (first[i].ArraySlice != second[i].ArraySlice))
+                    if ((first[i].RenderTarget != second[i].RenderTarget)/* || (first[i].ArraySlice != second[i].ArraySlice)*/)
                     {
                         return false;
                     }
@@ -613,7 +613,7 @@ namespace Microsoft.Xna.Framework.Graphics
                         {
                             if (item.RenderTarget != null)
                                 hash = hash * 23 + item.RenderTarget.GetHashCode();
-                            hash = hash * 23 + item.ArraySlice.GetHashCode();
+                            hash = hash * 23/* + item.ArraySlice.GetHashCode()*/;
                         }
                         return hash;
                     }

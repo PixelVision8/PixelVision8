@@ -827,8 +827,8 @@ namespace Microsoft.Xna.Framework.Graphics
                 var isEqual = true;
                 for (var i = 0; i < _currentRenderTargetCount; i++)
                 {
-                    if (_currentRenderTargetBindings[i].RenderTarget != renderTargets[i].RenderTarget ||
-                        _currentRenderTargetBindings[i].ArraySlice != renderTargets[i].ArraySlice)
+                    if (_currentRenderTargetBindings[i].RenderTarget != renderTargets[i].RenderTarget/* ||
+                        _currentRenderTargetBindings[i].ArraySlice != renderTargets[i].ArraySlice*/)
                     {
                         isEqual = false;
                         break;
