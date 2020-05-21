@@ -70,6 +70,7 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
     <Compile Remove="Graphics\Effect\AlphaTestEffect.cs" />
     <Compile Remove="Graphics\Effect\BasicEffect.cs" />
     <Compile Remove="Graphics\Effect\DualTextureEffect.cs" />
+    <Compile Remove="Graphics\Effect\EffectHelpers.cs" />
     <Compile Remove="Graphics\Effect\EffectMaterial.cs" />
     <Compile Remove="Graphics\Effect\EnvironmentMapEffect.cs" />
     <Compile Remove="Graphics\Effect\IEffectFog.cs" />

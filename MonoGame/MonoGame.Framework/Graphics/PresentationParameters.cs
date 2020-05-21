@@ -25,7 +25,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
         #region Private Fields
 
-        private DepthFormat depthStencilFormat;
+        // private DepthFormat depthStencilFormat;
         private SurfaceFormat backBufferFormat;
         private int backBufferHeight = GraphicsDeviceManager.DefaultBackBufferHeight;
         private int backBufferWidth = GraphicsDeviceManager.DefaultBackBufferWidth;
@@ -103,11 +103,11 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Get or set the depth stencil format for the back buffer.
         /// </summary>
-		public DepthFormat DepthStencilFormat
-        {
-            get { return depthStencilFormat; }
-            set { depthStencilFormat = value; }
-        }
+		// public DepthFormat DepthStencilFormat
+  //       {
+  //           get { return depthStencilFormat; }
+  //           set { depthStencilFormat = value; }
+  //       }
 
         /// <summary>
         /// Get or set a value indicating if we are in full screen mode.
@@ -206,7 +206,7 @@ namespace Microsoft.Xna.Framework.Graphics
 #else
             // isFullScreen = false;
 #endif
-            depthStencilFormat = DepthFormat.None;
+            // depthStencilFormat = DepthFormat.None;
             multiSampleCount = 0;
             PresentationInterval = PresentInterval.Default;
             DisplayOrientation = Microsoft.Xna.Framework.DisplayOrientation.Default;
@@ -223,7 +223,7 @@ namespace Microsoft.Xna.Framework.Graphics
             clone.backBufferHeight = this.backBufferHeight;
             clone.backBufferWidth = this.backBufferWidth;
             clone.deviceWindowHandle = this.deviceWindowHandle;
-            clone.depthStencilFormat = this.depthStencilFormat;
+            // clone.depthStencilFormat = this.depthStencilFormat;
             clone.IsFullScreen = this.IsFullScreen;
             clone.HardwareModeSwitch = this.HardwareModeSwitch;
             clone.multiSampleCount = this.multiSampleCount;

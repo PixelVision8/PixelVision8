@@ -20,7 +20,7 @@ namespace Microsoft.Xna.Framework
         private int _preferredBackBufferHeight;
         private int _preferredBackBufferWidth;
         private SurfaceFormat _preferredBackBufferFormat;
-        private DepthFormat _preferredDepthStencilFormat;
+        // private DepthFormat _preferredDepthStencilFormat;
         private bool _preferMultiSampling;
         private DisplayOrientation _supportedOrientations;
         private bool _synchronizedWithVerticalRetrace = true;
@@ -61,7 +61,7 @@ namespace Microsoft.Xna.Framework
 
             _supportedOrientations = DisplayOrientation.Default;
             _preferredBackBufferFormat = SurfaceFormat.Color;
-            _preferredDepthStencilFormat = DepthFormat.Depth24;
+            // _preferredDepthStencilFormat = DepthFormat.Depth24;
             _synchronizedWithVerticalRetrace = true;
 
             // Assume the window client size as the default back 
@@ -254,10 +254,10 @@ namespace Microsoft.Xna.Framework
 
         private void PreparePresentationParameters(PresentationParameters presentationParameters)
         {
-            presentationParameters.BackBufferFormat = _preferredBackBufferFormat;
+            // presentationParameters.BackBufferFormat = _preferredBackBufferFormat;
             presentationParameters.BackBufferWidth = _preferredBackBufferWidth;
             presentationParameters.BackBufferHeight = _preferredBackBufferHeight;
-            presentationParameters.DepthStencilFormat = _preferredDepthStencilFormat;
+            // presentationParameters.DepthStencilFormat = _preferredDepthStencilFormat;
             presentationParameters.IsFullScreen = _wantFullScreen;
             presentationParameters.HardwareModeSwitch = _hardwareModeSwitch;
             presentationParameters.PresentationInterval = _synchronizedWithVerticalRetrace ? PresentInterval.One : PresentInterval.Immediate;
@@ -543,18 +543,18 @@ namespace Microsoft.Xna.Framework
         /// When called at startup this will automatically set the format during initialization.  If
         /// set after startup you must call ApplyChanges() for the format to be changed.
         /// </remarks>
-        public DepthFormat PreferredDepthStencilFormat
-        {
-            get
-            {
-                return _preferredDepthStencilFormat;
-            }
-            set
-            {
-                _shouldApplyChanges = true;
-                _preferredDepthStencilFormat = value;
-            }
-        }
+        // public DepthFormat PreferredDepthStencilFormat
+        // {
+        //     get
+        //     {
+        //         return _preferredDepthStencilFormat;
+        //     }
+        //     set
+        //     {
+        //         _shouldApplyChanges = true;
+        //         _preferredDepthStencilFormat = value;
+        //     }
+        // }
 
         /// <summary>
         /// Indicates the desire for vsync when presenting the back buffer.

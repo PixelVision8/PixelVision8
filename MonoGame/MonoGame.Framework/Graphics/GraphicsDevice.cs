@@ -176,15 +176,15 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
-        internal DepthFormat ActiveDepthFormat
-        {
-            get
-            {
-                return IsRenderTargetBound
-                    ? _currentRenderTargetBindings[0].DepthFormat
-                    : PresentationParameters.DepthStencilFormat;
-            }
-        }
+        // internal DepthFormat ActiveDepthFormat
+        // {
+        //     get
+        //     {
+        //         return IsRenderTargetBound
+        //             ? _currentRenderTargetBindings[0].DepthFormat
+        //             : PresentationParameters.DepthStencilFormat;
+        //     }
+        // }
 
         public GraphicsAdapter Adapter
         {
@@ -210,7 +210,7 @@ namespace Microsoft.Xna.Framework.Graphics
         internal GraphicsDevice()
 		{
             PresentationParameters = new PresentationParameters();
-            PresentationParameters.DepthStencilFormat = DepthFormat.Depth24;
+            // PresentationParameters.DepthStencilFormat = DepthFormat.Depth24;
             Setup();
             GraphicsCapabilities = new GraphicsCapabilities();
             GraphicsCapabilities.Initialize(this);

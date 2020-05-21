@@ -173,14 +173,14 @@ namespace Microsoft.Xna.Framework.Graphics
 		public bool QueryRenderTargetFormat(
 			GraphicsProfile graphicsProfile,
 			SurfaceFormat format,
-			DepthFormat depthFormat,
+			// DepthFormat depthFormat,
 			int multiSampleCount,
 			out SurfaceFormat selectedFormat,
-			out DepthFormat selectedDepthFormat,
+			// out DepthFormat selectedDepthFormat,
 			out int selectedMultiSampleCount)
 		{
 			selectedFormat = format;
-            selectedDepthFormat = depthFormat;
+            // selectedDepthFormat = depthFormat;
             selectedMultiSampleCount = multiSampleCount;
 
             // fallback for unsupported renderTarget surface formats.
@@ -197,7 +197,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 selectedFormat = SurfaceFormat.Color;
 
 
-            return (format == selectedFormat) && (depthFormat == selectedDepthFormat) && (multiSampleCount == selectedMultiSampleCount);
+            return (format == selectedFormat)/* && (depthFormat == selectedDepthFormat)*/ && (multiSampleCount == selectedMultiSampleCount);
 		}
 
         /*

@@ -30,11 +30,11 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 
         private void PlatformConstruct(GraphicsDevice graphicsDevice, int width, int height, bool mipMap,
-            DepthFormat preferredDepthFormat, int preferredMultiSampleCount, RenderTargetUsage usage, bool shared)
+            /*DepthFormat preferredDepthFormat,*/ int preferredMultiSampleCount, RenderTargetUsage usage, bool shared)
         {
             Threading.BlockOnUIThread(() =>
             {
-                graphicsDevice.PlatformCreateRenderTarget(this, width, height, mipMap, this.Format, preferredDepthFormat, preferredMultiSampleCount, usage);
+                graphicsDevice.PlatformCreateRenderTarget(this, width, height, mipMap, this.Format, /*preferredDepthFormat,*/ preferredMultiSampleCount, usage);
             });
             
             
