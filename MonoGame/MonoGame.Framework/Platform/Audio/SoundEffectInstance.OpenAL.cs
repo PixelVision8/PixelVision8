@@ -324,32 +324,32 @@ namespace Microsoft.Xna.Framework.Audio
             }
         }
 
-        internal void PlatformSetFilter(FilterMode mode, float filterQ, float frequency)
-        {
-            if (!OpenALSoundController.Efx.IsInitialized)
-                return;
-
-            applyFilter = true;
-            switch (mode)
-            {
-            case FilterMode.BandPass:
-                filterType = EfxFilterType.Bandpass;
-                break;
-                case FilterMode.LowPass:
-                filterType = EfxFilterType.Lowpass;
-                break;
-                case FilterMode.HighPass:
-                filterType = EfxFilterType.Highpass;
-                break;
-            }
-            this.filterQ = filterQ;
-            this.frequency = frequency;
-            if (State == SoundState.Playing)
-            {
-                ApplyFilter();
-                applyFilter = false;
-            }
-        }
+        // internal void PlatformSetFilter(FilterMode mode, float filterQ, float frequency)
+        // {
+        //     if (!OpenALSoundController.Efx.IsInitialized)
+        //         return;
+        //
+        //     applyFilter = true;
+        //     switch (mode)
+        //     {
+        //     case FilterMode.BandPass:
+        //         filterType = EfxFilterType.Bandpass;
+        //         break;
+        //         case FilterMode.LowPass:
+        //         filterType = EfxFilterType.Lowpass;
+        //         break;
+        //         case FilterMode.HighPass:
+        //         filterType = EfxFilterType.Highpass;
+        //         break;
+        //     }
+        //     this.filterQ = filterQ;
+        //     this.frequency = frequency;
+        //     if (State == SoundState.Playing)
+        //     {
+        //         ApplyFilter();
+        //         applyFilter = false;
+        //     }
+        // }
 
         internal void PlatformClearFilter()
         {

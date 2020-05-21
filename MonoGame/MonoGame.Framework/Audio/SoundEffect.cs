@@ -70,22 +70,22 @@ namespace Microsoft.Xna.Framework.Audio
         }
 
         // Only used from XACT WaveBank.
-        internal SoundEffect(MiniFormatTag codec, byte[] buffer, int channels, int sampleRate, int blockAlignment, int loopStart, int loopLength)
-        {
-            Initialize();
-            if (_systemState != SoundSystemState.Initialized)
-                throw new NoAudioHardwareException("Audio has failed to initialize. Call SoundEffect.Initialize() before sound operation to get more specific errors.");
-
-            // Handle the common case... the rest is platform specific.
-            if (codec == MiniFormatTag.Pcm)
-            {
-                _duration = TimeSpan.FromSeconds((float)buffer.Length / (sampleRate * blockAlignment));
-                PlatformInitializePcm(buffer, 0, buffer.Length, 16, sampleRate, (AudioChannels)channels, loopStart, loopLength);
-                return;
-            }
-
-            PlatformInitializeXact(codec, buffer, channels, sampleRate, blockAlignment, loopStart, loopLength, out _duration);
-        }
+        // internal SoundEffect(MiniFormatTag codec, byte[] buffer, int channels, int sampleRate, int blockAlignment, int loopStart, int loopLength)
+        // {
+        //     Initialize();
+        //     if (_systemState != SoundSystemState.Initialized)
+        //         throw new NoAudioHardwareException("Audio has failed to initialize. Call SoundEffect.Initialize() before sound operation to get more specific errors.");
+        //
+        //     // Handle the common case... the rest is platform specific.
+        //     if (codec == MiniFormatTag.Pcm)
+        //     {
+        //         _duration = TimeSpan.FromSeconds((float)buffer.Length / (sampleRate * blockAlignment));
+        //         PlatformInitializePcm(buffer, 0, buffer.Length, 16, sampleRate, (AudioChannels)channels, loopStart, loopLength);
+        //         return;
+        //     }
+        //
+        //     PlatformInitializeXact(codec, buffer, channels, sampleRate, blockAlignment, loopStart, loopLength, out _duration);
+        // }
 
         #endregion
 

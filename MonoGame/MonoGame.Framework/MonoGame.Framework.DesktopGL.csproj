@@ -22,6 +22,7 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Audio\Xact\**" />
     <Compile Remove="bin\**\*" />
     <Compile Remove="Content\**" />
     <Compile Remove="Design\**" />
@@ -32,6 +33,7 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
     <Compile Remove="Platform\Media\**" />
     <Compile Remove="Properties\**\*" />
     <Compile Remove="Utilities\LzxStream\**" />
+    <EmbeddedResource Remove="Audio\Xact\**" />
     <EmbeddedResource Remove="Content\**" />
     <EmbeddedResource Remove="Design\**" />
     <EmbeddedResource Remove="Graphics\PackedVector\**" />
@@ -41,6 +43,7 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Audio\Xact\**" />
     <None Remove="Content\**" />
     <None Remove="Design\**" />
     <None Remove="Graphics\PackedVector\**" />
