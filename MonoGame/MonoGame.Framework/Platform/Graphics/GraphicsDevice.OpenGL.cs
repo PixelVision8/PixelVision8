@@ -129,10 +129,10 @@ namespace Microsoft.Xna.Framework.Graphics
         internal int _maxTextureSize = 0;
 
         // Keeps track of last applied state to avoid redundant OpenGL calls
-        internal bool _lastBlendEnable = false;
-        internal BlendState _lastBlendState = new BlendState();
+        // internal bool _lastBlendEnable = false;
+        // internal BlendState _lastBlendState = new BlendState();
         // internal DepthStencilState _lastDepthStencilState = new DepthStencilState();
-        internal RasterizerState _lastRasterizerState = new RasterizerState();
+        // internal RasterizerState _lastRasterizerState = new RasterizerState();
         private Vector4 _lastClearColor = Vector4.Zero;
         private float _lastClearDepth = 1.0f;
         private int _lastClearStencil = 0;
@@ -786,11 +786,11 @@ namespace Microsoft.Xna.Framework.Graphics
                     this.framebufferHelper.BindFramebuffer(glResolveFramebuffer);
                 }
                 // The only fragment operations which affect the resolve are the pixel ownership test, the scissor test, and dithering.
-                if (this._lastRasterizerState.ScissorTestEnable)
-                {
-                    GL.Disable(EnableCap.ScissorTest);
-                    GraphicsExtensions.CheckGLError();
-                }
+                // if (this._lastRasterizerState.ScissorTestEnable)
+                // {
+                //     GL.Disable(EnableCap.ScissorTest);
+                //     GraphicsExtensions.CheckGLError();
+                // }
                 var glFramebuffer = this.glFramebuffers[this._currentRenderTargetBindings];
                 this.framebufferHelper.BindReadFramebuffer(glFramebuffer);
                 for (var i = 0; i < this._currentRenderTargetCount; ++i)
@@ -801,11 +801,11 @@ namespace Microsoft.Xna.Framework.Graphics
                 }
                 if (renderTarget.RenderTargetUsage == RenderTargetUsage.DiscardContents && this.framebufferHelper.SupportsInvalidateFramebuffer)
                     this.framebufferHelper.InvalidateReadFramebuffer();
-                if (this._lastRasterizerState.ScissorTestEnable)
-                {
-                    GL.Enable(EnableCap.ScissorTest);
-                    GraphicsExtensions.CheckGLError();
-                }
+                // if (this._lastRasterizerState.ScissorTestEnable)
+                // {
+                //     GL.Enable(EnableCap.ScissorTest);
+                //     GraphicsExtensions.CheckGLError();
+                // }
             }
             for (var i = 0; i < this._currentRenderTargetCount; ++i)
             {

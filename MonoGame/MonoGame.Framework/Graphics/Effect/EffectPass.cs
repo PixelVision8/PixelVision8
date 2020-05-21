@@ -11,7 +11,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
         private readonly BlendState _blendState;
         // private readonly DepthStencilState _depthStencilState;
-        private readonly RasterizerState _rasterizerState;
+        // private readonly RasterizerState _rasterizerState;
 
 		public string Name { get; private set; }
 
@@ -23,7 +23,7 @@ namespace Microsoft.Xna.Framework.Graphics
                                 Shader pixelShader, 
                                 BlendState blendState, 
                                 /*DepthStencilState depthStencilState, */
-                                RasterizerState rasterizerState,
+                                /*RasterizerState rasterizerState,*/
                                 EffectAnnotationCollection annotations )
         {
             Debug.Assert(effect != null, "Got a null effect!");
@@ -38,7 +38,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
             _blendState = blendState;
             // _depthStencilState = depthStencilState;
-            _rasterizerState = rasterizerState;
+            // _rasterizerState = rasterizerState;
 
             Annotations = annotations;
         }
@@ -54,7 +54,7 @@ namespace Microsoft.Xna.Framework.Graphics
             Name = cloneSource.Name;
             _blendState = cloneSource._blendState;
             // _depthStencilState = cloneSource._depthStencilState;
-            _rasterizerState = cloneSource._rasterizerState;
+            // _rasterizerState = cloneSource._rasterizerState;
             Annotations = cloneSource.Annotations;
             _vertexShader = cloneSource._vertexShader;
             _pixelShader = cloneSource._pixelShader;
@@ -107,8 +107,8 @@ namespace Microsoft.Xna.Framework.Graphics
             }
 
             // Set the render states if we have some.
-            if (_rasterizerState != null)
-                device.RasterizerState = _rasterizerState;
+            // if (_rasterizerState != null)
+            //     device.RasterizerState = _rasterizerState;
             // if (_blendState != null)
             //     device.BlendState = _blendState;
             // if (_depthStencilState != null)

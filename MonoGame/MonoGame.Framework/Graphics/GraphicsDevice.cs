@@ -63,13 +63,13 @@ namespace Microsoft.Xna.Framework.Graphics
         // private DepthStencilState _depthStencilStateDepthRead;
         // private DepthStencilState _depthStencilStateNone;
 
-        private RasterizerState _rasterizerState;
-        private RasterizerState _actualRasterizerState;
+        // private RasterizerState _rasterizerState;
+        // private RasterizerState _actualRasterizerState;
         private bool _rasterizerStateDirty;
 
-        private RasterizerState _rasterizerStateCullClockwise;
-        private RasterizerState _rasterizerStateCullCounterClockwise;
-        private RasterizerState _rasterizerStateCullNone;
+        // private RasterizerState _rasterizerStateCullClockwise;
+        // private RasterizerState _rasterizerStateCullCounterClockwise;
+        // private RasterizerState _rasterizerStateCullNone;
 
         private Rectangle _scissorRectangle;
         private bool _scissorRectangleDirty;
@@ -315,11 +315,11 @@ namespace Microsoft.Xna.Framework.Graphics
             //
             // DepthStencilState = DepthStencilState.Default;
 
-            _rasterizerStateCullClockwise = RasterizerState.CullClockwise.Clone();
-            _rasterizerStateCullCounterClockwise = RasterizerState.CullCounterClockwise.Clone();
-            _rasterizerStateCullNone = RasterizerState.CullNone.Clone();
+            // _rasterizerStateCullClockwise = RasterizerState.CullClockwise.Clone();
+            // _rasterizerStateCullCounterClockwise = RasterizerState.CullCounterClockwise.Clone();
+            // _rasterizerStateCullNone = RasterizerState.CullNone.Clone();
 
-            RasterizerState = RasterizerState.CullCounterClockwise;
+            // RasterizerState = RasterizerState.CullCounterClockwise;
 
             EffectCache = new Dictionary<int, Effect>();
         }
@@ -360,7 +360,7 @@ namespace Microsoft.Xna.Framework.Graphics
             // _blendStateDirty = _depthStencilStateDirty = _rasterizerStateDirty = true;
             // BlendState = BlendState.Opaque;
             // DepthStencilState = DepthStencilState.Default;
-            RasterizerState = RasterizerState.CullCounterClockwise;
+            // RasterizerState = RasterizerState.CullCounterClockwise;
 
             // Clear the texture and sampler collections forcing
             // the state to be reapplied.
@@ -388,44 +388,44 @@ namespace Microsoft.Xna.Framework.Graphics
             ApplyRenderTargets(null);
         }
 
-        public RasterizerState RasterizerState
-        {
-            get
-            {
-                return _rasterizerState;
-            }
-
-            set
-            {
-                if (value == null)
-                    throw new ArgumentNullException("value");
-
-                // Don't set the same state twice!
-                if (_rasterizerState == value)
-                    return;
-
-                if (!value.DepthClipEnable && !GraphicsCapabilities.SupportsDepthClamp)
-                    throw new InvalidOperationException("Cannot set RasterizerState.DepthClipEnable to false on this graphics device");
-
-                _rasterizerState = value;
-
-                // Static state properties never actually get bound;
-                // instead we use our GraphicsDevice-specific version of them.
-                var newRasterizerState = _rasterizerState;
-                if (ReferenceEquals(_rasterizerState, RasterizerState.CullClockwise))
-                    newRasterizerState = _rasterizerStateCullClockwise;
-                else if (ReferenceEquals(_rasterizerState, RasterizerState.CullCounterClockwise))
-                    newRasterizerState = _rasterizerStateCullCounterClockwise;
-                else if (ReferenceEquals(_rasterizerState, RasterizerState.CullNone))
-                    newRasterizerState = _rasterizerStateCullNone;
-
-                newRasterizerState.BindToGraphicsDevice(this);
-
-                _actualRasterizerState = newRasterizerState;
-
-                _rasterizerStateDirty = true;
-            }
-        }
+        // public RasterizerState RasterizerState
+        // {
+        //     get
+        //     {
+        //         return _rasterizerState;
+        //     }
+        //
+        //     set
+        //     {
+        //         if (value == null)
+        //             throw new ArgumentNullException("value");
+        //
+        //         // Don't set the same state twice!
+        //         if (_rasterizerState == value)
+        //             return;
+        //
+        //         if (!value.DepthClipEnable && !GraphicsCapabilities.SupportsDepthClamp)
+        //             throw new InvalidOperationException("Cannot set RasterizerState.DepthClipEnable to false on this graphics device");
+        //
+        //         _rasterizerState = value;
+        //
+        //         // Static state properties never actually get bound;
+        //         // instead we use our GraphicsDevice-specific version of them.
+        //         var newRasterizerState = _rasterizerState;
+        //         if (ReferenceEquals(_rasterizerState, RasterizerState.CullClockwise))
+        //             newRasterizerState = _rasterizerStateCullClockwise;
+        //         else if (ReferenceEquals(_rasterizerState, RasterizerState.CullCounterClockwise))
+        //             newRasterizerState = _rasterizerStateCullCounterClockwise;
+        //         else if (ReferenceEquals(_rasterizerState, RasterizerState.CullNone))
+        //             newRasterizerState = _rasterizerStateCullNone;
+        //
+        //         newRasterizerState.BindToGraphicsDevice(this);
+        //
+        //         _actualRasterizerState = newRasterizerState;
+        //
+        //         _rasterizerStateDirty = true;
+        //     }
+        // }
 
         /// <summary>
         /// The color used as blend factor when alpha blending.
@@ -613,11 +613,11 @@ namespace Microsoft.Xna.Framework.Graphics
                     // _depthStencilStateDepthRead.Dispose();
                     // _depthStencilStateNone.Dispose();
 
-                    _rasterizerState = null;
-                    _actualRasterizerState = null;
-                    _rasterizerStateCullClockwise.Dispose();
-                    _rasterizerStateCullCounterClockwise.Dispose();
-                    _rasterizerStateCullNone.Dispose();
+                    // _rasterizerState = null;
+                    // _actualRasterizerState = null;
+                    // _rasterizerStateCullClockwise.Dispose();
+                    // _rasterizerStateCullCounterClockwise.Dispose();
+                    // _rasterizerStateCullNone.Dispose();
 
                     PlatformDispose();
                 }

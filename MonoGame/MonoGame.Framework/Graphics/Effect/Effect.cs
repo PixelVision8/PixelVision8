@@ -326,9 +326,9 @@ namespace Microsoft.Xna.Framework.Graphics
 
 				BlendState blend = null;
 				// DepthStencilState depth = null;
-				RasterizerState raster = null;
-				if (reader.ReadBoolean())
-				{
+				// RasterizerState raster = null;
+				// if (reader.ReadBoolean())
+				// {
 					// blend = new BlendState
 					// {
 					// 	AlphaBlendFunction = (BlendFunction)reader.ReadByte(),
@@ -344,9 +344,9 @@ namespace Microsoft.Xna.Framework.Graphics
 					// 	ColorWriteChannels3 = (ColorWriteChannels)reader.ReadByte(),
 					// 	MultiSampleMask = reader.ReadInt32(),
 					// };
-				}
-				if (reader.ReadBoolean())
-				{
+				// }
+				// if (reader.ReadBoolean())
+				// {
 					// depth = new DepthStencilState
 					// {
 					// 	CounterClockwiseStencilDepthBufferFail = (StencilOperation)reader.ReadByte(),
@@ -366,21 +366,21 @@ namespace Microsoft.Xna.Framework.Graphics
 					// 	StencilWriteMask = reader.ReadInt32(),
 					// 	TwoSidedStencilMode = reader.ReadBoolean(),
 					// };
-				}
-				if (reader.ReadBoolean())
-				{
-					raster = new RasterizerState
-					{
-						CullMode = (CullMode)reader.ReadByte(),
-						DepthBias = reader.ReadSingle(),
-						FillMode = (FillMode)reader.ReadByte(),
-						MultiSampleAntiAlias = reader.ReadBoolean(),
-						ScissorTestEnable = reader.ReadBoolean(),
-						SlopeScaleDepthBias = reader.ReadSingle(),
-					};
-				}
+				// }
+				// if (reader.ReadBoolean())
+				// {
+				// 	raster = new RasterizerState
+				// 	{
+				// 		CullMode = (CullMode)reader.ReadByte(),
+				// 		DepthBias = reader.ReadSingle(),
+				// 		FillMode = (FillMode)reader.ReadByte(),
+				// 		MultiSampleAntiAlias = reader.ReadBoolean(),
+				// 		ScissorTestEnable = reader.ReadBoolean(),
+				// 		SlopeScaleDepthBias = reader.ReadSingle(),
+				// 	};
+				// }
 
-                passes[i] = new EffectPass(effect, name, vertexShader, pixelShader, blend, /*depth,*/ raster, annotations);
+                passes[i] = new EffectPass(effect, name, vertexShader, pixelShader, blend, /*depth,*/ /*raster,*/ annotations);
 			}
 
             return new EffectPassCollection(passes);
