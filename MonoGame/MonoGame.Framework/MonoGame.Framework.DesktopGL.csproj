@@ -56,6 +56,7 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
     <Compile Remove="BoundingBox.cs" />
     <Compile Remove="BoundingFrustum.cs" />
     <Compile Remove="BoundingSphere.cs" />
+    <Compile Remove="ContainmentType.cs" />
     <Compile Remove="Curve.cs" />
     <Compile Remove="CurveContinuity.cs" />
     <Compile Remove="CurveKey.cs" />
@@ -86,6 +87,7 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
     <Compile Remove="Graphics\ModelMeshPartCollection.cs" />
     <Compile Remove="Graphics\OcclusionQuery.cs" />
     <Compile Remove="Graphics\RenderTargetCube.cs" />
+    <Compile Remove="Graphics\States\DepthStencilState.cs" />
     <Compile Remove="Graphics\Texture3D.cs" />
     <Compile Remove="Graphics\TextureCube.cs" />
     <Compile Remove="IDrawable.cs" />

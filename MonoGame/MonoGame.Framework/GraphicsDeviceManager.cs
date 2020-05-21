@@ -177,22 +177,22 @@ namespace Microsoft.Xna.Framework
 
         protected void OnDeviceDisposing(EventArgs e)
         {
-            EventHelpers.Raise(this, DeviceDisposing, e);
+            // EventHelpers.Raise(this, DeviceDisposing, e);
         }
 
         protected void OnDeviceResetting(EventArgs e)
         {
-            EventHelpers.Raise(this, DeviceResetting, e);
+            // EventHelpers.Raise(this, DeviceResetting, e);
         }
 
         internal void OnDeviceReset(EventArgs e)
         {
-            EventHelpers.Raise(this, DeviceReset, e);
+            // EventHelpers.Raise(this, DeviceReset, e);
         }
 
         internal void OnDeviceCreated(EventArgs e)
         {
-            EventHelpers.Raise(this, DeviceCreated, e);
+            // EventHelpers.Raise(this, DeviceCreated, e);
         }
 
         /// <summary>

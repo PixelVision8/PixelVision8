@@ -131,7 +131,7 @@ namespace Microsoft.Xna.Framework.Graphics
         // Keeps track of last applied state to avoid redundant OpenGL calls
         internal bool _lastBlendEnable = false;
         internal BlendState _lastBlendState = new BlendState();
-        internal DepthStencilState _lastDepthStencilState = new DepthStencilState();
+        // internal DepthStencilState _lastDepthStencilState = new DepthStencilState();
         internal RasterizerState _lastRasterizerState = new RasterizerState();
         private Vector4 _lastClearColor = Vector4.Zero;
         private float _lastClearDepth = 1.0f;
@@ -351,7 +351,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 _bufferBindingInfos[i] = new BufferBindingInfo(null, IntPtr.Zero, 0, -1);
         }
         
-        private DepthStencilState clearDepthStencilState = new DepthStencilState { StencilEnable = true };
+        // private DepthStencilState clearDepthStencilState = new DepthStencilState { StencilEnable = true };
 
         private void PlatformClear(ClearOptions options, Vector4 color, float depth, int stencil)
         {
@@ -370,13 +370,13 @@ namespace Microsoft.Xna.Framework.Graphics
             // the clear correctly and restore it afterwards.
             //
 		    var prevScissorRect = ScissorRectangle;
-		    var prevDepthStencilState = DepthStencilState;
+		    // var prevDepthStencilState = DepthStencilState;
             var prevBlendState = BlendState;
             ScissorRectangle = _viewport.Bounds;
             // DepthStencilState.Default has the Stencil Test disabled; 
             // make sure stencil test is enabled before we clear since
             // some drivers won't clear with stencil test disabled
-            DepthStencilState = this.clearDepthStencilState;
+            // DepthStencilState = this.clearDepthStencilState;
 		    BlendState = BlendState.Opaque;
             ApplyState(false);
 
@@ -425,7 +425,7 @@ namespace Microsoft.Xna.Framework.Graphics
            		
             // Restore the previous render state.
 		    ScissorRectangle = prevScissorRect;
-		    DepthStencilState = prevDepthStencilState;
+		    // DepthStencilState = prevDepthStencilState;
 		    BlendState = prevBlendState;
         }
 

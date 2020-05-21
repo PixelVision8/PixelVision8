@@ -10,7 +10,7 @@ namespace Microsoft.Xna.Framework.Graphics
         private readonly Shader _vertexShader;
 
         private readonly BlendState _blendState;
-        private readonly DepthStencilState _depthStencilState;
+        // private readonly DepthStencilState _depthStencilState;
         private readonly RasterizerState _rasterizerState;
 
 		public string Name { get; private set; }
@@ -22,7 +22,7 @@ namespace Microsoft.Xna.Framework.Graphics
                                 Shader vertexShader, 
                                 Shader pixelShader, 
                                 BlendState blendState, 
-                                DepthStencilState depthStencilState, 
+                                /*DepthStencilState depthStencilState, */
                                 RasterizerState rasterizerState,
                                 EffectAnnotationCollection annotations )
         {
@@ -37,7 +37,7 @@ namespace Microsoft.Xna.Framework.Graphics
             _pixelShader = pixelShader;
 
             _blendState = blendState;
-            _depthStencilState = depthStencilState;
+            // _depthStencilState = depthStencilState;
             _rasterizerState = rasterizerState;
 
             Annotations = annotations;
@@ -53,7 +53,7 @@ namespace Microsoft.Xna.Framework.Graphics
             // Share all the immutable types.
             Name = cloneSource.Name;
             _blendState = cloneSource._blendState;
-            _depthStencilState = cloneSource._depthStencilState;
+            // _depthStencilState = cloneSource._depthStencilState;
             _rasterizerState = cloneSource._rasterizerState;
             Annotations = cloneSource.Annotations;
             _vertexShader = cloneSource._vertexShader;
@@ -111,8 +111,8 @@ namespace Microsoft.Xna.Framework.Graphics
                 device.RasterizerState = _rasterizerState;
             if (_blendState != null)
                 device.BlendState = _blendState;
-            if (_depthStencilState != null)
-                device.DepthStencilState = _depthStencilState;
+            // if (_depthStencilState != null)
+            //     device.DepthStencilState = _depthStencilState;
         }
 
         private void SetShaderSamplers(Shader shader, TextureCollection textures, SamplerStateCollection samplerStates)

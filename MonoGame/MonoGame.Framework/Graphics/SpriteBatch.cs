@@ -18,7 +18,7 @@ namespace Microsoft.Xna.Framework.Graphics
 		SpriteSortMode _sortMode;
 		BlendState _blendState;
 		SamplerState _samplerState;
-		DepthStencilState _depthStencilState; 
+		// DepthStencilState _depthStencilState; 
 		RasterizerState _rasterizerState;		
 		Effect _effect;
         bool _beginCalled;
@@ -81,7 +81,7 @@ namespace Microsoft.Xna.Framework.Graphics
              SpriteSortMode sortMode = SpriteSortMode.Deferred,
              BlendState blendState = null,
              SamplerState samplerState = null,
-             DepthStencilState depthStencilState = null,
+             /*DepthStencilState depthStencilState = null,*/
              RasterizerState rasterizerState = null,
              Effect effect = null,
              Matrix? transformMatrix = null
@@ -94,7 +94,7 @@ namespace Microsoft.Xna.Framework.Graphics
             _sortMode = sortMode;
             _blendState = blendState ?? BlendState.AlphaBlend;
             _samplerState = samplerState ?? SamplerState.LinearClamp;
-            _depthStencilState = depthStencilState ?? DepthStencilState.None;
+            // _depthStencilState = depthStencilState ?? DepthStencilState.None;
             _rasterizerState = rasterizerState ?? RasterizerState.CullCounterClockwise;
             _effect = effect;
             _spriteEffect.TransformMatrix = transformMatrix;
@@ -129,7 +129,7 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             var gd = GraphicsDevice;
 			gd.BlendState = _blendState;
-			gd.DepthStencilState = _depthStencilState;
+			// gd.DepthStencilState = _depthStencilState;
 			gd.RasterizerState = _rasterizerState;
 			gd.SamplerStates[0] = _samplerState;
 

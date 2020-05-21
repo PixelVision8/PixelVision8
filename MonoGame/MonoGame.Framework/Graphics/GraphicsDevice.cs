@@ -55,13 +55,13 @@ namespace Microsoft.Xna.Framework.Graphics
         private BlendState _blendStateNonPremultiplied;
         private BlendState _blendStateOpaque;
 
-        private DepthStencilState _depthStencilState;
-        private DepthStencilState _actualDepthStencilState;
-        private bool _depthStencilStateDirty;
-
-        private DepthStencilState _depthStencilStateDefault;
-        private DepthStencilState _depthStencilStateDepthRead;
-        private DepthStencilState _depthStencilStateNone;
+        // private DepthStencilState _depthStencilState;
+        // private DepthStencilState _actualDepthStencilState;
+        // private bool _depthStencilStateDirty;
+        //
+        // private DepthStencilState _depthStencilStateDefault;
+        // private DepthStencilState _depthStencilStateDepthRead;
+        // private DepthStencilState _depthStencilStateNone;
 
         private RasterizerState _rasterizerState;
         private RasterizerState _actualRasterizerState;
@@ -309,11 +309,11 @@ namespace Microsoft.Xna.Framework.Graphics
 
             BlendState = BlendState.Opaque;
 
-            _depthStencilStateDefault = DepthStencilState.Default.Clone();
-            _depthStencilStateDepthRead = DepthStencilState.DepthRead.Clone();
-            _depthStencilStateNone = DepthStencilState.None.Clone();
-
-            DepthStencilState = DepthStencilState.Default;
+            // _depthStencilStateDefault = DepthStencilState.Default.Clone();
+            // _depthStencilStateDepthRead = DepthStencilState.DepthRead.Clone();
+            // _depthStencilStateNone = DepthStencilState.None.Clone();
+            //
+            // DepthStencilState = DepthStencilState.Default;
 
             _rasterizerStateCullClockwise = RasterizerState.CullClockwise.Clone();
             _rasterizerStateCullCounterClockwise = RasterizerState.CullCounterClockwise.Clone();
@@ -357,9 +357,9 @@ namespace Microsoft.Xna.Framework.Graphics
             PlatformInitialize();
 
             // Force set the default render states.
-            _blendStateDirty = _depthStencilStateDirty = _rasterizerStateDirty = true;
+            // _blendStateDirty = _depthStencilStateDirty = _rasterizerStateDirty = true;
             BlendState = BlendState.Opaque;
-            DepthStencilState = DepthStencilState.Default;
+            // DepthStencilState = DepthStencilState.Default;
             RasterizerState = RasterizerState.CullCounterClockwise;
 
             // Clear the texture and sampler collections forcing
@@ -487,37 +487,37 @@ namespace Microsoft.Xna.Framework.Graphics
             }
 		}
 
-        public DepthStencilState DepthStencilState
-        {
-            get { return _depthStencilState; }
-            set
-            {
-                if (value == null)
-                    throw new ArgumentNullException("value");
-
-                // Don't set the same state twice!
-                if (_depthStencilState == value)
-                    return;
-
-                _depthStencilState = value;
-
-                // Static state properties never actually get bound;
-                // instead we use our GraphicsDevice-specific version of them.
-                var newDepthStencilState = _depthStencilState;
-                if (ReferenceEquals(_depthStencilState, DepthStencilState.Default))
-                    newDepthStencilState = _depthStencilStateDefault;
-                else if (ReferenceEquals(_depthStencilState, DepthStencilState.DepthRead))
-                    newDepthStencilState = _depthStencilStateDepthRead;
-                else if (ReferenceEquals(_depthStencilState, DepthStencilState.None))
-                    newDepthStencilState = _depthStencilStateNone;
-
-                newDepthStencilState.BindToGraphicsDevice(this);
-
-                _actualDepthStencilState = newDepthStencilState;
-
-                _depthStencilStateDirty = true;
-            }
-        }
+        // public DepthStencilState DepthStencilState
+        // {
+        //     get { return _depthStencilState; }
+        //     set
+        //     {
+        //         if (value == null)
+        //             throw new ArgumentNullException("value");
+        //
+        //         // Don't set the same state twice!
+        //         if (_depthStencilState == value)
+        //             return;
+        //
+        //         _depthStencilState = value;
+        //
+        //         // Static state properties never actually get bound;
+        //         // instead we use our GraphicsDevice-specific version of them.
+        //         var newDepthStencilState = _depthStencilState;
+        //         if (ReferenceEquals(_depthStencilState, DepthStencilState.Default))
+        //             newDepthStencilState = _depthStencilStateDefault;
+        //         else if (ReferenceEquals(_depthStencilState, DepthStencilState.DepthRead))
+        //             newDepthStencilState = _depthStencilStateDepthRead;
+        //         else if (ReferenceEquals(_depthStencilState, DepthStencilState.None))
+        //             newDepthStencilState = _depthStencilStateNone;
+        //
+        //         newDepthStencilState.BindToGraphicsDevice(this);
+        //
+        //         _actualDepthStencilState = newDepthStencilState;
+        //
+        //         _depthStencilStateDirty = true;
+        //     }
+        // }
 
         internal void ApplyState(bool applyShaders)
         {
@@ -607,11 +607,11 @@ namespace Microsoft.Xna.Framework.Graphics
                     _blendStateNonPremultiplied.Dispose();
                     _blendStateOpaque.Dispose();
 
-                    _depthStencilState = null;
-                    _actualDepthStencilState = null;
-                    _depthStencilStateDefault.Dispose();
-                    _depthStencilStateDepthRead.Dispose();
-                    _depthStencilStateNone.Dispose();
+                    // _depthStencilState = null;
+                    // _actualDepthStencilState = null;
+                    // _depthStencilStateDefault.Dispose();
+                    // _depthStencilStateDepthRead.Dispose();
+                    // _depthStencilStateNone.Dispose();
 
                     _rasterizerState = null;
                     _actualRasterizerState = null;

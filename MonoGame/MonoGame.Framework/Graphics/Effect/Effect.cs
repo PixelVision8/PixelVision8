@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.IO;
 using Microsoft.Xna.Framework.Utilities;
 
+// using Microsoft.Xna.Framework.Utilities;
+
 namespace Microsoft.Xna.Framework.Graphics
 {
 	public class Effect : GraphicsResource
@@ -323,7 +325,7 @@ namespace Microsoft.Xna.Framework.Graphics
                     pixelShader = shaders[shaderIndex];
 
 				BlendState blend = null;
-				DepthStencilState depth = null;
+				// DepthStencilState depth = null;
 				RasterizerState raster = null;
 				if (reader.ReadBoolean())
 				{
@@ -345,25 +347,25 @@ namespace Microsoft.Xna.Framework.Graphics
 				}
 				if (reader.ReadBoolean())
 				{
-					depth = new DepthStencilState
-					{
-						CounterClockwiseStencilDepthBufferFail = (StencilOperation)reader.ReadByte(),
-						CounterClockwiseStencilFail = (StencilOperation)reader.ReadByte(),
-						CounterClockwiseStencilFunction = (CompareFunction)reader.ReadByte(),
-						CounterClockwiseStencilPass = (StencilOperation)reader.ReadByte(),
-						DepthBufferEnable = reader.ReadBoolean(),
-						DepthBufferFunction = (CompareFunction)reader.ReadByte(),
-						DepthBufferWriteEnable = reader.ReadBoolean(),
-						ReferenceStencil = reader.ReadInt32(),
-						StencilDepthBufferFail = (StencilOperation)reader.ReadByte(),
-						StencilEnable = reader.ReadBoolean(),
-						StencilFail = (StencilOperation)reader.ReadByte(),
-						StencilFunction = (CompareFunction)reader.ReadByte(),
-						StencilMask = reader.ReadInt32(),
-						StencilPass = (StencilOperation)reader.ReadByte(),
-						StencilWriteMask = reader.ReadInt32(),
-						TwoSidedStencilMode = reader.ReadBoolean(),
-					};
+					// depth = new DepthStencilState
+					// {
+					// 	CounterClockwiseStencilDepthBufferFail = (StencilOperation)reader.ReadByte(),
+					// 	CounterClockwiseStencilFail = (StencilOperation)reader.ReadByte(),
+					// 	CounterClockwiseStencilFunction = (CompareFunction)reader.ReadByte(),
+					// 	CounterClockwiseStencilPass = (StencilOperation)reader.ReadByte(),
+					// 	DepthBufferEnable = reader.ReadBoolean(),
+					// 	DepthBufferFunction = (CompareFunction)reader.ReadByte(),
+					// 	DepthBufferWriteEnable = reader.ReadBoolean(),
+					// 	ReferenceStencil = reader.ReadInt32(),
+					// 	StencilDepthBufferFail = (StencilOperation)reader.ReadByte(),
+					// 	StencilEnable = reader.ReadBoolean(),
+					// 	StencilFail = (StencilOperation)reader.ReadByte(),
+					// 	StencilFunction = (CompareFunction)reader.ReadByte(),
+					// 	StencilMask = reader.ReadInt32(),
+					// 	StencilPass = (StencilOperation)reader.ReadByte(),
+					// 	StencilWriteMask = reader.ReadInt32(),
+					// 	TwoSidedStencilMode = reader.ReadBoolean(),
+					// };
 				}
 				if (reader.ReadBoolean())
 				{
@@ -378,7 +380,7 @@ namespace Microsoft.Xna.Framework.Graphics
 					};
 				}
 
-                passes[i] = new EffectPass(effect, name, vertexShader, pixelShader, blend, depth, raster, annotations);
+                passes[i] = new EffectPass(effect, name, vertexShader, pixelShader, blend, /*depth,*/ raster, annotations);
 			}
 
             return new EffectPassCollection(passes);
