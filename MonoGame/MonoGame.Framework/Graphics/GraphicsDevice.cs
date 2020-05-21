@@ -525,17 +525,17 @@ namespace Microsoft.Xna.Framework.Graphics
 
             PlatformApplyBlend();
 
-            if (_depthStencilStateDirty)
-            {
-                _actualDepthStencilState.PlatformApplyState(this);
-                _depthStencilStateDirty = false;
-            }
-
-            if (_rasterizerStateDirty)
-            {
-                _actualRasterizerState.PlatformApplyState(this);
-                _rasterizerStateDirty = false;
-            }
+            // if (_depthStencilStateDirty)
+            // {
+            //     _actualDepthStencilState.PlatformApplyState(this);
+            //     _depthStencilStateDirty = false;
+            // }
+            //
+            // if (_rasterizerStateDirty)
+            // {
+            //     _actualRasterizerState.PlatformApplyState(this);
+            //     _rasterizerStateDirty = false;
+            // }
 
             PlatformApplyState(applyShaders);
         }

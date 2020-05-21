@@ -343,8 +343,8 @@ namespace Microsoft.Xna.Framework.Graphics
 
             // Force resetting states
             this.PlatformApplyBlend(true);
-            this.DepthStencilState.PlatformApplyState(this, true);
-            this.RasterizerState.PlatformApplyState(this, true);
+            // this.DepthStencilState.PlatformApplyState(this, true);
+            // this.RasterizerState.PlatformApplyState(this, true);
 
             _bufferBindingInfos = new BufferBindingInfo[_maxVertexBufferSlots];
             for (int i = 0; i < _bufferBindingInfos.Length; i++)
