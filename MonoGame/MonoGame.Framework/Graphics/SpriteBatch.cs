@@ -93,7 +93,7 @@ namespace Microsoft.Xna.Framework.Graphics
             // defaults
             _sortMode = sortMode;
             // _blendState = blendState ?? BlendState.AlphaBlend;
-            _samplerState = samplerState ?? SamplerState.LinearClamp;
+            _samplerState = /*samplerState ?? */SamplerState.PointClamp;
             // _depthStencilState = depthStencilState ?? DepthStencilState.None;
             // _rasterizerState = rasterizerState ?? RasterizerState.CullCounterClockwise;
             _effect = effect;

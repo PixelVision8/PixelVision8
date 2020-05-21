@@ -10,20 +10,20 @@ namespace Microsoft.Xna.Framework.Graphics
     {
         static SamplerState()
         {
-            AnisotropicClamp = new SamplerState("SamplerState.AnisotropicClamp", TextureFilter.Anisotropic, TextureAddressMode.Clamp);
-            AnisotropicWrap = new SamplerState("SamplerState.AnisotropicWrap", TextureFilter.Anisotropic, TextureAddressMode.Wrap);
-            LinearClamp = new SamplerState("SamplerState.LinearClamp", TextureFilter.Linear, TextureAddressMode.Clamp);
-            LinearWrap = new SamplerState("SamplerState.LinearWrap", TextureFilter.Linear, TextureAddressMode.Wrap);
+            // AnisotropicClamp = new SamplerState("SamplerState.AnisotropicClamp", TextureFilter.Anisotropic, TextureAddressMode.Clamp);
+            // AnisotropicWrap = new SamplerState("SamplerState.AnisotropicWrap", TextureFilter.Anisotropic, TextureAddressMode.Wrap);
+            // LinearClamp = new SamplerState("SamplerState.LinearClamp", TextureFilter.Linear, TextureAddressMode.Clamp);
+            // LinearWrap = new SamplerState("SamplerState.LinearWrap", TextureFilter.Linear, TextureAddressMode.Wrap);
             PointClamp = new SamplerState("SamplerState.PointClamp", TextureFilter.Point, TextureAddressMode.Clamp);
-            PointWrap = new SamplerState("SamplerState.PointWrap", TextureFilter.Point, TextureAddressMode.Wrap);
+            // PointWrap = new SamplerState("SamplerState.PointWrap", TextureFilter.Point, TextureAddressMode.Wrap);
         }
 
-        public static readonly SamplerState AnisotropicClamp;
-        public static readonly SamplerState AnisotropicWrap;
-        public static readonly SamplerState LinearClamp;
-        public static readonly SamplerState LinearWrap;
+        // public static readonly SamplerState AnisotropicClamp;
+        // public static readonly SamplerState AnisotropicWrap;
+        // public static readonly SamplerState LinearClamp;
+        // public static readonly SamplerState LinearWrap;
         public static readonly SamplerState PointClamp;
-        public static readonly SamplerState PointWrap;
+        // public static readonly SamplerState PointWrap;
 
         private readonly bool _defaultStateObject;
 

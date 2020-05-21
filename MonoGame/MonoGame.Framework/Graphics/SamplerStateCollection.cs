@@ -27,12 +27,12 @@ namespace Microsoft.Xna.Framework.Graphics
 		{
 		    _graphicsDevice = device;
 
-            _samplerStateAnisotropicClamp = SamplerState.AnisotropicClamp.Clone();
-            _samplerStateAnisotropicWrap = SamplerState.AnisotropicWrap.Clone();
-            _samplerStateLinearClamp = SamplerState.LinearClamp.Clone();
-            _samplerStateLinearWrap = SamplerState.LinearWrap.Clone();
+            // _samplerStateAnisotropicClamp = SamplerState.AnisotropicClamp.Clone();
+            // _samplerStateAnisotropicWrap = SamplerState.AnisotropicWrap.Clone();
+            // _samplerStateLinearClamp = SamplerState.LinearClamp.Clone();
+            // _samplerStateLinearWrap = SamplerState.LinearWrap.Clone();
             _samplerStatePointClamp = SamplerState.PointClamp.Clone();
-            _samplerStatePointWrap = SamplerState.PointWrap.Clone();
+            // _samplerStatePointWrap = SamplerState.PointWrap.Clone();
 
             _samplers = new SamplerState[maxSamplers];
             _actualSamplers = new SamplerState[maxSamplers];
@@ -60,23 +60,23 @@ namespace Microsoft.Xna.Framework.Graphics
 
                 // Static state properties never actually get bound;
                 // instead we use our GraphicsDevice-specific version of them.
-                var newSamplerState = value;
-                if (ReferenceEquals(value, SamplerState.AnisotropicClamp))
-                    newSamplerState = _samplerStateAnisotropicClamp;
-                else if (ReferenceEquals(value, SamplerState.AnisotropicWrap))
-                    newSamplerState = _samplerStateAnisotropicWrap;
-                else if (ReferenceEquals(value, SamplerState.LinearClamp))
-                    newSamplerState = _samplerStateLinearClamp;
-                else if (ReferenceEquals(value, SamplerState.LinearWrap))
-                    newSamplerState = _samplerStateLinearWrap;
-                else if (ReferenceEquals(value, SamplerState.PointClamp))
-                    newSamplerState = _samplerStatePointClamp;
-                else if (ReferenceEquals(value, SamplerState.PointWrap))
-                    newSamplerState = _samplerStatePointWrap;
+                // var newSamplerState = value;
+                // if (ReferenceEquals(value, SamplerState.AnisotropicClamp))
+                //     newSamplerState = _samplerStateAnisotropicClamp;
+                // else if (ReferenceEquals(value, SamplerState.AnisotropicWrap))
+                //     newSamplerState = _samplerStateAnisotropicWrap;
+                // else if (ReferenceEquals(value, SamplerState.LinearClamp))
+                //     newSamplerState = _samplerStateLinearClamp;
+                // else if (ReferenceEquals(value, SamplerState.LinearWrap))
+                //     newSamplerState = _samplerStateLinearWrap;
+                // else if (ReferenceEquals(value, SamplerState.PointClamp))
+                    // newSamplerState = _samplerStatePointClamp;
+                // else if (ReferenceEquals(value, SamplerState.PointWrap))
+                //     newSamplerState = _samplerStatePointWrap;
 
-                newSamplerState.BindToGraphicsDevice(_graphicsDevice);
+                _samplerStatePointClamp.BindToGraphicsDevice(_graphicsDevice);
 
-                _actualSamplers[index] = newSamplerState;
+                _actualSamplers[index] = _samplerStatePointClamp;
 
                 PlatformSetSamplerState(index);
             }
@@ -84,13 +84,13 @@ namespace Microsoft.Xna.Framework.Graphics
 
         internal void Clear()
         {
-            for (var i = 0; i < _samplers.Length; i++)
-            {
-                _samplers[i] = SamplerState.LinearWrap;
-
-                _samplerStateLinearWrap.BindToGraphicsDevice(_graphicsDevice);
-                _actualSamplers[i] = _samplerStateLinearWrap;
-            }
+            // for (var i = 0; i < _samplers.Length; i++)
+            // {
+            //     _samplers[i] = SamplerState.LinearWrap;
+            //
+            //     _samplerStateLinearWrap.BindToGraphicsDevice(_graphicsDevice);
+            //     _actualSamplers[i] = _samplerStateLinearWrap;
+            // }
 
             PlatformClear();
         }
