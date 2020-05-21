@@ -66,15 +66,15 @@ namespace Microsoft.Xna.Framework.Graphics
         //     get { return _depthFormat; }
         // }
 
-		public RenderTargetBinding(RenderTarget2D renderTarget)
-		{
-			if (renderTarget == null) 
-				throw new ArgumentNullException("renderTarget");
-
-			_renderTarget = renderTarget;
-            // _arraySlice = (int)CubeMapFace.PositiveX;
-            // _depthFormat = renderTarget.DepthStencilFormat;
-		}
+		// public RenderTargetBinding(RenderTarget2D renderTarget)
+		// {
+		// 	if (renderTarget == null) 
+		// 		throw new ArgumentNullException("renderTarget");
+  //
+		// 	_renderTarget = renderTarget;
+  //           // _arraySlice = (int)CubeMapFace.PositiveX;
+  //           // _depthFormat = renderTarget.DepthStencilFormat;
+		// }
 
         // public RenderTargetBinding(RenderTargetCube renderTarget, CubeMapFace cubeMapFace)
         // {
@@ -88,58 +88,58 @@ namespace Microsoft.Xna.Framework.Graphics
         //     _depthFormat = renderTarget.DepthStencilFormat;
         // }
 
-#if DIRECTX
+// #if DIRECTX
+//
+//         public RenderTargetBinding(RenderTarget2D renderTarget, int arraySlice)
+//         {
+//             if (renderTarget == null)
+//                 throw new ArgumentNullException("renderTarget");
+//             if (arraySlice < 0 || arraySlice >= renderTarget.ArraySize)
+//                 throw new ArgumentOutOfRangeException("arraySlice");
+//             if (!renderTarget.GraphicsDevice.GraphicsCapabilities.SupportsTextureArrays)
+//                 throw new InvalidOperationException("Texture arrays are not supported on this graphics device");
+//
+//             _renderTarget = renderTarget;
+//             _arraySlice = arraySlice;
+//             _depthFormat = renderTarget.DepthStencilFormat;
+//         }
+//
+//         public RenderTargetBinding(RenderTarget3D renderTarget)
+//         {
+//             if (renderTarget == null)
+//                 throw new ArgumentNullException("renderTarget");
+//
+//             _renderTarget = renderTarget;
+//             _arraySlice = 0;
+//             _depthFormat = renderTarget.DepthStencilFormat;
+//         }
+//
+//         public RenderTargetBinding(RenderTarget3D renderTarget, int arraySlice)
+//         {
+//             if (renderTarget == null)
+//                 throw new ArgumentNullException("renderTarget");
+//             if (arraySlice < 0 || arraySlice >= renderTarget.Depth)
+//                 throw new ArgumentOutOfRangeException("arraySlice");
+//
+//             _renderTarget = renderTarget;
+//             _arraySlice = arraySlice;
+//             _depthFormat = renderTarget.DepthStencilFormat;
+//         }
+//
+// #endif 
 
-        public RenderTargetBinding(RenderTarget2D renderTarget, int arraySlice)
-        {
-            if (renderTarget == null)
-                throw new ArgumentNullException("renderTarget");
-            if (arraySlice < 0 || arraySlice >= renderTarget.ArraySize)
-                throw new ArgumentOutOfRangeException("arraySlice");
-            if (!renderTarget.GraphicsDevice.GraphicsCapabilities.SupportsTextureArrays)
-                throw new InvalidOperationException("Texture arrays are not supported on this graphics device");
+        // public static implicit operator RenderTargetBinding(RenderTarget2D renderTarget)
+        // {
+        //     return new RenderTargetBinding(renderTarget);
+        // }
 
-            _renderTarget = renderTarget;
-            _arraySlice = arraySlice;
-            _depthFormat = renderTarget.DepthStencilFormat;
-        }
-
-        public RenderTargetBinding(RenderTarget3D renderTarget)
-        {
-            if (renderTarget == null)
-                throw new ArgumentNullException("renderTarget");
-
-            _renderTarget = renderTarget;
-            _arraySlice = 0;
-            _depthFormat = renderTarget.DepthStencilFormat;
-        }
-
-        public RenderTargetBinding(RenderTarget3D renderTarget, int arraySlice)
-        {
-            if (renderTarget == null)
-                throw new ArgumentNullException("renderTarget");
-            if (arraySlice < 0 || arraySlice >= renderTarget.Depth)
-                throw new ArgumentOutOfRangeException("arraySlice");
-
-            _renderTarget = renderTarget;
-            _arraySlice = arraySlice;
-            _depthFormat = renderTarget.DepthStencilFormat;
-        }
-
-#endif 
-
-        public static implicit operator RenderTargetBinding(RenderTarget2D renderTarget)
-        {
-            return new RenderTargetBinding(renderTarget);
-        }
-
-#if DIRECTX
-
-        public static implicit operator RenderTargetBinding(RenderTarget3D renderTarget)
-        {
-            return new RenderTargetBinding(renderTarget);
-        }
-
-#endif
+// #if DIRECTX
+//
+//         public static implicit operator RenderTargetBinding(RenderTarget3D renderTarget)
+//         {
+//             return new RenderTargetBinding(renderTarget);
+//         }
+//
+// #endif
 	}
 }
