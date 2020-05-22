@@ -5,7 +5,7 @@ namespace Microsoft.Xna.Framework.Graphics
 	{
         public EffectPassCollection Passes { get; private set; }
 
-        public EffectAnnotationCollection Annotations { get; private set; }
+        // public EffectAnnotationCollection Annotations { get; private set; }
 
         public string Name { get; private set; }
 
@@ -13,17 +13,17 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             // Share all the immutable types.
             Name = cloneSource.Name;
-            Annotations = cloneSource.Annotations;
+            // Annotations = cloneSource.Annotations;
 
             // Clone the mutable types.
             Passes = cloneSource.Passes.Clone(effect);
         }
 
-        internal EffectTechnique(Effect effect, string name, EffectPassCollection passes, EffectAnnotationCollection annotations)
+        internal EffectTechnique(Effect effect, string name, EffectPassCollection passes/*, EffectAnnotationCollection annotations*/)
         {
             Name = name;
             Passes = passes;
-            Annotations = annotations;
+            // Annotations = annotations;
         }
     }
 

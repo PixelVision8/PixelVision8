@@ -278,28 +278,28 @@ namespace Microsoft.Xna.Framework.Graphics
             {
                 var name = reader.ReadString();
 
-                var annotations = ReadAnnotations(reader);
+                ReadAnnotations(reader);
 
                 var passes = ReadPasses(reader, this, _shaders);
 
-                techniques[t] = new EffectTechnique(this, name, passes, annotations);
+                techniques[t] = new EffectTechnique(this, name, passes/*, annotations*/);
             }
 
             Techniques = new EffectTechniqueCollection(techniques);
             CurrentTechnique = Techniques[0];
         }
 
-        private static EffectAnnotationCollection ReadAnnotations(BinaryReader reader)
+        private static void ReadAnnotations(BinaryReader reader)
         {
             var count = (int)reader.ReadByte();
-            if (count == 0)
-                return EffectAnnotationCollection.Empty;
-
-            var annotations = new EffectAnnotation[count];
-
-            // TODO: Annotations are not implemented!
-
-            return new EffectAnnotationCollection(annotations);
+            // if (count == 0)
+            //     return EffectAnnotationCollection.Empty;
+            //
+            // var annotations = new EffectAnnotation[count];
+            //
+            // // TODO: Annotations are not implemented!
+            //
+            // return new EffectAnnotationCollection(annotations);
         }
 
         private static EffectPassCollection ReadPasses(BinaryReader reader, Effect effect, Shader[] shaders)
@@ -310,7 +310,7 @@ namespace Microsoft.Xna.Framework.Graphics
             for (var i = 0; i < count; i++)
             {
                 var name = reader.ReadString();
-                var annotations = ReadAnnotations(reader);
+                ReadAnnotations(reader);
 
                 // Get the vertex shader.
                 Shader vertexShader = null;
@@ -324,7 +324,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 if (shaderIndex != 255)
                     pixelShader = shaders[shaderIndex];
 
-				BlendState blend = null;
+				// BlendState blend = null;
 				// DepthStencilState depth = null;
 				// RasterizerState raster = null;
 				// if (reader.ReadBoolean())
@@ -380,7 +380,7 @@ namespace Microsoft.Xna.Framework.Graphics
 				// 	};
 				// }
 
-                passes[i] = new EffectPass(effect, name, vertexShader, pixelShader, blend, /*depth,*/ /*raster,*/ annotations);
+                passes[i] = new EffectPass(effect, name, vertexShader, pixelShader/*, blend, depth,*/ /*raster,*//* annotations*/);
 			}
 
             return new EffectPassCollection(passes);
@@ -399,7 +399,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 var type = (EffectParameterType)reader.ReadByte();
 				var name = reader.ReadString();
 				var semantic = reader.ReadString();
-				var annotations = ReadAnnotations(reader);
+				ReadAnnotations(reader);
 				var rowCount = (int)reader.ReadByte();
 				var columnCount = (int)reader.ReadByte();
 
@@ -452,7 +452,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
 				parameters[i] = new EffectParameter(
 					class_, type, name, rowCount, columnCount, semantic, 
-					annotations, elements, structMembers, data);
+					/*annotations,*/ elements, structMembers, data);
 			}
 
 			return new EffectParameterCollection(parameters);

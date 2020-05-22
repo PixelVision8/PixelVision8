@@ -20,7 +20,7 @@ namespace Microsoft.Xna.Framework.Graphics
                                     int rowCount, 
                                     int columnCount,
                                     string semantic, 
-                                    EffectAnnotationCollection annotations,
+                                    // EffectAnnotationCollection annotations,
                                     EffectParameterCollection elements,
                                     EffectParameterCollection structMembers,
                                     object data )
@@ -30,7 +30,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
             Name = name;
             Semantic = semantic;
-            Annotations = annotations;
+            // Annotations = annotations;
 
             RowCount = rowCount;
 			ColumnCount = columnCount;
@@ -49,7 +49,7 @@ namespace Microsoft.Xna.Framework.Graphics
             ParameterType = cloneSource.ParameterType;
             Name = cloneSource.Name;
             Semantic = cloneSource.Semantic;
-            Annotations = cloneSource.Annotations;
+            // Annotations = cloneSource.Annotations;
             RowCount = cloneSource.RowCount;
             ColumnCount = cloneSource.ColumnCount;
 
@@ -80,7 +80,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
         public EffectParameterCollection StructureMembers { get; private set; }
 
-        public EffectAnnotationCollection Annotations { get; private set; }
+        // public EffectAnnotationCollection Annotations { get; private set; }
 
 
         // TODO: Using object adds alot of boxing/unboxing overhead
