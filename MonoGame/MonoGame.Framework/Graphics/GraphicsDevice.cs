@@ -192,13 +192,13 @@ namespace Microsoft.Xna.Framework.Graphics
             private set;
         }
 
-        internal GraphicsMetrics _graphicsMetrics;
+        // internal GraphicsMetrics _graphicsMetrics;
 
         /// <summary>
         /// The rendering information for debugging and profiling.
         /// The metrics are reset every frame after draw within <see cref="GraphicsDevice.Present"/>. 
         /// </summary>
-        public GraphicsMetrics Metrics { get { return _graphicsMetrics; } set { _graphicsMetrics = value; } }
+        // public GraphicsMetrics Metrics { get { return _graphicsMetrics; } set { _graphicsMetrics = value; } }
 
         // private GraphicsDebug _graphicsDebug;
 
@@ -547,20 +547,20 @@ namespace Microsoft.Xna.Framework.Graphics
             // options |= ClearOptions.Stencil;
             PlatformClear(options, color.ToVector4(), _viewport.MaxDepth, 0);
 
-            unchecked
-            {
-                _graphicsMetrics._clearCount++;
-            }
+            // unchecked
+            // {
+            //     _graphicsMetrics._clearCount++;
+            // }
         }
 
         public void Clear(ClearOptions options, Color color, float depth, int stencil)
         {
             PlatformClear(options, color.ToVector4(), depth, stencil);
 
-            unchecked
-            {
-                _graphicsMetrics._clearCount++;
-            }
+            // unchecked
+            // {
+            //     _graphicsMetrics._clearCount++;
+            // }
         }
 
 		// public void Clear(ClearOptions options, Vector4 color, float depth, int stencil)
@@ -649,7 +649,7 @@ namespace Microsoft.Xna.Framework.Graphics
             if (_currentRenderTargetCount != 0)
                 throw new InvalidOperationException("Cannot call Present when a render target is active.");
 
-            _graphicsMetrics = new GraphicsMetrics();
+            // _graphicsMetrics = new GraphicsMetrics();
             PlatformPresent();
         }
 
@@ -1213,11 +1213,11 @@ namespace Microsoft.Xna.Framework.Graphics
 
             PlatformDrawUserIndexedPrimitives<T>(primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount, vertexDeclaration);
 
-            unchecked
-            {
-                _graphicsMetrics._drawCount++;
-                _graphicsMetrics._primitiveCount +=  primitiveCount;
-            }
+            // unchecked
+            // {
+            //     _graphicsMetrics._drawCount++;
+            //     _graphicsMetrics._primitiveCount +=  primitiveCount;
+            // }
         }
 
         /// <summary>

@@ -178,51 +178,51 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
-        public static ColorPointerType OpenGLColorPointerType(this VertexElementFormat elementFormat)
-        {
-            switch (elementFormat)
-            {
-                case VertexElementFormat.Single:
-                    return ColorPointerType.Float;
-
-                case VertexElementFormat.Vector2:
-                    return ColorPointerType.Float;
-
-                case VertexElementFormat.Vector3:
-                    return ColorPointerType.Float;
-
-                case VertexElementFormat.Vector4:
-                    return ColorPointerType.Float;
-
-                case VertexElementFormat.Color:
-                    return ColorPointerType.UnsignedByte;
-
-                case VertexElementFormat.Byte4:
-                    return ColorPointerType.UnsignedByte;
-
-                case VertexElementFormat.Short2:
-                    return ColorPointerType.Short;
-
-                case VertexElementFormat.Short4:
-                    return ColorPointerType.Short;
-
-                case VertexElementFormat.NormalizedShort2:
-                    return ColorPointerType.UnsignedShort;
-
-                case VertexElementFormat.NormalizedShort4:
-                    return ColorPointerType.UnsignedShort;
-				
-#if MONOMAC
-                case VertexElementFormat.HalfVector2:
-                    return ColorPointerType.HalfFloat;
-
-                case VertexElementFormat.HalfVector4:
-                    return ColorPointerType.HalfFloat;
-#endif
-			}
-
-            throw new ArgumentException();
-        }
+//         public static ColorPointerType OpenGLColorPointerType(this VertexElementFormat elementFormat)
+//         {
+//             switch (elementFormat)
+//             {
+//                 case VertexElementFormat.Single:
+//                     return ColorPointerType.Float;
+//
+//                 case VertexElementFormat.Vector2:
+//                     return ColorPointerType.Float;
+//
+//                 case VertexElementFormat.Vector3:
+//                     return ColorPointerType.Float;
+//
+//                 case VertexElementFormat.Vector4:
+//                     return ColorPointerType.Float;
+//
+//                 case VertexElementFormat.Color:
+//                     return ColorPointerType.UnsignedByte;
+//
+//                 case VertexElementFormat.Byte4:
+//                     return ColorPointerType.UnsignedByte;
+//
+//                 case VertexElementFormat.Short2:
+//                     return ColorPointerType.Short;
+//
+//                 case VertexElementFormat.Short4:
+//                     return ColorPointerType.Short;
+//
+//                 case VertexElementFormat.NormalizedShort2:
+//                     return ColorPointerType.UnsignedShort;
+//
+//                 case VertexElementFormat.NormalizedShort4:
+//                     return ColorPointerType.UnsignedShort;
+// 				
+// #if MONOMAC
+//                 case VertexElementFormat.HalfVector2:
+//                     return ColorPointerType.HalfFloat;
+//
+//                 case VertexElementFormat.HalfVector4:
+//                     return ColorPointerType.HalfFloat;
+// #endif
+// 			}
+//
+//             throw new ArgumentException();
+//         }
 
 //        public static NormalPointerType OpenGLNormalPointerType(this VertexElementFormat elementFormat)
 //         {
@@ -496,7 +496,7 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 #endif
 
-        const SurfaceFormat InvalidFormat = (SurfaceFormat)int.MaxValue;
+        // const SurfaceFormat InvalidFormat = (SurfaceFormat)int.MaxValue;
 		internal static void GetGLFormat (this SurfaceFormat format,
             GraphicsDevice graphicsDevice,
             out PixelInternalFormat glInternalFormat,

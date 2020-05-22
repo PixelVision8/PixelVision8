@@ -262,21 +262,21 @@ namespace Microsoft.Xna.Framework
             presentationParameters.HardwareModeSwitch = _hardwareModeSwitch;
             presentationParameters.PresentationInterval = _synchronizedWithVerticalRetrace ? PresentInterval.One : PresentInterval.Immediate;
             presentationParameters.DisplayOrientation = _game.Window.CurrentOrientation;
-            presentationParameters.DeviceWindowHandle = _game.Window.Handle;
+            // presentationParameters.DeviceWindowHandle = _game.Window.Handle;
 
-            if (_preferMultiSampling)
-            {
-                // always initialize MultiSampleCount to the maximum, if users want to overwrite
-                // this they have to respond to the PreparingDeviceSettingsEvent and modify
-                // args.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount
-                presentationParameters.MultiSampleCount = GraphicsDevice != null
-                    ? GraphicsDevice.GraphicsCapabilities.MaxMultiSampleCount
-                    : 32;
-            }
-            else
-            {
-                presentationParameters.MultiSampleCount = 0;
-            }
+            // if (_preferMultiSampling)
+            // {
+            //     // always initialize MultiSampleCount to the maximum, if users want to overwrite
+            //     // this they have to respond to the PreparingDeviceSettingsEvent and modify
+            //     // args.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount
+            //     presentationParameters.MultiSampleCount = GraphicsDevice != null
+            //         ? GraphicsDevice.GraphicsCapabilities.MaxMultiSampleCount
+            //         : 32;
+            // }
+            // else
+            // {
+            //     presentationParameters.MultiSampleCount = 0;
+            // }
 
             PlatformPreparePresentationParameters(presentationParameters);
         }

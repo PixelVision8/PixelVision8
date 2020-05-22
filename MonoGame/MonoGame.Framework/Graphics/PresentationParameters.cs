@@ -19,19 +19,19 @@ namespace Microsoft.Xna.Framework.Graphics
     {
         #region Constants
 
-        public const int DefaultPresentRate = 60;
+        // public const int DefaultPresentRate = 60;
 
         #endregion Constants
 
         #region Private Fields
 
         // private DepthFormat depthStencilFormat;
-        private SurfaceFormat backBufferFormat;
+        // private SurfaceFormat backBufferFormat;
         private int backBufferHeight = GraphicsDeviceManager.DefaultBackBufferHeight;
         private int backBufferWidth = GraphicsDeviceManager.DefaultBackBufferWidth;
-        private IntPtr deviceWindowHandle;
-        private int multiSampleCount;
-        private bool disposed;
+        // private IntPtr deviceWindowHandle;
+        // private int multiSampleCount;
+        // private bool disposed;
         private bool isFullScreen;
         private bool hardwareModeSwitch = true;
 
@@ -54,11 +54,11 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Get or set the format of the back buffer.
         /// </summary>
-        public SurfaceFormat BackBufferFormat
-        {
-            get { return backBufferFormat; }
-            set { backBufferFormat = value; }
-        }
+        // public SurfaceFormat BackBufferFormat
+        // {
+        //     get { return backBufferFormat; }
+        //     set { backBufferFormat = value; }
+        // }
 
         /// <summary>
         /// Get or set the height of the back buffer.
@@ -89,11 +89,11 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Get or set the handle of the window that will present the back buffer.
         /// </summary>
-        public IntPtr DeviceWindowHandle
-        {
-            get { return deviceWindowHandle; }
-            set { deviceWindowHandle = value; }
-        }
+        // public IntPtr DeviceWindowHandle
+        // {
+        //     get { return deviceWindowHandle; }
+        //     set { deviceWindowHandle = value; }
+        // }
 
 #if WINDOWS_UAP
         [CLSCompliant(false)]
@@ -142,11 +142,11 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Get or set the multisample count for the back buffer.
         /// </summary>
-        public int MultiSampleCount
-        {
-            get { return multiSampleCount; }
-            set { multiSampleCount = value; }
-        }
+        // public int MultiSampleCount
+        // {
+        //     get { return multiSampleCount; }
+        //     set { multiSampleCount = value; }
+        // }
 		
         /// <summary>
         /// Get or set the presentation interval.
@@ -180,7 +180,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// </summary>
         public void Clear()
         {
-            backBufferFormat = SurfaceFormat.Color;
+            // backBufferFormat = SurfaceFormat.Color;
 #if IOS
 			// Mainscreen.Bounds does not account for the device's orientation. it ALWAYS assumes portrait
 			var width = (int)(UIScreen.MainScreen.Bounds.Width * UIScreen.MainScreen.Scale);
@@ -200,14 +200,14 @@ namespace Microsoft.Xna.Framework.Graphics
             backBufferWidth = GraphicsDeviceManager.DefaultBackBufferWidth;
             backBufferHeight = GraphicsDeviceManager.DefaultBackBufferHeight;     
 #endif
-            deviceWindowHandle = IntPtr.Zero;
+            // deviceWindowHandle = IntPtr.Zero;
 #if IOS && !TVOS
 			isFullScreen = UIApplication.SharedApplication.StatusBarHidden;
 #else
             // isFullScreen = false;
 #endif
             // depthStencilFormat = DepthFormat.None;
-            multiSampleCount = 0;
+            // multiSampleCount = 0;
             PresentationInterval = PresentInterval.Default;
             DisplayOrientation = Microsoft.Xna.Framework.DisplayOrientation.Default;
         }
@@ -219,14 +219,14 @@ namespace Microsoft.Xna.Framework.Graphics
         public PresentationParameters Clone()
         {
             PresentationParameters clone = new PresentationParameters();
-            clone.backBufferFormat = this.backBufferFormat;
+            // clone.backBufferFormat = this.backBufferFormat;
             clone.backBufferHeight = this.backBufferHeight;
             clone.backBufferWidth = this.backBufferWidth;
-            clone.deviceWindowHandle = this.deviceWindowHandle;
+            // clone.deviceWindowHandle = this.deviceWindowHandle;
             // clone.depthStencilFormat = this.depthStencilFormat;
             clone.IsFullScreen = this.IsFullScreen;
             clone.HardwareModeSwitch = this.HardwareModeSwitch;
-            clone.multiSampleCount = this.multiSampleCount;
+            // clone.multiSampleCount = this.multiSampleCount;
             clone.PresentationInterval = this.PresentationInterval;
             clone.DisplayOrientation = this.DisplayOrientation;
             clone.RenderTargetUsage = this.RenderTargetUsage;

@@ -1017,21 +1017,21 @@ namespace Microsoft.Xna.Framework.Graphics
             {
                 ActivateShaderProgram();
 
-                if (_vertexShaderDirty)
-                {
-                    unchecked
-                    {
-                        _graphicsMetrics._vertexShaderCount++;
-                    }
-                }
-
-                if (_pixelShaderDirty)
-                {
-                    unchecked
-                    {
-                        _graphicsMetrics._pixelShaderCount++;
-                    }
-                }
+                // if (_vertexShaderDirty)
+                // {
+                //     unchecked
+                //     {
+                //         _graphicsMetrics._vertexShaderCount++;
+                //     }
+                // }
+                //
+                // if (_pixelShaderDirty)
+                // {
+                //     unchecked
+                //     {
+                //         _graphicsMetrics._pixelShaderCount++;
+                //     }
+                // }
 
                 _vertexShaderDirty = _pixelShaderDirty = false;
             }
@@ -1211,29 +1211,29 @@ namespace Microsoft.Xna.Framework.Graphics
             GraphicsExtensions.CheckGLError();
         }
 
-        private void PlatformGetBackBufferData<T>(Rectangle? rectangle, T[] data, int startIndex, int count) where T : struct
-        {
-            var rect = rectangle ?? new Rectangle(0, 0, PresentationParameters.BackBufferWidth, PresentationParameters.BackBufferHeight);
-            var tSize = Marshal.SizeOf(typeof(T));
-            var flippedY = PresentationParameters.BackBufferHeight - rect.Y - rect.Height;
-            GL.ReadPixels(rect.X, flippedY, rect.Width, rect.Height, PixelFormat.Rgba, PixelType.UnsignedByte, data);
-
-            // buffer is returned upside down, so we swap the rows around when copying over
-            var rowSize = rect.Width*PresentationParameters.BackBufferFormat.GetSize() / tSize;
-            var row = new T[rowSize];
-            for (var dy = 0; dy < rect.Height/2; dy++)
-            {
-                var topRow = startIndex + dy*rowSize;
-                var bottomRow = startIndex + (rect.Height - dy - 1)*rowSize;
-                // copy the bottom row to buffer
-                Array.Copy(data, bottomRow, row, 0, rowSize);
-                // copy top row to bottom row
-                Array.Copy(data, topRow, data, bottomRow, rowSize);
-                // copy buffer to top row
-                Array.Copy(row, 0, data, topRow, rowSize);
-                count -= rowSize;
-            }
-        }
+        // private void PlatformGetBackBufferData<T>(Rectangle? rectangle, T[] data, int startIndex, int count) where T : struct
+        // {
+        //     var rect = rectangle ?? new Rectangle(0, 0, PresentationParameters.BackBufferWidth, PresentationParameters.BackBufferHeight);
+        //     var tSize = Marshal.SizeOf(typeof(T));
+        //     var flippedY = PresentationParameters.BackBufferHeight - rect.Y - rect.Height;
+        //     GL.ReadPixels(rect.X, flippedY, rect.Width, rect.Height, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+        //
+        //     // buffer is returned upside down, so we swap the rows around when copying over
+        //     var rowSize = rect.Width*PresentationParameters.BackBufferFormat.GetSize() / tSize;
+        //     var row = new T[rowSize];
+        //     for (var dy = 0; dy < rect.Height/2; dy++)
+        //     {
+        //         var topRow = startIndex + dy*rowSize;
+        //         var bottomRow = startIndex + (rect.Height - dy - 1)*rowSize;
+        //         // copy the bottom row to buffer
+        //         Array.Copy(data, bottomRow, row, 0, rowSize);
+        //         // copy top row to bottom row
+        //         Array.Copy(data, topRow, data, bottomRow, rowSize);
+        //         // copy buffer to top row
+        //         Array.Copy(row, 0, data, topRow, rowSize);
+        //         count -= rowSize;
+        //     }
+        // }
 
         private static Rectangle PlatformGetTitleSafeArea(int x, int y, int width, int height)
         {
