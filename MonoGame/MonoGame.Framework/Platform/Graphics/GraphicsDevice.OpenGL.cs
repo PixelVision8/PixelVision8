@@ -551,10 +551,10 @@ namespace Microsoft.Xna.Framework.Graphics
 
         private void PlatformSetViewport(ref Viewport value)
         {
-            if (IsRenderTargetBound)
+            // if (IsRenderTargetBound)
                 GL.Viewport(value.X, value.Y, value.Width, value.Height);
-            else
-                GL.Viewport(value.X, PresentationParameters.BackBufferHeight - value.Y - value.Height, value.Width, value.Height);
+            // else
+            //     GL.Viewport(value.X, PresentationParameters.BackBufferHeight - value.Y - value.Height, value.Width, value.Height);
             GraphicsExtensions.LogGLError("GraphicsDevice.Viewport_set() GL.Viewport");
 
             GL.DepthRange(value.MinDepth, value.MaxDepth);
@@ -931,24 +931,24 @@ namespace Microsoft.Xna.Framework.Graphics
 
             _posFixup[0] = 1.0f;
             _posFixup[1] = 1.0f;
-            if (UseHalfPixelOffset)
-            {
-                _posFixup[2] = (63.0f/64.0f)/Viewport.Width;
-                _posFixup[3] = -(63.0f/64.0f)/Viewport.Height;
-            }
-            else
-            {
+            // if (UseHalfPixelOffset)
+            // {
+            //     _posFixup[2] = (63.0f/64.0f)/Viewport.Width;
+            //     _posFixup[3] = -(63.0f/64.0f)/Viewport.Height;
+            // }
+            // else
+            // {
                 _posFixup[2] = 0f;
                 _posFixup[3] = 0f;
-            }
+            // }
 
             //If we have a render target bound (rendering offscreen)
-            if (IsRenderTargetBound)
-            {
+            // if (IsRenderTargetBound)
+            // {
                 //flip vertically
-                _posFixup[1] *= -1.0f;
-                _posFixup[3] *= -1.0f;
-            }
+                // _posFixup[1] *= -1.0f;
+                // _posFixup[3] *= -1.0f;
+            // }
 
             fixed (float* floatPtr = _posFixup)
             {
@@ -987,7 +987,7 @@ namespace Microsoft.Xna.Framework.Graphics
             if ( _scissorRectangleDirty )
 	        {
                 var scissorRect = _scissorRectangle;
-                if (!IsRenderTargetBound)
+                // if (!IsRenderTargetBound)
                     scissorRect.Y = PresentationParameters.BackBufferHeight - (scissorRect.Y + scissorRect.Height);
                 GL.Scissor(scissorRect.X, scissorRect.Y, scissorRect.Width, scissorRect.Height);
                 GraphicsExtensions.CheckGLError();

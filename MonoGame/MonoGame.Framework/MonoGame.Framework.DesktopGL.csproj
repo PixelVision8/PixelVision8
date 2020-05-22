@@ -105,6 +105,8 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
     <Compile Remove="Graphics\GraphicsAdapter.cs" />
     <Compile Remove="Graphics\GraphicsDebug.cs" />
     <Compile Remove="Graphics\GraphicsDebugMessage.cs" />
+    <Compile Remove="Graphics\GraphicsDeviceStatus.cs" />
+    <Compile Remove="Graphics\GraphicsMetrics.cs" />
     <Compile Remove="Graphics\GraphicsProfile.cs" />
     <Compile Remove="Graphics\Model.cs" />
     <Compile Remove="Graphics\ModelBone.cs" />

@@ -27,7 +27,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// typically referred to as the half-pixel offset. MonoGame
         /// replicates XNA behavior if this flag is set to <c>true</c>.
         /// </remarks>
-        public bool UseHalfPixelOffset { get; private set; }
+        // public bool UseHalfPixelOffset { get; private set; }
 
         private Viewport _viewport;
 
@@ -262,13 +262,13 @@ namespace Microsoft.Xna.Framework.Graphics
             //     throw new NoSuitableGraphicsDeviceException(String.Format("Adapter '{0}' does not support the {1} profile.", adapter.Description, graphicsProfile));
             if (presentationParameters == null)
                 throw new ArgumentNullException("presentationParameters");
-#if DIRECTX
-            // TODO we need to figure out how to inject the half pixel offset into DX shaders
-            preferHalfPixelOffset = false;
-#endif
+// #if DIRECTX
+//             // TODO we need to figure out how to inject the half pixel offset into DX shaders
+//             preferHalfPixelOffset = false;
+// #endif
             Adapter = adapter;
             // _graphicsProfile = graphicsProfile;
-            UseHalfPixelOffset = preferHalfPixelOffset;
+            // UseHalfPixelOffset = preferHalfPixelOffset;
             PresentationParameters = presentationParameters;
             Setup();
             GraphicsCapabilities = new GraphicsCapabilities();
