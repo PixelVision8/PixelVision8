@@ -424,28 +424,28 @@ namespace Microsoft.Xna.Framework.Graphics
                                             elementCount * tSize, dataByteSize), "elementCount");
         }
 
-        internal Color[] GetColorData()
-        {
-            int colorDataLength = Width * Height;
-            var colorData = new Color[colorDataLength];
-
-            switch (Format)
-            {
-                case SurfaceFormat.Single:
-                    var floatData = new float[colorDataLength];
-                    GetData(floatData);
-
-                    for (int i = 0; i < colorDataLength; i++)
-                    {
-                        float brightness = floatData[i];
-                        // Export as a greyscale image.
-                        colorData[i] = new Color(brightness, brightness, brightness);
-                    }
-                    break;
-
-                case SurfaceFormat.Color:
-                    GetData(colorData);
-                    break;
+        // internal Color[] GetColorData()
+        // {
+        //     int colorDataLength = Width * Height;
+        //     var colorData = new Color[colorDataLength];
+        //
+        //     switch (Format)
+        //     {
+        //         case SurfaceFormat.Single:
+        //             var floatData = new float[colorDataLength];
+        //             GetData(floatData);
+        //
+        //             for (int i = 0; i < colorDataLength; i++)
+        //             {
+        //                 float brightness = floatData[i];
+        //                 // Export as a greyscale image.
+        //                 colorData[i] = new Color(brightness, brightness, brightness);
+        //             }
+        //             break;
+        //
+        //         case SurfaceFormat.Color:
+        //             GetData(colorData);
+        //             break;
 
                 // case SurfaceFormat.Alpha8:
                 //     var alpha8Data = new Alpha8[colorDataLength];
@@ -578,11 +578,11 @@ namespace Microsoft.Xna.Framework.Graphics
                 //
                 //     break;
 
-                default:
-                    throw new Exception("Texture surface format not supported");
-            }
-
-            return colorData;
-        }
+        //         default:
+        //             throw new Exception("Texture surface format not supported");
+        //     }
+        //
+        //     return colorData;
+        // }
     }
 }

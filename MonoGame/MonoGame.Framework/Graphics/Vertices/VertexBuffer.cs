@@ -15,25 +15,25 @@ namespace Microsoft.Xna.Framework.Graphics
 		public VertexDeclaration VertexDeclaration { get; private set; }
 		// public BufferUsage BufferUsage { get; private set; }
 		
-		protected VertexBuffer(GraphicsDevice graphicsDevice, VertexDeclaration vertexDeclaration, int vertexCount, /*BufferUsage bufferUsage,*/ bool dynamic)
-		{
-		    if (graphicsDevice == null)
-		    {
-		        throw new ArgumentNullException("graphicsDevice", FrameworkResources.ResourceCreationWhenDeviceIsNull);
-		    }
-		    this.GraphicsDevice = graphicsDevice;
-            this.VertexDeclaration = vertexDeclaration;
-            this.VertexCount = vertexCount;
-            // this.BufferUsage = bufferUsage;
-
-            // Make sure the graphics device is assigned in the vertex declaration.
-            if (vertexDeclaration.GraphicsDevice != graphicsDevice)
-                vertexDeclaration.GraphicsDevice = graphicsDevice;
-
-            _isDynamic = dynamic;
-
-            PlatformConstruct();
-		}
+		// protected VertexBuffer(GraphicsDevice graphicsDevice, VertexDeclaration vertexDeclaration, int vertexCount, /*BufferUsage bufferUsage,*/ bool dynamic)
+		// {
+		//     if (graphicsDevice == null)
+		//     {
+		//         throw new ArgumentNullException("graphicsDevice", FrameworkResources.ResourceCreationWhenDeviceIsNull);
+		//     }
+		//     this.GraphicsDevice = graphicsDevice;
+  //           this.VertexDeclaration = vertexDeclaration;
+  //           this.VertexCount = vertexCount;
+  //           // this.BufferUsage = bufferUsage;
+  //
+  //           // Make sure the graphics device is assigned in the vertex declaration.
+  //           if (vertexDeclaration.GraphicsDevice != graphicsDevice)
+  //               vertexDeclaration.GraphicsDevice = graphicsDevice;
+  //
+  //           _isDynamic = dynamic;
+  //
+  //           PlatformConstruct();
+		// }
 
   //       public VertexBuffer(GraphicsDevice graphicsDevice, VertexDeclaration vertexDeclaration, int vertexCount, BufferUsage bufferUsage) :
 		// 	this(graphicsDevice, vertexDeclaration, vertexCount, bufferUsage, false)
@@ -77,38 +77,38 @@ namespace Microsoft.Xna.Framework.Graphics
         /// For vertexStride we pass the size of a <see cref="VertexPositionTexture"/>.
         /// </p>
         /// </remarks>
-        public void GetData<T> (int offsetInBytes, T[] data, int startIndex, int elementCount, int vertexStride = 0) where T : struct
-        {
-            var elementSizeInBytes = ReflectionHelpers.SizeOf<T>.Get();
-            if (vertexStride == 0)
-                vertexStride = elementSizeInBytes;
-
-            var vertexByteSize = VertexCount * VertexDeclaration.VertexStride;
-            if (vertexStride > vertexByteSize)
-                throw new ArgumentOutOfRangeException("vertexStride", "Vertex stride can not be larger than the vertex buffer size.");
-
-            if (data == null)
-                throw new ArgumentNullException("data");
-            if (data.Length < (startIndex + elementCount))
-                throw new ArgumentOutOfRangeException("elementCount", "This parameter must be a valid index within the array.");
-            // if (BufferUsage == BufferUsage.WriteOnly)
-            //     throw new NotSupportedException("Calling GetData on a resource that was created with BufferUsage.WriteOnly is not supported.");
-			if (elementCount > 1 && elementCount * vertexStride > vertexByteSize)
-                throw new InvalidOperationException("The array is not the correct size for the amount of data requested.");
-
-            PlatformGetData<T>(offsetInBytes, data, startIndex, elementCount, vertexStride);
-        }
-
-        public void GetData<T>(T[] data, int startIndex, int elementCount) where T : struct
-        {
-            this.GetData<T>(0, data, startIndex, elementCount, 0);
-        }
-
-        public void GetData<T>(T[] data) where T : struct
-        {
-            var elementSizeInByte = ReflectionHelpers.SizeOf<T>.Get();
-            this.GetData<T>(0, data, 0, data.Length, elementSizeInByte);
-        }
+   //      public void GetData<T> (int offsetInBytes, T[] data, int startIndex, int elementCount, int vertexStride = 0) where T : struct
+   //      {
+   //          var elementSizeInBytes = ReflectionHelpers.SizeOf<T>.Get();
+   //          if (vertexStride == 0)
+   //              vertexStride = elementSizeInBytes;
+   //
+   //          var vertexByteSize = VertexCount * VertexDeclaration.VertexStride;
+   //          if (vertexStride > vertexByteSize)
+   //              throw new ArgumentOutOfRangeException("vertexStride", "Vertex stride can not be larger than the vertex buffer size.");
+   //
+   //          if (data == null)
+   //              throw new ArgumentNullException("data");
+   //          if (data.Length < (startIndex + elementCount))
+   //              throw new ArgumentOutOfRangeException("elementCount", "This parameter must be a valid index within the array.");
+   //          // if (BufferUsage == BufferUsage.WriteOnly)
+   //          //     throw new NotSupportedException("Calling GetData on a resource that was created with BufferUsage.WriteOnly is not supported.");
+			// if (elementCount > 1 && elementCount * vertexStride > vertexByteSize)
+   //              throw new InvalidOperationException("The array is not the correct size for the amount of data requested.");
+   //
+   //          PlatformGetData<T>(offsetInBytes, data, startIndex, elementCount, vertexStride);
+   //      }
+        //
+        // public void GetData<T>(T[] data, int startIndex, int elementCount) where T : struct
+        // {
+        //     this.GetData<T>(0, data, startIndex, elementCount, 0);
+        // }
+        //
+        // public void GetData<T>(T[] data) where T : struct
+        // {
+        //     var elementSizeInByte = ReflectionHelpers.SizeOf<T>.Get();
+        //     this.GetData<T>(0, data, 0, data.Length, elementSizeInByte);
+        // }
 
         /// <summary>
         /// Sets the vertex buffer data, specifying the index at which to start copying from the source data array,
@@ -170,11 +170,11 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="elementCount">Number of elements to copy from <paramref name="data"/>.
         /// The combination of <paramref name="startIndex"/> and <paramref name="elementCount"/> 
         /// must be within the <paramref name="data"/> array bounds.</param>
-		public void SetData<T>(T[] data, int startIndex, int elementCount) where T : struct
-        {
-            var elementSizeInBytes = ReflectionHelpers.SizeOf<T>.Get();
-            SetDataInternal<T>(0, data, startIndex, elementCount, elementSizeInBytes, SetDataOptions.None);
-		}
+		// public void SetData<T>(T[] data, int startIndex, int elementCount) where T : struct
+  //       {
+  //           var elementSizeInBytes = ReflectionHelpers.SizeOf<T>.Get();
+  //           SetDataInternal<T>(0, data, startIndex, elementCount, elementSizeInBytes, SetDataOptions.None);
+		// }
 		
         /// <summary>
         /// Sets the vertex buffer data. This is the same as calling <see cref="SetData{T}(int, T[], int, int, int)"/> 
@@ -183,11 +183,11 @@ namespace Microsoft.Xna.Framework.Graphics
         /// </summary>
         /// <typeparam name="T">Type of elements in the data array.</typeparam>
         /// <param name="data">Data array.</param>
-        public void SetData<T>(T[] data) where T : struct
-        {
-            var elementSizeInBytes = ReflectionHelpers.SizeOf<T>.Get();
-            SetDataInternal<T>(0, data, 0, data.Length, elementSizeInBytes, SetDataOptions.None);
-        }
+        // public void SetData<T>(T[] data) where T : struct
+        // {
+        //     var elementSizeInBytes = ReflectionHelpers.SizeOf<T>.Get();
+        //     SetDataInternal<T>(0, data, 0, data.Length, elementSizeInBytes, SetDataOptions.None);
+        // }
 
         protected void SetDataInternal<T>(int offsetInBytes, T[] data, int startIndex, int elementCount, int vertexStride, SetDataOptions options) where T : struct
         {

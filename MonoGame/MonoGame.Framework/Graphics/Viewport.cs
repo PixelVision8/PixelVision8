@@ -108,17 +108,17 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Gets the aspect ratio of this <see cref="Viewport"/>, which is width / height. 
         /// </summary>
-		public float AspectRatio 
-		{
-			get
-			{
-				if ((height != 0) && (width != 0))
-				{
-					return (((float) width)/((float)height));
-				}
-				return 0f;
-			}
-		}
+		// public float AspectRatio 
+		// {
+		// 	get
+		// 	{
+		// 		if ((height != 0) && (width != 0))
+		// 		{
+		// 			return (((float) width)/((float)height));
+		// 		}
+		// 		return 0f;
+		// 	}
+		// }
 		
         /// <summary>
         /// Gets or sets a boundary of this <see cref="Viewport"/>.
@@ -142,10 +142,10 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Returns the subset of the viewport that is guaranteed to be visible on a lower quality display.
         /// </summary>
-		public Rectangle TitleSafeArea 
-		{
-			get { return GraphicsDevice.GetTitleSafeArea(x, y, width, height); }
-		}
+		// public Rectangle TitleSafeArea 
+		// {
+		// 	get { return GraphicsDevice.GetTitleSafeArea(x, y, width, height); }
+		// }
 
         /// <summary>
         /// Constructs a viewport from the given values. The <see cref="MinDepth"/> will be 0.0 and <see cref="MaxDepth"/> will be 1.0.
@@ -173,23 +173,23 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="height">The height of the view bounds in pixels.</param>
         /// <param name="minDepth">The lower limit of depth.</param>
         /// <param name="maxDepth">The upper limit of depth.</param>
-        public Viewport(int x, int y, int width, int height,float minDepth,float maxDepth)
-        {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-            this.minDepth = minDepth;
-            this.maxDepth = maxDepth;
-        }
+        // public Viewport(int x, int y, int width, int height,float minDepth,float maxDepth)
+        // {
+        //     this.x = x;
+        //     this.y = y;
+        //     this.width = width;
+        //     this.height = height;
+        //     this.minDepth = minDepth;
+        //     this.maxDepth = maxDepth;
+        // }
 
         /// <summary>
         /// Creates a new instance of <see cref="Viewport"/> struct.
         /// </summary>
         /// <param name="bounds">A <see cref="Rectangle"/> that defines the location and size of the <see cref="Viewport"/> in a render target.</param>
-		public Viewport(Rectangle bounds) : this(bounds.X, bounds.Y, bounds.Width, bounds.Height)
-		{
-		}
+		// public Viewport(Rectangle bounds) : this(bounds.X, bounds.Y, bounds.Width, bounds.Height)
+		// {
+		// }
 
         /// <summary>
         /// Projects a <see cref="Vector3"/> from model space into screen space.
@@ -202,22 +202,22 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="view">The view <see cref="Matrix"/>.</param>
         /// <param name="world">The world <see cref="Matrix"/>.</param>
         /// <returns></returns>
-        public Vector3 Project(Vector3 source, Matrix projection, Matrix view, Matrix world)
-        {
-            Matrix matrix = Matrix.Multiply(Matrix.Multiply(world, view), projection);
-		    Vector3 vector = Vector3.Transform(source, matrix);
-		    float a = (((source.X * matrix.M14) + (source.Y * matrix.M24)) + (source.Z * matrix.M34)) + matrix.M44;
-		    if (!WithinEpsilon(a, 1f))
-		    {
-		        vector.X = vector.X / a;
-		        vector.Y = vector.Y / a;
-		        vector.Z = vector.Z / a;
-		    }
-		    vector.X = (((vector.X + 1f) * 0.5f) * this.width) + this.x;
-		    vector.Y = (((-vector.Y + 1f) * 0.5f) * this.height) + this.y;
-		    vector.Z = (vector.Z * (this.maxDepth - this.minDepth)) + this.minDepth;
-		    return vector;
-        }
+      //   public Vector3 Project(Vector3 source, Matrix projection, Matrix view, Matrix world)
+      //   {
+      //       Matrix matrix = Matrix.Multiply(Matrix.Multiply(world, view), projection);
+		    // Vector3 vector = Vector3.Transform(source, matrix);
+		    // float a = (((source.X * matrix.M14) + (source.Y * matrix.M24)) + (source.Z * matrix.M34)) + matrix.M44;
+		    // if (!WithinEpsilon(a, 1f))
+		    // {
+		    //     vector.X = vector.X / a;
+		    //     vector.Y = vector.Y / a;
+		    //     vector.Z = vector.Z / a;
+		    // }
+		    // vector.X = (((vector.X + 1f) * 0.5f) * this.width) + this.x;
+		    // vector.Y = (((-vector.Y + 1f) * 0.5f) * this.height) + this.y;
+		    // vector.Z = (vector.Z * (this.maxDepth - this.minDepth)) + this.minDepth;
+		    // return vector;
+      //   }
 
         /// <summary>
         /// Unprojects a <see cref="Vector3"/> from screen space into model space.
@@ -231,29 +231,29 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="view">The view <see cref="Matrix"/>.</param>
         /// <param name="world">The world <see cref="Matrix"/>.</param>
         /// <returns></returns>
-        public Vector3 Unproject(Vector3 source, Matrix projection, Matrix view, Matrix world)
-        {
-             Matrix matrix = Matrix.Invert(Matrix.Multiply(Matrix.Multiply(world, view), projection));
-		    source.X = (((source.X - this.x) / ((float) this.width)) * 2f) - 1f;
-		    source.Y = -((((source.Y - this.y) / ((float) this.height)) * 2f) - 1f);
-		    source.Z = (source.Z - this.minDepth) / (this.maxDepth - this.minDepth);
-		    Vector3 vector = Vector3.Transform(source, matrix);
-		    float a = (((source.X * matrix.M14) + (source.Y * matrix.M24)) + (source.Z * matrix.M34)) + matrix.M44;
-		    if (!WithinEpsilon(a, 1f))
-		    {
-		        vector.X = vector.X / a;
-		        vector.Y = vector.Y / a;
-		        vector.Z = vector.Z / a;
-		    }
-		    return vector;
-
-        }
+      //   public Vector3 Unproject(Vector3 source, Matrix projection, Matrix view, Matrix world)
+      //   {
+      //        Matrix matrix = Matrix.Invert(Matrix.Multiply(Matrix.Multiply(world, view), projection));
+		    // source.X = (((source.X - this.x) / ((float) this.width)) * 2f) - 1f;
+		    // source.Y = -((((source.Y - this.y) / ((float) this.height)) * 2f) - 1f);
+		    // source.Z = (source.Z - this.minDepth) / (this.maxDepth - this.minDepth);
+		    // Vector3 vector = Vector3.Transform(source, matrix);
+		    // float a = (((source.X * matrix.M14) + (source.Y * matrix.M24)) + (source.Z * matrix.M34)) + matrix.M44;
+		    // if (!WithinEpsilon(a, 1f))
+		    // {
+		    //     vector.X = vector.X / a;
+		    //     vector.Y = vector.Y / a;
+		    //     vector.Z = vector.Z / a;
+		    // }
+		    // return vector;
+      //
+      //   }
 		
-		private static bool WithinEpsilon(float a, float b)
-		{
-		    float num = a - b;
-		    return ((-1.401298E-45f <= num) && (num <= float.Epsilon));
-		}
+		// private static bool WithinEpsilon(float a, float b)
+		// {
+		//     float num = a - b;
+		//     return ((-1.401298E-45f <= num) && (num <= float.Epsilon));
+		// }
 
         /// <summary>
         /// Returns a <see cref="String"/> representation of this <see cref="Viewport"/> in the format:
