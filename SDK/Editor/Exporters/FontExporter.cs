@@ -58,7 +58,7 @@ namespace PixelVision8.Runner.Exporters
             {
                 var pos = engine.GameChip.CalculatePosition(i, maxCol);
 
-                spriteChip.ReadSpriteAt(i, tmpPixelData);
+                spriteChip.ReadSpriteAt(i, ref tmpPixelData);
 
                 textureData.SetPixels(pos.X * spriteChip.width, pos.Y * spriteChip.height, spriteChip.width,
                     spriteChip.height, tmpPixelData);

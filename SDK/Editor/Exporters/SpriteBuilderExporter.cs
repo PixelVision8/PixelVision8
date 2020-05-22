@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Data;
@@ -39,8 +38,8 @@ namespace PixelVision8.Runner.Exporters
         public int[] ids;
         public int totalSpritesInTexture;
 
-        public SpriteDataParser(IImageParser parser, IEngineChips chips, bool unique = true) : base(parser,
-            chips, unique)
+        public SpriteDataParser(IImageParser parser, ColorChip colorChip, SpriteChip spriteChip) : base(parser,
+            colorChip, spriteChip)
         {
         }
 
@@ -66,8 +65,6 @@ namespace PixelVision8.Runner.Exporters
     {
         private readonly string endComment = "-- spritelib-end";
 
-        private readonly IEngine engine;
-
         private readonly Dictionary<string, byte[]> files;
 
         private readonly List<SpriteExportData> sprites = new List<SpriteExportData>();
@@ -79,11 +76,14 @@ namespace PixelVision8.Runner.Exporters
 
         public int spriteCount;
         private int totalTiles;
+        private SpriteChip spriteChip;
+        private ColorChip colorChip;
 
-        public SpriteBuilderExporter(string fileName, IEngine engine, Dictionary<string, byte[]> files) : base(fileName)
+        public SpriteBuilderExporter(string fileName, ColorChip colorChip, SpriteChip spriteChip, Dictionary<string, byte[]> files) : base(fileName)
         {
             this.files = files;
-            this.engine = engine;
+            this.spriteChip = spriteChip;
+            this.colorChip = colorChip;
         }
 
         public override void CalculateSteps()
@@ -121,7 +121,7 @@ namespace PixelVision8.Runner.Exporters
             {
                 var spriteData = sprites[currentTile];
 
-                var spriteParser = new SpriteDataParser(spriteData.imageParser, engine);
+                var spriteParser = new SpriteDataParser(spriteData.imageParser, colorChip, spriteChip);
 
                 spriteParser.CalculateSteps();
 

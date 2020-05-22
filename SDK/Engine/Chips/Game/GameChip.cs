@@ -564,7 +564,7 @@ namespace PixelVision8.Engine.Chips
             {
                 if (id != tmpSpriteDataID)
                 {
-                    SpriteChip.ReadSpriteAt(id, tmpSpriteData);
+                    SpriteChip.ReadSpriteAt(id, ref tmpSpriteData);
                     tmpSpriteDataID = id;
                 }
 
@@ -599,7 +599,7 @@ namespace PixelVision8.Engine.Chips
                     //TODO flipping H, V and colorOffset should all be passed into reading a sprite
                     if (id != tmpSpriteDataID)
                     {
-                        SpriteChip.ReadSpriteAt(id, tmpSpriteData);
+                        SpriteChip.ReadSpriteAt(id, ref tmpSpriteData);
                         tmpSpriteDataID = id;
                     }
 
@@ -880,7 +880,7 @@ namespace PixelVision8.Engine.Chips
                         CurrentSprites++;
                     }
 
-                    FontChip.ReadSpriteAt(spriteIDs[j], tmpFontData);
+                    FontChip.ReadSpriteAt(spriteIDs[j], ref tmpFontData);
 
                     DrawPixels(tmpFontData, nextX, nextY, SpriteChip.width, SpriteChip.height, false, false, drawMode,
                         colorOffset);
@@ -1068,7 +1068,7 @@ namespace PixelVision8.Engine.Chips
 
             if (spriteID > -1)
             {
-                FontChip.ReadSpriteAt(spriteID, tmpSpriteData);
+                FontChip.ReadSpriteAt(spriteID, ref tmpSpriteData);
                 return tmpSpriteData;
             }
 
@@ -1443,7 +1443,7 @@ namespace PixelVision8.Engine.Chips
                 return data;
             }
 
-            SpriteChip.ReadSpriteAt(id, tmpSpriteData);
+            SpriteChip.ReadSpriteAt(id, ref tmpSpriteData);
 
             return tmpSpriteData;
         }
@@ -1739,7 +1739,7 @@ namespace PixelVision8.Engine.Chips
                     x = i % TilemapChip.columns * tileSize.X;
                     y = i / TilemapChip.columns * tileSize.Y;
 
-                    SpriteChip.ReadSpriteAt(spriteID, tmpPixelData);
+                    SpriteChip.ReadSpriteAt(spriteID, ref tmpPixelData);
 
                     // TODO need to see if the tile is flipped
                     //                    var flipH = tile.flipH;

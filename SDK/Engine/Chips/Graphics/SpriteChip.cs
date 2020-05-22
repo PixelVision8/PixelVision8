@@ -302,7 +302,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="pixelData"></param>
         /// <returns>
         /// </returns>
-        public void ReadSpriteAt(int index, int[] pixelData)
+        public void ReadSpriteAt(int index, ref int[] pixelData)
         {
             // TODO check to see if the cache doesn't exist and return the empty sprite as well
             if (index == -1)

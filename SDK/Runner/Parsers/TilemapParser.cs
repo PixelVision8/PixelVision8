@@ -29,10 +29,10 @@ namespace PixelVision8.Runner.Parsers
 
         private readonly TilemapChip tilemapChip;
         protected int columns, rows;
-        public TilemapParser(IImageParser parser, IEngineChips chips) :
-            base(parser, chips)
+        public TilemapParser(IImageParser parser, ColorChip colorChip, SpriteChip spriteChip, TilemapChip tilemapChip) :
+            base(parser, colorChip, spriteChip)
         {
-            tilemapChip = chips.TilemapChip;
+            this.tilemapChip = tilemapChip;
 
             autoImport = tilemapChip.autoImport;
             

@@ -29,7 +29,7 @@ namespace PixelVision8.Runner.Parsers
 {
     public class SpriteImageParser : ImageParser
     {
-        protected IEngineChips chips;
+        protected ColorChip colorChip;
         protected Color[] colorData;
         protected int cps;
         protected int index;
@@ -43,12 +43,13 @@ namespace PixelVision8.Runner.Parsers
         protected int x, y;
         protected Image image;
 
-        public SpriteImageParser(IImageParser parser, IEngineChips chips, bool unique = true,
-            SpriteChip spriteChip = null) : base(parser)
+        public SpriteImageParser(IImageParser parser, ColorChip colorChip, SpriteChip spriteChip) : base(parser)
         {
 
-            this.chips = chips;
-            this.spriteChip = spriteChip ?? chips.SpriteChip;
+            // this.chips = chips;
+            this.spriteChip = spriteChip;
+            this.colorChip = colorChip;
+
 
             spriteWidth = this.spriteChip.width;
             spriteHeight = this.spriteChip.height;
@@ -88,16 +89,12 @@ namespace PixelVision8.Runner.Parsers
         protected virtual void CreateImage()
         {
 
-            var colorChip = chips.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip
-                ? colorMapChip
-                : chips.ColorChip;
-
             colorData = colorChip.colors;
 
             var colorRefs = colorData.Select(c => ColorUtils.RgbToHex(c.R, c.G, c.B)).ToArray();
 
             // Remove the colors that are not supported
-            Array.Resize(ref colorRefs, chips.ColorChip.totalUsedColors);
+            Array.Resize(ref colorRefs, colorChip.totalUsedColors);
 
             var imageColors = Parser.colorPalette.Select(c => ColorUtils.RgbToHex(c.R, c.G, c.B)).ToArray();
 
@@ -255,7 +252,7 @@ namespace PixelVision8.Runner.Parsers
         public override void Dispose()
         {
             base.Dispose();
-            chips = null;
+            colorChip = null;
             spriteChip = null;
         }
     }

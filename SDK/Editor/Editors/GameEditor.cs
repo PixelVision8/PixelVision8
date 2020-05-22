@@ -964,7 +964,7 @@ namespace PixelVision8.Runner.Editors
             // Copy the sprites to the temp chip
             for (var i = 0; i < total; i++)
             {
-                spriteChip.ReadSpriteAt(i, tmpPixelData);
+                spriteChip.ReadSpriteAt(i, ref tmpPixelData);
 
                 if (tmpSpriteChip.FindSprite(tmpPixelData) == -1)
                 {
@@ -980,7 +980,7 @@ namespace PixelVision8.Runner.Editors
 
             for (var i = 0; i < total; i++)
             {
-                tmpSpriteChip.ReadSpriteAt(i, tmpPixelData);
+                tmpSpriteChip.ReadSpriteAt(i, ref tmpPixelData);
                 spriteChip.UpdateSpriteAt(i, tmpPixelData);
             }
 
@@ -1144,7 +1144,7 @@ namespace PixelVision8.Runner.Editors
 
                 loadService.targetEngine = targetGame;
 
-                loadService.AddParser(new FontParser(pngReader, targetGame));
+                loadService.AddParser(new FontParser(pngReader, targetGame.ColorChip, targetGame.FontChip));
 
                 loadService.LoadAll();
 
@@ -1177,7 +1177,7 @@ namespace PixelVision8.Runner.Editors
 
             var tmpSpriteData = new int[64];
 
-            fontChip.ReadSpriteAt(id, tmpSpriteData);
+            fontChip.ReadSpriteAt(id, ref tmpSpriteData);
 
             return tmpSpriteData;
         }
@@ -1299,7 +1299,7 @@ namespace PixelVision8.Runner.Editors
             for (i = 0; i < totalSprites; i++)
             {
                 // Read the sprite data
-                spriteChip.ReadSpriteAt(i, tmpPixelData);
+                spriteChip.ReadSpriteAt(i, ref tmpPixelData);
 
                 // Clear the color map
                 //                colorMap.Clear();

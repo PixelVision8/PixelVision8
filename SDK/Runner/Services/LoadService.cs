@@ -138,7 +138,7 @@ namespace PixelVision8.Runner.Services
 
                     var imageParser = new PNGFileReader(fileName, _fileLoadHelper, targetEngine.ColorChip.maskColor);
 
-                    AddParser(new FontParser(imageParser, targetEngine));
+                    AddParser(new FontParser(imageParser, targetEngine.ColorChip, targetEngine.FontChip));
 
                     // parser = LoadFont(fontName, ReadAllBytes(fileName));
                     // if (parser != null)
@@ -298,10 +298,10 @@ namespace PixelVision8.Runner.Services
             {
                 
                 var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
-                AddParser(new TilemapParser(imageParser, targetEngine));
+                AddParser(new TilemapParser(imageParser, targetEngine.ColorChip, targetEngine.SpriteChip, targetEngine.TilemapChip));
 
             }
-            
+
 
         }
 
@@ -328,7 +328,11 @@ namespace PixelVision8.Runner.Services
             {
                 var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
 
-                return new SpriteImageParser(imageParser, targetEngine);
+                var colorChip = targetEngine.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip
+                    ? colorMapChip
+                    : targetEngine.ColorChip;
+
+                return new SpriteImageParser(imageParser, colorChip, targetEngine.SpriteChip);
             }
 
             return null;

@@ -218,6 +218,54 @@ namespace PixelVision8.Engine
             Clear();
         }
 
+        public virtual void Crop(int x, int y, int blockWidth, int blockHeight)
+        {
+
+            if (!ValidateBounds(ref x, ref y, ref blockWidth, ref blockHeight))
+                return;
+
+            var tmpPixelData = GetPixels(x, y, blockWidth, blockHeight);
+
+            _width = blockWidth;
+            _height = blockHeight;
+
+            Array.Resize(ref pixels, _width * _height);
+
+            SetPixels(tmpPixelData);
+        }
+
+        protected bool ValidateBounds(ref int x, ref int y, ref int blockWidth, ref int blockHeight)
+        {
+            // Adjust X
+            if (x < 0)
+            {
+                blockWidth += x;
+                x = 0;
+            }
+
+            // Adjust Y
+            if (y < 0)
+            {
+                blockHeight += y;
+                y = 0;
+            }
+
+            // Adjust Width
+            if ((x + blockWidth) > _width)
+            {
+                blockWidth -= ((x + blockWidth) - _width);
+            }
+
+            // Adjust Height
+            if ((y + blockHeight) > _height)
+            {
+                blockHeight -= ((y + blockHeight) - _height);
+            }
+
+            return (blockWidth > 0 && blockHeight > 0);
+
+        }
+
         /// <summary>
         ///     Clears the pixel data. The default empty value is -1 since the
         ///     ColorChip starts at 0. You can also use the Clear() method to

@@ -133,7 +133,7 @@ namespace PixelVision8.Runner.Services
         {
             Restart();
             // TODO need to create a new Sprite Builder Exporter
-            AddExporter(new SpriteBuilderExporter(path, engine, files));
+            AddExporter(new SpriteBuilderExporter(path, engine.ColorChip, engine.SpriteChip, files));
         }
 
         public void ExportImage(string path, int[] pixelData, IEngine engine, int width, int height)

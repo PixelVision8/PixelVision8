@@ -34,10 +34,10 @@ namespace PixelVision8.Runner.Parsers
         private List<string> uniqueFontColors;
         private int[] fontMap;
 
-        public FontParser(IImageParser parser, IEngineChips chips) : base(parser,
-            chips, true, chips.FontChip)
+        public FontParser(IImageParser parser, ColorChip colorChip, FontChip fontChip) : base(parser,
+            colorChip, fontChip)
         {
-            fontChip = chips.FontChip;
+            this.fontChip = fontChip;
             // imageParser.ReadStream();
             name = parser.FileName.Split('.').First();
         }
@@ -49,7 +49,7 @@ namespace PixelVision8.Runner.Parsers
             uniqueFontColors = Parser.colorPalette.Select(c => ColorUtils.RgbToHex(c.R, c.G, c.B)).ToList();
 
             // Remove the mask color
-            uniqueFontColors.Remove(chips.ColorChip.maskColor);
+            uniqueFontColors.Remove(colorChip.maskColor);
 
             // Convert into an array
             var colorRefs = uniqueFontColors.ToArray();
