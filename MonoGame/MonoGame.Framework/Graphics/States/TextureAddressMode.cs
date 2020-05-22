@@ -12,7 +12,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Texels outside range will form the tile at every integer junction.
         /// </summary>
-		Wrap,
+		// Wrap,
         /// <summary>
         /// Texels outside range will be set to color of 0.0 or 1.0 texel.
         /// </summary>
@@ -20,10 +20,10 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Same as <see cref="TextureAddressMode.Wrap"/> but tiles will also flipped at every integer junction.
         /// </summary>
-        Mirror,
+        // Mirror,
         /// <summary>
         /// Texels outside range will be set to the border color.
         /// </summary>
-        Border
+        // Border
 	}
 }

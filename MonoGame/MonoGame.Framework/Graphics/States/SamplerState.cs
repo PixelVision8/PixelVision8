@@ -160,10 +160,10 @@ namespace Microsoft.Xna.Framework.Graphics
 
         public SamplerState()
         {
-            Filter = TextureFilter.Linear;
-            AddressU = TextureAddressMode.Wrap;
-            AddressV = TextureAddressMode.Wrap;
-            AddressW = TextureAddressMode.Wrap;
+            // Filter = TextureFilter.Linear;
+            // AddressU = TextureAddressMode.Wrap;
+            // AddressV = TextureAddressMode.Wrap;
+            // AddressW = TextureAddressMode.Wrap;
             BorderColor = Color.White;
             MaxAnisotropy = 4;
             MaxMipLevel = 0;
