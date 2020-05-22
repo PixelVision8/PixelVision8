@@ -80,9 +80,9 @@ namespace Microsoft.Xna.Framework.Graphics
         // private IndexBuffer _indexBuffer;
         private bool _indexBufferDirty;
 
-        private readonly RenderTargetBinding[] _currentRenderTargetBindings = new RenderTargetBinding[4];
+        // private readonly RenderTargetBinding[] _currentRenderTargetBindings = new RenderTargetBinding[4];
         private int _currentRenderTargetCount;
-        private readonly RenderTargetBinding[] _tempRenderTargetBinding = new RenderTargetBinding[1];
+        // private readonly RenderTargetBinding[] _tempRenderTargetBinding = new RenderTargetBinding[1];
 
         internal GraphicsCapabilities GraphicsCapabilities { get; private set; }
 
@@ -385,7 +385,7 @@ namespace Microsoft.Xna.Framework.Graphics
             ScissorRectangle = _viewport.Bounds;
 
             // Set the default render target.
-            ApplyRenderTargets(null);
+            ApplyRenderTargets();
         }
 
         // public RasterizerState RasterizerState
@@ -857,14 +857,14 @@ namespace Microsoft.Xna.Framework.Graphics
   //           }
   //       }
 
-        internal void ApplyRenderTargets(RenderTargetBinding[] renderTargets)
+        internal void ApplyRenderTargets(/*RenderTargetBinding[] renderTargets*/)
         {
             var clearTarget = false;
 
-            PlatformResolveRenderTargets();
+            // PlatformResolveRenderTargets();
 
             // Clear the current bindings.
-            Array.Clear(_currentRenderTargetBindings, 0, _currentRenderTargetBindings.Length);
+            // Array.Clear(_currentRenderTargetBindings, 0, _currentRenderTargetBindings.Length);
 
             int renderTargetWidth;
             int renderTargetHeight;
