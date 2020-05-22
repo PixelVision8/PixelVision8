@@ -56,10 +56,10 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="height"></param>
         /// <param name="mipmap"></param>
         /// <param name="format"></param>
-        // public Texture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipmap, SurfaceFormat format)
-        //     : this(graphicsDevice, width, height, mipmap, format, SurfaceType.Texture, false, 1)
-        // {
-        // }
+        public Texture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipmap, SurfaceFormat format)
+            : this(graphicsDevice, width, height, mipmap, format, SurfaceType.Texture, false, 1)
+        {
+        }
 
         /// <summary>
         /// Creates a new texture array of a given size with a surface format and optional mipmaps.
@@ -169,15 +169,15 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="data">New data for the texture</param>
         /// <param name="startIndex">Start position of data</param>
         /// <param name="elementCount"></param>
-        // public void SetData<T>(int level, Rectangle? rect, T[] data, int startIndex, int elementCount) where T : struct 
-        // {
-        //     Rectangle checkedRect;
-        //     ValidateParams(level, 0, rect, data, startIndex, elementCount, out checkedRect);
-        //     if (rect.HasValue)
-        //         PlatformSetData(level, 0, checkedRect, data, startIndex, elementCount);
-        //     else
-        //         PlatformSetData(level, data, startIndex, elementCount);
-        // }
+        public void SetData<T>(int level, Rectangle? rect, T[] data, int startIndex, int elementCount) where T : struct 
+        {
+            Rectangle checkedRect;
+            ValidateParams(level, 0, rect, data, startIndex, elementCount, out checkedRect);
+            if (rect.HasValue)
+                PlatformSetData(level, 0, checkedRect, data, startIndex, elementCount);
+            else
+                PlatformSetData(level, data, startIndex, elementCount);
+        }
 
         /// <summary>
         /// Changes the texture's pixels

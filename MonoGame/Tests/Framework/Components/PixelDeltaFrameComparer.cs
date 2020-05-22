@@ -7,7 +7,7 @@ using System;
 
 namespace MonoGame.Tests.Components 
 {
-	class PixelDeltaFrameComparer : IFrameComparer 
+	class PixelDeltaFrameComparer
     {
         private static int[] GreyScale(FramePixelData pixelData, int newWidth, int newHeight)
         {

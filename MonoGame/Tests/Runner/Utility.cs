@@ -108,30 +108,30 @@ namespace MonoGame.Tests {
         }
     }
 
-    public class BoundingSphereComparer : IEqualityComparer<BoundingSphere>
-    {
-        static public BoundingSphereComparer Epsilon = new BoundingSphereComparer(0.000001f);
-
-        private readonly float _epsilon;
-
-        private BoundingSphereComparer(float epsilon)
-        {
-            _epsilon = epsilon;
-        }
-
-        public bool Equals(BoundingSphere x, BoundingSphere y)
-        {
-            return  Math.Abs(x.Center.X - y.Center.X) < _epsilon &&
-                    Math.Abs(x.Center.Y - y.Center.Y) < _epsilon &&
-                    Math.Abs(x.Center.Z - y.Center.Z) < _epsilon &&
-                    Math.Abs(x.Radius - y.Radius) < _epsilon;
-        }
-
-        public int GetHashCode(BoundingSphere obj)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    // public class BoundingSphereComparer : IEqualityComparer<BoundingSphere>
+    // {
+    //     static public BoundingSphereComparer Epsilon = new BoundingSphereComparer(0.000001f);
+    //
+    //     private readonly float _epsilon;
+    //
+    //     private BoundingSphereComparer(float epsilon)
+    //     {
+    //         _epsilon = epsilon;
+    //     }
+    //
+    //     public bool Equals(BoundingSphere x, BoundingSphere y)
+    //     {
+    //         return  Math.Abs(x.Center.X - y.Center.X) < _epsilon &&
+    //                 Math.Abs(x.Center.Y - y.Center.Y) < _epsilon &&
+    //                 Math.Abs(x.Center.Z - y.Center.Z) < _epsilon &&
+    //                 Math.Abs(x.Radius - y.Radius) < _epsilon;
+    //     }
+    //
+    //     public int GetHashCode(BoundingSphere obj)
+    //     {
+    //         throw new NotImplementedException();
+    //     }
+    // }
 
     public class Vector2Comparer : IEqualityComparer<Vector2>
     {
@@ -205,54 +205,54 @@ namespace MonoGame.Tests {
         }
     }
 
-    public class QuaternionComparer : IEqualityComparer<Quaternion>
-    {
-        static public QuaternionComparer Epsilon = new QuaternionComparer(0.000001f);
-
-        private readonly float _epsilon;
-
-        private QuaternionComparer(float epsilon)
-        {
-            _epsilon = epsilon;
-        }
-
-        public bool Equals(Quaternion x, Quaternion y)
-        {
-            return Math.Abs(x.X - y.X) < _epsilon &&
-                   Math.Abs(x.Y - y.Y) < _epsilon &&
-                   Math.Abs(x.Z - y.Z) < _epsilon &&
-                   Math.Abs(x.W - y.W) < _epsilon;
-        }
-
-        public int GetHashCode(Quaternion obj)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    public class PlaneComparer : IEqualityComparer<Plane>
-    {
-        static public PlaneComparer Epsilon = new PlaneComparer(0.000001f);
-
-        private readonly float _epsilon;
-
-        private PlaneComparer(float epsilon)
-        {
-            _epsilon = epsilon;
-        }
-
-        public bool Equals(Plane x, Plane y)
-        {
-            return Math.Abs(x.Normal.X - y.Normal.X) < _epsilon &&
-                   Math.Abs(x.Normal.Y - y.Normal.Y) < _epsilon &&
-                   Math.Abs(x.Normal.Z - y.Normal.Z) < _epsilon &&
-                   Math.Abs(x.D - y.D) < _epsilon;
-        }
-
-        public int GetHashCode(Plane obj)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    // public class QuaternionComparer : IEqualityComparer<Quaternion>
+    // {
+    //     static public QuaternionComparer Epsilon = new QuaternionComparer(0.000001f);
+    //
+    //     private readonly float _epsilon;
+    //
+    //     private QuaternionComparer(float epsilon)
+    //     {
+    //         _epsilon = epsilon;
+    //     }
+    //
+    //     public bool Equals(Quaternion x, Quaternion y)
+    //     {
+    //         return Math.Abs(x.X - y.X) < _epsilon &&
+    //                Math.Abs(x.Y - y.Y) < _epsilon &&
+    //                Math.Abs(x.Z - y.Z) < _epsilon &&
+    //                Math.Abs(x.W - y.W) < _epsilon;
+    //     }
+    //
+    //     public int GetHashCode(Quaternion obj)
+    //     {
+    //         throw new NotImplementedException();
+    //     }
+    // }
+    // public class PlaneComparer : IEqualityComparer<Plane>
+    // {
+    //     static public PlaneComparer Epsilon = new PlaneComparer(0.000001f);
+    //
+    //     private readonly float _epsilon;
+    //
+    //     private PlaneComparer(float epsilon)
+    //     {
+    //         _epsilon = epsilon;
+    //     }
+    //
+    //     public bool Equals(Plane x, Plane y)
+    //     {
+    //         return Math.Abs(x.Normal.X - y.Normal.X) < _epsilon &&
+    //                Math.Abs(x.Normal.Y - y.Normal.Y) < _epsilon &&
+    //                Math.Abs(x.Normal.Z - y.Normal.Z) < _epsilon &&
+    //                Math.Abs(x.D - y.D) < _epsilon;
+    //     }
+    //
+    //     public int GetHashCode(Plane obj)
+    //     {
+    //         throw new NotImplementedException();
+    //     }
+    // }
 
     public static class ArrayUtil
     {

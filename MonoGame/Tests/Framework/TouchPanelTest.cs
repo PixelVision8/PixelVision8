@@ -366,7 +366,7 @@ namespace MonoGame.Tests.Framework
             //Then read the state, the first touch should be released
 
             //Start a touch
-            var pos = new Vector2(1);
+            var pos = new Vector2(1,1);
             _tps.AddEvent(1, TouchLocationState.Pressed, pos);
 
             var state = _tps.GetState();
@@ -380,9 +380,9 @@ namespace MonoGame.Tests.Framework
             //Release the touch, make a new one and move it around lots
             _tps.AddEvent(1, TouchLocationState.Released, pos);
 
-            _tps.AddEvent(2, TouchLocationState.Pressed, new Vector2(2));
+            _tps.AddEvent(2, TouchLocationState.Pressed, new Vector2(2,2));
             for (var i = 3; i < 200; i++)
-                _tps.AddEvent(2, TouchLocationState.Moved, new Vector2(i));
+                _tps.AddEvent(2, TouchLocationState.Moved, new Vector2(i,i));
 
             //We should now have the first touch in the release state and the second touch in the pressed state at 199,199
             state = _tps.GetState();
@@ -394,7 +394,7 @@ namespace MonoGame.Tests.Framework
 
             var secondTouch = state.First(x => x.Id != initialTouch.Id);
             Assert.AreEqual(TouchLocationState.Pressed, secondTouch.State);
-            Assert.AreEqual(new Vector2(199), secondTouch.Position);
+            Assert.AreEqual(new Vector2(199, 199), secondTouch.Position);
         }
 
         [Test]
@@ -404,8 +404,8 @@ namespace MonoGame.Tests.Framework
             //Create multiple touches in different states
 
             //Start a touch
-            var pos = new Vector2(1);
-            var pos2 = new Vector2(2);
+            var pos = new Vector2(1,1);
+            var pos2 = new Vector2(2,2);
             _tps.AddEvent(1, TouchLocationState.Pressed, pos);
 
             var state = _tps.GetState();

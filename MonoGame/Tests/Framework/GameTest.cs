@@ -148,11 +148,11 @@ namespace MonoGame.Tests {
 				var targetElapsedTime = TimeSpan.FromSeconds (1f / 10f);
 				var slowUpdateTime = TimeSpan.FromSeconds (targetElapsedTime.TotalSeconds * 2);
 
-				var slowUpdater = new SlowUpdater (Game, slowUpdateTime);
-				Game.Components.Add (slowUpdater);
-
-				var logger = new RunLoopLogger (Game);
-				Game.Components.Add (logger);
+				// var slowUpdater = new SlowUpdater (Game, slowUpdateTime);
+				// Game.Components.Add (slowUpdater);
+				//
+				// var logger = new RunLoopLogger (Game);
+				// Game.Components.Add (logger);
 
 				Game.MaxUpdateCount = int.MaxValue;
 				Game.MaxDrawCount = 100;
@@ -373,119 +373,119 @@ namespace MonoGame.Tests {
 			MaxDrawSatisfied
 		}
 
-		private class SlowUpdater : GameComponent {
-			private TimeSpan _updateTime;
-			public SlowUpdater (Game game, TimeSpan updateTime) :
-				base (game)
-			{
-				_updateTime = updateTime;
-			}
+		// private class SlowUpdater : GameComponent {
+		// 	private TimeSpan _updateTime;
+		// 	public SlowUpdater (Game game, TimeSpan updateTime) :
+		// 		base (game)
+		// 	{
+		// 		_updateTime = updateTime;
+		// 	}
+		//
+		// 	int _count = 0;
+		// 	public override void Update (GameTime gameTime)
+		// 	{
+		// 		base.Update (gameTime);
+		//
+		// 		if (_count >= 4)
+		// 			return;
+		//
+		// 		_count++;
+		//
+		// 		//if (!gameTime.IsRunningSlowly)
+		// 		{
+		// 			var endTick = Stopwatch.GetTimestamp () +
+		// 				      (long) (Stopwatch.Frequency * _updateTime.TotalSeconds);
+		// 			//long endTick = (long)(_updateTime.TotalMilliseconds * 10) + DateTime.Now.Ticks;
+		// 			while (Stopwatch.GetTimestamp () < endTick) {
+		// 				// Be busy!
+		// 			}
+		// 		}
+		// 	}
+		// }
 
-			int _count = 0;
-			public override void Update (GameTime gameTime)
-			{
-				base.Update (gameTime);
-
-				if (_count >= 4)
-					return;
-
-				_count++;
-
-				//if (!gameTime.IsRunningSlowly)
-				{
-					var endTick = Stopwatch.GetTimestamp () +
-						      (long) (Stopwatch.Frequency * _updateTime.TotalSeconds);
-					//long endTick = (long)(_updateTime.TotalMilliseconds * 10) + DateTime.Now.Ticks;
-					while (Stopwatch.GetTimestamp () < endTick) {
-						// Be busy!
-					}
-				}
-			}
-		}
-
-		private class RunLoopLogger : DrawableGameComponent {
-			public RunLoopLogger (Game game) :
-				base (game)
-			{
-			}
-
-			private List<Entry> _entries = new List<Entry> ();
-			public IEnumerable<Entry> GetEntries ()
-			{
-				return _entries.ToArray ();
-			}
-
-			public override void Update (GameTime gameTime)
-			{
-				base.Update (gameTime);
-				_entries.Add (Entry.FromUpdate (gameTime));
-			}
-
-			public override void Draw (GameTime gameTime)
-			{
-				base.Draw (gameTime);
-				_entries.Add (Entry.FromDraw (gameTime));
-			}
-
-			public string GetLogString ()
-			{
-				return string.Join (" ", _entries);
-			}
-
-			public struct Entry {
-				public static Entry FromDraw (GameTime gameTime)
-				{
-					return new Entry {
-						       Action = RunLoopAction.Draw,
-						       ElapsedGameTime = gameTime.ElapsedGameTime,
-						       TotalGameTime = gameTime.TotalGameTime,
-						       WasRunningSlowly = gameTime.IsRunningSlowly
-					};
-				}
-
-				public static Entry FromUpdate (GameTime gameTime)
-				{
-					return new Entry {
-						       Action = RunLoopAction.Update,
-						       ElapsedGameTime = gameTime.ElapsedGameTime,
-						       TotalGameTime = gameTime.TotalGameTime,
-						       WasRunningSlowly = gameTime.IsRunningSlowly
-					};
-				}
-
-				public RunLoopAction Action {
-					get; set;
-				}
-
-				public TimeSpan ElapsedGameTime {
-					get; set;
-				}
-
-				public TimeSpan TotalGameTime {
-					get; set;
-				}
-
-				public bool WasRunningSlowly {
-					get; set;
-				}
-
-				public override string ToString ()
-				{
-					char actionInitial;
-					switch (Action) {
-					case RunLoopAction.Draw: actionInitial = 'd'; break;
-					case RunLoopAction.Update: actionInitial = 'u'; break;
-					default: throw new NotSupportedException (Action.ToString ());
-					}
-
-					return string.Format (
-						       "{0}({1:0}{2})",
-						       actionInitial,
-						       ElapsedGameTime.TotalMilliseconds,
-						       WasRunningSlowly ? "!" : "");
-				}
-			}
-		}
+		// private class RunLoopLogger : DrawableGameComponent {
+		// 	public RunLoopLogger (Game game) :
+		// 		base (game)
+		// 	{
+		// 	}
+		//
+		// 	private List<Entry> _entries = new List<Entry> ();
+		// 	public IEnumerable<Entry> GetEntries ()
+		// 	{
+		// 		return _entries.ToArray ();
+		// 	}
+		//
+		// 	public override void Update (GameTime gameTime)
+		// 	{
+		// 		base.Update (gameTime);
+		// 		_entries.Add (Entry.FromUpdate (gameTime));
+		// 	}
+		//
+		// 	public override void Draw (GameTime gameTime)
+		// 	{
+		// 		base.Draw (gameTime);
+		// 		_entries.Add (Entry.FromDraw (gameTime));
+		// 	}
+		//
+		// 	public string GetLogString ()
+		// 	{
+		// 		return string.Join (" ", _entries);
+		// 	}
+		//
+		// 	public struct Entry {
+		// 		public static Entry FromDraw (GameTime gameTime)
+		// 		{
+		// 			return new Entry {
+		// 				       Action = RunLoopAction.Draw,
+		// 				       ElapsedGameTime = gameTime.ElapsedGameTime,
+		// 				       TotalGameTime = gameTime.TotalGameTime,
+		// 				       WasRunningSlowly = gameTime.IsRunningSlowly
+		// 			};
+		// 		}
+		//
+		// 		public static Entry FromUpdate (GameTime gameTime)
+		// 		{
+		// 			return new Entry {
+		// 				       Action = RunLoopAction.Update,
+		// 				       ElapsedGameTime = gameTime.ElapsedGameTime,
+		// 				       TotalGameTime = gameTime.TotalGameTime,
+		// 				       WasRunningSlowly = gameTime.IsRunningSlowly
+		// 			};
+		// 		}
+		//
+		// 		public RunLoopAction Action {
+		// 			get; set;
+		// 		}
+		//
+		// 		public TimeSpan ElapsedGameTime {
+		// 			get; set;
+		// 		}
+		//
+		// 		public TimeSpan TotalGameTime {
+		// 			get; set;
+		// 		}
+		//
+		// 		public bool WasRunningSlowly {
+		// 			get; set;
+		// 		}
+		//
+		// 		public override string ToString ()
+		// 		{
+		// 			char actionInitial;
+		// 			switch (Action) {
+		// 			case RunLoopAction.Draw: actionInitial = 'd'; break;
+		// 			case RunLoopAction.Update: actionInitial = 'u'; break;
+		// 			default: throw new NotSupportedException (Action.ToString ());
+		// 			}
+		//
+		// 			return string.Format (
+		// 				       "{0}({1:0}{2})",
+		// 				       actionInitial,
+		// 				       ElapsedGameTime.TotalMilliseconds,
+		// 				       WasRunningSlowly ? "!" : "");
+		// 		}
+		// 	}
+		// }
 
 		private enum RunLoopAction {
 			Draw,

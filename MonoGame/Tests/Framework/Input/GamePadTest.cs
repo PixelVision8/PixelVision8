@@ -198,9 +198,9 @@ namespace MonoGame.Tests.Input
                     Vector2.One, Vector2.One,
                     Vector2.One, Vector2.One);
 
-                yield return new TestCaseData(
-                    -Vector2.One, -Vector2.One,
-                    -Vector2.One, -Vector2.One);
+                // yield return new TestCaseData(
+                //     -Vector2.One, -Vector2.One,
+                //     -Vector2.One, -Vector2.One);
 
                 yield return new TestCaseData(
                     new Vector2(-2.7f, 5.6f), new Vector2(3.5f, -4.8f),
