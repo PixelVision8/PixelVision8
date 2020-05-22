@@ -171,7 +171,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="selectedMultiSampleCount">Set to the best count supported by the adaptor for the requested multisample count.</param>
         /// <returns>True if the requested format is supported by the adaptor. False if one or more of the values was changed.</returns>
 		public bool QueryRenderTargetFormat(
-			GraphicsProfile graphicsProfile,
+			// GraphicsProfile graphicsProfile,
 			SurfaceFormat format,
 			// DepthFormat depthFormat,
 			int multiSampleCount,
@@ -393,23 +393,23 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
-        public bool IsProfileSupported(GraphicsProfile graphicsProfile)
-        {
-            if(UseReferenceDevice)
-                return true;
-
-            switch(graphicsProfile)
-            {
-                case GraphicsProfile.Reach:
-                    return true;
-                case GraphicsProfile.HiDef:
-                    bool result = true;
-                    // TODO: check adapter capabilities...
-                    return result;
-                default:
-                    throw new InvalidOperationException();
-            }
-        }
+        // public bool IsProfileSupported(GraphicsProfile graphicsProfile)
+        // {
+        //     if(UseReferenceDevice)
+        //         return true;
+        //
+        //     switch(graphicsProfile)
+        //     {
+        //         case GraphicsProfile.Reach:
+        //             return true;
+        //         // case GraphicsProfile.HiDef:
+        //         //     bool result = true;
+        //         //     // TODO: check adapter capabilities...
+        //             return result;
+        //         default:
+        //             throw new InvalidOperationException();
+        //     }
+        // }
 
 #if WINDOWS && !OPENGL
         [System.Runtime.InteropServices.DllImport("gdi32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto, SetLastError = true, ExactSpelling = true)]

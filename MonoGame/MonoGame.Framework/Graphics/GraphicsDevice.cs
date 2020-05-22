@@ -254,12 +254,12 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <exception cref="ArgumentNullException">
         /// <paramref name="presentationParameters"/> is <see langword="null"/>.
         /// </exception>
-        public GraphicsDevice(GraphicsAdapter adapter, GraphicsProfile graphicsProfile, bool preferHalfPixelOffset, PresentationParameters presentationParameters)
+        public GraphicsDevice(GraphicsAdapter adapter/*, GraphicsProfile graphicsProfile*/, bool preferHalfPixelOffset, PresentationParameters presentationParameters)
         {
             if (adapter == null)
                 throw new ArgumentNullException("adapter");
-            if (!adapter.IsProfileSupported(graphicsProfile))
-                throw new NoSuitableGraphicsDeviceException(String.Format("Adapter '{0}' does not support the {1} profile.", adapter.Description, graphicsProfile));
+            // if (!adapter.IsProfileSupported(graphicsProfile))
+            //     throw new NoSuitableGraphicsDeviceException(String.Format("Adapter '{0}' does not support the {1} profile.", adapter.Description, graphicsProfile));
             if (presentationParameters == null)
                 throw new ArgumentNullException("presentationParameters");
 #if DIRECTX
@@ -267,7 +267,7 @@ namespace Microsoft.Xna.Framework.Graphics
             preferHalfPixelOffset = false;
 #endif
             Adapter = adapter;
-            _graphicsProfile = graphicsProfile;
+            // _graphicsProfile = graphicsProfile;
             UseHalfPixelOffset = preferHalfPixelOffset;
             PresentationParameters = presentationParameters;
             Setup();
@@ -751,11 +751,11 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
-        private readonly GraphicsProfile _graphicsProfile;
-        public GraphicsProfile GraphicsProfile
-        {
-            get { return _graphicsProfile; }
-        }
+        // private readonly GraphicsProfile _graphicsProfile;
+        // public GraphicsProfile GraphicsProfile
+        // {
+        //     get { return _graphicsProfile; }
+        // }
 
         public Rectangle ScissorRectangle
         {

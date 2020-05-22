@@ -29,7 +29,7 @@ namespace Microsoft.Xna.Framework
         private bool _hardwareModeSwitch = true;
         private bool _preferHalfPixelOffset = false;
         private bool _wantFullScreen;
-        private GraphicsProfile _graphicsProfile;
+        // private GraphicsProfile _graphicsProfile;
         // dirty flag for ApplyChanges
         private bool _shouldApplyChanges;
 
@@ -83,7 +83,7 @@ namespace Microsoft.Xna.Framework
 
             // XNA would read this from the manifest, but it would always default
             // to reach unless changed.  So lets mimic that without the manifest bit.
-            GraphicsProfile = GraphicsProfile.Reach;
+            // GraphicsProfile = GraphicsProfile.Reach;
 
             // Let the plaform optionally overload construction defaults.
             PlatformConstruct();
@@ -129,7 +129,7 @@ namespace Microsoft.Xna.Framework
             if (_graphicsDevice != null)
                 return;
 
-            _graphicsDevice = new GraphicsDevice(gdi.Adapter, gdi.GraphicsProfile, this.PreferHalfPixelOffset, gdi.PresentationParameters);
+            _graphicsDevice = new GraphicsDevice(gdi.Adapter/*, gdi.GraphicsProfile*/, this.PreferHalfPixelOffset, gdi.PresentationParameters);
             _shouldApplyChanges = false;
 
             // hook up reset events
@@ -284,7 +284,7 @@ namespace Microsoft.Xna.Framework
         private void PrepareGraphicsDeviceInformation(GraphicsDeviceInformation gdi)
         {
             gdi.Adapter = GraphicsAdapter.DefaultAdapter;
-            gdi.GraphicsProfile = GraphicsProfile;
+            // gdi.GraphicsProfile = GraphicsProfile;
             var pp = new PresentationParameters();
             PreparePresentationParameters(pp);
             gdi.PresentationParameters = pp;
@@ -313,23 +313,23 @@ namespace Microsoft.Xna.Framework
             // PrepareDeviceSettings event this information should be applied to the GraphicsDevice
             var gdi = DoPreparingDeviceSettings();
 
-            if (gdi.GraphicsProfile != GraphicsDevice.GraphicsProfile)
-            {
-                // if the GraphicsProfile changed we need to create a new GraphicsDevice
-                DisposeGraphicsDevice();
-                CreateDevice(gdi);
-                return;
-            }
+            // if (gdi.GraphicsProfile != GraphicsDevice.GraphicsProfile)
+            // {
+            //     // if the GraphicsProfile changed we need to create a new GraphicsDevice
+            //     DisposeGraphicsDevice();
+            //     CreateDevice(gdi);
+            //     return;
+            // }
 
             GraphicsDevice.Reset(gdi.PresentationParameters);
         }
 
-        private void DisposeGraphicsDevice()
-        {
-            _graphicsDevice.Dispose();
-            EventHelpers.Raise(this, DeviceDisposing, EventArgs.Empty);
-            _graphicsDevice = null;
-        }
+        // private void DisposeGraphicsDevice()
+        // {
+        //     _graphicsDevice.Dispose();
+        //     EventHelpers.Raise(this, DeviceDisposing, EventArgs.Empty);
+        //     _graphicsDevice = null;
+        // }
 
         partial void PlatformInitialize(PresentationParameters presentationParameters);
 
@@ -373,18 +373,18 @@ namespace Microsoft.Xna.Framework
         /// <summary>
         /// The profile which determines the graphics feature level.
         /// </summary>
-        public GraphicsProfile GraphicsProfile
-        {
-            get
-            {
-                return _graphicsProfile;
-            }
-            set
-            {
-                _shouldApplyChanges = true;
-                _graphicsProfile = value;
-            }
-        }
+        // public GraphicsProfile GraphicsProfile
+        // {
+        //     get
+        //     {
+        //         return _graphicsProfile;
+        //     }
+        //     set
+        //     {
+        //         _shouldApplyChanges = true;
+        //         _graphicsProfile = value;
+        //     }
+        // }
 
         /// <summary>
         /// Returns the graphics device for this manager.

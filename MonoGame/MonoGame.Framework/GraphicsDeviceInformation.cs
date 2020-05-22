@@ -24,7 +24,7 @@ namespace Microsoft.Xna.Framework
         /// <summary>
         /// The requested graphics device feature set. 
         /// </summary>
-        public GraphicsProfile GraphicsProfile { get; set; }
+        // public GraphicsProfile GraphicsProfile { get; set; }
         
         /// <summary>
         /// The settings that define how graphics will be presented to the display.
