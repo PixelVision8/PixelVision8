@@ -300,22 +300,22 @@ namespace Microsoft.Xna.Framework.Graphics
         /// the images should be identical.  This call does not premultiply the image alpha, but areas of zero alpha will
         /// result in black color data.
         /// </remarks>
-        public static Texture2D FromStream(GraphicsDevice graphicsDevice, Stream stream)
-		{
-            if (graphicsDevice == null)
-                throw new ArgumentNullException("graphicsDevice");
-            if (stream == null)
-                throw new ArgumentNullException("stream");
-
-            try
-            {
-                return PlatformFromStream(graphicsDevice, stream);
-            }
-            catch(Exception e)
-            {
-                throw new InvalidOperationException("This image format is not supported", e);
-            }
-        }
+  //       public static Texture2D FromStream(GraphicsDevice graphicsDevice, Stream stream)
+		// {
+  //           if (graphicsDevice == null)
+  //               throw new ArgumentNullException("graphicsDevice");
+  //           if (stream == null)
+  //               throw new ArgumentNullException("stream");
+  //
+  //           try
+  //           {
+  //               return PlatformFromStream(graphicsDevice, stream);
+  //           }
+  //           catch(Exception e)
+  //           {
+  //               throw new InvalidOperationException("This image format is not supported", e);
+  //           }
+  //       }
 
         /// <summary>
         /// Converts the texture to a JPG image

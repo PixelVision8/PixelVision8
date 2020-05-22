@@ -32,14 +32,20 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
     <Compile Remove="Platform\**\*" />
     <Compile Remove="Platform\Media\**" />
     <Compile Remove="Properties\**\*" />
+    <Compile Remove="Utilities\Deflate\**" />
+    <Compile Remove="Utilities\Lz4Stream\**" />
     <Compile Remove="Utilities\LzxStream\**" />
+    <Compile Remove="Utilities\ZLibStream\**" />
     <EmbeddedResource Remove="Audio\Xact\**" />
     <EmbeddedResource Remove="Content\**" />
     <EmbeddedResource Remove="Design\**" />
     <EmbeddedResource Remove="Graphics\PackedVector\**" />
     <EmbeddedResource Remove="Media\**" />
     <EmbeddedResource Remove="Platform\Media\**" />
+    <EmbeddedResource Remove="Utilities\Deflate\**" />
+    <EmbeddedResource Remove="Utilities\Lz4Stream\**" />
     <EmbeddedResource Remove="Utilities\LzxStream\**" />
+    <EmbeddedResource Remove="Utilities\ZLibStream\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,7 +56,10 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
     <None Remove="Media\**" />
     <None Remove="Platform\**\*" />
     <None Remove="Platform\Media\**" />
+    <None Remove="Utilities\Deflate\**" />
+    <None Remove="Utilities\Lz4Stream\**" />
     <None Remove="Utilities\LzxStream\**" />
+    <None Remove="Utilities\ZLibStream\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -132,12 +141,17 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
     <Compile Remove="Quaternion.cs" />
     <Compile Remove="Ray.cs" />
     <Compile Remove="ReusableItemList.cs" />
+    <Compile Remove="TitleContainer.cs" />
+    <Compile Remove="Utilities\BinaryWriterEx.cs" />
+    <Compile Remove="Utilities\ByteBufferPool.cs" />
+    <Compile Remove="Utilities\FileHelpers.cs" />
+    <Compile Remove="Utilities\GraphicsBackend.cs" />
+    <Compile Remove="Utilities\MonoGamePlatform.cs" />
+    <Compile Remove="Utilities\PlatformInfo.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Platform\TitleContainer.Desktop.cs" />
-    <Compile Include="Platform\Graphics\OpenGL.Common.cs" />
-    <Compile Include="Platform\Graphics\Texture2D.StbSharp.cs" />    
+    <Compile Include="Platform\Graphics\OpenGL.Common.cs" />    
     <Compile Include="Platform\SDL\SDL2.cs" />
     <Compile Include="Platform\SDL\SDLGamePlatform.cs" />
     <Compile Include="Platform\SDL\SDLGameWindow.cs" />
@@ -160,17 +174,20 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
     <Compile Include="Platform\Graphics\GraphicsAdapter.Legacy.cs" />
     <Compile Include="Platform\GamePlatform.Desktop.cs" />
     <Compile Include="Platform\GraphicsDeviceManager.SDL.cs" />
-    
-    <Compile Include="..\ThirdParty\StbImageSharp\src\StbImageSharp\**\*.cs" LinkBase="Utilities\StbImageSharp" />
-    <Compile Include="..\ThirdParty\StbImageWriteSharp\src\StbImageWriteSharp\**\*.cs" LinkBase="Utilities\StbImageWriteSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="global.json" />
+    <None Remove="MonoGame.Framework.Android.targets" />
+    <None Remove="MonoGame.Framework.DesktopGL.targets" />
+    <None Remove="MonoGame.Framework.iOS.targets" />
+    <None Remove="MonoGame.Framework.WindowsDX.targets" />
+    <None Remove="MonoGame.Framework.WindowsUniversal.targets" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="MonoGame.bmp">
       <LogicalName>MonoGame.bmp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\ThirdParty\SDL_GameControllerDB\gamecontrollerdb.txt">
-      <LogicalName>gamecontrollerdb.txt</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
 
@@ -218,8 +235,6 @@ This package provides you with MonoGame Framework that uses OpenGL for rendering
       <PackagePath>runtimes\osx\native</PackagePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-
-    <Content Include="MonoGame.Framework.DesktopGL.targets" PackagePath="build" />
   </ItemGroup>
 
   <Import Project="Platform\OpenGL.targets" />
