@@ -46,14 +46,14 @@ namespace Microsoft.Xna.Framework.Graphics
         private Color _blendFactor = Color.White;
         private bool _blendFactorDirty;
 
-        private BlendState _blendState;
-        private BlendState _actualBlendState;
-        private bool _blendStateDirty;
+        // private BlendState _blendState;
+        // private BlendState _actualBlendState;
+        // private bool _blendStateDirty;
 
-        private BlendState _blendStateAdditive;
-        private BlendState _blendStateAlphaBlend;
-        private BlendState _blendStateNonPremultiplied;
-        private BlendState _blendStateOpaque;
+        // private BlendState _blendStateAdditive;
+        // private BlendState _blendStateAlphaBlend;
+        // private BlendState _blendStateNonPremultiplied;
+        // private BlendState _blendStateOpaque;
 
         // private DepthStencilState _depthStencilState;
         // private DepthStencilState _actualDepthStencilState;
@@ -600,8 +600,8 @@ namespace Microsoft.Xna.Framework.Graphics
                     // Clear the effect cache.
                     EffectCache.Clear();
 
-                    _blendState = null;
-                    _actualBlendState = null;
+                    // _blendState = null;
+                    // _actualBlendState = null;
                     // _blendStateAdditive.Dispose();
                     // _blendStateAlphaBlend.Dispose();
                     // _blendStateNonPremultiplied.Dispose();

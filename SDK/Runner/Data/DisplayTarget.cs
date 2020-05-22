@@ -203,7 +203,7 @@ namespace PixelVision8.Runner.Data
         {
             // TODO didn't have to check length before service refactoring
             // if (totalPixels != pixels.Length) return;
-
+            
             renderTexture.SetData(pixels);
 
             spriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: useCRT ? shaderEffect : null);

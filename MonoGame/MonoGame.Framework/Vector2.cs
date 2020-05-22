@@ -65,18 +65,18 @@ namespace Microsoft.Xna.Framework
         /// <summary>
         /// Returns a <see cref="Vector2"/> with components 1, 0.
         /// </summary>
-        public static Vector2 UnitX
-        {
-            get { return unitXVector; }
-        }
+        // public static Vector2 UnitX
+        // {
+        //     get { return unitXVector; }
+        // }
 
         /// <summary>
         /// Returns a <see cref="Vector2"/> with components 0, 1.
         /// </summary>
-        public static Vector2 UnitY
-        {
-            get { return unitYVector; }
-        }
+        // public static Vector2 UnitY
+        // {
+        //     get { return unitYVector; }
+        // }
 
         #endregion
 
@@ -112,11 +112,11 @@ namespace Microsoft.Xna.Framework
         /// Constructs a 2d vector with X and Y set to the same value.
         /// </summary>
         /// <param name="value">The x and y coordinates in 2d-space.</param>
-        public Vector2(float value)
-        {
-            this.X = value;
-            this.Y = value;
-        }
+        // public Vector2(float value)
+        // {
+        //     this.X = value;
+        //     this.Y = value;
+        // }
 
         #endregion
 
@@ -127,12 +127,12 @@ namespace Microsoft.Xna.Framework
         /// </summary>
         /// <param name="value">Source <see cref="Vector2"/> on the right of the sub sign.</param>
         /// <returns>Result of the inversion.</returns>
-        public static Vector2 operator -(Vector2 value)
-        {
-            value.X = -value.X;
-            value.Y = -value.Y;
-            return value;
-        }
+        // public static Vector2 operator -(Vector2 value)
+        // {
+        //     value.X = -value.X;
+        //     value.Y = -value.Y;
+        //     return value;
+        // }
 
         /// <summary>
         /// Adds two vectors.
@@ -192,12 +192,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="scaleFactor">Scalar value on the left of the mul sign.</param>
         /// <param name="value">Source <see cref="Vector2"/> on the right of the mul sign.</param>
         /// <returns>Result of the vector multiplication with a scalar.</returns>
-        public static Vector2 operator *(float scaleFactor, Vector2 value)
-        {
-            value.X *= scaleFactor;
-            value.Y *= scaleFactor;
-            return value;
-        }
+        // public static Vector2 operator *(float scaleFactor, Vector2 value)
+        // {
+        //     value.X *= scaleFactor;
+        //     value.Y *= scaleFactor;
+        //     return value;
+        // }
 
         /// <summary>
         /// Divides the components of a <see cref="Vector2"/> by the components of another <see cref="Vector2"/>.
@@ -205,13 +205,13 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">Source <see cref="Vector2"/> on the left of the div sign.</param>
         /// <param name="value2">Divisor <see cref="Vector2"/> on the right of the div sign.</param>
         /// <returns>The result of dividing the vectors.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 operator /(Vector2 value1, Vector2 value2)
-        {
-            value1.X /= value2.X;
-            value1.Y /= value2.Y;
-            return value1;
-        }
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // public static Vector2 operator /(Vector2 value1, Vector2 value2)
+        // {
+        //     value1.X /= value2.X;
+        //     value1.Y /= value2.Y;
+        //     return value1;
+        // }
 
         /// <summary>
         /// Divides the components of a <see cref="Vector2"/> by a scalar.
@@ -260,12 +260,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">The first vector to add.</param>
         /// <param name="value2">The second vector to add.</param>
         /// <returns>The result of the vector addition.</returns>
-        public static Vector2 Add(Vector2 value1, Vector2 value2)
-        {
-            value1.X += value2.X;
-            value1.Y += value2.Y;
-            return value1;
-        }
+        // public static Vector2 Add(Vector2 value1, Vector2 value2)
+        // {
+        //     value1.X += value2.X;
+        //     value1.Y += value2.Y;
+        //     return value1;
+        // }
 
         /// <summary>
         /// Performs vector addition on <paramref name="value1"/> and
@@ -275,11 +275,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">The first vector to add.</param>
         /// <param name="value2">The second vector to add.</param>
         /// <param name="result">The result of the vector addition.</param>
-        public static void Add(ref Vector2 value1, ref Vector2 value2, out Vector2 result)
-        {
-            result.X = value1.X + value2.X;
-            result.Y = value1.Y + value2.Y;
-        }
+        // public static void Add(ref Vector2 value1, ref Vector2 value2, out Vector2 result)
+        // {
+        //     result.X = value1.X + value2.X;
+        //     result.Y = value1.Y + value2.Y;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains the cartesian coordinates of a vector specified in barycentric coordinates and relative to 2d-triangle.
@@ -290,12 +290,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="amount1">Barycentric scalar <c>b2</c> which represents a weighting factor towards second vector of 2d-triangle.</param>
         /// <param name="amount2">Barycentric scalar <c>b3</c> which represents a weighting factor towards third vector of 2d-triangle.</param>
         /// <returns>The cartesian translation of barycentric coordinates.</returns>
-        public static Vector2 Barycentric(Vector2 value1, Vector2 value2, Vector2 value3, float amount1, float amount2)
-        {
-            return new Vector2(
-                MathHelper.Barycentric(value1.X, value2.X, value3.X, amount1, amount2),
-                MathHelper.Barycentric(value1.Y, value2.Y, value3.Y, amount1, amount2));
-        }
+        // public static Vector2 Barycentric(Vector2 value1, Vector2 value2, Vector2 value3, float amount1, float amount2)
+        // {
+        //     return new Vector2(
+        //         MathHelper.Barycentric(value1.X, value2.X, value3.X, amount1, amount2),
+        //         MathHelper.Barycentric(value1.Y, value2.Y, value3.Y, amount1, amount2));
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains the cartesian coordinates of a vector specified in barycentric coordinates and relative to 2d-triangle.
@@ -306,11 +306,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="amount1">Barycentric scalar <c>b2</c> which represents a weighting factor towards second vector of 2d-triangle.</param>
         /// <param name="amount2">Barycentric scalar <c>b3</c> which represents a weighting factor towards third vector of 2d-triangle.</param>
         /// <param name="result">The cartesian translation of barycentric coordinates as an output parameter.</param>
-        public static void Barycentric(ref Vector2 value1, ref Vector2 value2, ref Vector2 value3, float amount1, float amount2, out Vector2 result)
-        {
-            result.X = MathHelper.Barycentric(value1.X, value2.X, value3.X, amount1, amount2);
-            result.Y = MathHelper.Barycentric(value1.Y, value2.Y, value3.Y, amount1, amount2);
-        }
+        // public static void Barycentric(ref Vector2 value1, ref Vector2 value2, ref Vector2 value3, float amount1, float amount2, out Vector2 result)
+        // {
+        //     result.X = MathHelper.Barycentric(value1.X, value2.X, value3.X, amount1, amount2);
+        //     result.Y = MathHelper.Barycentric(value1.Y, value2.Y, value3.Y, amount1, amount2);
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains CatmullRom interpolation of the specified vectors.
@@ -321,12 +321,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value4">The fourth vector in interpolation.</param>
         /// <param name="amount">Weighting factor.</param>
         /// <returns>The result of CatmullRom interpolation.</returns>
-        public static Vector2 CatmullRom(Vector2 value1, Vector2 value2, Vector2 value3, Vector2 value4, float amount)
-        {
-            return new Vector2(
-                MathHelper.CatmullRom(value1.X, value2.X, value3.X, value4.X, amount),
-                MathHelper.CatmullRom(value1.Y, value2.Y, value3.Y, value4.Y, amount));
-        }
+        // public static Vector2 CatmullRom(Vector2 value1, Vector2 value2, Vector2 value3, Vector2 value4, float amount)
+        // {
+        //     return new Vector2(
+        //         MathHelper.CatmullRom(value1.X, value2.X, value3.X, value4.X, amount),
+        //         MathHelper.CatmullRom(value1.Y, value2.Y, value3.Y, value4.Y, amount));
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains CatmullRom interpolation of the specified vectors.
@@ -337,43 +337,43 @@ namespace Microsoft.Xna.Framework
         /// <param name="value4">The fourth vector in interpolation.</param>
         /// <param name="amount">Weighting factor.</param>
         /// <param name="result">The result of CatmullRom interpolation as an output parameter.</param>
-        public static void CatmullRom(ref Vector2 value1, ref Vector2 value2, ref Vector2 value3, ref Vector2 value4, float amount, out Vector2 result)
-        {
-            result.X = MathHelper.CatmullRom(value1.X, value2.X, value3.X, value4.X, amount);
-            result.Y = MathHelper.CatmullRom(value1.Y, value2.Y, value3.Y, value4.Y, amount);
-        }
+        // public static void CatmullRom(ref Vector2 value1, ref Vector2 value2, ref Vector2 value3, ref Vector2 value4, float amount, out Vector2 result)
+        // {
+        //     result.X = MathHelper.CatmullRom(value1.X, value2.X, value3.X, value4.X, amount);
+        //     result.Y = MathHelper.CatmullRom(value1.Y, value2.Y, value3.Y, value4.Y, amount);
+        // }
 
         /// <summary>
         /// Round the members of this <see cref="Vector2"/> towards positive infinity.
         /// </summary>
-        public void Ceiling()
-        {
-            X = (float)Math.Ceiling(X);
-            Y = (float)Math.Ceiling(Y);
-        }
+        // public void Ceiling()
+        // {
+        //     X = (float)Math.Ceiling(X);
+        //     Y = (float)Math.Ceiling(Y);
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains members from another vector rounded towards positive infinity.
         /// </summary>
         /// <param name="value">Source <see cref="Vector2"/>.</param>
         /// <returns>The rounded <see cref="Vector2"/>.</returns>
-        public static Vector2 Ceiling(Vector2 value)
-        {
-            value.X = (float)Math.Ceiling(value.X);
-            value.Y = (float)Math.Ceiling(value.Y);
-            return value;
-        }
+        // public static Vector2 Ceiling(Vector2 value)
+        // {
+        //     value.X = (float)Math.Ceiling(value.X);
+        //     value.Y = (float)Math.Ceiling(value.Y);
+        //     return value;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains members from another vector rounded towards positive infinity.
         /// </summary>
         /// <param name="value">Source <see cref="Vector2"/>.</param>
         /// <param name="result">The rounded <see cref="Vector2"/>.</param>
-        public static void Ceiling(ref Vector2 value, out Vector2 result)
-        {
-            result.X = (float)Math.Ceiling(value.X);
-            result.Y = (float)Math.Ceiling(value.Y);
-        }
+        // public static void Ceiling(ref Vector2 value, out Vector2 result)
+        // {
+        //     result.X = (float)Math.Ceiling(value.X);
+        //     result.Y = (float)Math.Ceiling(value.Y);
+        // }
 
         /// <summary>
         /// Clamps the specified value within a range.
@@ -382,12 +382,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="min">The min value.</param>
         /// <param name="max">The max value.</param>
         /// <returns>The clamped value.</returns>
-        public static Vector2 Clamp(Vector2 value1, Vector2 min, Vector2 max)
-        {
-            return new Vector2(
-                MathHelper.Clamp(value1.X, min.X, max.X),
-                MathHelper.Clamp(value1.Y, min.Y, max.Y));
-        }
+        // public static Vector2 Clamp(Vector2 value1, Vector2 min, Vector2 max)
+        // {
+        //     return new Vector2(
+        //         MathHelper.Clamp(value1.X, min.X, max.X),
+        //         MathHelper.Clamp(value1.Y, min.Y, max.Y));
+        // }
 
         /// <summary>
         /// Clamps the specified value within a range.
@@ -396,11 +396,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="min">The min value.</param>
         /// <param name="max">The max value.</param>
         /// <param name="result">The clamped value as an output parameter.</param>
-        public static void Clamp(ref Vector2 value1, ref Vector2 min, ref Vector2 max, out Vector2 result)
-        {
-            result.X = MathHelper.Clamp(value1.X, min.X, max.X);
-            result.Y = MathHelper.Clamp(value1.Y, min.Y, max.Y);
-        }
+        // public static void Clamp(ref Vector2 value1, ref Vector2 min, ref Vector2 max, out Vector2 result)
+        // {
+        //     result.X = MathHelper.Clamp(value1.X, min.X, max.X);
+        //     result.Y = MathHelper.Clamp(value1.Y, min.Y, max.Y);
+        // }
 
         /// <summary>
         /// Returns the distance between two vectors.
@@ -420,11 +420,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">The first vector.</param>
         /// <param name="value2">The second vector.</param>
         /// <param name="result">The distance between two vectors as an output parameter.</param>
-        public static void Distance(ref Vector2 value1, ref Vector2 value2, out float result)
-        {
-            float v1 = value1.X - value2.X, v2 = value1.Y - value2.Y;
-            result = (float)Math.Sqrt((v1 * v1) + (v2 * v2));
-        }
+        // public static void Distance(ref Vector2 value1, ref Vector2 value2, out float result)
+        // {
+        //     float v1 = value1.X - value2.X, v2 = value1.Y - value2.Y;
+        //     result = (float)Math.Sqrt((v1 * v1) + (v2 * v2));
+        // }
 
         /// <summary>
         /// Returns the squared distance between two vectors.
@@ -432,11 +432,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">The first vector.</param>
         /// <param name="value2">The second vector.</param>
         /// <returns>The squared distance between two vectors.</returns>
-        public static float DistanceSquared(Vector2 value1, Vector2 value2)
-        {
-            float v1 = value1.X - value2.X, v2 = value1.Y - value2.Y;
-            return (v1 * v1) + (v2 * v2);
-        }
+        // public static float DistanceSquared(Vector2 value1, Vector2 value2)
+        // {
+        //     float v1 = value1.X - value2.X, v2 = value1.Y - value2.Y;
+        //     return (v1 * v1) + (v2 * v2);
+        // }
 
         /// <summary>
         /// Returns the squared distance between two vectors.
@@ -444,11 +444,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">The first vector.</param>
         /// <param name="value2">The second vector.</param>
         /// <param name="result">The squared distance between two vectors as an output parameter.</param>
-        public static void DistanceSquared(ref Vector2 value1, ref Vector2 value2, out float result)
-        {
-            float v1 = value1.X - value2.X, v2 = value1.Y - value2.Y;
-            result = (v1 * v1) + (v2 * v2);
-        }
+        // public static void DistanceSquared(ref Vector2 value1, ref Vector2 value2, out float result)
+        // {
+        //     float v1 = value1.X - value2.X, v2 = value1.Y - value2.Y;
+        //     result = (v1 * v1) + (v2 * v2);
+        // }
 
         /// <summary>
         /// Divides the components of a <see cref="Vector2"/> by the components of another <see cref="Vector2"/>.
@@ -456,12 +456,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">Source <see cref="Vector2"/>.</param>
         /// <param name="value2">Divisor <see cref="Vector2"/>.</param>
         /// <returns>The result of dividing the vectors.</returns>
-        public static Vector2 Divide(Vector2 value1, Vector2 value2)
-        {
-            value1.X /= value2.X;
-            value1.Y /= value2.Y;
-            return value1;
-        }
+        // public static Vector2 Divide(Vector2 value1, Vector2 value2)
+        // {
+        //     value1.X /= value2.X;
+        //     value1.Y /= value2.Y;
+        //     return value1;
+        // }
 
         /// <summary>
         /// Divides the components of a <see cref="Vector2"/> by the components of another <see cref="Vector2"/>.
@@ -469,11 +469,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">Source <see cref="Vector2"/>.</param>
         /// <param name="value2">Divisor <see cref="Vector2"/>.</param>
         /// <param name="result">The result of dividing the vectors as an output parameter.</param>
-        public static void Divide(ref Vector2 value1, ref Vector2 value2, out Vector2 result)
-        {
-            result.X = value1.X / value2.X;
-            result.Y = value1.Y / value2.Y;
-        }
+        // public static void Divide(ref Vector2 value1, ref Vector2 value2, out Vector2 result)
+        // {
+        //     result.X = value1.X / value2.X;
+        //     result.Y = value1.Y / value2.Y;
+        // }
 
         /// <summary>
         /// Divides the components of a <see cref="Vector2"/> by a scalar.
@@ -481,13 +481,13 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">Source <see cref="Vector2"/>.</param>
         /// <param name="divider">Divisor scalar.</param>
         /// <returns>The result of dividing a vector by a scalar.</returns>
-        public static Vector2 Divide(Vector2 value1, float divider)
-        {
-            float factor = 1 / divider;
-            value1.X *= factor;
-            value1.Y *= factor;
-            return value1;
-        }
+        // public static Vector2 Divide(Vector2 value1, float divider)
+        // {
+        //     float factor = 1 / divider;
+        //     value1.X *= factor;
+        //     value1.Y *= factor;
+        //     return value1;
+        // }
 
         /// <summary>
         /// Divides the components of a <see cref="Vector2"/> by a scalar.
@@ -495,12 +495,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">Source <see cref="Vector2"/>.</param>
         /// <param name="divider">Divisor scalar.</param>
         /// <param name="result">The result of dividing a vector by a scalar as an output parameter.</param>
-        public static void Divide(ref Vector2 value1, float divider, out Vector2 result)
-        {
-            float factor = 1 / divider;
-            result.X = value1.X * factor;
-            result.Y = value1.Y * factor;
-        }
+        // public static void Divide(ref Vector2 value1, float divider, out Vector2 result)
+        // {
+        //     float factor = 1 / divider;
+        //     result.X = value1.X * factor;
+        //     result.Y = value1.Y * factor;
+        // }
 
         /// <summary>
         /// Returns a dot product of two vectors.
@@ -508,10 +508,10 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">The first vector.</param>
         /// <param name="value2">The second vector.</param>
         /// <returns>The dot product of two vectors.</returns>
-        public static float Dot(Vector2 value1, Vector2 value2)
-        {
-            return (value1.X * value2.X) + (value1.Y * value2.Y);
-        }
+        // public static float Dot(Vector2 value1, Vector2 value2)
+        // {
+        //     return (value1.X * value2.X) + (value1.Y * value2.Y);
+        // }
 
         /// <summary>
         /// Returns a dot product of two vectors.
@@ -519,10 +519,10 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">The first vector.</param>
         /// <param name="value2">The second vector.</param>
         /// <param name="result">The dot product of two vectors as an output parameter.</param>
-        public static void Dot(ref Vector2 value1, ref Vector2 value2, out float result)
-        {
-            result = (value1.X * value2.X) + (value1.Y * value2.Y);
-        }
+        // public static void Dot(ref Vector2 value1, ref Vector2 value2, out float result)
+        // {
+        //     result = (value1.X * value2.X) + (value1.Y * value2.Y);
+        // }
 
         /// <summary>
         /// Compares whether current instance is equal to specified <see cref="Object"/>.
@@ -552,34 +552,34 @@ namespace Microsoft.Xna.Framework
         /// <summary>
         /// Round the members of this <see cref="Vector2"/> towards negative infinity.
         /// </summary>
-        public void Floor()
-        {
-            X = (float)Math.Floor(X);
-            Y = (float)Math.Floor(Y);
-        }
+        // public void Floor()
+        // {
+        //     X = (float)Math.Floor(X);
+        //     Y = (float)Math.Floor(Y);
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains members from another vector rounded towards negative infinity.
         /// </summary>
         /// <param name="value">Source <see cref="Vector2"/>.</param>
         /// <returns>The rounded <see cref="Vector2"/>.</returns>
-        public static Vector2 Floor(Vector2 value)
-        {
-            value.X = (float)Math.Floor(value.X);
-            value.Y = (float)Math.Floor(value.Y);
-            return value;
-        }
+        // public static Vector2 Floor(Vector2 value)
+        // {
+        //     value.X = (float)Math.Floor(value.X);
+        //     value.Y = (float)Math.Floor(value.Y);
+        //     return value;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains members from another vector rounded towards negative infinity.
         /// </summary>
         /// <param name="value">Source <see cref="Vector2"/>.</param>
         /// <param name="result">The rounded <see cref="Vector2"/>.</param>
-        public static void Floor(ref Vector2 value, out Vector2 result)
-        {
-            result.X = (float)Math.Floor(value.X);
-            result.Y = (float)Math.Floor(value.Y);
-        }
+        // public static void Floor(ref Vector2 value, out Vector2 result)
+        // {
+        //     result.X = (float)Math.Floor(value.X);
+        //     result.Y = (float)Math.Floor(value.Y);
+        // }
 
         /// <summary>
         /// Gets the hash code of this <see cref="Vector2"/>.
@@ -602,10 +602,10 @@ namespace Microsoft.Xna.Framework
         /// <param name="tangent2">The second tangent vector.</param>
         /// <param name="amount">Weighting factor.</param>
         /// <returns>The hermite spline interpolation vector.</returns>
-        public static Vector2 Hermite(Vector2 value1, Vector2 tangent1, Vector2 value2, Vector2 tangent2, float amount)
-        {
-            return new Vector2(MathHelper.Hermite(value1.X, tangent1.X, value2.X, tangent2.X, amount), MathHelper.Hermite(value1.Y, tangent1.Y, value2.Y, tangent2.Y, amount));
-        }
+        // public static Vector2 Hermite(Vector2 value1, Vector2 tangent1, Vector2 value2, Vector2 tangent2, float amount)
+        // {
+        //     return new Vector2(MathHelper.Hermite(value1.X, tangent1.X, value2.X, tangent2.X, amount), MathHelper.Hermite(value1.Y, tangent1.Y, value2.Y, tangent2.Y, amount));
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains hermite spline interpolation.
@@ -616,11 +616,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="tangent2">The second tangent vector.</param>
         /// <param name="amount">Weighting factor.</param>
         /// <param name="result">The hermite spline interpolation vector as an output parameter.</param>
-        public static void Hermite(ref Vector2 value1, ref Vector2 tangent1, ref Vector2 value2, ref Vector2 tangent2, float amount, out Vector2 result)
-        {
-            result.X = MathHelper.Hermite(value1.X, tangent1.X, value2.X, tangent2.X, amount);
-            result.Y = MathHelper.Hermite(value1.Y, tangent1.Y, value2.Y, tangent2.Y, amount);
-        }
+        // public static void Hermite(ref Vector2 value1, ref Vector2 tangent1, ref Vector2 value2, ref Vector2 tangent2, float amount, out Vector2 result)
+        // {
+        //     result.X = MathHelper.Hermite(value1.X, tangent1.X, value2.X, tangent2.X, amount);
+        //     result.Y = MathHelper.Hermite(value1.Y, tangent1.Y, value2.Y, tangent2.Y, amount);
+        // }
 
         /// <summary>
         /// Returns the length of this <see cref="Vector2"/>.
@@ -647,12 +647,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value2">The second vector.</param>
         /// <param name="amount">Weighting value(between 0.0 and 1.0).</param>
         /// <returns>The result of linear interpolation of the specified vectors.</returns>
-        public static Vector2 Lerp(Vector2 value1, Vector2 value2, float amount)
-        {
-            return new Vector2(
-                MathHelper.Lerp(value1.X, value2.X, amount),
-                MathHelper.Lerp(value1.Y, value2.Y, amount));
-        }
+        // public static Vector2 Lerp(Vector2 value1, Vector2 value2, float amount)
+        // {
+        //     return new Vector2(
+        //         MathHelper.Lerp(value1.X, value2.X, amount),
+        //         MathHelper.Lerp(value1.Y, value2.Y, amount));
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains linear interpolation of the specified vectors.
@@ -661,11 +661,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value2">The second vector.</param>
         /// <param name="amount">Weighting value(between 0.0 and 1.0).</param>
         /// <param name="result">The result of linear interpolation of the specified vectors as an output parameter.</param>
-        public static void Lerp(ref Vector2 value1, ref Vector2 value2, float amount, out Vector2 result)
-        {
-            result.X = MathHelper.Lerp(value1.X, value2.X, amount);
-            result.Y = MathHelper.Lerp(value1.Y, value2.Y, amount);
-        }
+        // public static void Lerp(ref Vector2 value1, ref Vector2 value2, float amount, out Vector2 result)
+        // {
+        //     result.X = MathHelper.Lerp(value1.X, value2.X, amount);
+        //     result.Y = MathHelper.Lerp(value1.Y, value2.Y, amount);
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains linear interpolation of the specified vectors.
@@ -677,12 +677,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value2">The second vector.</param>
         /// <param name="amount">Weighting value(between 0.0 and 1.0).</param>
         /// <returns>The result of linear interpolation of the specified vectors.</returns>
-        public static Vector2 LerpPrecise(Vector2 value1, Vector2 value2, float amount)
-        {
-            return new Vector2(
-                MathHelper.LerpPrecise(value1.X, value2.X, amount),
-                MathHelper.LerpPrecise(value1.Y, value2.Y, amount));
-        }
+        // public static Vector2 LerpPrecise(Vector2 value1, Vector2 value2, float amount)
+        // {
+        //     return new Vector2(
+        //         MathHelper.LerpPrecise(value1.X, value2.X, amount),
+        //         MathHelper.LerpPrecise(value1.Y, value2.Y, amount));
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains linear interpolation of the specified vectors.
@@ -694,11 +694,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value2">The second vector.</param>
         /// <param name="amount">Weighting value(between 0.0 and 1.0).</param>
         /// <param name="result">The result of linear interpolation of the specified vectors as an output parameter.</param>
-        public static void LerpPrecise(ref Vector2 value1, ref Vector2 value2, float amount, out Vector2 result)
-        { 
-            result.X = MathHelper.LerpPrecise(value1.X, value2.X, amount);
-            result.Y = MathHelper.LerpPrecise(value1.Y, value2.Y, amount);
-        }
+        // public static void LerpPrecise(ref Vector2 value1, ref Vector2 value2, float amount, out Vector2 result)
+        // { 
+        //     result.X = MathHelper.LerpPrecise(value1.X, value2.X, amount);
+        //     result.Y = MathHelper.LerpPrecise(value1.Y, value2.Y, amount);
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains a maximal values from the two vectors.
@@ -706,11 +706,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">The first vector.</param>
         /// <param name="value2">The second vector.</param>
         /// <returns>The <see cref="Vector2"/> with maximal values from the two vectors.</returns>
-        public static Vector2 Max(Vector2 value1, Vector2 value2)
-        {
-            return new Vector2(value1.X > value2.X ? value1.X : value2.X,
-                               value1.Y > value2.Y ? value1.Y : value2.Y);
-        }
+        // public static Vector2 Max(Vector2 value1, Vector2 value2)
+        // {
+        //     return new Vector2(value1.X > value2.X ? value1.X : value2.X,
+        //                        value1.Y > value2.Y ? value1.Y : value2.Y);
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains a maximal values from the two vectors.
@@ -718,11 +718,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">The first vector.</param>
         /// <param name="value2">The second vector.</param>
         /// <param name="result">The <see cref="Vector2"/> with maximal values from the two vectors as an output parameter.</param>
-        public static void Max(ref Vector2 value1, ref Vector2 value2, out Vector2 result)
-        {
-            result.X = value1.X > value2.X ? value1.X : value2.X;
-            result.Y = value1.Y > value2.Y ? value1.Y : value2.Y;
-        }
+        // public static void Max(ref Vector2 value1, ref Vector2 value2, out Vector2 result)
+        // {
+        //     result.X = value1.X > value2.X ? value1.X : value2.X;
+        //     result.Y = value1.Y > value2.Y ? value1.Y : value2.Y;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains a minimal values from the two vectors.
@@ -730,11 +730,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">The first vector.</param>
         /// <param name="value2">The second vector.</param>
         /// <returns>The <see cref="Vector2"/> with minimal values from the two vectors.</returns>
-        public static Vector2 Min(Vector2 value1, Vector2 value2)
-        {
-            return new Vector2(value1.X < value2.X ? value1.X : value2.X,
-                               value1.Y < value2.Y ? value1.Y : value2.Y);
-        }
+        // public static Vector2 Min(Vector2 value1, Vector2 value2)
+        // {
+        //     return new Vector2(value1.X < value2.X ? value1.X : value2.X,
+        //                        value1.Y < value2.Y ? value1.Y : value2.Y);
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains a minimal values from the two vectors.
@@ -742,11 +742,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">The first vector.</param>
         /// <param name="value2">The second vector.</param>
         /// <param name="result">The <see cref="Vector2"/> with minimal values from the two vectors as an output parameter.</param>
-        public static void Min(ref Vector2 value1, ref Vector2 value2, out Vector2 result)
-        {
-            result.X = value1.X < value2.X ? value1.X : value2.X;
-            result.Y = value1.Y < value2.Y ? value1.Y : value2.Y;
-        }
+        // public static void Min(ref Vector2 value1, ref Vector2 value2, out Vector2 result)
+        // {
+        //     result.X = value1.X < value2.X ? value1.X : value2.X;
+        //     result.Y = value1.Y < value2.Y ? value1.Y : value2.Y;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains a multiplication of two vectors.
@@ -754,12 +754,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">Source <see cref="Vector2"/>.</param>
         /// <param name="value2">Source <see cref="Vector2"/>.</param>
         /// <returns>The result of the vector multiplication.</returns>
-        public static Vector2 Multiply(Vector2 value1, Vector2 value2)
-        {
-            value1.X *= value2.X;
-            value1.Y *= value2.Y;
-            return value1;
-        }
+        // public static Vector2 Multiply(Vector2 value1, Vector2 value2)
+        // {
+        //     value1.X *= value2.X;
+        //     value1.Y *= value2.Y;
+        //     return value1;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains a multiplication of two vectors.
@@ -767,11 +767,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">Source <see cref="Vector2"/>.</param>
         /// <param name="value2">Source <see cref="Vector2"/>.</param>
         /// <param name="result">The result of the vector multiplication as an output parameter.</param>
-        public static void Multiply(ref Vector2 value1, ref Vector2 value2, out Vector2 result)
-        {
-            result.X = value1.X * value2.X;
-            result.Y = value1.Y * value2.Y;
-        }
+        // public static void Multiply(ref Vector2 value1, ref Vector2 value2, out Vector2 result)
+        // {
+        //     result.X = value1.X * value2.X;
+        //     result.Y = value1.Y * value2.Y;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains a multiplication of <see cref="Vector2"/> and a scalar.
@@ -779,12 +779,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">Source <see cref="Vector2"/>.</param>
         /// <param name="scaleFactor">Scalar value.</param>
         /// <returns>The result of the vector multiplication with a scalar.</returns>
-        public static Vector2 Multiply(Vector2 value1, float scaleFactor)
-        {
-            value1.X *= scaleFactor;
-            value1.Y *= scaleFactor;
-            return value1;
-        }
+        // public static Vector2 Multiply(Vector2 value1, float scaleFactor)
+        // {
+        //     value1.X *= scaleFactor;
+        //     value1.Y *= scaleFactor;
+        //     return value1;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains a multiplication of <see cref="Vector2"/> and a scalar.
@@ -792,34 +792,34 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">Source <see cref="Vector2"/>.</param>
         /// <param name="scaleFactor">Scalar value.</param>
         /// <param name="result">The result of the multiplication with a scalar as an output parameter.</param>
-        public static void Multiply(ref Vector2 value1, float scaleFactor, out Vector2 result)
-        {
-            result.X = value1.X * scaleFactor;
-            result.Y = value1.Y * scaleFactor;
-        }
+        // public static void Multiply(ref Vector2 value1, float scaleFactor, out Vector2 result)
+        // {
+        //     result.X = value1.X * scaleFactor;
+        //     result.Y = value1.Y * scaleFactor;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains the specified vector inversion.
         /// </summary>
         /// <param name="value">Source <see cref="Vector2"/>.</param>
         /// <returns>The result of the vector inversion.</returns>
-        public static Vector2 Negate(Vector2 value)
-        {
-            value.X = -value.X;
-            value.Y = -value.Y;
-            return value;
-        }
+        // public static Vector2 Negate(Vector2 value)
+        // {
+        //     value.X = -value.X;
+        //     value.Y = -value.Y;
+        //     return value;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains the specified vector inversion.
         /// </summary>
         /// <param name="value">Source <see cref="Vector2"/>.</param>
         /// <param name="result">The result of the vector inversion as an output parameter.</param>
-        public static void Negate(ref Vector2 value, out Vector2 result)
-        {
-            result.X = -value.X;
-            result.Y = -value.Y;
-        }
+        // public static void Negate(ref Vector2 value, out Vector2 result)
+        // {
+        //     result.X = -value.X;
+        //     result.Y = -value.Y;
+        // }
 
         /// <summary>
         /// Turns this <see cref="Vector2"/> to a unit vector with the same direction.
@@ -836,25 +836,25 @@ namespace Microsoft.Xna.Framework
         /// </summary>
         /// <param name="value">Source <see cref="Vector2"/>.</param>
         /// <returns>Unit vector.</returns>
-        public static Vector2 Normalize(Vector2 value)
-        {
-            float val = 1.0f / (float)Math.Sqrt((value.X * value.X) + (value.Y * value.Y));
-            value.X *= val;
-            value.Y *= val;
-            return value;
-        }
+        // public static Vector2 Normalize(Vector2 value)
+        // {
+        //     float val = 1.0f / (float)Math.Sqrt((value.X * value.X) + (value.Y * value.Y));
+        //     value.X *= val;
+        //     value.Y *= val;
+        //     return value;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains a normalized values from another vector.
         /// </summary>
         /// <param name="value">Source <see cref="Vector2"/>.</param>
         /// <param name="result">Unit vector as an output parameter.</param>
-        public static void Normalize(ref Vector2 value, out Vector2 result)
-        {
-            float val = 1.0f / (float)Math.Sqrt((value.X * value.X) + (value.Y * value.Y));
-            result.X = value.X * val;
-            result.Y = value.Y * val;
-        }
+        // public static void Normalize(ref Vector2 value, out Vector2 result)
+        // {
+        //     float val = 1.0f / (float)Math.Sqrt((value.X * value.X) + (value.Y * value.Y));
+        //     result.X = value.X * val;
+        //     result.Y = value.Y * val;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains reflect vector of the given vector and normal.
@@ -862,14 +862,14 @@ namespace Microsoft.Xna.Framework
         /// <param name="vector">Source <see cref="Vector2"/>.</param>
         /// <param name="normal">Reflection normal.</param>
         /// <returns>Reflected vector.</returns>
-        public static Vector2 Reflect(Vector2 vector, Vector2 normal)
-        {
-            Vector2 result;
-            float val = 2.0f * ((vector.X * normal.X) + (vector.Y * normal.Y));
-            result.X = vector.X - (normal.X * val);
-            result.Y = vector.Y - (normal.Y * val);
-            return result;
-        }
+        // public static Vector2 Reflect(Vector2 vector, Vector2 normal)
+        // {
+        //     Vector2 result;
+        //     float val = 2.0f * ((vector.X * normal.X) + (vector.Y * normal.Y));
+        //     result.X = vector.X - (normal.X * val);
+        //     result.Y = vector.Y - (normal.Y * val);
+        //     return result;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains reflect vector of the given vector and normal.
@@ -877,44 +877,44 @@ namespace Microsoft.Xna.Framework
         /// <param name="vector">Source <see cref="Vector2"/>.</param>
         /// <param name="normal">Reflection normal.</param>
         /// <param name="result">Reflected vector as an output parameter.</param>
-        public static void Reflect(ref Vector2 vector, ref Vector2 normal, out Vector2 result)
-        {
-            float val = 2.0f * ((vector.X * normal.X) + (vector.Y * normal.Y));
-            result.X = vector.X - (normal.X * val);
-            result.Y = vector.Y - (normal.Y * val);
-        }
+        // public static void Reflect(ref Vector2 vector, ref Vector2 normal, out Vector2 result)
+        // {
+        //     float val = 2.0f * ((vector.X * normal.X) + (vector.Y * normal.Y));
+        //     result.X = vector.X - (normal.X * val);
+        //     result.Y = vector.Y - (normal.Y * val);
+        // }
 
         /// <summary>
         /// Round the members of this <see cref="Vector2"/> to the nearest integer value.
         /// </summary>
-        public void Round()
-        {
-            X = (float)Math.Round(X);
-            Y = (float)Math.Round(Y);
-        }
+        // public void Round()
+        // {
+        //     X = (float)Math.Round(X);
+        //     Y = (float)Math.Round(Y);
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains members from another vector rounded to the nearest integer value.
         /// </summary>
         /// <param name="value">Source <see cref="Vector2"/>.</param>
         /// <returns>The rounded <see cref="Vector2"/>.</returns>
-        public static Vector2 Round(Vector2 value)
-        {
-            value.X = (float)Math.Round(value.X);
-            value.Y = (float)Math.Round(value.Y);
-            return value;
-        }
+        // public static Vector2 Round(Vector2 value)
+        // {
+        //     value.X = (float)Math.Round(value.X);
+        //     value.Y = (float)Math.Round(value.Y);
+        //     return value;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains members from another vector rounded to the nearest integer value.
         /// </summary>
         /// <param name="value">Source <see cref="Vector2"/>.</param>
         /// <param name="result">The rounded <see cref="Vector2"/>.</param>
-        public static void Round(ref Vector2 value, out Vector2 result)
-        {
-            result.X = (float)Math.Round(value.X);
-            result.Y = (float)Math.Round(value.Y);
-        }
+        // public static void Round(ref Vector2 value, out Vector2 result)
+        // {
+        //     result.X = (float)Math.Round(value.X);
+        //     result.Y = (float)Math.Round(value.Y);
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains cubic interpolation of the specified vectors.
@@ -923,12 +923,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value2">Source <see cref="Vector2"/>.</param>
         /// <param name="amount">Weighting value.</param>
         /// <returns>Cubic interpolation of the specified vectors.</returns>
-        public static Vector2 SmoothStep(Vector2 value1, Vector2 value2, float amount)
-        {
-            return new Vector2(
-                MathHelper.SmoothStep(value1.X, value2.X, amount),
-                MathHelper.SmoothStep(value1.Y, value2.Y, amount));
-        }
+        // public static Vector2 SmoothStep(Vector2 value1, Vector2 value2, float amount)
+        // {
+        //     return new Vector2(
+        //         MathHelper.SmoothStep(value1.X, value2.X, amount),
+        //         MathHelper.SmoothStep(value1.Y, value2.Y, amount));
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains cubic interpolation of the specified vectors.
@@ -937,11 +937,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value2">Source <see cref="Vector2"/>.</param>
         /// <param name="amount">Weighting value.</param>
         /// <param name="result">Cubic interpolation of the specified vectors as an output parameter.</param>
-        public static void SmoothStep(ref Vector2 value1, ref Vector2 value2, float amount, out Vector2 result)
-        {
-            result.X = MathHelper.SmoothStep(value1.X, value2.X, amount);
-            result.Y = MathHelper.SmoothStep(value1.Y, value2.Y, amount);
-        }
+        // public static void SmoothStep(ref Vector2 value1, ref Vector2 value2, float amount, out Vector2 result)
+        // {
+        //     result.X = MathHelper.SmoothStep(value1.X, value2.X, amount);
+        //     result.Y = MathHelper.SmoothStep(value1.Y, value2.Y, amount);
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains subtraction of on <see cref="Vector2"/> from a another.
@@ -949,12 +949,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">Source <see cref="Vector2"/>.</param>
         /// <param name="value2">Source <see cref="Vector2"/>.</param>
         /// <returns>The result of the vector subtraction.</returns>
-        public static Vector2 Subtract(Vector2 value1, Vector2 value2)
-        {
-            value1.X -= value2.X;
-            value1.Y -= value2.Y;
-            return value1;
-        }
+        // public static Vector2 Subtract(Vector2 value1, Vector2 value2)
+        // {
+        //     value1.X -= value2.X;
+        //     value1.Y -= value2.Y;
+        //     return value1;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains subtraction of on <see cref="Vector2"/> from a another.
@@ -962,11 +962,11 @@ namespace Microsoft.Xna.Framework
         /// <param name="value1">Source <see cref="Vector2"/>.</param>
         /// <param name="value2">Source <see cref="Vector2"/>.</param>
         /// <param name="result">The result of the vector subtraction as an output parameter.</param>
-        public static void Subtract(ref Vector2 value1, ref Vector2 value2, out Vector2 result)
-        {
-            result.X = value1.X - value2.X;
-            result.Y = value1.Y - value2.Y;
-        }
+        // public static void Subtract(ref Vector2 value1, ref Vector2 value2, out Vector2 result)
+        // {
+        //     result.X = value1.X - value2.X;
+        //     result.Y = value1.Y - value2.Y;
+        // }
 
         /// <summary>
         /// Returns a <see cref="String"/> representation of this <see cref="Vector2"/> in the format:
@@ -1004,13 +1004,13 @@ namespace Microsoft.Xna.Framework
         /// <param name="position">Source <see cref="Vector2"/>.</param>
         /// <param name="matrix">The transformation <see cref="Matrix"/>.</param>
         /// <param name="result">Transformed <see cref="Vector2"/> as an output parameter.</param>
-        public static void Transform(ref Vector2 position, ref Matrix matrix, out Vector2 result)
-        {
-            var x = (position.X * matrix.M11) + (position.Y * matrix.M21) + matrix.M41;
-            var y = (position.X * matrix.M12) + (position.Y * matrix.M22) + matrix.M42;
-            result.X = x;
-            result.Y = y;
-        }
+        // public static void Transform(ref Vector2 position, ref Matrix matrix, out Vector2 result)
+        // {
+        //     var x = (position.X * matrix.M11) + (position.Y * matrix.M21) + matrix.M41;
+        //     var y = (position.X * matrix.M12) + (position.Y * matrix.M22) + matrix.M42;
+        //     result.X = x;
+        //     result.Y = y;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains a transformation of 2d-vector by the specified <see cref="Quaternion"/>, representing the rotation.
@@ -1054,32 +1054,32 @@ namespace Microsoft.Xna.Framework
         /// <param name="destinationArray">Destination array.</param>
         /// <param name="destinationIndex">The starting index in the destination array, where the first <see cref="Vector2"/> should be written.</param>
         /// <param name="length">The number of vectors to be transformed.</param>
-        public static void Transform(
-            Vector2[] sourceArray,
-            int sourceIndex,
-            ref Matrix matrix,
-            Vector2[] destinationArray,
-            int destinationIndex,
-            int length)
-        {
-            if (sourceArray == null)
-                throw new ArgumentNullException("sourceArray");
-            if (destinationArray == null)
-                throw new ArgumentNullException("destinationArray");
-            if (sourceArray.Length < sourceIndex + length)
-                throw new ArgumentException("Source array length is lesser than sourceIndex + length");
-            if (destinationArray.Length < destinationIndex + length)
-                throw new ArgumentException("Destination array length is lesser than destinationIndex + length");
-
-            for (int x = 0; x < length; x++)
-            {
-                var position = sourceArray[sourceIndex + x];
-                var destination = destinationArray[destinationIndex + x];
-                destination.X = (position.X * matrix.M11) + (position.Y * matrix.M21) + matrix.M41;
-                destination.Y = (position.X * matrix.M12) + (position.Y * matrix.M22) + matrix.M42;
-                destinationArray[destinationIndex + x] = destination;
-            }
-        }
+        // public static void Transform(
+        //     Vector2[] sourceArray,
+        //     int sourceIndex,
+        //     ref Matrix matrix,
+        //     Vector2[] destinationArray,
+        //     int destinationIndex,
+        //     int length)
+        // {
+        //     if (sourceArray == null)
+        //         throw new ArgumentNullException("sourceArray");
+        //     if (destinationArray == null)
+        //         throw new ArgumentNullException("destinationArray");
+        //     if (sourceArray.Length < sourceIndex + length)
+        //         throw new ArgumentException("Source array length is lesser than sourceIndex + length");
+        //     if (destinationArray.Length < destinationIndex + length)
+        //         throw new ArgumentException("Destination array length is lesser than destinationIndex + length");
+        //
+        //     for (int x = 0; x < length; x++)
+        //     {
+        //         var position = sourceArray[sourceIndex + x];
+        //         var destination = destinationArray[destinationIndex + x];
+        //         destination.X = (position.X * matrix.M11) + (position.Y * matrix.M21) + matrix.M41;
+        //         destination.Y = (position.X * matrix.M12) + (position.Y * matrix.M22) + matrix.M42;
+        //         destinationArray[destinationIndex + x] = destination;
+        //     }
+        // }
 
         /// <summary>
         /// Apply transformation on vectors within array of <see cref="Vector2"/> by the specified <see cref="Quaternion"/> and places the results in an another array.
@@ -1130,13 +1130,13 @@ namespace Microsoft.Xna.Framework
         /// <param name="sourceArray">Source array.</param>
         /// <param name="matrix">The transformation <see cref="Matrix"/>.</param>
         /// <param name="destinationArray">Destination array.</param>
-        public static void Transform(
-            Vector2[] sourceArray,
-            ref Matrix matrix,
-            Vector2[] destinationArray)
-        {
-            Transform(sourceArray, 0, ref matrix, destinationArray, 0, sourceArray.Length);
-        }
+        // public static void Transform(
+        //     Vector2[] sourceArray,
+        //     ref Matrix matrix,
+        //     Vector2[] destinationArray)
+        // {
+        //     Transform(sourceArray, 0, ref matrix, destinationArray, 0, sourceArray.Length);
+        // }
 
         /// <summary>
         /// Apply transformation on all vectors within array of <see cref="Vector2"/> by the specified <see cref="Quaternion"/> and places the results in an another array.
@@ -1160,10 +1160,10 @@ namespace Microsoft.Xna.Framework
         /// <param name="normal">Source <see cref="Vector2"/> which represents a normal vector.</param>
         /// <param name="matrix">The transformation <see cref="Matrix"/>.</param>
         /// <returns>Transformed normal.</returns>
-        public static Vector2 TransformNormal(Vector2 normal, Matrix matrix)
-        {
-            return new Vector2((normal.X * matrix.M11) + (normal.Y * matrix.M21),(normal.X * matrix.M12) + (normal.Y * matrix.M22));
-        }
+        // public static Vector2 TransformNormal(Vector2 normal, Matrix matrix)
+        // {
+        //     return new Vector2((normal.X * matrix.M11) + (normal.Y * matrix.M21),(normal.X * matrix.M12) + (normal.Y * matrix.M22));
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector2"/> that contains a transformation of the specified normal by the specified <see cref="Matrix"/>.
@@ -1171,13 +1171,13 @@ namespace Microsoft.Xna.Framework
         /// <param name="normal">Source <see cref="Vector2"/> which represents a normal vector.</param>
         /// <param name="matrix">The transformation <see cref="Matrix"/>.</param>
         /// <param name="result">Transformed normal as an output parameter.</param>
-        public static void TransformNormal(ref Vector2 normal, ref Matrix matrix, out Vector2 result)
-        {
-            var x = (normal.X * matrix.M11) + (normal.Y * matrix.M21);
-            var y = (normal.X * matrix.M12) + (normal.Y * matrix.M22);
-            result.X = x;
-            result.Y = y;
-        }
+        // public static void TransformNormal(ref Vector2 normal, ref Matrix matrix, out Vector2 result)
+        // {
+        //     var x = (normal.X * matrix.M11) + (normal.Y * matrix.M21);
+        //     var y = (normal.X * matrix.M12) + (normal.Y * matrix.M22);
+        //     result.X = x;
+        //     result.Y = y;
+        // }
 
         /// <summary>
         /// Apply transformation on normals within array of <see cref="Vector2"/> by the specified <see cref="Matrix"/> and places the results in an another array.
@@ -1188,33 +1188,33 @@ namespace Microsoft.Xna.Framework
         /// <param name="destinationArray">Destination array.</param>
         /// <param name="destinationIndex">The starting index in the destination array, where the first <see cref="Vector2"/> should be written.</param>
         /// <param name="length">The number of normals to be transformed.</param>
-        public static void TransformNormal
-        (
-            Vector2[] sourceArray,
-            int sourceIndex,
-            ref Matrix matrix,
-            Vector2[] destinationArray,
-            int destinationIndex,
-            int length
-        )
-        {
-            if (sourceArray == null)
-                throw new ArgumentNullException("sourceArray");
-            if (destinationArray == null)
-                throw new ArgumentNullException("destinationArray");
-            if (sourceArray.Length < sourceIndex + length)
-                throw new ArgumentException("Source array length is lesser than sourceIndex + length");
-            if (destinationArray.Length < destinationIndex + length)
-                throw new ArgumentException("Destination array length is lesser than destinationIndex + length");
-
-            for (int i = 0; i < length; i++)
-            {
-                var normal = sourceArray[sourceIndex + i];
-
-                destinationArray[destinationIndex + i] = new Vector2((normal.X * matrix.M11) + (normal.Y * matrix.M21),
-                                                                     (normal.X * matrix.M12) + (normal.Y * matrix.M22));
-            }
-        }
+        // public static void TransformNormal
+        // (
+        //     Vector2[] sourceArray,
+        //     int sourceIndex,
+        //     ref Matrix matrix,
+        //     Vector2[] destinationArray,
+        //     int destinationIndex,
+        //     int length
+        // )
+        // {
+        //     if (sourceArray == null)
+        //         throw new ArgumentNullException("sourceArray");
+        //     if (destinationArray == null)
+        //         throw new ArgumentNullException("destinationArray");
+        //     if (sourceArray.Length < sourceIndex + length)
+        //         throw new ArgumentException("Source array length is lesser than sourceIndex + length");
+        //     if (destinationArray.Length < destinationIndex + length)
+        //         throw new ArgumentException("Destination array length is lesser than destinationIndex + length");
+        //
+        //     for (int i = 0; i < length; i++)
+        //     {
+        //         var normal = sourceArray[sourceIndex + i];
+        //
+        //         destinationArray[destinationIndex + i] = new Vector2((normal.X * matrix.M11) + (normal.Y * matrix.M21),
+        //                                                              (normal.X * matrix.M12) + (normal.Y * matrix.M22));
+        //     }
+        // }
 
         /// <summary>
         /// Apply transformation on all normals within array of <see cref="Vector2"/> by the specified <see cref="Matrix"/> and places the results in an another array.
@@ -1222,39 +1222,39 @@ namespace Microsoft.Xna.Framework
         /// <param name="sourceArray">Source array.</param>
         /// <param name="matrix">The transformation <see cref="Matrix"/>.</param>
         /// <param name="destinationArray">Destination array.</param>
-        public static void TransformNormal
-            (
-            Vector2[] sourceArray,
-            ref Matrix matrix,
-            Vector2[] destinationArray
-            )
-        {
-            if (sourceArray == null)
-                throw new ArgumentNullException("sourceArray");
-            if (destinationArray == null)
-                throw new ArgumentNullException("destinationArray");
-            if (destinationArray.Length < sourceArray.Length)
-                throw new ArgumentException("Destination array length is lesser than source array length");
-
-            for (int i = 0; i < sourceArray.Length; i++)
-            {
-                var normal = sourceArray[i];
-
-                destinationArray[i] = new Vector2((normal.X * matrix.M11) + (normal.Y * matrix.M21),
-                                                  (normal.X * matrix.M12) + (normal.Y * matrix.M22));
-            }
-        }
+        // public static void TransformNormal
+        //     (
+        //     Vector2[] sourceArray,
+        //     ref Matrix matrix,
+        //     Vector2[] destinationArray
+        //     )
+        // {
+        //     if (sourceArray == null)
+        //         throw new ArgumentNullException("sourceArray");
+        //     if (destinationArray == null)
+        //         throw new ArgumentNullException("destinationArray");
+        //     if (destinationArray.Length < sourceArray.Length)
+        //         throw new ArgumentException("Destination array length is lesser than source array length");
+        //
+        //     for (int i = 0; i < sourceArray.Length; i++)
+        //     {
+        //         var normal = sourceArray[i];
+        //
+        //         destinationArray[i] = new Vector2((normal.X * matrix.M11) + (normal.Y * matrix.M21),
+        //                                           (normal.X * matrix.M12) + (normal.Y * matrix.M22));
+        //     }
+        // }
 
         /// <summary>
         /// Deconstruction method for <see cref="Vector2"/>.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public void Deconstruct(out float x, out float y)
-        {
-            x = X;
-            y = Y;
-        }
+        // public void Deconstruct(out float x, out float y)
+        // {
+        //     x = X;
+        //     y = Y;
+        // }
 
         #endregion
     }

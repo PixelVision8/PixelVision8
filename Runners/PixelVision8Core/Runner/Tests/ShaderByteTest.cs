@@ -102,7 +102,7 @@ namespace PixelVision8.CoreDesktop
 
             _screen.SetData(_data);
 
-            _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
+            // _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
             _quickDraw.CurrentTechnique.Passes[0].Apply();
             GraphicsDevice.Textures[1] = _colorPallete;
             GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;

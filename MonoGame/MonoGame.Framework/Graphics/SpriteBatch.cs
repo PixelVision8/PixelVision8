@@ -16,7 +16,7 @@ namespace Microsoft.Xna.Framework.Graphics
         readonly SpriteBatcher _batcher;
 
 		SpriteSortMode _sortMode;
-		BlendState _blendState;
+		// BlendState _blendState;
 		SamplerState _samplerState;
 		// DepthStencilState _depthStencilState; 
 		// RasterizerState _rasterizerState;		
@@ -79,7 +79,7 @@ namespace Microsoft.Xna.Framework.Graphics
         public void Begin
         (
              SpriteSortMode sortMode = SpriteSortMode.Deferred,
-             BlendState blendState = null,
+             // BlendState blendState = null,
              SamplerState samplerState = null,
              /*DepthStencilState depthStencilState = null,*/
              // RasterizerState rasterizerState = null,

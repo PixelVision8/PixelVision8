@@ -19,12 +19,12 @@ namespace Microsoft.Xna.Framework
         /// <summary>
         /// Represents the log base ten of e(0.4342945).
         /// </summary>
-        public const float Log10E = 0.4342945f;
+        // public const float Log10E = 0.4342945f;
         
         /// <summary>
         /// Represents the log base two of e(1.442695).
         /// </summary>
-        public const float Log2E = 1.442695f;
+        // public const float Log2E = 1.442695f;
         
         /// <summary>
         /// Represents the value of pi(3.14159274).
@@ -34,12 +34,12 @@ namespace Microsoft.Xna.Framework
         /// <summary>
         /// Represents the value of pi divided by two(1.57079637).
         /// </summary>
-        public const float PiOver2 = (float)(Math.PI / 2.0);
+        // public const float PiOver2 = (float)(Math.PI / 2.0);
         
         /// <summary>
         /// Represents the value of pi divided by four(0.7853982).
         /// </summary>
-        public const float PiOver4 = (float)(Math.PI / 4.0);
+        // public const float PiOver4 = (float)(Math.PI / 4.0);
         
         /// <summary>
         /// Represents the value of pi times two(6.28318548).
@@ -50,7 +50,7 @@ namespace Microsoft.Xna.Framework
         /// Represents the value of pi times two(6.28318548).
         /// This is an alias of TwoPi.
         /// </summary>
-        public const float Tau = TwoPi;
+        // public const float Tau = TwoPi;
         
         /// <summary>
         /// Returns the Cartesian coordinate for one axis of a point that is defined by a given triangle and two normalized barycentric (areal) coordinates.
