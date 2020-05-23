@@ -40,6 +40,9 @@ struct VertexShaderOutput
 #define bloomAmount 0.15
 #define warp float2(0.008,0.01)
 
+sampler2D screen: register(s0);
+sampler colorPallete: register(s1);
+
 float brightboost = 1.0;
 float2 textureSize;
 float2 videoSize;
@@ -52,13 +55,6 @@ float2 outputSize;
 
 // ------------- //
 
-Texture2D decal;
-sampler2D DecalSampler = sampler_state
-{
-	Texture = <decal>;
-};
-
-float4x4 modelViewProj;
 
 //------------------------------------------------------------------------
 
@@ -76,7 +72,9 @@ float3 ToSrgb(float3 c)
 // Also zero's off screen.
 float3 Fetch(float2 pos, float2 off, float2 texture_size){
   pos=(floor(pos*texture_size.xy+off)+float2(0.5,0.5))/texture_size.xy;
-  return brightboost * pow(tex2D(DecalSampler,pos.xy).rgb, 2);
+  
+  float4 color = tex2D(screen, pos);
+  return brightboost * pow(tex2D(colorPallete, float2(color.r, 0.5f)).rgb, 2);
 }
 
 // Distance in emulated pixels to nearest texel.
@@ -195,7 +193,7 @@ float3 Mask(float2 pos){
   return mask;
 }
 
-float4 crt_lottes(float2 texture_size, float2 video_size, float2 tex, sampler2D s0)
+float4 crt_lottes(float2 texture_size, float2 video_size, float2 tex)
 {
 
 float2 pos=Warp(tex.xy*(texture_size.xy/video_size.xy))*(video_size.xy/texture_size.xy);
@@ -212,7 +210,7 @@ float3 outColor = Tri(pos, texture_size);
 
 float4 main_fragment(VertexShaderOutput VOUT) : COLOR0
 {
-	return crt_lottes(textureSize, videoSize, VOUT.texCoord, DecalSampler);
+	return crt_lottes(textureSize, videoSize, VOUT.texCoord);
 }
 
 technique

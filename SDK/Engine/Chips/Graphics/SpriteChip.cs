@@ -330,6 +330,14 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
+        public void DrawSprite(ref int[] pixelData, int index, int x, int y, bool flipX = false, bool flipY = false,
+            int colorOffset = 0)
+        {
+
+
+
+        }
+
         /// <summary>
         ///     Updates the sprite data at a given position in the
         ///     <see cref="texture" /> data.

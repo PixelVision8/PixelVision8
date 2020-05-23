@@ -84,5 +84,22 @@ namespace PixelVision8.Engine.Utils
             color.G = g;
             color.B = b;
         }
+        public static Color[] ConvertColors(string[] hexColors, string maskColor, bool debugMode, int backgroundColor)
+        {
+            var t = hexColors.Length;
+            var colors = new Color[t];
+
+            for (var i = 0; i < t; i++)
+            {
+                var colorHex = hexColors[i];
+
+                if (colorHex == maskColor && debugMode == false) colorHex = hexColors[backgroundColor];
+
+                var color = HexToColor(colorHex);
+                colors[i] = color;
+            }
+
+            return colors;
+        }
     }
 }

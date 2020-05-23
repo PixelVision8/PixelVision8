@@ -121,7 +121,7 @@ namespace PixelVision8.Runner.Services
                     var col = i % width;
                     if (col < visibleWidth && index < newTotalPixels)
                     {
-                        newPixels[index] = pixels[i];
+                        // newPixels[index] = pixels[i];
                         index++;
                     }
                 }

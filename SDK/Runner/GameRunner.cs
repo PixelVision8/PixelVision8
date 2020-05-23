@@ -403,7 +403,7 @@ namespace PixelVision8.Runner
 
                 // It's important that we pass in the Time.deltaTime to the PixelVisionEngine. It is passed along to any Chip that registers itself with 
                 // the ChipManager to be updated. The ControlsChip, GamesChip, and others use this time delta to synchronize their actions based on the 
-                // current framerate.
+                // current frame rate.
                 ActiveEngine.Update(timeDelta);
             }
         }
@@ -415,13 +415,18 @@ namespace PixelVision8.Runner
             frameCounter++;
 
             // Clear with black and draw the runner.
-            graphics.GraphicsDevice.Clear(Color.Black);
+            // graphics.GraphicsDevice.Clear(Color.Black);
 
             // Now it's time to call the PixelVisionEngine's Draw() method. This Draw() call propagates throughout all of the Chips that have 
             // registered themselves as being able to draw such as the GameChip and the DisplayChip.
 
             // Only call draw if the window has focus
             if (RunnerActive) ActiveEngine.Draw();
+
+            if (ActiveEngine.ColorChip.invalid)
+            {
+                displayTarget.RebuildColorPalette(ActiveEngine.ColorChip);
+            }
 
             displayTarget.Render(ActiveEngine.DisplayChip.Pixels);
 

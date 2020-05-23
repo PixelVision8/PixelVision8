@@ -22,6 +22,8 @@ using System;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Runner.Data
 {
@@ -199,19 +201,64 @@ namespace PixelVision8.Runner.Data
             }
         }
 
-        public void Render(Color[] pixels)
+        // public void Render(Color[] pixels)
+        // {
+        //     // TODO didn't have to check length before service refactoring
+        //     // if (totalPixels != pixels.Length) return;
+        //     
+        //     renderTexture.SetData(pixels);
+        //
+        //     spriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: useCRT ? shaderEffect : null);
+        //
+        //     spriteBatch.Draw(renderTexture, offset, visibleRect, Color.White, 0f, Vector2.Zero, scale,
+        //         SpriteEffects.None, 1f);
+        //
+        //     spriteBatch.End();
+        // }
+
+        private Texture2D _colorPallete;
+        // private SpriteBatch _spriteBatch;
+        private Texture2D _pixel;
+
+        public void RebuildColorPalette(ColorChip colorChip)
         {
-            // TODO didn't have to check length before service refactoring
-            // if (totalPixels != pixels.Length) return;
-            
+
+            var colors = ColorUtils.ConvertColors(colorChip.hexColors, colorChip.maskColor, colorChip.debugMode,
+                colorChip.backgroundColor);
+
+            // Create color palette texture
+            // var cachedColors = colors;//pngReader.colorPalette.ToArray();
+
+            // spriteBatch = new SpriteBatch(graphicManager.GraphicsDevice);
+
+            _colorPallete = new Texture2D(graphicManager.GraphicsDevice, colors.Length, 1);
+
+            var fullPalette = new Color[_colorPallete.Width];
+            for (int i = 0; i < fullPalette.Length; i++) { fullPalette[i] = i < colors.Length ? colors[i] : colors[0]; }
+
+            _colorPallete.SetData(colors);
+
+            _pixel = new Texture2D(graphicManager.GraphicsDevice, 1, 1);
+            _pixel.SetData(new Color[] { Color.White });
+
+            colorChip.ResetValidation();
+
+        }
+
+
+
+        public void Render(int[] pixels)
+        {
+
             renderTexture.SetData(pixels);
 
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: useCRT ? shaderEffect : null);
-
-            spriteBatch.Draw(renderTexture, offset, visibleRect, Color.White, 0f, Vector2.Zero, scale,
-                SpriteEffects.None, 1f);
-
+            spriteBatch.Begin(SpriteSortMode.Immediate, SamplerState.PointClamp);
+            crtShader.CurrentTechnique.Passes[0].Apply();
+            graphicManager.GraphicsDevice.Textures[1] = _colorPallete;
+            graphicManager.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
+            spriteBatch.Draw(renderTexture, offset, visibleRect, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 1f);
             spriteBatch.End();
+
         }
 
     }
