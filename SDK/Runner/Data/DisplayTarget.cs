@@ -41,7 +41,7 @@ namespace PixelVision8.Runner.Data
         public Vector2 offset;
         public Texture2D renderTexture;
         public Vector2 scale = new Vector2(1, 1);
-        private Effect shaderEffect;
+        // private Effect shaderEffect;
         public bool stretchScreen;
         private Rectangle visibleRect;
 
@@ -62,8 +62,6 @@ namespace PixelVision8.Runner.Data
         {
             get
             {
-                if (crtShader == null || shaderEffect == null) return false;
-
                 return _useCRT;
             }
             set
@@ -72,20 +70,22 @@ namespace PixelVision8.Runner.Data
 
                 _useCRT = value;
 
-                shaderEffect = _useCRT ? crtShader : null;
+                crtShader?.Parameters["crtOn"].SetValue(value ? 1f : 0f);
+                crtShader?.Parameters["warp"].SetValue(value ? new Vector2(0.008f, 0.01f) : Vector2.Zero);
+
             }
         }
 
         public float brightness
         {
-            get => shaderEffect?.Parameters["brightboost"]?.GetValueSingle() ?? 0;
-            set => shaderEffect?.Parameters["brightboost"]?.SetValue(MathHelper.Clamp(value, .5f, 1.5f));
+            get => crtShader?.Parameters["brightboost"]?.GetValueSingle() ?? 0;
+            set => crtShader?.Parameters["brightboost"]?.SetValue(MathHelper.Clamp(value, .255f, 1.5f));
         }
 
         public float sharpness
         {
-            get => shaderEffect?.Parameters["hardPix"]?.GetValueSingle() ?? 0;
-            set => shaderEffect?.Parameters["hardPix"]?.SetValue(value);
+            get => crtShader?.Parameters["hardPix"]?.GetValueSingle() ?? 0;
+            set => crtShader?.Parameters["hardPix"]?.SetValue(value);
         }
 
         public bool HasShader()
@@ -142,8 +142,9 @@ namespace PixelVision8.Runner.Data
             {
                 renderTexture = new Texture2D(graphicManager.GraphicsDevice, gameWidth, gameHeight);
 
-                shaderEffect?.Parameters["textureSize"].SetValue(new Vector2(gameWidth, gameHeight));
-                shaderEffect?.Parameters["videoSize"].SetValue(new Vector2(gameWidth, gameHeight));
+                crtShader?.Parameters["textureSize"].SetValue(new Vector2(gameWidth, gameHeight));
+                crtShader?.Parameters["videoSize"].SetValue(new Vector2(gameWidth, gameHeight));
+                // crtShader?.Parameters["crtOn"].SetValue(useCRT ? 1f : 0f);
                 
                 // Set the new number of pixels
                 // totalPixels = renderTexture.Width * renderTexture.Height;

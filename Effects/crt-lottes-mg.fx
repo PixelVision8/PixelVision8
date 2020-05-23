@@ -32,13 +32,10 @@ struct VertexShaderOutput
 
 #define hardPix -10.0
 #define hardScan -10.0
-#define shadowMask 0
 #define hardBloomPix -4.0
 #define hardBloomScan -3
-#define maskDark 0.5
-#define maskLight 1.5
 #define bloomAmount 0.15
-#define warp float2(0.008,0.01)
+float2 warp = float2(0.008, 0.01);
 
 sampler2D screen: register(s0);
 sampler colorPallete: register(s1);
@@ -47,6 +44,7 @@ float brightboost = 1.0;
 float2 textureSize;
 float2 videoSize;
 float2 outputSize;
+float crtOn = 0;
 
 //Uncomment to reduce instructions with simpler linearization
 //(fixes HD3000 Sandy Bridge IGP)
@@ -62,18 +60,20 @@ float2 outputSize;
 // Assuing using sRGB typed textures this should not be needed.
 float3 ToSrgb(float3 c)
 {
-
    return sqrt(c);
-
 }
-
 
 // Nearest emulated sample given floating point position and texel offset.
 // Also zero's off screen.
 float3 Fetch(float2 pos, float2 off, float2 texture_size){
-  pos=(floor(pos*texture_size.xy+off)+float2(0.5,0.5))/texture_size.xy;
+
+  // Smooths out the distortion
+  pos=(floor(pos*texture_size.xy+off*crtOn)+float2(0.5,0.5))/texture_size.xy;
   
+  // find the color on the scren texture
   float4 color = tex2D(screen, pos);
+
+  // Convert the color to a palette color and brighten it
   return brightboost * pow(tex2D(colorPallete, float2(color.r, 0.5f)).rgb, 2);
 }
 
@@ -138,9 +138,10 @@ float3 Horz7(float2 pos, float off, float2 texture_size){
   return (a*wa+b*wb+c*wc+d*wd+e*we+f*wf+g*wg)/(wa+wb+wc+wd+we+wf+wg);}
 
 // Return scanline weight.
-float Scan(float2 pos,float off, float2 texture_size){
-  float dst=Dist(pos, texture_size).y;
-  return Gaus(dst+off,hardScan);}
+float Scan(float2 pos, float off, float2 texture_size) {
+    float dst = Dist(pos, texture_size).y;
+    return Gaus(dst + off, hardScan) * crtOn;
+}
 
   // Return scanline weight for bloom.
 float BloomScan(float2 pos,float off, float2 texture_size){
@@ -171,41 +172,24 @@ float3 Bloom(float2 pos, float2 texture_size){
   float we=BloomScan(pos, 2.0, texture_size);
   return a*wa+b*wb+c*wc+d*wd+e*we;}
 
-	// Distortion of scanlines, and end of screen alpha.
-	float2 Warp(float2 pos){
-	  pos=pos*2.0-1.0;
-	  pos*=float2(1.0+(pos.y*pos.y)*warp.x,1.0+(pos.x*pos.x)*warp.y);
-	  return pos*0.5+0.5;}
-
-// Shadow mask
-float3 Mask(float2 pos){
-  float3 mask = maskDark;
-
-  // VGA style shadow mask.
-  pos.xy=floor(pos.xy*float2(1.0,0.5));
-  pos.x+=pos.y*3.0;
-  pos.x=frac(pos.x/6.0);
-
-  if(pos.x<0.333)mask.r=maskLight;
-  else if(pos.x<0.666)mask.g=maskLight;
-  else mask.b=maskLight;
-
-  return mask;
-}
+// Distortion of scanlines, and end of screen alpha.
+float2 Warp(float2 pos){
+	pos=pos*2.0-1.0;
+	pos*=float2(1.0+(pos.y*pos.y)*warp.x,1.0+(pos.x*pos.x)*warp.y);
+	return pos*0.5+0.5;}
 
 float4 crt_lottes(float2 texture_size, float2 video_size, float2 tex)
 {
 
-float2 pos=Warp(tex.xy*(texture_size.xy/video_size.xy))*(video_size.xy/texture_size.xy);
-float3 outColor = Tri(pos, texture_size);
+    float2 pos=Warp(tex.xy*(texture_size.xy/video_size.xy))*(video_size.xy/texture_size.xy);
+    float3 outColor = Tri(pos, texture_size);
 
-#ifdef DO_BLOOM
-  //Add Bloom
-  outColor.rgb+=Bloom(pos, textureSize)*bloomAmount;
-#endif
+    #ifdef DO_BLOOM
+      //Add Bloom
+      outColor.rgb+=Bloom(pos, textureSize)*bloomAmount;
+    #endif
 
-
-  return float4(ToSrgb(outColor.rgb),1.0);
+    return float4(ToSrgb(outColor.rgb),1.0);
 }
 
 float4 main_fragment(VertexShaderOutput VOUT) : COLOR0
