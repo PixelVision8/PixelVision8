@@ -89,7 +89,7 @@ jobs:
 
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Pixel Vision 8 Nightly
-      run: msbuild $env:Wap_Project_Path --output Releases\${{ matrix.configuration }}\ --runtime ${{ matrix.configuration }} --framework netcoreapp3.1 -p:PublishSingleFile=true -p:PublishTrimmed=true
+      run: msbuild $env:Wap_Project_Path --runtime ${{ matrix.configuration }} --framework netcoreapp3.1 -p:PublishSingleFile=true -p:PublishTrimmed=true
       #env:
       #  Appx_Bundle: Always
       #  Appx_Bundle_Platforms: x86|x64
