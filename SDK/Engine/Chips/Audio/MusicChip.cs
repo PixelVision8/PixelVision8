@@ -48,9 +48,11 @@ namespace PixelVision8.Engine.Chips
         public float[] noteHZ; // a lookup table of all musical notes in Hz
 
         public float[] noteStartFrequency; // same, but for sfxr frequency 0..1 range
-        protected float noteTickS = 30.0f / 120.0f; // (30.0f/120.0f) = 120BPM eighth notes
-        protected float noteTickSEven;
+
+        protected float swingRhythmFactor = 1.0f;//0.7f;
+        protected float noteTickS = 15.0f / 120.0f; // (15.0f/120.0f) = 120BPM sixteenth notes
         protected float noteTickSOdd;
+        protected float noteTickSEven;
 
         public int preRenderBitrate = 44100; //48000; // should be 44100; FIXME TODO EXPERIMENTING W BUGFIX
 
@@ -72,8 +74,6 @@ namespace PixelVision8.Engine.Chips
 
         public SongData[] songs = new SongData[1];
 //        protected int songLoopCount = 0;
-
-        protected float swingRhythmFactor = 0.7f;
 
         protected float time;
 
@@ -213,7 +213,7 @@ namespace PixelVision8.Engine.Chips
             {
                 if (time >= nextBeatTimestamp)
                 {
-                    nextBeatTimestamp = time + noteTickSOdd;//(SequencerBeatNumber % 2 == 1 ? noteTickSOdd : noteTickSEven);
+                    nextBeatTimestamp = time + noteTickS;//(SequencerBeatNumber % 2 == 1 ? noteTickSOdd : noteTickSEven);
                     OnBeat();
                 }
 
@@ -429,7 +429,7 @@ namespace PixelVision8.Engine.Chips
 
         public void UpdateNoteTickLengths()
         {
-            noteTickS = 30.0f / ActiveTrackerData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
+            noteTickS = 15.0f / ActiveTrackerData.speedInBPM; // (15.0f/120.0f) = 120BPM sixteenth notes
             noteTickSOdd = noteTickS * swingRhythmFactor; // small beat
             noteTickSEven = noteTickS * 2 - noteTickSOdd; // long beat
         }

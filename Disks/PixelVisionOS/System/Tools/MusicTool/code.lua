@@ -300,7 +300,7 @@ function Init()
     -- Force the slider to have a different start value so it can be updated correctly when the first song loads up
     songSliderData.value = -1
 
-    tempoStepper = editorUI:CreateNumberStepper({x = 120, y = 88}, 24, 0, 60, 480, "top", "Change the length of the pattern.")
+    tempoStepper = editorUI:CreateNumberStepper({x = 120, y = 88}, 24, 0, 1, 480, "top", "Change the length of the pattern.")
     tempoStepper.onInputAction = OnTempoChange
 
     table.insert(disableWhenPlaying, tempoStepper.backButton)
