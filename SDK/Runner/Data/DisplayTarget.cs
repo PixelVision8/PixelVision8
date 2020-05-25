@@ -230,7 +230,10 @@ namespace PixelVision8.Runner.Data
 
             // spriteBatch = new SpriteBatch(graphicManager.GraphicsDevice);
 
-            _colorPalette = new Texture2D(graphicManager.GraphicsDevice, colors.Length, 1);
+            var width = 256;
+            var height = (int)Math.Ceiling(colors.Length / (double)width);
+
+            _colorPalette = new Texture2D(graphicManager.GraphicsDevice, width, height);
 
             var fullPalette = new Color[_colorPalette.Width];
             for (int i = 0; i < fullPalette.Length; i++) { fullPalette[i] = i < colors.Length ? colors[i] : colors[0]; }
@@ -238,6 +241,9 @@ namespace PixelVision8.Runner.Data
             _colorPalette.SetData(colors);
 
             colorChip.ResetValidation();
+
+            // Set palette total
+            crtShader.Parameters["maskColor"].SetValue(Color.Magenta.ToVector4());
 
         }
 

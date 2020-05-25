@@ -45,6 +45,7 @@ float2 textureSize;
 float2 videoSize;
 float2 outputSize;
 float crtOn = 0;
+float4 maskColor;
 
 //Uncomment to reduce instructions with simpler linearization
 //(fixes HD3000 Sandy Bridge IGP)
@@ -71,10 +72,18 @@ float3 Fetch(float2 pos, float2 off, float2 texture_size){
   pos=(floor(pos*texture_size.xy+off*crtOn)+float2(0.5,0.5))/texture_size.xy;
   
   // find the color on the scren texture
-  float4 color = tex2D(screen, pos);
+  float4 inColor = tex2D(screen, pos);
+
+  float4 outColor;
+
+  if (inColor.b == 1 && inColor.g == 1 && inColor.r == 1)
+      outColor = maskColor;
+  else
+      // After 256, the color wraps over to green
+      outColor = tex2D(colorPallete, float2(inColor.r, inColor.g * 256));
 
   // Convert the color to a palette color and brighten it
-  return brightboost * pow(tex2D(colorPallete, float2(color.r, 0.5f)).rgb, 2);
+  return brightboost * pow(outColor.rgb, 2);
 }
 
 // Distance in emulated pixels to nearest texel.
