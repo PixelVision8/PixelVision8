@@ -799,6 +799,17 @@ function OnSelectSongField(value)
   currentSelectedSong = (value + 1) + songScrollOffset
 
   local realIndex = currentSelectedSong - songScrollOffset
+  
+  if (realIndex < 1 or realIndex > totalSongFields) then
+    local totalPatterns = #currentSongPatterns - totalSongFields
+
+    local scroll = (currentSelectedSong - 1) / totalPatterns
+    local scrollX = math.floor(scroll * songSliderData.size) + 11
+    songSliderData.handleX = scrollX
+    OnSongScroll(scroll)
+
+    realIndex = currentSelectedSong - songScrollOffset
+  end
 
   LoadLoop(tonumber(songInputFields[realIndex].text))
 
@@ -1156,7 +1167,7 @@ function Update(timeDelta)
       local currentPattern = songData["pattern"]
 
       if((currentSelectedSong - 1) ~= currentPattern and playMode ~= 3) then
-        OnSelectSongField(currentPattern)
+        OnSelectSongField(currentPattern - songScrollOffset)
         editorUI.refreshTime = 0
       end
 
