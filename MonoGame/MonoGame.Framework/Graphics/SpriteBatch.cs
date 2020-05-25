@@ -192,58 +192,58 @@ namespace Microsoft.Xna.Framework.Graphics
             item.Texture = texture;
 
             // set SortKey based on SpriteSortMode.
-            switch ( _sortMode )
-            {
-                // Comparison of Texture objects.
-                case SpriteSortMode.Texture:
-                    item.SortKey = texture.SortingKey;
-                    break;
-                // Comparison of Depth
-                case SpriteSortMode.FrontToBack:
-                    item.SortKey = layerDepth;
-                    break;
-                // Comparison of Depth in reverse
-                case SpriteSortMode.BackToFront:
-                    item.SortKey = -layerDepth;
-                    break;
-            }
+            // switch ( _sortMode )
+            // {
+            //     // Comparison of Texture objects.
+            //     case SpriteSortMode.Texture:
+            //         item.SortKey = texture.SortingKey;
+            //         break;
+            //     // Comparison of Depth
+            //     case SpriteSortMode.FrontToBack:
+            //         item.SortKey = layerDepth;
+            //         break;
+            //     // Comparison of Depth in reverse
+            //     case SpriteSortMode.BackToFront:
+            //         item.SortKey = -layerDepth;
+            //         break;
+            // }
                         
-            origin = origin * scale;
+            // origin = origin * scale;
             
-            float w, h;
-            if (sourceRectangle.HasValue)
-            {
+            // float w, h;
+            // if (sourceRectangle.HasValue)
+            // {
                 var srcRect = sourceRectangle.GetValueOrDefault();
-                w = srcRect.Width * scale.X;
-                h = srcRect.Height * scale.Y;
+                var w = srcRect.Width * scale.X;
+                var h = srcRect.Height * scale.Y;
                 _texCoordTL.X = srcRect.X * texture.TexelWidth;
                 _texCoordTL.Y = srcRect.Y * texture.TexelHeight;
                 _texCoordBR.X = (srcRect.X + srcRect.Width) * texture.TexelWidth;
                 _texCoordBR.Y = (srcRect.Y + srcRect.Height) * texture.TexelHeight;
-            }
-            else
-            {
-                w = texture.Width * scale.X;
-                h = texture.Height * scale.Y;
-                _texCoordTL = Vector2.Zero;
-                _texCoordBR = Vector2.One;
-            }
+            // }
+            // else
+            // {
+            //     w = texture.Width * scale.X;
+            //     h = texture.Height * scale.Y;
+            //     _texCoordTL = Vector2.Zero;
+            //     _texCoordBR = Vector2.One;
+            // }
             
-            if ((effects & SpriteEffects.FlipVertically) != 0)
-            {
-                var temp = _texCoordBR.Y;
-				_texCoordBR.Y = _texCoordTL.Y;
-				_texCoordTL.Y = temp;
-            }
-            if ((effects & SpriteEffects.FlipHorizontally) != 0)
-            {
-                var temp = _texCoordBR.X;
-				_texCoordBR.X = _texCoordTL.X;
-				_texCoordTL.X = temp;
-            }
+    //         if ((effects & SpriteEffects.FlipVertically) != 0)
+    //         {
+    //             var temp = _texCoordBR.Y;
+				// _texCoordBR.Y = _texCoordTL.Y;
+				// _texCoordTL.Y = temp;
+    //         }
+    //         if ((effects & SpriteEffects.FlipHorizontally) != 0)
+    //         {
+    //             var temp = _texCoordBR.X;
+				// _texCoordBR.X = _texCoordTL.X;
+				// _texCoordTL.X = temp;
+    //         }
             
-            if (rotation == 0f)
-            {
+            // if (rotation == 0f)
+            // {
                 item.Set(position.X - origin.X,
                         position.Y - origin.Y,
                         w,
@@ -252,22 +252,22 @@ namespace Microsoft.Xna.Framework.Graphics
                         _texCoordTL,
                         _texCoordBR,
                         layerDepth);
-            }
-            else
-            {
-                item.Set(position.X,
-                        position.Y,
-                        -origin.X,
-                        -origin.Y,
-                        w,
-                        h,
-                        (float)Math.Sin(rotation),
-                        (float)Math.Cos(rotation),
-                        color,
-                        _texCoordTL,
-                        _texCoordBR,
-                        layerDepth);
-            }
+            // }
+            // else
+            // {
+            //     item.Set(position.X,
+            //             position.Y,
+            //             -origin.X,
+            //             -origin.Y,
+            //             w,
+            //             h,
+            //             (float)Math.Sin(rotation),
+            //             (float)Math.Cos(rotation),
+            //             color,
+            //             _texCoordTL,
+            //             _texCoordBR,
+            //             layerDepth);
+            // }
             
             FlushIfNeeded();
 		}

@@ -140,14 +140,11 @@ namespace PixelVision8.Runner.Data
         {
             if (renderTexture == null || renderTexture.Width != gameWidth || renderTexture.Height != gameHeight)
             {
-                renderTexture = new Texture2D(graphicManager.GraphicsDevice, gameWidth, gameHeight, false, SurfaceFormat.Color);
+                renderTexture = new Texture2D(graphicManager.GraphicsDevice, gameWidth, gameHeight);
 
                 crtShader?.Parameters["textureSize"].SetValue(new Vector2(gameWidth, gameHeight));
                 crtShader?.Parameters["videoSize"].SetValue(new Vector2(gameWidth, gameHeight));
-                // crtShader?.Parameters["crtOn"].SetValue(useCRT ? 1f : 0f);
                 
-                // Set the new number of pixels
-                // totalPixels = renderTexture.Width * renderTexture.Height;
             }
 
             // Calculate the game's resolution
@@ -189,7 +186,6 @@ namespace PixelVision8.Runner.Data
                 offset.Y = 0;
             }
 
-
             // Apply changes
             graphicManager.IsFullScreen = fullscreen;
 
@@ -200,37 +196,18 @@ namespace PixelVision8.Runner.Data
                 graphicManager.PreferredBackBufferHeight = displayHeight;
                 graphicManager.ApplyChanges();
             }
+
         }
 
-        // public void Render(Color[] pixels)
-        // {
-        //     // TODO didn't have to check length before service refactoring
-        //     // if (totalPixels != pixels.Length) return;
-        //     
-        //     renderTexture.SetData(pixels);
-        //
-        //     spriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: useCRT ? shaderEffect : null);
-        //
-        //     spriteBatch.Draw(renderTexture, offset, visibleRect, Color.White, 0f, Vector2.Zero, scale,
-        //         SpriteEffects.None, 1f);
-        //
-        //     spriteBatch.End();
-        // }
-
         private Texture2D _colorPalette;
-
+        private readonly int paletteWidth = 256;
         public void RebuildColorPalette(ColorChip colorChip)
         {
 
             var colors = ColorUtils.ConvertColors(colorChip.hexColors, colorChip.maskColor, colorChip.debugMode,
                 colorChip.backgroundColor);
 
-            // Create color palette texture
-            // var cachedColors = colors;//pngReader.colorPalette.ToArray();
-
-            // spriteBatch = new SpriteBatch(graphicManager.GraphicsDevice);
-
-            var width = 256;
+            var width = paletteWidth;
             var height = (int)Math.Ceiling(colors.Length / (double)width);
 
             _colorPalette = new Texture2D(graphicManager.GraphicsDevice, width, height);
@@ -243,7 +220,7 @@ namespace PixelVision8.Runner.Data
             colorChip.ResetValidation();
 
             // Set palette total
-            crtShader.Parameters["maskColor"].SetValue(Color.Magenta.ToVector4());
+            // crtShader.Parameters["maskColor"].SetValue(Color.Magenta.ToVector4());
 
         }
 
