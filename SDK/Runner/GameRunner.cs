@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
@@ -430,6 +431,7 @@ namespace PixelVision8.Runner
 
             displayTarget.Render(ActiveEngine.DisplayChip.Pixels);
 
+            // displayTarget.spriteBatch.End();
             if (resolutionInvalid)
             {
                 ResetResolution();

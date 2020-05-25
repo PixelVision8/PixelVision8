@@ -20,8 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-// using System.Linq;
 using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Engine.Chips
@@ -95,25 +93,6 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public void Draw()
         {
-            // cachedColors = engine.ColorChip.colors;
-
-            // var bgColor = engine.ColorChip.backgroundColor;
-            //
-            // var col = 0;
-            // var row = 0;
-            // var w = Width;
-            //
-            // for (int i = 0; i < TotalPixels; i++)
-            // {
-            //
-            //     if (col >= w)
-            //     {
-            //         row++;
-            //         col = 0;
-            //     }
-            //
-            //
-            // }
             
             // Loop through all draw requests
             for (_layer = 0; _layer < DrawRequestPixelDataLayers.Length; _layer++)
@@ -134,17 +113,25 @@ namespace PixelVision8.Engine.Chips
             // Sort sprite draw calls
             SpriteDrawRequests.Sort((x, y) => x.priority.CompareTo(y.priority));
 
-            // for (int i = 0; i < SpriteDrawRequests.Count; i++)
-            // {
-            //     
-            // }
+            for (int i = 0; i < SpriteDrawRequests.Count; i++)
+            {
+                var request = SpriteDrawRequests[i];
+                var tmpPixelData = new int[64];
+                SpriteChip.ReadSpriteAt(request.id, ref tmpPixelData);
+                
+                CopyDrawRequestPixelData(tmpPixelData, request.x, request.y, 8, 8, request.flipH, request.flipV, request.colorOffset);
+
+                SpriteDrawRequestPool.Push(request);
+            }
+
+            SpriteDrawRequests.Clear();
 
             // Reset Draw Requests after they have been processed
             ResetDrawCalls();
+
+            clearFlag = false;
         }
-
-        private int _oldSize;
-
+        
         /// <summary>
         ///     Creates a new draw by copying the supplied pixel data over
         ///     to the Display's TextureData.
@@ -211,6 +198,9 @@ namespace PixelVision8.Engine.Chips
                 drawCall.colorOffset = colorOffset;
 
                 SpriteDrawRequests.Add(drawCall);
+
+                // Used by scan line draw
+                // OAMEntries.Add(drawCall);
             }
 
         }

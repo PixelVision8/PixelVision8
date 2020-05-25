@@ -3,13 +3,13 @@
     "GameChip":
     {
         "savedData":{
-            "selectedPalettePage": "0",
-            "selectedSpritePage": "1",
-            "sessionID": "202005182033044056",
-            "rootDirectory": "/Workspace/Spirally-Spiral/",
-            "selectedColor": "-1",
+            "selectedSprite": "-1",
             "selectedPalette": "-1",
-            "selectedSprite": "-1"
+            "selectedColor": "-1",
+            "rootDirectory": "/Workspace/MyFirstGame/",
+            "sessionID": "202005231324236163",
+            "selectedSpritePage": "1",
+            "selectedPalettePage": "0"
         }
     }
 }

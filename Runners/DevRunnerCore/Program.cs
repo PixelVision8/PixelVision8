@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using PixelVision8.CoreDesktop;
 using PixelVision8.Runner;
 
 namespace PixelVision8Core
@@ -23,6 +24,7 @@ namespace PixelVision8Core
             // TODO there is a bug where this will not go to the boot error
             using (var game = new PixelVision8.Runner.PixelVision8Runner(root))
             // using (var game = new ShaderByteTest())
+            // using (var game = new ShaderTest())
             {
                 game.Run();
             }

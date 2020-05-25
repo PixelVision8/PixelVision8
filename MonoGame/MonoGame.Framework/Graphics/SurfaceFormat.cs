@@ -104,7 +104,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Unsigned 32-bit RGBA sRGB pixel format that supports 8 bits per channel.
         /// </summary>
-        // ColorSRgb = 30,
+        ColorSRgb = 30,
         /// <summary>
         /// Unsigned 32-bit sRGB pixel format that supports 8 bits per channel. 8 bits are unused.
         /// </summary>

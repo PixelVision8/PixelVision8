@@ -58,12 +58,25 @@ namespace PixelVision8.CoreDesktop
             // Convert all of the pixels into color ids
             _data = pngReader.pixels;
 
+            for (int i = 0; i < _data.Length; i++)
+            {
+                _data[i] -=1;
+            }
+
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _colorPallete = new Texture2D(GraphicsDevice, 256, 1);
+            _colorPallete = new Texture2D(GraphicsDevice, 256, 2);
 
-            var fullPalette = new Color[_colorPallete.Width];
-            for (int i = 0; i < fullPalette.Length; i++) { fullPalette[i] = i < cachedColors.Length ? cachedColors[i] : cachedColors[0]; }
+            var fullPalette = new Color[_colorPallete.Width * _colorPallete.Height];
+            for (int i = 0; i < fullPalette.Length; i++) { fullPalette[i] = i < cachedColors.Length ? cachedColors[i] : Color.Magenta; }
+
+            for (int i = 0; i < cachedColors.Length; i++)
+            {
+                fullPalette[i + 256] = cachedColors[i];
+                fullPalette[i + 256].R -= 100;
+            }
+
+            // fullPalette[0].R = 0;
 
             _colorPallete.SetData(fullPalette);
 
@@ -79,7 +92,7 @@ namespace PixelVision8.CoreDesktop
             }
 
             // Set palette total
-            // _quickDraw.Parameters["paletteTotal"].SetValue((float)_colorPallete.Width);
+            _quickDraw.Parameters["maskColor"].SetValue(Color.Magenta.ToVector4());
 
         }
 
@@ -99,6 +112,8 @@ namespace PixelVision8.CoreDesktop
 
             _screen.SetData(_data);
 
+            var foo = new Color[_data.Length];
+            _screen.GetData(foo);
             _spriteBatch.Begin(SpriteSortMode.Immediate,  SamplerState.PointClamp);
             _quickDraw.CurrentTechnique.Passes[0].Apply();
             GraphicsDevice.Textures[1] = _colorPallete;

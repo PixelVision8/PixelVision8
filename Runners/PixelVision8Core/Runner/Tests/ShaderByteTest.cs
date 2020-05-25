@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -15,7 +16,7 @@ namespace PixelVision8.CoreDesktop
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Effect _quickDraw;
-        private Texture2D _pixel, _screen, _colorPallete;
+        private Texture2D _pixel, _screen, _colorPallete, _paletteBank;
         private byte[] _data;
         int scale = 2;
 
@@ -60,15 +61,37 @@ namespace PixelVision8.CoreDesktop
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _colorPallete = new Texture2D(GraphicsDevice, 256, 1);
+            _colorPallete = new Texture2D(GraphicsDevice, 256, 2);
+            _paletteBank = new Texture2D(GraphicsDevice, 256, 2);
 
-            var fullPalette = new Color[_colorPallete.Width];
-            for (int i = 0; i < fullPalette.Length; i++) { fullPalette[i] = i < cachedColors.Length ? cachedColors[i] : cachedColors[0]; }
+            var fullPalette = new Color[_colorPallete.Width * _colorPallete.Height];
+            var paletteBank = new Color[fullPalette.Length];
+
+            for (int i = 0; i < paletteBank.Length; i++)
+            {
+                paletteBank[i] = new Color(1,1,1);
+            }
+
+
+            Debug.WriteLine("Test 1" + new Color(0,0,0,0).PackedValue);
+            Debug.WriteLine("Test 2" + new Color(255,0,0,0).PackedValue);
+            Debug.WriteLine("Test 3" + new Color(0,255,0,0).PackedValue);
+            Debug.WriteLine("Test 4" + new Color(255,0,0,0).PackedValue);
+
+
+            for (int i = 0; i < fullPalette.Length; i++) { fullPalette[i] = i < cachedColors.Length ? cachedColors[i] : i > 256 ? Color.Magenta : cachedColors[0]; }
+
+            for (int i = 0; i < cachedColors.Length; i++)
+            {
+                fullPalette[i + 256] = cachedColors[i];
+                fullPalette[i + 256].R -= 100;
+            }
 
             _colorPallete.SetData(fullPalette);
+            _paletteBank.SetData(paletteBank);
 
-            _pixel = new Texture2D(GraphicsDevice, 1, 1);
-            _pixel.SetData(new Color[] { Color.White });
+            // _pixel = new Texture2D(GraphicsDevice, 1, 1);
+            // _pixel.SetData(new Color[] { Color.White });
 
             // Create screen texture
             _screen = new Texture2D(GraphicsDevice, pngReader.width/4, pngReader.height);
@@ -98,17 +121,19 @@ namespace PixelVision8.CoreDesktop
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.White);
 
             _screen.SetData(_data);
-
-            // _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
+            
+            _spriteBatch.Begin(SpriteSortMode.Immediate, SamplerState.PointClamp);
             _quickDraw.CurrentTechnique.Passes[0].Apply();
             GraphicsDevice.Textures[1] = _colorPallete;
             GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
             GraphicsDevice.Textures[2] = _screen;
             GraphicsDevice.SamplerStates[2] = SamplerState.PointClamp;
-            _spriteBatch.Draw(_pixel, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+            GraphicsDevice.Textures[3] = _paletteBank;
+            GraphicsDevice.SamplerStates[3] = SamplerState.PointClamp;
+            _spriteBatch.Draw(_screen, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
             _spriteBatch.End();
 
             base.Draw(gameTime);

@@ -140,7 +140,7 @@ namespace PixelVision8.Runner.Data
         {
             if (renderTexture == null || renderTexture.Width != gameWidth || renderTexture.Height != gameHeight)
             {
-                renderTexture = new Texture2D(graphicManager.GraphicsDevice, gameWidth, gameHeight);
+                renderTexture = new Texture2D(graphicManager.GraphicsDevice, gameWidth, gameHeight, false, SurfaceFormat.Color);
 
                 crtShader?.Parameters["textureSize"].SetValue(new Vector2(gameWidth, gameHeight));
                 crtShader?.Parameters["videoSize"].SetValue(new Vector2(gameWidth, gameHeight));
@@ -217,9 +217,7 @@ namespace PixelVision8.Runner.Data
         //     spriteBatch.End();
         // }
 
-        private Texture2D _colorPallete;
-        // private SpriteBatch _spriteBatch;
-        private Texture2D _pixel;
+        private Texture2D _colorPalette;
 
         public void RebuildColorPalette(ColorChip colorChip)
         {
@@ -232,30 +230,24 @@ namespace PixelVision8.Runner.Data
 
             // spriteBatch = new SpriteBatch(graphicManager.GraphicsDevice);
 
-            _colorPallete = new Texture2D(graphicManager.GraphicsDevice, colors.Length, 1);
+            _colorPalette = new Texture2D(graphicManager.GraphicsDevice, colors.Length, 1);
 
-            var fullPalette = new Color[_colorPallete.Width];
+            var fullPalette = new Color[_colorPalette.Width];
             for (int i = 0; i < fullPalette.Length; i++) { fullPalette[i] = i < colors.Length ? colors[i] : colors[0]; }
 
-            _colorPallete.SetData(colors);
-
-            _pixel = new Texture2D(graphicManager.GraphicsDevice, 1, 1);
-            _pixel.SetData(new Color[] { Color.White });
+            _colorPalette.SetData(colors);
 
             colorChip.ResetValidation();
 
         }
 
-
-
         public void Render(int[] pixels)
         {
 
             renderTexture.SetData(pixels);
-
             spriteBatch.Begin(SpriteSortMode.Immediate, SamplerState.PointClamp);
             crtShader.CurrentTechnique.Passes[0].Apply();
-            graphicManager.GraphicsDevice.Textures[1] = _colorPallete;
+            graphicManager.GraphicsDevice.Textures[1] = _colorPalette;
             graphicManager.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
             spriteBatch.Draw(renderTexture, offset, visibleRect, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 1f);
             spriteBatch.End();

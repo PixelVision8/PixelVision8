@@ -419,12 +419,13 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void Clear(int x = 0, int y = 0, int? width = null, int? height = null)
         {
-            //            displayChip.Clear();
-
+            // DisplayChip.Clear();
+            //
             w = width ?? DisplayChip.Width - x;
             h = height ?? DisplayChip.Height - y;
-
+            
             DrawRect(x, y, w, h, ColorChip.backgroundColor);
+            
         }
 
         /// <summary>
