@@ -12,6 +12,8 @@ Desktop.ini
 *.user
 *.sln.docstates
 
+saves.json
+
 # Build results
 [Dd]ebug/
 [Rr]elease/
