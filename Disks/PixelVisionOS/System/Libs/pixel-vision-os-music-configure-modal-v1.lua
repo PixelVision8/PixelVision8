@@ -392,7 +392,7 @@ function ConfigureModal:Open()
     -- self.settingSpeenMinInputData.colorOffset = 32
     -- self.settingSpeenMinInputData.disabledColorOffset = 34
     self.settingSpeenMinInputData.min = 50
-    self.settingSpeenMinInputData.max = 400
+    self.settingSpeenMinInputData.max = 350
     self.settingSpeenMinInputData.onAction = function(value)
 
       value = tonumber(value)
@@ -419,7 +419,7 @@ function ConfigureModal:Open()
     -- self.settingSpeenMaxInputData.colorOffset = 32
     -- self.settingSpeenMaxInputData.disabledColorOffset = 34
     self.settingSpeenMaxInputData.min = 50
-    self.settingSpeenMaxInputData.max = 400
+    self.settingSpeenMaxInputData.max = 350
     self.settingSpeenMaxInputData.onAction = function(value)
       -- gameEditor.pcgMaxTempo = tonumber(value)
 
@@ -984,8 +984,8 @@ function OnResetConfig()
         gameEditor.pcgFunk = 5
         gameEditor.pcgLayering = 5
 
-        gameEditor.pcgMinTempo = 120
-        gameEditor.pcgMaxTempo = 320
+        gameEditor.pcgMinTempo = 50
+        gameEditor.pcgMaxTempo = 120
 
         gameEditor.scale = 1
 

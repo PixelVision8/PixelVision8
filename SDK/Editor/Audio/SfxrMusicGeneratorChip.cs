@@ -211,9 +211,9 @@ namespace PixelVision8.Runner.Chips
         public int pcgLayering = 5;
 
         //public int pcgLoopsToCreate = 4;
-        public int pcgMaxTempo = 320;
+        public int pcgMaxTempo = 120;
 
-        public int pcgMinTempo = 120;
+        public int pcgMinTempo = 50;
         private int pcgPreviousNote; // phrasing reacts to previous notes
 
         //private int pcgPreviousProgressionIndex = 0; // phrasing reacts to previous chords in progression

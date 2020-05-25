@@ -60,7 +60,7 @@ namespace PixelVision8.Engine
         public int speedInBPM
         {
             get => _speedInBPM;
-            set => _speedInBPM = MathHelper.Clamp(value, 60, 480);
+            set => _speedInBPM = MathHelper.Clamp(value, 1, 480);
         }
 
         /// <summary>
