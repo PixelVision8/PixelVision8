@@ -890,7 +890,7 @@ function UpdateHexColor(value)
 
         return false
 
-    else
+    elseif(value ~= "#"..colorHexInputData.previousValue) then
 
         -- Make sure the color isn't duplicated when in palette mode
         for i = 1, 128 do

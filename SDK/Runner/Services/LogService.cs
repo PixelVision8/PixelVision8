@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using PixelVision8.Engine.Services;
@@ -84,7 +85,7 @@ namespace PixelVision8.Runner.Services
 
             if (logBuffer.Count > totalItems) logBuffer.RemoveAt(0);
 
-            Console.WriteLine(sb.ToString());
+            Debug.WriteLine(sb.ToString());
 
             logBuffer.Add(sb.ToString());
         }

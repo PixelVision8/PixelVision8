@@ -59,6 +59,9 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     self.dragCountTextArgs = {"00", 0, 0, DrawMode.SpriteAbove, "small", 15, -4}
     self.fileCount = 0
     self.totalSelections = 0
+    -- Clear the window refresh time
+    self.refreshTime = 0
+    self.refreshDelay = 5
     
     -- Make sure the last selections are cleared
     self:ClearSelections()
@@ -93,8 +96,6 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     scrollTo = scrollTo or 0
     selection = selection or 0
 
-    -- Clear the window refresh time
-    self.refreshTime = 0
 
     -- save the current directory
     self.currentPath = path
@@ -182,10 +183,10 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
 
 end
 
-function WorkspaceTool:UpdateFileList()
+function WorkspaceTool:UpdateFileList(useFiles)
 
     -- Get the list of files from the Lua Service
-    self.files = self:GetDirectoryContents(self.currentPath)
+    self.files = useFiles or self:GetDirectoryContents(self.currentPath)
 
     -- Save a count of the files after we add the special files to the list
     self.fileCount = #self.files
@@ -251,6 +252,23 @@ function WorkspaceTool:UpdateWindow()
     elseif(self.firstPress == true and editorUI.collisionManager.mouseReleased) then
 
         self.firstPress = false
+
+    end
+
+    -- Check for file system changes
+    self.refreshTime = self.refreshTime + editorUI.timeDelta
+    
+    if(self.refreshTime > self.refreshDelay) then
+
+        local tmpFiles = self:GetDirectoryContents(self.currentPath)
+
+        if(#tmpFiles ~= self.fileCount) then
+            self:UpdateFileList(tmpFiles)
+            -- Invalidate the component so it redraws at the end of the frame
+            editorUI:Invalidate(self)
+        end
+
+        self.refreshTime = 0
 
     end
 

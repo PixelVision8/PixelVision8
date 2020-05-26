@@ -604,10 +604,10 @@ namespace PixelVision8.Engine.Chips
                         tmpSpriteDataID = id;
                     }
 
-                    // DrawPixels(tmpSpriteData, x, y, SpriteChip.width, SpriteChip.height, flipH, flipV, drawMode,
-                        // colorOffset);
+                    DrawPixels(tmpSpriteData, x, y, SpriteChip.width, SpriteChip.height, flipH, flipV, drawMode,
+                        colorOffset);
 
-                    DisplayChip.DrawSprite(id, x, y, flipH, flipV, (byte)drawMode, colorOffset);
+                    // DisplayChip.DrawSprite(id, x, y, flipH, flipV, (byte)drawMode, colorOffset);
 
                     CurrentSprites++;
                 }

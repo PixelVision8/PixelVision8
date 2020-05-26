@@ -370,7 +370,7 @@ namespace PixelVision8.Engine.Chips
         public Color[] VisiblePixels()
         {
             var pixels = engine.DisplayChip.Pixels;
-
+            var cachedColors = engine.ColorChip.colors;
             var displaySize = engine.GameChip.Display();
 
             var visibleWidth = displaySize.X;
@@ -390,7 +390,7 @@ namespace PixelVision8.Engine.Chips
                 var col = i % width;
                 if (col < visibleWidth && index < newTotalPixels)
                 {
-                    // newPixels[index] = pixels[i];
+                    newPixels[index] = cachedColors[pixels[i]];
                     index++;
                 }
             }

@@ -22,11 +22,11 @@ function SettingsTool:CreateMonitorPanel()
 
 function SettingsTool:OnVolumeChange(value)
 
-  local newValue = Volume(value * 100)
+  local newValue = Volume(math.ceil(value * 100))
 
   WriteBiosData("Volume", newValue)
 
-  pixelVisionOS:DisplayMessage("Volume is now set to " .. tostring(value * 100) .. "%.")
+  pixelVisionOS:DisplayMessage(string.format("Volume is now set to %03d%%.", newValue))
 
   self.playSound = true
 

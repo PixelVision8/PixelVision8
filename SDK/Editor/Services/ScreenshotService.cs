@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Services;
+using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Workspace;
 
@@ -98,6 +99,8 @@ namespace PixelVision8.Runner.Services
 
             try
             {
+                var cachedColors = engine.ColorChip.colors;
+
                 var pixels = engine.DisplayChip.Pixels;
 
                 var displaySize = engine.GameChip.Display();
@@ -121,7 +124,7 @@ namespace PixelVision8.Runner.Services
                     var col = i % width;
                     if (col < visibleWidth && index < newTotalPixels)
                     {
-                        // newPixels[index] = pixels[i];
+                        newPixels[index] = cachedColors[pixels[i]];
                         index++;
                     }
                 }

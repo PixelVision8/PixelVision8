@@ -164,7 +164,7 @@ namespace PixelVision8.Engine.Chips
         {
             get
             {
-                if (invalid)
+                if (invalid || colorCache == null)
                 {
                     var t = total;
                     colorCache = new Color[t];
@@ -197,7 +197,7 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
-        public bool invalid { get; protected set; }
+        public bool invalid { get; protected set; } = true;
 
         public void Invalidate()
         {
