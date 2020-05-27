@@ -5,7 +5,7 @@ function SettingsTool:CreateMonitorPanel()
     self.volumeKnobData.onAction = function(value) self:OnVolumeChange(value) end 
     self.volumeKnobData.value = Volume() / 100
 
-    editorUI:Enable(self.volumeKnobData, not Mute())
+    -- editorUI:Enable(self.volumeKnobData, not Mute())
 
     self.brightnessKnobData = editorUI:CreateKnob({x = 40, y = 192, w = 24, h = 24}, "knob", "Change the brightness.")
     self.brightnessKnobData.onAction = function(value) self:OnBrightnessChange(value) end  
@@ -42,6 +42,12 @@ end
     editorUI:UpdateKnob(self.sharpnessKnobData)
 
     if(editorUI.collisionManager.mouseDown == false and self.playSound == true) then
+
+      -- unmute
+      if(Volume() > 0 and Mute() == true) then
+        Mute(false)
+      end
+
       PlayRawSound("0,1,,.2,,.2,.3,.1266,,,,,,,,,,,,,,,,,,1,,,,,,")
       self.playSound = false
     end
@@ -51,10 +57,13 @@ end
 
     if(self.lastMuteValue ~= newMuteValue) then
       self.lastMuteValue = newMuteValue
-      editorUI:Enable(self.volumeKnobData, not self.lastMuteValue)
+      -- editorUI:Enable(self.volumeKnobData, not self.lastMuteValue)
       -- editorUI:ToggleButton(muteBtnData, lastMuteValue, false)
       editorUI:ChangeKnob(self.volumeKnobData, Volume() / 100, false)
+      pixelVisionOS.titleBar.muteInvalid = true
     end
+
+    
 
     local newCRTValue = EnableCRT()
 
@@ -68,7 +77,6 @@ end
         editorUI:Enable(self.sharpnessKnobData, newCRTValue)
 
     end
-
 
   end
 

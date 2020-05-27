@@ -785,7 +785,9 @@ namespace PixelVision8.Runner
         {
             var vol = base.Volume(value);
 
-            bios.UpdateBiosData(BiosSettings.Volume.ToString(), vol.ToString());
+            // only save if not muted
+            if(Mute() == false)
+                bios.UpdateBiosData(BiosSettings.Volume.ToString(), vol.ToString());
 
             return vol;
         }
@@ -799,7 +801,9 @@ namespace PixelVision8.Runner
         {
             var mute = base.Mute(value);
 
-            bios.UpdateBiosData(BiosSettings.Mute.ToString(), mute.ToString());
+            // Only save if the value has changed
+            if(value != null)
+                bios.UpdateBiosData(BiosSettings.Mute.ToString(), mute.ToString());
 
             return mute;
         }

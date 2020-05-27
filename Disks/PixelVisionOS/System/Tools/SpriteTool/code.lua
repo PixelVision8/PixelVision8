@@ -181,7 +181,7 @@ function Init()
         toolBtnData.onAction = OnSelectTool
 
         -- TODO if using palettes, need to replace this with palette color value
-        local totalColors = gameEditor:TotalColors(true)--pixelVisionOS.totalSystemColors
+        local totalColors = pixelVisionOS.totalSystemColors
         local totalPerPage = 16--pixelVisionOS.systemColorsPerPage
         local maxPages = 16
         colorOffset = pixelVisionOS.colorOffset

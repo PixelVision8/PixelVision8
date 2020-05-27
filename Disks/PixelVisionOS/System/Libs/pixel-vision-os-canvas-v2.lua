@@ -237,8 +237,8 @@ function PixelVisionOS:UpdateCanvas(data, hitRect)
 
     local position = 
     {
-      x = Clamp(math.floor((editorUI.collisionManager.mousePos.x - data.rect.x) / data.gridSize), 0, editorUI.spriteSize.X - 1),
-      y = Clamp(math.floor((editorUI.collisionManager.mousePos.y - data.rect.y) / data.gridSize), 0, editorUI.spriteSize.y -1 ),
+      x = Clamp(math.floor((editorUI.collisionManager.mousePos.x - data.rect.x) / data.gridSize), 0, editorUI.spriteSize.X * data.scale - 1),
+      y = Clamp(math.floor((editorUI.collisionManager.mousePos.y - data.rect.y) / data.gridSize), 0, editorUI.spriteSize.y * data.scale -1 ),
     }
 
     data.toolTip = string.format("Over pixel (%02d,%02d)", position.x, position.y)

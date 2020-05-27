@@ -315,8 +315,8 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.GetLineBreak(sb, 1);
 
             // TODO legacy property
-            sb.Append("\"totalLoop\":");
-            sb.Append(musicChip.TotalLoops);
+            // sb.Append("\"totalLoop\":");
+            // sb.Append(musicChip.TotalLoops);
 
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");

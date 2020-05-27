@@ -287,12 +287,22 @@ namespace PixelVision8.Runner.Parsers
             var patternKey = "songs";
             //            var patternNameKey = "songName";
 
+            // Configure chip before parsing song data
+            if (data.ContainsKey("totalSongs")) musicChip.totalSongs = Convert.ToInt32((long)data["totalSongs"]);
+            if (data.ContainsKey("notesPerTrack")) musicChip.maxNoteNum = Convert.ToInt32((long)data["notesPerTrack"]);
+
+            if (data.ContainsKey("totalPatterns")) musicChip.TotalLoops = Convert.ToInt32((long)data["totalPatterns"]);
+
+            // TODO remove legacy property
+            if (data.ContainsKey("totalLoop")) musicChip.TotalLoops = Convert.ToInt32((long)data["totalLoop"]);
+
             if (data.ContainsKey("version") && (string) data["version"] == "v2")
 
             {
                 patternKey = "patterns";
                 //                patternNameKey = "patternName";
 
+                
 
                 // TODO build song playlist
 
@@ -301,10 +311,10 @@ namespace PixelVision8.Runner.Parsers
                 {
                     // Get the list of song data
                     var songsData = data["songs"] as List<object>;
-                    var total = songsData.Count;
+                    var total = Math.Min(songsData.Count, musicChip.totalSongs);
 
                     // Change the total songs to match the songs in the data
-                    musicChip.totalSongs = total;
+                    // musicChip.totalSongs = total;
 
                     // Loop through each of teh 
                     for (var i = 0; i < total; i++)
@@ -332,20 +342,17 @@ namespace PixelVision8.Runner.Parsers
             //            if (data.ContainsKey("totalTracks"))
             //                musicChip.totalTracks = Convert.ToInt32((long) data["totalTracks"]);
 
-            if (data.ContainsKey("notesPerTrack")) musicChip.maxNoteNum = Convert.ToInt32((long) data["notesPerTrack"]);
+            
 
-            if (data.ContainsKey("totalSongs")) musicChip.totalSongs = Convert.ToInt32((long) data["totalSongs"]);
+            
 
-            if (data.ContainsKey("totalPatterns")) musicChip.TotalLoops = Convert.ToInt32((long) data["totalPatterns"]);
-
-            // TODO remove legacy property
-            if (data.ContainsKey("totalLoop")) musicChip.TotalLoops = Convert.ToInt32((long) data["totalLoop"]);
+            
 
             if (data.ContainsKey(patternKey))
             {
                 var patternData = data[patternKey] as List<object>;
 
-                var total = patternData.Count;
+                var total = Math.Min(patternData.Count, musicChip.TotalLoops);
 
                 //                musicChip.totalLoops = total;
 
@@ -366,7 +373,7 @@ namespace PixelVision8.Runner.Parsers
                         var tracksData = (List<object>) sngData["tracks"];
                         //                        song.totalTracks = tracksData.Count;
 
-                        var trackCount = MathHelper.Clamp(tracksData.Count, 0, song.totalTracks);
+                        var trackCount = MathHelper.Clamp(tracksData.Count, 0, musicChip.totalTracks);
 
                         for (var j = 0; j < trackCount; j++)
                         {

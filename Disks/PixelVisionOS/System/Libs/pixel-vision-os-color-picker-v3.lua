@@ -170,7 +170,7 @@ function PixelVisionOS:RebuildColorPickerCache(data)
   data.nextCacheIndex = 1
   data.nextLoopTotal = 128
   data.nextLoopBlock = data.nextLoopTotal
-  data.nextCacheTotal = data.totalPages * 64
+  data.nextCacheTotal = data.totalPerPage * data.totalPages
 
   -- Delay between build loops
   data.buildCacheDelay = .05
@@ -247,7 +247,9 @@ function PixelVisionOS:DrawColorPickerColorItem(data, id)
     end
     
   else
+
     data.canvas.DrawSprites(emptycolor.spriteIDs, x, y, emptycolor.width, false, false)
+    
   end
 
 end

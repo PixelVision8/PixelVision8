@@ -137,14 +137,13 @@ function PixelVisionOS:CreateTitleBar(x, y, title, product)
     data.muteBtnData.hitRect = {x = data.muteDrawArgs[2], y = data.muteDrawArgs[3], w = 8, h = 11}
 
     data.muteBtnData.onAction = function()
-        local value = Mute(not Mute())
-
-        WriteBiosData("Mute", value == true and "True" or "False")
-
-        this.lastMuteValue = nil
+        Mute(not Mute())
+        data.muteInvalid = true
+        -- this.lastMuteValue = nil
     end
 
     data.muteBtnData.selected = Mute()
+    data.muteInvalid = true
 
     return data
 
@@ -552,14 +551,18 @@ function PixelVisionOS:DrawTitleBar(data)
     end
 
     -- TODO need to make sure this is cached in the lua bridge somewhere?
-    local newMuteValue = Mute()
-
-    if(self.lastMuteValue ~= newMuteValue) then
+   
+    -- if(self.lastMuteValue ~= newMuteValue) then
+    if(data.muteInvalid == true) then
+        -- print("Redraw mute")
+        local newMuteValue = Mute()
 
         data.muteDrawArgs[1] = newMuteValue and titlebarvolumeoff.spriteIDs or titlebarvolumeon.spriteIDs
 
         self.editorUI:NewDraw("DrawSprites", data.muteDrawArgs)
-        self.lastMuteValue = newMuteValue
+        -- self.lastMuteValue = newMuteValue
+
+        data.muteInvalid = false
 
     end
 

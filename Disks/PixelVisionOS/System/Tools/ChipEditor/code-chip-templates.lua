@@ -798,7 +798,7 @@ soundChips = {
     name = "GBoy",
     spriteName = "chipgboysound",
     type = "sound",
-    channels = { 0, 0, 5, 3},
+    channels = { 0, 0, 4, 3},
     message = "You are about to apply the GBoy sound chip settings. This chip uses 4 channels: two square, one wav sample, and one noise.",
     fields = {
       {

@@ -74,7 +74,7 @@ public class Image : TextureData
             {
                 _colorID = _pixelData[i];
 
-                if (_colorIDs.IndexOf(_colorID) == -1)
+                if (_colorID > -1 && _colorIDs.IndexOf(_colorID) == -1)
                 {
                     if (_colorIDs.Count < cps.Value)
                     {
