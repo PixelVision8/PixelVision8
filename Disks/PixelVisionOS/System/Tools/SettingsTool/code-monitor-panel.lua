@@ -57,13 +57,9 @@ end
 
     if(self.lastMuteValue ~= newMuteValue) then
       self.lastMuteValue = newMuteValue
-      -- editorUI:Enable(self.volumeKnobData, not self.lastMuteValue)
-      -- editorUI:ToggleButton(muteBtnData, lastMuteValue, false)
-      editorUI:ChangeKnob(self.volumeKnobData, Volume() / 100, false)
+      editorUI:ChangeKnob(self.volumeKnobData, Volume() / 100, true)
       pixelVisionOS.titleBar.muteInvalid = true
     end
-
-    
 
     local newCRTValue = EnableCRT()
 

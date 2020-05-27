@@ -71,7 +71,7 @@ namespace PixelVision8.Runner
 
         private static bool _mute;
         private static int lastVolume;
-        private static int muteVoldume;
+        private static int muteVolume;
 
         public readonly Dictionary<InputMap, int> defaultKeys = new Dictionary<InputMap, int>
         {
@@ -197,9 +197,15 @@ namespace PixelVision8.Runner
 
         public virtual int Volume(int? value = null)
         {
-            if (value.HasValue) lastVolume = value.Value;
+            if (value.HasValue) 
+                lastVolume = value.Value;
 
             SoundEffect.MasterVolume = lastVolume / 100f;
+
+            if (_mute == true && lastVolume > 0)
+            {
+                muteVolume = lastVolume;
+            }
 
             return lastVolume;
         }
@@ -207,23 +213,30 @@ namespace PixelVision8.Runner
         public virtual bool Mute(bool? value = null)
         {
             if (value.HasValue)
-                if (_mute != value)
+            {
+                // if (_mute != value)
+                // {
+                _mute = value.Value;
+
+                if (_mute)
                 {
-                    _mute = value.Value;
+                    muteVolume = lastVolume;
 
-                    if (_mute)
-                    {
-                        muteVoldume = lastVolume;
-
-                        Volume(0);
-                    }
-                    else
-                    {
-                        Volume(muteVoldume);
-                    }
+                    Volume(0);
                 }
+                else
+                {
+                    // Restore volume to halfway if un-muting and last  value was 0
+                    if (muteVolume < 5)
+                    {
+                        muteVolume = 50;
+                    }
+                    Volume(muteVolume);
+                }
+                // }
+            }
 
-            return _mute;
+            return SoundEffect.MasterVolume == 0 || _mute;
         }
 
 

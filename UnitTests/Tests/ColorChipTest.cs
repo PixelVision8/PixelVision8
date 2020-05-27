@@ -199,7 +199,7 @@ namespace PixelVision8Tests
 
             if (LoadColorChip())
             {
-                Assert.AreEqual(colorChip.backgroundColor, 1);
+                Assert.AreEqual(colorChip.backgroundColor, 0);
             }
             else
             {
