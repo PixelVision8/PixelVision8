@@ -19,6 +19,7 @@
 //
 
 using System;
+using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Engine
 {
@@ -26,14 +27,14 @@ namespace PixelVision8.Engine
     public sealed class TileData : AbstractData
     {
         private int _colorOffset;
-        private byte _flag = 0;
+        private int _flag = -1;
         private bool _flipH;
         private bool _flipV;
         private int _spriteID;
 
         private int _index;
 
-        public TileData(int index, int spriteID = -1, int colorOffset = 0, byte flag = 0, bool flipH = false,
+        public TileData(int index, int spriteID = -1, int colorOffset = 0, int flag = -1, bool flipH = false,
             bool flipV = false)
         {
             Index = index;
@@ -76,12 +77,12 @@ namespace PixelVision8.Engine
             }
         }
 
-        public byte flag
+        public int flag
         {
             get => _flag;
             set
             {
-                _flag = value;
+                _flag = MathHelper.Clamp(value, -1, 255);
                 Invalidate();
             }
         }

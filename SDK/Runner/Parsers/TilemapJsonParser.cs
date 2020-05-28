@@ -175,7 +175,7 @@ namespace PixelVision8.Runner.Parsers
                                     var propName = (string)prop["name"];
                             
                                     if (propName == "flagID")
-                                        tile.flag = unchecked((byte)(long)prop["value"]);
+                                        tile.flag = (int)(long)prop["value"];
                                     else if (propName == "colorOffset") 
                                         tile.colorOffset = (int)(long)prop["value"];
                                 }
@@ -272,7 +272,7 @@ namespace PixelVision8.Runner.Parsers
 
                                 if ((string) layer["name"] == "Sprites")
                                     tile.spriteID = dataValues[j];
-                                else if ((string) layer["name"] == "Flags") tile.flag = unchecked((byte)dataValues[j]);
+                                else if ((string) layer["name"] == "Flags") tile.flag = dataValues[j];
 
                                 // tile.Invalidate();
                             }
@@ -318,7 +318,7 @@ namespace PixelVision8.Runner.Parsers
                                     var propName = (string) prop["name"];
 
                                     if (propName == "flagID")
-                                        tile.flag = unchecked((byte)(long)prop["value"]);
+                                        tile.flag = (int)(long)prop["value"];
                                     else if (propName == "colorOffset") tile.colorOffset = (int) (long) prop["value"];
                                 }
 
