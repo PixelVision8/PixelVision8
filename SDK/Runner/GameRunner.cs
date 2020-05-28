@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
@@ -311,18 +310,18 @@ namespace PixelVision8.Runner
                     .cropScreen; //Convert.ToBoolean(workspaceService.ReadBiosData(BiosSettings.CropScreen.ToString(), "False") as string);
         }
 
-        public void DebugLayers(bool value)
-        {
-            debugLayers = value;
-        }
-
-        public void ToggleLayers(int value)
-        {
-            if (!debugLayers) return;
-
-            //                if (mode == RunnerMode.Play)
-            ActiveEngine.DisplayChip.layers = value - 1;
-        }
+        // public void DebugLayers(bool value)
+        // {
+        //     debugLayers = value;
+        // }
+        //
+        // public void ToggleLayers(int value)
+        // {
+        //     if (!debugLayers) return;
+        //
+        //     //                if (mode == RunnerMode.Play)
+        //     ActiveEngine.DisplayChip.layers = value - 1;
+        // }
 
         /// <summary>
         ///     Reset the currently running game.

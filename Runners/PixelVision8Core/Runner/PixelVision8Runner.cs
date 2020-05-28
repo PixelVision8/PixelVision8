@@ -433,19 +433,19 @@ namespace PixelVision8.Runner
             }
             else
             {
-                if (controllerChip.GetKeyUp(Keys.D1))
-                    ToggleLayers(2);
-                else if (controllerChip.GetKeyUp(Keys.D2))
-                    ToggleLayers(3);
-                else if (controllerChip.GetKeyUp(Keys.D3))
-                    ToggleLayers(4);
-                else if (controllerChip.GetKeyUp(Keys.D4))
-                    ToggleLayers(5);
-                else if (controllerChip.GetKeyUp(Keys.D5))
-                    ToggleLayers(6);
-                else if (controllerChip.GetKeyUp(Keys.D6))
-                    ToggleLayers(7);
-                else if (controllerChip.GetKeyUp(Keys.D7)) ToggleLayers(Enum.GetNames(typeof(DrawMode)).Length);
+                // if (controllerChip.GetKeyUp(Keys.D1))
+                //     ToggleLayers(2);
+                // else if (controllerChip.GetKeyUp(Keys.D2))
+                //     ToggleLayers(3);
+                // else if (controllerChip.GetKeyUp(Keys.D3))
+                //     ToggleLayers(4);
+                // else if (controllerChip.GetKeyUp(Keys.D4))
+                //     ToggleLayers(5);
+                // else if (controllerChip.GetKeyUp(Keys.D5))
+                //     ToggleLayers(6);
+                // else if (controllerChip.GetKeyUp(Keys.D6))
+                //     ToggleLayers(7);
+                // else if (controllerChip.GetKeyUp(Keys.D7)) ToggleLayers(Enum.GetNames(typeof(DrawMode)).Length);
             }
 
             // Capture Script errors

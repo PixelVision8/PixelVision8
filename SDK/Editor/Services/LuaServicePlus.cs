@@ -134,8 +134,8 @@ namespace PixelVision8.Runner.Services
             UserData.RegisterType<Image>();
 
             // Experimental
-            luaScript.Globals["DebugLayers"] = new Action<bool>(runner.DebugLayers);
-            luaScript.Globals["ToggleLayers"] = new Action<int>(runner.ToggleLayers);
+            // luaScript.Globals["DebugLayers"] = new Action<bool>(runner.DebugLayers);
+            // luaScript.Globals["ToggleLayers"] = new Action<int>(runner.ToggleLayers);
             luaScript.Globals["ResizeColorMemory"] = new Action<int, int>(ResizeColorMemory);
 
         }

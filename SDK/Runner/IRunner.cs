@@ -35,8 +35,8 @@ namespace PixelVision8.Runner
         bool Fullscreen(bool? value = null);
         bool StretchScreen(bool? value = null);
         bool CropScreen(bool? value = null);
-        void DebugLayers(bool value);
-        void ToggleLayers(int value);
+        // void DebugLayers(bool value);
+        // void ToggleLayers(int value);
         void ResetGame();
         IServiceLocator ServiceManager { get;}
 
