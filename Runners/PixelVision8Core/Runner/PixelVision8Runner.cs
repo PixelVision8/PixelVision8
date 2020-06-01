@@ -709,6 +709,8 @@ namespace PixelVision8.Runner
         {
             base.ConfigureEngine(metaData);
 
+            if (!LuaMode)
+                return; 
             // Get a reference to the Lua game
             var game = tmpEngine.GameChip as LuaGameChip;
 

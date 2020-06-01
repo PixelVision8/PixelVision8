@@ -148,7 +148,8 @@ namespace PixelVision8.Engine
             // Reset the sprite counter on each frame
             GameChip.CurrentSprites = 0;
 
-            foreach (var chip in UpdateChips) chip.Update(timeDelta); //delta / 1000f);
+            foreach (var chip in UpdateChips)
+                chip.Update(timeDelta); //delta / 1000f);
         }
 
         /// <summary>
@@ -159,7 +160,8 @@ namespace PixelVision8.Engine
         /// <tocexclude />
         public virtual void Draw()
         {
-            foreach (var chip in DrawChips) chip.Draw();
+            foreach (var chip in DrawChips)
+                chip.Draw();
         }
 
         /// <summary>

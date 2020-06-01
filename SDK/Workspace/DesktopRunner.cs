@@ -22,7 +22,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
 using PixelVision8.Engine;
@@ -69,6 +72,8 @@ namespace PixelVision8.Runner
         // protected delegate float SharpnessDelegator(float? sharpness = null);
         // protected IControllerChip controllerChip;
 
+        public bool LuaMode = true;
+
         /// <summary>
         ///     This constructor saves the path to the game's files and kicks off the base constructor
         /// </summary>
@@ -105,7 +110,8 @@ namespace PixelVision8.Runner
                 var chips = base.DefaultChips;
 
                 // Add the custom C# game chip
-                chips.Add(typeof(LuaGameChip).FullName);
+                //RoslynMode replaces this if necessary for now
+                    chips.Add(typeof(LuaGameChip).FullName);
 
                 // Return the list of chips
                 return chips;
@@ -168,11 +174,18 @@ namespace PixelVision8.Runner
             // Make the loaded engine active
             ActiveEngine = engine;
 
-            LuaGameChip tempQualifier = ((LuaGameChip)ActiveEngine.GameChip);
+            if (LuaMode)
+            {
+                LuaGameChip tempQualifier = ((LuaGameChip)ActiveEngine.GameChip);
+                tempQualifier.LoadScript(tempQualifier.DefaultScriptPath);
+            }
+            else
+            {
+                //Roslyn Mode
+                //The LuaGameChip created by default gets deactivated after the Roslyn chip is compiled.
+            }
 
-            tempQualifier.LoadScript(tempQualifier.DefaultScriptPath);
-
-            ActiveEngine.ResetGame();
+                ActiveEngine.ResetGame();
 
             // After loading the game, we are ready to run it.
             ActiveEngine.RunGame();
@@ -344,44 +357,107 @@ namespace PixelVision8.Runner
 
             base.ConfigureEngine(metaData);
 
-            // Get a reference to the    Lua game
-            var game = tmpEngine.GameChip as LuaGameChip;
+            //Alternate TODO: allow  one of the .json files in a game to declare if it's a C# or a LUA game instead of reading files?
+            if (File.Exists(rootPath + "\\" + metaData["GameName"] + "\\code.cs")) //TODO: shift this to use workspace paths, 
+                LuaMode = false;
 
-            // Get the script
-            var luaScript = game.LuaScript;
+            if (LuaMode)
+            {
+                // Get a reference to the  Lua game
+                var game = tmpEngine.GameChip as LuaGameChip;
 
-            // Limit which APIs are exposed based on the mode for security
-            // if (mode == RunnerMode.Loading)
-            // {
+
+                // Get the script
+                var luaScript = game.LuaScript;
+
+                // Limit which APIs are exposed based on the mode for security
+                // if (mode == RunnerMode.Loading)
+                // {
                 luaScript.Globals["StartNextPreload"] = new Action(StartNextPreload);
                 luaScript.Globals["PreloaderComplete"] = new Action(RunGame);
                 luaScript.Globals["ReadPreloaderPercent"] = new Func<int>(() => (int)(MathHelper.Clamp(loadService.Percent * 100, 0, 100)));
 
-            // }else
-            if (mode == RunnerMode.Booting)
-            {
-                luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
+                // }else
+                if (mode == RunnerMode.Booting)
+                {
+                    luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
+                }
+                else
+                {
+                    luaScript.Globals["LoadGame"] =
+                        new Func<string, Dictionary<string, string>, bool>((path, metadata) =>
+                            Load(path, RunnerMode.Loading, metadata));
+                }
+
+                // Global System APIs
+                luaScript.Globals["EnableCRT"] = new Func<bool?, bool>(EnableCRT);
+                luaScript.Globals["Brightness"] = new Func<float?, float>(Brightness);
+                luaScript.Globals["Sharpness"] = new Func<float?, float>(Sharpness);
+                luaScript.Globals["SystemVersion"] = new Func<string>(() => SystemVersion);
+                luaScript.Globals["SystemName"] = new Func<string>(() => systemName);
+                luaScript.Globals["SessionID"] = new Func<string>(() => SessionId);
+                luaScript.Globals["ReadBiosData"] = new Func<string, string, string>((key, defaultValue) =>
+                    bios.ReadBiosData(key, defaultValue));
+                luaScript.Globals["WriteBiosData"] = new Action<string, string>(bios.UpdateBiosData);
+
+                luaScript.Globals["ControllerConnected"] = new Func<int, bool>(tmpEngine.ControllerChip.IsConnected);
             }
             else
             {
-                luaScript.Globals["LoadGame"] =
-                    new Func<string, Dictionary<string, string>, bool>((path, metadata) =>
-                        Load(path, RunnerMode.Loading, metadata));
+                //Roslyn mode. Build the game. TODO: correct to use workspace paths. Hardcoded for Proof-Of-Concept
+                CompileFromSource(rootPath + "\\" + metaData["GameName"] + "\\code.cs");
             }
 
-            // Global System APIs
-            luaScript.Globals["EnableCRT"] = new Func<bool?, bool>(EnableCRT);
-            luaScript.Globals["Brightness"] = new Func<float?, float>(Brightness);
-            luaScript.Globals["Sharpness"] = new Func<float?, float>(Sharpness);
-            luaScript.Globals["SystemVersion"] = new Func<string>(() => SystemVersion);
-            luaScript.Globals["SystemName"] = new Func<string>(() => systemName);
-            luaScript.Globals["SessionID"] = new Func<string>(() => SessionId);
-            luaScript.Globals["ReadBiosData"] = new Func<string, string, string>((key, defaultValue) =>
-                bios.ReadBiosData(key, defaultValue));
-            luaScript.Globals["WriteBiosData"] = new Action<string, string>(bios.UpdateBiosData);
+        }
 
-            luaScript.Globals["ControllerConnected"] = new Func<int, bool>(tmpEngine.ControllerChip.IsConnected);
+        //This function and related Roslyn-powered C# support changes contributed by Drake Williams
+        public void CompileFromSource(string file = "code.cs")
+        {
+            //TODO: Loop over multiple C# files and compile them all into the same assembly.
+            //make an array or list of SyntaxTree here, loop over all .cs files, add each to the array/list.
+            string code = File.ReadAllText(file); //TODO replace with standard file loader. Single file for PoC
+            var tree = CSharpSyntaxTree.ParseText(code);
 
+            //Compilation options, should line up 1:1 with Visual Studio since it's the same underlying compiler.
+            var options = new CSharpCompilationOptions(outputKind: Microsoft.CodeAnalysis.OutputKind.DynamicallyLinkedLibrary,
+                optimizationLevel: Microsoft.CodeAnalysis.OptimizationLevel.Release,
+                moduleName: "RoslynGame");
+
+            //All of these are mandatory. This appears to the be minimum needed. Uncertain as of initial PoC if anything else outside of this needs referenced.
+            var references = new MetadataReference[]
+            {
+                MetadataReference.CreateFromFile(typeof(object).Assembly.Location), //System.Private.CoreLib
+                MetadataReference.CreateFromFile(typeof(Console).Assembly.Location), //System.Console
+                MetadataReference.CreateFromFile(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location), //System.Runtime
+                MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location), //Microsoft.CSharp
+                MetadataReference.CreateFromFile(typeof(GameChip).Assembly.Location), //PixelVision8Runner
+                MetadataReference.CreateFromFile("MonoGame.Framework.dll"), //MonoGameFramework
+                MetadataReference.CreateFromFile(Assembly.Load("netstandard").Location), //Required due to a .NET Standard 2.0 dependency somewhere.
+            };
+
+            var compiler = CSharpCompilation.Create("LoadedGame", new[] { tree }, references, options);
+
+            //Compile the existing file into memory, or error out.
+            var stream = new MemoryStream();
+            var compileResults = compiler.Emit(stream);
+            if (compileResults.Success)
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+            }
+            else
+            {
+                //TODO: error handling, use data from compileResults to show user what's wrong.
+                return;
+            }
+
+            //Get the DLL into active memory so we can use it.
+            byte[] roslynassembly = stream.ToArray();
+            var loadedAsm = Assembly.Load(roslynassembly);
+            var roslynGameChipType = loadedAsm.GetType("PixelVisionRoslyn.RoslynGameChip"); //This type much match what's in code.cs.
+            //Could theoretically iterate over types until once that inherits from GameChip is found, but this Proof of Concept demonstrates the baseline feature.
+
+            tmpEngine.GameChip.Deactivate(); //Remove the previous LuaGameChip.
+            tmpEngine.ActivateChip("GameChip", (AbstractChip)Activator.CreateInstance(roslynGameChipType)); //Inserts the DLL's GameChip descendent into the engine.
         }
 
         public virtual void DisplayError(ErrorCode code, Dictionary<string, string> tokens = null,

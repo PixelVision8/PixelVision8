@@ -71,6 +71,7 @@
 
   <ItemGroup>
     <PackageReference Include="ICSharpCode.SharpZipLib.dll" Version="0.85.4.369" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.6.0" />
     <PackageReference Include="MoonSharp" Version="2.0.0" />
   </ItemGroup>
 

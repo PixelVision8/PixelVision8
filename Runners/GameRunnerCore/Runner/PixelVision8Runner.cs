@@ -709,15 +709,19 @@ namespace PixelVision8.Runner
         {
             base.ConfigureEngine(metaData);
 
-            // Get a reference to the Lua game
-            var game = tmpEngine.GameChip as LuaGameChip;
+            if (!LuaMode)
+                return;
+            
+                // Get a reference to the Lua game
+                var game = tmpEngine.GameChip as LuaGameChip;
 
-            // Get the script
-            var luaScript = game.LuaScript;
+                // Get the script
+                var luaScript = game.LuaScript;
 
-            luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
-            luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
 
+                luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
+                luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
+            
 
             if (mode == RunnerMode.Playing)
             {

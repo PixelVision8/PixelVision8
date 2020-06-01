@@ -39,7 +39,8 @@ namespace PixelVision8.Runner.Services
             "lua",
             "json",
             "txt",
-            "wav"
+            "wav",
+            "cs"
         };
 
         protected WorkspacePath logFilePath;
