@@ -457,7 +457,7 @@ gpuChips = {
     name = "CGA",
     spriteName = "chipcgagpu",
     type = "gpu",
-    message = "You are about to apply the Pico GPU chip settings. The new GPU will allow for a resolution of 320x200 after accounting for overscan, remove the sprite limit, set the colors per sprite to 4 and replace the existing colors with a new 16 color set.",
+    message = "You are about to apply the CGA GPU chip settings. The new GPU will allow for a resolution of 320x200 after accounting for overscan, remove the sprite limit, set the colors per sprite to 4 and replace the existing colors with a new 16 color set.",
     fields = {
       {
         name = "displayWidthInputData",
@@ -856,7 +856,7 @@ soundChips = {
     name = "Pico",
     spriteName = "chippicosound",
     type = "sound",
-    message = "You are about to apply the Pico sound chip settings. his chip uses 4 channels capable of square, saw, noise, triangle and wav sample on any channel.",
+    message = "You are about to apply the Pico sound chip settings. This chip uses 4 channels capable of square, saw, noise, triangle and wav sample on any channel.",
     fields = {
       {
         name = "songTotalInputData",
@@ -885,7 +885,7 @@ soundChips = {
     name = "ArduKid",
     spriteName = "chipardukidsound",
     type = "sound",
-    message = "You are about to apply the ArduKid sound chip settings. his chip uses 2 channels capable of square, saw, noise, triangle and wav sample on any channel.",
+    message = "You are about to apply the ArduKid sound chip settings. This chip uses 2 channels capable of square, saw, noise, triangle and wav sample on any channel.",
     fields = {
       {
         name = "songTotalInputData",
