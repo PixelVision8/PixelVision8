@@ -1,0 +1,89 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <EnableDefaultCompileItems>False</EnableDefaultCompileItems>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <AssemblyName>PixelVision8</AssemblyName>
+    <RootNamespace>PixelVision8</RootNamespace>
+    <Version>1.9.8</Version>
+    <PackageId>PixelVision8</PackageId>
+    <PackageIcon>Icon.png</PackageIcon>
+    <Copyright>Jesse Freeman 2020</Copyright>
+    <UseAppHost>true</UseAppHost>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Examples\**" />
+    <None Remove="Disks\**" />
+    <None Remove="LICENSE.txt" />
+    <None Remove="CODE_OF_CONDUCT.md" />
+    <None Remove=".gitignore" />
+    <None Remove="Effects\mgfxc.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Icon.ico">
+      <LogicalName>Icon.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icon.bmp">
+      <LogicalName>Icon.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icon.icns">
+      <LogicalName>Icon.icns</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Remove="Examples\**" />
+    <EmbeddedResource Remove="Disks\**" />
+    <EmbeddedResource Remove="Resources\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Content\bios.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+<!--    <Content Include="Effects\crt-lottes-mg.ogl.mgfxo">-->
+<!--      <Link>Content\Effects\crt-lottes-mg.ogl.mgfxo</Link>-->
+<!--      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
+<!--    </Content>-->
+    <Content Include="Disks\RunnerTools\**\*.*">
+      <Link>Content\PixelVisionOS\Tools\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Disks\PixelVisionOS\System\**\*.*">
+      <Link>Content\PixelVisionOS\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="PixelVision8Runner.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="SDK\Editor\**\*.cs">
+      <Link>SDK\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="SDK\Engine\**\*.cs">
+      <Link>SDK\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="SDK\Lua\**\*.cs">
+      <Link>SDK\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="SDK\Runner\**\*.cs">
+      <Link>SDK\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="SDK\Workspace\**\*.cs">
+      <Link>SDK\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Remove="Examples\**" />
+    <Compile Remove="Runners\**" />
+    <Compile Remove="Disks\**" />
+    <Compile Remove="Resources\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ICSharpCode.SharpZipLib.dll" Version="0.85.4.369" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+    <PackageReference Include="MoonSharp" Version="2.0.0" />
+  </ItemGroup>
+
+</Project>

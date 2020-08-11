@@ -9,10 +9,20 @@
     <Import_RootNamespace>PixelVisionLua</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Chips\Game\LuaGameChip.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\LuaRunner.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LuaLoadService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ScriptParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LuaService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\Chips\Game\LuaGameChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\LuaRunner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\Services\LuaService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\Debugger\AsyncDebugger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\Debugger\DebugSession.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\Debugger\EmptyDebugSession.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\Debugger\IAsyncDebuggerClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\Debugger\MoonSharpDebugSession.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\Debugger\MoonSharpVsCodeDebugServer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\Debugger\Protocol.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\Debugger\Utilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\Debugger\VariableInspector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\Chips\Game\LuaDebugGameChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\Parsers\ScriptParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lua\Utils\ScriptLoaderUtil.cs" />
   </ItemGroup>
 </Project>

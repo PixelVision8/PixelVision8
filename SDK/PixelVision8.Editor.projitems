@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>35DA9648-5D5C-438D-9C84-67EF123B685D</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>PixelVisionEditor</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Audio\SfxrMusicGeneratorChip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Editors\GameEditor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\BackgroundScriptRunner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\ColorPaletteExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\DiskExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\FontExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\GifExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\IImageExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\ImageExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\MetaDataExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\MetaSpriteExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\MusicExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\PixelDataExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\PNGWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\SongExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\SoundExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\SpriteBuilderExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\SpriteExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\SystemExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\TilemapJsonExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\ZipDiskExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Exporters\ZipExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Services\BaseExportService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Services\GameDataExportService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Services\LoadServicePlus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Services\LuaPlatformAccessorService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Services\LuaServicePlus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Services\ScreenshotService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Editor\Services\WorkspaceServicePlus.cs" />
+  </ItemGroup>
+</Project>

@@ -9,25 +9,28 @@
     <Import_RootNamespace>PixelVisionWorkspace</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\DesktopRunner.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\AbstractExporter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\IAbstractExporter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Exporters\SavedDataExporter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\BiosService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\WorkspaceService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\Collections\EnumerableCollection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\Collections\InverseComparer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystemExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\WorkspacePath.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\FileSystemMounter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\MemoryFileSystem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\MergedFileSystem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\PhysicalFileSystem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\SubFileSystem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\FileSystems\ZipFileSystem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\IFileSystem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\IO\EmptyStream.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\IO\StreamExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Workspace\ParseException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\DesktopRunner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Utils\WorkspaceFileLoadHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Services\BiosService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Services\WorkspaceService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\Collections\EnumerableCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\Collections\InverseComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\FileSystemExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\WorkspacePath.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\FileSystems\FileSystemMounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\FileSystems\MemoryFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\FileSystems\MergedFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\FileSystems\PhysicalFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\FileSystems\ReadOnlyFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\FileSystems\SubFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\FileSystems\ZipFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\IFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\IO\EmptyStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\IO\StreamExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Workspace\ParseException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Exporters\AbstractExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Exporters\IAbstractExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Exporters\SavedDataExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workspace\Data\SpriteExportData.cs" />
   </ItemGroup>
 </Project>

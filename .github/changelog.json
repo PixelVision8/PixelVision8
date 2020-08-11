@@ -1,0 +1,39 @@
+{
+  // "commits" or "prs", defaults to commits. "prs" will soon allow for resolving labels
+  // from pull requests
+  "resolve": "commits",
+
+  // "asc" or "desc", determines the order of commits in the output
+  "sort": "asc",
+
+  // GitHub user or org name
+  "owner": "jimschubert",
+
+  // Repository name
+  "repo": "changelog",
+
+  // Enterprise GitHub base url
+  "enterprise": "https://ghe.example.com",
+
+  // Path to custom template following Go Text template syntax
+  "template": "/path/to/your/template",
+
+  // Group commits by headings based on patterns supporting Perl syntax regex or plain text
+  "groupings": [
+    { "name":  "Contributions", "patterns":  [ "(?i)\\bfeat\\b" ] }
+  ],
+
+  // Exclude commits based on this set of patterns or texts
+  // (useful for common maintenance commit messages)
+  "exclude": [
+    "^(?i)release\\s+\\d+\\.\\d+\\.\\d+",
+    "^(?i)minor fix\\b",
+    "^(?i)wip\\b"
+  ],
+
+  // Prefers local commits over API. Requires executing from within a Git repository.
+  "local": false,
+
+  // Processes UP TO this many commits before processing exclusion/inclusion rules. Defaults to size returned from GitHub API.
+  "max_commits": 250
+}

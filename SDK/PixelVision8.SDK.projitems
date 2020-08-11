@@ -29,7 +29,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\AbstractData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Canvas.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\DrawRequest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\Keys.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\SpriteCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\RawAudioData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\SongData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Data\SoundData.cs" />
@@ -47,7 +48,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Utils\MathUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Utils\SpriteChipUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\DisplayTarget.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Data\SpriteExportData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\IDisplayTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\IRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\AbstractParser.cs" />
@@ -58,10 +58,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\IAbstractParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\IImageParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\ImageParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\SpriteImageParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\JsonParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\MetaDataParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\PNGFileReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\PNGReader.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\SpriteParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\SystemParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TilemapJsonParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Parsers\TilemapParser.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LoadService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\LogService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Services\SaveFlags.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\FileLoadHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\JsonUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\MiniJSON.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runner\Utils\PNGUtils.cs" />

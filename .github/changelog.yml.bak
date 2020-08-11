@@ -1,0 +1,26 @@
+%YAML 1.1
+---
+resolve: prs
+groupings:
+  - name: Features
+    patterns:
+      - \bfeat\b
+      - \bfeature\b
+      - \badd\b
+      - \bUpdate\b
+  - name: Bugs
+    patterns:
+      - (?i)\bbug\b
+      - (?i)\bfix\b
+  - name: Docs
+    patterns:
+      - docs\b
+  - name: Other
+    patterns:
+      - '.?'
+exclude:
+  - wip
+  - help wanted
+  - Initial commit
+sort: desc
+local: false
