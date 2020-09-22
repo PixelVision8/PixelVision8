@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Services;
+using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Workspace;
 
@@ -29,15 +30,16 @@ namespace PixelVision8.Runner.Services
 {
     public class ScreenshotService : AbstractService
     {
-//        private ITextureFactory textureFactory;
+        private readonly PNGWriter imageExporter;
+
+        //        private ITextureFactory textureFactory;
         private readonly WorkspaceService workspace;
         private bool active;
-        private readonly PNGWriter imageExporter;
 
         public ScreenshotService(WorkspaceService workspace)
         {
             // TODO this needs to get teh workspace through the service
-//            this.textureFactory = textureFactory;
+            //            this.textureFactory = textureFactory;
             this.workspace = workspace;
 
             imageExporter = new PNGWriter();
@@ -47,7 +49,7 @@ namespace PixelVision8.Runner.Services
         {
             get
             {
-//                var fileSystem = workspace.fileSystem;
+                //                var fileSystem = workspace.fileSystem;
                 try
                 {
                     var directoryName =
@@ -63,7 +65,7 @@ namespace PixelVision8.Runner.Services
                     }
                     catch
                     {
-//                        Console.WriteLine("Screenshot Error: No workspace found.");
+                        //                        Console.WriteLine("Screenshot Error: No workspace found.");
                     }
 
                     // Check to see if a screenshot directory exits
@@ -75,7 +77,7 @@ namespace PixelVision8.Runner.Services
                 }
                 catch
                 {
-//                    Console.WriteLine("Save Screenshot Error:\n"+e.Message);
+                    //                    Console.WriteLine("Save Screenshot Error:\n"+e.Message);
                 }
 
                 return WorkspacePath.Root;
@@ -89,23 +91,26 @@ namespace PixelVision8.Runner.Services
 
         public bool TakeScreenshot(IEngine engine)
         {
-//            throw new NotImplementedException();
+            //            throw new NotImplementedException();
 
             var fileName = GenerateScreenshotName().Path;
 
-            if (active == false)
-                return active;
+            if (active == false) return active;
 
             try
             {
-                var pixels = engine.displayChip.pixels;
+                // var cachedColors = engine.ColorChip.colors;
 
-                var displaySize = engine.gameChip.Display();
+                var cachedColors =ColorUtils.ConvertColors(engine.ColorChip.hexColors, "#FF00FF", true);
+
+                var pixels = engine.DisplayChip.Pixels;
+
+                var displaySize = engine.GameChip.Display();
 
 
                 var visibleWidth = displaySize.X;
                 var visibleHeight = displaySize.Y;
-                var width = engine.displayChip.width;
+                var width = engine.DisplayChip.Width;
 
 
                 // Need to crop the image
@@ -121,7 +126,7 @@ namespace PixelVision8.Runner.Services
                     var col = i % width;
                     if (col < visibleWidth && index < newTotalPixels)
                     {
-                        newPixels[index] = pixels[i];
+                        newPixels[index] = cachedColors[pixels[i]];
                         index++;
                     }
                 }
@@ -131,9 +136,7 @@ namespace PixelVision8.Runner.Services
                 tmpExporter.CalculateSteps();
 
                 // Manually step through the exporter
-                while (tmpExporter.completed == false)
-                    tmpExporter.NextStep();
-
+                while (tmpExporter.completed == false) tmpExporter.NextStep();
 
                 workspace.SaveExporterFiles(new Dictionary<string, byte[]> {{tmpExporter.fileName, tmpExporter.bytes}});
 
@@ -141,7 +144,7 @@ namespace PixelVision8.Runner.Services
             }
             catch
             {
-//                Console.WriteLine("Take Screenshot Error:\n"+e.Message);
+                //                Console.WriteLine("Take Screenshot Error:\n"+e.Message);
                 // TODO throw some kind of error?
                 return false;
             }

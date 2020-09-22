@@ -39,16 +39,14 @@ namespace PixelVision8.Engine.Services
 
         public IService GetService(string id)
         {
-            if (services.ContainsKey(id))
-                return services[id];
+            if (services.ContainsKey(id)) return services[id];
 
             throw new Exception("The requested service '" + id + "' is not registered");
         }
 
         public void RemoveService(string id)
         {
-            if (services.ContainsKey(id))
-                services.Remove(id);
+            if (services.ContainsKey(id)) services.Remove(id);
 
             throw new Exception("The requested service '" + id + "' is not registered");
         }

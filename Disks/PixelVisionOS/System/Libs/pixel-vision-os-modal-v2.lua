@@ -18,11 +18,8 @@ function PixelVisionOS:OpenModal(modal, callBack)
 
   SaveTilemapCache()
 
-  self.closeDelay = .2
-  self.closeTime = -1
-
   -- Clear the previous mouse focus
-  self.editorUI:ClearFocus()
+  editorUI:ClearFocus()
 
   -- Set the active modal
   self.activeModal = modal
@@ -38,49 +35,70 @@ function PixelVisionOS:OpenModal(modal, callBack)
   self.activeModal:Open()
 
   -- Disable the menu button in the toolbar
-  self.editorUI:Enable(self.titleBar.iconButton, false)
+  editorUI:Enable(self.titleBar.iconButton, false)
+
+  self.modalCloseTime = nil
 
 end
 
 function PixelVisionOS:CloseModal()
-  if(self.activeModal ~= nil) then
-
-    if(self.activeModal.Close ~= nil) then
-      self.activeModal:Close()
-    end
-
-    self.editorUI:ClearFocus()
-
-    RestoreTilemapCache()
-
+  if(self.activeModal == nil) then
+    return
   end
+
+  if(self.activeModal.Close ~= nil) then
+    self.activeModal:Close()
+  end
+
+  editorUI:ClearFocus()
+
+  RestoreTilemapCache()
+
+  self.modalCloseDelay = .15
+  self.modalCloseTime = 0
 
   self.activeModal = nil
 
-  -- Trigger the callback so other objects can know when the modal is closed
-  if(self.onCloseCallback ~= nil) then
-
-    -- print("Close Modal")
-    
-    self.onCloseCallback()
-
-    self.onCloseCallback = nil
-  end
-
-  -- Enable the menu button in the toolbar
-  self.editorUI:Enable(self.titleBar.iconButton, true)
-
-  self.editorUI:Invalidate(self.titleBar)
+  -- print("Close Modal")
 
 end
 
-function PixelVisionOS:UpdateModal(deltaTime)
+function PixelVisionOS:UpdateModal(timeDelta)
+
+  if(self.modalCloseTime ~= nil) then
+
+    self.modalCloseTime = self.modalCloseTime + timeDelta
+
+    -- print("self.modalCloseTime", self.modalCloseTime)
+
+    if(self.modalCloseTime >= self.modalCloseDelay) then
+
+      self.modalCloseTime = nil
+
+      -- print("Modal Closed")
+
+      -- Trigger the callback so other objects can know when the modal is closed
+      if(self.onCloseCallback ~= nil) then
+        self.onCloseCallback()
+
+        -- TODO disabled this because of a race condition when one modal is called after another
+        -- self.onCloseCallback = nil
+      end
+
+      -- Enable the menu button in the toolbar
+      editorUI:Enable(self.titleBar.iconButton, true)
+
+      editorUI:Invalidate(self.titleBar)
+
+    end
+    
+  end
 
   if(self.activeModal == nil) then
     return;
   end
 
-  self.activeModal:Update(deltaTime)
+  self.activeModal:Update(timeDelta)
 
 end
 
@@ -95,5 +113,5 @@ function PixelVisionOS:DrawModal()
 end
 
 function PixelVisionOS:IsModalActive()
-  return self.activeModal ~= nil
+  return self.activeModal ~= nil and self.modalCloseTime == nil
 end

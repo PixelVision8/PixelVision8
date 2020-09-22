@@ -35,7 +35,7 @@ namespace PixelVision8.Runner.Data
 
         public int[] ids;
 
-//        public TextureData src;
+        //        public TextureData src;
         public IImageParser imageParser;
         public int width;
 

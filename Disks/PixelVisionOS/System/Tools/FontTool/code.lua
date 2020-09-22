@@ -11,21 +11,17 @@
 -- API Bridge
 LoadScript("sb-sprites")
 LoadScript("pixel-vision-os-v2")
-LoadScript("pixel-vision-os-color-picker-v2")
-LoadScript("pixel-vision-os-sprite-picker-v3")
-LoadScript("pixel-vision-os-canvas-v2")
+LoadScript("pixel-vision-os-color-picker-v3")
+LoadScript("pixel-vision-os-sprite-picker-v4")
+LoadScript("pixel-vision-os-canvas-v3")
 LoadScript("code-characters")
 
 local toolName = "Color Tool"
-local systemColorsPerPage = 64
-local success = false
-local emptyColorID = -1
 local colorOffset = 50
 local imageLoaded = false
 local toolLoaded = false
 local fontName = "untitled"
 local currentCharID = -1
-local lastCharID = -2
 local characterWindow = {x = 152, y = 72, w = 96, h = 64}
 local originalPixelData = nil
 local WHITE = 15
@@ -198,27 +194,27 @@ end
 
 function Init()
 
-    BackgroundColor(22)
+    BackgroundColor(5)
 
     -- Disable the back key in this tool
     EnableBackKey(false)
     EnableAutoRun(false)
 
-    -- Create an instance of the Pixel Vision OS
-    pixelVisionOS = PixelVisionOS:Init()
+    -- Create an global instance of the Pixel Vision OS
+    _G["pixelVisionOS"] = PixelVisionOS:Init()
+    
+    -- -- Create an instance of the Pixel Vision OS
+    -- pixelVisionOS = PixelVisionOS:Init()
 
-    -- Get a reference to the Editor UI
-    editorUI = pixelVisionOS.editorUI
+    -- -- Get a reference to the Editor UI
+    -- editorUI = pixelVisionOS.editorUI
 
     rootDirectory = ReadMetadata("directory", nil)
 
     -- Get the target file
     targetFile = ReadMetadata("file", nil)
 
-
-
     if(targetFile ~= nil) then
-
 
         -- print("targetFile", targetFile)
 
@@ -317,7 +313,7 @@ function OnFontLoaded()
 
     _G["itempickerselectedup"] = {spriteIDs = charselection.spriteIDs, width = charselection.width, colorOffset = (_G["itempickerover"].colorOffset + 2)}
 
-    canvasData = editorUI:CreateCanvas(
+    canvasData = pixelVisionOS:CreateCanvas(
         {
             x = 8,
             y = 40,
@@ -334,9 +330,9 @@ function OnFontLoaded()
         0
     )
 
-    canvasData.overDrawArgs[8] = 0
+    -- canvasData.overDrawArgs[8] = 0
 
-    editorUI:CanvasBrushColor(canvasData, WHITE)
+    pixelVisionOS:CanvasBrushColor(canvasData, WHITE)
 
     canvasData.onPress = function()
 
@@ -350,18 +346,16 @@ function OnFontLoaded()
         local tmpColor = canvasData.paintCanvas:ReadPixelAt(tmpPos.x, tmpPos.y)
 
         -- Change the tool bases on what color the mouse is over
-        editorUI:ChangeCanvasTool(canvasData, tmpColor == 0 and "pen" or "eraser", 6)
-
-        local pixelData = gameEditor:FlipPixelData(editorUI:GetCanvasPixelData(canvasData), flipH, flipV)
+        pixelVisionOS:ChangeCanvasTool(canvasData, tmpColor == 0 and "pen" or "eraser", 6)
 
         canvasData.inDrawMode = true
 
-        UpdateHistory(pixelData)
+        UpdateHistory(pixelVisionOS:GetCanvasPixelData(canvasData))
     end
 
     canvasData.onAction = OnSaveCanvasChanges
 
-    editorUI:ChangeCanvasPixelSize(canvasData, 1)
+    pixelVisionOS:ChangeCanvasPixelSize(canvasData, 1)
 
     charPicker = editorUI:CreatePicker(
         {x = 152, y = 72, w = 96, h = 64 },
@@ -383,7 +377,12 @@ function OnFontLoaded()
 
 
     spacingStepper = editorUI:CreateStringStepper({x = 200, y = 152}, 16, "0", {"-4", "-3", "-2", "-1", "0", "1", "2"}, "", "Change the length of the pattern.")
-    spacingStepper.onInputAction = function() DrawSampleText() end
+
+    -- TODO This is a hack becuse entering in numbers by hand could break the return value... example 2 becomes 20.
+    spacingStepper.inputField.highlighterTheme.disabled = 44
+    editorUI:Enable(spacingStepper.inputField, false)
+
+    spacingStepper.onInputAction = function(value) DrawSampleText(value) end
 
     charStepper = editorUI:CreateStringStepper({x = 152, y = 152}, 8, "A", characters, "", "Change the length of the pattern.")
 
@@ -426,8 +425,8 @@ end
 
 function OnSaveCanvasChanges()
 
-    local pixelData = editorUI:GetCanvasPixelData(canvasData)
-    local canvasSize = editorUI:GetCanvasSize(canvasData)
+    local pixelData = pixelVisionOS:GetCanvasPixelData(canvasData)
+    -- local canvasSize = editorUI:GetCanvasSize(canvasData)
 
     local total = #pixelData
 
@@ -548,8 +547,7 @@ function OnSelectChar(value)
 
     if(lastCharID ~= currentCharID) then
         -- Clear the original pixel data
-        originalPixelData = {}
-
+        
         -- Need to loop through the pixel data and change the offset
         local total = #tmpPixelData
         for i = 1, total do
@@ -558,11 +556,9 @@ function OnSelectChar(value)
 
                 -- Convert the pixel data to white
                 tmpPixelData[i] = WHITE
-
+            else
+                tmpPixelData[i] = -1
             end
-
-            -- Copy pixel data over to original pixel data array
-            originalPixelData[i] = tmpPixelData[i]
 
         end
 
@@ -572,11 +568,11 @@ function OnSelectChar(value)
     local size = NewPoint(8, 8)
 
     -- TODO simulate selecting the first sprite
-    editorUI:ResizeCanvas(canvasData, size, scale, tmpPixelData)
+    pixelVisionOS:ResizeCanvas(canvasData, size, scale, tmpPixelData)
 
     -- editorUI:CanvasBrushColor(canvasData, WHITE)
 
-    editorUI:ChangeCanvasTool(canvasData, tools[1])
+    pixelVisionOS:ChangeCanvasTool(canvasData, tools[1])
 
     pixelVisionOS:EnableMenuItem(RevertShortcut, false)
 
@@ -591,17 +587,14 @@ function OnSelectChar(value)
 
 end
 
-function DrawSampleText()
+function DrawSampleText(spacing)
 
     local rect = NewRect(8, 192, 240, 16)
 
     DrawRect(rect.x, rect.y, rect.width, rect.height, 0, DrawMode.TilemapCache)
 
-    local spacing = 0
-
-
-    local spacing = tonumber(editorUI:GetStringStepperValue(spacingStepper))
-
+    spacing = spacing or tonumber(editorUI:GetStringStepperValue(spacingStepper))
+    
     local charWidth = 8 + spacing
 
     local wrap = WordWrap(message, math.floor(rect.width / charWidth))
@@ -726,7 +719,7 @@ function Update(timeDelta)
 
             editorUI:UpdatePicker(charPicker)
             editorUI:UpdateInputField(fontNameInputData)
-            editorUI:UpdateCanvas(canvasData)
+            pixelVisionOS:UpdateCanvas(canvasData)
             editorUI:UpdateStepper(spacingStepper)
             editorUI:UpdateStepper(charStepper)
 
@@ -799,65 +792,30 @@ end
 
 function UpdateHistory(pixelData)
 
-    local historyAction = {
-        -- sound = settingsString,
-        Action = function()
+    -- local historyAction = {
+    --     -- sound = settingsString,
+    --     Action = function()
 
-            canvasData.paintCanvas:SetPixels(pixelData)
+    --         canvasData.paintCanvas:SetPixels(pixelData)
 
-            OnSaveCanvasChanges()
+    --         OnSaveCanvasChanges()
 
 
-        end
-    }
+    --     end
+    -- }
 
-    pixelVisionOS:AddUndoHistory(historyAction)
+    -- pixelVisionOS:AddUndoHistory(historyAction)
 
-    -- We only want to update the buttons in some situations
-    -- if(updateButtons ~= false) then
-    UpdateHistoryButtons()
+    -- -- We only want to update the buttons in some situations
+    -- -- if(updateButtons ~= false) then
+    -- UpdateHistoryButtons()
     -- end
 
 end
 
 -- local historyPos = 1
 
-function OnUndo()
 
-    local action = pixelVisionOS:Undo()
-
-    if(action ~= nil and action.Action ~= nil) then
-        action.Action()
-    end
-
-    UpdateHistoryButtons()
-end
-
-function OnRedo()
-
-    local action = pixelVisionOS:Redo()
-
-    if(action ~= nil and action.Action ~= nil) then
-        action.Action()
-    end
-
-    UpdateHistoryButtons()
-end
-
-function UpdateHistoryButtons()
-
-    pixelVisionOS:EnableMenuItem(UndoShortcut, pixelVisionOS:IsUndoable())
-    pixelVisionOS:EnableMenuItem(RedoShortcut, pixelVisionOS:IsRedoable())
-
-end
-
-function ClearHistory()
-
-    -- Reset history
-    pixelVisionOS:ResetUndoHistory()
-    UpdateHistoryButtons()
-
-end
 
 function OnRunGame()
     -- TODO should this ask to launch the game first?
@@ -878,5 +836,44 @@ function OnRunGame()
         LoadGame(NewWorkspacePath(rootDirectory))
 
     end
+
+end
+
+-- TODO reconnect undo history
+
+function OnUndo()
+
+    -- local action = pixelVisionOS:Undo()
+
+    -- if(action ~= nil and action.Action ~= nil) then
+    --     action.Action()
+    -- end
+
+    -- UpdateHistoryButtons()
+end
+
+function OnRedo()
+
+    -- local action = pixelVisionOS:Redo()
+
+    -- if(action ~= nil and action.Action ~= nil) then
+    --     action.Action()
+    -- end
+
+    -- UpdateHistoryButtons()
+end
+
+function UpdateHistoryButtons()
+
+    -- pixelVisionOS:EnableMenuItem(UndoShortcut, pixelVisionOS:IsUndoable())
+    -- pixelVisionOS:EnableMenuItem(RedoShortcut, pixelVisionOS:IsRedoable())
+
+end
+
+function ClearHistory()
+
+    -- Reset history
+    -- pixelVisionOS:ResetUndoHistory()
+    -- UpdateHistoryButtons()
 
 end

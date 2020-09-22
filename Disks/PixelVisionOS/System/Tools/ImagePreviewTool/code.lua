@@ -11,7 +11,6 @@
 -- Load in the editor framework script to access tool components
 LoadScript("sb-sprites")
 LoadScript("pixel-vision-os-v2")
-LoadScript("pixel-vision-os-color-picker-v2")
 
 local toolName = "Image Preview"
 local debugMode = false
@@ -19,14 +18,12 @@ local pixelVisionOS = nil
 local editorUI = nil
 local invalid = true
 local rootDirectory = nil
-local viewport = {x = 8, y = 24, w = 224, h = 184}
-local mouseOrigin = {x = 0, y = 0}
-local boundary = {x = 0, y = 0, w = 0, h = 0}
-local scrollPos = {x = 0, y = 0}
-local isPanning = false
-local scrollDelay = .2
-local scrollTime = 0
-local imageLoaded = false
+
+local image = nil
+local imageCanvas = nil
+local viewportRect = NewRect(0, 0, 224, 184)
+local boundaryRect = NewRect(0,0,0,0)
+local displayInvalid = true
 
 function Init()
 
@@ -51,29 +48,64 @@ function Init()
     -- targetFile = "/Workspace/Games/GGSystem/code.lua"
     if(targetFile ~= nil) then
 
-        -- Start the load process and display an error if it fail
-        if(gameEditor:LoadImage(targetFile) == true) then
+        -- Load the image
+        image = ReadImage(NewWorkspacePath(targetFile))
 
-            local pathSplit = string.split(targetFile, "/")
+        -- TODO need to copy out colors from the image  
+        local imageColors = image.colors
+        local totalColors = math.max(8, #imageColors)
+        
+        -- Get the last color index for the offset
+        local colorOffset = TotalColors()
 
-            -- Update title with file path
-            toolTitle = pathSplit[#pathSplit - 1] .. "/" .. pathSplit[#pathSplit]
+        -- Double the color memory
+        ResizeColorMemory(512)
 
-            ResetDataValidation()
+        -- Create the canvas to display the image color palette
+        colorMemoryCanvas = NewCanvas(8, totalColors / 8)
+        local pixels = {}
 
-            -- gameEditor:StartLoading()
+        -- Add the image colors to the color chip
+        for i = 1, totalColors do
+            Color(colorOffset + (i-1), imageColors[i])
 
-        else
-
-            pixelVisionOS:ChangeTitle(toolName, "toolbaricontool")
-
-            pixelVisionOS:ShowMessageModal(toolName .. " Error", "The tool was not able to load the correct file", 160, false,
-                function()
-                    QuitCurrentTool()
-                end
-            )
-
+            local index = i + 255
+            table.insert(pixels, index)
         end
+
+            -- TODO each pixel should be set above
+        colorMemoryCanvas:SetPixels(pixels)
+        
+        -- Get the image pixels
+        local pixelData = image.GetPixels()
+
+        -- TODO we may not need to do this if we just offset the canvas when drawing?
+        -- Shift colors
+        for i = 1, #pixelData do
+            pixelData[i] = pixelData[i] + colorOffset
+        end
+
+        -- Create a new canvas
+        imageCanvas = NewCanvas(image.width, image.height)
+
+        -- Copy the modified image pixel data over to the new canvas
+        imageCanvas.SetPixels(pixelData)
+
+        -- The image is loaded at this point
+        toolLoaded = true
+        
+        -- Create tool title from path
+        local pathSplit = string.split(targetFile, "/")
+        toolTitle = pathSplit[#pathSplit - 1] .. "/" .. pathSplit[#pathSplit]
+
+
+        -- Configure the menu
+        ConfigureMenu()
+
+        CreateViewport()
+
+        -- Reset Tool Validation
+        ResetDataValidation()
 
     else
 
@@ -86,70 +118,11 @@ function Init()
         )
     end
 
-
-
 end
 
-function SelectLayer(value)
+function ConfigureMenu()
 
-    layerMode = value - 1
-
-    gameEditor:RenderMapLayer(layerMode)
-
-end
-
-function InvalidateMap()
-    mapInvalid = true
-end
-
-function ResetMapValidation()
-    mapInvalid = false
-end
-
-function InvalidateData()
-
-    -- Only everything if it needs to be
-    if(invalid == true)then
-        return
-    end
-
-    pixelVisionOS:ChangeTitle(toolTitle .."*", "toolbariconfile")
-
-    invalid = true
-
-end
-
-function ResetDataValidation()
-
-    -- Only everything if it needs to be
-    if(invalid == false)then
-        return
-    end
-
-    pixelVisionOS:ChangeTitle(toolTitle, "toolbariconfile")
-    invalid = false
-
-end
-local scrollInvalid = true
-
-function OnHorizontalScroll(value)
-
-    -- TODO this is wrong but works when I use ABS... need to fix it
-    scrollPos.x = math.abs(math.floor(((viewport.w - boundary.w) - viewport.w) * value))
-
-    InvalidateMap()
-end
-
-function OnVerticalScroll(value)
-
-    scrollPos.y = math.abs(math.floor(((viewport.h - boundary.h) - viewport.h) * value))
-
-    InvalidateMap()
-end
-
-function OnImageLoaded()
-
-    pixelVisionOS:ImportColorsFromGame()
+    -- pixelVisionOS:ImportColorsFromGame()
 
     local menuOptions = 
     {
@@ -194,54 +167,81 @@ function OnImageLoaded()
 
     pixelVisionOS:CreateTitleBarMenu(menuOptions, "See menu options for this tool.")
 
-    -- Setup map viewport
+end
 
-    local mapSize = gameEditor:TilemapSize()
-
-    mapSize.x = mapSize.x * 8
-    mapSize.y = mapSize.y * 8
-
-    -- TODO need to modify the viewport to make sure the map fits inside of it correctly
-
-    viewport.w = math.min(mapSize.x, viewport.w)
-    viewport.h = math.min(mapSize.y, viewport.h)
+function CreateViewport()
+    
+    -- Setup viewport
+    viewportRect.Width = math.min(imageCanvas.width, viewportRect.Width)
+    viewportRect.Height = math.min(imageCanvas.height, viewportRect.Height)
 
     -- Calculate the boundary for scrolling
-    boundary.w = mapSize.x - viewport.w
-    boundary.h = mapSize.y - viewport.h
+    boundaryRect.Width = imageCanvas.width - viewportRect.Width
+    boundaryRect.Height = imageCanvas.height - viewportRect.Height
 
-    -- print("boundary", boundary.w, boundary.h)
-    -- TODO need to see if we need the scroll bars
-
-    if(boundary.h > 0) then
+    if(boundaryRect.Height > 0) then
         vSliderData = editorUI:CreateSlider({x = 235, y = 20, w = 10, h = 193}, "vsliderhandle", "Scroll text vertically.")
         vSliderData.onAction = OnVerticalScroll
     end
 
-    if(boundary.w > 0) then
+    if(boundaryRect.Width > 0) then
         hSliderData = editorUI:CreateSlider({ x = 4, y = 211, w = 233, h = 10}, "hsliderhandle", "Scroll text horizontally.", true)
         hSliderData.onAction = OnHorizontalScroll
     end
 
-    ResetDataValidation()
+    InvalidateDisplay()
+    
+end
 
-    SelectLayer(1)
+function InvalidateDisplay()
+    displayInvalid = true
+end
 
-    toolLoaded = true
+function ResetMapValidation()
+    displayInvalid = false
+end
 
-    local totalColors = gameEditor:TotalColors()
+function InvalidateData()
 
-    colorMemoryCanvas = NewCanvas(8, totalColors / 8)
-
-    local pixels = {}
-    for i = 1, totalColors do
-        local index = i + 255
-        table.insert(pixels, index)
+    -- Only everything if it needs to be
+    if(invalid == true)then
+        return
     end
 
-    colorMemoryCanvas:SetPixels(pixels)
+    pixelVisionOS:ChangeTitle(toolTitle .."*", "toolbariconfile")
+
+    invalid = true
 
 end
+
+function ResetDataValidation()
+
+    -- Only everything if it needs to be
+    if(invalid == false)then
+        return
+    end
+
+    pixelVisionOS:ChangeTitle(toolTitle, "toolbariconfile")
+    invalid = false
+
+end
+
+function OnHorizontalScroll(value)
+
+    -- TODO this is wrong but works when I use ABS... need to fix it
+    viewportRect.X = math.abs(math.floor(((viewportRect.Width - boundaryRect.Width) - viewportRect.Width) * value))
+
+    InvalidateDisplay()
+end
+
+function OnVerticalScroll(value)
+
+    viewportRect.Y = math.abs(math.floor(((viewportRect.Height - boundaryRect.Height) - viewportRect.Height) * value))
+
+    InvalidateDisplay()
+end
+
+
 
 function Update(timeDelta)
 
@@ -254,40 +254,14 @@ function Update(timeDelta)
     -- We only want to run this when a modal isn't active. Mostly to stop the tool if there is an error modal on load
     if(pixelVisionOS:IsModalActive() == false) then
 
-
-        if(imageLoaded == false) then
-
-            local percent = ReadPreloaderPercent()
-            pixelVisionOS:DisplayMessage("Loading image " .. percent .. "%")
-
-            -- If preloading is done, exit the loading loop
-            if(percent >= 100) then
-                imageLoaded = true
-
-                -- print("Image Loaded")
-                OnImageLoaded()
-
-            end
-
-        end
-
-
-        -- Only update the tool's UI when the modal isn't active
+        -- -- Only update the tool's UI when the modal isn't active
         if(targetFile ~= nil and toolLoaded == true) then
-
-            scrollPos = gameEditor:ScrollPosition()
 
             -- Update the slider
             editorUI:UpdateSlider(vSliderData)
 
             -- Update the slider
             editorUI:UpdateSlider(hSliderData)
-
-            if(gameEditor.renderingMap == true) then
-                gameEditor:NextRenderStep()
-                pixelVisionOS:DisplayMessage("Rendering Layer " .. tostring(gameEditor.renderPercent).. "% complete.", 2)
-                InvalidateMap()
-            end
 
         end
 
@@ -300,17 +274,10 @@ function Draw()
 
     RedrawDisplay()
 
-    if(mapInvalid == true and toolLoaded == true and pixelVisionOS:IsModalActive() == false) then
+    if(displayInvalid == true and pixelVisionOS:IsModalActive() == false) then
 
-        -- update the scroll position
-
-        -- print("Render", scrollPos.x, scrollPos.y)
-        gameEditor:ScrollPosition(scrollPos.x, scrollPos.y)
-
-        local useBG = false
-        local bgColor = pixelVisionOS.emptyColorID
-
-        gameEditor:CopyRenderToDisplay(viewport.x, viewport.y, viewport.w, viewport.h, 256, bgColor)
+        -- Draw the pixel data in the upper left hand cornver of the tool's window
+        imageCanvas:DrawPixels(8, 24, DrawMode.TilemapCache, 1, -1, -1, 0, viewportRect)
 
         if(debugMode) then
             colorMemoryCanvas:DrawPixels(8, 24, DrawMode.UI, 3)

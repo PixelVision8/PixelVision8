@@ -25,17 +25,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework.Audio;
-using PixelVision8.Engine.Data;
-using PixelVision8.Runner.Data;
 
 namespace PixelVision8.Engine.Audio
 {
     public class SfxrSynth : RawAudioData, IChannel
     {
         private const int LO_RES_NOISE_PERIOD = 8; // Should be < 32
-//        private float _overtoneFalloff; // Minimum frequency before stopping
+        //        private float _overtoneFalloff; // Minimum frequency before stopping
 
-//        private int _overtones; // Minimum frequency before stopping
+        //        private int _overtones; // Minimum frequency before stopping
 
         private readonly Dictionary<string, SoundEffectInstance> wavCache =
             new Dictionary<string, SoundEffectInstance>();
@@ -106,19 +104,19 @@ namespace PixelVision8.Engine.Audio
 
         private float _pos; // Phase expresed as a Number from 0-1, used for fast sin approx
 
-//
-//        private readonly Random _random = new Random();
+        //
+        //        private readonly Random _random = new Random();
         private int _repeatLimit; // Once the time reaches this limit, some of the variables are reset
 
         private int _repeatTime; // Counter for the repeats
 
         private float _sample; // Sub-sample calculated 8 times per actual sample, averaged out to get the super sample
-//        private float _sample2; // Used in other calculations
+        //        private float _sample2; // Used in other calculations
 
         private float _slide; // Note slide
 
 
-//        private float amp; // Used in other calculations
+        //        private float amp; // Used in other calculations
         private SoundEffectInstance _soundInstance;
 
         private float _squareDuty; // Offset of center switching point in the square wave
@@ -152,12 +150,11 @@ namespace PixelVision8.Engine.Audio
         /// </summary>
         public SfxrParams parameters { get; } = new SfxrParams();
 
-        public bool playing
+        public bool Playing
         {
             get
             {
-                if (_soundInstance == null)
-                    return false;
+                if (_soundInstance == null) return false;
 
                 return _soundInstance.State == SoundState.Playing;
             }
@@ -195,8 +192,7 @@ namespace PixelVision8.Engine.Audio
             {
                 parameters.SetSettingsString(soundData.param);
 
-                if (frequency.HasValue)
-                    parameters.startFrequency = frequency.Value;
+                if (frequency.HasValue) parameters.startFrequency = frequency.Value;
 
                 if (parameters.invalid) CacheSound();
             }
@@ -270,16 +266,16 @@ namespace PixelVision8.Engine.Audio
             else
             {
                 // Needs to cache new data
-//                _cachedWavePos = 0;
-//                _cachingNormal = true;
-//                _waveData = null;
+                //                _cachedWavePos = 0;
+                //                _cachingNormal = true;
+                //                _waveData = null;
 
                 Reset(true);
 
 
                 if (_soundInstance != null) _soundInstance.Stop();
 
-//                _waveData = GenerateWav();
+                //                _waveData = GenerateWav();
 
                 parameters.ResetValidation();
 
@@ -332,21 +328,21 @@ namespace PixelVision8.Engine.Audio
             else
                 _changeLimit = (int) ((1f - p.changeSpeed) * (1f - p.changeSpeed) * 20000f + 32f);
 
-//            if (p.changeAmount2 > 0f)
-//                _changeAmount2 = 1f - p.changeAmount2 * p.changeAmount2 * 0.9f;
-//            else
-//                _changeAmount2 = 1f + p.changeAmount2 * p.changeAmount2 * 10f;
+            //            if (p.changeAmount2 > 0f)
+            //                _changeAmount2 = 1f - p.changeAmount2 * p.changeAmount2 * 0.9f;
+            //            else
+            //                _changeAmount2 = 1f + p.changeAmount2 * p.changeAmount2 * 10f;
 
-//            _changeTime2 = 0;
-//            _changeReached2 = false;
+            //            _changeTime2 = 0;
+            //            _changeReached2 = false;
 
-//            if (p.changeSpeed2 == 1.0f)
-//                _changeLimit2 = 0;
-//            else
-//                _changeLimit2 = (int) ((1f - p.changeSpeed2) * (1f - p.changeSpeed2) * 20000f + 32f);
+            //            if (p.changeSpeed2 == 1.0f)
+            //                _changeLimit2 = 0;
+            //            else
+            //                _changeLimit2 = (int) ((1f - p.changeSpeed2) * (1f - p.changeSpeed2) * 20000f + 32f);
 
             _changeLimit = (int) (_changeLimit * ((1f - p.changeRepeat + 0.1f) / 1.1f));
-//            _changeLimit2 = (int) (_changeLimit2 * ((1f - p.changeRepeat + 0.1f) / 1.1f));
+            //            _changeLimit2 = (int) (_changeLimit2 * ((1f - p.changeRepeat + 0.1f) / 1.1f));
 
             if (__totalReset)
             {
@@ -371,15 +367,15 @@ namespace PixelVision8.Engine.Audio
 
                 _phase = 0;
 
-//                _overtones = (int) (p.overtones * 10f);
-//                _overtoneFalloff = p.overtoneFalloff;
+                //                _overtones = (int) (p.overtones * 10f);
+                //                _overtoneFalloff = p.overtoneFalloff;
 
                 _minFrequency = p.minFrequency;
 
-//                _bitcrushFreq = 1f - (float)Math.Pow(p.bitCrush, 1f / 3f);
-//                _bitcrushFreqSweep = -p.bitCrushSweep * 0.000015f;
-//                _bitcrushPhase = 0;
-//                _bitcrushLast = 0;
+                //                _bitcrushFreq = 1f - (float)Math.Pow(p.bitCrush, 1f / 3f);
+                //                _bitcrushFreqSweep = -p.bitCrushSweep * 0.000015f;
+                //                _bitcrushPhase = 0;
+                //                _bitcrushLast = 0;
 
                 _compressionFactor = 1f / (1f + 4f * p.compressionAmount);
 
@@ -392,6 +388,7 @@ namespace PixelVision8.Engine.Audio
                 _lpFilterDamping = 5.0f / (1.0f + p.lpFilterResonance * p.lpFilterResonance * 20.0f) *
                                    (0.01f + _lpFilterCutoff);
                 if (_lpFilterDamping > 0.8f) _lpFilterDamping = 0.8f;
+
                 _lpFilterDamping = 1.0f - _lpFilterDamping;
                 _lpFilterOn = p.lpFilterCutoff != 1.0f;
 
@@ -420,19 +417,22 @@ namespace PixelVision8.Engine.Audio
 
                 _phaserOffset = p.phaserOffset * p.phaserOffset * 1020.0f;
                 if (p.phaserOffset < 0.0f) _phaserOffset = -_phaserOffset;
+
                 _phaserDeltaOffset = p.phaserSweep * p.phaserSweep * p.phaserSweep * 0.2f;
                 _phaserPos = 0;
 
                 if (_phaserBuffer == null) _phaserBuffer = new float[1024];
+
                 if (_noiseBuffer == null) _noiseBuffer = new float[32];
-//                if (_pinkNoiseBuffer == null) _pinkNoiseBuffer = new float[32];
-//                if (_pinkNumber == null) _pinkNumber = new PinkNumber();
+                //                if (_pinkNoiseBuffer == null) _pinkNoiseBuffer = new float[32];
+                //                if (_pinkNumber == null) _pinkNumber = new PinkNumber();
                 if (_loResNoiseBuffer == null) _loResNoiseBuffer = new float[32];
 
                 uint i;
                 for (i = 0; i < 1024; i++) _phaserBuffer[i] = 0.0f;
+
                 for (i = 0; i < 32; i++) _noiseBuffer[i] = parameters.GetRandom() * 2.0f - 1.0f;
-//                for (i = 0; i < 32; i++) _pinkNoiseBuffer[i] = _pinkNumber.getNextValue();
+                //                for (i = 0; i < 32; i++) _pinkNoiseBuffer[i] = _pinkNumber.getNextValue();
                 for (i = 0; i < 32; i++)
                     _loResNoiseBuffer[i] = i % LO_RES_NOISE_PERIOD == 0
                         ? parameters.GetRandom() * 2.0f - 1.0f
@@ -477,7 +477,7 @@ namespace PixelVision8.Engine.Audio
                 if (_changePeriodTime >= _changePeriod)
                 {
                     _changeTime = 0;
-//                    _changeTime2 = 0;
+                    //                    _changeTime2 = 0;
                     _changePeriodTime = 0;
                     if (_changeReached)
                     {
@@ -485,11 +485,11 @@ namespace PixelVision8.Engine.Audio
                         _changeReached = false;
                     }
 
-//                    if (_changeReached2)
-//                    {
-//                        _period /= _changeAmount2;
-//                        _changeReached2 = false;
-//                    }
+                    //                    if (_changeReached2)
+                    //                    {
+                    //                        _period /= _changeAmount2;
+                    //                        _changeReached2 = false;
+                    //                    }
                 }
 
                 // If _changeLimit is reached, shifts the pitch
@@ -501,12 +501,12 @@ namespace PixelVision8.Engine.Audio
                     }
 
                 // If _changeLimit is reached, shifts the pitch
-//                if (!_changeReached2)
-//                    if (++_changeTime2 >= _changeLimit2)
-//                    {
-//                        _changeReached2 = true;
-//                        _period *= _changeAmount2;
-//                    }
+                //                if (!_changeReached2)
+                //                    if (++_changeTime2 >= _changeLimit2)
+                //                    {
+                //                        _changeReached2 = true;
+                //                        _period *= _changeAmount2;
+                //                    }
 
                 // Acccelerate and apply slide
                 _slide += _deltaSlide;
@@ -610,10 +610,10 @@ namespace PixelVision8.Engine.Audio
 
                     _sample = 0;
                     sampleTotal = 0;
-//                    overtoneStrength = 1f;
+                    //                    overtoneStrength = 1f;
 
-//                    for (k = 0; k <= _overtones; k++)
-//                    {
+                    //                    for (k = 0; k <= _overtones; k++)
+                    //                    {
                     tempPhase = _phase * (0 + 1) % _periodTemp;
 
                     // Gets the sample from the oscillator
@@ -649,8 +649,8 @@ namespace PixelVision8.Engine.Audio
                     }
 
                     sampleTotal += _sample;
-//                        overtoneStrength *= 1f - _overtoneFalloff;
-//                    }
+                    //                        overtoneStrength *= 1f - _overtoneFalloff;
+                    //                    }
 
                     _sample = sampleTotal;
 
@@ -696,16 +696,16 @@ namespace PixelVision8.Engine.Audio
                 _superSample = _masterVolume * _envelopeVolume * _superSample * 0.125f;
 
                 // Bit crush
-//                _bitcrushPhase += _bitcrushFreq;
-//                if (_bitcrushPhase > 1f)
-//                {
-//                    _bitcrushPhase = 0;
-//                    _bitcrushLast = _superSample;
-//                }
-//
-//                _bitcrushFreq = Math.Max(Math.Min(_bitcrushFreq + _bitcrushFreqSweep, 1f), 0f);
-//
-//                _superSample = _bitcrushLast;
+                //                _bitcrushPhase += _bitcrushFreq;
+                //                if (_bitcrushPhase > 1f)
+                //                {
+                //                    _bitcrushPhase = 0;
+                //                    _bitcrushLast = _superSample;
+                //                }
+                //
+                //                _bitcrushFreq = Math.Max(Math.Min(_bitcrushFreq + _bitcrushFreqSweep, 1f), 0f);
+                //
+                //                _superSample = _bitcrushLast;
 
                 // Compressor
                 if (_superSample > 0f)
@@ -729,12 +729,12 @@ namespace PixelVision8.Engine.Audio
         ///     Returns a random value: 0 <= n < 1
         /// </summary>
         /// <returns></returns>
-//        private float parameters.GetRandom()
-//        {
-//            // We can't use Unity's Random.value because it cannot be called from a separate thread
-//            // (We get the error "get_value can only be called from the main thread" when this is called to generate the sound data)
-//            return (float) (_random.NextDouble() % 1);
-//        }
+        //        private float parameters.GetRandom()
+        //        {
+        //            // We can't use Unity's Random.value because it cannot be called from a separate thread
+        //            // (We get the error "get_value can only be called from the main thread" when this is called to generate the sound data)
+        //            return (float) (_random.NextDouble() % 1);
+        //        }
         public void Dispose()
         {
             _soundInstance?.Dispose();

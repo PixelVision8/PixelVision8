@@ -17,26 +17,25 @@
 
 function EditorUI:CreateSlider(rect, spriteName, toolTip, horizontal, offset)
 
+  
   -- Set up button states
   local spriteData = _G[spriteName]
 
-  _G[spriteName .. "disabled"] = {
-    spriteIDs = table.clone(spriteData.spriteIDs),
-    width = spriteData.width,
-    colorOffset = 4
-  }
+  if(_G[spriteName .. "up"] == nil and spriteData ~= nil) then
+    _G[spriteName .. "up"] = {
+      spriteIDs = table.clone(spriteData.spriteIDs),
+      width = spriteData.width,
+      colorOffset = 8
+    }
+  end
 
-  _G[spriteName .. "up"] = {
-    spriteIDs = table.clone(spriteData.spriteIDs),
-    width = spriteData.width,
-    colorOffset = 8
-  }
-
-  _G[spriteName .. "over"] = {
-    spriteIDs = table.clone(spriteData.spriteIDs),
-    width = spriteData.width,
-    colorOffset = 12
-  }
+  if(_G[spriteName .. "over"] == nil and spriteData ~= nil) then
+    _G[spriteName .. "over"] = {
+      spriteIDs = table.clone(spriteData.spriteIDs),
+      width = spriteData.width,
+      colorOffset = 12
+    }
+  end
 
   -- Create a generic component data object
   local data = self:CreateData(rect, spriteName, toolTip, forceDraw)

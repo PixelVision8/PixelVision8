@@ -28,7 +28,7 @@ function EditorUI:CreateToggleButton(rect, spriteName, toolTip, forceDraw)
   data.onClick = function(tmpData)
 
     -- Only trigger the click action when the last pressed button name matches
-    if(self.currentButtonDown == tmpData.name) then
+    if(self.inFocusUI == tmpData) then
       self:ToggleButton(tmpData)
     end
 
@@ -233,7 +233,9 @@ function EditorUI:ClearGroupSelections(data)
     buttonData = data.buttons[i]
     if(buttonData ~= nil)then
       -- TODO this will accidentally enable disabled buttons. Need to check that they are selected and disabled
-      self:Enable(buttonData, true)
+      if(buttonData.selected and buttonData.enabled == false) then
+        self:Enable(buttonData, true)
+      end
       buttonData.selected = false
       buttonData.invalid = true
     end

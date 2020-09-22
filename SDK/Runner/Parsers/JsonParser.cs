@@ -20,25 +20,21 @@
 
 using System.Collections.Generic;
 using System.Text;
+using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Parsers
 {
     public class JsonParser : AbstractParser
     {
-        protected Dictionary<string, object> data;
+        protected Dictionary<string, object> Data;
 
-        protected string jsonString;
+        protected string JsonString;
 
-        public JsonParser(string jsonString = "")
+        public JsonParser(string filePath, IFileLoadHelper fileLoadHelper)
         {
-            this.jsonString = jsonString;
-        }
-
-        public override byte[] bytes
-        {
-            get => Encoding.ASCII.GetBytes(jsonString);
-            set => jsonString = Encoding.UTF8.GetString(value);
+            FileLoadHelper = fileLoadHelper;
+            SourcePath = filePath;
         }
 
         public override void CalculateSteps()
@@ -49,8 +45,18 @@ namespace PixelVision8.Runner.Parsers
 
         public virtual void ParseJson()
         {
-            data = Json.Deserialize(jsonString) as Dictionary<string, object>;
-            currentStep++;
+            Data = Json.Deserialize(JsonString) as Dictionary<string, object>;
+            StepCompleted();
+        }
+
+        public override void LoadSourceData()
+        {
+            if (FileLoadHelper != null)
+            {
+                JsonString = Encoding.UTF8.GetString(FileLoadHelper.ReadAllBytes(SourcePath));
+            }
+
+            StepCompleted();
         }
     }
 }

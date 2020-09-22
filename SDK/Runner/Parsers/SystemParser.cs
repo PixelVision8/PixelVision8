@@ -23,16 +23,18 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Audio;
+using PixelVision8.Engine.Utils;
+using PixelVision8.Runner.Services;
 
 namespace PixelVision8.Runner.Parsers
 {
     public class SystemParser : JsonParser
     {
-        protected IEngine target;
+        protected IEngine Target;
 
-        public SystemParser(IEngine target, string jsonString = "") : base(jsonString)
+        public SystemParser(string filePath, IFileLoadHelper fileLoadHelper, IEngine target) : base(filePath, fileLoadHelper)
         {
-            this.target = target;
+            Target = target;
         }
 
         public override void CalculateSteps()
@@ -43,11 +45,11 @@ namespace PixelVision8.Runner.Parsers
 
         public virtual void ApplySettings()
         {
-            if (target != null)
+            if (Target != null)
             {
-                var chipManager = target;
+                var chipManager = Target;
 
-                foreach (var entry in data)
+                foreach (var entry in Data)
                 {
                     var fullName = entry.Key;
                     var split = fullName.Split('.');
@@ -70,7 +72,6 @@ namespace PixelVision8.Runner.Parsers
                             break;
                         case "GameChip":
                         case "LuaGameChip":
-                        case "LuaToolChip":
                             ConfigureGameChip(chipData);
                             break;
                         case "MusicChip":
@@ -85,6 +86,9 @@ namespace PixelVision8.Runner.Parsers
                         case "TilemapChip":
                             ConfigureTilemapChip(chipData);
                             break;
+                        case "MetaSprites":
+                            ConfigureMetaSprites(chipData);
+                            break;
                     }
                 }
 
@@ -92,27 +96,25 @@ namespace PixelVision8.Runner.Parsers
                 chipManager.RemoveInactiveChips();
             }
 
-            currentStep++;
+            StepCompleted();
         }
 
         public void ConfigureColorChip(Dictionary<string, object> data)
         {
-            var colorChip = target.colorChip;
+            var colorChip = Target.ColorChip;
 
             // Flag chip to export
             colorChip.export = true;
 
             // Force the color chip to clear itself
-//            colorChip.Clear();
+            //            colorChip.Clear();
 
             //            if (data.ContainsKey("colorsPerPage"))
             //                colorChip.colorsPerPage = (int) (long) data["colorsPerPage"];
 
-            if (data.ContainsKey("maskColor"))
-                colorChip.maskColor = (string) data["maskColor"];
+            if (data.ContainsKey("maskColor")) colorChip.maskColor = (string) data["maskColor"];
 
-            if (data.ContainsKey("maxColors"))
-                colorChip.maxColors = (int) (long) data["maxColors"];
+            if (data.ContainsKey("maxColors")) colorChip.maxColors = (int) (long) data["maxColors"];
 
             // Make sure we have data to parse
             if (data.ContainsKey("colors"))
@@ -129,8 +131,7 @@ namespace PixelVision8.Runner.Parsers
                 colorChip.Clear();
 
                 // Add all the colors from the data
-                for (var i = 0; i < colors.Count; i++)
-                    colorChip.UpdateColorAt(i, (string) colors[i]);
+                for (var i = 0; i < colors.Count; i++) colorChip.UpdateColorAt(i, (string) colors[i]);
             }
 
 
@@ -142,14 +143,11 @@ namespace PixelVision8.Runner.Parsers
             //            if (data.ContainsKey("total"))
             //                colorChip.total = (int) (long) data["total"];
 
-            if (data.ContainsKey("backgroundColor"))
-                colorChip.backgroundColor = (int) (long) data["backgroundColor"];
+            if (data.ContainsKey("backgroundColor")) colorChip.backgroundColor = (int) (long) data["backgroundColor"];
 
-            if (data.ContainsKey("debug"))
-                colorChip.debugMode = Convert.ToBoolean(data["debug"]);
+            if (data.ContainsKey("debug")) colorChip.debugMode = Convert.ToBoolean(data["debug"]);
 
-            if (data.ContainsKey("unique"))
-                colorChip.unique = Convert.ToBoolean(data["unique"]);
+            if (data.ContainsKey("unique")) colorChip.unique = Convert.ToBoolean(data["unique"]);
 
             //            if (data.ContainsKey("paletteMode"))
             //                colorChip.paletteMode = Convert.ToBoolean(data["paletteMode"]);
@@ -162,40 +160,41 @@ namespace PixelVision8.Runner.Parsers
 
         public void ConfigureDisplayChip(Dictionary<string, object> data)
         {
-            var displayChip = target.displayChip;
+            var displayChip = Target.DisplayChip;
 
             // Flag chip to export
             displayChip.export = true;
 
-            var _width = displayChip.width;
-            var _height = displayChip.height;
+            var _width = displayChip.Width;
+            var _height = displayChip.Height;
 
-            if (data.ContainsKey("width"))
-                _width = (int) (long) data["width"];
+            if (data.ContainsKey("width")) _width = (int) (long) data["width"];
 
-            if (data.ContainsKey("height"))
-                _height = (int) (long) data["height"];
+            if (data.ContainsKey("height")) _height = (int) (long) data["height"];
 
-            if (data.ContainsKey("overscanX"))
-                displayChip.overscanX = (int) (long) data["overscanX"];
+            if (data.ContainsKey("overscanX")) displayChip.OverscanX = (int) (long) data["overscanX"];
 
-            if (data.ContainsKey("overscanY"))
-                displayChip.overscanY = (int) (long) data["overscanY"];
+            if (data.ContainsKey("overscanY")) displayChip.OverscanY = (int) (long) data["overscanY"];
 
-            if (data.ContainsKey("layers"))
-                displayChip.layers = (int) (long) data["layers"];
+            if (data.ContainsKey("layers")) displayChip.layers = (int) (long) data["layers"];
 
             displayChip.ResetResolution(_width, _height);
         }
 
         public void ConfigureFontChip(Dictionary<string, object> data)
         {
-            // TODO does this chip need to be parsed?
+            var fontChip = Target.FontChip;
+
+            if (data.ContainsKey("pages")) fontChip.pages = (int) (long) data["pages"];
+
+            if (data.ContainsKey("unique")) fontChip.unique = Convert.ToBoolean(data["unique"]);
+
+            fontChip.Resize(fontChip.pageWidth, fontChip.pageHeight * fontChip.pages);
         }
 
         public void ConfigureGameChip(Dictionary<string, object> data)
         {
-            var gameChip = target.gameChip;
+            var gameChip = Target.GameChip;
 
             // Flag chip to export
             gameChip.export = true;
@@ -214,15 +213,11 @@ namespace PixelVision8.Runner.Parsers
             //            if (data.ContainsKey("ext"))
             //                gameChip.ext = (string) data["ext"];
 
-            if (data.ContainsKey("maxSize"))
-                gameChip.maxSize = (int) (long) data["maxSize"];
+            if (data.ContainsKey("maxSize")) gameChip.maxSize = (int) (long) data["maxSize"];
 
-            if (data.ContainsKey("saveSlots"))
-                gameChip.SaveSlots = (int) (long) data["saveSlots"];
+            if (data.ContainsKey("saveSlots")) gameChip.SaveSlots = (int) (long) data["saveSlots"];
 
-            if (data.ContainsKey("lockSpecs"))
-                gameChip.lockSpecs = Convert.ToBoolean(data["lockSpecs"]);
-
+            if (data.ContainsKey("lockSpecs")) gameChip.lockSpecs = Convert.ToBoolean(data["lockSpecs"]);
 
             if (data.ContainsKey("savedData"))
                 foreach (var entry in data["savedData"] as Dictionary<string, object>)
@@ -231,14 +226,64 @@ namespace PixelVision8.Runner.Parsers
                     var value = entry.Value as string;
                     gameChip.WriteSaveData(name, value);
                 }
+
+
+            // TODO need to look for MetaSprite properties
+            if (data.ContainsKey("totalMetaSprites")) gameChip.TotalMetaSprites((int) (long) data["totalMetaSprites"]);
+
+            if (data.ContainsKey("metaSprites"))
+            {
+                var metaSprites = data["metaSprites"] as List<object>;
+
+                var total = MathHelper.Clamp(metaSprites.Count, 0, gameChip.TotalMetaSprites());
+
+                for (var i = 0; i < total; i++)
+                {
+                    var metaSprite = gameChip.MetaSprite(i);
+                    var spriteData = metaSprites[i] as Dictionary<string, object>;
+
+                    if (spriteData.ContainsKey("name")) metaSprite.Name = spriteData["name"] as string;
+
+                    if (spriteData.ContainsKey("sprites"))
+                        if (spriteData["sprites"] is List<object> childSprites)
+                        {
+                            var subTotal = childSprites.Count;
+                            for (var j = 0; j < subTotal; j++)
+                            {
+                                var childData = childSprites[j] as Dictionary<string, object>;
+
+                                metaSprite.AddSprite(
+                                    childData.ContainsKey("id") ? (int) (long) childData["id"] : 0,
+                                    childData.ContainsKey("x") ? (int) (long) childData["x"] : 0,
+                                    childData.ContainsKey("y") ? (int) (long) childData["y"] : 0,
+                                    childData.ContainsKey("flipH") && Convert.ToBoolean(childData["flipH"]),
+                                    childData.ContainsKey("flipV") && Convert.ToBoolean(childData["flipV"]),
+                                    childData.ContainsKey("colorOffset") ? (int) (long) childData["colorOffset"] : 0
+                                );
+                            }
+                        }
+                }
+
+                // var total = metaSprites.Length;
+                // for (int i = 0; i < UPPER; i++)
+                // {
+                //     
+                //         var metaSprite = gameChip.MetaSprite()
+                //
+                //         // TODO need a way to parse this out
+                //         Console.WriteLine("Found Sprites");
+                //         // var name = entry.Key;
+                //         // var value = entry.Value as string;
+                //         // gameChip.WriteSaveData(name, value);
+                //     }
+            }
         }
 
         public void ConfigureMusicChip(Dictionary<string, object> data)
         {
-            var musicChip = target.musicChip;
+            var musicChip = Target.MusicChip;
 
-            if (musicChip == null)
-                return;
+            if (musicChip == null) return;
 
             // Flag chip to export
             musicChip.export = true;
@@ -246,12 +291,22 @@ namespace PixelVision8.Runner.Parsers
             var patternKey = "songs";
             //            var patternNameKey = "songName";
 
+            // Configure chip before parsing song data
+            if (data.ContainsKey("totalSongs")) musicChip.totalSongs = Convert.ToInt32((long)data["totalSongs"]);
+            if (data.ContainsKey("notesPerTrack")) musicChip.maxNoteNum = Convert.ToInt32((long)data["notesPerTrack"]);
+
+            if (data.ContainsKey("totalPatterns")) musicChip.TotalLoops = Convert.ToInt32((long)data["totalPatterns"]);
+
+            // TODO remove legacy property
+            if (data.ContainsKey("totalLoop")) musicChip.TotalLoops = Convert.ToInt32((long)data["totalLoop"]);
+
             if (data.ContainsKey("version") && (string) data["version"] == "v2")
 
             {
                 patternKey = "patterns";
                 //                patternNameKey = "patternName";
 
+                
 
                 // TODO build song playlist
 
@@ -260,10 +315,10 @@ namespace PixelVision8.Runner.Parsers
                 {
                     // Get the list of song data
                     var songsData = data["songs"] as List<object>;
-                    var total = songsData.Count;
+                    var total = Math.Min(songsData.Count, musicChip.totalSongs);
 
                     // Change the total songs to match the songs in the data
-                    musicChip.totalSongs = total;
+                    // musicChip.totalSongs = total;
 
                     // Loop through each of teh 
                     for (var i = 0; i < total; i++)
@@ -271,23 +326,19 @@ namespace PixelVision8.Runner.Parsers
                         var songData = songsData[i] as Dictionary<string, object>;
                         var song = musicChip.songs[i];
 
-                        if (songData.ContainsKey("songName"))
-                            song.name = songData["songName"] as string;
+                        if (songData.ContainsKey("songName")) song.name = songData["songName"] as string;
 
                         if (songData.ContainsKey("patterns"))
                         {
                             var patternData = (List<object>) songData["patterns"];
                             var totalPatterns = patternData.Count;
                             song.patterns = new int[totalPatterns];
-                            for (var j = 0; j < totalPatterns; j++)
-                                song.patterns[j] = (int) (long) patternData[j];
+                            for (var j = 0; j < totalPatterns; j++) song.patterns[j] = (int) (long) patternData[j];
                         }
 
-                        if (songData.ContainsKey("start"))
-                            song.start = Convert.ToInt32((long) songData["start"]);
+                        if (songData.ContainsKey("start")) song.start = Convert.ToInt32((long) songData["start"]);
 
-                        if (songData.ContainsKey("end"))
-                            song.end = Convert.ToInt32((long) songData["end"]);
+                        if (songData.ContainsKey("end")) song.end = Convert.ToInt32((long) songData["end"]);
                     }
                 }
             }
@@ -295,25 +346,17 @@ namespace PixelVision8.Runner.Parsers
             //            if (data.ContainsKey("totalTracks"))
             //                musicChip.totalTracks = Convert.ToInt32((long) data["totalTracks"]);
 
-            if (data.ContainsKey("notesPerTrack"))
-                musicChip.maxNoteNum = Convert.ToInt32((long) data["notesPerTrack"]);
+            
 
-            if (data.ContainsKey("totalSongs"))
-                musicChip.totalSongs = Convert.ToInt32((long) data["totalSongs"]);
+            
 
-            if (data.ContainsKey("totalPatterns"))
-                musicChip.TotalLoops = Convert.ToInt32((long) data["totalPatterns"]);
-
-            // TODO remove legacy property
-            if (data.ContainsKey("totalLoop"))
-                musicChip.TotalLoops = Convert.ToInt32((long) data["totalLoop"]);
-
+            
 
             if (data.ContainsKey(patternKey))
             {
                 var patternData = data[patternKey] as List<object>;
 
-                var total = patternData.Count;
+                var total = Math.Min(patternData.Count, musicChip.TotalLoops);
 
                 //                musicChip.totalLoops = total;
 
@@ -334,7 +377,7 @@ namespace PixelVision8.Runner.Parsers
                         var tracksData = (List<object>) sngData["tracks"];
                         //                        song.totalTracks = tracksData.Count;
 
-                        var trackCount = MathHelper.Clamp(tracksData.Count, 0, song.totalTracks);
+                        var trackCount = MathHelper.Clamp(tracksData.Count, 0, musicChip.totalTracks);
 
                         for (var j = 0; j < trackCount; j++)
                         {
@@ -352,8 +395,7 @@ namespace PixelVision8.Runner.Parsers
                                     var noteData = (List<object>) trackData["notes"];
                                     var totalNotes = noteData.Count;
                                     track.notes = new int[totalNotes];
-                                    for (var k = 0; k < totalNotes; k++)
-                                        track.notes[k] = (int) (long) noteData[k];
+                                    for (var k = 0; k < totalNotes; k++) track.notes[k] = (int) (long) noteData[k];
                                 }
                             }
                         }
@@ -369,19 +411,16 @@ namespace PixelVision8.Runner.Parsers
 
         public void ConfigureSoundChip(Dictionary<string, object> data)
         {
-            var soundChip = target.soundChip;
+            var soundChip = Target.SoundChip;
 
-            if (soundChip == null)
-                return;
+            if (soundChip == null) return;
 
             // Flag chip to export
             soundChip.export = true;
 
-            if (data.ContainsKey("totalChannels"))
-                soundChip.totalChannels = (int) (long) data["totalChannels"];
+            if (data.ContainsKey("totalChannels")) soundChip.totalChannels = (int) (long) data["totalChannels"];
 
-            if (data.ContainsKey("totalSounds"))
-                soundChip.totalSounds = (int) (long) data["totalSounds"];
+            if (data.ContainsKey("totalSounds")) soundChip.TotalSounds = (int) (long) data["totalSounds"];
 
             if (data.ContainsKey("channelTypes"))
             {
@@ -398,7 +437,7 @@ namespace PixelVision8.Runner.Parsers
             {
                 var sounds = (List<object>) data["sounds"];
 
-                var total = MathHelper.Clamp(sounds.Count, 0, soundChip.totalSounds);
+                var total = MathHelper.Clamp(sounds.Count, 0, soundChip.TotalSounds);
 
                 for (var i = 0; i < total; i++)
                 {
@@ -407,14 +446,12 @@ namespace PixelVision8.Runner.Parsers
                     {
                         var sndData = sounds[i] as Dictionary<string, object>;
 
-                        if (sndData.ContainsKey("name"))
-                            soundData.name = sndData["name"] as string;
+                        if (sndData.ContainsKey("name")) soundData.name = sndData["name"] as string;
 
                         var tmpSettings = "";
                         var newProps = new string[24];
 
-                        if (sndData.ContainsKey("settings"))
-                            tmpSettings = sndData["settings"] as string;
+                        if (sndData.ContainsKey("settings")) tmpSettings = sndData["settings"] as string;
 
                         // If this this is version 1 we need to convert the settings to 24 value mode
                         if (!data.ContainsKey("version"))
@@ -507,35 +544,29 @@ namespace PixelVision8.Runner.Parsers
 
         public void ConfigureSpriteChip(Dictionary<string, object> data)
         {
-            var spriteChip = target.spriteChip;
+            var spriteChip = Target.SpriteChip;
 
             // Flag chip to export
             spriteChip.export = true;
 
-            if (data.ContainsKey("maxSpriteCount"))
-                spriteChip.maxSpriteCount = (int) (long) data["maxSpriteCount"];
+            if (data.ContainsKey("maxSpriteCount")) spriteChip.maxSpriteCount = (int) (long) data["maxSpriteCount"];
 
-            if (data.ContainsKey("spriteWidth"))
-                spriteChip.width = (int) (long) data["spriteWidth"];
+            if (data.ContainsKey("spriteWidth")) spriteChip.width = (int) (long) data["spriteWidth"];
 
-            if (data.ContainsKey("spriteHeight"))
-                spriteChip.height = (int) (long) data["spriteHeight"];
+            if (data.ContainsKey("spriteHeight")) spriteChip.height = (int) (long) data["spriteHeight"];
 
-            if (data.ContainsKey("cps"))
-                spriteChip.colorsPerSprite = (int) (long) data["cps"];
+            if (data.ContainsKey("cps")) spriteChip.colorsPerSprite = (int) (long) data["cps"];
 
-            if (data.ContainsKey("pages"))
-                spriteChip.pages = (int) (long) data["pages"];
+            if (data.ContainsKey("pages")) spriteChip.pages = (int) (long) data["pages"];
 
-            if (data.ContainsKey("unique"))
-                spriteChip.unique = Convert.ToBoolean(data["unique"]);
+            if (data.ContainsKey("unique")) spriteChip.unique = Convert.ToBoolean(data["unique"]);
 
             spriteChip.Resize(spriteChip.pageWidth, spriteChip.pageHeight * spriteChip.pages);
         }
 
         public void ConfigureTilemapChip(Dictionary<string, object> data)
         {
-            var tilemapChip = target.tilemapChip;
+            var tilemapChip = Target.TilemapChip;
 
             // Flag chip to export
             tilemapChip.export = true;
@@ -543,19 +574,96 @@ namespace PixelVision8.Runner.Parsers
             var columns = tilemapChip.columns;
             var rows = tilemapChip.rows;
 
-            if (data.ContainsKey("columns"))
-                columns = (int) (long) data["columns"];
+            if (data.ContainsKey("columns")) columns = (int) (long) data["columns"];
 
-            if (data.ContainsKey("rows"))
-                rows = (int) (long) data["rows"];
+            if (data.ContainsKey("rows")) rows = (int) (long) data["rows"];
 
-            if (data.ContainsKey("totalFlags"))
-                tilemapChip.totalFlags = (int) (long) data["totalFlags"];
+            if (data.ContainsKey("totalFlags")) tilemapChip.totalFlags = (int) (long) data["totalFlags"];
 
-            if (data.ContainsKey("autoImport"))
-                tilemapChip.autoImport = Convert.ToBoolean(data["autoImport"]);
+            if (data.ContainsKey("autoImport")) tilemapChip.autoImport = Convert.ToBoolean(data["autoImport"]);
 
             tilemapChip.Resize(columns, rows);
+        }
+
+        // Meta Sprite Json Example
+        // {
+        //     "MetaSprites": {
+        //         "version": "v1",
+        //         "total": 96,
+        //         "collections": [{
+        //             "name": "tileset_1",
+        //             "spriteIDs": [0, 1, 24, 25],
+        //             "sprites": [{
+        //                 "id": 0,
+        //                 "x": 0,
+        //                 "y": 0,
+        //                 "flipH": false,
+        //                 "flipV": false,
+        //                 "colorOffset": 0
+        //
+        //             }],
+        //             "width": 2,
+        //             "colorOffset": 0
+        //         }]
+        //     }
+        // }
+        public void ConfigureMetaSprites(Dictionary<string, object> data)
+        {
+            var gameChip = Target.GameChip;
+            
+            // Prepare to parse v1 of the MetaSprite json template/
+            if (data.ContainsKey("version") && (string)data["version"] == "v1")
+            {
+                if (data.ContainsKey("total")) gameChip.TotalMetaSprites(Convert.ToInt32((long)data["total"]));
+
+                var spriteWidth = data.ContainsKey("spriteWidth") ? Convert.ToInt32((long)data["spriteWidth"]) : gameChip.SpriteSize().X;
+                var spriteHeight = data.ContainsKey("spriteHeight") ? Convert.ToInt32((long)data["spriteHeight"]) : gameChip.SpriteSize().Y;
+
+                // Look for songs
+                if (data.ContainsKey("collections"))
+                {
+                    // Get the list of song data
+                    var collections = data["collections"] as List<object>;
+                    var total = Math.Min(collections.Count, gameChip.TotalMetaSprites());
+
+                    // Loop through each of teh 
+                    for (var i = 0; i < total; i++)
+                    {
+                        var collectionData = collections[i] as Dictionary<string, object>;
+                        var metaSprite = gameChip.MetaSprite(i);
+
+                        // TODO this is redundant
+                        metaSprite.SpriteWidth = spriteWidth;
+                        metaSprite.SpriteHeight = spriteHeight;
+
+                        if (collectionData.ContainsKey("name")) metaSprite.Name = collectionData["name"] as string;
+                        
+                        // Test to see if the basic sprite data exists, IDs and Width.
+                        if (collectionData.ContainsKey("spriteIDs") && collectionData.ContainsKey("width"))
+                        {
+                            var width = Convert.ToInt32((long)collectionData["width"]);
+
+                            var spriteData = (List<object>)collectionData["spriteIDs"];
+                            var totalSprites = spriteData.Count;
+
+                            for (var j = 0; j < totalSprites; j++)
+                            {
+                               var pos = MathUtil.CalculatePosition(j, width);
+
+                               metaSprite.AddSprite(Convert.ToInt32((long)spriteData[j]), pos.X * spriteWidth, pos.X * spriteHeight);
+
+                            }
+
+                        }
+                        // Test to see if the more advanced sprite data exists
+                        else if (collectionData.ContainsKey("sprites"))
+                        {
+                            // TODO this is where we need to manually create each sprite in the collection
+                        }
+
+                    }
+                }
+            }
         }
     }
 }

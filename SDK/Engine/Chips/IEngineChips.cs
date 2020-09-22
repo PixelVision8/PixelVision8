@@ -33,56 +33,56 @@ namespace PixelVision8.Engine.Chips
         ///     other systems to properly convert pixel data into color data for the
         ///     display. This property offers direct access to it.
         /// </summary>
-        ColorChip colorChip { get; set; }
+        ColorChip ColorChip { get; set; }
 
         /// <summary>
         ///     The controller chip handles all input to the engine. This property
         ///     offers direct access to it.
         /// </summary>
-        IControllerChip controllerChip { get; set; }
+        IControllerChip ControllerChip { get; set; }
 
         /// <summary>
         ///     The Display Chip handles all rendering for the engine. This property
         ///     offers direct access to it.
         /// </summary>
-        DisplayChip displayChip { get; set; }
+        DisplayChip DisplayChip { get; set; }
 
         /// <summary>
         ///     The Sound Chip stores and manages playback of sound effects in the
         ///     game engine. This property offers direct access to it.
         /// </summary>
-        SoundChip soundChip { get; set; }
+        SoundChip SoundChip { get; set; }
 
         /// <summary>
         ///     The Sprite Chip stores all the sprite as pixel data for the engine.
         ///     This property offers direct access to it.
         /// </summary>
-        SpriteChip spriteChip { get; set; }
+        SpriteChip SpriteChip { get; set; }
 
         /// <summary>
         ///     The Tile Map Chip stores references to Sprites as tile map data
         ///     making it easy to create levels from sprites and handle collision
         ///     detection via flags. This property offers direct access to it.
         /// </summary>
-        TilemapChip tilemapChip { get; set; }
+        TilemapChip TilemapChip { get; set; }
 
         /// <summary>
         ///     This property offers direct access to the current game loaded into
         ///     the engine's memory.
         /// </summary>
-        GameChip gameChip { get; set; }
+        GameChip GameChip { get; set; }
 
         /// <summary>
         ///     The Fonts Chip is responsible for rendering text to the display.
         ///     This property offers direct access to it.
         /// </summary>
-        FontChip fontChip { get; set; }
+        FontChip FontChip { get; set; }
 
         /// <summary>
         ///     The music chip represents a sequencer that can be used to play back
         ///     sound data for songs.
         /// </summary>
-        MusicChip musicChip { get; set; }
+        MusicChip MusicChip { get; set; }
 
         AbstractChip GetChip(string id, bool activeOnCreate = true);
 

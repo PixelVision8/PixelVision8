@@ -22,21 +22,23 @@ MouseCursor.__index = MouseCursor
 function MouseCursor:Init()
 
     -- Create a new object for the instance and register it
-    local _mouseCursor = {}
+    local _mouseCursor = {
+        cursorID = -1,
+        animationTime = 0,
+        animationDelay = .2,
+        animationFrame = 0,
+        colorOffset = 0,
+        lock = false,
+        pos = NewPoint(-1, -1)
+    }
+
     setmetatable(_mouseCursor, MouseCursor)
 
     -- This defines which set of data to use when drawing the cursor
-    _mouseCursor.cursorID = -1
-
-    _mouseCursor.animationTime = 0
-    _mouseCursor.animationDelay = .2
-    _mouseCursor.animationFrame = 0
-    _mouseCursor.colorOffset = 0
-    _mouseCursor.lock = false
-
+    
     -- Reference data for each of the different mouse cursors
     _mouseCursor.cursors = {
-        -- Pointer
+        -- Pointer 1
         {
             spriteData = cursorpointer,
             offset = {
@@ -44,7 +46,7 @@ function MouseCursor:Init()
                 y = -1
             }
         },
-        -- Hand (for interaction)
+        -- Hand (for interaction) 2
         {
             spriteData = cursorhand,
             offset = {
@@ -52,7 +54,7 @@ function MouseCursor:Init()
                 y = -1
             }
         },
-        -- Input
+        -- Input 3
         {
             spriteData = cursortext,
             offset = {
@@ -61,7 +63,7 @@ function MouseCursor:Init()
             }
         },
 
-        -- Help (for showing tool tips)
+        -- Help (for showing tool tips) 4
         {
             spriteData = cursorhelp,
             offset = {
@@ -69,7 +71,7 @@ function MouseCursor:Init()
                 y = -3
             }
         },
-        -- Wait
+        -- Wait 5
         {
             spriteData = cursorwait1,
             offset = {
@@ -80,7 +82,7 @@ function MouseCursor:Init()
             frames = 10,
             spriteName = "cursorwait"
         },
-        -- Pencil
+        -- Pencil 6
         {
             spriteData = cursorpen,
             offset = {
@@ -88,7 +90,7 @@ function MouseCursor:Init()
                 y = -15
             }
         },
-        -- Eraser
+        -- Eraser 7
         {
             spriteData = cursoreraser,
             offset = {
@@ -96,7 +98,7 @@ function MouseCursor:Init()
                 y = -15
             }
         },
-        -- Cross
+        -- Cross 8
         {
             spriteData = cursorcross,
             offset = {
@@ -104,12 +106,20 @@ function MouseCursor:Init()
                 y = -8
             }
         },
+        -- Move Hand 9
+        {
+            spriteData = cursorhandmove,
+            offset = {
+                x = -8,
+                y = -8
+            }
+        },
     }
 
-    _mouseCursor.pos = {x = -1, y = -1}
 
     _mouseCursor:SetCursor(1)
     -- Return the new instance of the editor ui
+    
     return _mouseCursor
 
 end

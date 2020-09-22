@@ -5,8 +5,7 @@
         "backgroundColor":0,
         "maskColor":"#FF00FF",
         "unique":false,
-        "debug":false,
-        
+        "debug":false
     },
     "DisplayChip":
     {
@@ -15,13 +14,15 @@
         "overscanX":1,
         "overscanY":1,
         "layers":6
-        
     },
     "FontChip":
     {
+        "unique":true,
+        "pages":2
     },
     "GameChip":
     {
+        "totalMetaSprites":96,
         "lockSpecs":true,
         "maxSize":512,
         "saveSlots":8
@@ -53,7 +54,6 @@
         "columns":36,
         "rows":32,
         "totalFlags":16,
-        "autoImport":false,
-        
+        "autoImport":false
     }
 }

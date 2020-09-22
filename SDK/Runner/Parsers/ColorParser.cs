@@ -37,7 +37,7 @@ namespace PixelVision8.Runner.Parsers
         protected Color tmpColor;
         protected int totalColors;
 
-        public ColorParser(IImageParser imageParser, ColorChip colorChip) : base(imageParser)
+        public ColorParser(IImageParser parser, ColorChip colorChip) : base(parser)
         {
             this.colorChip = colorChip;
             unique = colorChip.unique;
@@ -50,9 +50,9 @@ namespace PixelVision8.Runner.Parsers
 
             base.CalculateSteps();
 
-//            steps.Add(IndexColors);
+            //            steps.Add(IndexColors);
             steps.Add(ReadColors);
-//            steps.Add(ResetColorChip);
+            //            steps.Add(ResetColorChip);
             steps.Add(UpdateColors);
         }
 
@@ -62,22 +62,22 @@ namespace PixelVision8.Runner.Parsers
 
             // If we are loading a legacy game and no system colors are defined, used the image parser's palette
 
-//            if (colorChip.supportedColors == null)
-//            {
-//                string[] systemColors = imageParser.colorPalette.Select(c => ((ColorData) c).ToHex()).ToArray();
-////
-//                for (int i = 0; i < systemColors.Length; i++)
-//                {
-//                    colorChip.AddSupportedColor(systemColors[i]);
-//                }
-//            }
+            //            if (colorChip.supportedColors == null)
+            //            {
+            //                string[] systemColors = imageParser.colorPalette.Select(c => ((ColorData) c).ToHex()).ToArray();
+            ////
+            //                for (int i = 0; i < systemColors.Length; i++)
+            //                {
+            //                    colorChip.AddSupportedColor(systemColors[i]);
+            //                }
+            //            }
 
             // Parse colors as normal
 
             var srcColors =
                 unique
-                    ? imageParser.colorPalette.ToArray()
-                    : imageParser.colorPixels; //data.Select(c => new ColorAdapter(c) as Color).ToArray();
+                    ? Parser.colorPalette.ToArray()
+                    : Parser.colorPixels; //data.Select(c => new ColorAdapter(c) as Color).ToArray();
             var total = srcColors.Length;
 
             // Loop through each color and find the unique ones
@@ -94,7 +94,7 @@ namespace PixelVision8.Runner.Parsers
                 }
                 else
                 {
-//                if(tmpColor != magenta)
+                    //                if(tmpColor != magenta)
                     colors.Add(tmpColor);
                 }
             }
@@ -103,14 +103,14 @@ namespace PixelVision8.Runner.Parsers
 
             currentStep++;
         }
-//
-//        public void ResetColorChip()
-//        {
-//            // Clear the colors first
-////            colorChip.Clear();
-//
-//            currentStep++;
-//        }
+        //
+        //        public void ResetColorChip()
+        //        {
+        //            // Clear the colors first
+        ////            colorChip.Clear();
+        //
+        //            currentStep++;
+        //        }
 
         public void UpdateColors()
         {

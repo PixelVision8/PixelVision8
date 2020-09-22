@@ -1,10 +1,12 @@
 {
-	"name": "FilePickerTool",
-	"description": "",
-	"version": "v0.9.0",
-	"ext": ".pv8",
-	"gpuChip": "PV8",
-	"cartChip": "PV8",
-	"soundChip": "PV8",
-	"editType": "workspace"
+    "name":"FilePickerTool",
+    "description":"",
+    "version":"v0.9.8",
+    "ext":".pv8",
+    "gpuChip":"PV8",
+    "cartChip":"PV8",
+    "soundChip":"PV8",
+    "editType":"workspace",
+    "ignoreProcessing":"False",
+    
 }

@@ -1,0 +1,11 @@
+{
+    "name":"PV8System",
+    "description":"A PV8 Game Template.",
+    "version":"v0.9.7",
+    "ext":".pv8",
+    "gpuChip":"Custom",
+    "cartChip":"PV8",
+    "soundChip":"PV8",
+    "paletteMode":"true",
+    
+}

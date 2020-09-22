@@ -23,39 +23,53 @@ using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Runner.Parsers
 {
-    public class TilemapParser : SpriteParser
+    public class TilemapParser : SpriteImageParser
     {
         private readonly bool autoImport;
 
         private readonly TilemapChip tilemapChip;
-//        private ITexture2D tileFlagTex;
-//        private IColor clear;
-//        
-//        private int flag;
-//        private int offset;
-
-        public TilemapParser(IImageParser imageParser, byte[] tileFlagData, IEngineChips chips) :
-            base(imageParser, chips)
+        protected int columns, rows;
+        public TilemapParser(IImageParser parser, ColorChip colorChip, SpriteChip spriteChip, TilemapChip tilemapChip) :
+            base(parser, colorChip, spriteChip)
         {
-            tilemapChip = chips.tilemapChip;
+            this.tilemapChip = tilemapChip;
 
             autoImport = tilemapChip.autoImport;
-
-//            clear = new ColorData(0f){a = 0f};
-            maskColor = ColorUtils.HexToColor(chips.colorChip.maskColor);
+            
         }
 
-        protected override void CalculateBounds()
+        public override void CutOutSprites()
         {
-            // Calculate the texture's bounds
-            base.CalculateBounds();
 
-            columns = columns > tilemapChip.columns ? tilemapChip.columns : columns;
+            // TODO the image should be the right size from the beginning
 
-            rows = rows > tilemapChip.rows ? tilemapChip.rows : rows;
+            // Make sure the tilemap is  the correct size
+            var tmpColumns = image.Columns > tilemapChip.columns ? tilemapChip.columns : image.Columns;
+            var tmpRows = image.Rows > tilemapChip.rows ? tilemapChip.rows : image.Rows;
 
-            // Recalculate total sprites
-            totalSprites = columns * rows;
+            for (var i = 0; i < totalSprites; i++)
+            {
+
+                var pos = MathUtil.CalculatePosition(i, image.Columns);
+
+                if(pos.X < tmpColumns && pos.Y < image.Rows)
+                { 
+                    // Convert sprite to color index
+                    ConvertColorsToIndexes(cps);
+
+                    ProcessSpriteData();
+                }
+
+                index++;
+
+            }
+
+            if(tmpColumns < image.Columns || tmpRows < image.Rows)
+            {
+                image.Resize(tmpColumns * tmpColumns * spriteChip.width, tmpRows * spriteChip.height);
+            }
+
+            StepCompleted();
         }
 
         protected override void ProcessSpriteData()
@@ -68,14 +82,13 @@ namespace PixelVision8.Runner.Parsers
                 spriteChip.UpdateSpriteAt(id, spriteData);
             }
 
-            x = index % columns;
-            y = index / columns;
+            x = index % image.Columns;
+            y = index / image.Columns;
 
             var tile = tilemapChip.GetTile(x, y);
 
             tile.spriteID = id;
-//            tile.flag = flag;
-//            tile.colorOffset = offset;
+
         }
     }
 }

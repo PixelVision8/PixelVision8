@@ -19,9 +19,8 @@
 //
 
 using System;
-using PixelVision8.Engine;
 
-namespace PixelVision8.Runner.Data
+namespace PixelVision8.Engine
 {
     public class RawAudioData : AbstractData
     {
@@ -51,11 +50,6 @@ namespace PixelVision8.Runner.Data
             }
         }
 
-//        public void GetData(float[] data)
-//        {
-//            Array.Copy(this.data, data, samples);
-//        }
-
         public void Resize(int samples)
         {
             Array.Resize(ref data, samples);
@@ -77,6 +71,7 @@ namespace PixelVision8.Runner.Data
 
             var soundLength = Convert.ToUInt32(samples);
             if (__bitDepth == 16) soundLength *= 2;
+
             if (__sampleRate == 22050) soundLength /= 2;
 
             var fileSize = 36 + soundLength;

@@ -25,6 +25,7 @@ namespace PixelVision8.Runner.Parsers
 {
     public interface IImageParser
     {
+        string MaskHex { get; }
         int width { get; }
         int height { get; }
         Color[] colorPixels { get; }
@@ -33,5 +34,7 @@ namespace PixelVision8.Runner.Parsers
         void ReadHeader();
         void ReadStream();
         void ReadBytes(byte[] bytes);
+        void Dispose();
+        string FileName { get; set; }
     }
 }

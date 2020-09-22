@@ -19,6 +19,7 @@
 //
 
 using System;
+using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Engine.Utils
 {
@@ -44,23 +45,64 @@ namespace PixelVision8.Engine.Utils
             return (int) Math.Floor(value);
         }
 
-//        /// <summary>
-//        ///     Returns Round value as an int.
-//        /// </summary>
-//        /// <param name="value"></param>
-//        public static int RoundToInt(float value)
-//        {
-//            return (int) Math.Round(value);
-//        }
-//
-//        public static int RandomRange(int min, int max)
-//        {
-//            return random.Next(min, max);
-//        }
-//
-//        public static float RandomValue()
-//        {
-//            return random.Next(0, 100) / 100f;
-//        }
+        /// <summary>
+        ///     Converts an X and Y position into an index. This is useful for finding positions in 1D
+        ///     arrays that represent 2D data.
+        /// </summary>
+        /// <param name="x">
+        ///     The x position.
+        /// </param>
+        /// <param name="y">
+        ///     The y position.
+        /// </param>
+        /// <param name="width">
+        ///     The width of the data if it was represented as a 2D array.
+        /// </param>
+        /// <returns>
+        ///     Returns an int value representing the X and Y position in a 1D array.
+        /// </returns>
+        public static int CalculateIndex(int x, int y, int width)
+        {
+            int index;
+            index = x + y * width;
+            return index;
+        }
+
+        /// <summary>
+        ///     Repeats a value based on the max. When the value is greater than the max, it starts
+        ///     over at 0 plus the remaining value.
+        /// </summary>
+        /// <param name="val">
+        ///     The value to repeat.
+        /// </param>
+        /// <param name="max">
+        ///     The maximum the value can be.
+        /// </param>
+        /// <returns>
+        ///     Returns an int that is never less than 0 or greater than the max.
+        /// </returns>
+        public static int Repeat(int val, int max)
+        {
+            return (int)(val - Math.Floor(val / (float)max) * max);
+        }
+
+        /// <summary>
+        ///     Converts an index into an X and Y position to help when working with 1D arrays that
+        ///     represent 2D data.
+        /// </summary>
+        /// <param name="index">
+        ///     The position of the 1D array.
+        /// </param>
+        /// <param name="width">
+        ///     The width of the data if it was a 2D array.
+        /// </param>
+        /// <returns>
+        ///     Returns a vector representing the X and Y position of an index in a 1D array.
+        /// </returns>
+        public static Point CalculatePosition(int index, int width)
+        {
+            return new Point(index % width, index / width);
+        }
+
     }
 }

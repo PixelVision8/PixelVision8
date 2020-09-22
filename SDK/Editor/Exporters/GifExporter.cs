@@ -51,8 +51,8 @@ namespace PixelVision8.Runner
 
         public GifExporter(string fileName, IEngineChips engine) : base(fileName)
         {
-            DisplayChip = engine.displayChip;
-            bounds = DisplayChip.visibleBounds;
+            DisplayChip = engine.DisplayChip;
+            bounds = DisplayChip.VisibleBounds;
         }
 
         public override void CalculateSteps()
@@ -74,14 +74,14 @@ namespace PixelVision8.Runner
 
             var tmpFrame = new GifFrame();
             
-            var tmpT2D = new Texture2D(DisplayChip.width, DisplayChip.height);
-
-            tmpT2D.SetPixels32(DisplayChip.pixels);
-
-            var pixels = tmpT2D.GetPixels(0, 0, bounds.Width, bounds.Height);
+            // var tmpT2D = new Texture2D(DisplayChip.Width, DisplayChip.Height);
+            //
+            // tmpT2D.SetPixels32(DisplayChip.Pixels);
+            //
+            // var pixels = tmpT2D.GetPixels(0, 0, bounds.Width, bounds.Height);
 
             tmpFrame.Texture = new Texture2D(bounds.Width, bounds.Height);
-            tmpFrame.Texture.SetPixels32(pixels); // TODO need to crop this
+            tmpFrame.Texture.SetPixels32(DisplayChip.VisiblePixels()); // TODO need to crop this
 
             tmpFrame.Delay = delay;
 

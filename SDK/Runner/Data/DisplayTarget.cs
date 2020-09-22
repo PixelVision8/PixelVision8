@@ -1,4 +1,4 @@
-﻿    //   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -22,13 +22,15 @@ using System;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Runner.Data
 {
     public class DisplayTarget : IDisplayTarget
     {
-        private readonly int _monitorHeight = 640;
-        private readonly int _monitorWidth = 640;
+        private readonly int _monitorHeight;
+        private readonly int _monitorWidth;
         private readonly GraphicsDeviceManager graphicManager;
         public readonly SpriteBatch spriteBatch;
         private int _monitorScale = 1;
@@ -39,9 +41,8 @@ namespace PixelVision8.Runner.Data
         public Vector2 offset;
         public Texture2D renderTexture;
         public Vector2 scale = new Vector2(1, 1);
-        private Effect shaderEffect;
+        // private Effect shaderEffect;
         public bool stretchScreen;
-        private int totalPixels;
         private Rectangle visibleRect;
 
         // TODO think we just need to pass in the active game and not the entire runner?
@@ -61,57 +62,47 @@ namespace PixelVision8.Runner.Data
         {
             get
             {
-                if (crtShader == null || shaderEffect == null)
-                    return false;
-
                 return _useCRT;
             }
             set
             {
-                if (crtShader == null)
-                    return;
+                if (crtShader == null) return;
 
                 _useCRT = value;
 
-                shaderEffect = _useCRT ? crtShader : null;
+                crtShader?.Parameters["crtOn"].SetValue(value ? 1f : 0f);
+                crtShader?.Parameters["warp"].SetValue(value ? new Vector2(0.008f, 0.01f) : Vector2.Zero);
+
             }
         }
 
         public float brightness
         {
-            get => shaderEffect?.Parameters["brightboost"]?.GetValueSingle() ?? 0;
-            set => shaderEffect?.Parameters["brightboost"]?.SetValue(MathHelper.Clamp(value, .5f, 1.5f));
+            get => crtShader?.Parameters["brightboost"]?.GetValueSingle() ?? 0;
+            set => crtShader?.Parameters["brightboost"]?.SetValue(MathHelper.Clamp(value, .255f, 1.5f));
         }
 
         public float sharpness
         {
-            get => shaderEffect?.Parameters["hardPix"]?.GetValueSingle() ?? 0;
-            set => shaderEffect?.Parameters["hardPix"]?.SetValue(value);
+            get => crtShader?.Parameters["hardPix"]?.GetValueSingle() ?? 0;
+            set => crtShader?.Parameters["hardPix"]?.SetValue(value);
+        }
+
+        public bool HasShader()
+        {
+            return crtShader != null;
         }
 
         public Stream shaderPath
         {
             set
             {
-//                Effect tmpEffect;
-
+                
                 using (var reader = new BinaryReader(value))
                 {
                     crtShader = new Effect(graphicManager.GraphicsDevice,
                         reader.ReadBytes((int) reader.BaseStream.Length));
                 }
-
-                // Sharpness
-                crtShader.Parameters["hardPix"]?.SetValue(-10.0f); // -3.0f (4 - 6)
-
-                // Brightness
-                crtShader.Parameters["brightboost"]?.SetValue(1f); // 1.0f (.5 - 1.5)
-
-
-                crtShader.Parameters["hardScan"]?.SetValue(-4.0f); // -8.0f
-                crtShader.Parameters["warpX"]?.SetValue(0.008f); // 0.031f
-                crtShader.Parameters["warpY"]?.SetValue(0.01f); // 0.041f
-                crtShader.Parameters["shape"]?.SetValue(2f); // 2.0f
 
                 useCRT = true;
             }
@@ -151,13 +142,9 @@ namespace PixelVision8.Runner.Data
             {
                 renderTexture = new Texture2D(graphicManager.GraphicsDevice, gameWidth, gameHeight);
 
-                shaderEffect?.Parameters["textureSize"].SetValue(new Vector2(gameWidth, gameHeight));
-                shaderEffect?.Parameters["videoSize"].SetValue(new Vector2(gameWidth, gameHeight));
-                shaderEffect?.Parameters["outputSize"].SetValue(new Vector2(graphicManager.PreferredBackBufferWidth,
-                    graphicManager.PreferredBackBufferHeight));
-
-                // Set the new number of pixels
-                totalPixels = renderTexture.Width * renderTexture.Height;
+                crtShader?.Parameters["textureSize"].SetValue(new Vector2(gameWidth, gameHeight));
+                crtShader?.Parameters["videoSize"].SetValue(new Vector2(gameWidth, gameHeight));
+                
             }
 
             // Calculate the game's resolution
@@ -199,9 +186,6 @@ namespace PixelVision8.Runner.Data
                 offset.Y = 0;
             }
 
-//            Console.WriteLine("Reset Res Fullscreen " + fullscreen + " "+displayWidth+"x"+displayHeight);
-
-
             // Apply changes
             graphicManager.IsFullScreen = fullscreen;
 
@@ -212,33 +196,46 @@ namespace PixelVision8.Runner.Data
                 graphicManager.PreferredBackBufferHeight = displayHeight;
                 graphicManager.ApplyChanges();
             }
+
         }
 
-        public void Render(Color[] pixels)
+        private Texture2D _colorPalette;
+        private readonly int paletteWidth = 256;
+        public void RebuildColorPalette(ColorChip colorChip)
         {
-            // TODO didn't have to check length before service refactoring
-            if (totalPixels != pixels.Length) return;
+
+            var colors = ColorUtils.ConvertColors(colorChip.hexColors, colorChip.maskColor, colorChip.debugMode,
+                colorChip.backgroundColor);
+
+            var width = paletteWidth;
+            var height = (int)Math.Ceiling(colors.Length / (double)width);
+
+            _colorPalette = new Texture2D(graphicManager.GraphicsDevice, width, height);
+
+            var fullPalette = new Color[_colorPalette.Width];
+            for (int i = 0; i < fullPalette.Length; i++) { fullPalette[i] = i < colors.Length ? colors[i] : colors[0]; }
+
+            _colorPalette.SetData(colors);
+
+            colorChip.ResetValidation();
+
+            // Set palette total
+            // crtShader.Parameters["maskColor"].SetValue(Color.Magenta.ToVector4());
+
+        }
+
+        public void Render(int[] pixels)
+        {
 
             renderTexture.SetData(pixels);
-
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: useCRT ? shaderEffect : null);
-
-            spriteBatch.Draw(renderTexture, offset, visibleRect, Color.White, 0f, Vector2.Zero, scale,
-                SpriteEffects.None, 1f);
-
+            spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
+            crtShader.CurrentTechnique.Passes[0].Apply();
+            graphicManager.GraphicsDevice.Textures[1] = _colorPalette;
+            graphicManager.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
+            spriteBatch.Draw(renderTexture, offset, visibleRect, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 1f);
             spriteBatch.End();
+
         }
 
-//        public void CaptureScreenshot()
-//        {
-//            var gd = graphicManager.GraphicsDevice;
-//            
-//            Color[] colors = new Color[gd.Viewport.Width * gd.Viewport.Height];
-//
-//            gd.GetBackBufferData<Color>(colors);
-//            
-//            
-//            
-//        }
     }
 }

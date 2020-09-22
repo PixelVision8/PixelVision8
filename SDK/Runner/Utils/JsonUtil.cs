@@ -32,8 +32,7 @@ namespace PixelVision8.Runner.Utils
 
         public static void GetLineBreak(StringBuilder sb, int indent = 0)
         {
-            if (compressJson)
-                return;
+            if (compressJson) return;
 
             sb.Append(lineBreak);
 
@@ -43,8 +42,7 @@ namespace PixelVision8.Runner.Utils
         public static void GetIndent(StringBuilder sb, int indent = 0)
         {
             indent += indentLevel;
-            for (var i = 0; i < indent; i++)
-                sb.Append(indentChar);
+            for (var i = 0; i < indent; i++) sb.Append(indentChar);
         }
     }
 }

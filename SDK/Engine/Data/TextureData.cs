@@ -29,7 +29,7 @@ namespace PixelVision8.Engine
     ///     reference colors in the ColorChip when rendering to a display. The
     ///     <see cref="TextureData" /> class provides a set of APIs to make it easier
     ///     to work with this data. It also allows you to perform more advanced
-    ///     operations around getting and setting pixel data including support for
+    ///     operations around getting and setti ng pixel data including support for
     ///     wrapping.
     /// </summary>
     public class TextureData : AbstractData
@@ -42,7 +42,7 @@ namespace PixelVision8.Engine
         protected int _width;
         public int[] pixels = new int[0];
 
-        private int[] tmpPixels;
+        // private int[] tmpPixels;
 
         protected int total;
 
@@ -121,7 +121,7 @@ namespace PixelVision8.Engine
         /// <returns></returns>
         public virtual int[] GetPixels()
         {
-            tmpPixels = new int[pixels.Length];
+            var tmpPixels = new int[pixels.Length];
 
             Array.Copy(pixels, tmpPixels, pixels.Length);
 
@@ -130,11 +130,11 @@ namespace PixelVision8.Engine
 
         public virtual int[] GetPixels(int x, int y, int blockWidth, int blockHeight)
         {
-            tmpPixels = new int[blockWidth * blockHeight];
+            var tmpPixels = new int[blockWidth * blockHeight];
 
             CopyPixels(ref tmpPixels, x, y, blockWidth, blockHeight);
 
-//            Array.Copy(pixels, tmpPixels, pixels.Length);
+            //            Array.Copy(pixels, tmpPixels, pixels.Length);
 
             return tmpPixels;
         }
@@ -167,8 +167,7 @@ namespace PixelVision8.Engine
         {
             total = blockWidth * blockHeight;
 
-            if (total == 0)
-                return;
+            if (total == 0) return;
 
             // Per-line copy, as there is no special per-pixel logic required.
 
@@ -212,11 +211,59 @@ namespace PixelVision8.Engine
         {
             _width = MathHelper.Clamp(width, 1, 2048);
             _height = MathHelper.Clamp(height, 1, 2048);
-            ;
+            
 
             Array.Resize(ref pixels, width * height);
 
             Clear();
+        }
+
+        public virtual void Crop(int x, int y, int blockWidth, int blockHeight)
+        {
+
+            if (!ValidateBounds(ref x, ref y, ref blockWidth, ref blockHeight))
+                return;
+
+            var tmpPixelData = GetPixels(x, y, blockWidth, blockHeight);
+
+            _width = blockWidth;
+            _height = blockHeight;
+
+            Array.Resize(ref pixels, _width * _height);
+
+            SetPixels(tmpPixelData);
+        }
+
+        protected bool ValidateBounds(ref int x, ref int y, ref int blockWidth, ref int blockHeight)
+        {
+            // Adjust X
+            if (x < 0)
+            {
+                blockWidth += x;
+                x = 0;
+            }
+
+            // Adjust Y
+            if (y < 0)
+            {
+                blockHeight += y;
+                y = 0;
+            }
+
+            // Adjust Width
+            if ((x + blockWidth) > _width)
+            {
+                blockWidth -= ((x + blockWidth) - _width);
+            }
+
+            // Adjust Height
+            if ((y + blockHeight) > _height)
+            {
+                blockHeight -= ((y + blockHeight) - _height);
+            }
+
+            return (blockWidth > 0 && blockHeight > 0);
+
         }
 
         /// <summary>
@@ -288,26 +335,18 @@ namespace PixelVision8.Engine
 
                 if (pixel != -1 || ignoreTransparent != true)
                 {
-                    if (colorOffset > 0 && pixel != -1)
-                        pixel += colorOffset;
+                    if (colorOffset > 0 && pixel != -1) pixel += colorOffset;
 
                     srcX = i % blockWidth;
                     srcY = i / blockWidth;
 
-                    if (flipH)
-                        srcX = blockWidth - 1 - srcX;
-                    if (flipV)
-                        srcY = blockWidth - 1 - srcY;
+                    if (flipH) srcX = blockWidth - 1 - srcX;
+
+                    if (flipV) srcY = blockWidth - 1 - srcY;
 
                     SetPixel(srcX + x, srcY + y, pixel);
                 }
 
-
-//                
-//                if (pixel != -1 && ignoreTransparent == false)
-//                {
-//                    
-//                }
             }
 
             Invalidate();
@@ -325,8 +364,7 @@ namespace PixelVision8.Engine
         {
             total = _width * _height;
 
-            if (data.Length < total)
-                Array.Resize(ref data, total);
+            if (data.Length < total) Array.Resize(ref data, total);
 
             int color;
 
@@ -336,8 +374,7 @@ namespace PixelVision8.Engine
                 for (var i = 0; i < total; i++)
                 {
                     color = pixels[i];
-                    if (color != transparentColor)
-                        data[i] = color;
+                    if (color != transparentColor) data[i] = color;
                 }
         }
 
@@ -366,8 +403,7 @@ namespace PixelVision8.Engine
         {
             total = blockWidth * blockHeight;
 
-            if (data.Length < total)
-                Array.Resize(ref data, total);
+            if (data.Length < total) Array.Resize(ref data, total);
 
             // Per-line copy, as there is no special per-pixel logic required.
 

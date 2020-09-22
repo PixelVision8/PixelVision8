@@ -47,11 +47,9 @@ namespace PixelVision8.Engine.Utils
         /// <param name="b"></param>
         public static void HexToRgb(string hex, out byte r, out byte g, out byte b)
         {
-            if (hex == null)
-                hex = "FF00FF";
+            if (hex == null) hex = "FF00FF";
 
-            if (hex[0] == '#')
-                hex = hex.Substring(1);
+            if (hex[0] == '#') hex = hex.Substring(1);
 
             r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
             g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
@@ -73,22 +71,35 @@ namespace PixelVision8.Engine.Utils
 
         public static Color HexToColor(string hex)
         {
-            byte r, g, b;
-
-            HexToRgb(hex, out r, out g, out b);
+            HexToRgb(hex, out var r, out var g, out var b);
 
             return new Color(r, g, b);
         }
 
         public static void HexToColor(string hex, Color color)
         {
-            byte r, g, b;
-
-            HexToRgb(hex, out r, out g, out b);
+            HexToRgb(hex, out var r, out var g, out var b);
 
             color.R = r;
             color.G = g;
             color.B = b;
+        }
+        public static Color[] ConvertColors(string[] hexColors, string maskColor = "#FF00FF", bool debugMode = false, int backgroundColor = 0)
+        {
+            var t = hexColors.Length;
+            var colors = new Color[t];
+
+            for (var i = 0; i < t; i++)
+            {
+                var colorHex = hexColors[i];
+
+                if (colorHex == maskColor && debugMode == false) colorHex = hexColors[backgroundColor];
+
+                var color = HexToColor(colorHex);
+                colors[i] = color;
+            }
+
+            return colors;
         }
     }
 }

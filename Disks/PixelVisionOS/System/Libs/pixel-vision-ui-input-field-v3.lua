@@ -15,6 +15,15 @@
 -- Shawn Rakowski - @shwany
 --
 
+local patterns = {
+  hex = '%x',
+  number = '%d',
+  file = '[_%-%w ]',
+  keys = '%a',
+  note = '[A-G#]',
+  variable = '[%w]'
+}
+
 function EditorUI:CreateInputField(rect, text, toolTip, pattern, font, colorOffset)
 
   -- Set the edit flag if it's not yet set
@@ -44,13 +53,6 @@ function EditorUI:CreateInputField(rect, text, toolTip, pattern, font, colorOffs
   data.colorize = false
 
   data.pattern = pattern
-  data.patterns = {
-    hex = '%x',
-    number = '%d',
-    file = '[_%-%w]',
-    keys = '%a',
-    note = '[A-G#]'
-  }
 
   -- Remap return
   data.keymap["return"] = function(targetData)
@@ -74,35 +76,8 @@ function EditorUI:CreateInputField(rect, text, toolTip, pattern, font, colorOffs
 
   data.captureInput = function(targetData)
 
-    local inputString = InputString()
-    local outputString = ""
+    return self:ValidateInputFieldText(targetData, InputString())
 
-    for char in inputString:gmatch"." do
-
-      local pattern = targetData.patterns[targetData.pattern]
-
-      if(pattern ~= nil) then
-        char = string.match(char, pattern)
-      end
-
-      if(char ~= nil) then
-
-        if(targetData.forceCase ~= nil) then
-          char = string[targetData.forceCase](char)
-        end
-
-        -- Text to see if the input field is a single character and clear it
-        if(targetData.tiles.w == 1) then
-          targetData.buffer[1] = char
-        else
-          outputString = outputString .. char
-        end
-
-      end
-
-    end
-
-    return outputString
   end
 
   data.onEdit = function(targetData, value)
@@ -121,9 +96,41 @@ function EditorUI:CreateInputField(rect, text, toolTip, pattern, font, colorOffs
 
 end
 
+function EditorUI:ValidateInputFieldText(targetData, inputString, pattern, forceCase)
+
+  local outputString = ""
+
+  pattern = pattern ~= nil and patterns[pattern] or patterns[targetData.pattern]
+  forceCase = targetData ~= nil and targetData.forceCase or forceCase
+
+  for char in inputString:gmatch"." do
+
+    if(pattern ~= nil) then
+      char = string.match(char, pattern)
+    end
+
+    if(char ~= nil) then
+
+      if(forceCase ~= nil) then
+        char = string[forceCase](char)
+      end
+
+      -- Text to see if the input field is a single character and clear it
+      if(targetData ~= nil and targetData.tiles.w == 1) then
+        targetData.buffer[1] = char
+      else
+        outputString = outputString .. char
+      end
+
+    end
+
+  end
+
+  return outputString
+
+end
+
 function EditorUI:OnEditTextInputField(data, value)
-
-
 
   -- Test to see if we are entering edit mode
   if(value == true) then
@@ -171,6 +178,8 @@ end
 
 function EditorUI:ChangeInputField(data, text, trigger)
   -- Input fields need to process the text before setting it
+
+  -- print(data.name, "ChangeInputField", text)
 
   -- Look for any custom validation
   if(data.onValidate ~= nil) then

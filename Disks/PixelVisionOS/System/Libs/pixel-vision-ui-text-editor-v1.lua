@@ -33,7 +33,7 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset)
   data.endOfLineOffset = 1
   data.viewPort = NewRect(data.rect.x, data.rect.y, data.rect.w, data.rect.h)
   data.cursorPos = {x = 0, y = 0, color = 0}
-  data.inputDelay = .15
+  data.inputDelay = .10
   data.flavorBack = 0
   data.theme = {
     bg = 0, --Background Color
@@ -886,6 +886,11 @@ function EditorUI:TextEditorPasteText(data)
   self:TextEditorBeginUndoable(data)
   if data.sxs then self:TextEditorDeleteSelection(data) end
   local text = self:TextEditorClipboard()
+  
+  if(text == nil) then
+    return
+  end
+  
   text = text:gsub("\t", " ") -- tabs mess up the layout, replace them with spaces
   local firstLine = true
   for line in string.gmatch(text.."\n", "([^\r\n]*)\r?\n") do
@@ -1137,20 +1142,35 @@ end
 
 function EditorUI:TextEditorUpdate(data, dt)
 
+  -- Make sure we don't detect a collision if the mouse is down but not over this button
+  if(self.collisionManager.mouseDown and data.inFocus == false) then
+
+    -- If we lose focus while the mouse is down but still in edit mode we need to clear that
+    if(data.editing == true) then
+      self:EditTextEditor(data, false)
+    end
+
+    -- Force the display to redraw if it has been changed externally
+    self:TextEditorDrawBuffer(data)
+
+    return
+
+  end
+
   local overrideFocus = (data.inFocus == true and self.collisionManager.mouseDown)
 
   -- TODO this should be only happen when in focus
   local cx = self.collisionManager.mousePos.c - data.tiles.c
   local cy = self.collisionManager.mousePos.r - data.tiles.r
 
-  -- print("Inside Text", data.name)
+  -- print("Inside Text", (editorUI.inFocusUI ~= nil and editorUI.inFocusUI.name or nil))
   -- Ready to test finer collision if needed
-  if(self.collisionManager:MouseInRect(data.rect) == true or overrideFocus) then
+  if((self.collisionManager:MouseInRect(data.rect) == true or overrideFocus)) then
 
     if(data.enabled == true and data.editable == true) then
 
       if(data.inFocus == false) then
-
+        print("in focus")
         -- Set focus
         self:SetFocus(data, 3)
       end
@@ -1174,7 +1194,7 @@ function EditorUI:TextEditorUpdate(data, dt)
 
     end
 
-  else
+  elseif(data.inFocus == true) then
     -- If the mouse isn't over the component clear the focus
     self:ClearFocus(data)
 

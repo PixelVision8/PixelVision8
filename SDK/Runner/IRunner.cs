@@ -20,13 +20,14 @@
 
 using System.Collections.Generic;
 using PixelVision8.Engine;
+using PixelVision8.Engine.Services;
 
 namespace PixelVision8.Runner
 {
     public interface IRunner
     {
-        IEngine activeEngine { get; }
-        void ProcessFiles(IEngine tmpEngine, Dictionary<string, byte[]> files, bool displayProgress = false);
+        IEngine ActiveEngine { get; }
+        void ProcessFiles(IEngine tmpEngine, string[] files, bool displayProgress = false);
         void DisplayWarning(string message);
         int Volume(int? value = null);
         bool Mute(bool? value = null);
@@ -34,8 +35,10 @@ namespace PixelVision8.Runner
         bool Fullscreen(bool? value = null);
         bool StretchScreen(bool? value = null);
         bool CropScreen(bool? value = null);
-        void DebugLayers(bool value);
-        void ToggleLayers(int value);
-        void ResetGame();
+        // void DebugLayers(bool value);
+        // void ToggleLayers(int value);
+        // void ResetGame();
+        IServiceLocator ServiceManager { get;}
+
     }
 }

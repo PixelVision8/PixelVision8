@@ -44,18 +44,20 @@ namespace PixelVision8.Engine.Chips
         public bool loopSong;
         public int maxNoteNum = 127; // how many notes in these arrays below
         public int maxTracks = 5; // max number of instruments playing notes
-        public float nextBeatTimestamp;
+
         public float[] noteHZ; // a lookup table of all musical notes in Hz
 
         public float[] noteStartFrequency; // same, but for sfxr frequency 0..1 range
-        protected float noteTickS = 30.0f / 120.0f; // (30.0f/120.0f) = 120BPM eighth notes
-        protected float noteTickSEven;
-        protected float noteTickSOdd;
+
+        protected float swingRhythmFactor = 1.0f;//0.7f;
+        protected float noteTickS = 15.0f / 120.0f; // (15.0f/120.0f) = 120BPM sixteenth notes
+        protected float noteTickSOdd; // small beat
+        protected float noteTickSEven; // long beat
 
         public int preRenderBitrate = 44100; //48000; // should be 44100; FIXME TODO EXPERIMENTING W BUGFIX
 
 
-//        protected int sequencerLoopNum;
+        //        protected int sequencerLoopNum;
         public bool songCurrentlyPlaying;
 
 
@@ -68,17 +70,18 @@ namespace PixelVision8.Engine.Chips
             {"patterns", -1},
             {"loop", 0}
         };
-//        private int currentLoopID;
+        //        private int currentLoopID;
 
         public SongData[] songs = new SongData[1];
-//        protected int songLoopCount = 0;
+        //        protected int songLoopCount = 0;
 
-        protected float swingRhythmFactor = 0.7f;
-
-        protected float time;
+        protected float time = 0;
+        public float nextBeatTimestamp = 0;
+        public const float maxDelta = 10; // This is so high to keep things accurate. Lower if songs are "skipping" / playing many beats all at once
+        public const float tickOffset = -0.0105f; // Set up to account for extra delay
 
         public TrackerData[] trackerDataCollection = new TrackerData[0];
-//        public int tracksPerLoop = 8;
+        //        public int tracksPerLoop = 8;
 
         public int
             SequencerBeatNumber
@@ -119,12 +122,12 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
-//        public SongData[] songDataCollection = new SongData[0];
+        //        public SongData[] songDataCollection = new SongData[0];
 
-//        public int CurrentLoopId
-//        {
-//            get { return currentLoop; }
-//        }
+        //        public int CurrentLoopId
+        //        {
+        //            get { return currentLoop; }
+        //        }
 
         /// <summary>
         ///     Total number of Loop stored in the music chip. There is a maximum
@@ -156,29 +159,27 @@ namespace PixelVision8.Engine.Chips
             get => maxNoteNum;
             set
             {
-                if (maxNoteNum == value)
-                    return;
+                if (maxNoteNum == value) return;
 
                 var total = TotalLoops;
-                for (var i = 0; i < total; i++)
-                    trackerDataCollection[i].totalNotes = value;
+                for (var i = 0; i < total; i++) trackerDataCollection[i].totalNotes = value;
             }
         }
 
         public int totalTracks => SoundChip.totalChannels;
-//        {
-//            get => _totalTracks;
-//            set
-//            {
-//                value = MathHelper.Clamp(value, 1, maxTracks);
-//
-//                var total = trackerDataCollection.Length;
-//                for (var i = 0; i < total; i++)
-//                    trackerDataCollection[i].totalTracks = value;
-//
-//                _totalTracks = value;
-//            }
-//        }
+        //        {
+        //            get => _totalTracks;
+        //            set
+        //            {
+        //                value = MathHelper.Clamp(value, 1, maxTracks);
+        //
+        //                var total = trackerDataCollection.Length;
+        //                for (var i = 0; i < total; i++)
+        //                    trackerDataCollection[i].totalTracks = value;
+        //
+        //                _totalTracks = value;
+        //            }
+        //        }
 
         /// <summary>
         ///     The active song's data that was loaded into memory.
@@ -187,14 +188,13 @@ namespace PixelVision8.Engine.Chips
         {
             get
             {
-                if (trackerDataCollection == null)
-                    return null;
+                if (trackerDataCollection == null) return null;
 
                 return trackerDataCollection[currentPattern];
             }
         }
 
-        protected SoundChip SoundChip => engine.soundChip;
+        protected SoundChip SoundChip => engine.SoundChip;
 
         /// <summary>
         ///     Updates the sequencer if it is in playback mode. This will
@@ -203,7 +203,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="timeDelta"></param>
         public void Update(int timeDelta)
         {
-            // Need to conver the time to a float
+            // Need to convert the time to a float
             time += timeDelta / 1000f;
 
             songData["playing"] = Convert.ToInt32(songCurrentlyPlaying);
@@ -213,8 +213,18 @@ namespace PixelVision8.Engine.Chips
             {
                 if (time >= nextBeatTimestamp)
                 {
-                    nextBeatTimestamp = time + noteTickSOdd;//(SequencerBeatNumber % 2 == 1 ? noteTickSOdd : noteTickSEven);
+                    float delta = time - nextBeatTimestamp;
+                    // If the time between when the note is supposed to be played and when it would be delayed to is too large, reset it.
+                    if (delta > maxDelta)
+                    {
+                        nextBeatTimestamp = time + noteTickS;//(SequencerBeatNumber % 2 == 1 ? noteTickSOdd : noteTickSEven);
+                    }
+                    else
+                    {
+                        nextBeatTimestamp += noteTickS;
+                    }
                     OnBeat();
+                    // time = 0;
                 }
 
                 // If song is playing, update songData values
@@ -245,7 +255,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public override void Configure()
         {
-            engine.musicChip = this;
+            engine.MusicChip = this;
 
             //engine.chipManager.AddToUpdateList(this);
 
@@ -257,7 +267,7 @@ namespace PixelVision8.Engine.Chips
             noteHZ = new float[maxNoteNum];
             noteStartFrequency = new float[maxNoteNum];
             noteStartFrequency[0] = 0f; // since we never set it below
-//            var SR = 44100.0f; // hmm preRenderBitrate? nah
+            //            var SR = 44100.0f; // hmm preRenderBitrate? nah
             float hertz;
 
             for (var x = 0; x < maxNoteNum; ++x)
@@ -278,8 +288,8 @@ namespace PixelVision8.Engine.Chips
             }
 
             TotalLoops = 16;
-//            maxTracks = 4;
-//            totalTracks = maxTracks;
+            //            maxTracks = 4;
+            //            totalTracks = maxTracks;
             totalSongs = 16;
         }
 
@@ -290,7 +300,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="id"></param>
         public void LoadPattern(int id)
         {
-//            Console.WriteLine("Load pattern " + id);
+            //            Console.WriteLine("Load pattern " + id);
 
             // Rewind the playhead
             SequencerBeatNumber = 0;
@@ -302,9 +312,9 @@ namespace PixelVision8.Engine.Chips
             UpdateNoteTickLengths();
 
             // Updates the tracks per loop
-//            tracksPerLoop = activeTrackerData.tracks.Length;
+            //            tracksPerLoop = activeTrackerData.tracks.Length;
 
-//            Console.WriteLine("Load Pattern Track " + tracksPerLoop);
+            //            Console.WriteLine("Load Pattern Track " + tracksPerLoop);
             // Update the music notes?
             UpdateMusicNotes();
         }
@@ -320,7 +330,7 @@ namespace PixelVision8.Engine.Chips
         public void PlayPatterns(int[] ids, bool loop = false, int startAt = 0, int? endAt = null)
         {
             // Create a new song data object for the pattern IDs
-            currentSong = new SongData {patterns = ids, start = startAt};
+            currentSong = new SongData { patterns = ids, start = startAt };
 
             // Set the end of the song if a value has been supplied
             if (endAt.HasValue) currentSong.end = endAt.Value;
@@ -344,60 +354,57 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         protected void OnBeat()
         {
-//            Console.WriteLine("On Beat "+ sequencerBeatNumber +" "+notesPerTrack + " " + currentSong.AtEnd());
+            //            Console.WriteLine("On Beat "+ sequencerBeatNumber +" "+notesPerTrack + " " + currentSong.AtEnd());
 
 
             if (SequencerBeatNumber >= NotesPerTrack) // at end of a loop?
             {
-//                Console.WriteLine("End of song Looping " + loopSong);
+                //                Console.WriteLine("End of song Looping " + loopSong);
 
                 // Finished Loop;
 
                 // Increase the next loop value
-//                sequencerLoopNum++;
-//    
-//                if (sequencerLoopNum >= currentSong.Length)
-//                {
-//                    if (loopSong)
-//                    {    
-//                        sequencerLoopNum = 0;
-//                    }
-//                    else
-//                    {
-//                        songCurrentlyPlaying = false;
-//                        return;
-//                    }
-//                }
-
-
-                // Look to see if the next pattern is -1 and if looping is false
-                if (loopSong == false)
-                {
-//                    Console.WriteLine("End of song " + loopSong + " " + songCurrentlyPlaying);
-//
-//                    if (loopSong == false)
-//                    {
-//                        Console.WriteLine("Stop song");
-                    // Stop the song and return
-                    songCurrentlyPlaying = false;
-                    return;
-//                    }
-
-                    //RewindSong();
-                }
-
-//                Console.WriteLine("Load new pattern");
-
-//                    RewindSong();
-
-                // Get the next pattern
+                //                sequencerLoopNum++;
+                //    
+                //                if (sequencerLoopNum >= currentSong.Length)
+                //                {
+                //                    if (loopSong)
+                //                    {    
+                //                        sequencerLoopNum = 0;
+                //                    }
+                //                    else
+                //                    {
+                //                        songCurrentlyPlaying = false;
+                //                        return;
+                //                    }
+                //                }
                 var nextPattern = currentSong.NextPattern();
 
+                // Look to see if the next pattern is 0 (start) and if looping is false
+                if (loopSong == false && currentSong.currentPos == 0)
+                {
+                    //                    Console.WriteLine("End of song " + loopSong + " " + songCurrentlyPlaying);
+                    //
+                    //                    if (loopSong == false)
+                    //                    {
+                    //                        Console.WriteLine("Stop song");
+                    // Stop the song and return
+                    RewindSong();
+                    nextBeatTimestamp = time;
+                    return;
+                    
+                }
+
+                //                Console.WriteLine("Load new pattern");
+
+                //                    RewindSong();
+
+                
 
                 // Load the next song in the playlist
                 LoadPattern(nextPattern);
 
-//                }
+                //                }
             }
 
             var total = ActiveTrackerData.tracks.Length;
@@ -411,9 +418,9 @@ namespace PixelVision8.Engine.Chips
                 // what note is it?
                 var gotANote = tmpTrack.notes[SequencerBeatNumber % NotesPerTrack];
 
-//                var instrument = soundChip.ReadChannel(trackNum);
+                //                var instrument = soundChip.ReadChannel(trackNum);
 
-//                if (instrument != null)
+                //                if (instrument != null)
                 if (gotANote > 0 && gotANote < maxNoteNum && tmpTrack.mute == false)
                 {
                     var frequency = noteStartFrequency[gotANote];
@@ -429,7 +436,7 @@ namespace PixelVision8.Engine.Chips
 
         public void UpdateNoteTickLengths()
         {
-            noteTickS = 30.0f / ActiveTrackerData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
+            noteTickS = 15.0f / ActiveTrackerData.speedInBPM + tickOffset; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
             noteTickSOdd = noteTickS * swingRhythmFactor; // small beat
             noteTickSEven = noteTickS * 2 - noteTickSOdd; // long beat
         }
@@ -443,7 +450,7 @@ namespace PixelVision8.Engine.Chips
 
             currentSong.Rewind();
 
-//            sequencerLoopNum = 0;
+            //            sequencerLoopNum = 0;
             SequencerBeatNumber = 0;
         }
 
@@ -459,9 +466,18 @@ namespace PixelVision8.Engine.Chips
         ///     Toggles the current playback state of the sequencer. If the song
         ///     is playing it will pause, if it is paused it will play
         /// </summary>
-        public void PauseSong() // unused
+        public void PauseSong()
         {
-            songCurrentlyPlaying = !songCurrentlyPlaying;
+            if (songCurrentlyPlaying)
+            {
+                songCurrentlyPlaying = false;
+            }
+            else
+            {
+                songCurrentlyPlaying = true;
+                // Reset next beat timestamp
+                nextBeatTimestamp = time;
+            }
         }
 
         protected void UpdateMusicNotes()
@@ -475,8 +491,7 @@ namespace PixelVision8.Engine.Chips
 
         public void UpdateSong(int id, int[] patterns, int startAt = 0, int? endAt = null)
         {
-            if (id < 0 || id > songs.Length)
-                return;
+            if (id < 0 || id > songs.Length) return;
 
             var songData = songs[id];
 
@@ -488,13 +503,11 @@ namespace PixelVision8.Engine.Chips
 
         public void PlaySong(int id, bool loop = false, int seekTo = 0)
         {
-            if (id < 0 || id > songs.Length)
-                return;
-
+            if (id < 0 || id > songs.Length) return;
 
             PlaySong(songs[id], loop, seekTo);
 
-//            PlayPatterns(songs[id]);
+            //            PlayPatterns(songs[id]);
         }
 
         public void PlaySong(SongData songData, bool loop = false, int seekTo = 0)
@@ -504,6 +517,9 @@ namespace PixelVision8.Engine.Chips
             // Seek to the pattern just before the desired id since we call NextPattern below
             currentSong.SeekTo(seekTo - 1);
 
+            // Reset next beat timestamp
+            nextBeatTimestamp = time;
+
             // Save the loop value
             loopSong = loop;
 
@@ -511,9 +527,9 @@ namespace PixelVision8.Engine.Chips
             LoadPattern(currentSong.NextPattern());
 
             // Toggle the song playing value
-//            if (songCurrentlyPlaying)
-//                songCurrentlyPlaying = false;
-//            else
+            //            if (songCurrentlyPlaying)
+            //                songCurrentlyPlaying = false;
+            //            else
             songCurrentlyPlaying = true;
         }
     }

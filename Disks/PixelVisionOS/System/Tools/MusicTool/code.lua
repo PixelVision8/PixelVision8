@@ -130,20 +130,23 @@ end
 
 function Init()
 
-  BackgroundColor(22)
+  BackgroundColor(5)
 
   -- Disable the back key in this tool
   EnableBackKey(false)
   EnableAutoRun(false)
 
-  -- Create an instance of the Pixel Vision OS
-  pixelVisionOS = PixelVisionOS:Init()
+  -- Create an global instance of the Pixel Vision OS
+  _G["pixelVisionOS"] = PixelVisionOS:Init()
 
-  -- Get a reference to the Editor UI
-  editorUI = pixelVisionOS.editorUI
+  -- -- Create an instance of the Pixel Vision OS
+  -- pixelVisionOS = PixelVisionOS:Init()
+
+  -- -- Get a reference to the Editor UI
+  -- editorUI = pixelVisionOS.editorUI
 
   -- Reset the undo history so it's ready for the tool
-  pixelVisionOS:ResetUndoHistory()
+  -- pixelVisionOS:ResetUndoHistory()
 
   rootDirectory = ReadMetadata("directory", nil)
 
@@ -300,7 +303,7 @@ function Init()
     -- Force the slider to have a different start value so it can be updated correctly when the first song loads up
     songSliderData.value = -1
 
-    tempoStepper = editorUI:CreateNumberStepper({x = 120, y = 88}, 24, 0, 60, 480, "top", "Change the length of the pattern.")
+    tempoStepper = editorUI:CreateNumberStepper({x = 120, y = 88}, 24, 0, 1, 480, "top", "Change the length of the pattern.")
     tempoStepper.onInputAction = OnTempoChange
 
     table.insert(disableWhenPlaying, tempoStepper.backButton)
@@ -800,6 +803,17 @@ function OnSelectSongField(value)
 
   local realIndex = currentSelectedSong - songScrollOffset
 
+  if (realIndex < 1 or realIndex > totalSongFields) then
+    local totalPatterns = #currentSongPatterns - totalSongFields
+
+    local scroll = (currentSelectedSong - 1) / totalPatterns
+    local scrollX = math.floor(scroll * songSliderData.size) + 11
+    songSliderData.handleX = scrollX
+    OnSongScroll(scroll)
+
+    realIndex = currentSelectedSong - songScrollOffset
+  end
+
   LoadLoop(tonumber(songInputFields[realIndex].text))
 
   OnSongScroll()
@@ -1017,9 +1031,10 @@ function LoadLoop(id)
   disablePreview = false
 
   -- Reset the undo history so it's ready for the tool
-  pixelVisionOS:ResetUndoHistory()
+  -- TODO configure Undo here
+  -- pixelVisionOS:ResetUndoHistory()
 
-  UpdateHistoryButtons()
+  -- UpdateHistoryButtons()
 
 end
 
@@ -1156,7 +1171,7 @@ function Update(timeDelta)
       local currentPattern = songData["pattern"]
 
       if((currentSelectedSong - 1) ~= currentPattern and playMode ~= 3) then
-        OnSelectSongField(currentPattern)
+        OnSelectSongField(currentPattern - songScrollOffset)
         editorUI.refreshTime = 0
       end
 
@@ -1566,58 +1581,31 @@ end
 
 function UpdateHistory(track, beat, newNote, oldNote)
 
-  local historyAction = {
-    RedoAction = function()
-      SelectTrack(track)
-      SelectBeat(beat)
-      UpdateCurrentNote(newNote, false)
-      -- print("Redo Note", newNote)
-      -- Force the display to update again
-      SelectBeat(beat)
-    end,
-    UndoAction = function()
-      SelectTrack(track)
-      SelectBeat(beat)
-      UpdateCurrentNote(oldNote, false)
-      -- Force the display to update again
-      SelectBeat(beat)
-    end
-  }
+  -- local historyAction = {
+  --   RedoAction = function()
+  --     SelectTrack(track)
+  --     SelectBeat(beat)
+  --     UpdateCurrentNote(newNote, false)
+  --     -- print("Redo Note", newNote)
+  --     -- Force the display to update again
+  --     SelectBeat(beat)
+  --   end,
+  --   UndoAction = function()
+  --     SelectTrack(track)
+  --     SelectBeat(beat)
+  --     UpdateCurrentNote(oldNote, false)
+  --     -- Force the display to update again
+  --     SelectBeat(beat)
+  --   end
+  -- }
 
-  pixelVisionOS:AddUndoHistory(historyAction)
+  -- pixelVisionOS:AddUndoHistory(historyAction)
 
-  UpdateHistoryButtons()
-
-end
-
-function UpdateHistoryButtons()
-
-  pixelVisionOS:EnableMenuItem(UndoShortcut, pixelVisionOS:IsUndoable())
-  pixelVisionOS:EnableMenuItem(RedoShortcut, pixelVisionOS:IsRedoable())
+  -- UpdateHistoryButtons()
 
 end
 
-function OnUndo()
 
-  local action = pixelVisionOS:Undo()
-
-  if(action ~= nil and action.UndoAction ~= nil) then
-    action.UndoAction()
-  end
-
-  UpdateHistoryButtons()
-end
-
-function OnRedo()
-
-  local action = pixelVisionOS:Redo()
-
-  if(action ~= nil and action.RedoAction ~= nil) then
-    action.RedoAction()
-  end
-
-  UpdateHistoryButtons()
-end
 
 function OnQuit()
 
@@ -1736,4 +1724,34 @@ function OnRunGame()
 
   end
 
+end
+
+-- TODO rewire history
+function UpdateHistoryButtons()
+
+  -- pixelVisionOS:EnableMenuItem(UndoShortcut, pixelVisionOS:IsUndoable())
+  -- pixelVisionOS:EnableMenuItem(RedoShortcut, pixelVisionOS:IsRedoable())
+
+end
+
+function OnUndo()
+
+  -- local action = pixelVisionOS:Undo()
+
+  -- if(action ~= nil and action.UndoAction ~= nil) then
+  --   action.UndoAction()
+  -- end
+
+  -- UpdateHistoryButtons()
+end
+
+function OnRedo()
+
+  -- local action = pixelVisionOS:Redo()
+
+  -- if(action ~= nil and action.RedoAction ~= nil) then
+  --   action.RedoAction()
+  -- end
+
+  -- UpdateHistoryButtons()
 end

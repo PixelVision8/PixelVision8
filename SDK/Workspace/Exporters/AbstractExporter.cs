@@ -18,19 +18,26 @@
 // Shawn Rakowski - @shwany
 //
 
+using System.Collections.Generic;
 using PixelVision8.Runner.Parsers;
 
 namespace PixelVision8.Runner.Exporters
 {
     public class AbstractExporter : AbstractParser, IAbstractExporter
     {
-//        public byte[] bytes { get; protected set; }
-
+        
         public AbstractExporter(string fileName)
         {
             this.fileName = fileName;
+            
+            Response = new Dictionary<string, object>
+            {
+                {"success", false},
+                {"message", ""}
+            };
         }
 
+        public Dictionary<string, object> Response { get; }
         public string fileName { get; protected set; }
     }
 }

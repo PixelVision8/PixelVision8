@@ -43,11 +43,10 @@ namespace PixelVision8.Runner.Workspace
 
         public ICollection<WorkspacePath> GetEntities(WorkspacePath path)
         {
-            if (!path.IsDirectory)
-                throw new ArgumentException("The specified path is no directory.", "path");
-            ISet<WorkspacePath> subentities;
-            if (!_directories.TryGetValue(path, out subentities))
-                throw new DirectoryNotFoundException();
+            if (!path.IsDirectory) throw new ArgumentException("The specified path is no directory.", "path");
+
+            if (!_directories.TryGetValue(path, out var subentities)) throw new DirectoryNotFoundException();
+
             return subentities;
         }
 
@@ -58,48 +57,48 @@ namespace PixelVision8.Runner.Workspace
 
         public Stream CreateFile(WorkspacePath path)
         {
-            if (!path.IsFile)
-                throw new ArgumentException("The specified path is no file.", "path");
-            if (!_directories.ContainsKey(path.ParentPath))
-                throw new DirectoryNotFoundException();
+            if (!path.IsFile) throw new ArgumentException("The specified path is no file.", "path");
+
+            if (!_directories.ContainsKey(path.ParentPath)) throw new DirectoryNotFoundException();
+
             _directories[path.ParentPath].Add(path);
             return new MemoryFileStream(_files[path] = new MemoryFile());
         }
 
         public Stream OpenFile(WorkspacePath path, FileAccess access)
         {
-            if (!path.IsFile)
-                throw new ArgumentException("The specified path is no file.", "path");
-            MemoryFile file;
-            if (!_files.TryGetValue(path, out file))
-                throw new FileNotFoundException();
+            if (!path.IsFile) throw new ArgumentException("The specified path is no file.", "path");
+
+            if (!_files.TryGetValue(path, out var file)) throw new FileNotFoundException();
+
             return new MemoryFileStream(file);
         }
 
         public void CreateDirectory(WorkspacePath path)
         {
-            if (!path.IsDirectory)
-                throw new ArgumentException("The specified path is no directory.", "path");
-            ISet<WorkspacePath> subentities;
+            if (!path.IsDirectory) throw new ArgumentException("The specified path is no directory.", "path");
+
             if (_directories.ContainsKey(path))
                 throw new ArgumentException("The specified directory-path already exists.", "path");
-            if (!_directories.TryGetValue(path.ParentPath, out subentities))
-                throw new DirectoryNotFoundException();
+
+            if (!_directories.TryGetValue(path.ParentPath, out var subentities)) throw new DirectoryNotFoundException();
+
             subentities.Add(path);
             _directories[path] = new HashSet<WorkspacePath>();
         }
 
         public void Delete(WorkspacePath path)
         {
-            if (path.IsRoot)
-                throw new ArgumentException("The root cannot be deleted.");
+            if (path.IsRoot) throw new ArgumentException("The root cannot be deleted.");
+
             bool removed;
             if (path.IsDirectory)
                 removed = _directories.Remove(path);
             else
                 removed = _files.Remove(path);
-            if (!removed)
-                throw new ArgumentException("The specified path does not exist.");
+
+            if (!removed) throw new ArgumentException("The specified path does not exist.");
+
             var parent = _directories[path.ParentPath];
             parent.Remove(path);
         }
@@ -154,10 +153,10 @@ namespace PixelVision8.Runner.Workspace
 
             public override long Seek(long offset, SeekOrigin origin)
             {
-                if (origin == SeekOrigin.Begin)
-                    return Position = offset;
-                if (origin == SeekOrigin.Current)
-                    return Position += offset;
+                if (origin == SeekOrigin.Begin) return Position = offset;
+
+                if (origin == SeekOrigin.Current) return Position += offset;
+
                 return Position = Length - offset;
             }
 
@@ -179,8 +178,8 @@ namespace PixelVision8.Runner.Workspace
 
             public override void Write(byte[] buffer, int offset, int count)
             {
-                if (Length - Position < count)
-                    SetLength(Position + count);
+                if (Length - Position < count) SetLength(Position + count);
+
                 Buffer.BlockCopy(buffer, offset, Content, (int) Position, count);
                 Position += count;
             }

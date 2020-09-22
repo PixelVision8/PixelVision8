@@ -18,29 +18,28 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Engine;
 using PixelVision8.Engine.Audio;
 using PixelVision8.Engine.Chips;
-using PixelVision8.Runner.Data;
 
 namespace PixelVision8.Runner.Exporters
 {
     public class SongExporter : AbstractExporter
     {
         private readonly MusicChip musicChip;
+
+        private readonly int[] patterns;
         private readonly SoundChip soundChip;
         private int currentPattern;
 
         // to avoid clipping, all tracks are a bit quieter since we ADD values - set to 1f for full mix
         public float mixdownTrackVolume = 0.6f;
-        public float note_tick_s = 30.0f / 120.0f; // (30.0f/120.0f) = 120BPM eighth notes
+        public float note_tick_s = 15.0f / 120.0f; // (15.0f/120.0f) = 120BPM sixteenth notes
         public float note_tick_s_odd;
-
-        private readonly int[] patterns;
         private RawAudioData result;
 
 
-        public float
-            swing_rhythm_factor = 0.7f; //1.0f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
+        public float swing_rhythm_factor = 1.0f; //0.7f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
 
         private RawAudioData[] trackresult;
 
@@ -89,7 +88,7 @@ namespace PixelVision8.Runner.Exporters
             var totalNotesInSong = ncount; // total musical notes in song loops x notes
 
             // TODO needed to increase this number to match the speed better but this should be test out more.
-            note_tick_s = 45.0f / songData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
+            note_tick_s = 15.0f / songData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
             note_tick_s_odd = note_tick_s * swing_rhythm_factor; // small beat
 
             var notedatalength = (int) (preRenderBitrate * 2f * note_tick_s_odd); // one note worth of stereo audio (x2)
@@ -120,9 +119,7 @@ namespace PixelVision8.Runner.Exporters
 
             for (tracknum = 0; tracknum < tcount; tracknum++)
             {
-                if (instrument[tracknum] == null)
-                    instrument[tracknum] = new SfxrSynth();
-
+                if (instrument[tracknum] == null) instrument[tracknum] = new SfxrSynth();
 
                 var songdataCurrentPos = newStartPos;
                 trackresult[tracknum].Resize(newLength);
@@ -140,26 +137,18 @@ namespace PixelVision8.Runner.Exporters
                     // generate one note worth of audio data
                     if (gotANote > 0 && instrument[tracknum] != null)
                     {
-                        // FIXME TODO HACK: prerendered notes seem pitch shifted too high
-                        // manually fudged - WHY WHY WHY - no idea why this works, but it does.
-                        // this is the most heinous hack I've ever implemented and it hurts so bad
-                        // it isn't worth anything: this is duct tape solution
-                        var noteFUDGE = 1; //- 12; // shift how many semitones
-                        var freqFUDGE = 0.0025f; //0.005f; // slightly off without this offset
 
                         //instrument[tracknum].Reset(true); // seems to do nothing
 
                         // doing this for every note played is insane:
                         // try a fresh new instrument (RAM and GC spammy)
-                        //instrument[tracknum] = new SfxrSynth(); // shouldn't be required
+                        instrument[tracknum] = new SfxrSynth(); // shouldn't be required, but for some reason it is
                         // set the params to current track's instrument string
-                        instrument[tracknum].parameters
-                            .SetSettingsString(soundChip.ReadSound(songData.tracks[tracknum].sfxID).param);
+                        instrument[tracknum].parameters.SetSettingsString(soundChip.ReadSound(songData.tracks[tracknum].sfxID).param);
 
 
                         // pitch shift the sound to the correct musical note frequency
-                        instrument[tracknum].parameters.startFrequency =
-                            noteStartFrequency[gotANote + noteFUDGE] + freqFUDGE;
+                        instrument[tracknum].parameters.startFrequency = noteStartFrequency[gotANote];
 
 
                         // maybe this will help
@@ -238,8 +227,7 @@ namespace PixelVision8.Runner.Exporters
 
             for (var i = 0; i < clips.Length; i++)
             {
-                if (clips[i] == null)
-                    continue;
+                if (clips[i] == null) continue;
 
                 buffer = clips[i].data; //.GetData(buffer);
 
@@ -254,8 +242,8 @@ namespace PixelVision8.Runner.Exporters
                     if (data[loop] > 1f) // too loud?
                     {
                         clipWarnings++;
-                        if (data[loop] - 1f > redlineMax)
-                            redlineMax = data[loop] - 1f;
+                        if (data[loop] - 1f > redlineMax) redlineMax = data[loop] - 1f;
+
                         data[loop] = 1f;
                     }
                 }

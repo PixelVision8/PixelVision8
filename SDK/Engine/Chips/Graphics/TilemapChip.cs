@@ -83,8 +83,7 @@ namespace PixelVision8.Engine.Chips
         {
             //            cachedTileMap.Clear();
 
-            for (var i = 0; i < total; i++)
-                tiles[i].Invalidate();
+            for (var i = 0; i < total; i++) tiles[i].Invalidate();
             //                layers[(int) Layer.Invalid][i] = -1;
 
             Invalidate();
@@ -143,7 +142,7 @@ namespace PixelVision8.Engine.Chips
                 if (c < this.columns && r < this.rows && clear == false)
                 {
                     newTiles[i] = GetTile(c, r);
-                    newTiles[i].index = i;
+                    newTiles[i].Index = i;
                 }
                 else
                 {
@@ -152,6 +151,8 @@ namespace PixelVision8.Engine.Chips
 
                 if (c == columns - 1) row++;
             }
+
+            
 
             // Save the new tilemap data
             this.columns = columns;
@@ -181,7 +182,7 @@ namespace PixelVision8.Engine.Chips
         public override void Configure()
         {
             //ppu.tileMap = this;
-            engine.tilemapChip = this;
+            engine.TilemapChip = this;
 
             // Resize to default nes resolution
             Resize(32, 30);
@@ -190,7 +191,7 @@ namespace PixelVision8.Engine.Chips
         public override void Deactivate()
         {
             base.Deactivate();
-            engine.tilemapChip = null;
+            engine.TilemapChip = null;
         }
     }
 }

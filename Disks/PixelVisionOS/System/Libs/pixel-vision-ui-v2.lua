@@ -25,7 +25,6 @@ LoadScript("pixel-vision-ui-slider-v2")
 LoadScript("pixel-vision-ui-knob-v2")
 LoadScript("pixel-vision-ui-button-v2")
 LoadScript("pixel-vision-ui-text-button-v1")
-LoadScript("pixel-vision-ui-palette-button-v2")
 LoadScript("pixel-vision-ui-toggle-group-v2")
 LoadScript("pixel-vision-ui-text-v2")
 LoadScript("pixel-vision-ui-text-editor-v1")
@@ -149,6 +148,7 @@ function EditorUI:CreateData(rect, spriteName, toolTip, forceDraw)
             data.rect.h = 0
         end
 
+        -- print(dump(data.rect.x / self.spriteSize.x))
         -- Calculate tile dimensions
         data.tiles = {
             c = math.floor(data.rect.x / self.spriteSize.x),
@@ -228,6 +228,10 @@ end
 
 function EditorUI:SetFocus(data, cursor)
 
+    -- Don't set focus if the mouse was just released
+    if(self.collisionManager.mouseReleased == true) then
+        return
+    end
 
     -- Update the cursor no matter what
     self.cursorID = cursor or 2

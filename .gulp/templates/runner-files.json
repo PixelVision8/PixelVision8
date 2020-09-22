@@ -217,7 +217,6 @@
       "{0}/MonoGame.Framework.dll",
       "{0}/MoonSharp.Interpreter.dll",
       "{0}/System.Runtime.Serialization.Formatters.dll",
-      "{0}/System.Runtime.Serialization.Json.dll",
-      "{0}/ICSharpCode.SharpZipLib.dll"
+      "{0}/System.Runtime.Serialization.Json.dll"
     ]
 }

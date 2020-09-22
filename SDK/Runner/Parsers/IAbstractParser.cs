@@ -26,5 +26,8 @@ namespace PixelVision8.Runner.Parsers
         bool completed { get; }
         void CalculateSteps();
         void NextStep();
+        void StepCompleted();
+        void Dispose();
+
     }
 }

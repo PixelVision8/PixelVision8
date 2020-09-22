@@ -25,6 +25,8 @@ function EditorUI:CreateButton(rect, spriteName, toolTip, forceDraw)
   data.doubleClickDelay = .45
   data.doubleClickActive = false
 
+  data.buttonCursor = 2
+
   -- By default, we don't want buttons to redraw the background
   data.redrawBackground = false
   data.bgColorOverride = nil
@@ -38,20 +40,22 @@ function EditorUI:CreateButton(rect, spriteName, toolTip, forceDraw)
   data.onClick = function(tmpData)
 
     -- Only trigger the click action when the last pressed button name matches
-    if(self.currentButtonDown == tmpData.name) then
+    if(self.inFocusUI ~= nil and self.inFocusUI.name == tmpData.name) then
       self:ClickButton(tmpData, true, tmpData.doubleClickActive and tmpData.doubleClickTime < tmpData.doubleClickDelay)
 
+      -- self.inFocusUI = nil
       tmpData.doubleClickTime = 0
       tmpData.doubleClickActive = true
       tmpData.doubleClick = true
     end
+    
   end
 
   -- On First Press (Called when the button)
   data.onFirstPress = function(tmpData)
 
     -- Save the name of the button that was just pressed
-    self.currentButtonDown = tmpData.name
+    -- self.inFocusUI = tmpData
 
     self:PressButton(tmpData, true)
   end
@@ -151,8 +155,9 @@ function EditorUI:UpdateButton(data, hitRect)
       end
     end
 
+    -- print(data.name, data.buttonCursor)
     -- If we are in the collision area, set the focus
-    self:SetFocus(data)
+    self:SetFocus(data, data.buttonCursor)
 
     -- calculate the correct button over state
     local state = self.collisionManager.mouseDown and "down" or "over"
@@ -187,6 +192,7 @@ function EditorUI:UpdateButton(data, hitRect)
       -- Click the button
       data.onClick(data)
       data.firstPress = true
+
     elseif(self.collisionManager.mouseDown) then
 
       if(data.firstPress ~= false) then
@@ -201,11 +207,11 @@ function EditorUI:UpdateButton(data, hitRect)
 
   else
 
+    -- On Release Outside
     if(data.inFocus == true) then
       data.firstPress = true
       -- If we are not in the button's rect, clear the focus
       self:ClearFocus(data)
-
     end
 
   end
@@ -238,7 +244,6 @@ function EditorUI:RedrawButton(data, stateOverride)
       -- Test to see if the button is disabled. If there is a disabled sprite data, we'll change the state to disabled. By default, always use the up state.
       if(data.enabled == false and data.cachedSpriteData["disabled"] ~= nil and data.selected ~= true) then --_G[spriteName .. "disabled"] ~= nil) then
         state = "disabled"
-
       end
 
     end

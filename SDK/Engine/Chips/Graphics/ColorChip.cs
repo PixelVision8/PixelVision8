@@ -61,9 +61,7 @@ namespace PixelVision8.Engine.Chips
 
         private int _maxColors = -1;
 
-        protected Color[] colorCache;
-
-        protected int[] invalidColors = new int[16];
+        // protected Color[] colorCache;
 
         public bool unique;
 
@@ -73,8 +71,8 @@ namespace PixelVision8.Engine.Chips
         public int maxColors
         {
             //TODO this is not used in the chip and is here for the color tool.
-            get => _maxColors == -1 ? colors.Length : _maxColors;
-            set => _maxColors = MathHelper.Clamp(value, 2, 256);
+            get => _maxColors == -1 ? _colors.Length : _maxColors;
+            set => _maxColors = value == -1 ? -1 : MathHelper.Clamp(value, 2, 256);
         }
 
 
@@ -101,8 +99,7 @@ namespace PixelVision8.Engine.Chips
             get => _maskColor;
             set
             {
-                if (ValidateHexColor(value))
-                    _maskColor = value.ToUpper();
+                if (ValidateHexColor(value)) _maskColor = value.ToUpper();
             }
         }
 
@@ -113,10 +110,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         /// <value>Int</value>
         // TODO need to change this to totalSet colors or something more descriptive
-        public int totalUsedColors
-        {
-            get { return hexColors.Length - hexColors.ToList().RemoveAll(c => c == maskColor); }
-        }
+        public int totalUsedColors => hexColors.Length - hexColors.ToList().RemoveAll(c => c == maskColor);
 
         //TODO need to figure out a better way to set this up?
         //        public int maxColors
@@ -151,7 +145,6 @@ namespace PixelVision8.Engine.Chips
                 var oldTotal = _colors.Length;
 
                 Array.Resize(ref _colors, value);
-                Array.Resize(ref invalidColors, value);
                 if (oldTotal < value)
                     for (var i = oldTotal; i < value; i++)
                         _colors[i] = maskColor;
@@ -164,31 +157,31 @@ namespace PixelVision8.Engine.Chips
         ///     Returns a list of color data to be used for rendering.
         /// </summary>
         /// <value>ColorData[]</value>
-        public Color[] colors
-        {
-            get
-            {
-                if (invalid)
-                {
-                    var t = total;
-                    colorCache = new Color[t];
-
-                    for (var i = 0; i < t; i++)
-                    {
-                        var colorHex = _colors[i];
-
-                        if (colorHex == maskColor && debugMode == false) colorHex = _colors[backgroundColor];
-
-                        var color = ColorUtils.HexToColor(colorHex); // {flag = invalidColors[i]};
-                        colorCache[i] = color;
-                    }
-
-                    ResetValidation();
-                }
-
-                return colorCache;
-            }
-        }
+        // public Color[] colors
+        // {
+        //     get
+        //     {
+        //         if (invalid || colorCache == null)
+        //         {
+        //             var t = total;
+        //             colorCache = new Color[t];
+        //
+        //             for (var i = 0; i < t; i++)
+        //             {
+        //                 var colorHex = _colors[i];
+        //
+        //                 if (colorHex == maskColor && debugMode == false) colorHex = _colors[backgroundColor];
+        //
+        //                 var color = ColorUtils.HexToColor(colorHex); // {flag = invalidColors[i]};
+        //                 colorCache[i] = color;
+        //             }
+        //
+        //             ResetValidation();
+        //         }
+        //
+        //         return colorCache;
+        //     }
+        // }
 
         // Setting this to true will use the mask color for empty colors instead of replacing them with the bg color
         public bool debugMode
@@ -201,7 +194,7 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
-        public bool invalid { get; protected set; }
+        public bool invalid { get; protected set; } = true;
 
         public void Invalidate()
         {
@@ -211,9 +204,6 @@ namespace PixelVision8.Engine.Chips
         public void ResetValidation(int value = 0)
         {
             invalid = false;
-            var total = invalidColors.Length;
-            for (var i = 0; i < total; i++)
-                invalidColors[i] = value;
         }
 
         public string ReadColorAt(int index)
@@ -226,17 +216,19 @@ namespace PixelVision8.Engine.Chips
         //            return Array.IndexOf(_colors, color);
         //        }
 
-        public void Clear()
+        public void Clear(string color = null)
         {
+            if (color == null)
+                color = maskColor;
+
+            // Console.WriteLine("Clear " + color);
             var t = _colors.Length;
-            for (var i = 0; i < t; i++)
-                UpdateColorAt(i, maskColor);
+            for (var i = 0; i < t; i++) UpdateColorAt(i, color);
         }
 
         public virtual void UpdateColorAt(int index, string color)
         {
-            if (index >= _colors.Length || index < 0)
-                return;
+            if (index >= _colors.Length || index < 0) return;
 
             // Make sure that all colors are uppercase
             color = color.ToUpper();
@@ -244,7 +236,6 @@ namespace PixelVision8.Engine.Chips
             if (ColorUtils.ValidateHexColor(color))
             {
                 _colors[index] = color;
-                invalidColors[index] = 1;
                 Invalidate();
             }
         }
@@ -258,7 +249,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public override void Configure()
         {
-            engine.colorChip = this;
+            engine.ColorChip = this;
             backgroundColor = -1;
             total = 256;
 
@@ -268,7 +259,7 @@ namespace PixelVision8.Engine.Chips
         public override void Deactivate()
         {
             base.Deactivate();
-            engine.colorChip = null;
+            engine.ColorChip = null;
         }
 
         public bool ValidateHexColor(string inputColor)

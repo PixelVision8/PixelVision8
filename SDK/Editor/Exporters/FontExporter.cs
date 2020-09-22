@@ -20,6 +20,7 @@
 
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Parsers;
 
 namespace PixelVision8.Runner.Exporters
@@ -27,14 +28,14 @@ namespace PixelVision8.Runner.Exporters
     public class FontExporter : SpriteExporter
     {
         public FontExporter(string fileName, IEngine engine, IImageExporter imageExporter) : base(fileName, engine,
-            imageExporter, engine.fontChip)
+            imageExporter, engine.FontChip)
         {
         }
 
         // TODO this should be a step in the exporter
         public override void ConfigurePixelData()
         {
-//            var spriteChip = engine.fontChip;
+            //            var spriteChip = engine.fontChip;
 
             var width = 96; //spriteChip.textureWidth;
             var height = 64; //spriteChip.textureHeight;
@@ -42,7 +43,7 @@ namespace PixelVision8.Runner.Exporters
 
             var textureData = new TextureData(width, height);
 
-//            var pixelData = new int[width * height];
+            //            var pixelData = new int[width * height];
 
             // Go through all of the sprites in the font
 
@@ -56,22 +57,26 @@ namespace PixelVision8.Runner.Exporters
 
             for (var i = 0; i < total; i++)
             {
-                var pos = engine.gameChip.CalculatePosition(i, maxCol);
+                var pos = engine.GameChip.CalculatePosition(i, maxCol);
 
-                spriteChip.ReadSpriteAt(i, tmpPixelData);
+                spriteChip.ReadSpriteAt(i, ref tmpPixelData);
 
                 textureData.SetPixels(pos.X * spriteChip.width, pos.Y * spriteChip.height, spriteChip.width,
                     spriteChip.height, tmpPixelData);
             }
 
-            var colors = !(engine.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip)
-                ? engine.colorChip.colors
-                : colorMapChip.colors;
+            // var convertedColors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);
+
+            // var colors = !(engine.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip)
+            //     ? engine.ColorChip.colors
+            //     : colorMapChip.colors;
 
             var imageExporter = new PNGWriter();
 
+            // TODO use the colors from the sprite parser this class extends?
+
             exporter = new PixelDataExporter(fullFileName, textureData.pixels, width, height, colors, imageExporter,
-                engine.colorChip.maskColor);
+                engine.ColorChip.maskColor);
         }
     }
 }

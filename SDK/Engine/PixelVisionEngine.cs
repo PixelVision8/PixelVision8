@@ -33,98 +33,93 @@ namespace PixelVision8.Engine
     /// </summary>
     public class PixelVisionEngine : IEngine, IServiceLocator
     {
-        protected Dictionary<string, string> _metaData = new Dictionary<string, string>
-        {
-            {"name", "untitled"}
-        };
+        protected Dictionary<string, AbstractChip> Chips = new Dictionary<string, AbstractChip>();
+        protected string[] DefaultChips;
+        protected List<IDraw> DrawChips = new List<IDraw>();
+        protected IServiceLocator ServiceLocator;
+        protected List<IUpdate> UpdateChips = new List<IUpdate>();
 
-        protected Dictionary<string, AbstractChip> chips = new Dictionary<string, AbstractChip>();
-        protected string[] defaultChips;
-        protected List<IDraw> drawChips = new List<IDraw>();
-        protected IServiceLocator serviceLocator;
-        protected List<IUpdate> updateChips = new List<IUpdate>();
-
-        /// <summary>
-        ///     The PixelVisionEngine constructor requires a render target and an
-        ///     optional list of <paramref name="chips" /> to be properly configured.
-        /// </summary>
-        /// <param name="displayTarget"></param>
-        /// <param name="inputFactory1"></param>
-        /// <param name="chips"></param>
-        /// <param name="name"></param>
-        /// <tocexclude />
         public PixelVisionEngine(IServiceLocator serviceLocator, string[] chips = null, string name = "Engine")
         {
-            if (chips != null)
-                defaultChips = chips;
+            if (chips != null) DefaultChips = chips;
 
-            this.name = name;
-            this.serviceLocator = serviceLocator;
-            //this.canWrite = readOnly;
+            Name = name;
+            ServiceLocator = serviceLocator;
 
             Init();
         }
 
-        public Dictionary<string, string> metaData => _metaData;
+        public Dictionary<string, string> MetaData { get; } = new Dictionary<string, string>
+        {
+            {"name", "untitled"}
+        };
 
         /// <summary>
         /// </summary>
         /// <tocexclude />
-        public string name { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         ///     Access to the ColorChip.
         /// </summary>
         /// <tocexclude />
-        public ColorChip colorChip { get; set; }
+        public ColorChip ColorChip { get; set; }
 
         /// <summary>
         ///     Access to the ControllerChip.
         /// </summary>
         /// <tocexclude />
-        public IControllerChip controllerChip { get; set; }
+        public IControllerChip ControllerChip { get; set; }
 
         /// <summary>
         ///     Access to the DisplayChip.
         /// </summary>
         /// <tocexclude />
-        public DisplayChip displayChip { get; set; }
+        public DisplayChip DisplayChip { get; set; }
 
         /// <summary>
         ///     Access to the SoundChip.
         /// </summary>
         /// <tocexclude />
-        public SoundChip soundChip { get; set; }
+        public SoundChip SoundChip { get; set; }
 
         /// <summary>
         ///     Access to the SpriteChip.
         /// </summary>
         /// <tocexclude />
-        public SpriteChip spriteChip { get; set; }
+        public SpriteChip SpriteChip { get; set; }
 
         /// <summary>
         ///     Access to the TileMapChip.
         /// </summary>
         /// <tocexclude />
-        public TilemapChip tilemapChip { get; set; }
+        public TilemapChip TilemapChip { get; set; }
 
         /// <summary>
         ///     Access to the FontChip.
         /// </summary>
         /// <tocexclude />
-        public FontChip fontChip { get; set; }
+        public FontChip FontChip { get; set; }
 
         /// <summary>
         ///     Access to the MusicChip.
         /// </summary>
         /// <tocexclude />
-        public MusicChip musicChip { get; set; }
+        public MusicChip MusicChip { get; set; }
 
         /// <summary>
         ///     Access to the current game in memory.
         /// </summary>
         /// <tocexclude />
-        public GameChip gameChip { get; set; }
+        public GameChip GameChip { get; set; }
+
+        public virtual void ResetGame()
+        {
+            if (GameChip == null) return;
+
+            foreach (var chip in Chips) chip.Value.Reset();
+
+        }
 
         /// <summary>
         ///     Attempts to run a game that has been loaded into memory via the
@@ -135,22 +130,10 @@ namespace PixelVision8.Engine
         /// <tocexclude />
         public virtual void RunGame()
         {
-            if (gameChip == null)
-                return;
+            if (GameChip == null) return;
 
-            // Make sure all chips are reset to their default values
-            //            chipManager.Reset();
-            foreach (var chip in chips)
-                chip.Value.Reset();
+            foreach (var chip in Chips) chip.Value.Init();
 
-            // Call init on all chips
-            //            chipManager.Init();
-            var chipNames = chips.Keys.ToList();
-
-            foreach (var chipName in chipNames)
-                chips[chipName].Init();
-
-            //            running = true;
         }
 
         /// <summary>
@@ -163,10 +146,9 @@ namespace PixelVision8.Engine
         public virtual void Update(int timeDelta)
         {
             // Reset the sprite counter on each frame
-            gameChip.CurrentSprites = 0;
+            GameChip.CurrentSprites = 0;
 
-            foreach (var chip in updateChips)
-                chip.Update(timeDelta);//delta / 1000f);
+            foreach (var chip in UpdateChips) chip.Update(timeDelta); //delta / 1000f);
         }
 
         /// <summary>
@@ -177,8 +159,7 @@ namespace PixelVision8.Engine
         /// <tocexclude />
         public virtual void Draw()
         {
-            foreach (var chip in drawChips)
-                chip.Draw();
+            foreach (var chip in DrawChips) chip.Draw();
         }
 
         /// <summary>
@@ -188,14 +169,8 @@ namespace PixelVision8.Engine
         public virtual void Shutdown()
         {
             // Shutdown chips
-            foreach (var chip in chips)
-                chip.Value.Shutdown();
+            foreach (var chip in Chips) chip.Value.Shutdown();
 
-            //            // Remove chips
-            //            chips.Clear();
-            //            
-            //            // Removed references to services
-            //            _services.Clear();
         }
 
         /// <summary>
@@ -205,10 +180,9 @@ namespace PixelVision8.Engine
         /// <returns></returns>
         public string GetMetadata(string key, string defaultValue = "")
         {
-            if (!_metaData.ContainsKey(key))
-                _metaData.Add(key, defaultValue);
+            if (!MetaData.ContainsKey(key)) MetaData.Add(key, defaultValue);
 
-            return _metaData[key];
+            return MetaData[key];
         }
 
         /// <summary>
@@ -217,16 +191,17 @@ namespace PixelVision8.Engine
         /// <param name="value"></param>
         public void SetMetadata(string key, string value)
         {
-            if (!_metaData.ContainsKey(key))
+            if (!MetaData.ContainsKey(key))
+            {
+                MetaData.Add(key, value);
+            }
+            else
             {
                 if (value == "")
-                    _metaData.Remove(key);
-                else
-                    _metaData.Add(key, value);
-            }
-            else if (value != "")
-            {
-                _metaData[key] = value;
+                    MetaData.Remove(key);
+                else 
+                    MetaData[key] = value;
+
             }
         }
 
@@ -238,59 +213,52 @@ namespace PixelVision8.Engine
         {
             target.Clear();
 
-            foreach (var data in _metaData)
-                target.Add(data.Key, data.Value);
+            foreach (var data in MetaData) target.Add(data.Key, data.Value);
         }
 
 
         /// <summary>
         ///     The PixelVisionEngine Init() method creates the
         ///     <see cref="ChipManager" /> and <see cref="APIBridge" /> as well as any
-        ///     additional chips supplied in the <see cref="defaultChips" /> array.
+        ///     additional chips supplied in the <see cref="DefaultChips" /> array.
         /// </summary>
         /// <tocexclude />
         public virtual void Init()
         {
-            //            chipManager = new ChipManager(this);
-
             //apiBridge = new APIBridge(this);
-            if (defaultChips != null)
-                CreateChips(defaultChips);
+            if (DefaultChips != null) CreateChips(DefaultChips);
         }
 
         public void CreateChips(string[] chips)
         {
-            foreach (var chip in chips)
-                GetChip(chip);
+            foreach (var chip in chips) GetChip(chip);
         }
 
         #region Chip Manager
 
         public void AddService(string id, IService service)
         {
-            serviceLocator.AddService(id, service);
+            ServiceLocator.AddService(id, service);
         }
 
         public IService GetService(string id)
         {
-            return serviceLocator.GetService(id);
+            return ServiceLocator.GetService(id);
         }
 
         public void RemoveService(string id)
         {
-            serviceLocator.RemoveService(id);
+            ServiceLocator.RemoveService(id);
         }
 
         public bool HasChip(string id)
         {
-            return chips.ContainsKey(id);
+            return Chips.ContainsKey(id);
         }
 
         public AbstractChip GetChip(string id, bool activeOnCreate = true)
         {
-            //Debug.Log("Chip Manager: Get Chip " + id);
-
-            if (HasChip(id)) return chips[id];
+            if (HasChip(id)) return Chips[id];
 
             var type = Type.GetType(id);
 
@@ -319,41 +287,35 @@ namespace PixelVision8.Engine
             if (HasChip(id))
             {
                 //TODO do we need to disable the old chip first
-                chips[id] = chip;
+                Chips[id] = chip;
             }
             else
             {
                 //TODO fixed bug here but need to make sure we don't need to do this above
-                chips.Add(id, chip);
+                Chips.Add(id, chip);
 
-                if (chip is IUpdate)
-                    updateChips.Add(chip as IUpdate);
+                if (chip is IUpdate) UpdateChips.Add(chip as IUpdate);
 
-                if (chip is IDraw)
-                    drawChips.Add(chip as IDraw);
+                if (chip is IDraw) DrawChips.Add(chip as IDraw);
             }
 
-            if (autoActivate)
-                chip.Activate(this);
+            if (autoActivate) chip.Activate(this);
         }
 
         public void DeactivateChip(string id, AbstractChip chip)
         {
             chip.Deactivate();
 
-            if (chip is IUpdate)
-                updateChips.Remove(chip as IUpdate);
+            if (chip is IUpdate update) UpdateChips.Remove(update);
 
-            if (chip is IDraw)
-                drawChips.Remove(chip as IDraw);
+            if (chip is IDraw draw) DrawChips.Remove(draw);
 
-            chips.Remove(id);
+            Chips.Remove(id);
         }
 
         public void RemoveInactiveChips()
         {
-            foreach (var item in chips.Where(c => c.Value.active == false).ToArray())
-                chips.Remove(item.Key);
+            foreach (var item in Chips.Where(c => c.Value.active == false).ToArray()) Chips.Remove(item.Key);
         }
 
         #endregion

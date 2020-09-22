@@ -18,7 +18,9 @@
 // Shawn Rakowski - @shwany
 //
 
+using System.Text;
 using PixelVision8.Engine;
+using PixelVision8.Runner.Services;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -26,7 +28,7 @@ namespace PixelVision8.Runner.Parsers
     {
         private readonly IEngine engine;
 
-        public MetaDataParser(string jsonString, IEngine target) : base(jsonString)
+        public MetaDataParser(string filePath, IFileLoadHelper fileLoadHelper, IEngine target) : base(filePath, fileLoadHelper)
         {
             engine = target;
         }
@@ -39,10 +41,10 @@ namespace PixelVision8.Runner.Parsers
 
         public void ApplySettings()
         {
-            foreach (var d in data)
-                engine.SetMetadata(d.Key, d.Value as string);
+            foreach (var d in Data) engine.SetMetadata(d.Key, d.Value as string);
 
-            currentStep++;
+            StepCompleted();
         }
+        
     }
 }

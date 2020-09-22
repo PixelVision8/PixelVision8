@@ -61,11 +61,6 @@ namespace PixelVision8.Runner
             LoadDefaultGame();
         }
 
-        public override void CreateLoadService()
-        {
-            loadService = new LuaLoadService();
-        }
-
         public override void ConfigureServices()
         {
             var luaService = new LuaService(this);
@@ -80,15 +75,15 @@ namespace PixelVision8.Runner
         private void LoadDefaultGame()
         {
             // Create a list of valid files we want to load from the game directory
-            var fileExtensions = new[]
+            string[] fileExtensions =
             {
                 "lua",
                 "png",
                 "json"
             };
 
-            // Create a new dictionary to store the file binary data
-            var gameFiles = new Dictionary<string, byte[]>();
+            // Create a new list to store the file paths
+            var gameFiles = new List<string>();
 
             // Get only the files we need from the directory base on their extension above.
             var files = from p in Directory.EnumerateFiles(gamePath)
@@ -98,18 +93,27 @@ namespace PixelVision8.Runner
             // Loop through each file in the list
             foreach (var file in files)
                 // Read the binary data and save it along with the file name to the dictionary.
-                gameFiles.Add(Path.GetFileName(file), File.ReadAllBytes(file));
+                gameFiles.Add(file);
 
             // Configure a new PV8 engine to play the game
             ConfigureEngine();
 
             // Manually activate the custom game chip
-            tmpEngine.ActivateChip("GameChip", new LuaGameChip());
+            tmpEngine.ActivateChip("GameChip", new LuaGameChip { DefaultScriptPath = "Content/code.lua" });
 
             // Process the files
-            ProcessFiles(tmpEngine, gameFiles);
+            ProcessFiles(tmpEngine, gameFiles.ToArray());
 
-            controllerChip = activeEngine.controllerChip;
+            controllerChip = ActiveEngine.ControllerChip;
+        }
+
+        public override void ActivateEngine(IEngine engine)
+        {
+            LuaGameChip gameChip = ((LuaGameChip)engine.GameChip);
+
+            gameChip.LoadScript(gameChip.DefaultScriptPath);
+
+            base.ActivateEngine(engine);
         }
 
         protected override void Update(GameTime gameTime)
@@ -120,9 +124,10 @@ namespace PixelVision8.Runner
                 controllerChip.GetKeyDown(Keys.LeftControl))
                 if (controllerChip.GetKeyUp(Keys.R) || controllerChip.GetKeyUp(Keys.D4))
                     ResetGame();
+
         }
 
-        public override void ResetGame()
+        public void ResetGame()
         {
             LoadDefaultGame();
         }

@@ -24,25 +24,32 @@ LoadScript("pixel-vision-ui-v2")
 LoadScript("pixel-vision-os-title-bar-v2")
 LoadScript("pixel-vision-os-message-bar-v2")
 LoadScript("pixel-vision-os-modal-v2")
-LoadScript("pixel-vision-os-message-modal-v2")
+LoadScript("pixel-vision-os-message-modal-v3")
 LoadScript("pixel-vision-os-color-utils-v2")
 LoadScript("pixel-vision-os-undo-v2")
+LoadScript("pixel-vision-os-clipboard-v2")
 LoadScript("pixel-vision-os-version")
 
 function PixelVisionOS:Init()
-    -- Create a new object for the instance and register it
-    local _pixelVisionOS = {}
-    setmetatable(_pixelVisionOS, PixelVisionOS)
 
-    _pixelVisionOS.editorUI = EditorUI:Init()
+    -- Get a global reference to the Editor UI
+    _G["editorUI"] = EditorUI:Init()
+
+    -- Create a new object for the instance and register it
+    local _pixelVisionOS = {
+        editorUI = editorUI,
+        version = _G["PixelVisionOSVersion"] or "v2.6",
+        uiComponents = {},
+        uiTotal = 0, 
+        displayFPS = false
+    }
+    setmetatable(_pixelVisionOS, PixelVisionOS)
 
     -- Create new title bar instance
     _pixelVisionOS.titleBar = _pixelVisionOS:CreateTitleBar(0, 0)
 
     -- Create message bar instance
     _pixelVisionOS.messageBar = _pixelVisionOS:CreateMessageBar(7, 230, 60)
-
-    _pixelVisionOS.version = _G["PixelVisionOSVersion"] or "v2.6"
 
     return _pixelVisionOS
 
@@ -63,18 +70,34 @@ function PixelVisionOS:Update(timeDelta)
     self:UpdateModal(timeDelta)
     -- end
 
+    -- Loop through all of the registered UI and update them
+    for i = 1, self.uiTotal do
+
+        -- Get a reference to the UI data
+        local ref = self.uiComponents[i]
+
+        if(ref ~= nil) then
+
+            -- Only update UI when the modal is not active
+            if(pixelVisionOS:IsModalActive() == false or ref.ignoreModal) then
+
+                -- Call the UI scope's update and pass back in the UI data
+                ref.uiScope[ref.uiUpdate](ref.uiScope, ref.uiData)
+
+            end
+
+        end
+
+    end
+
 end
 
 function PixelVisionOS:Draw()
 
     if(self.editorUI.inFocusUI ~= nil and self.editorUI.inFocusUI.toolTip ~= nil) then
-
         self:DisplayToolTip(self.editorUI.inFocusUI.toolTip)
-
     else
         self:ClearToolTip()
-        -- clear tool tip message
-
     end
 
     -- We manually call draw on the message bar since it can be updated at any point outside of its own update call
@@ -86,6 +109,21 @@ function PixelVisionOS:Draw()
 
     -- Draw modals on top
     self:DrawModal()
+
+    if(self.displayFPS == true) then
+
+        local fps = ReadFPS()
+
+        local color = 7
+
+        if(fps < 30) then
+            color = 9
+        elseif(fps <= 40 and fps >= 30) then
+            color = 14
+        end
+
+        DrawText(tostring(fps), Display().x - 10, Display().y - 10, DrawMode.Sprite, "medium", color, -4)
+    end
 
 end
 
@@ -118,7 +156,7 @@ function PixelVisionOS:ShowAboutModal(toolTitle, optionalText, width)
 
 end
 
-function PixelVisionOS:ShowMessageModal(title, message, width, showCancel, onCloseCallback)
+function PixelVisionOS:ShowMessageModal(title, message, width, showCancel, onCloseCallback, okButtonSpriteName)
 
     -- Look to see if the modal exists
     if(self.messageModal == nil) then
@@ -132,7 +170,7 @@ function PixelVisionOS:ShowMessageModal(title, message, width, showCancel, onClo
     else
 
         -- If the modal exists, configure it with the new values
-        self.messageModal:Configure(title, message, width, showCancel)
+        self.messageModal:Configure(title, message, width, showCancel, okButtonSpriteName)
     end
 
     -- Open the modal
@@ -211,12 +249,6 @@ function PixelVisionOS:ValidateGameInDir(workspacePath, requiredFiles)
 
     requiredFiles = requiredFiles or {"data.json", "info.json"}
 
-    -- if(extraFiles ~= nil) then
-    --   for i = 1, #extraFiles do
-    --     table.insert(requiredFiles, extraFiles[i])
-    --   end
-    -- end
-
     local flag = 0
 
     local total = #requiredFiles
@@ -230,3 +262,59 @@ function PixelVisionOS:ValidateGameInDir(workspacePath, requiredFiles)
     return flag == total
 
 end
+
+function PixelVisionOS:RegisterUI(data, updateCall, scope, ignoreModal)
+
+    scope = scope or self
+  
+    -- Try to remove an existing instance of the component
+    self:RemoveUI(data.name)
+  
+    table.insert(self.uiComponents, {uiData = data, uiUpdate = updateCall, uiScope = scope, ignoreModal = ignoreModal or false})
+  
+    self.uiTotal = #self.uiComponents
+  
+    -- Return an instance of the component
+    return data
+  
+  end
+  
+  function PixelVisionOS:RemoveUI(name)
+  
+    local i
+    local removeItem = -1
+  
+    for i = 1, self.uiTotal do
+  
+      if(self.uiComponents[i].uiData.name == name) then
+  
+        -- Set the remove flag to true
+        removeItem = i
+  
+        -- Exit out of the loop
+        break
+  
+      end
+  
+    end
+  
+    -- If there is nothing to remove than exit out of the function
+    if(removeItem == -1) then
+      return
+    end
+  
+    -- Remove item
+    table.remove(self.uiComponents, removeItem)
+  
+    -- Update the total
+    self.uiTotal = #self.uiComponents
+  
+    -- For debugging
+  
+    -- print("Remove", removeItem, "total", self.uiTotal)
+  
+    -- for i = 1, #self.uiComponents do
+    --   print("Left over", self.uiComponents[i].uiData.name)
+    -- end
+  
+  end

@@ -26,10 +26,10 @@ using System.Text;
 
 namespace PixelVision8.Runner.Utils
 {
-//    public class ToJson : Attribute
-//    {
-//
-//    }
+    //    public class ToJson : Attribute
+    //    {
+    //
+    //    }
 
 
     // Example usage:
@@ -81,8 +81,7 @@ namespace PixelVision8.Runner.Utils
         public static object Deserialize(string json)
         {
             // save the string for debug information
-            if (json == null)
-                return null;
+            if (json == null) return null;
 
             return Parser.Parse(json);
         }
@@ -122,8 +121,7 @@ namespace PixelVision8.Runner.Utils
                     {
                         word.Append(NextChar);
 
-                        if (json.Peek() == -1)
-                            break;
+                        if (json.Peek() == -1) break;
                     }
 
                     return word.ToString();
@@ -136,8 +134,7 @@ namespace PixelVision8.Runner.Utils
                 {
                     EatWhitespace();
 
-                    if (json.Peek() == -1)
-                        return TOKEN.NONE;
+                    if (json.Peek() == -1) return TOKEN.NONE;
 
                     switch (PeekChar)
                     {
@@ -226,12 +223,10 @@ namespace PixelVision8.Runner.Utils
 
                             // name
                             var name = ParseString();
-                            if (name == null)
-                                return null;
+                            if (name == null) return null;
 
                             // :
-                            if (NextToken != TOKEN.COLON)
-                                return null;
+                            if (NextToken != TOKEN.COLON) return null;
 
                             // ditch the colon
                             json.Read();
@@ -360,8 +355,7 @@ namespace PixelVision8.Runner.Utils
                                 case 'u':
                                     var hex = new char[4];
 
-                                    for (var i = 0; i < 4; i++)
-                                        hex[i] = NextChar;
+                                    for (var i = 0; i < 4; i++) hex[i] = NextChar;
 
                                     s.Append((char) Convert.ToInt32(new string(hex), 16));
                                     break;
@@ -383,13 +377,11 @@ namespace PixelVision8.Runner.Utils
 
                 if (number.IndexOf('.') == -1)
                 {
-                    long parsedInt;
-                    long.TryParse(number, out parsedInt);
+                    long.TryParse(number, out var parsedInt);
                     return parsedInt;
                 }
 
-                double parsedDouble;
-                double.TryParse(number, out parsedDouble);
+                double.TryParse(number, out var parsedDouble);
                 return parsedDouble;
             }
 
@@ -399,8 +391,7 @@ namespace PixelVision8.Runner.Utils
                 {
                     json.Read();
 
-                    if (json.Peek() == -1)
-                        break;
+                    if (json.Peek() == -1) break;
                 }
             }
 
@@ -469,8 +460,7 @@ namespace PixelVision8.Runner.Utils
 
                 foreach (var e in obj.Keys)
                 {
-                    if (!first)
-                        builder.Append(',');
+                    if (!first) builder.Append(',');
 
                     SerializeString(e.ToString());
                     builder.Append(':');
@@ -491,8 +481,7 @@ namespace PixelVision8.Runner.Utils
 
                 foreach (var obj in anArray)
                 {
-                    if (!first)
-                        builder.Append(',');
+                    if (!first) builder.Append(',');
 
                     SerializeValue(obj);
 

@@ -47,21 +47,19 @@ function EditorUI:CreatePicker(rect, itemWidth, itemHeight, total, spriteName, t
 
     local spriteData = data.cachedSpriteData.selectedup
 
-    local bounds = NewRect(data.rect.x - 8, data.rect.y - 8, data.rect.w + data.rect.x, data.rect.h + data.rect.y)
+    -- local bounds = NewRect(data.rect.x - 8, data.rect.y - 8, data.rect.w + data.rect.x, data.rect.h + data.rect.y)
 
-    data.selectedDrawArgs = {spriteData.spriteIDs, - 1, - 1, spriteData.width, false, false, DrawMode.UI, spriteData.colorOffset, true, false}
+    data.selectedDrawArgs = {spriteData.spriteIDs, - 1, - 1, spriteData.width, false, false, DrawMode.Sprite, spriteData.colorOffset, true, false}
 
     spriteData = data.cachedSpriteData.over
 
-    data.overDrawArgs = {spriteData.spriteIDs, 0, 0, spriteData.width, false, false, DrawMode.UI, spriteData.colorOffset, true, false}
+    data.overDrawArgs = {spriteData.spriteIDs, 0, 0, spriteData.width, false, false, DrawMode.Sprite, spriteData.colorOffset, true, false}
   end
 
 
   data.onClick = function(tmpData)
 
-    if(self.currentPickerDown == tmpData.name) then
-
-
+    if(self.inFocusUI ~= nil and self.inFocusUI.name == tmpData.name) then
 
       self:PickerClick(tmpData, true, tmpData.doubleClickActive and tmpData.doubleClickTime < tmpData.doubleClickDelay)
 
@@ -76,7 +74,7 @@ function EditorUI:CreatePicker(rect, itemWidth, itemHeight, total, spriteName, t
 
   data.onFirstPress = function(tmpData)
 
-    self.currentPickerDown = tmpData.name
+    self.inFocusUI = tmpData
     self:PickerPress(tmpData, true)
   end
 
@@ -150,6 +148,7 @@ function EditorUI:UpdatePicker(data, hitRect)
     -- Check to see if the mouse is over a valid area
     if(tmpPos.index > - 1 and tmpPos.index < data.total) then
 
+      
       -- If we are in the collision area, set the focus
       self:SetFocus(data, data.focusCursor)
 
@@ -317,9 +316,10 @@ function EditorUI:SelectPicker(data, value, callAction)
   -- TODO this is a bit sloppy, it should run through the internal press logic and not duplicate it all here
   local pos = CalculatePosition(value, data.columns)
 
-  data.selectedDrawArgs[2] = (pos.x * data.itemWidth) + data.rect.x - data.borderOffset
-  data.selectedDrawArgs[3] = (pos.y * data.itemHeight) + data.rect.y - data.borderOffset
-
+  if(data.selectedDrawArgs ~=nil) then
+    data.selectedDrawArgs[2] = (pos.x * data.itemWidth) + data.rect.x - data.borderOffset
+    data.selectedDrawArgs[3] = (pos.y * data.itemHeight) + data.rect.y - data.borderOffset
+  end
   if(data.onAction ~= nil and callAction ~= false) then
 
     -- Trigger the onAction call back and pass in the double click value if the button is set up to use it

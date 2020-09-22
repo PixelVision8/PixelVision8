@@ -19,8 +19,10 @@
 //
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Runner.Exporters
 {
@@ -78,13 +80,28 @@ namespace PixelVision8.Runner.Exporters
             exporter.NextStep();
         }
 
+        public void StepCompleted()
+        {
+            exporter.StepCompleted();
+        }
+
+        public void Dispose()
+        {
+            exporter.Dispose();
+            colorChip = null;
+            exporter = null;
+        }
+
+        public Dictionary<string, object> Response => exporter.Response;
         public byte[] bytes => exporter.bytes;
 
         public string fileName => exporter.fileName;
 
         public virtual void ConfigureColors()
         {
-            colors = colorChip.colors;
+            colors = ColorUtils.ConvertColors(colorChip.hexColors, colorChip.maskColor, true);
+            //
+            // colorChip.colors;
             total = colors.Length;
 
             width = 8;

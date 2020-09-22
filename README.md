@@ -1,6 +1,6 @@
 # Pixel Vision 8 Source Code
 
-![Pixel Vision 8](https://github.com/jessefreeman-tester/PixelVision8/workflows/Pixel%20Vision%208/badge.svg)
+![Pixel Vision 8](https://github.com/PixelVision8/PixelVision8/workflows/Pixel%20Vision%208/badge.svg)
 
 Pixel Vision 8's core philosophy is to teach retro game development with streamlined workflows. PV8 is also a platform that standardizes 8-bit fantasy console limitations built on top of the open-source C# game engine based on MonoGame. This engine simply provides a standard set of APIs to create authentic-looking 8-bit games with modern programming languages and workflows. It also allows you to define specific limitations that alter the following properties:
 
@@ -24,4 +24,4 @@ Pixel Vision 8 was created by Jesse Freeman ([@jessefreeman](http://twitter.com/
 
 Licensed under the [Microsoft Public License (MS-PL) License](https://opensource.org/licenses/MS-PL).  See LICENSE file in the project root for full license information.
 
-Pixel Vision 8 is Copyright (c) 2017 - 2020 Jesse Freeman. All rights reserved.
+Pixel Vision 8 is Copyright (c) 2017 Jesse Freeman. All rights reserved.

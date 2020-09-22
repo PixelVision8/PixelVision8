@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Data;
@@ -33,13 +32,14 @@ namespace PixelVision8.Runner.Exporters
     /// <summary>
     ///     Leverage the built in sprite parser to do the cutting up and indexing work for us
     /// </summary>
-    internal class SpriteDataParser : SpriteParser
+    ///  TODO this needs to extend Sprite Data Parser
+    internal class SpriteDataParser : SpriteImageParser
     {
         public int[] ids;
         public int totalSpritesInTexture;
 
-        public SpriteDataParser(IImageParser imageParser, IEngineChips chips, bool unique = true) : base(imageParser,
-            chips, unique)
+        public SpriteDataParser(IImageParser parser, ColorChip colorChip, SpriteChip spriteChip) : base(parser,
+            colorChip, spriteChip)
         {
         }
 
@@ -47,7 +47,7 @@ namespace PixelVision8.Runner.Exporters
         {
             // Get the total number of sprites
             totalSpritesInTexture =
-                SpriteChipUtil.CalculateTotalSprites(imageWidth, imageHeight, spriteChip.width, spriteChip.height);
+                SpriteChipUtil.CalculateTotalSprites(ImageWidth, ImageHeight, spriteChip.width, spriteChip.height);
 
             ids = Enumerable.Repeat(-1, totalSpritesInTexture).ToArray();
 
@@ -65,8 +65,6 @@ namespace PixelVision8.Runner.Exporters
     {
         private readonly string endComment = "-- spritelib-end";
 
-        private readonly IEngine engine;
-
         private readonly Dictionary<string, byte[]> files;
 
         private readonly List<SpriteExportData> sprites = new List<SpriteExportData>();
@@ -78,11 +76,14 @@ namespace PixelVision8.Runner.Exporters
 
         public int spriteCount;
         private int totalTiles;
+        private SpriteChip spriteChip;
+        private ColorChip colorChip;
 
-        public SpriteBuilderExporter(string fileName, IEngine engine, Dictionary<string, byte[]> files) : base(fileName)
+        public SpriteBuilderExporter(string fileName, ColorChip colorChip, SpriteChip spriteChip, Dictionary<string, byte[]> files) : base(fileName)
         {
             this.files = files;
-            this.engine = engine;
+            this.spriteChip = spriteChip;
+            this.colorChip = colorChip;
         }
 
         public override void CalculateSteps()
@@ -120,20 +121,17 @@ namespace PixelVision8.Runner.Exporters
             {
                 var spriteData = sprites[currentTile];
 
-                var spriteParser = new SpriteDataParser(spriteData.imageParser, engine);
+                var spriteParser = new SpriteDataParser(spriteData.imageParser, colorChip, spriteChip);
 
                 spriteParser.CalculateSteps();
 
-                while (spriteParser.completed == false)
-                    spriteParser.NextStep();
-
+                while (spriteParser.completed == false) spriteParser.NextStep();
 
                 Array.Copy(spriteParser.ids, spriteData.ids, spriteParser.ids.Length);
 
                 currentTile++;
 
-                if (currentTile >= totalTiles)
-                    break;
+                if (currentTile >= totalTiles) break;
             }
 
             currentStep++;

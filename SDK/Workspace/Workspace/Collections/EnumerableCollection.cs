@@ -64,6 +64,7 @@ namespace PixelVision8.Runner.Workspace
                 throw new ArgumentOutOfRangeException(nameof(array),
                     "The supplied array (of size " + array.Length + ") cannot contain " + Count + " items on index " +
                     arrayIndex);
+
             foreach (var item in _enumerable) array[arrayIndex++] = item;
         }
 

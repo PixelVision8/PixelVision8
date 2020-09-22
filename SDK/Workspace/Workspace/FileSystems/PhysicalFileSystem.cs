@@ -53,22 +53,22 @@ namespace PixelVision8.Runner.Workspace
 
         public Stream CreateFile(WorkspacePath path)
         {
-            if (!path.IsFile)
-                throw new ArgumentException("The specified path is not a file.", "path");
+            if (!path.IsFile) throw new ArgumentException("The specified path is not a file.", "path");
+
             return File.Create(GetPhysicalPath(path));
         }
 
         public Stream OpenFile(WorkspacePath path, FileAccess access)
         {
-            if (!path.IsFile)
-                throw new ArgumentException("The specified path is not a file.", "path");
+            if (!path.IsFile) throw new ArgumentException("The specified path is not a file.", "path");
+
             return File.Open(GetPhysicalPath(path), FileMode.Open, access);
         }
 
         public void CreateDirectory(WorkspacePath path)
         {
-            if (!path.IsDirectory)
-                throw new ArgumentException("The specified path is not a directory.", "path");
+            if (!path.IsDirectory) throw new ArgumentException("The specified path is not a directory.", "path");
+
             Directory.CreateDirectory(GetPhysicalPath(path));
         }
 
@@ -90,10 +90,11 @@ namespace PixelVision8.Runner.Workspace
 
         public PhysicalFileSystem(string physicalRoot)
         {
-            if (!Path.IsPathRooted(physicalRoot))
-                physicalRoot = Path.GetFullPath(physicalRoot);
+            if (!Path.IsPathRooted(physicalRoot)) physicalRoot = Path.GetFullPath(physicalRoot);
+
             if (physicalRoot[physicalRoot.Length - 1] != Path.DirectorySeparatorChar)
                 physicalRoot = physicalRoot + Path.DirectorySeparatorChar;
+
             PhysicalRoot = physicalRoot;
         }
 
@@ -107,6 +108,7 @@ namespace PixelVision8.Runner.Workspace
         {
             if (!physicalPath.StartsWith(PhysicalRoot, StringComparison.InvariantCultureIgnoreCase))
                 throw new ArgumentException("The specified path is not member of the PhysicalRoot.", "physicalPath");
+
             var virtualPath = WorkspacePath.DirectorySeparator + physicalPath.Remove(0, PhysicalRoot.Length)
                                   .Replace(Path.DirectorySeparatorChar, WorkspacePath.DirectorySeparator);
             return WorkspacePath.Parse(virtualPath);
@@ -116,10 +118,12 @@ namespace PixelVision8.Runner.Workspace
         {
             if (!physicalPath.StartsWith(PhysicalRoot, StringComparison.InvariantCultureIgnoreCase))
                 throw new ArgumentException("The specified path is not member of the PhysicalRoot.", "physicalPath");
+
             var virtualPath = WorkspacePath.DirectorySeparator + physicalPath.Remove(0, PhysicalRoot.Length)
                                   .Replace(Path.DirectorySeparatorChar, WorkspacePath.DirectorySeparator);
             if (virtualPath[virtualPath.Length - 1] != WorkspacePath.DirectorySeparator)
                 virtualPath += WorkspacePath.DirectorySeparator;
+
             return WorkspacePath.Parse(virtualPath);
         }
 

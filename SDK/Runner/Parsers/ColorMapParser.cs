@@ -28,8 +28,8 @@ namespace PixelVision8.Runner.Parsers
     {
         public static string chipName = "PixelVisionSDK.Chips.ColorMapChip";
 
-        public ColorMapParser(IImageParser imageParser, ColorChip colorChip, Color magenta, bool unique = false) : base(
-            imageParser, colorChip)
+        public ColorMapParser(IImageParser parser, ColorChip colorChip, Color magenta, bool unique = false) : base(
+            parser, colorChip)
         {
         }
 
@@ -37,7 +37,7 @@ namespace PixelVision8.Runner.Parsers
         {
             currentStep = 0;
             steps.Add(ParseImageData);
-//            steps.Add(IndexColors);
+            //            steps.Add(IndexColors);
             steps.Add(ReadColors);
             steps.Add(BuildColorMap);
         }
@@ -48,7 +48,7 @@ namespace PixelVision8.Runner.Parsers
             colorChip.total = totalColors;
 
 
-//            colorChip.RebuildColorPages(totalColors);
+            //            colorChip.RebuildColorPages(totalColors);
 
             for (var i = 0; i < totalColors; i++)
             {

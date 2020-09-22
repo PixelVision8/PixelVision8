@@ -18,9 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Parsers;
 
 namespace PixelVision8.Runner.Exporters
@@ -42,11 +44,14 @@ namespace PixelVision8.Runner.Exporters
             this.engine = engine;
             this.imageExporter = imageExporter;
 
-            this.spriteChip = spriteChip ?? engine.spriteChip;
+            this.spriteChip = spriteChip ?? engine.SpriteChip;
 
-            var colorMapChip = engine.GetChip(ColorMapParser.chipName, false) as ColorChip;
+            // var colorMapChip = engine.GetChip(ColorMapParser.chipName, false) as ColorChip;
 
-            colors = colorMapChip == null ? engine.colorChip.colors : colorMapChip.colors;
+            colors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);
+
+            // TODO removing the color map chip dependency when exporting moving forward
+            // colors = colorMapChip == null ? engine.ColorChip.colors : colorMapChip.colors;
         }
 
         public int totalSteps => exporter.totalSteps;
@@ -65,6 +70,21 @@ namespace PixelVision8.Runner.Exporters
             exporter.NextStep();
         }
 
+        public void StepCompleted()
+        {
+            exporter.StepCompleted();
+        }
+
+        public void Dispose()
+        {
+            exporter.Dispose();
+            engine = null;
+            spriteChip = null;
+            imageExporter = null;
+            exporter = null;
+        }
+
+        public Dictionary<string, object> Response => exporter.Response;
         public byte[] bytes => exporter.bytes;
 
         public string fileName => exporter.fileName;
@@ -80,7 +100,7 @@ namespace PixelVision8.Runner.Exporters
             spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
 
             exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, imageExporter,
-                engine.colorChip.maskColor);
+                engine.ColorChip.maskColor);
         }
     }
 }

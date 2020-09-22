@@ -50,8 +50,7 @@ namespace PixelVision8.Engine
             set
             {
                 var total = tracks.Length;
-                for (var i = 0; i < total; i++)
-                    tracks[i].totalNotes = value;
+                for (var i = 0; i < total; i++) tracks[i].totalNotes = value;
             }
         }
 
@@ -61,7 +60,7 @@ namespace PixelVision8.Engine
         public int speedInBPM
         {
             get => _speedInBPM;
-            set => _speedInBPM = MathHelper.Clamp(value, 60, 480);
+            set => _speedInBPM = MathHelper.Clamp(value, 1, 480);
         }
 
         /// <summary>
@@ -99,8 +98,7 @@ namespace PixelVision8.Engine
         {
             //            songName = name;
             totalTracks = trackCount;
-            foreach (var track in tracks)
-                track.Reset();
+            foreach (var track in tracks) track.Reset();
         }
 
         public string SerializeData()
@@ -131,11 +129,10 @@ namespace PixelVision8.Engine
                     JsonUtil.indentLevel++;
                     var track = tracks[i];
 
-                    if (track != null)
-                        sb.Append(track.SerializeData());
+                    if (track != null) sb.Append(track.SerializeData());
 
-                    if (i < total - 1)
-                        sb.Append(",");
+                    if (i < total - 1) sb.Append(",");
+
                     JsonUtil.indentLevel--;
                 }
 

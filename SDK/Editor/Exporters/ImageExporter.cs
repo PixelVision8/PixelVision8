@@ -30,7 +30,7 @@ namespace PixelVision8.Runner.Exporters
 
         protected IImageExporter imageExporter;
 
-//        protected int loops;
+        //        protected int loops;
         protected int width;
 
         public ImageExporter(string fileName, IImageExporter imageExporter, Color[] colors, int width, int height) :

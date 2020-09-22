@@ -37,6 +37,5 @@ namespace PixelVision8.Runner.Workspace
         void CreateDirectory(WorkspacePath path);
         void Delete(WorkspacePath path);
 
-        // TODO should add readonly, copy and move?
     }
 }

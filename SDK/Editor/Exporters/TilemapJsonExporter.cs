@@ -57,21 +57,164 @@ namespace PixelVision8.Runner.Exporters
             // Create a new string builder
             steps.Add(CreateStringBuilder);
 
-
-            steps.Add(SaveGameData);
+            // TODO need to see if there is a legacy flag
+            steps.Add(SaveMapDataV1);
+            // steps.Add(SaveMapDataV2);
+            
+            // steps.Add(SaveMapDataV1);
 
             // Save the final string builder
             steps.Add(CloseStringBuilder);
         }
 
-        private void SaveGameData()
+
+        private void SaveMapDataV2()
         {
             JsonUtil.compressJson = true;
 
-            var spriteChip = targetEngine.spriteChip;
-            var tilemapChip = targetEngine.tilemapChip;
-            var colorChip = targetEngine.colorChip;
-            var gameChip = targetEngine.gameChip;
+            var spriteChip = targetEngine.SpriteChip;
+            var tilemapChip = targetEngine.TilemapChip;
+            var colorChip = targetEngine.ColorChip;
+            var gameChip = targetEngine.GameChip;
+
+            var spriteSize = gameChip.SpriteSize();
+
+            // version
+            sb.Append("\"version\":");
+            sb.Append(2);
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+
+            // layers start
+            sb.Append("\"layers\": [");
+            JsonUtil.GetLineBreak(sb, 2);
+
+            var idOffset = 1 + spriteChip.TotalSprites;
+
+            // Layer start
+            sb.Append("{");
+            JsonUtil.GetLineBreak(sb, 3);
+
+            // type
+            sb.Append("\"type\":");
+            sb.Append("\"objectgroup\"");
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 3);
+            
+            // layers start
+            sb.Append("\"objects\": [");
+            JsonUtil.GetLineBreak(sb, 4);
+
+
+            var total = tilemapChip.total;
+            var cols = tilemapChip.columns;
+            var tileCounter = 0;
+
+            for (var i = 0; i < total; i++)
+            {
+                var pos = gameChip.CalculatePosition(i, cols);
+
+                var tile = gameChip.Tile(pos.X, pos.Y);
+
+                // Only save a tile if it exists
+                if (tile.spriteID > 0 || tile.flag > 0 || tile.colorOffset > 0)
+                {
+                    sb.Append("{");
+                    JsonUtil.GetLineBreak(sb, 5);
+
+                    // TODO need to add in flip values to this sprite ID
+                    sb.Append("\"gid\":");
+                    sb.Append(CreateGID(tile.spriteID + 1, tile.flipH, tile.flipV));
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 5);
+                    
+                    sb.Append("\"x\":");
+                    sb.Append(pos.X * spriteSize.X);
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 5);
+
+                    // Tiled Y pos is 1 based, so offset the x position by 1 tile
+                    sb.Append("\"y\":");
+                    sb.Append((pos.Y + 1) * spriteSize.Y);
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 5);
+
+                    // layers start
+                    sb.Append("\"properties\": [");
+                    JsonUtil.GetLineBreak(sb, 6);
+
+                    // Save flag id
+                    JsonUtil.GetLineBreak(sb, 7);
+                    sb.Append("{");
+
+                    sb.Append("\"name\":");
+                    sb.Append("\"flagID\"");
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 7);
+
+                    sb.Append("\"value\":");
+                    sb.Append(tile.flag);
+
+                    // property end
+                    JsonUtil.GetLineBreak(sb, 6);
+                    sb.Append("},");
+
+                    // Save color offset
+                    JsonUtil.GetLineBreak(sb, 7);
+                    sb.Append("{");
+
+                    sb.Append("\"name\":");
+                    sb.Append("\"colorOffset\"");
+                    sb.Append(",");
+                    JsonUtil.GetLineBreak(sb, 7);
+
+                    sb.Append("\"value\":");
+                    sb.Append(tile.colorOffset);
+
+                    // property end
+                    JsonUtil.GetLineBreak(sb, 6);
+                    sb.Append("}");
+
+
+                    JsonUtil.GetLineBreak(sb, 5);
+                    sb.Append("]");
+                    JsonUtil.GetLineBreak(sb, 4);
+
+                    sb.Append("}");
+
+                    sb.Append(",");
+
+                    tileCounter++;
+                }
+            }
+
+            if (tileCounter > 0)
+                // Remove the last comma
+                sb.Length--;
+
+            // tilesets end
+            JsonUtil.GetLineBreak(sb, 3);
+            sb.Append("]");
+
+            // Layer end
+            JsonUtil.GetLineBreak(sb, 2);
+            sb.Append("}");
+
+            // layers end
+            JsonUtil.GetLineBreak(sb, 1);
+            sb.Append("]");
+
+           StepCompleted();
+        }
+
+        private void SaveMapDataV1()
+        {
+            JsonUtil.compressJson = true;
+
+            var spriteChip = targetEngine.SpriteChip;
+            var tilemapChip = targetEngine.TilemapChip;
+            var colorChip = targetEngine.ColorChip;
+            var gameChip = targetEngine.GameChip;
 
             var spriteSize = gameChip.SpriteSize();
 
@@ -148,7 +291,7 @@ namespace PixelVision8.Runner.Exporters
             {
                 {
                     "sprites.png",
-                    new SpriteVector(spriteChip.texture.width, spriteChip.texture.height, spriteChip.totalSprites)
+                    new SpriteVector(spriteChip.texture.width, spriteChip.texture.height, spriteChip.TotalSprites)
                 }
             };
 
@@ -230,7 +373,7 @@ namespace PixelVision8.Runner.Exporters
 
                 // transparentcolor
                 sb.Append("\"transparentcolor\":");
-                sb.Append("\"" + targetEngine.colorChip.maskColor + "\"");
+                sb.Append("\"" + targetEngine.ColorChip.maskColor + "\"");
                 JsonUtil.GetLineBreak(sb, 2);
 
                 // tilesets end
@@ -250,7 +393,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("\"layers\": [");
             JsonUtil.GetLineBreak(sb, 2);
 
-            var idOffset = 1 + spriteChip.totalSprites;
+            var idOffset = 1 + spriteChip.TotalSprites;
 
             // Layer start
             sb.Append("{");
@@ -417,7 +560,7 @@ namespace PixelVision8.Runner.Exporters
                 }
             }
 
-//            sb.Append(String.Join("", new List<int>(layers[(int)Layer.Sprites]).ConvertAll(i => i.ToString()).ToArray()));
+            //            sb.Append(String.Join("", new List<int>(layers[(int)Layer.Sprites]).ConvertAll(i => i.ToString()).ToArray()));
 
             //                var layerEnum = (TilemapChip.Layer) Enum.Parse(typeof(TilemapChip.Layer), layerName);
             //                    
@@ -468,12 +611,9 @@ namespace PixelVision8.Runner.Exporters
         {
             var gid = (uint) id;
 
-            if (flipH)
-                gid |= 1U << 31;
+            if (flipH) gid |= 1U << 31;
 
-            if (flipV)
-                gid |= 1U << 30;
-
+            if (flipV) gid |= 1U << 30;
 
             return gid;
         }

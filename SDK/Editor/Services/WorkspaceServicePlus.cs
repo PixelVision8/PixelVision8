@@ -21,9 +21,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
+using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Utils;
 using PixelVision8.Runner.Workspace;
 
@@ -31,14 +33,14 @@ namespace PixelVision8.Runner.Services
 {
     public class WorkspaceServicePlus : WorkspaceService
     {
-//        private bool disksInvalid = true;
+        //        private bool disksInvalid = true;
         private readonly List<WorkspacePath> _disks = new List<WorkspacePath>();
 
         public WorkspaceServicePlus(KeyValuePair<WorkspacePath, IFileSystem> mountPoint) : base(mountPoint)
         {
         }
 
-//        private SortedList<WorkspacePath, IFileSystem> DiskMount => Mounts as SortedList<WorkspacePath, IFileSystem>;
+        //        private SortedList<WorkspacePath, IFileSystem> DiskMount => Mounts as SortedList<WorkspacePath, IFileSystem>;
         public int TotalDisks => _disks.Count;
         public int MaxDisks { get; set; } = 2;
 
@@ -54,8 +56,7 @@ namespace PixelVision8.Runner.Services
                 filePath = filePath.AppendDirectory(name);
 
                 // If the filesystem doesn't exit, we want to create it
-                if (!Exists(filePath))
-                    CreateDirectory(filePath);
+                if (!Exists(filePath)) CreateDirectory(filePath);
             }
 
             var workspaceDisk = new SubFileSystem(this, filePath);
@@ -63,6 +64,7 @@ namespace PixelVision8.Runner.Services
             Mounts.Add(
                 new KeyValuePair<WorkspacePath, IFileSystem>(WorkspacePath.Root.AppendDirectory("Workspace"),
                     workspaceDisk));
+            
         }
 
         public void RebuildWorkspace()
@@ -87,6 +89,7 @@ namespace PixelVision8.Runner.Services
 
             // Mount the PixelVisionOS directory
             AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(osPath, new MergedFileSystem(systemPaths)));
+
         }
 
         // Exports the active song in the music chip
@@ -114,7 +117,7 @@ namespace PixelVision8.Runner.Services
 
 
                     // TODO exporting sprites doesn't work
-                    if (locator.GetService(typeof(ExportService).FullName) is ExportService exportService)
+                    if (locator.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
                     {
                         exportService.ExportSong(filePath.Path, musicChip, soundChip, selectedPatterns);
                         //
@@ -129,9 +132,9 @@ namespace PixelVision8.Runner.Services
                 }
 
                 // TODO saving song doesn't work
-//                runner.exportService.ExportSong(filePath.Path, musicChip, soundChip);
-//
-//                runner.StartExport();
+                //                runner.exportService.ExportSong(filePath.Path, musicChip, soundChip);
+                //
+                //                runner.StartExport();
             }
         }
 
@@ -147,7 +150,7 @@ namespace PixelVision8.Runner.Services
 
 
                 // TODO exporting sprites doesn't work
-                if (locator.GetService(typeof(ExportService).FullName) is ExportService exportService)
+                if (locator.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
                 {
                     exportService.ExportSong(filePath.Path, musicChip, soundChip, selectedPatterns);
                     //
@@ -180,8 +183,7 @@ namespace PixelVision8.Runner.Services
             else
                 disk = new PhysicalFileSystem(path);
 
-            if (disk == null)
-                return null;
+            if (disk == null) return null;
 
             // Test to see if the disk is a valid game
             if (ValidateGameInDir(disk) == false &&
@@ -240,6 +242,7 @@ namespace PixelVision8.Runner.Services
                 // Add the remaining disks
                 foreach (var disk in Disks) diskPaths.Add(DiskPhysicalRoot(disk));
 
+                // TODO this shouldn't eject the disk  that is about to be loaded since it  could force a zip file to be rewritten before it is loaded
                 // Remove the old disks
                 EjectAll();
 
@@ -269,34 +272,20 @@ namespace PixelVision8.Runner.Services
 
         public void SaveActiveDisk()
         {
-            if (currentDisk is ZipFileSystem disk) disk.Save();
 
             // Create a new mount point for the current game
             var rootPath = WorkspacePath.Root.AppendDirectory("Game");
+
+            // Save the active disk if it is a zip file system
+            if (currentDisk is ZipFileSystem disk) SaveDisk(rootPath);
 
             // Make sure we don't have a disk with the same name
             if (Exists(rootPath)) Mounts.Remove(Get(rootPath));
         }
 
-        public override void IncludeLibDirectoryFiles(Dictionary<string, byte[]> files)
-        {
-            base.IncludeLibDirectoryFiles(files);
-
-            var paths = new List<WorkspacePath>();
-
-            var diskPaths = Disks;
-
-            foreach (var disk in diskPaths) paths.Add(disk.AppendDirectory("System").AppendDirectory("Libs"));
-
-            AddExtraFiles(files, paths);
-        }
-
         public override void ShutdownSystem()
         {
-            // make sure we have the current list of disks in the bios
-//            UpdateDiskInBios();
-//            var disks = disks;
-
+            
             foreach (var disk in Disks) SaveDisk(disk);
 
             base.ShutdownSystem();
@@ -352,13 +341,13 @@ namespace PixelVision8.Runner.Services
                         fileData.Add(name, bytes);
 
                     count++;
-//                    Console.WriteLine("Parse File " + name);
+                    //                    Console.WriteLine("Parse File " + name);
                 }
 
                 try
                 {
                     // TODO exporting sprites doesn't work
-                    if (locator.GetService(typeof(ExportService).FullName) is ExportService exportService)
+                    if (locator.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
                     {
                         exportService.ExportSpriteBuilder(path + "sb-sprites.lua", targetGame, fileData);
                         //
@@ -388,7 +377,7 @@ namespace PixelVision8.Runner.Services
             Mounts.Add(new KeyValuePair<WorkspacePath, IFileSystem>(path, disk));
 
             if (!_disks.Contains(path)) _disks.Add(path);
-//            InvalidateDisks();
+            //            InvalidateDisks();
         }
 
         public void RemoveDisk(WorkspacePath path)
@@ -402,18 +391,53 @@ namespace PixelVision8.Runner.Services
                 Mounts.Remove(Get(path));
 
                 if (_disks.Contains(path)) _disks.Remove(path);
-//                
-//                InvalidateDisks();
+                //                
+                //                InvalidateDisks();
             }
         }
 
         public void SaveDisk(WorkspacePath path)
         {
-            if (Exists(path))
+            
+            var diskExporter = new ZipDiskExporter(path.Path, this);
+            diskExporter.CalculateSteps();
+
+            while (diskExporter.completed == false)
             {
-                var mount = Get(path);
-                if (mount.Value is ZipFileSystem zipFileSystem) zipFileSystem.Save();
+                diskExporter.NextStep();
             }
+
+        }
+
+        public Dictionary<string, object> CreateZipFile(WorkspacePath path, Dictionary<WorkspacePath, WorkspacePath> files)
+        {
+            var fileHelper = new WorkspaceFileLoadHelper(this);
+            var zipExporter = new ZipExporter(path.Path, fileHelper, files);
+            zipExporter.CalculateSteps();
+
+            while (zipExporter.completed == false)
+            {
+                zipExporter.NextStep();
+            }
+
+            try
+            {
+                if ((bool)zipExporter.Response["success"])
+                {
+                    var zipPath = WorkspacePath.Parse(zipExporter.fileName);
+
+                    SaveExporterFiles(new Dictionary<string, byte[]>() { { zipExporter.fileName, zipExporter.bytes } });
+                }
+            }
+            catch (Exception e)
+            {
+                // Change the success to false
+                zipExporter.Response["success"] = false;
+                zipExporter.Response["message"] = e.Message;
+            }
+            
+            
+            return zipExporter.Response;
         }
 
         public void EjectAll()
@@ -427,6 +451,23 @@ namespace PixelVision8.Runner.Services
             if (path == WorkspacePath.Root.AppendDirectory("Disks")) return MaxDisks > 0;
 
             return base.Exists(path);
+        }
+
+        public override List<WorkspacePath> SharedLibDirectories()
+        {
+            // Create paths to the System/Libs and Workspace/Libs folder
+            var paths = base.SharedLibDirectories();
+
+            // Add disks
+            for (int i = 0; i < TotalDisks; i++)
+            {
+                var tmpPath = Disks[i].AppendDirectory("System").AppendDirectory("Libs");
+
+                if(Exists(tmpPath))
+                    paths.Insert(0, tmpPath);
+            }
+
+            return paths;
         }
     }
 }

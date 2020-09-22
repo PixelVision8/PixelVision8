@@ -42,8 +42,7 @@ namespace PixelVision8.Runner.Workspace
         {
             var b = new byte[bufferSize];
             int readBytes;
-            while ((readBytes = s.Read(b, 0, bufferSize)) > 0)
-                destination.Write(b, 0, readBytes);
+            while ((readBytes = s.Read(b, 0, bufferSize)) > 0) destination.Write(b, 0, readBytes);
         }
 
         public static void StreamTo(this Stream s, Stream destination)

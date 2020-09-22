@@ -38,7 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="PixelVision8Runner.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SDK\**\*.cs">
       <Link>SDK\%(RecursiveDir)%(Filename)%(Extension)</Link>
@@ -46,7 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ICSharpCode.SharpZipLib.dll" Version="0.85.4.369" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.6.0" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
     <PackageReference Include="MoonSharp" Version="2.0.0" />
   </ItemGroup>

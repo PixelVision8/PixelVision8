@@ -153,19 +153,20 @@ end
 
 function Init()
 
-  BackgroundColor(22)
+  BackgroundColor(5)
 
   -- Disable the back key in this tool
   EnableBackKey(false)
 
-  -- Create an instance of the Pixel Vision OS
-  pixelVisionOS = PixelVisionOS:Init()
+  -- Create an global instance of the Pixel Vision OS
+  _G["pixelVisionOS"] = PixelVisionOS:Init()
 
   -- Reset the undo history so it's ready for the tool
-  pixelVisionOS:ResetUndoHistory()
+  -- TODO restart undo history here
+  -- pixelVisionOS:ResetUndoHistory()
 
   -- Get a reference to the Editor UI
-  editorUI = pixelVisionOS.editorUI
+  -- editorUI = pixelVisionOS.editorUI
 
 
   rootDirectory = ReadMetadata("directory", nil)
@@ -646,67 +647,6 @@ function ApplySoundChanges(autoPlay, saveHistory)
 
 end
 
-function UpdateHistory(settingsString)
-
-  local historyAction = {
-    sound = settingsString,
-    Action = function()
-      UpdateSound(settingsString, true, false)
-    end
-  }
-
-  pixelVisionOS:AddUndoHistory(historyAction)
-
-  UpdateHistoryButtons()
-
-end
-
--- local historyPos = 1
-
-function OnUndo()
-
-  local action = pixelVisionOS:Undo()
-
-  if(action ~= nil and action.Action ~= nil) then
-    action.Action()
-  end
-
-  UpdateHistoryButtons()
-end
-
-function OnRedo()
-
-  local action = pixelVisionOS:Redo()
-
-  if(action ~= nil and action.Action ~= nil) then
-    action.Action()
-  end
-
-  UpdateHistoryButtons()
-end
-
--- function OnRestoreSoundHistory(value)
---
---   if(historyPos < 1) then
---     historyPos = 1
---   elseif(historyPos > #soundHistory) then
---     historyPos = #soundHistory
---   end
---
---   UpdateHistoryButtons()
---
--- end
-
-function UpdateHistoryButtons()
-
-  -- TODO need to update the menu buttons
-
-  pixelVisionOS:EnableMenuItem(UndoShortcut, pixelVisionOS:IsUndoable())
-  pixelVisionOS:EnableMenuItem(RedoShortcut, pixelVisionOS:IsRedoable())
-  -- editorUI:Enable(controlButtonData[4].buttonUI, pixelVisionOS:IsUndoable())
-  -- editorUI:Enable(controlButtonData[5].buttonUI, pixelVisionOS:IsRedoable())
-
-end
 
 function Draw()
 
@@ -893,8 +833,9 @@ function LoadSound(value, clearHistory, updateHistory)
 
   if(clearHistory == true) then
     -- Reset the undo history so it's ready for the tool
-    pixelVisionOS:ResetUndoHistory()
-    UpdateHistoryButtons()
+    -- pixelVisionOS:ResetUndoHistory()
+    -- UpdateHistoryButtons()
+    -- TODO Undo logic here too that needs to be restored
   end
 
   if(updateHistory ~= false) then
@@ -1178,4 +1119,53 @@ function OnRunGame()
 
   end
 
+end
+
+
+function UpdateHistory(settingsString)
+
+  -- local historyAction = {
+  --   sound = settingsString,
+  --   Action = function()
+  --     UpdateSound(settingsString, true, false)
+  --   end
+  -- }
+
+  -- pixelVisionOS:AddUndoHistory(historyAction)
+
+  -- UpdateHistoryButtons()
+
+end
+
+-- local historyPos = 1
+
+function OnUndo()
+
+  -- local action = pixelVisionOS:Undo()
+
+  -- if(action ~= nil and action.Action ~= nil) then
+  --   action.Action()
+  -- end
+
+  -- UpdateHistoryButtons()
+end
+
+function OnRedo()
+
+  -- local action = pixelVisionOS:Redo()
+
+  -- if(action ~= nil and action.Action ~= nil) then
+  --   action.Action()
+  -- end
+
+  -- UpdateHistoryButtons()
+end
+
+function UpdateHistoryButtons()
+
+  -- TODO need to update the menu buttons
+
+  -- pixelVisionOS:EnableMenuItem(UndoShortcut, pixelVisionOS:IsUndoable())
+  -- pixelVisionOS:EnableMenuItem(RedoShortcut, pixelVisionOS:IsRedoable())
+  
 end

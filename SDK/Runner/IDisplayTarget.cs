@@ -26,8 +26,8 @@ namespace PixelVision8.Runner
     {
         void ResetResolution(int gameWidth, int gameHeight, int overScanX = 0, int overScanY = 0);
 
-        void Render(Color[] colors);
-//        void CacheColors(IEngine engine);
-//        void ConvertMousePosition(Vector pos);
+        void Render(int[] colors);
+        //        void CacheColors(IEngine engine);
+        //        void ConvertMousePosition(Vector pos);
     }
 }

@@ -1,0 +1,175 @@
+-- List of all the valid keys
+KeyCodeMap = {
+    {name = Keys.None, keyCode = 0, char = ""},
+    {name = Keys.Back, keyCode = 8, char = "!"},
+    {name = Keys.Tab, keyCode = 9, char = "@"},
+    {name = Keys.Enter, keyCode = 13, char = "#"},
+    {name = Keys.Space, keyCode = 32, char = "%"},
+    {name = Keys.Left, keyCode = 37, char = "^"},
+    {name = Keys.Up, keyCode = 38, char = "&"},
+    {name = Keys.Right, keyCode = 39, char = "*"},
+    {name = Keys.Down, keyCode = 40, char = "("},
+    {name = Keys.Delete, keyCode = 46, char = ")"},
+    {name = Keys.D0, keyCode = 48, char = "0"},
+    {name = Keys.D1, keyCode = 49, char = "1"},
+    {name = Keys.D2, keyCode = 50, char = "2"},
+    {name = Keys.D3, keyCode = 51, char = "3"},
+    {name = Keys.D4, keyCode = 52, char = "4"},
+    {name = Keys.D5, keyCode = 53, char = "5"},
+    {name = Keys.D6, keyCode = 54, char = "6"},
+    {name = Keys.D7, keyCode = 55, char = "7"},
+    {name = Keys.D8, keyCode = 56, char = "8"},
+    {name = Keys.D9, keyCode = 57, char = "9"},
+    {name = Keys.A, keyCode = 65, char = "A"},
+    {name = Keys.B, keyCode = 66, char = "B"},
+    {name = Keys.C, keyCode = 67, char = "C"},
+    {name = Keys.D, keyCode = 68, char = "D"},
+    {name = Keys.E, keyCode = 69, char = "E"},
+    {name = Keys.F, keyCode = 70, char = "F"},
+    {name = Keys.G, keyCode = 71, char = "G"},
+    {name = Keys.H, keyCode = 72, char = "H"},
+    {name = Keys.I, keyCode = 73, char = "I"},
+    {name = Keys.J, keyCode = 74, char = "J"},
+    {name = Keys.K, keyCode = 75, char = "K"},
+    {name = Keys.L, keyCode = 76, char = "L"},
+    {name = Keys.M, keyCode = 77, char = "M"},
+    {name = Keys.N, keyCode = 78, char = "N"},
+    {name = Keys.O, keyCode = 79, char = "O"},
+    {name = Keys.P, keyCode = 80, char = "P"},
+    {name = Keys.Q, keyCode = 81, char = "Q"},
+    {name = Keys.R, keyCode = 82, char = "R"},
+    {name = Keys.S, keyCode = 83, char = "S"},
+    {name = Keys.T, keyCode = 84, char = "T"},
+    {name = Keys.U, keyCode = 85, char = "U"},
+    {name = Keys.V, keyCode = 86, char = "V"},
+    {name = Keys.W, keyCode = 87, char = "W"},
+    {name = Keys.X, keyCode = 88, char = "X"},
+    {name = Keys.Y, keyCode = 89, char = "Y"},
+    {name = Keys.Z, keyCode = 90, char = "Z"},
+    {name = Keys.LeftShift, keyCode = 160, char = "}"},
+    {name = Keys.RightShift, keyCode = 161, char = "~"},
+    {name = Keys.OemSemicolon, keyCode = 186, char = ";"},
+    {name = Keys.OemPlus, keyCode = 187, char = "+"},
+    {name = Keys.OemComma, keyCode = 188, char = ","},
+    {name = Keys.OemMinus, keyCode = 189, char = "-"},
+    {name = Keys.OemPeriod, keyCode = 190, char = "."},
+    {name = Keys.OemQuestion, keyCode = 191, char = "/"},
+    {name = Keys.OemTilde, keyCode = 192, char = "`"},
+    {name = Keys.OemOpenBrackets, keyCode = 219, char = "["},
+    {name = Keys.OemPipe, keyCode = 220, char = "\\"},
+    {name = Keys.OemCloseBrackets, keyCode = 221, char = "]"},
+    {name = Keys.OemQuotes, keyCode = 222, char = "'"},
+  }
+
+DefaultKeys = {
+  Player1UpKey= "Up",
+  Player1DownKey= "Down",
+  Player1LeftKey= "Left",
+  Player1RightKey= "Right",
+  Player1SelectKey= "A",
+  Player1StartKey= "S",
+  Player1AKey= "x",
+  Player1BKey= "c",
+  Player2UpKey= "i",
+  Player2DownKey= "k",
+  Player2LeftKey= "j",
+  Player2RightKey= "l",
+  Player2SelectKey= ";",
+  Player2StartKey= ",",
+  Player2AKey= "Back",
+  Player2BKey= "Return",
+  Player1UpButton= "",
+  Player1DownButton= "",
+  Player1LeftButton= "",
+  Player1RightButton= "",
+  Player1SelectButton= "",
+  Player1StartButton= "",
+  Player1AButton= "",
+  Player1BButton= "",
+  Player2UpButton= "",
+  Player2DownButton= "",
+  Player2LeftButton= "",
+  Player2RightButton= "",
+  Player2SelectButton= "",
+  Player2StartButton= "",
+  Player2AButton= "",
+  Player2BButton = ""
+}
+
+ButtonCodes = {
+  
+  {name = Buttons.Up, keyCode = 0, char = "&"},
+  {name = Buttons.Down, keyCode = 1, char = "("},
+  {name = Buttons.Left, keyCode = 2, char = "^"},
+  {name = Buttons.Right, keyCode = 3, char = "*"},
+  {name = Buttons.Select, keyCode = 6, char = "-"},
+  {name = Buttons.Start, keyCode = 7, char = "+"},
+  {name = Buttons.A, keyCode = 4, char = "A"},
+  {name = Buttons.B, keyCode = 5, char = "B"},
+  
+  
+  -- Up = 0,
+  -- Down = 1,
+  -- Left = 2,
+  -- Right = 3,
+  -- A = 4,
+  -- B = 5,
+  -- Select = 6,
+  -- Start = 7
+
+}
+
+player1Keys = {
+  "Player1UpKey",
+  "Player1DownKey",
+  "Player1LeftKey",
+  "Player1RightKey",
+  "Player1SelectKey",
+  "Player1StartKey",
+  "Player1AKey",
+  "Player1BKey"
+}
+
+player2Keys = {
+  "Player2UpKey",
+  "Player2DownKey",
+  "Player2LeftKey",
+  "Player2RightKey",
+  "Player2SelectKey",
+  "Player2StartKey",
+  "Player2AKey",
+  "Player2BKey"
+}
+
+player1Buttons = {
+  "Player1UpButton",
+  "Player1DownButton",
+  "Player1LeftButton",
+  "Player1RightButton",
+  "Player1SelectButton",
+  "Player1StartButton",
+  "Player1AButton",
+  "Player1BButton"
+}
+
+player2Buttons = {
+  "Player2UpButton",
+  "Player2DownButton",
+  "Player2LeftButton",
+  "Player2RightButton",
+  "Player2SelectButton",
+  "Player2StartButton",
+  "Player2AButton",
+  "Player2BButton",
+}
+
+ButtonTypes = {
+  "Up",
+  "Down",
+  "Left",
+  "Right",
+  "A",
+  "B",
+  "Select",
+  "Start"
+}

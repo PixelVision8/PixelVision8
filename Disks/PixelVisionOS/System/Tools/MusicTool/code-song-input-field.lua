@@ -203,7 +203,7 @@ function EditorUI:UpdateSongInputField(data, dt)
         keyName = keyName .. "ctrl-"
       end
 
-      if(Key(Keys.Back)) then
+      if(Key(Keys.Backspace)) then
         keyName = keyName .. "backspace"
       elseif(Key(Keys.Delete)) then
         keyName = keyName .. "delete"

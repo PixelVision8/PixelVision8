@@ -33,7 +33,7 @@ namespace PixelVision8.Runner.Utils
         private readonly string maskHex;
 
         public IList<Color> colors;
-//        public List<Color> uniqueColors = new List<Color>();
+        //        public List<Color> uniqueColors = new List<Color>();
 
         internal Palette(string maskHex = "#FF00FF")
         {
@@ -46,27 +46,27 @@ namespace PixelVision8.Runner.Utils
 
         internal void AddColor(Color color)
         {
-//            if (colors.IndexOf(color) == -1)
-//            {
+            //            if (colors.IndexOf(color) == -1)
+            //            {
             colors.Add(color);
 
 
-//            var colorData = new ColorData(color.R, color.G, color.B);
+            //            var colorData = new ColorData(color.R, color.G, color.B);
 
-//            if (uniqueColors.IndexOf(colorData) == -1)
-//            {
-//                uniqueColors.Add(colorData);
-//                
-////                Console.WriteLine("New Color " + colorData.ToHex());
-//            }
+            //            if (uniqueColors.IndexOf(colorData) == -1)
+            //            {
+            //                uniqueColors.Add(colorData);
+            //                
+            ////                Console.WriteLine("New Color " + colorData.ToHex());
+            //            }
 
-//                Console.WriteLine("New Color " + color.ToHex());
-//            }
+            //                Console.WriteLine("New Color " + color.ToHex());
+            //            }
         }
 
         internal void AddAlphaToColorAtIndex(int colorIndex, byte alpha)
         {
-//            var oldColor = colors[colorIndex];
+            //            var oldColor = colors[colorIndex];
 
             // TODO this could be cleaner
             colors[colorIndex] = ColorUtils.HexToColor(maskHex);

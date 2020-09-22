@@ -28,7 +28,7 @@ function PixelVisionOS:CreateMessageBar(x, y, maxChars, clearColorID)
     currentMessage = "",
     mode = 1,
     invalid = false,
-    clearColorID = clearColorID or BackgroundColor(),
+    clearColorID = clearColorID or nil,
     modes = {
       Empty = 1,
       Message = 2,
@@ -51,7 +51,7 @@ function PixelVisionOS:CreateMessageBar(x, y, maxChars, clearColorID)
     data.pos.y,
     data.maxChars * 4,
     8,
-    data.clearColorID,
+    -1,
     DrawMode.TilemapCache
   }
 
@@ -63,7 +63,7 @@ function PixelVisionOS:UpdateMessageBar(data)
 
   if(data.delay == -1) then
 
-    if(self.editorUI.collisionManager.hovered == -1) then
+    if(editorUI.collisionManager.hovered == -1) then
       -- If _messageBar delay is set to 0 then clear it
       if(data.currentMessage ~= "") then
         self:ClearMessage(data)
@@ -78,7 +78,7 @@ function PixelVisionOS:UpdateMessageBar(data)
     return
   end
 
-  data.time = data.time + self.editorUI.timeDelta
+  data.time = data.time + editorUI.timeDelta
 
   if(data.delay > 0) then
     if(data.time > data.delay) then
@@ -91,6 +91,12 @@ end
 -- Unlike other components, the message bar is manually drawn last since its message can be updated outside of the update loop by other components
 function PixelVisionOS:DrawMessageBar(data)
   if(data.invalid == true) then
+    
+    if(data.clearColorID == nil) then 
+      data.clearColorID = BackgroundColor()
+      data.clearDrawArgs[5] = data.clearColorID
+    end
+  
     local length = data.maxChars - #data.currentMessage + 1
 
     if(length < 0) then
@@ -98,10 +104,10 @@ function PixelVisionOS:DrawMessageBar(data)
     end
 
     data.textDrawArgs[1] = string.upper(data.currentMessage)
-    self.editorUI:NewDraw("DrawRect", data.clearDrawArgs)
-    self.editorUI:NewDraw("DrawText", data.textDrawArgs)
+    editorUI:NewDraw("DrawRect", data.clearDrawArgs)
+    editorUI:NewDraw("DrawText", data.textDrawArgs)
 
-    self.editorUI:ResetValidation(data)
+    editorUI:ResetValidation(data)
   end
 end
 
@@ -128,7 +134,7 @@ function PixelVisionOS:DisplayMessage(text, delay, data)
   data.delay = delay or 2
   data.time = 0
   data.mode = data.modes.Message
-  self.editorUI:Invalidate(data)
+  editorUI:Invalidate(data)
 
 end
 
