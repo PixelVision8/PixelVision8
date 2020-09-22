@@ -1,0 +1,14 @@
+{
+    
+    "GameChip":
+    {
+        "savedData":{
+            "scroll": "1,1",
+            "selectedSprite": "0",
+            "cursor": "1,1",
+            "rootDirectory": "/Workspace/HelloWorld/",
+            "sessionID": "202004090933276473",
+            "targetFile": "/Workspace/MyFirstGame/README.txt"
+        }
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "AutoRun": "/PixelVisionOS/Tools/WorkspaceTool/",
+    "ArchiveExtensions": "zip,pv8,pvt,pvs,pva,pvr",
+    "FileExtensions": "png,lua,json,txt,wav,cs",
+    "RequiredFiles": "data.json,info.json",
+    "LibsDir": "Libs",
+    "FileDiskMounting": "True",
+    "MaxDisks": "2",
+    "FullScreen": "False",
+    "StretchScreen": "False",
+    "CropScreen": "True",
+    "Scale": "1",
+    "Brightness": "100",
+    "Sharpness": "-6",
+    "Volume": "50",
+    "Mute": "False",
+    "CRT": "False"
+}

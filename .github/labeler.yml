@@ -1,0 +1,29 @@
+# labeler "full" schema
+# See my other project, https://github.com/jimschubert/labeler-action
+enable:
+  issues: true
+  prs: true
+
+comments:
+  issues: |
+    Thanks for opening this issue!
+    I have applied any labels matching special text in your title and description.
+  prs: |
+    Thanks for the contribution!
+    I have applied any labels matching special text in your title and description.
+
+labels:
+  'bug':
+    include:
+      - '\bbug[s]?\b'
+      - '\bfix(es)?\b'
+    exclude: []
+  'help wanted':
+    include:
+      - '\bhelp( me)?\b'
+    exclude:
+      - '\b\[test(ing)?\]\b'
+  'enhancement':
+    include:
+      - '\bfeat\b'
+    exclude: []

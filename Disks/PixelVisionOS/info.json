@@ -1,0 +1,5 @@
+{
+  "name" :"PixelVisionOS",
+  "description": "This disk turns the Pixel Vision 8 Fantasy Console into an 8-bit computer for playing, creating and modifying games.",
+  "AutoRun": "/System/Tools/WorkspaceTool/"
+}

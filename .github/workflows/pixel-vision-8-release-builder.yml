@@ -1,0 +1,124 @@
+name: Pixel Vision 8
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+
+  # This runs before the builds and cretes the new feature release
+  create-release:
+
+    name: "Create Release"
+    runs-on: "ubuntu-latest"
+
+    # Steps for the task
+    steps:
+
+      # Figure out what the next tag should be
+      - id: compute_tag
+        uses: craig-day/compute-tag@v10
+        with:
+          github_token: ${{ github.token }}
+          version_scheme: semantic
+          version_type: minor
+
+      # Create the new release tag based on the above tag value and pass in the generated change log
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.compute_tag.outputs.next_tag }}
+          release_name: Pixel Vision 8 ${{ steps.compute_tag.outputs.next_tag }} Release
+          draft: false
+          prerelease: false
+
+
+  changelogger:
+    runs-on: ubuntu-latest
+    needs: create-release
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Unshallow
+        run: git fetch --prune --unshallow
+
+      # Figure out what the CURRENT tag should be
+      - id: compute_tag
+        uses: craig-day/compute-tag@v10
+        with:
+          github_token: ${{ github.token }}
+          version_scheme: semantic
+          version_type: minor
+
+      - name: save Changelog
+        id: PREVIOUS_version
+        run: |
+          IFS='.' read -ra my_array <<< "${{ steps.compute_tag.outputs.next_tag }}"
+          echo "::set-env name=CURRENT::${my_array[0]:1}.$((${my_array[1]} - 1)).$((${my_array[2]}))"
+          echo "::set-env name=PREVIOUS::${my_array[0]:1}.$((${my_array[1]} - 2)).0"
+
+      - name: Create Changelog
+        id: changelog
+        uses: jimschubert/beast-changelog-action@v1
+        with:
+          FROM: v${{ env.PREVIOUS }}
+          TO: v${{ env.CURRENT }}
+
+      - name: View Changelog
+        run: cat .github/CHANGELOG.md
+
+      - name: save Changelog
+        id: log
+        run: |
+          REPORT="$(cat .github/CHANGELOG.md)"
+          REPORT="${REPORT//'%'/'%25'}"
+          REPORT="${REPORT//$'\n'/'%0A'}"
+          REPORT="${REPORT//$'\r'/'%0D'}"
+          echo "::set-env name=REPORT::$REPORT"
+
+     # Setup dotnet v3.1
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.301
+
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+
+      - name: Build
+        run: |
+          sed -i 's/0.0.0/${{env.CURRENT}}/g' Content/bios.json
+          sed -i 's/0.0.0/${{env.CURRENT}}/g' PixelVision8.CoreDesktop.csproj
+          cd .gulp
+          npm install
+          npm install gulp -g
+          echo $VERSION
+          gulp
+
+      # Update the release with the change log
+      - name: Update Release
+        id: update_release
+        uses: meeDamian/github-release@2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allow_override: true
+          tag: v${{env.CURRENT}}
+          gzip: false
+          body: >
+            This is a stable build of Pixel Vision 8 based on the Github source code. While it is similar to the one you can download from [the main website](https://www.pixelvision8.com/), this build has some limitations specific to this project's dependency on the vanilla build of [MonoGame](https://www.monogame.net/). If you still would like to use it, you can download a build for Windows, Mac, and Linux (x64 & ARM 64) below. Please make sure to backup your [Workspace](https://docs.pixelvision8.com/pixelvisionos) before running this or any new build of Pixel Vision 8.
+
+            Here is a list of the most recent changes:
+
+
+            ${{ env.REPORT }}. In addition, you can see the current open issues [here](https://github.com/PixelVision8/PixelVision8/issues) or use one of the following links to submit a new [bug](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=bug_report.md), [feature](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=feature_request.md) or [question](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=question.md). To learn more about Pixel Vision 8, check out [the documentation](https://docs.pixelvision8.com/), explore [the examples](https://www.pixelvision8.com/examples), join [the Discord server](https://discord.gg/pixelvision8), and visit [the main website](https://www.pixelvision8.com/).
+          files: >
+            PixelVision8-v${{env.CURRENT}}-macOS.zip:Releases/PixelVision8-macOS.zip
+            PixelVision8-v${{env.CURRENT}}-win.zip:Releases/PixelVision8-win.zip
+            PixelVision8-v${{env.CURRENT}}-linux.zip:Releases/PixelVision8-linux.zip

@@ -1,0 +1,2 @@
+{
+    "width":256,"height":256,"nextobjectid":1,"orientation":"orthogonal","renderorder":"right-down","tiledversion":"1.0.3","tilewidth":8,"tileheight":8,"type":"map","version":1,"backgroundcolor":"#FF00FF","tilesets": [{"columns":16,"firstgid":1,"image":"sprites.png","imagewidth":128,"imageheight":1024,"margin":0,"name":"sprites","spacing":0,"tilewidth":8,"tileheight":8,"tilecount":2048,"transparentcolor":"#FF00FF"}],"layers": [{"draworder":"topdown","name":"Tilemap","id":1,"type":"objectgroup","opacity":1,"visible":true,"x":0,"y":0,"objects": []}]}
