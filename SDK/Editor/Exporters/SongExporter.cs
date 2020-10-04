@@ -29,7 +29,7 @@ namespace PixelVision8.Runner.Exporters
         private readonly MusicChip musicChip;
 
         private readonly int[] patterns;
-        private readonly SoundChip soundChip;
+        private readonly SfxrSoundChip soundChip;
         private int currentPattern;
 
         // to avoid clipping, all tracks are a bit quieter since we ADD values - set to 1f for full mix
@@ -52,7 +52,7 @@ namespace PixelVision8.Runner.Exporters
 
             // Save references to the currentc chips
             this.musicChip = musicChip;
-            this.soundChip = soundChip;
+            this.soundChip = soundChip as SfxrSoundChip;
 
             this.patterns = patterns;
         }
@@ -111,7 +111,7 @@ namespace PixelVision8.Runner.Exporters
                         preRenderBitrate);
             }
 
-            var instrument = new SfxrSynth[songData.totalTracks];
+            var instrument = new SfxrSynthChannel[songData.totalTracks];
 
             var newStartPos = trackresult[0].samples / 2;
             var newLength = trackresult[0].samples + songdatalength;
@@ -119,7 +119,7 @@ namespace PixelVision8.Runner.Exporters
 
             for (tracknum = 0; tracknum < tcount; tracknum++)
             {
-                if (instrument[tracknum] == null) instrument[tracknum] = new SfxrSynth();
+                if (instrument[tracknum] == null) instrument[tracknum] = new SfxrSynthChannel();
 
                 var songdataCurrentPos = newStartPos;
                 trackresult[tracknum].Resize(newLength);
@@ -142,7 +142,7 @@ namespace PixelVision8.Runner.Exporters
 
                         // doing this for every note played is insane:
                         // try a fresh new instrument (RAM and GC spammy)
-                        instrument[tracknum] = new SfxrSynth(); // shouldn't be required, but for some reason it is
+                        instrument[tracknum] = new SfxrSynthChannel(); // shouldn't be required, but for some reason it is
                         // set the params to current track's instrument string
                         instrument[tracknum].parameters.SetSettingsString(soundChip.ReadSound(songData.tracks[tracknum].sfxID).param);
 

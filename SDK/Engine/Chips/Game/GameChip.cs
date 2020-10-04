@@ -1,4 +1,4 @@
-﻿//   
+﻿﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -1290,12 +1290,12 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         /// <param name="id"></param>
         /// <param name="data"></param>
-        public string Sound(int id, string data = null)
-        {
-            if (data != null) SoundChip.UpdateSound(id, data);
-
-            return SoundChip.ReadSound(id).param;
-        }
+        // public string Sound(int id, string data = null)
+        // {
+        //     if (data != null) SoundChip.UpdateSound(id, data);
+        //
+        //     return SoundChip.ReadSound(id).param;
+        // }
 
         /// <summary>
         ///     Use StopSound() to stop any sound playing on a specific channel.

@@ -103,6 +103,33 @@ namespace PixelVision8.Engine.Utils
         {
             return new Point(index % width, index / width);
         }
+        
+        /// <summary>
+        ///     Converts an index into an X and Y position to help when working with 1D arrays that
+        ///     represent 2D data.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="index">
+        ///     The position of the 1D array.
+        /// </param>
+        /// <param name="width">
+        ///     The width of the data if it was a 2D array.
+        /// </param>
+        /// <returns>
+        ///     Returns a vector representing the X and Y position of an index in a 1D array.
+        /// </returns>
+        public static void CalculatePosition(ref Point point, int index, int width)
+        {
+            point.X = index % width;
+            point.Y = index / width;
+        }
+        
+        public static int Clamp(int value, int min, int max)
+        {
+            value = value > max ? max : value;
+            value = value < min ? min : value;
+            return value;
+        }
 
     }
 }

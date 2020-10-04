@@ -1,4 +1,4 @@
-﻿//  SfxrSynth
+﻿﻿//  SfxrSynth
 //  
 //  Copyright 2010 Thomas Vian
 //  Copyright 2013 Zeh Fernando

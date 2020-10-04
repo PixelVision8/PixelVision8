@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Audio;
+using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Services;
 
@@ -411,7 +412,7 @@ namespace PixelVision8.Runner.Parsers
 
         public void ConfigureSoundChip(Dictionary<string, object> data)
         {
-            var soundChip = Target.SoundChip;
+            var soundChip = Target.SoundChip as SfxrSoundChip;
 
             if (soundChip == null) return;
 

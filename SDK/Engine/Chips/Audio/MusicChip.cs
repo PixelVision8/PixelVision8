@@ -1,4 +1,4 @@
-﻿//   
+﻿﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -21,8 +21,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-
-//using UnityEngine;
 
 namespace PixelVision8.Engine.Chips
 {
@@ -194,7 +192,7 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
-        protected SoundChip SoundChip => engine.SoundChip;
+        protected ISoundChip SoundChip => engine.SoundChip;
 
         /// <summary>
         ///     Updates the sequencer if it is in playback mode. This will
@@ -255,7 +253,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public override void Configure()
         {
-            engine.MusicChip = this;
+            ((PixelVisionEngine)engine).MusicChip = this;
 
             //engine.chipManager.AddToUpdateList(this);
 
@@ -532,5 +530,6 @@ namespace PixelVision8.Engine.Chips
             //            else
             songCurrentlyPlaying = true;
         }
+        
     }
 }

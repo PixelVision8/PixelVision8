@@ -42,13 +42,5 @@ namespace PixelVision8.Engine.Audio
         /// </summary>
         void Stop();
 
-        /// <summary>
-        ///     Handles setting a wave type to the channel. This will
-        ///     lock the channel when manually set using this API. To
-        ///     unlock, pass in WaveShape.None.
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        WaveType ChannelType(WaveType? type);
     }
 }

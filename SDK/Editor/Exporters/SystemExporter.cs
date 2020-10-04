@@ -352,7 +352,7 @@ namespace PixelVision8.Runner.Exporters
             {
                 //                Console.WriteLine("Channel "+i +" type "+soundChip.ChannelType(i));
 
-                sb.Append((int) soundChip.ChannelType(i));
+                sb.Append((int) ((SfxrSoundChip)soundChip).ChannelType(i));
                 if (i < total - 1) sb.Append(",");
             }
 

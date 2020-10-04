@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
 
 namespace PixelVision8.Runner.Chips
 {
@@ -283,7 +284,7 @@ namespace PixelVision8.Runner.Chips
             bool wasFunkyLastNote;
 
             var musicChip = chips.MusicChip;
-            var soundChip = chips.SoundChip;
+            var soundChip = chips.SoundChip as SfxrSoundChip;
 
             var activeTrackerData = musicChip.ActiveTrackerData;
 

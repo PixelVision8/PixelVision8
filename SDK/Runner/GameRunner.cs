@@ -1,4 +1,4 @@
-﻿//   
+﻿﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -134,7 +134,7 @@ namespace PixelVision8.Runner
                     typeof(FontChip).FullName,
                     typeof(ControllerChip).FullName,
                     typeof(DisplayChip).FullName,
-                    typeof(SoundChip).FullName,
+                    typeof(SfxrSoundChip).FullName,
                     typeof(MusicChip).FullName
                 };
 

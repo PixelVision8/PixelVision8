@@ -64,7 +64,7 @@ namespace PixelVision8.Runner.Editors
         protected DesktopRunner runner;
 
         protected IServiceLocator serviceManager;
-        private SoundChip soundChip;
+        private SfxrSoundChip soundChip;
         private SpriteChip spriteChip;
         private PixelVisionEngine targetGame;
         private TilemapChip tilemapChip;
@@ -99,7 +99,7 @@ namespace PixelVision8.Runner.Editors
                     typeof(FontChip).FullName,
                     typeof(ControllerChip).FullName,
                     typeof(DisplayChip).FullName,
-                    typeof(SoundChip).FullName,
+                    typeof(SfxrSoundChip).FullName,
                     typeof(MusicChip).FullName,
                     typeof(LuaGameChip).FullName
                 };
@@ -159,16 +159,16 @@ namespace PixelVision8.Runner.Editors
             try
             {
                 targetGame = new PixelVisionEngine(serviceManager, DefaultChips.ToArray());
-
+                // targetGame.Init();
+                
                 runner.ParseFiles(files, targetGame, saveFlags);
             }
-            catch
+            catch(Exception e)
             {
-                //                Console.WriteLine("Game Editor Load Error:\n"+e.Message);
+                Console.WriteLine("Game Editor Load Error:\n"+e.Message);
 
                 return false;
             }
-
 
             Reset();
 
@@ -184,7 +184,7 @@ namespace PixelVision8.Runner.Editors
             //            targetGame = new PixelVisionEngine(null, null, runner.defaultChips.ToArray());
 
             // Configure the game editor now that all the chips have been loaded
-            gameChip = targetGame.GameChip;
+            gameChip = targetGame.GameChip as GameChip; 
 
             // Since the game is not attached to a runner it will throw an error when trying to load lua serivce
             try
@@ -209,7 +209,7 @@ namespace PixelVision8.Runner.Editors
             spriteChip = targetGame.SpriteChip;
             fontChip = targetGame.FontChip;
             tilemapChip = targetGame.TilemapChip;
-            soundChip = targetGame.SoundChip;
+            soundChip = targetGame.SoundChip as SfxrSoundChip;
             musicChip = targetGame.MusicChip; // TODO need to create a SfxrMusicChip
 
             //            Console.WriteLine("MC Tracks " + musicChip.totalTracks);
@@ -1136,7 +1136,7 @@ namespace PixelVision8.Runner.Editors
 
                 targetGame = new PixelVisionEngine(serviceManager, chips)
                 {
-                    ColorChip = {unique = true}, FontChip = {unique = false, pages = 1}, Name = path
+                    FontChip = {unique = false, pages = 1}, Name = path
                 };
 
                 var pngReader = new PNGReader(imageBytes, targetGame.ColorChip.maskColor)
@@ -1252,7 +1252,10 @@ namespace PixelVision8.Runner.Editors
 
         public string Sound(int id, string data = null)
         {
-            return gameChip.Sound(id, data);
+            if (data != null) soundChip.UpdateSound(id, data);
+            //
+            return soundChip.ReadSound(id).param;
+            // return gameChip.Sound(id, data);
         }
 
         /// <summary>
@@ -1502,7 +1505,7 @@ namespace PixelVision8.Runner.Editors
         public void GenerateSound(int index, int template)
         {
             // Create a tmp synth parameter
-            var settings = new SfxrSynth().parameters;
+            var settings = new SfxrSynthChannel().parameters;
 
             // Apply sound template
             switch (template)
@@ -1533,7 +1536,7 @@ namespace PixelVision8.Runner.Editors
                     break;
             }
 
-            gameChip.Sound(index, settings.GetSettingsString());
+            soundChip.UpdateSound(index, settings.GetSettingsString());
         }
 
         /// <summary>
@@ -1557,7 +1560,7 @@ namespace PixelVision8.Runner.Editors
         {
             //            var settings = new SfxrSynth().parameters;
             // TODO I don't like that this is a static value on the SoundData class
-            gameChip.Sound(id, SoundData.DEFAULT_SOUND_PARAM); //settings.GetSettingsString());
+            ((SfxrSoundChip)soundChip).UpdateSound(id, SoundData.DEFAULT_SOUND_PARAM); //settings.GetSettingsString());
         }
 
         /// <summary>
@@ -1757,7 +1760,7 @@ namespace PixelVision8.Runner.Editors
             // Just need to get a reference to any track setting for this data
             var soundData = songGenerator.trackSettings[0].ReadInstrumentSoundData(id);
 
-            if (soundData != null) soundChip.PlayRawSound(soundData);
+            if (soundData != null) soundChip .PlayRawSound(soundData);
         }
 
         /// <summary>
@@ -2300,7 +2303,7 @@ namespace PixelVision8.Runner.Editors
             workspacePath = workspacePath.AppendFile(sfx.name + ".wav");
 
             // TODO need to wire this up
-            var synth = new SfxrSynth();
+            var synth = new SfxrSynthChannel();
             synth.parameters.SetSettingsString(sfx.param);
             //            var stream = workspace.CreateFile(path);
 
