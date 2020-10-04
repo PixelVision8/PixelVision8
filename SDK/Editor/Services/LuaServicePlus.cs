@@ -304,7 +304,7 @@ namespace PixelVision8.Runner.Services
             var colors = new Color[totalColors];
             for (var i = 0; i < totalColors; i++) colors[i] = ColorUtils.HexToColor(hexColors[i]);
 
-            var pixelData = image.pixels;
+            var pixelData = image.Pixels;
 
             var exporter =
                 new PixelDataExporter(dest.EntityName, pixelData, width, height, colors, _pngWriter, "#FF00FF");

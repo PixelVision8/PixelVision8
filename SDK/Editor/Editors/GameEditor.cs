@@ -745,10 +745,10 @@ namespace PixelVision8.Runner.Editors
 
             var tiles = tilemapChip.tiles;
 
-            var total = canvas.pixels.Length;
+            var total = canvas.Pixels.Length;
 
             // Loop through all the tiles and build the pixels
-            for (var i = 0; i < total; i++) canvas.pixels[i] = mode == 0 ? tiles[i].spriteID : tiles[i].flag;
+            for (var i = 0; i < total; i++) canvas.Pixels[i] = mode == 0 ? tiles[i].spriteID : tiles[i].flag;
 
             if (mode == 0)
             {
@@ -786,9 +786,9 @@ namespace PixelVision8.Runner.Editors
                 {
                     var tile = tiles[i];
 
-                    if (canvas.pixels[i] < -1)
+                    if (canvas.Pixels[i] < -1)
                     {
-                        var pixel = canvas.pixels[i] / -100 - 1;
+                        var pixel = canvas.Pixels[i] / -100 - 1;
 
                         tile.spriteID = pixel;
 
@@ -797,7 +797,7 @@ namespace PixelVision8.Runner.Editors
                 }
                 else if (mode == 1)
                 {
-                    tiles[i].flag = unchecked((byte)canvas.pixels[i]);
+                    tiles[i].flag = unchecked((byte)canvas.Pixels[i]);
                 }
 
             tilemapChip.Invalidate();

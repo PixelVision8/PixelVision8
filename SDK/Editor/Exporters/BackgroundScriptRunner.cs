@@ -142,7 +142,7 @@ namespace PixelVision8
 
                 var imageExporter = new PNGWriter();
 
-                var exporter = new PixelDataExporter(fileName, image.pixels, image.width, image.height, palette, imageExporter,
+                var exporter = new PixelDataExporter(fileName, image.Pixels, image.width, image.height, palette, imageExporter,
                     maskColor);
 
                 exporter.CalculateSteps();

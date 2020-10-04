@@ -70,7 +70,7 @@ public class Image : TextureData
 
             _colorIDs.Clear();
 
-            for (int i = 0; i < total; i++)
+            for (int i = 0; i < TotalPixels; i++)
             {
                 _colorID = _pixelData[i];
 

@@ -96,7 +96,7 @@ namespace PixelVision8.Engine
         {
             canDraw = wrap || x >= 0 && x <= _width - stroke.width && y >= 0 && y <= _height - stroke.height;
             //            
-            if (canDraw) SetPixels(x, y, stroke.width, stroke.height, stroke.pixels);
+            if (canDraw) SetPixels(x, y, stroke.width, stroke.height, stroke.Pixels);
         }
 
         /// <summary>
@@ -598,7 +598,7 @@ namespace PixelVision8.Engine
         /// <param name="canvas"></param>
         public void MergeCanvas(Canvas canvas, int colorOffset = 0, bool ignoreTransparent = false)
         {
-            MergePixels(0, 0, canvas.width, canvas.height, canvas.pixels, false, false, colorOffset);
+            MergePixels(0, 0, canvas.width, canvas.height, canvas.Pixels, false, false, colorOffset);
         }
 
         public int ReadPixelAt(int x, int y)
@@ -606,9 +606,9 @@ namespace PixelVision8.Engine
             // Calculate the index
             var index = x + y * _width;
 
-            if (index >= pixels.Length) return -1;
+            if (index >= Pixels.Length) return -1;
 
-            return pixels[index];
+            return Pixels[index];
         }
 
         public int[] SamplePixels(int x, int y, int width, int height)
@@ -628,7 +628,7 @@ namespace PixelVision8.Engine
             if (wrap == false)
             {
 
-                BlockSave(pixels, blockWidth, blockHeight, this.pixels, x, y, width, height);
+                BlockSave(pixels, blockWidth, blockHeight, this.Pixels, x, y, width, height);
                 return;
             }
 
