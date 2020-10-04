@@ -19,15 +19,19 @@
 //
 
 using Microsoft.Xna.Framework;
+using PixelVision8.Engine.Chips;
 
 namespace PixelVision8.Runner
 {
     public interface IDisplayTarget
     {
         void ResetResolution(int gameWidth, int gameHeight, int overScanX = 0, int overScanY = 0);
-
-        void Render(int[] colors);
-        //        void CacheColors(IEngine engine);
-        //        void ConvertMousePosition(Vector pos);
+        void RebuildColorPalette(ColorChip colorChip);
+        void Render(int[] pixels, int defaultColor = 0);
+        int monitorScale { get; set; }
+        bool fullscreen { get; set; }
+        bool stretchScreen { get; set; }
+        bool cropScreen { get; set; }
+        Vector2 Scale { get; }
     }
 }

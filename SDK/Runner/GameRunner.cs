@@ -96,7 +96,7 @@ namespace PixelVision8.Runner
 
         protected bool autoShutdown = false;
         protected bool displayProgress;
-        public DisplayTarget displayTarget;
+        public DisplayTargetLite displayTarget;
         protected TimeSpan elapsedTime = TimeSpan.Zero;
         protected int frameCounter;
         protected GraphicsDeviceManager graphics;
@@ -302,7 +302,7 @@ namespace PixelVision8.Runner
         public virtual void ConfigureDisplayTarget()
         {
             // Create the default display target
-            displayTarget = new DisplayTarget(graphics, 512, 480);
+            displayTarget = new DisplayTargetLite(graphics, 512, 480);
         }
 
         public void InvalidateResolution()
@@ -363,9 +363,10 @@ namespace PixelVision8.Runner
             if (ActiveEngine.ColorChip.invalid)
             {
                 displayTarget.RebuildColorPalette(ActiveEngine.ColorChip);
+                ActiveEngine.ColorChip.ResetValidation();
             }
 
-            displayTarget.Render(ActiveEngine.DisplayChip.Pixels);
+            displayTarget.Render(ActiveEngine.DisplayChip.Pixels, ActiveEngine.ColorChip.backgroundColor);
 
             // displayTarget.spriteBatch.End();
             if (resolutionInvalid)
@@ -489,7 +490,7 @@ namespace PixelVision8.Runner
             IsMouseVisible = false;
 
             // Update the mouse to use the new monitor scale
-            var scale = displayTarget.scale;
+            var scale = displayTarget.Scale;
             ActiveEngine.ControllerChip.MouseScale(scale.X, scale.Y);
         }
 

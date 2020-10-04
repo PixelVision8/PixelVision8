@@ -188,14 +188,14 @@ namespace PixelVision8.Runner
 
             Scale(Convert.ToInt32(bios.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
 
-            if (displayTarget.HasShader() == false)
+            if (((DisplayTarget)displayTarget).HasShader() == false)
             {
                 // Configure CRT shader
                 var shaderPath = WorkspacePath.Parse(bios.ReadBiosData(CRTSettings.CRTEffectPath.ToString(),
                     "/App/Effects/crt-lottes-mg.ogl.mgfxo"));
 
                 if (workspaceService.Exists(shaderPath))
-                    displayTarget.shaderPath = workspaceService.OpenFile(shaderPath, FileAccess.Read);
+                    ((DisplayTarget)displayTarget).shaderPath = workspaceService.OpenFile(shaderPath, FileAccess.Read);
             }
 
 
@@ -1701,34 +1701,34 @@ namespace PixelVision8.Runner
         {
             if (toggle.HasValue)
             {
-                displayTarget.useCRT = toggle.Value;
+                ((DisplayTarget)displayTarget).useCRT = toggle.Value;
                 bios.UpdateBiosData(CRTSettings.CRT.ToString(), toggle.Value.ToString());
                 InvalidateResolution();
             }
 
-            return displayTarget.useCRT;
+            return ((DisplayTarget)displayTarget).useCRT;
         }
 
         public float Brightness(float? brightness = null)
         {
             if (brightness.HasValue)
             {
-                displayTarget.brightness = brightness.Value;
+                ((DisplayTarget)displayTarget).brightness = brightness.Value;
                 bios.UpdateBiosData(CRTSettings.Brightness.ToString(), (brightness * 100).ToString());
             }
 
-            return displayTarget.brightness;
+            return ((DisplayTarget)displayTarget).brightness;
         }
 
         public float Sharpness(float? sharpness = null)
         {
             if (sharpness.HasValue)
             {
-                displayTarget.sharpness = sharpness.Value;
+                ((DisplayTarget)displayTarget).sharpness = sharpness.Value;
                 bios.UpdateBiosData(CRTSettings.Sharpness.ToString(), sharpness.ToString());
             }
 
-            return displayTarget.sharpness;
+            return ((DisplayTarget)displayTarget).sharpness;
         }
 
         #endregion
