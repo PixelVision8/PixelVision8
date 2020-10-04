@@ -60,12 +60,12 @@ function NewFileModal:Open()
   -- Save a snapshot of the TilemapCache
 
   -- Draw the black background
-  self.canvas:SetStroke({0}, 1, 1)
+  self.canvas:SetStroke(0, 1)
   self.canvas:SetPattern({0}, 1, 1)
   self.canvas:DrawSquare(0, 0, self.canvas.width - 1, self.canvas.height - 1, true)
 
   -- Draw the brown background
-  self.canvas:SetStroke({12}, 1, 1)
+  self.canvas:SetStroke(12, 1)
   self.canvas:SetPattern({11}, 1, 1)
   self.canvas:DrawSquare(2, 8, self.canvas.width - 3, self.canvas.height - 3, true)
 
@@ -73,7 +73,7 @@ function NewFileModal:Open()
 
   self.canvas:DrawText(self.title:upper(), tmpX, 0, "small", 15, - 4)
 
-  self.canvas:SetStroke({15}, 1, 1)
+  self.canvas:SetStroke(15, 1)
   self.canvas:DrawLine(2, 8, self.canvas.width - 4, 8)
   self.canvas:DrawLine(2, 8, 2, self.canvas.height - 4)
 

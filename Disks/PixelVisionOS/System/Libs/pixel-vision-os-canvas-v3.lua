@@ -39,7 +39,7 @@ function PixelVisionOS:CreateCanvas(rect, size, scale, colorOffset, toolTip, emp
   -- Create a selection canvas
   data.selectionCanvas = NewCanvas(data.rect.w, data.rect.h)
   data.selectionCanvas.wrap = false
-  data.selectionCanvas:SetStroke({0}, 1, 1)
+  data.selectionCanvas:SetStroke(0, 1)
 
   data.gridCanvas = NewCanvas(data.rect.w, data.rect.h)
   data.gridCanvas.wrap = false
@@ -399,7 +399,7 @@ function PixelVisionOS:DrawOnCanvas(data, mousePos, toolID)
         local overColorID = data.paintCanvas:ReadPixelAt(mousePos.x, mousePos.y) - data.colorOffset
 
         if(overColorID > 0) then
-          data.tmpPaintCanvas:SetStroke({data.emptyColorID}, 1, 1)
+          data.tmpPaintCanvas:SetStroke(data.emptyColorID, 1)
         else
           self:ResetCanvasStroke(data)
         end
@@ -422,7 +422,7 @@ function PixelVisionOS:DrawOnCanvas(data, mousePos, toolID)
     elseif(data.tool == "eraser") then
 
       -- Change the stroke the empty color
-      data.tmpPaintCanvas:SetStroke({data.emptyColorID}, 1, 1)
+      data.tmpPaintCanvas:SetStroke(data.emptyColorID, 1)
 
       data.tmpPaintCanvas:DrawLine(data.startPos.x, data.startPos.y, mousePos.x, mousePos.y)
       data.startPos = NewPoint(mousePos.x, mousePos.y)
@@ -601,10 +601,10 @@ function PixelVisionOS:CutPixels(data)
 
 
   -- Change the stroke to a single pixel of white
-  data.tmpPaintCanvas:SetStroke({bgColor}, 1, 1)
+  data.tmpPaintCanvas:SetStroke(bgColor, 1)
 
   -- Change the stroke to a single pixel of white
-  data.tmpPaintCanvas:SetPattern({bgColor}, 1, 1)
+  data.tmpPaintCanvas:SetPattern(bgColor, 1)
 
   -- Adjust right and bottom to account for 1 px border
   data.tmpPaintCanvas:DrawSquare(selection.size.Left, selection.size.Top, selection.size.Right - 1, selection.size.Bottom -1, true)
@@ -665,8 +665,8 @@ function PixelVisionOS:ResetCanvasStroke(data)
   local realBrushColor = tmpColor + data.colorOffset
 
   -- Change the stroke to a single pixel
-  data.tmpPaintCanvas:SetStroke({realBrushColor}, 1, 1)
-  data.tmpPaintCanvas:SetPattern({realBrushColor}, 1, 1)
+  data.tmpPaintCanvas:SetStroke(realBrushColor, 1)
+  data.tmpPaintCanvas:SetPattern(realBrushColor, 1)
 
   -- Check to see if we are in palete mode
   -- if(se/lf.paletteColorPickerData ~= nil) then
@@ -910,7 +910,7 @@ function PixelVisionOS:ResizeCanvas(data, size, scale, pixelData)
   local columns = data.rect.w / scale
   local rows = data.rect.h / scale
 
-  data.gridCanvas:SetStroke({0}, 1, 1)
+  data.gridCanvas:SetStroke(0, 1)
 
   for i = 0, rows do
       data.gridCanvas:DrawLine(0, i * scale - 1, data.rect.w, i * scale - 1)

@@ -116,7 +116,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
             canvas:Clear(bgColor)
 
             -- Set the stroke and pattern to clear any previous icon this draws over
-            canvas:SetStroke({bgColor}, 1, 1)
+            canvas:SetStroke(bgColor, 1)
             canvas:SetPattern({bgColor}, 1, 1)
 
             -- Create states
@@ -178,10 +178,10 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
                     if(textColor == 15) then
 
                         -- Set the background color to black since the text is white
-                        canvas:SetStroke({0}, 1, 1)
+                        canvas:SetStroke(0, 1)
                         canvas:SetPattern({0}, 1, 1)
 
-                        canvas:DrawSquare(x - 1, y + 1, (x ) + (#line * 4) - 1, (y) + 7, true)
+                        canvas:DrawSquare(x - 1, y + 1, (x ) + (#line * 4) + 1, (y) + 9, true)
 
                     end
 
@@ -190,6 +190,9 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
 
                 end
 
+                -- TODO need to look into why we need to force the canvas to draw here before saving
+                canvas:Draw()
+                
                 data.cachedPixelData[states[i]] = canvas
 
             end

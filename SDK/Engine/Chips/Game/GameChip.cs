@@ -1027,7 +1027,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="fontName"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        protected int[] ConvertTextToSprites(string text, string fontName = "default")
+        public int[] ConvertTextToSprites(string text, string fontName = "default")
         {
             total = text.Length;
 

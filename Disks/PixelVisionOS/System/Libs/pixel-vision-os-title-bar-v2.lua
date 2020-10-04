@@ -194,7 +194,7 @@ function PixelVisionOS:CreateTitleBarMenu(items, toolTip)
     local canvas = NewCanvas(tmpW, tmpH + 10)
 
     -- Set the canvas stroke to be 2 x 2 pixels wide
-    canvas:SetStroke({0, 0, 0, 0}, 2, 2)
+    canvas:SetStroke(0, 2)
 
     -- Create a solid background pattern
     canvas:SetPattern({12}, 1, 1)
@@ -295,7 +295,7 @@ function PixelVisionOS:DrawTitleBarMenuItem(canvas, option, bgColor2)
     local divWidth = canvas.width
 
     if(option.divider == true) then
-        canvas:SetStroke({divColor}, 1, 1)
+        canvas:SetStroke(divColor, 1)
         local y = 2
         canvas:DrawLine(0, y, canvas.width, y)
     else
@@ -304,7 +304,7 @@ function PixelVisionOS:DrawTitleBarMenuItem(canvas, option, bgColor2)
 
         if(option.key ~= nil) then
 
-            canvas:SetStroke({bgColor2}, 1, 1)
+            canvas:SetStroke(bgColor, 1)
             if(bgColor2 ~= nil) then
                 canvas:SetPattern({bgColor2}, 1, 1)
             end
@@ -315,7 +315,7 @@ function PixelVisionOS:DrawTitleBarMenuItem(canvas, option, bgColor2)
             canvas:DrawSquare(tmpX, tmpY, tmpX + 13, tmpY + 5, true)
 
             canvas:DrawText(("^" .. tostring(option.key)):upper(), tmpX + 3, tmpY - 1, "small", t2Color, - 4)
-
+            
         end
 
     end

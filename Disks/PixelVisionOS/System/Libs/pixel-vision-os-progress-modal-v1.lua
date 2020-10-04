@@ -49,12 +49,12 @@ function ProgressModal:Open()
   if(self.firstRun == nil) then
 
     -- Draw the black background
-    self.canvas:SetStroke({5}, 1, 1)
+    self.canvas:SetStroke(5, 1)
     self.canvas:SetPattern({0}, 1, 1)
     self.canvas:DrawSquare(0, 0, self.canvas.width - 1, self.canvas.height - 1, true)
 
     -- Draw the brown background
-    self.canvas:SetStroke({12}, 1, 1)
+    self.canvas:SetStroke(12, 1)
     self.canvas:SetPattern({11}, 1, 1)
     self.canvas:DrawSquare(3, 9, self.canvas.width - 4, self.canvas.height - 4, true)
 
