@@ -71,26 +71,28 @@ namespace PixelVision8.Runner.Services
             // Step 7 (optional). Look for fonts to load
             if ((saveFlags & SaveFlags.Fonts) == SaveFlags.Fonts)
             {
-                var fontChip = targetEngine.FontChip;
-                var spriteChip = targetEngine.SpriteChip;
-                var tmpTextureData = new TextureData(96, 64);
-
-                var fonts = fontChip.fonts;
-
-                foreach (var font in fonts)
-                {
-                    var name = font.Key;
-                    var sprites = font.Value;
-
-                    // Clear the texture
-                    tmpTextureData.Clear();
-
-                    // Loop through all the characters and copy their texture data over
-                    var total = sprites.Length;
-                    for (var i = 0; i < total; i++)
-                    {
-                    }
-                }
+                // TODO this is not finished
+                // var fontChip = targetEngine.FontChip;
+                // var spriteChip = targetEngine.SpriteChip;
+                // var tmpTextureData = new PixelData(96, 64);
+                //
+                // var fonts = fontChip.fonts;
+                //
+                // foreach (var font in fonts)
+                // {
+                //     var name = font.Key;
+                //     var sprites = font.Value;
+                //
+                //     // Clear the texture
+                //     PixelDataUtil.Clear(tmpTextureData);
+                //     // tmpTextureData.Clear();
+                //
+                //     // Loop through all the characters and copy their texture data over
+                //     var total = sprites.Length;
+                //     for (var i = 0; i < total; i++)
+                //     {
+                //     }
+                // }
             }
 
             if ((saveFlags & SaveFlags.Tilemap) == SaveFlags.Tilemap)

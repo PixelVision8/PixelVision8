@@ -1,4 +1,4 @@
-﻿﻿//   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -1709,14 +1709,6 @@ namespace PixelVision8.Engine.Chips
         ///     tile map as well as scrolling of the tile map if it is larger then
         ///     the screen's resolution.
         /// </summary>
-        /// <param name="textureData">
-        ///     A reference to a <see cref="TextureData" /> class to populate with
-        ///     tile map pixel data.
-        /// </param>
-        /// <param name="clearColor">
-        ///     The transparent color to use when a tile is set to -1. The default
-        ///     value is -1 for transparent.
-        /// </param>
         /// <ignore />
         protected void RebuildCache(Canvas targetTextureData)
         {

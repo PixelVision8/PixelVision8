@@ -35,8 +35,8 @@ namespace PixelVision8.Engine
         public int Y1;
         public bool Fill;
         public bool DrawCentered;
-        public Brush Stroke;
-        public Brush Pattern;
+        public PixelData Stroke;
+        public PixelData Pattern;
         public int[] Ids;
         public bool FlipH;
         public bool FlipV;
@@ -47,20 +47,25 @@ namespace PixelVision8.Engine
         public TextureData TargetTexture;
     } 
 
-    public class Brush : TextureData
-    {
-        public Brush(int width = 1, int height = 1) : base(width, height)
-        {
-        }
-    }
+    // public class Brush
+    // {
+    //     
+    //     private PixelData pixelData = new PixelData(1, 1);
+    //     public Brush(int width = 1, int height = 1)
+    //     {
+    //         PixelDataUtil.Resize(ref pixelData, width, height);
+    //     }
+    //     
+    //     public 
+    // }
 
 
     public class Canvas : TextureData, IDraw
     {
         private readonly GameChip gameChip;
-        private readonly Brush pattern;
+        private PixelData pattern;
         private readonly Point spriteSize;
-        private readonly Brush stroke;
+        private PixelData stroke;
         private readonly CanvasDrawRequest[] requestPool = new CanvasDrawRequest[1024];
         private readonly TextureData tmpLayer = new TextureData();
         private int currentRequest = -1;
@@ -92,11 +97,11 @@ namespace PixelVision8.Engine
             currentTexture = this;
             
             this.gameChip = gameChip;
-            pattern = new Brush();
-            pattern.SetPixel(0, 0, 0);
+            pattern = new PixelData(1, 1) {Pixels = {[0] = 0}};
+            // pattern.SetPixel(0, 0, 0);
 
-            stroke = new Brush();
-            stroke.SetPixel(0, 0, 0);
+            stroke = new PixelData(1, 1) {Pixels = {[0] = 0}};
+            // stroke.SetPixel(0, 0, 0);
             spriteSize = gameChip.SpriteSize();
 
             // Create a pool of draw requests
@@ -191,13 +196,15 @@ namespace PixelVision8.Engine
 
             newRequest.Action = "SetStroke";
 
-            if (newRequest.Stroke == null)
+            // if (newRequest.Stroke == null)
+            // {
+            //     newRequest.Stroke = new PixelData(size, size);
+            // }
+            // else 
+            if (newRequest.Stroke.Width != size || newRequest.Stroke.Height != size)
             {
-                newRequest.Stroke = new Brush(size, size);
-            }
-            else if (newRequest.Stroke.width != size || newRequest.Stroke.height != size)
-            {
-                newRequest.Stroke.Resize(size, size);
+                PixelDataUtil.Resize(ref newRequest.Stroke, size, size);
+                // newRequest.Stroke.Resize(size, size);
             }
 
             var newPixels = new int[size * size];
@@ -206,7 +213,8 @@ namespace PixelVision8.Engine
                 newPixels[i] = color;
             }
 
-            newRequest.Stroke.SetPixels(newPixels);
+            PixelDataUtil.SetPixels(newPixels, newRequest.Stroke);
+            // newRequest.Stroke.SetPixels(newPixels);
             
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
@@ -240,10 +248,12 @@ namespace PixelVision8.Engine
 
         private void SetStrokeAction(CanvasDrawRequest request)
         {
-            if (stroke.width != request.Stroke.width || pattern.height != request.Stroke.height)
-                stroke.Resize(request.Stroke.width, request.Stroke.height);
+            if (stroke.Width != request.Stroke.Width || pattern.Height != request.Stroke.Height)
+                PixelDataUtil.Resize(ref stroke, request.Stroke.Width, request.Stroke.Height);
+                // stroke.Resize(request.Stroke.width, request.Stroke.height);
 
-            stroke.SetPixels(request.Stroke.Pixels);
+                PixelDataUtil.SetPixels(request.Stroke.Pixels, stroke);
+            // stroke.SetPixels(request.Stroke.Pixels);
         }
 
         public void SetPattern(int[] newPixels, int newWidth, int newHeight)
@@ -257,16 +267,21 @@ namespace PixelVision8.Engine
 
             newRequest.Action = "SetPattern";
 
-            if (newRequest.Pattern == null)
+            // if (newRequest.Pattern == null)
+            // {
+            //     newRequest.Pattern = new Brush(newWidth, newHeight);
+            // }
+            // else 
+            if (newRequest.Pattern.Width != newWidth || newRequest.Pattern.Height != newHeight)
             {
-                newRequest.Pattern = new Brush(newWidth, newHeight);
-            }
-            else if (newRequest.Pattern.width != newWidth || newRequest.Pattern.height != newHeight)
-            {
-                newRequest.Pattern.Resize(newWidth, newHeight);
+                PixelDataUtil.Resize(ref newRequest.Pattern, newWidth, newHeight);
+
+                // newRequest.Pattern.Resize(newWidth, newHeight);
             }
 
-            newRequest.Pattern.SetPixels(newPixels);
+            PixelDataUtil.SetPixels(newPixels, newRequest.Pattern);
+
+            // newRequest.Pattern.SetPixels(newPixels);
             
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
@@ -274,19 +289,22 @@ namespace PixelVision8.Engine
 
         public void SetPatternAction(CanvasDrawRequest request)
         {
-            if (pattern.width != request.Pattern.width || pattern.height != request.Pattern.height)
-                pattern.Resize(request.Pattern.width, request.Pattern.height);
+            if (pattern.Width != request.Pattern.Width || pattern.Height != request.Pattern.Height)
+                PixelDataUtil.Resize(ref pattern, request.Pattern.Width, request.Pattern.Height);
 
-            pattern.SetPixels(request.Pattern.GetPixels());
+                // pattern.Resize(request.Pattern.width, request.Pattern.height);
+            PixelDataUtil.SetPixels(request.Pattern.Pixels, pattern);
+
+            // pattern.SetPixels(request.Pattern.GetPixels());
         }
 
         private void SetStrokePixel(int x, int y)
         {
-            canDraw = wrap || x >= 0 && x <= width - stroke.width && y >= 0 && y <= height - stroke.height;
+            canDraw = wrap || x >= 0 && x <= width - stroke.Width && y >= 0 && y <= height - stroke.Height;
             
             // TODO this should never be null           
             if (canDraw) 
-                currentTexture.SetPixels(x, y, stroke.width, stroke.height, stroke.Pixels);
+                currentTexture.SetPixels(x, y, stroke.Width, stroke.Height, stroke.Pixels);
             
         }
 
@@ -415,16 +433,16 @@ namespace PixelVision8.Engine
             _tl.Y = _y0;
 
             // Calculate the top right
-            _tr.X = _x0 + _w - (stroke.width * 2);
+            _tr.X = _x0 + _w - (stroke.Width * 2);
             _tr.Y = _y0;
 
             // Calculate the bottom right
-            _br.X = _x0 + _w - (stroke.width * 2);
-            _br.Y = _y0 + _h - (stroke.height * 2);
+            _br.X = _x0 + _w - (stroke.Width * 2);
+            _br.Y = _y0 + _h - (stroke.Height * 2);
 
             // Calculate the bottom left
             _bl.X = _x0;
-            _bl.Y = _y0 + _h - (stroke.height * 2);
+            _bl.Y = _y0 + _h - (stroke.Height * 2);
 
             // Determine if the box  should be drawn from the center
             if (drawCentered)
@@ -460,7 +478,7 @@ namespace PixelVision8.Engine
             if (fill)
             {
                 // Make sure there are enough pixels to fill
-                if (Math.Abs(_w) > stroke.width && Math.Abs(_h) > stroke.height)
+                if (Math.Abs(_w) > stroke.Width && Math.Abs(_h) > stroke.Height)
                 {
                     // Trigger a flood fill
                     FloodFill(_center.X, _center.Y);
@@ -563,9 +581,9 @@ namespace PixelVision8.Engine
             }
 
             // Adjust for border
-            _y0 += stroke.height;
-            _x1 -= stroke.width;
-            _y1 -= stroke.height;
+            _y0 += stroke.Height;
+            _x1 -= stroke.Width;
+            _y1 -= stroke.Height;
             
             /* rectangular parameter enclosing the ellipse */
             _a = Math.Abs(_x1 - _x0);
@@ -629,7 +647,7 @@ namespace PixelVision8.Engine
                 _x1 = request.X0;
                 _y1 = request.Y0;
                 
-                if (Math.Abs(_w) > stroke.width && Math.Abs(_h) > stroke.height)
+                if (Math.Abs(_w) > stroke.Width && Math.Abs(_h) > stroke.Height)
                 {
                     request.X0 = _w / 2;
                     request.Y0 = _h / 2;
@@ -838,11 +856,11 @@ namespace PixelVision8.Engine
                 var spanRight = false;
                 while (y1 < height && currentTexture.GetPixel(temp.X, y1) == targetColor)
                 {
-                    currentTexture.SetPixel(temp.X, y1, pattern.GetPixel(temp.X, y1));
+                    currentTexture.SetPixel(temp.X, y1, PixelDataUtil.GetPixel(pattern, temp.X, y1));
 
                     if (!spanLeft && temp.X > 0 && currentTexture.GetPixel(temp.X - 1, y1) == targetColor)
                     {
-                        if (currentTexture.GetPixel(temp.X - 1, y1) != pattern.GetPixel(temp.X, y1))
+                        if (currentTexture.GetPixel(temp.X - 1, y1) != PixelDataUtil.GetPixel(pattern, temp.X, y1))
                             pixels.Push(new Point(temp.X - 1, y1));
 
                         spanLeft = true;
@@ -854,7 +872,7 @@ namespace PixelVision8.Engine
 
                     if (!spanRight && temp.X < width - 1 && currentTexture.GetPixel(temp.X + 1, y1) == targetColor)
                     {
-                        if (currentTexture.GetPixel(temp.X + 1, y1) != pattern.GetPixel(temp.X, y1))
+                        if (currentTexture.GetPixel(temp.X + 1, y1) != PixelDataUtil.GetPixel(pattern, temp.X, y1))
                             pixels.Push(new Point(temp.X + 1, y1));
 
                         spanRight = true;

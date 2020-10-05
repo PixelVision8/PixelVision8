@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PixelVision8.Engine;
+using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Services;
 
 namespace PixelVision8.Runner.Parsers
@@ -78,62 +79,6 @@ namespace PixelVision8.Runner.Parsers
 
                         var layerType = (string)layer["type"];
 
-                        // if (layerType == "tilelayer")
-                        // {
-                        //     var tileSet = tileSets[i] as Dictionary<string, object>;
-                        //
-                        //
-                        //     var offset = (int)(long)tileSet["firstgid"];
-                        //
-                        //     var columns = (int)(long)layer["width"];
-                        //     var rows = (int)(long)layer["height"];
-                        //
-                        //     var rawLayerData = layer["data"] as List<object>;
-                        //
-                        //     var dataValues = rawLayerData
-                        //         .Select(x => (int)(long)x - offset < -1 ? -1 : (int)(long)x - offset).ToArray();
-                        //
-                        //     if (columns != tilemapChip.columns || rows > tilemapChip.rows)
-                        //     {
-                        //         // Create texture data that matches the memory of the tilemap chip
-                        //         var tmpPixelData = new TextureData(tilemapChip.columns, tilemapChip.rows);
-                        //         tmpPixelData.Clear();
-                        //
-                        //         var jsonData = new TextureData(columns, rows);
-                        //         jsonData.Clear();
-                        //         jsonData.SetPixels(0, 0, columns, rows, dataValues);
-                        //
-                        //         var tmpCol = columns > tilemapChip.columns ? tilemapChip.columns : columns;
-                        //         var tmpRow = rows > tilemapChip.rows ? tilemapChip.rows : rows;
-                        //
-                        //         if (tmpCol > columns) tmpCol = columns;
-                        //
-                        //         if (tmpRow > rows) tmpRow = rows;
-                        //
-                        //         var tmpData = new int[tmpCol * tmpRow];
-                        //
-                        //         jsonData.CopyPixels(ref tmpData, 0, 0, tmpCol, tmpRow);
-                        //
-                        //         tmpPixelData.SetPixels(0, 0, tmpCol, tmpRow, tmpData);
-                        //
-                        //         tmpPixelData.CopyPixels(ref dataValues, 0, 0, tmpPixelData.width, tmpPixelData.height);
-                        //
-                        //         tmpPixelData.CopyPixels(ref dataValues, 0, 0, tilemapChip.columns, tilemapChip.rows);
-                        //     }
-                        //
-                        //
-                        //     for (var j = 0; j < tilemapChip.total; j++)
-                        //     {
-                        //         var tile = tilemapChip.tiles[j];
-                        //
-                        //         if ((string)layer["name"] == "Sprites")
-                        //             tile.spriteID = dataValues[j];
-                        //         else if ((string)layer["name"] == "Flags") tile.flag = unchecked((byte)dataValues[j]);
-                        //
-                        //         // tile.Invalidate();
-                        //     }
-                        // }
-                        // else 
                         if (layerType == "objectgroup")
                         {
                             var objects = layer["objects"] as List<object>;
@@ -240,12 +185,15 @@ namespace PixelVision8.Runner.Parsers
                             if (columns != tilemapChip.columns || rows > tilemapChip.rows)
                             {
                                 // Create texture data that matches the memory of the tilemap chip
-                                var tmpPixelData = new TextureData(tilemapChip.columns, tilemapChip.rows);
-                                tmpPixelData.Clear();
+                                var tmpPixelData = new PixelData(tilemapChip.columns, tilemapChip.rows);
+                                PixelDataUtil.Clear(tmpPixelData);
+                                // tmpPixelData.Clear();
 
-                                var jsonData = new TextureData(columns, rows);
-                                jsonData.Clear();
-                                jsonData.SetPixels(0, 0, columns, rows, dataValues);
+                                var jsonData = new PixelData(columns, rows);
+                                PixelDataUtil.Clear(jsonData);
+                                // jsonData.Clear();
+                                PixelDataUtil.SetPixels(jsonData, 0, 0, columns, rows, dataValues);
+                                // jsonData.SetPixels(0, 0, columns, rows, dataValues);
 
                                 var tmpCol = columns > tilemapChip.columns ? tilemapChip.columns : columns;
                                 var tmpRow = rows > tilemapChip.rows ? tilemapChip.rows : rows;
@@ -256,13 +204,18 @@ namespace PixelVision8.Runner.Parsers
 
                                 var tmpData = new int[tmpCol * tmpRow];
 
-                                jsonData.CopyPixels(ref tmpData, 0, 0, tmpCol, tmpRow);
+                                PixelDataUtil.CopyPixels(ref tmpData, jsonData, 0, 0, tmpCol, tmpRow);
+                                // jsonData.CopyPixels(ref tmpData, 0, 0, tmpCol, tmpRow);
 
-                                tmpPixelData.SetPixels(0, 0, tmpCol, tmpRow, tmpData);
+                                PixelDataUtil.SetPixels(tmpPixelData, 0, 0, tmpCol, tmpRow, tmpData);
+                                // tmpPixelData.SetPixels(0, 0, tmpCol, tmpRow, tmpData);
 
-                                tmpPixelData.CopyPixels(ref dataValues, 0, 0, tmpPixelData.width, tmpPixelData.height);
+                                // TODO why is this happening twice?
+                                // PixelDataUtil.CopyPixels(ref dataValues, tmpPixelData, 0, 0, tmpPixelData.Width, tmpPixelData.Height);
+                                // tmpPixelData.CopyPixels(ref dataValues, 0, 0, tmpPixelData.width, tmpPixelData.height);
+                                PixelDataUtil.CopyPixels(ref dataValues, tmpPixelData, 0, 0, tilemapChip.columns, tilemapChip.rows);
 
-                                tmpPixelData.CopyPixels(ref dataValues, 0, 0, tilemapChip.columns, tilemapChip.rows);
+                                // tmpPixelData.CopyPixels(ref dataValues, 0, 0, tilemapChip.columns, tilemapChip.rows);
                             }
 
 
