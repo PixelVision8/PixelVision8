@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -20,14 +20,19 @@
 
 namespace PixelVision8.Engine
 {
-    public struct DrawRequest
+    public struct PixelData
     {
-        public int id;
-        public int x;
-        public int y;
-        public bool flipH;
-        public bool flipV;
-        public byte priority;
-        public int colorOffset;
+        public int[] Pixels;
+        public int Width;
+        public int Height;
+        public int TotalPixels;
+
+        public PixelData(int width, int height)
+        {
+            Width = width;
+            Height = height;
+            TotalPixels = Width * Height;
+            Pixels = new int[TotalPixels];
+        }
     }
 }

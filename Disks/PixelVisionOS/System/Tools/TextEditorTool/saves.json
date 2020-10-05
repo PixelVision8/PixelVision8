@@ -3,10 +3,10 @@
     "GameChip":
     {
         "savedData":{
-            "scroll": "1,14",
-            "cursor": "16,26",
-            "targetFile": "/Workspace/NewProject/code.lua",
-            "sessionID": "202009060947223510"
+            "sessionID": "202010051019125428",
+            "targetFile": "/Workspace/SpriteStressDemo/data.json",
+            "cursor": "1,1",
+            "scroll": "1,1"
         }
     }
 }
