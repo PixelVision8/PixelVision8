@@ -97,7 +97,9 @@ namespace PixelVision8.Runner.Exporters
             var height = spriteChip.textureHeight;
             var pixelData = new int[width * height];
 
-            spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
+            PixelDataUtil.CopyPixels(ref pixelData, spriteChip.PixelData, 0, 0 , width, height);
+            
+            // spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
 
             exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, imageExporter,
                 engine.ColorChip.maskColor);

@@ -291,7 +291,7 @@ namespace PixelVision8.Runner.Exporters
             {
                 {
                     "sprites.png",
-                    new SpriteVector(spriteChip.texture.width, spriteChip.texture.height, spriteChip.TotalSprites)
+                    new SpriteVector(spriteChip.textureWidth, spriteChip.textureHeight, spriteChip.TotalSprites)
                 }
             };
 
@@ -306,7 +306,7 @@ namespace PixelVision8.Runner.Exporters
 
                 // columns
                 sb.Append("\"columns\":");
-                sb.Append(spriteChip.texture.width / spriteSize.X);
+                sb.Append(spriteChip.textureWidth / spriteSize.X);
                 sb.Append(",");
                 JsonUtil.GetLineBreak(sb, 2);
 

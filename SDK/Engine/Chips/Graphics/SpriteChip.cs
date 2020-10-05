@@ -45,8 +45,10 @@ namespace PixelVision8.Engine.Chips
         /// <summary>
         ///     Internal <see cref="TextureData" /> where sprites are stored
         /// </summary>
-        protected TextureData _texture = new TextureData(128, 128);
+        // protected TextureData _texture = new TextureData(128, 128);
 
+        protected PixelData pixelData = new PixelData(128, 128);
+        
         /// <summary>
         ///     Internal <see cref="cache" /> for faster lookup
         /// </summary>
@@ -99,24 +101,35 @@ namespace PixelVision8.Engine.Chips
         ///     TextureData. When requested, a clone of the <see cref="_texture" />
         ///     field is returned. This is expensive and only used for tools.
         /// </summary>
-        public TextureData texture
+        // public TextureData texture
+        // {
+        //     get => _texture;
+        //     set => SpriteChipUtil.CloneTextureData(value, _texture);
+        //     //TODO do we need this?
+        // }
+
+        public PixelData PixelData
         {
-            get => _texture;
-            set => SpriteChipUtil.CloneTextureData(value, _texture);
-            //TODO do we need this?
+            get => pixelData;
+            // set
+            // {
+            //     PixelDataUtil.Resize(ref pixelData, value.Width, value.Height);
+            //     PixelDataUtil.SetPixels(value.Pixels, pixelData);
+            //     
+            // }
         }
 
         /// <summary>
         ///     Return's the <see cref="Sprite" /> Ram's internal
         ///     <see cref="texture" /> <see cref="width" />
         /// </summary>
-        public int textureWidth => _texture.width;
+        public int textureWidth => pixelData.Width;
 
         /// <summary>
         ///     Return's the <see cref="Sprite" /> Ram's internal
         ///     <see cref="texture" /> <see cref="width" />
         /// </summary>
-        public int textureHeight => _texture.height;
+        public int textureHeight => pixelData.Height;
 
         /// <summary>
         ///     The virtual number of pages of sprite memory the SpriteChip
@@ -242,8 +255,9 @@ namespace PixelVision8.Engine.Chips
 
             if (textureWidth != w || textureHeight != h)
             {
-                texture.Resize(w, h);
-                Clear();
+                PixelDataUtil.Resize(ref pixelData, w, h);
+                // texture.Resize(w, h);
+                // Clear();
             }
 
             //TODO this needs to be double checked at different size sprites
@@ -286,7 +300,9 @@ namespace PixelVision8.Engine.Chips
         {
             cache = new string[TotalSprites];
             //            pixelDataCache = new int[totalSprites][];
-            _texture.Clear();
+            
+            PixelDataUtil.Clear(pixelData);
+            // _texture.Clear();
         }
         //        protected readonly int totalSpritePixels = 64;
 
@@ -315,7 +331,7 @@ namespace PixelVision8.Engine.Chips
             }
             else
             {
-                width1 = _texture.width;
+                width1 = this.pixelData.Width;
                 //                height1 = _texture.height;
 
                 w = width1 / width;
@@ -326,7 +342,8 @@ namespace PixelVision8.Engine.Chips
                 // Flip y for Unity
                 //            tmpY = height1 - tmpY - height;
 
-                _texture.CopyPixels(ref pixelData, tmpX, tmpY, width, height);
+                PixelDataUtil.CopyPixels(ref pixelData, this.pixelData, tmpX, tmpY, width, height);
+                // _texture.CopyPixels(ref pixelData, tmpX, tmpY, width, height);
             }
         }
 
@@ -360,7 +377,7 @@ namespace PixelVision8.Engine.Chips
             // Make sure we stay in bounds
             index = MathHelper.Clamp(index, 0, totalSprites1 - 1);
 
-            var w1 = _texture.width / width;
+            var w1 = pixelData.Width / width;
 
             x = index % w1 * width;
             y = index / w1 * height;
@@ -368,7 +385,8 @@ namespace PixelVision8.Engine.Chips
             //            if (true)
             //                y = _texture.height - y - height;
 
-            _texture.SetPixels(x, y, width, height, pixels);
+            PixelDataUtil.SetPixels(this.pixelData, x, y, width, height, pixels);
+            // _texture.SetPixels(x, y, width, height, pixels);
 
             CacheSprite(index, pixels);
         }
