@@ -197,8 +197,7 @@ namespace PixelVision8.Engine.Utils
             }
         }
         
-        public static void MergePixels(PixelData pixelData, int x, int y, int blockWidth, int blockHeight, int[] pixels, bool flipH, bool flipV,
-            int colorOffset, bool ignoreTransparent)
+        public static void MergePixels(PixelData pixelData, int x, int y, int blockWidth, int blockHeight, int[] pixels, bool flipH = false, bool flipV = false, int colorOffset = 0, bool ignoreTransparent = true)
         {
             var TotalPixels = blockWidth * blockHeight;
 

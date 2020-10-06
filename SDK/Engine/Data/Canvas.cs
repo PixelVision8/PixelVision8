@@ -62,6 +62,7 @@ namespace PixelVision8.Engine
 
     public class Canvas : TextureData, IDraw
     {
+        
         private readonly GameChip gameChip;
         private PixelData pattern;
         private readonly Point spriteSize;
@@ -893,7 +894,8 @@ namespace PixelVision8.Engine
         /// <param name="canvas"></param>
         public void MergeCanvas(Canvas canvas, int colorOffset = 0, bool ignoreTransparent = false)
         {
-            MergePixels(0, 0, canvas.width, canvas.height, canvas.Pixels, false, false, colorOffset);
+            MergePixels(0, 0, canvas.width, canvas.height, canvas.GetPixels(), false, false, colorOffset, ignoreTransparent);
+            Invalidate();
         }
 
         public int ReadPixelAt(int x, int y)
@@ -926,6 +928,8 @@ namespace PixelVision8.Engine
             }
 
             base.SetPixels(x, y, blockWidth, blockHeight, pixels);
+            
+            Invalidate();
         }
 
         void BlockSave(int[] src, int srcW, int srcH, int[] dest, int destX, int destY, int destW, int destH)
@@ -978,6 +982,8 @@ namespace PixelVision8.Engine
 
                 Array.Copy(src, startCol, dest, destCol, srcW);
             }
+            
+            Invalidate();
         }
 
         private int tmpX = 0;

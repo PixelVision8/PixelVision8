@@ -54,7 +54,7 @@ namespace PixelVision8.Engine
         // and field accesses (ldfld, stfld) are much faster than
         // property accesses (call / callvirt get_ / set_)
         // protected int _width;
-        public int[] Pixels => pixelData.Pixels;
+        public virtual int[] Pixels => pixelData.Pixels;
 
         // private int[] tmpPixels;
 

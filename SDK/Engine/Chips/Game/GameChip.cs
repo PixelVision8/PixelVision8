@@ -1794,6 +1794,8 @@ namespace PixelVision8.Engine.Chips
             //            Invalidate();
         }
 
+        
+
         //        public void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0)
         //        {
         //            // Test if we need to rebuild the cached tilemap

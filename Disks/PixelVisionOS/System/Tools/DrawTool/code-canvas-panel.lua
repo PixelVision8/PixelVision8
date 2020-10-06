@@ -198,7 +198,6 @@ function DrawTool:UpdateCanvas(value, flipH, flipV)
 
     self.originalPixelData = {}
 
-    -- local colorOffset = pixelVisionOS.gameColorOffset
     -- Need to loop through the pixel data and change the offset
     local total = #tmpPixelData
     for i = 1, total do
@@ -230,6 +229,7 @@ end
 
 function DrawTool:OnSaveCanvasChanges()
 
+    print("OnSaveCanvasChanges")
     self.canvasData.inDrawMode = false
 
     -- Get the raw pixel data

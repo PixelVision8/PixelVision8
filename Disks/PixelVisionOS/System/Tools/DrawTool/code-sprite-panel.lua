@@ -181,29 +181,13 @@ function DrawTool:OnNextSpriteSize(reverse)
 
     self:ConfigureSpritePickerSelector(self.spriteMode)
 
-    -- -- Need to clear any sprite data that is in the clipboard
-    -- self.copiedSpriteData = nil
-    -- pixelVisionOS:EnableMenuItem(PasteShortcut, false)
-
     editorUI:Invalidate(self.sizeBtnData)
 
-    -- DrawSprites(_G[spriteName .. "over"].spriteIDs, 0, 0, _G[spriteName .. "up"].width, false, false, DrawMode.TilemapCache)
-
-    -- print("self.selectionSizes", self.selectionSizes[self.spriteMode].scale)
     -- TODO need to rewire this
     pixelVisionOS:ChangeCanvasPixelSize(self.canvasData, self.selectionSizes[self.spriteMode].scale)
 
     -- -- Force the sprite editor to update to the new selection from the sprite picker
     self:ChangeSpriteID(self.spritePickerData.currentSelection)
-
-    -- ClearHistory()
-
-    -- self:Invalidate/ColorPreview()
-
-    -- Get the scale from the sprite picker
-    -- self.posScale = self.spriteMode
-
-    -- TODO need to reindex the colors?
 
 end
 
