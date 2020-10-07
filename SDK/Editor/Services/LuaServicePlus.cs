@@ -295,16 +295,16 @@ namespace PixelVision8.Runner.Services
 
         public void SaveImage(WorkspacePath dest, Image image)
         {
-            var width = image.width;
-            var height = image.height;
-            var hexColors = image.colors;
+            var width = image.Width;
+            var height = image.Height;
+            var hexColors = image.Colors;
 
             // convert colors
             var totalColors = hexColors.Length;
             var colors = new Color[totalColors];
             for (var i = 0; i < totalColors; i++) colors[i] = ColorUtils.HexToColor(hexColors[i]);
 
-            var pixelData = image.Pixels;
+            var pixelData = image.GetPixels();
 
             var exporter =
                 new PixelDataExporter(dest.EntityName, pixelData, width, height, colors, _pngWriter, "#FF00FF");

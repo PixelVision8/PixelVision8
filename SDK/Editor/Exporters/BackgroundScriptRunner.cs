@@ -138,11 +138,11 @@ namespace PixelVision8
 
             try
             {
-                var palette = image.colors.Select(ColorUtils.HexToColor).ToArray();
+                var palette = image.Colors.Select(ColorUtils.HexToColor).ToArray();
 
                 var imageExporter = new PNGWriter();
 
-                var exporter = new PixelDataExporter(fileName, image.Pixels, image.width, image.height, palette, imageExporter,
+                var exporter = new PixelDataExporter(fileName, image.GetPixels(), image.Width, image.Height, palette, imageExporter,
                     maskColor);
 
                 exporter.CalculateSteps();

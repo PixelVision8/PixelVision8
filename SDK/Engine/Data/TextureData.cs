@@ -18,6 +18,8 @@
 // Shawn Rakowski - @shwany
 //
 
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine
@@ -34,6 +36,65 @@ namespace PixelVision8.Engine
     /// </summary>
     public class TextureData : AbstractData
     {
+        
+        public string[] colors;
+        public int Columns => width / _spriteSize.X;
+        public int Rows => height / _spriteSize.Y;
+        public int TotalSprites => Columns * Rows;
+    
+        protected Point _spriteSize;
+        protected List<int> _colorIDs = new List<int>();
+        protected int _colorID;
+        protected Point _pos;
+        protected int[] _pixelData;
+        
+        /// <summary>
+        ///     Get a single sprite from the Image.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cps">Total number of colors supported by the sprite.</param>
+        /// <returns></returns>
+        public int[] GetSpriteData(int id, int? cps = null)
+        {
+            _pos = MathUtil.CalculatePosition(id, Columns);
+
+            _pixelData = GetPixels(_pos.X * 8, _pos.Y * 8, _spriteSize.X, _spriteSize.Y);
+
+            // If there is a CPS cap, we need to go through all the pixels and make sure they are in range.
+            if (cps.HasValue)
+            {
+
+                _colorIDs.Clear();
+
+                for (int i = 0; i < TotalPixels; i++)
+                {
+                    _colorID = _pixelData[i];
+
+                    if (_colorID > -1 && _colorIDs.IndexOf(_colorID) == -1)
+                    {
+                        if (_colorIDs.Count < cps.Value)
+                        {
+                            _colorIDs.Add(_colorID);
+                        }
+                        else
+                        {
+                            _pixelData[i] = -1;
+                        }
+                    
+                    }
+
+        
+                }
+        
+            }
+
+            // Return the new sprite image
+            return _pixelData;
+        }
+        
+        
+        
+        
         protected PixelData pixelData = new PixelData(256, 256);
 
         protected int _height

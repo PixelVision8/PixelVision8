@@ -27,31 +27,47 @@ using PixelVision8.Engine.Utils;
 ///     Wrapper for texture data that includes Hex color data to rebuild colors when
 ///     exporting and cutting up sprites. 
 /// </summary>
-public class Image : TextureData
+public struct Image
 {
-    public string[] colors;
-    public int Columns => width / _spriteSize.X;
-    public int Rows => height / _spriteSize.Y;
+    
+    private PixelData pixelData;
+    public int Width => pixelData.Width;
+
+    public int Height => pixelData.Height;
+    public int Columns => Width / _spriteSize.X;
+    public int Rows => Height / _spriteSize.Y;
+    
+    public string[] Colors;
+    
     public int TotalSprites => Columns * Rows;
     
-    protected readonly Point _spriteSize;
-    private List<int> _colorIDs = new List<int>();
+    private Point _spriteSize;
+    private List<int> _colorIDs;
     private int _colorID;
     private Point _pos;
-    private int[] _pixelData;
+    private int[] _tmpPixelData;
 
-    public Image(int width, int height, string[] colors, int[] pixelData = null, Point? spriteSize = null) : base(width, height)
+    public Image(int width, int height, string[] colors, int[] pixels = null, Point? spriteSize = null)// : base(width, height)
     {
-        this.colors = colors;
+        pixelData = new PixelData(256, 256);
+            
+        this.Colors = colors;
         _spriteSize = spriteSize ?? new Point(8, 8);
 
-        if (pixelData != null)
-        {
-            SetPixels(pixelData);
-        }
+        _colorIDs = new List<int>();
+        _colorID = 0;
+        _pos = Point.Zero;
+        _tmpPixelData = null;
         
+        Resize(width, height);
+        
+        if (pixels != null)
+        {
+            PixelDataUtil.SetPixels(pixels, pixelData);
+        }
+       
     }
-
+    
     /// <summary>
     ///     Get a single sprite from the Image.
     /// </summary>
@@ -62,17 +78,17 @@ public class Image : TextureData
     {
         _pos = MathUtil.CalculatePosition(id, Columns);
 
-        _pixelData = GetPixels(_pos.X * 8, _pos.Y * 8, _spriteSize.X, _spriteSize.Y);
-
+        // _pixelData = GetPixels(_pos.X * 8, _pos.Y * 8, _spriteSize.X, _spriteSize.Y);
+        _tmpPixelData = PixelDataUtil.GetPixels(pixelData, _pos.X * 8, _pos.Y * 8, _spriteSize.X, _spriteSize.Y);
         // If there is a CPS cap, we need to go through all the pixels and make sure they are in range.
         if (cps.HasValue)
         {
 
             _colorIDs.Clear();
 
-            for (int i = 0; i < TotalPixels; i++)
+            for (int i = 0; i < _tmpPixelData.Length; i++)
             {
-                _colorID = _pixelData[i];
+                _colorID = _tmpPixelData[i];
 
                 if (_colorID > -1 && _colorIDs.IndexOf(_colorID) == -1)
                 {
@@ -82,23 +98,21 @@ public class Image : TextureData
                     }
                     else
                     {
-                        _pixelData[i] = -1;
+                        _tmpPixelData[i] = -1;
                     }
-                    
                 }
-
-        
             }
-        
         }
 
         // Return the new sprite image
-        return _pixelData;
+        return _tmpPixelData;
     }
+    
+    public void SetPixels(int[] newPixelData) => PixelDataUtil.SetPixels(newPixelData, pixelData);
 
-    public void RemapColors(Color colors)
-    {
-        // TODO need to create a way to remap the colors in the current image to the one passed in
-    }
+    public int[] GetPixels() => PixelDataUtil.GetPixels(pixelData);
+    
+    public void Resize(int newWidth, int newHeight) => PixelDataUtil.Resize(ref pixelData, newWidth, newHeight);
+    
 
 }
