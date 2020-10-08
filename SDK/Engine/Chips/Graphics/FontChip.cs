@@ -31,7 +31,6 @@ namespace PixelVision8.Engine.Chips
     {
         public Dictionary<string, int[]> fonts = new Dictionary<string, int[]>();
 
-
         /// <summary>
         ///     This method configures the FontChip. It registers itself with the
         ///     engine, sets the default width and height to 8 and resizes the
@@ -44,10 +43,7 @@ namespace PixelVision8.Engine.Chips
             pages = 2;
             colorsPerSprite = 2;
             unique = true;
-            // Resize(pageWidth, pageHeight * pages);
-
-
-            // Clear();
+           
         }
 
         public override void Deactivate()

@@ -45,18 +45,9 @@ namespace PixelVision8.Engine.Chips
         ///     Internal <see cref="cache" /> for faster lookup
         /// </summary>
         protected string[] cache;
-
         public readonly int pageHeight = 128;
-
-        //protected Vector2 pageSize = new Vector2(128, 128);
         public readonly int pageWidth = 128;
-
-        protected int tmpX;
-        protected int tmpY;
-        // protected int totalSprites1;
         public bool unique = false;
-        protected int w;
-        protected int width1;
 
         /// <summary>
         ///     Sets the total number of sprite draw calls for the display.
@@ -217,72 +208,6 @@ namespace PixelVision8.Engine.Chips
         }
 
         /// <summary>
-        ///     This resizes the <see cref="Sprite" /> Ram's
-        ///     internal TextureData. This will destroy all
-        ///     sprites in memory.
-        /// </summary>
-        /// <param name="w">
-        ///     New <see cref="width" /> for the internal
-        ///     TextureData.
-        /// </param>
-        /// <param name="h">
-        ///     New <see cref="height" /> for the internal
-        ///     TextureData.
-        /// </param>
-        // public void Resize(int w, int h)
-        // {
-        //     
-        //     w = Math.Max((int) Math.Ceiling((float) w / width) * width, width);
-        //     h = Math.Max((int) Math.Ceiling((float) h / height) * height, height);
-        //
-        //     // if (textureWidth != w || textureHeight != h)
-        //     // {
-        //         spriteMemory.Resize(w, h);
-        //     // }
-        //
-        //     //TODO this needs to be double checked at different size sprites
-        //     var cols = MathUtil.FloorToInt(textureWidth / width);
-        //     var rows = MathUtil.FloorToInt(textureHeight / height);
-        //     totalSprites1 = cols * rows;
-        // }
-
-        /// <summary>
-        ///     This caches a sprite for easier look up and duplicate detection.
-        ///     Each sprite is cached as a string.
-        /// </summary>
-        /// <param name="index">
-        ///     Index where the sprite's cached value should be stored in the
-        ///     <see cref="cache" /> array.
-        /// </param>
-        /// <param name="data">
-        ///     An array of ints that represents the sprite's color data.
-        /// </param>
-        protected void CacheSprite(int index, int[] data)
-        {
-            if (index < 0 || index >= cache.Length) return;
-
-            // TODO need to test to see if the sprite is empty first (no need to cache)
-
-            cache[index] = SpriteChipUtil.SpriteDataToString(data);
-
-            var totalPixels = width * height;
-
-            var tmpPixels = new int[totalPixels];
-            Array.Copy(data, tmpPixels, totalPixels);
-            //            pixelDataCache[index] = tmpPixels;
-        }
-
-        /// <summary>
-        ///     Clears the Image to a default color index of -1
-        ///     and also resets the cache. This removes all sprites from the chip.
-        /// </summary>
-        // public void Clear()
-        // {
-        //     
-        //     spriteMemory.Clear();
-        // }
-
-        /// <summary>
         ///     Returns an array of ints that represent a sprite. Each
         ///     int should be mapped to a color
         ///     <paramref name="index" /> to display in the renderer.
@@ -307,29 +232,10 @@ namespace PixelVision8.Engine.Chips
             }
             else
             {
-                width1 = this.spriteMemory.Width;
-                //                height1 = _texture.height;
-
-                w = width1 / width;
-
-                tmpX = index % w * width;
-                tmpY = index / w * height;
-
-                // Flip y for Unity
-                //            tmpY = height1 - tmpY - height;
-
-                PixelDataUtil.CopyPixels(ref pixelData, this.spriteMemory.PixelData, tmpX, tmpY, width, height);
-                // _texture.CopyPixels(ref pixelData, tmpX, tmpY, width, height);
+                // TODO need to remove the additional array copy from the Image to the Array
+                Array.Copy(spriteMemory.GetSpriteData(index, colorsPerSprite), pixelData, pixelData.Length);
             }
         }
-
-        // public void DrawSprite(ref int[] pixelData, int index, int x, int y, bool flipX = false, bool flipY = false,
-        //     int colorOffset = 0)
-        // {
-        //
-        //
-        //
-        // }
 
         /// <summary>
         ///     Updates the sprite data at a given position in the
@@ -339,32 +245,35 @@ namespace PixelVision8.Engine.Chips
         /// <param name="pixels"></param>
         public void UpdateSpriteAt(int index, int[] pixels)
         {
-            if (index < 0) return;
-
-            //            int spriteWidth = width;
-            //            int spriteHeight = height;
-            //            int x;
-            //            int y;
-            //            int index1 = index;
-            //            int width2 = _texture.width;
-            //            int height2 = _texture.height;
-            //            var totalSprites2 = SpriteChipUtil.CalculateTotalSprites(width2, height2, spriteWidth, spriteHeight);
-
-            // Make sure we stay in bounds
-            index = MathHelper.Clamp(index, 0, spriteMemory.TotalSprites - 1);
-
-            var w1 = spriteMemory.Width / width;
-
-            tmpX = index % w1 * width;
-            tmpY = index / w1 * height;
-
-            //            if (true)
-            //                y = _texture.height - y - height;
-
-            PixelDataUtil.SetPixels(this.spriteMemory.PixelData, tmpX, tmpY, width, height, pixels);
-            // _texture.SetPixels(x, y, width, height, pixels);
-
+            spriteMemory.WriteSpriteData(index, pixels);
+            
             CacheSprite(index, pixels);
+        }
+        
+        /// <summary>
+        ///     This caches a sprite for easier look up and duplicate detection.
+        ///     Each sprite is cached as a string.
+        /// </summary>
+        /// <param name="index">
+        ///     Index where the sprite's cached value should be stored in the
+        ///     <see cref="cache" /> array.
+        /// </param>
+        /// <param name="data">
+        ///     An array of ints that represents the sprite's color data.
+        /// </param>
+        protected void CacheSprite(int index, int[] data)
+        {
+            if (index < 0 || index >= cache.Length) return;
+
+            // TODO need to test to see if the sprite is empty first (no need to cache)
+
+            cache[index] = SpriteChipUtil.SpriteDataToString(data);
+
+            var totalPixels = width * height;
+
+            var tmpPixels = new int[totalPixels];
+            Array.Copy(data, tmpPixels, totalPixels);
+            //            pixelDataCache[index] = tmpPixels;
         }
 
         /// <summary>

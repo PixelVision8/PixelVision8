@@ -18,6 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
@@ -118,15 +119,22 @@ public struct Image
         return _tmpPixelData;
     }
     
-    public void WriteSpriteData(int id, int[] pixel)
+    public void WriteSpriteData(int id, int[] pixels)
     {
         
         // The total sprite pixel size should be cached
-        if(pixel.Length != _spriteSize.X * _spriteSize.Y)
+        if(pixels.Length != _spriteSize.X * _spriteSize.Y)
             return;
         
-        var pos = MathUtil.CalculatePosition(id, PixelData.Width);
-        SetPixels(pos.X, pos.Y, _spriteSize.X, _spriteSize.Y, pixel);
+        // Make sure we stay in bounds
+        id = MathHelper.Clamp(id, 0, TotalSprites - 1);
+
+        var pos = MathUtil.CalculatePosition(id, Columns);
+        pos.X *= _spriteSize.X;
+        pos.Y *= _spriteSize.Y;
+        
+        PixelDataUtil.SetPixels(PixelData, pos.X, pos.Y, _spriteSize.X, _spriteSize.Y, pixels);
+        
     }
 
     public void SetPixels(int[] pixels) => PixelDataUtil.SetPixels(pixels, _pixelData);
