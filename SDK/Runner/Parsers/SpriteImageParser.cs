@@ -178,7 +178,7 @@ namespace PixelVision8.Runner.Parsers
             // Convert all of the pixels into color ids
             var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorMap, ColorUtils.RgbToHex(c.R, c.G, c.B))).ToArray();
 
-            image = new Image(Parser.width, Parser.height, colorMap, pixelIDs, new Point(spriteWidth, spriteHeight));
+            image = new Image(Parser.width, Parser.height, pixelIDs, colorMap);
 
             StepCompleted();
         }

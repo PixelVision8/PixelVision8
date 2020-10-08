@@ -29,11 +29,11 @@ using PixelVision8.Engine.Utils;
 /// </summary>
 public struct Image
 {
-    
-    private PixelData pixelData;
-    public int Width => pixelData.Width;
 
-    public int Height => pixelData.Height;
+    private PixelData _pixelData;
+    public PixelData PixelData => _pixelData;
+    public int Width => _pixelData.Width;
+    public int Height => _pixelData.Height;
     public int Columns => Width / _spriteSize.X;
     public int Rows => Height / _spriteSize.Y;
     
@@ -47,27 +47,37 @@ public struct Image
     private Point _pos;
     private int[] _tmpPixelData;
 
-    public Image(int width, int height, string[] colors, int[] pixels = null, Point? spriteSize = null)// : base(width, height)
+    public int SpriteWidth
     {
-        pixelData = new PixelData(256, 256);
-            
-        this.Colors = colors;
-        _spriteSize = spriteSize ?? new Point(8, 8);
+        get => _spriteSize.X;
+        set => _spriteSize.X = value; // TODO this should be divisible by 8
+    }
 
+    public int SpriteHeight
+    {
+        get => _spriteSize.Y;
+        set => _spriteSize.Y = value; // TODO this should be divisible by 8
+    }
+
+    public Image(int width, int height, int[] pixels = null, string[] colors = null)// : base(width, height)
+    {
+        _pixelData = new PixelData(width, height);
+
+        if (pixels != null)
+        {
+            PixelDataUtil.SetPixels(pixels, _pixelData);
+        }
+        
+        Colors = colors;
+        
+        _spriteSize = new Point(8, 8);
         _colorIDs = new List<int>();
         _colorID = 0;
         _pos = Point.Zero;
         _tmpPixelData = null;
         
-        Resize(width, height);
-        
-        if (pixels != null)
-        {
-            PixelDataUtil.SetPixels(pixels, pixelData);
-        }
-       
     }
-    
+
     /// <summary>
     ///     Get a single sprite from the Image.
     /// </summary>
@@ -79,7 +89,7 @@ public struct Image
         _pos = MathUtil.CalculatePosition(id, Columns);
 
         // _pixelData = GetPixels(_pos.X * 8, _pos.Y * 8, _spriteSize.X, _spriteSize.Y);
-        _tmpPixelData = PixelDataUtil.GetPixels(pixelData, _pos.X * 8, _pos.Y * 8, _spriteSize.X, _spriteSize.Y);
+        _tmpPixelData = PixelDataUtil.GetPixels(_pixelData, _pos.X * 8, _pos.Y * 8, _spriteSize.X, _spriteSize.Y);
         // If there is a CPS cap, we need to go through all the pixels and make sure they are in range.
         if (cps.HasValue)
         {
@@ -108,11 +118,27 @@ public struct Image
         return _tmpPixelData;
     }
     
-    public void SetPixels(int[] newPixelData) => PixelDataUtil.SetPixels(newPixelData, pixelData);
+    public void WriteSpriteData(int id, int[] pixel)
+    {
+        
+        // The total sprite pixel size should be cached
+        if(pixel.Length != _spriteSize.X * _spriteSize.Y)
+            return;
+        
+        var pos = MathUtil.CalculatePosition(id, PixelData.Width);
+        SetPixels(pos.X, pos.Y, _spriteSize.X, _spriteSize.Y, pixel);
+    }
 
-    public int[] GetPixels() => PixelDataUtil.GetPixels(pixelData);
+    public void SetPixels(int[] pixels) => PixelDataUtil.SetPixels(pixels, _pixelData);
     
-    public void Resize(int newWidth, int newHeight) => PixelDataUtil.Resize(ref pixelData, newWidth, newHeight);
+    public void SetPixels(int x, int y, int blockWidth, int blockHeight, int[] pixels) => PixelDataUtil.SetPixels(PixelData, x, y, blockWidth, blockHeight, pixels);
+
+    public int[] GetPixels() => PixelDataUtil.GetPixels(PixelData);
+    public int[] GetPixels(int x, int y, int blockWidth, int blockHeight) => PixelDataUtil.GetPixels(PixelData, x, y, blockWidth, blockHeight);
+    
+    public void Resize(int newWidth, int newHeight) => PixelDataUtil.Resize(ref _pixelData, newWidth, newHeight);
+
+    public void Clear(int color = -1) => PixelDataUtil.Clear(PixelData, color);
     
 
 }

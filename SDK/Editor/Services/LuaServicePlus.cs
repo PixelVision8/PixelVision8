@@ -215,7 +215,7 @@ namespace PixelVision8.Runner.Services
 
         public Image NewImage(int width, int height, string[] colors, int[] pixelData = null)
         {
-            return new Image(width, height, colors, pixelData);
+            return new Image(width, height, pixelData, colors);
         }
 
         public Dictionary<string, object> ReadJson(WorkspacePath src)

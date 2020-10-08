@@ -58,7 +58,7 @@ namespace PixelVision8.Runner.Parsers
             var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorRefs, ColorUtils.RgbToHex(c.R, c.G, c.B))).ToArray();
 
             // Create new image
-            image = new Image(Parser.width, Parser.height, colorRefs, pixelIDs, new Point(spriteWidth, spriteHeight));
+            image = new Image(Parser.width, Parser.height, pixelIDs, colorRefs);
 
             StepCompleted();
 
