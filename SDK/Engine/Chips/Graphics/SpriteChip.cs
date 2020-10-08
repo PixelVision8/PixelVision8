@@ -37,7 +37,7 @@ namespace PixelVision8.Engine.Chips
         protected readonly int[] emptySpriteData = Enumerable.Repeat(-1, 64).ToArray();
 
         protected int _colorsPerSprite = 8;
-        protected int _pages = 4;
+        protected int _pages;
 
         private Image spriteMemory = new Image(128, 128);
 
@@ -53,7 +53,7 @@ namespace PixelVision8.Engine.Chips
 
         protected int tmpX;
         protected int tmpY;
-        protected int totalSprites1;
+        // protected int totalSprites1;
         public bool unique = false;
         protected int w;
         protected int width1;
@@ -124,7 +124,14 @@ namespace PixelVision8.Engine.Chips
                 if (_pages == value) return;
 
                 _pages = MathHelper.Clamp(value, 1, 8);
-                Resize(pageWidth, pageHeight * pages);
+                
+                spriteMemory.Resize(
+                    (int) Math.Ceiling((float) pageWidth / width) * width, 
+                    (int) Math.Ceiling((float) pageHeight * pages / height)* height
+                    );
+               
+                cache = new string[spriteMemory.TotalSprites];
+
             }
         }
 
@@ -194,12 +201,13 @@ namespace PixelVision8.Engine.Chips
         {
             engine.SpriteChip = this;
 
+            pages = 4;
             // _texture.wrapMode = false;
             // width = 8;
             // height = 8;
 
 
-            Clear();
+            // Clear();
         }
 
         public override void Deactivate()
@@ -221,22 +229,22 @@ namespace PixelVision8.Engine.Chips
         ///     New <see cref="height" /> for the internal
         ///     TextureData.
         /// </param>
-        public void Resize(int w, int h)
-        {
-            
-            w = Math.Max((int) Math.Ceiling((float) w / width) * width, width);
-            h = Math.Max((int) Math.Ceiling((float) h / height) * height, height);
-
-            if (textureWidth != w || textureHeight != h)
-            {
-                spriteMemory.Resize(w, h);
-            }
-
-            //TODO this needs to be double checked at different size sprites
-            var cols = MathUtil.FloorToInt(textureWidth / width);
-            var rows = MathUtil.FloorToInt(textureHeight / height);
-            totalSprites1 = cols * rows;
-        }
+        // public void Resize(int w, int h)
+        // {
+        //     
+        //     w = Math.Max((int) Math.Ceiling((float) w / width) * width, width);
+        //     h = Math.Max((int) Math.Ceiling((float) h / height) * height, height);
+        //
+        //     // if (textureWidth != w || textureHeight != h)
+        //     // {
+        //         spriteMemory.Resize(w, h);
+        //     // }
+        //
+        //     //TODO this needs to be double checked at different size sprites
+        //     var cols = MathUtil.FloorToInt(textureWidth / width);
+        //     var rows = MathUtil.FloorToInt(textureHeight / height);
+        //     totalSprites1 = cols * rows;
+        // }
 
         /// <summary>
         ///     This caches a sprite for easier look up and duplicate detection.
@@ -268,12 +276,11 @@ namespace PixelVision8.Engine.Chips
         ///     Clears the Image to a default color index of -1
         ///     and also resets the cache. This removes all sprites from the chip.
         /// </summary>
-        public void Clear()
-        {
-            cache = new string[TotalSprites];
-            spriteMemory.Clear();
-            
-        }
+        // public void Clear()
+        // {
+        //     
+        //     spriteMemory.Clear();
+        // }
 
         /// <summary>
         ///     Returns an array of ints that represent a sprite. Each
@@ -344,7 +351,7 @@ namespace PixelVision8.Engine.Chips
             //            var totalSprites2 = SpriteChipUtil.CalculateTotalSprites(width2, height2, spriteWidth, spriteHeight);
 
             // Make sure we stay in bounds
-            index = MathHelper.Clamp(index, 0, totalSprites1 - 1);
+            index = MathHelper.Clamp(index, 0, spriteMemory.TotalSprites - 1);
 
             var w1 = spriteMemory.Width / width;
 

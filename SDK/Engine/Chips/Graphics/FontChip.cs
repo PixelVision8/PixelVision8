@@ -44,10 +44,10 @@ namespace PixelVision8.Engine.Chips
             pages = 2;
             colorsPerSprite = 2;
             unique = true;
-            Resize(pageWidth, pageHeight * pages);
+            // Resize(pageWidth, pageHeight * pages);
 
 
-            Clear();
+            // Clear();
         }
 
         public override void Deactivate()

@@ -190,7 +190,7 @@ namespace PixelVision8.Runner.Parsers
 
             if (data.ContainsKey("unique")) fontChip.unique = Convert.ToBoolean(data["unique"]);
 
-            fontChip.Resize(fontChip.pageWidth, fontChip.pageHeight * fontChip.pages);
+            // fontChip.Resize(fontChip.pageWidth, fontChip.pageHeight * fontChip.pages);
         }
 
         public void ConfigureGameChip(Dictionary<string, object> data)
@@ -562,7 +562,7 @@ namespace PixelVision8.Runner.Parsers
 
             if (data.ContainsKey("unique")) spriteChip.unique = Convert.ToBoolean(data["unique"]);
 
-            spriteChip.Resize(spriteChip.pageWidth, spriteChip.pageHeight * spriteChip.pages);
+            // spriteChip.Resize(spriteChip.pageWidth, spriteChip.pageHeight * spriteChip.pages);
         }
 
         public void ConfigureTilemapChip(Dictionary<string, object> data)
