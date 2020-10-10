@@ -73,7 +73,7 @@ namespace PixelVision8.Engine.Chips
     public class GameChip : AbstractChip, IUpdate, IDraw
     {
         protected int _saveSlots;
-        protected Canvas cachedTileMap;
+        protected TextureData cachedTileMap;
         public int fps;
         public Dictionary<string, string> savedData = new Dictionary<string, string>();
 
@@ -254,7 +254,7 @@ namespace PixelVision8.Engine.Chips
             _spriteSize.Y = SpriteChip.height;
 
             // Create a new canvas for the tilemap cache
-            if (cachedTileMap == null) cachedTileMap = new Canvas(DisplayChip.Width, DisplayChip.Height, this);
+            if (cachedTileMap == null) cachedTileMap = new TextureData(DisplayChip.Width, DisplayChip.Height);
 
             // Build tilemap cache
             RebuildCache(cachedTileMap);
@@ -1710,7 +1710,7 @@ namespace PixelVision8.Engine.Chips
         ///     the screen's resolution.
         /// </summary>
         /// <ignore />
-        protected void RebuildCache(Canvas targetTextureData)
+        protected void RebuildCache(TextureData targetTextureData)
         {
             if (TilemapChip.invalid != true) return;
 

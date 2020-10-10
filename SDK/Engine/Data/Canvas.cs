@@ -47,21 +47,9 @@ namespace PixelVision8.Engine
         public TextureData TargetTexture;
     } 
 
-    // public class Brush
-    // {
-    //     
-    //     private PixelData pixelData = new PixelData(1, 1);
-    //     public Brush(int width = 1, int height = 1)
-    //     {
-    //         PixelDataUtil.Resize(ref pixelData, width, height);
-    //     }
-    //     
-    //     public 
-    // }
-
-
     public class Canvas : TextureData, IDraw
     {
+        private TextureData defaultLayer;
         
         private readonly GameChip gameChip;
         private PixelData pattern;
@@ -92,17 +80,19 @@ namespace PixelVision8.Engine
         private int _total;
         private CanvasDrawRequest _request;
 
+        public PixelData PixelData => defaultLayer.pixelData;
+        
         public Canvas(int width, int height, GameChip gameChip = null) : base(width, height)
         {
-            // Make the canvas the default drawing surface
-            currentTexture = this;
             
+            // Make the canvas the default drawing surface
+            defaultLayer = this;
+            
+
             this.gameChip = gameChip;
             pattern = new PixelData(1, 1) {Pixels = {[0] = 0}};
-            // pattern.SetPixel(0, 0, 0);
-
             stroke = new PixelData(1, 1) {Pixels = {[0] = 0}};
-            // stroke.SetPixel(0, 0, 0);
+
             spriteSize = gameChip.SpriteSize();
 
             // Create a pool of draw requests
@@ -127,17 +117,20 @@ namespace PixelVision8.Engine
                 {"SaveTmpLayer", request => SaveTmpLayerAction(request)},
             };
             
+            // Switch to the default layer
+            ChangeTargetCanvas(defaultLayer);
+            
         }
 
-        public override void Resize(int width, int height)
+        public override void Resize(int blockWidth, int blockHeight)
         {
-            base.Resize(width, height);
+            PixelDataUtil.Resize(ref pixelData, blockWidth, blockHeight);
 
             // make sure the tmp layer is the same size as the canvas
-            tmpLayer.Resize(width, height);
+            tmpLayer.Resize(blockWidth, blockHeight);
         }
 
-        private void ChangeTargetCanvas(TextureData textureData, int? width = null, int? height = null)
+        private void ChangeTargetCanvas(TextureData textureData, int? blockWidth = null, int? blockHeight = null)
         {
             var getRequest = NextRequest();
 
@@ -148,8 +141,8 @@ namespace PixelVision8.Engine
 
             newRequest.Action = "ChangeTargetCanvas";
             newRequest.TargetTexture = textureData;
-            newRequest.X0 = width ?? -1;
-            newRequest.Y0 = height ?? -1;
+            newRequest.X0 = blockWidth ?? -1;
+            newRequest.Y0 = blockHeight ?? -1;
             
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
@@ -197,15 +190,9 @@ namespace PixelVision8.Engine
 
             newRequest.Action = "SetStroke";
 
-            // if (newRequest.Stroke == null)
-            // {
-            //     newRequest.Stroke = new PixelData(size, size);
-            // }
-            // else 
             if (newRequest.Stroke.Width != size || newRequest.Stroke.Height != size)
             {
                 PixelDataUtil.Resize(ref newRequest.Stroke, size, size);
-                // newRequest.Stroke.Resize(size, size);
             }
 
             var newPixels = new int[size * size];
@@ -215,46 +202,17 @@ namespace PixelVision8.Engine
             }
 
             PixelDataUtil.SetPixels(newPixels, newRequest.Stroke);
-            // newRequest.Stroke.SetPixels(newPixels);
             
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
         }
         
-        // public void SetStroke(int[] newPixels, int newWidth, int newHeight)
-        // {
-        //     var getRequest = NextRequest();
-        //
-        //     if (getRequest == null)
-        //         return;
-        //
-        //     var newRequest = getRequest.Value;
-        //
-        //     newRequest.Action = "SetStroke";
-        //
-        //     if (newRequest.Stroke == null)
-        //     {
-        //         newRequest.Stroke = new Brush(newWidth, newHeight);
-        //     }
-        //     else if (newRequest.Stroke.width != newWidth || newRequest.Stroke.height != newHeight)
-        //     {
-        //         newRequest.Stroke.Resize(newWidth, newHeight);
-        //     }
-        //
-        //     newRequest.Stroke.SetPixels(newPixels);
-        //     
-        //     // Save the changes to the request
-        //     requestPool[currentRequest] = newRequest;
-        // }
-
         private void SetStrokeAction(CanvasDrawRequest request)
         {
             if (stroke.Width != request.Stroke.Width || pattern.Height != request.Stroke.Height)
                 PixelDataUtil.Resize(ref stroke, request.Stroke.Width, request.Stroke.Height);
-                // stroke.Resize(request.Stroke.width, request.Stroke.height);
 
-                PixelDataUtil.SetPixels(request.Stroke.Pixels, stroke);
-            // stroke.SetPixels(request.Stroke.Pixels);
+            PixelDataUtil.SetPixels(request.Stroke.Pixels, stroke);
         }
 
         public void SetPattern(int[] newPixels, int newWidth, int newHeight)
@@ -293,19 +251,15 @@ namespace PixelVision8.Engine
             if (pattern.Width != request.Pattern.Width || pattern.Height != request.Pattern.Height)
                 PixelDataUtil.Resize(ref pattern, request.Pattern.Width, request.Pattern.Height);
 
-                // pattern.Resize(request.Pattern.width, request.Pattern.height);
             PixelDataUtil.SetPixels(request.Pattern.Pixels, pattern);
-
-            // pattern.SetPixels(request.Pattern.GetPixels());
         }
 
         private void SetStrokePixel(int x, int y)
         {
-            canDraw = wrap || x >= 0 && x <= width - stroke.Width && y >= 0 && y <= height - stroke.Height;
+            canDraw = wrap || x >= 0 && x <= defaultLayer.width - stroke.Width && y >= 0 && y <= defaultLayer.height - stroke.Height;
             
-            // TODO this should never be null           
             if (canDraw) 
-                currentTexture.SetPixels(x, y, stroke.Width, stroke.Height, stroke.Pixels);
+                PixelDataUtil.SetPixels(currentTexture.pixelData, x, y, stroke.Width, stroke.Height, stroke.Pixels);
             
         }
 
@@ -488,7 +442,7 @@ namespace PixelVision8.Engine
                     SaveTmpLayer(x0, y0, _w, _h);
                     
                     // Change back to default drawing surface
-                    ChangeTargetCanvas(this);
+                    ChangeTargetCanvas(defaultLayer);
                 }
             }
         }
@@ -516,7 +470,11 @@ namespace PixelVision8.Engine
         private void SaveTmpLayerAction(CanvasDrawRequest request)
         {
             // Copy pixels data to the main drawing surface
-            MergePixels(request.X0, request.Y0, request.X1, request.Y1, tmpLayer.GetPixels());
+            // MergePixels(request.X0, request.Y0, request.X1, request.Y1, tmpLayer.pixelData.Pixels);
+            MergePixels(request.X0, request.Y0, request.X1, request.Y1, tmpLayer.pixelData.Pixels);//, flipH, flipV, colorOffset, ignoreTransparent);
+
+            Invalidate();
+            
         }
         
         public void DrawEllipse(int x0, int y0, int x1, int y1, bool fill = false, bool drawCentered = false)
@@ -549,7 +507,7 @@ namespace PixelVision8.Engine
             SaveTmpLayer(x0, y0, _w, _h);
             
             // Change back to default drawing surface
-            ChangeTargetCanvas(this);
+            ChangeTargetCanvas(defaultLayer);
         }
 
         private long _a;
@@ -642,9 +600,6 @@ namespace PixelVision8.Engine
             if (request.Fill)
             {
 
-                // var centerX = request.X0 + w / 2;
-                // var centerY = request.Y0 + h / 2;
-
                 _x1 = request.X0;
                 _y1 = request.Y0;
                 
@@ -657,9 +612,6 @@ namespace PixelVision8.Engine
 
                 }
                 
-                // MergePixels(_x1, _y1, _w, _h, currentTexture.GetPixels());
-
-                // currentTexture = this;
             }
         }
 
@@ -707,22 +659,19 @@ namespace PixelVision8.Engine
 
             MergePixels(request.X0, request.Y0, spriteSize.X, spriteSize.Y, gameChip.Sprite(request.Ids[0]),
                 request.FlipH, request.FlipV, request.ColorOffset);
+            // MergePixels(request.X0, request.Y0, spriteSize.X, spriteSize.Y, gameChip.Sprite(request.Ids[0]),
+            //     request.FlipH, request.FlipV, request.ColorOffset);
             
             Invalidate();
         }
 
 
-        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
+        public void DrawSprites(int[] ids, int x, int y, int blockWidth, bool flipH = false, bool flipV = false,
             int colorOffset = 0)
         {
             _total = ids.Length;
 
-            // TODO added this so C# code isn't corrupted, need to check performance impact
-            // if (tmpIDs.Length != total) Array.Resize(ref tmpIDs, total);
-            //
-            // Array.Copy(ids, tmpIDs, total);
-
-            var height = MathUtil.CeilToInt(_total / width);
+            // var height = MathUtil.CeilToInt(_total / width);
 
             var startX = x;
             var startY = y;
@@ -737,17 +686,12 @@ namespace PixelVision8.Engine
                 // Set the sprite id
                 var id = ids[i];
 
-                // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
                 // Test to see if the sprite is within range
                 if (id > -1)
                 {
-                    x = MathUtil.FloorToInt(i % width) * paddingW + startX;
-                    y = MathUtil.FloorToInt(i / width) * paddingH + startY;
-                    //
-                    //                    var render = true;
-
-                    // Check to see if we need to test the bounds
-
+                    x = MathUtil.FloorToInt(i % blockWidth) * paddingW + startX;
+                    y = MathUtil.FloorToInt(i / blockWidth) * paddingH + startY;
+                    
                     DrawSprite(id, x, y, flipH, flipV, colorOffset);
                 }
             }
@@ -837,7 +781,7 @@ namespace PixelVision8.Engine
         /// <param name="y"></param>
         public void FloodFillAction(CanvasDrawRequest request)
         {
-            if (request.X0 < 0 || request.Y0 < 0 || request.X0 > width || request.Y0 > height) return;
+            if (request.X0 < 0 || request.Y0 < 0 || request.X0 > defaultLayer.width || request.Y0 > defaultLayer.height) return;
 
             // Get the color at the point where we are trying to fill and use that to match all the color inside the shape
             var targetColor = currentTexture.GetPixel(request.X0, request.Y0);
@@ -855,7 +799,7 @@ namespace PixelVision8.Engine
                 y1++;
                 var spanLeft = false;
                 var spanRight = false;
-                while (y1 < height && currentTexture.GetPixel(temp.X, y1) == targetColor)
+                while (y1 < defaultLayer.height && currentTexture.GetPixel(temp.X, y1) == targetColor)
                 {
                     currentTexture.SetPixel(temp.X, y1, PixelDataUtil.GetPixel(pattern, temp.X, y1));
 
@@ -871,14 +815,14 @@ namespace PixelVision8.Engine
                         spanLeft = false;
                     }
 
-                    if (!spanRight && temp.X < width - 1 && currentTexture.GetPixel(temp.X + 1, y1) == targetColor)
+                    if (!spanRight && temp.X < defaultLayer.width - 1 && currentTexture.GetPixel(temp.X + 1, y1) == targetColor)
                     {
                         if (currentTexture.GetPixel(temp.X + 1, y1) != PixelDataUtil.GetPixel(pattern, temp.X, y1))
                             pixels.Push(new Point(temp.X + 1, y1));
 
                         spanRight = true;
                     }
-                    else if (spanRight && temp.X < width - 1 && currentTexture.GetPixel(temp.X + 1, y1) != targetColor)
+                    else if (spanRight && temp.X < defaultLayer.width - 1 && currentTexture.GetPixel(temp.X + 1, y1) != targetColor)
                     {
                         spanRight = false;
                     }
@@ -888,46 +832,54 @@ namespace PixelVision8.Engine
             }
         }
 
+        public override int[] Pixels => defaultLayer.Pixels;
+
         /// <summary>
         ///     Allows you to merge the pixel data of another canvas into this one without compleatly overwritting it.
         /// </summary>
         /// <param name="canvas"></param>
         public void MergeCanvas(Canvas canvas, int colorOffset = 0, bool ignoreTransparent = false)
         {
-            MergePixels(0, 0, canvas.width, canvas.height, canvas.GetPixels(), false, false, colorOffset, ignoreTransparent);
+            
+            MergePixels( 0, 0, canvas.width, canvas.height, canvas.Pixels, false, false, colorOffset, ignoreTransparent);//, flipH, flipV, colorOffset, ignoreTransparent);
+            
+            // MergePixels(0, 0, canvas.width, canvas.height, canvas.GetPixels(), false, false, colorOffset, ignoreTransparent);
             Invalidate();
         }
 
         public int ReadPixelAt(int x, int y)
         {
             // Calculate the index
-            var index = x + y * width;
+            var index = x + y * defaultLayer.width;
 
-            if (index >= Pixels.Length) return -1;
+            // TODO length should be cached
+            if (index >= defaultLayer.Pixels.Length) return -1;
 
-            return Pixels[index];
+            return defaultLayer.Pixels[index];
         }
 
-        public int[] SamplePixels(int x, int y, int width, int height)
+        public int[] SamplePixels(int x, int y, int widthBlock, int heightBlock)
         {
             // TODO this should be optimized if we are going to us it moving forward
-            var totalPixels = width * height;
-            var pixelData = new int[totalPixels];
+            var totalPixels = widthBlock * heightBlock;
+            var tmpPixels = new int[totalPixels];
 
-            CopyPixels(ref pixelData, x, y, width, height);
+            CopyPixels(ref tmpPixels, x, y, widthBlock, heightBlock);
 
-            return pixelData;
+            return tmpPixels;
         }
 
         public override void SetPixels(int x, int y, int blockWidth, int blockHeight, int[] pixels)
         {
             if (wrap == false)
             {
-                BlockSave(pixels, blockWidth, blockHeight, this.Pixels, x, y, width, height);
+                BlockSave(pixels, blockWidth, blockHeight, this.defaultLayer.Pixels, x, y, defaultLayer.width, defaultLayer.height);
                 return;
             }
 
-            base.SetPixels(x, y, blockWidth, blockHeight, pixels);
+            PixelDataUtil.SetPixels(defaultLayer.pixelData, x, y, blockWidth, blockHeight, pixels);
+
+            // base.SetPixels(x, y, blockWidth, blockHeight, pixels);
             
             Invalidate();
         }
@@ -1022,8 +974,8 @@ namespace PixelVision8.Engine
             {
                 tmpX = 0;
                 tmpY = 0;
-                tmpW = width;
-                tmpH = height;
+                tmpW = defaultLayer.width;
+                tmpH = defaultLayer.height;
             }
 
             var srcPixels = GetPixels(tmpX, tmpY, tmpW, tmpH);
@@ -1058,7 +1010,7 @@ namespace PixelVision8.Engine
             if(invalid)
                 Draw();
             
-            return base.GetPixels();
+            return PixelDataUtil.GetPixels(PixelData);
             
         }
 
@@ -1067,7 +1019,8 @@ namespace PixelVision8.Engine
             if(invalid)
                 Draw();
             
-            return base.GetPixels(x, y, blockWidth, blockHeight);
+            return PixelDataUtil.GetPixels(PixelData, x, y, blockWidth, blockHeight);
+            // return base.GetPixels(x, y, blockWidth, blockHeight);
         }
 
         // Reference https://tech-algorithm.com/articles/nearest-neighbor-image-scaling/
@@ -1119,9 +1072,16 @@ namespace PixelVision8.Engine
             ResetValidation();
         }
 
-        public TextureData texture => this;
-        public int textureWidth => this.width;
-        public int textureHeight => this.height;
+        public override void Clear(int colorRef = -1, int x = 0, int y = 0, int? width = null, int? height = null)
+        {
+            PixelDataUtil.Clear(pixelData, colorRef, x, y, width, height);
+
+            Invalidate();
+        }
+
+        // public TextureData texture => this;
+        // public int textureWidth => this.width;
+        // public int textureHeight => this.height;
     }
 
     // Performance improvement
