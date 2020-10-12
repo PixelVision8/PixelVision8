@@ -95,7 +95,7 @@ namespace PixelVision8.Engine
         
         
         
-        protected PixelData pixelData = new PixelData(256, 256);
+        public PixelData pixelData = new PixelData(256, 256);
 
         protected int _height
         {
