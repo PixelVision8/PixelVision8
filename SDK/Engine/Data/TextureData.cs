@@ -98,13 +98,13 @@ namespace PixelVision8.Engine
         protected int _height
         {
             get => pixelData.Height;
-            set => pixelData.Height = value;
+            // set => pixelData.Height = value;
         }
 
         protected int _width
         {
             get => pixelData.Width;
-            set => pixelData.Width = value;
+            // set => pixelData.Width = value;
         }
         
         public virtual int[] Pixels => pixelData.Pixels;
@@ -123,8 +123,8 @@ namespace PixelVision8.Engine
         /// </param>
         public TextureData(int width = 1, int height = 1)
         {
-            _width = width;
-            _height = height;
+            // _width = width;
+            // _height = height;
 
             Resize(width, height);
         }
@@ -217,7 +217,6 @@ namespace PixelVision8.Engine
         public virtual void Resize(int blockWidth, int blockHeight)
         {
             PixelDataUtil.Resize(ref pixelData, blockWidth, blockHeight);
-
         }
 
         public virtual void Crop(int x, int y, int blockWidth, int blockHeight)

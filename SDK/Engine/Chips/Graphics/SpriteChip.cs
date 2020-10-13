@@ -201,6 +201,11 @@ namespace PixelVision8.Engine.Chips
             // Clear();
         }
 
+        public void Clear()
+        {
+            spriteMemory.Clear();
+        }
+
         public override void Deactivate()
         {
             base.Deactivate();

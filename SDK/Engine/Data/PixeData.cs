@@ -18,21 +18,28 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
+
 namespace PixelVision8.Engine
 {
-    public struct PixelData
+    public class PixelData
     {
-        public int[] Pixels;
-        public int Width;
-        public int Height;
-        public int TotalPixels;
+        public int[] Pixels = new int[0];
+        public int Width { get; private set; }
+        public int Height { get;  private set; }
+        public int TotalPixels { get;  private set; }
 
-        public PixelData(int width, int height)
+        public PixelData(int width = 1, int height = 1)
+        {
+            Resize(width, height);
+        }
+
+        public void Resize(int width, int height)
         {
             Width = width;
             Height = height;
             TotalPixels = Width * Height;
-            Pixels = new int[TotalPixels];
+            Array.Resize(ref Pixels, TotalPixels);
         }
     }
 }

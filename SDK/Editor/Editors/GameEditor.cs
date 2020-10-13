@@ -412,10 +412,10 @@ namespace PixelVision8.Runner.Editors
             colorChip.Clear(color);
         }
 
-        // public void ClearSprites()
-        // {
-        //     // spriteChip.Clear();
-        // }
+        public void ClearSprites()
+        {
+            spriteChip.Clear();
+        }
 
         /// <summary>
         ///     Get the TotalDisks colors or change the limit for how many colors the color chip can store.

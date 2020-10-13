@@ -66,8 +66,6 @@ namespace PixelVision8.Engine.Utils
         
             CopyPixels(ref tmpPixels, pixelData, x, y, blockWidth, blockHeight);
         
-            //            Array.Copy(pixels, tmpPixels, pixels.Length);
-        
             return tmpPixels;
         }
         
@@ -231,11 +229,8 @@ namespace PixelVision8.Engine.Utils
 
             var tmpPixelData = GetPixels(pixelData, x, y, blockWidth, blockHeight);
 
-            pixelData.Width = blockWidth;
-            pixelData.Height = blockHeight;
-
-            Array.Resize(ref pixelData.Pixels, pixelData.Width * pixelData.Height);
-
+            pixelData.Resize(blockWidth, blockHeight);
+            
             SetPixels(tmpPixelData, pixelData);
         }
         
@@ -273,12 +268,8 @@ namespace PixelVision8.Engine.Utils
         
         public static void Resize(ref PixelData pixelData, int width, int height)
         {
-            pixelData.Width = MathHelper.Clamp(width, 1, 2048);
-            pixelData.Height = MathHelper.Clamp(height, 1, 2048);
-            pixelData.TotalPixels = pixelData.Width * pixelData.Height;
-
-            Array.Resize(ref pixelData.Pixels, pixelData.TotalPixels);
-
+            pixelData.Resize(MathHelper.Clamp(width, 1, 2048), MathHelper.Clamp(height, 1, 2048));
+            
             Clear(pixelData);
         }
     }
