@@ -42,6 +42,9 @@
     <Compile Include="SDK\**\*.cs">
       <Link>SDK\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
+    <Compile Update="SDK\Engine\Data\Canvas\Canvas.cs">
+      <Link>SDK\Engine\Data\Canvas.cs</Link>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

@@ -152,7 +152,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
                 end
 
                 -- Clear the area for the text
-                canvas:DrawSquare(0, 24, data.rect.w - 2, 24 + 14, true)
+                canvas:DrawRectangle(0, 24, data.rect.w - 2, 14, true)
 
                 for i = 1, #lines do
 
@@ -181,7 +181,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
                         canvas:SetStroke(0, 1)
                         canvas:SetPattern({0}, 1, 1)
 
-                        canvas:DrawSquare(x - 1, y + 1, (x ) + (#line * 4) + 1, (y) + 9, true)
+                        canvas:DrawRectangle(x - 1, y + 1, (#line * 4) + 2,  8, true)
 
                     end
 

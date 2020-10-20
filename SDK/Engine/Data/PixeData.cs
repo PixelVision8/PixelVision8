@@ -41,5 +41,13 @@ namespace PixelVision8.Engine
             TotalPixels = Width * Height;
             Array.Resize(ref Pixels, TotalPixels);
         }
+
+        public int this[in int i]
+        {
+            get => Pixels[i];
+            set => Pixels[i] = value;
+        }
+        
+        public override string ToString() => "{Width:" + this.Width.ToString() + " Height:" + this.Height.ToString() + " Total Pixels:" + this.TotalPixels.ToString() + "}";
     }
 }

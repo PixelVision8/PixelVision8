@@ -34,7 +34,7 @@ namespace PixelVision8.Engine.Utils
             x = (x % size + size) % size;
             // size is still == _width from the previous operation - let's reuse the local
 
-            return pixelData.Pixels[x + size * y];
+            return pixelData[x + size * y];
         }
         
         public static void SetPixel(PixelData pixelData, int x, int y, int color)
@@ -48,14 +48,14 @@ namespace PixelVision8.Engine.Utils
 
             var index = x + size * y;
 
-            pixelData.Pixels[index] = color;
+            pixelData[index] = color;
         }
         
         public static int[] GetPixels(PixelData pixelData)
         {
-            var tmpPixels = new int[pixelData.Pixels.Length];
+            var tmpPixels = new int[pixelData.TotalPixels];
 
-            Array.Copy(pixelData.Pixels, tmpPixels, pixelData.Pixels.Length);
+            Array.Copy(pixelData.Pixels, tmpPixels, pixelData.TotalPixels);
 
             return tmpPixels;
         }
@@ -170,7 +170,7 @@ namespace PixelVision8.Engine.Utils
             else
                 for (var i = 0; i < TotalPixels; i++)
                 {
-                    color = pixelData.Pixels[i];
+                    color = pixelData[i];
                     if (color != transparentColor) data[i] = color;
                 }
         }
@@ -272,6 +272,7 @@ namespace PixelVision8.Engine.Utils
             
             Clear(pixelData);
         }
+
     }
     
 }

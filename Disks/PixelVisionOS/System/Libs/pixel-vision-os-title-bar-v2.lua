@@ -199,11 +199,11 @@ function PixelVisionOS:CreateTitleBarMenu(items, toolTip)
     -- Create a solid background pattern
     canvas:SetPattern({12}, 1, 1)
 
-    -- Draw border
-    canvas:DrawSquare(0, 0, canvas.width - 8, canvas.height - 8, true)
+    -- Draw background and border
+    canvas:DrawRectangle(0, 0, canvas.width - 8, canvas.height - 8, true)
     canvas.wrap = false
 
-    canvas:Draw()
+    --canvas:Draw()
 
     local tmpCanvas = NewCanvas(canvas.width - 12, itemHeight)
     tmpCanvas.wrap = false
@@ -226,6 +226,8 @@ function PixelVisionOS:CreateTitleBarMenu(items, toolTip)
         -- Draw the up state
         self:DrawTitleBarMenuItem(tmpCanvas, option, 14)
 
+        --print(option.name, tmpCanvas.width, tmpCanvas.height, #tmpCanvas:GetPixels())
+        
         canvas:MergePixels(tmpX, tmpY, tmpCanvas.width, tmpCanvas.height, tmpCanvas:GetPixels(), false, false, 0, true)
 
         if(option.divider ~= true) then
@@ -313,8 +315,8 @@ function PixelVisionOS:DrawTitleBarMenuItem(canvas, option, bgColor2)
             local tmpX = canvas.width - 16
             local tmpY = 1
 
-            canvas:DrawSquare(tmpX, tmpY, tmpX + 12, tmpY + 7, true)
-
+            canvas:DrawRectangle(tmpX, tmpY, 12, 7, true)
+            
             canvas:DrawText(("^" .. tostring(option.key)):upper(), tmpX + 2, tmpY - 1, "small", t2Color, - 4)
             
         end
