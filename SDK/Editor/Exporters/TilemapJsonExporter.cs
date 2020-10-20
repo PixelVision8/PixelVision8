@@ -18,10 +18,12 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PixelVision8.Engine;
+using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Exporters
@@ -112,7 +114,7 @@ namespace PixelVision8.Runner.Exporters
 
             for (var i = 0; i < total; i++)
             {
-                var pos = gameChip.CalculatePosition(i, cols);
+                var pos = MathUtil.CalculatePosition(i, cols);
 
                 var tile = gameChip.Tile(pos.X, pos.Y);
 
@@ -457,7 +459,7 @@ namespace PixelVision8.Runner.Exporters
 
             for (var i = 0; i < total; i++)
             {
-                var pos = gameChip.CalculatePosition(i, cols);
+                var pos = MathUtil.CalculatePosition(i, cols);
 
                 var tile = gameChip.Tile(pos.X, pos.Y);
 

@@ -897,7 +897,7 @@ namespace PixelVision8.Runner
 
                 base.ShutdownActiveEngine();
 
-                if (ActiveEngine.GameChip.SaveSlots > 0)
+                if (((GameChip)ActiveEngine.GameChip).SaveSlots > 0)
                     SaveGameData("/Game/", ActiveEngine, SaveFlags.SaveData,
                         false);
 

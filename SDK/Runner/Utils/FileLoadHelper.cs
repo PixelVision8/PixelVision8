@@ -23,6 +23,11 @@ using PixelVision8.Runner.Services;
 
 namespace PixelVision8.Runner.Utils
 {
+    public interface IFileLoadHelper
+    {
+        string GetFileName(string path);
+        byte[] ReadAllBytes(string file);
+    }
     
     public class FileLoadHelper : IFileLoadHelper
     {

@@ -26,6 +26,7 @@ using PixelVision8.Engine.Audio;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Services;
+using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -195,7 +196,7 @@ namespace PixelVision8.Runner.Parsers
 
         public void ConfigureGameChip(Dictionary<string, object> data)
         {
-            var gameChip = Target.GameChip;
+            var gameChip = Target.GameChip as GameChip;
 
             // Flag chip to export
             gameChip.export = true;
@@ -610,7 +611,7 @@ namespace PixelVision8.Runner.Parsers
         // }
         public void ConfigureMetaSprites(Dictionary<string, object> data)
         {
-            var gameChip = Target.GameChip;
+            var gameChip = Target.GameChip as GameChip;
             
             // Prepare to parse v1 of the MetaSprite json template/
             if (data.ContainsKey("version") && (string)data["version"] == "v1")

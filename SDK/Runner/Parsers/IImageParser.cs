@@ -30,11 +30,7 @@ namespace PixelVision8.Runner.Parsers
         int height { get; }
         Color[] colorPixels { get; }
         List<Color> colorPalette { get; }
-        bool IsImage();
-        void ReadHeader();
         void ReadStream();
-        void ReadBytes(byte[] bytes);
-        void Dispose();
         string FileName { get; set; }
     }
 }

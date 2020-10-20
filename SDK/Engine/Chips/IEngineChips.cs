@@ -70,7 +70,7 @@ namespace PixelVision8.Engine.Chips
         ///     This property offers direct access to the current game loaded into
         ///     the engine's memory.
         /// </summary>
-        GameChip GameChip { get; set; }
+        GameChipLite GameChip { get; set; }
 
         /// <summary>
         ///     The Fonts Chip is responsible for rendering text to the display.

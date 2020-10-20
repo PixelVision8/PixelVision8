@@ -57,7 +57,7 @@ namespace PixelVision8.Runner.Exporters
 
             for (var i = 0; i < total; i++)
             {
-                var pos = engine.GameChip.CalculatePosition(i, maxCol);
+                var pos = MathUtil.CalculatePosition(i, maxCol);
 
                 spriteChip.ReadSpriteAt(i, ref tmpPixelData);
 

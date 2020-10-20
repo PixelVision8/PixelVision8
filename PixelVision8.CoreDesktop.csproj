@@ -45,6 +45,12 @@
     <Compile Update="SDK\Engine\Data\Canvas\Canvas.cs">
       <Link>SDK\Engine\Data\Canvas.cs</Link>
     </Compile>
+    <Compile Update="SDK\Engine\Data\Canvas\Canvas.cs">
+      <Link>SDK\Engine\Data\Canvas.cs</Link>
+    </Compile>
+    <Compile Update="SDK\Engine\Chips\Game\GameChipLite.cs">
+      <Link>SDK\Engine\Chips\Game\GameChip.cs</Link>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

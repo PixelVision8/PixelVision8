@@ -20,6 +20,7 @@
 
 using System.Text;
 using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Exporters
@@ -28,17 +29,20 @@ namespace PixelVision8.Runner.Exporters
     {
         private readonly IEngine targetEngine;
         private StringBuilder sb;
+        private GameChip GameChip;
 
         public MetaSpriteExporter(string fileName, IEngine targetEngine) : base(fileName)
         {
             this.targetEngine = targetEngine;
 
+            GameChip = this.targetEngine.GameChip as GameChip;
+            
             CalculateSteps();
         }
 
         public override void CalculateSteps()
         {
-            if (targetEngine.GameChip.TotalMetaSprites() < 1) return;
+            if (GameChip.TotalMetaSprites() < 1) return;
 
             base.CalculateSteps();
 
@@ -54,7 +58,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void MetaSpriteData()
         {
-            var gameChip = targetEngine.GameChip;
+            // var gameChip = targetEngine.GameChip;
 
             // Save Data
             sb.Append("\"metaSprites\":");
@@ -66,9 +70,9 @@ namespace PixelVision8.Runner.Exporters
 
             // var savedData = gameChip.savedData;
 
-            for (var i = 0; i < gameChip.TotalMetaSprites(); i++)
+            for (var i = 0; i < GameChip.TotalMetaSprites(); i++)
             {
-                var metaSprite = gameChip.MetaSprite(i);
+                var metaSprite = GameChip.MetaSprite(i);
                 var childrenSprites = metaSprite.Sprites;
                 var totalChildrenSprites = childrenSprites.Count;
 

@@ -31,14 +31,11 @@ using PixelVision8.Engine.Services;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Importers;
 using PixelVision8.Runner.Parsers;
+using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Services
 {
-    public interface IFileLoadHelper
-    {
-        string GetFileName(string path);
-        byte[] ReadAllBytes(string file);
-    }
+    
     
     public class LoadService : AbstractService
     {

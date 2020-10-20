@@ -111,7 +111,7 @@ namespace PixelVision8.Engine
         ///     Access to the current game in memory.
         /// </summary>
         /// <tocexclude />
-        public GameChip GameChip { get; set; }
+        public GameChipLite GameChip { get; set; }
 
         public virtual void ResetGame()
         {

@@ -26,11 +26,8 @@ namespace PixelVision8.Runner.Parsers
 
         public ImageParser(IImageParser parser)
         { 
-            this.Parser = parser;
+            Parser = parser;
         }
-
-        public int ImageWidth => Parser.width;
-        public int ImageHeight => Parser.height;
 
         public override void CalculateSteps()
         {
@@ -48,7 +45,6 @@ namespace PixelVision8.Runner.Parsers
         public override void Dispose()
         {
             base.Dispose();
-            // Parser.Dispose();
             Parser = null;
         }
     }

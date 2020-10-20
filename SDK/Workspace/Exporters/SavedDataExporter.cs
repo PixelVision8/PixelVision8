@@ -21,6 +21,7 @@
 using System.Linq;
 using System.Text;
 using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Exporters
@@ -39,7 +40,7 @@ namespace PixelVision8.Runner.Exporters
 
         public override void CalculateSteps()
         {
-            if (targetEngine.GameChip.SaveSlots < 1) return;
+            if (((GameChip)targetEngine.GameChip).SaveSlots < 1) return;
 
             base.CalculateSteps();
 
@@ -55,7 +56,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void SaveGameData()
         {
-            var gameChip = targetEngine.GameChip;
+            var gameChip = targetEngine.GameChip as GameChip;
 
             // Save Data
             sb.Append("\"savedData\":");

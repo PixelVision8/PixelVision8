@@ -30,7 +30,7 @@ namespace PixelVision8.Engine
     public class Canvas : AbstractData, IDraw
     {
         
-        private readonly GameChip gameChip;
+        private readonly GameChipLite gameChip;
         private PixelData stroke = new PixelData();
         private PixelData pattern = new PixelData();
         private readonly Point spriteSize;
@@ -64,7 +64,7 @@ namespace PixelVision8.Engine
         public int height => defaultLayer.Height;
         public int[] Pixels => defaultLayer.Pixels;
 
-        public Canvas(int width, int height, GameChip gameChip = null)
+        public Canvas(int width, int height, GameChipLite gameChip = null)
         {
             
             Resize(width, height);
@@ -838,8 +838,6 @@ namespace PixelVision8.Engine
             }
             
         }
-
-        
 
         /// <summary>
         ///     Fast blit to the display through the draw request API

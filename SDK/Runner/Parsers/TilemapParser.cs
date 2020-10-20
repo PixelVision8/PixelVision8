@@ -1,4 +1,4 @@
-﻿//   
+﻿﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -28,14 +28,15 @@ namespace PixelVision8.Runner.Parsers
         private readonly bool autoImport;
 
         private readonly TilemapChip tilemapChip;
-        protected int columns, rows;
-        public TilemapParser(IImageParser parser, ColorChip colorChip, SpriteChip spriteChip, TilemapChip tilemapChip) :
+        private bool autoResize;
+
+        public TilemapParser(IImageParser parser, ColorChip colorChip, SpriteChip spriteChip, TilemapChip tilemapChip, bool autoResize = false) :
             base(parser, colorChip, spriteChip)
         {
             this.tilemapChip = tilemapChip;
 
             autoImport = tilemapChip.autoImport;
-            
+            this.autoResize = autoResize;
         }
 
         public override void CutOutSprites()
@@ -43,16 +44,23 @@ namespace PixelVision8.Runner.Parsers
 
             // TODO the image should be the right size from the beginning
 
-            // Make sure the tilemap is  the correct size
+            if(autoResize)
+                tilemapChip.Resize(image.Columns, image.Rows);
+            
+            // if(autoResize)
+            // 
             var tmpColumns = image.Columns > tilemapChip.columns ? tilemapChip.columns : image.Columns;
             var tmpRows = image.Rows > tilemapChip.rows ? tilemapChip.rows : image.Rows;
 
+            // Make sure the tilemap matches the image size
+            // tilemapChip.Resize(image.Columns, image.Rows);
+            
             for (var i = 0; i < totalSprites; i++)
             {
 
                 var pos = MathUtil.CalculatePosition(i, image.Columns);
 
-                if(pos.X < tmpColumns && pos.Y < image.Rows)
+                if(pos.X < tmpColumns && pos.Y < tmpRows)
                 { 
                     // Convert sprite to color index
                     ConvertColorsToIndexes(cps);

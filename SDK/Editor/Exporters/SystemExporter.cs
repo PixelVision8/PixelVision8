@@ -62,7 +62,7 @@ namespace PixelVision8.Runner.Exporters
 
             // Serialize Game
             if (engine.GameChip != null && engine.GameChip.export)
-                steps.Add(delegate { SerializeGameChip(engine.GameChip); });
+                steps.Add(delegate { SerializeGameChip(engine.GameChip as GameChip); });
 
             // Serialize Music
             if (engine.MusicChip != null && engine.MusicChip.export)

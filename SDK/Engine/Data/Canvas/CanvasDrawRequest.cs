@@ -18,11 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine
 {
@@ -35,21 +31,5 @@ namespace PixelVision8.Engine
         public bool FlipH;
         public bool FlipV;
         public int ColorOffset;
-        
-        
-        
-        
-        // Depricate
-        public int X0;
-        public int X1;
-        public int Y0;
-        public int Y1;
-        
-        // public string Text;
-        // public string Font;
-        // public int Spacing;
-        // public PixelData Stroke = new PixelData();
-        // public PixelData Pattern = new PixelData();
-        // public PixelData TargetTexture;
     }
 }
