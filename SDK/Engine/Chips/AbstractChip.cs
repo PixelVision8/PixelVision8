@@ -47,7 +47,7 @@ namespace PixelVision8.Engine.Chips
     /// </example>
     public class AbstractChip
     {
-        protected PixelVisionEngine engine;
+        protected PixelVisionEngineLite engine;
 
         /// <summary>
         ///     A flag for the ChipManager to determine if the chip
@@ -70,7 +70,7 @@ namespace PixelVision8.Engine.Chips
         ///     as well as to each other through the engine's exposed APIs.
         /// </summary>
         /// <param name="parent">A reference to the engine.</param>
-        public virtual void Activate(PixelVisionEngine parent)
+        public virtual void Activate(PixelVisionEngineLite parent)
         {
             engine = parent;
             active = true;

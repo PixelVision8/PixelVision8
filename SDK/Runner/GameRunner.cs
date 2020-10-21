@@ -1,4 +1,4 @@
-﻿﻿//   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -23,88 +23,26 @@ using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Input;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Services;
 using PixelVision8.Runner.Data;
-using PixelVision8.Runner.Services;
-using PixelVision8.Runner.Utils;
-
-using Buttons = PixelVision8.Engine.Chips.Buttons;
 
 namespace PixelVision8.Runner
 {
-    public class GameRunner : Game, IRunner
+    public class GameRunner : Game
     {
 
-        public enum ErrorCode
-        {
-            Exception,
-            LoadError,
-            NoAutoRun
-        }
-
-        // Runner modes
-        public enum RunnerMode
-        {
-            Playing,
-            Booting,
-            Loading,
-            Error
-        }
-
-        private static bool _mute;
-        private static int lastVolume;
-        private static int muteVolume;
-
-        public readonly Dictionary<InputMap, int> defaultKeys = new Dictionary<InputMap, int>
-        {
-            {InputMap.Player1UpKey, (int) Keys.Up},
-            {InputMap.Player1DownKey, (int) Keys.Down},
-            {InputMap.Player1RightKey, (int) Keys.Right},
-            {InputMap.Player1LeftKey, (int) Keys.Left},
-            {InputMap.Player1SelectKey, (int) Keys.A},
-            {InputMap.Player1StartKey, (int) Keys.S},
-            {InputMap.Player1AKey, (int) Keys.X},
-            {InputMap.Player1BKey, (int) Keys.C},
-            {InputMap.Player1UpButton, (int) Buttons.Up},
-            {InputMap.Player1DownButton, (int) Buttons.Down},
-            {InputMap.Player1RightButton, (int) Buttons.Right},
-            {InputMap.Player1LeftButton, (int) Buttons.Left},
-            {InputMap.Player1SelectButton, (int) Buttons.Select},
-            {InputMap.Player1StartButton, (int) Buttons.Start},
-            {InputMap.Player1AButton, (int) Buttons.A},
-            {InputMap.Player1BButton, (int) Buttons.B},
-            {InputMap.Player2UpKey, (int) Keys.I},
-            {InputMap.Player2DownKey, (int) Keys.K},
-            {InputMap.Player2RightKey, (int) Keys.L},
-            {InputMap.Player2LeftKey, (int) Keys.J},
-            {InputMap.Player2SelectKey, (int) Keys.OemSemicolon},
-            {InputMap.Player2StartKey, (int) Keys.OemComma},
-            {InputMap.Player2AKey, (int) Keys.Enter},
-            {InputMap.Player2BKey, (int) Keys.RightShift},
-            {InputMap.Player2UpButton, (int) Buttons.Up},
-            {InputMap.Player2DownButton, (int) Buttons.Down},
-            {InputMap.Player2RightButton, (int) Buttons.Right},
-            {InputMap.Player2LeftButton, (int) Buttons.Left},
-            {InputMap.Player2SelectButton, (int) Buttons.Select},
-            {InputMap.Player2StartButton, (int) Buttons.Start},
-            {InputMap.Player2AButton, (int) Buttons.A},
-            {InputMap.Player2BButton, (int) Buttons.B}
-        };
-
+        protected static bool _mute;
+        protected static int lastVolume;
+        protected static int muteVolume;
         protected bool autoShutdown = false;
-        protected bool displayProgress;
-        public DisplayTargetLite displayTarget;
         protected TimeSpan elapsedTime = TimeSpan.Zero;
         protected int frameCounter;
-        protected GraphicsDeviceManager graphics;
-        public LoadService loadService;
-        protected RunnerMode mode;
-        protected bool resolutionInvalid = true;
-        public IServiceLocator ServiceManager { get; }
+        // protected RunnerMode mode;
         protected int timeDelta;
+        public IDisplayTarget displayTarget;
+        protected GraphicsDeviceManager graphics;
+        protected bool resolutionInvalid = true;
         protected IEngine tmpEngine;
 
         public GameRunner()
@@ -115,11 +53,8 @@ namespace PixelVision8.Runner
 
             graphics = new GraphicsDeviceManager(this);
 
-            ServiceManager = new ServiceManager();
             //            IsFixedTimeStep = true;
         }
-
-        
 
         // Default chips for the engine
         public virtual List<string> DefaultChips
@@ -134,23 +69,15 @@ namespace PixelVision8.Runner
                     typeof(FontChip).FullName,
                     typeof(ControllerChip).FullName,
                     typeof(DisplayChip).FullName,
-                    typeof(SfxrSoundChip).FullName,
-                    typeof(MusicChip).FullName
+                    typeof(SoundChip).FullName,
+                    // typeof(MusicChip).FullName
                 };
 
                 return chips;
             }
         }
 
-        protected virtual bool RunnerActive
-        {
-            get
-            {
-                if (autoShutdown && mode != RunnerMode.Loading) return IsActive;
-
-                return true;
-            }
-        }
+        protected virtual bool RunnerActive => IsActive;
 
         public virtual IEngine ActiveEngine { get; protected set; }
 
@@ -262,41 +189,9 @@ namespace PixelVision8.Runner
             // TODO this should be routed down to the game to show an error of some sort
         }
 
-        // TODO should this be moved over to the workspace?
-        /// <summary>
-        ///     This method goes through the list of files and prepares them for the load service
-        /// </summary>
-        /// <param name="tmpEngine"></param>
-        /// <param name="files"></param>
-        /// <param name="displayProgress"></param>
-        public virtual void ProcessFiles(IEngine tmpEngine, string[] files,
-            bool displayProgress = false)
-        {
-            this.displayProgress = displayProgress;
-
-            this.tmpEngine = tmpEngine;
-
-            ParseFiles(files);
-
-            if (!displayProgress)
-            {
-                loadService.LoadAll();
-                RunGame();
-            }
-        }
-
         protected virtual void ConfigureRunner()
         {
             ConfigureDisplayTarget();
-
-            //            CreateAudioPlayerFactory();
-
-            CreateLoadService();
-        }
-
-        public virtual void CreateLoadService()
-        {
-            loadService = new LoadService(new FileLoadHelper());
         }
 
         public virtual void ConfigureDisplayTarget()
@@ -314,7 +209,6 @@ namespace PixelVision8.Runner
         {
             resolutionInvalid = false;
         }
-
 
         protected override void Update(GameTime gameTime)
         {
@@ -376,62 +270,25 @@ namespace PixelVision8.Runner
             }
         }
 
-        public void ParseFiles(string[] files, IEngine engine, SaveFlags saveFlags,
-            bool autoLoad = true)
-        {
-            loadService.ParseFiles(files, engine, saveFlags);
-
-            if (autoLoad) loadService.LoadAll();
-        }
-
         public virtual void ConfigureEngine(Dictionary<string, string> metaData = null)
         {
-            // Detect if we should be preloading the archive
-            if (mode == RunnerMode.Booting || mode == RunnerMode.Error || mode == RunnerMode.Loading)
-                displayProgress = false;
-            else
-                displayProgress = true;
-
-            if (ActiveEngine != null) ShutdownActiveEngine();
-
-            // Pixel Vision 8 has a built in the JSON serialize/de-serialize. It allows chips to be dynamically 
-            // loaded by their full class name. Above we are using typeof() along with the FullName property to 
-            // get the string values for each chip. The engine will parse this string and automatically create 
-            // the chip then register it with the ChipManager. You can manually instantiate chips but its best 
-            // to let the engine do it for you.
             
             // It's now time to set up a new instance of the PixelVisionEngine. Here we are passing in the string 
             // names of the chips it should use.
             tmpEngine = CreateNewEngine(DefaultChips);
-
-            ConfigureServices();
-
-            // Pass all meta data into the engine instance
-            if (metaData != null)
-                foreach (var entry in metaData)
-                    tmpEngine.SetMetadata(entry.Key, entry.Value);
-
-            ConfigureKeyboard();
-
-            ConfiguredControllers();
+            // tmpEngine.Init();
+            
+            // ConfigureKeyboard();
+            ConfigureControllers();
         }
 
-        protected virtual void ConfigureKeyboard()
-        {
-            // Pass input mapping
-            foreach (var keyMap in defaultKeys)
-            {
-                var rawValue = keyMap.Value;
+        // protected virtual void ConfigureKeyboard()
+        // {
+        //     
+        //     // tmpEngine.ControllerChip.RegisterKeyInput();
+        // }
 
-                var keyValue = rawValue;
-
-                tmpEngine.SetMetadata(keyMap.Key.ToString(), keyValue.ToString());
-            }
-
-            tmpEngine.ControllerChip.RegisterKeyInput();
-        }
-
-        protected virtual void ConfiguredControllers()
+        protected virtual void ConfigureControllers()
         {
             tmpEngine.ControllerChip.RegisterControllers();
         }
@@ -446,14 +303,9 @@ namespace PixelVision8.Runner
             // TODO need to move this over to the workspace
         }
 
-        public IEngine CreateNewEngine(List<string> chips)
+        public virtual IEngine CreateNewEngine(List<string> chips)
         {
-            return new PixelVisionEngine(ServiceManager, chips.ToArray());
-        }
-
-        public virtual void ConfigureServices()
-        {
-            // TODO need to overwrite with any custom services you need the engine to load
+            return new PixelVisionEngineLite(chips.ToArray());
         }
 
         public virtual void ActivateEngine(IEngine engine)
@@ -492,25 +344,6 @@ namespace PixelVision8.Runner
             // Update the mouse to use the new monitor scale
             var scale = displayTarget.Scale;
             ActiveEngine.ControllerChip.MouseScale(scale.X, scale.Y);
-        }
-
-        protected void ParseFiles(string[] files, SaveFlags? flags = null)
-        {
-            if (!flags.HasValue)
-            {
-                flags = SaveFlags.System;
-                flags |= SaveFlags.Colors;
-                flags |= SaveFlags.ColorMap;
-                flags |= SaveFlags.Sprites;
-                flags |= SaveFlags.Tilemap;
-                flags |= SaveFlags.Fonts;
-                flags |= SaveFlags.Sounds;
-                flags |= SaveFlags.Music;
-                flags |= SaveFlags.SaveData;
-                flags |= SaveFlags.MetaSprites;
-            }
-
-            loadService.ParseFiles(files, tmpEngine, flags.Value);
         }
 
         public virtual void RunGame()

@@ -267,7 +267,7 @@ namespace PixelVision8.Runner.Services
             {
                 // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
-                return new MetaDataParser(file, _fileLoadHelper, targetEngine);
+                return new MetaDataParser(file, _fileLoadHelper, ((PixelVisionEngine)targetEngine));
             }
 
             return null;

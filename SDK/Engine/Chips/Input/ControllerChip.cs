@@ -268,78 +268,16 @@ namespace PixelVision8.Engine.Chips
         }
 
 
-        public void RegisterKeyInput()
+        public void RegisterKeyInput(Dictionary<Buttons, Keys> player1Map, Dictionary<Buttons, Keys> player2Map)
         {
             currentKeyboardState = Keyboard.GetState();
             previousKeyboardState = currentKeyboardState;
 
             var player1 = getPlayer(0);
-
-            var test = engine.GetMetadata(InputMap.Player1UpKey.ToString());
-
-            try
-            {
-                player1.KeyboardMap = new Dictionary<Buttons, Keys>
-                {
-                    {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player1UpKey.ToString()))},
-                    {
-                        Buttons.Left,
-                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player1LeftKey.ToString()))
-                    },
-                    {
-                        Buttons.Right,
-                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player1RightKey.ToString()))
-                    },
-                    {
-                        Buttons.Down,
-                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player1DownKey.ToString()))
-                    },
-                    {
-                        Buttons.Select,
-                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player1SelectKey.ToString()))
-                    },
-                    {
-                        Buttons.Start,
-                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player1StartKey.ToString()))
-                    },
-                    {Buttons.A, (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player1AKey.ToString()))},
-                    {Buttons.B, (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player1BKey.ToString()))}
-                };
-
-                var player2 = getPlayer(1);
-                //            player2.GamePadIndex = KEYBOARD_INDEX;
-                player2.KeyboardMap = new Dictionary<Buttons, Keys>
-                {
-                    {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player2UpKey.ToString()))},
-                    {
-                        Buttons.Left,
-                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player2LeftKey.ToString()))
-                    },
-                    {
-                        Buttons.Right,
-                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player2RightKey.ToString()))
-                    },
-                    {
-                        Buttons.Down,
-                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player2DownKey.ToString()))
-                    },
-                    {
-                        Buttons.Select,
-                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player2SelectKey.ToString()))
-                    },
-                    {
-                        Buttons.Start,
-                        (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player2StartKey.ToString()))
-                    },
-                    {Buttons.A, (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player2AKey.ToString()))},
-                    {Buttons.B, (Keys) Enum.Parse(typeof(Keys), engine.GetMetadata(InputMap.Player2BKey.ToString()))}
-                };
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            player1.KeyboardMap = player1Map;
+            
+            var player2 = getPlayer(1);
+            player2.KeyboardMap = player2Map;
         }
 
         public void RegisterControllers()

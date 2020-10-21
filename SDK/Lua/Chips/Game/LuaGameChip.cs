@@ -50,7 +50,7 @@ namespace PixelVision8.Engine.Chips
             try
             {
                 // Look to see if there are any lua services registered in the game engine
-                var luaService = engine.GetService(typeof(LuaService).FullName) as LuaService;
+                var luaService = ((PixelVisionEngine)engine).GetService(typeof(LuaService).FullName) as LuaService;
 
                 // Run the lua service to configure the script
                 luaService.ConfigureScript(LuaScript);

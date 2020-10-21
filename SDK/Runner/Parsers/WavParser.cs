@@ -27,7 +27,7 @@ namespace PixelVision8.Runner.Parsers
     public class WavParser : AbstractParser
     {
         public string[] files;
-        public SoundChip soundChip;
+        public ISoundChip soundChip;
         private IFileLoadHelper _fileLoadHelper;
         public WavParser(string[] files, IFileLoadHelper fileLoadHelper, IEngine engine)
         {

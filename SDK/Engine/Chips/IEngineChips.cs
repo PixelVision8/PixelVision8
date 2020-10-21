@@ -18,8 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine.Services;
-
 namespace PixelVision8.Engine.Chips
 {
     /// <summary>
@@ -51,7 +49,7 @@ namespace PixelVision8.Engine.Chips
         ///     The Sound Chip stores and manages playback of sound effects in the
         ///     game engine. This property offers direct access to it.
         /// </summary>
-        SoundChip SoundChip { get; set; }
+        ISoundChip SoundChip { get; set; }
 
         /// <summary>
         ///     The Sprite Chip stores all the sprite as pixel data for the engine.
@@ -82,13 +80,13 @@ namespace PixelVision8.Engine.Chips
         ///     The music chip represents a sequencer that can be used to play back
         ///     sound data for songs.
         /// </summary>
-        MusicChip MusicChip { get; set; }
+        // MusicChip MusicChip { get; set; }
 
         AbstractChip GetChip(string id, bool activeOnCreate = true);
 
-        void AddService(string id, IService service);
+        // void AddService(string id, IService service);
 
-        IService GetService(string id);
+        // IService GetService(string id);
 
         bool HasChip(string id);
 

@@ -18,6 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using PixelVision8.Engine.Chips;
@@ -38,7 +39,7 @@ namespace PixelVision8.Engine
         bool GetKeyUp(Keys key);
         bool GetKeyDown(Keys key);
         void MouseScale(float x, float y);
-        void RegisterKeyInput();
+        void RegisterKeyInput(Dictionary<Buttons, Keys> player1Map, Dictionary<Buttons, Keys> player2Map);
         void RegisterControllers();
         void SetInputText(char character, Keys key);
         bool IsConnected(int id);

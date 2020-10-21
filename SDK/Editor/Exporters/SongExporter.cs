@@ -36,16 +36,16 @@ namespace PixelVision8.Runner.Exporters
         public float mixdownTrackVolume = 0.6f;
         public float note_tick_s = 15.0f / 120.0f; // (15.0f/120.0f) = 120BPM sixteenth notes
         public float note_tick_s_odd;
-        private RawAudioData result;
+        private SfxrSynthChannel result;
 
 
         public float swing_rhythm_factor = 1.0f; //0.7f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
 
-        private RawAudioData[] trackresult;
+        private SfxrSynthChannel[] trackresult;
 
         //        int songdataCurrentPos = 0;
 
-        public SongExporter(string path, MusicChip musicChip, SoundChip soundChip, int[] patterns) : base(path)
+        public SongExporter(string path, MusicChip musicChip, ISoundChip soundChip, int[] patterns) : base(path)
         {
             // Rebuild the path by adding the active song name and wav extension
             fileName = path;
@@ -104,10 +104,10 @@ namespace PixelVision8.Runner.Exporters
             if (trackresult == null)
             {
                 // all the tracks we need - an array of audioclips that will be merged into result
-                trackresult = new RawAudioData[tcount];
+                trackresult = new SfxrSynthChannel[tcount];
 
                 for (var i = 0; i < tcount; i++)
-                    trackresult[i] = new RawAudioData(0, 1,
+                    trackresult[i] = new SfxrSynthChannel(0, 1,
                         preRenderBitrate);
             }
 
@@ -209,7 +209,7 @@ namespace PixelVision8.Runner.Exporters
         }
 
         // pre-rendered waveforms - OPTIMIZATION - SLOW SLOW SLOW - FIXME
-        public RawAudioData MixdownAudioClips(params RawAudioData[] clips)
+        public SfxrSynthChannel MixdownAudioClips(params SfxrSynthChannel[] clips)
         {
             if (clips == null || clips.Length == 0) return null;
 
@@ -253,7 +253,7 @@ namespace PixelVision8.Runner.Exporters
             // stereo
             //AudioClip result = AudioClip.Create("MixdownSTEREO", length / 2, 2, preRenderBitrate, false);
             // mono
-            var result = new RawAudioData(length / 2, 1, preRenderBitrate);
+            var result = new SfxrSynthChannel(length / 2, 1, preRenderBitrate);
             result.SetData(data); // TODO: we can get a warning here: data too large to fit: discarded x samples
             // the truncation can happen with a large sustain of a note that could go on after the song is over
             // one solution is to pad the end with 4sec of 0000s then maybe search and TRIM

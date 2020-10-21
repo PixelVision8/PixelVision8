@@ -71,28 +71,26 @@ namespace PixelVision8.Runner.Services
             // Step 7 (optional). Look for fonts to load
             if ((saveFlags & SaveFlags.Fonts) == SaveFlags.Fonts)
             {
-                // TODO this is not finished
-                // var fontChip = targetEngine.FontChip;
-                // var spriteChip = targetEngine.SpriteChip;
-                // var tmpTextureData = new PixelData(96, 64);
-                //
-                // var fonts = fontChip.fonts;
-                //
-                // foreach (var font in fonts)
-                // {
-                //     var name = font.Key;
-                //     var sprites = font.Value;
-                //
-                //     // Clear the texture
-                //     PixelDataUtil.Clear(tmpTextureData);
-                //     // tmpTextureData.Clear();
-                //
-                //     // Loop through all the characters and copy their texture data over
-                //     var total = sprites.Length;
-                //     for (var i = 0; i < total; i++)
-                //     {
-                //     }
-                // }
+                var fontChip = targetEngine.FontChip;
+                var spriteChip = targetEngine.SpriteChip;
+                var tmpTextureData = new TextureData(96, 64);
+
+                var fonts = fontChip.fonts;
+
+                foreach (var font in fonts)
+                {
+                    var name = font.Key;
+                    var sprites = font.Value;
+
+                    // Clear the texture
+                    tmpTextureData.Clear();
+
+                    // Loop through all the characters and copy their texture data over
+                    var total = sprites.Length;
+                    for (var i = 0; i < total; i++)
+                    {
+                    }
+                }
             }
 
             if ((saveFlags & SaveFlags.Tilemap) == SaveFlags.Tilemap)
@@ -104,7 +102,7 @@ namespace PixelVision8.Runner.Services
 
             // Step 9 (optional). Look for meta data and override the game
             if ((saveFlags & SaveFlags.Sounds) == SaveFlags.Sounds)
-                AddExporter(new SoundExporter(path + "sounds.json", targetEngine));
+                AddExporter(new SfxrSoundExporter(path + "sounds.json", targetEngine));
 
             // Step 10 (optional). Look for meta data and override the game
             if ((saveFlags & SaveFlags.Music) == SaveFlags.Music)
@@ -121,7 +119,7 @@ namespace PixelVision8.Runner.Services
             StartExport(useSteps);
         }
 
-        public void ExportSong(string path, MusicChip musicChip, SoundChip soundChip, int[] patterns)
+        public void ExportSong(string path, MusicChip musicChip, ISoundChip soundChip, int[] patterns)
         {
             Restart();
 

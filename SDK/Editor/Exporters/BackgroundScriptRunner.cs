@@ -44,7 +44,7 @@ namespace PixelVision8
             }
         }
 
-        public BackgroundScriptRunner(string scriptName, LuaServicePlus luaService, string[] args = null) : base(null)
+        public BackgroundScriptRunner(string scriptName, LuaService luaService, string[] args = null) : base(null)
         {
 
             LuaScript.DoFile(scriptName);

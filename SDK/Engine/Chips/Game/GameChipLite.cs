@@ -162,7 +162,7 @@ namespace PixelVision8.Engine.Chips
 
         protected DisplayChip DisplayChip => engine.DisplayChip;
 
-        protected SoundChip SoundChip => engine.SoundChip;
+        protected ISoundChip SoundChip => engine.SoundChip;
 
         protected SpriteChip SpriteChip => engine.SpriteChip;
 
@@ -2140,29 +2140,29 @@ namespace PixelVision8.Engine.Chips
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public string ReadMetadata(string key, string defaultValue = "undefined")
-        {
-            return engine.GetMetadata(key, defaultValue);
-        }
-
-        /// <summary>
-        ///     Writes meta data back into the game which can be read if the game reloads.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        public void WriteMetadata(string key, string value)
-        {
-            engine.SetMetadata(key, value);
-        }
-
-        public Dictionary<string, string> ReadAllMetadata()
-        {
-            var tmpMetadata = new Dictionary<string, string>();
-
-            engine.ReadAllMetadata(tmpMetadata);
-
-            return tmpMetadata;
-        }
+        // public string ReadMetadata(string key, string defaultValue = "undefined")
+        // {
+        //     return engine.GetMetadata(key, defaultValue);
+        // }
+        //
+        // /// <summary>
+        // ///     Writes meta data back into the game which can be read if the game reloads.
+        // /// </summary>
+        // /// <param name="key"></param>
+        // /// <param name="value"></param>
+        // public void WriteMetadata(string key, string value)
+        // {
+        //     engine.SetMetadata(key, value);
+        // }
+        //
+        // public Dictionary<string, string> ReadAllMetadata()
+        // {
+        //     var tmpMetadata = new Dictionary<string, string>();
+        //
+        //     engine.ReadAllMetadata(tmpMetadata);
+        //
+        //     return tmpMetadata;
+        // }
 
         #endregion
 

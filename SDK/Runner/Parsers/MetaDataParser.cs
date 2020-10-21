@@ -27,9 +27,9 @@ namespace PixelVision8.Runner.Parsers
 {
     public class MetaDataParser : JsonParser
     {
-        private readonly IEngine engine;
+        private readonly PixelVisionEngine engine;
 
-        public MetaDataParser(string filePath, IFileLoadHelper fileLoadHelper, IEngine target) : base(filePath, fileLoadHelper)
+        public MetaDataParser(string filePath, IFileLoadHelper fileLoadHelper, PixelVisionEngine target) : base(filePath, fileLoadHelper)
         {
             engine = target;
         }

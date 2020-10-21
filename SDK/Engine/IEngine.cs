@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
 using PixelVision8.Engine.Chips;
 
 namespace PixelVision8.Engine
@@ -32,7 +31,7 @@ namespace PixelVision8.Engine
     {
         string Name { get; set; }
 
-        Dictionary<string, string> MetaData { get; }
+        // Dictionary<string, string> MetaData { get; }
 
         /// <summary>
         ///     Reset the game in memory
@@ -47,24 +46,6 @@ namespace PixelVision8.Engine
         /// <summary>
         /// </summary>
         void Shutdown();
-
-        /// <summary>
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        string GetMetadata(string key, string defaultValue = "");
-
-        /// <summary>
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        void SetMetadata(string key, string value);
-
-        /// <summary>
-        /// </summary>
-        /// <param name="target"></param>
-        /// <param name="ignoreKeys"></param>
-        void ReadAllMetadata(Dictionary<string, string> target);
+        
     }
 }

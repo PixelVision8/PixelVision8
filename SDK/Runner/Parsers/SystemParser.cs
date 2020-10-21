@@ -32,11 +32,11 @@ namespace PixelVision8.Runner.Parsers
 {
     public class SystemParser : JsonParser
     {
-        protected IEngine Target;
+        protected PixelVisionEngine Target;
 
         public SystemParser(string filePath, IFileLoadHelper fileLoadHelper, IEngine target) : base(filePath, fileLoadHelper)
         {
-            Target = target;
+            Target = target as PixelVisionEngine;
         }
 
         public override void CalculateSteps()

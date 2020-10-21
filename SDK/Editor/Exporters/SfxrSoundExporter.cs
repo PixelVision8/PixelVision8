@@ -1,4 +1,4 @@
-﻿//   
+﻿﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -20,18 +20,22 @@
 
 using System.Text;
 using PixelVision8.Engine;
+using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Exporters
 {
-    public class MusicExporter : AbstractExporter
+    public class SfxrSoundExporter : AbstractExporter
     {
         private readonly IEngine targetEngine;
         private StringBuilder sb;
+        private SfxrSoundChip _sfxrSoundChip;
 
-        public MusicExporter(string fileName, IEngine targetEngine) : base(fileName)
+        public SfxrSoundExporter(string fileName, IEngine targetEngine) : base(fileName)
         {
             this.targetEngine = targetEngine;
+            
+            _sfxrSoundChip = targetEngine.SoundChip as SfxrSoundChip;
 
             //            CalculateSteps();
         }
@@ -52,45 +56,47 @@ namespace PixelVision8.Runner.Exporters
 
         private void SaveGameData()
         {
-            var musicChip = ((PixelVisionEngine)targetEngine).MusicChip;
+            var soundChip = targetEngine.SoundChip;
+
             sb.Append("\"version\":\"v2\",");
             JsonUtil.GetLineBreak(sb, 1);
 
-            sb.Append("\"songs\":[");
+            JsonUtil.indentLevel++;
+            sb.Append("\"sounds\": [");
 
-            var total = musicChip.songs.Length;
+            var total = soundChip.TotalSounds;
             for (var i = 0; i < total; i++)
             {
-                var songData = musicChip.songs[i];
-                if (songData != null)
-                {
-                    JsonUtil.indentLevel++;
-                    sb.Append(songData.SerializeData());
-                    JsonUtil.indentLevel--;
-                }
+                var sound = _sfxrSoundChip.ReadSound(i);
+                //                if (sound != null)
+                //                {
+                JsonUtil.indentLevel++;
 
+
+                //                {
+                //                    "name":"Melody",
+                //                    "settings":"0,.5,,.2,,.2,.3,.1266,,,,,,,,,,,,,,,,,,1,,,,,,"
+                //                },
+
+
+                sb.Append("{");
+                JsonUtil.GetLineBreak(sb, 1);
+
+                sb.Append("\"name\":\"");
+                sb.Append(sound.name);
+                sb.Append("\",");
+                JsonUtil.GetLineBreak(sb, 1);
+                sb.Append("\"settings\":");
+                sb.Append("\"" + sound.param + "\"");
+                JsonUtil.GetLineBreak(sb, 1);
+                sb.Append("}");
+
+                //                    sb.Append(sound.ReadSettings());
                 if (i < total - 1) sb.Append(",");
-            }
 
-            JsonUtil.indentLevel--;
-            JsonUtil.GetLineBreak(sb, 1);
-            sb.Append("],");
-
-            JsonUtil.GetLineBreak(sb, 1);
-            sb.Append("\"patterns\":[");
-
-            total = musicChip.trackerDataCollection.Length;
-            for (var i = 0; i < total; i++)
-            {
-                var songData = musicChip.trackerDataCollection[i];
-                if (songData != null)
-                {
-                    JsonUtil.indentLevel++;
-                    sb.Append(songData.SerializeData());
-                    JsonUtil.indentLevel--;
-                }
-
-                if (i < total - 1) sb.Append(",");
+                JsonUtil.GetLineBreak(sb, 1);
+                JsonUtil.indentLevel--;
+                //                }
             }
 
             JsonUtil.indentLevel--;
@@ -108,19 +114,20 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.indentLevel++;
 
             JsonUtil.GetLineBreak(sb);
-            sb.Append("\"MusicChip\":");
+            sb.Append("\"SoundChip\":");
 
             JsonUtil.GetLineBreak(sb);
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-            JsonUtil.indentLevel++;
+            //            JsonUtil.indentLevel++;
 
             currentStep++;
         }
 
         private void CloseStringBuilder()
         {
+            JsonUtil.indentLevel--;
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
 

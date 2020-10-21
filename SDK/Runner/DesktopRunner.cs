@@ -1,4 +1,4 @@
-﻿﻿//
+﻿//
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.
 //
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -34,15 +34,33 @@ using MoonSharp.VsCodeDebugger;
 using MoonSharp.VsCodeDebugger.DebuggerLogic;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Services;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Editors;
 using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Utils;
 using PixelVision8.Runner.Workspace;
+using Buttons = PixelVision8.Engine.Chips.Buttons;
 
 namespace PixelVision8.Runner
 
 {
+    public enum ErrorCode
+    {
+        Exception,
+        LoadError,
+        NoAutoRun
+    }
+
+    // Runner modes
+    public enum RunnerMode
+    {
+        Playing,
+        Booting,
+        Loading,
+        Error
+    }
+    
     /// <summary>
     ///     This is the main type for your game.
     /// </summary>
@@ -88,8 +106,21 @@ namespace PixelVision8.Runner
         protected string tmpPath;
         public WorkspaceService workspaceService;
         protected WorkspaceServicePlus workspaceServicePlus;
-
+        public LoadService loadService;
+        public IServiceLocator ServiceManager { get; }
+        protected RunnerMode mode;
+        protected bool displayProgress;
         private string bootDisk;
+        
+        protected override bool RunnerActive
+        {
+            get
+            {
+                if (autoShutdown && mode != RunnerMode.Loading) return IsActive;
+
+                return true;
+            }
+        }
         
         // Default path to where PV8 workspaces will go
         public DesktopRunner(string rootPath, string bootDisk = null)
@@ -98,6 +129,8 @@ namespace PixelVision8.Runner
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
             
+            ServiceManager = new ServiceManager();
+
             this.rootPath = rootPath;
             server = new MoonSharpVsCodeDebugServer(1985);
             server.Start();
@@ -131,11 +164,17 @@ namespace PixelVision8.Runner
         {
             get
             {
-                // Get the list of default chips
-                var chips = base.DefaultChips;
-
-                // Add the custom C# game chip
-                chips.Add(typeof(LuaDebugGameChip).FullName);
+                var chips = new List<string>
+                {
+                    typeof(ColorChip).FullName,
+                    typeof(SpriteChip).FullName,
+                    typeof(TilemapChip).FullName,
+                    typeof(FontChip).FullName,
+                    typeof(ControllerChip).FullName,
+                    typeof(DisplayChip).FullName,
+                    typeof(SfxrSoundChip).FullName,
+                    typeof(MusicChip).FullName
+                };
 
                 // Return the list of chips
                 return chips;
@@ -162,11 +201,12 @@ namespace PixelVision8.Runner
             }
         }
 
-        public override void CreateLoadService()
+        public void CreateLoadService()
         {
             loadService = new LoadService(new WorkspaceFileLoadHelper(workspaceService));
 
             Script.DefaultOptions.ScriptLoader = new ScriptLoaderUtil(workspaceService);
+            
         }
 
         public override void ConfigureDisplayTarget()
@@ -205,22 +245,153 @@ namespace PixelVision8.Runner
             Brightness(Convert.ToSingle(bios.ReadBiosData(CRTSettings.Brightness.ToString(), "100")) / 100F);
             Sharpness(Convert.ToSingle(bios.ReadBiosData(CRTSettings.Sharpness.ToString(), "-6")));
         }
-
-        protected override void ConfigureKeyboard()
+        
+        // public enum InputMap
+        // {
+        //     Player1UpKey,
+        //     Player1DownKey,
+        //     Player1RightKey,
+        //     Player1LeftKey,
+        //     Player1SelectKey,
+        //     Player1StartKey,
+        //     Player1AKey,
+        //     Player1BKey,
+        //     Player1UpButton,
+        //     Player1DownButton,
+        //     Player1RightButton,
+        //     Player1LeftButton,
+        //     Player1SelectButton,
+        //     Player1StartButton,
+        //     Player1AButton,
+        //     Player1BButton,
+        //     Player2UpKey,
+        //     Player2DownKey,
+        //     Player2RightKey,
+        //     Player2LeftKey,
+        //     Player2SelectKey,
+        //     Player2StartKey,
+        //     Player2AKey,
+        //     Player2BKey,
+        //     Player2UpButton,
+        //     Player2DownButton,
+        //     Player2RightButton,
+        //     Player2LeftButton,
+        //     Player2SelectButton,
+        //     Player2StartButton,
+        //     Player2AButton,
+        //     Player2BButton
+        // }
+        
+        public readonly Dictionary<string, int> defaultKeys = new Dictionary<string, int>
         {
+            {"Player1UpKey", (int) Keys.Up},
+            {"Player1DownKey", (int) Keys.Down},
+            {"Player1RightKey", (int) Keys.Right},
+            {"Player1LeftKey", (int) Keys.Left},
+            {"Player1SelectKey", (int) Keys.A},
+            {"Player1StartKey", (int) Keys.S},
+            {"Player1AKey", (int) Keys.X},
+            {"Player1BKey", (int) Keys.C},
+            {"Player1UpButton", (int) Buttons.Up},
+            {"Player1DownButton", (int) Buttons.Down},
+            {"Player1RightButton", (int) Buttons.Right},
+            {"Player1LeftButton", (int) Buttons.Left},
+            {"Player1SelectButton", (int) Buttons.Select},
+            {"Player1StartButton", (int) Buttons.Start},
+            {"Player1AButton", (int) Buttons.A},
+            {"Player1BButton", (int) Buttons.B},
+            {"Player2UpKey", (int) Keys.I},
+            {"Player2DownKey", (int) Keys.K},
+            {"Player2RightKey", (int) Keys.L},
+            {"Player2LeftKey", (int) Keys.J},
+            {"Player2SelectKey", (int) Keys.OemSemicolon},
+            {"Player2StartKey", (int) Keys.OemComma},
+            {"Player2AKey", (int) Keys.Enter},
+            {"Player2BKey", (int) Keys.RightShift},
+            {"Player2UpButton", (int) Buttons.Up},
+            {"Player2DownButton", (int) Buttons.Down},
+            {"Player2RightButton", (int) Buttons.Right},
+            {"Player2LeftButton", (int) Buttons.Left},
+            {"Player2SelectButton", (int) Buttons.Select},
+            {"Player2StartButton", (int) Buttons.Start},
+            {"Player2AButton", (int) Buttons.A},
+            {"Player2BButton", (int) Buttons.B}
+        };
+        
+        protected void ConfigureKeyboard()
+        {
+            var targetEngine = tmpEngine as PixelVisionEngine;
+            
             // Pass input mapping
             foreach (var keyMap in defaultKeys)
             {
-                var rawValue = Convert.ToInt32(bios.ReadBiosData(keyMap.Key.ToString(), keyMap.Value.ToString(), true));
-                //                if (rawValue is long)
-                //                    rawValue = Convert.ToInt32(rawValue);
-
+                var rawValue = Convert.ToInt32(bios.ReadBiosData(keyMap.Key, keyMap.Value.ToString(), true));
                 var keyValue = rawValue;
 
-                tmpEngine.SetMetadata(keyMap.Key.ToString(), keyValue.ToString());
+                targetEngine.SetMetadata(keyMap.Key, keyValue.ToString());
             }
 
-            tmpEngine.ControllerChip.RegisterKeyInput();
+            // base.ConfigureKeyboard();
+            
+            
+            var player1KeyboardMap = new Dictionary<Buttons, Keys>
+            {
+                {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1UpKey.ToString()))},
+                {
+                    Buttons.Left,
+                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1LeftKey.ToString()))
+                },
+                {
+                    Buttons.Right,
+                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1RightKey.ToString()))
+                },
+                {
+                    Buttons.Down,
+                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1DownKey.ToString()))
+                },
+                {
+                    Buttons.Select,
+                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1SelectKey.ToString()))
+                },
+                {
+                    Buttons.Start,
+                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1StartKey.ToString()))
+                },
+                {Buttons.A, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1AKey.ToString()))},
+                {Buttons.B, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1BKey.ToString()))}
+            };
+            
+            // var player2 = getPlayer(1);
+            //            player2.GamePadIndex = KEYBOARD_INDEX;
+            var player2KeyboardMap = new Dictionary<Buttons, Keys>
+            {
+                {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2UpKey.ToString()))},
+                {
+                    Buttons.Left,
+                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2LeftKey.ToString()))
+                },
+                {
+                    Buttons.Right,
+                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2RightKey.ToString()))
+                },
+                {
+                    Buttons.Down,
+                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2DownKey.ToString()))
+                },
+                {
+                    Buttons.Select,
+                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2SelectKey.ToString()))
+                },
+                {
+                    Buttons.Start,
+                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2StartKey.ToString()))
+                },
+                {Buttons.A, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2AKey.ToString()))},
+                {Buttons.B, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2BKey.ToString()))}
+            };
+            
+            tmpEngine.ControllerChip.RegisterKeyInput(player1KeyboardMap, player2KeyboardMap);
+
         }
 
         public override void ActivateEngine(IEngine engine)
@@ -302,6 +473,8 @@ namespace PixelVision8.Runner
             systemName = bios.ReadBiosData("SystemName", "PixelVision8", true);
 
             base.ConfigureRunner();
+            
+            CreateLoadService();
 
             // TODO This may be a string
             Volume(MathHelper.Clamp(
@@ -557,8 +730,6 @@ namespace PixelVision8.Runner
                 {
                     // Only take a screenshot when one isn't being saved
                     if (!screenShotActive)
-                        //                            Console.WriteLine("Take Picture");
-
                         screenShotActive = screenshotService.TakeScreenshot(ActiveEngine);
                 }
                 else if (controllerChip.GetKeyUp(actionKeys[ActionKeys.RecordKey]))
@@ -911,8 +1082,13 @@ namespace PixelVision8.Runner
                         {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message}}, e);
             }
         }
+        
+        public override IEngine CreateNewEngine(List<string> chips)
+        {
+            return new PixelVisionEngine(ServiceManager, chips.ToArray());
+        }
 
-        public override void ConfigureEngine(Dictionary<string, string> metaData = null)
+        public void ConfigureEngine(Dictionary<string, string> metaData = null)
         {
             LuaMode = Array.IndexOf(GameFiles, "code.cs") == -1;
             if (LuaMode)
@@ -922,23 +1098,23 @@ namespace PixelVision8.Runner
                 var chips = DefaultChips;
 
                 // Add the Lua game chip
-                // if(LuaMode)
                 chips.Add(typeof(LuaGameChip).FullName);
 
                 // TODO need to move this to a base config engine method so the parent can be called
 
                 // Had to disable the active game manually before this is called so copied base logic here
-                tmpEngine = CreateNewEngine(DefaultChips);
+                tmpEngine = CreateNewEngine(chips);
 
+                // tmpEngine.Init();
+                
                 ConfigureServices();
 
                 // Pass all meta data into the engine instance
                 if (metaData != null)
                     foreach (var entry in metaData)
-                        tmpEngine.SetMetadata(entry.Key, entry.Value);
+                        ((PixelVisionEngine)tmpEngine).SetMetadata(entry.Key, entry.Value);
 
-                ConfigureKeyboard();
-                ConfiguredControllers();
+                
 
                 // Get a reference to the    Lua game
                 var game = tmpEngine.GameChip as LuaGameChip;
@@ -1061,11 +1237,15 @@ namespace PixelVision8.Runner
                 // Pass all meta data into the engine instance
                 if (metaData != null)
                     foreach (var entry in metaData)
-                        tmpEngine.SetMetadata(entry.Key, entry.Value);
+                        ((PixelVisionEngine)tmpEngine).SetMetadata(entry.Key, entry.Value);
 
-                ConfigureKeyboard();
-                ConfiguredControllers();
+                // ConfigureKeyboard();
+                // ConfiguredControllers();
             }
+            
+            // TODO moved this out of the normal configuration order so make sure this still makes sense here
+            ConfigureKeyboard();
+            ConfigureControllers();
         }
 
         protected string OperatingSystem()
@@ -1294,14 +1474,14 @@ namespace PixelVision8.Runner
             base.OnExiting(sender, args);
         }
 
-        public override void ConfigureServices()
+        public void ConfigureServices()
         {
             CreateLuaService();
 
             ServiceManager.AddService(typeof(GameDataExportService).FullName, ExportService);
         }
 
-        public override void ProcessFiles(IEngine tmpEngine, string[] files, bool displayProgress = false)
+        public void ProcessFiles(IEngine tmpEngine, string[] files, bool displayProgress = false)
         {
             // Look for a CS file
             var csFilePaths = files.Where(p => p.EndsWith(".cs")).ToArray();
@@ -1309,9 +1489,47 @@ namespace PixelVision8.Runner
                 //Roslyn mode. Build the game. TODO: correct to use workspace paths. Hardcoded for Proof-Of-Concept
                 CompileFromSource(csFilePaths);
 
-            base.ProcessFiles(tmpEngine, files, displayProgress);
-        }
+            // base.ProcessFiles(tmpEngine, files, displayProgress);
+            this.displayProgress = displayProgress;
 
+            this.tmpEngine = tmpEngine;
+
+            ParseFiles(files);
+
+            if (!displayProgress)
+            {
+                loadService.LoadAll();
+                RunGame();
+            }
+        }
+        
+        public void ParseFiles(string[] files, IEngine engine, SaveFlags saveFlags,
+            bool autoLoad = true)
+        {
+            loadService.ParseFiles(files, engine, saveFlags);
+
+            if (autoLoad) loadService.LoadAll();
+        }
+        
+        protected void ParseFiles(string[] files, SaveFlags? flags = null)
+        {
+            if (!flags.HasValue)
+            {
+                flags = SaveFlags.System;
+                flags |= SaveFlags.Colors;
+                flags |= SaveFlags.ColorMap;
+                flags |= SaveFlags.Sprites;
+                flags |= SaveFlags.Tilemap;
+                flags |= SaveFlags.Fonts;
+                flags |= SaveFlags.Sounds;
+                flags |= SaveFlags.Music;
+                flags |= SaveFlags.SaveData;
+                flags |= SaveFlags.MetaSprites;
+            }
+
+            loadService.ParseFiles(files, tmpEngine, flags.Value);
+        }
+        
         public void CompileFromSource(string[] files)
         {
             var total = files.Length;
@@ -1389,9 +1607,10 @@ namespace PixelVision8.Runner
                 loadedAsm.GetType("PixelVisionRoslyn.RoslynGameChip"); //This type much match what's in code.cs.
             //Could theoretically iterate over types until once that inherits from GameChip is found, but this Proof of Concept demonstrates the baseline feature.
 
-            // tmpEngine.GameChip.Deactivate(); //Remove the previous LuaGameChip.
-            tmpEngine.ActivateChip("GameChip", (AbstractChip) Activator.CreateInstance(roslynGameChipType))
-                ; //Inserts the DLL's GameChip descendent into the engine.
+            if (roslynGameChipType != null)
+            {
+                tmpEngine.ActivateChip("GameChip", (AbstractChip) Activator.CreateInstance(roslynGameChipType)); //Inserts the DLL's GameChip descendent into the engine.
+            }
         }
 
         public virtual void CreateLuaService()
@@ -1400,7 +1619,7 @@ namespace PixelVision8.Runner
             if (luaService != null)
                 return;
 
-            luaService = new LuaServicePlus(this);
+            luaService = new LuaService(this);
 
             // Register Lua Service
             ServiceManager.AddService(typeof(LuaService).FullName, luaService);
@@ -1426,7 +1645,7 @@ namespace PixelVision8.Runner
             var metaData = lastGameRef.Value;
 
             // Merge values from the active game
-            foreach (var entry in ActiveEngine.MetaData)
+            foreach (var entry in ((PixelVisionEngine)ActiveEngine).MetaData)
                 if (metaData.ContainsKey(entry.Key))
                     metaData[entry.Key] = entry.Value;
                 else

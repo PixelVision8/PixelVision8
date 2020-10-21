@@ -271,7 +271,7 @@ namespace PixelVision8.Runner.Chips
             //workspace.InvalidateSave();
         }
 
-        public void GenerateSong(IEngine chips)
+        public void GenerateSong(PixelVisionEngine chips)
         {
             float noteChangeBoost; // more likely to play a note on beat one of each bar
             var restHere = true; // if true, silence

@@ -72,7 +72,6 @@
     <Compile Include="SDK/Engine/Chips/Audio/SoundChannel.cs" />
     <Compile Include="SDK/Engine/Chips/Audio/ISoundChip.cs" />
     <Compile Include="SDK/Engine/Chips/AbstractChip.cs" />
-    <Compile Include="SDK/Engine/Chips/Graphics/IDisplay.cs" />
     <Compile Include="SDK/Engine/Chips/Graphics/SpriteChip.cs" />
     <Compile Include="SDK/Engine/Chips/Graphics/TilemapChip.cs" />
     <Compile Include="SDK/Engine/Chips/Graphics/ColorChip.cs" />
