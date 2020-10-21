@@ -112,20 +112,20 @@ namespace PixelVision8.Engine.Chips
             }
 
             // Sort sprite draw calls
-            SpriteDrawRequests.Sort((x, y) => x.priority.CompareTo(y.priority));
-
-            for (int i = 0; i < SpriteDrawRequests.Count; i++)
-            {
-                var request = SpriteDrawRequests[i];
-                var tmpPixelData = new int[64];
-                SpriteChip.ReadSpriteAt(request.id, ref tmpPixelData);
-                
-                CopyDrawRequestPixelData(tmpPixelData, request.x, request.y, 8, 8, request.flipH, request.flipV, request.colorOffset);
-
-                SpriteDrawRequestPool.Push(request);
-            }
-
-            SpriteDrawRequests.Clear();
+            // SpriteDrawRequests.Sort((x, y) => x.priority.CompareTo(y.priority));
+            //
+            // for (int i = 0; i < SpriteDrawRequests.Count; i++)
+            // {
+            //     var request = SpriteDrawRequests[i];
+            //     var tmpPixelData = new int[64];
+            //     SpriteChip.ReadSpriteAt(request.id, ref tmpPixelData);
+            //     
+            //     CopyDrawRequestPixelData(tmpPixelData, request.x, request.y, 8, 8, request.flipH, request.flipV, request.colorOffset);
+            //
+            //     SpriteDrawRequestPool.Push(request);
+            // }
+            //
+            // SpriteDrawRequests.Clear();
 
             // Reset Draw Requests after they have been processed
             ResetDrawCalls();
@@ -180,31 +180,31 @@ namespace PixelVision8.Engine.Chips
             DrawRequestPixelDataLayers[layer].Add(draw);
         }
 
-        public List<DrawRequest> SpriteDrawRequests = new List<DrawRequest>();
+        // public List<DrawRequest> SpriteDrawRequests = new List<DrawRequest>();
 
-        public void DrawSprite(int id, int x, int y, bool flipH, bool flipV, byte priority, int colorOffset)
-        {
-
-            var request = NextSpriteDrawRequest();
-
-            if (request.HasValue)
-            {
-                var drawCall = request.Value;
-                drawCall.id = id;
-                drawCall.x = x;
-                drawCall.y = y;
-                drawCall.flipH = flipH;
-                drawCall.flipV = flipV;
-                drawCall.priority = priority;
-                drawCall.colorOffset = colorOffset;
-
-                SpriteDrawRequests.Add(drawCall);
-
-                // Used by scan line draw
-                // OAMEntries.Add(drawCall);
-            }
-
-        }
+        // public void DrawSprite(int id, int x, int y, bool flipH, bool flipV, byte priority, int colorOffset)
+        // {
+        //
+        //     var request = NextSpriteDrawRequest();
+        //
+        //     if (request.HasValue)
+        //     {
+        //         var drawCall = request.Value;
+        //         drawCall.id = id;
+        //         drawCall.x = x;
+        //         drawCall.y = y;
+        //         drawCall.flipH = flipH;
+        //         drawCall.flipV = flipV;
+        //         drawCall.priority = priority;
+        //         drawCall.colorOffset = colorOffset;
+        //
+        //         SpriteDrawRequests.Add(drawCall);
+        //
+        //         // Used by scan line draw
+        //         // OAMEntries.Add(drawCall);
+        //     }
+        //
+        // }
 
         /// <summary>
         ///     Changes the resolution of the display.
@@ -290,21 +290,21 @@ namespace PixelVision8.Engine.Chips
 
         protected Stack<DrawRequest> SpriteDrawRequestPool;
 
-        public DrawRequest? NextSpriteDrawRequest()
-        {
-
-            if (SpriteDrawRequestPool.Count > 0)
-                return SpriteDrawRequestPool.Pop();
-
-            // var request = new DrawRequest();
-            //
-            // if (SpriteDrawRequestPool.Count > 0)
-            //     request.pixelData = DrawRequestPixelDataPool.Pop();
-            // else
-            //     request.pixelData = new int[0];
-
-            return null;
-        }
+        // public DrawRequest? NextSpriteDrawRequest()
+        // {
+        //
+        //     if (SpriteDrawRequestPool.Count > 0)
+        //         return SpriteDrawRequestPool.Pop();
+        //
+        //     // var request = new DrawRequest();
+        //     //
+        //     // if (SpriteDrawRequestPool.Count > 0)
+        //     //     request.pixelData = DrawRequestPixelDataPool.Pop();
+        //     // else
+        //     //     request.pixelData = new int[0];
+        //
+        //     return null;
+        // }
 
         int _total;
         int _srcX;

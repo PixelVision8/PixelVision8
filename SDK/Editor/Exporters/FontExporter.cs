@@ -41,7 +41,7 @@ namespace PixelVision8.Runner.Exporters
             var height = 64; //spriteChip.textureHeight;
 
 
-            var textureData = new TextureData(width, height);
+            var textureData = new PixelData(width, height);
 
             //            var pixelData = new int[width * height];
 
@@ -60,9 +60,7 @@ namespace PixelVision8.Runner.Exporters
                 var pos = MathUtil.CalculatePosition(i, maxCol);
 
                 spriteChip.ReadSpriteAt(i, ref tmpPixelData);
-
-                textureData.SetPixels(pos.X * spriteChip.width, pos.Y * spriteChip.height, spriteChip.width,
-                    spriteChip.height, tmpPixelData);
+                PixelDataUtil.SetPixels(textureData, pos.X * spriteChip.width, pos.Y * spriteChip.height, spriteChip.width, spriteChip.height, tmpPixelData);
             }
 
             // var convertedColors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);

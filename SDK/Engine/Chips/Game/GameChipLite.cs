@@ -21,7 +21,6 @@
 #region
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using PixelVision8.Engine.Utils; 
@@ -69,7 +68,7 @@ namespace PixelVision8.Engine.Chips
     public class GameChipLite : AbstractChip, IUpdate, IDraw
     {
         // protected int _saveSlots;
-        protected TextureData cachedTileMap;
+        protected PixelData cachedTileMap;
         public int fps;
         // public Dictionary<string, string> savedData = new Dictionary<string, string>();
 
@@ -250,7 +249,7 @@ namespace PixelVision8.Engine.Chips
             _spriteSize.Y = SpriteChip.height;
 
             // Create a new canvas for the tilemap cache
-            if (cachedTileMap == null) cachedTileMap = new TextureData(DisplayChip.Width, DisplayChip.Height);
+            if (cachedTileMap == null) cachedTileMap = new PixelData(DisplayChip.Width, DisplayChip.Height);
 
             // Build tilemap cache
             RebuildCache(cachedTileMap);
@@ -1599,7 +1598,8 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public void RebuildTilemap()
         {
-            cachedTileMap.Clear();
+            PixelDataUtil.Clear(cachedTileMap);
+            // cachedTileMap.Clear();
 
             TilemapChip.InvalidateAll();
         }
@@ -1706,14 +1706,14 @@ namespace PixelVision8.Engine.Chips
         ///     the screen's resolution.
         /// </summary>
         /// <ignore />
-        protected void RebuildCache(TextureData targetTextureData)
+        protected void RebuildCache(PixelData targetTextureData)
         {
             if (TilemapChip.invalid != true) return;
 
             var realWidth = SpriteChip.width * TilemapChip.columns;
             var realHeight = SpriteChip.height * TilemapChip.rows;
 
-            if (realWidth != cachedTileMap.width || realHeight != cachedTileMap.height)
+            if (realWidth != cachedTileMap.Width || realHeight != cachedTileMap.Height)
                 cachedTileMap.Resize(realWidth, realHeight);
 
             var tileSize = SpriteSize();
@@ -1752,8 +1752,8 @@ namespace PixelVision8.Engine.Chips
 
                     //                    targetTextureData.DrawSprite(spriteID, x, y);
                     // Draw the pixel data into the cachedTilemap
-                    targetTextureData.MergePixels(x, y, tileSize.X, tileSize.Y, tmpPixelData, false, false,
-                        tile.colorOffset, false);
+                    
+                    PixelDataUtil.MergePixels(targetTextureData, x, y, tileSize.X, tileSize.Y, tmpPixelData, false, false, tile.colorOffset, false);
 
                     // totalTilesUpdated++;
                 }
@@ -1767,7 +1767,7 @@ namespace PixelVision8.Engine.Chips
         {
             if (TilemapChip.invalid) RebuildCache(cachedTileMap);
 
-            cachedTileMap.CopyPixels(ref pixelData, x, y, blockWidth, blockHeight);
+            PixelDataUtil.CopyPixels(ref pixelData, cachedTileMap, x, y, blockWidth, blockHeight);
         }
 
         protected void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight,
@@ -1782,10 +1782,10 @@ namespace PixelVision8.Engine.Chips
 
             // Todo need to go through and draw to the tilemap cache but ignore transparent pixels
             if (pixels == null)
-                cachedTileMap.Clear(colorOffset, x, y, blockWidth, blockHeight);
+                PixelDataUtil.Clear(cachedTileMap, colorOffset, x, y, blockWidth, blockHeight);
             else
                 // Set pixels on the tilemap cache
-                cachedTileMap.MergePixels(x, y, blockWidth, blockHeight, pixels, flipH, flipV, colorOffset);
+                PixelDataUtil.MergePixels(cachedTileMap, x, y, blockWidth, blockHeight, pixels, flipH, flipV, colorOffset);
 
             //            Invalidate();
         }
@@ -1816,90 +1816,7 @@ namespace PixelVision8.Engine.Chips
         // }
 
         #endregion
-
-
-        #region Math
-
-        /// <summary>
-        ///     Limits a value between a minimum and maximum.
-        /// </summary>
-        /// <param name="val">
-        ///     The value to clamp.
-        /// </param>
-        /// <param name="min">
-        ///     The minimum the value can be.
-        /// </param>
-        /// <param name="max">
-        ///     The maximum the value can be.
-        /// </param>
-        /// <returns>
-        ///     Returns an int within the min and max range.
-        /// </returns>
-        // public int Clamp(int val, int min, int max)
-        // {
-        //     return MathHelper.Clamp(val, min, max);
-        // }
-
-        /// <summary>
-        ///     Repeats a value based on the max. When the value is greater than the max, it starts
-        ///     over at 0 plus the remaining value.
-        /// </summary>
-        /// <param name="val">
-        ///     The value to repeat.
-        /// </param>
-        /// <param name="max">
-        ///     The maximum the value can be.
-        /// </param>
-        /// <returns>
-        ///     Returns an int that is never less than 0 or greater than the max.
-        /// </returns>
-        // public int Repeat(int val, int max)
-        // {
-        //     return MathUtil.Repeat(val, max);
-        // }
-
-        /// <summary>
-        ///     Converts an X and Y position into an index. This is useful for finding positions in 1D
-        ///     arrays that represent 2D data.
-        /// </summary>
-        /// <param name="x">
-        ///     The x position.
-        /// </param>
-        /// <param name="y">
-        ///     The y position.
-        /// </param>
-        /// <param name="width">
-        ///     The width of the data if it was represented as a 2D array.
-        /// </param>
-        /// <returns>
-        ///     Returns an int value representing the X and Y position in a 1D array.
-        /// </returns>
-        // public int CalculateIndex(int x, int y, int width)
-        // {
-        //     // int index;
-        //     // index = x + y * width;
-        //     return MathUtil.CalculateIndex(x, y, width);
-        // }
-
-        /// <summary>
-        ///     Converts an index into an X and Y position to help when working with 1D arrays that
-        ///     represent 2D data.
-        /// </summary>
-        /// <param name="index">
-        ///     The position of the 1D array.
-        /// </param>
-        /// <param name="width">
-        ///     The width of the data if it was a 2D array.
-        /// </param>
-        /// <returns>
-        ///     Returns a vector representing the X and Y position of an index in a 1D array.
-        /// </returns>
-        // public Point CalculatePosition(int index, int width)
-        // {
-        //     return MathUtil.CalculatePosition(index, width);
-        // }
-
-        #endregion
+        
 
         #region Utils
         
@@ -1914,134 +1831,8 @@ namespace PixelVision8.Engine.Chips
         {
             return CurrentSprites;
         }
-
-        /// <summary>
-        ///     This allows you to call the TextUtil's WordWrap helper to wrap a string of text to a specified character
-        ///     width. Since the FontChip only knows how to render characters as sprites, this can be used to calculate
-        ///     blocks of text then each line can be rendered with a DrawText() call.
-        /// </summary>
-        /// <param name="text">The string of text to wrap.</param>
-        /// <param name="width">The width of characters to wrap each line of text.</param>
-        /// <returns></returns>
-        // public string WordWrap(string text, int width)
-        // {
-        //
-        //     if (text == null)
-        //     {
-        //         return "";
-        //     }
-        //     
-        //     int pos, next;
-        //
-        //     // Reset the string builder
-        //     _sb.Clear();
-        //
-        //     // Lucidity check
-        //     if (width < 1) return text;
-        //
-        //     // Parse each line of text
-        //     for (pos = 0; pos < text.Length; pos = next)
-        //     {
-        //         // Find end of line
-        //         var eol = text.IndexOf(newline, pos);
-        //         if (eol == -1)
-        //             next = eol = text.Length;
-        //         else
-        //             next = eol + newline.Length;
-        //
-        //         // Copy this line of text, breaking into smaller lines as needed
-        //         if (eol > pos)
-        //             do
-        //             {
-        //                 var len = eol - pos;
-        //                 if (len > width) len = BreakLine(text, pos, width);
-        //
-        //                 _sb.Append(text, pos, len);
-        //                 _sb.Append(newline);
-        //
-        //                 // Trim whitespace following break
-        //                 pos += len;
-        //                 while (pos < eol && char.IsWhiteSpace(text[pos])) pos++;
-        //             } while (eol > pos);
-        //         else
-        //             _sb.Append(newline); // Empty line
-        //     }
-        //
-        //     return _sb.ToString();
-        // }
-
-        /// <summary>
-        ///     Locates position to break the given line so as to avoid
-        ///     breaking words.
-        /// </summary>
-        /// <param name="text">String that contains line of text</param>
-        /// <param name="pos">Index where line of text starts</param>
-        /// <param name="max">Maximum line length</param>
-        /// <returns>The modified line length</returns>
-        // protected int BreakLine(string text, int pos, int max)
-        // {
-        //     // Find last whitespace in line
-        //     var i = max;
-        //     while (i >= 0 && !char.IsWhiteSpace(text[pos + i])) i--;
-        //
-        //     // If no whitespace found, break at maximum length
-        //     if (i < 0) return max;
-        //
-        //     // Find start of whitespace
-        //     while (i >= 0 && char.IsWhiteSpace(text[pos + i])) i--;
-        //
-        //     // Return length of text before whitespace
-        //     return i + 1;
-        // }
-
-        /// <summary>
-        ///     This calls the TextUtil's SplitLines() helper to convert text with line breaks (\n) into a collection of
-        ///     lines. This can be used in conjunction with the WordWrap() helper to render large blocks of text line by
-        ///     line with the DrawText() API.
-        /// </summary>
-        /// <param name="str">The string of text to split.</param>
-        /// <returns>Returns an array of strings representing each line of text.</returns>
-        // public string[] SplitLines(string str)
-        // {
-        //     var lines = str.Split(
-        //         new[] {newline},
-        //         StringSplitOptions.None
-        //     );
-        //
-        //     return lines;
-        // }
-
-        /// <summary>
-        ///     Fast calculation to get the distance between two points
-        /// </summary>
-        /// <param name="x0"></param>
-        /// <param name="y0"></param>
-        /// <param name="x1"></param>
-        /// <param name="y1"></param>
-        /// <returns></returns>
-        // public int CalculateDistance(int x0, int y0, int x1, int y1)
-        // {
-        //     var dx = x1 - x0;
-        //     var dy = y1 - y0;
-        //     var distance = Math.Sqrt(dx * dx + dy * dy);
-        //     return (int) distance;
-        // }
-
-        // public int[] BitArray(int value)
-        // {
-        //     var bits = new BitArray(BitConverter.GetBytes(value));
-        //
-        //     var intArray = new int[bits.Length];
-        //
-        //     bits.CopyTo(intArray, 0);
-        //
-        //     return intArray;
-        // }
-
+        
         #endregion
-
-
-        #region Experimental APIs
 
         /// <summary>
         ///     This method will automatically calculate the start color offset for palettes in the color chip.
@@ -2054,180 +1845,5 @@ namespace PixelVision8.Engine.Chips
             return 128 + MathUtil.Clamp(paletteID, 0, 7) * 16 + MathUtil.Clamp(paletteColorID, 0, ColorsPerSprite() - 1);
         }
         
-        // public SpriteCollection MetaSprite(int id, SpriteCollection spriteCollection = null)
-        // {
-        //     if (spriteCollection != null)
-        //         metaSprites[id] = spriteCollection;
-        //     else if (metaSprites[id] == null)
-        //         metaSprites[id] =
-        //             new SpriteCollection(
-        //                 "MetaSprite" + id.ToString().PadLeft(metaSprites.Length.ToString().Length, '0'))
-        //             {
-        //                 SpriteWidth = SpriteSize().X,
-        //                 SpriteHeight = SpriteSize().Y,
-        //                 SpriteMax = TotalSprites(),
-        //                 MaxBoundary = new Rectangle(metaSpriteMaxBounds.X, metaSpriteMaxBounds.Y,
-        //                     metaSpriteMaxBounds.Width - SpriteSize().X,
-        //                     metaSpriteMaxBounds.Height - SpriteSize().Y)
-        //             };
-        //
-        //     return metaSprites[id];
-        // }
-        
-
-        // public void DrawMetaSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
-        //     DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
-        //     Rectangle? bounds = null)
-        // {
-        //     // This draw method doesn't support background or tile draw modes
-        //     if (drawMode == DrawMode.Background || drawMode == DrawMode.Tile) return;
-        //
-        //     // Get the sprite data for the meta sprite
-        //     tmpSpritesData = metaSprites[id].Sprites;
-        //     total = tmpSpritesData.Count;
-        //
-        //     // Loop through each of the sprites
-        //     for (var i = 0; i < total; i++)
-        //     {
-        //         _currentSpriteData = tmpSpritesData[i];
-        //
-        //         if (!SpriteChip.IsEmptyAt(_currentSpriteData.Id))
-        //         {
-        //             // Get sprite values
-        //             startX = _currentSpriteData.X;
-        //             startY = _currentSpriteData.Y;
-        //             _tmpFlipH = _currentSpriteData.FlipH;
-        //             _tmpFlipV = _currentSpriteData.FlipV;
-        //
-        //             // Get the width and height of the meta sprite's bounds
-        //             _width = metaSprites[id].Bounds.Width;
-        //             height = metaSprites[id].Bounds.Height;
-        //
-        //             if (flipH)
-        //             {
-        //                 startX = _width - startX - SpriteSize().X;
-        //                 _tmpFlipH = !_tmpFlipH;
-        //             }
-        //
-        //             if (flipV)
-        //             {
-        //                 startY = height - startY - SpriteSize().Y;
-        //                 _tmpFlipV = !_tmpFlipV;
-        //             }
-        //
-        //             startX += x;
-        //             startY += y;
-        //
-        //             DrawSprite(
-        //                 _currentSpriteData.Id,
-        //                 startX,
-        //                 startY,
-        //                 _tmpFlipH,
-        //                 _tmpFlipV,
-        //                 drawMode,
-        //                 _currentSpriteData.ColorOffset + colorOffset,
-        //                 onScreen,
-        //                 useScrollPos,
-        //                 bounds
-        //             );
-        //         }
-        //     }
-        // }
-
-        /// <summary>
-        ///     Reads the meta data that was passed into the game when it was loaded.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        // public string ReadMetadata(string key, string defaultValue = "undefined")
-        // {
-        //     return engine.GetMetadata(key, defaultValue);
-        // }
-        //
-        // /// <summary>
-        // ///     Writes meta data back into the game which can be read if the game reloads.
-        // /// </summary>
-        // /// <param name="key"></param>
-        // /// <param name="value"></param>
-        // public void WriteMetadata(string key, string value)
-        // {
-        //     engine.SetMetadata(key, value);
-        // }
-        //
-        // public Dictionary<string, string> ReadAllMetadata()
-        // {
-        //     var tmpMetadata = new Dictionary<string, string>();
-        //
-        //     engine.ReadAllMetadata(tmpMetadata);
-        //
-        //     return tmpMetadata;
-        // }
-
-        #endregion
-
-        #region Factories
-
-        /// <summary>
-        ///     A Rect is a Pixel Vision 8 primitive used for defining the bounds of an object on the display. It
-        ///     contains an x, y, width and height property. The Rect class also has some additional methods to aid with
-        ///     collision detection such as Intersect(rect, rect), IntersectsWidth(rect) and Contains(x,y).
-        /// </summary>
-        /// <param name="x">The x position of the rect as an int.</param>
-        /// <param name="y">The y position of the rect as an int.</param>
-        /// <param name="w">The width value of the rect as an int.</param>
-        /// <param name="h">The height value of the rect as an int.</param>
-        /// <returns>Returns a new instance of a Rect to be used as a Lua object.</returns>
-        // public Rectangle NewRect(int x = 0, int y = 0, int w = 0, int h = 0)
-        // {
-        //     return new Rectangle(x, y, w, h);
-        // }
-
-        /// <summary>
-        ///     A Vector is a Pixel Vision 8 primitive used for defining a position on the display as an x,y value.
-        /// </summary>
-        /// <param name="x">The x position of the Vector as an int.</param>
-        /// <param name="y">The y position of the Vector as an int.</param>
-        /// <returns>Returns a new instance of a Vector to be used as a Lua object.</returns>
-        // public Point NewPoint(int x = 0, int y = 0)
-        // {
-        //     return new Point(x, y);
-        // }
-        //
-        // public Canvas NewCanvas(int width, int height)
-        // {
-        //     return new Canvas(width, height, this);
-        // }
-
-        // public SpriteData NewSpriteData(int id, int x = 0, int y = 0, bool flipH = false, bool flipV = false,
-        //     int colorOffset = 0)
-        // {
-        //     return new SpriteData(id, x, y, flipH, flipV, colorOffset);
-        // }
-        //
-        // public SpriteCollection NewSpriteCollection(string name, SpriteData[] sprites = null)
-        // {
-        //     return new SpriteCollection(name, sprites);
-        // }
-
-        // public SpriteCollection NewMetaSprite(int id, string name, int[] spriteIDs, int width, int colorOffset = 0)
-        // {
-        //     var collection = NewSpriteCollection(name);
-        //
-        //     for (int i = 0; i < spriteIDs.Length; i++)
-        //     {
-        //
-        //         var pos = MathUtil.CalculatePosition(i, width);
-        //        
-        //         collection.AddSprite(spriteIDs[i], pos.X * spriteSize.X, pos.Y * spriteSize.Y, false, false, colorOffset);
-        //     }
-        //
-        //     // TODO need to figure out how to do this better where meta sprites 
-        //     
-        //
-        //     return MetaSprite(id, collection);
-        // }
-
-        #endregion
     }
 }

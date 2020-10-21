@@ -48,6 +48,6 @@ namespace PixelVision8.Engine
             set => Pixels[i] = value;
         }
         
-        public override string ToString() => "{Width:" + this.Width.ToString() + " Height:" + this.Height.ToString() + " Total Pixels:" + this.TotalPixels.ToString() + "}";
+        public override string ToString() => "{Width:" + Width + " Height:" + Height + " Total Pixels:" + TotalPixels + "}";
     }
 }

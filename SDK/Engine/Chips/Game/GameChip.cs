@@ -290,14 +290,14 @@ namespace PixelVision8.Engine.Chips
         
         public void SaveTilemapCache()
         {
-            tilemapCachePixels = cachedTileMap.GetPixels();
+            tilemapCachePixels = PixelDataUtil.GetPixels(cachedTileMap);
         }
 
         public void RestoreTilemapCache()
         {
             if (tilemapCachePixels == null) return;
 
-            cachedTileMap.SetPixels(tilemapCachePixels);
+            PixelDataUtil.SetPixels(tilemapCachePixels, cachedTileMap);
         }
 
         #endregion

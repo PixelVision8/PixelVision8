@@ -73,7 +73,7 @@ namespace PixelVision8.Runner.Services
             {
                 var fontChip = targetEngine.FontChip;
                 var spriteChip = targetEngine.SpriteChip;
-                var tmpTextureData = new TextureData(96, 64);
+                var tmpTextureData = new PixelData(96, 64);
 
                 var fonts = fontChip.fonts;
 
@@ -83,7 +83,8 @@ namespace PixelVision8.Runner.Services
                     var sprites = font.Value;
 
                     // Clear the texture
-                    tmpTextureData.Clear();
+                    PixelDataUtil.Clear(tmpTextureData);
+                    // tmpTextureData.Clear();
 
                     // Loop through all the characters and copy their texture data over
                     var total = sprites.Length;
