@@ -19,46 +19,68 @@
 //
 
 using System;
+using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine
 {
     public struct DrawRequestPixelData
     {
-        private int[] _pixelData;
+        private PixelData _pixelData;
         public bool flipH;
         public bool flipV;
         public int colorOffset;
-        public int height;
-        public int width;
         public int x;
         public int y;
+        public byte Priority;
 
-        private int totalPixels;
+        public int height => PixelData.Height;
+        public int width => PixelData.Width;
+        private int totalPixels => PixelData.TotalPixels;
+
+        public PixelData PixelData
+        {
+            get
+            {
+                if(_pixelData == null)
+                    _pixelData = new PixelData();
+
+                return _pixelData;
+            }
+        }
+        public void SetPixels(int[] pixels, int blockWidth, int blockHeight)
+        {
+            if (width != blockWidth || height != blockHeight)
+            {
+                PixelDataUtil.Resize(ref _pixelData, blockWidth, blockHeight);
+            }
+            
+            PixelDataUtil.SetPixels(pixels, _pixelData);
+        }
 
         public bool isRectangle => totalPixels < 0;
 
-        public int[] pixelData
-        {
-            get => _pixelData;
-            set
-            {
-                totalPixels = value?.Length ?? -1;
-
-                // If the DrawRequest is fresh and we're assigning it a new array, use it
-                // This should only occur in DisplayChip.NextDrawRequest
-                if (_pixelData == null)
-                {
-                    _pixelData = value;
-                    return;
-                }
-
-                // ... except we set it to null to draw a solid rectangle
-                if (value == null) return;
-
-                if (_pixelData.Length < totalPixels) Array.Resize(ref _pixelData, totalPixels);
-
-                Array.Copy(value, _pixelData, totalPixels);
-            }
-        }
+        // public int[] pixelData
+        // {
+        //     get => _pixelData;
+        //     set
+        //     {
+        //         totalPixels = value?.Length ?? -1;
+        //
+        //         // If the DrawRequest is fresh and we're assigning it a new array, use it
+        //         // This should only occur in DisplayChip.NextDrawRequest
+        //         if (_pixelData == null)
+        //         {
+        //             _pixelData = value;
+        //             return;
+        //         }
+        //
+        //         // ... except we set it to null to draw a solid rectangle
+        //         if (value == null) return;
+        //
+        //         if (_pixelData.Length < totalPixels) Array.Resize(ref _pixelData, totalPixels);
+        //
+        //         Array.Copy(value, _pixelData, totalPixels);
+        //     }
+        // }
     }
 }

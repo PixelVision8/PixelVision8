@@ -178,7 +178,7 @@ namespace PixelVision8.Runner.Parsers
 
             if (data.ContainsKey("overscanY")) displayChip.OverscanY = (int) (long) data["overscanY"];
 
-            if (data.ContainsKey("layers")) displayChip.layers = (int) (long) data["layers"];
+            // if (data.ContainsKey("layers")) displayChip.layers = (int) (long) data["layers"];
 
             displayChip.ResetResolution(_width, _height);
         }
@@ -547,11 +547,12 @@ namespace PixelVision8.Runner.Parsers
         public void ConfigureSpriteChip(Dictionary<string, object> data)
         {
             var spriteChip = Target.SpriteChip;
-
+            var displayChip = Target.DisplayChip;
+            
             // Flag chip to export
             spriteChip.export = true;
 
-            if (data.ContainsKey("maxSpriteCount")) spriteChip.maxSpriteCount = (int) (long) data["maxSpriteCount"];
+            if (data.ContainsKey("maxSpriteCount")) displayChip.MaxDrawRequests = (int) (long) data["maxSpriteCount"];
 
             if (data.ContainsKey("spriteWidth")) spriteChip.width = (int) (long) data["spriteWidth"];
 

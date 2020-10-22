@@ -426,11 +426,12 @@ namespace PixelVision8.Engine.Chips
         {
             // DisplayChip.Clear();
             //
-            w = width ?? DisplayChip.Width - x;
-            h = height ?? DisplayChip.Height - y;
-            
-            DrawRect(x, y, w, h, ColorChip.backgroundColor);
-            
+            // w = width ?? DisplayChip.Width - x;
+            // h = height ?? DisplayChip.Height - y;
+            //
+            // DrawRect(x, y, w, h, ColorChip.backgroundColor);
+            DisplayChip.Clear();
+
         }
 
         /// <summary>
@@ -510,7 +511,7 @@ namespace PixelVision8.Engine.Chips
 
                 default:
 
-                    DisplayChip.NewDrawCall(pixelData, x, y, width, height, (int) drawMode, flipH, flipV, colorOffset);
+                    DisplayChip.NewDrawCall(pixelData, x, y, width, height, (byte) drawMode, flipH, flipV, colorOffset);
 
                     break;
             }

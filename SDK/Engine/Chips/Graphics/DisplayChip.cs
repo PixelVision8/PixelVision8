@@ -30,41 +30,49 @@ namespace PixelVision8.Engine.Chips
         // private Color[] cachedColors;
 
         private DrawRequestPixelData draw;
-        protected List<DrawRequestPixelData>[] DrawRequestPixelDataLayers = new List<DrawRequestPixelData>[0];
-        protected Stack<int[]> DrawRequestPixelDataPool = new Stack<int[]>();
+        // protected List<DrawRequestPixelData>[] DrawRequestPixelDataLayers = new List<DrawRequestPixelData>[0];
+        // protected Stack<int[]> DrawRequestPixelDataPool = new Stack<int[]>();
         public int[] Pixels = new int[0];
         public int TotalPixels;
         public int OverscanX { get; set; }
         public int OverscanY { get; set; }
-
-        // This should be part of the chip's data
-        public int maxDrawRequests = 512;
-
-
-        SpriteChip SpriteChip => engine.SpriteChip;
-
-        public int layers
+        
+        
+        private List<DrawRequestPixelData> DrawCalls = new List<DrawRequestPixelData>();
+        private DrawRequestPixelData[] DrawRequestPool = new DrawRequestPixelData[0];
+        private int drawRequestCounter = -1;
+        
+        public int MaxDrawRequests
         {
-            get => DrawRequestPixelDataLayers.Length;
             set
             {
-                Array.Resize(ref DrawRequestPixelDataLayers, value);
-                for (var i = value - 1; i > -1; i--)
+                if(value == 0)
+                    return;
+                
+                _maxDrawRequests = value;
+                if (DrawRequestPool.Length != _maxDrawRequests)
                 {
-                    var requests = DrawRequestPixelDataLayers[i];
-                    if (requests == null)
-                        DrawRequestPixelDataLayers[i] = new List<DrawRequestPixelData>();
-                    else
-                        requests.Clear();
+                    Array.Resize(ref DrawRequestPool, _maxDrawRequests);
+                    DrawCalls.Capacity = _maxDrawRequests;
                 }
             }
         }
 
+        // This should be part of the chip's data
+        private int _maxDrawRequests = 1024;
+        
+        int _total;
+        int _srcX;
+        int _srcY;
+        int _colorID;
+        int i1;
+        int _index;
+
+        private int[] emptyPixels = new int[0];
+
         public int OverscanXPixels => OverscanX * engine.SpriteChip.width;
 
         public int OverscanYPixels => OverscanY * engine.SpriteChip.height;
-
-        //        public bool displayMaskColor;
 
         /// <summary>
         ///     This returns the visble areas sprites should be displayed on. Note that x and y may be negative if overscan is set
@@ -89,50 +97,52 @@ namespace PixelVision8.Engine.Chips
         private int _layer;
         private int _i;
         private DrawRequestPixelData _drawRequest;
+        private int drawCallCounter = -1;
+        private bool _clearFlag = true;
 
         /// <summary>
         /// </summary>
         public void Draw()
         {
-            
-            // Loop through all draw requests
-            for (_layer = 0; _layer < DrawRequestPixelDataLayers.Length; _layer++)
+            drawCallCounter = DrawCalls.Count;
+
+            if (_clearFlag)
             {
-                // TODO need to add back in support for turning layers on and off
-            
-                _drawRequests = DrawRequestPixelDataLayers[_layer];
-                _totalDR = _drawRequests.Count;
-                for (_i = 0; _i < _totalDR; _i++)
+
+                // Loop through all of the display pixels
+                for (_i = 0; _i < TotalPixels; _i++)
                 {
-                    _drawRequest = _drawRequests[_i];
-            
-                    CopyDrawRequestPixelData(_drawRequest.isRectangle ? null : _drawRequest.pixelData, _drawRequest.x, _drawRequest.y, _drawRequest.width, _drawRequest.height,
-                        _drawRequest.flipH, _drawRequest.flipV, _drawRequest.colorOffset);
+                    // We always set the clear color to -1 since the display target will automatically convert this into the background color
+                    Pixels[_i] = -1;
                 }
+
+                // Reset the clear flag for the next frame
+                _clearFlag = false;
             }
-
+            
             // Sort sprite draw calls
-            // SpriteDrawRequests.Sort((x, y) => x.priority.CompareTo(y.priority));
-            //
-            // for (int i = 0; i < SpriteDrawRequests.Count; i++)
-            // {
-            //     var request = SpriteDrawRequests[i];
-            //     var tmpPixelData = new int[64];
-            //     SpriteChip.ReadSpriteAt(request.id, ref tmpPixelData);
-            //     
-            //     CopyDrawRequestPixelData(tmpPixelData, request.x, request.y, 8, 8, request.flipH, request.flipV, request.colorOffset);
-            //
-            //     SpriteDrawRequestPool.Push(request);
-            // }
-            //
-            // SpriteDrawRequests.Clear();
+            DrawCalls.Sort((x, y) => x.Priority.CompareTo(y.Priority));
 
+            // if(drawRequestCounter  < 0)
+            //     return;
+            
+            for (int i = 0; i < drawCallCounter; i++)
+            {
+                _drawRequest = DrawCalls[i];
+                CopyDrawRequestPixelData(_drawRequest.isRectangle ? null : _drawRequest.PixelData.Pixels, _drawRequest.x, _drawRequest.y, _drawRequest.width, _drawRequest.height,
+                _drawRequest.flipH, _drawRequest.flipV, _drawRequest.colorOffset);
+            }
+           
             // Reset Draw Requests after they have been processed
             ResetDrawCalls();
 
-            // clearFlag = false;
         }
         
+        public void Clear()
+        {
+            _clearFlag = true;
+        }
+
         /// <summary>
         ///     Creates a new draw by copying the supplied pixel data over
         ///     to the Display's TextureData.
@@ -153,59 +163,44 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         /// <param name="colorOffset"></param>
         /// <param name="layerOrder"></param>
-        public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, int layer = 0, bool flipH = false,
+        public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, byte layer = 0, bool flipH = false,
             bool flipV = false, int colorOffset = 0)
         {
             
             // Exit if we are drawing to a layer that doesn't exist
-            if (layer >= layers)
-                return;
-            // {
-            //     // This can happen as the old system wasn't very strict.
-            //     // TODO: Handle "out of bounds" layer accesses properly!
-            //     _oldSize = layers;
-            //     Array.Resize(ref DrawRequestPixelDataLayers, layer + 1);
-            //     for (_i = layers - 1; _i >= _oldSize; _i--) DrawRequestPixelDataLayers[_i] = new List<DrawRequestPixelData>();
-            // }
+            // if (layer >= layers)
+            //     return;
 
-            draw = NextDrawRequestPixelData();
-            draw.x = x;
-            draw.y = y;
-            draw.width = width;
-            draw.height = height;
-            draw.pixelData = pixelData;
-            draw.flipH = flipH;
-            draw.flipV = flipV;
-            draw.colorOffset = colorOffset;
-            DrawRequestPixelDataLayers[layer].Add(draw);
+            if (pixelData == null)
+            {
+                var total = width * height;
+                
+                if(emptyPixels.Length != total)
+                    Array.Resize(ref emptyPixels, total);
+
+                pixelData = emptyPixels;
+
+            }
+
+            var request = NextDrawRequest();
+
+            if (request.HasValue)
+            {
+                draw = request.Value;
+                draw.x = x;
+                draw.y = y;
+                draw.SetPixels(pixelData, width, height);
+                draw.Priority = layer;
+                draw.flipH = flipH;
+                draw.flipV = flipV;
+                draw.colorOffset = colorOffset;
+                
+                DrawCalls.Add(draw);
+                // DrawRequestPixelDataLayers[layer].Add(draw);
+            }
+            
         }
-
-        // public List<DrawRequest> SpriteDrawRequests = new List<DrawRequest>();
-
-        // public void DrawSprite(int id, int x, int y, bool flipH, bool flipV, byte priority, int colorOffset)
-        // {
-        //
-        //     var request = NextSpriteDrawRequest();
-        //
-        //     if (request.HasValue)
-        //     {
-        //         var drawCall = request.Value;
-        //         drawCall.id = id;
-        //         drawCall.x = x;
-        //         drawCall.y = y;
-        //         drawCall.flipH = flipH;
-        //         drawCall.flipV = flipV;
-        //         drawCall.priority = priority;
-        //         drawCall.colorOffset = colorOffset;
-        //
-        //         SpriteDrawRequests.Add(drawCall);
-        //
-        //         // Used by scan line draw
-        //         // OAMEntries.Add(drawCall);
-        //     }
-        //
-        // }
-
+ 
         /// <summary>
         ///     Changes the resolution of the display.
         /// </summary>
@@ -237,18 +232,20 @@ namespace PixelVision8.Engine.Chips
             ResetResolution(256, 240);
 
             // By default set the total layers to the DrawModes minus Tilemap Cache which isn't used for rendering
-            layers = Enum.GetNames(typeof(DrawMode)).Length - 1;
+            // layers = Enum.GetNames(typeof(DrawMode)).Length - 1;
+
+            MaxDrawRequests = 1024;
 
             // TODO should the display have the sprite limit and the game chip looks there first
 
-            SpriteDrawRequestPool = new Stack<DrawRequest>();
-
-            var maxCalls = SpriteChip.maxSpriteCount > 0 ? SpriteChip.maxSpriteCount : maxDrawRequests;
-
-            for (int i = 0; i < maxCalls; i++)
-            {
-                SpriteDrawRequestPool.Push(new DrawRequest());
-            }
+            // SpriteDrawRequestPool = new Stack<DrawRequest>();
+            //
+            // var maxCalls = SpriteChip.maxSpriteCount > 0 ? SpriteChip.maxSpriteCount : maxDrawRequests;
+            //
+            // for (int i = 0; i < maxCalls; i++)
+            // {
+            //     SpriteDrawRequestPool.Push(new DrawRequest());
+            // }
 
 
         }
@@ -261,68 +258,28 @@ namespace PixelVision8.Engine.Chips
 
         public void ResetDrawCalls()
         {
-            // Reset all draw requests
-            for (var layer = DrawRequestPixelDataLayers.Length - 1; layer > -1; layer--)
-            {
-                var drawRequests = DrawRequestPixelDataLayers[layer];
 
-                for (var i = drawRequests.Count - 1; i > -1; i--)
-                {
-                    var request = drawRequests[i];
-                    DrawRequestPixelDataPool.Push(request.pixelData);
-                }
-
-                drawRequests.Clear();
-            }
+            drawRequestCounter = -1;
+            DrawCalls.Clear();
         }
 
-        public DrawRequestPixelData NextDrawRequestPixelData()
+        public DrawRequestPixelData? NextDrawRequest()
         {
-            var request = new DrawRequestPixelData();
+            drawRequestCounter++;
 
-            if (DrawRequestPixelDataPool.Count > 0)
-                request.pixelData = DrawRequestPixelDataPool.Pop();
-            else
-                request.pixelData = new int[0];
+            if (drawRequestCounter >= _maxDrawRequests)
+            {
+                // drawRequestCounter = _maxDrawRequests;
+                return null;
+            }
 
-            return request;
+            return DrawRequestPool[drawRequestCounter];
         }
-
-        protected Stack<DrawRequest> SpriteDrawRequestPool;
-
-        // public DrawRequest? NextSpriteDrawRequest()
-        // {
-        //
-        //     if (SpriteDrawRequestPool.Count > 0)
-        //         return SpriteDrawRequestPool.Pop();
-        //
-        //     // var request = new DrawRequest();
-        //     //
-        //     // if (SpriteDrawRequestPool.Count > 0)
-        //     //     request.pixelData = DrawRequestPixelDataPool.Pop();
-        //     // else
-        //     //     request.pixelData = new int[0];
-        //
-        //     return null;
-        // }
-
-        int _total;
-        int _srcX;
-        int _srcY;
-        int _colorID;
-        int i1;
-        int _index;
 
         public void CopyDrawRequestPixelData(int[] pixelData, int x, int y, int width, int height, bool flipH = false,
             bool flipV = false, int colorOffset = 0)
         {
-            // int total;
-            // int srcX;
-            // int srcY;
-            // int colorID;
-            // // int i;
-            // int index;
-
+            
             var tmpWidth = this.Width;
             var tmpHeight = this.Height;
 
@@ -360,13 +317,6 @@ namespace PixelVision8.Engine.Chips
                 }
             }
         }
-
-        // private bool clearFlag = false;
-        //
-        // public void Clear()
-        // {
-        //     clearFlag = true;
-        // }
 
         public Color[] VisiblePixels()
         {
