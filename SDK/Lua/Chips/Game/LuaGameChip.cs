@@ -77,14 +77,14 @@ namespace PixelVision8.Engine.Chips
             LuaScript.Globals["DrawPixels"] =
                 new Action<int[], int, int, int, int, bool, bool, DrawMode, int>(DrawPixels);
             LuaScript.Globals["DrawSprite"] =
-                new Action<int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprite);
+                new Action<int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSingleSprite);
             LuaScript.Globals["DrawSprites"] =
                 new Action<int[], int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprites);
             LuaScript.Globals["DrawSpriteBlock"] =
                 new Action<int, int, int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSpriteBlock);
 
             LuaScript.Globals["DrawText"] =
-                new Action<string, int, int, DrawMode, string, int, int, Rectangle?>(DrawText);
+                new Action<string, int, int, DrawMode, string, int, int, bool, bool, Rectangle?>(DrawText);
             LuaScript.Globals["DrawTilemap"] = new Action<int, int, int, int, int?, int?>(DrawTilemap);
 
             LuaScript.Globals["DrawRect"] = new Action<int, int, int, int, int, DrawMode>(DrawRect);
@@ -353,6 +353,13 @@ namespace PixelVision8.Engine.Chips
             LuaScript.DoString(script, null, name);
         }
 
+        public void DrawSingleSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
+            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
+            Rectangle? bounds = null)
+        {
+            DrawSprite(id, x, y, flipH, flipV, drawMode, colorOffset, onScreen, useScrollPos, bounds, SpriteChip);
+        }
+        
         #endregion
     }
 }

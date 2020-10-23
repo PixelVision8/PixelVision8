@@ -75,7 +75,7 @@ namespace PixelVision8.Engine.Chips
         protected int[] tmpFontData = new int[0];
 
         protected int[] tmpSpriteData = new int[0];
-        protected int tmpSpriteDataID = -1;
+        // protected int tmpSpriteDataID = -1;
 
         protected int w;
         protected int h;
@@ -430,7 +430,7 @@ namespace PixelVision8.Engine.Chips
             // h = height ?? DisplayChip.Height - y;
             //
             // DrawRect(x, y, w, h, ColorChip.backgroundColor);
-            DisplayChip.Clear();
+            DisplayChip.Clear(ColorChip.backgroundColor);
 
         }
 
@@ -510,8 +510,11 @@ namespace PixelVision8.Engine.Chips
                     break;
 
                 default:
+                    
+                    var data = new DrawPixelDataRequest(pixelData, width, height);
+                    DisplayChip.NewDrawCall(data, x, y, width, height, (byte) drawMode, flipH, flipV, colorOffset);
 
-                    DisplayChip.NewDrawCall(pixelData, x, y, width, height, (byte) drawMode, flipH, flipV, colorOffset);
+                    // DisplayChip.NewDrawCall(pixelData, x, y, width, height, (byte) drawMode, flipH, flipV, colorOffset);
 
                     break;
             }
@@ -559,21 +562,23 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
-            Rectangle? bounds = null)
+            Rectangle? bounds = null, SpriteChip srcChip = null)
         {
             // Only apply the max sprite count to sprite draw modes
+
+            srcChip ??= SpriteChip;
 
             if (drawMode == DrawMode.Tile)
             {
                 Tile(x, y, id, colorOffset);
             }
-            else if (drawMode == DrawMode.TilemapCache || drawMode == DrawMode.UI)
+            else if (drawMode == DrawMode.TilemapCache)
             {
-                if (id != tmpSpriteDataID)
-                {
-                    SpriteChip.ReadSpriteAt(id, ref tmpSpriteData);
-                    tmpSpriteDataID = id;
-                }
+                // if (id != tmpSpriteDataID)
+                // {
+                    srcChip.ReadSpriteAt(id, ref tmpSpriteData);
+                //     tmpSpriteDataID = id;
+                // }
 
                 DrawPixels(tmpSpriteData, x, y, SpriteChip.width, SpriteChip.height, flipH, flipV, drawMode,
                     colorOffset);
@@ -586,9 +591,6 @@ namespace PixelVision8.Engine.Chips
                 if (onScreen)
                 {
                     _tmpBounds = bounds ?? DisplayChip.VisibleBounds;
-
-                    //                        if (bounds == null)
-                    //                            bounds = displayChip.visibleBounds;
 
                     // This can set the render flag to true or false based on it's location
                     //TODO need to take into account the current bounds of the screen
@@ -603,18 +605,13 @@ namespace PixelVision8.Engine.Chips
                 // If the sprite should be rendered, call DrawSprite()
                 if (render)
                 {
-                    //TODO flipping H, V and colorOffset should all be passed into reading a sprite
-                    if (id != tmpSpriteDataID)
-                    {
-                        SpriteChip.ReadSpriteAt(id, ref tmpSpriteData);
-                        tmpSpriteDataID = id;
-                    }
-
-                    DrawPixels(tmpSpriteData, x, y, SpriteChip.width, SpriteChip.height, flipH, flipV, drawMode,
-                        colorOffset);
-
-                    // DisplayChip.DrawSprite(id, x, y, flipH, flipV, (byte)drawMode, colorOffset);
-
+                    
+                    var pos = MathUtil.CalculatePosition(id, srcChip.Columns);
+                    pos.X *= SpriteChip.width;
+                    pos.Y *= SpriteChip.height;
+                    
+                    DisplayChip.NewDrawCall(srcChip, x, y, SpriteChip.width, SpriteChip.height, (byte)drawMode, flipH, flipV, colorOffset, pos.X, pos.Y);
+                    
                     CurrentSprites++;
                 }
             }
@@ -679,18 +676,12 @@ namespace PixelVision8.Engine.Chips
 
             height = MathUtil.CeilToInt(total / width);
 
+            // TODO this needs to be moved into the Draw Sprite
             startX = x - (useScrollPos ? _scrollPos.X : 0);
             startY = y - (useScrollPos ? _scrollPos.Y : 0);
 
-            var paddingW = SpriteChip.width;
-            var paddingH = SpriteChip.height;
-
-            if (drawMode == DrawMode.Tile)
-            {
-                paddingW = 1;
-                paddingH = 1;
-            }
-            //            startY = displayChip.height - height - startY;
+            _paddingW = drawMode == DrawMode.Tile ? 1 : _spriteSize.X;
+            _paddingH = drawMode == DrawMode.Tile ? 1 : _spriteSize.Y;
 
             if (flipH || flipV) SpriteChipUtil.FlipSpriteData(ref tmpIDs, width, height, flipH, flipV);
 
@@ -709,8 +700,8 @@ namespace PixelVision8.Engine.Chips
                 // Test to see if the sprite is within range
                 if (id > -1)
                 {
-                    x = MathUtil.FloorToInt(i % width) * paddingW + startX;
-                    y = MathUtil.FloorToInt(i / width) * paddingH + startY;
+                    x = MathUtil.FloorToInt(i % width) * _paddingW + startX;
+                    y = MathUtil.FloorToInt(i / width) * _paddingH + startY;
                     //
                     //                    var render = true;
 
@@ -834,7 +825,8 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         /// <returns></returns>
         public void DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default",
-            int colorOffset = 0, int spacing = 0, Rectangle? bounds = null)
+            int colorOffset = 0, int spacing = 0, bool onScreen = true, bool useScrollPos = true,
+            Rectangle? bounds = null)
         {
             // TODO this should use DrawSprites() API
             spriteSize = SpriteSize();
@@ -889,10 +881,12 @@ namespace PixelVision8.Engine.Chips
                         CurrentSprites++;
                     }
 
-                    FontChip.ReadSpriteAt(spriteIDs[j], ref tmpFontData);
+                    // FontChip.ReadSpriteAt(spriteIDs[j], ref tmpFontData);
 
-                    DrawPixels(tmpFontData, nextX, nextY, SpriteChip.width, SpriteChip.height, false, false, drawMode,
-                        colorOffset);
+                    DrawSprite(spriteIDs[j], nextX, nextY, false, false, drawMode, colorOffset, onScreen, useScrollPos, null, FontChip);
+
+                    // DrawPixels(tmpFontData, nextX, nextY, SpriteChip.width, SpriteChip.height, false, false, drawMode,
+                        // colorOffset);
                 }
 
                 nextX += offset;
@@ -1607,6 +1601,8 @@ namespace PixelVision8.Engine.Chips
 
 
         protected Point _tilemapSize = Point.Zero;
+        private int _paddingW;
+        private int _paddingH;
 
         /// <summary>
         ///     This will return a vector representing the size of the tilemap in columns (x) and rows (y).

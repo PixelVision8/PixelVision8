@@ -25,15 +25,18 @@ using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine.Chips
 {
+    
     public class DisplayChip : AbstractChip, IDraw
     {
         // private Color[] cachedColors;
 
         private DrawRequestPixelData draw;
+        private PixelData Display = new PixelData();
         // protected List<DrawRequestPixelData>[] DrawRequestPixelDataLayers = new List<DrawRequestPixelData>[0];
         // protected Stack<int[]> DrawRequestPixelDataPool = new Stack<int[]>();
-        public int[] Pixels = new int[0];
-        public int TotalPixels;
+        public int[] Pixels => Display.Pixels;
+
+        public int TotalPixels => Display.TotalPixels;
         public int OverscanX { get; set; }
         public int OverscanY { get; set; }
         
@@ -84,12 +87,12 @@ namespace PixelVision8.Engine.Chips
         /// <summary>
         ///     Returns the display's <see cref="Width" />
         /// </summary>
-        public int Width { get; protected set; } = 256;
+        public int Width => Display.Width;
 
         /// <summary>
         ///     Returns the display's <see cref="Height" />
         /// </summary>
-        public int Height { get; protected set; } = 240;
+        public int Height => Display.Height;
 
 
         private List<DrawRequestPixelData> _drawRequests;
@@ -99,7 +102,8 @@ namespace PixelVision8.Engine.Chips
         private DrawRequestPixelData _drawRequest;
         private int drawCallCounter = -1;
         private bool _clearFlag = true;
-
+        private int clearColor = -1;
+        
         /// <summary>
         /// </summary>
         public void Draw()
@@ -113,7 +117,7 @@ namespace PixelVision8.Engine.Chips
                 for (_i = 0; _i < TotalPixels; _i++)
                 {
                     // We always set the clear color to -1 since the display target will automatically convert this into the background color
-                    Pixels[_i] = -1;
+                    Pixels[_i] = clearColor;
                 }
 
                 // Reset the clear flag for the next frame
@@ -129,8 +133,13 @@ namespace PixelVision8.Engine.Chips
             for (int i = 0; i < drawCallCounter; i++)
             {
                 _drawRequest = DrawCalls[i];
-                CopyDrawRequestPixelData(_drawRequest.isRectangle ? null : _drawRequest.PixelData.Pixels, _drawRequest.x, _drawRequest.y, _drawRequest.width, _drawRequest.height,
-                _drawRequest.flipH, _drawRequest.flipV, _drawRequest.colorOffset);
+                
+                PixelDataUtil.CopyPixels(_drawRequest.PixelData, _drawRequest.SampleRect.X, _drawRequest.SampleRect.Y, _drawRequest.SampleRect.Width, _drawRequest.SampleRect.Height, Display, _drawRequest.x, _drawRequest.y, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
+                
+                
+                // PixelDataUtil.MergePixels(_drawRequest.PixelData, _drawRequest.x, _drawRequest.y, _drawRequest.width, _drawRequest.height, _drawRequest.PixelData.Pixels, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
+                // CopyDrawRequestPixelData(_drawRequest.PixelData.Pixels, _drawRequest.x, _drawRequest.y, _drawRequest.width, _drawRequest.height,
+                // _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
             }
            
             // Reset Draw Requests after they have been processed
@@ -138,8 +147,10 @@ namespace PixelVision8.Engine.Chips
 
         }
         
-        public void Clear()
+        public void Clear(int color = -1)
         {
+            clearColor = color;
+            
             _clearFlag = true;
         }
 
@@ -148,10 +159,10 @@ namespace PixelVision8.Engine.Chips
         ///     to the Display's TextureData.
         /// </summary>
         /// <param name="pixelData"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
+        /// <param name="destX"></param>
+        /// <param name="destY"></param>
+        /// <param name="blockWidth"></param>
+        /// <param name="blockHeight"></param>
         /// <param name="layer"></param>
         /// <param name="flipH">
         ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips
@@ -163,37 +174,40 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         /// <param name="colorOffset"></param>
         /// <param name="layerOrder"></param>
-        public void NewDrawCall(int[] pixelData, int x, int y, int width, int height, byte layer = 0, bool flipH = false,
-            bool flipV = false, int colorOffset = 0)
+        public void NewDrawCall(IDisplay src, int destX, int destY, int blockWidth, int blockHeight, byte layer = 0, bool flipH = false,
+            bool flipV = false, int colorOffset = 0, int srcX = 0, int srcY = 0)
         {
             
             // Exit if we are drawing to a layer that doesn't exist
             // if (layer >= layers)
             //     return;
 
-            if (pixelData == null)
-            {
-                var total = width * height;
-                
-                if(emptyPixels.Length != total)
-                    Array.Resize(ref emptyPixels, total);
-
-                pixelData = emptyPixels;
-
-            }
+            // if (pixelData == null)
+            // {
+            //     var total = width * height;
+            //     
+            //     if(emptyPixels.Length != total)
+            //         Array.Resize(ref emptyPixels, total);
+            //
+            //     pixelData = emptyPixels;
+            //
+            // }
 
             var request = NextDrawRequest();
 
             if (request.HasValue)
             {
                 draw = request.Value;
-                draw.x = x;
-                draw.y = y;
-                draw.SetPixels(pixelData, width, height);
+                draw.x = destX;
+                draw.y = destY;
+
+                
+                draw.SampleFrom(src, srcX, srcY, blockWidth, blockHeight);
+                
                 draw.Priority = layer;
-                draw.flipH = flipH;
-                draw.flipV = flipV;
-                draw.colorOffset = colorOffset;
+                draw.FlipH = flipH;
+                draw.FlipV = flipV;
+                draw.ColorOffset = colorOffset;
                 
                 DrawCalls.Add(draw);
                 // DrawRequestPixelDataLayers[layer].Add(draw);
@@ -208,12 +222,13 @@ namespace PixelVision8.Engine.Chips
         /// <param name="height"></param>
         public void ResetResolution(int width, int height)
         {
-            Width = width;
-            Height = height;
+            Display.Resize(width, height);
+            // Width = width;
+            // Height = height;
 
-            TotalPixels = Width * Height;
+            // TotalPixels = Width * Height;
 
-            Array.Resize(ref Pixels, TotalPixels);
+            // Array.Resize(ref Pixels, TotalPixels);
         }
 
         /// <summary>
@@ -235,18 +250,6 @@ namespace PixelVision8.Engine.Chips
             // layers = Enum.GetNames(typeof(DrawMode)).Length - 1;
 
             MaxDrawRequests = 1024;
-
-            // TODO should the display have the sprite limit and the game chip looks there first
-
-            // SpriteDrawRequestPool = new Stack<DrawRequest>();
-            //
-            // var maxCalls = SpriteChip.maxSpriteCount > 0 ? SpriteChip.maxSpriteCount : maxDrawRequests;
-            //
-            // for (int i = 0; i < maxCalls; i++)
-            // {
-            //     SpriteDrawRequestPool.Push(new DrawRequest());
-            // }
-
 
         }
 

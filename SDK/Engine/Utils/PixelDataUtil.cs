@@ -221,6 +221,16 @@ namespace PixelVision8.Engine.Utils
                 }
             }
         }
+
+        public static void CopyPixels(PixelData src, int srcX, int srcY, int width, int height, PixelData dest,
+            int destX, int destY, bool flipH = false, bool flipV = false, int colorOffset = 0,
+            bool ignoreTransparent = true)
+        {
+
+            var pixels = GetPixels(src, srcX, srcY, width, height);
+            MergePixels(dest, destX, destY, width, height, pixels, flipH, flipV, colorOffset, ignoreTransparent);
+
+        }
         
         public static void Crop(PixelData pixelData, int x, int y, int blockWidth, int blockHeight)
         {

@@ -18,69 +18,55 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using PixelVision8.Engine.Utils;
+using Microsoft.Xna.Framework;
+using PixelVision8.Engine.Chips;
 
 namespace PixelVision8.Engine
 {
+
+    public struct DrawPixelDataRequest : IDisplay
+    {
+        public PixelData PixelData { get; }
+
+        public DrawPixelDataRequest(int[] pixels, int width, int height)
+        {
+            PixelData = new PixelData();
+            PixelData.Resize(width, height);
+            if(pixels != null)
+                PixelData.Pixels = pixels;
+        }
+    }
+    
     public struct DrawRequestPixelData
     {
         private PixelData _pixelData;
-        public bool flipH;
-        public bool flipV;
-        public int colorOffset;
+        
+        private IDisplay SrcPixelData;
+        public Rectangle SampleRect;
+        public bool FlipH;
+        public bool FlipV;
+        public int ColorOffset;
         public int x;
         public int y;
+        
         public byte Priority;
 
-        public int height => PixelData.Height;
-        public int width => PixelData.Width;
+        public int height => SampleRect.Height;
+        public int width => SampleRect.Width;
         private int totalPixels => PixelData.TotalPixels;
 
-        public PixelData PixelData
+        public PixelData PixelData => SrcPixelData.PixelData;
+        
+        public void SampleFrom(IDisplay source, int srcX, int srcY, int blockWidth, int blockHeight)
         {
-            get
-            {
-                if(_pixelData == null)
-                    _pixelData = new PixelData();
-
-                return _pixelData;
-            }
-        }
-        public void SetPixels(int[] pixels, int blockWidth, int blockHeight)
-        {
-            if (width != blockWidth || height != blockHeight)
-            {
-                PixelDataUtil.Resize(ref _pixelData, blockWidth, blockHeight);
-            }
-            
-            PixelDataUtil.SetPixels(pixels, _pixelData);
+            SrcPixelData = source;
+            SampleRect.X = srcX;
+            SampleRect.Y = srcY;
+            SampleRect.Width = blockWidth;
+            SampleRect.Height = blockHeight;
         }
 
         public bool isRectangle => totalPixels < 0;
 
-        // public int[] pixelData
-        // {
-        //     get => _pixelData;
-        //     set
-        //     {
-        //         totalPixels = value?.Length ?? -1;
-        //
-        //         // If the DrawRequest is fresh and we're assigning it a new array, use it
-        //         // This should only occur in DisplayChip.NextDrawRequest
-        //         if (_pixelData == null)
-        //         {
-        //             _pixelData = value;
-        //             return;
-        //         }
-        //
-        //         // ... except we set it to null to draw a solid rectangle
-        //         if (value == null) return;
-        //
-        //         if (_pixelData.Length < totalPixels) Array.Resize(ref _pixelData, totalPixels);
-        //
-        //         Array.Copy(value, _pixelData, totalPixels);
-        //     }
-        // }
     }
 }

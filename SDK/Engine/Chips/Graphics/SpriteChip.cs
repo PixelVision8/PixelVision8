@@ -31,7 +31,7 @@ namespace PixelVision8.Engine.Chips
     ///     <see cref="TextureData" /> class allowing you to dynamically resize
     ///     sprites at run time.
     /// </summary>
-    public class SpriteChip : AbstractChip
+    public class SpriteChip : AbstractChip, IDisplay
     {
         // TODO these are hard coded assuming the sprites are always 8x8
         protected readonly int[] emptySpriteData = Enumerable.Repeat(-1, 64).ToArray();
@@ -144,6 +144,8 @@ namespace PixelVision8.Engine.Chips
             get => _colorsPerSprite;
             set => _colorsPerSprite = MathHelper.Clamp(value, 1, 16);
         }
+
+        public int Columns => textureWidth / width;
 
         /// <summary>
         ///     Tests to see if sprite <paramref name="data" /> is empty. This method
