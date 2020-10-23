@@ -198,7 +198,7 @@ function EditorUI:NewDraw(callName, args)
 
         -- Create the draw function that calls a draw method and passes in arguments
         Draw = function()
-
+            --print("NewDraw", callName, dump(args))
             -- Call the global draw function
             _G[callName](unpack(args))
         end

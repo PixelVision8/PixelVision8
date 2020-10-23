@@ -18,6 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
+using Microsoft.Xna.Framework;
+using PixelVision8.Engine.Utils;
+
 namespace PixelVision8.Engine.Chips
 {
     /// <summary>
@@ -27,33 +31,63 @@ namespace PixelVision8.Engine.Chips
     ///     manages flag values per tile for use in collision detection. Finally, the TileMapChip
     ///     also stores a color offset per tile to simulate palette shifting.
     /// </summary>
-    public class TilemapChip : AbstractChip
+    public class TilemapChip : AbstractChip, IDisplay
     {
+        private SpriteChip SpriteChip;
+        
         public bool autoImport;
 
         public TileData[] tiles;
 
-        /// <summary>
-        ///     Total number of collision flags the chip will support.
-        ///     The default value is 16.
-        ///     The default value is 16.
-        /// </summary>
-        public int totalFlags = 16;
+        private int _columns;
+        private int _rows;
+        private int _i;
+        private TileData _tile;
+        private Point _pos;
 
         /// <summary>
         ///     The total tiles in the chip.
         /// </summary>
         public int total => columns * rows;
+        
+        public int width => viewPort.Width;
+
+        public int height => viewPort.Height;
+
+        private PixelData _tilemapCache = new PixelData();
+
+        public PixelData PixelData
+        {
+           get {
+                if (invalid) 
+                    RebuildCache();
+                return _tilemapCache;
+            }
+        }
+        
+        private Point _tileSize;
+        private int[] tmpPixelData;
+        public Rectangle viewPort;
+        public int textureWidth => _tilemapCache.Width;
+        public int textureHeight => _tilemapCache.Height;
 
         /// <summary>
         ///     The width of the tile map by tiles.
         /// </summary>
-        public int columns { get; protected set; }
+        public int columns
+        {
+            get => _columns;
+            protected set => _columns = MathUtil.Clamp(value, 0, 255);
+        }
 
         /// <summary>
         ///     The height of the tile map in tiles.
         /// </summary>
-        public int rows { get; protected set; }
+        public int rows
+        {
+            get => _rows;
+            protected set => _rows = MathUtil.Clamp(value, 0, 255);
+        }
 
         public bool invalid { get; protected set; }
 
@@ -81,7 +115,7 @@ namespace PixelVision8.Engine.Chips
 
         public void InvalidateAll()
         {
-            //            cachedTileMap.Clear();
+            //            _tilemapCache.Clear();
 
             for (var i = 0; i < total; i++) tiles[i].Invalidate();
             //                layers[(int) Layer.Invalid][i] = -1;
@@ -97,19 +131,7 @@ namespace PixelVision8.Engine.Chips
 
         public TileData GetTile(int column, int row)
         {
-            return tiles[CalculateTileIndex(column, row)];
-        }
-
-        public int CalculateTileIndex(int column, int row)
-        {
-            // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-            var size = rows;
-            row = (row % size + size) % size;
-            size = columns;
-            column = (column % size + size) % size;
-            // size is still == columns from the previous operation - let's reuse the local
-
-            return column + size * row;
+            return tiles[MathUtil.CalculateIndex(column, row, columns)];
         }
 
         /// <summary>
@@ -127,38 +149,40 @@ namespace PixelVision8.Engine.Chips
         ///     paletteID and <see cref="flags" /> arrays to return their values to
         ///     -1. This is set to true by default.
         /// </param>
-        public void Resize(int columns, int rows, bool clear = true)
+        public void Resize(int newColumns, int newRows, bool clear = true)
         {
-            // Create a new array for each tile's data
-            var newTiles = new TileData[columns * rows];
 
-            var row = 0;
+            // Make sure we keep the value in range
+            columns = MathUtil.Clamp(newColumns, 1, 256);
+            rows = MathUtil.Clamp(newRows, 1, 256);
+            
+            // Resize the tile array
+            Array.Resize(ref tiles, columns * rows);
 
-            for (var i = 0; i < newTiles.Length; i++)
+            // Loop through all of the tiles
+            for (_i = 0; _i < tiles.Length; _i++)
             {
-                var c = i % columns;
-                var r = row;
-
-                if (c < this.columns && r < this.rows && clear == false)
+                
+                // Create a new tile if it doesn't exist
+                if (tiles[_i] == null)
                 {
-                    newTiles[i] = GetTile(c, r);
-                    newTiles[i].Index = i;
+                    tiles[_i] = new TileData(_i);
                 }
                 else
                 {
-                    newTiles[i] = new TileData(i);
+                    tiles[_i].Index = _i;
+                    
+                    if (clear)
+                    {
+                        tiles[_i].spriteID = -1;
+                        tiles[_i].flag = -1;
+                        tiles[_i].colorOffset = 0;
+                    }
                 }
-
-                if (c == columns - 1) row++;
             }
-
             
-
-            // Save the new tilemap data
-            this.columns = columns;
-            this.rows = rows;
-            tiles = newTiles;
-
+            _tilemapCache.Resize(this.columns * SpriteChip.width, this.rows * SpriteChip.height);
+            
             Invalidate();
         }
 
@@ -184,6 +208,11 @@ namespace PixelVision8.Engine.Chips
             //ppu.tileMap = this;
             engine.TilemapChip = this;
 
+            // Get a reference to the Sprite Chip
+            SpriteChip = engine.SpriteChip;
+            
+            _tileSize = new Point(SpriteChip.width, SpriteChip.height);
+            tmpPixelData = new int[_tileSize.X * _tileSize.Y];
             // Resize to default nes resolution
             Resize(32, 30);
         }
@@ -193,5 +222,45 @@ namespace PixelVision8.Engine.Chips
             base.Deactivate();
             engine.TilemapChip = null;
         }
+
+        // public PixelData texture
+        // {
+        //     get
+        //     {
+        //         if (invalid) 
+        //             RebuildCache();
+        //         return _tilemapCache;
+        //     }
+        // }
+
+        protected void RebuildCache()
+        {
+            
+            // Loop through all of the tiles in the tilemap
+            for (_i = 0; _i < total; _i++)
+            {
+                _tile = tiles[_i];
+
+                if (_tile.invalid)
+                {
+                    // Get the sprite id
+                    _pos = MathUtil.CalculatePosition(_i, columns );
+                    
+                    SpriteChip.ReadSpriteAt(_tile.spriteID, ref tmpPixelData);
+
+                    if (_tile.flipH || _tile.flipV)
+                        SpriteChipUtil.FlipSpriteData(ref tmpPixelData, _tileSize.X, _tileSize.Y, _tile.flipH,
+                            _tile.flipH);
+
+                    // Draw the pixel data into the cachedTilemap
+                    PixelDataUtil.MergePixels(_tilemapCache,_pos.X * _tileSize.X, _pos.Y * _tileSize.Y , _tileSize.X, _tileSize.Y, tmpPixelData, false, false, _tile.colorOffset, false);
+
+                }
+            }
+
+            // Reset the invalidation state
+            ResetValidation();
+        }
+        
     }
 }

@@ -712,10 +712,10 @@ namespace PixelVision8.Runner.Editors
             return tileData;
         }
 
-        public void RebuildTilemap()
-        {
-            gameChip.RebuildTilemap();
-        }
+        // public void RebuildTilemap()
+        // {
+        //     gameChip.RebuildTilemap();
+        // }
 
         public Point TilemapSize(int? width = null, int? height = null, bool clear = false)
         {

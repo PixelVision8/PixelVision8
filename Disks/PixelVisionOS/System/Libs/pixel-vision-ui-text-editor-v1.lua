@@ -417,6 +417,8 @@ function EditorUI:TextEditorDrawCharactersAtCursor(data, text, x, y)
     data.font,
     data.enabled == true and data.cursorPos.color or data.highlighterTheme.disabled,
     data.spacing,
+    true,
+    true,
     data.viewPort
   }
 

@@ -68,7 +68,7 @@ namespace PixelVision8.Engine.Chips
     public class GameChipLite : AbstractChip, IUpdate, IDraw
     {
         // protected int _saveSlots;
-        protected PixelData cachedTileMap;
+        // protected PixelData cachedTileMap;
         public int fps;
         // public Dictionary<string, string> savedData = new Dictionary<string, string>();
 
@@ -249,10 +249,10 @@ namespace PixelVision8.Engine.Chips
             _spriteSize.Y = SpriteChip.height;
 
             // Create a new canvas for the tilemap cache
-            if (cachedTileMap == null) cachedTileMap = new PixelData(DisplayChip.Width, DisplayChip.Height);
+            // if (cachedTileMap == null) cachedTileMap = new PixelData(DisplayChip.Width, DisplayChip.Height);
 
             // Build tilemap cache
-            RebuildCache(cachedTileMap);
+            // RebuildCache(cachedTileMap);
 
             // Resize the tmpSpriteData so it mateches the sprite's width and height
             Array.Resize(ref tmpSpriteData, SpriteChip.width * SpriteChip.height);
@@ -505,7 +505,10 @@ namespace PixelVision8.Engine.Chips
             {
                 case DrawMode.TilemapCache:
 
-                    UpdateCachedTilemap(pixelData, x, y, width, height, flipH, flipV, colorOffset);
+                    // Copy pixel data directly into the tilemap chip's texture
+                    PixelDataUtil.MergePixels(TilemapChip.PixelData, x, y, width, height, pixelData, flipH, flipV, colorOffset);
+
+                    //            Invalidate();
 
                     break;
 
@@ -938,6 +941,8 @@ namespace PixelVision8.Engine.Chips
             // Grab the correct cached pixel data
             GetCachedPixels(viewPort.X, viewPort.Y, viewPort.Width, viewPort.Height, ref tmpTilemapCache);
 
+            // TODO need to pass the tilemap directly into the renderer
+            
             // Copy over the cached pixel data from the tilemap request
             DrawPixels(tmpTilemapCache, x, y, viewPort.Width, viewPort.Height, false, false, DrawMode.Tile);
         }
@@ -1082,51 +1087,6 @@ namespace PixelVision8.Engine.Chips
 
         #endregion
 
-        #region File IO
-
-        /// <summary>
-        ///     Allows you to save string data to the game file itself. This data persistent even after restarting a game.
-        /// </summary>
-        /// <param name="key">
-        ///     A string to use as the key for the data.
-        /// </param>
-        /// <param name="value">
-        ///     A string representing the data to be saved.
-        /// </param>
-        // public void WriteSaveData(string key, string value)
-        // {
-        //     if (savedData.Count > SaveSlots) return;
-        //
-        //     if (savedData.ContainsKey(key))
-        //     {
-        //         savedData[key] = value;
-        //         return;
-        //     }
-        //
-        //     savedData.Add(key, value);
-        // }
-
-        /// <summary>
-        ///     Allows you to read saved data by supplying a key. If no matching key exists, "undefined" is returned.
-        /// </summary>
-        /// <param name="key">
-        ///     The string key used to find the data.
-        /// </param>
-        /// <param name="defaultValue">
-        ///     The optional string to use if data does not exist.
-        /// </param>
-        /// <returns>
-        ///     Returns string data associated with the supplied key.
-        /// </returns>
-        // public string ReadSaveData(string key, string defaultValue = "undefined")
-        // {
-        //     if (!savedData.ContainsKey(key)) WriteSaveData(key, defaultValue);
-        //
-        //     return savedData[key];
-        // }
-
-        #endregion
-
         #region Input
 
         /// <summary>
@@ -1257,7 +1217,7 @@ namespace PixelVision8.Engine.Chips
 
         #endregion
 
-        #region Sound
+        // #region Sound
 
         /// <summary>
         ///     This method plays back a sound on a specific channel. The SoundChip has a limit of
@@ -1274,18 +1234,6 @@ namespace PixelVision8.Engine.Chips
         {
             SoundChip.PlaySound(id, channel);
         }
-
-        /// <summary>
-        ///     This method allows your read and write raw sound data on the SoundChip.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="data"></param>
-        // public string Sound(int id, string data = null)
-        // {
-        //     if (data != null) SoundChip.UpdateSound(id, data);
-        //
-        //     return SoundChip.ReadSound(id).param;
-        // }
 
         /// <summary>
         ///     Use StopSound() to stop any sound playing on a specific channel.
@@ -1305,96 +1253,6 @@ namespace PixelVision8.Engine.Chips
         {
             return SoundChip.IsChannelPlaying(channel);
         }
-
-        /// <summary>
-        ///     Plays a sing by it's ID. You can pass in a start position for it to being at a specific pattern ID in the song.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="loop"></param>
-        /// <param name="startAt"></param>
-        // public void PlaySong(int id, bool loop = true, int startAt = 0)
-        // {
-        //     MusicChip.PlaySong(id, loop, startAt);
-        // }
-
-        /// <summary>
-        ///     This helper method allows you to automatically load a set of patterns as a complete
-        ///     song and plays them back. You can also define if the tracks should loop when they
-        ///     are done playing.
-        /// </summary>
-        /// <param name="loopIDs">
-        ///     An array of loop IDs to playback as a single song.
-        /// </param>
-        /// <param name="loop">
-        ///     A bool that determines if the song should loop back to the first ID when it is
-        ///     done playing.
-        /// </param>
-        // public void PlayPattern(int id, bool loop = true)
-        // {
-        //     MusicChip.PlayPatterns(new[] {id}, loop);
-        // }
-
-        /// <summary>
-        ///     This helper method allows you to automatically load a set of patterns as a complete
-        ///     song and plays them back. You can also define if the tracks should loop when they
-        ///     are done playing.
-        /// </summary>
-        /// <param name="loopIDs">
-        ///     An array of loop IDs to playback as a single song.
-        /// </param>
-        /// <param name="loop">
-        ///     A bool that determines if the song should loop back to the first ID when it is
-        ///     done playing.
-        /// </param>
-        // public void PlayPatterns(int[] loopIDs, bool loop = true)
-        // {
-        //     MusicChip.PlayPatterns(loopIDs, loop);
-        // }
-
-        /// <summary>
-        ///     Returns a dictionary with information about the current state of the music chip.
-        /// </summary>
-        /// <returns></returns>
-        // public Dictionary<string, int> SongData()
-        // {
-        //     return MusicChip.songData;
-        // }
-
-        /// <summary>
-        ///     Toggles the current playback state of the sequencer. If the song
-        ///     is playing it will pause, if it is paused it will play.
-        /// </summary>
-        // public void PauseSong()
-        // {
-        //     MusicChip.PauseSong();
-        // }
-
-        /// <summary>
-        ///     Stops the sequencer.
-        /// </summary>
-        // public void StopSong()
-        // {
-        //     MusicChip.StopSong();
-        // }
-
-        /// <summary>
-        ///     Rewinds the sequencer to the beginning of the currently loaded song. You can define
-        ///     the position in the loop and the loop where playback should begin. Calling this method
-        ///     without any arguments will simply rewind the song to the beginning of the first loop.
-        /// </summary>
-        /// <param name="position">
-        ///     Position in the loop to start playing at.
-        /// </param>
-        /// <param name="patternID">
-        ///     The loop to rewind too.
-        /// </param>
-        // public void RewindSong(int position = 0, int patternID = 0)
-        // {
-        //     //TODO need to add in better support for rewinding a song across multiple loops
-        //     MusicChip.RewindSong();
-        // }
-
-        #endregion
 
         #region Sprite
         
@@ -1450,40 +1308,6 @@ namespace PixelVision8.Engine.Chips
 
             return tmpSpriteData;
         }
-
-        /// <summary>
-        ///     Returns the total number of sprites in the system. You can pass in an optional argument to
-        ///     get a total number of sprites the Sprite Chip can store by passing in false for ignoreEmpty.
-        ///     By default, only sprites with pixel data will be included in the total return.
-        /// </summary>
-        /// <param name="ignoreEmpty">
-        ///     This is an optional value that defaults to true. When set to true, the SpriteChip returns
-        ///     the total number of sprites that are not empty (where all the pixel data is set to -1).
-        ///     Set this value to false if you want to get all of the available color slots in the ColorChip
-        ///     regardless if they are empty or not.
-        /// </param>
-        /// <returns>
-        ///     This method returns the total number of sprites in the color chip based on the ignoreEmpty
-        ///     argument's value.
-        /// </returns>
-        // public int TotalSprites(bool ignoreEmpty = false)
-        // {
-        //     return ignoreEmpty ? SpriteChip.SpritesInMemory : SpriteChip.TotalSprites;
-        // }
-
-        /// <summary>
-        ///     This method returns the maximum number of sprites the Display Chip can render in a single frame. Use this
-        ///     to better understand the limitations of the hardware your game is running on. This is a read only property
-        ///     at runtime.
-        /// </summary>
-        /// <param name="total"></param>
-        /// <returns>Returns an int representing the total number of sprites on the screen at once.</returns>
-        // public int MaxSpriteCount()
-        // {
-        //     //            if (total.HasValue) spriteChip.maxSpriteCount = total.Value;
-        //
-        //     return SpriteChip.maxSpriteCount;
-        // }
 
         #endregion
 
@@ -1591,13 +1415,13 @@ namespace PixelVision8.Engine.Chips
         ///     This forces the map to redraw its cached pixel data. Use this to clear any pixel data added
         ///     after the map created the pixel data cache.
         /// </summary>
-        public void RebuildTilemap()
-        {
-            PixelDataUtil.Clear(cachedTileMap);
-            // cachedTileMap.Clear();
-
-            TilemapChip.InvalidateAll();
-        }
+        // public void RebuildTilemap()
+        // {
+        //     PixelDataUtil.Clear(cachedTileMap);
+        //     // cachedTileMap.Clear();
+        //
+        //     TilemapChip.InvalidateAll();
+        // }
 
 
         protected Point _tilemapSize = Point.Zero;
@@ -1703,89 +1527,89 @@ namespace PixelVision8.Engine.Chips
         ///     the screen's resolution.
         /// </summary>
         /// <ignore />
-        protected void RebuildCache(PixelData targetTextureData)
-        {
-            if (TilemapChip.invalid != true) return;
-
-            var realWidth = SpriteChip.width * TilemapChip.columns;
-            var realHeight = SpriteChip.height * TilemapChip.rows;
-
-            if (realWidth != cachedTileMap.Width || realHeight != cachedTileMap.Height)
-                cachedTileMap.Resize(realWidth, realHeight);
-
-            var tileSize = SpriteSize();
-
-            // Create tmp variables for loop
-            int x, y, spriteID;
-
-            // Get a local reference to the total number of tiles
-            var totalTiles = TilemapChip.total;
-
-            // var totalTilesUpdated = 0;
-
-            // Loop through all of the tiles in the tilemap
-            for (var i = 0; i < totalTiles; i++)
-            {
-                var tile = TilemapChip.tiles[i];
-
-                if (tile.invalid)
-                {
-                    // Get the sprite id
-                    spriteID = tile.spriteID;
-
-                    // Calculate the new position of the tile;
-                    x = i % TilemapChip.columns * tileSize.X;
-                    y = i / TilemapChip.columns * tileSize.Y;
-
-                    SpriteChip.ReadSpriteAt(spriteID, ref tmpPixelData);
-
-                    // TODO need to see if the tile is flipped
-                    //                    var flipH = tile.flipH;
-                    //                    var flipV = flipVLayer[i] == 1;
-
-                    if (tile.flipH || tile.flipV)
-                        SpriteChipUtil.FlipSpriteData(ref tmpPixelData, SpriteChip.width, SpriteChip.height, tile.flipH,
-                            tile.flipH);
-
-                    //                    targetTextureData.DrawSprite(spriteID, x, y);
-                    // Draw the pixel data into the cachedTilemap
-                    
-                    PixelDataUtil.MergePixels(targetTextureData, x, y, tileSize.X, tileSize.Y, tmpPixelData, false, false, tile.colorOffset, false);
-
-                    // totalTilesUpdated++;
-                }
-            }
-
-            // Reset the invalidation state
-            TilemapChip.ResetValidation();
-        }
+        // protected void RebuildCache(PixelData targetTextureData)
+        // {
+        //     if (TilemapChip.invalid != true) return;
+        //
+        //     var realWidth = SpriteChip.width * TilemapChip.columns;
+        //     var realHeight = SpriteChip.height * TilemapChip.rows;
+        //
+        //     if (realWidth != cachedTileMap.Width || realHeight != cachedTileMap.Height)
+        //         cachedTileMap.Resize(realWidth, realHeight);
+        //
+        //     var tileSize = SpriteSize();
+        //
+        //     // Create tmp variables for loop
+        //     int x, y, spriteID;
+        //
+        //     // Get a local reference to the total number of tiles
+        //     var totalTiles = TilemapChip.total;
+        //
+        //     // var totalTilesUpdated = 0;
+        //
+        //     // Loop through all of the tiles in the tilemap
+        //     for (var i = 0; i < totalTiles; i++)
+        //     {
+        //         var tile = TilemapChip.tiles[i];
+        //
+        //         if (tile.invalid)
+        //         {
+        //             // Get the sprite id
+        //             spriteID = tile.spriteID;
+        //
+        //             // Calculate the new position of the tile;
+        //             x = i % TilemapChip.columns * tileSize.X;
+        //             y = i / TilemapChip.columns * tileSize.Y;
+        //
+        //             SpriteChip.ReadSpriteAt(spriteID, ref tmpPixelData);
+        //
+        //             // TODO need to see if the tile is flipped
+        //             //                    var flipH = tile.flipH;
+        //             //                    var flipV = flipVLayer[i] == 1;
+        //
+        //             if (tile.flipH || tile.flipV)
+        //                 SpriteChipUtil.FlipSpriteData(ref tmpPixelData, SpriteChip.width, SpriteChip.height, tile.flipH,
+        //                     tile.flipH);
+        //
+        //             //                    targetTextureData.DrawSprite(spriteID, x, y);
+        //             // Draw the pixel data into the cachedTilemap
+        //             
+        //             PixelDataUtil.MergePixels(targetTextureData, x, y, tileSize.X, tileSize.Y, tmpPixelData, false, false, tile.colorOffset, false);
+        //
+        //             // totalTilesUpdated++;
+        //         }
+        //     }
+        //
+        //     // Reset the invalidation state
+        //     TilemapChip.ResetValidation();
+        // }
 
         public void GetCachedPixels(int x, int y, int blockWidth, int blockHeight, ref int[] pixelData)
         {
-            if (TilemapChip.invalid) RebuildCache(cachedTileMap);
+            // if (TilemapChip.invalid) RebuildCache(cachedTileMap);
 
-            PixelDataUtil.CopyPixels(ref pixelData, cachedTileMap, x, y, blockWidth, blockHeight);
+            PixelDataUtil.CopyPixels(ref pixelData, TilemapChip.PixelData, x, y, blockWidth, blockHeight);
         }
 
-        protected void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight,
-            bool flipH = false, bool flipV = false, int colorOffset = 0)
-        {
-            // Check to see if the tilemap cache is invalide before drawing to it
-            if (TilemapChip.invalid) RebuildCache(cachedTileMap);
-
-            // Flip the y axis 
-            //            y = cachedTileMap.height - y - blockHeight;
-
-
-            // Todo need to go through and draw to the tilemap cache but ignore transparent pixels
-            if (pixels == null)
-                PixelDataUtil.Clear(cachedTileMap, colorOffset, x, y, blockWidth, blockHeight);
-            else
-                // Set pixels on the tilemap cache
-                PixelDataUtil.MergePixels(cachedTileMap, x, y, blockWidth, blockHeight, pixels, flipH, flipV, colorOffset);
-
-            //            Invalidate();
-        }
+        // protected void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight,
+        //     bool flipH = false, bool flipV = false, int colorOffset = 0)
+        // {
+        //     // Check to see if the tilemap cache is invalide before drawing to it
+        //     if (TilemapChip.invalid) RebuildCache(cachedTileMap);
+        //
+        //     // Flip the y axis 
+        //     //            y = cachedTileMap.height - y - blockHeight;
+        //
+        //
+        //     // Todo need to go through and draw to the tilemap cache but ignore transparent pixels
+        //     if (pixels == null)
+        //         PixelDataUtil.Clear(cachedTileMap, colorOffset, x, y, blockWidth, blockHeight);
+        //     else
+        //         // Set pixels on the tilemap cache
+        //         PixelDataUtil.MergePixels(cachedTileMap, x, y, blockWidth, blockHeight, pixels, flipH, flipV, colorOffset);
+        //
+        //     //            Invalidate();
+        // }
 
         
 

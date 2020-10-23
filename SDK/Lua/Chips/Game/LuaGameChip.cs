@@ -83,8 +83,7 @@ namespace PixelVision8.Engine.Chips
             LuaScript.Globals["DrawSpriteBlock"] =
                 new Action<int, int, int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSpriteBlock);
 
-            LuaScript.Globals["DrawText"] =
-                new Action<string, int, int, DrawMode, string, int, int, bool, bool, Rectangle?>(DrawText);
+            LuaScript.Globals["DrawText"] = new Action<string, int, int, DrawMode, string, int, int, bool, bool, Rectangle?>(DrawText);
             LuaScript.Globals["DrawTilemap"] = new Action<int, int, int, int, int?, int?>(DrawTilemap);
 
             LuaScript.Globals["DrawRect"] = new Action<int, int, int, int, int, DrawMode>(DrawRect);
@@ -155,7 +154,7 @@ namespace PixelVision8.Engine.Chips
 
             #region Tilemap
 
-            LuaScript.Globals["RebuildTilemap"] = new Action(RebuildTilemap);
+            // LuaScript.Globals["RebuildTilemap"] = new Action(RebuildTilemap);
 
             LuaScript.Globals["TilemapSize"] = new Func<int?, int?, bool, Point>(TilemapSize);
             LuaScript.Globals["Tile"] = new Func<int, int, int?, int?, int?, bool?, bool?, TileData>(Tile);

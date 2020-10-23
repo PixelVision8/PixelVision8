@@ -581,7 +581,7 @@ namespace PixelVision8.Runner.Parsers
 
             if (data.ContainsKey("rows")) rows = (int) (long) data["rows"];
 
-            if (data.ContainsKey("totalFlags")) tilemapChip.totalFlags = (int) (long) data["totalFlags"];
+            // if (data.ContainsKey("totalFlags")) tilemapChip.totalFlags = (int) (long) data["totalFlags"];
 
             if (data.ContainsKey("autoImport")) tilemapChip.autoImport = Convert.ToBoolean(data["autoImport"]);
 
