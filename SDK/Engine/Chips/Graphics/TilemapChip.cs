@@ -1,4 +1,4 @@
-﻿//   
+﻿﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -65,8 +65,8 @@ namespace PixelVision8.Engine.Chips
             }
         }
         
-        private Point _tileSize;
-        private int[] tmpPixelData;
+        private Rectangle _tileSize;
+        private PixelData tmpPixelData;
         public Rectangle viewPort;
         public int textureWidth => _tilemapCache.Width;
         public int textureHeight => _tilemapCache.Height;
@@ -211,8 +211,10 @@ namespace PixelVision8.Engine.Chips
             // Get a reference to the Sprite Chip
             SpriteChip = engine.SpriteChip;
             
-            _tileSize = new Point(SpriteChip.width, SpriteChip.height);
-            tmpPixelData = new int[_tileSize.X * _tileSize.Y];
+            _tileSize = new Rectangle(0, 0, SpriteChip.width, SpriteChip.height);
+            
+            tmpPixelData = new PixelData(_tileSize.Width, _tileSize.Height);
+            
             // Resize to default nes resolution
             Resize(32, 30);
         }
@@ -246,14 +248,14 @@ namespace PixelVision8.Engine.Chips
                     // Get the sprite id
                     _pos = MathUtil.CalculatePosition(_i, columns );
                     
-                    SpriteChip.ReadSpriteAt(_tile.spriteID, ref tmpPixelData);
+                    SpriteChip.ReadSpriteAt(_tile.spriteID, ref tmpPixelData.Pixels);
 
                     if (_tile.flipH || _tile.flipV)
-                        SpriteChipUtil.FlipSpriteData(ref tmpPixelData, _tileSize.X, _tileSize.Y, _tile.flipH,
+                        SpriteChipUtil.FlipSpriteData(ref tmpPixelData.Pixels, _tileSize.Width, _tileSize.Height, _tile.flipH,
                             _tile.flipH);
 
                     // Draw the pixel data into the cachedTilemap
-                    PixelDataUtil.MergePixels(_tilemapCache,_pos.X * _tileSize.X, _pos.Y * _tileSize.Y , _tileSize.X, _tileSize.Y, tmpPixelData, false, false, _tile.colorOffset, false);
+                    PixelDataUtil.MergePixels(tmpPixelData, _tileSize, _tilemapCache, _pos.X * _tileSize.Width, _pos.Y * _tileSize.Height, false, false, _tile.colorOffset, false);
 
                 }
             }

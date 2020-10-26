@@ -20,12 +20,16 @@
 
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine
 {
 
     public struct DrawPixelDataRequest : IDisplay
     {
+        
+        // TODO should never have to resize this. Use a max array and counter then set new pixel data?
+        
         public PixelData PixelData { get; }
 
         public DrawPixelDataRequest(int[] pixels, int width, int height)
@@ -51,22 +55,19 @@ namespace PixelVision8.Engine
         
         public byte Priority;
 
-        public int height => SampleRect.Height;
-        public int width => SampleRect.Width;
-        private int totalPixels => PixelData.TotalPixels;
-
         public PixelData PixelData => SrcPixelData.PixelData;
         
         public void SampleFrom(IDisplay source, int srcX, int srcY, int blockWidth, int blockHeight)
         {
             SrcPixelData = source;
+           
             SampleRect.X = srcX;
             SampleRect.Y = srcY;
             SampleRect.Width = blockWidth;
             SampleRect.Height = blockHeight;
         }
-
-        public bool isRectangle => totalPixels < 0;
+        
+        
 
     }
 }

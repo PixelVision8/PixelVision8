@@ -1,4 +1,4 @@
-﻿﻿//   
+﻿﻿﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -134,7 +134,22 @@ namespace PixelVision8.Engine.Chips
             {
                 _drawRequest = DrawCalls[i];
                 
-                PixelDataUtil.CopyPixels(_drawRequest.PixelData, _drawRequest.SampleRect.X, _drawRequest.SampleRect.Y, _drawRequest.SampleRect.Width, _drawRequest.SampleRect.Height, Display, _drawRequest.x, _drawRequest.y, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
+                // PixelDataUtil.MergePixels(
+                //     Display,
+                //     _drawRequest.x,
+                //     _drawRequest.y,
+                //     _drawRequest.SampleRect.Width,
+                //     _drawRequest.SampleRect.Height,
+                //     _drawRequest.PixelData.Pixels,
+                //     _drawRequest.FlipH,
+                //     _drawRequest.FlipV,
+                //     _drawRequest.ColorOffset
+                // );
+                
+                
+                // PixelDataUtil.CopyPixels(_drawRequest.PixelData, Display, _drawRequest.SampleRect.X, _drawRequest.SampleRect.Y, _drawRequest.SampleRect.Width, _drawRequest.SampleRect.Height, _drawRequest.x, _drawRequest.y, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
+                PixelDataUtil.MergePixels(_drawRequest.PixelData, _drawRequest.SampleRect, Display, _drawRequest.x, _drawRequest.y, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
+                // PixelDataUtil.CopyPixels(_drawRequest.PixelData, Display, _drawRequest.x, _drawRequest.y, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
                 
                 
                 // PixelDataUtil.MergePixels(_drawRequest.PixelData, _drawRequest.x, _drawRequest.y, _drawRequest.width, _drawRequest.height, _drawRequest.PixelData.Pixels, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
@@ -201,15 +216,23 @@ namespace PixelVision8.Engine.Chips
                 draw.x = destX;
                 draw.y = destY;
 
-                
-                draw.SampleFrom(src, srcX, srcY, blockWidth, blockHeight);
-                
-                draw.Priority = layer;
-                draw.FlipH = flipH;
-                draw.FlipV = flipV;
-                draw.ColorOffset = colorOffset;
-                
-                DrawCalls.Add(draw);
+                // PixelDataUtil.ValidateBounds(src.PixelData.Width, src.PixelData.Height, ref srcX, ref srcY, ref blockWidth,
+                //     ref blockHeight);
+
+                // if (blockWidth > 0 || blockHeight > 0)
+                // {
+
+                    draw.SampleFrom(src, srcX, srcY, blockWidth, blockHeight);
+
+                    draw.Priority = layer;
+                    draw.FlipH = flipH;
+                    draw.FlipV = flipV;
+                    draw.ColorOffset = colorOffset;
+
+                    DrawCalls.Add(draw);
+                    
+                // }
+
                 // DrawRequestPixelDataLayers[layer].Add(draw);
             }
             

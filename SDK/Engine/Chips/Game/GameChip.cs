@@ -53,7 +53,8 @@ namespace PixelVision8.Engine.Chips
         protected bool _tmpFlipV;  
         protected SpriteData _currentSpriteData;
         protected List<SpriteData> tmpSpritesData;
-        
+        protected int startX;
+        protected int startY;
         private readonly string newline = "\n";
         protected SpriteCollection[] metaSprites;
 
@@ -737,40 +738,6 @@ namespace PixelVision8.Engine.Chips
         }
 
         #endregion
-        
-        /// <summary>
-        ///     A helper method that converts a single character into pixel data.
-        /// </summary>
-        /// <param name="character"></param>
-        /// <param name="fontName"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public int[] CharacterToPixelData(char character, string fontName)
-        {
-            var fontMap = FontChip.ReadFont(fontName);
-
-            // Test to make sure font exists
-            if (fontMap == null) throw new Exception("Font '" + fontName + "' not found.");
-
-            var index = Convert.ToInt32(character) - charOffset;
-
-            var totalCharacters = fontMap.Length;
-            var spriteID = -1;
-
-            if (index < totalCharacters && index > -1) spriteID = fontMap[index];
-
-            if (spriteID > -1)
-            {
-                FontChip.ReadSpriteAt(spriteID, ref tmpSpriteData);
-                return tmpSpriteData;
-            }
-
-            //                return Sprite(spriteID);
-
-            return null;
-        }
-        
-        
         
     }
     

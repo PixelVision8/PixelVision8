@@ -81,14 +81,13 @@
     <Compile Include="SDK/Engine/Utils/SpriteChipUtil.cs" />
     <Compile Include="SDK/Engine/Utils/MathUtil.cs" />
     <Compile Include="SDK/Engine/PixelVisionEngineLite.cs" />
-    <Compile Include="SDK/Engine/Data/DrawRequest.cs" />
     <Compile Include="SDK/Engine/Data/AbstractData.cs" />
-    <Compile Include="SDK/Engine/Data/PixelData.cs" /> 
-    <Compile Include="SDK/Engine/Data/TextureData.cs" />
+    <Compile Include="SDK/Engine/Data/PixelData.cs" />
     <Compile Include="SDK/Engine/Data/SoundData.cs" />
     <Compile Include="SDK/Engine/Data/TileData.cs" />
     <Compile Include="SDK/Engine/IEngine.cs" />
     <Compile Include="SDK/Runner/Parsers/PNGParser.cs" />
+    <Compile Include="SDK\Engine\Chips\Graphics\IDisplay.cs" />
     <Compile Include="SDK\Engine\Data\DrawRequestPixelData.cs" />
     <Compile Include="SDK\Engine\Utils\PixelDataUtil.cs" />
   </ItemGroup>

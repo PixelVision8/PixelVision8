@@ -63,9 +63,7 @@ namespace PixelVision8.Engine.Utils
         /// </returns>
         public static int CalculateIndex(int x, int y, int width)
         {
-            int index;
-            index = x + y * width;
-            return index;
+            return x + y * width;
         }
 
         /// <summary>

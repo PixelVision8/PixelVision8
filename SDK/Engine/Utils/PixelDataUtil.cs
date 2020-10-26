@@ -26,39 +26,16 @@ namespace PixelVision8.Engine.Utils
     
     public static class PixelDataUtil
     {
-        public static int GetPixel(PixelData pixelData, int x, int y)
-        {
-            var size = pixelData.Height;
-            y = (y % size + size) % size;
-            size = pixelData.Width;
-            x = (x % size + size) % size;
-            // size is still == _width from the previous operation - let's reuse the local
+        private static int _mergeSampleWidth;
+        private static int _mergeSampleHeight;
+        private static int _mergeDestWidth;
+        private static int _mergeDestHeight;
+        private static int _mergeCol;
+        private static int _mergeRow;
+        private static int _mergeX;
+        private static int _mergeY;
 
-            return pixelData[x + size * y];
-        }
-        
-        public static void SetPixel(PixelData pixelData, int x, int y, int color)
-        {
-            // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-            var size = pixelData.Height;
-            y = (y % size + size) % size;
-            size = pixelData.Width;
-            x = (x % size + size) % size;
-            // size is still == _width from the previous operation - let's reuse the local
-
-            var index = x + size * y;
-
-            pixelData[index] = color;
-        }
-        
-        public static int[] GetPixels(PixelData pixelData)
-        {
-            var tmpPixels = new int[pixelData.TotalPixels];
-
-            Array.Copy(pixelData.Pixels, tmpPixels, pixelData.TotalPixels);
-
-            return tmpPixels;
-        }
+        public static int[] GetPixels(PixelData pixelData) => GetPixels(pixelData, 0, 0, pixelData.Width, pixelData.Height);
         
         public static int[] GetPixels(PixelData pixelData, int x, int y, int blockWidth, int blockHeight)
         {
@@ -69,216 +46,127 @@ namespace PixelVision8.Engine.Utils
             return tmpPixels;
         }
         
-        public static void SetPixels(int[] pixels, PixelData pixelData)
+        public static void SetPixels(int[] pixels, PixelData pixelData) => SetPixels(pixelData, 0, 0, pixelData.Width, pixelData.Height, pixels);
+        
+        public static void SetPixels(PixelData pixelData, int x, int y, int blockWidth, int blockHeight, int[] srcPixels)
         {
-            var TotalPixels = Math.Min(pixels.Length, pixelData.Width * pixelData.Height);
+            
+            for (var i = blockHeight -1; i > -1; i--)
+            {
+                Array.Copy(
+                    srcPixels, 
+                    i  * blockWidth, 
+                    pixelData.Pixels, 
+                    x + (i + y) * pixelData.Width, 
+                    blockWidth
+                    );
+            }
 
-            Array.Copy(pixels, pixelData.Pixels, TotalPixels);
+        }
+        
+        public static void CopyPixels(ref int[] destPixels, PixelData pixelData, int x, int y, int sampleWidth, int sampleHeight)
+        {
+
+            var total = sampleWidth * sampleHeight;
+            
+            if (destPixels.Length < total) 
+                Array.Resize(ref destPixels, total);
+            
+            // Copy each entire line at once.
+            for (var i = sampleHeight - 1; i > -1; --i)
+            {
+                Array.Copy(
+                    pixelData.Pixels, 
+                    x + (y + i) * pixelData.Width, 
+                    destPixels, 
+                    i * sampleWidth, 
+                    sampleWidth
+                    );
+            }
             
         }
-        
-        public static void SetPixels(PixelData pixelData, int x, int y, int blockWidth, int blockHeight, int[] pixels)
+
+        public static void Clear(PixelData pixelData,  int colorRef = -1)
         {
-            var TotalPixels = blockWidth * blockHeight;
-
-            if (TotalPixels == 0) return;
-
-            // Per-line copy, as there is no special per-pixel logic required.
-
-            // Vertical wrapping is not an issue. Horizontal wrapping requires splitting the copy into two operations.
-            // Keep important data in local variables.
-            int dstY;
-            // var dst = Pixels;
-            var width = pixelData.Width;
-            var height = pixelData.Height;
-            var offsetStart = (x % width + width) % width;
-            var offsetEnd = offsetStart + blockWidth;
-            if (offsetEnd <= width)
-            {
-                // Copy each entire line at once.
-                for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
-                {
-                    // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                    dstY = ((y + tmpY) % height + height) % height;
-                    Array.Copy(pixels, tmpY * blockWidth, pixelData.Pixels, offsetStart + dstY * width, blockWidth);
-                }
-            }
-            else
-            {
-                // Copy each non-wrapping section and each wrapped section separately.
-                var wrap = offsetEnd % width;
-                for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
-                {
-                    // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                    dstY = ((y + tmpY) % height + height) % height;
-                    Array.Copy(pixels, tmpY * blockWidth, pixelData.Pixels, offsetStart + dstY * width, blockWidth - wrap);
-                    Array.Copy(pixels, blockWidth - wrap + tmpY * blockWidth, pixelData.Pixels, dstY * width, wrap);
-                }
-            }
-        }
-        
-        public static void CopyPixels(ref int[] data, PixelData pixelData, int x, int y, int blockWidth, int blockHeight)
-        {
-            var TotalPixels = blockWidth * blockHeight;
-
-            if (data.Length < TotalPixels) Array.Resize(ref data, TotalPixels);
-
-            // Per-line copy, as there is no special per-pixel logic required.
-
-            // Vertical wrapping is not an issue. Horizontal wrapping requires splitting the copy into two operations.
-            // Keep important data in local variables.
-            int srcY;
-            var src = pixelData.Pixels;
-            var width = pixelData.Width;
-            var height = pixelData.Height;
-            var offsetStart = (x % width + width) % width;
-            var offsetEnd = offsetStart + blockWidth;
-            if (offsetEnd <= width)
-            {
-                // Copy each entire line at once.
-                for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
-                {
-                    // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                    srcY = ((y + tmpY) % height + height) % height;
-                    Array.Copy(src, offsetStart + srcY * width, data, tmpY * blockWidth, blockWidth);
-                }
-            }
-            else
-            {
-                // Copy each non-wrapping section and each wrapped section separately.
-                var wrap = offsetEnd % width;
-                for (var tmpY = blockHeight - 1; tmpY > -1; --tmpY)
-                {
-                    // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                    srcY = ((y + tmpY) % height + height) % height;
-                    Array.Copy(src, offsetStart + srcY * width, data, tmpY * blockWidth, blockWidth - wrap);
-                    Array.Copy(src, srcY * width, data, blockWidth - wrap + tmpY * blockWidth, wrap);
-                }
-            }
-        }
-        
-        public static void CopyPixels(PixelData pixelData, ref int[] data, bool ignoreTransparent, int transparentColor)
-        {
-            var TotalPixels = pixelData.Width * pixelData.Height;
-
-            if (data.Length < TotalPixels) Array.Resize(ref data, TotalPixels);
-
-            int color;
-
-            if (!ignoreTransparent)
-                Array.Copy(pixelData.Pixels, data, TotalPixels);
-            else
-                for (var i = 0; i < TotalPixels; i++)
-                {
-                    color = pixelData[i];
-                    if (color != transparentColor) data[i] = color;
-                }
-        }
-        
-        public static void Clear(PixelData pixelData,  int colorRef = -1, int x = 0, int y = 0, int? width = null, int? height = null)
-        {
-            int[] tmpPixels = null;
-
-            var tmpWidth = width ?? pixelData.Width;
-            var tmpHeight = height ?? pixelData.Height;
-
-            var total = tmpWidth * tmpHeight;
-
-            // TODO not sure why this sometimes goes to negative but this check should fix that
-            if (total > 0)
-            {
-                tmpPixels = new int[total];
-
-                for (var i = 0; i < total; i++) tmpPixels[i] = colorRef;
-
-                SetPixels(pixelData, x, y, tmpWidth, tmpHeight, tmpPixels);
-            }
-        }
-        
-        public static void MergePixels(PixelData pixelData, int x, int y, int blockWidth, int blockHeight, int[] pixels, bool flipH = false, bool flipV = false, int colorOffset = 0, bool ignoreTransparent = true)
-        {
-            var TotalPixels = blockWidth * blockHeight;
-
-            // Per-pixel copy.
-            int pixel;
-            int srcX, srcY;
-            for (var i = TotalPixels - 1; i > -1; i--)
-            {
-                pixel = pixels?[i] ?? -1;
-
-                if (pixel != -1 || ignoreTransparent != true)
-                {
-                    if (colorOffset > 0 && pixel != -1) pixel += colorOffset;
-
-                    srcX = i % blockWidth;
-                    srcY = i / blockWidth;
-
-                    if (flipH) srcX = blockWidth - 1 - srcX;
-
-                    if (flipV) srcY = blockWidth - 1 - srcY;
-
-                    SetPixel(pixelData, srcX + x, srcY + y, pixel);
-                }
-            }
+            for (var i = pixelData.TotalPixels - 1; i > -1; i--) pixelData[i] = colorRef;
         }
 
-        public static void CopyPixels(PixelData src, int srcX, int srcY, int width, int height, PixelData dest,
+        public static void MergePixels(PixelData src, Rectangle sample,
+            PixelData dest,
             int destX, int destY, bool flipH = false, bool flipV = false, int colorOffset = 0,
             bool ignoreTransparent = true)
         {
+            _mergeSampleWidth = sample.Width;
+            _mergeSampleHeight = sample.Height;
+            _mergeDestWidth = dest.Width;
+            _mergeDestHeight = dest.Height;
 
-            var pixels = GetPixels(src, srcX, srcY, width, height);
-            MergePixels(dest, destX, destY, width, height, pixels, flipH, flipV, colorOffset, ignoreTransparent);
-
-        }
-        
-        public static void Crop(PixelData pixelData, int x, int y, int blockWidth, int blockHeight)
-        {
-            if (!ValidateBounds(pixelData.Width, pixelData.Height, ref x, ref y, ref blockWidth, ref blockHeight))
-                return;
-
-            var tmpPixelData = GetPixels(pixelData, x, y, blockWidth, blockHeight);
-
-            pixelData.Resize(blockWidth, blockHeight);
-            
-            SetPixels(tmpPixelData, pixelData);
-        }
-        
-        public static bool ValidateBounds(int width, int height, ref int x, ref int y, ref int blockWidth, ref int blockHeight)
-        {
             // Adjust X
-            if (x < 0)
+            if (destX < 0)
             {
-                blockWidth += x;
-                x = 0;
+                _mergeSampleWidth += destX;
+                destX = 0;
             }
 
             // Adjust Y
-            if (y < 0)
+            if (destY < 0)
             {
-                blockHeight += y;
-                y = 0;
+                _mergeSampleHeight += destY;
+                destY = 0;
             }
 
             // Adjust Width
-            if ((x + blockWidth) > width)
+            if (destX + _mergeSampleWidth > _mergeDestWidth)
             {
-                blockWidth -= ((x + blockWidth) - width);
+                _mergeSampleWidth -= (destX + _mergeSampleWidth) - _mergeDestWidth;
             }
 
-            // Adjust Height
-            if ((y + blockHeight) > height)
+            // Adjust Height.
+            if (destY + _mergeSampleHeight > _mergeDestHeight)
             {
-                blockHeight -= ((y + blockHeight) - height);
+                _mergeSampleHeight -= destY + _mergeSampleHeight - _mergeDestHeight;
             }
 
-            return (blockWidth > 0 && blockHeight > 0);
+            var total = _mergeSampleWidth * _mergeSampleHeight;
+            
+            if(total == 0)
+                return;
 
+            _mergeCol = 0;
+            _mergeRow = 0;    
+            
+            for (var i = 0; i < total; i++)
+            {
+                _mergeX = _mergeCol;
+                _mergeY = _mergeRow;
+                
+                var tmpPixel = src.Pixels?[(_mergeX + sample.X) + src.Width * (_mergeY + sample.Y)] ?? -1;
+
+                if (tmpPixel != -1 || ignoreTransparent != true)
+                {
+                    
+                    if (flipH) 
+                        _mergeX = _mergeSampleWidth - 1 - _mergeX;
+
+                    if (flipV) 
+                        _mergeY = _mergeSampleWidth - 1 - _mergeY;
+
+                    dest.Pixels[(_mergeX + destX) + _mergeDestWidth * (_mergeY + destY)] = tmpPixel + colorOffset;
+                }
+                
+                _mergeCol ++;
+                
+                if(_mergeCol >= _mergeSampleWidth) 
+                {
+                    _mergeCol = 0;
+                    _mergeRow ++;
+                }
+            }
         }
         
-        public static void Resize(ref PixelData pixelData, int width, int height)
+        public static void Resize(PixelData pixelData, int blockWidth, int blockHeight)
         {
-            pixelData.Resize(MathHelper.Clamp(width, 1, 2048), MathHelper.Clamp(height, 1, 2048));
+            pixelData.Resize(MathHelper.Clamp(blockWidth, 1, 2048), MathHelper.Clamp(blockHeight, 1, 2048));
             
             Clear(pixelData);
         }

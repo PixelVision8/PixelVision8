@@ -144,7 +144,7 @@ public struct Image
     public int[] GetPixels() => PixelDataUtil.GetPixels(PixelData);
     public int[] GetPixels(int x, int y, int blockWidth, int blockHeight) => PixelDataUtil.GetPixels(PixelData, x, y, blockWidth, blockHeight);
     
-    public void Resize(int newWidth, int newHeight) => PixelDataUtil.Resize(ref _pixelData, newWidth, newHeight);
+    public void Resize(int newWidth, int newHeight) => PixelDataUtil.Resize(_pixelData, newWidth, newHeight);
 
     public void Clear(int color = -1) => PixelDataUtil.Clear(PixelData, color);
     

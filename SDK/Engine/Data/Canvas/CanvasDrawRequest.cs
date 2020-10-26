@@ -30,6 +30,8 @@ namespace PixelVision8.Engine
         public bool Fill;
         public bool FlipH;
         public bool FlipV;
+        public int x;
+        public int y;
         public int ColorOffset;
     }
 }
