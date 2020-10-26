@@ -255,7 +255,7 @@ namespace PixelVision8.Engine.Chips
                             _tile.flipH);
 
                     // Draw the pixel data into the cachedTilemap
-                    PixelDataUtil.MergePixels(tmpPixelData, _tileSize, _tilemapCache, _pos.X * _tileSize.Width, _pos.Y * _tileSize.Height, false, false, _tile.colorOffset, false);
+                    PixelDataUtil.MergePixels(tmpPixelData, 0, 0, _tileSize.Width, _tileSize.Height, _tilemapCache, _pos.X * _tileSize.Width, _pos.Y * _tileSize.Height, false, false, _tile.colorOffset, false);
 
                 }
             }

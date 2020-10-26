@@ -453,7 +453,7 @@ namespace PixelVision8.Engine.Chips
         }
 
         private PixelData _tmpPixelData = new PixelData();
-        private Rectangle _tmpSampleRect = Rectangle.Empty;
+        private Rectangle _tmpRect = Rectangle.Empty;
         
         /// <summary>
         ///     This method allows you to draw raw pixel data directly to the display. Depending on which draw mode you
@@ -512,12 +512,9 @@ namespace PixelVision8.Engine.Chips
                         _tmpPixelData.Resize(blockWidth, blockHeight);
 
                     _tmpPixelData.Pixels = pixelData;
-
-                    _tmpSampleRect.Width = blockWidth;
-                    _tmpSampleRect.Height = blockHeight;
                     
                     // Copy pixel data directly into the tilemap chip's texture
-                    PixelDataUtil.MergePixels(_tmpPixelData, _tmpSampleRect, TilemapChip.PixelData, x, y, flipH, flipV, colorOffset);
+                    PixelDataUtil.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, TilemapChip.PixelData, x, y, flipH, flipV, colorOffset);
 
                     //            Invalidate();
 

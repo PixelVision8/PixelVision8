@@ -397,7 +397,7 @@ namespace PixelVision8.Engine
         
         private void SaveTmpLayerAction(CanvasDrawRequest request)
         {
-            PixelDataUtil.MergePixels(tmpLayer, request.Bounds, defaultLayer, request.x, request.y);
+            PixelDataUtil.MergePixels(tmpLayer, request.Bounds.X, request.Bounds.Y, request.Bounds.Width, request.Bounds.Height, defaultLayer, request.x, request.y);
             
             currentTexture = defaultLayer;
         }
@@ -577,7 +577,7 @@ namespace PixelVision8.Engine
             // if (request.Bounds.Width * request.Bounds.Height != request.PixelData.TotalPixels)
             //     return;
             // Debug.WriteLine("Bounds " + request.Bounds + " "+ request.PixelData.TotalPixels);
-            PixelDataUtil.MergePixels(request.PixelData, request.Bounds, defaultLayer, request.x, request.y, request.FlipH, request.FlipV, request.ColorOffset);
+            PixelDataUtil.MergePixels(request.PixelData, request.Bounds.X, request.Bounds.Y, request.Bounds.Width, request.Bounds.Height, defaultLayer, request.x, request.y, request.FlipH, request.FlipV, request.ColorOffset);
         }
 
         public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
@@ -783,10 +783,10 @@ namespace PixelVision8.Engine
 
             _tmpPixelData.Pixels = pixels;
 
-            _tmpRect.Width = blockWidth;
-            _tmpRect.Height = blockHeight;
+            // _tmpRect.Width = blockWidth;
+            // _tmpRect.Height = blockHeight;
             
-            PixelDataUtil.MergePixels(_tmpPixelData, _tmpRect, defaultLayer, x, y, flipH, flipV, colorOffset, ignoreTransparent);
+            PixelDataUtil.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, defaultLayer, x, y, flipH, flipV, colorOffset, ignoreTransparent);
         }
 
         public int ReadPixelAt(int x, int y)

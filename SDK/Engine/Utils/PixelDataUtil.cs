@@ -26,8 +26,6 @@ namespace PixelVision8.Engine.Utils
     
     public static class PixelDataUtil
     {
-        private static int _mergeSampleWidth;
-        private static int _mergeSampleHeight;
         private static int _mergeDestWidth;
         private static int _mergeDestHeight;
         private static int _mergeCol;
@@ -91,43 +89,42 @@ namespace PixelVision8.Engine.Utils
             for (var i = pixelData.TotalPixels - 1; i > -1; i--) pixelData[i] = colorRef;
         }
 
-        public static void MergePixels(PixelData src, Rectangle sample,
+        public static void MergePixels(PixelData src, int sampleX, int sampleY, int sampleWidth, int sampleHeight,
             PixelData dest,
             int destX, int destY, bool flipH = false, bool flipV = false, int colorOffset = 0,
             bool ignoreTransparent = true)
         {
-            _mergeSampleWidth = sample.Width;
-            _mergeSampleHeight = sample.Height;
+
             _mergeDestWidth = dest.Width;
             _mergeDestHeight = dest.Height;
 
             // Adjust X
             if (destX < 0)
             {
-                _mergeSampleWidth += destX;
+                sampleWidth += destX;
                 destX = 0;
             }
 
             // Adjust Y
             if (destY < 0)
             {
-                _mergeSampleHeight += destY;
+                sampleHeight += destY;
                 destY = 0;
             }
 
             // Adjust Width
-            if (destX + _mergeSampleWidth > _mergeDestWidth)
+            if (destX + sampleWidth > _mergeDestWidth)
             {
-                _mergeSampleWidth -= (destX + _mergeSampleWidth) - _mergeDestWidth;
+                sampleWidth -= (destX + sampleWidth) - _mergeDestWidth;
             }
 
             // Adjust Height.
-            if (destY + _mergeSampleHeight > _mergeDestHeight)
+            if (destY + sampleHeight > _mergeDestHeight)
             {
-                _mergeSampleHeight -= destY + _mergeSampleHeight - _mergeDestHeight;
+                sampleHeight -= destY + sampleHeight - _mergeDestHeight;
             }
 
-            var total = _mergeSampleWidth * _mergeSampleHeight;
+            var total = sampleWidth * sampleHeight;
             
             if(total == 0)
                 return;
@@ -140,23 +137,23 @@ namespace PixelVision8.Engine.Utils
                 _mergeX = _mergeCol;
                 _mergeY = _mergeRow;
                 
-                var tmpPixel = src.Pixels?[(_mergeX + sample.X) + src.Width * (_mergeY + sample.Y)] ?? -1;
+                var tmpPixel = src.Pixels?[(_mergeX + sampleX) + src.Width * (_mergeY + sampleY)] ?? -1;
 
                 if (tmpPixel != -1 || ignoreTransparent != true)
                 {
                     
                     if (flipH) 
-                        _mergeX = _mergeSampleWidth - 1 - _mergeX;
+                        _mergeX = sampleWidth - 1 - _mergeX;
 
                     if (flipV) 
-                        _mergeY = _mergeSampleWidth - 1 - _mergeY;
+                        _mergeY = sampleWidth - 1 - _mergeY;
 
                     dest.Pixels[(_mergeX + destX) + _mergeDestWidth * (_mergeY + destY)] = tmpPixel + colorOffset;
                 }
                 
                 _mergeCol ++;
                 
-                if(_mergeCol >= _mergeSampleWidth) 
+                if(_mergeCol >= sampleWidth) 
                 {
                     _mergeCol = 0;
                     _mergeRow ++;
