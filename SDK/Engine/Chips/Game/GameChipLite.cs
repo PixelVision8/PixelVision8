@@ -523,9 +523,9 @@ namespace PixelVision8.Engine.Chips
                 default:
                     
                     // TODO need to optimize this with a pool in the Display Chip?
-                    var data = new DrawPixelDataRequest(pixelData, blockWidth, blockHeight);
+                    // var data = new DrawPixelDataRequest(pixelData, blockWidth, blockHeight);
                     
-                    DisplayChip.NewDrawCall(data, x, y, blockWidth, blockHeight, (byte) drawMode, flipH, flipV, colorOffset);
+                    DisplayChip.NewDrawCall(pixelData, x, y, blockWidth, blockHeight, (byte) drawMode, flipH, flipV, colorOffset);
 
                     // DisplayChip.NewDrawCall(pixelData, x, y, width, height, (byte) drawMode, flipH, flipV, colorOffset);
 

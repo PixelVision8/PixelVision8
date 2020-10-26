@@ -20,32 +20,14 @@
 
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine
 {
 
-    public struct DrawPixelDataRequest : IDisplay
-    {
-        
-        // TODO should never have to resize this. Use a max array and counter then set new pixel data?
-        
-        public PixelData PixelData { get; }
-
-        public DrawPixelDataRequest(int[] pixels, int width, int height)
-        {
-            PixelData = new PixelData();
-            PixelData.Resize(width, height);
-            if(pixels != null)
-                PixelData.Pixels = pixels;
-        }
-    }
-    
     public struct DrawRequestPixelData
     {
-        private PixelData _pixelData;
+        private PixelData _tmpPixelData;
         
-        private IDisplay SrcPixelData;
         public Rectangle SampleRect;
         public bool FlipH;
         public bool FlipV;
@@ -55,12 +37,29 @@ namespace PixelVision8.Engine
         
         public byte Priority;
 
-        public PixelData PixelData => SrcPixelData.PixelData;
+        public PixelData PixelData { get; private set; }
         
         public void SampleFrom(IDisplay source, int srcX, int srcY, int blockWidth, int blockHeight)
         {
-            SrcPixelData = source;
+            PixelData = source.PixelData;
            
+            SampleRect.X = srcX;
+            SampleRect.Y = srcY;
+            SampleRect.Width = blockWidth;
+            SampleRect.Height = blockHeight;
+        }
+
+        public void SampleFrom(int[] pixels, int srcX, int srcY, int blockWidth, int blockHeight)
+        {
+            if(_tmpPixelData == null)
+                _tmpPixelData = new PixelData(blockWidth, blockHeight);
+            
+            if(_tmpPixelData.Width != blockWidth || _tmpPixelData.Height != blockHeight)
+                _tmpPixelData.Resize(blockWidth, blockHeight);
+            
+            _tmpPixelData.Pixels = pixels;
+            
+            PixelData = _tmpPixelData;
             SampleRect.X = srcX;
             SampleRect.Y = srcY;
             SampleRect.Width = blockWidth;

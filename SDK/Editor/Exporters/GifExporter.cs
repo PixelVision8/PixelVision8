@@ -24,6 +24,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Utils;
 
@@ -46,11 +47,13 @@ namespace PixelVision8.Runner
         private Dictionary<int, List<Color>> distinctColors;
         private int scale = 1;
         private Dictionary<int, List<byte>> encoded;
+        private IEngineChips engine;
 
         public bool ExportingFinished => byteList != null;
 
         public GifExporter(string fileName, IEngineChips engine) : base(fileName)
         {
+            this.engine = engine;
             DisplayChip = engine.DisplayChip;
             bounds = DisplayChip.VisibleBounds;
         }
@@ -81,12 +84,49 @@ namespace PixelVision8.Runner
             // var pixels = tmpT2D.GetPixels(0, 0, bounds.Width, bounds.Height);
 
             tmpFrame.Texture = new Texture2D(bounds.Width, bounds.Height);
-            tmpFrame.Texture.SetPixels32(DisplayChip.VisiblePixels()); // TODO need to crop this
+            tmpFrame.Texture.SetPixels32(VisiblePixels()); // TODO need to crop this
 
             tmpFrame.Delay = delay;
 
             Frames.Add(tmpFrame);
         }
+        
+        public Color[] VisiblePixels()
+        {
+
+            // TODO there might be a better way to do this like grabbing the pixel data from somewhere else?
+            var pixels = DisplayChip.Pixels;
+
+            var cachedColors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, engine.ColorChip.debugMode, engine.ColorChip.backgroundColor);
+
+            // var cachedColors = engine.ColorChip.colors;
+            var displaySize = engine.GameChip.Display();
+
+            var visibleWidth = displaySize.X;
+            var visibleHeight = displaySize.Y;
+            var width = engine.DisplayChip.Width;
+
+            // Need to crop the image
+            var newPixels = new Color[visibleWidth * visibleHeight];
+
+            var totalPixels = pixels.Length;
+            var newTotalPixels = newPixels.Length;
+
+            var index = 0;
+
+            for (var i = 0; i < totalPixels; i++)
+            {
+                var col = i % width;
+                if (col < visibleWidth && index < newTotalPixels)
+                {
+                    newPixels[index] = cachedColors[pixels[i]];
+                    index++;
+                }
+            }
+
+            return newPixels;
+        }
+
         
         public void StartGif()
         {

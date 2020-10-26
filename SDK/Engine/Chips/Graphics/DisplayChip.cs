@@ -64,15 +64,6 @@ namespace PixelVision8.Engine.Chips
         // This should be part of the chip's data
         private int _maxDrawRequests = 1024;
         
-        int _total;
-        int _srcX;
-        int _srcY;
-        int _colorID;
-        int i1;
-        int _index;
-
-        private int[] emptyPixels = new int[0];
-
         public int OverscanXPixels => OverscanX * engine.SpriteChip.width;
 
         public int OverscanYPixels => OverscanY * engine.SpriteChip.height;
@@ -96,8 +87,8 @@ namespace PixelVision8.Engine.Chips
 
 
         private List<DrawRequestPixelData> _drawRequests;
-        private int _totalDR;
-        private int _layer;
+        // private int _totalDR;
+        // private int _layer;
         private int _i;
         private DrawRequestPixelData _drawRequest;
         private int drawCallCounter = -1;
@@ -113,8 +104,11 @@ namespace PixelVision8.Engine.Chips
             if (_clearFlag)
             {
 
+                // TODO need to use Clear instead of a loop after re-indexing colors correctly
+                // Array.Clear(Pixels, 0, TotalPixels);
+                
                 // Loop through all of the display pixels
-                for (_i = 0; _i < TotalPixels; _i++)
+                for (_i = TotalPixels-1 ; _i > -1; _i--)
                 {
                     // We always set the clear color to -1 since the display target will automatically convert this into the background color
                     Pixels[_i] = clearColor;
@@ -127,34 +121,12 @@ namespace PixelVision8.Engine.Chips
             // Sort sprite draw calls
             DrawCalls.Sort((x, y) => x.Priority.CompareTo(y.Priority));
 
-            // if(drawRequestCounter  < 0)
-            //     return;
-            
-            for (int i = 0; i < drawCallCounter; i++)
+            for (_i = 0; _i < drawCallCounter; _i++)
             {
-                _drawRequest = DrawCalls[i];
+                _drawRequest = DrawCalls[_i];
                 
-                // PixelDataUtil.MergePixels(
-                //     Display,
-                //     _drawRequest.x,
-                //     _drawRequest.y,
-                //     _drawRequest.SampleRect.Width,
-                //     _drawRequest.SampleRect.Height,
-                //     _drawRequest.PixelData.Pixels,
-                //     _drawRequest.FlipH,
-                //     _drawRequest.FlipV,
-                //     _drawRequest.ColorOffset
-                // );
-                
-                
-                // PixelDataUtil.CopyPixels(_drawRequest.PixelData, Display, _drawRequest.SampleRect.X, _drawRequest.SampleRect.Y, _drawRequest.SampleRect.Width, _drawRequest.SampleRect.Height, _drawRequest.x, _drawRequest.y, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
                 PixelDataUtil.MergePixels(_drawRequest.PixelData, _drawRequest.SampleRect.X, _drawRequest.SampleRect.Y, _drawRequest.SampleRect.Width, _drawRequest.SampleRect.Height, Display, _drawRequest.x, _drawRequest.y, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
-                // PixelDataUtil.CopyPixels(_drawRequest.PixelData, Display, _drawRequest.x, _drawRequest.y, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
                 
-                
-                // PixelDataUtil.MergePixels(_drawRequest.PixelData, _drawRequest.x, _drawRequest.y, _drawRequest.width, _drawRequest.height, _drawRequest.PixelData.Pixels, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
-                // CopyDrawRequestPixelData(_drawRequest.PixelData.Pixels, _drawRequest.x, _drawRequest.y, _drawRequest.width, _drawRequest.height,
-                // _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
             }
            
             // Reset Draw Requests after they have been processed
@@ -168,6 +140,22 @@ namespace PixelVision8.Engine.Chips
             
             _clearFlag = true;
         }
+
+        public void NewDrawCall(int[] pixels, int destX, int destY, int blockWidth, int blockHeight, byte layer = 0,
+            bool flipH = false,
+            bool flipV = false, int colorOffset = 0, int srcX = 0, int srcY = 0)
+        {
+
+            NextDrawRequest(destX, destY, layer, flipH, flipV, colorOffset);
+                
+            if (nextDrawRequest)
+            {
+                _drawRequest.SampleFrom(pixels, srcX, srcY, blockWidth, blockHeight);
+                DrawCalls.Add(_drawRequest);
+            }
+            
+        }
+        
 
         /// <summary>
         ///     Creates a new draw by copying the supplied pixel data over
@@ -192,48 +180,14 @@ namespace PixelVision8.Engine.Chips
         public void NewDrawCall(IDisplay src, int destX, int destY, int blockWidth, int blockHeight, byte layer = 0, bool flipH = false,
             bool flipV = false, int colorOffset = 0, int srcX = 0, int srcY = 0)
         {
+            NextDrawRequest(destX, destY, layer, flipH, flipV, colorOffset);
             
-            // Exit if we are drawing to a layer that doesn't exist
-            // if (layer >= layers)
-            //     return;
-
-            // if (pixelData == null)
-            // {
-            //     var total = width * height;
-            //     
-            //     if(emptyPixels.Length != total)
-            //         Array.Resize(ref emptyPixels, total);
-            //
-            //     pixelData = emptyPixels;
-            //
-            // }
-
-            var request = NextDrawRequest();
-
-            if (request.HasValue)
+            if (nextDrawRequest)
             {
-                draw = request.Value;
-                draw.x = destX;
-                draw.y = destY;
-
-                // PixelDataUtil.ValidateBounds(src.PixelData.Width, src.PixelData.Height, ref srcX, ref srcY, ref blockWidth,
-                //     ref blockHeight);
-
-                // if (blockWidth > 0 || blockHeight > 0)
-                // {
-
-                    draw.SampleFrom(src, srcX, srcY, blockWidth, blockHeight);
-
-                    draw.Priority = layer;
-                    draw.FlipH = flipH;
-                    draw.FlipV = flipV;
-                    draw.ColorOffset = colorOffset;
-
-                    DrawCalls.Add(draw);
-                    
-                // }
-
-                // DrawRequestPixelDataLayers[layer].Add(draw);
+                // _drawRequest = request.Value;
+                _drawRequest.SampleFrom(src, srcX, srcY, blockWidth, blockHeight);
+                DrawCalls.Add(_drawRequest);
+                 
             }
             
         }
@@ -243,16 +197,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        public void ResetResolution(int width, int height)
-        {
-            Display.Resize(width, height);
-            // Width = width;
-            // Height = height;
-
-            // TotalPixels = Width * Height;
-
-            // Array.Resize(ref Pixels, TotalPixels);
-        }
+        public void ResetResolution(int width, int height) => Display.Resize(width, height);
 
         /// <summary>
         ///     This configures the DisplayChip. It registers itself as the default
@@ -289,96 +234,63 @@ namespace PixelVision8.Engine.Chips
             DrawCalls.Clear();
         }
 
-        public DrawRequestPixelData? NextDrawRequest()
+        private bool nextDrawRequest;
+        
+        public void NextDrawRequest(int destX, int destY, byte layer = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
             drawRequestCounter++;
 
-            if (drawRequestCounter >= _maxDrawRequests)
-            {
-                // drawRequestCounter = _maxDrawRequests;
-                return null;
-            }
-
-            return DrawRequestPool[drawRequestCounter];
-        }
-
-        public void CopyDrawRequestPixelData(int[] pixelData, int x, int y, int width, int height, bool flipH = false,
-            bool flipV = false, int colorOffset = 0)
-        {
+            nextDrawRequest = drawRequestCounter < _maxDrawRequests;
             
-            var tmpWidth = this.Width;
-            var tmpHeight = this.Height;
-
-            _total = width * height;
-
-            for (i1 = 0; i1 < _total; i1++)
-            {
-                _colorID = pixelData?[i1] ?? 0;
-
-                if (_colorID > -1)
-                {
-                    if (colorOffset > 0) _colorID += colorOffset;
-
-                    _srcX = i1 % width;
-                    _srcY = i1 / width;
-
-                    if (flipH) _srcX = width - 1 - _srcX;
-
-                    if (flipV) _srcY = height - 1 - _srcY;
-
-                    _srcX += x;
-                    _srcY += y;
-
-                    // Make sure x & y are wrapped around the display
-                    // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-                    _srcY = (_srcY % tmpHeight + tmpHeight) % tmpHeight;
-                    _srcX = (_srcX % tmpWidth + tmpWidth) % tmpWidth;
-                    // size is still == _width from the previous operation - let's reuse the local
-
-                    // Find the index
-                    _index = _srcX + tmpWidth * _srcY;
-
-                    // Set the pixel
-                    Pixels[_index] = _colorID;//cachedColors[_colorID];
-                }
-            }
+            if (nextDrawRequest == false)
+                return;
+            
+            _drawRequest = DrawRequestPool[drawRequestCounter];
+            
+            _drawRequest.x = destX;
+            _drawRequest.y = destY;
+            _drawRequest.Priority = layer;
+            _drawRequest.FlipH = flipH;
+            _drawRequest.FlipV = flipV;
+            _drawRequest.ColorOffset = colorOffset;
+            
         }
 
-        public Color[] VisiblePixels()
-        {
-
-            // TODO there might be a better way to do this like grabbing the pixel data from somewhere else?
-            var pixels = engine.DisplayChip.Pixels;
-
-            var cachedColors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, engine.ColorChip.debugMode, engine.ColorChip.backgroundColor);
-
-            // var cachedColors = engine.ColorChip.colors;
-            var displaySize = engine.GameChip.Display();
-
-            var visibleWidth = displaySize.X;
-            var visibleHeight = displaySize.Y;
-            var width = engine.DisplayChip.Width;
-
-            // Need to crop the image
-            var newPixels = new Color[visibleWidth * visibleHeight];
-
-            var totalPixels = pixels.Length;
-            var newTotalPixels = newPixels.Length;
-
-            var index = 0;
-
-            for (var i = 0; i < totalPixels; i++)
-            {
-                var col = i % width;
-                if (col < visibleWidth && index < newTotalPixels)
-                {
-                    newPixels[index] = cachedColors[pixels[i]];
-                    index++;
-                }
-            }
-
-            return newPixels;
-        }
+        // public Color[] VisiblePixels()
+        // {
+        //
+        //     // TODO there might be a better way to do this like grabbing the pixel data from somewhere else?
+        //     var pixels = engine.DisplayChip.Pixels;
+        //
+        //     var cachedColors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, engine.ColorChip.debugMode, engine.ColorChip.backgroundColor);
+        //
+        //     // var cachedColors = engine.ColorChip.colors;
+        //     var displaySize = engine.GameChip.Display();
+        //
+        //     var visibleWidth = displaySize.X;
+        //     var visibleHeight = displaySize.Y;
+        //     var width = engine.DisplayChip.Width;
+        //
+        //     // Need to crop the image
+        //     var newPixels = new Color[visibleWidth * visibleHeight];
+        //
+        //     var totalPixels = pixels.Length;
+        //     var newTotalPixels = newPixels.Length;
+        //
+        //     var index = 0;
+        //
+        //     for (var i = 0; i < totalPixels; i++)
+        //     {
+        //         var col = i % width;
+        //         if (col < visibleWidth && index < newTotalPixels)
+        //         {
+        //             newPixels[index] = cachedColors[pixels[i]];
+        //             index++;
+        //         }
+        //     }
+        //
+        //     return newPixels;
+        // }
 
         
     }
