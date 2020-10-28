@@ -8,5 +8,5 @@ message = " " .. SystemName() ..
 "\n\n\n" ..
 "The " .. SystemName() .. " is built on top of the open source Pixel Vision SDK thanks to the following sponsors: " ..
 "Jan Rochat and Ethan Shaughnessy" ..
-"\n\n\n\n" ..
+"\n\n" ..
 "Learn more at pixelvision8.com"

@@ -44,7 +44,7 @@ local nextScreenDelay = .3
 local nextScreenTime = 0
 local startDelay = .5
 local ready = false
-local bottomBorder = 224 + 8
+local bottomBorder = 232
 local safeMode = false
 local showPlugin = -1
 

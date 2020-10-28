@@ -84,7 +84,7 @@ namespace PixelVision8.Engine.Chips
         protected int nextY;
         protected int[] spriteIDs;
         protected int _width;
-        protected Rectangle viewPort;
+        // protected Rectangle viewPort;
         protected Point _scrollPos = Point.Zero;
         protected int _index;
         protected int _spriteId;
@@ -92,7 +92,7 @@ namespace PixelVision8.Engine.Chips
         protected int charOffset = 32;
         protected Point _spriteSize = new Point(8,8);
         private PixelData _tmpPixelData = new PixelData();
-        protected Rectangle _tmpBounds;
+        // protected Rectangle _tmpBounds;
         protected Point _tilemapSize = Point.Zero;
         private int _paddingW;
         private int _paddingH;
@@ -127,6 +127,9 @@ namespace PixelVision8.Engine.Chips
         {
             // Set the engine's game to this instance
             engine.GameChip = this;
+            
+            display.X = DisplayChip.Width;
+            display.Y = DisplayChip.Height;
 
             // metaSprites = new SpriteCollection[96];
         }
@@ -349,8 +352,8 @@ namespace PixelVision8.Engine.Chips
         {
             // DisplayChip.Clear();
             //
-            // w = width ?? DisplayChip.Width - x;
-            // h = height ?? DisplayChip.Height - y;
+            // w = width ?? display.X - x;
+            // h = height ?? display.Y - y;
             //
             // DrawRect(x, y, w, h, ColorChip.backgroundColor);
             DisplayChip.Clear(ColorChip.backgroundColor);
@@ -366,11 +369,11 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public Point Display(bool visible = true)
         {
-            offsetX = visible ? DisplayChip.OverscanXPixels : 0;
-            offsetY = visible ? DisplayChip.OverscanYPixels : 0;
+            // offsetX = visible ? DisplayChip.OverscanXPixels : 0;
+            // offsetY = visible ? DisplayChip.OverscanYPixels : 0;
 
-            display.X = DisplayChip.Width - offsetX;
-            display.Y = DisplayChip.Height - offsetY;
+            // display.X = display.X;// - offsetX;
+            // display.Y = display.Y;// - offsetY;
 
             return display;
         }
@@ -521,11 +524,11 @@ namespace PixelVision8.Engine.Chips
                     // Check to see if we need to test the bounds
                     if (onScreen)
                     {
-                        _tmpBounds = bounds ?? DisplayChip.VisibleBounds;
+                        // _tmpBounds = bounds ?? DisplayChip.VisibleBounds;
 
                         // This can set the render flag to true or false based on it's location
                         //TODO need to take into account the current bounds of the screen
-                        render = x >= _tmpBounds.X && x <= _tmpBounds.Width && y >= _tmpBounds.Y && y <= _tmpBounds.Height;
+                        render = x >= 0 && x <= display.X && y >= 0 && y <= display.Y;
                     }
                     else
                     {   
@@ -862,19 +865,21 @@ namespace PixelVision8.Engine.Chips
         public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null,
             int? offsetY = null)
         {
-            viewPort.X = offsetX ?? _scrollPos.X;
-            viewPort.Y = offsetY ?? _scrollPos.Y;
-            viewPort.Width = columns == 0 ? DisplayChip.Width : columns * SpriteChip.width;
-            viewPort.Height = rows == 0 ? DisplayChip.Height : rows * SpriteChip.height;
-
-            // Grab the correct cached pixel data
-            // GetCachedPixels(viewPort.X, viewPort.Y, viewPort.Width, viewPort.Height, ref tmpTilemapCache);
-
-            // Pass the pixel data 
             
-            DisplayChip.NewDrawCall(TilemapChip, x, y, viewPort.Width, viewPort.Height, (byte)DrawMode.Tile, false, false, 0, viewPort.X, viewPort.X);
+            DisplayChip.NewDrawCall(
+                TilemapChip, 
+                x, 
+                y, 
+                columns == 0 ? display.X : columns * SpriteChip.width, 
+                rows == 0 ? display.Y : rows * SpriteChip.height, 
+                (byte)DrawMode.Tile, 
+                false, 
+                false, 
+                0, 
+                offsetX ?? _scrollPos.X, 
+                offsetY ?? _scrollPos.Y
+            );
             
-            // DisplayChip.NewDrawCall(tmpTilemapCache, x, y, viewPort.Width, viewPort.Height, (byte)DrawMode.Tile);
 
         }
         
@@ -892,8 +897,9 @@ namespace PixelVision8.Engine.Chips
         public void DrawRect(int x, int y, int width, int height, int color = -1,
             DrawMode drawMode = DrawMode.TilemapCache)
         {
+            var pixels = new int[width * height];
             // TODO is there a faster way to do this?
-            DrawPixels(null, x, y, width, height, false, false, drawMode, color);
+            DrawPixels(pixels, x, y, width, height, false, false, drawMode, color);
         }
 
         /// <summary>
@@ -980,38 +986,6 @@ namespace PixelVision8.Engine.Chips
 
             return spriteIDs;
         }
-
-        /// <summary>
-        ///     A helper method that converts a single character into pixel data.
-        /// </summary>
-        /// <param name="character"></param>
-        /// <param name="fontName"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        // public int[] CharacterToPixelData(char character, string fontName)
-        // {
-        //     var fontMap = FontChip.ReadFont(fontName);
-        //
-        //     // Test to make sure font exists
-        //     if (fontMap == null) throw new Exception("Font '" + fontName + "' not found.");
-        //
-        //     var index = Convert.ToInt32(character) - charOffset;
-        //
-        //     var totalCharacters = fontMap.Length;
-        //     var spriteID = -1;
-        //
-        //     if (index < totalCharacters && index > -1) spriteID = fontMap[index];
-        //
-        //     if (spriteID > -1)
-        //     {
-        //         FontChip.ReadSpriteAt(spriteID, ref tmpSpriteData);
-        //         return tmpSpriteData;
-        //     }
-        //
-        //     //                return Sprite(spriteID);
-        //
-        //     return null;
-        // }
 
         #endregion
 
@@ -1120,13 +1094,13 @@ namespace PixelVision8.Engine.Chips
         {
             var pos = ControllerChip.ReadMousePosition();
 
-            var bounds = DisplayChip.VisibleBounds;
+            // var bounds = DisplayChip.VisibleBounds;
 
             // Make sure that the mouse x position is inside of the display width
-            if (pos.X < 0 || pos.X > bounds.Width) pos.X = -1;
+            if (pos.X < 0 || pos.X > display.X) pos.X = -1;
 
             // Make sure that the mouse y position is inside of the display height
-            if (pos.Y < 0 || pos.Y > bounds.Height) pos.Y = -1;
+            if (pos.Y < 0 || pos.Y > display.Y) pos.Y = -1;
 
             return pos;
         }

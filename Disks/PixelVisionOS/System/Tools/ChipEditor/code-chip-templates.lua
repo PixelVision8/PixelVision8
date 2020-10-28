@@ -13,14 +13,7 @@ gpuChips = {
         name = "displayHeightInputData",
         value = 248
       },
-      {
-        name = "overscanRightInputData",
-        value = 1
-      },
-      {
-        name = "overscanBottomInputData",
-        value = 1
-      },
+      
       {
         name = "drawsInputData",
         value = 0
@@ -67,14 +60,6 @@ gpuChips = {
       {
         name = "displayHeightInputData",
         value = 240
-      },
-      {
-        name = "overscanRightInputData",
-        value = 1
-      },
-      {
-        name = "overscanBottomInputData",
-        value = 1
       },
       {
         name = "drawsInputData",
@@ -169,14 +154,7 @@ gpuChips = {
         name = "displayHeightInputData",
         value = 192
       },
-      {
-        name = "overscanRightInputData",
-        value = 1
-      },
-      {
-        name = "overscanBottomInputData",
-        value = 1
-      },
+      
       {
         name = "drawsInputData",
         value = 64
@@ -282,14 +260,7 @@ gpuChips = {
         name = "displayHeightInputData",
         value = 152
       },
-      {
-        name = "overscanRightInputData",
-        value = 1
-      },
-      {
-        name = "overscanBottomInputData",
-        value = 1
-      },
+      
       {
         name = "drawsInputData",
         value = 40
@@ -370,14 +341,7 @@ gpuChips = {
         name = "displayHeightInputData",
         value = 136
       },
-      {
-        name = "overscanRightInputData",
-        value = 1
-      },
-      {
-        name = "overscanBottomInputData",
-        value = 1
-      },
+      
       {
         name = "drawsInputData",
         value = 0
@@ -426,14 +390,7 @@ gpuChips = {
         name = "displayHeightInputData",
         value = 72
       },
-      {
-        name = "overscanRightInputData",
-        value = 1
-      },
-      {
-        name = "overscanBottomInputData",
-        value = 1
-      },
+      
       {
         name = "drawsInputData",
         value = 0
@@ -467,14 +424,7 @@ gpuChips = {
         name = "displayHeightInputData",
         value = 208
       },
-      {
-        name = "overscanRightInputData",
-        value = 1
-      },
-      {
-        name = "overscanBottomInputData",
-        value = 1
-      },
+      
       {
         name = "drawsInputData",
         value = 0

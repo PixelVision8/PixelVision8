@@ -174,9 +174,9 @@ namespace PixelVision8.Runner.Parsers
 
             if (data.ContainsKey("height")) _height = (int) (long) data["height"];
 
-            if (data.ContainsKey("overscanX")) displayChip.OverscanX = (int) (long) data["overscanX"];
+            // if (data.ContainsKey("overscanX")) displayChip.OverscanX = (int) (long) data["overscanX"];
 
-            if (data.ContainsKey("overscanY")) displayChip.OverscanY = (int) (long) data["overscanY"];
+            // if (data.ContainsKey("overscanY")) displayChip.OverscanY = (int) (long) data["overscanY"];
 
             // if (data.ContainsKey("layers")) displayChip.layers = (int) (long) data["layers"];
 

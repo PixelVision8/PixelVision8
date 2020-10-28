@@ -35,7 +35,7 @@ namespace PixelVision8.Runner
 
         private DisplayChip DisplayChip;
         private List<GifFrame> Frames = new List<GifFrame>();
-        private Rectangle bounds;
+        // private Rectangle bounds;
         List<byte> byteList = new List<byte>();
         const string header = "GIF89a";
         // private Gif tmpGif;
@@ -55,7 +55,7 @@ namespace PixelVision8.Runner
         {
             this.engine = engine;
             DisplayChip = engine.DisplayChip;
-            bounds = DisplayChip.VisibleBounds;
+            // bounds = DisplayChip.VisibleBounds;
         }
 
         public override void CalculateSteps()
@@ -83,7 +83,7 @@ namespace PixelVision8.Runner
             //
             // var pixels = tmpT2D.GetPixels(0, 0, bounds.Width, bounds.Height);
 
-            tmpFrame.Texture = new Texture2D(bounds.Width, bounds.Height);
+            tmpFrame.Texture = new Texture2D(DisplayChip.Width, DisplayChip.Height);
             tmpFrame.Texture.SetPixels32(VisiblePixels()); // TODO need to crop this
 
             tmpFrame.Delay = delay;
@@ -93,6 +93,11 @@ namespace PixelVision8.Runner
         
         public Color[] VisiblePixels()
         {
+            
+            // TODO this should just copy the frame from the Display Target
+            // var color = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, engine.ColorChip.debugMode,
+            //     engine.ColorChip.backgroundColor);
+            
 
             // TODO there might be a better way to do this like grabbing the pixel data from somewhere else?
             var pixels = DisplayChip.Pixels;
@@ -116,12 +121,12 @@ namespace PixelVision8.Runner
 
             for (var i = 0; i < totalPixels; i++)
             {
-                var col = i % width;
-                if (col < visibleWidth && index < newTotalPixels)
-                {
-                    newPixels[index] = cachedColors[pixels[i]];
-                    index++;
-                }
+                // var col = i % width;
+                // if (col < visibleWidth && index < newTotalPixels)
+                // {
+                    newPixels[i] = cachedColors[pixels[i]];
+                    // index++;
+                // }
             }
 
             return newPixels;

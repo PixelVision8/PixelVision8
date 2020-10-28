@@ -314,42 +314,42 @@ function Init()
     table.insert(inputFields, displayHeightInputData)
 
 
-    local overscanSize = gameEditor:OverscanBorder()
-
-    overscanRightInputData = editorUI:CreateInputField({x = 96, y = 208, w = 8}, tostring(overscanSize.x), "Crops a column (8 px) from the right of the display.", "number")
-    overscanRightInputData.min = 0
-    overscanRightInputData.max = 4
-    overscanRightInputData.onAction = function(value)
-
-      local size = gameEditor:OverscanBorder()
-
-      gameEditor:OverscanBorder(tonumber(value), tonumber(overscanBottomInputData.text))
-
-      ChangeChipGraphic(1, "chipcustomgpu" )
-
-      InvalidateData()
-
-    end
-
-    table.insert(inputFields, overscanRightInputData)
-
-
-    overscanBottomInputData = editorUI:CreateInputField({x = 120, y = 208, w = 8}, tostring(overscanSize.y), "Crops a row (8 px) from the bottom of the display.", "number")
-    overscanBottomInputData.min = 0
-    overscanBottomInputData.max = 4
-    overscanBottomInputData.onAction = function(value)
-
-      local size = gameEditor:OverscanBorder()
-
-      gameEditor:OverscanBorder(tonumber(overscanRightInputData.text), tonumber(value))
-
-      ChangeChipGraphic(1, "chipcustomgpu" )
-
-      InvalidateData()
-
-    end
-
-    table.insert(inputFields, overscanBottomInputData)
+    --local overscanSize = gameEditor:OverscanBorder()
+    --
+    --overscanRightInputData = editorUI:CreateInputField({x = 96, y = 208, w = 8}, tostring(overscanSize.x), "Crops a column (8 px) from the right of the display.", "number")
+    --overscanRightInputData.min = 0
+    --overscanRightInputData.max = 4
+    --overscanRightInputData.onAction = function(value)
+    --
+    --  local size = gameEditor:OverscanBorder()
+    --
+    --  gameEditor:OverscanBorder(tonumber(value), tonumber(overscanBottomInputData.text))
+    --
+    --  ChangeChipGraphic(1, "chipcustomgpu" )
+    --
+    --  InvalidateData()
+    --
+    --end
+    --
+    --table.insert(inputFields, overscanRightInputData)
+    --
+    --
+    --overscanBottomInputData = editorUI:CreateInputField({x = 120, y = 208, w = 8}, tostring(overscanSize.y), "Crops a row (8 px) from the bottom of the display.", "number")
+    --overscanBottomInputData.min = 0
+    --overscanBottomInputData.max = 4
+    --overscanBottomInputData.onAction = function(value)
+    --
+    --  local size = gameEditor:OverscanBorder()
+    --
+    --  gameEditor:OverscanBorder(tonumber(overscanRightInputData.text), tonumber(value))
+    --
+    --  ChangeChipGraphic(1, "chipcustomgpu" )
+    --
+    --  InvalidateData()
+    --
+    --end
+    --
+    --table.insert(inputFields, overscanBottomInputData)
 
 
     drawsInputData = editorUI:CreateInputField({x = 144, y = 208, w = 24}, tostring(gameEditor:MaxSpriteCount()), "Caps the total spites on the screen. Zero removes the limit.", "number")
@@ -684,8 +684,8 @@ function OnSelectChip(value)
 
       editorUI:TextEditorInvalidateBuffer(displayWidthInputData)
       editorUI:TextEditorInvalidateBuffer(displayHeightInputData)
-      editorUI:TextEditorInvalidateBuffer(overscanRightInputData)
-      editorUI:TextEditorInvalidateBuffer(overscanBottomInputData)
+      --editorUI:TextEditorInvalidateBuffer(overscanRightInputData)
+      --editorUI:TextEditorInvalidateBuffer(overscanBottomInputData)
       editorUI:TextEditorInvalidateBuffer(drawsInputData)
 
       editorUI:TextEditorInvalidateBuffer(cpsInputData)
@@ -963,8 +963,8 @@ function Update(timeDelta)
         if(runnerName ~= DrawVersion) then
           editorUI:UpdateInputField(displayWidthInputData)
           editorUI:UpdateInputField(displayHeightInputData)
-          editorUI:UpdateInputField(overscanRightInputData)
-          editorUI:UpdateInputField(overscanBottomInputData)
+          --editorUI:UpdateInputField(overscanRightInputData)
+          --editorUI:UpdateInputField(overscanBottomInputData)
           editorUI:UpdateInputField(drawsInputData)
         else
           editorUI:UpdateInputField(spritePagesInputData)

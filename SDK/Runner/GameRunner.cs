@@ -335,10 +335,10 @@ namespace PixelVision8.Runner
 
             var gameWidth = displayChip.Width;
             var gameHeight = displayChip.Height;
-            var overScanX = displayChip.OverscanXPixels;
-            var overScanY = displayChip.OverscanYPixels;
+            // var overScanX = displayChip.OverscanXPixels;
+            // var overScanY = displayChip.OverscanYPixels;
 
-            displayTarget.ResetResolution(gameWidth, gameHeight, overScanX, overScanY);
+            displayTarget.ResetResolution(gameWidth, gameHeight);
             IsMouseVisible = false;
 
             // Update the mouse to use the new monitor scale

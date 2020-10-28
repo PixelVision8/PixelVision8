@@ -501,14 +501,14 @@ namespace PixelVision8.Runner.Editors
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public Point OverscanBorder(int? x, int? y)
-        {
-            if (x.HasValue) displayChip.OverscanX = x.Value;
-
-            if (y.HasValue) displayChip.OverscanY = y.Value;
-
-            return new Point(displayChip.OverscanX, displayChip.OverscanY);
-        }
+        // public Point OverscanBorder(int? x, int? y)
+        // {
+        //     if (x.HasValue) displayChip.OverscanX = x.Value;
+        //
+        //     if (y.HasValue) displayChip.OverscanY = y.Value;
+        //
+        //     return new Point(displayChip.OverscanX, displayChip.OverscanY);
+        // }
 
 
         public void RedrawDisplay()

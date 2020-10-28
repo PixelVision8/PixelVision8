@@ -140,15 +140,15 @@ namespace PixelVision8.Runner.Exporters
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
-            sb.Append("\"overscanX\":");
-            sb.Append(display.OverscanX);
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
-
-            sb.Append("\"overscanY\":");
-            sb.Append(display.OverscanY);
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
+            // sb.Append("\"overscanX\":");
+            // sb.Append(display.OverscanX);
+            // sb.Append(",");
+            // JsonUtil.GetLineBreak(sb, 1);
+            //
+            // sb.Append("\"overscanY\":");
+            // sb.Append(display.OverscanY);
+            // sb.Append(",");
+            // JsonUtil.GetLineBreak(sb, 1);
 
             // sb.Append("\"layers\":");
             // sb.Append(display.layers);

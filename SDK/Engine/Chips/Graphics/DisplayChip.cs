@@ -37,8 +37,8 @@ namespace PixelVision8.Engine.Chips
         public int[] Pixels => Display.Pixels;
 
         public int TotalPixels => Display.TotalPixels;
-        public int OverscanX { get; set; }
-        public int OverscanY { get; set; }
+        // public int OverscanX { get; set; }
+        // public int OverscanY { get; set; }
         
         
         private List<DrawRequestPixelData> DrawCalls = new List<DrawRequestPixelData>();
@@ -64,16 +64,16 @@ namespace PixelVision8.Engine.Chips
         // This should be part of the chip's data
         private int _maxDrawRequests = 1024;
         
-        public int OverscanXPixels => OverscanX * engine.SpriteChip.width;
-
-        public int OverscanYPixels => OverscanY * engine.SpriteChip.height;
+        // public int OverscanXPixels => OverscanX * engine.SpriteChip.width;
+        //
+        // public int OverscanYPixels => OverscanY * engine.SpriteChip.height;
 
         /// <summary>
         ///     This returns the visble areas sprites should be displayed on. Note that x and y may be negative if overscan is set
         ///     since the screen wraps.
         /// </summary>
-        public Rectangle VisibleBounds => new Rectangle(-OverscanXPixels, -OverscanYPixels, Width - OverscanXPixels,
-            Height - OverscanYPixels);
+        // public Rectangle VisibleBounds => new Rectangle(-OverscanXPixels, -OverscanYPixels, Width - OverscanXPixels,
+            // Height - OverscanYPixels);
 
         /// <summary>
         ///     Returns the display's <see cref="Width" />
