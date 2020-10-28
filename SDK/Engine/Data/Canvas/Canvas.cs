@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
@@ -734,22 +735,16 @@ namespace PixelVision8.Engine
 
         public static int GetPixel(PixelData pixelData, int x, int y)
         {
-            return -1;
-            
             _size = pixelData.Height;
             y = (y % _size + _size) % _size;
             _size = pixelData.Width;
             x = (x % _size + _size) % _size;
-                // size is still == _width from the previous operation - let's reuse the local
-            if (x + pixelData.Width * y > pixelData.TotalPixels)
-                    return -1;
-                
+              
             return pixelData[x + pixelData.Width * y];
         }
-        //
+
         public static void SetPixel(PixelData pixelData, int x, int y, int color)
         {
-            return;
             
             // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
             _size = pixelData.Height;
@@ -757,10 +752,9 @@ namespace PixelVision8.Engine
             _size = pixelData.Width;
             x = (x % _size + _size) % _size;
 
-            if (x + pixelData.Width * y > pixelData.TotalPixels)
-                return;
-                    
-            pixelData[x + pixelData.Height * y] = color;
+            pixelData[x + pixelData.Width * y] = color;
+           
+            
         }
 
         /// <summary>
@@ -825,69 +819,69 @@ namespace PixelVision8.Engine
         {
             // Flatten the canvas
             Draw();
-            
-            if (wrap == false)
-            {
-                BlockSave(pixels, blockWidth, blockHeight, defaultLayer.Pixels, x, y, width, height);
-                return;
-            }
+            //
+            // if (wrap == false)
+            // {
+            //     BlockSave(pixels, blockWidth, blockHeight, defaultLayer.Pixels, x, y, width, height);
+            //     return;
+            // }
 
             PixelDataUtil.SetPixels(defaultLayer, x, y, blockWidth, blockHeight, pixels);
             
         }
 
-        void BlockSave(int[] src, int srcW, int srcH, int[] dest, int destX, int destY, int destW, int destH)
-        {
-            var srcX = 0;
-            var srcY = 0;
-            var srcLength = srcW;
-
-            // Adjust X
-            if (destX < 0)
-            {
-                srcX = -destX;
-
-                srcW -= srcX;
-
-                // destW += destX; 
-                destX = 0;
-            }
-
-            if (destX + srcW > destW)
-                srcW -= ((destX + srcW) - destW);
-
-            if (srcW <= 0) return;
-
-            // Adjust Y
-            if (destY < 0)
-            {
-                srcY = -destY;
-
-                srcH -= srcY;
-
-                // destW += destX; 
-                destY = 0;
-            }
-
-            if (destY + srcH > destH)
-                srcH -= ((destY + srcH) - destH);
-
-            if (srcH <= 0) return;
-
-            var row = 0;
-            var startCol = 0;
-            // var endCol = 0;
-            var destCol = 0;
-
-            for (row = 0; row < srcH; row++)
-            {
-                startCol = srcX + (row + srcY) * srcLength;
-                destCol = destX + (row + destY) * destW;
-
-                Array.Copy(src, startCol, dest, destCol, srcW);
-            }
-            
-        }
+        // void BlockSave(int[] src, int srcW, int srcH, int[] dest, int destX, int destY, int destW, int destH)
+        // {
+        //     var srcX = 0;
+        //     var srcY = 0;
+        //     var srcLength = srcW;
+        //
+        //     // Adjust X
+        //     if (destX < 0)
+        //     {
+        //         srcX = -destX;
+        //
+        //         srcW -= srcX;
+        //
+        //         // destW += destX; 
+        //         destX = 0;
+        //     }
+        //
+        //     if (destX + srcW > destW)
+        //         srcW -= ((destX + srcW) - destW);
+        //
+        //     if (srcW <= 0) return;
+        //
+        //     // Adjust Y
+        //     if (destY < 0)
+        //     {
+        //         srcY = -destY;
+        //
+        //         srcH -= srcY;
+        //
+        //         // destW += destX; 
+        //         destY = 0;
+        //     }
+        //
+        //     if (destY + srcH > destH)
+        //         srcH -= ((destY + srcH) - destH);
+        //
+        //     if (srcH <= 0) return;
+        //
+        //     var row = 0;
+        //     var startCol = 0;
+        //     // var endCol = 0;
+        //     var destCol = 0;
+        //
+        //     for (row = 0; row < srcH; row++)
+        //     {
+        //         startCol = srcX + (row + srcY) * srcLength;
+        //         destCol = destX + (row + destY) * destW;
+        //
+        //         Array.Copy(src, startCol, dest, destCol, srcW);
+        //     }
+        //     
+        // }
 
         /// <summary>
         ///     Fast blit to the display through the draw request API

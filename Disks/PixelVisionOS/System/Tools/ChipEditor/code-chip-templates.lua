@@ -7,11 +7,11 @@ gpuChips = {
     fields = {
       {
         name = "displayWidthInputData",
-        value = 264
+        value = 256
       },
       {
         name = "displayHeightInputData",
-        value = 248
+        value = 240
       },
       
       {
@@ -51,7 +51,7 @@ gpuChips = {
     name = "Fami",
     spriteName = "chipfamigpu",
     type = "gpu",
-    message = "You are about to apply the Fami GPU chip settings. The new GPU will allow for a resolution of 248x232 after accounting for overscan, limit the number of sprites on the screen to 64, set the colors per sprite to 4 and replace the existing colors with a new 55 color set.",
+    message = "You are about to apply the Fami GPU chip settings. The new GPU will allow for a resolution of 240x232 after accounting for overscan, limit the number of sprites on the screen to 64, set the colors per sprite to 4 and replace the existing colors with a new 55 color set.",
     fields = {
       {
         name = "displayWidthInputData",
@@ -144,7 +144,7 @@ gpuChips = {
     name = "Mastr",
     spriteName = "chipmastrgpu",
     type = "gpu",
-    message = "You are about to apply the Mastr GPU chip settings. The new GPU will allow for a resolution of 248x184 after accounting for overscan, limit the number of sprites on the screen to 64, set the colors per sprite to 6 and replace the existing colors with a new 64 color set.",
+    message = "You are about to apply the Mastr GPU chip settings. The new GPU will allow for a resolution of 240x184 after accounting for overscan, limit the number of sprites on the screen to 64, set the colors per sprite to 6 and replace the existing colors with a new 64 color set.",
     fields = {
       {
         name = "displayWidthInputData",
@@ -254,11 +254,11 @@ gpuChips = {
     fields = {
       {
         name = "displayWidthInputData",
-        value = 168
+        value = 160
       },
       {
         name = "displayHeightInputData",
-        value = 152
+        value = 144
       },
       
       {
@@ -335,11 +335,11 @@ gpuChips = {
     fields = {
       {
         name = "displayWidthInputData",
-        value = 136
+        value = 128
       },
       {
         name = "displayHeightInputData",
-        value = 136
+        value = 128
       },
       
       {
@@ -384,11 +384,11 @@ gpuChips = {
     fields = {
       {
         name = "displayWidthInputData",
-        value = 136
+        value = 128
       },
       {
         name = "displayHeightInputData",
-        value = 72
+        value = 64
       },
       
       {
@@ -418,11 +418,11 @@ gpuChips = {
     fields = {
       {
         name = "displayWidthInputData",
-        value = 328
+        value = 320
       },
       {
         name = "displayHeightInputData",
-        value = 208
+        value = 200
       },
       
       {

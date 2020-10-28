@@ -28,11 +28,11 @@ namespace PixelVision8.Engine.Utils
     public static class PixelDataUtil
     {
         private static int _mergeDestWidth;
-        private static int _mergeDestHeight;
         private static int _mergeCol;
         private static int _mergeRow;
         private static int _mergeX;
         private static int _mergeY;
+        private static int _total;
 
         public static int[] GetPixels(PixelData pixelData) => GetPixels(pixelData, 0, 0, pixelData.Width, pixelData.Height);
         
@@ -97,19 +97,18 @@ namespace PixelVision8.Engine.Utils
         {
 
             _mergeDestWidth = dest.Width;
-            _mergeDestHeight = dest.Height;
             
-            ValidateBounds(ref sampleWidth, ref sampleHeight, _mergeDestWidth, _mergeDestHeight, ref destX, ref destY);
+            ValidateBounds(ref sampleWidth, ref sampleHeight, _mergeDestWidth, dest.Height, ref destX, ref destY);
 
-            var total = sampleWidth * sampleHeight;
+            _total = sampleWidth * sampleHeight;
             
-            if(total == 0)
+            if(_total == 0)
                 return;
 
             _mergeCol = 0;
             _mergeRow = 0;    
             
-            for (var i = 0; i < total; i++)
+            for (var i = 0; i < _total; i++)
             {
                 _mergeX = _mergeCol;
                 _mergeY = _mergeRow;
