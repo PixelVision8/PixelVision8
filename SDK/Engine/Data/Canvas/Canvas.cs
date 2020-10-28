@@ -637,7 +637,7 @@ namespace PixelVision8.Engine
                 }
 
                 // Copy over the pixel
-                PixelDataUtil.SetPixels( gameChip.CharacterToPixelData(text[i], font), newRequest.PixelData);
+                PixelDataUtil.SetPixels( gameChip.FontChar(text[i], font), newRequest.PixelData);
 
                 newRequest.x = nextX;
                 newRequest.y = y;
@@ -656,7 +656,7 @@ namespace PixelVision8.Engine
             }
             
         }
-
+        
         public void FloodFill(int x, int y)
         {
             var getRequest = NextRequest();

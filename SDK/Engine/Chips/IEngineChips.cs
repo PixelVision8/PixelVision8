@@ -84,16 +84,7 @@ namespace PixelVision8.Engine.Chips
 
         AbstractChip GetChip(string id, bool activeOnCreate = true);
 
-        // void AddService(string id, IService service);
-
-        // IService GetService(string id);
-
-        bool HasChip(string id);
-
         void ActivateChip(string id, AbstractChip chip, bool autoActivate = true);
 
-        void DeactivateChip(string id, AbstractChip chip);
-
-        void RemoveInactiveChips();
     }
 }

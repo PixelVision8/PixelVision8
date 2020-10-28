@@ -31,9 +31,8 @@ namespace PixelVision8.Engine.Chips
 {
     public enum DrawMode
     {
-        TilemapCache = -1,
-        Background,
         SpriteBelow,
+        TilemapCache,
         Tile,
         Sprite,
         UI,
@@ -67,89 +66,40 @@ namespace PixelVision8.Engine.Chips
     /// </summary>
     public class GameChipLite : AbstractChip, IUpdate, IDraw
     {
-        // protected int _saveSlots;
-        // protected PixelData cachedTileMap;
+
         public int fps;
-        // public Dictionary<string, string> savedData = new Dictionary<string, string>();
-
-        protected int[] tmpFontData = new int[0];
-
+        // protected int[] tmpFontData = new int[0];
         protected int[] tmpSpriteData = new int[0];
-        // protected int tmpSpriteDataID = -1;
-
-        protected int w;
-        protected int h;
         protected Point display;
         protected int offsetX;
         protected int offsetY;
-
         protected int[] tmpIDs = new int[0];
         protected int total;
-
         protected int height;
-        // protected int startX;
-        // protected int startY;
         protected int id;
         protected bool render;
         protected Point spriteSize;
-
         protected int charWidth;
         protected int nextX;
         protected int nextY;
-
         protected int[] spriteIDs;
-        protected int[] tmpTilemapCache = new int[0];
-
         protected int _width;
         protected Rectangle viewPort;
         protected Point _scrollPos = Point.Zero;
         protected int _index;
         protected int _spriteId;
         protected char character;
-
         protected int charOffset = 32;
         protected Point _spriteSize = new Point(8,8);
-        // protected int[] tmpPixelData = new int[8 * 8];
-        // protected int[] tilemapCachePixels;
-        // protected readonly string newline = "\n";
-        // protected SpriteCollection[] metaSprites;
-
-        // protected Rectangle metaSpriteMaxBounds = new Rectangle(0, 0, 64, 64);
-        // protected bool _tmpFlipH;
-        // protected bool _tmpFlipV;
-        // protected SpriteData _currentSpriteData;
-        // protected List<SpriteData> tmpSpritesData;
-        // public int maxSize = 256;
-
-        // public bool lockSpecs = false;
+        private PixelData _tmpPixelData = new PixelData();
+        protected Rectangle _tmpBounds;
+        protected Point _tilemapSize = Point.Zero;
+        private int _paddingW;
+        private int _paddingH;
+        
         public int CurrentSprites { get; set; }
 
         #region GameChip Properties
-
-        /// <summary>
-        ///     Flag for the maximum size the game should be.
-        /// </summary>
-        
-
-        /// <summary>
-        ///     Used to limit the amount of data the game can save.
-        /// </summary>
-        // public int SaveSlots
-        // {
-        //     get => _saveSlots;
-        //     set
-        //     {
-        //         value = MathHelper.Clamp(value, 2, 16);
-        //         _saveSlots = value;
-        //
-        //         // resize dictionary?
-        //         for (var i = savedData.Count - 1; i >= 0; i--)
-        //         {
-        //             var item = savedData.ElementAt(i);
-        //             if (i > value) savedData.Remove(item.Key);
-        //         }
-        //     }
-        // }
 
         #endregion
 
@@ -168,27 +118,6 @@ namespace PixelVision8.Engine.Chips
         protected TilemapChip TilemapChip => engine.TilemapChip;
 
         protected FontChip FontChip => engine.FontChip;
-
-        // protected MusicChip MusicChip => engine.MusicChip;
-
-        // protected int _TotalMetaSprites
-        // {
-        //     // TODO do we need to save the previous values?
-        //     set => Array.Resize(ref metaSprites, MathHelper.Clamp(value, 0, 96));
-        //     get => metaSprites.Length;
-        // }
-
-        // public int TotalMetaSprites(int? total = null)
-        // {
-        //     if (total.HasValue)
-        //     {
-        //         _TotalMetaSprites = total.Value;
-        //     }
-        //
-        //     return _TotalMetaSprites;
-        // }
-
-        //        protected readonly int[] _singlePixel = { 0 };
 
         #endregion
 
@@ -248,15 +177,9 @@ namespace PixelVision8.Engine.Chips
             _spriteSize.X = SpriteChip.width;
             _spriteSize.Y = SpriteChip.height;
 
-            // Create a new canvas for the tilemap cache
-            // if (cachedTileMap == null) cachedTileMap = new PixelData(DisplayChip.Width, DisplayChip.Height);
-
-            // Build tilemap cache
-            // RebuildCache(cachedTileMap);
-
             // Resize the tmpSpriteData so it mateches the sprite's width and height
             Array.Resize(ref tmpSpriteData, SpriteChip.width * SpriteChip.height);
-            Array.Resize(ref tmpFontData, SpriteChip.width * SpriteChip.height);
+            // Array.Resize(ref tmpFontData, SpriteChip.width * SpriteChip.height);
 
             base.Reset();
         }
@@ -452,8 +375,6 @@ namespace PixelVision8.Engine.Chips
             return display;
         }
 
-        private PixelData _tmpPixelData = new PixelData();
-        private Rectangle _tmpRect = Rectangle.Empty;
         
         /// <summary>
         ///     This method allows you to draw raw pixel data directly to the display. Depending on which draw mode you
@@ -506,6 +427,10 @@ namespace PixelVision8.Engine.Chips
         {
             switch (drawMode)
             {
+                case DrawMode.Tile:
+                    // Do nothing since we can't set raw pixel data to a tile
+                    break;
+                
                 case DrawMode.TilemapCache:
 
                     if(_tmpPixelData.Width != blockWidth || _tmpPixelData.Height != blockHeight)
@@ -516,24 +441,15 @@ namespace PixelVision8.Engine.Chips
                     // Copy pixel data directly into the tilemap chip's texture
                     PixelDataUtil.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, TilemapChip.PixelData, x, y, flipH, flipV, colorOffset);
 
-                    //            Invalidate();
-
                     break;
 
                 default:
                     
-                    // TODO need to optimize this with a pool in the Display Chip?
-                    // var data = new DrawPixelDataRequest(pixelData, blockWidth, blockHeight);
-                    
                     DisplayChip.NewDrawCall(pixelData, x, y, blockWidth, blockHeight, (byte) drawMode, flipH, flipV, colorOffset);
-
-                    // DisplayChip.NewDrawCall(pixelData, x, y, width, height, (byte) drawMode, flipH, flipV, colorOffset);
 
                     break;
             }
         }
-
-        protected Rectangle _tmpBounds;
 
         /// <summary>
         ///     Sprites represent individual collections of pixel data at a fixed size. By default, Pixel Vision 8 sprites are
@@ -580,8 +496,6 @@ namespace PixelVision8.Engine.Chips
             // Only apply the max sprite count to sprite draw modes
 
             srcChip ??= SpriteChip;
-            
-            
 
             if (drawMode == DrawMode.Tile)
             {
@@ -594,14 +508,11 @@ namespace PixelVision8.Engine.Chips
                 
                 if (drawMode == DrawMode.TilemapCache)
                 {
-                    // if (id != tmpSpriteDataID)
-                    // {
-                        srcChip.ReadSpriteAt(id, ref tmpSpriteData);
-                    //     tmpSpriteDataID = id;
-                    // }
-
-                    DrawPixels(tmpSpriteData, x, y, SpriteChip.width, SpriteChip.height, flipH, flipV, drawMode,
-                        colorOffset);
+                    
+                    srcChip.ReadSpriteAt(id, ref tmpSpriteData);
+                    
+                    DrawPixels(tmpSpriteData, x, y, SpriteChip.width, SpriteChip.height, flipH, flipV, drawMode, colorOffset);
+                    
                 }
                 else
                 {
@@ -638,7 +549,6 @@ namespace PixelVision8.Engine.Chips
                 
             }
         }
-
 
         /// <summary>
         ///     The DrawSprites method makes it easier to combine and draw groups of sprites to the display in a grid. This is
@@ -743,7 +653,6 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
-
         /// <summary>
         ///     DrawSpriteBlock() is similar to DrawSprites except you define the first sprite (upper left corner) and the width x
         ///     height
@@ -813,9 +722,6 @@ namespace PixelVision8.Engine.Chips
 
             DrawSprites(sprites, x, y, width, flipH, flipV, drawMode, colorOffset, onScreen, useScrollPos, bounds);
         }
-
-        //        protected int j;
-        //        protected int[] pixelData;
 
         /// <summary>
         ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render
@@ -921,8 +827,6 @@ namespace PixelVision8.Engine.Chips
             }
         }
 
-
-
         /// <summary>
         ///     By default, the tilemap renders to the display by simply calling DrawTilemap(). This automatically fills the entire
         ///     display with the visible portion of the tilemap. To have more granular control over how to render the tilemap, you
@@ -964,16 +868,16 @@ namespace PixelVision8.Engine.Chips
             viewPort.Height = rows == 0 ? DisplayChip.Height : rows * SpriteChip.height;
 
             // Grab the correct cached pixel data
-            GetCachedPixels(viewPort.X, viewPort.Y, viewPort.Width, viewPort.Height, ref tmpTilemapCache);
+            // GetCachedPixels(viewPort.X, viewPort.Y, viewPort.Width, viewPort.Height, ref tmpTilemapCache);
 
-            // TODO need to pass the tilemap directly into the renderer
+            // Pass the pixel data 
             
-            // Copy over the cached pixel data from the tilemap request
-            DrawPixels(tmpTilemapCache, x, y, viewPort.Width, viewPort.Height, false, false, DrawMode.Tile);
+            DisplayChip.NewDrawCall(TilemapChip, x, y, viewPort.Width, viewPort.Height, (byte)DrawMode.Tile, false, false, 0, viewPort.X, viewPort.X);
+            
+            // DisplayChip.NewDrawCall(tmpTilemapCache, x, y, viewPort.Width, viewPort.Height, (byte)DrawMode.Tile);
+
         }
         
-        
-
         /// <summary>
         ///     This method allows you to draw a rectangle with a fill color. By default, this method is used to clear the screen
         ///     but you can supply a color offset to change the color value and use it to fill a rectangle area with a specific
@@ -986,7 +890,7 @@ namespace PixelVision8.Engine.Chips
         /// <param name="color"></param>
         /// <param name="drawMode"></param>
         public void DrawRect(int x, int y, int width, int height, int color = -1,
-            DrawMode drawMode = DrawMode.Background)
+            DrawMode drawMode = DrawMode.TilemapCache)
         {
             // TODO is there a faster way to do this?
             DrawPixels(null, x, y, width, height, false, false, drawMode, color);
@@ -1038,7 +942,6 @@ namespace PixelVision8.Engine.Chips
         #endregion
 
         #region Pixel Data
-        
 
         /// <summary>
         ///     A helper method to convert a string of characters into an array of sprite IDs.
@@ -1085,30 +988,30 @@ namespace PixelVision8.Engine.Chips
         /// <param name="fontName"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public int[] CharacterToPixelData(char character, string fontName)
-        {
-            var fontMap = FontChip.ReadFont(fontName);
-
-            // Test to make sure font exists
-            if (fontMap == null) throw new Exception("Font '" + fontName + "' not found.");
-
-            var index = Convert.ToInt32(character) - charOffset;
-
-            var totalCharacters = fontMap.Length;
-            var spriteID = -1;
-
-            if (index < totalCharacters && index > -1) spriteID = fontMap[index];
-
-            if (spriteID > -1)
-            {
-                FontChip.ReadSpriteAt(spriteID, ref tmpSpriteData);
-                return tmpSpriteData;
-            }
-
-            //                return Sprite(spriteID);
-
-            return null;
-        }
+        // public int[] CharacterToPixelData(char character, string fontName)
+        // {
+        //     var fontMap = FontChip.ReadFont(fontName);
+        //
+        //     // Test to make sure font exists
+        //     if (fontMap == null) throw new Exception("Font '" + fontName + "' not found.");
+        //
+        //     var index = Convert.ToInt32(character) - charOffset;
+        //
+        //     var totalCharacters = fontMap.Length;
+        //     var spriteID = -1;
+        //
+        //     if (index < totalCharacters && index > -1) spriteID = fontMap[index];
+        //
+        //     if (spriteID > -1)
+        //     {
+        //         FontChip.ReadSpriteAt(spriteID, ref tmpSpriteData);
+        //         return tmpSpriteData;
+        //     }
+        //
+        //     //                return Sprite(spriteID);
+        //
+        //     return null;
+        // }
 
         #endregion
 
@@ -1242,7 +1145,7 @@ namespace PixelVision8.Engine.Chips
 
         #endregion
 
-        // #region Sound
+        #region Sound
 
         /// <summary>
         ///     This method plays back a sound on a specific channel. The SoundChip has a limit of
@@ -1278,10 +1181,11 @@ namespace PixelVision8.Engine.Chips
         {
             return SoundChip.IsChannelPlaying(channel);
         }
+        
+        #endregion
 
         #region Sprite
         
-
         /// <summary>
         ///     Returns the size of the sprite as a Vector where X and Y represent the width and height.
         /// </summary>
@@ -1320,6 +1224,7 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public int[] Sprite(int id, int[] data = null)
         {
+            
             if (data != null)
             {
                 SpriteChip.UpdateSpriteAt(id, data);
@@ -1330,6 +1235,29 @@ namespace PixelVision8.Engine.Chips
             }
 
             SpriteChip.ReadSpriteAt(id, ref tmpSpriteData);
+
+            return tmpSpriteData;
+        }
+        
+        public int[] FontChar(char character, string fontName, int[] data = null)
+        {
+
+            var fontMap = FontChip.ReadFont(fontName);
+
+            // Test to make sure font exists
+            if (fontMap == null) throw new Exception("Font '" + fontName + "' not found.");
+
+            // TODO need to test this out
+            id = ConvertTextToSprites(character.ToString(), fontName)[0];
+            
+            if (data != null)
+            {
+                FontChip.UpdateSpriteAt(id, data);
+
+                return data;
+            }
+
+            FontChip.ReadSpriteAt(id, ref tmpSpriteData);
 
             return tmpSpriteData;
         }
@@ -1437,23 +1365,6 @@ namespace PixelVision8.Engine.Chips
         }
 
         /// <summary>
-        ///     This forces the map to redraw its cached pixel data. Use this to clear any pixel data added
-        ///     after the map created the pixel data cache.
-        /// </summary>
-        // public void RebuildTilemap()
-        // {
-        //     PixelDataUtil.Clear(cachedTileMap);
-        //     // cachedTileMap.Clear();
-        //
-        //     TilemapChip.InvalidateAll();
-        // }
-
-
-        protected Point _tilemapSize = Point.Zero;
-        private int _paddingW;
-        private int _paddingH;
-
-        /// <summary>
         ///     This will return a vector representing the size of the tilemap in columns (x) and rows (y).
         ///     To find the size in pixels, you will need to multiply the returned vectors x and y values by
         ///     the sprite size's x and y. This method also allows you to resize the tilemap by passing in an
@@ -1539,135 +1450,8 @@ namespace PixelVision8.Engine.Chips
 
         #endregion
 
-
-        #region Tilemap Cache
-        
-
-        /// <summary>
-        ///     This method converts the tile map into pixel data that can be
-        ///     rendered by the engine. It's an expensive operation and should only
-        ///     be called when the game or level is loading up. This data can be
-        ///     passed into the ScreenBufferChip to allow cached rendering of the
-        ///     tile map as well as scrolling of the tile map if it is larger then
-        ///     the screen's resolution.
-        /// </summary>
-        /// <ignore />
-        // protected void RebuildCache(PixelData targetTextureData)
-        // {
-        //     if (TilemapChip.invalid != true) return;
-        //
-        //     var realWidth = SpriteChip.width * TilemapChip.columns;
-        //     var realHeight = SpriteChip.height * TilemapChip.rows;
-        //
-        //     if (realWidth != cachedTileMap.Width || realHeight != cachedTileMap.Height)
-        //         cachedTileMap.Resize(realWidth, realHeight);
-        //
-        //     var tileSize = SpriteSize();
-        //
-        //     // Create tmp variables for loop
-        //     int x, y, spriteID;
-        //
-        //     // Get a local reference to the total number of tiles
-        //     var totalTiles = TilemapChip.total;
-        //
-        //     // var totalTilesUpdated = 0;
-        //
-        //     // Loop through all of the tiles in the tilemap
-        //     for (var i = 0; i < totalTiles; i++)
-        //     {
-        //         var tile = TilemapChip.tiles[i];
-        //
-        //         if (tile.invalid)
-        //         {
-        //             // Get the sprite id
-        //             spriteID = tile.spriteID;
-        //
-        //             // Calculate the new position of the tile;
-        //             x = i % TilemapChip.columns * tileSize.X;
-        //             y = i / TilemapChip.columns * tileSize.Y;
-        //
-        //             SpriteChip.ReadSpriteAt(spriteID, ref tmpPixelData);
-        //
-        //             // TODO need to see if the tile is flipped
-        //             //                    var flipH = tile.flipH;
-        //             //                    var flipV = flipVLayer[i] == 1;
-        //
-        //             if (tile.flipH || tile.flipV)
-        //                 SpriteChipUtil.FlipSpriteData(ref tmpPixelData, SpriteChip.width, SpriteChip.height, tile.flipH,
-        //                     tile.flipH);
-        //
-        //             //                    targetTextureData.DrawSprite(spriteID, x, y);
-        //             // Draw the pixel data into the cachedTilemap
-        //             
-        //             PixelDataUtil.MergePixels(targetTextureData, x, y, tileSize.X, tileSize.Y, tmpPixelData, false, false, tile.colorOffset, false);
-        //
-        //             // totalTilesUpdated++;
-        //         }
-        //     }
-        //
-        //     // Reset the invalidation state
-        //     TilemapChip.ResetValidation();
-        // }
-
-        public void GetCachedPixels(int x, int y, int blockWidth, int blockHeight, ref int[] pixelData)
-        {
-            // if (TilemapChip.invalid) RebuildCache(cachedTileMap);
-
-            PixelDataUtil.CopyPixels(ref pixelData, TilemapChip.PixelData, x, y, blockWidth, blockHeight);
-        }
-
-        // protected void UpdateCachedTilemap(int[] pixels, int x, int y, int blockWidth, int blockHeight,
-        //     bool flipH = false, bool flipV = false, int colorOffset = 0)
-        // {
-        //     // Check to see if the tilemap cache is invalide before drawing to it
-        //     if (TilemapChip.invalid) RebuildCache(cachedTileMap);
-        //
-        //     // Flip the y axis 
-        //     //            y = cachedTileMap.height - y - blockHeight;
-        //
-        //
-        //     // Todo need to go through and draw to the tilemap cache but ignore transparent pixels
-        //     if (pixels == null)
-        //         PixelDataUtil.Clear(cachedTileMap, colorOffset, x, y, blockWidth, blockHeight);
-        //     else
-        //         // Set pixels on the tilemap cache
-        //         PixelDataUtil.MergePixels(cachedTileMap, x, y, blockWidth, blockHeight, pixels, flipH, flipV, colorOffset);
-        //
-        //     //            Invalidate();
-        // }
-
-        
-
-        //        public void ReadPixelData(int width, int height, ref int[] pixelData, int offsetX = 0, int offsetY = 0)
-        //        {
-        //            // Test if we need to rebuild the cached tilemap
-        //            if (tilemapChip.invalid)
-        //                RebuildCache(cachedTileMap);
-        //
-        //            // Return the requested pixel data
-        //            cachedTileMap.CopyPixels(ref pixelData, offsetX, offsetY, width, height);
-        //        }
-        
-
-        // public void SaveTilemapCache()
-        // {
-        //     tilemapCachePixels = cachedTileMap.GetPixels();
-        // }
-        //
-        // public void RestoreTilemapCache()
-        // {
-        //     if (tilemapCachePixels == null) return;
-        //
-        //     cachedTileMap.SetPixels(tilemapCachePixels);
-        // }
-
-        #endregion
-        
-
         #region Utils
         
-        // protected StringBuilder _sb = new StringBuilder();
-
         public int ReadFPS()
         {
             return fps;

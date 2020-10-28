@@ -38,7 +38,6 @@ namespace PixelVision8.Engine.Chips
         public bool autoImport;
 
         public TileData[] tiles;
-
         private int _columns;
         private int _rows;
         private int _i;
@@ -50,9 +49,9 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public int total => columns * rows;
         
-        public int width => viewPort.Width;
-
-        public int height => viewPort.Height;
+        // public int width => viewPort.Width;
+        //
+        // public int height => viewPort.Height;
 
         private PixelData _tilemapCache = new PixelData();
 
@@ -67,10 +66,7 @@ namespace PixelVision8.Engine.Chips
         
         private Rectangle _tileSize;
         private PixelData tmpPixelData;
-        public Rectangle viewPort;
-        public int textureWidth => _tilemapCache.Width;
-        public int textureHeight => _tilemapCache.Height;
-
+        
         /// <summary>
         ///     The width of the tile map by tiles.
         /// </summary>
@@ -113,15 +109,6 @@ namespace PixelVision8.Engine.Chips
             Invalidate();
         }
 
-        public void InvalidateAll()
-        {
-            //            _tilemapCache.Clear();
-
-            for (var i = 0; i < total; i++) tiles[i].Invalidate();
-            //                layers[(int) Layer.Invalid][i] = -1;
-
-            Invalidate();
-        }
 
         public void ResetValidation()
         {

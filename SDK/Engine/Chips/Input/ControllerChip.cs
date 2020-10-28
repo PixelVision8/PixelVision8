@@ -74,7 +74,7 @@ namespace PixelVision8.Engine.Chips
 
     public class Controller
     {
-        //            public int GamePadIndex;
+        
         public GamePadState CurrentState;
         public Dictionary<Buttons, Keys> KeyboardMap;
 
@@ -107,14 +107,6 @@ namespace PixelVision8.Engine.Chips
         {
             return players[id].IsConnected();
         }
-
-        // public bool CaptureButtonInput()
-        // {
-        //     var buttons = players[0].CurrentState.Buttons;
-        //     
-        // }
-
-        // public Dictionary<string, string>
 
         private Keys? repChar;
 
@@ -322,13 +314,6 @@ namespace PixelVision8.Engine.Chips
             engine.ControllerChip = null;
         }
 
-        // private void BuildInputString(Keys key)
-        // {
-        //     inputStringBuilder.Append(GetChar(key, currentKeyboardState.CapsLock, currentKeyboardState.NumLock,
-        //         currentKeyboardState.IsKeyDown(Keys.LeftShift) ||
-        //         currentKeyboardState.IsKeyDown(Keys.RightShift)));
-        // }
-
         private Controller getPlayer(int index)
         {
             return index >= 0 && index < players.Count ? players[index] : null;
@@ -338,12 +323,8 @@ namespace PixelVision8.Engine.Chips
         {
             switch (input)
             {
-                //                case Buttons.Home:
-                //                    return state.Buttons.BigButton == ButtonState.Pressed;
                 case Buttons.Start:
                     return state.Buttons.Start == ButtonState.Pressed;
-                //                case Buttons.Back:
-                //                    return state.Buttons.Back == ButtonState.Pressed;
                 case Buttons.Up:
                     return state.DPad.Up == ButtonState.Pressed;
                 case Buttons.Left:
@@ -354,40 +335,10 @@ namespace PixelVision8.Engine.Chips
                     return state.DPad.Right == ButtonState.Pressed;
                 case Buttons.Select:
                     return state.Buttons.Back == ButtonState.Pressed;
-                //                case Buttons.X:
-                //                    return state.Buttons.X == ButtonState.Pressed;
                 case Buttons.A:
                     return state.Buttons.A == ButtonState.Pressed;
                 case Buttons.B:
                     return state.Buttons.B == ButtonState.Pressed;
-                    //                case Buttons.LeftShoulder:
-                    //                    return state.Buttons.LeftShoulder == ButtonState.Pressed;
-                    //                case Buttons.RightShoulder:
-                    //                    return state.Buttons.RightShoulder == ButtonState.Pressed;
-                    //                case Buttons.LeftTrigger:
-                    //                    return state.Triggers.Left > DeadzoneTriggers;
-                    //                case Buttons.RightTrigger:
-                    //                    return state.Triggers.Right > DeadzoneTriggers;
-                    //                case Buttons.LeftStick:
-                    //                    return state.Buttons.LeftStick == ButtonState.Pressed;
-                    //                case Buttons.LeftStickUp:
-                    //                    return state.ThumbSticks.Left.Y > DeadzoneSticks;
-                    //                case Buttons.LeftStickLeft:
-                    //                    return state.ThumbSticks.Left.X < -DeadzoneSticks;
-                    //                case Buttons.LeftStickDown:
-                    //                    return state.ThumbSticks.Left.Y < -DeadzoneSticks;
-                    //                case Buttons.LeftStickRight:
-                    //                    return state.ThumbSticks.Left.X > DeadzoneSticks;
-                    //                case Buttons.RightStick:
-                    //                    return state.Buttons.RightStick == ButtonState.Pressed;
-                    //                case Buttons.RightStickUp:
-                    //                    return state.ThumbSticks.Right.Y > DeadzoneSticks;
-                    //                case Buttons.RightStickLeft:
-                    //                    return state.ThumbSticks.Right.X < -DeadzoneSticks;
-                    //                case Buttons.RightStickDown:
-                    //                    return state.ThumbSticks.Right.Y < -DeadzoneSticks;
-                    //                case Buttons.RightStickRight:
-                    //                    return state.ThumbSticks.Right.X > DeadzoneSticks;
             }
 
             return false;
@@ -413,8 +364,6 @@ namespace PixelVision8.Engine.Chips
 
             return currentKeyboardState.IsKeyDown(tmpKey) && !previousKeyboardState.IsKeyDown(tmpKey);
         }
-
-        
 
         #region Mouse APIs
 
