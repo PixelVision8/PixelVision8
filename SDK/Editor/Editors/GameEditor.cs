@@ -1995,7 +1995,7 @@ namespace PixelVision8.Runner.Editors
 
             var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
 
-            PixelDataUtil.CopyPixels(ref pixelData, spriteChip.PixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
+            PixelDataUtil.CopyPixels(spriteChip.PixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY, ref pixelData);
             // spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
 
             //            var pixelData = Sprite(id);
@@ -2022,7 +2022,7 @@ namespace PixelVision8.Runner.Editors
 
             //            Console.WriteLine("Write sprite " + pos.X +" "+pos.Y);
             // spriteChip.texture.SetPixels(pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY, pixelData);
-            PixelDataUtil.SetPixels(spriteChip.PixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY, pixelData);
+            PixelDataUtil.SetPixels(pixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY, spriteChip.PixelData);
 
             // TODO need to invalidate the cached sprite data
 

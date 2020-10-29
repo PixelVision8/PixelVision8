@@ -60,7 +60,7 @@ namespace PixelVision8.Runner.Exporters
                 var pos = MathUtil.CalculatePosition(i, maxCol);
 
                 spriteChip.ReadSpriteAt(i, ref tmpPixelData);
-                PixelDataUtil.SetPixels(textureData, pos.X * spriteChip.width, pos.Y * spriteChip.height, spriteChip.width, spriteChip.height, tmpPixelData);
+                PixelDataUtil.SetPixels(tmpPixelData, pos.X * spriteChip.width, pos.Y * spriteChip.height, spriteChip.width, spriteChip.height, textureData);
             }
 
             // var convertedColors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);

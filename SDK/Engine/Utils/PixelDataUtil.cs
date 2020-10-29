@@ -20,7 +20,6 @@
 
 using System;
 using System.Diagnostics;
-using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Engine.Utils
 {
@@ -33,49 +32,60 @@ namespace PixelVision8.Engine.Utils
         private static int _mergeX;
         private static int _mergeY;
         private static int _total;
+        private static int _tmpPixel;
+        private static int[] _tmpPixels;
 
         public static int[] GetPixels(PixelData pixelData) => GetPixels(pixelData, 0, 0, pixelData.Width, pixelData.Height);
         
         public static int[] GetPixels(PixelData pixelData, int x, int y, int blockWidth, int blockHeight)
         {
-            var tmpPixels = new int[blockWidth * blockHeight];
+            _tmpPixels = new int[blockWidth * blockHeight];
         
-            CopyPixels(ref tmpPixels, pixelData, x, y, blockWidth, blockHeight);
+            CopyPixels(pixelData, x, y, blockWidth, blockHeight, ref _tmpPixels);
         
-            return tmpPixels;
+            return _tmpPixels;
         }
         
-        public static void SetPixels(int[] pixels, PixelData pixelData) => SetPixels(pixelData, 0, 0, pixelData.Width, pixelData.Height, pixels);
+        public static void SetPixels(int[] srcPixels, PixelData destPixelData) => SetPixels(srcPixels, 0, 0, destPixelData.Width, destPixelData.Height, destPixelData);
         
-        public static void SetPixels(PixelData pixelData, int x, int y, int blockWidth, int blockHeight, int[] srcPixels)
+        public static void SetPixels(int[] srcPixels, int x, int y, int blockWidth, int blockHeight, PixelData destPixelData)
         {
-            ValidateBounds(ref blockWidth, ref blockHeight, pixelData.Width, pixelData.Height, ref x, ref y);
+            ValidateBounds(ref blockWidth, ref blockHeight, ref x, ref y, destPixelData.Width, destPixelData.Height);
 
             for (var i = blockHeight -1; i > -1; i--)
             {
-                Array.Copy(
-                    srcPixels, 
-                    i  * blockWidth, 
-                    pixelData.Pixels, 
-                    x + (i + y) * pixelData.Width, 
-                    blockWidth
+                try
+                {
+                    Array.Copy(
+                        srcPixels, 
+                        i  * blockWidth, 
+                        destPixelData.Pixels, 
+                        x + (i + y) * destPixelData.Width, 
+                        blockWidth
                     );
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    // throw;
+                }
+                
             }
 
         }
         
-        public static void CopyPixels(ref int[] destPixels, PixelData pixelData, int x, int y, int sampleWidth, int sampleHeight)
+        public static void CopyPixels(PixelData srcPixelData, int x, int y, int sampleWidth, int sampleHeight, ref int[] destPixels)
         {
 
-            ValidateBounds(ref sampleWidth, ref sampleHeight, pixelData.Width, pixelData.Height, ref x, ref y);
+            ValidateBounds(ref sampleWidth, ref sampleHeight, ref x, ref y, srcPixelData.Width, srcPixelData.Height);
             
             // Copy each entire line at once.
             for (var i = sampleHeight - 1; i > -1; --i)
             {
                 
                 Array.Copy(
-                    pixelData.Pixels, 
-                    x + (y + i) * pixelData.Width, 
+                    srcPixelData.Pixels, 
+                    x + (y + i) * srcPixelData.Width, 
                     destPixels, 
                     i * sampleWidth, 
                     sampleWidth
@@ -98,7 +108,7 @@ namespace PixelVision8.Engine.Utils
 
             _mergeDestWidth = dest.Width;
             
-            ValidateBounds(ref sampleWidth, ref sampleHeight, _mergeDestWidth, dest.Height, ref destX, ref destY);
+            ValidateBounds(ref sampleWidth, ref sampleHeight, ref destX, ref destY, _mergeDestWidth, dest.Height);
 
             _total = sampleWidth * sampleHeight;
             
@@ -113,21 +123,19 @@ namespace PixelVision8.Engine.Utils
                 _mergeX = _mergeCol;
                 _mergeY = _mergeRow;
                 
-                var index = (_mergeX + sampleX) + (src.Width * (_mergeY + sampleY));
+                _tmpPixel = src.Pixels[(_mergeX + sampleX) + (src.Width * (_mergeY + sampleY))];
+                
+                if (_tmpPixel != -1 || ignoreTransparent != true)
+                {
+                
+                    if (flipH) 
+                        _mergeX = sampleWidth - 1 - _mergeX;
 
-                    var tmpPixel = src.Pixels[index];
-                    
-                    if (tmpPixel != -1 || ignoreTransparent != true)
-                    {
-                    
-                        if (flipH) 
-                            _mergeX = sampleWidth - 1 - _mergeX;
+                    if (flipV) 
+                        _mergeY = sampleWidth - 1 - _mergeY;
 
-                        if (flipV) 
-                            _mergeY = sampleWidth - 1 - _mergeY;
-
-                        dest.Pixels[(_mergeX + destX) + _mergeDestWidth * (_mergeY + destY)] = tmpPixel + colorOffset;
-                    }
+                    dest.Pixels[(_mergeX + destX) + _mergeDestWidth * (_mergeY + destY)] = _tmpPixel + colorOffset;
+                }
                 
                 _mergeCol ++;
                 
@@ -139,40 +147,41 @@ namespace PixelVision8.Engine.Utils
             }
         }
 
-        private static void ValidateBounds(ref int sampleWidth, ref int sampleHeight, int destWidth, int destHeight, ref int destX,
-            ref int destY)
+        private static void ValidateBounds(ref int srcWidth, ref int srcHeight, ref int destX,
+            ref int destY, int destWidth, int destHeight)
         {
             
             // Adjust X
             if (destX < 0)
             {
-                sampleWidth += destX;
+                srcWidth += destX;
                 destX = 0;
             }
 
             // Adjust Y
             if (destY < 0)
             {
-                sampleHeight += destY;
+                srcHeight += destY;
                 destY = 0;
             }
 
             // Adjust Width
-            if (destX + sampleWidth > destWidth)
+            if (destX + srcWidth > destWidth)
             {
-                sampleWidth -= (destX + sampleWidth) - destWidth;
+                srcWidth -= (destX + srcWidth) - destWidth;
             }
 
             // Adjust Height.
-            if (destY + sampleHeight > destHeight)
+            if (destY + srcHeight > destHeight)
             {
-                sampleHeight -= destY + sampleHeight - destHeight;
+                srcHeight -= destY + srcHeight - destHeight;
             }
+            
         }
 
         public static void Resize(PixelData pixelData, int blockWidth, int blockHeight)
         {
-            pixelData.Resize(MathHelper.Clamp(blockWidth, 1, 2048), MathHelper.Clamp(blockHeight, 1, 2048));
+            pixelData.Resize(MathUtil.Clamp(blockWidth, 1, 2048), MathUtil.Clamp(blockHeight, 1, 2048));
             
             Clear(pixelData);
         }

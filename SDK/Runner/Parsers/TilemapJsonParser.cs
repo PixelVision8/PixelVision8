@@ -193,7 +193,7 @@ namespace PixelVision8.Runner.Parsers
                                 var jsonData = new PixelData(columns, rows);
                                 PixelDataUtil.Clear(jsonData);
                                 // jsonData.Clear();
-                                PixelDataUtil.SetPixels(jsonData, 0, 0, columns, rows, dataValues);
+                                PixelDataUtil.SetPixels(dataValues, 0, 0, columns, rows, jsonData);
                                 // jsonData.SetPixels(0, 0, columns, rows, dataValues);
 
                                 var tmpCol = columns > tilemapChip.columns ? tilemapChip.columns : columns;
@@ -205,16 +205,16 @@ namespace PixelVision8.Runner.Parsers
 
                                 var tmpData = new int[tmpCol * tmpRow];
 
-                                PixelDataUtil.CopyPixels(ref tmpData, jsonData, 0, 0, tmpCol, tmpRow);
+                                PixelDataUtil.CopyPixels(jsonData, 0, 0, tmpCol, tmpRow, ref tmpData);
                                 // jsonData.CopyPixels(ref tmpData, 0, 0, tmpCol, tmpRow);
 
-                                PixelDataUtil.SetPixels(tmpPixelData, 0, 0, tmpCol, tmpRow, tmpData);
+                                PixelDataUtil.SetPixels(tmpData, 0, 0, tmpCol, tmpRow, tmpPixelData);
                                 // tmpPixelData.SetPixels(0, 0, tmpCol, tmpRow, tmpData);
 
                                 // TODO why is this happening twice?
                                 // PixelDataUtil.CopyPixels(ref dataValues, tmpPixelData, 0, 0, tmpPixelData.Width, tmpPixelData.Height);
                                 // tmpPixelData.CopyPixels(ref dataValues, 0, 0, tmpPixelData.width, tmpPixelData.height);
-                                PixelDataUtil.CopyPixels(ref dataValues, tmpPixelData, 0, 0, tilemapChip.columns, tilemapChip.rows);
+                                PixelDataUtil.CopyPixels(tmpPixelData, 0, 0, tilemapChip.columns, tilemapChip.rows, ref dataValues);
 
                                 // tmpPixelData.CopyPixels(ref dataValues, 0, 0, tilemapChip.columns, tilemapChip.rows);
                             }

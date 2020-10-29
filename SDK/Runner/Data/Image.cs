@@ -133,13 +133,13 @@ public struct Image
         pos.X *= _spriteSize.X;
         pos.Y *= _spriteSize.Y;
         
-        PixelDataUtil.SetPixels(PixelData, pos.X, pos.Y, _spriteSize.X, _spriteSize.Y, pixels);
+        PixelDataUtil.SetPixels(pixels, pos.X, pos.Y, _spriteSize.X, _spriteSize.Y, PixelData);
         
     }
 
     public void SetPixels(int[] pixels) => PixelDataUtil.SetPixels(pixels, _pixelData);
     
-    public void SetPixels(int x, int y, int blockWidth, int blockHeight, int[] pixels) => PixelDataUtil.SetPixels(PixelData, x, y, blockWidth, blockHeight, pixels);
+    public void SetPixels(int x, int y, int blockWidth, int blockHeight, int[] pixels) => PixelDataUtil.SetPixels(pixels, x, y, blockWidth, blockHeight, PixelData);
 
     public int[] GetPixels() => PixelDataUtil.GetPixels(PixelData);
     public int[] GetPixels(int x, int y, int blockWidth, int blockHeight) => PixelDataUtil.GetPixels(PixelData, x, y, blockWidth, blockHeight);

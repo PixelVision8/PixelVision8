@@ -35,14 +35,14 @@ function PixelVisionOS:CreateCanvas(rect, size, scale, colorOffset, toolTip, emp
   data.selectedPixelData = nil
   data.brushColorID = 253 -- Second to last color in the tool
   data.showGrid = false
-
+  data.defaultStrokeWidth = 1
   -- Create a selection canvas
+  
   data.selectionCanvas = NewCanvas(data.rect.w, data.rect.h)
-  data.selectionCanvas.wrap = false
-  data.selectionCanvas:SetStroke(0, 1)
+  data.selectionCanvas:SetStroke(0, data.defaultStrokeWidth)
 
   data.gridCanvas = NewCanvas(data.rect.w, data.rect.h)
-  data.gridCanvas.wrap = false
+  --data.gridCanvas.wrap = false
   
   data.brushDrawArgs = {0, 0, 8, 8, data.brushColorID, DrawMode.Sprite}
 
@@ -350,7 +350,7 @@ function PixelVisionOS:DrawOnCanvas(data, mousePos, toolID)
         local overColorID = data.paintCanvas:ReadPixelAt(mousePos.x, mousePos.y) - data.colorOffset
 
         if(overColorID > 0) then
-          data.tmpPaintCanvas:SetStroke(data.emptyColorID, 1)
+          data.tmpPaintCanvas:SetStroke(data.emptyColorID, data.defaultStrokeWidth)
         else
           self:ResetCanvasStroke(data)
         end
@@ -373,7 +373,7 @@ function PixelVisionOS:DrawOnCanvas(data, mousePos, toolID)
     elseif(data.tool == "eraser") then
 
       -- Change the stroke the empty color
-      data.tmpPaintCanvas:SetStroke(data.emptyColorID, 1)
+      data.tmpPaintCanvas:SetStroke(data.emptyColorID, data.defaultStrokeWidthv)
 
       data.tmpPaintCanvas:DrawLine(data.startPos.x, data.startPos.y, mousePos.x, mousePos.y)
       data.startPos = NewPoint(mousePos.x, mousePos.y)
@@ -399,14 +399,53 @@ function PixelVisionOS:DrawOnCanvas(data, mousePos, toolID)
       data.tmpPaintCanvas:Clear()
 
       self:ResetCanvasStroke(data)
+      
+      local w = math.abs(mousePos.x - data.startPos.x)
+      local h = math.abs(mousePos.y - data.startPos.y)
 
-      data.tmpPaintCanvas:DrawSquare(data.startPos.x, data.startPos.y, mousePos.x, mousePos.y, data.fill)
+      if(w <= 0 or h <= 0) then
+        return
+      end
+      
+      data.tmpPaintCanvas:DrawRectangle(
+        math.min(data.startPos.x, mousePos.x), 
+        math.min(data.startPos.y, mousePos.y), 
+        w,
+        h, 
+        data.fill
+      )
 
       -- force the paint canvas to redraw
       data.paintCanvas:Invalidate()
 
       editorUI:Invalidate(data)
 
+    elseif(data.tool == "circle") then
+
+      data.tmpPaintCanvas:Clear()
+
+      self:ResetCanvasStroke(data)
+
+      local w = math.abs(mousePos.x - data.startPos.x)
+      local h = math.abs(mousePos.y - data.startPos.y)
+
+      if(w <= 0 or h <= 0) then
+        return
+      end
+
+      data.tmpPaintCanvas:DrawEllipse(
+              math.min(data.startPos.x, mousePos.x),
+              math.min(data.startPos.y, mousePos.y),
+              w,
+              h,
+              data.fill
+      )
+      
+      -- force the paint canvas to redraw
+      data.paintCanvas:Invalidate()
+
+      editorUI:Invalidate(data)
+      
     elseif(data.tool == "select") then
 
       if(data.mouseState == "pressed") then
@@ -468,18 +507,7 @@ function PixelVisionOS:DrawOnCanvas(data, mousePos, toolID)
 
       end
 
-    elseif(data.tool == "circle") then
-
-      data.tmpPaintCanvas:Clear()
-
-      self:ResetCanvasStroke(data)
-
-      data.tmpPaintCanvas:DrawEllipse(data.startPos.x, data.startPos.y, mousePos.x, mousePos.y, data.fill)
-
-      -- force the paint canvas to redraw
-      data.paintCanvas:Invalidate()
-
-      editorUI:Invalidate(data)
+    
 
     elseif(data.tool == "eyedropper") then
 
@@ -527,10 +555,10 @@ function PixelVisionOS:CutPixels(data)
 
 
   -- Change the stroke to a single pixel of white
-  data.tmpPaintCanvas:SetStroke(bgColor, 1)
+  data.tmpPaintCanvas:SetStroke(bgColor, data.defaultStrokeWidth)
 
   -- Change the stroke to a single pixel of white
-  data.tmpPaintCanvas:SetPattern(bgColor, 1)
+  data.tmpPaintCanvas:SetPattern(bgColor, data.defaultStrokeWidth)
 
   -- Adjust right and bottom to account for 1 px border
   data.tmpPaintCanvas:DrawSquare(selection.size.Left, selection.size.Top, selection.size.Right - 1, selection.size.Bottom -1, true)
@@ -585,7 +613,7 @@ function PixelVisionOS:ResetCanvasStroke(data)
   local realBrushColor = tmpColor + data.colorOffset
 
   -- Change the stroke to a single pixel
-  data.tmpPaintCanvas:SetStroke(realBrushColor, 1)
+  data.tmpPaintCanvas:SetStroke(realBrushColor, data.defaultStrokeWidth)
   data.tmpPaintCanvas:SetPattern({realBrushColor}, 1, 1)
 
   ReplaceColor(data.brushColorID, tmpColor + data.colorOffset)
@@ -780,7 +808,7 @@ function PixelVisionOS:ResizeCanvas(data, size, scale, pixelData)
   local columns = data.rect.w / scale
   local rows = data.rect.h / scale
 
-  data.gridCanvas:SetStroke(0, 1)
+  data.gridCanvas:SetStroke(0, data.defaultStrokeWidth)
 
   for i = 0, rows do
       data.gridCanvas:DrawLine(0, i * scale - 1, data.rect.w, i * scale - 1)

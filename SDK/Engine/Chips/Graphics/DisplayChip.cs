@@ -20,7 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine.Chips
@@ -28,17 +27,12 @@ namespace PixelVision8.Engine.Chips
     
     public class DisplayChip : AbstractChip, IDraw
     {
-        // private Color[] cachedColors;
-
         private DrawRequestPixelData draw;
         private PixelData Display = new PixelData();
-        // protected List<DrawRequestPixelData>[] DrawRequestPixelDataLayers = new List<DrawRequestPixelData>[0];
-        // protected Stack<int[]> DrawRequestPixelDataPool = new Stack<int[]>();
         public int[] Pixels => Display.Pixels;
+        public int[] ClearPixels = new int[0];
 
         public int TotalPixels => Display.TotalPixels;
-        // public int OverscanX { get; set; }
-        // public int OverscanY { get; set; }
         
         
         private List<DrawRequestPixelData> DrawCalls = new List<DrawRequestPixelData>();
@@ -64,17 +58,6 @@ namespace PixelVision8.Engine.Chips
         // This should be part of the chip's data
         private int _maxDrawRequests = 1024;
         
-        // public int OverscanXPixels => OverscanX * engine.SpriteChip.width;
-        //
-        // public int OverscanYPixels => OverscanY * engine.SpriteChip.height;
-
-        /// <summary>
-        ///     This returns the visble areas sprites should be displayed on. Note that x and y may be negative if overscan is set
-        ///     since the screen wraps.
-        /// </summary>
-        // public Rectangle VisibleBounds => new Rectangle(-OverscanXPixels, -OverscanYPixels, Width - OverscanXPixels,
-            // Height - OverscanYPixels);
-
         /// <summary>
         ///     Returns the display's <see cref="Width" />
         /// </summary>
@@ -104,15 +87,7 @@ namespace PixelVision8.Engine.Chips
             if (_clearFlag)
             {
 
-                // TODO need to use Clear instead of a loop after re-indexing colors correctly
-                // Array.Clear(Pixels, 0, TotalPixels);
-                
-                // Loop through all of the display pixels
-                for (_i = TotalPixels-1 ; _i > -1; _i--)
-                {
-                    // We always set the clear color to -1 since the display target will automatically convert this into the background color
-                    Pixels[_i] = clearColor;
-                }
+                Array.Copy(ClearPixels, Pixels, TotalPixels);
 
                 // Reset the clear flag for the next frame
                 _clearFlag = false;
@@ -136,7 +111,18 @@ namespace PixelVision8.Engine.Chips
         
         public void Clear(int color = -1)
         {
-            clearColor = color;
+            if (clearColor != color)
+            {
+                clearColor = color;
+
+                // Loop through all of the display pixels
+                for (_i = TotalPixels-1 ; _i > -1; _i--)
+                {
+                    // We always set the clear color to -1 since the display target will automatically convert this into the background color
+                    ClearPixels[_i] = clearColor;
+                }
+
+            }
             
             _clearFlag = true;
         }
@@ -197,7 +183,17 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        public void ResetResolution(int width, int height) => Display.Resize(width, height);
+        public void ResetResolution(int width, int height)
+        {
+            
+            Display.Resize(width, height);
+            
+            // Make sure the clear pixel array is the same size
+            Array.Resize(ref ClearPixels, Display.TotalPixels);
+            
+            // Force the screen to clear after a resolution reset   
+            _clearFlag = true;
+        }
 
         /// <summary>
         ///     This configures the DisplayChip. It registers itself as the default
@@ -235,7 +231,8 @@ namespace PixelVision8.Engine.Chips
         }
 
         private bool nextDrawRequest;
-        
+        // private bool _bgFlag;
+
         public void NextDrawRequest(int destX, int destY, byte layer = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
             drawRequestCounter++;
@@ -255,43 +252,6 @@ namespace PixelVision8.Engine.Chips
             _drawRequest.ColorOffset = colorOffset;
             
         }
-
-        // public Color[] VisiblePixels()
-        // {
-        //
-        //     // TODO there might be a better way to do this like grabbing the pixel data from somewhere else?
-        //     var pixels = engine.DisplayChip.Pixels;
-        //
-        //     var cachedColors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, engine.ColorChip.debugMode, engine.ColorChip.backgroundColor);
-        //
-        //     // var cachedColors = engine.ColorChip.colors;
-        //     var displaySize = engine.GameChip.Display();
-        //
-        //     var visibleWidth = displaySize.X;
-        //     var visibleHeight = displaySize.Y;
-        //     var width = engine.DisplayChip.Width;
-        //
-        //     // Need to crop the image
-        //     var newPixels = new Color[visibleWidth * visibleHeight];
-        //
-        //     var totalPixels = pixels.Length;
-        //     var newTotalPixels = newPixels.Length;
-        //
-        //     var index = 0;
-        //
-        //     for (var i = 0; i < totalPixels; i++)
-        //     {
-        //         var col = i % width;
-        //         if (col < visibleWidth && index < newTotalPixels)
-        //         {
-        //             newPixels[index] = cachedColors[pixels[i]];
-        //             index++;
-        //         }
-        //     }
-        //
-        //     return newPixels;
-        // }
-
-        
+ 
     }
 }

@@ -201,12 +201,12 @@ function PixelVisionOS:CreateTitleBarMenu(items, toolTip)
 
     -- Draw background and border
     canvas:DrawRectangle(0, 0, canvas.width - 8, canvas.height - 8, true)
-    canvas.wrap = false
+    --canvas.wrap = false
 
     --canvas:Draw()
 
     local tmpCanvas = NewCanvas(canvas.width - 12, itemHeight)
-    tmpCanvas.wrap = false
+    --tmpCanvas.wrap = false
 
     local pos = NewPoint(6, 9)
 
