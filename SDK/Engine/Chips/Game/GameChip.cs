@@ -585,8 +585,7 @@ namespace PixelVision8.Engine.Chips
         
 
         public void DrawMetaSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
-            Rectangle? bounds = null)
+            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
             // This draw method doesn't support background or tile draw modes
             if (drawMode == DrawMode.TilemapCache || drawMode == DrawMode.Tile) return;
@@ -634,10 +633,7 @@ namespace PixelVision8.Engine.Chips
                         _tmpFlipH,
                         _tmpFlipV,
                         drawMode,
-                        _currentSpriteData.ColorOffset + colorOffset,
-                        onScreen,
-                        useScrollPos,
-                        bounds
+                        _currentSpriteData.ColorOffset + colorOffset
                     );
                 }
             }

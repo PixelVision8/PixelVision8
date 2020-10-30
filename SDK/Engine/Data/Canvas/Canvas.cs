@@ -242,8 +242,8 @@ namespace PixelVision8.Engine
             newRequest.Bounds.Y = y0;
             
             // Well be using the wid as the second point
-            newRequest.Bounds.Width = x1;// - stroke.Width;
-            newRequest.Bounds.Height = y1;// - stroke.Height;
+            newRequest.Bounds.Width = x1;
+            newRequest.Bounds.Height = y1;
 
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
@@ -254,15 +254,8 @@ namespace PixelVision8.Engine
         {
             _x0 = drawRequest.Bounds.X;
             _y0 = drawRequest.Bounds.Y;
-            _x1 = drawRequest.Bounds.Width - stroke.Width;
-
-            if (_x1 < _x0)
-                _x1 = _x0;
-            
-            _y1 = drawRequest.Bounds.Height - stroke.Width;
-            
-            if (_y1 < _y0)
-                _y1 = _y0;
+            _x1 = drawRequest.Bounds.Width;// - stroke.Width;
+            _y1 = drawRequest.Bounds.Height;// - stroke.Width;
             
             _counter = 0;
 
@@ -397,14 +390,14 @@ namespace PixelVision8.Engine
             request.Bounds.Y = _tmpRect.Bottom;
             
             // Well be using the wid as the second point
-            request.Bounds.Width = _tmpRect.Right + stroke.Width;
+            request.Bounds.Width = _tmpRect.Right;
             request.Bounds.Height = _tmpRect.Bottom;
             
             DrawLineAction(request);
             
             // Left
             request.Bounds.X =  _tmpRect.Left;
-            request.Bounds.Y = _tmpRect.Top + stroke.Height;
+            request.Bounds.Y = _tmpRect.Top;
             
             // Well be using the wid as the second point
             request.Bounds.Width = _tmpRect.Left;

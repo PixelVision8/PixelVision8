@@ -72,18 +72,18 @@ namespace PixelVision8.Engine.Chips
 
             #region Display APIs
 
-            LuaScript.Globals["Clear"] = new Action<int, int, int?, int?>(Clear);
+            LuaScript.Globals["Clear"] = new Action(Clear);
             LuaScript.Globals["Display"] = new Func<bool, Point>(Display);
             LuaScript.Globals["DrawPixels"] =
                 new Action<int[], int, int, int, int, bool, bool, DrawMode, int>(DrawPixels);
             LuaScript.Globals["DrawSprite"] =
-                new Action<int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSingleSprite);
+                new Action<int, int, int, bool, bool, DrawMode, int>(DrawSingleSprite);
             LuaScript.Globals["DrawSprites"] =
-                new Action<int[], int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSprites);
+                new Action<int[], int, int, int, bool, bool, DrawMode, int>(DrawSprites);
             LuaScript.Globals["DrawSpriteBlock"] =
-                new Action<int, int, int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawSpriteBlock);
+                new Action<int, int, int, int, int, bool, bool, DrawMode, int>(DrawSpriteBlock);
 
-            LuaScript.Globals["DrawText"] = new Action<string, int, int, DrawMode, string, int, int, bool, bool, Rectangle?>(DrawText);
+            LuaScript.Globals["DrawText"] = new Action<string, int, int, DrawMode, string, int, int>(DrawText);
             LuaScript.Globals["DrawTilemap"] = new Action<int, int, int, int, int?, int?>(DrawTilemap);
 
             LuaScript.Globals["DrawRect"] = new Action<int, int, int, int, int, DrawMode>(DrawRect);
@@ -198,7 +198,7 @@ namespace PixelVision8.Engine.Chips
             LuaScript.Globals["TotalMetaSprites"] = new Func<int?, int>(TotalMetaSprites);
             LuaScript.Globals["MetaSprite"] = new Func<int, SpriteCollection, SpriteCollection>(MetaSprite);
             LuaScript.Globals["DrawMetaSprite"] =
-                new Action<int, int, int, bool, bool, DrawMode, int, bool, bool, Rectangle?>(DrawMetaSprite);
+                new Action<int, int, int, bool, bool, DrawMode, int>(DrawMetaSprite);
 
             UserData.RegisterType<SpriteData>();
             LuaScript.Globals["SpriteData"] = UserData.CreateStatic<SpriteData>();
@@ -353,10 +353,9 @@ namespace PixelVision8.Engine.Chips
         }
 
         public void DrawSingleSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
-            Rectangle? bounds = null)
+            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
-            DrawSprite(id, x, y, flipH, flipV, drawMode, colorOffset, onScreen, useScrollPos, bounds, SpriteChip);
+            DrawSprite(id, x, y, flipH, flipV, drawMode, colorOffset, SpriteChip);
         }
         
         #endregion

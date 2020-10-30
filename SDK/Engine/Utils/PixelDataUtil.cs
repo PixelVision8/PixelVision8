@@ -52,6 +52,10 @@ namespace PixelVision8.Engine.Utils
         {
             ValidateBounds(ref blockWidth, ref blockHeight, ref x, ref y, destPixelData.Width, destPixelData.Height);
 
+            // Exit if the width or height is not valid
+            if(blockWidth < 1 || blockHeight < 1)
+                return;
+            
             for (var i = blockHeight -1; i > -1; i--)
             {
                 try
@@ -78,6 +82,9 @@ namespace PixelVision8.Engine.Utils
         {
 
             ValidateBounds(ref sampleWidth, ref sampleHeight, ref x, ref y, srcPixelData.Width, srcPixelData.Height);
+            
+            if (sampleWidth < 1 || sampleHeight < 1)
+                return;
             
             // Copy each entire line at once.
             for (var i = sampleHeight - 1; i > -1; --i)
@@ -110,6 +117,9 @@ namespace PixelVision8.Engine.Utils
             
             ValidateBounds(ref sampleWidth, ref sampleHeight, ref destX, ref destY, _mergeDestWidth, dest.Height);
 
+            if (sampleWidth < 1 || sampleHeight < 1)
+                return;
+            
             _total = sampleWidth * sampleHeight;
             
             if(_total == 0)

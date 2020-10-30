@@ -316,7 +316,6 @@ namespace PixelVision8.Engine.Chips
 
         #region Display
 
-
         /// <summary>
         ///     Clearing the display removed all of the existing pixel data, replacing it with the default background
         ///     color. The Clear() method allows you specify what region of the display to clear. By simply calling
@@ -326,29 +325,7 @@ namespace PixelVision8.Engine.Chips
         ///     useful for drawing a HUD but clearing the display below for a scrolling map and sprites. Clear can only
         ///     be used once during the draw phase.
         /// </summary>
-        /// <param name="x">
-        ///     This is an optional value that defaults to 0 and defines where the clear's X position should begin.
-        ///     When X is 0, clear starts on the far left-hand side of the display. Values less than 0 or greater than
-        ///     the width of the display are ignored.
-        /// </param>
-        /// <param name="y">
-        ///     This is an optional value that defaults to 0 and defines where the clear's Y position should begin. When Y
-        ///     is 0, clear starts at the top of the display. Values less than 0 or greater than the height of the display
-        ///     are ignored.
-        /// </param>
-        /// <param name="width">
-        ///     This is an optional value that defaults to the width of the display and defines how many horizontal pixels
-        ///     to clear. When the width is 0, clear starts at the x position and ends at the far right-hand side of the
-        ///     display. Values less than 0 or greater than the width are adjusted to stay within the boundaries of the
-        ///     screen's visible pixels.
-        /// </param>
-        /// <param name="height">
-        ///     This is an optional value that defaults to the height of the display and defines how many vertical pixels
-        ///     to clear. When the height is 0, clear starts at the Y position and ends at the bottom of the display.
-        ///     Values less than 0 or greater than the height are adjusted to stay within the boundaries of the screen's
-        ///     visible pixels.
-        /// </param>
-        public void Clear(int x = 0, int y = 0, int? width = null, int? height = null)
+        public void Clear()
         {
             // DisplayChip.Clear();
             //
@@ -483,18 +460,19 @@ namespace PixelVision8.Engine.Chips
         ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips
         ///     the pixel data vertically.
         /// </param>
+        /// <param name="drawMode"></param>
+        /// <param name="colorOffset">
+        ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
+        ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
+        /// </param>
+        /// <param name="srcChip"></param>
         /// <param name="aboveBG">
         ///     An optional bool that defines if the sprite is above or below the tilemap. Sprites are set to render above the
         ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile
         ///     above the background color.
         /// </param>
-        /// <param name="colorOffset">
-        ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
-        ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
-        /// </param>
         public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
-            Rectangle? bounds = null, SpriteChip srcChip = null)
+            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, SpriteChip srcChip = null)
         {
             // Only apply the max sprite count to sprite draw modes
 
@@ -506,8 +484,8 @@ namespace PixelVision8.Engine.Chips
             }
             else
             {
-                x -=(useScrollPos ? _scrollPos.X : 0);
-                y -=(useScrollPos ? _scrollPos.Y : 0);
+                // x -=(useScrollPos ? _scrollPos.X : 0);
+                // y -=(useScrollPos ? _scrollPos.Y : 0);
                 
                 if (drawMode == DrawMode.TilemapCache)
                 {
@@ -522,23 +500,23 @@ namespace PixelVision8.Engine.Chips
                     if (SpriteChip.maxSpriteCount > 0 && CurrentSprites >= SpriteChip.maxSpriteCount) return;
 
                     // Check to see if we need to test the bounds
-                    if (onScreen)
-                    {
-                        // _tmpBounds = bounds ?? DisplayChip.VisibleBounds;
-
-                        // This can set the render flag to true or false based on it's location
-                        //TODO need to take into account the current bounds of the screen
-                        render = x >= 0 && x <= display.X && y >= 0 && y <= display.Y;
-                    }
-                    else
-                    {   
-                        // If we are not testing to see if the sprite is onscreen it will always render and wrap based on its position
-                        render = true;
-                    }
-
-                    // If the sprite should be rendered, call DrawSprite()
-                    if (render)
-                    {
+                    // if (onScreen)
+                    // {
+                    //     // _tmpBounds = bounds ?? DisplayChip.VisibleBounds;
+                    //
+                    //     // This can set the render flag to true or false based on it's location
+                    //     //TODO need to take into account the current bounds of the screen
+                    //     render = x >= 0 && x <= display.X && y >= 0 && y <= display.Y;
+                    // }
+                    // else
+                    // {   
+                    //     // If we are not testing to see if the sprite is onscreen it will always render and wrap based on its position
+                    //     render = true;
+                    // }
+                    //
+                    // // If the sprite should be rendered, call DrawSprite()
+                    // if (render)
+                    // {
                         
                         var pos = MathUtil.CalculatePosition(id, srcChip.Columns);
                         pos.X *= SpriteChip.width;
@@ -547,7 +525,7 @@ namespace PixelVision8.Engine.Chips
                         DisplayChip.NewDrawCall(srcChip, x, y, SpriteChip.width, SpriteChip.height, (byte)drawMode, flipH, flipV, colorOffset, pos.X, pos.Y);
                         
                         CurrentSprites++;
-                    }
+                    // }
                 }
                 
             }
@@ -591,16 +569,8 @@ namespace PixelVision8.Engine.Chips
         ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
         ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
         /// </param>
-        /// <param name="onScreen">
-        ///     This flag defines if the sprites should not render when they are off the screen. Use this in conjunction with
-        ///     overscan border control what happens to sprites at the edge of the display. If this value is false, the sprites
-        ///     wrap around the screen when they reach the edges of the screen.
-        /// </param>
-        /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
-        /// <param name="bounds"></param>
         public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
-            Rectangle? bounds = null)
+            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
             total = ids.Length;
 
@@ -648,10 +618,7 @@ namespace PixelVision8.Engine.Chips
                         flipH, 
                         flipV, 
                         drawMode, 
-                        colorOffset, 
-                        onScreen, 
-                        useScrollPos, 
-                        bounds);
+                        colorOffset);
                 }
             }
         }
@@ -670,11 +637,8 @@ namespace PixelVision8.Engine.Chips
         ///     An int value representing the Y position to place sprite on the display. If set to 0, it renders on the top
         ///     of the screen.
         /// </param>
-        /// <param name="width">
-        ///     The width, in sprites, of the grid. A value of 2 renders 2 sprites wide. The DrawSprites method continues to
-        ///     run through all of the sprites in the ID array until reaching the end. Sprite groups do not have to be perfect
-        ///     squares since the width value is only used to wrap sprites to the next row.
-        /// </param>
+        /// <param name="columns"></param>
+        /// <param name="rows"></param>
         /// <param name="flipH">
         ///     This is an optional argument which accepts a bool. The default value is set to false but passing in true flips
         ///     the pixel data horizontally.
@@ -688,17 +652,10 @@ namespace PixelVision8.Engine.Chips
         ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
         ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
         /// </param>
-        /// <param name="onScreen">
-        ///     This flag defines if the sprites should not render when they are off the screen. Use this in conjunction with
-        ///     overscan border control what happens to sprites at the edge of the display. If this value is false, the sprites
-        ///     wrap around the screen when they reach the edges of the screen.
-        /// </param>
-        /// <param name="useScrollPos">This will automatically offset the sprite's x and y position based on the scroll value.</param>
-        public void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false,
-            bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true,
-            bool useScrollPos = true, Rectangle? bounds = null)
+        public void DrawSpriteBlock(int id, int x, int y, int columns = 1, int rows = 1, bool flipH = false,
+            bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
-            total = width * height;
+            total = columns * rows;
 
             var sprites = new int[total];
 
@@ -708,7 +665,7 @@ namespace PixelVision8.Engine.Chips
             var tmpC = id % sW;
             var tmpR = (int) Math.Floor(id / (double) sW);
 
-            var tmpCols = tmpC + width;
+            var tmpCols = tmpC + columns;
 
             for (var i = 0; i < total; i++)
             {
@@ -723,7 +680,7 @@ namespace PixelVision8.Engine.Chips
                 }
             }
 
-            DrawSprites(sprites, x, y, width, flipH, flipV, drawMode, colorOffset, onScreen, useScrollPos, bounds);
+            DrawSprites(sprites, x, y, columns, flipH, flipV, drawMode, colorOffset);
         }
 
         /// <summary>
@@ -766,8 +723,7 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         /// <returns></returns>
         public void DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default",
-            int colorOffset = 0, int spacing = 0, bool onScreen = true, bool useScrollPos = true,
-            Rectangle? bounds = null)
+            int colorOffset = 0, int spacing = 0)
         {
             // TODO this should use DrawSprites() API
             spriteSize = SpriteSize();
@@ -801,12 +757,12 @@ namespace PixelVision8.Engine.Chips
 
             for (var j = 0; j < total; j++)
             {
-                var visible = true;
-
-                if (bounds.HasValue) visible = bounds.Value.Contains(nextX, nextY);
-
-                if (visible)
-                {
+                // var visible = true;
+                //
+                // if (bounds.HasValue) visible = bounds.Value.Contains(nextX, nextY);
+                //
+                // if (visible)
+                // {
                     //                    var tmpFontData = new int[64];
 
                     // Clear the background when in tile mode
@@ -822,9 +778,9 @@ namespace PixelVision8.Engine.Chips
                         CurrentSprites++;
                     }
 
-                    DrawSprite(spriteIDs[j], nextX, nextY, false, false, drawMode, colorOffset, onScreen, useScrollPos, null, FontChip);
+                    DrawSprite(spriteIDs[j], nextX, nextY, false, false, drawMode, colorOffset, FontChip);
 
-                }
+                // }
 
                 nextX += offset;
             }

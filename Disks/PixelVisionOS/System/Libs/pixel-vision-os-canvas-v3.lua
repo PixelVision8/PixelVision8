@@ -385,7 +385,7 @@ function PixelVisionOS:DrawOnCanvas(data, mousePos, toolID)
       data.tmpPaintCanvas:Clear()
 
       self:ResetCanvasStroke(data)
-
+      
       data.tmpPaintCanvas:DrawLine(data.startPos.x, data.startPos.y, mousePos.x, mousePos.y, data.fill)
 
       -- force the paint canvas to redraw
@@ -400,18 +400,11 @@ function PixelVisionOS:DrawOnCanvas(data, mousePos, toolID)
 
       self:ResetCanvasStroke(data)
       
-      local w = math.abs(mousePos.x - data.startPos.x)
-      local h = math.abs(mousePos.y - data.startPos.y)
-
-      if(w <= 0 or h <= 0) then
-        return
-      end
-      
       data.tmpPaintCanvas:DrawRectangle(
         math.min(data.startPos.x, mousePos.x), 
-        math.min(data.startPos.y, mousePos.y), 
-        w,
-        h, 
+        math.min(data.startPos.y, mousePos.y),
+        math.abs(mousePos.x - data.startPos.x)+ 1,
+        math.abs(mousePos.y - data.startPos.y) + 1, 
         data.fill
       )
 
@@ -426,19 +419,12 @@ function PixelVisionOS:DrawOnCanvas(data, mousePos, toolID)
 
       self:ResetCanvasStroke(data)
 
-      local w = math.abs(mousePos.x - data.startPos.x)
-      local h = math.abs(mousePos.y - data.startPos.y)
-
-      if(w <= 0 or h <= 0) then
-        return
-      end
-
       data.tmpPaintCanvas:DrawEllipse(
-              math.min(data.startPos.x, mousePos.x),
-              math.min(data.startPos.y, mousePos.y),
-              w,
-              h,
-              data.fill
+        math.min(data.startPos.x, mousePos.x),
+        math.min(data.startPos.y, mousePos.y),
+        math.abs(mousePos.x - data.startPos.x)+ 1,
+        math.abs(mousePos.y - data.startPos.y) + 1,
+        data.fill
       )
       
       -- force the paint canvas to redraw

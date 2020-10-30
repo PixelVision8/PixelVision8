@@ -218,10 +218,10 @@ function Draw()
   RedrawDisplay()
 
   -- Draw top border
-  DrawSprites(topborder.spriteIDs, 0, 0, topborder.width, false, false, DrawMode.Sprite, 0, false, false)
+  DrawSprites(topborder.spriteIDs, 0, 0, topborder.width)
 
   -- Draw bottom border
-  DrawSprites(bottomborder.spriteIDs, 0, 232, bottomborder.width, false, false, DrawMode.Sprite, 0, false, false)
+  DrawSprites(bottomborder.spriteIDs, 0, 232, bottomborder.width)
 
   -- Mask off the bottom of the screen so you can see the scrolling
   DrawRect(0, 240, 256, 8, 0, DrawMode.UI)
