@@ -1,4 +1,4 @@
-﻿﻿//  SfxrSynth
+﻿//  SfxrSynth
 //  
 //  Copyright 2010 Thomas Vian
 //  Copyright 2013 Zeh Fernando
@@ -21,8 +21,8 @@
 //  
 //  @author Zeh Fernando
 
-using System;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace PixelVision8.Engine.Audio
 {
@@ -466,9 +466,9 @@ namespace PixelVision8.Engine.Audio
             if (GetRandomBool())
             {
                 _changeSpeed = 0.5f + GetRandom() * 0.2f;
-                var cnum = (int) (GetRandom() * 7f) + 1;
-                var cden = cnum + (int) (GetRandom() * 7f) + 2;
-                _changeAmount = cnum / (float) cden;
+                var cnum = (int)(GetRandom() * 7f) + 1;
+                var cden = cnum + (int)(GetRandom() * 7f) + 2;
+                _changeAmount = cnum / (float)cden;
             }
         }
 
@@ -479,10 +479,10 @@ namespace PixelVision8.Engine.Audio
         {
             resetParams();
 
-            _waveType = (WaveType) (GetRandom() * 3);
+            _waveType = (WaveType)(GetRandom() * 3);
 
             // TODO need to remove sine
-            if (_waveType == WaveType.Sine && GetRandomBool()) _waveType = (WaveType) (GetRandom() * 2f);
+            if (_waveType == WaveType.Sine && GetRandomBool()) _waveType = (WaveType)(GetRandom() * 2f);
 
             _startFrequency = 0.5f + GetRandom() * 0.5f;
             _minFrequency = _startFrequency - 0.2f - GetRandom() * 0.6f;
@@ -605,7 +605,7 @@ namespace PixelVision8.Engine.Audio
         {
             resetParams();
 
-            _waveType = (WaveType) (GetRandom() * 3f);
+            _waveType = (WaveType)(GetRandom() * 3f);
             if (_waveType == WaveType.Sine)
                 _waveType = WaveType.Noise;
             else if (_waveType == 0) _squareDuty = GetRandom() * 0.6f;
@@ -646,7 +646,7 @@ namespace PixelVision8.Engine.Audio
         {
             resetParams();
 
-            _waveType = (WaveType) (GetRandom() * 2f);
+            _waveType = (WaveType)(GetRandom() * 2f);
             if (_waveType == 0) _squareDuty = GetRandom() * 0.6f;
 
             _startFrequency = 0.2f + GetRandom() * 0.4f;
@@ -773,7 +773,7 @@ namespace PixelVision8.Engine.Audio
             resetParams();
 
             // TODO Need to make sure this stays within range
-            _waveType = (WaveType) (GetRandom() * 9f);
+            _waveType = (WaveType)(GetRandom() * 9f);
 
             _attackTime = Pow(GetRandom() * 2f - 1f, 4);
             _sustainTime = Pow(GetRandom() * 2f - 1f, 2);
@@ -838,7 +838,7 @@ namespace PixelVision8.Engine.Audio
 
             // 24 params
 
-            str += (int) waveType + ",";
+            str += (int)waveType + ",";
             str += To4DP(_attackTime) + ",";
             str += To4DP(_sustainTime) + ",";
             str += To4DP(_sustainPunch) + ",";
@@ -880,7 +880,7 @@ namespace PixelVision8.Engine.Audio
             // Parse the params if there are enough values
             if (values.Length == 24)
             {
-                waveType = (WaveType) ParseUint(values[0]);
+                waveType = (WaveType)ParseUint(values[0]);
                 attackTime = ParseFloat(values[1]);
                 sustainTime = ParseFloat(values[2]);
                 sustainPunch = ParseFloat(values[3]);
@@ -928,9 +928,9 @@ namespace PixelVision8.Engine.Audio
         /// <param name="__makeDirty"></param>
         public void CopyFrom(SfxrParams __params, bool __makeDirty = false)
         {
-            var wasDirty = invalid;
+            var wasDirty = Invalid;
             SetSettingsString(GetSettingsString());
-            _invalid = wasDirty || __makeDirty;
+            Invalid = wasDirty || __makeDirty;
         }
 
         // Utility methods
@@ -996,7 +996,7 @@ namespace PixelVision8.Engine.Audio
         /// <returns></returns>
         public float GetRandom()
         {
-            return (float) _random.NextDouble();
+            return (float)_random.NextDouble();
         }
 
         /// <summary>

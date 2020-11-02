@@ -31,8 +31,6 @@ namespace PixelVision8.Engine
     {
         string Name { get; set; }
 
-        // Dictionary<string, string> MetaData { get; }
-
         /// <summary>
         ///     Reset the game in memory
         /// </summary>
@@ -46,6 +44,6 @@ namespace PixelVision8.Engine
         /// <summary>
         /// </summary>
         void Shutdown();
-        
+
     }
 }

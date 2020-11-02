@@ -18,9 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Text;
 using PixelVision8.Engine;
-using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Parsers
@@ -37,7 +35,7 @@ namespace PixelVision8.Runner.Parsers
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-            steps.Add(ApplySettings);
+            _steps.Add(ApplySettings);
         }
 
         public void ApplySettings()
@@ -46,6 +44,6 @@ namespace PixelVision8.Runner.Parsers
 
             StepCompleted();
         }
-        
+
     }
 }

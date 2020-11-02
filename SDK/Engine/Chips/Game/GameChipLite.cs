@@ -20,10 +20,10 @@
 
 #region
 
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using PixelVision8.Engine.Utils; 
+using PixelVision8.Engine.Utils;
+using System;
 
 #endregion
 
@@ -90,13 +90,13 @@ namespace PixelVision8.Engine.Chips
         protected int _spriteId;
         protected char character;
         protected int charOffset = 32;
-        protected Point _spriteSize = new Point(8,8);
+        protected Point _spriteSize = new Point(8, 8);
         private PixelData _tmpPixelData = new PixelData();
         // protected Rectangle _tmpBounds;
         protected Point _tilemapSize = Point.Zero;
         private int _paddingW;
         private int _paddingH;
-        
+
         public int CurrentSprites { get; set; }
 
         #region GameChip Properties
@@ -127,7 +127,7 @@ namespace PixelVision8.Engine.Chips
         {
             // Set the engine's game to this instance
             engine.GameChip = this;
-            
+
             display.X = DisplayChip.Width;
             display.Y = DisplayChip.Height;
 
@@ -355,7 +355,7 @@ namespace PixelVision8.Engine.Chips
             return display;
         }
 
-        
+
         /// <summary>
         ///     This method allows you to draw raw pixel data directly to the display. Depending on which draw mode you
         ///     use, the pixel data could be rendered as a sprite or drawn directly onto the tilemap cache. Sprites drawn
@@ -410,22 +410,22 @@ namespace PixelVision8.Engine.Chips
                 case DrawMode.Tile:
                     // Do nothing since we can't set raw pixel data to a tile
                     break;
-                
+
                 case DrawMode.TilemapCache:
 
-                    if(_tmpPixelData.Width != blockWidth || _tmpPixelData.Height != blockHeight)
+                    if (_tmpPixelData.Width != blockWidth || _tmpPixelData.Height != blockHeight)
                         _tmpPixelData.Resize(blockWidth, blockHeight);
 
                     _tmpPixelData.Pixels = pixelData;
-                    
+
                     // Copy pixel data directly into the tilemap chip's texture
                     PixelDataUtil.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, TilemapChip.PixelData, x, y, flipH, flipV, colorOffset);
 
                     break;
 
                 default:
-                    
-                    DisplayChip.NewDrawCall(pixelData, x, y, blockWidth, blockHeight, (byte) drawMode, flipH, flipV, colorOffset);
+
+                    DisplayChip.NewDrawCall(pixelData, x, y, blockWidth, blockHeight, (byte)drawMode, flipH, flipV, colorOffset);
 
                     break;
             }
@@ -486,14 +486,14 @@ namespace PixelVision8.Engine.Chips
             {
                 // x -=(useScrollPos ? _scrollPos.X : 0);
                 // y -=(useScrollPos ? _scrollPos.Y : 0);
-                
+
                 if (drawMode == DrawMode.TilemapCache)
                 {
-                    
+
                     srcChip.ReadSpriteAt(id, ref tmpSpriteData);
-                    
+
                     DrawPixels(tmpSpriteData, x, y, SpriteChip.width, SpriteChip.height, flipH, flipV, drawMode, colorOffset);
-                    
+
                 }
                 else
                 {
@@ -517,17 +517,17 @@ namespace PixelVision8.Engine.Chips
                     // // If the sprite should be rendered, call DrawSprite()
                     // if (render)
                     // {
-                        
-                        var pos = MathUtil.CalculatePosition(id, srcChip.Columns);
-                        pos.X *= SpriteChip.width;
-                        pos.Y *= SpriteChip.height;
-                        
-                        DisplayChip.NewDrawCall(srcChip, x, y, SpriteChip.width, SpriteChip.height, (byte)drawMode, flipH, flipV, colorOffset, pos.X, pos.Y);
-                        
-                        CurrentSprites++;
+
+                    var pos = MathUtil.CalculatePosition(id, srcChip.Columns);
+                    pos.X *= SpriteChip.width;
+                    pos.Y *= SpriteChip.height;
+
+                    DisplayChip.NewDrawCall(srcChip, x, y, SpriteChip.width, SpriteChip.height, (byte)drawMode, flipH, flipV, colorOffset, pos.X, pos.Y);
+
+                    CurrentSprites++;
                     // }
                 }
-                
+
             }
         }
 
@@ -613,11 +613,11 @@ namespace PixelVision8.Engine.Chips
 
                     DrawSprite(
                         id,
-                        MathUtil.FloorToInt(i % width) * _paddingW + x, 
-                        MathUtil.FloorToInt(i / width) * _paddingH + y, 
-                        flipH, 
-                        flipV, 
-                        drawMode, 
+                        MathUtil.FloorToInt(i % width) * _paddingW + x,
+                        MathUtil.FloorToInt(i / width) * _paddingH + y,
+                        flipH,
+                        flipV,
+                        drawMode,
                         colorOffset);
                 }
             }
@@ -659,11 +659,11 @@ namespace PixelVision8.Engine.Chips
 
             var sprites = new int[total];
 
-            var sW = MathUtil.CeilToInt((float) SpriteChip.textureWidth / SpriteChip.width);
+            var sW = MathUtil.CeilToInt((float)SpriteChip.textureWidth / SpriteChip.width);
 
             var startC = id % sW;
             var tmpC = id % sW;
-            var tmpR = (int) Math.Floor(id / (double) sW);
+            var tmpR = (int)Math.Floor(id / (double)sW);
 
             var tmpCols = tmpC + columns;
 
@@ -763,22 +763,22 @@ namespace PixelVision8.Engine.Chips
                 //
                 // if (visible)
                 // {
-                    //                    var tmpFontData = new int[64];
+                //                    var tmpFontData = new int[64];
 
-                    // Clear the background when in tile mode
-                    if (clearTiles) Tile(nextX / 8, nextY / 8, -1);
+                // Clear the background when in tile mode
+                if (clearTiles) Tile(nextX / 8, nextY / 8, -1);
 
-                    // Manually increase the sprite counter if drawing to one of the sprite layers
-                    if (drawMode == DrawMode.Sprite || drawMode == DrawMode.SpriteAbove ||
-                        drawMode == DrawMode.SpriteBelow)
-                    {
-                        // If the sprite counter has been met, exit out of the draw call
-                        if (SpriteChip.maxSpriteCount > 0 && CurrentSprites >= SpriteChip.maxSpriteCount) return;
+                // Manually increase the sprite counter if drawing to one of the sprite layers
+                if (drawMode == DrawMode.Sprite || drawMode == DrawMode.SpriteAbove ||
+                    drawMode == DrawMode.SpriteBelow)
+                {
+                    // If the sprite counter has been met, exit out of the draw call
+                    if (SpriteChip.maxSpriteCount > 0 && CurrentSprites >= SpriteChip.maxSpriteCount) return;
 
-                        CurrentSprites++;
-                    }
+                    CurrentSprites++;
+                }
 
-                    DrawSprite(spriteIDs[j], nextX, nextY, false, false, drawMode, colorOffset, FontChip);
+                DrawSprite(spriteIDs[j], nextX, nextY, false, false, drawMode, colorOffset, FontChip);
 
                 // }
 
@@ -821,24 +821,24 @@ namespace PixelVision8.Engine.Chips
         public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null,
             int? offsetY = null)
         {
-            
+
             DisplayChip.NewDrawCall(
-                TilemapChip, 
-                x, 
-                y, 
-                columns == 0 ? display.X : columns * SpriteChip.width, 
-                rows == 0 ? display.Y : rows * SpriteChip.height, 
-                (byte)DrawMode.Tile, 
-                false, 
-                false, 
-                0, 
-                offsetX ?? _scrollPos.X, 
+                TilemapChip,
+                x,
+                y,
+                columns == 0 ? display.X : columns * SpriteChip.width,
+                rows == 0 ? display.Y : rows * SpriteChip.height,
+                (byte)DrawMode.Tile,
+                false,
+                false,
+                0,
+                offsetX ?? _scrollPos.X,
                 offsetY ?? _scrollPos.Y
             );
-            
+
 
         }
-        
+
         /// <summary>
         ///     This method allows you to draw a rectangle with a fill color. By default, this method is used to clear the screen
         ///     but you can supply a color offset to change the color value and use it to fill a rectangle area with a specific
@@ -887,7 +887,7 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public Point ScrollPosition(int? x = null, int? y = null)
         {
-            
+
             if (x.HasValue)
             {
                 _scrollPos.X = x.Value;
@@ -1111,11 +1111,11 @@ namespace PixelVision8.Engine.Chips
         {
             return SoundChip.IsChannelPlaying(channel);
         }
-        
+
         #endregion
 
         #region Sprite
-        
+
         /// <summary>
         ///     Returns the size of the sprite as a Vector where X and Y represent the width and height.
         /// </summary>
@@ -1154,7 +1154,7 @@ namespace PixelVision8.Engine.Chips
         /// </returns>
         public int[] Sprite(int id, int[] data = null)
         {
-            
+
             if (data != null)
             {
                 SpriteChip.UpdateSpriteAt(id, data);
@@ -1168,7 +1168,7 @@ namespace PixelVision8.Engine.Chips
 
             return tmpSpriteData;
         }
-        
+
         public int[] FontChar(char character, string fontName, int[] data = null)
         {
 
@@ -1179,7 +1179,7 @@ namespace PixelVision8.Engine.Chips
 
             // TODO need to test this out
             id = ConvertTextToSprites(character.ToString(), fontName)[0];
-            
+
             if (data != null)
             {
                 FontChip.UpdateSpriteAt(id, data);
@@ -1216,9 +1216,9 @@ namespace PixelVision8.Engine.Chips
         {
             var tile = TilemapChip.GetTile(column, row);
 
-            if (value.HasValue) tile.flag = value.Value;
+            if (value.HasValue) tile.Flag = value.Value;
 
-            return tile.flag;
+            return tile.Flag;
         }
 
 
@@ -1259,32 +1259,32 @@ namespace PixelVision8.Engine.Chips
 
             if (spriteID.HasValue)
             {
-                tile.spriteID = spriteID.Value;
+                tile.SpriteId = spriteID.Value;
                 invalidateTileMap = true;
             }
 
             if (colorOffset.HasValue)
             {
-                tile.colorOffset = colorOffset.Value;
+                tile.ColorOffset = colorOffset.Value;
                 invalidateTileMap = true;
             }
 
             if (flag.HasValue)
             {
-                tile.flag = flag.Value;
+                tile.Flag = flag.Value;
                 invalidateTileMap = true;
             }
 
             if (flipH.HasValue)
             {
-                tile.flipH = flipH.Value;
+                tile.FlipH = flipH.Value;
                 invalidateTileMap = true;
             }
 
 
             if (flipV.HasValue)
             {
-                tile.flipV = flipV.Value;
+                tile.FlipV = flipV.Value;
                 invalidateTileMap = true;
             }
 
@@ -1381,7 +1381,7 @@ namespace PixelVision8.Engine.Chips
         #endregion
 
         #region Utils
-        
+
         public int ReadFPS()
         {
             return fps;
@@ -1391,7 +1391,7 @@ namespace PixelVision8.Engine.Chips
         {
             return CurrentSprites;
         }
-        
+
         #endregion
 
         /// <summary>
@@ -1404,6 +1404,6 @@ namespace PixelVision8.Engine.Chips
             // TODO this is hardcoded right now but there are 8 palettes with a max of 16 colors each
             return 128 + MathUtil.Clamp(paletteID, 0, 7) * 16 + MathUtil.Clamp(paletteColorID, 0, ColorsPerSprite() - 1);
         }
-        
+
     }
 }

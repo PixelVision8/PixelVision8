@@ -18,36 +18,45 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
+using 
+/* Unmerged change from project 'PixelVision8.CoreDesktop'
+Before:
 using System.Collections.Generic;
 using PixelVision8.Runner.Services;
+After:
+using System.Collections.Services;
 using PixelVision8.Runner.Utils;
+using System;
+*/
+PixelVision8.Runner.Utils;
+using System;
+using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Parsers
 {
     public abstract class AbstractParser : IAbstractParser
     {
-        protected List<Action> steps = new List<Action>();
+        protected List<Action> _steps = new List<Action>();
 
         public IFileLoadHelper FileLoadHelper;
 
-        public int currentStep { get; protected set; }
+        public int CurrentStep { get; protected set; }
 
         public string SourcePath;
 
         public virtual byte[] bytes { get; set; }
 
-        public int totalSteps => steps.Count;
+        public int totalSteps => _steps.Count;
 
-        public bool completed => currentStep >= totalSteps;
+        public bool completed => CurrentStep >= totalSteps;
 
         public virtual void CalculateSteps()
         {
-            currentStep = 0;
+            CurrentStep = 0;
 
             // First step will always be to get the data needed to parse
-            if(!string.IsNullOrEmpty(SourcePath))
-                steps.Add(LoadSourceData);
+            if (!string.IsNullOrEmpty(SourcePath))
+                _steps.Add(LoadSourceData);
         }
 
         public virtual void LoadSourceData()
@@ -64,19 +73,19 @@ namespace PixelVision8.Runner.Parsers
         {
             if (completed) return;
 
-            steps[currentStep]();
+            _steps[CurrentStep]();
         }
 
         public virtual void StepCompleted()
         {
-            currentStep++;
+            CurrentStep++;
         }
 
         public virtual void Dispose()
         {
             bytes = null;
             FileLoadHelper = null;
-            steps.Clear();
+            _steps.Clear();
         }
     }
 }

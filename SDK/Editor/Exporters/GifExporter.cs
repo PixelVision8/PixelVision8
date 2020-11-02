@@ -18,15 +18,15 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace PixelVision8.Runner
 {
@@ -62,13 +62,13 @@ namespace PixelVision8.Runner
         {
             base.CalculateSteps();
 
-            steps.Add(StartGif);
+            _steps.Add(StartGif);
 
-            steps.Add(IndexColors);
+            _steps.Add(IndexColors);
 
-            steps.Add(BuildColorTable);
+            _steps.Add(BuildColorTable);
 
-            steps.Add(ConvertFrame);
+            _steps.Add(ConvertFrame);
 
         }
 
@@ -76,7 +76,7 @@ namespace PixelVision8.Runner
         {
 
             var tmpFrame = new GifFrame();
-            
+
             // var tmpT2D = new Texture2D(DisplayChip.Width, DisplayChip.Height);
             //
             // tmpT2D.SetPixels32(DisplayChip.Pixels);
@@ -90,14 +90,14 @@ namespace PixelVision8.Runner
 
             Frames.Add(tmpFrame);
         }
-        
+
         public Color[] VisiblePixels()
         {
-            
+
             // TODO this should just copy the frame from the Display Target
             // var color = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, engine.ColorChip.debugMode,
             //     engine.ColorChip.backgroundColor);
-            
+
 
             // TODO there might be a better way to do this like grabbing the pixel data from somewhere else?
             var pixels = DisplayChip.Pixels;
@@ -124,18 +124,18 @@ namespace PixelVision8.Runner
                 // var col = i % width;
                 // if (col < visibleWidth && index < newTotalPixels)
                 // {
-                    newPixels[i] = cachedColors[pixels[i]];
-                    // index++;
+                newPixels[i] = cachedColors[pixels[i]];
+                // index++;
                 // }
             }
 
             return newPixels;
         }
 
-        
+
         public void StartGif()
         {
-            
+
             Width = (ushort)(Frames[0].Texture.width);
             Height = (ushort)(Frames[0].Texture.height);
             globalColorTable = new List<Color>();
@@ -145,7 +145,7 @@ namespace PixelVision8.Runner
             colorTables = new List<Color>[Frames.Count];
             distinctColors = new Dictionary<int, List<Color>>();
 
-            currentStep++;
+            CurrentStep++;
         }
 
         public void IndexColors()
@@ -155,12 +155,12 @@ namespace PixelVision8.Runner
                 var frame = Frames[i];
 
                 var distinct = frame.Texture.GetPixels32().Distinct().ToList();
-                
+
                 distinctColors.Add(i, distinct);
-                
+
             }
 
-            currentStep++;
+            CurrentStep++;
         }
 
         public void BuildColorTable()
@@ -187,7 +187,7 @@ namespace PixelVision8.Runner
 
             ReplaceTransparentColor(ref globalColorTable);
 
-            currentStep++;
+            CurrentStep++;
         }
 
         public void ConvertFrame()
@@ -218,7 +218,7 @@ namespace PixelVision8.Runner
 
                 tmpBytes.AddRange(tableBasedImageData.GetBytes());
 
-                
+
                 encoded.Add(index, tmpBytes);
                 // encodeProgress.Progress++;
 
@@ -238,12 +238,12 @@ namespace PixelVision8.Runner
                     bytes = binary.ToArray();
                     // encodeProgress.Completed = true;
                 }
-                
+
                 // onProgress(encodeProgress);
-                
+
             }
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private static byte[] ColorTableToBytes(List<Color> colorTable, byte colorTableSize)

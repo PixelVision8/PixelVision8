@@ -20,15 +20,14 @@
 
 #region
 
+using Microsoft.Xna.Framework;
+using PixelVision8.Engine.Utils;
+using PixelVisionSDK.Engine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using PixelVision8.Engine.Utils;
-using PixelVisionSDK.Engine;
 
 #endregion
 
@@ -50,7 +49,7 @@ namespace PixelVision8.Engine.Chips
         // private int h;
         protected int[] tilemapCachePixels;
         protected bool _tmpFlipH;
-        protected bool _tmpFlipV;  
+        protected bool _tmpFlipV;
         protected SpriteData _currentSpriteData;
         protected List<SpriteData> tmpSpritesData;
         protected int startX;
@@ -129,9 +128,9 @@ namespace PixelVision8.Engine.Chips
         /// </label>
         public override void Reset()
         {
-            
+
             Array.Clear(metaSprites, 0, metaSprites.Length);
-            
+
             base.Reset();
         }
 
@@ -222,7 +221,7 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         public void PlayPattern(int id, bool loop = true)
         {
-            MusicChip.PlayPatterns(new[] {id}, loop);
+            MusicChip.PlayPatterns(new[] { id }, loop);
         }
 
         /// <summary>
@@ -288,7 +287,7 @@ namespace PixelVision8.Engine.Chips
         #endregion
 
         #region Tilemap Cache
-        
+
         public void SaveTilemapCache()
         {
             tilemapCachePixels = PixelDataUtil.GetPixels(TilemapChip.PixelData);
@@ -388,7 +387,7 @@ namespace PixelVision8.Engine.Chips
         #endregion
 
         #region Utils
-        
+
         private StringBuilder _sb = new StringBuilder();
 
         // public int ReadFPS()
@@ -416,7 +415,7 @@ namespace PixelVision8.Engine.Chips
             {
                 return "";
             }
-            
+
             int pos, next;
 
             // Reset the string builder
@@ -490,7 +489,7 @@ namespace PixelVision8.Engine.Chips
         public string[] SplitLines(string str)
         {
             var lines = str.Split(
-                new[] {newline},
+                new[] { newline },
                 StringSplitOptions.None
             );
 
@@ -510,7 +509,7 @@ namespace PixelVision8.Engine.Chips
             var dx = x1 - x0;
             var dy = y1 - y0;
             var distance = Math.Sqrt(dx * dx + dy * dy);
-            return (int) distance;
+            return (int)distance;
         }
 
         public int[] BitArray(int value)
@@ -562,7 +561,7 @@ namespace PixelVision8.Engine.Chips
 
             return SpriteChip.maxSpriteCount;
         }
-        
+
         public SpriteCollection MetaSprite(int id, SpriteCollection spriteCollection = null)
         {
             if (spriteCollection != null)
@@ -582,7 +581,7 @@ namespace PixelVision8.Engine.Chips
 
             return metaSprites[id];
         }
-        
+
 
         public void DrawMetaSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
@@ -718,24 +717,24 @@ namespace PixelVision8.Engine.Chips
         public SpriteCollection NewMetaSprite(int id, string name, int[] spriteIDs, int width, int colorOffset = 0)
         {
             var collection = NewSpriteCollection(name);
-        
+
             for (int i = 0; i < spriteIDs.Length; i++)
             {
-        
+
                 var pos = CalculatePosition(i, width);
-               
+
                 collection.AddSprite(spriteIDs[i], pos.X * spriteSize.X, pos.Y * spriteSize.Y, false, false, colorOffset);
             }
-        
+
             // TODO need to figure out how to do this better where meta sprites 
-            
-        
+
+
             return MetaSprite(id, collection);
         }
 
         #endregion
-        
+
     }
-    
-    
+
+
 }

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
+using System;
+using System.Globalization;
+using System.IO;
 
 namespace PixelVision8.Runner
 {
@@ -16,21 +16,21 @@ namespace PixelVision8.Runner
             // Fix a bug related to parsing numbers in Europe, among other things
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
-        
+
             var root = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
-        
+
             // Need to do this for MacOS
             // if (root.EndsWith("/MonoBundle/Content")) root = root.Replace("/MonoBundle/Content", "/Resources/Content");
-        
+
             // TODO there is a bug where this will not go to the boot error
             using (var game = new ExampleRunner(root))
             {
                 game.Run();
             }
-        
+
         }
     }
-    
+
     class ExampleRunner : CSharpRunner
     {
         public ExampleRunner(string gamePath) : base(gamePath)
@@ -39,17 +39,17 @@ namespace PixelVision8.Runner
 
         protected override void AddGameChip()
         {
-            tmpEngine.ActivateChip("GameChip", new DrawSpritesExample());
+            _tmpEngine.ActivateChip("GameChip", new DrawSpritesExample());
         }
     }
-    
+
     class DrawSpritesExample : GameChipLite
     {
         // Use floats to store the subpixel position
         private float speed = 5;
         private float nextPos;
         private int lastSpriteCount;
-        
+
         // Use this point to position the  sprites
         private Point pos;
 
@@ -71,9 +71,9 @@ namespace PixelVision8.Runner
             {
                 test[i] = 15;
             }
-            
+
             // DrawPixels(test, 0, 0, 8, 8, false, false, DrawMode.TilemapCache);
-            
+
             // DrawText("Works", 8, 0, DrawMode.TilemapCache, "large");
         }
 
@@ -83,11 +83,11 @@ namespace PixelVision8.Runner
             nextPos = nextPos + (speed * (timeDelta / 100f));
 
             // Need to convert the nextPoint to an int, so we'll save it in a point
-            pos.X = (int)nextPos;
-            pos.Y = (int)nextPos;
+            pos.X = MathUtil.Repeat((int)nextPos, display.X + 16);
+            pos.Y = MathUtil.Repeat((int)nextPos, display.Y + 16);
         }
 
-        
+
         public override void Draw()
         {
             // Redraw the display
@@ -97,17 +97,17 @@ namespace PixelVision8.Runner
             DrawSprites(spriteGroup, pos.X, 8, 4);
 
             // Draw flipped sprite group moving vertically but render when offscreen
-            DrawSprites(spriteGroup, 36, pos.Y, 4, true, false, DrawMode.Sprite, 0, false);
+            DrawSprites(spriteGroup, 36, pos.Y, 4, true);
 
             // Show the total number of sprites
-            DrawText("FPS " + fps + " Sprites " + lastSpriteCount, 144 - (8*4), 224, DrawMode.Sprite, "large", 15);
+            DrawText("FPS " + fps + " Sprites " + lastSpriteCount, 144 - (8 * 4), 224, DrawMode.Sprite, "large", 15);
 
             // Draw the x,y position of each sprite
             DrawText("(" + MathUtil.FloorToInt(nextPos) + ",8)", pos.X + 32, 8, DrawMode.Sprite, "large", 15);
             DrawText("(36," + MathUtil.FloorToInt(nextPos) + ")", 66, pos.Y + 12, DrawMode.Sprite, "large", 15);
 
-            
-            
+
+
             lastSpriteCount = CurrentSprites;
         }
     }

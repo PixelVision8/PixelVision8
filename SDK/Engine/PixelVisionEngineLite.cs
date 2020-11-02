@@ -1,4 +1,4 @@
-﻿﻿//   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,10 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Engine.Chips;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PixelVision8.Engine.Chips;
 
 namespace PixelVision8.Engine
 {
@@ -30,7 +30,7 @@ namespace PixelVision8.Engine
     ///     state of all chips, the game itself and helps with communication between
     ///     the two.
     /// </summary>
-    public class PixelVisionEngineLite: IEngine
+    public class PixelVisionEngineLite : IEngine
     {
         protected Dictionary<string, AbstractChip> Chips = new Dictionary<string, AbstractChip>();
         protected List<IDraw> DrawChips = new List<IDraw>();
@@ -46,7 +46,7 @@ namespace PixelVision8.Engine
             }
         }
 
-        
+
 
         /// <summary>
         /// </summary>
@@ -136,7 +136,7 @@ namespace PixelVision8.Engine
             // Reset the sprite counter on each frame
             GameChip.CurrentSprites = 0;
 
-            foreach (var chip in UpdateChips) chip.Update(timeDelta); //delta / 1000f);
+            foreach (var chip in UpdateChips) chip.Update(timeDelta);
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace PixelVision8.Engine
 
         public void RemoveInactiveChips()
         {
-            foreach (var item in Chips.Where(c => c.Value.active == false).ToArray()) Chips.Remove(item.Key);
+            foreach (var item in Chips.Where(c => c.Value.Active == false).ToArray()) Chips.Remove(item.Key);
         }
 
         #endregion

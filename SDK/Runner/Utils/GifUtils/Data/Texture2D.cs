@@ -21,44 +21,44 @@
 // Shawn Rakowski - @shwany
 //
 
+using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
-using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Runner.Utils
 {
-	/// <summary>
-	/// Stub for Texture2D from UnityEngine.CoreModule
-	/// </summary>
-	public class Texture2D
-	{
-		// ReSharper disable once InconsistentNaming (original naming saved)
-		public readonly int width;
+    /// <summary>
+    /// Stub for Texture2D from UnityEngine.CoreModule
+    /// </summary>
+    public class Texture2D
+    {
+        // ReSharper disable once InconsistentNaming (original naming saved)
+        public readonly int width;
 
-		// ReSharper disable once InconsistentNaming (original naming saved)
-		public readonly int height;
-		
-		private Color[] _pixels;
+        // ReSharper disable once InconsistentNaming (original naming saved)
+        public readonly int height;
 
-		public Texture2D(int width, int height)
-		{
-			this.width = width;
-			this.height = height;
-		}
+        private Color[] _pixels;
 
-		public void SetPixels32(Color[] pixels)
-		{
-			_pixels = pixels.ToArray();
-		}
+        public Texture2D(int width, int height)
+        {
+            this.width = width;
+            this.height = height;
+        }
 
-		public Color[] GetPixels32()
-		{
-			return _pixels.ToArray();
-		}
+        public void SetPixels32(Color[] pixels)
+        {
+            _pixels = pixels.ToArray();
+        }
 
-		public void Apply()
-		{
-		}
+        public Color[] GetPixels32()
+        {
+            return _pixels.ToArray();
+        }
+
+        public void Apply()
+        {
+        }
 
         public virtual Color[] GetPixels(int x, int y, int blockWidth, int blockHeight)
         {
@@ -84,7 +84,7 @@ namespace PixelVision8.Runner.Utils
             // Keep important data in local variables.
             int srcY;
             var src = _pixels;
-            
+
             var offsetStart = (x % width + width) % width;
             var offsetEnd = offsetStart + blockWidth;
             if (offsetEnd <= width)

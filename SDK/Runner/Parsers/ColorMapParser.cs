@@ -35,11 +35,11 @@ namespace PixelVision8.Runner.Parsers
 
         public override void CalculateSteps()
         {
-            currentStep = 0;
-            steps.Add(ParseImageData);
+            CurrentStep = 0;
+            _steps.Add(ParseImageData);
             //            steps.Add(IndexColors);
-            steps.Add(ReadColors);
-            steps.Add(BuildColorMap);
+            _steps.Add(ReadColors);
+            _steps.Add(BuildColorMap);
         }
 
         public void BuildColorMap()
@@ -58,7 +58,7 @@ namespace PixelVision8.Runner.Parsers
                 colorChip.UpdateColorAt(i, hex);
             }
 
-            currentStep++;
+            CurrentStep++;
         }
     }
 }

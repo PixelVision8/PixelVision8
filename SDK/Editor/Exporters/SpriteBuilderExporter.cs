@@ -18,14 +18,14 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Parsers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace PixelVision8.Runner.Exporters
 {
@@ -46,8 +46,10 @@ namespace PixelVision8.Runner.Exporters
         public override void PrepareSprites()
         {
             // Get the total number of sprites
-            totalSpritesInTexture =
-                SpriteChipUtil.CalculateTotalSprites(image.Width, image.Height, spriteChip.width, spriteChip.height);
+            //TODO this needs to be double checked at different size sprites
+            var cols = MathUtil.FloorToInt(image.Width / spriteChip.width);
+            var rows = MathUtil.FloorToInt(image.Height / spriteChip.height);
+            totalSpritesInTexture = cols * rows;
 
             ids = Enumerable.Repeat(-1, totalSpritesInTexture).ToArray();
 
@@ -92,16 +94,16 @@ namespace PixelVision8.Runner.Exporters
 
             spriteCount = 0;
 
-            steps.Add(ConvertFilesToTextures);
+            _steps.Add(ConvertFilesToTextures);
 
             maxTilesPerLoop = 10;
             totalTiles = files.Count;
 
-            var loops = (int) Math.Ceiling((float) totalTiles / maxTilesPerLoop);
+            var loops = (int)Math.Ceiling((float)totalTiles / maxTilesPerLoop);
 
-            for (var i = 0; i < loops; i++) steps.Add(ParseSpriteData);
+            for (var i = 0; i < loops; i++) _steps.Add(ParseSpriteData);
 
-            steps.Add(GenerateSpriteJSON);
+            _steps.Add(GenerateSpriteJSON);
         }
 
 
@@ -111,7 +113,7 @@ namespace PixelVision8.Runner.Exporters
                 // Add the sprite data to the list
                 sprites.Add(new SpriteExportData(file.Key, file.Value));
 
-            currentStep++;
+            CurrentStep++;
         }
 
 
@@ -134,7 +136,7 @@ namespace PixelVision8.Runner.Exporters
                 if (currentTile >= totalTiles) break;
             }
 
-            currentStep++;
+            CurrentStep++;
         }
 
 
@@ -193,7 +195,7 @@ namespace PixelVision8.Runner.Exporters
 
             bytes = Encoding.UTF8.GetBytes(sb.ToString());
 
-            currentStep++;
+            CurrentStep++;
         }
     }
 }

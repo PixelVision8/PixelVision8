@@ -18,11 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Runner.Services;
+using PixelVision8.Runner.Utils;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using PixelVision8.Runner.Services;
-using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner
 {
@@ -75,8 +75,8 @@ namespace PixelVision8.Runner
 
             // Get only the files we need from the directory base on their extension above.
             var files = from p in Directory.EnumerateFiles(gamePath)
-                where fileExtensions.Any(val => p.EndsWith(val))
-                select p;
+                        where fileExtensions.Any(val => p.EndsWith(val))
+                        select p;
 
             // Loop through each file in the list
             foreach (string file in files)
@@ -87,21 +87,21 @@ namespace PixelVision8.Runner
 
             // Configure a new PV8 engine to play the game
             ConfigureEngine();
-             
+
             AddGameChip();
 
             var fileHelper = new FileLoadHelper();
-            
-            var loader = new Loader(fileHelper, graphics.GraphicsDevice);
-            
+
+            var loader = new Loader(fileHelper, _graphics.GraphicsDevice);
+
             // Process the files
-            loader.ParseFiles(gameFiles.ToArray(), tmpEngine);
+            loader.ParseFiles(gameFiles.ToArray(), _tmpEngine);
             loader.LoadAll();
-            
+
             RunGame();
 
         }
-        
+
         protected virtual void AddGameChip()
         {
             // TODO overwrite and add new game

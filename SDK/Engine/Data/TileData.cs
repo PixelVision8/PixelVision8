@@ -18,12 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using Microsoft.Xna.Framework;
+using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine
 {
-    
+
     public sealed class TileData : AbstractData
     {
         private int _colorOffset;
@@ -38,12 +37,12 @@ namespace PixelVision8.Engine
             bool flipV = false)
         {
             Index = index;
-            this.spriteID = spriteID;
-            this.colorOffset = colorOffset;
-            this.flag = flag;
+            this.SpriteId = spriteID;
+            this.ColorOffset = colorOffset;
+            this.Flag = flag;
 
-            this.flipH = flipH;
-            this.flipV = flipV;
+            this.FlipH = flipH;
+            this.FlipV = flipV;
             Invalidate();
         }
 
@@ -57,7 +56,7 @@ namespace PixelVision8.Engine
             }
         }
 
-        public int spriteID
+        public int SpriteId
         {
             get => _spriteID;
             set
@@ -67,7 +66,7 @@ namespace PixelVision8.Engine
             }
         }
 
-        public int colorOffset
+        public int ColorOffset
         {
             get => _colorOffset;
             set
@@ -77,17 +76,17 @@ namespace PixelVision8.Engine
             }
         }
 
-        public int flag
+        public int Flag
         {
             get => _flag;
             set
             {
-                _flag = MathHelper.Clamp(value, -1, 255);
+                _flag = MathUtil.Clamp(value, -1, 255);
                 Invalidate();
             }
         }
 
-        public bool flipH
+        public bool FlipH
         {
             get => _flipH;
             set
@@ -98,7 +97,7 @@ namespace PixelVision8.Engine
         }
 
 
-        public bool flipV
+        public bool FlipV
         {
             get => _flipV;
             set
@@ -110,12 +109,12 @@ namespace PixelVision8.Engine
 
         public void Clear()
         {
-            spriteID = -1;
-            colorOffset = 0;
-            flag = 0;
+            SpriteId = -1;
+            ColorOffset = 0;
+            Flag = 0;
 
-            flipH = false;
-            flipV = false;
+            FlipH = false;
+            FlipV = false;
 
             Invalidate();
         }

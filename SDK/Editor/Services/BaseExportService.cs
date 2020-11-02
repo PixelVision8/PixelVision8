@@ -18,12 +18,12 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Engine.Services;
+using PixelVision8.Runner.Exporters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
-using PixelVision8.Engine.Services;
-using PixelVision8.Runner.Exporters;
 
 namespace PixelVision8.Runner.Services
 {
@@ -75,7 +75,7 @@ namespace PixelVision8.Runner.Services
             {
                 ExportAll();
 
-                
+
             }
             else
             {

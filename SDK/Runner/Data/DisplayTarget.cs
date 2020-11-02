@@ -1,4 +1,4 @@
-﻿﻿//   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,12 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
+using System;
+using System.IO;
 
 namespace PixelVision8.Runner.Data
 {
@@ -33,8 +32,8 @@ namespace PixelVision8.Runner.Data
         private Effect crtShader;
         private Texture2D _colorPalette;
         private readonly int paletteWidth = 256;
-        
-        public DisplayTarget(GraphicsDeviceManager graphicManager, int width, int height): base(graphicManager, width, height)
+
+        public DisplayTarget(GraphicsDeviceManager graphicManager, int width, int height) : base(graphicManager, width, height)
         {
         }
 
@@ -77,11 +76,11 @@ namespace PixelVision8.Runner.Data
         {
             set
             {
-                
+
                 using (var reader = new BinaryReader(value))
                 {
                     crtShader = new Effect(GraphicManager.GraphicsDevice,
-                        reader.ReadBytes((int) reader.BaseStream.Length));
+                        reader.ReadBytes((int)reader.BaseStream.Length));
                 }
 
                 useCRT = true;
@@ -96,17 +95,17 @@ namespace PixelVision8.Runner.Data
 
                 crtShader?.Parameters["textureSize"].SetValue(new Vector2(gameWidth, gameHeight));
                 crtShader?.Parameters["videoSize"].SetValue(new Vector2(gameWidth, gameHeight));
-                
+
             }
-            
+
             base.ResetResolution(gameWidth, gameHeight, overScanX, overScanY);
 
         }
 
-        
+
         public override void RebuildColorPalette(ColorChip colorChip)
         {
-            
+
             base.RebuildColorPalette(colorChip);
 
             // TODO do we need to recreate these two things each time?

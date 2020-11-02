@@ -1,4 +1,4 @@
-﻿﻿//   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,9 +18,9 @@
 // Shawn Rakowski - @shwany
 //
 
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Engine.Chips
 {
@@ -271,7 +271,7 @@ namespace PixelVision8.Engine.Chips
             for (var x = 0; x < maxNoteNum; ++x)
             {
                 // what Hz is a particular musical note? (eg A#)
-                hertz = a / 32.0f * (float) Math.Pow(2.0f, (x - 9.0f) / 12.0f);
+                hertz = a / 32.0f * (float)Math.Pow(2.0f, (x - 9.0f) / 12.0f);
                 noteHZ[x] = hertz; // this appears to be correct: C = 60 = 261.6255Hz
 
                 // derive the SFXR sine wave frequency to play this Hz
@@ -280,7 +280,7 @@ namespace PixelVision8.Engine.Chips
                 // maybe the algorithm assumes 1 based array etc?
                 if (x < 126) // let's just hack in one semitone lower sounds (but not overflow array)
                     noteStartFrequency[x + 1] =
-                        (float) Math.Sqrt(hertz / preRenderBitrate * 100.0f / 8.0f - 0.001f) - 0.0018f;
+                        (float)Math.Sqrt(hertz / preRenderBitrate * 100.0f / 8.0f - 0.001f) - 0.0018f;
 
                 // last num is a hack using my ears to "tune"
             }
@@ -390,14 +390,14 @@ namespace PixelVision8.Engine.Chips
                     RewindSong();
                     nextBeatTimestamp = time;
                     return;
-                    
+
                 }
 
                 //                Console.WriteLine("Load new pattern");
 
                 //                    RewindSong();
 
-                
+
 
                 // Load the next song in the playlist
                 LoadPattern(nextPattern);
@@ -530,6 +530,6 @@ namespace PixelVision8.Engine.Chips
             //            else
             songCurrentlyPlaying = true;
         }
-        
+
     }
 }

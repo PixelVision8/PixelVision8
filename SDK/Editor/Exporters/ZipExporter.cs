@@ -18,17 +18,16 @@
 // Shawn Rakowski - @shwany
 //
 
+using Microsoft.Xna.Framework;
+// using ICSharpCode.SharpZipLib.Zip;
+// using ICSharpCode.SharpZipLib.Zip;
+using PixelVision8.Runner.Utils;
+using PixelVision8.Runner.Workspace;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using Microsoft.Xna.Framework;
-// using ICSharpCode.SharpZipLib.Zip;
-// using ICSharpCode.SharpZipLib.Zip;
-using PixelVision8.Runner.Services;
-using PixelVision8.Runner.Utils;
-using PixelVision8.Runner.Workspace;
 
 namespace PixelVision8.Runner.Exporters
 {
@@ -56,14 +55,14 @@ namespace PixelVision8.Runner.Exporters
         {
             base.CalculateSteps();
 
-            steps.Add(CreateZip);
+            _steps.Add(CreateZip);
 
             for (int i = 0; i < SourceFiles.Count; i++)
             {
-                steps.Add(AddFile);
+                _steps.Add(AddFile);
             }
 
-            steps.Add(CloseZip);
+            _steps.Add(CloseZip);
         }
 
         public override void LoadSourceData()
@@ -74,7 +73,7 @@ namespace PixelVision8.Runner.Exporters
         public void CreateZip()
         {
             Archive = new ZipArchive(ZipFs, ZipArchiveMode.Create, true);
-            
+
             StepCompleted();
         }
 
@@ -96,7 +95,7 @@ namespace PixelVision8.Runner.Exporters
                         var stream = new MemoryStream(FileLoadHelper.ReadAllBytes(srcFile.Path));
                         stream.CopyTo(entryStream);
                     }
-                    
+
                 }
 
                 CurrentFile++;
@@ -109,7 +108,7 @@ namespace PixelVision8.Runner.Exporters
                 Response["success"] = false;
 
                 // Finish running the exporter since there was an error
-                currentStep = totalSteps;
+                CurrentStep = totalSteps;
             }
         }
 
@@ -120,9 +119,9 @@ namespace PixelVision8.Runner.Exporters
             Response["success"] = true;
 
             // Archive.Finish();
-            
+
             Archive.Dispose();
-            
+
             ZipFs.Seek(0, SeekOrigin.Begin);
 
             bytes = ZipFs.ToArray();
@@ -136,8 +135,8 @@ namespace PixelVision8.Runner.Exporters
         public override void Dispose()
         {
             base.Dispose();
-            
-            
+
+
             ZipFs.Dispose();
         }
     }

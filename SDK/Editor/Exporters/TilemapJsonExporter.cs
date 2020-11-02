@@ -18,13 +18,12 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Utils;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace PixelVision8.Runner.Exporters
 {
@@ -57,16 +56,16 @@ namespace PixelVision8.Runner.Exporters
             base.CalculateSteps();
 
             // Create a new string builder
-            steps.Add(CreateStringBuilder);
+            _steps.Add(CreateStringBuilder);
 
             // TODO need to see if there is a legacy flag
-            steps.Add(SaveMapDataV1);
-            // steps.Add(SaveMapDataV2);
-            
-            // steps.Add(SaveMapDataV1);
+            _steps.Add(SaveMapDataV1);
+            // _steps.Add(SaveMapDataV2);
+
+            // _steps.Add(SaveMapDataV1);
 
             // Save the final string builder
-            steps.Add(CloseStringBuilder);
+            _steps.Add(CloseStringBuilder);
         }
 
 
@@ -102,7 +101,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("\"objectgroup\"");
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 3);
-            
+
             // layers start
             sb.Append("\"objects\": [");
             JsonUtil.GetLineBreak(sb, 4);
@@ -119,17 +118,17 @@ namespace PixelVision8.Runner.Exporters
                 var tile = gameChip.Tile(pos.X, pos.Y);
 
                 // Only save a tile if it exists
-                if (tile.spriteID > 0 || tile.flag > 0 || tile.colorOffset > 0)
+                if (tile.SpriteId > 0 || tile.Flag > 0 || tile.ColorOffset > 0)
                 {
                     sb.Append("{");
                     JsonUtil.GetLineBreak(sb, 5);
 
                     // TODO need to add in flip values to this sprite ID
                     sb.Append("\"gid\":");
-                    sb.Append(CreateGID(tile.spriteID + 1, tile.flipH, tile.flipV));
+                    sb.Append(CreateGID(tile.SpriteId + 1, tile.FlipH, tile.FlipV));
                     sb.Append(",");
                     JsonUtil.GetLineBreak(sb, 5);
-                    
+
                     sb.Append("\"x\":");
                     sb.Append(pos.X * spriteSize.X);
                     sb.Append(",");
@@ -155,7 +154,7 @@ namespace PixelVision8.Runner.Exporters
                     JsonUtil.GetLineBreak(sb, 7);
 
                     sb.Append("\"value\":");
-                    sb.Append(tile.flag);
+                    sb.Append(tile.Flag);
 
                     // property end
                     JsonUtil.GetLineBreak(sb, 6);
@@ -171,7 +170,7 @@ namespace PixelVision8.Runner.Exporters
                     JsonUtil.GetLineBreak(sb, 7);
 
                     sb.Append("\"value\":");
-                    sb.Append(tile.colorOffset);
+                    sb.Append(tile.ColorOffset);
 
                     // property end
                     JsonUtil.GetLineBreak(sb, 6);
@@ -206,7 +205,7 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.GetLineBreak(sb, 1);
             sb.Append("]");
 
-           StepCompleted();
+            StepCompleted();
         }
 
         private void SaveMapDataV1()
@@ -464,7 +463,7 @@ namespace PixelVision8.Runner.Exporters
                 var tile = gameChip.Tile(pos.X, pos.Y);
 
                 // Only save a tile if it exists
-                if (tile.spriteID + tile.flag >= -1)
+                if (tile.SpriteId + tile.Flag >= -1)
                 {
                     sb.Append("{");
                     JsonUtil.GetLineBreak(sb, 5);
@@ -476,7 +475,7 @@ namespace PixelVision8.Runner.Exporters
 
                     // TODO need to add in flip values to this sprite ID
                     sb.Append("\"gid\":");
-                    sb.Append(CreateGID(tile.spriteID + 1, tile.flipH, tile.flipV));
+                    sb.Append(CreateGID(tile.SpriteId + 1, tile.FlipH, tile.FlipV));
                     sb.Append(",");
                     JsonUtil.GetLineBreak(sb, 5);
 
@@ -521,7 +520,7 @@ namespace PixelVision8.Runner.Exporters
                     JsonUtil.GetLineBreak(sb, 7);
 
                     sb.Append("\"value\":");
-                    sb.Append(tile.flag);
+                    sb.Append(tile.Flag);
 
                     // property end
                     JsonUtil.GetLineBreak(sb, 6);
@@ -543,7 +542,7 @@ namespace PixelVision8.Runner.Exporters
                     JsonUtil.GetLineBreak(sb, 7);
 
                     sb.Append("\"value\":");
-                    sb.Append(tile.colorOffset);
+                    sb.Append(tile.ColorOffset);
 
                     // property end
                     JsonUtil.GetLineBreak(sb, 6);
@@ -585,7 +584,7 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.GetLineBreak(sb, 1);
             sb.Append("]");
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void CreateStringBuilder()
@@ -595,7 +594,7 @@ namespace PixelVision8.Runner.Exporters
 
             JsonUtil.GetLineBreak(sb, 1);
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void CloseStringBuilder()
@@ -606,12 +605,12 @@ namespace PixelVision8.Runner.Exporters
 
             bytes = Encoding.UTF8.GetBytes(sb.ToString());
 
-            currentStep++;
+            CurrentStep++;
         }
 
         public uint CreateGID(int id, bool flipH, bool flipV)
         {
-            var gid = (uint) id;
+            var gid = (uint)id;
 
             if (flipH) gid |= 1U << 31;
 

@@ -18,6 +18,9 @@
 // Shawn Rakowski - @shwany
 //
 
+
+/* Unmerged change from project 'PixelVision8.CoreDesktop'
+Before:
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,6 +28,21 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
+After:
+using Microsoft.Xna.Framework;
+using System.Collections.Chips;
+using PixelVision8.Engine.Utils;
+using System;
+using System.Collections.Framework;
+using System.Diagnostics;
+using System.Linq;
+*/
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using PixelVision8.Engine;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -63,29 +81,32 @@ namespace PixelVision8.Runner.Parsers
         {
             base.CalculateSteps();
 
-            steps.Add(CreateImage);
+            _steps.Add(CreateImage);
 
             if (spriteChip != null)
             {
-                steps.Add(PrepareSprites);
+                _steps.Add(PrepareSprites);
 
-                steps.Add(CutOutSprites);
+                _steps.Add(CutOutSprites);
 
-                steps.Add(PostCutOutSprites);
+                _steps.Add(PostCutOutSprites);
 
             }
         }
 
         public virtual void PrepareSprites()
         {
-            
+
             cps = spriteChip.colorsPerSprite;
 
             totalSprites = image.TotalSprites;
 
-            maxSprites = SpriteChipUtil.CalculateTotalSprites(spriteChip.textureWidth, spriteChip.textureHeight,
-            spriteWidth, spriteHeight);
-            
+            //TODO this needs to be double checked at different size sprites
+            var cols = MathUtil.FloorToInt(spriteChip.textureWidth / spriteWidth);
+            var rows = MathUtil.FloorToInt(spriteChip.textureHeight / spriteHeight);
+
+            maxSprites = cols * rows;
+
             // // Keep track of number of sprites added
             spritesAdded = 0;
 
@@ -120,7 +141,7 @@ namespace PixelVision8.Runner.Parsers
 
                 // var color = imageColors[i];
                 var color = imageColors[i];
-                
+
                 if (color == Parser.MaskHex) continue;
 
                 var id = Array.IndexOf(colorRefs, color);
@@ -145,8 +166,19 @@ namespace PixelVision8.Runner.Parsers
             // Sort colors
             uniqueColorIDs.Sort();
 
+
+/* Unmerged change from project 'PixelVision8.CoreDesktop'
+Before:
             var indexes = new List<int>();
             
+            // find open slots
+After:
+            var indexes = new List<int>();
+
+            // find open slots
+*/
+            var indexes = new List<int>();
+
             // find open slots
             for (int i = 0; i < colorMap.Length; i++)
             {
@@ -156,8 +188,19 @@ namespace PixelVision8.Runner.Parsers
                 }
             }
 
+
+/* Unmerged change from project 'PixelVision8.CoreDesktop'
+Before:
             var totalOrphanColors = orphanColors.Count;
             
+            for (int i = 0; i < indexes.Count; i++)
+After:
+            var totalOrphanColors = orphanColors.Count;
+
+            for (int i = 0; i < indexes.Count; i++)
+*/
+            var totalOrphanColors = orphanColors.Count;
+
             for (int i = 0; i < indexes.Count; i++)
             {
                 if (i < totalOrphanColors)
@@ -188,12 +231,12 @@ namespace PixelVision8.Runner.Parsers
 
             for (var i = 0; i < totalSprites; i++)
             {
-                
+
                 // Convert sprite to color index
                 ConvertColorsToIndexes(cps);
 
                 ProcessSpriteData();
-                
+
                 index++;
 
             }

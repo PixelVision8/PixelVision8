@@ -18,10 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using PixelVision8.Engine;
@@ -35,6 +31,10 @@ using PixelVision8.Runner.Importers;
 using PixelVision8.Runner.Parsers;
 using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Workspace;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Buttons = PixelVision8.Engine.Chips.Buttons;
 
 namespace PixelVision8.Runner.Editors
@@ -160,12 +160,12 @@ namespace PixelVision8.Runner.Editors
             {
                 targetGame = new PixelVisionEngine(serviceManager, DefaultChips.ToArray());
                 // targetGame.Init();
-                
+
                 runner.ParseFiles(files, targetGame, saveFlags);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Console.WriteLine("Game Editor Load Error:\n"+e.Message);
+                Console.WriteLine("Game Editor Load Error:\n" + e.Message);
 
                 return false;
             }
@@ -184,7 +184,7 @@ namespace PixelVision8.Runner.Editors
             //            targetGame = new PixelVisionEngine(null, null, runner.defaultChips.ToArray());
 
             // Configure the game editor now that all the chips have been loaded
-            gameChip = targetGame.GameChip as GameChip; 
+            gameChip = targetGame.GameChip as GameChip;
 
             // Since the game is not attached to a runner it will throw an error when trying to load lua serivce
             try
@@ -423,7 +423,8 @@ namespace PixelVision8.Runner.Editors
         /// <param name="ignoreEmpty"></param>
         /// <param name="total"></param>
         /// <returns></returns>
-        public int TotalColors(bool ignoreEmpty = false) {
+        public int TotalColors(bool ignoreEmpty = false)
+        {
             //            if (TotalDisks.HasValue)
             //                activeColorChip.maxColors = TotalDisks.Value;
 
@@ -748,7 +749,7 @@ namespace PixelVision8.Runner.Editors
             var total = canvas.Pixels.Length;
 
             // Loop through all the tiles and build the pixels
-            for (var i = 0; i < total; i++) canvas.Pixels[i] = mode == 0 ? tiles[i].spriteID : tiles[i].flag;
+            for (var i = 0; i < total; i++) canvas.Pixels[i] = mode == 0 ? tiles[i].SpriteId : tiles[i].Flag;
 
             if (mode == 0)
             {
@@ -790,14 +791,14 @@ namespace PixelVision8.Runner.Editors
                     {
                         var pixel = canvas.Pixels[i] / -100 - 1;
 
-                        tile.spriteID = pixel;
+                        tile.SpriteId = pixel;
 
-                        if (colorOffset > -1) tile.colorOffset = colorOffset;
+                        if (colorOffset > -1) tile.ColorOffset = colorOffset;
                     }
                 }
                 else if (mode == 1)
                 {
-                    tiles[i].flag = unchecked((byte)canvas.Pixels[i]);
+                    tiles[i].Flag = unchecked((byte)canvas.Pixels[i]);
                 }
 
             tilemapChip.Invalidate();
@@ -853,7 +854,7 @@ namespace PixelVision8.Runner.Editors
             {
                 // TODO this needs to go through the error system?
                 Console.WriteLine(e);
-                
+
             }
 
             return false;
@@ -938,7 +939,7 @@ namespace PixelVision8.Runner.Editors
             }
             //            else if (mode == 2)
             //            {
-            //                activeColorChip = targetGame.GetChip(FlagColorParser.flagColorChipName, false) as ColorChip;
+            //                activeColorChip = targetGame.GetChip(FlagColorParser.FlagColorChipName, false) as ColorChip;
             //            }
             else
             {
@@ -1122,7 +1123,7 @@ namespace PixelVision8.Runner.Editors
 
             try
             {
-                
+
                 // We only need a few chips to make this work
                 string[] chips =
                 {
@@ -1136,11 +1137,12 @@ namespace PixelVision8.Runner.Editors
 
                 targetGame = new PixelVisionEngine(serviceManager, chips)
                 {
-                    FontChip = {unique = false, pages = 1}, Name = path
+                    FontChip = { unique = false, pages = 1 },
+                    Name = path
                 };
 
                 var pngReader = new PNGReader(imageBytes, targetGame.ColorChip.maskColor)
-                    {FileName = filePath.EntityName };
+                { FileName = filePath.EntityName };
 
                 var loadService = runner.loadService;
 
@@ -1155,7 +1157,7 @@ namespace PixelVision8.Runner.Editors
             }
             catch
             {
-                
+
                 return false;
             }
 
@@ -1760,7 +1762,7 @@ namespace PixelVision8.Runner.Editors
             // Just need to get a reference to any track setting for this data
             var soundData = songGenerator.trackSettings[0].ReadInstrumentSoundData(id);
 
-            if (soundData != null) soundChip .PlayRawSound(soundData);
+            if (soundData != null) soundChip.PlayRawSound(soundData);
         }
 
         /// <summary>
@@ -2163,13 +2165,13 @@ namespace PixelVision8.Runner.Editors
         //     {
         //         // 
         //
-        //         if (tileData.spriteID == -1)
+        //         if (tileData.SpriteId == -1)
         //             spriteData = Enumerable.Repeat(-1, totalPixels).ToArray();
         //         else
-        //             spriteData = gameChip.Sprite(tileData.spriteID);
+        //             spriteData = gameChip.Sprite(tileData.SpriteId);
         //
         //         // Shift the pixel data
-        //         for (var j = 0; j < spriteData.Length; j++) spriteData[j] += tileData.colorOffset;
+        //         for (var j = 0; j < spriteData.Length; j++) spriteData[j] += tileData.ColorOffset;
         //
         //         //
         //         layerCache[0].SetPixels(col, row, spriteChip.width, spriteChip.height, spriteData);
@@ -2177,7 +2179,7 @@ namespace PixelVision8.Runner.Editors
         //
         //     if (layerCache[1] != null)
         //     {
-        //         flagData = Enumerable.Repeat((int)tileData.flag, spriteChip.width * spriteChip.height).ToArray();
+        //         flagData = Enumerable.Repeat((int)tileData.Flag, spriteChip.width * spriteChip.height).ToArray();
         //
         //         layerCache[1].SetPixels(col, row, spriteChip.width, spriteChip.height, flagData);
         //     }

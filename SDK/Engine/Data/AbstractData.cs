@@ -18,8 +18,8 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace PixelVision8.Engine
 {
@@ -31,7 +31,6 @@ namespace PixelVision8.Engine
     /// </summary>
     public abstract class AbstractData
     {
-        protected bool _invalid;
 
         /// <summary>
         ///     The invalid flag allows you to quickly see if data has been changed
@@ -41,7 +40,7 @@ namespace PixelVision8.Engine
         ///     before refreshing their data.
         /// </summary>
         /// <value>Boolean</value>
-        public virtual bool invalid => _invalid;
+        public bool Invalid;
 
         /// <summary>
         ///     This method allows a clean way to set the invalid property to true
@@ -50,7 +49,7 @@ namespace PixelVision8.Engine
         /// </summary>
         public virtual void Invalidate()
         {
-            _invalid = true;
+            Invalid = true;
         }
 
         /// <summary>
@@ -62,7 +61,7 @@ namespace PixelVision8.Engine
         /// <param name="value"></param>
         public virtual void ResetValidation(int value = 0)
         {
-            _invalid = Convert.ToBoolean(MathHelper.Clamp(value, 0, 1));
+            Invalid = Convert.ToBoolean(MathHelper.Clamp(value, 0, 1));
         }
     }
 }

@@ -18,8 +18,8 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.IO;
 using Microsoft.Xna.Framework;
+using System.IO;
 
 namespace PixelVision8.Runner.Exporters
 {

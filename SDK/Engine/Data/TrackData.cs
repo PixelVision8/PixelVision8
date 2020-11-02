@@ -18,11 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
+using Microsoft.Xna.Framework;
+using PixelVision8.Runner.Utils;
 using System;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework;
-using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Engine
 {

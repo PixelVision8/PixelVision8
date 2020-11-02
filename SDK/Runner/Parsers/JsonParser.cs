@@ -18,10 +18,9 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Runner.Utils;
 using System.Collections.Generic;
 using System.Text;
-using PixelVision8.Runner.Services;
-using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -40,7 +39,7 @@ namespace PixelVision8.Runner.Parsers
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-            steps.Add(ParseJson);
+            _steps.Add(ParseJson);
         }
 
         public virtual void ParseJson()

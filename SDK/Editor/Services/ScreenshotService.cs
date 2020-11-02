@@ -18,13 +18,13 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Services;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Workspace;
+using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Services
 {
@@ -101,7 +101,7 @@ namespace PixelVision8.Runner.Services
             {
                 // var cachedColors = engine.ColorChip.colors;
 
-                var cachedColors =ColorUtils.ConvertColors(engine.ColorChip.hexColors, "#FF00FF", true);
+                var cachedColors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, "#FF00FF", true);
 
                 var pixels = engine.DisplayChip.Pixels;
 
@@ -138,7 +138,7 @@ namespace PixelVision8.Runner.Services
                 // Manually step through the exporter
                 while (tmpExporter.completed == false) tmpExporter.NextStep();
 
-                workspace.SaveExporterFiles(new Dictionary<string, byte[]> {{tmpExporter.fileName, tmpExporter.bytes}});
+                workspace.SaveExporterFiles(new Dictionary<string, byte[]> { { tmpExporter.fileName, tmpExporter.bytes } });
 
                 return true;
             }

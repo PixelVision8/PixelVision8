@@ -18,10 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
+using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -51,9 +51,9 @@ namespace PixelVision8.Runner.Parsers
             base.CalculateSteps();
 
             //            steps.Add(IndexColors);
-            steps.Add(ReadColors);
+            _steps.Add(ReadColors);
             //            steps.Add(ResetColorChip);
-            steps.Add(UpdateColors);
+            _steps.Add(UpdateColors);
         }
 
         public virtual void ReadColors()
@@ -101,7 +101,7 @@ namespace PixelVision8.Runner.Parsers
 
             totalColors = colors.Count;
 
-            currentStep++;
+            CurrentStep++;
         }
         //
         //        public void ResetColorChip()
@@ -122,7 +122,7 @@ namespace PixelVision8.Runner.Parsers
                 colorChip.UpdateColorAt(i, hex);
             }
 
-            currentStep++;
+            CurrentStep++;
         }
     }
 }

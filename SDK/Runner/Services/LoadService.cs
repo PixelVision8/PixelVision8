@@ -18,12 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
@@ -32,14 +26,18 @@ using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Importers;
 using PixelVision8.Runner.Parsers;
 using PixelVision8.Runner.Utils;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
 
 namespace PixelVision8.Runner.Services
 {
-    
-    
+
+
     public class LoadService : AbstractService
     {
-        
+
         protected readonly List<IAbstractParser> parsers = new List<IAbstractParser>();
 
         protected int currentParserID;
@@ -70,7 +68,7 @@ namespace PixelVision8.Runner.Services
 
         public bool Completed => currentParserID >= TotalParsers;
 
-        public float Percent => TotalSteps == 0 ? 1f : currentStep / (float) TotalSteps;
+        public float Percent => TotalSteps == 0 ? 1f : currentStep / (float)TotalSteps;
 
         /// <summary>
         ///     This can be used to display a message while preloading
@@ -128,7 +126,7 @@ namespace PixelVision8.Runner.Services
             // Step 7 (optional). Look for fonts to load
             if ((saveFlags & SaveFlags.Fonts) == SaveFlags.Fonts)
             {
-                
+
                 var paths = files.Where(s => s.EndsWith(".font.png")).ToArray();
 
                 foreach (var fileName in paths)
@@ -159,9 +157,9 @@ namespace PixelVision8.Runner.Services
 
                 // Get all of the wav files
                 var wavFiles = files.Where(x => x.EndsWith(".wav")).ToArray();
-                
-                if(wavFiles.Length > 0)
-                    AddParser(new WavParser(wavFiles, _fileLoadHelper, targetEngine ));
+
+                if (wavFiles.Length > 0)
+                    AddParser(new WavParser(wavFiles, _fileLoadHelper, targetEngine));
             }
 
             // Step 10 (optional). Look for meta data and override the game
@@ -202,7 +200,7 @@ namespace PixelVision8.Runner.Services
         {
             if (Completed)
             {
-                parsers.Clear(); 
+                parsers.Clear();
                 return;
             }
 
@@ -244,7 +242,7 @@ namespace PixelVision8.Runner.Services
             {
                 NextParser();
                 Thread.Sleep(1);
-                loadingWorker.ReportProgress((int) (Percent * 100), i);
+                loadingWorker.ReportProgress((int)(Percent * 100), i);
             }
         }
 
@@ -260,7 +258,7 @@ namespace PixelVision8.Runner.Services
 
         protected AbstractParser LoadMetaData(string[] files)
         {
-            
+
             var file = files.FirstOrDefault(x => x.EndsWith("info.json"));
 
             if (!string.IsNullOrEmpty(file))
@@ -275,7 +273,7 @@ namespace PixelVision8.Runner.Services
 
         protected void LoadTilemap(string[] files)
         {
-            
+
             // If a tilemap json file exists, try to load that
             var file = files.FirstOrDefault(x => x.EndsWith("tilemap.json"));
 
@@ -295,7 +293,7 @@ namespace PixelVision8.Runner.Services
 
             if (!string.IsNullOrEmpty(file))
             {
-                
+
                 var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
                 AddParser(new TilemapParser(imageParser, targetEngine.ColorChip, targetEngine.SpriteChip, targetEngine.TilemapChip));
 
@@ -313,7 +311,7 @@ namespace PixelVision8.Runner.Services
             // var cacheFile = "sprites.cache.png";
 
             // string fileName = null;
-            
+
             // TODO need to depricate this
             var file = files.FirstOrDefault(x => x.EndsWith("sprites.png"));
 
@@ -401,7 +399,7 @@ namespace PixelVision8.Runner.Services
 
         protected void LoadSounds(string[] files)
         {
-            
+
             var file = files.FirstOrDefault(x => x.EndsWith("sounds.json"));
 
 
@@ -411,7 +409,7 @@ namespace PixelVision8.Runner.Services
 
                 AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
             }
-            
+
         }
 
         protected void LoadMusic(string[] files)
@@ -442,28 +440,19 @@ namespace PixelVision8.Runner.Services
 
         protected void LoadSaveData(string[] files)
         {
-            
+
             var file = files.FirstOrDefault(x => x.EndsWith("saves.json"));
 
             if (!string.IsNullOrEmpty(file))
             {
 
-                
+
                 // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
                 AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
-                
+
             }
         }
 
-        // public virtual string GetFileName(string path)
-        // {
-        //     return _fileLoadHelper.GetFileName(path);
-        // }
-
-        // public virtual byte[] ReadAllBytes(string file)
-        // {
-        //     return _fileLoadHelper.ReadAllBytes(file);
-        // }
     }
 }

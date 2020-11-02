@@ -18,10 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Utils;
+using System;
+using System.Linq;
 
 namespace PixelVision8.Engine.Chips
 {
@@ -115,12 +115,12 @@ namespace PixelVision8.Engine.Chips
                 if (_pages == value) return;
 
                 _pages = MathHelper.Clamp(value, 1, 8);
-                
+
                 spriteMemory.Resize(
-                    (int) Math.Ceiling((float) pageWidth / width) * width, 
-                    (int) Math.Ceiling((float) pageHeight * pages / height)* height
+                    (int)Math.Ceiling((float)pageWidth / width) * width,
+                    (int)Math.Ceiling((float)pageHeight * pages / height) * height
                     );
-               
+
                 cache = new string[spriteMemory.TotalSprites];
 
             }
@@ -253,10 +253,10 @@ namespace PixelVision8.Engine.Chips
         public void UpdateSpriteAt(int index, int[] pixels)
         {
             spriteMemory.WriteSpriteData(index, pixels);
-            
+
             CacheSprite(index, pixels);
         }
-        
+
         /// <summary>
         ///     This caches a sprite for easier look up and duplicate detection.
         ///     Each sprite is cached as a string.

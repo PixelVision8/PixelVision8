@@ -18,15 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Runner.Services;
-
 namespace PixelVision8.Runner
 {
     public class LuaRunner : GameRunner

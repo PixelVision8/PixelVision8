@@ -18,20 +18,20 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Parsers;
+using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Services
 {
     public class GameDataExportService : BaseExportService
     {
-        
+
         private IEngine targetEngine;
-        
+
         public void ExportGame(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
         {
 
@@ -65,7 +65,7 @@ namespace PixelVision8.Runner.Services
                 var imageExporter = new PNGWriter();
 
                 AddExporter(new SpriteExporter(path + "sprites.png", targetEngine, imageExporter));
-                
+
             }
 
             // Step 7 (optional). Look for fonts to load

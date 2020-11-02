@@ -18,9 +18,9 @@
 // Shawn Rakowski - @shwany
 //
 
+using Microsoft.Xna.Framework;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Engine.Utils
 {

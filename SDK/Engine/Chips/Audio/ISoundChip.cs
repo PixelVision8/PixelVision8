@@ -20,7 +20,7 @@
 
 namespace PixelVision8.Engine.Chips
 {
-    
+
     public interface ISoundChip
     {
         /// <summary>

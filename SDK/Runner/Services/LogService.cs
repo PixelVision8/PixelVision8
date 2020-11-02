@@ -18,12 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
+using PixelVision8.Engine.Services;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using PixelVision8.Engine.Services;
 
 namespace PixelVision8.Runner
 {
@@ -65,7 +64,7 @@ namespace PixelVision8.Runner.Services
 
         public void UpdateLog(string logString, LogType type = LogType.Log, string stackTrace = "")
         {
-            var typeCharacter = logCharacters[(int) type];
+            var typeCharacter = logCharacters[(int)type];
 
             // Clear string builder
             sb.Clear();

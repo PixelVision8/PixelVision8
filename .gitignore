@@ -227,6 +227,7 @@ project.lock.json
 *.feature.xlsx.*
 *.Specs_*.html
 
+Properties/**
 **/saves.json
 **/*saves.json
 #####

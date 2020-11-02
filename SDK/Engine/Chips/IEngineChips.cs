@@ -76,12 +76,6 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         FontChip FontChip { get; set; }
 
-        /// <summary>
-        ///     The music chip represents a sequencer that can be used to play back
-        ///     sound data for songs.
-        /// </summary>
-        // MusicChip MusicChip { get; set; }
-
         AbstractChip GetChip(string id, bool activeOnCreate = true);
 
         void ActivateChip(string id, AbstractChip chip, bool autoActivate = true);

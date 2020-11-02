@@ -18,13 +18,13 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Runner.Services;
+using PixelVision8.Runner.Utils;
+using PixelVision8.Runner.Workspace;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using PixelVision8.Runner.Services;
-using PixelVision8.Runner.Utils;
-using PixelVision8.Runner.Workspace;
 
 namespace PixelVision8.Runner.Exporters
 {
@@ -63,7 +63,7 @@ namespace PixelVision8.Runner.Exporters
                 physicalPath = zipFileSystem.PhysicalRoot;
                 physicalBackupPath = zipFileSystem.PhysicalRoot + ".bak";
 
-                steps.Add(BackupZip);
+                _steps.Add(BackupZip);
 
                 // Get all the files
                 var srcFiles = zipFileSystem.GetEntitiesRecursive(WorkspacePath.Root).ToArray();
@@ -83,15 +83,15 @@ namespace PixelVision8.Runner.Exporters
 
                 for (int i = 0; i < zipExporter.totalSteps; i++)
                 {
-                    steps.Add(NextZipStep);
+                    _steps.Add(NextZipStep);
                 }
 
                 // Save the disk
-                steps.Add(SaveDisk);
+                _steps.Add(SaveDisk);
 
-                steps.Add(CheckForErrors);
+                _steps.Add(CheckForErrors);
 
-                steps.Add(Cleanup);
+                _steps.Add(Cleanup);
 
             }
 

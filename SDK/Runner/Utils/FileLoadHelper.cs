@@ -19,7 +19,6 @@
 //
 
 using System.IO;
-using PixelVision8.Runner.Services;
 
 namespace PixelVision8.Runner.Utils
 {
@@ -28,7 +27,7 @@ namespace PixelVision8.Runner.Utils
         string GetFileName(string path);
         byte[] ReadAllBytes(string file);
     }
-    
+
     public class FileLoadHelper : IFileLoadHelper
     {
         public string GetFileName(string path)

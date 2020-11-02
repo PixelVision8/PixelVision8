@@ -34,10 +34,11 @@ function DrawTool:CreateCanvas()
     )
     
 
-    self.canvasData.onPress = function()
+    self.canvasData.onFirstPress = function()
             
-        print("Press")
-        self:BeginUndo()
+        --print("First Press!", editorUI.inFocusUI.name, self.canvasData.inDrawMode, self.canvasData.mouseState)
+        
+        self:BeginUndo(data)
 
         self.canvasData.inDrawMode = true
 
@@ -54,7 +55,7 @@ function DrawTool:CreateCanvas()
         if(editorUI.inFocusUI ~= nil and editorUI.inFocusUI.name == self.canvasData.name) then
             print("Release")
             self:OnSaveCanvasChanges() 
-            self:EndUndo()
+            self:EndUndo(data)
         end
 
     end
@@ -229,7 +230,6 @@ end
 
 function DrawTool:OnSaveCanvasChanges()
 
-    print("OnSaveCanvasChanges")
     self.canvasData.inDrawMode = false
 
     -- Get the raw pixel data
@@ -252,9 +252,6 @@ function DrawTool:OnSaveCanvasChanges()
 
     end
 
-    -- Redraw the colors per sprite display
-    -- self:InvalidateColorPreview()
-
     -- Update the spritePickerData
     if(self.spritePickerData.currentSelection > - 1) then
         pixelVisionOS:UpdateItemPickerPixelDataAt(self.spritePickerData, self.spritePickerData.currentSelection, pixelData, canvasSize.width, canvasSize.height)
@@ -263,15 +260,10 @@ function DrawTool:OnSaveCanvasChanges()
     -- Update the current sprite in the picker
     gameEditor:WriteSpriteData(self.spritePickerData.currentSelection, pixelData, self.selectionSize.x, self.selectionSize.y)
 
-    -- Test to see if the canvas is invalid
-    if(self.canvasData.invalid == true) then
+    -- Invalidate the sprite tool since we change some pixel data
+    self:InvalidateData()
 
-        -- Invalidate the sprite tool since we change some pixel data
-        self:InvalidateData()
-
-        -- Reset the canvas invalidation since we copied it
-        editorUI:ResetValidation(self.canvasData)
-
-    end
+    -- Reset the canvas invalidation since we copied it
+    editorUI:ResetValidation(self.canvasData)
 
 end

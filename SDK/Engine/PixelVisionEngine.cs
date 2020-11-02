@@ -18,9 +18,9 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Services;
+using System.Collections.Generic;
 
 namespace PixelVision8.Engine
 {
@@ -46,7 +46,7 @@ namespace PixelVision8.Engine
         /// <param name="ignoreKeys"></param>
         void ReadAllMetadata(Dictionary<string, string> target);
     }
-    
+
     /// <summary>
     ///     This is the default engine class for Pixel Vision 8. It manages the
     ///     state of all chips, the game itself and helps with communication between
@@ -59,17 +59,17 @@ namespace PixelVision8.Engine
         // protected List<IDraw> DrawChips = new List<IDraw>();
         protected IServiceLocator ServiceLocator;
         // protected List<IUpdate> UpdateChips = new List<IUpdate>();
-        
+
         public Dictionary<string, string> MetaData { get; } = new Dictionary<string, string>
         {
             {"name", "untitled"}
         };
-        
-        public PixelVisionEngine(IServiceLocator serviceLocator, string[] chips = null, string name = "Engine") 
+
+        public PixelVisionEngine(IServiceLocator serviceLocator, string[] chips = null, string name = "Engine")
         {
-            
+
             ServiceLocator = serviceLocator;
-            
+
             //if (chips != null) DefaultChips = chips;
 
             Name = name;
@@ -82,29 +82,29 @@ namespace PixelVision8.Engine
 
             // Init();
         }
-        
+
         /// <summary>
         ///     Access to the MusicChip.
         /// </summary>
         /// <tocexclude />
         public MusicChip MusicChip { get; set; }
-        
+
         public void AddService(string id, IService service)
         {
             ServiceLocator.AddService(id, service);
         }
-        
+
         public IService GetService(string id)
         {
             return ServiceLocator.GetService(id);
         }
-        
+
         public void RemoveService(string id)
         {
             ServiceLocator.RemoveService(id);
         }
-        
-        
+
+
         /// <summary>
         /// </summary>
         /// <param name="key"></param>
@@ -131,7 +131,7 @@ namespace PixelVision8.Engine
             {
                 if (value == "")
                     MetaData.Remove(key);
-                else 
+                else
                     MetaData[key] = value;
 
             }
@@ -147,6 +147,6 @@ namespace PixelVision8.Engine
 
             foreach (var data in MetaData) target.Add(data.Key, data.Value);
         }
-        
+
     }
 }

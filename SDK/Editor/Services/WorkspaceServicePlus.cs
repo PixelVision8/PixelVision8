@@ -18,16 +18,15 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Utils;
 using PixelVision8.Runner.Workspace;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace PixelVision8.Runner.Services
 {
@@ -64,7 +63,7 @@ namespace PixelVision8.Runner.Services
             Mounts.Add(
                 new KeyValuePair<WorkspacePath, IFileSystem>(WorkspacePath.Root.AppendDirectory("Workspace"),
                     workspaceDisk));
-            
+
         }
 
         public void RebuildWorkspace()
@@ -285,7 +284,7 @@ namespace PixelVision8.Runner.Services
 
         public override void ShutdownSystem()
         {
-            
+
             foreach (var disk in Disks) SaveDisk(disk);
 
             base.ShutdownSystem();
@@ -326,8 +325,8 @@ namespace PixelVision8.Runner.Services
             {
                 // Get all the files in the folder
                 var files = from file in GetEntities(srcPath)
-                    where file.GetExtension() == ".png"
-                    select file;
+                            where file.GetExtension() == ".png"
+                            select file;
 
                 foreach (var file in files)
                 {
@@ -398,7 +397,7 @@ namespace PixelVision8.Runner.Services
 
         public void SaveDisk(WorkspacePath path)
         {
-            
+
             var diskExporter = new ZipDiskExporter(path.Path, this);
             diskExporter.CalculateSteps();
 
@@ -435,8 +434,8 @@ namespace PixelVision8.Runner.Services
                 zipExporter.Response["success"] = false;
                 zipExporter.Response["message"] = e.Message;
             }
-            
-            
+
+
             return zipExporter.Response;
         }
 
@@ -463,7 +462,7 @@ namespace PixelVision8.Runner.Services
             {
                 var tmpPath = Disks[i].AppendDirectory("System").AppendDirectory("Libs");
 
-                if(Exists(tmpPath))
+                if (Exists(tmpPath))
                     paths.Insert(0, tmpPath);
             }
 

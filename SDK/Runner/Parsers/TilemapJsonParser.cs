@@ -18,13 +18,12 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Engine;
+using PixelVision8.Engine.Utils;
+using PixelVision8.Runner.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Utils;
-using PixelVision8.Runner.Services;
-using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -41,7 +40,7 @@ namespace PixelVision8.Runner.Parsers
         {
             base.CalculateSteps();
 
-            steps.Add(ParseMap);
+            _steps.Add(ParseMap);
 
         }
 
@@ -51,11 +50,11 @@ namespace PixelVision8.Runner.Parsers
 
             if (version == 2)
             {
-                steps.Add(ConfigureTilemapV2);
+                _steps.Add(ConfigureTilemapV2);
             }
             else
             {
-                steps.Add(ConfigureTilemapV1);
+                _steps.Add(ConfigureTilemapV1);
             }
 
             StepCompleted();
@@ -89,43 +88,43 @@ namespace PixelVision8.Runner.Parsers
                             for (var j = 0; j < totalTiles; j++)
                             {
                                 var tileObject = objects[j] as Dictionary<string, object>;
-                            
+
                                 var column = (int)Math.Floor((float)(long)tileObject["x"] / 8);
                                 var row = (int)Math.Floor((float)(long)tileObject["y"] / 8) - 1;
-                            
+
                                 var tile = tilemapChip.GetTile(column, row);
-                            
+
                                 var gid = (uint)(long)tileObject["gid"];
-                            
+
                                 var idMask = (1 << 30) - 1;
-                            
-                                tile.spriteID = (int)(gid & idMask) - 1;
-                            
+
+                                tile.SpriteId = (int)(gid & idMask) - 1;
+
                                 var hMask = 1 << 31;
-                            
-                                tile.flipH = (hMask & gid) != 0;
-                            
+
+                                tile.FlipH = (hMask & gid) != 0;
+
                                 var vMask = 1 << 30;
-                            
-                                tile.flipV = (vMask & gid) != 0;
-                            
+
+                                tile.FlipV = (vMask & gid) != 0;
+
                                 var properties = tileObject["properties"] as List<object>;
-                            
+
                                 //								int flagID = -1;
                                 //								int colorOffset = 0;
-                            
+
                                 for (var k = 0; k < properties.Count; k++)
                                 {
                                     var prop = properties[k] as Dictionary<string, object>;
-                            
+
                                     var propName = (string)prop["name"];
-                            
+
                                     if (propName == "flagID")
-                                        tile.flag = (int)(long)prop["value"];
-                                    else if (propName == "colorOffset") 
-                                        tile.colorOffset = (int)(long)prop["value"];
+                                        tile.Flag = (int)(long)prop["value"];
+                                    else if (propName == "colorOffset")
+                                        tile.ColorOffset = (int)(long)prop["value"];
                                 }
-                            
+
                                 // tile.Invalidate();
                             }
                         }
@@ -166,22 +165,22 @@ namespace PixelVision8.Runner.Parsers
                     {
                         var layer = layers[i] as Dictionary<string, object>;
 
-                        var layerType = (string) layer["type"];
+                        var layerType = (string)layer["type"];
 
                         if (layerType == "tilelayer")
                         {
                             var tileSet = tileSets[i] as Dictionary<string, object>;
 
 
-                            var offset = (int) (long) tileSet["firstgid"];
+                            var offset = (int)(long)tileSet["firstgid"];
 
-                            var columns = (int) (long) layer["width"];
-                            var rows = (int) (long) layer["height"];
+                            var columns = (int)(long)layer["width"];
+                            var rows = (int)(long)layer["height"];
 
                             var rawLayerData = layer["data"] as List<object>;
 
                             var dataValues = rawLayerData
-                                .Select(x => (int) (long) x - offset < -1 ? -1 : (int) (long) x - offset).ToArray();
+                                .Select(x => (int)(long)x - offset < -1 ? -1 : (int)(long)x - offset).ToArray();
 
                             if (columns != tilemapChip.columns || rows > tilemapChip.rows)
                             {
@@ -224,9 +223,9 @@ namespace PixelVision8.Runner.Parsers
                             {
                                 var tile = tilemapChip.tiles[j];
 
-                                if ((string) layer["name"] == "Sprites")
-                                    tile.spriteID = dataValues[j];
-                                else if ((string) layer["name"] == "Flags") tile.flag = dataValues[j];
+                                if ((string)layer["name"] == "Sprites")
+                                    tile.SpriteId = dataValues[j];
+                                else if ((string)layer["name"] == "Flags") tile.Flag = dataValues[j];
 
                                 // tile.Invalidate();
                             }
@@ -241,24 +240,24 @@ namespace PixelVision8.Runner.Parsers
                             {
                                 var tileObject = objects[j] as Dictionary<string, object>;
 
-                                var column = (int) Math.Floor((float) (long) tileObject["x"] / 8);
-                                var row = (int) Math.Floor((float) (long) tileObject["y"] / 8) - 1;
+                                var column = (int)Math.Floor((float)(long)tileObject["x"] / 8);
+                                var row = (int)Math.Floor((float)(long)tileObject["y"] / 8) - 1;
 
                                 var tile = tilemapChip.GetTile(column, row);
 
-                                var gid = (uint) (long) tileObject["gid"];
+                                var gid = (uint)(long)tileObject["gid"];
 
                                 var idMask = (1 << 30) - 1;
 
-                                tile.spriteID = (int) (gid & idMask) - 1;
+                                tile.SpriteId = (int)(gid & idMask) - 1;
 
                                 var hMask = 1 << 31;
 
-                                tile.flipH = (hMask & gid) != 0;
+                                tile.FlipH = (hMask & gid) != 0;
 
                                 var vMask = 1 << 30;
 
-                                tile.flipV = (vMask & gid) != 0;
+                                tile.FlipV = (vMask & gid) != 0;
 
                                 var properties = tileObject["properties"] as List<object>;
 
@@ -269,11 +268,11 @@ namespace PixelVision8.Runner.Parsers
                                 {
                                     var prop = properties[k] as Dictionary<string, object>;
 
-                                    var propName = (string) prop["name"];
+                                    var propName = (string)prop["name"];
 
                                     if (propName == "flagID")
-                                        tile.flag = (int)(long)prop["value"];
-                                    else if (propName == "colorOffset") tile.colorOffset = (int) (long) prop["value"];
+                                        tile.Flag = (int)(long)prop["value"];
+                                    else if (propName == "colorOffset") tile.ColorOffset = (int)(long)prop["value"];
                                 }
 
                                 // tile.Invalidate();
@@ -297,6 +296,6 @@ namespace PixelVision8.Runner.Parsers
         }
 
 
-        
+
     }
 }

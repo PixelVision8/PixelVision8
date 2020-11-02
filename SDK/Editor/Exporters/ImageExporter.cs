@@ -18,8 +18,8 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.IO;
 using Microsoft.Xna.Framework;
+using System.IO;
 
 namespace PixelVision8.Runner.Exporters
 {
@@ -47,7 +47,7 @@ namespace PixelVision8.Runner.Exporters
         {
             base.CalculateSteps();
 
-            steps.Add(WriteBytes);
+            _steps.Add(WriteBytes);
         }
 
         protected virtual void WriteBytes()
@@ -61,7 +61,7 @@ namespace PixelVision8.Runner.Exporters
                 bytes = stream.ToArray();
             }
 
-            currentStep++;
+            CurrentStep++;
         }
     }
 }

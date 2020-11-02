@@ -43,7 +43,7 @@ namespace PixelVision8.Engine.Chips
             pages = 2;
             colorsPerSprite = 2;
             unique = true;
-           
+
         }
 
         public override void Deactivate()

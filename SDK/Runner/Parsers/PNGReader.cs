@@ -18,15 +18,16 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Parsers;
 using PixelVision8.Runner.Utils;
-using PixelVisionRunner.Utils;
+//using PixelVisionRunner.Utils;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using MonoGame.Framework.Utilities;
 
 namespace PixelVision8.Runner.Importers
 {
@@ -97,8 +98,8 @@ namespace PixelVision8.Runner.Importers
                 memoryStream.Read(numArray1, 0, 4);
                 var num = numArray1.ToUInt();
                 memoryStream.Position -= 4L;
-                var numArray2 = new byte[12 + (int) num];
-                memoryStream.Read(numArray2, 0, 12 + (int) num);
+                var numArray2 = new byte[12 + (int)num];
+                memoryStream.Read(numArray2, 0, 12 + (int)num);
                 ProcessChunk(numArray2);
             }
         }
@@ -150,8 +151,8 @@ namespace PixelVision8.Runner.Importers
             {
                 var headerChunk = new HeaderChunk();
                 headerChunk.Decode(chunkBytes);
-                width = (int) headerChunk.Width;
-                height = (int) headerChunk.Height;
+                width = (int)headerChunk.Width;
+                height = (int)headerChunk.Height;
 
                 bitsPerSample = headerChunk.BitDepth;
                 colorType = headerChunk.ColorType;

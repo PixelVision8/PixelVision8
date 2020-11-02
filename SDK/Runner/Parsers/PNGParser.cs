@@ -18,11 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
-using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PixelVision8.Runner.Parsers;
+using System.Collections.Generic;
+using System.IO;
 
 namespace com.pixelvision8.lite.SDK.Runner.Parsers
 {
@@ -30,7 +30,7 @@ namespace com.pixelvision8.lite.SDK.Runner.Parsers
     {
 
         public GraphicsDevice GraphicsDevice;
-        
+
         public string FilePath;
 
         public PNGParser(string filePath, GraphicsDevice graphicsDevice, string maskHex = "#FF00FF")
@@ -41,9 +41,9 @@ namespace com.pixelvision8.lite.SDK.Runner.Parsers
 
         public string MaskHex => "#FF00FF";
         public int width { get; private set; }
-        public int height { get; private set;}
+        public int height { get; private set; }
         public Color[] colorPixels { get; private set; }
-        public List<Color> colorPalette { get;  private set;}
+        public List<Color> colorPalette { get; private set; }
 
         public void ReadStream()
         {
@@ -55,26 +55,26 @@ namespace com.pixelvision8.lite.SDK.Runner.Parsers
                 // Set the width and height
                 width = t2D.Width;
                 height = t2D.Height;
-                
+
                 // Calculate the total pixels
                 var totalPixels = t2D.Width * t2D.Height;
-                
+
                 // Get the color pixels from the texture 2D
                 colorPixels = new Color[totalPixels];
                 t2D.GetData(colorPixels);
-                
+
                 // Create a palette made up of unique colors
                 colorPalette = new List<Color>();
                 for (int i = 0; i < totalPixels; i++)
                 {
-                    if(colorPalette.IndexOf(colorPixels[i]) == -1)
+                    if (colorPalette.IndexOf(colorPixels[i]) == -1)
                         colorPalette.Add(colorPixels[i]);
                 }
-                
+
             }
-        
+
         }
-        
+
         public string FileName
         {
             get => Path.GetFileName(FilePath);

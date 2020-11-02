@@ -1,4 +1,4 @@
-﻿﻿//   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,9 +18,9 @@
 // Shawn Rakowski - @shwany
 //
 
+using Microsoft.Xna.Framework.Audio;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.Xna.Framework.Audio;
 
 namespace PixelVision8.Engine.Audio
 {
@@ -54,7 +54,7 @@ namespace PixelVision8.Engine.Audio
         /// </summary>
         public virtual void Play(SoundData soundData, float? frequency = null)
         {
-            
+
             // TODO this probably doesn't work in the lite version
             // Stop any playing sound
             Stop();
@@ -69,10 +69,10 @@ namespace PixelVision8.Engine.Audio
                 using (var stream = new MemoryStream(soundData.bytes))
                 {
                     var soundEffect = SoundEffect.FromStream(stream);
-                
+
                     // var param = new SfxrParams();
                     // param.SetSettingsString(soundData.param);
-                
+
                     // TODO This should be cached?
                     _soundInstance = soundEffect.CreateInstance();
                     // TODO need to set the volume?

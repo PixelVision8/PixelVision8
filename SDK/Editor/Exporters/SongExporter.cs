@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
 using PixelVision8.Engine.Audio;
 using PixelVision8.Engine.Chips;
 
@@ -66,10 +65,10 @@ namespace PixelVision8.Runner.Exporters
         {
             base.CalculateSteps();
 
-            for (var i = 0; i < patterns.Length; i++) steps.Add(ExportSong);
+            for (var i = 0; i < patterns.Length; i++) _steps.Add(ExportSong);
 
-            steps.Add(MixdownAudioClips);
-            steps.Add(CreateSongByteData);
+            _steps.Add(MixdownAudioClips);
+            _steps.Add(CreateSongByteData);
         }
 
         public void ExportSong()
@@ -91,7 +90,7 @@ namespace PixelVision8.Runner.Exporters
             note_tick_s = 15.0f / songData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
             note_tick_s_odd = note_tick_s * swing_rhythm_factor; // small beat
 
-            var notedatalength = (int) (preRenderBitrate * 2f * note_tick_s_odd); // one note worth of stereo audio (x2)
+            var notedatalength = (int)(preRenderBitrate * 2f * note_tick_s_odd); // one note worth of stereo audio (x2)
 
             // TODO this is off. It is happening to fast and not matching up to the correct speed of the song.
             var beatlength = preRenderBitrate * note_tick_s_odd; // one note worth of time
@@ -184,7 +183,7 @@ namespace PixelVision8.Runner.Exporters
                     }
 
                     // TODO converted this to an int, may break?
-                    songdataCurrentPos += (int) beatlength; //notedatalength; this is x2 due to stereo
+                    songdataCurrentPos += (int)beatlength; //notedatalength; this is x2 due to stereo
 
                     //yield return null; // if here, min one frame PER note PER track PER loop: too slow
                 } // for all notes
@@ -192,20 +191,20 @@ namespace PixelVision8.Runner.Exporters
 
 
             currentPattern++;
-            currentStep++;
+            CurrentStep++;
         }
 
         private void MixdownAudioClips()
         {
             result = MixdownAudioClips(trackresult);
-            currentStep++;
+            CurrentStep++;
         }
 
         private void CreateSongByteData()
         {
             //TODO need to break this process up in to steps so it doesn't block the runner
             bytes = result.GenerateWav();
-            currentStep++;
+            CurrentStep++;
         }
 
         // pre-rendered waveforms - OPTIMIZATION - SLOW SLOW SLOW - FIXME

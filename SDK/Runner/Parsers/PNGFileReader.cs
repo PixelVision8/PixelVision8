@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Importers
@@ -28,7 +27,7 @@ namespace PixelVision8.Runner.Importers
         public string FilePath;
         public IFileLoadHelper FileLoadHelper;
 
-        public PNGFileReader(string filePath, IFileLoadHelper fileLoadHelper, string maskHex = "#FF00FF"):base(null, maskHex)
+        public PNGFileReader(string filePath, IFileLoadHelper fileLoadHelper, string maskHex = "#FF00FF") : base(null, maskHex)
         {
             FilePath = filePath;
             FileLoadHelper = fileLoadHelper;
@@ -40,10 +39,10 @@ namespace PixelVision8.Runner.Importers
             {
                 ReadBytes(FileLoadHelper.ReadAllBytes(FilePath));
             }
-        
+
             base.ReadStream();
         }
-        
+
         public override string FileName
         {
             get => FileLoadHelper.GetFileName(FilePath);

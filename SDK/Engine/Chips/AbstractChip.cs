@@ -34,34 +34,30 @@ namespace PixelVision8.Engine.Chips
     ///     // Create a new class that extends the abstract chip
     ///     public class CustomChip : AbstractChip
     ///     {
-    ///     // You need to override the Config method with your own custom setup code
-    ///     public override Config()
-    ///     {
-    ///     // Add custom logic here
+    ///         // You need to override the Config method with your own custom setup code
+    ///         public override Config()
+    ///         {
+    ///         // Add custom logic here
+    ///         }
     ///     }
-    ///     }
+    ///
     ///     // Create a new instance of your chip
     ///     var chip = new CustomChip();
+    ///
     ///     // When ready, activate the chip by passing in a reference to an engine instance
     ///     chip.Activate(engine);
+    /// 
     /// </example>
     public class AbstractChip
     {
         protected PixelVisionEngineLite engine;
 
         /// <summary>
-        ///     A flag for the ChipManager to determine if the chip
-        ///     should be part of the serialization process.
-        /// </summary>
-        /// <value>bool</value>
-        public bool export = true;
-
-        /// <summary>
         ///     Determines if the chip is enabled or active by the
         ///     ChipManager. If marked as active it may be deleted
         ///     when the ChipManager performs its cleanup.
         /// </summary>
-        public bool active { get; private set; }
+        public bool Active { get; private set; }
 
         /// <summary>
         ///     Activate is the beginning of the chip's life cycle.
@@ -73,7 +69,7 @@ namespace PixelVision8.Engine.Chips
         public virtual void Activate(PixelVisionEngineLite parent)
         {
             engine = parent;
-            active = true;
+            Active = true;
             Configure();
         }
 
@@ -96,7 +92,7 @@ namespace PixelVision8.Engine.Chips
         /// </summary>
         public virtual void Deactivate()
         {
-            active = false;
+            Active = false;
         }
 
         public virtual void Init()

@@ -18,14 +18,15 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using MoonSharp.Interpreter;
 using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using PixelVision8.Engine;
 
 namespace PixelVision8
 {
@@ -62,10 +63,10 @@ namespace PixelVision8
 
         public override void CalculateSteps()
         {
-            currentStep = 0;
+            CurrentStep = 0;
 
             if (LuaScript?.Globals["CalculateSteps"] == null) return;
-            
+
             try
             {
                 LuaScript.Call(LuaScript.Globals["CalculateSteps"]);
@@ -75,7 +76,7 @@ namespace PixelVision8
                 Console.WriteLine(e);
                 Exit();
             }
-            
+
         }
 
         public override void LoadSourceData()
@@ -97,7 +98,7 @@ namespace PixelVision8
         {
             stepQueue.Add(functionName);
 
-            steps.Add(CallStep);
+            _steps.Add(CallStep);
         }
 
         protected void CallStep()
@@ -106,15 +107,15 @@ namespace PixelVision8
             try
             {
                 // Console.WriteLine("calling " + stepQueue[currentStep]);
-                LuaScript.Call(LuaScript.Globals[stepQueue[currentStep]]);
+                LuaScript.Call(LuaScript.Globals[stepQueue[CurrentStep]]);
                 StepCompleted();
             }
             catch (Exception e)
             {
-                 Console.WriteLine(e);
+                Console.WriteLine(e);
                 Exit();
             }
-            
+
         }
 
         public void SetStringAsData(string value)
@@ -128,9 +129,9 @@ namespace PixelVision8
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                
+
             }
-            
+
         }
 
         public void SetImageAsData(Image image, string maskColor = "#FF00FF")
@@ -157,14 +158,14 @@ namespace PixelVision8
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                
+
             }
 
         }
 
         public void Exit()
         {
-            currentStep = totalSteps;
+            CurrentStep = totalSteps;
         }
     }
 }

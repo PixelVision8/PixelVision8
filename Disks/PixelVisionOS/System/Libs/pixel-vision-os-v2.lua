@@ -110,7 +110,7 @@ function PixelVisionOS:Draw()
     -- Draw modals on top
     self:DrawModal()
 
-    if(self.displayFPS == true) then
+    --if(self.displayFPS == true) then
 
         local fps = ReadFPS()
 
@@ -123,7 +123,7 @@ function PixelVisionOS:Draw()
         end
 
         DrawText(tostring(fps), Display().x - 10, Display().y - 10, DrawMode.Sprite, "medium", color, -4)
-    end
+    --end
 
 end
 

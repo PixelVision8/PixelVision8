@@ -18,8 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MoonSharp.Interpreter;
@@ -27,6 +25,8 @@ using PixelVision8.Engine.Audio;
 using PixelVision8.Runner;
 using PixelVision8.Runner.Services;
 using PixelVisionSDK.Engine;
+using System;
+using System.Collections.Generic;
 
 namespace PixelVision8.Engine.Chips
 {
@@ -44,7 +44,7 @@ namespace PixelVision8.Engine.Chips
                 return _luaScript;
             }
         }
-        
+
         protected virtual void RegisterLuaServices()
         {
             try
@@ -295,7 +295,7 @@ namespace PixelVision8.Engine.Chips
         {
             // Setup the GameChip
             base.Reset();
-            
+
             if (LuaScript.Globals["Reset"] != null) LuaScript.Call(LuaScript.Globals["Reset"]);
 
         }
@@ -357,7 +357,7 @@ namespace PixelVision8.Engine.Chips
         {
             DrawSprite(id, x, y, flipH, flipV, drawMode, colorOffset, SpriteChip);
         }
-        
+
         #endregion
     }
 }

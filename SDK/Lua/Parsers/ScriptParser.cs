@@ -39,13 +39,13 @@ namespace PixelVision8.Runner.Parsers
         {
             base.CalculateSteps();
 
-            steps.Add(LoadScript);
+            _steps.Add(LoadScript);
         }
 
         protected void LoadScript()
         {
             target?.AddScript(name, script);
-            currentStep++;
+            CurrentStep++;
         }
     }
 }

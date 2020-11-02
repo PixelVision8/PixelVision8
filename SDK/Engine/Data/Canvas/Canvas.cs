@@ -1,4 +1,4 @@
-﻿﻿﻿//   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,18 +18,18 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
+using System;
+using System.Collections.Generic;
 
 namespace PixelVision8.Engine
 {
-    
+
     public class Canvas : AbstractData, IDraw
     {
-        
+
         private readonly GameChipLite gameChip;
         private PixelData stroke = new PixelData();
         private PixelData pattern = new PixelData();
@@ -77,12 +77,12 @@ namespace PixelVision8.Engine
 
         public Canvas(int width, int height, GameChipLite gameChip = null)
         {
-            
+
             Resize(width, height);
-            
+
             // Make the canvas the default drawing surface
             currentTexture = defaultLayer;
-            
+
             this.gameChip = gameChip;
 
             // Create a pool of draw requests
@@ -109,11 +109,11 @@ namespace PixelVision8.Engine
             {
                 spriteSize = gameChip.SpriteSize();
             }
-            
+
         }
 
         public void Resize(int width, int height) => PixelDataUtil.Resize(defaultLayer, width, height);
-  
+
         private void ChangeTargetCanvas(int width, int height)
         {
             var getRequest = NextRequest();
@@ -127,7 +127,7 @@ namespace PixelVision8.Engine
             // newRequest.PixelData = textureData;
             newRequest.Bounds.Width = width;
             newRequest.Bounds.Height = height;
-            
+
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
         }
@@ -135,8 +135,8 @@ namespace PixelVision8.Engine
         private void ChangeTargetCanvasAction(CanvasDrawRequest drawRequest)
         {
             currentTexture = tmpLayer;
-            
-            if(drawRequest.Bounds.Width !=  currentTexture.Width || drawRequest.Bounds.Height != currentTexture.Height)
+
+            if (drawRequest.Bounds.Width != currentTexture.Width || drawRequest.Bounds.Height != currentTexture.Height)
                 PixelDataUtil.Resize(currentTexture, drawRequest.Bounds.Width, drawRequest.Bounds.Height);
             else
                 PixelDataUtil.Clear(currentTexture);
@@ -165,19 +165,19 @@ namespace PixelVision8.Engine
             }
 
             PixelDataUtil.SetPixels(newPixels, newRequest.PixelData);
-            
+
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
         }
-        
+
         private void SetStrokeAction(CanvasDrawRequest request)
         {
             if (stroke.Width != request.PixelData.Width || pattern.Height != request.PixelData.Height)
                 PixelDataUtil.Resize(stroke, request.PixelData.Width, request.PixelData.Height);
 
             PixelDataUtil.SetPixels(request.PixelData.Pixels, stroke);
-       }
- 
+        }
+
         public void SetPattern(int[] newPixels, int newWidth, int newHeight)
         {
             var getRequest = NextRequest();
@@ -240,7 +240,7 @@ namespace PixelVision8.Engine
 
             newRequest.Bounds.X = x0;
             newRequest.Bounds.Y = y0;
-            
+
             // Well be using the wid as the second point
             newRequest.Bounds.Width = x1;
             newRequest.Bounds.Height = y1;
@@ -249,14 +249,14 @@ namespace PixelVision8.Engine
             requestPool[currentRequest] = newRequest;
         }
 
-        
+
         private void DrawLineAction(CanvasDrawRequest drawRequest)
         {
             _x0 = drawRequest.Bounds.X;
             _y0 = drawRequest.Bounds.Y;
             _x1 = drawRequest.Bounds.Width;// - stroke.Width;
             _y1 = drawRequest.Bounds.Height;// - stroke.Width;
-            
+
             _counter = 0;
 
             _dx = _x1 - _x0;
@@ -284,8 +284,8 @@ namespace PixelVision8.Engine
             }
 
             _err = (_dx > _dy ? _dx : -_dy) / 2;
-            
-            for (;;)
+
+            for (; ; )
             {
                 SetStrokePixel(_x0, _y0);
 
@@ -312,17 +312,17 @@ namespace PixelVision8.Engine
 
             _tmpRect.X = x;
             _tmpRect.Y = y;
-            
+
             if (fill)
             {
-                ChangeTargetCanvas( rectWidth, rectHeight);
-                
+                ChangeTargetCanvas(rectWidth, rectHeight);
+
                 // Reset the tmp Rect to 0,0 when drawing into the new layer
                 _tmpRect.X = 0;
                 _tmpRect.Y = 0;
-                
+
             }
-            
+
             var getRequest = NextRequest();
 
             if (getRequest == null)
@@ -334,14 +334,14 @@ namespace PixelVision8.Engine
 
             newRequest.Bounds.X = _tmpRect.X;
             newRequest.Bounds.Y = _tmpRect.Y;
-            
+
             // Well be using the wid as the second point
             newRequest.Bounds.Width = rectWidth;
             newRequest.Bounds.Height = rectHeight;
 
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
-            
+
             // Check again to see if we need to fill the rectangle
             if (fill)
             {
@@ -350,61 +350,61 @@ namespace PixelVision8.Engine
                 {
                     // Trigger a flood fill
                     FloodFill(newRequest.Bounds.Center.X, newRequest.Bounds.Center.Y);
-            
+
                     // Copy pixels data to the main drawing surface
                     SaveTmpLayer(x, y, rectWidth, rectHeight);
-                    
+
                 }
             }
         }
-        
+
         public void DrawRectangleAction(CanvasDrawRequest request)
         {
             _tmpRect.X = request.Bounds.X;
             _tmpRect.Y = request.Bounds.Y;
             _tmpRect.Width = request.Bounds.Width - stroke.Width;
             _tmpRect.Height = request.Bounds.Height - stroke.Height;
-            
+
             // Top
-            request.Bounds.X =  _tmpRect.Left;
+            request.Bounds.X = _tmpRect.Left;
             request.Bounds.Y = _tmpRect.Top;
-            
+
             // Well be using the wid as the second point
             request.Bounds.Width = _tmpRect.Right;
             request.Bounds.Height = _tmpRect.Top;
-            
+
             DrawLineAction(request);
-            
+
             // Right
-            request.Bounds.X =  _tmpRect.Right;
+            request.Bounds.X = _tmpRect.Right;
             request.Bounds.Y = _tmpRect.Top;
-            
+
             // Well be using the wid as the second point
             request.Bounds.Width = _tmpRect.Right;
             request.Bounds.Height = _tmpRect.Bottom;
-            
+
             DrawLineAction(request);
-            
+
             // Bottom
-            request.Bounds.X =  _tmpRect.Left;
+            request.Bounds.X = _tmpRect.Left;
             request.Bounds.Y = _tmpRect.Bottom;
-            
+
             // Well be using the wid as the second point
             request.Bounds.Width = _tmpRect.Right;
             request.Bounds.Height = _tmpRect.Bottom;
-            
+
             DrawLineAction(request);
-            
+
             // Left
-            request.Bounds.X =  _tmpRect.Left;
+            request.Bounds.X = _tmpRect.Left;
             request.Bounds.Y = _tmpRect.Top;
-            
+
             // Well be using the wid as the second point
             request.Bounds.Width = _tmpRect.Left;
             request.Bounds.Height = _tmpRect.Bottom;
-            
+
             DrawLineAction(request);
-            
+
         }
 
 
@@ -416,7 +416,7 @@ namespace PixelVision8.Engine
                 return;
 
             var newRequest = getRequest;
-            
+
             newRequest.Action = "SaveTmpLayer";
             newRequest.x = x;
             newRequest.y = y;
@@ -424,26 +424,26 @@ namespace PixelVision8.Engine
             newRequest.Bounds.Y = 0;
             newRequest.Bounds.Width = blockWidth;
             newRequest.Bounds.Height = blockHeight;
-            
+
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
         }
 
         // private Rectangle _tmpRect = Rectangle.Empty;
-        
+
         private void SaveTmpLayerAction(CanvasDrawRequest request)
         {
             PixelDataUtil.MergePixels(tmpLayer, request.Bounds.X, request.Bounds.Y, request.Bounds.Width, request.Bounds.Height, defaultLayer, request.x, request.y);
-            
+
             currentTexture = defaultLayer;
         }
-        
+
         public void DrawEllipse(int x, int y, int ellipseWidth, int ellipseHeight, bool fill = false)
         {
-            
-            if(fill)
-                ChangeTargetCanvas( ellipseWidth, ellipseHeight);
-            
+
+            if (fill)
+                ChangeTargetCanvas(ellipseWidth, ellipseHeight);
+
             var getRequest = NextRequest();
 
             if (getRequest == null)
@@ -455,36 +455,36 @@ namespace PixelVision8.Engine
             newRequest.Bounds.Y = y;
             newRequest.Bounds.Width = ellipseWidth;
             newRequest.Bounds.Height = ellipseHeight;
-            
+
             newRequest.Fill = fill;
 
             newRequest.Action = "DrawEllipse";
-            
+
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
-            
-            if(fill)
+
+            if (fill)
                 SaveTmpLayer(x, y, ellipseWidth, ellipseHeight);
-            
+
             // Change back to default drawing surface
             // ChangeTargetCanvas(defaultLayer);
         }
 
-        
+
         public void DrawEllipseAction(CanvasDrawRequest request)
         {
-            
+
             // Save the x and y values to calculate below
             _x0 = request.Bounds.Left;
             _y0 = request.Bounds.Top;
             _x1 = request.Bounds.Right - stroke.Width;
             _y1 = request.Bounds.Bottom - stroke.Height;
-            
+
             if (request.Fill)
             {
                 request.Bounds.X = 0;
                 request.Bounds.Y = 0;
-                
+
                 _x0 = request.Bounds.X;
                 _y0 = request.Bounds.Y;
                 _x1 = request.Bounds.Right - stroke.Width;
@@ -495,7 +495,7 @@ namespace PixelVision8.Engine
             // _y0 += stroke.Height;
             // _x1 -= stroke.Width;
             // _y1 -= stroke.Height;
-            
+
             /* rectangular parameter enclosing the ellipse */
             _a = Math.Abs(_x1 - _x0);
             _b = Math.Abs(_y1 - _y0);
@@ -507,14 +507,14 @@ namespace PixelVision8.Engine
             if (_x0 > _x1)
             {
                 _x0 = _x1;
-                _x1 += (int) (_a);
+                _x1 += (int)(_a);
             } /* if called with swapped points */
 
             if (_y0 > _y1)
                 _y0 = _y1; /* .. exchange them */
 
-            _y0 += (int) ((_b + 1) / 2);
-            _y1 = (int) (_y0 - _b1); /* starting pixel */
+            _y0 += (int)((_b + 1) / 2);
+            _y1 = (int)(_y0 - _b1); /* starting pixel */
             _a = 8 * _a * _a;
             _b1 = 8 * _b * _b;
             do
@@ -554,19 +554,19 @@ namespace PixelVision8.Engine
                 // Save the center X & Y position before we save it back
                 _x1 = request.Bounds.Center.X;
                 _y1 = request.Bounds.Center.Y;
-                
+
                 if (request.Bounds.Width > stroke.Width && request.Bounds.Height > stroke.Height)
                 {
                     request.Bounds.X = _x1;
                     request.Bounds.Y = _y1;
-                    
+
                     FloodFillAction(request);
 
                 }
-                
+
             }
         }
-        
+
         // TODO need to draw pixel data to the display and route the sprite and text through it
 
         public void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, int colorOffset = 0)
@@ -583,11 +583,11 @@ namespace PixelVision8.Engine
             // We need at least 1 pixel to save the sprite ID
             if (newRequest.PixelData.Width != spriteSize.X || newRequest.PixelData.Height != spriteSize.Y)
             {
-                PixelDataUtil.Resize(newRequest.PixelData, spriteSize.X,spriteSize.X);
+                PixelDataUtil.Resize(newRequest.PixelData, spriteSize.X, spriteSize.X);
             }
 
             // Copy over the pixel
-            PixelDataUtil.SetPixels( gameChip.Sprite(id), newRequest.PixelData);
+            PixelDataUtil.SetPixels(gameChip.Sprite(id), newRequest.PixelData);
 
             newRequest.x = x;
             newRequest.y = y;
@@ -598,7 +598,7 @@ namespace PixelVision8.Engine
             newRequest.FlipH = flipH;
             newRequest.FlipV = flipV;
             newRequest.ColorOffset = colorOffset;
-            
+
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
         }
@@ -632,7 +632,7 @@ namespace PixelVision8.Engine
                 {
                     x = MathUtil.FloorToInt(i % width) * paddingW + startX;
                     y = MathUtil.FloorToInt(i / width) * paddingH + startY;
-                    
+
                     DrawSprite(id, x, y, flipH, flipV, colorOffset);
                 }
             }
@@ -640,7 +640,7 @@ namespace PixelVision8.Engine
 
         public void DrawText(string text, int x, int y, string font = "default", int colorOffset = 0, int spacing = 0)
         {
-            
+
             // This only works when the canvas has a reference to the gameChip
             if (gameChip == null) return;
 
@@ -661,11 +661,11 @@ namespace PixelVision8.Engine
                 // We need at least 1 pixel to save the sprite ID
                 if (newRequest.PixelData.Width != spriteSize.X || newRequest.PixelData.Height != spriteSize.Y)
                 {
-                    PixelDataUtil.Resize(newRequest.PixelData, spriteSize.X,spriteSize.X);
+                    PixelDataUtil.Resize(newRequest.PixelData, spriteSize.X, spriteSize.X);
                 }
 
                 // Copy over the pixel
-                PixelDataUtil.SetPixels( gameChip.FontChar(text[i], font), newRequest.PixelData);
+                PixelDataUtil.SetPixels(gameChip.FontChar(text[i], font), newRequest.PixelData);
 
                 newRequest.x = nextX;
                 newRequest.y = y;
@@ -676,15 +676,15 @@ namespace PixelVision8.Engine
                 newRequest.FlipH = false;
                 newRequest.FlipV = false;
                 newRequest.ColorOffset = colorOffset;
-            
+
                 // Save the changes to the request
                 requestPool[currentRequest] = newRequest;
-                
+
                 nextX += spriteSize.X + spacing;
             }
-            
+
         }
-        
+
         public void FloodFill(int x, int y)
         {
             var getRequest = NextRequest();
@@ -697,7 +697,7 @@ namespace PixelVision8.Engine
             newRequest.Action = "FloodFill";
             newRequest.Bounds.X = x;
             newRequest.Bounds.Y = y;
-            
+
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
         }
@@ -758,20 +758,20 @@ namespace PixelVision8.Engine
                 }
             }
         }
-        
+
         private int GetPixel(PixelData pixelData, int x, int y)
         {
             _size = pixelData.Height;
             y = (y % _size + _size) % _size;
             _size = pixelData.Width;
             x = (x % _size + _size) % _size;
-              
+
             return pixelData[x + pixelData.Width * y];
         }
 
         private void SetPixel(PixelData pixelData, int x, int y, int color)
         {
-            
+
             // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
             _size = pixelData.Height;
             y = (y % _size + _size) % _size;
@@ -779,7 +779,7 @@ namespace PixelVision8.Engine
             x = (x % _size + _size) % _size;
 
             pixelData[x + pixelData.Width * y] = color;
-            
+
         }
 
         /// <summary>
@@ -788,22 +788,22 @@ namespace PixelVision8.Engine
         /// <param name="canvas"></param>
         public void MergeCanvas(Canvas canvas, int colorOffset = 0, bool ignoreTransparent = false) => MergePixels(0, 0, canvas.width, canvas.height, canvas.GetPixels(), false, false, colorOffset, ignoreTransparent);
 
-        
+
         public virtual void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels,
             bool flipH = false, bool flipV = false, int colorOffset = 0, bool ignoreTransparent = true)
         {
 
             // Flatten the canvas
             Draw();
-         
-            if(_tmpPixelData.Width != blockWidth || _tmpPixelData.Height != blockHeight)
+
+            if (_tmpPixelData.Width != blockWidth || _tmpPixelData.Height != blockHeight)
                 _tmpPixelData.Resize(blockWidth, blockHeight);
 
             _tmpPixelData.Pixels = pixels;
 
             // _tmpRect.Width = blockWidth;
             // _tmpRect.Height = blockHeight;
-            
+
             PixelDataUtil.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, defaultLayer, x, y, flipH, flipV, colorOffset, ignoreTransparent);
         }
 
@@ -813,7 +813,7 @@ namespace PixelVision8.Engine
             var index = x + y * width;
 
             if (index >= defaultLayer.TotalPixels) return -1;
-            
+
             // Flatten the canvas
             Draw();
 
@@ -835,17 +835,17 @@ namespace PixelVision8.Engine
         {
             // Flatten the canvas
             Draw();
-            
+
             PixelDataUtil.CopyPixels(defaultLayer, x, y, blockWidth, blockHeight, ref data);
         }
 
-        public  void SetPixels(int x, int y, int blockWidth, int blockHeight, int[] pixels)
+        public void SetPixels(int x, int y, int blockWidth, int blockHeight, int[] pixels)
         {
             // Flatten the canvas
             Draw();
-            
+
             PixelDataUtil.SetPixels(pixels, x, y, blockWidth, blockHeight, defaultLayer);
-            
+
         }
 
         /// <summary>
@@ -862,7 +862,7 @@ namespace PixelVision8.Engine
             int maskColor = -1, int maskColorID = -1, int colorOffset = 0, Rectangle? viewport = null,
             int[] isolateColors = null)
         {
-            
+
             // This only works when the canvas has a reference to the gameChip
             if (gameChip == null) return;
 
@@ -900,21 +900,21 @@ namespace PixelVision8.Engine
             }
 
             // Covert the width and height into ints based on scale
-            var newWidth = (int) (tmpW * scale);
-            var newHeight = (int) (tmpH * scale);
+            var newWidth = (int)(tmpW * scale);
+            var newHeight = (int)(tmpH * scale);
 
             var destPixels = scale > 1 ? ResizePixels(srcPixels, tmpW, tmpH, newWidth, newHeight) : srcPixels;
 
             gameChip.DrawPixels(destPixels, x, y, newWidth, newHeight, false, false, drawMode, colorOffset);
         }
 
-        public  int[] GetPixels()
+        public int[] GetPixels()
         {
             // Flatten the canvas
             Draw();
-            
+
             return PixelDataUtil.GetPixels(defaultLayer);
-            
+
         }
 
         public virtual void Clear(int colorRef = -1, int x = 0, int y = 0, int? width = null, int? height = null)
@@ -925,12 +925,12 @@ namespace PixelVision8.Engine
                 var tmpHeight = height ?? 1;
 
                 var tmpPixels = new int[tmpWidth * tmpHeight];
-                
+
                 for (int i = 0; i < tmpPixels.Length; i++)
                 {
                     tmpPixels[i] = colorRef;
                 }
-                
+
                 SetPixels(x, y, tmpWidth, tmpHeight, tmpPixels);
             }
             else
@@ -938,22 +938,22 @@ namespace PixelVision8.Engine
                 PixelDataUtil.Clear(defaultLayer, colorRef);
                 ResetValidation();
             }
-            
+
         }
-        
-        public  int[] GetPixels(int x, int y, int blockWidth, int blockHeight)
+
+        public int[] GetPixels(int x, int y, int blockWidth, int blockHeight)
         {
             // Flatten the canvas
             Draw();
-            
+
             return PixelDataUtil.GetPixels(defaultLayer, x, y, blockWidth, blockHeight);
         }
-        
+
         public virtual void SetPixels(int[] pixels)
         {
             // Flatten the canvas
             Draw();
-            
+
             PixelDataUtil.SetPixels(pixels, defaultLayer);
 
             // Invalidate();
@@ -982,7 +982,7 @@ namespace PixelVision8.Engine
 
         public void Draw()
         {
-            if (invalid == false)
+            if (Invalid == false)
                 return;
 
             // Calculate the total requests based on the current request number

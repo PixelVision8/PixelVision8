@@ -19,10 +19,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using MoonSharp.Interpreter;
@@ -34,6 +30,11 @@ using PixelVision8.Runner.Importers;
 using PixelVision8.Runner.Parsers;
 using PixelVision8.Runner.Utils;
 using PixelVision8.Runner.Workspace;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using PixelVision8.Engine;
 
 namespace PixelVision8.Runner.Services
 {
@@ -45,7 +46,7 @@ namespace PixelVision8.Runner.Services
 
         private SoundEffectInstance currentSound;
         protected DesktopRunner desktopRunner;
-        
+
         /// <summary>
         ///     The LuaService exposes core Runner APIs to the Lua Game Chip
         /// </summary>
@@ -53,7 +54,7 @@ namespace PixelVision8.Runner.Services
         public LuaService(DesktopRunner runner)
         {
             this.runner = runner;
-            
+
             workspace = runner.workspaceService as WorkspaceServicePlus;
         }
 
@@ -81,7 +82,7 @@ namespace PixelVision8.Runner.Services
 
             return "undefined";
         }
-        
+
         /// <summary>
         ///     This service exposes some of the runner's APIs to Lua Games.
         /// </summary>
@@ -113,19 +114,19 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["RunBackgroundScript"] = new Func<string, string[], bool>(RunBackgroundScript);
             luaScript.Globals["BackgroundScriptData"] = new Func<string, string, string>(BackgroundScriptData);
             luaScript.Globals["CancelExport"] = new Action(CancelExport);
-            
+
             luaScript.Globals["PlayWav"] = new Action<WorkspacePath>(PlayWav);
             luaScript.Globals["StopWav"] = new Action(StopWav);
 
             luaScript.Globals["CreateDisk"] =
                 new Func<string, Dictionary<WorkspacePath, WorkspacePath>, WorkspacePath, int, Dictionary<string, object>>(CreateDisk);
-            
+
             luaScript.Globals["ClearLog"] = new Action(workspace.ClearLog);
             luaScript.Globals["ReadLogItems"] = new Func<List<string>>(workspace.ReadLogItems);
 
             // TODO these are deprecated
             luaScript.Globals["ReadTextFile"] = new Func<string, string>(ReadTextFile);
-            luaScript.Globals["SaveTextToFile"] = (SaveTextToFileDelegator) SaveTextToFile;
+            luaScript.Globals["SaveTextToFile"] = (SaveTextToFileDelegator)SaveTextToFile;
 
             // File helpers
             luaScript.Globals["NewImage"] = new Func<int, int, string[], int[], Image>(NewImage);
@@ -152,7 +153,7 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["ResizeColorMemory"] = new Action<int, int>(ResizeColorMemory);
 
         }
-        
+
         public void ResizeColorMemory(int newSize, int maxColors = -1)
         {
             // runner.ActiveEngine.ColorChip.maxColors = maxColors;
@@ -259,7 +260,7 @@ namespace PixelVision8.Runner.Services
 
         public Image ReadImage(WorkspacePath src, string maskHex = "#ff00ff", string[] colorRefs = null)
         {
-            
+
             PNGReader reader = null;
 
             using (var memoryStream = new MemoryStream())
@@ -275,10 +276,10 @@ namespace PixelVision8.Runner.Services
 
             var tmpColorChip = new ColorChip();
 
-            
+
 
             var imageParser = new SpriteImageParser(reader, tmpColorChip);
-            
+
             // Manually call each step
             imageParser.ParseImageData();
 
@@ -369,7 +370,7 @@ namespace PixelVision8.Runner.Services
             dest = workspace.UniqueFilePath(dest.AppendDirectory("Build")).AppendPath(name + ".pv8");
             var diskExporter = new DiskExporter(dest.Path, fileLoader, files, maxFileSize);
 
-            if (((DesktopRunner) runner).ExportService is GameDataExportService exportService)
+            if (((DesktopRunner)runner).ExportService is GameDataExportService exportService)
             {
 
                 exportService.Clear();
@@ -388,11 +389,11 @@ namespace PixelVision8.Runner.Services
                 diskExporter.Response["success"] = false;
                 diskExporter.Response["message"] = "Couldn't find the service to save a disk.";
             }
-            
+
             return diskExporter.Response;
         }
-        
+
         private delegate bool SaveTextToFileDelegator(string filePath, string text, bool autoCreate = false);
-    
+
     }
 }

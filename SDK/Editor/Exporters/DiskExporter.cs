@@ -18,10 +18,9 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
-using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Utils;
 using PixelVision8.Runner.Workspace;
+using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Exporters
 {
@@ -38,12 +37,13 @@ namespace PixelVision8.Runner.Exporters
         {
             base.CalculateSteps();
 
-            steps.Add(ValidateSize);
-;        }
+            _steps.Add(ValidateSize);
+            ;
+        }
 
         private void ValidateSize()
         {
-            
+
             if ((bool)Response["success"])
             {
 
@@ -58,16 +58,16 @@ namespace PixelVision8.Runner.Exporters
                     // Change the response message to reflect that the file is to big to save
                     Response["message"] =
                         "The game is too big to compile. You'll need to increase the game's size to create a new build with the current files.";
-                        
+
                     // Set the success back to false
                     Response["success"] = false;
 
                     bytes = null;
 
                 }
-                
+
             }
-            
+
             StepCompleted();
         }
     }

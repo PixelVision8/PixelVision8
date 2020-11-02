@@ -30,6 +30,7 @@
     <EmbeddedResource Include="Icon.bmp" />
     <EmbeddedResource Remove="Content\Effects\**" />
     <EmbeddedResource Remove="Content\PixelVisionOS\**" />
+    <EmbeddedResource Remove="Effects\**" />
     <EmbeddedResource Remove="SDK\Runner\Utils\GifUtils\**" />
     <EmbeddedResource Remove="SDK\Lua\**" />
   </ItemGroup>
@@ -58,7 +59,6 @@
     <Compile Include="SDK/Runner/Utils/FileLoadHelper.cs" />
     <Compile Include="SDK/Runner/IDisplayTarget.cs" />
     <Compile Include="SDK/Runner/GameRunner.cs" />
-    <Compile Include="SDK/Runner/Data/Image.cs" />
     <Compile Include="SDK/Runner/Data/DisplayTargetLite.cs" />
     <Compile Include="SDK/Runner/CSharpRunner.cs" />
     <Compile Include="SDK/Engine/Chips/IDraw.cs" />
@@ -89,6 +89,7 @@
     <Compile Include="SDK/Runner/Parsers/PNGParser.cs" />
     <Compile Include="SDK\Engine\Chips\Graphics\IDisplay.cs" />
     <Compile Include="SDK\Engine\Data\DrawRequestPixelData.cs" />
+    <Compile Include="SDK\Engine\Data\Image.cs" />
     <Compile Include="SDK\Engine\Utils\PixelDataUtil.cs" />
   </ItemGroup>
 
@@ -101,6 +102,7 @@
   <ItemGroup>
     <None Remove="Content\Effects\**" />
     <None Remove="Content\PixelVisionOS\**" />
+    <None Remove="Effects\**" />
     <None Remove="Content\bios.json" />
     <None Remove="SDK\Runner\Utils\GifUtils\**" />
     <None Remove="SDK\Lua\**" />

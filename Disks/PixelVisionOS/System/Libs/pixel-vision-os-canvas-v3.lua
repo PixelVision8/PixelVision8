@@ -54,7 +54,9 @@ function PixelVisionOS:CreateCanvas(rect, size, scale, colorOffset, toolTip, emp
 
   data.triggerOnFirstPress = function(tmpData)
 
-    self:CanvasPress(tmpData, true)
+    print("First Press")
+    
+    --self:CanvasPress(tmpData, true)
 
     -- Trigger fill here since it only happens on the fist press
     if(data.tool == "fill") then
@@ -68,9 +70,14 @@ function PixelVisionOS:CreateCanvas(rect, size, scale, colorOffset, toolTip, emp
 
       editorUI:Invalidate(data)
     end
-
+    
+    -- Trigger first press callback
     if(data.onFirstPress ~= nil) then
+
       data.onFirstPress()
+
+      editorUI:Invalidate(data)
+      
     end
 
   end
@@ -114,6 +121,7 @@ function PixelVisionOS:ChangeCanvasTool(data, toolName, cursorID)
     ReplaceColor(data.brushColorID, data.emptyColorID)
 
   else
+    
     data.currentCursorID = 8
     self:ResetCanvasStroke(data)
 
@@ -126,6 +134,7 @@ end
 
 function PixelVisionOS:SetCanvasPixels(data, pixelData)
   data.paintCanvas:SetPixels(pixelData)
+  editorUI:Invalidate(data)
 end
 
 function PixelVisionOS:UpdateCanvas(data, hitRect)
@@ -183,7 +192,7 @@ function PixelVisionOS:UpdateCanvas(data, hitRect)
 
         data.selectionTime = 0
           
-        data.selectionCanvas:LinePattern(2, data.selectionCounter)
+        --data.selectionCanvas:LinePattern(2, data.selectionCounter)
 
         end
       
@@ -243,7 +252,7 @@ function PixelVisionOS:UpdateCanvas(data, hitRect)
       data.brushDrawArgs[1] = (position.x * data.gridSize) + data.rect.x - data.borderOffset
       data.brushDrawArgs[2] = (position.y * data.gridSize) + data.rect.y - data.borderOffset
       
-      if(data.tool ~= "eyedropper") then
+      if(data.tool ~= "eyedropper" and data.mouseState ~= "dragging") then
         editorUI:NewDraw("DrawRect", data.brushDrawArgs)
       end
 
@@ -283,8 +292,8 @@ function PixelVisionOS:UpdateCanvas(data, hitRect)
   else
 
     if(data.inFocus == true) then
-      self:CanvasPress(data, true)
-      data.firstPress = true
+      --self:CanvasPress(data, true)
+      --data.firstPress = true
       -- If we are not in the button's rect, clear the focus
       editorUI:ClearFocus(data)
 
@@ -389,7 +398,7 @@ function PixelVisionOS:DrawOnCanvas(data, mousePos, toolID)
       data.tmpPaintCanvas:DrawLine(data.startPos.x, data.startPos.y, mousePos.x, mousePos.y, data.fill)
 
       -- force the paint canvas to redraw
-      data.paintCanvas:Invalidate()
+      --data.paintCanvas:Invalidate()
 
       editorUI:Invalidate(data)
 
@@ -409,7 +418,7 @@ function PixelVisionOS:DrawOnCanvas(data, mousePos, toolID)
       )
 
       -- force the paint canvas to redraw
-      data.paintCanvas:Invalidate()
+      --data.paintCanvas:Invalidate()
 
       editorUI:Invalidate(data)
 
@@ -428,7 +437,7 @@ function PixelVisionOS:DrawOnCanvas(data, mousePos, toolID)
       )
       
       -- force the paint canvas to redraw
-      data.paintCanvas:Invalidate()
+      --data.paintCanvas:Invalidate()
 
       editorUI:Invalidate(data)
       
@@ -544,10 +553,10 @@ function PixelVisionOS:CutPixels(data)
   data.tmpPaintCanvas:SetStroke(bgColor, data.defaultStrokeWidth)
 
   -- Change the stroke to a single pixel of white
-  data.tmpPaintCanvas:SetPattern(bgColor, data.defaultStrokeWidth)
+  data.tmpPaintCanvas:SetPattern({ bgColor }, data.defaultStrokeWidth, data.defaultStrokeWidth)
 
   -- Adjust right and bottom to account for 1 px border
-  data.tmpPaintCanvas:DrawSquare(selection.size.Left, selection.size.Top, selection.size.Right - 1, selection.size.Bottom -1, true)
+  data.tmpPaintCanvas:DrawRectangle(selection.size.Left, selection.size.Top, selection.size.Right - 1, selection.size.Bottom -1, true)
 
   return selection
     
@@ -577,7 +586,7 @@ function PixelVisionOS:CancelCanvasSelection(data, mergeSelection, action)
 
   if(mergeSelection ~= false and data.selectedPixelData ~= nil) then
     data.paintCanvas:SetPixels(data.selectRect.Left, data.selectRect.Top, data.selectedPixelData.size.Width, data.selectedPixelData.size.Height, data.selectedPixelData.pixelData)
-    data.paintCanvas:Invalidate()
+    --data.paintCanvas:Invalidate()
   end
  
   data.selectedPixelData = nil
@@ -607,30 +616,36 @@ function PixelVisionOS:ResetCanvasStroke(data)
 end
 
 function PixelVisionOS:InvalidateCanvas(data)
-
-  data.paintCanvas:Invalidate()
+  editorUI:Invalidate(data)
+  --data.paintCanvas:Invalidate()
 
 end
 
 function PixelVisionOS:RedrawCanvas(data)
 
 
-  if(data == nil) then
+  if(data == nil or data.invalid == false) then
     return
   end
 
   local bgColor = data.showBGColor and gameEditor:BackgroundColor() + 256 or data.emptyColorID
 
-  if(data.paintCanvas.invalid == true) then
+  print("Redraw canvas", data.showGrid)
+  
+  --print("data.paintCanvas.invalid", data.paintCanvas.invalid, "data.tmpPaintCanvas.invalid", data.tmpPaintCanvas.invalid)
+  
+  --if(data.paintCanvas.invalid == true) then
 
-    -- Draw the final canvas to the display on each frame
-    data.paintCanvas:DrawPixels(data.rect.x, data.rect.y, DrawMode.TilemapCache, data.scale, data.emptyColorID, bgColor)
+  -- Draw the final canvas to the display on each frame
+  data.paintCanvas:DrawPixels(data.rect.x, data.rect.y, DrawMode.TilemapCache, data.scale, data.emptyColorID, bgColor)
 
-    data.paintCanvas:ResetValidation()
+    --data.paintCanvas:ResetValidation()
 
-  end
+  --end
 
   if(data.tmpPaintCanvas.invalid == true) then
+    
+    --print("Redraw temp layer?")
 
     -- Draw the tmp layer on top of everything since it has the active drawing's pixel data
     data.tmpPaintCanvas:DrawPixels(data.rect.x, data.rect.y, DrawMode.TilemapCache, data.scale, bgColor, data.emptyColorID)
@@ -650,7 +665,7 @@ function PixelVisionOS:RedrawCanvas(data)
 
   -- TODO need to find a way to only draw this when the canvas has been invalidated
   if(data.showGrid == true) then
-    data.gridCanvas:DrawPixels(data.rect.x, data.rect.y, DrawMode.Sprite, 1, -1, -1)
+    data.gridCanvas:DrawPixels(data.rect.x, data.rect.y, DrawMode.TilemapCache, 1, -1, -1)
   end
 
   if(data.selectRect  ~= nil) then
@@ -661,7 +676,7 @@ function PixelVisionOS:RedrawCanvas(data)
     if(math.abs(data.selectRect.Width) > 0 and math.abs(data.selectRect.Height) > 0) then
   
       -- Adjust right and bottom by 1 so selection is inside of selected pixels
-      data.selectionCanvas:DrawSquare(data.selectRect.Left * data.scale, data.selectRect.Top * data.scale, data.selectRect.Right * data.scale - 1, data.selectRect.Bottom * data.scale -1, false)
+      data.selectionCanvas:DrawRectangle(data.selectRect.Left * data.scale, data.selectRect.Top * data.scale, data.selectRect.Right * data.scale - 1, data.selectRect.Bottom * data.scale -1, false)
   
       bgColor = data.showBGColor and gameEditor:BackgroundColor() + 256 or -1
   
@@ -669,6 +684,8 @@ function PixelVisionOS:RedrawCanvas(data)
     end
 
   end
+  
+  editorUI:ResetValidation(data)
 
 end
 
@@ -680,22 +697,27 @@ function PixelVisionOS:CanvasRelease(data, callAction)
 
   data.mouseState = data.mouseState == "released" and "up" or "released"
 
-  if(data.tmpPaintCanvas.invalid == true) then
+  --print("data.tmpPaintCanvas.invalid", data.tmpPaintCanvas.invalid);
+  
+  --if(data.invalid == true) then
 
-    data.tmpPaintCanvas:Draw()
-    
-    -- Merge the pixel data from the tmp canvas into the main canvas before it renders
-    data.paintCanvas:MergeCanvas(data.tmpPaintCanvas, 0, true)
+  --print("Redraw canvas")
+  --data.tmpPaintCanvas:Draw()
+  
+  -- Merge the pixel data from the tmp canvas into the main canvas before it renders
+  data.paintCanvas:MergeCanvas(data.tmpPaintCanvas, 0, true)
 
-    -- Clear the canvas
-    data.tmpPaintCanvas:Clear()
-
+  -- Clear the canvas
+  data.tmpPaintCanvas:Clear()
+  
     -- Normally clearing the canvas invalidates it but we want to reset it until its drawn in again
-    data.tmpPaintCanvas:ResetValidation()
+    --data.tmpPaintCanvas:ResetValidation()
 
     -- print("Merged tmp canvas")
 
-  end
+    --self:ResetValidation(data)
+    
+  --end
 
   if(data.selectRect ~= nil and (data.selectRect.Width == 0 or data.selectRect.Height == 0)) then
     data.selectRect = nil
@@ -731,26 +753,29 @@ function PixelVisionOS:CanvasRelease(data, callAction)
 
   if(oldPixelData ~= nil) then
     data.paintCanvas:SetPixels(oldPixelData)
-    data.paintCanvas:Invalidate()
+    --data.paintCanvas:Invalidate()
   end
 
 end
 
-function PixelVisionOS:CanvasPress(data, callAction)
-
-  data.tmpPaintCanvas:Invalidate()
-
-  if(data.onPress ~= nil and callAction ~= false) then
-
-    -- Trigger the onPress
-    data.onPress()
-
-  end
-
-end
+--function PixelVisionOS:CanvasPress(data, callAction)
+--
+--  --data.tmpPaintCanvas:Invalidate()
+--  
+--  editorUI:Invalidate(data)
+--  
+--  if(data.onPress ~= nil and callAction ~= false) then
+--
+--    -- Trigger the onPress
+--    data.onPress()
+--
+--  end
+--
+--end
 
 function PixelVisionOS:ResizeCanvas(data, size, scale, pixelData)
 
+  print("ResizeCanvas")
   if(data.selectRect ~= nil) then
     self:CancelCanvasSelection(data, true, false)
   end
@@ -759,7 +784,16 @@ function PixelVisionOS:ResizeCanvas(data, size, scale, pixelData)
   data.rect.h = size.y * scale
   
   -- Create a new canvas for drawing into
-  data.paintCanvas = NewCanvas(size.x, size.y)
+  if(data.paintCanvas == null) then
+    print("New canvas")
+    data.paintCanvas = NewCanvas(size.x, size.y)
+  elseif(data.paintCanvas.width ~= size.x or data.paintCanvas.height ~= size.y) then
+    print("Resize Canvas")
+    data.paintCanvas:Resize(size.x, size.y)
+  else
+    print("Clear Canvas")
+    data.paintCanvas:Clear()
+  end
 
   -- Create a temporary canvas
   data.tmpPaintCanvas = NewCanvas(size.x, size.y)
@@ -802,6 +836,8 @@ function PixelVisionOS:ResizeCanvas(data, size, scale, pixelData)
         data.gridCanvas:DrawLine(j*scale -1 , 0, j*scale -1 , data.rect.h)
       end
   end
+  
+  editorUI:Invalidate(data)
 
 end
 
@@ -841,13 +877,9 @@ function PixelVisionOS:CanvasColorOffset(data, value)
 
   data.colorOffset = value
 
-  -- TODO need to change brush color
-
 end
 
 function PixelVisionOS:GetCanvasPixelData(data)
-
-  -- TODO should this subtract the color offset?
 
   return data.paintCanvas:GetPixels()
 

@@ -18,12 +18,12 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Loaders;
 using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Workspace;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace PixelVision8.Runner.Utils
 {
@@ -75,7 +75,7 @@ namespace PixelVision8.Runner.Utils
 
                     return script;
                 }
-                    
+
             }
 
             _workspace.UpdateLog($"Could not load '{file}' file because it is either missing or empty.", LogType.Warning);

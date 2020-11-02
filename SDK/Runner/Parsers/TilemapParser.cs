@@ -1,4 +1,4 @@
-﻿﻿//   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -44,9 +44,9 @@ namespace PixelVision8.Runner.Parsers
 
             // TODO the image should be the right size from the beginning
 
-            if(autoResize)
+            if (autoResize)
                 tilemapChip.Resize(image.Columns, image.Rows);
-            
+
             // if(autoResize)
             // 
             var tmpColumns = image.Columns > tilemapChip.columns ? tilemapChip.columns : image.Columns;
@@ -54,14 +54,14 @@ namespace PixelVision8.Runner.Parsers
 
             // Make sure the tilemap matches the image size
             // tilemapChip.Resize(image.Columns, image.Rows);
-            
+
             for (var i = 0; i < totalSprites; i++)
             {
 
                 var pos = MathUtil.CalculatePosition(i, image.Columns);
 
-                if(pos.X < tmpColumns && pos.Y < tmpRows)
-                { 
+                if (pos.X < tmpColumns && pos.Y < tmpRows)
+                {
                     // Convert sprite to color index
                     ConvertColorsToIndexes(cps);
 
@@ -72,7 +72,7 @@ namespace PixelVision8.Runner.Parsers
 
             }
 
-            if(tmpColumns < image.Columns || tmpRows < image.Rows)
+            if (tmpColumns < image.Columns || tmpRows < image.Rows)
             {
                 image.Resize(tmpColumns * tmpColumns * spriteChip.width, tmpRows * spriteChip.height);
             }
@@ -95,7 +95,7 @@ namespace PixelVision8.Runner.Parsers
 
             var tile = tilemapChip.GetTile(x, y);
 
-            tile.spriteID = id;
+            tile.SpriteId = id;
 
         }
     }

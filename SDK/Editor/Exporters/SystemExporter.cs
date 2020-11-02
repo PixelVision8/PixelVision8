@@ -18,10 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Text;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Utils;
+using System.Text;
 
 namespace PixelVision8.Runner.Exporters
 {
@@ -42,48 +42,48 @@ namespace PixelVision8.Runner.Exporters
             base.CalculateSteps();
 
             // Create a new string builder
-            steps.Add(CreateStringBuilder);
-            
+            _steps.Add(CreateStringBuilder);
+
             // TODO all chips should export
 
             // Serialize Color Chip
             if (engine.ColorChip != null)
-                steps.Add(delegate { SerializeColorChip(engine.ColorChip); });
+                _steps.Add(delegate { SerializeColorChip(engine.ColorChip); });
 
             // Serialize Display
             if (engine.DisplayChip != null)
-                steps.Add(delegate { SerializeDisplay(engine.DisplayChip); });
+                _steps.Add(delegate { SerializeDisplay(engine.DisplayChip); });
 
             //             Serialize Controller
             if (engine.ControllerChip != null)
-                steps.Add(delegate { SerializeControllerChip(engine.ControllerChip); });
+                _steps.Add(delegate { SerializeControllerChip(engine.ControllerChip); });
 
             // Serialize Font
             if (engine.FontChip != null)
-                steps.Add(delegate { SerializeFontChip(engine.FontChip); });
+                _steps.Add(delegate { SerializeFontChip(engine.FontChip); });
 
             // Serialize Game
             if (engine.GameChip != null)
-                steps.Add(delegate { SerializeGameChip(((GameChip)engine.GameChip)); });
+                _steps.Add(delegate { SerializeGameChip(((GameChip)engine.GameChip)); });
 
             // Serialize Music
             if (((PixelVisionEngine)engine).MusicChip != null)
-                steps.Add(delegate { SerializeMusicChip(((PixelVisionEngine)engine).MusicChip); });
+                _steps.Add(delegate { SerializeMusicChip(((PixelVisionEngine)engine).MusicChip); });
 
             // Serialize Sound
             if (engine.SoundChip != null/* && engine.SoundChip.export*/)
-                steps.Add(delegate { SerializeSoundChip(engine.SoundChip as SfxrSoundChip); });
+                _steps.Add(delegate { SerializeSoundChip(engine.SoundChip as SfxrSoundChip); });
 
             // Serialize Sprite
             if (engine.SpriteChip != null)
-                steps.Add(delegate { SerializeSpriteChip(engine.SpriteChip); });
+                _steps.Add(delegate { SerializeSpriteChip(engine.SpriteChip); });
 
             // Serialize Tilemap
             if (engine.TilemapChip != null)
-                steps.Add(delegate { SerializeTilemapChip(engine.TilemapChip); });
+                _steps.Add(delegate { SerializeTilemapChip(engine.TilemapChip); });
 
             // Save the final string builder
-            steps.Add(CloseStringBuilder);
+            _steps.Add(CloseStringBuilder);
         }
 
         private void CreateStringBuilder()
@@ -95,7 +95,7 @@ namespace PixelVision8.Runner.Exporters
 
             JsonUtil.indentLevel = 1;
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void CloseStringBuilder()
@@ -114,7 +114,7 @@ namespace PixelVision8.Runner.Exporters
             //            Debug.Log("Save bytes");
             bytes = Encoding.UTF8.GetBytes(sb.ToString());
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void SerializeDisplay(DisplayChip display)
@@ -158,7 +158,7 @@ namespace PixelVision8.Runner.Exporters
 
             sb.Append(",");
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void SerializeColorChip(ColorChip colorChip)
@@ -202,7 +202,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("}");
             sb.Append(",");
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void SerializeControllerChip(IControllerChip controllerChip)
@@ -219,7 +219,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("}");
             sb.Append(",");
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void SerializeFontChip(FontChip fontChip)
@@ -244,7 +244,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("}");
             sb.Append(",");
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void SerializeGameChip(GameChip gameChip)
@@ -284,7 +284,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("}");
             sb.Append(",");
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void SerializeMusicChip(MusicChip musicChip)
@@ -324,7 +324,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("}");
             sb.Append(",");
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void SerializeSoundChip(SfxrSoundChip soundChip)
@@ -354,7 +354,7 @@ namespace PixelVision8.Runner.Exporters
             {
                 //                Console.WriteLine("Channel "+i +" type "+soundChip.ChannelType(i));
 
-                sb.Append((int) soundChip.ChannelType(i));
+                sb.Append((int)soundChip.ChannelType(i));
                 if (i < total - 1) sb.Append(",");
             }
 
@@ -364,7 +364,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("}");
             sb.Append(",");
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void SerializeSpriteChip(SpriteChip spriteChip)
@@ -433,7 +433,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("}");
             sb.Append(",");
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void SerializeTilemapChip(TilemapChip tilemapChip)
@@ -470,7 +470,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("}");
             sb.Append(",");
 
-            currentStep++;
+            CurrentStep++;
         }
     }
 }

@@ -39,11 +39,11 @@ namespace PixelVision8.Runner.Exporters
 
         public override void CalculateSteps()
         {
-            currentStep = 0;
+            CurrentStep = 0;
 
-            steps.Add(CopyPixels);
+            _steps.Add(CopyPixels);
 
-            steps.Add(WriteBytes);
+            _steps.Add(WriteBytes);
         }
 
         protected virtual void CopyPixels()
@@ -62,7 +62,7 @@ namespace PixelVision8.Runner.Exporters
                     colors[i] = maskColor;
             }
 
-            currentStep++;
+            CurrentStep++;
         }
     }
 }

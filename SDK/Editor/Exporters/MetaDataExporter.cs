@@ -18,10 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Text;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Utils;
+using System.Text;
 
 namespace PixelVision8.Runner.Exporters
 {
@@ -30,12 +30,12 @@ namespace PixelVision8.Runner.Exporters
         private readonly IEngine engine;
         private StringBuilder sb;
         private GameChip gameChip;
-        
+
         public MetadataExporter(string fileName, IEngine engine) : base(fileName)
         {
             this.engine = engine;
             gameChip = this.engine.GameChip as GameChip;
-            
+
             //            
             //            CalculateSteps();
         }
@@ -45,13 +45,13 @@ namespace PixelVision8.Runner.Exporters
             base.CalculateSteps();
 
             // Create a new string builder
-            steps.Add(CreateStringBuilder);
+            _steps.Add(CreateStringBuilder);
 
             // Serialize Game
-            if (engine.GameChip != null) steps.Add(delegate { SerializeGameChip(gameChip); });
+            if (engine.GameChip != null) _steps.Add(delegate { SerializeGameChip(gameChip); });
 
             // Save the final string builder
-            steps.Add(CloseStringBuilder);
+            _steps.Add(CloseStringBuilder);
         }
 
         private void CreateStringBuilder()
@@ -62,7 +62,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void CloseStringBuilder()
@@ -72,7 +72,7 @@ namespace PixelVision8.Runner.Exporters
 
             bytes = Encoding.UTF8.GetBytes(sb.ToString());
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void SerializeGameChip(GameChip gameChip)
@@ -123,7 +123,7 @@ namespace PixelVision8.Runner.Exporters
             }
 
 
-            currentStep++;
+            CurrentStep++;
         }
     }
 }

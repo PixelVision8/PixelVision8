@@ -18,13 +18,13 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Engine.Services;
+using PixelVision8.Runner.Workspace;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using PixelVision8.Engine.Services;
-using PixelVision8.Runner.Workspace;
 
 namespace PixelVision8.Runner.Services
 {
@@ -45,7 +45,7 @@ namespace PixelVision8.Runner.Services
         protected WorkspacePath logFilePath;
         protected LogService logService;
         public WorkspacePath osLibPath;
-        
+
         public List<string> requiredFiles = new List<string>
         {
             "data.json",
@@ -168,11 +168,11 @@ namespace PixelVision8.Runner.Services
                         stream.Dispose();
                     }
                 }
-                
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
         }
 
         internal string GetPhysicalPath(WorkspacePath filePath)
@@ -183,7 +183,7 @@ namespace PixelVision8.Runner.Services
 
             if (segments[0] == "Game")
             {
-                return GetPhysicalPath(((SubFileSystem) currentDisk).Root.AppendFile(filePath.EntityName));
+                return GetPhysicalPath(((SubFileSystem)currentDisk).Root.AppendFile(filePath.EntityName));
             }
             else if (segments[0] == "Disks")
             {
@@ -241,7 +241,7 @@ namespace PixelVision8.Runner.Services
                 // Look through all of the share libraries to find the correct path
                 foreach (var sharedLibDirectory in SharedLibDirectories())
                 {
-                    if(Exists(sharedLibDirectory.AppendFile(filePath.EntityName)))
+                    if (Exists(sharedLibDirectory.AppendFile(filePath.EntityName)))
                     {
 
                         path = sharedLibDirectory.AppendFile(filePath.EntityName).Path;
@@ -355,7 +355,7 @@ namespace PixelVision8.Runner.Services
             var filePath = WorkspacePath.Parse(path);
             var exits = Exists(filePath);
 
-            string[]files = null;
+            string[] files = null;
 
             if (exits)
             {
@@ -369,14 +369,14 @@ namespace PixelVision8.Runner.Services
                         using (var stream = OpenFile(filePath, FileAccess.ReadWrite))
                         {
                             if (stream is FileStream)
-                                currentDisk = ZipFileSystem.Open((FileStream) stream);
+                                currentDisk = ZipFileSystem.Open((FileStream)stream);
                             else
                                 currentDisk = ZipFileSystem.Open(stream, path);
 
                             stream.Close();
                         }
                 }
-                
+
                 // We need to get a list of the current mounts
 
                 if (Mounts is SortedList<WorkspacePath, IFileSystem> mounts)
@@ -401,9 +401,9 @@ namespace PixelVision8.Runner.Services
         }
 
         public virtual string[] GetGameEntities(WorkspacePath path) => (from p in GetEntities(path)
-                where fileExtensions.Any(val => p.EntityName.EndsWith(val))
-                select p.Path).ToArray();
-        
+                                                                        where fileExtensions.Any(val => p.EntityName.EndsWith(val))
+                                                                        select p.Path).ToArray();
+
         public virtual List<WorkspacePath> SharedLibDirectories()
         {
             // Create paths to the System/Libs and Workspace/Libs folder
@@ -416,7 +416,7 @@ namespace PixelVision8.Runner.Services
             var workspaceLibsPath = WorkspacePath.Root.AppendDirectory("Workspace").AppendDirectory("System")
                 .AppendDirectory("Libs");
 
-            if(Exists(workspaceLibsPath))
+            if (Exists(workspaceLibsPath))
                 paths.Insert(0, workspaceLibsPath);
 
             return paths;

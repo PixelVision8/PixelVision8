@@ -1,4 +1,4 @@
-﻿﻿//   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,14 +18,14 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
 using PixelVision8.Engine.Audio;
 using PixelVision8.Engine.Utils;
+using System;
+using System.Collections.Generic;
 
 namespace PixelVision8.Engine.Chips
 {
-    
+
     /// <summary>
     ///     The <see cref="SfxrSoundChip" /> is responsible for playing back sound
     ///     effects in the engine. It's powered by SFxr.

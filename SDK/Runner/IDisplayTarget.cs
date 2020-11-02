@@ -28,10 +28,10 @@ namespace PixelVision8.Runner
         void ResetResolution(int gameWidth, int gameHeight, int overScanX = 0, int overScanY = 0);
         void RebuildColorPalette(ColorChip colorChip);
         void Render(int[] pixels, int defaultColor = 0);
-        int monitorScale { get; set; }
-        bool fullscreen { get; set; }
-        bool stretchScreen { get; set; }
-        bool cropScreen { get; set; }
+        int MonitorScale { get; set; }
+        bool Fullscreen { get; set; }
+        bool StretchScreen { get; set; }
+        bool CropScreen { get; set; }
         Vector2 Scale { get; }
     }
 }

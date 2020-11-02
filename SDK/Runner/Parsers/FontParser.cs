@@ -18,12 +18,27 @@
 // Shawn Rakowski - @shwany
 //
 
+
+/* Unmerged change from project 'PixelVision8.CoreDesktop'
+Before:
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine.Chips;
+After:
+using Microsoft.Xna.Framework;
+using System.Collections.Chips;
 using PixelVision8.Engine.Utils;
+using System;
+using System.Collections.Chips;
+*/
+using PixelVision8.Engine.Chips;
+using PixelVision8.Engine.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using PixelVision8.Engine;
 
 namespace PixelVision8.Runner.Parsers
 {

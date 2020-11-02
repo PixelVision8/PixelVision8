@@ -18,18 +18,18 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
 using PixelVision8.Runner.Parsers;
+using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Exporters
 {
     public class AbstractExporter : AbstractParser, IAbstractExporter
     {
-        
+
         public AbstractExporter(string fileName)
         {
             this.fileName = fileName;
-            
+
             Response = new Dictionary<string, object>
             {
                 {"success", false},

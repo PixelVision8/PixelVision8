@@ -21,14 +21,14 @@
 //  
 //  @author Zeh Fernando
 
+using Microsoft.Xna.Framework.Audio;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.Xna.Framework.Audio;
 
 namespace PixelVision8.Engine.Audio
 {
-    public class  SfxrSynthChannel : SoundChannel
+    public class SfxrSynthChannel : SoundChannel
     {
         private const int LO_RES_NOISE_PERIOD = 8; // Should be < 32
         //        private float _overtoneFalloff; // Minimum frequency before stopping
@@ -134,7 +134,8 @@ namespace PixelVision8.Engine.Audio
 
         public float[] data;
         public SfxrSynthChannel(int samples = 0, int channels = 1, int frequency = 22050)
-        {this.samples = samples;
+        {
+            this.samples = samples;
             this.channels = channels;
             this.frequency = frequency;
             data = new float[samples];
@@ -182,13 +183,13 @@ namespace PixelVision8.Engine.Audio
 
                 if (frequency.HasValue) parameters.startFrequency = frequency.Value;
 
-                if (parameters.invalid) CacheSound();
-                
+                if (parameters.Invalid) CacheSound();
+
                 // Only play if there is a sound instance
                 _soundInstance?.Play();
             }
 
-            
+
         }
 
         /// <summary>
@@ -232,7 +233,7 @@ namespace PixelVision8.Engine.Audio
         //     return base.GenerateWav();
         // }
         //
-        
+
         public void SetData(float[] data, int offsetSamples = 0)
         {
             var total = data.Length;
@@ -260,14 +261,14 @@ namespace PixelVision8.Engine.Audio
         /// <returns>Wave data (in .wav format) as a byte array</returns>
         public virtual byte[] GenerateWav()
         {
-            
+
             Stop();
 
             Reset(true);
 
             Resize(Convert.ToInt32(_envelopeFullLength));
             SynthWave(data, 0, _envelopeFullLength);
-            
+
             var __sampleRate = 22050u;
             var __bitDepth = 8u;
 
@@ -313,9 +314,9 @@ namespace PixelVision8.Engine.Audio
             // Average bytes per second
             writeUintToBytes(wav, ref bytePos, bytesPerSec, Endian.LITTLE_ENDIAN);
             // Block align
-            writeShortToBytes(wav, ref bytePos, (short) blockAlign, Endian.LITTLE_ENDIAN);
+            writeShortToBytes(wav, ref bytePos, (short)blockAlign, Endian.LITTLE_ENDIAN);
             // Significant bits per sample
-            writeShortToBytes(wav, ref bytePos, (short) __bitDepth, Endian.LITTLE_ENDIAN);
+            writeShortToBytes(wav, ref bytePos, (short)__bitDepth, Endian.LITTLE_ENDIAN);
 
             // Data Chunk
 
@@ -337,7 +338,7 @@ namespace PixelVision8.Engine.Audio
                     bufferSample /= sampleCount;
                     sampleCount = 0;
 
-                    writeBytes(wav, ref bytePos, new[] {(byte) (Math.Round(bufferSample * 127f) + 128)},
+                    writeBytes(wav, ref bytePos, new[] { (byte)(Math.Round(bufferSample * 127f) + 128) },
                         Endian.LITTLE_ENDIAN);
 
                     bufferSample = 0f;
@@ -358,7 +359,7 @@ namespace PixelVision8.Engine.Audio
         protected void writeShortToBytes(byte[] __bytes, ref int __position, short __newShort, Endian __endian)
         {
             writeBytes(__bytes, ref __position,
-                new byte[2] {(byte) ((__newShort >> 8) & 0xff), (byte) (__newShort & 0xff)}, __endian);
+                new byte[2] { (byte)((__newShort >> 8) & 0xff), (byte)(__newShort & 0xff) }, __endian);
         }
 
         /// <summary>
@@ -487,7 +488,7 @@ namespace PixelVision8.Engine.Audio
             if (p.changeSpeed == 1.0f)
                 _changeLimit = 0;
             else
-                _changeLimit = (int) ((1f - p.changeSpeed) * (1f - p.changeSpeed) * 20000f + 32f);
+                _changeLimit = (int)((1f - p.changeSpeed) * (1f - p.changeSpeed) * 20000f + 32f);
 
             //            if (p.changeAmount2 > 0f)
             //                _changeAmount2 = 1f - p.changeAmount2 * p.changeAmount2 * 0.9f;
@@ -502,7 +503,7 @@ namespace PixelVision8.Engine.Audio
             //            else
             //                _changeLimit2 = (int) ((1f - p.changeSpeed2) * (1f - p.changeSpeed2) * 20000f + 32f);
 
-            _changeLimit = (int) (_changeLimit * ((1f - p.changeRepeat + 0.1f) / 1.1f));
+            _changeLimit = (int)(_changeLimit * ((1f - p.changeRepeat + 0.1f) / 1.1f));
             //            _changeLimit2 = (int) (_changeLimit2 * ((1f - p.changeRepeat + 0.1f) / 1.1f));
 
             if (__totalReset)
@@ -568,7 +569,7 @@ namespace PixelVision8.Engine.Audio
                 _envelopeLength1 = p.sustainTime * p.sustainTime * 100000.0f;
                 _envelopeLength2 = p.decayTime * p.decayTime * 100000.0f + 10f;
                 _envelopeLength = _envelopeLength0;
-                _envelopeFullLength = (uint) (_envelopeLength0 + _envelopeLength1 + _envelopeLength2);
+                _envelopeFullLength = (uint)(_envelopeLength0 + _envelopeLength1 + _envelopeLength2);
 
                 _envelopeOverLength0 = 1.0f / _envelopeLength0;
                 _envelopeOverLength1 = 1.0f / _envelopeLength1;
@@ -604,7 +605,7 @@ namespace PixelVision8.Engine.Audio
                 if (p.repeatSpeed == 0.0)
                     _repeatLimit = 0;
                 else
-                    _repeatLimit = (int) ((1.0 - p.repeatSpeed) * (1.0 - p.repeatSpeed) * 20000) + 32;
+                    _repeatLimit = (int)((1.0 - p.repeatSpeed) * (1.0 - p.repeatSpeed) * 20000) + 32;
             }
         }
 
@@ -619,7 +620,7 @@ namespace PixelVision8.Engine.Audio
             _finished = false;
 
             int i, j, n;
-            var l = (int) __length;
+            var l = (int)__length;
             float tempPhase, sampleTotal;
 
             for (i = 0; i < l; i++)
@@ -686,10 +687,10 @@ namespace PixelVision8.Engine.Audio
                 if (_vibratoAmplitude > 0)
                 {
                     _vibratoPhase += _vibratoSpeed;
-                    _periodTemp = _period * (1.0f + (float) Math.Sin(_vibratoPhase) * _vibratoAmplitude);
+                    _periodTemp = _period * (1.0f + (float)Math.Sin(_vibratoPhase) * _vibratoAmplitude);
                 }
 
-                _periodTempInt = (int) _periodTemp;
+                _periodTempInt = (int)_periodTemp;
                 if (_periodTemp < 8) _periodTemp = _periodTempInt = 8;
 
                 // Sweeps the square duty
@@ -739,7 +740,7 @@ namespace PixelVision8.Engine.Audio
                 if (_phaser)
                 {
                     _phaserOffset += _phaserDeltaOffset;
-                    _phaserInt = (int) _phaserOffset;
+                    _phaserInt = (int)_phaserOffset;
                     if (_phaserInt < 0)
                         _phaserInt = -_phaserInt;
                     else if (_phaserInt > 1023) _phaserInt = 1023;
@@ -801,7 +802,7 @@ namespace PixelVision8.Engine.Audio
                             break;
                         case WaveType.Noise:
                             // Noise
-                            _sample = _noiseBuffer[(uint) (tempPhase * 32f / _periodTempInt) % 32];
+                            _sample = _noiseBuffer[(uint)(tempPhase * 32f / _periodTempInt) % 32];
                             break;
                         case WaveType.Triangle:
                             // Triangle
@@ -870,9 +871,9 @@ namespace PixelVision8.Engine.Audio
 
                 // Compressor
                 if (_superSample > 0f)
-                    _superSample = (float) Math.Pow(_superSample, _compressionFactor);
+                    _superSample = (float)Math.Pow(_superSample, _compressionFactor);
                 else
-                    _superSample = -(float) Math.Pow(-_superSample, _compressionFactor);
+                    _superSample = -(float)Math.Pow(-_superSample, _compressionFactor);
 
                 // Clipping if too loud
                 if (_superSample < -1f)

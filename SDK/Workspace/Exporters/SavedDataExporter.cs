@@ -18,11 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Linq;
-using System.Text;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Utils;
+using System.Linq;
+using System.Text;
 
 namespace PixelVision8.Runner.Exporters
 {
@@ -45,13 +45,13 @@ namespace PixelVision8.Runner.Exporters
             base.CalculateSteps();
 
             // Create a new string builder
-            steps.Add(CreateStringBuilder);
+            _steps.Add(CreateStringBuilder);
 
 
-            steps.Add(SaveGameData);
+            _steps.Add(SaveGameData);
 
             // Save the final string builder
-            steps.Add(CloseStringBuilder);
+            _steps.Add(CloseStringBuilder);
         }
 
         private void SaveGameData()
@@ -83,7 +83,7 @@ namespace PixelVision8.Runner.Exporters
                 }
             }
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void CreateStringBuilder()
@@ -103,7 +103,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void CloseStringBuilder()
@@ -121,7 +121,7 @@ namespace PixelVision8.Runner.Exporters
 
             bytes = Encoding.UTF8.GetBytes(sb.ToString());
 
-            currentStep++;
+            CurrentStep++;
         }
     }
 }

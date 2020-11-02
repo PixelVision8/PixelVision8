@@ -18,11 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
+using Microsoft.Xna.Framework;
+using PixelVision8.Engine.Utils;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Engine.Chips
 {

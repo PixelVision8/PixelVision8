@@ -19,21 +19,47 @@
 //
 
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using com.pixelvision8.lite.SDK.Runner.Parsers;
 using Microsoft.Xna.Framework.Graphics;
 using PixelVision8.Engine;
 using PixelVision8.Runner.Parsers;
+
+/* Unmerged change from project 'PixelVision8.CoreDesktop'
+Before:
 using PixelVision8.Runner.Utils;
+After:
+using PixelVision8.Runner.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+*/
+using PixelVision8.Runner.Utils;
+using System;
+using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Services
+
+/* Unmerged change from project 'PixelVision8.CoreDesktop'
+Before:
 {
     
     public class Loader
     {
         
+        protected readonly List<IAbstractParser> parsers = new List<IAbstractParser>();
+After:
+{
+
+    public class Loader
+    {
+
+        protected readonly List<IAbstractParser> parsers = new List<IAbstractParser>();
+*/
+{
+
+    public class Loader
+    {
+
         protected readonly List<IAbstractParser> parsers = new List<IAbstractParser>();
         protected int currentParserID;
         public bool Completed => currentParserID >= TotalParsers;
@@ -44,7 +70,7 @@ namespace PixelVision8.Runner.Services
         private readonly IFileLoadHelper _fileLoadHelper;
 
         private GraphicsDevice _graphicsDevice;
-        
+
         public Loader(IFileLoadHelper fileLoadHelper, GraphicsDevice graphicsDevice)
         {
             _fileLoadHelper = fileLoadHelper;
@@ -65,13 +91,24 @@ namespace PixelVision8.Runner.Services
             List<string> wavs = new List<string>();
 
             Array.Sort(files);
-            
+
             foreach (var file in files)
             {
                 if (file.EndsWith("colors.png"))
                 {
+
+/* Unmerged change from project 'PixelVision8.CoreDesktop'
+Before:
                     var imageParser = new PNGParser(file, _graphicsDevice, engine.ColorChip.maskColor);
                     
+                    AddParser(new ColorParser(imageParser, engine.ColorChip));
+After:
+                    var imageParser = new PNGParser(file, _graphicsDevice, engine.ColorChip.maskColor);
+
+                    AddParser(new ColorParser(imageParser, engine.ColorChip));
+*/
+                    var imageParser = new PNGParser(file, _graphicsDevice, engine.ColorChip.maskColor);
+
                     AddParser(new ColorParser(imageParser, engine.ColorChip));
                 }
                 // Look for sprites
@@ -81,7 +118,7 @@ namespace PixelVision8.Runner.Services
 
                     AddParser(new SpriteImageParser(imageParser, engine.ColorChip, engine.SpriteChip));
                 }
-                
+
                 // Look for fonts
                 else if (file.EndsWith(".font.png"))
                 {
@@ -103,10 +140,21 @@ namespace PixelVision8.Runner.Services
                 {
                     wavs.Add(file);
                 }
+
+/* Unmerged change from project 'PixelVision8.CoreDesktop'
+Before:
             }
             
             AddParser(new WavParser(wavs.ToArray(), _fileLoadHelper, engine ));
-            
+After:
+            }
+
+            AddParser(new WavParser(wavs.ToArray(), _fileLoadHelper, engine ));
+*/
+            }
+
+            AddParser(new WavParser(wavs.ToArray(), _fileLoadHelper, engine));
+
         }
 
         public void AddParser(IAbstractParser parser)
@@ -129,7 +177,7 @@ namespace PixelVision8.Runner.Services
         {
             if (Completed)
             {
-                parsers.Clear(); 
+                parsers.Clear();
                 return;
             }
 

@@ -30,14 +30,6 @@ namespace PixelVision8.Engine.Utils
         // public static int[] tmpPixelData = new int[8 * 8];
         private static readonly StringBuilder tmpSB = new StringBuilder();
 
-        public static int CalculateTotalSprites(int width, int height, int spriteWidth, int spriteHeight)
-        {
-            //TODO this needs to be double checked at different size sprites
-            var cols = MathUtil.FloorToInt(width / spriteWidth);
-            var rows = MathUtil.FloorToInt(height / spriteHeight);
-            return cols * rows;
-        }
-
         public static void FlipSpriteData(ref int[] pixelData, int sWidth, int sHeight, bool flipH = false,
             bool flipV = false)
         {

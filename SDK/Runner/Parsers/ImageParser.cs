@@ -25,14 +25,14 @@ namespace PixelVision8.Runner.Parsers
         protected IImageParser Parser;
 
         public ImageParser(IImageParser parser)
-        { 
+        {
             Parser = parser;
         }
 
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-            steps.Add(ParseImageData);
+            _steps.Add(ParseImageData);
         }
 
         public void ParseImageData()

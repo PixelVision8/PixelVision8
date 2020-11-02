@@ -18,11 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace PixelVision8.Engine.Chips
 {
@@ -74,7 +74,7 @@ namespace PixelVision8.Engine.Chips
 
     public class Controller
     {
-        
+
         public GamePadState CurrentState;
         public Dictionary<Buttons, Keys> KeyboardMap;
 
@@ -150,25 +150,25 @@ namespace PixelVision8.Engine.Chips
             foreach (var key in currentKeyboardState.GetPressedKeys())
             {
 
-                var pv8Key = (Keys) (int) key;
+                var pv8Key = (Keys)(int)key;
 
                 if (JustPressed(pv8Key))
                 {
-                    
+
                     downSince = DateTime.Now;
                     repChar = pv8Key;
 
                     // BuildInputString(pv8Key);
-                    
+
                 }
                 else if (GetKeyUp(pv8Key))
                 {
-                    
+
                     if (repChar == pv8Key) repChar = null;
 
                 }
 
-                var tmpKey = (Keys) (int) key;
+                var tmpKey = (Keys)(int)key;
 
                 if (repChar != null && repChar == pv8Key && currentKeyboardState.IsKeyDown(tmpKey))
                 {
@@ -267,7 +267,7 @@ namespace PixelVision8.Engine.Chips
 
             var player1 = getPlayer(0);
             player1.KeyboardMap = player1Map;
-            
+
             var player2 = getPlayer(1);
             player2.KeyboardMap = player2Map;
         }
@@ -389,7 +389,7 @@ namespace PixelVision8.Engine.Chips
         {
             mouseWheelPos.X = currentMouseState.HorizontalScrollWheelValue - previousMouseState.HorizontalScrollWheelValue;
             mouseWheelPos.Y = currentMouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue;
-            
+
             return mouseWheelPos;
         }
 

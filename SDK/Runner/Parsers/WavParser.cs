@@ -19,7 +19,6 @@
 
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
-using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Parsers
@@ -39,8 +38,8 @@ namespace PixelVision8.Runner.Parsers
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-            steps.Add(ParseWavData);
-            steps.Add(ConfigureSamples);
+            _steps.Add(ParseWavData);
+            _steps.Add(ConfigureSamples);
         }
 
         public void ParseWavData()
@@ -51,14 +50,14 @@ namespace PixelVision8.Runner.Parsers
                 soundChip.AddSample(name, _fileLoadHelper.ReadAllBytes(file));
             }
 
-            currentStep++;
+            CurrentStep++;
         }
 
         public void ConfigureSamples()
         {
             soundChip.RefreshSamples();
 
-            currentStep++;
+            CurrentStep++;
         }
     }
 }

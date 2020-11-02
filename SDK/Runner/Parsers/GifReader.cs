@@ -18,11 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
+using Microsoft.Xna.Framework;
+using PixelVision8.Runner.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -47,9 +47,9 @@ namespace PixelVision8.Runner.Parsers
         {
             base.CalculateSteps();
 
-            steps.Add(CreateGif);
-            steps.Add(DecodeGif);
-            steps.Add(FinishDecoding);
+            _steps.Add(CreateGif);
+            _steps.Add(DecodeGif);
+            _steps.Add(FinishDecoding);
         }
 
         public void CreateGif()
@@ -59,63 +59,63 @@ namespace PixelVision8.Runner.Parsers
 
         public void DecodeGif()
         {
-            
+
             decoded = new Dictionary<ImageDescriptor, byte[]>();
             frameCount = parser.Blocks.Count(i => i is ImageDescriptor);
             // var decodeProgress = new DecodeProgress { FrameCount = frameCount };
-        
+
             for (var i = 0; i < parser.Blocks.Count; i++)
             {
                 var imageDescriptor = parser.Blocks[i] as ImageDescriptor;
-        
+
                 if (imageDescriptor == null) continue;
-        
+
                 var data = (TableBasedImageData)parser.Blocks[i + 1 + imageDescriptor.LocalColorTableFlag];
-        
+
                 // ThreadPool.QueueUserWorkItem(context =>
                 // {
                 //     if (decodeProgress.Completed || decodeProgress.Exception != null) return;
                 //
-                    byte[] colorIndexes;
-        
-                    // try
-                    // {
-                        colorIndexes = LzwDecoder.Decode(data.ImageData, data.LzwMinimumCodeSize);
-                    // }
-                    // catch (Exception e)
-                    // {
-                    //     decodeProgress.Exception = e;
-                    //     decodeProgress.Completed = true;
-                    //     onProgress(decodeProgress);
-                    //     return;
-                    // }
-        
-                    // lock (decoded)
-                    // {
-                        decoded.Add(imageDescriptor, colorIndexes);
-                        // decodeProgress.Progress++;
-        
-                        // if (decoded.Count == frameCount)
-                        // {
-                        //     try
-                        //     {
-                        //         decodeProgress.Gif = CompleteDecode(parser, decoded);
-                        //         decodeProgress.Completed = true;
-                        //     }
-                        //     catch (Exception e)
-                        //     {
-                        //         decodeProgress.Exception = e;
-                        //         decodeProgress.Completed = true;
-                        //     }
-                        // }
-                        //
-                        // onProgress(decodeProgress);
-                    // }
+                byte[] colorIndexes;
+
+                // try
+                // {
+                colorIndexes = LzwDecoder.Decode(data.ImageData, data.LzwMinimumCodeSize);
+                // }
+                // catch (Exception e)
+                // {
+                //     decodeProgress.Exception = e;
+                //     decodeProgress.Completed = true;
+                //     onProgress(decodeProgress);
+                //     return;
+                // }
+
+                // lock (decoded)
+                // {
+                decoded.Add(imageDescriptor, colorIndexes);
+                // decodeProgress.Progress++;
+
+                // if (decoded.Count == frameCount)
+                // {
+                //     try
+                //     {
+                //         decodeProgress.Gif = CompleteDecode(parser, decoded);
+                //         decodeProgress.Completed = true;
+                //     }
+                //     catch (Exception e)
+                //     {
+                //         decodeProgress.Exception = e;
+                //         decodeProgress.Completed = true;
+                //     }
+                // }
+                //
+                // onProgress(decodeProgress);
+                // }
                 // });
             }
         }
-        
-        
+
+
 
         private void FinishDecoding()
         {
@@ -127,7 +127,7 @@ namespace PixelVision8.Runner.Parsers
             state = new Color[Width * Height];
             filled = false;
             frames = new List<GifFrame>();
-        
+
             for (var j = 0; j < parser.Blocks.Count; j++)
             {
                 if (parser.Blocks[j] is GraphicControlExtension)
@@ -137,15 +137,15 @@ namespace PixelVision8.Runner.Parsers
                 else if (parser.Blocks[j] is ImageDescriptor)
                 {
                     var imageDescriptor = (ImageDescriptor)parser.Blocks[j];
-        
+
                     if (imageDescriptor.InterlaceFlag == 1) throw new NotSupportedException("Interlacing is not supported!");
-        
+
                     // var colorTable = imageDescriptor.LocalColorTableFlag == 1 ? GetUnityColors((ColorTable) parser.Blocks[j + 1]) : globalColorTable;
                     var colorIndexes = decoded[imageDescriptor];
                     var frame = DecodeFrame(gcExtension, imageDescriptor, colorIndexes, filled, Width, Height, state);
-        
+
                     frames.Add(frame);
-        
+
                     //if (frames.Count == 1 && globalColorTable != null)
                     //{
                     //	if (gcExtension == null || gcExtension.TransparentColorFlag == 0 || gcExtension.TransparentColorIndex != parser.LogicalScreenDescriptor.BackgroundColorIndex)
@@ -153,7 +153,7 @@ namespace PixelVision8.Runner.Parsers
                     //		backgroundColor = globalColorTable[parser.LogicalScreenDescriptor.BackgroundColorIndex];
                     //	}
                     //}
-        
+
                     switch (frame.DisposalMethod)
                     {
                         case DisposalMethod.NoDisposalSpecified:
@@ -174,7 +174,7 @@ namespace PixelVision8.Runner.Parsers
                     }
                 }
             }
-        
+
             // return new Gif(frames);
         }
 
@@ -226,6 +226,6 @@ namespace PixelVision8.Runner.Parsers
 
     }
 
-    
+
 
 }

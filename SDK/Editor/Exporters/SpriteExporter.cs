@@ -18,12 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
-using PixelVision8.Runner.Parsers;
+using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Exporters
 {
@@ -97,8 +96,8 @@ namespace PixelVision8.Runner.Exporters
             var height = spriteChip.textureHeight;
             var pixelData = new int[width * height];
 
-            PixelDataUtil.CopyPixels(spriteChip.PixelData, 0, 0 , width, height, ref pixelData);
-            
+            PixelDataUtil.CopyPixels(spriteChip.PixelData, 0, 0, width, height, ref pixelData);
+
             // spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
 
             exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, imageExporter,

@@ -18,10 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using PixelVision8.Engine.Chips;
+using System.Collections.Generic;
 using Buttons = PixelVision8.Engine.Chips.Buttons;
 
 namespace PixelVision8.Engine

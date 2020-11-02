@@ -18,9 +18,9 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.IO;
 using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Workspace;
+using System.IO;
 
 namespace PixelVision8.Runner.Utils
 {

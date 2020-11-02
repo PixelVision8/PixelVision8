@@ -18,14 +18,14 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.Collections.Generic;
-using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using PixelVision8.Engine;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Runner.Data;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace PixelVision8.Runner
 {
@@ -33,17 +33,16 @@ namespace PixelVision8.Runner
     {
 
         protected static bool _mute;
-        protected static int lastVolume;
-        protected static int muteVolume;
-        protected bool autoShutdown = false;
-        protected TimeSpan elapsedTime = TimeSpan.Zero;
-        protected int frameCounter;
-        // protected RunnerMode mode;
-        protected int timeDelta;
-        public IDisplayTarget displayTarget;
-        protected GraphicsDeviceManager graphics;
-        protected bool resolutionInvalid = true;
-        protected IEngine tmpEngine;
+        protected static int _lastVolume;
+        protected static int _muteVolume;
+        protected bool _autoShutdown = false;
+        protected TimeSpan _elapsedTime = TimeSpan.Zero;
+        protected int _frameCounter;
+        protected int _timeDelta;
+        public IDisplayTarget DisplayTarget;
+        protected GraphicsDeviceManager _graphics;
+        protected bool _resolutionInvalid = true;
+        protected IEngine _tmpEngine;
 
         public GameRunner()
         {
@@ -51,7 +50,7 @@ namespace PixelVision8.Runner
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
-            graphics = new GraphicsDeviceManager(this);
+            _graphics = new GraphicsDeviceManager(this);
 
             //            IsFixedTimeStep = true;
         }
@@ -70,7 +69,6 @@ namespace PixelVision8.Runner
                     typeof(ControllerChip).FullName,
                     typeof(DisplayChip).FullName,
                     typeof(SoundChip).FullName,
-                    // typeof(MusicChip).FullName
                 };
 
                 return chips;
@@ -83,42 +81,42 @@ namespace PixelVision8.Runner
 
         public virtual int Volume(int? value = null)
         {
-            if (value.HasValue) 
-                lastVolume = value.Value;
+            if (value.HasValue)
+                _lastVolume = value.Value;
 
-            SoundEffect.MasterVolume = lastVolume / 100f;
+            SoundEffect.MasterVolume = _lastVolume / 100f;
 
-            if (_mute == true && lastVolume > 0)
+            if (_mute == true && _lastVolume > 0)
             {
-                muteVolume = lastVolume;
+                _muteVolume = _lastVolume;
             }
 
-            return lastVolume;
+            return _lastVolume;
         }
 
         public virtual bool Mute(bool? value = null)
         {
             if (value.HasValue)
             {
-                
+
                 _mute = value.Value;
 
                 if (_mute)
                 {
-                    muteVolume = lastVolume;
+                    _muteVolume = _lastVolume;
 
                     Volume(0);
                 }
                 else
                 {
                     // Restore volume to halfway if un-muting and last  value was 0
-                    if (muteVolume < 5)
+                    if (_muteVolume < 5)
                     {
-                        muteVolume = 50;
+                        _muteVolume = 50;
                     }
-                    Volume(muteVolume);
+                    Volume(_muteVolume);
                 }
-                
+
             }
 
             return SoundEffect.MasterVolume == 0 || _mute;
@@ -134,13 +132,12 @@ namespace PixelVision8.Runner
         {
             if (scale.HasValue)
             {
-                displayTarget.monitorScale = scale.Value; //MathHelper.Clamp(, 1, 6);
+                DisplayTarget.MonitorScale = scale.Value;
 
-                //                ResetResolution();
                 InvalidateResolution();
             }
 
-            return displayTarget.monitorScale;
+            return DisplayTarget.MonitorScale;
         }
 
 
@@ -148,45 +145,36 @@ namespace PixelVision8.Runner
         {
             if (value.HasValue)
             {
-                displayTarget.fullscreen = value.Value;
+                DisplayTarget.Fullscreen = value.Value;
 
                 InvalidateResolution();
             }
 
             return
-                displayTarget
-                    .fullscreen;
+                DisplayTarget.Fullscreen;
         }
 
         public virtual bool StretchScreen(bool? value = null)
         {
             if (value.HasValue)
             {
-                displayTarget.stretchScreen = value.Value;
+                DisplayTarget.StretchScreen = value.Value;
                 InvalidateResolution();
             }
 
             return
-                displayTarget
-                    .stretchScreen;
+                DisplayTarget.StretchScreen;
         }
 
         public virtual bool CropScreen(bool? value = null)
         {
             if (value.HasValue)
             {
-                displayTarget.cropScreen = value.Value;
+                DisplayTarget.CropScreen = value.Value;
                 InvalidateResolution();
             }
 
-            return
-                displayTarget
-                    .cropScreen;
-        }
-
-        public virtual void DisplayWarning(string message)
-        {
-            // TODO this should be routed down to the game to show an error of some sort
+            return DisplayTarget.CropScreen;
         }
 
         protected virtual void ConfigureRunner()
@@ -197,17 +185,17 @@ namespace PixelVision8.Runner
         public virtual void ConfigureDisplayTarget()
         {
             // Create the default display target
-            displayTarget = new DisplayTargetLite(graphics, 512, 480);
+            DisplayTarget = new DisplayTargetLite(_graphics, 512, 480);
         }
 
         public void InvalidateResolution()
         {
-            resolutionInvalid = true;
+            _resolutionInvalid = true;
         }
 
         public void ResetResolutionValidation()
         {
-            resolutionInvalid = false;
+            _resolutionInvalid = false;
         }
 
         protected override void Update(GameTime gameTime)
@@ -216,26 +204,26 @@ namespace PixelVision8.Runner
             // error when the Runner loads up and starts before we've had a chance to instantiate the new engine instance.
             if (ActiveEngine == null) return;
 
-            elapsedTime += gameTime.ElapsedGameTime;
+            _elapsedTime += gameTime.ElapsedGameTime;
 
-            if (elapsedTime > TimeSpan.FromSeconds(1))
+            if (_elapsedTime > TimeSpan.FromSeconds(1))
             {
-                elapsedTime -= TimeSpan.FromSeconds(1);
+                _elapsedTime -= TimeSpan.FromSeconds(1);
 
                 // Make sure the game chip has the current fps value
-                ActiveEngine.GameChip.fps = frameCounter;
+                ActiveEngine.GameChip.fps = _frameCounter;
 
-                frameCounter = 0;
+                _frameCounter = 0;
             }
 
             if (RunnerActive)
             {
-                timeDelta = (int) (gameTime.ElapsedGameTime.TotalSeconds * 1000);
+                _timeDelta = (int)(gameTime.ElapsedGameTime.TotalSeconds * 1000);
 
                 // It's important that we pass in the Time.deltaTime to the PixelVisionEngine. It is passed along to any Chip that registers itself with 
                 // the ChipManager to be updated. The ControlsChip, GamesChip, and others use this time delta to synchronize their actions based on the 
                 // current frame rate.
-                ActiveEngine.Update(timeDelta);
+                ActiveEngine.Update(_timeDelta);
             }
         }
 
@@ -243,10 +231,10 @@ namespace PixelVision8.Runner
         {
             if (ActiveEngine == null) return;
 
-            frameCounter++;
+            _frameCounter++;
 
             // Clear with black and draw the runner.
-            graphics.GraphicsDevice.Clear(Color.Black);
+            _graphics.GraphicsDevice.Clear(Color.Black);
 
             // Now it's time to call the PixelVisionEngine's Draw() method. This Draw() call propagates throughout all of the Chips that have 
             // registered themselves as being able to draw such as the GameChip and the DisplayChip.
@@ -256,14 +244,14 @@ namespace PixelVision8.Runner
 
             if (ActiveEngine.ColorChip.invalid)
             {
-                displayTarget.RebuildColorPalette(ActiveEngine.ColorChip);
+                DisplayTarget.RebuildColorPalette(ActiveEngine.ColorChip);
                 ActiveEngine.ColorChip.ResetValidation();
             }
 
-            displayTarget.Render(ActiveEngine.DisplayChip.Pixels, ActiveEngine.ColorChip.backgroundColor);
+            DisplayTarget.Render(ActiveEngine.DisplayChip.Pixels, ActiveEngine.ColorChip.backgroundColor);
 
             // displayTarget.spriteBatch.End();
-            if (resolutionInvalid)
+            if (_resolutionInvalid)
             {
                 ResetResolution();
                 ResetResolutionValidation();
@@ -272,25 +260,18 @@ namespace PixelVision8.Runner
 
         public virtual void ConfigureEngine(Dictionary<string, string> metaData = null)
         {
-            
+
             // It's now time to set up a new instance of the PixelVisionEngine. Here we are passing in the string 
             // names of the chips it should use.
-            tmpEngine = CreateNewEngine(DefaultChips);
-            // tmpEngine.Init();
-            
+            _tmpEngine = CreateNewEngine(DefaultChips);
+
             // ConfigureKeyboard();
             ConfigureControllers();
         }
 
-        // protected virtual void ConfigureKeyboard()
-        // {
-        //     
-        //     // tmpEngine.ControllerChip.RegisterKeyInput();
-        // }
-
         protected virtual void ConfigureControllers()
         {
-            tmpEngine.ControllerChip.RegisterControllers();
+            _tmpEngine.ControllerChip.RegisterControllers();
         }
 
         public virtual void ShutdownActiveEngine()
@@ -335,20 +316,18 @@ namespace PixelVision8.Runner
 
             var gameWidth = displayChip.Width;
             var gameHeight = displayChip.Height;
-            // var overScanX = displayChip.OverscanXPixels;
-            // var overScanY = displayChip.OverscanYPixels;
-
-            displayTarget.ResetResolution(gameWidth, gameHeight);
+            
+            DisplayTarget.ResetResolution(gameWidth, gameHeight);
             IsMouseVisible = false;
 
             // Update the mouse to use the new monitor scale
-            var scale = displayTarget.Scale;
+            var scale = DisplayTarget.Scale;
             ActiveEngine.ControllerChip.MouseScale(scale.X, scale.Y);
         }
 
         public virtual void RunGame()
         {
-            ActivateEngine(tmpEngine);
+            ActivateEngine(_tmpEngine);
         }
     }
 }

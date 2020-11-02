@@ -357,7 +357,7 @@ namespace PixelVision8.Runner.Utils
 
                                     for (var i = 0; i < 4; i++) hex[i] = NextChar;
 
-                                    s.Append((char) Convert.ToInt32(new string(hex), 16));
+                                    s.Append((char)Convert.ToInt32(new string(hex), 16));
                                     break;
                             }
 
@@ -441,13 +441,13 @@ namespace PixelVision8.Runner.Utils
                 else if ((asStr = value as string) != null)
                     SerializeString(asStr);
                 else if (value is bool)
-                    builder.Append((bool) value ? "true" : "false");
+                    builder.Append((bool)value ? "true" : "false");
                 else if ((asList = value as IList) != null)
                     SerializeArray(asList);
                 else if ((asDict = value as IDictionary) != null)
                     SerializeObject(asDict);
                 else if (value is char)
-                    SerializeString(new string((char) value, 1));
+                    SerializeString(new string((char)value, 1));
                 else
                     SerializeOther(value);
             }
@@ -544,7 +544,7 @@ namespace PixelVision8.Runner.Utils
                 // They always have, I'm just letting you know.
                 // Previously floats and doubles lost precision too.
                 if (value is float)
-                    builder.Append(((float) value).ToString("R"));
+                    builder.Append(((float)value).ToString("R"));
                 else if (value is int
                          || value is uint
                          || value is long

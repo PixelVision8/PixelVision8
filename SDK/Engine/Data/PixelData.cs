@@ -44,20 +44,8 @@ namespace PixelVision8.Engine
 
         public int this[in int i]
         {
-            get
-            {
-                // if (i > TotalPixels) 
-                //     return -1;
-                
-                return Pixels[i]; 
-            }
-            set
-            {
-                // if (i > TotalPixels) 
-                //     return;
-                
-                Pixels[i] = value;
-            }
+            get => Pixels[i];
+            set => Pixels[i] = value;
         }
 
         public override string ToString() => "{Width:" + Width + " Height:" + Height + " Total Pixels:" + TotalPixels + "}";

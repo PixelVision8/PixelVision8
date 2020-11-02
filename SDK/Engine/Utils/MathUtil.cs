@@ -18,14 +18,14 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace PixelVision8.Engine.Utils
 {
     public static class MathUtil
     {
-        public static readonly Random random = new Random();
+        public static readonly Random Random = new Random();
 
         /// <summary>
         ///     Returns Ceil value as an int.
@@ -33,7 +33,7 @@ namespace PixelVision8.Engine.Utils
         /// <param name="value"></param>
         public static int CeilToInt(float value)
         {
-            return (int) Math.Ceiling(value);
+            return (int)Math.Ceiling(value);
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace PixelVision8.Engine.Utils
         /// <param name="value"></param>
         public static int FloorToInt(float value)
         {
-            return (int) Math.Floor(value);
+            return (int)Math.Floor(value);
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace PixelVision8.Engine.Utils
         {
             return new Point(index % width, index / width);
         }
-        
+
         /// <summary>
         ///     Converts an index into an X and Y position to help when working with 1D arrays that
         ///     represent 2D data.
@@ -121,14 +121,14 @@ namespace PixelVision8.Engine.Utils
             point.X = index % width;
             point.Y = index / width;
         }
-        
+
         public static int Clamp(int value, int min, int max)
         {
             value = value > max ? max : value;
             value = value < min ? min : value;
             return value;
         }
-        
+
 
     }
 }

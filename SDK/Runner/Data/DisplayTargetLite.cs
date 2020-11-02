@@ -1,4 +1,4 @@
-﻿﻿//   
+﻿//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,12 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PixelVision8.Engine.Chips;
 using PixelVision8.Engine.Utils;
+using System;
 
 namespace PixelVision8.Runner.Data
 {
@@ -42,15 +41,15 @@ namespace PixelVision8.Runner.Data
         private Color[] _pixelData = new Color[0];
         private int _colorID;
         private int _i;
-        
-        // TODO there is some conflict with this and the scale getter
+
         protected Vector2 _scale = new Vector2(1, 1);
-        
-        public bool stretchScreen { get; set; }
-        public bool cropScreen { get; set; } = true;
-        public bool fullscreen { get; set; } = false;
+
+        public bool StretchScreen { get; set; }
+        public bool CropScreen { get; set; } = true;
+        public bool Fullscreen { get; set; } = false;
+
         public Vector2 Scale => _scale;
-        
+
         public DisplayTargetLite(GraphicsDeviceManager graphicManager, int width, int height)
         {
             this.GraphicManager = graphicManager;
@@ -68,7 +67,7 @@ namespace PixelVision8.Runner.Data
             throw new NotImplementedException();
         }
 
-        public int monitorScale
+        public int MonitorScale
         {
             get => _monitorScale;
             set
@@ -107,22 +106,22 @@ namespace PixelVision8.Runner.Data
             VisibleRect.Width = renderTexture.Width - overScanX;
             VisibleRect.Height = renderTexture.Height - overScanY;
 
-            var tmpMonitorScale = fullscreen ? 1 : monitorScale;
+            var tmpMonitorScale = Fullscreen ? 1 : MonitorScale;
 
             // Calculate the monitor's resolution
-            var displayWidth = fullscreen
+            var displayWidth = Fullscreen
                 ? GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width
                 : _monitorWidth *
                   tmpMonitorScale;
-            var displayHeight = fullscreen
+            var displayHeight = Fullscreen
                 ? GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height
                 : _monitorHeight * tmpMonitorScale;
-            
-            // Calculate the game scale
-            _scale.X = (float) displayWidth / VisibleRect.Width;
-            _scale.Y = (float) displayHeight / VisibleRect.Height;
 
-            if (!stretchScreen)
+            // Calculate the game scale
+            _scale.X = (float)displayWidth / VisibleRect.Width;
+            _scale.Y = (float)displayHeight / VisibleRect.Height;
+
+            if (!StretchScreen)
             {
                 // To preserve the aspect ratio,
                 // use the smaller scale factor.
@@ -133,16 +132,16 @@ namespace PixelVision8.Runner.Data
             offset.X = (displayWidth - VisibleRect.Width * Scale.X) * .5f;
             offset.Y = (displayHeight - VisibleRect.Height * Scale.Y) * .5f;
 
-            if (cropScreen && !fullscreen)
+            if (CropScreen && !Fullscreen)
             {
-                displayWidth = Math.Min(displayWidth, (int) (VisibleRect.Width * Scale.X));
-                displayHeight = Math.Min(displayHeight, (int) (VisibleRect.Height * Scale.Y));
+                displayWidth = Math.Min(displayWidth, (int)(VisibleRect.Width * Scale.X));
+                displayHeight = Math.Min(displayHeight, (int)(VisibleRect.Height * Scale.Y));
                 offset.X = 0;
                 offset.Y = 0;
             }
 
             // Apply changes
-            GraphicManager.IsFullScreen = fullscreen;
+            GraphicManager.IsFullScreen = Fullscreen;
 
             if (GraphicManager.PreferredBackBufferWidth != displayWidth ||
                 GraphicManager.PreferredBackBufferHeight != displayHeight)
@@ -164,7 +163,7 @@ namespace PixelVision8.Runner.Data
             CachedColors = ColorUtils.ConvertColors(colorChip.hexColors, colorChip.maskColor, colorChip.debugMode,
                 colorChip.backgroundColor);
         }
-        
+
         public virtual void Render(int[] pixels, int defaultColor)
         {
 
@@ -173,17 +172,17 @@ namespace PixelVision8.Runner.Data
                 return;
 
             SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
-            
+
             for (_i = 0; _i < _totalPixels; _i++)
             {
                 _colorID = pixels[_i];
                 _pixelData[_i] = CachedColors[_colorID < 0 ? defaultColor : _colorID];
             }
-            
+
             renderTexture.SetData(_pixelData);
             SpriteBatch.Draw(renderTexture, offset, VisibleRect, Color.White, 0f, Vector2.Zero, Scale, SpriteEffects.None, 1f);
             SpriteBatch.End();
-            
+
         }
 
     }
