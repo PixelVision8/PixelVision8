@@ -1562,7 +1562,7 @@ namespace PixelVision8.Runner.Editors
         {
             //            var settings = new SfxrSynth().parameters;
             // TODO I don't like that this is a static value on the SoundData class
-            ((SfxrSoundChip)soundChip).UpdateSound(id, SoundData.DEFAULT_SOUND_PARAM); //settings.GetSettingsString());
+            soundChip.UpdateSound(id, ""); //settings.GetSettingsString());
         }
 
         /// <summary>

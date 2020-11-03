@@ -165,21 +165,15 @@ namespace PixelVision8.Engine.Audio
         /// </summary>
         public override void Play(SoundData soundData, float? frequency = null)
         {
-            // Stop any playing sound
-            Stop();
-
-            // Clear the last sound instance
-            _soundInstance = null;
-
-            // See if this is a wav
-            if (soundData.isWav)
+            if (soundData is SfxSoundData)
             {
-                if (waveLock == WaveType.Sample || waveLock == WaveType.None)
-                    base.Play(soundData, frequency);
-            }
-            else
-            {
-                parameters.SetSettingsString(soundData.param);
+                // Stop any playing sound
+                Stop();
+
+                // Clear the last sound instance
+                _soundInstance = null;
+
+                parameters.SetSettingsString(((SfxSoundData)soundData).param);
 
                 if (frequency.HasValue) parameters.startFrequency = frequency.Value;
 
@@ -188,7 +182,9 @@ namespace PixelVision8.Engine.Audio
                 // Only play if there is a sound instance
                 _soundInstance?.Play();
             }
-
+            
+            if (waveLock == WaveType.Sample || waveLock == WaveType.None)
+                base.Play(soundData, frequency);
 
         }
 

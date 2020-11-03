@@ -42,7 +42,7 @@ namespace PixelVision8.Engine.Chips
             //            var synth = sounds[index];
             //            synth.UpdateSettings(param);
 
-            Sounds[index].param = param;
+            ReadSound(index).param = param;
         }
 
         /// <summary>
@@ -55,6 +55,12 @@ namespace PixelVision8.Engine.Chips
             return new SfxrSynthChannel();
         }
 
+        public override SoundData CreateSoundData(string name)
+        {
+            return new SfxSoundData(name);
+        }
+
+
         /// <summary>
         ///     Returns a Sfxr Synth to be played back at run time by the SoundChip.
         /// </summary>
@@ -65,9 +71,9 @@ namespace PixelVision8.Engine.Chips
         /// <returns>
         ///     A reference to a SfxrSynth which contains the sound data.
         /// </returns>
-        public SoundData ReadSound(int id)
+        public SfxSoundData ReadSound(int id)
         {
-            return Sounds[id];
+            return Sounds[id] as SfxSoundData;
         }
 
         public string ReadLabel(int id)
@@ -103,7 +109,7 @@ namespace PixelVision8.Engine.Chips
         {
             var channel = Channels[channelID];
 
-            channel.Play(new SoundData("untitled", data), frequency);
+            channel.Play(new SfxSoundData("untitled", data), frequency);
         }
 
     }

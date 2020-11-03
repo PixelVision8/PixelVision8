@@ -74,6 +74,7 @@
     <Compile Include="SDK\Engine\Chips\Audio\Sfxr\SfxrParams.cs" />
     <Compile Include="SDK\Engine\Chips\Audio\Sfxr\SfxrSoundChip.cs" />
     <Compile Include="SDK\Engine\Chips\Audio\Sfxr\SfxrSynthChannel.cs" />
+    <Compile Include="SDK\Engine\Chips\Audio\Sfxr\SfxSoundData.cs" />
     <Compile Include="SDK\Engine\Chips\Audio\SoundChannel.cs" />
     <Compile Include="SDK\Engine\Chips\Audio\SoundChip.cs" />
     <Compile Include="SDK\Engine\Chips\Game\GameChip.cs" />

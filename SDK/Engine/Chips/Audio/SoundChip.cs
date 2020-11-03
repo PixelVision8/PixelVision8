@@ -68,8 +68,13 @@ namespace PixelVision8.Engine.Chips
 
                 for (var i = 0; i < value; i++)
                     if (Sounds[i] == null)
-                        Sounds[i] = new SoundData("Untitled" + i.ToString("D2"));
+                        Sounds[i] = CreateSoundData("Untitled" + i.ToString("D2"));
             }
+        }
+
+        public virtual SoundData CreateSoundData(string name)
+        {
+            return new SoundData(name);
         }
 
         /// <summary>
@@ -120,6 +125,17 @@ namespace PixelVision8.Engine.Chips
             //            channel = sounds[index];
 
             channel.Play(Sounds[index], frequency);
+        }
+
+        public void PlaySound(string name, int channelID = 0, float? frequency = null)
+        {
+            for (int i = 0; i < TotalSounds; i++)
+            {
+                if (Sounds[i].name == name)
+                {
+                    PlaySound(i, channelID, frequency);
+                }
+            }
         }
 
         public bool IsChannelPlaying(int channelID)

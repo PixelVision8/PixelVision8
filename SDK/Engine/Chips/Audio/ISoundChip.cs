@@ -49,6 +49,8 @@ namespace PixelVision8.Engine.Chips
         /// </param>
         void PlaySound(int index, int channelID = 0, float? frequency = null);
 
+        void PlaySound(string name, int channelID = 0, float? frequency = null);
+
         bool IsChannelPlaying(int channelID);
         void StopSound(int channel);
         void Shutdown();

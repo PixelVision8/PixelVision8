@@ -63,7 +63,7 @@ namespace PixelVision8.Engine.Audio
             _soundInstance = null;
 
             // See if this is a wav
-            if (soundData.isWav)
+            if (soundData.bytes != null)
             {
                 // if (waveLock == WaveType.Sample || waveLock == WaveType.None)
                 using (var stream = new MemoryStream(soundData.bytes))
