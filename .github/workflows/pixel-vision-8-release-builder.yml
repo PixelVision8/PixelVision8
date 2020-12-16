@@ -61,8 +61,8 @@ jobs:
         id: PREVIOUS_version
         run: |
           IFS='.' read -ra my_array <<< "${{ steps.compute_tag.outputs.next_tag }}"
-          echo "::set-env name=CURRENT::${my_array[0]:1}.$((${my_array[1]} - 1)).$((${my_array[2]}))"
-          echo "::set-env name=PREVIOUS::${my_array[0]:1}.$((${my_array[1]} - 2)).0"
+          echo "CURRENT=${my_array[0]:1}.$((${my_array[1]} - 1)).$((${my_array[2]}))" >> $GITHUB_ENV
+          echo "PREVIOUS=${my_array[0]:1}.$((${my_array[1]} - 2)).0" >> $GITHUB_ENV
 
       - name: Create Changelog
         id: changelog
@@ -81,7 +81,7 @@ jobs:
           REPORT="${REPORT//'%'/'%25'}"
           REPORT="${REPORT//$'\n'/'%0A'}"
           REPORT="${REPORT//$'\r'/'%0D'}"
-          echo "::set-env name=REPORT::$REPORT"
+          echo "REPORT=$REPORT" >> $GITHUB_ENV
 
      # Setup dotnet v3.1
       - name: Setup .NET Core
