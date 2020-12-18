@@ -13,7 +13,7 @@ local keywords = {
 --Lua escapable characters
 local escapable = {"a", "b", "f", "n", "r", "t", "v", "\\", '"', "'"}
 
---LIKO-12 Callbacks
+--Pixel Vision 8 Callbacks
 local callbacks = {"Init", "Update", "Draw", "Shutdown", "self"}
 
 --Convert values to keys for instant searching

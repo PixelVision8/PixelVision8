@@ -26,12 +26,12 @@ namespace PixelVision8.Engine
     {
         public string Action;
         public Rectangle Bounds = Rectangle.Empty;
-        public PixelData PixelData = new PixelData();
+        public int ColorOffset;
         public bool Fill;
         public bool FlipH;
         public bool FlipV;
+        public PixelData PixelData = new PixelData();
         public int x;
         public int y;
-        public int ColorOffset;
     }
 }

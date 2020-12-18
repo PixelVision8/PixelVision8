@@ -47,6 +47,15 @@ end
 function TextTool:OnRunGame()
 
 
+    local data = {codeFile = _textTool.targetFile}
+
+
+    //if(self.codeMode == true) then
+    //
+    //    data["codeFile"] = _textTool.targetFile
+    //
+    //end
+
     local parentPath = self.targetFilePath.ParentPath
 
     if(self.invalid == true) then
@@ -60,17 +69,18 @@ function TextTool:OnRunGame()
                     end
 
                     -- TODO should check that this is a game directory or that this file is at least a code.lua file
-                    LoadGame(parentPath.Path)
+                    LoadGame(parentPath.Path, data)
                 end
         )
 
     else
         -- Quit the tool
-        LoadGame(parentPath.Path)
+        LoadGame(parentPath.Path, data)
     end
 
+end
 
-    function OnQuit()
+function TextTool:OnQuit()
 
       if(self.invalid == true) then
 
@@ -92,8 +102,6 @@ function TextTool:OnRunGame()
         QuitCurrentTool()
       end
 
-    end
-    
 end
 
 

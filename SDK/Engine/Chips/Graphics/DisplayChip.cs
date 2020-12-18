@@ -27,11 +27,9 @@ namespace PixelVision8.Engine.Chips
 
     public class DisplayChip : AbstractChip, IDraw
     {
-        private DrawRequestPixelData draw;
         private PixelData Display = new PixelData();
         public int[] Pixels => Display.Pixels;
         public int[] ClearPixels = new int[0];
-
         public int TotalPixels => Display.TotalPixels;
 
 

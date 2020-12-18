@@ -2,7 +2,7 @@ FileTypeMap =
 {
     folder = "filefolder",
     updirectory = "fileparentfolder",
-    lua = "filecode",
+    lua = "filecodelua",
     json = "filejson",
     png = "filepng",
     run = "filerun", -- TODO need to change this to run
@@ -12,7 +12,7 @@ FileTypeMap =
     pv8 = "diskempty",
     pvr = "disksystem",
     wav = "filewav",
-    cs = "filetext",
+    cs = "filecodecsharp",
 
     -- TODO these are not core file types
     unknown = "fileunknown",
@@ -31,8 +31,6 @@ FileTypeMap =
 
 function WorkspaceTool:OpenWindow(path, scrollTo, selection)
 
-    -- print("Open", path)
-
     -- Make sure the path exists before loading it up
     if(PathExists(path) == false) then
 
@@ -40,15 +38,6 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
         path = self.workspacePath
 
     end
-
-
-
-    -- self.runIconUp = {table.unpack(filerunup.spritesIDs)}
-    -- self.runIconSelectedUp = {table.unpack(filerunselectedup.spritesIDs)}
-
-    -- print("Run icon", dump(self.runIconUp))
-
-    -- print("Loading Path", path)
 
     -- Configure window settings
     self.iconPadding = 16
@@ -134,18 +123,22 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     -- self:RegisterUI(self.closeButton, "UpdateButton", editorUI)
     self.desktopIconCount = 2 + self.totalDisk
 
+
+    self.tmpY = 0
+    self.tmpPos = null
+
     -- Check to see if we have window buttons
     if(self.windowIconButtons == nil) then
 
         -- Create a icon button group for all of the files
         self.windowIconButtons = pixelVisionOS:CreateIconGroup(false)
 
-        local startY  = 16
+        self.tmpY  = 16
         for i = 1, self.totalDisk + 1 do
 
-            pixelVisionOS:NewIconGroupButton(self.windowIconButtons, NewPoint(208, startY), "none", nil, toolTip)
+            pixelVisionOS:NewIconGroupButton(self.windowIconButtons, NewPoint(208, self.tmpY), "none", nil, toolTip)
 
-            startY = startY + 40
+            self.tmpY = self.tmpY + 40
         end
 
         -- -- Create the placeholder for the trash can
@@ -155,12 +148,12 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
         for i = 1, self.totalPerWindow do
 
             -- Calculate the correct position
-            local pos = CalculatePosition( i-1, self.totalPerColumn )
-            pos.x = (pos.x * (self.iconWidth + self.iconPadding)) + 13
-            pos.y = (pos.y * (self.iconHeight + self.iconPadding / 2)) + 32
+            self.tmpPos = CalculatePosition( i-1, self.totalPerColumn )
+            self.tmpPos.x = (self.tmpPos.x * (self.iconWidth + self.iconPadding)) + 13
+            self.tmpPos.y = (self.tmpPos.y * (self.iconHeight + self.iconPadding / 2)) + 32
 
             -- Create the new icon button
-            pixelVisionOS:NewIconGroupButton(self.windowIconButtons, pos, "none", nil, toolTip, self.windowBGColor)
+            pixelVisionOS:NewIconGroupButton(self.windowIconButtons, self.tmpPos, "none", nil, toolTip, self.windowBGColor)
 
         end
 
@@ -559,39 +552,29 @@ function WorkspaceTool:OnWindowIconClick(id)
 
     local type = tmpItem.type
     local path = tmpItem.path
-
-    -- print("OnWindowIconClick", id, type, path)
-
-
-    -- TODO need a list of things we can't delete
-
-    -- Enable delete option
-
-    -- -- print("Window Icon Click", tmpItem.name)
     local type = tmpItem.type
 
     -- If the type is a folder, open it
     if(type == "folder" or type == "updirectory" or type == "disk" or type == "drive" or type == "trash") then
 
-
-        -- self.pathHistory[self.currentPath.Path].scrollPos = self.vSliderData.value
-        -- self.pathHistory[self.currentPath.Path].selection
         self:OpenWindow(tmpItem.path)
 
-        -- Check to see if the file is in the trash
+    -- Check to see if the file is in the trash
     elseif(self:TrashOpen()) then
 
         -- Show warning message about trying to edit files in the trash
-        pixelVisionOS:ShowMessageModal(self.toolName .. " Error", "You are not able to edit files inside of the trash.", 160, false
-        )
+        pixelVisionOS:ShowMessageModal(self.toolName .. " Error", "You are not able to edit files inside of the trash.", 160, false)
 
         -- Check to see if the file is an executable
     elseif(type == "run") then
 
+        local metaData = {
+            codeFile = "code.cs"
+        }
 
-        LoadGame(path)
+        print("Load Game", dump(metaData))
 
-
+        LoadGame(path, metaData)
 
     elseif(type == "pv8") then
 

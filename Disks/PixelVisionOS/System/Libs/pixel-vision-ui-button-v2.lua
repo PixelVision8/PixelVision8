@@ -136,10 +136,8 @@ function EditorUI:UpdateButton(data, hitRect)
     hitRect = data.hitRect or data.rect
   end
 
-  local overrideFocus = (data.inFocus == true and self.collisionManager.mouseDown)
-
   -- Ready to test finer collision if needed
-  if(self.collisionManager:MouseInRect(hitRect) == true or overrideFocus) then
+  if(self.collisionManager:MouseInRect(hitRect) == true or (data.inFocus == true and self.collisionManager.mouseDown)) then
 
     if(data.doubleClick == true) then
 
@@ -160,13 +158,13 @@ function EditorUI:UpdateButton(data, hitRect)
     self:SetFocus(data, data.buttonCursor)
 
     -- calculate the correct button over state
-    local state = self.collisionManager.mouseDown and "down" or "over"
+    self.tmpState = self.collisionManager.mouseDown and "down" or "over"
 
     if(data.selected == true) then
-      state = "selected" .. state
+      self.tmpState = "selected" .. self.tmpState
     end
 
-    local spriteData = data.cachedSpriteData ~= nil and data.cachedSpriteData[state] or nil
+    local spriteData = data.cachedSpriteData ~= nil and data.cachedSpriteData[self.tmpState] or nil
 
     if(spriteData ~= nil and data.spriteDrawArgs ~= nil) then
 
@@ -230,32 +228,32 @@ function EditorUI:RedrawButton(data, stateOverride)
   if(data.invalid == true or stateOverride ~= nil) then
 
     -- The default state is up
-    local state = "up"
+    self.tmpState = "up"
 
     if(stateOverride ~= nil) then
-      state = stateOverride
+      self.tmpState = stateOverride
     else
 
       -- If the button is selected, we will use the selected up state
       if(data.selected == true) then
-        state = "selected" .. state
+        self.tmpState = "selected" .. self.tmpState
       end
 
       -- Test to see if the button is disabled. If there is a disabled sprite data, we'll change the state to disabled. By default, always use the up state.
       if(data.enabled == false and data.cachedSpriteData["disabled"] ~= nil and data.selected ~= true) then --_G[spriteName .. "disabled"] ~= nil) then
-        state = "disabled"
+        self.tmpState = "disabled"
       end
 
     end
 
     -- Test to see if the sprite data exist before updating the tiles
-    if(data.cachedSpriteData ~= nil and data.cachedSpriteData[state] ~= nil and data.tileDrawArgs ~= nil) then
+    if(data.cachedSpriteData ~= nil and data.cachedSpriteData[self.tmpState] ~= nil and data.tileDrawArgs ~= nil) then
 
       -- Update the tile draw arguments
-      data.tileDrawArgs[1] = data.cachedSpriteData[state].spriteIDs
+      data.tileDrawArgs[1] = data.cachedSpriteData[self.tmpState].spriteIDs
 
       -- Color offset
-      data.tileDrawArgs[8] = data.cachedSpriteData[state].colorOffset or 0
+      data.tileDrawArgs[8] = data.cachedSpriteData[self.tmpState].colorOffset or 0
 
       if(data.redrawBackground == true) then
 
@@ -286,16 +284,16 @@ function EditorUI:ClearButton(data, flag)
   end
 
   -- Get the cached empty sprite data
-  local spriteData = data.cachedSpriteData["empty"]
+  self.tmpSpriteData = data.cachedSpriteData["empty"]
 
   -- make sure we have sprite data to draw
-  if(spriteData ~= nil) then
+  if(self.tmpSpriteData ~= nil) then
 
     -- Update the tile draw arguments
-    data.tileDrawArgs[1] = spriteData.spriteIDs
+    data.tileDrawArgs[1] = self.tmpSpriteData.spriteIDs
 
     -- Color offset
-    data.tileDrawArgs[8] = spriteData.colorOffset or 0
+    data.tileDrawArgs[8] = self.tmpSpriteData.colorOffset or 0
 
     self:NewDraw("DrawSprites", data.tileDrawArgs)
 

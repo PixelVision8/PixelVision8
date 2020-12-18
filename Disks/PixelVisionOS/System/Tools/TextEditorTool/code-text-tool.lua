@@ -38,13 +38,14 @@ function TextTool:Init()
 
     -- Get the target file
     
-    
     if(_textTool.targetFile ~= nil) then
 
         _textTool.targetFilePath = NewWorkspacePath(_textTool.targetFile)
     
-        _textTool.codeMode = _textTool.targetFilePath.GetExtension() == ".lua"
-        
+        _textTool.extension = _textTool.targetFilePath.GetExtension()
+
+        _textTool.codeMode = _textTool.extension == ".lua" or _textTool.extension == ".cs"
+       
         local pathSplit = string.split(_textTool.targetFile, "/")
         
         -- Update title with file path

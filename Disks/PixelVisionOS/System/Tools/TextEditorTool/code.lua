@@ -50,7 +50,7 @@ end
 
 function Shutdown()
 
-  drawTool:Shutdown()
+  textTool:Shutdown()
 
 end
 

@@ -151,10 +151,11 @@ function WorkspaceTool:CreateDropDownMenu()
 
     end
 
-    if(PathExists(self.fileTemplatePath.AppendFile("code.json"))) then
+    if(PathExists(self.fileTemplatePath.AppendFile("code.lua")) or PathExists(self.fileTemplatePath.AppendFile("code.cs"))) then
 
         -- TODO need to add to the offset
         addAt = addAt + 6
+
         -- Empty Trash ID 13
         table.insert(menuOptions, addAt, {name = "Run", key = Keys.R, action = function() self:OnRun() end, enabled = false, toolTip = "Run the current game."})
         addAt = addAt + 1

@@ -1139,7 +1139,6 @@ namespace PixelVision8.Runner
                             Load(path, RunnerMode.Loading, metadata));
 
                 // Global System APIs
-                luaScript.Globals["EnableCRT"] = new Func<bool?, bool>(EnableCRT);
                 luaScript.Globals["Brightness"] = new Func<float?, float>(Brightness);
                 luaScript.Globals["Sharpness"] = new Func<float?, float>(Sharpness);
                 luaScript.Globals["SystemVersion"] = new Func<string>(() => SystemVersion);
@@ -1425,10 +1424,38 @@ namespace PixelVision8.Runner
                 // Have the workspace run the game from the current path
                 GameFiles = workspaceService.LoadGame(path);
 
+                // Find the right code file to load and remove other code files
+
+                // Ignore CS files by default
+                var ignoreExtension = "none";
+
+                // Look to se if Meta Data overrides which code file to run
+                if (metaData.ContainsKey("codeFile") && mode == RunnerMode.Playing)
+                {
+                    ignoreExtension = metaData["codeFile"] == "code.cs" ? ".lua" : ".cs";
+                }
+                else if(Array.IndexOf(GameFiles, "info.json") != -1)
+                {
+
+                    var json = workspaceService.ReadTextFromFile(WorkspacePath.Parse(GameFiles[Array.IndexOf(GameFiles, "info.json")]));
+
+                    if (Json.Deserialize(json) is Dictionary<string, object> data && data.ContainsKey("codeFile"))
+                    {
+                        ignoreExtension = (string) data["codeFile"] == "code.cs" ? ".lua" : ".cs";
+                    }
+                }
+
+                if (ignoreExtension != "none")
+                {
+                    var ignore = GameFiles.Where(p => p.EndsWith(ignoreExtension)).ToArray();
+
+                    GameFiles = GameFiles.Except(ignore).ToArray();
+                }
+
                 // Create a new tmpEngine
                 ConfigureEngine(metaData);
 
-                // Path the full path to the engine's name
+                // Path the full path to the engine's name  
                 _tmpEngine.Name = path;
 
                 if (GameFiles != null)

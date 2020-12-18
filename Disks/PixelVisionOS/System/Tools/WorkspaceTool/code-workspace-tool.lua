@@ -74,12 +74,8 @@ function WorkspaceTool:RestoreLastPath()
   local lastScrollPos = tonumber(ReadSaveData("scrollPos", "0"))
   local lastSelection = tonumber(ReadSaveData("selection", "0"))
 
-  --print("newPath", newPath)
-
   -- Read metadata last path and default to the newPath
   local lastPath = ReadMetadata("overrideLastPath", newPath)
-
-  --print("lastPath 1", lastPath)
 
   if(lastPath ~= "none") then
 
@@ -93,15 +89,10 @@ function WorkspaceTool:RestoreLastPath()
 
   end
 
-  --print("overrideLastPath 2", ReadMetadata("overrideLastPath", "Cleared"))
-
   -- Convert the path to a Workspace Path
   newPath = newPath == "none" and self.workspacePath or NewWorkspacePath(newPath)
 
   -- Open the window to the new path
-
-  --print("final path", newPath)
-
   if(newPath.Path == self.workspacePath.Path and #GetEntities(self.workspacePath) == 0) then
     self:AutoCreateFirstProject()
   else
