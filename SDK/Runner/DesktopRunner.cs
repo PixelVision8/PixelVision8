@@ -1596,8 +1596,20 @@ namespace PixelVision8.Runner
                 MetadataReference.CreateFromFile(typeof(GameChip).Assembly.Location), //PixelVision8Runner
                 MetadataReference.CreateFromFile(typeof(Game).Assembly.Location), //MonoGameFramework
                 MetadataReference.CreateFromFile(Assembly.Load("netstandard")
-                    .Location) //Required due to a .NET Standard 2.0 dependency somewhere.
+                    .Location), //Required due to a .NET Standard 2.0 dependency somewhere.
+                MetadataReference.CreateFromFile(Assembly.Load("System.Collections").Location), //required for Linq
+                MetadataReference.CreateFromFile(Assembly.Load("System.Linq").Location),
+                MetadataReference.CreateFromFile(Assembly.Load("System.Linq.Expressions").Location),
+                //MetadataReference.CreateFromFile(typeof(System.Linq.Queryable).Assembly.Location), //System.Linq.Queryable.
+                //MetadataReference.CreateFromFile(typeof(System.Linq.Expressions.Expression).Assembly.Location), //System.Linq.Expressions
+                //MetadataReference.CreateFromFile(typeof(System.Net.WebClient).Assembly.Location), //System.Net.WebClient. 
+
             };
+
+            //Possibilities:
+            //Systems.Collections.Generic() - works fine, needs declared in code.cs
+            //File IO - System.IO.File fails to run (probably good)
+            //Networking - System.Net calls very little by itself.
 
             var compiler = CSharpCompilation.Create("LoadedGame", syntaxTrees, references, options);
 
@@ -1640,8 +1652,7 @@ namespace PixelVision8.Runner
             //Get the DLL into active memory so we can use it. Runtime errors will give the wrong line number if we're in Release mode.
             var loadedAsm = Assembly.Load(dllStream.ToArray(), buildDebugData ?  pdbStream.ToArray() : null);
 
-            var roslynGameChipType =
-                loadedAsm.GetType("PixelVisionRoslyn.RoslynGameChip"); //code.cs must use this type.
+            var roslynGameChipType = loadedAsm.GetType("PixelVisionRoslyn.RoslynGameChip"); //code.cs must use this type.
             //Could theoretically iterate over types until one that inherits from GameChip is found, but this strictness may be a better idea.
 
             if (roslynGameChipType != null)
