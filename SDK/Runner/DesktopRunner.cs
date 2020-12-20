@@ -16,10 +16,13 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+// Drake Williams - drakewill+pv8@gmail.com
 //
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MoonSharp.Interpreter;
@@ -762,7 +765,7 @@ namespace PixelVision8.Runner
             {
                 DisplayError(ErrorCode.Exception,
                     new Dictionary<string, string>
-                        {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message}},
+                        {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message + e.StackTrace.Split("\r\n")[0]}},
                     e);
             }
         }
@@ -1557,27 +1560,28 @@ namespace PixelVision8.Runner
             loadService.ParseFiles(files, _tmpEngine, flags.Value);
         }
 
-        public void CompileFromSource(string[] files)
+        public void CompileFromSource(string[] files, bool buildDebugData = true)
         {
             var total = files.Length;
-
             var syntaxTrees = new SyntaxTree[total];
+            var embeddedTexts = new EmbeddedText[total];
 
-            for (var i = 0;
-                i < total;
-                i++)
+            for (var i = 0; i < total; i++)
             {
                 var path = WorkspacePath.Parse(files[i]);
-
                 var data = workspaceService.ReadTextFromFile(path);
-
                 syntaxTrees[i] = CSharpSyntaxTree.ParseText(data);
+                //if (buildDebugData)
+                //{
+                    var st = SourceText.From(text: data, encoding: Encoding.UTF8); //, canBeEmbedded: true isnt present when passing in a string?
+                    embeddedTexts[i] = EmbeddedText.FromSource(files[i], st);
+                //}
             }
 
             //Compilation options, should line up 1:1 with Visual Studio since it's the same underlying compiler.
             var options = new CSharpCompilationOptions(
                 OutputKind.DynamicallyLinkedLibrary,
-                optimizationLevel: OptimizationLevel.Release,
+                optimizationLevel: buildDebugData ?  OptimizationLevel.Debug : OptimizationLevel.Release, 
                 moduleName: "RoslynGame");
 
             //All of these are mandatory. This appears to the be minimum needed. Uncertain as of initial PoC if anything else outside of this needs referenced.
@@ -1598,41 +1602,47 @@ namespace PixelVision8.Runner
             var compiler = CSharpCompilation.Create("LoadedGame", syntaxTrees, references, options);
 
             //Compile the existing file into memory, or error out.
-            var stream = new MemoryStream();
+            var dllStream = new MemoryStream();
+            var pdbStream = new MemoryStream();
 
-            var compileResults = compiler.Emit(stream);
+            //This wont help unless we hit a runtime error.
+            var emitOptions = new EmitOptions(
+                debugInformationFormat: DebugInformationFormat.PortablePdb,
+                pdbFilePath: "RoslynGame.pdb"
+                );
+
+            var compileResults = compiler.Emit( peStream: dllStream, pdbStream: pdbStream, embeddedTexts:embeddedTexts, options: emitOptions);
             if (compileResults.Success)
             {
-                stream.Seek(0, SeekOrigin.Begin);
+                dllStream.Seek(0, SeekOrigin.Begin);
+                pdbStream.Seek(0, SeekOrigin.Begin);
             }
 
             else
             {
                 var errors = compileResults.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
-
-                // TODO Need to get the error from the compiler
-                // var e = "Code could not be compiled";
+                var errorData = errors[0].Location.GetLineSpan();
+                var lineNumber = errorData.StartLinePosition.Line + 1;
+                var charNumber = errorData.StartLinePosition.Character + 1;
                 DisplayError(ErrorCode.Exception,
                     new Dictionary<string, string>
                     {
                         {
                             "@{error}",
                             errors.Count > 0
-                                ? errors[0].GetMessage()
+                                ? "Line " + lineNumber + " Pos " + charNumber  + ": " +  errors[0].GetMessage()
                                 : "There was an unknown errror trying to compile a C# file."
                         }
                     });
-                //TODO: error handling, use data from compileResults to show user what's wrong.
                 return;
             }
 
-            //Get the DLL into active memory so we can use it.
-            var roslynassembly = stream.ToArray();
-            var loadedAsm = Assembly.Load(roslynassembly);
+            //Get the DLL into active memory so we can use it. Runtime errors will give the wrong line number if we're in Release mode.
+            var loadedAsm = Assembly.Load(dllStream.ToArray(), buildDebugData ?  pdbStream.ToArray() : null);
 
             var roslynGameChipType =
-                loadedAsm.GetType("PixelVisionRoslyn.RoslynGameChip"); //This type much match what's in code.cs.
-            //Could theoretically iterate over types until once that inherits from GameChip is found, but this Proof of Concept demonstrates the baseline feature.
+                loadedAsm.GetType("PixelVisionRoslyn.RoslynGameChip"); //code.cs must use this type.
+            //Could theoretically iterate over types until one that inherits from GameChip is found, but this strictness may be a better idea.
 
             if (roslynGameChipType != null)
             {

@@ -16,7 +16,7 @@
   of fonts into the default.font.png. Use uppercase for larger characters and
   lowercase for a smaller one.
 ]]--
-local message = "EMPTY GAME\n\n\nThis is an empty game template.\n\n\nVisit 'www.pixelvision8.com' to learn more about creating games from scratch."
+local message = "EMPTY GAME\n\n\nThis is an empty Lua game template.\n\n\nVisit 'www.pixelvision8.com' to learn more about creating games from scratch."
 
 --[[
   The Init() method is part of the game's lifecycle and called a game starts.

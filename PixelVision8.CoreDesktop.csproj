@@ -38,6 +38,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Content\PixelVisionOS\Tools\ErrorTool\medium.font.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Disks\PixelVisionOS\System\Tools\WorkspaceTool\ProjectTemplate\code.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SDK\Editor\Audio\SfxrMusicGeneratorChip.cs" />
     <Compile Include="SDK\Editor\Editors\GameEditor.cs" />
