@@ -1594,21 +1594,13 @@ namespace PixelVision8.Runner
                 MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location), //Microsoft.CSharp
                 MetadataReference.CreateFromFile(typeof(GameChip).Assembly.Location), //PixelVision8Runner
                 MetadataReference.CreateFromFile(typeof(Game).Assembly.Location), //MonoGameFramework
-                MetadataReference.CreateFromFile(typeof(Point).Assembly.Location), //XNA Framework
+                //MetadataReference.CreateFromFile(typeof(Point).Assembly.Location), //XNA Framework, automatic as part of PixelVision8Runner. needs declared in code.cs, not here.
                 MetadataReference.CreateFromFile(Assembly.Load("netstandard").Location), //Required due to a .NET Standard 2.0 dependency somewhere.
                 MetadataReference.CreateFromFile(Assembly.Load("System.Collections").Location), //required for Linq
                 MetadataReference.CreateFromFile(Assembly.Load("System.Linq").Location),
+                MetadataReference.CreateFromFile(Assembly.Load("System.Linq.Queryable").Location),
                 MetadataReference.CreateFromFile(Assembly.Load("System.Linq.Expressions").Location),
-                //MetadataReference.CreateFromFile(typeof(System.Linq.Queryable).Assembly.Location), //System.Linq.Queryable.
-                //MetadataReference.CreateFromFile(typeof(System.Linq.Expressions.Expression).Assembly.Location), //System.Linq.Expressions
-                //MetadataReference.CreateFromFile(typeof(System.Net.WebClient).Assembly.Location), //System.Net.WebClient. 
-
             };
-
-            //Possibilities:
-            //Systems.Collections.Generic() - works fine, needs declared in code.cs
-            //File IO - System.IO.File fails to run (probably good)
-            //Networking - System.Net calls very little by itself.
 
             var compiler = CSharpCompilation.Create("LoadedGame", syntaxTrees, references, options);
             //var pdbFilePath = Path.GetTempPath() + "RoslynGame.pdb";
@@ -1617,7 +1609,7 @@ namespace PixelVision8.Runner
             var dllStream = new MemoryStream();
             var pdbStream = new MemoryStream();
 
-            //This wont help unless we hit a runtime error.
+            //This lets us get data if we hit a runtime error.
             var emitOptions = new EmitOptions(
                 debugInformationFormat: DebugInformationFormat.PortablePdb
                 //pdbFilePath: pdbFilePath

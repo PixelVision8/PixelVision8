@@ -112,7 +112,6 @@ namespace PixelVision8.Engine.Utils
             int destX, int destY, bool flipH = false, bool flipV = false, int colorOffset = 0,
             bool ignoreTransparent = true)
         {
-
             _mergeDestWidth = dest.Width;
 
             ValidateBounds(ref sampleWidth, ref sampleHeight, ref destX, ref destY, _mergeDestWidth, dest.Height);

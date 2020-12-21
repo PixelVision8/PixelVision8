@@ -212,7 +212,6 @@ namespace PixelVision8.Engine.Chips
             // layers = Enum.GetNames(typeof(DrawMode)).Length - 1;
 
             MaxDrawRequests = 1024;
-
         }
 
         public override void Deactivate()
