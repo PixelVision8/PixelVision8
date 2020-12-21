@@ -1514,11 +1514,10 @@ namespace PixelVision8.Runner
 
         public void ProcessFiles(IEngine tmpEngine, string[] files, bool displayProgress = false)
         {
-            // Look for a CS file
             var csFilePaths = files.Where(p => p.EndsWith(".cs")).ToArray();
             if (csFilePaths.Length > 0)
-                //Roslyn mode. Build the game. TODO: correct to use workspace paths.
-                CompileFromSource(csFilePaths);
+                //Roslyn mode.
+                BuildRoslynGameChip(csFilePaths);
 
             // base.ProcessFiles(tmpEngine, files, displayProgress);
             this.displayProgress = displayProgress;
@@ -1561,7 +1560,7 @@ namespace PixelVision8.Runner
             loadService.ParseFiles(files, _tmpEngine, flags.Value);
         }
 
-        public void CompileFromSource(string[] files, bool buildDebugData = true)
+        public void BuildRoslynGameChip(string[] files, bool buildDebugData = true)
         {
             var total = files.Length;
             var syntaxTrees = new SyntaxTree[total];
@@ -1572,11 +1571,8 @@ namespace PixelVision8.Runner
                 var path = WorkspacePath.Parse(files[i]);
                 var data = workspaceService.ReadTextFromFile(path);
                 syntaxTrees[i] = CSharpSyntaxTree.ParseText(data);
-                //if (buildDebugData)
-                //{
-                    var st = SourceText.From(text: data, encoding: Encoding.UTF8);
-                    embeddedTexts[i] = EmbeddedText.FromSource(files[i], st);
-                //}
+                var st = SourceText.From(text: data, encoding: Encoding.UTF8);
+                embeddedTexts[i] = EmbeddedText.FromSource(files[i], st);
             }
 
             //Compilation options, should line up 1:1 with Visual Studio since it's the same underlying compiler.
@@ -1585,14 +1581,16 @@ namespace PixelVision8.Runner
                 optimizationLevel: buildDebugData ?  OptimizationLevel.Debug : OptimizationLevel.Release, 
                 moduleName: "RoslynGame");
 
-            //All of these are mandatory. This appears to the be minimum needed. Uncertain as of initial PoC if anything else outside of this needs referenced.
+            //This list of references is what limits the user from breaking out of the PV8 limitations through Roslyn.
+            //The first few lines are mandatory references, with the later ones being common helpful core libraries.
+            //We specifically exclude some from the list (System.IO.File, System.Net specifically for security, and System.Threading.Tasks to avoid bugs around parallel DrawX() calls).
             var references = new MetadataReference[]
             {
                 MetadataReference.CreateFromFile(typeof(object).Assembly.Location), //System.Private.CoreLib
                 MetadataReference.CreateFromFile(typeof(Console).Assembly.Location), //System.Console
                 MetadataReference.CreateFromFile(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location), //System.Runtime
                 MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location), //Microsoft.CSharp
-                MetadataReference.CreateFromFile(typeof(GameChip).Assembly.Location), //PixelVision8Runner
+                MetadataReference.CreateFromFile(typeof(GameChip).Assembly.Location), //PixelVision8
                 MetadataReference.CreateFromFile(typeof(Game).Assembly.Location), //MonoGameFramework
                 //MetadataReference.CreateFromFile(typeof(Point).Assembly.Location), //XNA Framework, automatic as part of PixelVision8Runner. needs declared in code.cs, not here.
                 MetadataReference.CreateFromFile(Assembly.Load("netstandard").Location), //Required due to a .NET Standard 2.0 dependency somewhere.
@@ -1603,7 +1601,6 @@ namespace PixelVision8.Runner
             };
 
             var compiler = CSharpCompilation.Create("LoadedGame", syntaxTrees, references, options);
-            //var pdbFilePath = Path.GetTempPath() + "RoslynGame.pdb";
 
             //Compile the existing file into memory, or error out.
             var dllStream = new MemoryStream();
@@ -1612,21 +1609,13 @@ namespace PixelVision8.Runner
             //This lets us get data if we hit a runtime error.
             var emitOptions = new EmitOptions(
                 debugInformationFormat: DebugInformationFormat.PortablePdb
-                //pdbFilePath: pdbFilePath
-                );
+            );
 
             var compileResults = compiler.Emit( peStream: dllStream, pdbStream: pdbStream,  embeddedTexts:embeddedTexts, options: emitOptions);
             if (compileResults.Success)
             {
                 dllStream.Seek(0, SeekOrigin.Begin);
                 pdbStream.Seek(0, SeekOrigin.Begin);
-                //if (pdbStream.Length > 0)
-                //{
-                //    byte[] buffer = new byte[pdbStream.Length];
-                //    pdbStream.Read(buffer, 0, (int)pdbStream.Length);
-                //    //System.IO.File.WriteAllBytes(pdbFilePath, buffer);
-                //    pdbStream.Seek(0, SeekOrigin.Begin);
-                //}
             }
             else
             {
@@ -1647,10 +1636,10 @@ namespace PixelVision8.Runner
                 return;
             }
 
-            //Get the DLL into active memory so we can use it. Runtime errors will give the wrong line number if we're in Release mode.
+            //Get the DLL into active memory so we can use it. Runtime errors will give the wrong line number if we're in Release mode, so don't include the pdbStream for that.
             var loadedAsm = Assembly.Load(dllStream.ToArray(), buildDebugData ?  pdbStream.ToArray() : null);
 
-            var roslynGameChipType = loadedAsm.GetType("PixelVisionRoslyn.RoslynGameChip"); //code.cs must use this type.
+            var roslynGameChipType = loadedAsm.GetType("PixelVisionRoslyn.RoslynGameChip"); //code.cs must use this namespace and class name.
             //Could theoretically iterate over types until one that inherits from GameChip is found, but this strictness may be a better idea.
 
             dllStream.Close(); dllStream.Dispose();
