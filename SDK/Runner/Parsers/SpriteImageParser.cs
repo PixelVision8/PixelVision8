@@ -105,7 +105,7 @@ namespace PixelVision8.Runner.Parsers
             var cols = MathUtil.FloorToInt(spriteChip.textureWidth / spriteWidth);
             var rows = MathUtil.FloorToInt(spriteChip.textureHeight / spriteHeight);
 
-            maxSprites = cols * rows;
+            maxSprites = cols * rows; 
 
             // // Keep track of number of sprites added
             spritesAdded = 0;

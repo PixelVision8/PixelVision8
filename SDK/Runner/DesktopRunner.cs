@@ -1494,7 +1494,8 @@ namespace PixelVision8.Runner
             // Export the current game
 
             // TODO exporter needs a callback when its completed
-            ExportService.ExportGame(path, engine, saveFlags, useSteps);
+            if (mode != RunnerMode.Error) //Was causing Roslyn games to wipe save data on any error.
+                ExportService.ExportGame(path, engine, saveFlags, useSteps);
         }
 
         protected override void OnExiting(object sender, EventArgs args)

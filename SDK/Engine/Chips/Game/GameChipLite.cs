@@ -66,7 +66,6 @@ namespace PixelVision8.Engine.Chips
     /// </summary>
     public class GameChipLite : AbstractChip, IUpdate, IDraw
     {
-
         public int fps;
         // protected int[] tmpFontData = new int[0];
         protected int[] tmpSpriteData = new int[0];
