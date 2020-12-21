@@ -63,5 +63,10 @@ namespace PixelVision8.Engine
         {
             Invalid = Convert.ToBoolean(MathHelper.Clamp(value, 0, 1));
         }
+
+        public virtual void ResetValidation() //Should be faster without calling 2 extra functions per tile. Adds 1-2FPS debugging.
+        {
+            Invalid = false;
+        }
     }
 }

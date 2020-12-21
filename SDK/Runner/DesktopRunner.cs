@@ -765,8 +765,7 @@ namespace PixelVision8.Runner
             {
                 DisplayError(ErrorCode.Exception,
                     new Dictionary<string, string>
-                        {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message + e.StackTrace.Split("\r\n")[0]}},
-                    e);
+                        {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message + e.StackTrace.Split("\r\n")[0]}}, e);
             }
         }
 
@@ -793,7 +792,8 @@ namespace PixelVision8.Runner
             {
                 DisplayError(ErrorCode.Exception,
                     new Dictionary<string, string>
-                        {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message}}, e);
+                        {{ "@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message + e.StackTrace.Split("\r\n")[0]}}, e);
+                
             }
         }
 
@@ -1516,7 +1516,7 @@ namespace PixelVision8.Runner
             // Look for a CS file
             var csFilePaths = files.Where(p => p.EndsWith(".cs")).ToArray();
             if (csFilePaths.Length > 0)
-                //Roslyn mode. Build the game. TODO: correct to use workspace paths. Hardcoded for Proof-Of-Concept
+                //Roslyn mode. Build the game. TODO: correct to use workspace paths.
                 CompileFromSource(csFilePaths);
 
             // base.ProcessFiles(tmpEngine, files, displayProgress);
@@ -1573,14 +1573,14 @@ namespace PixelVision8.Runner
                 syntaxTrees[i] = CSharpSyntaxTree.ParseText(data);
                 //if (buildDebugData)
                 //{
-                    var st = SourceText.From(text: data, encoding: Encoding.UTF8); //, canBeEmbedded: true isnt present when passing in a string?
+                    var st = SourceText.From(text: data, encoding: Encoding.UTF8);
                     embeddedTexts[i] = EmbeddedText.FromSource(files[i], st);
                 //}
             }
 
             //Compilation options, should line up 1:1 with Visual Studio since it's the same underlying compiler.
             var options = new CSharpCompilationOptions(
-                OutputKind.DynamicallyLinkedLibrary,
+                OutputKind.DynamicallyLinkedLibrary, 
                 optimizationLevel: buildDebugData ?  OptimizationLevel.Debug : OptimizationLevel.Release, 
                 moduleName: "RoslynGame");
 
@@ -1589,14 +1589,12 @@ namespace PixelVision8.Runner
             {
                 MetadataReference.CreateFromFile(typeof(object).Assembly.Location), //System.Private.CoreLib
                 MetadataReference.CreateFromFile(typeof(Console).Assembly.Location), //System.Console
-                MetadataReference.CreateFromFile(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly
-                    .Location), //System.Runtime
-                MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly
-                    .Location), //Microsoft.CSharp
+                MetadataReference.CreateFromFile(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location), //System.Runtime
+                MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location), //Microsoft.CSharp
                 MetadataReference.CreateFromFile(typeof(GameChip).Assembly.Location), //PixelVision8Runner
                 MetadataReference.CreateFromFile(typeof(Game).Assembly.Location), //MonoGameFramework
-                MetadataReference.CreateFromFile(Assembly.Load("netstandard")
-                    .Location), //Required due to a .NET Standard 2.0 dependency somewhere.
+                MetadataReference.CreateFromFile(typeof(Point).Assembly.Location), //XNA Framework
+                MetadataReference.CreateFromFile(Assembly.Load("netstandard").Location), //Required due to a .NET Standard 2.0 dependency somewhere.
                 MetadataReference.CreateFromFile(Assembly.Load("System.Collections").Location), //required for Linq
                 MetadataReference.CreateFromFile(Assembly.Load("System.Linq").Location),
                 MetadataReference.CreateFromFile(Assembly.Load("System.Linq.Expressions").Location),
@@ -1612,6 +1610,7 @@ namespace PixelVision8.Runner
             //Networking - System.Net calls very little by itself.
 
             var compiler = CSharpCompilation.Create("LoadedGame", syntaxTrees, references, options);
+            //var pdbFilePath = Path.GetTempPath() + "RoslynGame.pdb";
 
             //Compile the existing file into memory, or error out.
             var dllStream = new MemoryStream();
@@ -1619,17 +1618,23 @@ namespace PixelVision8.Runner
 
             //This wont help unless we hit a runtime error.
             var emitOptions = new EmitOptions(
-                debugInformationFormat: DebugInformationFormat.PortablePdb,
-                pdbFilePath: "RoslynGame.pdb"
+                debugInformationFormat: DebugInformationFormat.PortablePdb
+                //pdbFilePath: pdbFilePath
                 );
 
-            var compileResults = compiler.Emit( peStream: dllStream, pdbStream: pdbStream, embeddedTexts:embeddedTexts, options: emitOptions);
+            var compileResults = compiler.Emit( peStream: dllStream, pdbStream: pdbStream,  embeddedTexts:embeddedTexts, options: emitOptions);
             if (compileResults.Success)
             {
                 dllStream.Seek(0, SeekOrigin.Begin);
                 pdbStream.Seek(0, SeekOrigin.Begin);
+                //if (pdbStream.Length > 0)
+                //{
+                //    byte[] buffer = new byte[pdbStream.Length];
+                //    pdbStream.Read(buffer, 0, (int)pdbStream.Length);
+                //    //System.IO.File.WriteAllBytes(pdbFilePath, buffer);
+                //    pdbStream.Seek(0, SeekOrigin.Begin);
+                //}
             }
-
             else
             {
                 var errors = compileResults.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
@@ -1654,6 +1659,9 @@ namespace PixelVision8.Runner
 
             var roslynGameChipType = loadedAsm.GetType("PixelVisionRoslyn.RoslynGameChip"); //code.cs must use this type.
             //Could theoretically iterate over types until one that inherits from GameChip is found, but this strictness may be a better idea.
+
+            dllStream.Close(); dllStream.Dispose();
+            pdbStream.Close(); pdbStream.Dispose();
 
             if (roslynGameChipType != null)
             {
