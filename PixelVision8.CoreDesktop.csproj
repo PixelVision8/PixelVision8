@@ -26,8 +26,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Icon.ico" />
-    <EmbeddedResource Include="Icon.bmp" />
+    <EmbeddedResource Include="Icon.ico">
+      <LogicalName>Icon.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icon.bmp">
+      <LogicalName>Icon.bmp</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +42,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Content\PixelVisionOS\Tools\ErrorTool\medium.font.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Disks\PixelVisionOS\System\Tools\WorkspaceTool\ProjectTemplate\code.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SDK\Editor\Audio\SfxrMusicGeneratorChip.cs" />
     <Compile Include="SDK\Editor\Editors\GameEditor.cs" />

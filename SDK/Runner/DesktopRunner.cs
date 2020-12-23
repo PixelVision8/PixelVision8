@@ -16,10 +16,13 @@
 // Christer Kaitila - @McFunkypants
 // Pedro Medeiros - @saint11
 // Shawn Rakowski - @shwany
+// Drake Williams - drakewill+pv8@gmail.com
 //
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MoonSharp.Interpreter;
@@ -762,8 +765,7 @@ namespace PixelVision8.Runner
             {
                 DisplayError(ErrorCode.Exception,
                     new Dictionary<string, string>
-                        {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message}},
-                    e);
+                        {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message + e.StackTrace.Split("\r\n")[0]}}, e);
             }
         }
 
@@ -790,7 +792,8 @@ namespace PixelVision8.Runner
             {
                 DisplayError(ErrorCode.Exception,
                     new Dictionary<string, string>
-                        {{"@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message}}, e);
+                        {{ "@{error}", e is ScriptRuntimeException error ? error.DecoratedMessage : e.Message + e.StackTrace.Split("\r\n")[0]}}, e);
+                
             }
         }
 
@@ -1491,7 +1494,8 @@ namespace PixelVision8.Runner
             // Export the current game
 
             // TODO exporter needs a callback when its completed
-            ExportService.ExportGame(path, engine, saveFlags, useSteps);
+            if (mode != RunnerMode.Error) //Was causing Roslyn games to wipe save data on any error.
+                ExportService.ExportGame(path, engine, saveFlags, useSteps);
         }
 
         protected override void OnExiting(object sender, EventArgs args)
@@ -1510,11 +1514,10 @@ namespace PixelVision8.Runner
 
         public void ProcessFiles(IEngine tmpEngine, string[] files, bool displayProgress = false)
         {
-            // Look for a CS file
             var csFilePaths = files.Where(p => p.EndsWith(".cs")).ToArray();
             if (csFilePaths.Length > 0)
-                //Roslyn mode. Build the game. TODO: correct to use workspace paths. Hardcoded for Proof-Of-Concept
-                CompileFromSource(csFilePaths);
+                //Roslyn mode.
+                BuildRoslynGameChip(csFilePaths);
 
             // base.ProcessFiles(tmpEngine, files, displayProgress);
             this.displayProgress = displayProgress;
@@ -1557,82 +1560,90 @@ namespace PixelVision8.Runner
             loadService.ParseFiles(files, _tmpEngine, flags.Value);
         }
 
-        public void CompileFromSource(string[] files)
+        public void BuildRoslynGameChip(string[] files, bool buildDebugData = true)
         {
             var total = files.Length;
-
             var syntaxTrees = new SyntaxTree[total];
+            var embeddedTexts = new EmbeddedText[total];
 
-            for (var i = 0;
-                i < total;
-                i++)
+            for (var i = 0; i < total; i++)
             {
                 var path = WorkspacePath.Parse(files[i]);
-
                 var data = workspaceService.ReadTextFromFile(path);
-
                 syntaxTrees[i] = CSharpSyntaxTree.ParseText(data);
+                var st = SourceText.From(text: data, encoding: Encoding.UTF8);
+                embeddedTexts[i] = EmbeddedText.FromSource(files[i], st);
             }
 
             //Compilation options, should line up 1:1 with Visual Studio since it's the same underlying compiler.
             var options = new CSharpCompilationOptions(
-                OutputKind.DynamicallyLinkedLibrary,
-                optimizationLevel: OptimizationLevel.Release,
+                OutputKind.DynamicallyLinkedLibrary, 
+                optimizationLevel: buildDebugData ?  OptimizationLevel.Debug : OptimizationLevel.Release, 
                 moduleName: "RoslynGame");
 
-            //All of these are mandatory. This appears to the be minimum needed. Uncertain as of initial PoC if anything else outside of this needs referenced.
+            //This list of references is what limits the user from breaking out of the PV8 limitations through Roslyn.
+            //The first few lines are mandatory references, with the later ones being common helpful core libraries.
+            //We specifically exclude some from the list (System.IO.File, System.Net specifically for security, and System.Threading.Tasks to avoid bugs around parallel DrawX() calls).
             var references = new MetadataReference[]
             {
                 MetadataReference.CreateFromFile(typeof(object).Assembly.Location), //System.Private.CoreLib
                 MetadataReference.CreateFromFile(typeof(Console).Assembly.Location), //System.Console
-                MetadataReference.CreateFromFile(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly
-                    .Location), //System.Runtime
-                MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly
-                    .Location), //Microsoft.CSharp
-                MetadataReference.CreateFromFile(typeof(GameChip).Assembly.Location), //PixelVision8Runner
+                MetadataReference.CreateFromFile(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location), //System.Runtime
+                MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location), //Microsoft.CSharp
+                MetadataReference.CreateFromFile(typeof(GameChip).Assembly.Location), //PixelVision8
                 MetadataReference.CreateFromFile(typeof(Game).Assembly.Location), //MonoGameFramework
-                MetadataReference.CreateFromFile(Assembly.Load("netstandard")
-                    .Location) //Required due to a .NET Standard 2.0 dependency somewhere.
+                //MetadataReference.CreateFromFile(typeof(Point).Assembly.Location), //XNA Framework, automatic as part of PixelVision8Runner. needs declared in code.cs, not here.
+                MetadataReference.CreateFromFile(Assembly.Load("netstandard").Location), //Required due to a .NET Standard 2.0 dependency somewhere.
+                MetadataReference.CreateFromFile(Assembly.Load("System.Collections").Location), //required for Linq
+                MetadataReference.CreateFromFile(Assembly.Load("System.Linq").Location),
+                MetadataReference.CreateFromFile(Assembly.Load("System.Linq.Queryable").Location),
+                MetadataReference.CreateFromFile(Assembly.Load("System.Linq.Expressions").Location),
             };
 
             var compiler = CSharpCompilation.Create("LoadedGame", syntaxTrees, references, options);
 
             //Compile the existing file into memory, or error out.
-            var stream = new MemoryStream();
+            var dllStream = new MemoryStream();
+            var pdbStream = new MemoryStream();
 
-            var compileResults = compiler.Emit(stream);
+            //This lets us get data if we hit a runtime error.
+            var emitOptions = new EmitOptions(
+                debugInformationFormat: DebugInformationFormat.PortablePdb
+            );
+
+            var compileResults = compiler.Emit( peStream: dllStream, pdbStream: pdbStream,  embeddedTexts:embeddedTexts, options: emitOptions);
             if (compileResults.Success)
             {
-                stream.Seek(0, SeekOrigin.Begin);
+                dllStream.Seek(0, SeekOrigin.Begin);
+                pdbStream.Seek(0, SeekOrigin.Begin);
             }
-
             else
             {
                 var errors = compileResults.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
-
-                // TODO Need to get the error from the compiler
-                // var e = "Code could not be compiled";
+                var errorData = errors[0].Location.GetLineSpan();
+                var lineNumber = errorData.StartLinePosition.Line + 1;
+                var charNumber = errorData.StartLinePosition.Character + 1;
                 DisplayError(ErrorCode.Exception,
                     new Dictionary<string, string>
                     {
                         {
                             "@{error}",
                             errors.Count > 0
-                                ? errors[0].GetMessage()
+                                ? "Line " + lineNumber + " Pos " + charNumber  + ": " +  errors[0].GetMessage()
                                 : "There was an unknown errror trying to compile a C# file."
                         }
                     });
-                //TODO: error handling, use data from compileResults to show user what's wrong.
                 return;
             }
 
-            //Get the DLL into active memory so we can use it.
-            var roslynassembly = stream.ToArray();
-            var loadedAsm = Assembly.Load(roslynassembly);
+            //Get the DLL into active memory so we can use it. Runtime errors will give the wrong line number if we're in Release mode, so don't include the pdbStream for that.
+            var loadedAsm = Assembly.Load(dllStream.ToArray(), buildDebugData ?  pdbStream.ToArray() : null);
 
-            var roslynGameChipType =
-                loadedAsm.GetType("PixelVisionRoslyn.RoslynGameChip"); //This type much match what's in code.cs.
-            //Could theoretically iterate over types until once that inherits from GameChip is found, but this Proof of Concept demonstrates the baseline feature.
+            var roslynGameChipType = loadedAsm.GetType("PixelVisionRoslyn.RoslynGameChip"); //code.cs must use this namespace and class name.
+            //Could theoretically iterate over types until one that inherits from GameChip is found, but this strictness may be a better idea.
+
+            dllStream.Close(); dllStream.Dispose();
+            pdbStream.Close(); pdbStream.Dispose();
 
             if (roslynGameChipType != null)
             {
