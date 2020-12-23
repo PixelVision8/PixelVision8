@@ -1586,17 +1586,15 @@ namespace PixelVision8.Runner
             //We specifically exclude some from the list (System.IO.File, System.Net specifically for security, and System.Threading.Tasks to avoid bugs around parallel DrawX() calls).
             var references = new MetadataReference[]
             {
-                MetadataReference.CreateFromFile(typeof(object).Assembly.Location), //System.Private.CoreLib
-                MetadataReference.CreateFromFile(typeof(Console).Assembly.Location), //System.Console
-                MetadataReference.CreateFromFile(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location), //System.Runtime
-                MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location), //Microsoft.CSharp
-                MetadataReference.CreateFromFile(typeof(GameChip).Assembly.Location), //PixelVision8
-                MetadataReference.CreateFromFile(typeof(Game).Assembly.Location), //MonoGameFramework
-                //MetadataReference.CreateFromFile(typeof(Point).Assembly.Location), //XNA Framework, automatic as part of PixelVision8Runner. needs declared in code.cs, not here.
+                MetadataReference.CreateFromFile(Assembly.Load("System.Runtime").Location),
+                MetadataReference.CreateFromFile(Assembly.Load("System.Private.CoreLib").Location),
+                MetadataReference.CreateFromFile(Assembly.Load("System.Console").Location),
+                MetadataReference.CreateFromFile(Assembly.Load("Microsoft.CSharp").Location),
+                MetadataReference.CreateFromFile(Assembly.Load("Pixel Vision 8").Location),
+                MetadataReference.CreateFromFile(Assembly.Load("MonoGame.Framework").Location), 
                 MetadataReference.CreateFromFile(Assembly.Load("netstandard").Location), //Required due to a .NET Standard 2.0 dependency somewhere.
                 MetadataReference.CreateFromFile(Assembly.Load("System.Collections").Location), //required for Linq
                 MetadataReference.CreateFromFile(Assembly.Load("System.Linq").Location),
-                MetadataReference.CreateFromFile(Assembly.Load("System.Linq.Queryable").Location),
                 MetadataReference.CreateFromFile(Assembly.Load("System.Linq.Expressions").Location),
             };
 
