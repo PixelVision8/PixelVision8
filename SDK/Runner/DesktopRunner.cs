@@ -249,42 +249,6 @@ namespace PixelVision8.Runner
             Sharpness(Convert.ToSingle(bios.ReadBiosData(CRTSettings.Sharpness.ToString(), "-6")));
         }
 
-        // public enum InputMap
-        // {
-        //     Player1UpKey,
-        //     Player1DownKey,
-        //     Player1RightKey,
-        //     Player1LeftKey,
-        //     Player1SelectKey,
-        //     Player1StartKey,
-        //     Player1AKey,
-        //     Player1BKey,
-        //     Player1UpButton,
-        //     Player1DownButton,
-        //     Player1RightButton,
-        //     Player1LeftButton,
-        //     Player1SelectButton,
-        //     Player1StartButton,
-        //     Player1AButton,
-        //     Player1BButton,
-        //     Player2UpKey,
-        //     Player2DownKey,
-        //     Player2RightKey,
-        //     Player2LeftKey,
-        //     Player2SelectKey,
-        //     Player2StartKey,
-        //     Player2AKey,
-        //     Player2BKey,
-        //     Player2UpButton,
-        //     Player2DownButton,
-        //     Player2RightButton,
-        //     Player2LeftButton,
-        //     Player2SelectButton,
-        //     Player2StartButton,
-        //     Player2AButton,
-        //     Player2BButton
-        // }
-
         public readonly Dictionary<string, int> defaultKeys = new Dictionary<string, int>
         {
             {"Player1UpKey", (int) Keys.Up},
@@ -334,9 +298,6 @@ namespace PixelVision8.Runner
                 targetEngine.SetMetadata(keyMap.Key, keyValue.ToString());
             }
 
-            // base.ConfigureKeyboard();
-
-
             var player1KeyboardMap = new Dictionary<Buttons, Keys>
             {
                 {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1UpKey.ToString()))},
@@ -364,8 +325,6 @@ namespace PixelVision8.Runner
                 {Buttons.B, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1BKey.ToString()))}
             };
 
-            // var player2 = getPlayer(1);
-            //            player2.GamePadIndex = KEYBOARD_INDEX;
             var player2KeyboardMap = new Dictionary<Buttons, Keys>
             {
                 {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2UpKey.ToString()))},
@@ -513,12 +472,7 @@ namespace PixelVision8.Runner
 
         protected void CreateWorkspaceService()
         {
-            // workspaceService = new WorkspaceService(new KeyValuePair<WorkspacePath, IFileSystem>(
-            //         WorkspacePath.Root.AppendDirectory("App"),
-            //         new PhysicalFileSystem(rootPath)));
-            //
-            //     ServiceManager.AddService(typeof(WorkspaceService).FullName, workspaceService);
-
+            
             // TODO use partial class to add in support for workspace APIs needed by tools
             workspaceServicePlus = new WorkspaceServicePlus(
                 new KeyValuePair<WorkspacePath, IFileSystem>(

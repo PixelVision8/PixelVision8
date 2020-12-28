@@ -2,6 +2,7 @@ const gulp = require('gulp');
 const requireDir  = require('require-dir');
 const fs = require('fs');
 const libxmljs = require("libxmljs");
+const { platform } = require('os');
 
 // Set the path to the .csproj file
 process.env.STAGING = "../Builds/"
@@ -90,4 +91,10 @@ for (let index = 0; index < process.env.PLATFORMS.split(",").length; index++) {
 gulp.task(
   'default', 
   gulp.series( tasks )
+);
+
+// Perform all of the builds
+gulp.task(
+  'launch', 
+  gulp.series( ['build-run'] )
 );
