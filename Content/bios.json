@@ -1,7 +1,7 @@
 {
 	"CreateWorkspace" : "True",
-	"BaseDir": "PixelVision8",
 	"Resolution": "512x480",
+	"LogFilePath": "/Workspace/System/Log.txt",
 	"BootTool": "/PixelVisionOS/Tools/BootTool/",
 	"LoadTool": "/PixelVisionOS/Tools/LoadTool/",
 	"ErrorTool": "/PixelVisionOS/Tools/ErrorTool/",

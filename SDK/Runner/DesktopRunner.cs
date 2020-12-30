@@ -43,6 +43,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using Buttons = PixelVision8.Engine.Chips.Buttons;
 
 namespace PixelVision8.Runner
@@ -148,7 +149,9 @@ namespace PixelVision8.Runner
         private bool attachScript = true;
 
         public string SessionId { get; protected set; }
-        protected WorkspacePath userBiosPath => WorkspacePath.Parse("/Storage/user-bios.json");
+        protected WorkspacePath systemBiosPath => WorkspacePath.Parse("/Storage/system-bios.json");
+
+        protected WorkspacePath userBios => WorkspacePath.Parse("/Workspace/System/user-bios.json");
 
         public string LocalStorage
         {
@@ -533,7 +536,7 @@ namespace PixelVision8.Runner
             // Create the base directory in the documents and local storage folder
 
             // Get the base directory from the bios or use Pixel Vision 8 as the default name
-            var baseDir = bios.ReadBiosData("BaseDir", "PixelVision8");
+            var baseDir = Regex.Replace(bios.ReadBiosData("SystemName", "PixelVision8"), @"\s+", "");
 
             tmpPath = Path.Combine(LocalStorage, baseDir, "Tmp");
 
@@ -553,18 +556,27 @@ namespace PixelVision8.Runner
                 mounts.Add(WorkspacePath.Root.AppendDirectory(directory.Key), new PhysicalFileSystem(directory.Value));
             }
 
-
             // Mount the filesystem
             workspaceService.MountFileSystems(mounts);
 
+            if(workspaceService.Exists(systemBiosPath) == false)
+            {
+                var tmpBios = workspaceService.CreateFile(systemBiosPath);
+                tmpBios.Close();
 
-            var userBios = workspaceService.ReadTextFromFile(userBiosPath);
+                workspaceService.SaveTextToFile(systemBiosPath, "{\"workspacePath\":\""+Documents+"\"}");
+            }
 
-            bios.ParseBiosText(userBios);
+            var systemBios = workspaceService.ReadTextFromFile(systemBiosPath);
 
-            workspaceService.SetupLogFile(WorkspacePath.Parse(bios.ReadBiosData("LogFilePath", "/Tmp/Log.txt")));
+            bios.ParseBiosText(systemBios);
 
             // Everything below is custom to PV8
+
+            var userBios = workspaceService.ReadTextFromFile(this.userBios);
+
+            bios.ParseBiosText(userBios);
+            
 
             // Define PV8 disk extensions from the bios
             workspaceServicePlus.archiveExtensions =
@@ -595,8 +607,10 @@ namespace PixelVision8.Runner
                 // Set the TotalDisks disks
                 workspaceServicePlus.MaxDisks = int.Parse(bios.ReadBiosData("MaxDisks", "2", true));
 
+                var workspaceSystemPath = bios.ReadBiosData("workspacePath", Documents);
+
                 // Create the real system path to the documents folder
-                documentsPath = Path.Combine(Documents, baseDir);
+                documentsPath = Path.Combine(workspaceSystemPath, baseDir);
 
                 if (Directory.Exists(documentsPath) == false) Directory.CreateDirectory(documentsPath);
 
@@ -607,6 +621,8 @@ namespace PixelVision8.Runner
 
                 // Mount the workspace drive
                 workspaceServicePlus.MountWorkspace(workspaceName);
+
+                workspaceService.SetupLogFile(WorkspacePath.Parse(bios.ReadBiosData("LogFilePath", "/Tmp/Log.txt")));
 
             }
 
@@ -846,28 +862,6 @@ namespace PixelVision8.Runner
                 }
             }
         }
-
-        // public virtual void BootDone(bool safeMode = false)
-        // {
-        //     // Only call BootDone when the runner is booting.
-        //     if (mode != RunnerMode.Booting) return;
-        //
-        //     // Test to see if we are in save mode before loading the bios
-        //     if (safeMode)
-        //     {
-        //         // Clear the current bios
-        //         bios.Clear();
-        //
-        //         // Read the bios text
-        //         var biosText = workspaceService.ReadTextFromFile(biosPath);
-        //
-        //         // Reparse the bios text
-        //         bios.ParseBiosText(biosText);
-        //
-        //     }
-        //
-        //     AutoLoadDefaultGame();
-        // }
 
         /// <summary>
         ///     This mthod manually loads the game file's binary data then configures the engine and processes the files.
@@ -1202,6 +1196,9 @@ namespace PixelVision8.Runner
             // TODO moved this out of the normal configuration order so make sure this still makes sense here
             ConfigureKeyboard();
             ConfigureControllers();
+
+            // Make sure the current state of the system is saved back to the bios
+            SaveBiosChanges();
         }
 
         protected string OperatingSystem()
@@ -1731,9 +1728,11 @@ namespace PixelVision8.Runner
                 // Get the path to where the user's bios should be saved
                 //                var path = FileSystemPath.Parse("/User/").AppendFile("user-bios.json");
 
-                if (!workspaceService.Exists(userBiosPath))
+                if (!workspaceService.Exists(userBios))
                 {
-                    var newBios = workspaceService.CreateFile(userBiosPath);
+                    workspaceService.CreateDirectoryRecursive(userBios.ParentPath);
+
+                    var newBios = workspaceService.CreateFile(userBios);
                     newBios.Close();
                 }
 
@@ -1741,7 +1740,7 @@ namespace PixelVision8.Runner
                 var userData = new Dictionary<string, object>();
 
                 // Load the raw data for ther user's bio
-                var json = workspaceService.ReadTextFromFile(userBiosPath);
+                var json = workspaceService.ReadTextFromFile(userBios);
 
                 // If the json file isn't empty, deserialize it
                 if (json != "") userData = Json.Deserialize(json) as Dictionary<string, object>;
@@ -1755,7 +1754,7 @@ namespace PixelVision8.Runner
                         userData.Add(pair.Key, pair.Value);
 
                 // Save the new bios data back to the user's bios file.
-                workspaceService.SaveTextToFile(userBiosPath, Json.Serialize(userData), true);
+                workspaceService.SaveTextToFile(userBios, Json.Serialize(userData), true);
             }
         }
 

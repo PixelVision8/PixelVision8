@@ -996,7 +996,7 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
                 isDirectory = true,
                 selected = false,
                 dragDelay = -1,
-                sprite = PathExists(self.workspacePath.AppendDirectory("System")) and "filedriveos" or "filedrive",
+                sprite = "filedrive",
                 bgColor = BackgroundColor()
             }
     )
