@@ -130,20 +130,17 @@ namespace PixelVision8.Runner.Services
             if ((saveFlags & SaveFlags.Fonts) == SaveFlags.Fonts)
             {
 
-
-// "/PixelVisionOS/Tools/Fonts/large.font.png",
-
-                // Load up default fonts
+                // these are the defaul font names
                 var defaultFonts = new string[]{
                     "large",
                     "medium",
                     "small",
                 };
-
-                // Load up custom fonts
-
+                
+                // Get the list of fonts in the directory
                 var paths = files.Where(s => s.EndsWith(".font.png")).ToList();
 
+                // Make sure the default fonts are either in the project or in /Tools/Fonts/*
                 foreach (var font in defaultFonts)
                 {
                     if(paths.Contains("/Game/" + font + ".font.png") == false)
@@ -152,20 +149,12 @@ namespace PixelVision8.Runner.Services
                     }
                 }
 
+                // Loop through each of the fonts and load them up
                 foreach (var fileName in paths)
                 {
-
-                    Console.WriteLine("Load font " + fileName);
-
-                    // var fontName = GetFileName(fileName).Split('.').First();
-
                     var imageParser = new PNGFileReader(fileName, _fileLoadHelper, targetEngine.ColorChip.maskColor);
 
                     AddParser(new FontParser(imageParser, targetEngine.ColorChip, targetEngine.FontChip));
-
-                    // parser = LoadFont(fontName, ReadAllBytes(fileName));
-                    // if (parser != null)
-                    //     AddParser(parser);
                 }
             }
 

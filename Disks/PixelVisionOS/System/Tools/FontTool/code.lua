@@ -379,7 +379,7 @@ function OnFontLoaded()
     spacingStepper = editorUI:CreateStringStepper({x = 200, y = 152}, 16, "0", {"-4", "-3", "-2", "-1", "0", "1", "2"}, "", "Change the length of the pattern.")
 
     -- TODO This is a hack becuse entering in numbers by hand could break the return value... example 2 becomes 20.
-    spacingStepper.inputField.highlighterTheme.disabled = 44
+    spacingStepper.inputField.highlighterTheme.disabled = 15
     editorUI:Enable(spacingStepper.inputField, false)
 
     spacingStepper.onInputAction = function(value) DrawSampleText(value) end

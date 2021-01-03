@@ -186,7 +186,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
                     end
 
                     -- Draw the text
-                    canvas:DrawText(line, x, y, "medium5", textColor, - 4)
+                    canvas:DrawText(line, x, y, "medium", textColor, - 4)
 
                 end
 

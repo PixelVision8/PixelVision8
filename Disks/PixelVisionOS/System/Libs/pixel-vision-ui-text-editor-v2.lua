@@ -3,23 +3,23 @@ LoadScript("lume")
 
 function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset)
 
-  local colorShift = colorOffset or 44
+  -- local colorShift = colorOffset or 44
 
   -- local text = text or ""
 
   local data = self:CreateData(rect, nil, toolTip)
 
   data.highlighterTheme = {
-    text = colorShift,
-    selection = colorShift + 4,
-    keyword = colorShift + 2,
-    number = colorShift + 6,
-    comment = colorShift + 8,
-    string = colorShift + 10,
-    api = colorShift + 12,
-    callback = colorShift + 14,
-    escape = colorShift + 16,
-    disabled = colorShift + 8
+    text = 15, -- White
+    selection = 14, -- Yellow,
+    keyword = 13, -- 
+    number = 2, -- 
+    comment = 6, -- 
+    string = 11, -- 
+    api = 7, -- 
+    callback = 15, -- 
+    escape = 15, -- 
+    disabled = 5, -- 
   }
 
   if(highlighter ~= nil) then
@@ -37,7 +37,8 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset)
   data.flavorBack = 0
   data.theme = {
     bg = 0, --Background Color
-    cursor = 4 --Cursor Color
+    cursor = 0, --Cursor Color
+    cursorBG = 15 --Cursor BG Color
   }
   data.cx, data.cy = 1, 1 --Cursor Position
   data.fw = self.spriteSize.x
@@ -76,7 +77,7 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset)
   data.colorOffset = 0
   data.spacing = 0
 
-  data.font = font or "medium"
+  data.font = font or "large"
   data.charSize = NewPoint(8, 8)
 
   data.bgMaskDrawArguments = {
@@ -97,13 +98,22 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset)
     DrawMode.TilemapCache
   }
 
+  data.cursorBGDrawArguments = {
+    0,
+    0,
+    data.charSize.X,
+    data.charSize.Y,
+    data.theme.cursorBG,
+    DrawMode.Sprite
+  }
+
   data.cursorDrawArguments = {
     data.blinkChar,
     0,
     0,
-    DrawMode.Sprite,
+    DrawMode.SpriteAbove,
     data.font,
-    data.highlighterTheme.selection,
+    data.theme.cursor,
     data.spacing
   }
 
@@ -507,12 +517,7 @@ function EditorUI:TextEditorDrawBlink(data)
   if data.cy - data.vy < 0 or data.cy - data.vy > data.tiles.h then return end
   if data.bflag then
 
-    local bx = (data.cx - data.vx) * (data.fw)
-    local by = (data.cy - data.vy) * (data.fh)
-
-    local charIndex = data.cx--(data.cx - data.vx) + 1 -- bx / 8 + 1
-
-    local char = data.buffer[data.cy]:sub(charIndex, charIndex)
+    local char = data.buffer[data.cy]:sub(data.cx, data.cx)
 
     -- Need to replace empty characters with a space
     if(char == "" or char == "\r") then
@@ -520,8 +525,13 @@ function EditorUI:TextEditorDrawBlink(data)
     end
 
     data.cursorDrawArguments[1] = char
-    data.cursorDrawArguments[2] = data.rect.x + bx
-    data.cursorDrawArguments[3] = data.rect.y + by
+    data.cursorDrawArguments[2] = data.rect.x + (data.cx - data.vx) * (data.fw)
+    data.cursorDrawArguments[3] = data.rect.y + (data.cy - data.vy) * (data.fh)
+
+    data.cursorBGDrawArguments[1] = data.cursorDrawArguments[2]
+    data.cursorBGDrawArguments[2] = data.cursorDrawArguments[3]
+
+    self:NewDraw("DrawRect", data.cursorBGDrawArguments)
 
     self:NewDraw("DrawText", data.cursorDrawArguments)
 

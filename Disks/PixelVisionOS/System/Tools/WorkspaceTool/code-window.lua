@@ -391,7 +391,7 @@ function WorkspaceTool:ChangeWindowTitle()
     end
 
     -- Draw the new title bar text   
-    DrawText(pathTitle, 19, 17, DrawMode.TilemapCache, "medium5", colorID, - 4)
+    DrawText(pathTitle, 19, 17, DrawMode.TilemapCache, "medium", colorID, - 4)
 
 end
 

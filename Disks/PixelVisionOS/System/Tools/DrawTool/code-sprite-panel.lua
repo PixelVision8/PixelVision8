@@ -54,13 +54,7 @@ function DrawTool:CreateSpritePanel()
     self.spritePickerData.onAction = function(value) self:ChangeSpriteID(value) end
     self.spritePickerData.onDropTarget = function(src, dest) self:OnSpritePickerDrop(src, dest) end
 
-    self.spriteIDInputData = editorUI:CreateInputField({x = 176, y = 208, w = 32}, "0", "The ID of the currently selected sprite.", "number", nil, PaletteOffset(0))
-    
-    self.spriteIDInputData.highlighterTheme = {
-        disabled = PaletteOffset(0,0),
-        text = PaletteOffset(0,2),
-        selection = PaletteOffset(0,4),
-    }
+    self.spriteIDInputData = editorUI:CreateInputField({x = 176, y = 208, w = 32}, "0", "The ID of the currently selected sprite.", "number")
     
     self.spriteIDInputData.min = 0
     self.spriteIDInputData.max = gameEditor:TotalSprites() - 1

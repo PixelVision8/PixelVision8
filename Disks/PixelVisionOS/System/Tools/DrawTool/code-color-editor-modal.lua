@@ -143,23 +143,15 @@ function EditColorModal:Configure()
 
     table.insert(self.buttons, colorPickerButton)
 
-    local highlighterTheme = {
-        disabled = PaletteOffset(0,0),
-        text = PaletteOffset(0,2),
-        selection = PaletteOffset(0,4),
-    }
-
     -- Settings
-    self.colorHexInputData = editorUI:CreateInputField({x = self.rect.x + 24, y = self.rect.y + 144, w = 48}, "FF00FF", "Hex value of the selected color.", "hex", "input", PaletteOffset(0))
-    self.colorHexInputData.highlighterTheme = highlighterTheme
+    self.colorHexInputData = editorUI:CreateInputField({x = self.rect.x + 24, y = self.rect.y + 144, w = 48}, "FF00FF", "Hex value of the selected color.", "hex")
 
     self.colorHexInputData.forceCase = "upper"
 
     table.insert(self.invalidateUI, self.colorHexInputData)
 
     -- Red input
-    self.redInputData = editorUI:CreateInputField({x = self.rect.x + 200, y = self.rect.y + 80, w = 24}, "000", "Hex value of the selected color.", "number", "input", PaletteOffset(0))
-    self.redInputData.highlighterTheme = highlighterTheme
+    self.redInputData = editorUI:CreateInputField({x = self.rect.x + 200, y = self.rect.y + 80, w = 24}, "000", "Hex value of the selected color.", "number")
     
     self.redInputData.min = 0
     self.redInputData.max = 255
@@ -167,8 +159,7 @@ function EditColorModal:Configure()
     table.insert(self.invalidateUI, self.redInputData)
 
     -- Green input
-    self.greenInputData = editorUI:CreateInputField({x = self.rect.x + 200, y = self.rect.y + 112, w = 24}, "000", "Hex value of the selected color.", "number", "input", PaletteOffset(0))
-    self.greenInputData.highlighterTheme = highlighterTheme
+    self.greenInputData = editorUI:CreateInputField({x = self.rect.x + 200, y = self.rect.y + 112, w = 24}, "000", "Hex value of the selected color.", "number")
 
     self.greenInputData.min = 0
     self.greenInputData.max = 255
@@ -176,8 +167,7 @@ function EditColorModal:Configure()
     table.insert(self.invalidateUI, self.greenInputData)
 
     -- blue input
-    self.blueInputData = editorUI:CreateInputField({x = self.rect.x + 200, y = self.rect.y + 144, w = 24}, "000", "Hex value of the selected color.", "number", "input", PaletteOffset(0))
-    self.blueInputData.highlighterTheme = highlighterTheme
+    self.blueInputData = editorUI:CreateInputField({x = self.rect.x + 200, y = self.rect.y + 144, w = 24}, "000", "Hex value of the selected color.", "number")
 
     self.blueInputData.min = 0
     self.blueInputData.max = 255
