@@ -144,12 +144,7 @@ function MouseCursor:Update(timeDelta, collisionState)
         end
 
     end
-    --
-    -- if(cursorID == 5) then
-    --
-    --
-    -- end
-
+    
 end
 
 function MouseCursor:Draw()
@@ -171,7 +166,7 @@ function MouseCursor:Draw()
         if(spriteData ~= nil) then
 
             -- Draw the new cursor taking into account the cursors offset
-            DrawSprites(spriteData.spriteIDs, self.pos.x + self.cursorData.offset.x, self.pos.y + self.cursorData.offset.y, spriteData.width, false, false, DrawMode.SpriteAbove, self.colorOffset, true, false)
+            DrawSprites(spriteData.spriteIDs, self.pos.x + self.cursorData.offset.x, self.pos.y + self.cursorData.offset.y, spriteData.width, false, false, DrawMode.SpriteAbove, self.colorOffset)
 
         end
 

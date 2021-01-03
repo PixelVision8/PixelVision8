@@ -35,7 +35,8 @@ function PixelVisionOS:CreateIconButton(point, spriteName, label, toolTip, bgCol
     -- Enable the button's doubleClick property
     data.doubleClick = true
     data.open = false
-
+    -- data.iconDragOffset = {x = 24, y = 12}
+    
     data.tilePixelArgs = {nil, data.rect.x, data.rect.y, 48, 48, DrawMode.TilemapCache, 0}
 
     data.onClick = function(tmpData)
@@ -219,8 +220,6 @@ function PixelVisionOS:UpdateIconButton(data, hitRect)
             editorUI:ClearFocus(data)
         end
 
-        -- See if the button needs to be redrawn.
-        -- self:RedrawButton(data)
         data.onRedraw(data)
         -- Shouldn't update the button if its disabled
         return
@@ -253,7 +252,6 @@ function PixelVisionOS:UpdateIconButton(data, hitRect)
     -- Ready to test finer collision if needed
     if(collision or overrideFocus) then
 
-
         if(data.doubleClick == true) then
 
             -- If the button wasn't in focus before, reset the timer since it's about to get focus
@@ -267,6 +265,7 @@ function PixelVisionOS:UpdateIconButton(data, hitRect)
             if(data.doubleClickActive and data.doubleClickTime > data.doubleClickDelay) then
                 data.doubleClickActive = false
             end
+
         end
 
         -- If we are in the collision area, set the focus
@@ -280,6 +279,7 @@ function PixelVisionOS:UpdateIconButton(data, hitRect)
             -- Click the button
             data.onClick(data)
             data.firstPress = true
+            
         elseif(editorUI.collisionManager.mouseDown) then
 
             if(data.firstPress ~= false) then
@@ -434,7 +434,7 @@ function PixelVisionOS:CreateIconGroup(singleSelection)
     data.singleSelection = singleSelection
     data.dragOverTime = 0
     data.dragOverDelay = .3
-    data.drawIconArgs = {nil, 0, 0, 48, 40, false, false, DrawMode.UI}
+    data.drawIconArgs = {nil, 0, 0, 47, 40, false, false, DrawMode.UI}
 
     return data
 
@@ -601,52 +601,11 @@ function PixelVisionOS:UpdateIconGroup(data)
 
                 if(editorUI.collisionManager.mousePos.x > - 1 and editorUI.collisionManager.mousePos.y > - 1) then
 
-                    local mouseOffset = {x = 24, y = 12}
-
-                    local clipSize = {x = 0, y = 0, w = 48, h = 40}
-
-                    -- TODO need to save this so it's not being called every time
-                    -- Calculate mask
-                    local displaySize = Display()
-
-                    displaySize.x = displaySize.x - 1
-                    -- TODO think this is a bug in the display size, it shouldn't need to subtract 9, just 1 like the width
-                    displaySize.y = displaySize.y - 9
-                    -- displaySize.width = displaySize.width - 1
-                    -- displaySize.y = displaySize.y - 9
-
-                    if((editorUI.collisionManager.mousePos.x + (clipSize.w / 2)) > displaySize.x) then
-                        clipSize.w = clipSize.w - ((editorUI.collisionManager.mousePos.x + (clipSize.w / 2)) - displaySize.x)
-                    elseif((editorUI.collisionManager.mousePos.x - (clipSize.w / 2)) < 0) then
-
-                        local tmp = clipSize.w - ((editorUI.collisionManager.mousePos.x + (clipSize.w / 2))) + 1
-
-                        clipSize.x = tmp
-                        clipSize.w = clipSize.w - tmp
-
-                        mouseOffset.x = mouseOffset.x - clipSize.x
-
-                    end
-
-                    if((editorUI.collisionManager.mousePos.y + (clipSize.h / 2)) > displaySize.y) then
-                        clipSize.h = clipSize.h - ((editorUI.collisionManager.mousePos.y + (clipSize.h / 2)) - displaySize.y)
-                    elseif((editorUI.collisionManager.mousePos.y - (clipSize.h / 2)) < 4) then
-                        -- clipSize.h = 0
-
-                        local tmp = clipSize.h - ((editorUI.collisionManager.mousePos.y + (clipSize.h / 2))) + 3
-
-                        clipSize.y = tmp
-                        clipSize.h = clipSize.h - tmp
-
-                        mouseOffset.y = mouseOffset.y - clipSize.y
-
-                    end
-
-                    data.drawIconArgs[1] = btn.cachedPixelData["dragging"]:SamplePixels(clipSize.x, clipSize.y, clipSize.w, clipSize.h)
-                    data.drawIconArgs[2] = editorUI.collisionManager.mousePos.x - mouseOffset.x
-                    data.drawIconArgs[3] = editorUI.collisionManager.mousePos.y - mouseOffset.y
-                    data.drawIconArgs[4] = clipSize.w
-                    data.drawIconArgs[5] = clipSize.h
+                    data.drawIconArgs[1] = btn.cachedPixelData["dragging"].pixels
+                    data.drawIconArgs[2] = editorUI.collisionManager.mousePos.x - 24
+                    data.drawIconArgs[3] = editorUI.collisionManager.mousePos.y - 12
+                    -- data.drawIconArgs[4] = btn.cachedPixelData["dragging"].width
+                    -- data.drawIconArgs[5] = clipSize.h
 
                     -- DrawPixels(btn.cachedPixelData["up"], 0,0)
                     editorUI:NewDraw("DrawPixels", data.drawIconArgs)
