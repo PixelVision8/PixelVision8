@@ -72,15 +72,10 @@ jobs:
       - name: View Changelog
         run: cat .github/CHANGELOG.md
 
-
       - name: save Changelog
         id: log
-        env:
-          REPORT: $(cat .github/CHANGELOG.md)
-        # run: |
-        #   REPORT="$(cat .github/CHANGELOG.md)"
-        #   REPORT="${REPORT//'%'/'%25'}"
-        #   echo "REPORT=$(cat .github/CHANGELOG.md)" >> $GITHUB_ENV
+        run: |
+          echo "REPORT=$(cat .github/CHANGELOG.md)" >> $GITHUB_ENV
 
       # Setup dotnet v3.1
       - name: Setup .NET Core
