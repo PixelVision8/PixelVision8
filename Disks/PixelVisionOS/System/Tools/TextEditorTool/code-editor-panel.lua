@@ -204,7 +204,7 @@ end
 
 function TextTool:OnHorizontalScroll(value)
 
-    print("Scroll", value)
+    -- print("Scroll", value)
     
     local charPos = math.ceil(((self.inputAreaData.maxLineWidth + 1) - (self.inputAreaData.tiles.w)) * value) + 1
 
@@ -216,7 +216,7 @@ function TextTool:OnHorizontalScroll(value)
 end
 
 function TextTool:OnVerticalScroll(value)
-    print("Scroll", value)
+    -- print("Scroll", value)
     local line = math.ceil((#self.inputAreaData.buffer - (self.inputAreaData.tiles.h - 1)) * value)
     if(self.inputAreaData.vy ~= line) then
         self.inputAreaData.vy = Clamp(line, 1, #self.inputAreaData.buffer)

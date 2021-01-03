@@ -50,11 +50,9 @@ function TextTool:OnRunGame()
     local data = {codeFile = _textTool.targetFile}
 
 
-    //if(self.codeMode == true) then
-    //
-    //    data["codeFile"] = _textTool.targetFile
-    //
-    //end
+    -- if(self.codeMode == true) then
+    --    data["codeFile"] = _textTool.targetFile
+    -- end
 
     local parentPath = self.targetFilePath.ParentPath
 

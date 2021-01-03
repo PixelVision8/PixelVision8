@@ -25,7 +25,9 @@ namespace PixelVision8.Runner.Utils
     public interface IFileLoadHelper
     {
         string GetFileName(string path);
-        byte[] ReadAllBytes(string file);
+        byte[] ReadAllBytes(string path);
+
+        bool Exists(string path);
     }
 
     public class FileLoadHelper : IFileLoadHelper
@@ -40,6 +42,11 @@ namespace PixelVision8.Runner.Utils
 
             // TODO this should be a service
             return File.ReadAllBytes(file);
+        }
+
+        public bool Exists(string path)
+        {
+            return File.Exists(path);
         }
     }
 

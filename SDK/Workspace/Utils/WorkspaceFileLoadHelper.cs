@@ -20,6 +20,7 @@
 
 using PixelVision8.Runner.Services;
 using PixelVision8.Runner.Workspace;
+using System;
 using System.IO;
 
 namespace PixelVision8.Runner.Utils
@@ -54,6 +55,11 @@ namespace PixelVision8.Runner.Utils
                 return memoryStream.ToArray();
             }
 
+        }
+
+        public bool Exists( string path)
+        {
+            return WorkspaceService.Exists(WorkspacePath.Parse(path));
         }
     }
 

@@ -52,7 +52,7 @@ namespace PixelVision8.Runner
 
             _graphics = new GraphicsDeviceManager(this);
 
-            //            IsFixedTimeStep = true;
+            IsFixedTimeStep = true;
         }
 
         // Default chips for the engine

@@ -5,7 +5,7 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset)
 
   local colorShift = colorOffset or 44
 
-  local text = text or ""
+  -- local text = text or ""
 
   local data = self:CreateData(rect, nil, toolTip)
 
@@ -62,7 +62,7 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset)
   data.autoDeselect = true
 
   data.buffer = {}
-  data.font = font or "input"
+  
   data.invalidateLine = true
   data.invalidateBuffer = true
   data.invalidText = true
@@ -75,6 +75,8 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset)
   data.drawMode = DrawMode.TilemapCache
   data.colorOffset = 0
   data.spacing = 0
+
+  data.font = font or "input"
   data.charSize = NewPoint(8, 8)
 
   data.bgMaskDrawArguments = {
@@ -404,25 +406,39 @@ function EditorUI:TextEditorDrawCharactersAtCursor(data, text, x, y)
   x = x or (data.cursorPos.x * data.charSize.X)
   y = y or (data.cursorPos.y * data.charSize.Y)
 
-  -- Move the cursor to the end of the text block for the next draw call
-  data.cursorPos.x = data.cursorPos.x + #text
+  local length = #text
+  local tmpChar = ""
 
-  -- TODO need to create a new object here
+  for i = 1, length do
 
-  local drawArguments = {
-    text,
-    data.rect.x + x,
-    data.rect.y + y,
-    DrawMode.TilemapCache,
-    data.font,
-    data.enabled == true and data.cursorPos.color or data.highlighterTheme.disabled,
-    data.spacing,
-    true,
-    true,
-    data.viewPort
-  }
+    data.cursorPos.x = data.cursorPos.x + 1
 
-  self:NewDraw("DrawText", drawArguments)
+    tmpChar = text:sub(i, i)
+
+    if(x >= 0 and tmpChar ~= " ") then
+
+      if(x > (data.viewPort.width - 8)) then
+        return
+      end
+
+      local drawArguments = {
+        tmpChar,
+        data.rect.x + x,
+        data.rect.y + y,
+        DrawMode.TilemapCache,
+        data.font,
+        data.enabled == true and data.cursorPos.color or data.highlighterTheme.disabled,
+        data.spacing
+      }
+
+      self:NewDraw("DrawText", drawArguments)
+
+    end 
+
+    -- Increase X to the next character
+    x = x + data.charSize.X
+
+  end
 
 end
 

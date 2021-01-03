@@ -26,6 +26,7 @@ using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Importers;
 using PixelVision8.Runner.Parsers;
 using PixelVision8.Runner.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -88,6 +89,8 @@ namespace PixelVision8.Runner.Services
         {
             Reset();
 
+            Console.WriteLine("Font Test " +  _fileLoadHelper.Exists("/PixelVisionOS/Tools/Fonts/large.font.png"));
+
             // Save the engine so we can work with it during loading
             targetEngine = engine;
 
@@ -127,10 +130,33 @@ namespace PixelVision8.Runner.Services
             if ((saveFlags & SaveFlags.Fonts) == SaveFlags.Fonts)
             {
 
-                var paths = files.Where(s => s.EndsWith(".font.png")).ToArray();
+
+// "/PixelVisionOS/Tools/Fonts/large.font.png",
+
+                // Load up default fonts
+                var defaultFonts = new string[]{
+                    "large",
+                    "medium",
+                    "small",
+                };
+
+                // Load up custom fonts
+
+                var paths = files.Where(s => s.EndsWith(".font.png")).ToList();
+
+                foreach (var font in defaultFonts)
+                {
+                    if(paths.Contains("/Game/" + font + ".font.png") == false)
+                    {
+                        paths.Add("/PixelVisionOS/Tools/Fonts/" + font + ".font.png");
+                    }
+                }
 
                 foreach (var fileName in paths)
                 {
+
+                    Console.WriteLine("Load font " + fileName);
+
                     // var fontName = GetFileName(fileName).Split('.').First();
 
                     var imageParser = new PNGFileReader(fileName, _fileLoadHelper, targetEngine.ColorChip.maskColor);
