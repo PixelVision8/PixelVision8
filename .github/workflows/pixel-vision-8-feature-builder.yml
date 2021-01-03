@@ -76,10 +76,12 @@ jobs:
         id: log
         run: |
           REPORT="$(cat .github/CHANGELOG.md)"
-          REPORT="${REPORT//'%'/'%25'}"
-          REPORT="${REPORT//$'\n'/'%0A'}"
-          REPORT="${REPORT//$'\r'/'%0D'}"
           echo "REPORT=$REPORT" >> $GITHUB_ENV
+
+        # REPORT="${REPORT//'%'/'%25'}"
+        # REPORT="${REPORT//$'\n'/'%0A'}"
+        # REPORT="${REPORT//$'\r'/'%0D'}"
+        # echo "REPORT=$REPORT" >> $GITHUB_ENV
 
       # Setup dotnet v3.1
       - name: Setup .NET Core
