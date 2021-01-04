@@ -89,8 +89,6 @@ namespace PixelVision8.Runner.Services
         {
             Reset();
 
-            Console.WriteLine("Font Test " +  _fileLoadHelper.Exists("/PixelVisionOS/Tools/Fonts/large.font.png"));
-
             // Save the engine so we can work with it during loading
             targetEngine = engine;
 

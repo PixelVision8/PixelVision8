@@ -73,7 +73,7 @@ namespace PixelVision8.Engine.Chips
             #region Display APIs
 
             LuaScript.Globals["Clear"] = new Action(Clear);
-            LuaScript.Globals["Display"] = new Func<bool, Point>(Display);
+            LuaScript.Globals["Display"] = new Func<Point>(Display);
             LuaScript.Globals["DrawPixels"] =
                 new Action<int[], int, int, int, int, bool, bool, DrawMode, int>(DrawPixels);
             LuaScript.Globals["DrawSprite"] =

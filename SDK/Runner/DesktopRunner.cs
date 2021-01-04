@@ -114,7 +114,7 @@ namespace PixelVision8.Runner
         public IServiceLocator ServiceManager { get; }
         protected RunnerMode mode;
         protected bool displayProgress;
-        private string bootDisk;
+        private List<string> bootDisks = new List<string>();
 
         protected override bool RunnerActive
         {
@@ -127,7 +127,7 @@ namespace PixelVision8.Runner
         }
 
         // Default path to where PV8 workspaces will go
-        public DesktopRunner(string rootPath, string bootDisk = null)
+        public DesktopRunner(string rootPath, string[] args = null)
         {
             // Fix a bug related to parsing numbers in Europe, among other things
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -139,10 +139,58 @@ namespace PixelVision8.Runner
             server = new MoonSharpVsCodeDebugServer(1985);
             server.Start();
 
-            if (bootDisk != null && bootDisk.EndsWith(".pv8") ? File.Exists(bootDisk) : Directory.Exists(bootDisk))
+            if(args != null)
+                ParseArguments(args);
+
+        }
+
+        private void ParseArguments(string[] args)
+        {
+
+            if(args.Length == 0)
+            return;
+            
+            if(args.Length == 1 && args[0].EndsWith(".pv8") ? File.Exists(args[0]) : Directory.Exists(args[0]))
             {
-                this.bootDisk = bootDisk;
+                bootDisks.Add(args[0]);
             }
+
+            var pairs = args.Length / 2;
+
+            for (int i = 0; i < pairs; i++)
+            {
+                try
+                {
+                    var param = args[i * 2];
+                    var val = args[i * 2 + 1];
+
+                    switch(param){
+
+                        case "-d": case "-disk":
+
+                            bootDisks.Add(val);
+
+                        break;
+                        default:
+
+                            for (int j = 0; j < args.Length; j++)
+                            {
+                                bootDisks.Add(args[j]);
+                            }
+
+                        break;
+
+                    }
+
+                }
+                catch (System.Exception error)
+                {
+                    Console.WriteLine("Issue with command line argumes");
+                    throw;
+                }
+
+            }
+
         }
 
         protected MoonSharpVsCodeDebugServer server;
@@ -808,17 +856,26 @@ namespace PixelVision8.Runner
                 }
             }
 
-            if (bootDisk == null)
+            if (bootDisks.Count == 0)
             {
                 AutoLoadDefaultGame();
             }
             else
             {
-                // Force runner to auto run disk
-                autoRunEnabled = true;
 
-                // Mount the disk
-                MountDisk(bootDisk);
+                for (int i = 0; i < bootDisks.Count; i++)
+                {
+
+                    // Force runner to auto run disk
+                    autoRunEnabled = i == 0;
+
+                    // Mount the disk
+                    MountDisk(bootDisks[i]);
+
+                    autoRunEnabled = true;
+
+                }
+                
             }
 
         }

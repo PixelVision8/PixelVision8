@@ -343,13 +343,13 @@ namespace PixelVision8.Engine.Chips
         ///     the overscan value set on the display chip. To calculate the exact overscan in pixels, you must subtract
         ///     the full size from the visible size. Simply supply false as an argument to get the full display dimensions.
         /// </summary>
-        public Point Display(bool visible = true)
+        public Point Display()
         {
             // offsetX = visible ? DisplayChip.OverscanXPixels : 0;
             // offsetY = visible ? DisplayChip.OverscanYPixels : 0;
 
-            // display.X = display.X;// - offsetX;
-            // display.Y = display.Y;// - offsetY;
+            display.X = DisplayChip.Width;// - offsetX;
+            display.Y = DisplayChip.Height;// - offsetY;
 
             return display;
         }
