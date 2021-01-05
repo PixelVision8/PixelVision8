@@ -115,6 +115,7 @@ namespace PixelVision8.Runner
         protected RunnerMode mode;
         protected bool displayProgress;
         private List<string> bootDisks = new List<string>();
+        private Dictionary<string, string> bootBios= new Dictionary<string, string>();
 
         protected override bool RunnerActive
         {
@@ -167,12 +168,17 @@ namespace PixelVision8.Runner
                     switch(param){
 
                         case "-d": case "-disk":
-
+                            // Add disk to boot list
                             bootDisks.Add(val);
-
+                        break;
+                        case "-b": case "-bios":
+                            // TODO override path to user bios
+                        break;
+                        case "-w": case "-workspace":
+                            // TODO override path to workspace
                         break;
                         default:
-
+                            // Loop through all the arguments and treat them as disk paths
                             for (int j = 0; j < args.Length; j++)
                             {
                                 bootDisks.Add(args[j]);
@@ -199,7 +205,7 @@ namespace PixelVision8.Runner
         public string SessionId { get; protected set; }
         protected WorkspacePath systemBiosPath => WorkspacePath.Parse("/Storage/system-bios.json");
 
-        protected WorkspacePath userBios => WorkspacePath.Parse("/Workspace/System/user-bios.json");
+        protected WorkspacePath userBiosPath = WorkspacePath.Parse("/User/user-bios.json");
 
         public string LocalStorage
         {
@@ -551,6 +557,7 @@ namespace PixelVision8.Runner
             {
                 // Read the bios text
                 var biosText = workspaceService.ReadTextFromFile(biosPath);
+                
                 //
                 bios = new BiosService();
 
@@ -578,14 +585,16 @@ namespace PixelVision8.Runner
 
         protected virtual void ConfigureWorkspace()
         {
-            // Call the base ConfigureWorkspace method to configure the workspace correctly
-            var mounts = new Dictionary<WorkspacePath, IFileSystem>();
 
-            // Create the base directory in the documents and local storage folder
+            // The following settings come directly from the Content/bios.json file included with the exe
+
+            // Create a new mount point for the virtual file system
+            var mounts = new Dictionary<WorkspacePath, IFileSystem>();
 
             // Get the base directory from the bios or use Pixel Vision 8 as the default name
             var baseDir = Regex.Replace(bios.ReadBiosData("SystemName", "PixelVision8"), @"\s+", "");
 
+            // Update the path for the user's shared storage for a temp directory
             tmpPath = Path.Combine(LocalStorage, baseDir, "Tmp");
 
             // Create an array of required directories
@@ -598,6 +607,8 @@ namespace PixelVision8.Runner
             // Loop through the list of directories, make sure they exist and create them
             foreach (var directory in requiredDirectories)
             {
+
+                // Create the path if it does not exist
                 if (!Directory.Exists(directory.Value)) Directory.CreateDirectory(directory.Value);
 
                 // Add directories as mount points
@@ -607,28 +618,20 @@ namespace PixelVision8.Runner
             // Mount the filesystem
             workspaceService.MountFileSystems(mounts);
 
+            // Check to see if the system bios exist
             if(workspaceService.Exists(systemBiosPath) == false)
             {
+                // Create a new file for the system bios
                 var tmpBios = workspaceService.CreateFile(systemBiosPath);
                 tmpBios.Close();
 
+                // Write the default workspace path into the system bios
                 workspaceService.SaveTextToFile(systemBiosPath, "{\"workspacePath\":\""+Documents+"\"}");
             }
 
-            var systemBios = workspaceService.ReadTextFromFile(systemBiosPath);
-
-            bios.ParseBiosText(systemBios);
-
-            // Everything below is custom to PV8
-
-            var userBios = workspaceService.ReadTextFromFile(this.userBios);
-
-            bios.ParseBiosText(userBios);
-            
-
             // Define PV8 disk extensions from the bios
             workspaceServicePlus.archiveExtensions =
-                bios.ReadBiosData("ArchiveExtensions", "zip,pv8,pvt,pvs,pva,pvr", true).Split(',')
+                bios.ReadBiosData("ArchiveExtensions", "zip, pv8, pvr", true).Split(',')
                     .ToList();
 
             //  Define the valid file extensions from the bios
@@ -641,11 +644,51 @@ namespace PixelVision8.Runner
                 bios.ReadBiosData("RequiredFiles", "data.json,info.json", true).Split(',')
                     .ToList();
 
+
+            var createWorkspace = bios.ReadBiosData("CreateWorkspace", "False");
+
+            // The following settings are user configurable
+            if (createWorkspace != "True")
+            {
+
+                userBiosPath = WorkspacePath.Parse(systemBiosPath.Path);
+                return;
+            }
+
+            // Read the system bios to get the workspace path
+            var systemBios = workspaceService.ReadTextFromFile(systemBiosPath);
+
+            // Parse the system bios to get the path for the workspace folder
+            bios.ParseBiosText(systemBios);
+
+
+            // TODO If CreateWorkspace is false, set the user bios path to the system bios and return
+
+
+            // TODO need to set up the base directory
+            var workspaceSystemPath = bios.ReadBiosData("workspacePath", Documents);
+
+            // Create the real system path to the documents folder
+            documentsPath = Path.Combine(workspaceSystemPath, baseDir);
+
+            if (Directory.Exists(documentsPath) == false) Directory.CreateDirectory(documentsPath);
+
+            // Create a new physical file system mount
+            workspaceServicePlus.AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(
+                WorkspacePath.Root.AppendDirectory("User"),
+                new PhysicalFileSystem(documentsPath)));
+
+            // TODO this is not loading correctly because the mount point has not been created yet
+
+            var userBiosData = workspaceService.ReadTextFromFile(userBiosPath);
+
+            bios.ParseBiosText(userBiosData);
+
+
             // Include any library files in the OS mount point
             workspaceServicePlus.osLibPath = WorkspacePath.Root.AppendDirectory("PixelVisionOS")
                 .AppendDirectory(bios.ReadBiosData("LibsDir", "Libs", true));
 
-            var createWorkspace = bios.ReadBiosData("CreateWorkspace", "True");
 
             if (createWorkspace == "True")
             {
@@ -654,18 +697,6 @@ namespace PixelVision8.Runner
 
                 // Set the TotalDisks disks
                 workspaceServicePlus.MaxDisks = int.Parse(bios.ReadBiosData("MaxDisks", "2", true));
-
-                var workspaceSystemPath = bios.ReadBiosData("workspacePath", Documents);
-
-                // Create the real system path to the documents folder
-                documentsPath = Path.Combine(workspaceSystemPath, baseDir);
-
-                if (Directory.Exists(documentsPath) == false) Directory.CreateDirectory(documentsPath);
-
-                // Create a new physical file system mount
-                workspaceServicePlus.AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(
-                    WorkspacePath.Root.AppendDirectory("User"),
-                    new PhysicalFileSystem(documentsPath)));
 
                 // Mount the workspace drive
                 workspaceServicePlus.MountWorkspace(workspaceName);
@@ -1785,11 +1816,11 @@ namespace PixelVision8.Runner
                 // Get the path to where the user's bios should be saved
                 //                var path = FileSystemPath.Parse("/User/").AppendFile("user-bios.json");
 
-                if (!workspaceService.Exists(userBios))
+                if (!workspaceService.Exists(userBiosPath))
                 {
-                    workspaceService.CreateDirectoryRecursive(userBios.ParentPath);
+                    workspaceService.CreateDirectoryRecursive(userBiosPath.ParentPath);
 
-                    var newBios = workspaceService.CreateFile(userBios);
+                    var newBios = workspaceService.CreateFile(userBiosPath);
                     newBios.Close();
                 }
 
@@ -1797,7 +1828,7 @@ namespace PixelVision8.Runner
                 var userData = new Dictionary<string, object>();
 
                 // Load the raw data for ther user's bio
-                var json = workspaceService.ReadTextFromFile(userBios);
+                var json = workspaceService.ReadTextFromFile(userBiosPath);
 
                 // If the json file isn't empty, deserialize it
                 if (json != "") userData = Json.Deserialize(json) as Dictionary<string, object>;
@@ -1811,7 +1842,7 @@ namespace PixelVision8.Runner
                         userData.Add(pair.Key, pair.Value);
 
                 // Save the new bios data back to the user's bios file.
-                workspaceService.SaveTextToFile(userBios, Json.Serialize(userData), true);
+                workspaceService.SaveTextToFile(userBiosPath, Json.Serialize(userData), true);
             }
         }
 

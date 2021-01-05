@@ -9,4 +9,14 @@ gulp.task('build-run', ()=>{
     }));
 });
 
+gulp.task('build-run-lite', ()=>{
+  return gulp.src("../PixelVision8Lite.CoreDesktop.csproj", {read: false})
+      .pipe(run({
+        additionalArgs: [],
+        echo: true
+    }));
+});
+
 gulp.task("run", gulp.series('build-run'));
+
+gulp.task("run-lite", gulp.series('build-run-lite'));

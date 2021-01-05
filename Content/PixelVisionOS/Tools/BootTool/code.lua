@@ -70,12 +70,12 @@ function Init()
   local wrap = WordWrap(message, (display.x / 8) - 3)
   local lines = SplitLines(wrap)
   local total = #lines
-  local startY = (240 + 16) / 8--((display.y * 2) + 16) / 8 --(((display.y * 2) / 8) - 7) - total -
+  local startY = (240 + 16) / 8
 
   --176 448
 
   local runnerName = SystemName()
-  local runnerVer = "/"..SystemVersion() -- TODO we don't have a V char so use / instead
+  local runnerVer = SystemVersion():upper()
 
   local labelWidth = (#runnerName * 8) + (#runnerVer * 4) + 16
 

@@ -98,3 +98,9 @@ gulp.task(
   'launch', 
   gulp.series( ['build-run'] )
 );
+
+// Perform all of the builds
+gulp.task(
+  'launch-lite', 
+  gulp.series( ['build-run-lite'] )
+);

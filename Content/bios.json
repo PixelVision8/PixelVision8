@@ -1,10 +1,12 @@
 {
 	"CreateWorkspace" : "True",
 	"Resolution": "512x480",
-	"LogFilePath": "/Workspace/System/Log.txt",
+	"LogFilePath": "/User/Log.txt",
+	"ScreenShotPath": "/User/ScreenShots/",
 	"BootTool": "/PixelVisionOS/Tools/BootTool/",
 	"LoadTool": "/PixelVisionOS/Tools/LoadTool/",
 	"ErrorTool": "/PixelVisionOS/Tools/ErrorTool/",
+	
 	"SystemName": "Pixel Vision 8",
 	"SystemVersion": "v0.0.0",
 	"FileDiskMounting": "True",
@@ -13,5 +15,10 @@
 	"NoDefaultTool": "Could not find a default tool to load.",
 	"Exception": "@{error}\nPress Ctrl + 4 to reload the current game.",
 	"LoadError": "There was an issue loading from '@{path}'.",
-	"Warning": "@{error}"
+	"Warning": "@{error}",
+
+	"ArchiveExtensions": "zip,pv8,pvt,pvs,pva,pvr",
+	"FileExtensions": "png,lua,json,txt,wav,cs",
+	"RequiredFiles": "data.json,info.json"
+	
 }
