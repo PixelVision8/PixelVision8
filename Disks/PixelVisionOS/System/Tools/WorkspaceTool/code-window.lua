@@ -568,6 +568,10 @@ function WorkspaceTool:OnWindowIconClick(id)
         -- Check to see if the file is an executable
     elseif(type == "run") then
 
+        -- TODO need to read the info file and see what runner to use
+        
+        -- TODO need to pass the main code file to the metat data 
+
         local metaData = {
             codeFile = "code.cs"
         }

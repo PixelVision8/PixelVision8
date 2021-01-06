@@ -74,20 +74,9 @@ function TextTool:LoadSuccess()
     
     self:CreateDropDownMenu()
 
-    
-
-    -- inputAreaData.colorOffset = 32
-    --self.inputAreaData.onAction = function(text)
-    --    -- print("input area updated")
-    --end
-
-    -- TODO need to read the toggle line state from the bios
-
     self.showLines = ReadBiosData("ShowLinesInTextEditor") == "True" and true or false
 
     self:CreateEditorPanel()
-    
-    
 
     self:ResetDataValidation()
     
@@ -102,7 +91,7 @@ function TextTool:InvalidateData()
 
   pixelVisionOS:ChangeTitle(self.toolTitle .."*", "toolbariconfile")
 
-  pixelVisionOS:EnableMenuItem(4, true)
+  pixelVisionOS:EnableMenuItem(SaveShortcut, true)
 
     self.invalid = true
 
@@ -121,7 +110,7 @@ function TextTool:ResetDataValidation()
   -- Reset the input field's text validation
   editorUI:TextEditorResetTextValidation(self.inputAreaData)
 
-  pixelVisionOS:EnableMenuItem(4, false)
+  pixelVisionOS:EnableMenuItem(SaveShortcut, false)
 
 end
 
@@ -131,7 +120,7 @@ function TextTool:OnSave()
 
   if(success == true) then
     pixelVisionOS:DisplayMessage("Saving '" .. self.targetFile .. "'.", 5 )
-    ResetDataValidation()
+    self:ResetDataValidation()
   else
     pixelVisionOS:DisplayMessage("Unable to save '" .. self.targetFile .. "'.", 5 )
   end
@@ -154,6 +143,7 @@ function TextTool:Shutdown()
   WriteSaveData("sessionID", SessionID())
 
   if(targetFile ~= nil) then
+
     WriteSaveData("targetFile", self.targetFile)
 
     local state = editorUI:TextEditorGetState(self.inputAreaData)

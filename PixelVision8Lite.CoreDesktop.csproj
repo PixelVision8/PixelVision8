@@ -33,6 +33,7 @@
     <EmbeddedResource Remove="Effects\**" />
     <EmbeddedResource Remove="SDK\Runner\Utils\GifUtils\**" />
     <EmbeddedResource Remove="SDK\Lua\**" />
+    <Content Remove="Content\Effects\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,8 +41,10 @@
       <Link>Content\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Remove="Content\Effects\**" />
-    <Content Remove="Content\PixelVisionOS\**" />
+    <Content Include="Content\PixelVisionOS\Tools\Fonts\**\*.*">
+      <Link>Content\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -87,29 +90,15 @@
     <Compile Include="SDK/Engine/Data/TileData.cs" />
     <Compile Include="SDK/Engine/IEngine.cs" />
     <Compile Include="SDK/Runner/Parsers/PNGParser.cs" />
-    <Compile Include="SDK\Engine\Chips\Graphics\IDisplay.cs" />
-    <Compile Include="SDK\Engine\Data\DrawRequestPixelData.cs" />
-    <Compile Include="SDK\Engine\Data\Image.cs" />
-    <Compile Include="SDK\Engine\Utils\PixelDataUtil.cs" />
+    <Compile Include="SDK/Engine/Chips/Graphics/IDisplay.cs" />
+    <Compile Include="SDK/Engine/Data/DrawRequestPixelData.cs" />
+    <Compile Include="SDK/Engine/Data/Image.cs" />
+    <Compile Include="SDK/Engine/Utils/PixelDataUtil.cs" />
+    
   </ItemGroup>
 
   <ItemGroup>
-<!--    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.6.0" />-->
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
-<!--    <PackageReference Include="MoonSharp" Version="2.0.0" />-->
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Content\Effects\**" />
-    <None Remove="Content\PixelVisionOS\**" />
-    <None Remove="Effects\**" />
-    <None Remove="Content\bios.json" />
-    <None Remove="SDK\Runner\Utils\GifUtils\**" />
-    <None Remove="SDK\Lua\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Content" />
   </ItemGroup>
 
 </Project>

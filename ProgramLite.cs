@@ -19,9 +19,6 @@ namespace PixelVision8.Runner
 
             var root = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
 
-            // Need to do this for MacOS
-            // if (root.EndsWith("/MonoBundle/Content")) root = root.Replace("/MonoBundle/Content", "/Resources/Content");
-
             // TODO there is a bug where this will not go to the boot error
             using (var game = new ExampleRunner(root))
             {
@@ -39,11 +36,11 @@ namespace PixelVision8.Runner
 
         protected override void AddGameChip()
         {
-            _tmpEngine.ActivateChip("GameChip", new DrawSpritesExample());
+            _tmpEngine.ActivateChip("GameChip", new ExampleGameChip());
         }
     }
 
-    class DrawSpritesExample : GameChipLite
+    class ExampleGameChip : GameChipLite
     {
         // Use floats to store the subpixel position
         private float speed = 5;
@@ -105,8 +102,6 @@ namespace PixelVision8.Runner
             // Draw the x,y position of each sprite
             DrawText("(" + MathUtil.FloorToInt(nextPos) + ",8)", pos.X + 32, 8, DrawMode.Sprite, "large", 15);
             DrawText("(36," + MathUtil.FloorToInt(nextPos) + ")", 66, pos.Y + 12, DrawMode.Sprite, "large", 15);
-
-
 
             lastSpriteCount = CurrentSprites;
         }

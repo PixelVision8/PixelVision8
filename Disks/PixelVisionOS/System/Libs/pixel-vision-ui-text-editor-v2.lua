@@ -17,7 +17,7 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset)
     comment = 6, -- 
     string = 11, -- 
     api = 7, -- 
-    callback = 15, -- 
+    callback = 8, -- 
     escape = 15, -- 
     disabled = 5, -- 
   }

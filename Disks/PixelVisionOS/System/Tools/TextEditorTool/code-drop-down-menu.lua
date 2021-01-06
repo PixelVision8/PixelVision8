@@ -8,6 +8,8 @@
 	distributing is allowed.
 ]]--
 
+NewShortcut, SaveShortcut, CutShortcut, CopyShortcut, PasteShortcut = 3, 10, 6, 7, 8
+
 function TextTool:CreateDropDownMenu()
 
     local menuOptions =
@@ -17,27 +19,24 @@ function TextTool:CreateDropDownMenu()
         {divider = true},
         {name = "New", action = function() self:NewFile() end, enabled = false, key = Keys.N, toolTip = "Create a new text file."}, -- Reset all the values
         {name = "Rename", action = function() self:RenameFile() end, enabled = false, key = Keys.N, toolTip = "Create a new text file."}, -- Reset all the values
-        {name = "Save", action = function() self:OnSave() end, enabled = false, key = Keys.S, toolTip = "Save changes made to the text file."}, -- Reset all the values
-        --{name = "Revert", action = nil, enabled = false, toolTip = "Revert the text file to its previous state."}, -- Reset all the values
         {divider = true},
         {name = "Cut", action = function() self:OnCutText() end, enabled = false, key = Keys.X, toolTip = "Cut the currently selected text."}, -- Reset all the values
         {name = "Copy", action = function() self:OnCopyText() end, enabled = false, key = Keys.C, toolTip = "Copy the currently selected text."}, -- Reset all the values
         {name = "Paste", action = function() self:OnPasteColor() end, enabled = false, key = Keys.V, toolTip = "Paste the last copied text."}, -- Reset all the values
-
     }
 
     if(self.codeMode == true) then
 
         table.insert(menuOptions, {divider = true})
         table.insert(menuOptions, {name = "Toggle Lines", action = function() self:ToggleLineNumbers() end, key = Keys.L, toolTip = "Toggle the line numbers for the editor."})
+        table.insert(menuOptions, {name = "Run Game", action = function() self:OnRunGame() end, key = Keys.R, toolTip = "Run the code for this game."})
 
-        if(PathExists(NewWorkspacePath(self.rootDirectory).AppendFile("code.lua"))) then
-            table.insert(menuOptions, {name = "Run Game", action = function() self:OnRunGame() end, key = Keys.R, toolTip = "Run the code for this game."})
-        end
+        SaveShortcut = SaveShortcut + 3
     end
 
     -- Add the last part of the menu options
     table.insert(menuOptions, {divider = true})
+    table.insert(menuOptions, {name = "Save", action = function() self:OnSave() end, enabled = false, key = Keys.S, toolTip = "Save changes made to the text file."}) -- Reset all the values
     table.insert(menuOptions, {name = "Quit", key = Keys.Q, action = function() self:OnQuit() end, toolTip = "Quit the current game."}) -- Quit the current game
 
     pixelVisionOS:CreateTitleBarMenu(menuOptions, "See menu options for this tool.")
@@ -47,7 +46,7 @@ end
 function TextTool:OnRunGame()
 
 
-    local data = {codeFile = _textTool.targetFile}
+    local data = {codeFile = self.targetFile}
 
 
     -- if(self.codeMode == true) then

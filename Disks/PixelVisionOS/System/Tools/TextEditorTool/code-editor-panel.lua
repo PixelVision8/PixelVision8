@@ -243,11 +243,11 @@ function TextTool:DrawLineNumbers()
     end
 
     local offset = self.inputAreaData.vy - 1
-    local totalLines = self.inputAreaData.tiles.h
+    -- local totalLines = self.inputAreaData.tiles.h
     local padWidth = (self.lineWidth / 8) - 1
     for i = 1, self.inputAreaData.tiles.h do
 
-        DrawText(string.lpad(tostring(i + offset), padWidth, "0") .. " ", 1, 2 + i, DrawMode.Tile, "input", 44)
+        DrawText(string.lpad(tostring(i + offset), padWidth, "0") .. " ", 1, 2 + i, DrawMode.Tile, "large", 6)
 
     end
 
