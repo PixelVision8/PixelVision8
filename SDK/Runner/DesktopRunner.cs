@@ -934,6 +934,21 @@ namespace PixelVision8.Runner
             {
                 var success = Load(nextPathToLoad, nextMode, nextMetaData);
 
+                var engine = ActiveEngine as PixelVisionEngine;
+
+                if(engine != null)
+                {
+                    if(engine.MetaData.ContainsKey("runnerType"))
+                    {
+                        engine.MetaData["runnerType"] = ((PixelVisionEngine)_tmpEngine).MetaData["runnerType"];
+                    }
+                    else
+                    {
+                        engine.MetaData.Add("runnerType", ((PixelVisionEngine)_tmpEngine).MetaData["runnerType"]);
+                    }
+                }
+
+
                 //TODO this needs to be tested more
                 if (success == false)
                 {
@@ -1472,18 +1487,49 @@ namespace PixelVision8.Runner
                 var ignoreExtension = "none";
 
                 // Look to se if Meta Data overrides which code file to run
-                if (metaData.ContainsKey("codeFile") && mode == RunnerMode.Playing)
+                if (metaData.ContainsKey("runnerType") && mode == RunnerMode.Playing)
                 {
-                    ignoreExtension = metaData["codeFile"] == "code.cs" ? ".lua" : ".cs";
+                    // Console.WriteLine("MetaData Code File " + metaData["runnerType"]);
+
+                    ignoreExtension = metaData["runnerType"] == "c#" ? ".lua" : ".cs";
                 }
-                else if(Array.IndexOf(GameFiles, "info.json") != -1)
+                // Read the game's meta file to see if the runner is defined there
+                else if(Array.IndexOf(GameFiles, "/Game/info.json") != -1)
                 {
 
-                    var json = workspaceService.ReadTextFromFile(WorkspacePath.Parse(GameFiles[Array.IndexOf(GameFiles, "info.json")]));
+                    var json = workspaceService.ReadTextFromFile(WorkspacePath.Parse(GameFiles[Array.IndexOf(GameFiles, "/Game/info.json")]));
 
-                    if (Json.Deserialize(json) is Dictionary<string, object> data && data.ContainsKey("codeFile"))
+                    var runnerType = "";
+
+                    // Console.WriteLine("C# Files " + GameFiles.Where(p => p.EndsWith(".cs")).ToArray().Length);
+
+                    if (Json.Deserialize(json) is Dictionary<string, object> data && data.ContainsKey("runnerType"))
                     {
-                        ignoreExtension = (string) data["codeFile"] == "code.cs" ? ".lua" : ".cs";
+                        ignoreExtension = (string) data["runnerType"] == "c#" ? ".lua" : ".cs";
+                        
+                        runnerType = (string) data["runnerType"];
+                        
+                        // Console.WriteLine("Info File Type " + runnerType);
+
+                    }
+                    else
+                    {
+                        // Check to see if there is a CS file because the engine will always default to that
+                        if(GameFiles.Where(p => p.EndsWith(".cs")).ToArray().Length > 0)
+                        {
+                            runnerType =  "c#";
+                            // Console.WriteLine("File Type " + runnerType);
+
+                        }
+                    }
+
+                    if(metaData.ContainsKey("runnerType") == true)
+                    {
+                        metaData["runnerType"] =  runnerType;
+                    }
+                    else
+                    {
+                        metaData.Add("runnerType",  runnerType);
                     }
                 }
 
@@ -1493,6 +1539,8 @@ namespace PixelVision8.Runner
 
                     GameFiles = GameFiles.Except(ignore).ToArray();
                 }
+
+                // Console.WriteLine("Final Type " + metaData["runnerType"]);
 
                 // Create a new tmpEngine
                 ConfigureEngine(metaData);
@@ -1555,8 +1603,10 @@ namespace PixelVision8.Runner
         {
             var csFilePaths = files.Where(p => p.EndsWith(".cs")).ToArray();
             if (csFilePaths.Length > 0)
+            {
                 //Roslyn mode.
                 BuildRoslynGameChip(csFilePaths);
+            }
 
             // base.ProcessFiles(tmpEngine, files, displayProgress);
             this.displayProgress = displayProgress;

@@ -46,8 +46,9 @@ end
 function TextTool:OnRunGame()
 
 
-    local data = {codeFile = self.targetFile}
+    local data = {runnerType = self.extension == ".lua" and "lua" or "c#"}
 
+    print("runnerType", data["runnerType"], self.extension)
 
     -- if(self.codeMode == true) then
     --    data["codeFile"] = _textTool.targetFile
