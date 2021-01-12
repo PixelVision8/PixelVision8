@@ -113,6 +113,7 @@ namespace PixelVision8.Engine.Chips
 
         public override void Configure()
         {
+
             base.Configure();
 
             metaSprites = new SpriteCollection[96];

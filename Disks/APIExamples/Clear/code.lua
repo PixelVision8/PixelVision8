@@ -32,7 +32,7 @@ function Update(timeDelta)
   if(time > delay) then
 
     -- Toggle the clear flag
-    clearFlag = not clearFlag
+    clearFlag = true
 
     -- Reset the timer
     time = 0
@@ -45,9 +45,10 @@ function Draw()
 
   -- Test the clear flag and do a full or partial clear based on the value
   if(clearFlag == true) then
+    
     Clear()
-  else
-    Clear(16, 16, display.x - 32, display.y - 32)
+
+    clearFlag= false
   end
 
   -- Perform the next block of code 10 times

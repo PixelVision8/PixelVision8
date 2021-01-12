@@ -197,6 +197,7 @@ namespace PixelVision8.Runner.Parsers
         {
             var gameChip = Target.GameChip as GameChip;
 
+
             // Flag chip to export
             //gameChip.export = true;
 

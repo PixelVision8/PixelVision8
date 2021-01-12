@@ -124,6 +124,7 @@ namespace PixelVision8.Engine.Chips
 
         public override void Configure()
         {
+
             // Set the engine's game to this instance
             engine.GameChip = this;
 

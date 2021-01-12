@@ -24,7 +24,7 @@ gpuChips = {
       },
       {
         name = "cpsInputData",
-        value = 8
+        value = 16
       },
     },
     colors = {

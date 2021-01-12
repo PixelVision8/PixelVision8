@@ -15,7 +15,7 @@ local distance = 0
 function Init()
 
   -- Set the canvas stroke to a white 1x1 pixel brush
-  canvas:SetStroke({15}, 1, 1)
+  canvas:SetStroke(15, 1)
 
 end
 
@@ -37,9 +37,9 @@ function Draw()
   -- Clear the canvas with the background color
   canvas:Clear(0)
 
-  -- Draw 2 circles around each point
-  canvas:DrawCircle(pointA.x - 4, pointA.y - 4, pointA.x + 4, pointA.y + 4)
-  canvas:DrawCircle(pointB.x - 4, pointB.y - 4, pointB.x + 4, pointB.y + 4)
+  -- Draw 2 circles around each point 
+  canvas:DrawEllipse(pointA.x - 4, pointA.y - 4, 10, 10)
+  canvas:DrawEllipse(pointB.x - 4, pointB.y - 4, 10, 10)
 
   -- Draw a line between the two points
   canvas:DrawLine(pointA.x, pointA.y, pointB.x, pointB.y)

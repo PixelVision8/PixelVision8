@@ -1,11 +1,16 @@
 {
-    "name":"PV8System",
+    "name":"ColorsPerSprite",
     "description":"A PV8 Game Template.",
-    "version":"v0.9.7",
+    "version":"v0.0.0",
     "ext":".pv8",
     "gpuChip":"PV8",
     "cartChip":"PV8",
     "soundChip":"PV8",
     "paletteMode":"false",
+    "buildWin":"false",
+    "buildExtras":"",
+    "runnerType":"c#",
+    "buildMac":"false",
+    "buildLinux":"false",
     
 }

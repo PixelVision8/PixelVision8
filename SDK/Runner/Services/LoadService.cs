@@ -138,12 +138,12 @@ namespace PixelVision8.Runner.Services
                 // Get the list of fonts in the directory
                 var paths = files.Where(s => s.EndsWith(".font.png")).ToList();
 
-                // Make sure the default fonts are either in the project or in /Tools/Fonts/*
+                // Make sure the default fonts are either in the project or in /App/Fonts/*
                 foreach (var font in defaultFonts)
                 {
                     if(paths.Contains("/Game/" + font + ".font.png") == false)
                     {
-                        paths.Add("/PixelVisionOS/Tools/Fonts/" + font + ".font.png");
+                        paths.Add("/App/Fonts/" + font + ".font.png");
                     }
                 }
 

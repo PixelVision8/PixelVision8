@@ -196,6 +196,7 @@ namespace PixelVision8.Engine
 
         public void ActivateChip(string id, AbstractChip chip, bool autoActivate = true)
         {
+
             if (HasChip(id))
             {
                 //TODO do we need to disable the old chip first

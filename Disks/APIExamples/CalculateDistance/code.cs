@@ -31,7 +31,7 @@ namespace PixelVision8.Examples
             canvas = new Canvas(256, 240, this);
 
             // Set the canvas stroke to a white 1x1 pixel brush
-            canvas.SetStroke(new[] { 15 }, 1, 1);
+            canvas.SetStroke(15, 1);
 
         }
 
@@ -56,8 +56,8 @@ namespace PixelVision8.Examples
             canvas.Clear(0);
 
             // Draw 2 circles around each point
-            canvas.DrawCircle(pointA.X - 4, pointA.Y - 4, pointA.X + 4, pointA.Y + 4);
-            canvas.DrawCircle(pointB.X - 4, pointB.Y - 4, pointB.X + 4, pointB.Y + 4);
+            canvas.DrawEllipse(pointA.X - 4, pointA.Y - 4, 10, 10);
+            canvas.DrawEllipse(pointB.X - 4, pointB.Y - 4, 10, 10);
 
             // Draw a line between the two points
             canvas.DrawLine(pointA.X, pointA.Y, pointB.X, pointB.Y);

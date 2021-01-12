@@ -87,13 +87,13 @@ namespace PixelVision8.Runner
         protected IControllerChip controllerChip;
         protected string documentsPath;
         protected bool ejectingDisk;
-        public string[] GameFiles;
+        // public string[] GameFiles;
         protected GifExporter gifEncoder;
 
         public List<KeyValuePair<string, Dictionary<string, string>>> loadHistory =
             new List<KeyValuePair<string, Dictionary<string, string>>>();
 
-        public bool LuaMode = true;
+        // public bool LuaMode = true;
         protected LuaService luaService;
         protected bool mountingDisk;
         protected Dictionary<string, string> nextMetaData;
@@ -191,7 +191,7 @@ namespace PixelVision8.Runner
                 }
                 catch (System.Exception error)
                 {
-                    Console.WriteLine("Issue with command line argumes");
+                    Console.WriteLine("Issue with command line arguments");
                     throw;
                 }
 
@@ -1144,9 +1144,10 @@ namespace PixelVision8.Runner
 
         public void ConfigureEngine(Dictionary<string, string> metaData = null)
         {
-            LuaMode = Array.IndexOf(GameFiles, "code.cs") == -1;
-            if (LuaMode)
+            // LuaMode = Array.IndexOf(GameFiles, "code.cs") == -1;
+            if (metaData["runnerType"] != "c#")
             {
+
                 CreateLuaService();
 
                 var chips = DefaultChips;
@@ -1479,7 +1480,7 @@ namespace PixelVision8.Runner
                 // TODO find a better way to do this
 
                 // Have the workspace run the game from the current path
-                GameFiles = workspaceService.LoadGame(path);
+                var GameFiles = workspaceService.LoadGame(path);
 
                 // Find the right code file to load and remove other code files
 
@@ -1601,11 +1602,12 @@ namespace PixelVision8.Runner
 
         public void ProcessFiles(IEngine tmpEngine, string[] files, bool displayProgress = false)
         {
-            var csFilePaths = files.Where(p => p.EndsWith(".cs")).ToArray();
-            if (csFilePaths.Length > 0)
+            // var csFilePaths = files.Where(p => p.EndsWith(".cs")).ToArray();
+            if (tmpEngine.GameChip == null)
             {
+
                 //Roslyn mode.
-                BuildRoslynGameChip(csFilePaths);
+                BuildRoslynGameChip(files.Where(p => p.EndsWith(".cs")).ToArray());
             }
 
             // base.ProcessFiles(tmpEngine, files, displayProgress);
@@ -1717,7 +1719,7 @@ namespace PixelVision8.Runner
                             "@{error}",
                             errors.Count > 0
                                 ? "Line " + lineNumber + " Pos " + charNumber  + ": " +  errors[0].GetMessage()
-                                : "There was an unknown errror trying to compile a C# file."
+                                : "There was an unknown error trying to compile a C# file."
                         }
                     });
                 return;
@@ -1726,11 +1728,18 @@ namespace PixelVision8.Runner
             //Get the DLL into active memory so we can use it. Runtime errors will give the wrong line number if we're in Release mode, so don't include the pdbStream for that.
             var loadedAsm = Assembly.Load(dllStream.ToArray(), buildDebugData ?  pdbStream.ToArray() : null);
 
-            var roslynGameChipType = loadedAsm.GetType("PixelVisionRoslyn.RoslynGameChip"); //code.cs must use this namespace and class name.
+            // TODO change this for net5.0
+            // var roslynGameChipType = loadedAsm.GetTypes().Where(t => t.IsAssignableTo(typeof(GameChip))).FirstOrDefault();  //code.cs must use this namespace and class name.
+            
+            // TODO this is only for net3.1
+            var roslynGameChipType = loadedAsm.GetTypes().Where(t => typeof(GameChip).IsAssignableFrom(t)).FirstOrDefault();
+        
             //Could theoretically iterate over types until one that inherits from GameChip is found, but this strictness may be a better idea.
 
             dllStream.Close(); dllStream.Dispose();
             pdbStream.Close(); pdbStream.Dispose();
+
+            // Console.WriteLine("roslynGameChipType " + roslynGameChipType);
 
             if (roslynGameChipType != null)
             {

@@ -11,7 +11,7 @@ using PixelVision8.Engine.Chips;
 
 namespace PixelVision8.Examples
 {
-    class BackgroundColorExample : GameChip
+    public class BackgroundColorExample : GameChip
     {
         public override void Init()
         {
@@ -33,5 +33,6 @@ namespace PixelVision8.Examples
             //Redraw the display
             RedrawDisplay();
         }
+
     }
 }

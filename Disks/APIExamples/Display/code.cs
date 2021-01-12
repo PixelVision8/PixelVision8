@@ -28,26 +28,18 @@ namespace PixelVision8.Examples
             canvas = new Canvas(256, 240, this);
 
             // Get the full size of the display
-            var sizeA = Display(false);
-
-            // Get the visible size of the display
-            var sizeB = Display();
+            var sizeA = Display();
 
             // Draw the two sizes to the display
-            DrawText("Full Display Size " + sizeA.X + "x" + sizeB.Y, 1, 1, DrawMode.Tile, "large", 15);
-            DrawText("Visible Display Size " + sizeB.X + "x" + sizeB.Y, 1, 2, DrawMode.Tile, "large", 15);
-
+            DrawText("Full Display Size " + sizeA.X + "x" + sizeA.Y, 1, 1, DrawMode.Tile, "large", 15);
+            
             // Set the canvas stroke to white
-            canvas.SetStroke(new int[] { 15 }, 1, 1);
+            canvas.SetStroke(14, 2);
 
             // Set the fill color to 5 and draw the full size square
-            canvas.SetPattern(new int[] { 5 }, 1, 1);
-            canvas.DrawSquare(8, 32, sizeA.X / 2 + 8, sizeA.Y / 2 + 32, true);
+            canvas.DrawRectangle(0, 0, sizeA.X, sizeA.Y);
 
-            // Set the fill color to 0 and draw the visible size square
-            canvas.SetPattern(new int[] { 0 }, 1, 1);
-            canvas.DrawSquare(8, 32, sizeB.X / 2 + 8, sizeB.Y / 2 + 32, true);
-
+            
         }
 
         public override void Draw()
