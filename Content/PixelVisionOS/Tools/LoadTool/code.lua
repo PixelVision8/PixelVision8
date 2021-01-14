@@ -293,7 +293,7 @@ function Draw()
 
     runnerType = ReadMetadata( "runnerType", "none" )
 
-    if(runnerType == "c#") then runnerType = "csharp" end
+    if(runnerType == "csharp") then runnerType = "csharp" end
 
     if(_G["runner"..runnerType] ~= nil) then
         DrawSprites( _G["runner"..runnerType].spriteIDs, 116, 72, _G["runner"..runnerType].width)

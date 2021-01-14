@@ -936,7 +936,7 @@ namespace PixelVision8.Runner
 
                 var engine = ActiveEngine as PixelVisionEngine;
 
-                if(engine != null)
+                if(engine != null && ((PixelVisionEngine)_tmpEngine).MetaData.ContainsKey("runnerType"))
                 {
                     if(engine.MetaData.ContainsKey("runnerType"))
                     {
@@ -1148,7 +1148,7 @@ namespace PixelVision8.Runner
             // Console.WriteLine("Configure Runner Type " + metaData["runnerType"]);
             
             // LuaMode = Array.IndexOf(GameFiles, "code.cs") == -1;
-            if (metaData.ContainsKey("runnerType") && metaData["runnerType"] != "c#")
+            if (metaData.ContainsKey("runnerType") && metaData["runnerType"] != "csharp")
             {
 
                 CreateLuaService();
@@ -1495,7 +1495,7 @@ namespace PixelVision8.Runner
                 {
                     // Console.WriteLine("MetaData Code File " + metaData["runnerType"]);
 
-                    ignoreExtension = metaData["runnerType"] == "c#" ? ".lua" : ".cs";
+                    ignoreExtension = metaData["runnerType"] == "csharp" ? ".lua" : ".cs";
                 }
                 // Read the game's meta file to see if the runner is defined there
                 else if(Array.IndexOf(GameFiles, "/Game/info.json") != -1)
@@ -1509,7 +1509,7 @@ namespace PixelVision8.Runner
 
                     if (Json.Deserialize(json) is Dictionary<string, object> data && data.ContainsKey("runnerType"))
                     {
-                        ignoreExtension = (string) data["runnerType"] == "c#" ? ".lua" : ".cs";
+                        ignoreExtension = (string) data["runnerType"] == "csharp" ? ".lua" : ".cs";
                         
                         runnerType = (string) data["runnerType"];
                         
@@ -1521,7 +1521,7 @@ namespace PixelVision8.Runner
                         // Check to see if there is a CS file because the engine will always default to that
                         if(GameFiles.Where(p => p.EndsWith(".cs")).ToArray().Length > 0)
                         {
-                            runnerType =  "c#";
+                            runnerType =  "csharp";
                             // Console.WriteLine("File Type " + runnerType);
 
                         }

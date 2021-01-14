@@ -46,7 +46,7 @@ end
 function TextTool:OnRunGame()
 
 
-    local data = {runnerType = self.extension == ".lua" and "lua" or "c#"}
+    local data = {runnerType = self.extension == ".lua" and "lua" or "csharp"}
 
     print("runnerType", data["runnerType"], self.extension)
 

@@ -9,7 +9,7 @@
     "paletteMode":"false",
     "buildWin":"false",
     "buildExtras":"",
-    "runnerType":"c#",
+    "runnerType":"lua",
     "buildMac":"false",
     "buildLinux":"false",
     

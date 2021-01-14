@@ -6,5 +6,5 @@
 	"gpuChip": "PV8",
 	"cartChip": "PV8",
 	"soundChip": "PV8",
-
+	"runnerType":"lua"
 }

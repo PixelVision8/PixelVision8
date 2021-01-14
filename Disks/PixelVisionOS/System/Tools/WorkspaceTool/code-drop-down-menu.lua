@@ -178,9 +178,7 @@ end
 
 function WorkspaceTool:CreateNewCodeFile(defaultPath)
 
-
     local templatePath = NewWorkspacePath(ReadMetadata("RootPath", "/")).AppendDirectory(ReadMetadata("GameName", "untitled")).AppendDirectory("CodeTemplates")
-
 
     defaultPath = defaultPath or self.currentPath
 
@@ -199,26 +197,15 @@ function WorkspaceTool:CreateNewCodeFile(defaultPath)
             ext = data["runnerType"] ~= "lua" and  ".cs" or ".lua"
         end
 
-    -- else
+    elseif(PathExists(defaultPath.AppendFile("code.cs"))) then
 
-    --     -- Create a lua file by default
-    --     fileName = fileName .. ".lua"
+        ext = ".cs"
 
     end
 
     local empty = PathExists(defaultPath.AppendFile(fileName .. ext))
 
-    -- -- Test to see if a the code file already exists
-    -- fileName = (PathExists(defaultPath.AppendFile(fileName)) and "empty-" or "main-").. fileName
-    
-    
-
-
-    -- TODO read the info file
-    -- TODO if no info file exists, copy over the lua file
-    -- TODO if info file exists and is C# copy over the C# file
-
-    print("Create new code file at", defaultPath, fileName)
+    print("Create new code file at", defaultPath, fileName, ext)
 
     if(empty ~= true) then
 
@@ -241,41 +228,42 @@ function WorkspaceTool:CreateNewCodeFile(defaultPath)
         pixelVisionOS:OpenModal(newFileModal,
             function()
 
-                local newPath = UniqueFilePath(defaultPath.AppendFile(newFileModal.inputField.text .. ext))
-                
-                CopyTo(templatePath.AppendFile("empty-" .. fileName .. ext), newPath)
-                -- local filePath = UniqueFilePath(defaultPath.AppendFile(newFileModal.inputField.text .. "." .. ext))
+                -- Check to see if ok was pressed on the model
+                if(newFileModal.selectionValue == true) then
 
-                -- print("Create and rename", filePath)
-
-                self:RefreshWindow(true)
-
-                self:SelectFile(newPath)
-
-                -- local tmpPath = defaultPath.AppendFile(filePath.EntityName)
-
-                -- Check for lua files first since we always want to make them empty
-                -- if(ext == "lua") then
-
-                    -- TODO need to see if a code.lua file exists first and decide to copy template over or make an empty file
-
-                    -- if(PathExists(self.currentPath.AppendFile("code.lua"))) then
-
-                    --   SaveText(filePath, "-- Empty code file")
-
-                    -- else
-
-                    --   CopyTo(tmpPath, filePath)
+                    local newPath = UniqueFilePath(defaultPath.AppendFile(newFileModal.inputField.text .. ext))
                     
-                    -- end
+                    local templatePath = templatePath.AppendFile("empty-" .. fileName .. ext)
 
-                -- elseif(ext == "cs") then
+                    -- TODO if this is a C# file, we need to rename the class
+                    if(ext == ".cs") then
 
-                    -- TODO need to see if a code.lua file exists first and decide to copy template over or make an empty file
+                        local codeTemplate = ReadTextFile(templatePath)
 
-                    -- SaveText(filePath, "-- Empty code file")
+                        local newClassName = newPath.EntityNameWithoutExtension:sub(1,1):upper() .. newPath.EntityNameWithoutExtension:gsub('%W',' '):gsub("%W%l", string.upper):sub(2):gsub('%W','') .. "Class"
 
-                -- end
+                        codeTemplate = codeTemplate:gsub( "CustomClass", newClassName)
+
+
+                        print("newClassName", newClassName)
+                        
+                        SaveTextToFile(newPath, codeTemplate)
+
+
+                    else
+
+                        -- Just copy the Lua template as is
+                        CopyTo(templatePath, newPath)
+
+                    end
+
+                    
+                    self:RefreshWindow(true)
+
+                    self:SelectFile(newPath)
+
+                end
+
             end
         )   
 

@@ -7,5 +7,5 @@
     "cartChip":"PV8",
     "soundChip":"PV8",
     "paletteMode":"false",
-    
+    "runnerType":"lua"
 }

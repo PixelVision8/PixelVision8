@@ -8,7 +8,7 @@
     "soundChip":"PV8",
     "buildWin":"false",
     "buildExtras":"",
-    "runnerType":"",
+    "runnerType":"lua",
     "buildMac":"false",
     "buildLinux":"false",
     "paletteMode":"false",

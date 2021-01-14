@@ -16,10 +16,12 @@ cursorwait9={width=2,spriteIDs={455,456,468,469}}
 diskemptyopenup={width=3,spriteIDs={506,507,508,523,524,525,535,536,537}}
 diskemptyselectedup={width=3,spriteIDs={465,466,467,480,481,482,493,494,495}}
 diskemptyup={width=3,spriteIDs={424,425,426,440,441,442,452,453,454}}
-filecodecsharpdisabled={width=3,spriteIDs={273,274,275,286,287,288,297,298,93}}
 filecodecsharpselectedup={width=3,spriteIDs={270,271,272,283,284,285,263,296,111}}
 filecodecsharpup={width=3,spriteIDs={267,268,269,280,281,282,294,295,93}}
-filecodeluadisabled={width=3,spriteIDs={276,277,278,289,290,291,299,300,301}}
+filedisabledcodecsharpselectedup={width=3,spriteIDs={270,271,272,283,284,285,263,296,111}}
+filedisabledcodecsharpup={width=3,spriteIDs={273,274,275,286,287,288,297,298,93}}
+filedisabledcodeluaselectedup={width=3,spriteIDs={206,207,208,235,236,237,258,259,260}}
+filedisabledcodeluaup={width=3,spriteIDs={276,277,278,289,290,291,299,300,301}}
 filecodeluaselectedup={width=3,spriteIDs={206,207,208,235,236,237,258,259,260}}
 filecodeluaup={width=3,spriteIDs={138,139,140,167,168,169,190,191,192}}
 filecolorselectedup={width=3,spriteIDs={209,210,211,238,239,240,252,110,111}}

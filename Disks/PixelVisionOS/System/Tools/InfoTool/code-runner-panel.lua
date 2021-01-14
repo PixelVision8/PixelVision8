@@ -12,7 +12,7 @@ local runnerInfoPanelID = "RunnerInfoPanel"
 
 function InfoTool:CreateRunnerInfoPanel()
 
-    self.runnerTypes = {"lua", "c#"}
+    self.runnerTypes = {"lua", "csharp"}
 
     -- Get runner setting
 

@@ -20,7 +20,7 @@ namespace PixelVision8.Engine.Chips
 	{
 		public override void Init()
 		{
-			BackgroundColor(12);
+
 			var message = "EMPTY C# GAME\n\n\nThis is an empty game template.\n\n\nVisit 'www.pixelvision8.com' to learn more about creating games from scratch.";
 
 			var wrap = WordWrap(message, (display.X / 8) - 2);

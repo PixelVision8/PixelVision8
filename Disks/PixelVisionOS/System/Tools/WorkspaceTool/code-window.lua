@@ -59,7 +59,8 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     -- Clear the window refresh time
     self.refreshTime = 0
     self.refreshDelay = 5
-
+    self.runnerType = "none"
+    
     -- Make sure the last selections are cleared
     self:ClearSelections()
 
@@ -168,6 +169,7 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     -- Reset the last start id
     self.lastStartID = 0
 
+    -- TODO this shouldn't be called since it's handled in the window refresh but throws an error when taken out
     self:UpdateFileList()
 
     -- Update the slider
@@ -184,7 +186,7 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     -- TODO restore any selections
 
     -- Redraw the window
-    self:RefreshWindow()
+    self:RefreshWindow(true)
 
 end
 
@@ -351,6 +353,48 @@ end
 
 function WorkspaceTool:RefreshWindow(updateFileList)
 
+    local infoPath = self.currentPath.AppendFile("info.json")
+
+    self.runnerType = "none"
+
+    if(PathExists(infoPath)) then
+
+        local data = ReadJson(infoPath)
+
+        if(data["runnerType"] ~= nil) then
+
+            if(data["runnerType"] == "lua" and PathExists(self.currentPath.AppendFile("code.lua"))) then
+
+                self.runnerType = "lua"
+            elseif(data["runnerType"] == "csharp" and PathExists(self.currentPath.AppendFile("code.cs"))) then
+            
+                self.runnerType = "csharp"
+            end
+
+        elseif(PathExists(self.currentPath.AppendFile("code.cs"))) then
+
+            self.runnerType = "csharp"
+
+        elseif(PathExists(self.currentPath.AppendFile("code.lua"))) then
+
+            self.runnerType = "lua"
+
+        end
+
+    else
+
+        if(PathExists(self.currentPath.AppendFile("code.cs"))) then
+
+            self.runnerType = "csharp"
+
+        elseif(PathExists(self.currentPath.AppendFile("code.lua"))) then
+           
+            self.runnerType = "lua"
+
+        end
+
+    end
+
     -- Check to see if we need to refresh the file list
     if(updateFileList == true) then
 
@@ -358,6 +402,15 @@ function WorkspaceTool:RefreshWindow(updateFileList)
         self:UpdateFileList()
 
     end
+
+
+    -- print("RefreshWindow", "Runner Type", self.runnerType)
+
+    -- TODO test to see if this is a game project
+
+    -- TODO read info file
+
+    -- TODO determin code mode
 
     -- Invalidate the component so it redraws at the end of the frame
     editorUI:Invalidate(self)
@@ -568,17 +621,14 @@ function WorkspaceTool:OnWindowIconClick(id)
         -- Check to see if the file is an executable
     elseif(type == "run") then
 
-        -- TODO need to read the info file and see what runner to use
-        
-        -- TODO need to pass the main code file to the metat data 
+        if(self.runnerType == nil) then
 
-        local metaData = {
-            codeFile = "code.cs"
-        }
+            -- TODO You shouldn't be able to run a game if the runnerType is not set
+            return
 
-        print("Load Game", dump(metaData))
+        end
 
-        LoadGame(path, metaData)
+        LoadGame(path, { runnerType = self.runnerType })
 
     elseif(type == "pv8") then
 
@@ -976,8 +1026,28 @@ end
 function WorkspaceTool:GetIconSpriteName(item)
 
     local iconName = FileTypeMap[item.type]
-    -- -- print("name", name, iconName)
-    return iconName == nil and "fileunknown" or FileTypeMap[item.type]
+
+    -- print("name", name, iconName)
+
+    if(iconName == "filecodelua") then
+
+        if(self.runnerType == "none" or self.runnerType == "csharp") then
+
+            iconName = "filedisabledcodelua"
+
+        end
+
+    elseif(iconName == "filecodecsharp") then
+
+        if(self.runnerType == "none" or self.runnerType == "lua") then
+
+            iconName = "filedisabledcodecsharp"
+
+        end
+
+    end
+    
+    return iconName == nil and "fileunknown" or iconName
 
 end
 
@@ -1077,8 +1147,6 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
 
     local srcSeg = workspacePath.GetDirectorySegments()
 
-    -- print("ValidateGameInDir", dump(srcSeg))
-
     local totalSeg = #srcSeg
 
     local codeFilename = "code.lua"
@@ -1087,8 +1155,11 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
         codeFilename = "code.cs"
     end
 
+    local showRunner = self.runnerType ~= "none" and pixelVisionOS:ValidateGameInDir(workspacePath, {codeFilename})
+
+    print("self.runnerType", self.runnerType)
     -- Check to see if this is a game directory and we should display the run exe
-    if(pixelVisionOS:ValidateGameInDir(workspacePath, {codeFilename}) and self:TrashOpen() == false) then
+    if(showRunner and self:TrashOpen() == false) then
 
         if((srcSeg[1] == "Disks") or (srcSeg[1] == "Workspace" and totalSeg ~= 1)) then
 
@@ -1130,7 +1201,7 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
 
 
                 -- TODO copy 3 x 3 sprites out of it into memory
-                local spriteIDs = {}
+                -- local spriteIDs = {}
 
                 self.customSpriteStartIndex = 767
 
