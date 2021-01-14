@@ -1144,8 +1144,11 @@ namespace PixelVision8.Runner
 
         public void ConfigureEngine(Dictionary<string, string> metaData = null)
         {
+
+            // Console.WriteLine("Configure Runner Type " + metaData["runnerType"]);
+            
             // LuaMode = Array.IndexOf(GameFiles, "code.cs") == -1;
-            if (metaData["runnerType"] != "c#")
+            if (metaData.ContainsKey("runnerType") && metaData["runnerType"] != "c#")
             {
 
                 CreateLuaService();
@@ -1739,7 +1742,7 @@ namespace PixelVision8.Runner
             dllStream.Close(); dllStream.Dispose();
             pdbStream.Close(); pdbStream.Dispose();
 
-            // Console.WriteLine("roslynGameChipType " + roslynGameChipType);
+            Console.WriteLine("roslynGameChipType " + roslynGameChipType);
 
             if (roslynGameChipType != null)
             {

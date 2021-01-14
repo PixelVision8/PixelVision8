@@ -228,15 +228,17 @@ function WorkspaceTool:OnRunFileAction(srcPath, destPath, action, duplicate)
 
     if(self.progressModal == nil) then
 
+      print("ProgressModal", ProgressModal == nil, editorUI == nil)
+
       -- Create the model
-      self.progressModal = ProgressModal:Init("File Action ", editorUI, function() self:CancelFileActions() end)
+      self.progressModal = ProgressModal:Init("File Action ", 168)
 
       self.progressModal.fileAction = action
       self.progressModal.totalFiles = #self.targetFiles
     end
 
     -- Open the modal
-    pixelVisionOS:OpenModal(self.progressModal)
+    pixelVisionOS:OpenModal(self.progressModal, function() self:CancelFileActions() end)
 
     pixelVisionOS:RegisterUI({name = "ProgressUpdate"}, "UpdateFileActionProgress", self, true)
 
@@ -512,6 +514,10 @@ function WorkspaceTool:CreateNewProject(name, path)
   -- Copy the contents of the template path to the new unique path
   CopyTo(self.fileTemplatePath, path)
 
+  self:CreateNewCodeFile(path)
+
+  -- TODO need to replace the version number in the info file with the current version
+
   return path
 
 end
@@ -567,6 +573,22 @@ function WorkspaceTool:OnNewFile(fileName, ext, type, editable)
 
       -- Check for lua files first since we always want to make them empty
       if(ext == "lua") then
+
+        -- TODO need to see if a code.lua file exists first and decide to copy template over or make an empty file
+
+        if(PathExists(self.currentPath.AppendFile("code.lua"))) then
+
+          SaveText(filePath, "-- Empty code file")
+
+        else
+
+          CopyTo(tmpPath, filePath)
+        
+        end
+
+      elseif(ext == "cs") then
+
+        -- TODO need to see if a code.lua file exists first and decide to copy template over or make an empty file
 
         SaveText(filePath, "-- Empty code file")
 

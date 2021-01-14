@@ -129,6 +129,24 @@ namespace PixelVision8.Engine.Utils
             return value;
         }
 
+        // from https://stackoverflow.com/questions/16365870/distance-between-two-points-without-using-the-square-root
+        public static int Sqrt(int x){
+            int s, t;
+
+            s = 1;  t = x;
+            while (s < t) {
+                s <<= 1;
+                t >>= 1;
+            }//decide the value of the first tentative
+
+            do {
+                t = s;
+                s = (x / s + s) >> 1;//x1=(N / x0 + x0)/2 : recurrence formula
+            } while (s < t);
+
+            return t;
+        }
+
 
     }
 }

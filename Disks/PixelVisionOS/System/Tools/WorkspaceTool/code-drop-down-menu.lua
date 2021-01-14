@@ -89,19 +89,20 @@ function WorkspaceTool:CreateDropDownMenu()
 
     -- end
 
+    -- print("Code Exists ", self.fileTemplatePath.AppendFile("code.lua"), self.fileTemplatePath)
     -- Add text options to the menu
     -- if(runnerName ~= PlayVersion and runnerName ~= DrawVersion and runnerName ~= TuneVersion) then
-    if(PathExists(self.fileTemplatePath.AppendFile("code.json"))) then
-        table.insert(menuOptions, addAt, {name = "New Code", action = function() self:OnNewFile("code", "lua") end, enabled = false, toolTip = "Run the current game."})
-        table.insert(self.newFileOptions, {name = "New Code"})
-        addAt = addAt + 1
-    end
+    -- if(PathExists(self.fileTemplatePath.AppendFile("code.lua"))) then
+    table.insert(menuOptions, addAt, {name = "New Code", action = function() self:CreateNewCodeFile() end, enabled = false, toolTip = "Run the current game."})
+    table.insert(self.newFileOptions, {name = "New Code"})
+    addAt = addAt + 1
+    -- end
 
-    if(PathExists(self.fileTemplatePath.AppendFile("json.json"))) then
-        table.insert(menuOptions, addAt, {name = "New JSON", action = function() self:OnNewFile("untitled", "json") end, enabled = false, toolTip = "Run the current game."})
-        table.insert(self.newFileOptions, {name = "New JSON"})
-        addAt = addAt + 1
-    end
+    -- if(PathExists(self.fileTemplatePath.AppendFile("json.json"))) then
+    table.insert(menuOptions, addAt, {name = "New JSON", action = function() self:OnNewFile("untitled", "json") end, enabled = false, toolTip = "Run the current game."})
+    table.insert(self.newFileOptions, {name = "New JSON"})
+    addAt = addAt + 1
+    -- end
 
     -- Add draw options
 
@@ -172,6 +173,114 @@ function WorkspaceTool:CreateDropDownMenu()
     end
 
     pixelVisionOS:CreateTitleBarMenu(menuOptions, "See menu options for this tool.")
+
+end
+
+function WorkspaceTool:CreateNewCodeFile(defaultPath)
+
+
+    local templatePath = NewWorkspacePath(ReadMetadata("RootPath", "/")).AppendDirectory(ReadMetadata("GameName", "untitled")).AppendDirectory("CodeTemplates")
+
+
+    defaultPath = defaultPath or self.currentPath
+
+    local fileName = "code"
+    local ext = ".lua"
+
+    local infoFilePath = defaultPath.AppendFile("info.json")
+
+    if(PathExists(infoFilePath)) then
+
+        local data = ReadJson(infoFilePath)
+
+        print(dump(data))
+
+        if(data["runnerType"] ~= nil) then
+            ext = data["runnerType"] ~= "lua" and  ".cs" or ".lua"
+        end
+
+    -- else
+
+    --     -- Create a lua file by default
+    --     fileName = fileName .. ".lua"
+
+    end
+
+    local empty = PathExists(defaultPath.AppendFile(fileName .. ext))
+
+    -- -- Test to see if a the code file already exists
+    -- fileName = (PathExists(defaultPath.AppendFile(fileName)) and "empty-" or "main-").. fileName
+    
+    
+
+
+    -- TODO read the info file
+    -- TODO if no info file exists, copy over the lua file
+    -- TODO if info file exists and is C# copy over the C# file
+
+    print("Create new code file at", defaultPath, fileName)
+
+    if(empty ~= true) then
+
+        local newPath = defaultPath.AppendFile(fileName .. ext)
+
+        print("Create file", templatePath.AppendFile("main-" .. fileName .. ext), "in", defaultPath.AppendFile(fileName .. ext))
+
+        CopyTo(templatePath.AppendFile("main-" .. fileName .. ext), newPath)
+
+        self:RefreshWindow(true)
+
+        self:SelectFile(newPath)
+
+    else
+
+        local newFileModal = self:GetNewFileModal()
+
+        newFileModal:SetText("New " .. (ext == ".cs" and "C# File" or "Lua"), "code", "Name code file", true)
+
+        pixelVisionOS:OpenModal(newFileModal,
+            function()
+
+                local newPath = UniqueFilePath(defaultPath.AppendFile(newFileModal.inputField.text .. ext))
+                
+                CopyTo(templatePath.AppendFile("empty-" .. fileName .. ext), newPath)
+                -- local filePath = UniqueFilePath(defaultPath.AppendFile(newFileModal.inputField.text .. "." .. ext))
+
+                -- print("Create and rename", filePath)
+
+                self:RefreshWindow(true)
+
+                self:SelectFile(newPath)
+
+                -- local tmpPath = defaultPath.AppendFile(filePath.EntityName)
+
+                -- Check for lua files first since we always want to make them empty
+                -- if(ext == "lua") then
+
+                    -- TODO need to see if a code.lua file exists first and decide to copy template over or make an empty file
+
+                    -- if(PathExists(self.currentPath.AppendFile("code.lua"))) then
+
+                    --   SaveText(filePath, "-- Empty code file")
+
+                    -- else
+
+                    --   CopyTo(tmpPath, filePath)
+                    
+                    -- end
+
+                -- elseif(ext == "cs") then
+
+                    -- TODO need to see if a code.lua file exists first and decide to copy template over or make an empty file
+
+                    -- SaveText(filePath, "-- Empty code file")
+
+                -- end
+            end
+        )   
+
+        -- self:OnNewFile("code", "lua")
+    end
 
 end
 

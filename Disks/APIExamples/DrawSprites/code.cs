@@ -17,7 +17,7 @@ using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Examples
 {
-    class DrawSpritesExample : GameChip
+    class DrawSpritesExample : GameChipLite
     {
         // Use floats to store the subpixel position
         private float speed = 5;

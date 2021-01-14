@@ -3,7 +3,7 @@ WorkspaceTool = {}
 WorkspaceTool.__index = WorkspaceTool
 
 
-LoadScript("pixel-vision-os-progress-modal-v1")
+LoadScript("pixel-vision-os-progress-modal-v2")
 LoadScript("pixel-vision-os-file-modal-v1")
 
 -- Import scripts needed by the workspace tool
