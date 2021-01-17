@@ -17,25 +17,8 @@
 
 function EditorUI:CreateSlider(rect, spriteName, toolTip, horizontal, offset)
 
-  
   -- Set up button states
-  local spriteData = _G[spriteName]
-
-  if(_G[spriteName .. "up"] == nil and spriteData ~= nil) then
-    _G[spriteName .. "up"] = {
-      spriteIDs = table.clone(spriteData.spriteIDs),
-      width = spriteData.width,
-      colorOffset = 8
-    }
-  end
-
-  if(_G[spriteName .. "over"] == nil and spriteData ~= nil) then
-    _G[spriteName .. "over"] = {
-      spriteIDs = table.clone(spriteData.spriteIDs),
-      width = spriteData.width,
-      colorOffset = 12
-    }
-  end
+  local spriteData = MetaSprite(FindMetaSpriteId(spriteName))-- _G[spriteName]
 
   -- Create a generic component data object
   local data = self:CreateData(rect, spriteName, toolTip, forceDraw)
@@ -54,19 +37,16 @@ function EditorUI:CreateSlider(rect, spriteName, toolTip, horizontal, offset)
   -- This is applied to the top when horizontal and the left when vertical
   data.offset = offset or 0
 
-  -- Calculate the handle's size based on the sprite
-  local spriteData = data.cachedSpriteData.up
-
   -- If there is a sprite calculate the handle size
   if(spriteData ~= nil) then
     -- Determine if the slider is horizontal or vertical and use the correct sprite dimensions
     if(horizontal == true) then
-      data.handleSize = spriteData.width * self.spriteSize.x
+      data.handleSize = spriteData.Width
     else
-      data.handleSize = math.floor(#spriteData.spriteIDs / spriteData.width) * self.spriteSize.y
+      data.handleSize = spriteData.Height
     end
 
-    data.spriteDrawArgs = {spriteData.spriteIDs, 0, 0, spriteData.width, false, false, DrawMode.Sprite, 0, false}
+    data.spriteDrawArgs = {FindMetaSpriteId(spriteName), 0, 0, false, false, DrawMode.Sprite, 0, false}
 
   end
   -- Need to account for the correct orientation
@@ -141,36 +121,20 @@ function EditorUI:UpdateSlider(data)
 
   if(data.enabled == true) then
 
-    -- Update the handle sprites
-    local spriteData = data.cachedSpriteData.up
-
-    -- If the slider has focus, show the over state
-    if(data.inFocus == true) then
-      spriteData = data.cachedSpriteData.over
-    end
-
     -- Make sure we have sprite data to render
-    if(spriteData ~= nil and data.spriteDrawArgs ~= nil) then
+    if(data.spriteDrawArgs ~= nil) then
 
-      -- Update the draw arguments for the sprite
-
-      -- Sprite Data
-      data.spriteDrawArgs[1] = spriteData.spriteIDs
-
-      -- X pos
+      -- Update X, Y, and Color Offset
       data.spriteDrawArgs[2] = data.handleX
-
-      -- Y pos
       data.spriteDrawArgs[3] = data.handleY
+      data.spriteDrawArgs[7] = data.inFocus and 12 or 8
 
-      -- Color Offset
-      data.spriteDrawArgs[8] = spriteData.colorOffset or 0
-
-      self:NewDraw("DrawSprites", data.spriteDrawArgs)
+      self:NewDraw("DrawMetaSprite", data.spriteDrawArgs)
 
     end
 
   end
+
   -- Return the slider data value
   return data.value
 

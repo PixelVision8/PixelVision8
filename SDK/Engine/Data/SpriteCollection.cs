@@ -101,6 +101,9 @@ namespace PixelVisionSDK.Engine
 
         public int SpriteWidth;
 
+        public int Width => Bounds.Width;
+        public int Height => Bounds.Height;
+
         public SpriteCollection(string name, SpriteData[] sprites = null)
         {
             Name = name;

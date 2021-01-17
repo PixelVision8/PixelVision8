@@ -100,7 +100,7 @@ namespace PixelVision8.Engine.Chips
                 for (int i = 0; i < total.Value; i++)
                 {
                     if(metaSprites[i] == null)
-                        metaSprites[i] = new SpriteCollection("MetaSprite_" + i);
+                        metaSprites[i] = new SpriteCollection("EmptyMetaSprite");
                 }
             }
 
@@ -470,6 +470,10 @@ namespace PixelVision8.Engine.Chips
 
         public SpriteCollection MetaSprite(int id, SpriteCollection spriteCollection = null)
         {
+
+            if(id < 0 || id > _TotalMetaSprites)
+                return null;
+            
             if (spriteCollection != null)
                 metaSprites[id] = spriteCollection;
             else if (metaSprites[id] == null)
@@ -555,7 +559,7 @@ namespace PixelVision8.Engine.Chips
                             flipH,
                             flipV,
                             drawMode,
-                            colorOffset);
+                            _currentSpriteData.ColorOffset + colorOffset);
                     }
                 }
             }
@@ -686,6 +690,10 @@ namespace PixelVision8.Engine.Chips
 
         public SpriteCollection NewMetaSprite(int id, string name, int[] spriteIDs, int width, int colorOffset = 0)
         {
+
+            if(id < 0 || id > _TotalMetaSprites)
+                return null;
+
             var collection = NewSpriteCollection(name);
 
             for (int i = 0; i < spriteIDs.Length; i++)

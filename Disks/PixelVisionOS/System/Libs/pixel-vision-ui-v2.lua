@@ -21,9 +21,9 @@ EditorUI.__index = EditorUI
 -- Core Framework UI Components
 LoadScript("pixel-vision-ui-utils-v2")
 LoadScript("pixel-vision-ui-collision-manager-v2")
-LoadScript("pixel-vision-ui-slider-v2")
+LoadScript("pixel-vision-ui-slider-v3")
 LoadScript("pixel-vision-ui-knob-v2")
-LoadScript("pixel-vision-ui-button-v2")
+LoadScript("pixel-vision-ui-button-v3")
 LoadScript("pixel-vision-ui-toggle-group-v2")
 LoadScript("pixel-vision-ui-text-v2")
 LoadScript("pixel-vision-ui-text-editor-v2")
@@ -175,14 +175,14 @@ function EditorUI:RebuildSpriteCache(data, invalidate)
     -- If a sprite name is provided then look for the correct sprite states
     if(spriteName ~= nil) then
         data.cachedSpriteData = {
-            up = _G[spriteName .. "up"],
-            down = _G[spriteName .. "down"] ~= nil and _G[spriteName .. "down"] or _G[spriteName .. "selectedup"],
-            over = _G[spriteName .. "over"],
-            selectedup = _G[spriteName .. "selectedup"],
-            selectedover = _G[spriteName .. "selectedover"],
-            selecteddown = _G[spriteName .. "selecteddown"] ~= nil and _G[spriteName .. "selecteddown"] or _G[spriteName .. "selectedover"],
-            disabled = _G[spriteName .. "disabled"],
-            empty = _G[spriteName .. "empty"] -- used to clear the sprites
+            up = spriteName .. "up",
+            down = spriteName .. "down" ~= nil and spriteName .. "down" or spriteName .. "selectedup",
+            over = spriteName .. "over",
+            selectedup = spriteName .. "selectedup",
+            selectedover = spriteName .. "selectedover",
+            selecteddown = spriteName .. "selecteddown" ~= nil and spriteName .. "selecteddown" or spriteName .. "selectedover",
+            disabled = spriteName .. "disabled",
+            empty = spriteName .. "empty" -- used to clear the sprites
         }
     end
 
