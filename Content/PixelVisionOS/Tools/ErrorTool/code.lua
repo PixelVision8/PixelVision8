@@ -8,39 +8,36 @@
   distributing is allowed.
 ]]--
 
-LoadScript("sb-sprites")
-
 local currentAnimation = {
-  errorframe1,
-  errorframe2,
-  errorframe3,
-  errorframe4,
-  errorframe5,
-  errorframe6,
-  errorframe7,
-  errorframe8,
-  errorframe9,
-  errorframe10,
-  errorframe11,
-  errorframe12,
-  errorframe13,
-  errorframe14
+  "errorframe1",
+  "errorframe2",
+  "errorframe3",
+  "errorframe4",
+  "errorframe5",
+  "errorframe6",
+  "errorframe7",
+  "errorframe8",
+  "errorframe9",
+  "errorframe10",
+  "errorframe11",
+  "errorframe12",
+  "errorframe13",
+  "errorframe14"
 }
 
 local animDelay = .07
 local animTime = 0
 local frame = 1
-local loopAnimation = true
 
 function Init()
 
   playSounds = ReadBiosData("PlaySystemSounds", "True") == "True"
 
-if(EnableAutoRun ~= nil) then
-  -- TODO Should only enable this if there is a disk loading error?
-  EnableAutoRun(true)
+  if(EnableAutoRun ~= nil) then
+    -- TODO Should only enable this if there is a disk loading error?
+    EnableAutoRun(true)
 
-end
+  end
 
   -- Set the background an rebuild the screen buffer
   BackgroundColor(tonumber(ReadBiosData("DefaultBackgroundColor", "5")))
@@ -73,6 +70,7 @@ function Update(timeDelta)
   timeDelta = timeDelta / 1000
 
   animTime = animTime + timeDelta
+  
   if(animTime > animDelay) then
     animTime = 0
     frame = frame + 1
@@ -87,6 +85,6 @@ function Draw()
 
   RedrawDisplay()
 
-  local sprite = currentAnimation[frame]
-  DrawSprites(sprite.spriteIDs, 104, 71, sprite.width, false, false, DrawMode.Sprite, 0)
+  DrawMetaSprite(FindMetaSpriteId(currentAnimation[frame]), 104, 71)
+
 end

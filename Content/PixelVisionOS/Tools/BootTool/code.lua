@@ -50,9 +50,6 @@ local showPlugin = -1
 
 function Init()
 
-  print("Ready To Draw")
-  -- CreateMetaSprites()
-
   playSounds = ReadBiosData("PlaySystemSounds", "True") == "True"
 
   if(EnableAutoRun ~= nil) then
@@ -88,17 +85,12 @@ function Init()
 
   DrawText(runnerVer, startX + (#runnerName * 8) + 8, 225, DrawMode.TilemapCache, "small", 11, - 4)
 
-  -- DrawText("Runner Version")
-
   -- We want to render the text from the bottom of the screen so we offset it and loop backwards.
   for i = 1, total do
     DrawText(lines[i], 1, startY + (i - 1), DrawMode.Tile, "large", 15)
   end
 
   DrawMetaSprite(FindMetaSpriteId("logosmall"), 1, startY, false, false, DrawMode.Tile);
-
-  -- Replace the tile with a logo and rest the color offset to 0 (since the font was set to 15)
-  -- Tile(1, startY, MetaSprite(FindMetaSpriteId("logosmall")).Sprites[1].Id, 0)
 
 end
 
@@ -162,8 +154,7 @@ function Update(timeDelta)
         ScrollPosition(0, newScrollY)
 
         -- Check that we are in boot mode
-      else -- if(editorBridge.mode == 2) then
-
+      else
         nextScreenTime = nextScreenTime + timeDelta
 
         if(nextScreenTime > nextScreenDelay) then

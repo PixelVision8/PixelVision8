@@ -1157,7 +1157,7 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
 
     local showRunner = self.runnerType ~= "none" and pixelVisionOS:ValidateGameInDir(workspacePath, {codeFilename})
 
-    print("self.runnerType", self.runnerType)
+    -- print("self.runnerType", self.runnerType)
     -- Check to see if this is a game directory and we should display the run exe
     if(showRunner and self:TrashOpen() == false) then
 

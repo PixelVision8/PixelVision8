@@ -9,7 +9,7 @@ function WorkspaceTool:CreateDropDownMenu()
     local tmpProjectPath = ReadBiosData("ProjectTemplate")
     self.fileTemplatePath = tmpProjectPath == nil and NewWorkspacePath(ReadMetadata("RootPath", "/")).AppendDirectory(ReadMetadata("GameName", "untitled")).AppendDirectory("ProjectTemplate") or NewWorkspacePath(tmpProjectPath)
 
-    print("Template Path", self.fileTemplatePath, PathExists(self.fileTemplatePath))
+    -- print("Template Path", self.fileTemplatePath, PathExists(self.fileTemplatePath))
     -- Create some enums for the focus typess
 
     -- TODO need to see if the log file actually exists
@@ -73,7 +73,7 @@ function WorkspaceTool:CreateDropDownMenu()
 
         addAt = addAt + 1
 
-        print("New Project")
+        -- print("New Project")
 
     end
 
