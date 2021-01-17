@@ -1,0 +1,37 @@
+{
+    "MetaSprites": {
+        "version": "v1",
+        "collections": [
+            {"name":"buildbuttonover","width":4,"spriteIDs":[210,211,212,213,218,219,220,221,224,225,225,226]},
+            {"name":"buildbuttonup","width":4,"spriteIDs":[178,179,180,181,192,193,194,195,204,205,205,206]},
+            {"name":"checkboxdisabled","width":1,"spriteIDs":[55]},
+            {"name":"checkboxover","width":1,"spriteIDs":[97]},
+            {"name":"checkboxselectedover","width":1,"spriteIDs":[112]},
+            {"name":"checkboxselectedup","width":1,"spriteIDs":[123]},
+            {"name":"checkboxup","width":1,"spriteIDs":[78]},
+            {"name":"cursorhanddown","width":2,"spriteIDs":[91,92,106,107]},
+            {"name":"cursorhand","width":2,"spriteIDs":[47,48,70,71]},
+            {"name":"cursorpointer","width":2,"spriteIDs":[45,46,68,69]},
+            {"name":"cursortext","width":2,"spriteIDs":[49,50,72,73]},
+            {"name":"hsliderhandle","width":3,"spriteIDs":[40,41,42,63,64,65]},
+            {"name":"iconrunnerselectedup","width":3,"spriteIDs":[175,176,177,189,190,191,201,202,203]},
+            {"name":"iconrunnerup","width":3,"spriteIDs":[172,173,174,186,187,188,198,199,200]},
+            {"name":"modalcancelbuttonover","width":4,"spriteIDs":[93,94,95,96,108,109,110,111]},
+            {"name":"modalcancelbuttonup","width":4,"spriteIDs":[51,52,53,54,74,75,76,77]},
+            {"name":"modalokbuttonover","width":4,"spriteIDs":[98,99,100,101,113,114,115,116]},
+            {"name":"modalokbuttonup","width":4,"spriteIDs":[56,57,58,59,79,80,81,82]},
+            {"name":"pv8toolbaricondown","width":2,"spriteIDs":[85,86,103,104]},
+            {"name":"pv8toolbariconup","width":2,"spriteIDs":[118,119,2,124]},
+            {"name":"radiobuttondisabled","width":1,"spriteIDs":[120]},
+            {"name":"radiobuttonover","width":1,"spriteIDs":[121]},
+            {"name":"radiobuttonselectedover","width":1,"spriteIDs":[121]},
+            {"name":"radiobuttonselectedup","width":1,"spriteIDs":[125]},
+            {"name":"radiobuttonup","width":1,"spriteIDs":[122]},
+            {"name":"titlebarvolumeoff","width":1,"spriteIDs":[87]},
+            {"name":"titlebarvolumeon","width":1,"spriteIDs":[88]},
+            {"name":"toolbaricontool","width":1,"spriteIDs":[105]},
+            {"name":"vsliderhandle","width":2,"spriteIDs":[43,44,66,67,89,90]}
+        ],
+        "total": 96
+    }
+}

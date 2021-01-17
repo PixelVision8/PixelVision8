@@ -27,7 +27,6 @@ function MouseCursor:Init()
         animationTime = 0,
         animationDelay = .2,
         animationFrame = 0,
-        colorOffset = 0,
         lock = false,
         pos = NewPoint(-1, -1)
     }
@@ -40,7 +39,7 @@ function MouseCursor:Init()
     _mouseCursor.cursors = {
         -- Pointer 1
         {
-            spriteData = cursorpointer,
+            spriteData = "cursorpointer",
             offset = {
                 x = 0,
                 y = -1
@@ -48,7 +47,7 @@ function MouseCursor:Init()
         },
         -- Hand (for interaction) 2
         {
-            spriteData = cursorhand,
+            spriteData = "cursorhand",
             offset = {
                 x = -6,
                 y = -1
@@ -56,7 +55,7 @@ function MouseCursor:Init()
         },
         -- Input 3
         {
-            spriteData = cursortext,
+            spriteData = "cursortext",
             offset = {
                 x = -4,
                 y = -10
@@ -65,7 +64,7 @@ function MouseCursor:Init()
 
         -- Help (for showing tool tips) 4
         {
-            spriteData = cursorhelp,
+            spriteData = "cursorhelp",
             offset = {
                 x = -2,
                 y = -3
@@ -73,7 +72,7 @@ function MouseCursor:Init()
         },
         -- Wait 5
         {
-            spriteData = cursorwait1,
+            spriteData = "cursorwait1",
             offset = {
                 x = -2,
                 y = -3
@@ -84,7 +83,7 @@ function MouseCursor:Init()
         },
         -- Pencil 6
         {
-            spriteData = cursorpen,
+            spriteData = "cursorpen",
             offset = {
                 x = 0,
                 y = -15
@@ -92,7 +91,7 @@ function MouseCursor:Init()
         },
         -- Eraser 7
         {
-            spriteData = cursoreraser,
+            spriteData = "cursoreraser",
             offset = {
                 x = 0,
                 y = -15
@@ -100,7 +99,7 @@ function MouseCursor:Init()
         },
         -- Cross 8
         {
-            spriteData = cursorcross,
+            spriteData = "cursorcross",
             offset = {
                 x = -8,
                 y = -8
@@ -108,7 +107,7 @@ function MouseCursor:Init()
         },
         -- Move Hand 9
         {
-            spriteData = cursorhandmove,
+            spriteData = "cursorhandmove",
             offset = {
                 x = -8,
                 y = -8
@@ -157,19 +156,15 @@ function MouseCursor:Draw()
     -- Make sure the data isn't undefined
     if(self.cursorData ~= nil) then
 
-        local spriteData = self.cursorData.spriteData
-
-        if(self.cursorID == 2 and MouseButton(0)) then
-            spriteData = cursorhanddown
-        end
-
-        if(spriteData ~= nil) then
-
-            -- Draw the new cursor taking into account the cursors offset
-            DrawSprites(spriteData.spriteIDs, self.pos.x + self.cursorData.offset.x, self.pos.y + self.cursorData.offset.y, spriteData.width, false, false, DrawMode.SpriteAbove, self.colorOffset)
-
-        end
-
+        DrawMetaSprite(
+            FindMetaSpriteId((self.cursorID == 2 and MouseButton(0)) and "cursorhanddown" or self.cursorData.spriteData),
+            self.pos.x + self.cursorData.offset.x,
+            self.pos.y + self.cursorData.offset.y,
+            false,
+            false,
+            DrawMode.SpriteAbove
+        )
+           
     end
 
 end

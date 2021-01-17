@@ -34,6 +34,7 @@ namespace PixelVision8.Engine.Chips
     {
         protected Script _luaScript;
         public string DefaultScriptPath = "code";
+        public DateTime now = DateTime.Now;
 
         public Script LuaScript
         {
@@ -180,6 +181,7 @@ namespace PixelVision8.Engine.Chips
 
             LuaScript.Globals["ReadFPS"] = new Func<int>(ReadFPS);
             LuaScript.Globals["ReadTotalSprites"] = new Func<int>(ReadTotalSprites);
+            LuaScript.Globals["CurrentTime"] = new Func<string>(CurrentTime);
 
             #endregion
 
@@ -357,6 +359,11 @@ namespace PixelVision8.Engine.Chips
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
             DrawSprite(id, x, y, flipH, flipV, drawMode, colorOffset, SpriteChip);
+        }
+
+        public string CurrentTime()
+        {
+            return now.ToString("HH:mmtt");
         }
 
         #endregion

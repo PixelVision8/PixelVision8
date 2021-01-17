@@ -57,10 +57,9 @@ function PixelVisionOS:CreateTitleBar(x, y, title, product)
     }
 
     data.muteDrawArgs = {
-        titlebarvolumeon.spriteIDs,
+        "titlebarvolumeon",
         172,
         0,
-        titlebarvolumeon.width,
         false,
         false,
         DrawMode.TilemapCache,
@@ -106,12 +105,7 @@ function PixelVisionOS:CreateTitleBar(x, y, title, product)
 
     self.editorUI:Invalidate(data)
 
-    -- Draw background
-    local spriteData = _G["titlebarbackground"]
-
-    if(spriteData ~= nil) then
-        self.editorUI:NewDraw("DrawSprites", {spriteData.spriteIDs, 0, 0, spriteData.width, DrawMode.TilemapCache})
-    end
+    DrawMetaSprite(FindMetaSpriteId("titlebarbackground"), 0, 0, false, false, DrawMode.TilemapCache)
 
     -- Fix scope for lamda functions below
     local this = self
@@ -431,8 +425,8 @@ function PixelVisionOS:UpdateTitleBar(data, timeDelta)
 
                     end
 
-
                     break
+
                 end
             end
 
@@ -442,12 +436,11 @@ function PixelVisionOS:UpdateTitleBar(data, timeDelta)
 
     if(data.time > data.timeDelay) then
 
-        local newTimeStamp = data.debugTime == true and "08:00AM" or string.upper(os.date("%I:%M%p"))
+        local newTimeStamp = data.debugTime == true and "08:00AM" or string.upper(CurrentTime())
 
         if(newTimeStamp ~= data.lastTimeStamp) then
 
-            -- Clears the time tiles first
-            DrawSprites({ 0, 0, 0, 0}, 25, 0, 4, false, false, DrawMode.Tile)
+            DrawRect( 200, 0, 32, 8, 0, DrawMode.TilemapCache )
 
             DrawText(newTimeStamp, 200, 1, DrawMode.TilemapCache, "medium", data.textColorOffset, - 4)
 
@@ -560,9 +553,9 @@ function PixelVisionOS:DrawTitleBar(data)
         -- print("Redraw mute")
         local newMuteValue = Mute()
 
-        data.muteDrawArgs[1] = newMuteValue and titlebarvolumeoff.spriteIDs or titlebarvolumeon.spriteIDs
+        data.muteDrawArgs[1] = FindMetaSpriteId(newMuteValue and "titlebarvolumeoff" or "titlebarvolumeon")
 
-        self.editorUI:NewDraw("DrawSprites", data.muteDrawArgs)
+        self.editorUI:NewDraw("DrawMetaSprite", data.muteDrawArgs)
         -- self.lastMuteValue = newMuteValue
 
         data.muteInvalid = false
