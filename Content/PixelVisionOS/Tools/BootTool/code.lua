@@ -8,31 +8,31 @@
 	distributing is allowed.
 ]]--
 
-LoadScript("sb-sprites")
+-- LoadScript("sb-sprites")
 LoadScript("boot-text")
 
 -- Get references to boot animation sprite data
 local bootSprites = {
-  logoframe01,
-  logoframe02,
-  logoframe03,
-  logoframe04,
-  logoframe05,
-  logoframe06,
-  logoframe07,
-  logoframe08,
-  logoframe09,
-  logoframe10,
-  logoframe11,
-  logoframe12,
-  logoframe13,
-  logoframe14,
-  logoframe15,
-  logoframe15,
-  logoframe15,
-  logoframe15,
-  logoframe15,
-  logoframe15
+  "logoframe01",
+  "logoframe02",
+  "logoframe03",
+  "logoframe04",
+  "logoframe05",
+  "logoframe06",
+  "logoframe07",
+  "logoframe08",
+  "logoframe09",
+  "logoframe10",
+  "logoframe11",
+  "logoframe12",
+  "logoframe13",
+  "logoframe14",
+  "logoframe15",
+  "logoframe15",
+  "logoframe15",
+  "logoframe15",
+  "logoframe15",
+  "logoframe15"
 }
 
 -- Animation properties
@@ -49,6 +49,9 @@ local safeMode = false
 local showPlugin = -1
 
 function Init()
+
+  print("Ready To Draw")
+  -- CreateMetaSprites()
 
   playSounds = ReadBiosData("PlaySystemSounds", "True") == "True"
 
@@ -92,8 +95,10 @@ function Init()
     DrawText(lines[i], 1, startY + (i - 1), DrawMode.Tile, "large", 15)
   end
 
+  DrawMetaSprite(FindMetaSpriteId("logosmall"), 1, startY, false, false, DrawMode.Tile);
+
   -- Replace the tile with a logo and rest the color offset to 0 (since the font was set to 15)
-  Tile(1, startY, logosmall.spriteIDs[1], 0)
+  -- Tile(1, startY, MetaSprite(FindMetaSpriteId("logosmall")).Sprites[1].Id, 0)
 
 end
 
@@ -113,14 +118,7 @@ function Update(timeDelta)
     BootDone(safeMode)
     return
   end
-  -- if(shortcutTime > shortcutDelay) then
-  --   checkShortcuts = false
-  -- end
-  --
-  -- if(checkShortcuts == true) then
-
-  -- end
-
+  
   -- Test to see if we are ready to display the boot animation
   if(ready == false) then
 
@@ -185,9 +183,8 @@ function Update(timeDelta)
 
         -- Not done with animation, go to next frame
         frame = frame + 1
-        local sprite = bootSprites[frame]
-        DrawSprites(sprite.spriteIDs, 10, 12, sprite.width, false, false, DrawMode.Tile)
-        -- UpdateTiles(, )
+
+        DrawMetaSprite(FindMetaSpriteId(bootSprites[frame]), 10, 12, false, false, DrawMode.Tile)
 
       elseif(done == false) then
 
@@ -218,13 +215,11 @@ function Draw()
   RedrawDisplay()
 
   -- Draw top border
-  DrawSprites(topborder.spriteIDs, 0, 0, topborder.width)
+  DrawMetaSprite(FindMetaSpriteId("topborder"), 0, 0)
 
   -- Draw bottom border
-  DrawSprites(bottomborder.spriteIDs, 0, 232, bottomborder.width)
+  DrawMetaSprite(FindMetaSpriteId("bottomborder"), 0, 232)
 
-  -- Mask off the bottom of the screen so you can see the scrolling
-  DrawRect(0, 240, 256, 8, 0, DrawMode.UI)
 end
 
 function KeyPressCheck()
@@ -259,7 +254,6 @@ function KeyPressCheck()
         EnableCRT(false)
         Scale(1)
 
-        --print("Safe mode")
       end
     end
   end

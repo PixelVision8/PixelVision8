@@ -36,18 +36,20 @@
     <Content Remove="Content\Effects\**" />
   </ItemGroup>
 
+  <!-- Point these to the example game directory you want to run. -->
   <ItemGroup>
-    <Content Include="Disks\APIExamples\ScrollPosition\**\*.*">
-      <Link>Content\%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Fonts\**\*.*">
+    <Compile Include="Disks\APIExamples\BackgroundColor\code.cs" />
+    <Content Include="Disks\APIExamples\BackgroundColor\**\*.*">
       <Link>Content\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Content\Fonts\**\*.*">
+      <Link>Content\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Compile Include="ProgramLite.cs" />
     <Compile Include="SDK/Runner/Parsers/FontParser.cs" />
     <Compile Include="SDK/Runner/Parsers/ImageParser.cs" />

@@ -12,7 +12,7 @@ using PixelVision8.Engine.Chips;
 namespace PixelVision8.Examples
 {
 
-    public class BackgroundColorExample : GameChip
+    public class ExampleGameChip : GameChip
     {
         public override void Init()
         {

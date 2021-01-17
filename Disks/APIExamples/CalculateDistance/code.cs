@@ -17,7 +17,7 @@ using PixelVision8.Engine.Chips;
 
 namespace PixelVision8.Examples
 {
-    class CalculateDistanceExample : GameChip
+    class ExampleGameChip : GameChip
     {
         private Point pointA = new Point(8, 8);
         private Point pointB = new Point(248, 232);

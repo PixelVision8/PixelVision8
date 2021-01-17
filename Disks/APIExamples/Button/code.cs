@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace PixelVision8.Examples
 {
-    class ButtonExample : GameChip
+    class ExampleGameChip : GameChip
     {
         // This array will store any buttons pressed during the current frame
         private List<string> pressedButtons = new List<string>();

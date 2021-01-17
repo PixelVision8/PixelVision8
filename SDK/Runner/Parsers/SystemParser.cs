@@ -235,6 +235,9 @@ namespace PixelVision8.Runner.Parsers
 
             if (data.ContainsKey("metaSprites"))
             {
+
+                Console.WriteLine("ContainsKey  metaSprites");
+                
                 var metaSprites = data["metaSprites"] as List<object>;
 
                 var total = MathHelper.Clamp(metaSprites.Count, 0, gameChip.TotalMetaSprites());
@@ -612,12 +615,18 @@ namespace PixelVision8.Runner.Parsers
         // }
         public void ConfigureMetaSprites(Dictionary<string, object> data)
         {
+            
             var gameChip = Target.GameChip as GameChip;
 
             // Prepare to parse v1 of the MetaSprite json template/
             if (data.ContainsKey("version") && (string)data["version"] == "v1")
             {
-                if (data.ContainsKey("total")) gameChip.TotalMetaSprites(Convert.ToInt32((long)data["total"]));
+
+                Console.WriteLine("ConfigureMetaSprites");
+                
+
+                if (data.ContainsKey("total")) 
+                    gameChip.TotalMetaSprites(Convert.ToInt32((long)data["total"]));
 
                 var spriteWidth = data.ContainsKey("spriteWidth") ? Convert.ToInt32((long)data["spriteWidth"]) : gameChip.SpriteSize().X;
                 var spriteHeight = data.ContainsKey("spriteHeight") ? Convert.ToInt32((long)data["spriteHeight"]) : gameChip.SpriteSize().Y;
@@ -625,6 +634,7 @@ namespace PixelVision8.Runner.Parsers
                 // Look for songs
                 if (data.ContainsKey("collections"))
                 {
+
                     // Get the list of song data
                     var collections = data["collections"] as List<object>;
                     var total = Math.Min(collections.Count, gameChip.TotalMetaSprites());
@@ -651,11 +661,15 @@ namespace PixelVision8.Runner.Parsers
 
                             for (var j = 0; j < totalSprites; j++)
                             {
-                                var pos = MathUtil.CalculatePosition(j, width);
+                                if(Convert.ToInt32((long)spriteData[j]) > -1)
+                                {
+                                    var pos = MathUtil.CalculatePosition(j, width);
 
-                                metaSprite.AddSprite(Convert.ToInt32((long)spriteData[j]), pos.X * spriteWidth, pos.X * spriteHeight);
-
+                                    metaSprite.AddSprite(Convert.ToInt32((long)spriteData[j]), pos.X * spriteWidth, pos.Y * spriteHeight);
+                                }
                             }
+
+                            collections[i] = collectionData;
 
                         }
                         // Test to see if the more advanced sprite data exists

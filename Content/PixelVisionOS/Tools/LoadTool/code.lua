@@ -8,79 +8,79 @@
   distributing is allowed.
 ]]--
 
-LoadScript("sb-sprites")
+-- LoadScript("sb-sprites")
 LoadScript("attach-debugger")
 
 local currentAnimation = {}
 
 -- Game boot animation frames
 local insertAnimation = {
-    loadingframe1,
-    loadingframe2,
-    loadingframe3,
-    loadingframe4,
-    loadingframe5,
-    loadingframe6,
-    loadingframe7,
-    loadingframe8,
-    loadingframe9,
-    loadingframe9,
-    loadingframe10,
-    loadingframe11,
-    loadingframe12,
-    loadingframe13,
-    loadingframe14,
-    loadingframe15,
-    loadingframe16,
-    loadingframe17,
-    loadingframe18,
-    loadingframe17,
-    loadingframe19,
-    loadingframe20,
-    loadingframe18,
-    loadingframe19,
-    loadingframe18,
-    loadingframe19,
+    "loadingframe1",
+    "loadingframe2",
+    "loadingframe3",
+    "loadingframe4",
+    "loadingframe5",
+    "loadingframe6",
+    "loadingframe7",
+    "loadingframe8",
+    "loadingframe9",
+    "loadingframe9",
+    "loadingframe10",
+    "loadingframe11",
+    "loadingframe12",
+    "loadingframe13",
+    "loadingframe14",
+    "loadingframe15",
+    "loadingframe16",
+    "loadingframe17",
+    "loadingframe18",
+    "loadingframe17",
+    "loadingframe19",
+    "loadingframe20",
+    "loadingframe18",
+    "loadingframe19",
+    "loadingframe18",
+    "loadingframe19",
     
 }
 
 local loadAnimation = {
-    loadingframe17,
-    loadingframe18,
-    loadingframe17,
-    loadingframe19,
-    loadingframe20,
-    loadingframe18,
-    loadingframe19,
-    loadingframe18,
-    loadingframe19,
+    "loadingframe17",
+    "loadingframe18",
+    "loadingframe17",
+    "loadingframe19",
+    "loadingframe20",
+    "loadingframe18",
+    "loadingframe19",
+    "loadingframe18",
+    "loadingframe19",
 }
 
 local ejectAnimation = {
-    loadingframe18,
-    loadingframe19,
-    loadingframe18,
-    loadingframe20,
-    loadingframe19,
-    loadingframe20,
-    loadingframe19,
-    loadingframe18,
-    loadingframe17,
-    loadingframe16,
-    loadingframe15,
-    loadingframe14,
-    loadingframe13,
-    loadingframe12,
-    loadingframe11,
-    loadingframe10,
-    loadingframe10,
-    loadingframe18,
-    loadingframe19,
-    loadingframe18,
-    loadingframe20,
-    loadingframe19,
-    loadingframe20,
-    loadingframe19,
+    "loadingframe18",
+    "loadingframe19",
+    "loadingframe18",
+    "loadingframe20",
+    "loadingframe19",
+    "loadingframe20",
+    "loadingframe19",
+    "loadingframe18",
+    "loadingframe17",
+    "loadingframe16",
+    "loadingframe15",
+    "loadingframe14",
+    "loadingframe13",
+    'loadingframe12',
+    "loadingframe11",
+    "loadingframe10",
+    "loadingframe10",
+    "loadingframe18",
+    "loadingframe19",
+    "loadingframe18",
+    "loadingframe20",
+    "loadingframe19",
+    "loadingframe20",
+    "loadingframe19",
 }
 
 -- Animation properties
@@ -106,12 +106,7 @@ local runnerType = "none"
 
 function Init()
 
-    -- local metadata = ReadAllMetadata()
-
-    -- for key, value in next, metadata do
-    --     print("Meta Data", key, value)
-    -- end
-    -- print("ReadAllMetadata", dump(ReadAllMetadata()))
+    -- CreateMetaSprites()
 
     if(EnableAutoRun ~= nil) then
         EnableAutoRun(false)
@@ -216,12 +211,6 @@ function Update(timeDelta)
 
         if(mode == "ejecting") then
         
-            -- if(frame == 8 and UnloadProgress() < 99) then
-
-            --     frame = 1
-            --     print("UnloadProgress", UnloadProgress())
-
-            -- else
             if(frame == 15) then
             
                 EndUnload()
@@ -272,12 +261,12 @@ function Draw()
     RedrawDisplay()
 
     -- Get current sprite data
-    local sprite = currentAnimation[frame]
+    -- local spriteId = FindMetaSpriteId(currentAnimation[frame])
 
-    if(sprite ~= nil) then
+    -- if(sprite ~= nil) then
         -- Draw sprite to the display
-        DrawSprites(sprite.spriteIDs, 112, 96, sprite.width, false, false, DrawMode.Sprite, 0)
-    end
+    DrawMetaSprite(FindMetaSpriteId(currentAnimation[frame]), 112, 96, false, false, DrawMode.Sprite, 0)
+    -- end
 
     if(preloadComplete == true and showDebugger == true) then
 
@@ -288,15 +277,15 @@ function Draw()
     elseif((preloading == true or mode == "loading") and mode ~= "ejecting") then
 
         DrawText(string.format("LOADING %03d%s", percent, "%"), offset * 8, 27 * 8, DrawMode.Sprite, "large", 15)
-    
+
     end
 
     runnerType = ReadMetadata( "runnerType", "none" )
 
     if(runnerType == "csharp") then runnerType = "csharp" end
 
-    if(_G["runner"..runnerType] ~= nil) then
-        DrawSprites( _G["runner"..runnerType].spriteIDs, 116, 72, _G["runner"..runnerType].width)
-    end
+    -- if(_G["runner"..runnerType] ~= nil) then
+        DrawMetaSprite(FindMetaSpriteId("runner"..runnerType), 116, 72)
+    -- end
 
 end

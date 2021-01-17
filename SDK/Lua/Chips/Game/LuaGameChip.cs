@@ -195,6 +195,7 @@ namespace PixelVision8.Engine.Chips
 
             LuaScript.Globals["PaletteOffset"] = new Func<int, int, int>(PaletteOffset);
 
+            LuaScript.Globals["FindMetaSpriteId"] = new Func<string, int>(FindMetaSpriteId);
             LuaScript.Globals["TotalMetaSprites"] = new Func<int?, int>(TotalMetaSprites);
             LuaScript.Globals["MetaSprite"] = new Func<int, SpriteCollection, SpriteCollection>(MetaSprite);
             LuaScript.Globals["DrawMetaSprite"] =

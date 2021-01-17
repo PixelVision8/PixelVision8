@@ -471,7 +471,7 @@ namespace PixelVision8.Engine.Chips
         ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile
         ///     above the background color.
         /// </param>
-        public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
+        public virtual void NewDrawSprite(int id, int x, int y, int columns, int rows, bool flipH = false, bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, SpriteChip srcChip = null)
         {
             // Only apply the max sprite count to sprite draw modes
@@ -499,36 +499,79 @@ namespace PixelVision8.Engine.Chips
                 {
                     if (SpriteChip.maxSpriteCount > 0 && CurrentSprites >= SpriteChip.maxSpriteCount) return;
 
-                    // Check to see if we need to test the bounds
-                    // if (onScreen)
-                    // {
-                    //     // _tmpBounds = bounds ?? DisplayChip.VisibleBounds;
-                    //
-                    //     // This can set the render flag to true or false based on it's location
-                    //     //TODO need to take into account the current bounds of the screen
-                    //     render = x >= 0 && x <= display.X && y >= 0 && y <= display.Y;
-                    // }
-                    // else
-                    // {   
-                    //     // If we are not testing to see if the sprite is onscreen it will always render and wrap based on its position
-                    //     render = true;
-                    // }
-                    //
-                    // // If the sprite should be rendered, call DrawSprite()
-                    // if (render)
-                    // {
-
                     var pos = MathUtil.CalculatePosition(id, srcChip.Columns);
                     pos.X *= SpriteChip.width;
                     pos.Y *= SpriteChip.height;
 
-                    DisplayChip.NewDrawCall(srcChip, x, y, SpriteChip.width, SpriteChip.height, (byte)drawMode, flipH, flipV, colorOffset, pos.X, pos.Y);
+                    DisplayChip.NewDrawCall(srcChip, x, y, SpriteChip.width * columns, SpriteChip.height * rows, (byte)drawMode, flipH, flipV, colorOffset, pos.X, pos.Y);
 
                     CurrentSprites++;
                     // }
                 }
 
             }
+        }
+        
+        public virtual void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
+            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, SpriteChip srcChip = null)
+        {
+
+            NewDrawSprite(id, x, y, 1, 1, flipH, flipV, drawMode, colorOffset, srcChip);
+            // // Only apply the max sprite count to sprite draw modes
+            //
+            // srcChip ??= SpriteChip;
+            //
+            // if (drawMode == DrawMode.Tile)
+            // {
+            //     Tile(x, y, id, colorOffset);
+            // }
+            // else
+            // {
+            //     // x -=(useScrollPos ? _scrollPos.X : 0);
+            //     // y -=(useScrollPos ? _scrollPos.Y : 0);
+            //
+            //     if (drawMode == DrawMode.TilemapCache)
+            //     {
+            //
+            //         srcChip.ReadSpriteAt(id, ref tmpSpriteData);
+            //
+            //         DrawPixels(tmpSpriteData, x, y, SpriteChip.width, SpriteChip.height, flipH, flipV, drawMode, colorOffset);
+            //
+            //     }
+            //     else
+            //     {
+            //         if (SpriteChip.maxSpriteCount > 0 && CurrentSprites >= SpriteChip.maxSpriteCount) return;
+            //
+            //         // Check to see if we need to test the bounds
+            //         // if (onScreen)
+            //         // {
+            //         //     // _tmpBounds = bounds ?? DisplayChip.VisibleBounds;
+            //         //
+            //         //     // This can set the render flag to true or false based on it's location
+            //         //     //TODO need to take into account the current bounds of the screen
+            //         //     render = x >= 0 && x <= display.X && y >= 0 && y <= display.Y;
+            //         // }
+            //         // else
+            //         // {   
+            //         //     // If we are not testing to see if the sprite is onscreen it will always render and wrap based on its position
+            //         //     render = true;
+            //         // }
+            //         //
+            //         // // If the sprite should be rendered, call DrawSprite()
+            //         // if (render)
+            //         // {
+            //
+            //         var pos = MathUtil.CalculatePosition(id, srcChip.Columns);
+            //         pos.X *= SpriteChip.width;
+            //         pos.Y *= SpriteChip.height;
+            //
+            //         DisplayChip.NewDrawCall(srcChip, x, y, SpriteChip.width, SpriteChip.height, (byte)drawMode, flipH, flipV, colorOffset, pos.X, pos.Y);
+            //
+            //         CurrentSprites++;
+            //         // }
+            //     }
+            //
+            // }
         }
 
         /// <summary>
@@ -569,58 +612,59 @@ namespace PixelVision8.Engine.Chips
         ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
         ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
         /// </param>
-        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
+        public virtual void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
-            total = ids.Length;
+            
+            // total = ids.Length;
 
-            // TODO added this so C# code isn't corrupted, need to check performance impact
-            if (tmpIDs.Length != total) Array.Resize(ref tmpIDs, total);
+            // // TODO added this so C# code isn't corrupted, need to check performance impact
+            // if (tmpIDs.Length != total) Array.Resize(ref tmpIDs, total);
 
-            Array.Copy(ids, tmpIDs, total);
+            // Array.Copy(ids, tmpIDs, total);
 
-            height = MathUtil.CeilToInt(total / width);
+            // height = MathUtil.CeilToInt(total / width);
 
-            // TODO this needs to be moved into the Draw Sprite
-            // startX = x;// - (useScrollPos ? _scrollPos.X : 0);
-            // startY = y;// - (useScrollPos ? _scrollPos.Y : 0);
+            // // TODO this needs to be moved into the Draw Sprite
+            // // startX = x;// - (useScrollPos ? _scrollPos.X : 0);
+            // // startY = y;// - (useScrollPos ? _scrollPos.Y : 0);
 
-            _paddingW = drawMode == DrawMode.Tile ? 1 : _spriteSize.X;
-            _paddingH = drawMode == DrawMode.Tile ? 1 : _spriteSize.Y;
+            // _paddingW = drawMode == DrawMode.Tile ? 1 : _spriteSize.X;
+            // _paddingH = drawMode == DrawMode.Tile ? 1 : _spriteSize.Y;
 
-            if (flipH || flipV) SpriteChipUtil.FlipSpriteData(ref tmpIDs, width, height, flipH, flipV);
+            // if (flipH || flipV) SpriteChipUtil.FlipSpriteData(ref tmpIDs, width, height, flipH, flipV);
 
-            // Store the sprite id from the ids array
-            //            int id;
-            //            bool render;
+            // // Store the sprite id from the ids array
+            // //            int id;
+            // //            bool render;
 
-            // TODO need to offset the bounds based on the scroll position before testing against it
+            // // TODO need to offset the bounds based on the scroll position before testing against it
 
-            for (var i = 0; i < total; i++)
-            {
-                // Set the sprite id
-                id = tmpIDs[i];
+            // for (var i = 0; i < total; i++)
+            // {
+            //     // Set the sprite id
+            //     id = tmpIDs[i];
 
-                // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
-                // Test to see if the sprite is within range
-                if (id > -1)
-                {
-                    // startX = 
-                    // startY = MathUtil.FloorToInt(i / width) * _paddingH + y;
-                    //
-                    //                    var render = true;
+            //     // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
+            //     // Test to see if the sprite is within range
+            //     if (id > -1)
+            //     {
+            //         // startX = 
+            //         // startY = MathUtil.FloorToInt(i / width) * _paddingH + y;
+            //         //
+            //         //                    var render = true;
 
 
-                    DrawSprite(
-                        id,
-                        MathUtil.FloorToInt(i % width) * _paddingW + x,
-                        MathUtil.FloorToInt(i / width) * _paddingH + y,
-                        flipH,
-                        flipV,
-                        drawMode,
-                        colorOffset);
-                }
-            }
+            //         DrawSprite(
+            //             id,
+            //             MathUtil.FloorToInt(i % width) * _paddingW + x,
+            //             MathUtil.FloorToInt(i / width) * _paddingH + y,
+            //             flipH,
+            //             flipV,
+            //             drawMode,
+            //             colorOffset);
+            //     }
+            // }
         }
 
         /// <summary>
@@ -655,33 +699,36 @@ namespace PixelVision8.Engine.Chips
         public void DrawSpriteBlock(int id, int x, int y, int columns = 1, int rows = 1, bool flipH = false,
             bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
-            total = columns * rows;
-
-            var sprites = new int[total];
-
-            var sW = MathUtil.CeilToInt((float)SpriteChip.textureWidth / SpriteChip.width);
-
-            var startC = id % sW;
-            var tmpC = id % sW;
-            var tmpR = (int)Math.Floor(id / (double)sW);
-
-            var tmpCols = tmpC + columns;
-
-            for (var i = 0; i < total; i++)
-            {
-                sprites[i] = tmpC + tmpR * sW;
-
-                tmpC += 1;
-
-                if (tmpC >= tmpCols)
-                {
-                    tmpC = startC;
-                    tmpR += 1;
-                }
-            }
-
-            DrawSprites(sprites, x, y, columns, flipH, flipV, drawMode, colorOffset);
+            
+            NewDrawSprite(id, x, y, columns, rows, flipH, flipV, drawMode, colorOffset);
+            // total = columns * rows;
+            //
+            // var sprites = new int[total];
+            //
+            // var sW = MathUtil.CeilToInt((float)SpriteChip.textureWidth / SpriteChip.width);
+            //
+            // var startC = id % sW;
+            // var tmpC = id % sW;
+            // var tmpR = (int)Math.Floor(id / (double)sW);
+            //
+            // var tmpCols = tmpC + columns;
+            //
+            // for (var i = 0; i < total; i++)
+            // {
+            //     sprites[i] = tmpC + tmpR * sW;
+            //
+            //     tmpC += 1;
+            //
+            //     if (tmpC >= tmpCols)
+            //     {
+            //         tmpC = startC;
+            //         tmpR += 1;
+            //     }
+            // }
+            //
+            // DrawSprites(sprites, x, y, columns, flipH, flipV, drawMode, colorOffset);
         }
+        
 
         /// <summary>
         ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render

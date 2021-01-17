@@ -1,9 +1,17 @@
-﻿using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
-using System;
+﻿using System;
 using System.Globalization;
 using System.IO;
+using PixelVision8.Examples;
+
+namespace PixelVision8.Engine.Chips
+{
+    // This is a wrapper class to run the code examples but doesn't add any addition logic to the 
+    //lite version of the engine and will throw errors on APIs not supported
+    public class GameChip : GameChipLite
+    {
+
+    }
+}
 
 namespace PixelVision8.Runner
 {
@@ -40,70 +48,72 @@ namespace PixelVision8.Runner
         }
     }
 
-    class ExampleGameChip : GameChipLite
-    {
-        // Use floats to store the subpixel position
-        private float speed = 5;
-        private float nextPos;
-        private int lastSpriteCount;
+    
 
-        // Use this point to position the  sprites
-        private Point pos;
+    // class ExampleGameChip : GameChipLite
+    // {
+    //     // Use floats to store the subpixel position
+    //     private float speed = 5;
+    //     private float nextPos;
+    //     private int lastSpriteCount;
 
-        // A group of sprite IDs for the DrawSprites() API
-        private int[] spriteGroup =
-        {
-            -1, 33, 34, -1,
-            48, 49, 50, 51,
-            64, 65, 66, 67,
-            -1, 81, 82, -1
-        };
+    //     // Use this point to position the  sprites
+    //     private Point pos;
 
-        private int[] test = new int[64];
-        public override void Init()
-        {
-            BackgroundColor(1);
+    //     // A group of sprite IDs for the DrawSprites() API
+    //     private int[] spriteGroup =
+    //     {
+    //         -1, 33, 34, -1,
+    //         48, 49, 50, 51,
+    //         64, 65, 66, 67,
+    //         -1, 81, 82, -1
+    //     };
 
-            for (int i = 0; i < test.Length; i++)
-            {
-                test[i] = 15;
-            }
+    //     private int[] test = new int[64];
+    //     public override void Init()
+    //     {
+    //         BackgroundColor(1);
 
-            // DrawPixels(test, 0, 0, 8, 8, false, false, DrawMode.TilemapCache);
+    //         for (int i = 0; i < test.Length; i++)
+    //         {
+    //             test[i] = 15;
+    //         }
 
-            // DrawText("Works", 8, 0, DrawMode.TilemapCache, "large");
-        }
+    //         // DrawPixels(test, 0, 0, 8, 8, false, false, DrawMode.TilemapCache);
 
-        public override void Update(int timeDelta)
-        {
-            // Calculate the next position
-            nextPos = nextPos + (speed * (timeDelta / 100f));
+    //         // DrawText("Works", 8, 0, DrawMode.TilemapCache, "large");
+    //     }
 
-            // Need to convert the nextPoint to an int, so we'll save it in a point
-            pos.X = MathUtil.Repeat((int)nextPos, display.X + 16);
-            pos.Y = MathUtil.Repeat((int)nextPos, display.Y + 16);
-        }
+    //     public override void Update(int timeDelta)
+    //     {
+    //         // Calculate the next position
+    //         nextPos = nextPos + (speed * (timeDelta / 100f));
+
+    //         // Need to convert the nextPoint to an int, so we'll save it in a point
+    //         pos.X = MathUtil.Repeat((int)nextPos, display.X + 16);
+    //         pos.Y = MathUtil.Repeat((int)nextPos, display.Y + 16);
+    //     }
 
 
-        public override void Draw()
-        {
-            // Redraw the display
-            RedrawDisplay();
+    //     public override void Draw()
+    //     {
+    //         // Redraw the display
+    //         RedrawDisplay();
 
-            // Draw sprite group moving horizontally and hide when it goes offscreen
-            DrawSprites(spriteGroup, pos.X, 8, 4);
+    //         // Draw sprite group moving horizontally and hide when it goes offscreen
+    //         DrawSprites(spriteGroup, pos.X, 8, 4);
 
-            // Draw flipped sprite group moving vertically but render when offscreen
-            DrawSprites(spriteGroup, 36, pos.Y, 4, true);
+    //         // Draw flipped sprite group moving vertically but render when offscreen
+    //         DrawSprites(spriteGroup, 36, pos.Y, 4, true);
 
-            // Show the total number of sprites
-            DrawText("FPS " + fps + " Sprites " + lastSpriteCount, 144 - (8 * 4), 224, DrawMode.Sprite, "large", 15);
+    //         // Show the total number of sprites
+    //         DrawText("FPS " + fps + " Sprites " + lastSpriteCount, 144 - (8 * 4), 224, DrawMode.Sprite, "large", 15);
 
-            // Draw the x,y position of each sprite
-            DrawText("(" + MathUtil.FloorToInt(nextPos) + ",8)", pos.X + 32, 8, DrawMode.Sprite, "large", 15);
-            DrawText("(36," + MathUtil.FloorToInt(nextPos) + ")", 66, pos.Y + 12, DrawMode.Sprite, "large", 15);
+    //         // Draw the x,y position of each sprite
+    //         DrawText("(" + MathUtil.FloorToInt(nextPos) + ",8)", pos.X + 32, 8, DrawMode.Sprite, "large", 15);
+    //         DrawText("(36," + MathUtil.FloorToInt(nextPos) + ")", 66, pos.Y + 12, DrawMode.Sprite, "large", 15);
 
-            lastSpriteCount = CurrentSprites;
-        }
-    }
+    //         lastSpriteCount = CurrentSprites;
+    //     }
+    // }
 }

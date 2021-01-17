@@ -24,6 +24,52 @@ using System.Collections.Generic;
 
 namespace PixelVisionSDK.Engine
 {
+
+    // public class MetaSprite
+    // {
+    //     public string Name;
+    //     public List<int> SpriteIds = new List<int>();
+
+    //     public int Width;
+
+    //     public MetaSprite(string name, List<int> spriteIds, int width)
+    //     {
+    //         Name = name;
+    //         Width = width;
+
+    //         for (int i = 0; i < spriteIds.Count; i++)
+    //         {
+    //             AddSprite(spriteIds[i]);
+    //         }
+    //     }
+
+    //     public void AddSprite(int id, int? index = null)
+    //     {
+            
+    //         if(index.HasValue && index.Value > -1 && index.Value < SpriteIds.Count)
+    //         {
+    //             SpriteIds.Insert(index.Value, id);
+    //         }
+    //         else
+    //         {
+    //             SpriteIds.Add(id);
+    //         }
+    //     }
+
+    //     public void RemoveSprite(int? index = null)
+    //     {
+    //         if(index.HasValue && index.Value > -1 && index.Value < SpriteIds.Count)
+    //         {
+    //             SpriteIds.RemoveAt(index.Value);
+    //         }
+    //         else
+    //         {
+    //             SpriteIds.RemoveAt(SpriteIds.Count -1);
+    //         }
+    //     }
+        
+    // }
+
     public struct SpriteData
     {
         public int Id;
@@ -48,7 +94,7 @@ namespace PixelVisionSDK.Engine
     {
         public readonly List<SpriteData> Sprites;
         public Rectangle Bounds;
-        public Rectangle MaxBoundary;
+        // public Rectangle MaxBoundary;
         public string Name;
         public int SpriteHeight;
         public int SpriteMax;
@@ -61,7 +107,7 @@ namespace PixelVisionSDK.Engine
             Sprites = new List<SpriteData>();
             Bounds = Rectangle.Empty;
             SpriteMax = 1024;
-            MaxBoundary = new Rectangle(0, 0, 128, 128);
+            // MaxBoundary = new Rectangle(0, 0, 128, 128);
             SpriteWidth = 8;
             SpriteHeight = 8;
 
@@ -75,14 +121,14 @@ namespace PixelVisionSDK.Engine
 
         public void AddSprite(int id, int x = 0, int y = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
-            var newX = MathHelper.Clamp(x, MaxBoundary.X, MaxBoundary.Width);
-            var newY = MathHelper.Clamp(y, MaxBoundary.Y, MaxBoundary.Height);
+            // var newX = MathHelper.Clamp(x, MaxBoundary.X, MaxBoundary.Width);
+            // var newY = MathHelper.Clamp(y, MaxBoundary.Y, MaxBoundary.Height);
 
             // TODO is there a way to abstract this without knowing the sprite size?
-            Bounds.Width = Math.Max(Bounds.Width, newX + SpriteWidth);
-            Bounds.Height = Math.Max(Bounds.Height, newX + SpriteHeight);
+            Bounds.Width = Math.Max(Bounds.Width, x + SpriteWidth);
+            Bounds.Height = Math.Max(Bounds.Height, y + SpriteHeight);
 
-            Sprites.Add(new SpriteData(MathHelper.Clamp(id, 0, SpriteMax), newX, newY, flipH, flipV, colorOffset));
+            Sprites.Add(new SpriteData(MathHelper.Clamp(id, 0, SpriteMax), x, y, flipH, flipV, colorOffset));
         }
 
         public void Clear()
