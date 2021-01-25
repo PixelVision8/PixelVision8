@@ -33,12 +33,11 @@ using PixelVision8.Engine.Utils;
 using System;
 using System.Collections.Chips;
 */
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PixelVision8.Engine;
+using PixelVision8.Player;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -61,7 +60,7 @@ namespace PixelVision8.Runner.Parsers
         {
 
             // Get all the colors from the image
-            uniqueFontColors = Parser.colorPalette.Select(c => ColorUtils.RgbToHex(c.R, c.G, c.B)).ToList();
+            uniqueFontColors = Parser.colorPalette.Select(c => Utilities.RgbToHex(c.R, c.G, c.B)).ToList();
 
             // Remove the mask color
             uniqueFontColors.Remove(colorChip.maskColor);
@@ -70,10 +69,10 @@ namespace PixelVision8.Runner.Parsers
             var colorRefs = uniqueFontColors.ToArray();
 
             // Convert all of the pixels into color ids
-            var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorRefs, ColorUtils.RgbToHex(c.R, c.G, c.B))).ToArray();
+            var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorRefs, Utilities.RgbToHex(c.R, c.G, c.B))).ToArray();
 
             // Create new image
-            image = new Image(Parser.width, Parser.height, pixelIDs, colorRefs);
+            ImageData = new ImageData(Parser.width, Parser.height, pixelIDs, colorRefs);
 
             StepCompleted();
 

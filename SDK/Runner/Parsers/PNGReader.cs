@@ -19,7 +19,7 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
 using PixelVision8.Runner.Parsers;
 using PixelVision8.Runner.Utils;
 //using PixelVisionRunner.Utils;
@@ -317,7 +317,7 @@ namespace PixelVision8.Runner.Importers
                         //                        var colorVector = tmpColor.ToVector4();
                         //                        
 
-                        var color = alpha < 1 ? ColorUtils.HexToColor(maskHex) : new Color(r, g, b);
+                        var color = alpha < 1 ? Utilities.HexToColor(maskHex) : new Color(r, g, b);
 
                         //                        var color = new ColorData(r, g, b);
                         _colors[y * width + index1] = color;

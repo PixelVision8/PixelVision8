@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -20,119 +20,176 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using PixelVision8.Engine.Chips;
 using System;
-using System.IO;
+using PixelVision8.Player;
 
 namespace PixelVision8.Runner.Data
 {
-    public class DisplayTarget : DisplayTargetLite
+    public class DisplayTarget
     {
-        private bool _useCRT;
-        private Effect crtShader;
-        private Texture2D _colorPalette;
-        private readonly int paletteWidth = 256;
+        public Vector2 offset;
+        public Texture2D renderTexture;
+        protected readonly GraphicsDeviceManager GraphicManager;
+        protected readonly SpriteBatch SpriteBatch;
+        protected Color[] CachedColors;
+        protected Rectangle VisibleRect;
+        private readonly int _monitorHeight;
+        private readonly int _monitorWidth;
+        private int _monitorScale = 1;
+        private int _totalPixels;
+        private Color[] _pixelData = new Color[0];
+        private int _colorID;
+        private int _i;
 
-        public DisplayTarget(GraphicsDeviceManager graphicManager, int width, int height) : base(graphicManager, width, height)
+        protected Vector2 _scale = new Vector2(1, 1);
+        protected int displayWidth;
+        protected int displayHeight;
+        
+        public bool StretchScreen { get; set; }
+        public bool Fullscreen { get; set; }
+
+        public Vector2 Scale => _scale;
+
+        public DisplayTarget(GraphicsDeviceManager graphicManager, int width, int height)
         {
+            GraphicManager = graphicManager;
+
+            GraphicManager.HardwareModeSwitch = false;
+
+            SpriteBatch = new SpriteBatch(graphicManager.GraphicsDevice);
+
+            _monitorWidth = MathHelper.Clamp(width, 64, 640);
+            _monitorHeight = MathHelper.Clamp(height, 64, 480);
         }
 
-        public bool useCRT
+        public int MonitorScale
         {
-            get
-            {
-                return _useCRT;
-            }
+            get => _monitorScale;
             set
             {
-                if (crtShader == null) return;
+                var fits = false;
 
-                _useCRT = value;
-
-                crtShader?.Parameters["crtOn"].SetValue(value ? 1f : 0f);
-                crtShader?.Parameters["warp"].SetValue(value ? new Vector2(0.008f, 0.01f) : Vector2.Zero);
-
-            }
-        }
-
-        public float brightness
-        {
-            get => crtShader?.Parameters["brightboost"]?.GetValueSingle() ?? 0;
-            set => crtShader?.Parameters["brightboost"]?.SetValue(MathHelper.Clamp(value, .255f, 1.5f));
-        }
-
-        public float sharpness
-        {
-            get => crtShader?.Parameters["hardPix"]?.GetValueSingle() ?? 0;
-            set => crtShader?.Parameters["hardPix"]?.SetValue(value);
-        }
-
-        public bool HasShader()
-        {
-            return crtShader != null;
-        }
-
-        public Stream shaderPath
-        {
-            set
-            {
-
-                using (var reader = new BinaryReader(value))
+                while (fits == false)
                 {
-                    crtShader = new Effect(GraphicManager.GraphicsDevice,
-                        reader.ReadBytes((int)reader.BaseStream.Length));
-                }
+                    var newWidth = _monitorWidth * value;
+                    var newHeight = _monitorHeight * value;
 
-                useCRT = true;
+                    if (newWidth < GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width && newHeight < GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height)
+                    {
+                        fits = true;
+                        _monitorScale = value;
+                    }
+                    else
+                    {
+                        value--;
+                    }
+                }
             }
         }
 
-        public override void ResetResolution(int gameWidth, int gameHeight, int overScanX = 0, int overScanY = 0)
+        public virtual void ResetResolution(IPlayerChips engine)
         {
+            var displayChip = engine.DisplayChip;
+
+            var gameWidth = displayChip.Width;
+            var gameHeight = displayChip.Height;
+            
             if (renderTexture == null || renderTexture.Width != gameWidth || renderTexture.Height != gameHeight)
             {
                 renderTexture = new Texture2D(GraphicManager.GraphicsDevice, gameWidth, gameHeight);
-
-                crtShader?.Parameters["textureSize"].SetValue(new Vector2(gameWidth, gameHeight));
-                crtShader?.Parameters["videoSize"].SetValue(new Vector2(gameWidth, gameHeight));
-
             }
 
-            base.ResetResolution(gameWidth, gameHeight, overScanX, overScanY);
+            // Calculate the game's resolution
+            VisibleRect.Width = renderTexture.Width;
+            VisibleRect.Height = renderTexture.Height;
 
+            var tmpMonitorScale = Fullscreen ? 1 : MonitorScale;
+
+            // Calculate the monitor's resolution
+            displayWidth = Fullscreen
+                ? GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width
+                : _monitorWidth *
+                  tmpMonitorScale;
+            displayHeight = Fullscreen
+                ? GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height
+                : _monitorHeight * tmpMonitorScale;
+
+            CalculateDisplayScale();
+
+            CalculateDisplayOffset();
+
+            // Apply changes
+            GraphicManager.IsFullScreen = Fullscreen;
+
+            if (GraphicManager.PreferredBackBufferWidth != displayWidth ||
+                GraphicManager.PreferredBackBufferHeight != displayHeight)
+            {
+                GraphicManager.PreferredBackBufferWidth = displayWidth;
+                GraphicManager.PreferredBackBufferHeight = displayHeight;
+                GraphicManager.ApplyChanges();
+            }
+
+            _totalPixels = gameWidth * gameHeight;
+            if (_pixelData.Length != _totalPixels)
+            {
+                Array.Resize(ref _pixelData, _totalPixels);
+            }
         }
 
-
-        public override void RebuildColorPalette(ColorChip colorChip)
+        protected virtual void CalculateDisplayOffset()
         {
-
-            base.RebuildColorPalette(colorChip);
-
-            // TODO do we need to recreate these two things each time?
-            _colorPalette = new Texture2D(GraphicManager.GraphicsDevice, paletteWidth, (int)Math.Ceiling(CachedColors.Length / (double)paletteWidth));
-            _colorPalette.SetData(CachedColors);
-
-            colorChip.ResetValidation();
-
+            offset.X = (displayWidth - VisibleRect.Width * Scale.X) * .5f;
+            offset.Y = (displayHeight - VisibleRect.Height * Scale.Y) * .5f;
         }
 
-        public override void Render(int[] pixels, int backgroundColor)
+        protected virtual void CalculateDisplayScale()
+        {
+            // Calculate the game scale
+            _scale.X = (float) displayWidth / VisibleRect.Width;
+            _scale.Y = (float) displayHeight / VisibleRect.Height;
+            
+            if (!StretchScreen)
+            {
+                // To preserve the aspect ratio,
+                // use the smaller scale factor.
+                _scale.X = Math.Min(Scale.X, Scale.Y);
+                _scale.Y = Scale.X;
+            }
+        }
+
+        public virtual void RebuildColorPalette(ColorChip colorChip)
+        {
+            if (colorChip.invalid)
+            {
+                CachedColors = Utilities.ConvertColors(colorChip.hexColors, colorChip.maskColor, colorChip.debugMode,
+                    colorChip.backgroundColor);
+                
+                colorChip.ResetValidation();
+            
+            }
+        }
+
+        public virtual void Render(IPlayerChips engine)//int[] pixels, int defaultColor)
         {
 
-            if (crtShader == null)
+            // Make sure the color palette doesn't need to rebuild itself
+            RebuildColorPalette(engine.ColorChip);
+             
+            // We can only update the display if the pixel lengths match up
+            if (engine.DisplayChip.Pixels.Length != _totalPixels)
+                return;
+
+            SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
+
+            for (_i = 0; _i < _totalPixels; _i++)
             {
-                base.Render(pixels, backgroundColor);
+                _colorID = engine.DisplayChip.Pixels[_i];
+                _pixelData[_i] = CachedColors[_colorID < 0 ? engine.ColorChip.backgroundColor : _colorID];
             }
-            else
-            {
-                renderTexture.SetData(pixels);
-                SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
-                crtShader.CurrentTechnique.Passes[0].Apply();
-                GraphicManager.GraphicsDevice.Textures[1] = _colorPalette;
-                GraphicManager.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-                SpriteBatch.Draw(renderTexture, offset, VisibleRect, Color.White, 0f, Vector2.Zero, Scale, SpriteEffects.None, 1f);
-                SpriteBatch.End();
-            }
+
+            renderTexture.SetData(_pixelData);
+            SpriteBatch.Draw(renderTexture, offset, VisibleRect, Color.White, 0f, Vector2.Zero, Scale, SpriteEffects.None, 1f);
+            SpriteBatch.End();
 
         }
 

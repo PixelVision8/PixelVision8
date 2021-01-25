@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,8 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
+using PixelVision8.Player;
 using PixelVision8.Runner.Utils;
 using System.Text;
 
@@ -27,10 +26,10 @@ namespace PixelVision8.Runner.Exporters
 {
     public class SystemExporter : AbstractExporter
     {
-        private readonly IEngine engine;
+        private readonly IPlayerChips engine;
         private StringBuilder sb;
 
-        public SystemExporter(string fileName, IEngine engine) : base(fileName)
+        public SystemExporter(string fileName, IPlayerChips engine) : base(fileName)
         {
             this.engine = engine;
 
@@ -64,11 +63,11 @@ namespace PixelVision8.Runner.Exporters
 
             // Serialize Game
             if (engine.GameChip != null)
-                _steps.Add(delegate { SerializeGameChip(((GameChip)engine.GameChip)); });
+                _steps.Add(delegate { SerializeGameChip(engine.GameChip); });
 
             // Serialize Music
-            if (((PixelVisionEngine)engine).MusicChip != null)
-                _steps.Add(delegate { SerializeMusicChip(((PixelVisionEngine)engine).MusicChip); });
+            if (engine.MusicChip != null)
+                _steps.Add(delegate { SerializeMusicChip(engine.MusicChip); });
 
             // Serialize Sound
             if (engine.SoundChip != null/* && engine.SoundChip.export*/)

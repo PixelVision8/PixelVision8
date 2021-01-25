@@ -19,8 +19,7 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
 using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Parsers
@@ -29,7 +28,7 @@ namespace PixelVision8.Runner.Parsers
     {
         protected readonly List<Color> colors = new List<Color>();
 
-        protected readonly bool unique;
+        // protected readonly bool unique;
 
         protected ColorChip colorChip;
 
@@ -40,8 +39,8 @@ namespace PixelVision8.Runner.Parsers
         public ColorParser(IImageParser parser, ColorChip colorChip) : base(parser)
         {
             this.colorChip = colorChip;
-            unique = colorChip.unique;
-            magenta = ColorUtils.HexToColor(colorChip.maskColor);
+            // unique = colorChip.unique;
+            magenta = Utilities.HexToColor(colorChip.maskColor);
         }
 
         public override void CalculateSteps()
@@ -74,10 +73,7 @@ namespace PixelVision8.Runner.Parsers
 
             // Parse colors as normal
 
-            var srcColors =
-                unique
-                    ? Parser.colorPalette.ToArray()
-                    : Parser.colorPixels; //data.Select(c => new ColorAdapter(c) as Color).ToArray();
+            var srcColors = Parser.colorPixels;
             var total = srcColors.Length;
 
             // Loop through each color and find the unique ones
@@ -89,14 +85,9 @@ namespace PixelVision8.Runner.Parsers
                 if (tmpColor.A < 1) // && !ignoreTransparent)
                     tmpColor = magenta;
 
-                if (unique && tmpColor == magenta)
-                {
-                }
-                else
-                {
+                
                     //                if(tmpColor != magenta)
                     colors.Add(tmpColor);
-                }
             }
 
             totalColors = colors.Count;
@@ -117,7 +108,7 @@ namespace PixelVision8.Runner.Parsers
             for (var i = 0; i < totalColors; i++)
             {
                 var tmpColor = colors[i];
-                var hex = ColorUtils.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B);
+                var hex = Utilities.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B);
 
                 colorChip.UpdateColorAt(i, hex);
             }

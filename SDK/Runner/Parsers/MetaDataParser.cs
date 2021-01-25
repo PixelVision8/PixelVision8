@@ -18,16 +18,16 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
+using PixelVision8.Player;
 using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Parsers
 {
     public class MetaDataParser : JsonParser
     {
-        private readonly PixelVisionEngine engine;
+        private readonly IPlayerChips engine;
 
-        public MetaDataParser(string filePath, IFileLoadHelper fileLoadHelper, PixelVisionEngine target) : base(filePath, fileLoadHelper)
+        public MetaDataParser(string filePath, IFileLoadHelper fileLoadHelper, IPlayerChips target) : base(filePath, fileLoadHelper)
         {
             engine = target;
         }

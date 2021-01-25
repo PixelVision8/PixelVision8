@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -19,9 +19,7 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Services;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Workspace;
 using System.Collections.Generic;
@@ -89,7 +87,7 @@ namespace PixelVision8.Runner.Services
             return workspace.UniqueFilePath(screenshotDir.AppendFile("screenshot.png"));
         }
 
-        public bool TakeScreenshot(IEngine engine)
+        public bool TakeScreenshot(IPlayerChips engine)
         {
             //            throw new NotImplementedException();
 
@@ -101,7 +99,7 @@ namespace PixelVision8.Runner.Services
             {
                 // var cachedColors = engine.ColorChip.colors;
 
-                var cachedColors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, "#FF00FF", true);
+                var cachedColors = Utilities.ConvertColors(engine.ColorChip.hexColors, "#FF00FF", true);
 
                 var pixels = engine.DisplayChip.Pixels;
 

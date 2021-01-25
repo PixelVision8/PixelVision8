@@ -15,7 +15,7 @@ using PixelVision8.Engine.Chips;
 
 namespace PixelVision8.Examples
 {
-    class ClampExample : GameChip
+    class ExampleGameChip : GameChip
     {
 
         private int counter;

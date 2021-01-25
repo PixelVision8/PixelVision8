@@ -18,8 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -45,12 +44,12 @@ namespace PixelVision8.Runner.Parsers
             // TODO the image should be the right size from the beginning
 
             if (autoResize)
-                tilemapChip.Resize(image.Columns, image.Rows);
+                tilemapChip.Resize(ImageData.Columns, ImageData.Rows);
 
             // if(autoResize)
             // 
-            var tmpColumns = image.Columns > tilemapChip.columns ? tilemapChip.columns : image.Columns;
-            var tmpRows = image.Rows > tilemapChip.rows ? tilemapChip.rows : image.Rows;
+            var tmpColumns = ImageData.Columns > tilemapChip.columns ? tilemapChip.columns : ImageData.Columns;
+            var tmpRows = ImageData.Rows > tilemapChip.rows ? tilemapChip.rows : ImageData.Rows;
 
             // Make sure the tilemap matches the image size
             // tilemapChip.Resize(image.Columns, image.Rows);
@@ -58,7 +57,7 @@ namespace PixelVision8.Runner.Parsers
             for (var i = 0; i < totalSprites; i++)
             {
 
-                var pos = MathUtil.CalculatePosition(i, image.Columns);
+                var pos = Utilities.CalculatePosition(i, ImageData.Columns);
 
                 if (pos.X < tmpColumns && pos.Y < tmpRows)
                 {
@@ -72,9 +71,9 @@ namespace PixelVision8.Runner.Parsers
 
             }
 
-            if (tmpColumns < image.Columns || tmpRows < image.Rows)
+            if (tmpColumns < ImageData.Columns || tmpRows < ImageData.Rows)
             {
-                image.Resize(tmpColumns * tmpColumns * spriteChip.width, tmpRows * spriteChip.height);
+                ImageData.Resize(tmpColumns * tmpColumns * spriteChip.width, tmpRows * spriteChip.height);
             }
 
             StepCompleted();
@@ -90,8 +89,8 @@ namespace PixelVision8.Runner.Parsers
                 spriteChip.UpdateSpriteAt(id, spriteData);
             }
 
-            x = index % image.Columns;
-            y = index / image.Columns;
+            x = index % ImageData.Columns;
+            y = index / ImageData.Columns;
 
             var tile = tilemapChip.GetTile(x, y);
 

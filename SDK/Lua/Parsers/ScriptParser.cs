@@ -18,7 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine.Chips;
+using PixelVision8.Player;
 
 namespace PixelVision8.Runner.Parsers
 {

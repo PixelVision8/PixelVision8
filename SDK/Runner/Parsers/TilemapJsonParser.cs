@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,8 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
 using PixelVision8.Runner.Utils;
 using System;
 using System.Collections.Generic;
@@ -29,9 +28,9 @@ namespace PixelVision8.Runner.Parsers
 {
     public class TilemapJsonParser : JsonParser
     {
-        protected IEngine target;
+        protected IPlayerChips target;
 
-        public TilemapJsonParser(string filePath, IFileLoadHelper fileLoadHelper, IEngine target) : base(filePath, fileLoadHelper)
+        public TilemapJsonParser(string filePath, IFileLoadHelper fileLoadHelper, IPlayerChips target) : base(filePath, fileLoadHelper)
         {
             this.target = target;
         }
@@ -186,13 +185,13 @@ namespace PixelVision8.Runner.Parsers
                             {
                                 // Create texture data that matches the memory of the tilemap chip
                                 var tmpPixelData = new PixelData(tilemapChip.columns, tilemapChip.rows);
-                                PixelDataUtil.Clear(tmpPixelData);
+                                Utilities.Clear(tmpPixelData);
                                 // tmpPixelData.Clear();
 
                                 var jsonData = new PixelData(columns, rows);
-                                PixelDataUtil.Clear(jsonData);
+                                Utilities.Clear(jsonData);
                                 // jsonData.Clear();
-                                PixelDataUtil.SetPixels(dataValues, 0, 0, columns, rows, jsonData);
+                                Utilities.SetPixels(dataValues, 0, 0, columns, rows, jsonData);
                                 // jsonData.SetPixels(0, 0, columns, rows, dataValues);
 
                                 var tmpCol = columns > tilemapChip.columns ? tilemapChip.columns : columns;
@@ -204,16 +203,16 @@ namespace PixelVision8.Runner.Parsers
 
                                 var tmpData = new int[tmpCol * tmpRow];
 
-                                PixelDataUtil.CopyPixels(jsonData, 0, 0, tmpCol, tmpRow, ref tmpData);
+                                Utilities.CopyPixels(jsonData, 0, 0, tmpCol, tmpRow, ref tmpData);
                                 // jsonData.CopyPixels(ref tmpData, 0, 0, tmpCol, tmpRow);
 
-                                PixelDataUtil.SetPixels(tmpData, 0, 0, tmpCol, tmpRow, tmpPixelData);
+                                Utilities.SetPixels(tmpData, 0, 0, tmpCol, tmpRow, tmpPixelData);
                                 // tmpPixelData.SetPixels(0, 0, tmpCol, tmpRow, tmpData);
 
                                 // TODO why is this happening twice?
                                 // PixelDataUtil.CopyPixels(ref dataValues, tmpPixelData, 0, 0, tmpPixelData.Width, tmpPixelData.Height);
                                 // tmpPixelData.CopyPixels(ref dataValues, 0, 0, tmpPixelData.width, tmpPixelData.height);
-                                PixelDataUtil.CopyPixels(tmpPixelData, 0, 0, tilemapChip.columns, tilemapChip.rows, ref dataValues);
+                                Utilities.CopyPixels(tmpPixelData, 0, 0, tilemapChip.columns, tilemapChip.rows, ref dataValues);
 
                                 // tmpPixelData.CopyPixels(ref dataValues, 0, 0, tilemapChip.columns, tilemapChip.rows);
                             }

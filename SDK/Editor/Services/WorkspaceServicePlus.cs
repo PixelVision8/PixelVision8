@@ -18,8 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
+using PixelVision8.Player;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Utils;
 using PixelVision8.Runner.Workspace;
@@ -311,7 +310,7 @@ namespace PixelVision8.Runner.Services
                 }
         }
 
-        public int GenerateSprites(string path, PixelVisionEngine targetGame)
+        public int GenerateSprites(string path, PixelVision targetGame)
         {
             var count = 0;
 

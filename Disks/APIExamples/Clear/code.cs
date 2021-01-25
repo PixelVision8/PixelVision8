@@ -17,7 +17,7 @@ using System;
 
 namespace PixelVision8.Examples
 {
-    class ClearExample : GameChip
+    class ExampleGameChip : GameChip
     {
         // Create a new random generator
         Random random = new Random();

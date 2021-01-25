@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,20 +18,20 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Runner.Utils;
+
 using System.Linq;
+using PixelVision8.Runner.Utils;
 using System.Text;
+using PixelVision8.Player;
 
 namespace PixelVision8.Runner.Exporters
 {
     public class SavedDataExporter : AbstractExporter
     {
-        private readonly IEngine targetEngine;
+        private readonly IPlayerChips targetEngine;
         private StringBuilder sb;
 
-        public SavedDataExporter(string fileName, IEngine targetEngine) : base(fileName)
+        public SavedDataExporter(string fileName, IPlayerChips targetEngine) : base(fileName)
         {
             this.targetEngine = targetEngine;
 
@@ -40,7 +40,7 @@ namespace PixelVision8.Runner.Exporters
 
         public override void CalculateSteps()
         {
-            if (((GameChip)targetEngine.GameChip).SaveSlots < 1) return;
+            if ((targetEngine.GameChip).SaveSlots < 1) return;
 
             base.CalculateSteps();
 
@@ -56,7 +56,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void SaveGameData()
         {
-            var gameChip = targetEngine.GameChip as GameChip;
+            var gameChip = targetEngine.GameChip;
 
             // Save Data
             sb.Append("\"savedData\":");

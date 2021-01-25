@@ -19,10 +19,8 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Audio;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
+using PixelVision8.Player.Audio;
 using PixelVision8.Runner.Utils;
 using System;
 using System.Collections.Generic;
@@ -31,11 +29,11 @@ namespace PixelVision8.Runner.Parsers
 {
     public class SystemParser : JsonParser
     {
-        protected PixelVisionEngine Target;
+        protected IPlayerChips Target;
 
-        public SystemParser(string filePath, IFileLoadHelper fileLoadHelper, IEngine target) : base(filePath, fileLoadHelper)
+        public SystemParser(string filePath, IFileLoadHelper fileLoadHelper, IPlayerChips target) : base(filePath, fileLoadHelper)
         {
-            Target = target as PixelVisionEngine;
+            Target = target;// as PixelVisionEngine;
         }
 
         public override void CalculateSteps()
@@ -94,7 +92,7 @@ namespace PixelVision8.Runner.Parsers
                 }
 
                 // Removed any active chips not reserialized
-                chipManager.RemoveInactiveChips();
+                // chipManager.RemoveInactiveChips();
             }
 
             StepCompleted();
@@ -115,7 +113,7 @@ namespace PixelVision8.Runner.Parsers
 
             if (data.ContainsKey("maskColor")) colorChip.maskColor = (string)data["maskColor"];
 
-            if (data.ContainsKey("maxColors")) colorChip.maxColors = (int)(long)data["maxColors"];
+            // if (data.ContainsKey("maxColors")) colorChip.maxColors = (int)(long)data["maxColors"];
 
             // Make sure we have data to parse
             if (data.ContainsKey("colors"))
@@ -148,7 +146,7 @@ namespace PixelVision8.Runner.Parsers
 
             if (data.ContainsKey("debug")) colorChip.debugMode = Convert.ToBoolean(data["debug"]);
 
-            if (data.ContainsKey("unique")) colorChip.unique = Convert.ToBoolean(data["unique"]);
+            // if (data.ContainsKey("unique")) colorChip.unique = Convert.ToBoolean(data["unique"]);
 
             //            if (data.ContainsKey("paletteMode"))
             //                colorChip.paletteMode = Convert.ToBoolean(data["paletteMode"]);
@@ -195,7 +193,7 @@ namespace PixelVision8.Runner.Parsers
 
         public void ConfigureGameChip(Dictionary<string, object> data)
         {
-            var gameChip = Target.GameChip as GameChip;
+            var gameChip = Target.GameChip;
 
 
             // Flag chip to export
@@ -616,14 +614,11 @@ namespace PixelVision8.Runner.Parsers
         public void ConfigureMetaSprites(Dictionary<string, object> data)
         {
             
-            var gameChip = Target.GameChip as GameChip;
+            var gameChip = Target.GameChip;
 
             // Prepare to parse v1 of the MetaSprite json template/
             if (data.ContainsKey("version") && (string)data["version"] == "v1")
             {
-
-                Console.WriteLine("ConfigureMetaSprites");
-                
 
                 if (data.ContainsKey("total")) 
                     gameChip.TotalMetaSprites(Convert.ToInt32((long)data["total"]));
@@ -663,7 +658,7 @@ namespace PixelVision8.Runner.Parsers
                             {
                                 if(Convert.ToInt32((long)spriteData[j]) > -1)
                                 {
-                                    var pos = MathUtil.CalculatePosition(j, width);
+                                    var pos = Utilities.CalculatePosition(j, width);
 
                                     metaSprite.AddSprite(Convert.ToInt32((long)spriteData[j]), pos.X * spriteWidth, pos.Y * spriteHeight);
                                 }

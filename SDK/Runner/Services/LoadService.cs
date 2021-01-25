@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -19,10 +19,7 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Services;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
 using PixelVision8.Runner.Importers;
 using PixelVision8.Runner.Parsers;
 using PixelVision8.Runner.Utils;
@@ -44,10 +41,10 @@ namespace PixelVision8.Runner.Services
         protected int currentParserID;
         public int currentStep;
         protected BackgroundWorker loadingWorker;
-        protected Color maskColor = ColorUtils.HexToColor("#ff00ff"); // TODO this shouldn't be hard coded 
+        protected Color maskColor = Utilities.HexToColor("#ff00ff"); // TODO this shouldn't be hard coded 
         protected AbstractParser parser;
 
-        public IEngine targetEngine;
+        public IPlayerChips targetEngine;
 
         public List<string> textExtensions = new List<string>
         {
@@ -85,7 +82,7 @@ namespace PixelVision8.Runner.Services
         }
 
 
-        public virtual void ParseFiles(string[] files, IEngine engine, SaveFlags saveFlags)
+        public virtual void ParseFiles(string[] files, IPlayerChips engine, SaveFlags saveFlags)
         {
             Reset();
 
@@ -188,7 +185,7 @@ namespace PixelVision8.Runner.Services
 
         }
 
-        public virtual void ParseExtraFileTypes(string[] files, IEngine engine, SaveFlags saveFlags)
+        public virtual void ParseExtraFileTypes(string[] files, IPlayerChips engine, SaveFlags saveFlags)
         {
             // TODO Override and add extra file parsers here.
         }
@@ -278,7 +275,7 @@ namespace PixelVision8.Runner.Services
             {
                 // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
-                return new MetaDataParser(file, _fileLoadHelper, ((PixelVisionEngine)targetEngine));
+                return new MetaDataParser(file, _fileLoadHelper, targetEngine);
             }
 
             return null;

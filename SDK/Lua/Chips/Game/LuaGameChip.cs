@@ -21,20 +21,19 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MoonSharp.Interpreter;
-using PixelVision8.Engine.Audio;
 using PixelVision8.Runner;
 using PixelVision8.Runner.Services;
-using PixelVisionSDK.Engine;
 using System;
 using System.Collections.Generic;
+using PixelVision8.Player.Audio;
+using PixelVisionSDK.Player;
 
-namespace PixelVision8.Engine.Chips
+namespace PixelVision8.Player
 {
     public class LuaGameChip : GameChip
     {
         protected Script _luaScript;
         public string DefaultScriptPath = "code";
-        public DateTime now = DateTime.Now;
 
         public Script LuaScript
         {
@@ -51,7 +50,7 @@ namespace PixelVision8.Engine.Chips
             try
             {
                 // Look to see if there are any lua services registered in the game engine
-                var luaService = ((PixelVisionEngine)engine).GetService(typeof(LuaService).FullName) as LuaService;
+                var luaService = ((PixelVision)Player).GetService(typeof(LuaService).FullName) as LuaService;
 
                 // Run the lua service to configure the script
                 luaService.ConfigureScript(LuaScript);
@@ -60,6 +59,7 @@ namespace PixelVision8.Engine.Chips
             {
                 // Do nothing if the lua service isn't found
             }
+
 
             #region Color APIs
 
@@ -82,7 +82,7 @@ namespace PixelVision8.Engine.Chips
             LuaScript.Globals["DrawSprites"] =
                 new Action<int[], int, int, int, bool, bool, DrawMode, int>(DrawSprites);
             LuaScript.Globals["DrawSpriteBlock"] =
-                new Action<int, int, int, int, int, bool, bool, DrawMode, int>(DrawSpriteBlock);
+                // new Action<int, int, int, int, int, bool, bool, DrawMode, int>(DrawSpriteBlock);
 
             LuaScript.Globals["DrawText"] = new Action<string, int, int, DrawMode, string, int, int>(DrawText);
             LuaScript.Globals["DrawTilemap"] = new Action<int, int, int, int, int?, int?>(DrawTilemap);
@@ -181,7 +181,6 @@ namespace PixelVision8.Engine.Chips
 
             LuaScript.Globals["ReadFPS"] = new Func<int>(ReadFPS);
             LuaScript.Globals["ReadTotalSprites"] = new Func<int>(ReadTotalSprites);
-            LuaScript.Globals["CurrentTime"] = new Func<string>(CurrentTime);
 
             #endregion
 
@@ -311,15 +310,6 @@ namespace PixelVision8.Engine.Chips
             RegisterLuaServices();
         }
 
-        // public virtual void LoadDefaultScript()
-        // {
-        //     // Kick off the first game script file
-        //     LoadScript(DefaultScriptPath);
-        //
-        //     // Reset the game
-        //
-        // }
-
         #endregion
 
         #region Scripts
@@ -358,12 +348,7 @@ namespace PixelVision8.Engine.Chips
         public void DrawSingleSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
-            DrawSprite(id, x, y, flipH, flipV, drawMode, colorOffset, SpriteChip);
-        }
-
-        public string CurrentTime()
-        {
-            return now.ToString("HH:mmtt");
+            DrawSprite(id, x, y, 1, 1, flipH, flipV, drawMode, colorOffset, SpriteChip);
         }
 
         #endregion

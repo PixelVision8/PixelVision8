@@ -19,8 +19,7 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -53,7 +52,7 @@ namespace PixelVision8.Runner.Parsers
             for (var i = 0; i < totalColors; i++)
             {
                 var tmpColor = colors[i];
-                var hex = ColorUtils.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B);
+                var hex = Utilities.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B);
 
                 colorChip.UpdateColorAt(i, hex);
             }

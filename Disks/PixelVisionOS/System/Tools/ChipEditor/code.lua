@@ -25,7 +25,6 @@ local specsLocked = false
 local DrawVersion, TuneVersion = "Pixel Vision 8 Draw", "Pixel Vision 8 Tune"
 local runnerName = SystemName()
 
-
 -- TODO for testing
 -- runnerName = TuneVersion
 
@@ -49,7 +48,7 @@ local waveTypeIDs = {
   5
 }
 
-local waveToolTips = 
+local waveToolTips =
 {
   "Support for square wave form on this channel",
   "Support for saw tooth wave form on this channel",
@@ -153,7 +152,7 @@ function Init()
     -- Find the json editor
     textEditorPath = editorMapping["json"]
 
-    local menuOptions = 
+    local menuOptions =
     {
       -- About ID 1
       {name = "About", action = function() pixelVisionOS:ShowAboutModal(toolName) end, toolTip = "Learn about PV8."},
@@ -1171,7 +1170,7 @@ function OnSave()
 
     table.insert(flags, SaveFlags.Colors)
     invalidateColors = false
-  end 
+  end
 
   if(invalidateColorMap == true) then
 

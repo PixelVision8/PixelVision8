@@ -1,0 +1,74 @@
+using PixelVision8.Player;
+
+namespace PixelVision8.Player
+{
+    public partial class Canvas
+    {
+        // TODO need to draw pixel data to the display and route the sprite and text through it
+
+        public void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, int colorOffset = 0)
+        {
+            var getRequest = NextRequest();
+
+            if (getRequest == null)
+                return;
+
+            var newRequest = getRequest;
+
+            newRequest.Action = "DrawPixelData";
+
+            // We need at least 1 pixel to save the sprite ID
+            if (newRequest.PixelData.Width != spriteSize.X || newRequest.PixelData.Height != spriteSize.Y)
+            {
+                Utilities.Resize(newRequest.PixelData, spriteSize.X, spriteSize.X);
+            }
+
+            // Copy over the pixel
+            Utilities.SetPixels(gameChip.Sprite(id), newRequest.PixelData);
+
+            newRequest.x = x;
+            newRequest.y = y;
+            newRequest.Bounds.X = 0;
+            newRequest.Bounds.Y = 0;
+            newRequest.Bounds.Width = spriteSize.X;
+            newRequest.Bounds.Height = spriteSize.Y;
+            newRequest.FlipH = flipH;
+            newRequest.FlipV = flipV;
+            newRequest.ColorOffset = colorOffset;
+
+            // Save the changes to the request
+            requestPool[currentRequest] = newRequest;
+        }
+        
+        public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
+            int colorOffset = 0)
+        {
+            _total = ids.Length;
+
+            var startX = x;
+            var startY = y;
+
+            var paddingW = spriteSize.X;
+            var paddingH = spriteSize.Y;
+
+            // TODO need to offset the bounds based on the scroll position before testing against it
+
+            for (var i = 0; i < _total; i++)
+            {
+                // Set the sprite id
+                var id = ids[i];
+
+                // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
+                // Test to see if the sprite is within range
+                if (id > -1)
+                {
+                    x = Utilities.FloorToInt(i % width) * paddingW + startX;
+                    y = Utilities.FloorToInt(i / width) * paddingH + startY;
+
+                    DrawSprite(id, x, y, flipH, flipV, colorOffset);
+                }
+            }
+        }    
+
+    }
+}

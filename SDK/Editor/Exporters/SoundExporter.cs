@@ -18,8 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
+using PixelVision8.Player;
 using PixelVision8.Runner.Utils;
 using System.Text;
 
@@ -27,12 +26,12 @@ namespace PixelVision8.Runner.Exporters
 {
     public class SoundExporter : AbstractExporter
     {
-        private readonly IEngine targetEngine;
+        private readonly IPlayerChips _targetPlay;
         private StringBuilder sb;
 
-        public SoundExporter(string fileName, IEngine targetEngine) : base(fileName)
+        public SoundExporter(string fileName, IPlayerChips targetPlay) : base(fileName)
         {
-            this.targetEngine = targetEngine;
+            this._targetPlay = targetPlay;
 
             //            CalculateSteps();
         }
@@ -53,7 +52,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void SaveGameData()
         {
-            var soundChip = targetEngine.SoundChip as SfxrSoundChip;
+            var soundChip = _targetPlay.SoundChip as SfxrSoundChip;
 
             sb.Append("\"version\":\"v2\",");
             JsonUtil.GetLineBreak(sb, 1);

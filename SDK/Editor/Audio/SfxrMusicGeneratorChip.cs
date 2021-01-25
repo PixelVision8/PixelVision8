@@ -19,8 +19,7 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
+using PixelVision8.Player;
 using System;
 using System.Collections.Generic;
 
@@ -271,7 +270,7 @@ namespace PixelVision8.Runner.Chips
             //workspace.InvalidateSave();
         }
 
-        public void GenerateSong(PixelVisionEngine chips)
+        public void GenerateSong(PixelVision chips)
         {
             float noteChangeBoost; // more likely to play a note on beat one of each bar
             var restHere = true; // if true, silence

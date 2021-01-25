@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,7 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
+using PixelVision8.Player;
 using PixelVision8.Runner.Utils;
 using System.Text;
 
@@ -26,10 +26,10 @@ namespace PixelVision8.Runner.Exporters
 {
     public class MusicExporter : AbstractExporter
     {
-        private readonly IEngine targetEngine;
+        private readonly IPlayerChips targetEngine;
         private StringBuilder sb;
 
-        public MusicExporter(string fileName, IEngine targetEngine) : base(fileName)
+        public MusicExporter(string fileName, IPlayerChips targetEngine) : base(fileName)
         {
             this.targetEngine = targetEngine;
 
@@ -52,7 +52,7 @@ namespace PixelVision8.Runner.Exporters
 
         private void SaveGameData()
         {
-            var musicChip = ((PixelVisionEngine)targetEngine).MusicChip;
+            var musicChip = targetEngine.MusicChip;
             sb.Append("\"version\":\"v2\",");
             JsonUtil.GetLineBreak(sb, 1);
 

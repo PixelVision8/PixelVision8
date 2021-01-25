@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -19,14 +19,13 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PixelVision8.Player;
 
 namespace PixelVision8.Runner
 {
@@ -47,11 +46,11 @@ namespace PixelVision8.Runner
         private Dictionary<int, List<Color>> distinctColors;
         private int scale = 1;
         private Dictionary<int, List<byte>> encoded;
-        private IEngineChips engine;
+        private IPlayerChips engine;
 
         public bool ExportingFinished => byteList != null;
 
-        public GifExporter(string fileName, IEngineChips engine) : base(fileName)
+        public GifExporter(string fileName, IPlayerChips engine) : base(fileName)
         {
             this.engine = engine;
             DisplayChip = engine.DisplayChip;
@@ -95,14 +94,14 @@ namespace PixelVision8.Runner
         {
 
             // TODO this should just copy the frame from the Display Target
-            // var color = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, engine.ColorChip.debugMode,
+            // var color = Utilities.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, engine.ColorChip.debugMode,
             //     engine.ColorChip.backgroundColor);
 
 
             // TODO there might be a better way to do this like grabbing the pixel data from somewhere else?
             var pixels = DisplayChip.Pixels;
 
-            var cachedColors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, engine.ColorChip.debugMode, engine.ColorChip.backgroundColor);
+            var cachedColors = Utilities.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, engine.ColorChip.debugMode, engine.ColorChip.backgroundColor);
 
             // var cachedColors = engine.ColorChip.colors;
             var displaySize = engine.GameChip.Display();

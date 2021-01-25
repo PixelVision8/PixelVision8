@@ -17,7 +17,7 @@ using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Examples
 {
-    class FlagExample : GameChip
+    class ExampleGameChip : GameChip
     {
         // This point will store the current tile's position
         private Point tilePosition;

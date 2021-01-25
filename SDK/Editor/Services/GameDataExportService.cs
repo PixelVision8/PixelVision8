@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,9 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Parsers;
 using System.Collections.Generic;
@@ -30,9 +28,9 @@ namespace PixelVision8.Runner.Services
     public class GameDataExportService : BaseExportService
     {
 
-        private IEngine targetEngine;
+        private IPlayerChips targetEngine;
 
-        public void ExportGame(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
+        public void ExportGame(string path, IPlayerChips engine, SaveFlags saveFlags, bool useSteps = true)
         {
 
             Clear();
@@ -83,7 +81,7 @@ namespace PixelVision8.Runner.Services
                     var sprites = font.Value;
 
                     // Clear the texture
-                    PixelDataUtil.Clear(tmpTextureData);
+                    Utilities.Clear(tmpTextureData);
                     // tmpTextureData.Clear();
 
                     // Loop through all the characters and copy their texture data over
@@ -131,14 +129,14 @@ namespace PixelVision8.Runner.Services
             AddExporter(new SongExporter(path, musicChip, soundChip, patterns));
         }
 
-        public void ExportSpriteBuilder(string path, IEngine engine, Dictionary<string, byte[]> files)
+        public void ExportSpriteBuilder(string path, PixelVision engine, Dictionary<string, byte[]> files)
         {
             Restart();
             // TODO need to create a new Sprite Builder Exporter
             AddExporter(new SpriteBuilderExporter(path, engine.ColorChip, engine.SpriteChip, files));
         }
 
-        public void ExportImage(string path, int[] pixelData, IEngine engine, int width, int height)
+        public void ExportImage(string path, int[] pixelData, PixelVision engine, int width, int height)
         {
             Restart();
 
@@ -146,7 +144,7 @@ namespace PixelVision8.Runner.Services
             var imageExporter = new PNGWriter();
 
             // TODO need to double check that we should force this into debug so transparent images have the mask color in them by default
-            var colors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);
+            var colors = Utilities.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);
 
 
             AddExporter(new PixelDataExporter(path, pixelData, width, height, colors, imageExporter,

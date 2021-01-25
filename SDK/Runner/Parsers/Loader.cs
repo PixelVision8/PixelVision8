@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -21,7 +21,7 @@
 
 using com.pixelvision8.lite.SDK.Runner.Parsers;
 using Microsoft.Xna.Framework.Graphics;
-using PixelVision8.Engine;
+using PixelVision8.Player;
 using PixelVision8.Runner.Parsers;
 
 /* Unmerged change from project 'PixelVision8.CoreDesktop'
@@ -39,22 +39,6 @@ using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Services
 
-/* Unmerged change from project 'PixelVision8.CoreDesktop'
-Before:
-{
-    
-    public class Loader
-    {
-        
-        protected readonly List<IAbstractParser> parsers = new List<IAbstractParser>();
-After:
-{
-
-    public class Loader
-    {
-
-        protected readonly List<IAbstractParser> parsers = new List<IAbstractParser>();
-*/
 {
 
     public class Loader
@@ -84,7 +68,7 @@ After:
             TotalSteps = 0;
         }
 
-        public virtual void ParseFiles(string[] files, IEngine engine)
+        public virtual void ParseFiles(string[] files, IPlayerChips engine)
         {
             Reset();
 
@@ -96,17 +80,6 @@ After:
             {
                 if (file.EndsWith("colors.png"))
                 {
-
-/* Unmerged change from project 'PixelVision8.CoreDesktop'
-Before:
-                    var imageParser = new PNGParser(file, _graphicsDevice, engine.ColorChip.maskColor);
-                    
-                    AddParser(new ColorParser(imageParser, engine.ColorChip));
-After:
-                    var imageParser = new PNGParser(file, _graphicsDevice, engine.ColorChip.maskColor);
-
-                    AddParser(new ColorParser(imageParser, engine.ColorChip));
-*/
                     var imageParser = new PNGParser(file, _graphicsDevice, engine.ColorChip.maskColor);
 
                     AddParser(new ColorParser(imageParser, engine.ColorChip));

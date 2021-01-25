@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,8 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
+using PixelVision8.Player;
 using PixelVision8.Runner.Utils;
 using System.Text;
 
@@ -27,14 +26,14 @@ namespace PixelVision8.Runner.Exporters
 {
     public class MetadataExporter : AbstractExporter
     {
-        private readonly IEngine engine;
+        private readonly IPlayerChips engine;
         private StringBuilder sb;
-        private GameChip gameChip;
+        private GameChip _gameChip;
 
-        public MetadataExporter(string fileName, IEngine engine) : base(fileName)
+        public MetadataExporter(string fileName, IPlayerChips engine) : base(fileName)
         {
             this.engine = engine;
-            gameChip = this.engine.GameChip as GameChip;
+            _gameChip = this.engine.GameChip;
 
             //            
             //            CalculateSteps();
@@ -48,7 +47,7 @@ namespace PixelVision8.Runner.Exporters
             _steps.Add(CreateStringBuilder);
 
             // Serialize Game
-            if (engine.GameChip != null) _steps.Add(delegate { SerializeGameChip(gameChip); });
+            if (engine.GameChip != null) _steps.Add(delegate { SerializeGameChip(_gameChip); });
 
             // Save the final string builder
             _steps.Add(CloseStringBuilder);
@@ -110,7 +109,7 @@ namespace PixelVision8.Runner.Exporters
             //            JsonUtil.GetLineBreak(sb, 1);
 
             // Loop through all the meta data and save it
-            var metaData = ((PixelVisionEngine)engine).MetaData;
+            var metaData = engine.MetaData;
 
             foreach (var data in metaData)
             {

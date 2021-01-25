@@ -37,12 +37,11 @@ using System.Collections.Framework;
 using System.Diagnostics;
 using System.Linq;
 */
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PixelVision8.Engine;
+using PixelVision8.Player;
 
 namespace PixelVision8.Runner.Parsers
 {
@@ -60,7 +59,7 @@ namespace PixelVision8.Runner.Parsers
         protected int spriteWidth = 8;
         protected int totalSprites;
         protected int x, y;
-        public Image image;
+        public ImageData ImageData;
 
         public SpriteImageParser(IImageParser parser, ColorChip colorChip, SpriteChip spriteChip = null) : base(parser)
         {
@@ -99,11 +98,11 @@ namespace PixelVision8.Runner.Parsers
 
             cps = spriteChip.colorsPerSprite;
 
-            totalSprites = image.TotalSprites;
+            totalSprites = ImageData.TotalSprites;
 
             //TODO this needs to be double checked at different size sprites
-            var cols = MathUtil.FloorToInt(spriteChip.textureWidth / spriteWidth);
-            var rows = MathUtil.FloorToInt(spriteChip.textureHeight / spriteHeight);
+            var cols = Utilities.FloorToInt(spriteChip.textureWidth / spriteWidth);
+            var rows = Utilities.FloorToInt(spriteChip.textureHeight / spriteHeight);
 
             maxSprites = cols * rows; 
 
@@ -117,16 +116,16 @@ namespace PixelVision8.Runner.Parsers
         public virtual void CreateImage()
         {
             // Get the chip colors and replace any transparent ones with the first color so we don't parse transparency
-            var colorData = ColorUtils.ConvertColors(colorChip.hexColors, colorChip.maskColor);
+            var colorData = Utilities.ConvertColors(colorChip.hexColors, colorChip.maskColor);
 
             // colorData = colorChip.colors;
 
-            var colorRefs = colorData.Select(c => ColorUtils.RgbToHex(c.R, c.G, c.B)).ToArray();
+            var colorRefs = colorData.Select(c => Utilities.RgbToHex(c.R, c.G, c.B)).ToArray();
 
             // Remove the colors that are not supported
             Array.Resize(ref colorRefs, colorChip.totalUsedColors);
 
-            var imageColors = Parser.colorPalette.Select(c => ColorUtils.RgbToHex(c.R, c.G, c.B)).ToArray();
+            var imageColors = Parser.colorPalette.Select(c => Utilities.RgbToHex(c.R, c.G, c.B)).ToArray();
 
             var colorMap = new string[colorRefs.Length];
 
@@ -219,9 +218,9 @@ After:
             }
 
             // Convert all of the pixels into color ids
-            var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorMap, ColorUtils.RgbToHex(c.R, c.G, c.B))).ToArray();
+            var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorMap, Utilities.RgbToHex(c.R, c.G, c.B))).ToArray();
 
-            image = new Image(Parser.width, Parser.height, pixelIDs, colorMap);
+            ImageData = new ImageData(Parser.width, Parser.height, pixelIDs, colorMap);
 
             StepCompleted();
         }
@@ -275,7 +274,7 @@ After:
 
         public virtual void ConvertColorsToIndexes(int totalColors)
         {
-            spriteData = image.GetSpriteData(index, totalColors);
+            spriteData = ImageData.GetSpriteData(index, totalColors);
         }
 
         public override void Dispose()

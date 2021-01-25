@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,8 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
 using PixelVision8.Runner.Utils;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,10 +42,10 @@ namespace PixelVision8.Runner.Exporters
 
     public class TilemapJsonExporter : AbstractExporter
     {
-        private readonly IEngine targetEngine;
+        private readonly IPlayerChips targetEngine;
         private StringBuilder sb;
 
-        public TilemapJsonExporter(string fileName, IEngine targetEngine) : base(fileName)
+        public TilemapJsonExporter(string fileName, IPlayerChips targetEngine) : base(fileName)
         {
             this.targetEngine = targetEngine;
         }
@@ -113,7 +112,7 @@ namespace PixelVision8.Runner.Exporters
 
             for (var i = 0; i < total; i++)
             {
-                var pos = MathUtil.CalculatePosition(i, cols);
+                var pos = Utilities.CalculatePosition(i, cols);
 
                 var tile = gameChip.Tile(pos.X, pos.Y);
 
@@ -458,7 +457,7 @@ namespace PixelVision8.Runner.Exporters
 
             for (var i = 0; i < total; i++)
             {
-                var pos = MathUtil.CalculatePosition(i, cols);
+                var pos = Utilities.CalculatePosition(i, cols);
 
                 var tile = gameChip.Tile(pos.X, pos.Y);
 

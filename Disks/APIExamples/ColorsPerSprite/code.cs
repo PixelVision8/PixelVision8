@@ -15,7 +15,7 @@ using PixelVision8.Engine.Chips;
 
 namespace PixelVision8.Examples
 {
-    class ColorsPerSpriteExample : GameChip
+    class ExampleGameChip : GameChip
     {
 
         // Store the CPS value

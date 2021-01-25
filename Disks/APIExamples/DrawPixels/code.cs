@@ -15,7 +15,7 @@ using PixelVision8.Engine.Chips;
 
 namespace PixelVision8.Examples
 {
-    class DrawPixelsExample : GameChip
+    class ExampleGameChip : GameChip
     {
         int[] pixelData = {
             -1, -1, -1, 0, 0, 0, 0, -1,

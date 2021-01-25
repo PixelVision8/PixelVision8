@@ -19,7 +19,7 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -69,7 +69,7 @@ namespace PixelVision8.Runner.Utils
             //            var oldColor = colors[colorIndex];
 
             // TODO this could be cleaner
-            colors[colorIndex] = ColorUtils.HexToColor(maskHex);
+            colors[colorIndex] = Utilities.HexToColor(maskHex);
         }
 
         internal void AddAlphaToColors(IList<byte> alphas)

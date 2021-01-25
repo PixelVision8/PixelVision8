@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.
 //
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -28,9 +28,7 @@ using Microsoft.Xna.Framework.Input;
 using MoonSharp.Interpreter;
 using MoonSharp.VsCodeDebugger;
 using MoonSharp.VsCodeDebugger.DebuggerLogic;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Services;
+using PixelVision8.Player;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Editors;
 using PixelVision8.Runner.Services;
@@ -44,7 +42,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using Buttons = PixelVision8.Engine.Chips.Buttons;
+using Buttons = PixelVision8.Player.Buttons;
 
 namespace PixelVision8.Runner
 
@@ -64,7 +62,7 @@ namespace PixelVision8.Runner
         Loading,
         Error
     }
-
+    
     /// <summary>
     ///     This is the main type for your game.
     /// </summary>
@@ -220,26 +218,26 @@ namespace PixelVision8.Runner
             }
         }
 
-        public override List<string> DefaultChips
-        {
-            get
-            {
-                var chips = new List<string>
-                {
-                    typeof(ColorChip).FullName,
-                    typeof(SpriteChip).FullName,
-                    typeof(TilemapChip).FullName,
-                    typeof(FontChip).FullName,
-                    typeof(ControllerChip).FullName,
-                    typeof(DisplayChip).FullName,
-                    typeof(SfxrSoundChip).FullName,
-                    typeof(MusicChip).FullName
-                };
-
-                // Return the list of chips
-                return chips;
-            }
-        }
+        // public override List<string> DefaultChips
+        // {
+        //     get
+        //     {
+        //         var chips = new List<string>
+        //         {
+        //             typeof(ColorChip).FullName,
+        //             typeof(SpriteChip).FullName,
+        //             typeof(TilemapChip).FullName,
+        //             typeof(FontChip).FullName,
+        //             typeof(ControllerChip).FullName,
+        //             typeof(DisplayChip).FullName,
+        //             typeof(SfxrSoundChip).FullName,
+        //             typeof(MusicChip).FullName
+        //         };
+        //
+        //         // Return the list of chips
+        //         return chips;
+        //     }
+        // }
 
 
         protected string Documents => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -276,7 +274,7 @@ namespace PixelVision8.Runner
                 .Split('x').Select(int.Parse)
                 .ToArray();
 
-            if (DisplayTarget == null) DisplayTarget = new DisplayTarget(_graphics, tmpRes[0], tmpRes[1]);
+            if (DisplayTarget == null) DisplayTarget = new ShaderDisplayTarget(_graphics, tmpRes[0], tmpRes[1]);
 
             Fullscreen(Convert.ToBoolean(
                 bios.ReadBiosData(BiosSettings.FullScreen.ToString(), "False")));
@@ -288,18 +286,18 @@ namespace PixelVision8.Runner
 
             Scale(Convert.ToInt32(bios.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
 
-            if (((DisplayTarget)DisplayTarget).HasShader() == false)
+            if (((ShaderDisplayTarget)DisplayTarget).HasShader() == false)
             {
                 // Configure CRT shader
                 var shaderPath = WorkspacePath.Parse(bios.ReadBiosData(CRTSettings.CRTEffectPath.ToString(),
                     "/App/Effects/crt-lottes-mg.ogl.mgfxo"));
 
                 if (workspaceService.Exists(shaderPath))
-                    ((DisplayTarget)DisplayTarget).shaderPath = workspaceService.OpenFile(shaderPath, FileAccess.Read);
+                    ((ShaderDisplayTarget)DisplayTarget).shaderPath = workspaceService.OpenFile(shaderPath, FileAccess.Read);
             }
 
-
-            DisplayTarget.ResetResolution(tmpRes[0], tmpRes[1]);
+            if(ActiveEngine != null)
+                DisplayTarget.ResetResolution(ActiveEngine);
 
             // Configure the shader from the bios
             Brightness(Convert.ToSingle(bios.ReadBiosData(CRTSettings.Brightness.ToString(), "100")) / 100F);
@@ -344,7 +342,7 @@ namespace PixelVision8.Runner
 
         protected void ConfigureKeyboard()
         {
-            var targetEngine = _tmpEngine as PixelVisionEngine;
+            // var targetEngine = _tmpEngine as PixelVisionEngine;
 
             // Pass input mapping
             foreach (var keyMap in defaultKeys)
@@ -352,68 +350,68 @@ namespace PixelVision8.Runner
                 var rawValue = Convert.ToInt32(bios.ReadBiosData(keyMap.Key, keyMap.Value.ToString(), true));
                 var keyValue = rawValue;
 
-                targetEngine.SetMetadata(keyMap.Key, keyValue.ToString());
+                _tmpEngine.SetMetadata(keyMap.Key, keyValue.ToString());
             }
 
             var player1KeyboardMap = new Dictionary<Buttons, Keys>
             {
-                {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1UpKey.ToString()))},
+                {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1UpKey.ToString()))},
                 {
                     Buttons.Left,
-                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1LeftKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1LeftKey.ToString()))
                 },
                 {
                     Buttons.Right,
-                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1RightKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1RightKey.ToString()))
                 },
                 {
                     Buttons.Down,
-                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1DownKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1DownKey.ToString()))
                 },
                 {
                     Buttons.Select,
-                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1SelectKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1SelectKey.ToString()))
                 },
                 {
                     Buttons.Start,
-                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1StartKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1StartKey.ToString()))
                 },
-                {Buttons.A, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1AKey.ToString()))},
-                {Buttons.B, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player1BKey.ToString()))}
+                {Buttons.A, (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1AKey.ToString()))},
+                {Buttons.B, (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1BKey.ToString()))}
             };
 
             var player2KeyboardMap = new Dictionary<Buttons, Keys>
             {
-                {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2UpKey.ToString()))},
+                {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2UpKey.ToString()))},
                 {
                     Buttons.Left,
-                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2LeftKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2LeftKey.ToString()))
                 },
                 {
                     Buttons.Right,
-                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2RightKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2RightKey.ToString()))
                 },
                 {
                     Buttons.Down,
-                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2DownKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2DownKey.ToString()))
                 },
                 {
                     Buttons.Select,
-                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2SelectKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2SelectKey.ToString()))
                 },
                 {
                     Buttons.Start,
-                    (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2StartKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2StartKey.ToString()))
                 },
-                {Buttons.A, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2AKey.ToString()))},
-                {Buttons.B, (Keys) Enum.Parse(typeof(Keys), targetEngine.GetMetadata(InputMap.Player2BKey.ToString()))}
+                {Buttons.A, (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2AKey.ToString()))},
+                {Buttons.B, (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2BKey.ToString()))}
             };
 
             _tmpEngine.ControllerChip.RegisterKeyInput(player1KeyboardMap, player2KeyboardMap);
 
         }
 
-        public override void ActivateEngine(IEngine engine)
+        public override void ActivateEngine(IPlay engine)
         {
             // At this point this game is fully configured so all chips are accessible for extra configuring
 
@@ -456,7 +454,7 @@ namespace PixelVision8.Runner
             controllerChip.SetInputText(e.Character, e.Key);
         }
 
-        public virtual void BaseActivateEngine(IEngine engine)
+        public virtual void BaseActivateEngine(IPlay engine)
         {
             if (engine == null) return;
 
@@ -482,8 +480,20 @@ namespace PixelVision8.Runner
 
             // No ned to  call the base method since the logic is copied here
         }
+        
+        
 
-        protected override void ConfigureRunner()
+        public override void ResetResolution()
+        {
+            base.ResetResolution();
+            
+            IsMouseVisible = false;
+            // Update the mouse to use the new monitor scale
+            var scale = ((ShaderDisplayTarget) DisplayTarget).Scale;
+            ActiveEngine.ControllerChip.MouseScale(scale.X, scale.Y);
+        }
+
+        protected void ConfigureRunner()
         {
             // Save the session ID
             SessionId = DateTime.Now.ToString("yyyyMMddHHmmssffff");
@@ -491,7 +501,8 @@ namespace PixelVision8.Runner
             SystemVersion = bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0", true);
             systemName = bios.ReadBiosData("SystemName", "PixelVision8", true);
 
-            base.ConfigureRunner();
+            // Configure the runner
+            ConfigureDisplayTarget();
 
             CreateLoadService();
 
@@ -581,6 +592,7 @@ namespace PixelVision8.Runner
                 // Reset the filter based from bios after everything loads up
                 EnableCRT(Convert.ToBoolean(bios.ReadBiosData(CRTSettings.CRT.ToString(), "False")));
             }
+
         }
 
         protected virtual void ConfigureWorkspace()
@@ -934,17 +946,17 @@ namespace PixelVision8.Runner
             {
                 var success = Load(nextPathToLoad, nextMode, nextMetaData);
 
-                var engine = ActiveEngine as PixelVisionEngine;
+                // var engine = ActiveEngine as PixelVisionEngine;
 
-                if(engine != null && ((PixelVisionEngine)_tmpEngine).MetaData.ContainsKey("runnerType"))
+                if(_tmpEngine != null && _tmpEngine.MetaData.ContainsKey("runnerType"))
                 {
-                    if(engine.MetaData.ContainsKey("runnerType"))
+                    if(_tmpEngine.MetaData.ContainsKey("runnerType"))
                     {
-                        engine.MetaData["runnerType"] = ((PixelVisionEngine)_tmpEngine).MetaData["runnerType"];
+                        _tmpEngine.MetaData["runnerType"] = _tmpEngine.MetaData["runnerType"];
                     }
                     else
                     {
-                        engine.MetaData.Add("runnerType", ((PixelVisionEngine)_tmpEngine).MetaData["runnerType"]);
+                        _tmpEngine.MetaData.Add("runnerType", _tmpEngine.MetaData["runnerType"]);
                     }
                 }
 
@@ -1122,7 +1134,7 @@ namespace PixelVision8.Runner
 
                 base.ShutdownActiveEngine();
 
-                if (((GameChip)ActiveEngine.GameChip).SaveSlots > 0)
+                if ((ActiveEngine.GameChip).SaveSlots > 0)
                     SaveGameData("/Game/", ActiveEngine, SaveFlags.SaveData,
                         false);
 
@@ -1137,10 +1149,28 @@ namespace PixelVision8.Runner
             }
         }
 
-        public override IEngine CreateNewEngine(List<string> chips)
+        public override IPlay CreateNewEngine(List<string> chips)
         {
-            return new PixelVisionEngine(ServiceManager, chips.ToArray());
+            
+            var tmpEngine = new PixelVision(chips.ToArray())
+            {
+                ServiceLocator = ServiceManager
+            };
+            
+            return tmpEngine;
         }
+        
+        List<string> defaultChips = new List<string>
+        {
+            typeof(ColorChip).FullName,
+            typeof(SpriteChip).FullName,
+            typeof(TilemapChip).FullName,
+            typeof(FontChip).FullName,
+            typeof(ControllerChip).FullName,
+            typeof(DisplayChip).FullName,
+            typeof(SfxrSoundChip).FullName,
+            typeof(MusicChip).FullName
+        };
 
         public void ConfigureEngine(Dictionary<string, string> metaData = null)
         {
@@ -1153,24 +1183,18 @@ namespace PixelVision8.Runner
 
                 CreateLuaService();
 
-                var chips = DefaultChips;
-
-                // Add the Lua game chip
-                chips.Add(typeof(LuaGameChip).FullName);
-
-                // TODO need to move this to a base config engine method so the parent can be called
-
                 // Had to disable the active game manually before this is called so copied base logic here
-                _tmpEngine = CreateNewEngine(chips);
-
-                // tmpEngine.Init();
+                _tmpEngine = CreateNewEngine(defaultChips);
+                
+                // We need to add the Lua Game Chip after the other chips so the service locator is availible
+                _tmpEngine.ActivateChip("GameChip", new LuaGameChip());
 
                 ConfigureServices();
 
                 // Pass all meta data into the engine instance
                 if (metaData != null)
                     foreach (var entry in metaData)
-                        ((PixelVisionEngine)_tmpEngine).SetMetadata(entry.Key, entry.Value);
+                        _tmpEngine.SetMetadata(entry.Key, entry.Value);
 
 
 
@@ -1289,12 +1313,12 @@ namespace PixelVision8.Runner
             else
             {
                 // Had to disable the active game manually before this is called so copied base logic here
-                _tmpEngine = CreateNewEngine(DefaultChips);
+                _tmpEngine = CreateNewEngine(defaultChips);
 
                 // Pass all meta data into the engine instance
                 if (metaData != null)
                     foreach (var entry in metaData)
-                        ((PixelVisionEngine)_tmpEngine).SetMetadata(entry.Key, entry.Value);
+                        _tmpEngine.SetMetadata(entry.Key, entry.Value);
 
                 // ConfigureKeyboard();
                 // ConfiguredControllers();
@@ -1302,7 +1326,7 @@ namespace PixelVision8.Runner
 
             // TODO moved this out of the normal configuration order so make sure this still makes sense here
             ConfigureKeyboard();
-            ConfigureControllers();
+            // ConfigureControllers();
 
             // Make sure the current state of the system is saved back to the bios
             SaveBiosChanges();
@@ -1580,7 +1604,7 @@ namespace PixelVision8.Runner
             return false;
         }
 
-        public void SaveGameData(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
+        public void SaveGameData(string path, IPlayerChips engine, SaveFlags saveFlags, bool useSteps = true)
         {
             // Export the current game
 
@@ -1603,7 +1627,7 @@ namespace PixelVision8.Runner
             ServiceManager.AddService(typeof(GameDataExportService).FullName, ExportService);
         }
 
-        public void ProcessFiles(IEngine tmpEngine, string[] files, bool displayProgress = false)
+        public void ProcessFiles(IPlay tmpEngine, string[] files, bool displayProgress = false)
         {
             // var csFilePaths = files.Where(p => p.EndsWith(".cs")).ToArray();
             if (tmpEngine.GameChip == null)
@@ -1616,7 +1640,7 @@ namespace PixelVision8.Runner
             // base.ProcessFiles(tmpEngine, files, displayProgress);
             this.displayProgress = displayProgress;
 
-            this._tmpEngine = tmpEngine;
+            _tmpEngine = tmpEngine;
 
             ParseFiles(files);
 
@@ -1627,7 +1651,7 @@ namespace PixelVision8.Runner
             }
         }
 
-        public void ParseFiles(string[] files, IEngine engine, SaveFlags saveFlags,
+        public void ParseFiles(string[] files, PixelVision engine, SaveFlags saveFlags,
             bool autoLoad = true)
         {
             loadService.ParseFiles(files, engine, saveFlags);
@@ -1760,6 +1784,7 @@ namespace PixelVision8.Runner
 
             // Register Lua Service
             ServiceManager.AddService(typeof(LuaService).FullName, luaService);
+            
         }
 
         public void OnFileDropped(object gameWindow, string path)
@@ -1782,7 +1807,7 @@ namespace PixelVision8.Runner
             var metaData = lastGameRef.Value;
 
             // Merge values from the active game
-            foreach (var entry in ((PixelVisionEngine)ActiveEngine).MetaData)
+            foreach (var entry in ActiveEngine.MetaData)
                 if (metaData.ContainsKey(entry.Key))
                     metaData[entry.Key] = entry.Value;
                 else
@@ -2033,18 +2058,30 @@ namespace PixelVision8.Runner
             return full;
         }
 
-        public override bool StretchScreen(bool? value = null)
+        public bool StretchScreen(bool? value = null)
         {
-            var stretch = base.StretchScreen(value);
+            if (value.HasValue)
+            {
+                ((ShaderDisplayTarget) DisplayTarget).StretchScreen = value.Value;
+                InvalidateResolution();
+            }
+
+            var stretch = ((ShaderDisplayTarget) DisplayTarget).StretchScreen;
 
             bios.UpdateBiosData(BiosSettings.StretchScreen.ToString(), stretch.ToString());
 
             return stretch;
         }
 
-        public override bool CropScreen(bool? value = null)
+        public bool CropScreen(bool? value = null)
         {
-            var crop = base.CropScreen(value);
+            if (value.HasValue)
+            {
+                ((ShaderDisplayTarget) DisplayTarget).CropScreen = value.Value;
+                InvalidateResolution();
+            }
+
+            var crop = ((ShaderDisplayTarget) DisplayTarget).CropScreen;
 
             bios.UpdateBiosData(BiosSettings.CropScreen.ToString(), crop.ToString());
 
@@ -2059,34 +2096,34 @@ namespace PixelVision8.Runner
         {
             if (toggle.HasValue)
             {
-                ((DisplayTarget)DisplayTarget).useCRT = toggle.Value;
+                ((ShaderDisplayTarget)DisplayTarget).useCRT = toggle.Value;
                 bios.UpdateBiosData(CRTSettings.CRT.ToString(), toggle.Value.ToString());
                 InvalidateResolution();
             }
 
-            return ((DisplayTarget)DisplayTarget).useCRT;
+            return ((ShaderDisplayTarget)DisplayTarget).useCRT;
         }
 
         public float Brightness(float? brightness = null)
         {
             if (brightness.HasValue)
             {
-                ((DisplayTarget)DisplayTarget).brightness = brightness.Value;
+                ((ShaderDisplayTarget)DisplayTarget).brightness = brightness.Value;
                 bios.UpdateBiosData(CRTSettings.Brightness.ToString(), (brightness * 100).ToString());
             }
 
-            return ((DisplayTarget)DisplayTarget).brightness;
+            return ((ShaderDisplayTarget)DisplayTarget).brightness;
         }
 
         public float Sharpness(float? sharpness = null)
         {
             if (sharpness.HasValue)
             {
-                ((DisplayTarget)DisplayTarget).sharpness = sharpness.Value;
+                ((ShaderDisplayTarget)DisplayTarget).sharpness = sharpness.Value;
                 bios.UpdateBiosData(CRTSettings.Sharpness.ToString(), sharpness.ToString());
             }
 
-            return ((DisplayTarget)DisplayTarget).sharpness;
+            return ((ShaderDisplayTarget)DisplayTarget).sharpness;
         }
 
         #endregion

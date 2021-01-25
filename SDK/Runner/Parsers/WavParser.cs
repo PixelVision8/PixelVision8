@@ -17,8 +17,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
+using PixelVision8.Player;
 using PixelVision8.Runner.Utils;
 
 namespace PixelVision8.Runner.Parsers
@@ -28,7 +27,7 @@ namespace PixelVision8.Runner.Parsers
         public string[] files;
         public ISoundChip soundChip;
         private IFileLoadHelper _fileLoadHelper;
-        public WavParser(string[] files, IFileLoadHelper fileLoadHelper, IEngine engine)
+        public WavParser(string[] files, IFileLoadHelper fileLoadHelper, IPlayerChips engine)
         {
             _fileLoadHelper = fileLoadHelper;
             soundChip = engine.SoundChip;

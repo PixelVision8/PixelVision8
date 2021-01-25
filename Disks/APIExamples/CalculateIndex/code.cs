@@ -15,7 +15,7 @@ using PixelVision8.Engine.Chips;
 
 namespace PixelVision8.Examples
 {
-    class CalculateIndexExample : GameChip
+    class ExampleGameChip : GameChip
     {
 
         // A 1D array of example values

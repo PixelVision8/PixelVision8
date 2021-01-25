@@ -22,9 +22,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using MoonSharp.Interpreter;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Services;
-using PixelVision8.Engine.Utils;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Importers;
 using PixelVision8.Runner.Parsers;
@@ -34,7 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using PixelVision8.Engine;
+using PixelVision8.Player;
 
 namespace PixelVision8.Runner.Services
 {
@@ -45,7 +42,7 @@ namespace PixelVision8.Runner.Services
         private readonly WorkspaceServicePlus workspace;
 
         private SoundEffectInstance currentSound;
-        protected DesktopRunner desktopRunner;
+        public DateTime now = DateTime.Now;
 
         /// <summary>
         ///     The LuaService exposes core Runner APIs to the Lua Game Chip
@@ -89,6 +86,7 @@ namespace PixelVision8.Runner.Services
         /// <param name="luaScript"></param>
         public virtual void ConfigureScript(Script luaScript)
         {
+            
             luaScript.Options.DebugPrint = runner.DisplayWarning;
 
             luaScript.Globals["Volume"] = new Func<int?, int>(runner.Volume);
@@ -130,23 +128,26 @@ namespace PixelVision8.Runner.Services
             luaScript.Globals["SaveTextToFile"] = (SaveTextToFileDelegator)SaveTextToFile;
 
             // File helpers
-            luaScript.Globals["NewImage"] = new Func<int, int, string[], int[], Image>(NewImage);
+            luaScript.Globals["NewImage"] = new Func<int, int, string[], int[], ImageData>(NewImage);
 
             // Read file helpers
             luaScript.Globals["ReadJson"] = new Func<WorkspacePath, Dictionary<string, object>>(ReadJson);
             luaScript.Globals["ReadText"] = new Func<WorkspacePath, string>(ReadText);
-            luaScript.Globals["ReadImage"] = new Func<WorkspacePath, string, string[], Image>(ReadImage);
+            luaScript.Globals["ReadImage"] = new Func<WorkspacePath, string, string[], ImageData>(ReadImage);
 
             // Save file helpers
             luaScript.Globals["SaveText"] = new Action<WorkspacePath, string>(SaveText);
-            luaScript.Globals["SaveImage"] = new Action<WorkspacePath, Image>(SaveImage);
+            luaScript.Globals["SaveImage"] = new Action<WorkspacePath, ImageData>(SaveImage);
 
-            luaScript.Globals["AddExporter"] = new Action<WorkspacePath, Image>(SaveImage);
+            luaScript.Globals["AddExporter"] = new Action<WorkspacePath, ImageData>(SaveImage);
 
             luaScript.Globals["NewWorkspacePath"] = new Func<string, WorkspacePath>(WorkspacePath.Parse);
+    
+            luaScript.Globals["CurrentTime"] = new Func<string>(CurrentTime);
 
+            
             UserData.RegisterType<WorkspacePath>();
-            UserData.RegisterType<Image>();
+            UserData.RegisterType<ImageData>();
 
             // Experimental
             // luaScript.Globals["DebugLayers"] = new Action<bool>(runner.DebugLayers);
@@ -159,6 +160,11 @@ namespace PixelVision8.Runner.Services
         {
             // runner.ActiveEngine.ColorChip.maxColors = maxColors;
             runner.ActiveEngine.ColorChip.total = newSize;
+        }
+        
+        public string CurrentTime()
+        {
+            return now.ToString("HH:mmtt");
         }
 
         public void PlayWav(WorkspacePath workspacePath)
@@ -227,9 +233,9 @@ namespace PixelVision8.Runner.Services
             }
         }
 
-        public Image NewImage(int width, int height, string[] colors, int[] pixelData = null)
+        public ImageData NewImage(int width, int height, string[] colors, int[] pixelData = null)
         {
-            return new Image(width, height, pixelData, colors);
+            return new ImageData(width, height, pixelData, colors);
         }
 
         public Dictionary<string, object> ReadJson(WorkspacePath src)
@@ -259,7 +265,7 @@ namespace PixelVision8.Runner.Services
             workspace.SaveTextToFile(dest, defaultText, true);
         }
 
-        public Image ReadImage(WorkspacePath src, string maskHex = "#ff00ff", string[] colorRefs = null)
+        public ImageData ReadImage(WorkspacePath src, string maskHex = "#ff00ff", string[] colorRefs = null)
         {
 
             PNGReader reader = null;
@@ -287,7 +293,7 @@ namespace PixelVision8.Runner.Services
             // If no colors are passed in, used the image's palette
             if (colorRefs == null)
             {
-                colorRefs = reader.colorPalette.Select(c => ColorUtils.RgbToHex(c.R, c.G, c.B)).ToArray();
+                colorRefs = reader.colorPalette.Select(c => Utilities.RgbToHex(c.R, c.G, c.B)).ToArray();
             }
 
             // Resize the color chip
@@ -303,22 +309,22 @@ namespace PixelVision8.Runner.Services
             imageParser.CreateImage();
 
             // Return the new image from the parser
-            return imageParser.image;
+            return imageParser.ImageData;
 
         }
 
-        public void SaveImage(WorkspacePath dest, Image image)
+        public void SaveImage(WorkspacePath dest, ImageData imageData)
         {
-            var width = image.Width;
-            var height = image.Height;
-            var hexColors = image.Colors;
+            var width = imageData.Width;
+            var height = imageData.Height;
+            var hexColors = imageData.Colors;
 
             // convert colors
             var totalColors = hexColors.Length;
             var colors = new Color[totalColors];
-            for (var i = 0; i < totalColors; i++) colors[i] = ColorUtils.HexToColor(hexColors[i]);
+            for (var i = 0; i < totalColors; i++) colors[i] = Utilities.HexToColor(hexColors[i]);
 
-            var pixelData = image.GetPixels();
+            var pixelData = imageData.GetPixels();
 
             var exporter =
                 new PixelDataExporter(dest.EntityName, pixelData, width, height, colors, _pngWriter, "#FF00FF");

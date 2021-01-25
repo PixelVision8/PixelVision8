@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -19,9 +19,7 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
 using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Exporters
@@ -29,14 +27,14 @@ namespace PixelVision8.Runner.Exporters
     public class SpriteExporter : IAbstractExporter
     {
         protected Color[] colors;
-        protected IEngine engine;
+        protected IPlayerChips engine;
         protected PixelDataExporter exporter;
         protected string fullFileName;
         protected IImageExporter imageExporter;
         protected SpriteChip spriteChip;
 
 
-        public SpriteExporter(string fileName, IEngine engine, IImageExporter imageExporter,
+        public SpriteExporter(string fileName, IPlayerChips engine, IImageExporter imageExporter,
             SpriteChip spriteChip = null)
         {
             fullFileName = fileName;
@@ -47,7 +45,7 @@ namespace PixelVision8.Runner.Exporters
 
             // var colorMapChip = engine.GetChip(ColorMapParser.chipName, false) as ColorChip;
 
-            colors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);
+            colors = Utilities.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);
 
             // TODO removing the color map chip dependency when exporting moving forward
             // colors = colorMapChip == null ? engine.ColorChip.colors : colorMapChip.colors;
@@ -96,7 +94,7 @@ namespace PixelVision8.Runner.Exporters
             var height = spriteChip.textureHeight;
             var pixelData = new int[width * height];
 
-            PixelDataUtil.CopyPixels(spriteChip.PixelData, 0, 0, width, height, ref pixelData);
+            Utilities.CopyPixels(spriteChip.PixelData, 0, 0, width, height, ref pixelData);
 
             // spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
 
