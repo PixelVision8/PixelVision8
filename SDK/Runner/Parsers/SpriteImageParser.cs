@@ -43,7 +43,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PixelVision8.Player;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class SpriteImageParser : ImageParser
     {
@@ -282,6 +282,18 @@ After:
             base.Dispose();
             colorChip = null;
             spriteChip = null;
+        }
+    }
+    
+    public partial class Loader
+    {
+        [FileParser("sprite.png", "Sprites")]
+        public void ParseSprites(string[] files, IPlayerChips engine)
+        {
+            // We only want to parse a single sprite file so just take the first one in the list
+            var imageParser = new PNGParser(files[0], _graphicsDevice, engine.ColorChip.maskColor);
+
+            AddParser(new SpriteImageParser(imageParser, engine.ColorChip, engine.SpriteChip));
         }
     }
 }

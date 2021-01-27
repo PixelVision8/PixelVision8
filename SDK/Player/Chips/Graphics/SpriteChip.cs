@@ -317,6 +317,8 @@ namespace PixelVision8.Player
 
             return Array.IndexOf(cache, sprite);
         }
+        
+        // TODO don't forget to add 'typeof(SpriteChip).FullName' to the Chip list in the GameRunner.Activate.cs class
     }
 }
 

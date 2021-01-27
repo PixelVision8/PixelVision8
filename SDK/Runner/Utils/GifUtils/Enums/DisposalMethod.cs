@@ -21,7 +21,7 @@
 // Shawn Rakowski - @shwany
 //
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner.Gif
 {
     /// <summary>
     /// Indicates the way in which the graphic is to be treated after being displayed.

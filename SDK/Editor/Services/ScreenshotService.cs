@@ -24,7 +24,7 @@ using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Workspace;
 using System.Collections.Generic;
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Runner
 {
     public class ScreenshotService : AbstractService
     {

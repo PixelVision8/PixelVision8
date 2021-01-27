@@ -18,16 +18,15 @@
 //
 
 using PixelVision8.Player;
-using PixelVision8.Runner.Utils;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class WavParser : AbstractParser
     {
         public string[] files;
         public ISoundChip soundChip;
-        private IFileLoadHelper _fileLoadHelper;
-        public WavParser(string[] files, IFileLoadHelper fileLoadHelper, IPlayerChips engine)
+        private IFileLoader _fileLoadHelper;
+        public WavParser(string[] files, IFileLoader fileLoadHelper, IPlayerChips engine)
         {
             _fileLoadHelper = fileLoadHelper;
             soundChip = engine.SoundChip;
@@ -59,4 +58,14 @@ namespace PixelVision8.Runner.Parsers
             CurrentStep++;
         }
     }
+
+    public partial class Loader
+    {
+        [FileParser(".wav", "Music")]
+        public void ParseWave(string[] files, IPlayerChips engine)
+        {
+            AddParser(new WavParser(files, _fileLoadHelper, engine ));
+        }
+    }
+    
 }

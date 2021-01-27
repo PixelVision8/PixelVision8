@@ -24,7 +24,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner.Gif
 {
     internal class LogicalScreenDescriptor
     {

@@ -58,6 +58,7 @@
     <Compile Include="SDK/Runner/Game/GameRunner.cs" />
     <Compile Include="SDK/Runner/Game/GameRunner.Display.cs" />
     <Compile Include="SDK/Runner/Game/GameRunner.Engine.cs" />
+    <Compile Include="SDK\Runner\Parsers\IFileLoader.cs" />
     <Content Include="Disks/APIExamples/$(ApiExample)/**/*.*">
       <Link>Content/%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

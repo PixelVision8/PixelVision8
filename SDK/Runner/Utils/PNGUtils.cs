@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner
 {
     public class Palette
     {

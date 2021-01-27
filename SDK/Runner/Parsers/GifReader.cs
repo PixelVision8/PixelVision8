@@ -19,12 +19,12 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Runner.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PixelVision8.Runner.Gif;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     class GifReader : AbstractParser
     {

@@ -19,18 +19,18 @@
 //
 
 using PixelVision8.Player;
-using PixelVision8.Runner.Utils;
+using PixelVision8.Runner;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class TilemapJsonParser : JsonParser
     {
         protected IPlayerChips target;
 
-        public TilemapJsonParser(string filePath, IFileLoadHelper fileLoadHelper, IPlayerChips target) : base(filePath, fileLoadHelper)
+        public TilemapJsonParser(string filePath, IFileLoader fileLoadHelper, IPlayerChips target) : base(filePath, fileLoadHelper)
         {
             this.target = target;
         }

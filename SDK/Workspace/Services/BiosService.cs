@@ -18,10 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Runner.Utils;
+using PixelVision8.Runner;
 using System.Collections.Generic;
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Runner
 {
     public class BiosService
     {

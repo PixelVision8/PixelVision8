@@ -20,12 +20,12 @@
 
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Loaders;
-using PixelVision8.Runner.Services;
+using PixelVision8.Runner;
 using PixelVision8.Runner.Workspace;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner
 {
 
     public class ScriptLoaderUtil : IScriptLoader

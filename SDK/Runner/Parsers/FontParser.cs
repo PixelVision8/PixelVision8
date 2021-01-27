@@ -39,7 +39,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PixelVision8.Player;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class FontParser : SpriteImageParser
     {
@@ -109,5 +109,21 @@ namespace PixelVision8.Runner.Parsers
             fontMap[index] = id;
         }
 
+    }
+    
+    public partial class Loader
+    {
+        [FileParser("font.png", "Fonts")]
+        public void ParseFonts(string[] files, IPlayerChips engine)
+        {
+            for (int i = 0; i < files.Length; i++)
+            {
+                // We only want to parse a single sprite file so just take the first one in the list
+                var imageParser = new PNGParser(files[i], _graphicsDevice, engine.ColorChip.maskColor);
+
+                AddParser(new FontParser(imageParser, engine.ColorChip, engine.FontChip));
+            }
+            
+        }
     }
 }

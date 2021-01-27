@@ -20,7 +20,7 @@
 
 using PixelVision8.Player;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class TilemapParser : SpriteImageParser
     {
@@ -95,6 +95,20 @@ namespace PixelVision8.Runner.Parsers
             var tile = tilemapChip.GetTile(x, y);
 
             tile.SpriteId = id;
+
+        }
+    }
+    
+    public partial class Loader
+    {
+        [FileParser("tilemap.png", "Tilemap")]
+        public void ParseTilemapImage(string[] files, IPlayerChips engine)
+        {
+            
+            // We only want to parse a single sprite file so just take the first one in the list
+            var imageParser = new PNGParser(files[0], _graphicsDevice, engine.ColorChip.maskColor);
+
+            AddParser(new TilemapParser(imageParser, engine.ColorChip, engine.SpriteChip, engine.TilemapChip, true));
 
         }
     }

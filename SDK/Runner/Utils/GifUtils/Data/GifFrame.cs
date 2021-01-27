@@ -22,7 +22,7 @@
 //
 
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner.Gif
 {
     /// <summary>
     /// Texture + delay + disposal method

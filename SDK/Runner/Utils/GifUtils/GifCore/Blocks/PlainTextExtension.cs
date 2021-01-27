@@ -23,7 +23,7 @@
 
 using System;
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner.Gif
 {
     internal class PlainTextExtension : Block
     {

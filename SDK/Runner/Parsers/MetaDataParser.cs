@@ -19,15 +19,15 @@
 //
 
 using PixelVision8.Player;
-using PixelVision8.Runner.Utils;
+using PixelVision8.Runner;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class MetaDataParser : JsonParser
     {
         private readonly IPlayerChips engine;
 
-        public MetaDataParser(string filePath, IFileLoadHelper fileLoadHelper, IPlayerChips target) : base(filePath, fileLoadHelper)
+        public MetaDataParser(string filePath, IFileLoader fileLoadHelper, IPlayerChips target) : base(filePath, fileLoadHelper)
         {
             engine = target;
         }

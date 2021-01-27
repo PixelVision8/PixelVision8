@@ -19,46 +19,74 @@
 //
 
 
-using com.pixelvision8.lite.SDK.Runner.Parsers;
+
 using Microsoft.Xna.Framework.Graphics;
 using PixelVision8.Player;
-using PixelVision8.Runner.Parsers;
-
-/* Unmerged change from project 'PixelVision8.CoreDesktop'
-Before:
-using PixelVision8.Runner.Utils;
-After:
-using PixelVision8.Runner.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-*/
-using PixelVision8.Runner.Utils;
-using System;
-using System.Collections.Generic;
+using System.Reflection;
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Runner
 
 {
 
-    public class Loader
+    public partial class Loader
     {
+        
+        public class FileParser : Attribute
+        {
+            public string FileType;
+            public string FlagType;
+            public MethodInfo MethodInfo;
 
+            public FileParser(string fileType, string flagType)
+            {
+                FileType = fileType;
+                FlagType = flagType;
+            }
+            
+        }
+        
+        public int currentStep;
+        
         protected readonly List<IAbstractParser> parsers = new List<IAbstractParser>();
         protected int currentParserID;
         public bool Completed => currentParserID >= TotalParsers;
+        public float Percent => TotalSteps == 0 ? 1f : currentStep / (float)TotalSteps;
 
-        protected int TotalParsers => parsers.Count;
+        public int TotalParsers => parsers.Count;
 
         public int TotalSteps;
-        private readonly IFileLoadHelper _fileLoadHelper;
+        private readonly IFileLoader _fileLoadHelper;
 
         private GraphicsDevice _graphicsDevice;
 
-        public Loader(IFileLoadHelper fileLoadHelper, GraphicsDevice graphicsDevice)
+        public List<FileParser> ParserMapping = new List<FileParser>();
+        
+        public Loader(IFileLoader fileLoadHelper, GraphicsDevice graphicsDevice = null)
         {
             _fileLoadHelper = fileLoadHelper;
             _graphicsDevice = graphicsDevice;
+            
+            var methods = GetType().GetMethods().Where(m=>m.GetCustomAttributes(typeof(FileParser), false).Length > 0).ToArray();
+
+            for (int i = 0; i < methods.Length; i++)
+            {
+                Console.WriteLine("Method " + i + " " + methods[i].Name);
+                
+                Type thisType = this.GetType();
+                MethodInfo theMethod = thisType.GetMethod(methods[i].Name);
+
+                // Get the File Parser attribute
+                var attributes = theMethod.GetCustomAttribute(typeof(FileParser)) as FileParser;
+
+                // Cache the method info on the attribute instance
+                attributes.MethodInfo = theMethod;
+
+                ParserMapping.Add(attributes);
+                
+            }
         }
 
         public void Reset()
@@ -66,70 +94,9 @@ namespace PixelVision8.Runner.Services
             parsers.Clear();
             currentParserID = 0;
             TotalSteps = 0;
+            currentStep = 0;
         }
-
-        public virtual void ParseFiles(string[] files, IPlayerChips engine)
-        {
-            Reset();
-
-            List<string> wavs = new List<string>();
-
-            Array.Sort(files);
-
-            foreach (var file in files)
-            {
-                if (file.EndsWith("colors.png"))
-                {
-                    var imageParser = new PNGParser(file, _graphicsDevice, engine.ColorChip.maskColor);
-
-                    AddParser(new ColorParser(imageParser, engine.ColorChip));
-                }
-                // Look for sprites
-                if (file.EndsWith("sprites.png"))
-                {
-                    var imageParser = new PNGParser(file, _graphicsDevice, engine.ColorChip.maskColor);
-
-                    AddParser(new SpriteImageParser(imageParser, engine.ColorChip, engine.SpriteChip));
-                }
-
-                // Look for fonts
-                else if (file.EndsWith(".font.png"))
-                {
-                    var imageParser = new PNGParser(file, _graphicsDevice, engine.ColorChip.maskColor);
-
-                    AddParser(new FontParser(imageParser, engine.ColorChip, engine.FontChip));
-
-                }
-                // Look for tiles
-                else if (file.EndsWith("tilemap.png"))
-                {
-                    var imageParser = new PNGParser(file, _graphicsDevice, engine.ColorChip.maskColor);
-
-                    AddParser(new TilemapParser(imageParser, engine.ColorChip, engine.SpriteChip, engine.TilemapChip, true));
-
-                }
-                // Look for wavs
-                else if (file.EndsWith(".wav"))
-                {
-                    wavs.Add(file);
-                }
-
-/* Unmerged change from project 'PixelVision8.CoreDesktop'
-Before:
-            }
-            
-            AddParser(new WavParser(wavs.ToArray(), _fileLoadHelper, engine ));
-After:
-            }
-
-            AddParser(new WavParser(wavs.ToArray(), _fileLoadHelper, engine ));
-*/
-            }
-
-            AddParser(new WavParser(wavs.ToArray(), _fileLoadHelper, engine));
-
-        }
-
+        
         public void AddParser(IAbstractParser parser)
         {
             parser.CalculateSteps();
@@ -142,7 +109,7 @@ After:
         public void LoadAll()
         {
             while (Completed == false) NextParser();
-
+        
             parsers.Clear();
         }
 
@@ -158,11 +125,35 @@ After:
 
             parser.NextStep();
 
+            currentStep++;
+            
             if (parser.completed)
             {
                 parser.Dispose();
                 currentParserID++;
             }
+        }
+        
+        public virtual void ParseFiles(string[] files, IPlayerChips engine)
+        {
+            Reset();
+
+            Array.Sort(files);
+
+            for (int i = 0; i < ParserMapping.Count; i++)
+            {
+
+                var parserInfo = ParserMapping[i];
+                
+                var filesToParse = files.Where(f => f.EndsWith(parserInfo.FileType)).ToArray();
+
+                if (filesToParse.Length > 0)
+                {
+                    parserInfo.MethodInfo.Invoke(this, new object[]{filesToParse, engine});
+                }
+                
+            }
+            
         }
 
     }

@@ -21,17 +21,17 @@
 using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 using PixelVision8.Player.Audio;
-using PixelVision8.Runner.Utils;
+using PixelVision8.Runner;
 using System;
 using System.Collections.Generic;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class SystemParser : JsonParser
     {
         protected IPlayerChips Target;
 
-        public SystemParser(string filePath, IFileLoadHelper fileLoadHelper, IPlayerChips target) : base(filePath, fileLoadHelper)
+        public SystemParser(string filePath, IFileLoader fileLoadHelper, IPlayerChips target) : base(filePath, fileLoadHelper)
         {
             Target = target;// as PixelVisionEngine;
         }

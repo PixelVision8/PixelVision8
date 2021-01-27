@@ -20,11 +20,10 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using PixelVision8.Runner.Parsers;
 using System.Collections.Generic;
 using System.IO;
 
-namespace com.pixelvision8.lite.SDK.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class PNGParser : IImageParser
     {

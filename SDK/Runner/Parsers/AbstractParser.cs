@@ -18,27 +18,16 @@
 // Shawn Rakowski - @shwany
 //
 
-using 
-/* Unmerged change from project 'PixelVision8.CoreDesktop'
-Before:
-using System.Collections.Generic;
-using PixelVision8.Runner.Services;
-After:
-using System.Collections.Services;
-using PixelVision8.Runner.Utils;
-using System;
-*/
-PixelVision8.Runner.Utils;
 using System;
 using System.Collections.Generic;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public abstract class AbstractParser : IAbstractParser
     {
         protected List<Action> _steps = new List<Action>();
 
-        public IFileLoadHelper FileLoadHelper;
+        public IFileLoader FileLoadHelper;
 
         public int CurrentStep { get; protected set; }
 

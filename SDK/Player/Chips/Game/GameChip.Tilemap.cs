@@ -26,70 +26,10 @@ namespace PixelVision8.Player
     {
         // TODO shared id with GameChip_Sprite
         protected TilemapChip TilemapChip => Player.TilemapChip;
-        protected Point _tilemapSize = Point.Zero;
-        
-        /// <summary>
-        ///     By default, the tilemap renders to the display by simply calling DrawTilemap(). This automatically fills the entire
-        ///     display with the visible portion of the tilemap. To have more granular control over how to render the tilemap, you
-        ///     can supply an optional X and Y position to change where it draws on the screen. You can also modify the width
-        ///     (columns) and height (rows) that are displayed too. This is useful if you want to show a HUD or some other kind of
-        ///     image on the screen that is not overridden by the tilemap. To scroll the tilemap, you need to call the
-        ///     ScrollPosition() and supply a new scroll X and Y value.
-        /// </summary>
-        /// <param name="x">
-        ///     An optional int value representing the X position to render the tilemap on the display. If set to 0, it
-        ///     renders on the far left-hand side of the screen.
-        /// </param>
-        /// <param name="y">
-        ///     An optional int value representing the Y position to render the tilemap on the display. If set to 0, it
-        ///     renders on the top of the screen.
-        /// </param>
-        /// <param name="columns">
-        ///     An optional int value representing how many horizontal tiles to include when drawing the map. By default, this is
-        ///     0 which automatically uses the full visible width of the display, while taking into account the X position offset.
-        /// </param>
-        /// <param name="rows">
-        ///     An optional int value representing how many vertical tiles to include when drawing the map. By default, this is 0
-        ///     which automatically uses the full visible height of the display, while taking into account the Y position offset.
-        /// </param>
-        /// <param name="offsetX">
-        ///     An optional int value to override the scroll X position. This is useful when you need to change the left x position
-        ///     from where to sample the tilemap data from.
-        /// </param>
-        /// <param name="offsetY">
-        ///     An optional int value to override the scroll Y position. This is useful when you need to change the top y position
-        ///     from where to sample the tilemap data from.
-        /// </param>
-        public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null,
-            int? offsetY = null)
-        {
-
-            DisplayChip.NewDrawCall(
-                TilemapChip,
-                x,
-                y,
-                columns == 0 ? DisplayChip.Width : columns * SpriteChip.width,
-                rows == 0 ? DisplayChip.Height : rows * SpriteChip.height,
-                (byte)DrawMode.Tile,
-                false,
-                false,
-                0,
-                offsetX ?? _scrollPos.X,
-                offsetY ?? _scrollPos.Y
-            );
-
-
-        }
-
-        /// <summary>
-        ///     You can use RedrawDisplay to make clearing and drawing the tilemap easier. This is a helper method automatically
-        ///     calls both Clear() and DrawTilemap() for you.
-        /// </summary>
-        public void RedrawDisplay()
-        {
-            Clear();
-            DrawTilemap();
-        }
+        private Point _tilemapSize = Point.Zero;
+        private Point _scrollPos = Point.Zero;
+        private int _total;
+        private int _width;
 
         /// <summary>
         ///     You can scroll the tilemap by calling the ScrollPosition() method and supplying a new scroll X and Y position.
@@ -291,12 +231,12 @@ namespace PixelVision8.Player
         /// </param>
         public void UpdateTiles(int[] ids, int? colorOffset = null, int? flag = null)
         {
-            total = ids.Length;
+            _total = ids.Length;
             _width = TilemapSize().X;
 
             //TODO need to get offset and flags working
 
-            for (var i = 0; i < total; i++)
+            for (var i = 0; i < _total; i++)
             {
                 id = ids[i];
 

@@ -18,7 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Runner.Utils;
+using PixelVision8.Runner;
 using PixelVision8.Runner.Workspace;
 using System.Collections.Generic;
 
@@ -28,7 +28,7 @@ namespace PixelVision8.Runner.Exporters
     {
         private long maxFileSize;
 
-        public DiskExporter(string fileName, IFileLoadHelper fileLoadHelper, Dictionary<WorkspacePath, WorkspacePath> srcFiles, long maxFileSize = 512, int compressionLevel = 0) : base(fileName, fileLoadHelper, srcFiles, compressionLevel)
+        public DiskExporter(string fileName, IFileLoader fileLoadHelper, Dictionary<WorkspacePath, WorkspacePath> srcFiles, long maxFileSize = 512, int compressionLevel = 0) : base(fileName, fileLoadHelper, srcFiles, compressionLevel)
         {
             this.maxFileSize = maxFileSize;
         }

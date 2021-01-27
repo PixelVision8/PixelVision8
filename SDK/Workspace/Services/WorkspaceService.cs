@@ -26,7 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Runner
 {
     public class WorkspaceService : FileSystemMounter, IService
     {

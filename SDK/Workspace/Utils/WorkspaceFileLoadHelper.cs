@@ -18,15 +18,15 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Runner.Services;
+using PixelVision8.Runner;
 using PixelVision8.Runner.Workspace;
 using System;
 using System.IO;
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner
 {
 
-    public class WorkspaceFileLoadHelper : IFileLoadHelper
+    public class WorkspaceFileLoadHelper : IFileLoader
     {
         protected WorkspaceService WorkspaceService;
 

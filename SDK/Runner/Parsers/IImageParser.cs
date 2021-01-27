@@ -21,7 +21,7 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public interface IImageParser
     {

@@ -22,7 +22,7 @@ using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 using System.Collections.Generic;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class ColorParser : ImageParser
     {

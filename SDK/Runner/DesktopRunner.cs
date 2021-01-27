@@ -31,8 +31,7 @@ using MoonSharp.VsCodeDebugger.DebuggerLogic;
 using PixelVision8.Player;
 using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Editors;
-using PixelVision8.Runner.Services;
-using PixelVision8.Runner.Utils;
+using PixelVision8.Runner;
 using PixelVision8.Runner.Workspace;
 using System;
 using System.Collections.Generic;
@@ -1135,7 +1134,7 @@ namespace PixelVision8.Runner
                 base.ShutdownActiveEngine();
 
                 if ((ActiveEngine.GameChip).SaveSlots > 0)
-                    SaveGameData("/Game/", ActiveEngine, SaveFlags.SaveData,
+                    SaveGameData("/Game/", ActiveEngine, FileFlags.SaveData,
                         false);
 
                 // Save the active disk
@@ -1604,13 +1603,13 @@ namespace PixelVision8.Runner
             return false;
         }
 
-        public void SaveGameData(string path, IPlayerChips engine, SaveFlags saveFlags, bool useSteps = true)
+        public void SaveGameData(string path, IPlayerChips engine, FileFlags fileFlags, bool useSteps = true)
         {
             // Export the current game
 
             // TODO exporter needs a callback when its completed
             if (mode != RunnerMode.Error) //Was causing Roslyn games to wipe save data on any error.
-                ExportService.ExportGame(path, engine, saveFlags, useSteps);
+                ExportService.ExportGame(path, engine, fileFlags, useSteps);
         }
 
         protected override void OnExiting(object sender, EventArgs args)
@@ -1651,28 +1650,27 @@ namespace PixelVision8.Runner
             }
         }
 
-        public void ParseFiles(string[] files, PixelVision engine, SaveFlags saveFlags,
+        public void ParseFiles(string[] files, PixelVision engine, FileFlags fileFlags,
             bool autoLoad = true)
         {
-            loadService.ParseFiles(files, engine, saveFlags);
+            loadService.ParseFiles(files, engine, fileFlags);
 
             if (autoLoad) loadService.LoadAll();
         }
 
-        protected void ParseFiles(string[] files, SaveFlags? flags = null)
+        protected void ParseFiles(string[] files, FileFlags? flags = null)
         {
             if (!flags.HasValue)
             {
-                flags = SaveFlags.System;
-                flags |= SaveFlags.Colors;
-                flags |= SaveFlags.ColorMap;
-                flags |= SaveFlags.Sprites;
-                flags |= SaveFlags.Tilemap;
-                flags |= SaveFlags.Fonts;
-                flags |= SaveFlags.Sounds;
-                flags |= SaveFlags.Music;
-                flags |= SaveFlags.SaveData;
-                flags |= SaveFlags.MetaSprites;
+                flags = FileFlags.System;
+                flags |= FileFlags.Colors;
+                flags |= FileFlags.Sprites;
+                flags |= FileFlags.Tilemap;
+                flags |= FileFlags.Fonts;
+                flags |= FileFlags.Sounds;
+                flags |= FileFlags.Music;
+                flags |= FileFlags.SaveData;
+                flags |= FileFlags.MetaSprites;
             }
 
             loadService.ParseFiles(files, _tmpEngine, flags.Value);

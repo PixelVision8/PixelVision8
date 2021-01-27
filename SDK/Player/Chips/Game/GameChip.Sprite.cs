@@ -29,8 +29,9 @@ namespace PixelVision8.Player
         // TODO this shares tmpSpriteData with GameChip_Display
         
         protected SpriteChip SpriteChip => Player.SpriteChip;
-        
-        protected int id;
+        private int[] _tmpSpriteData = new int[64];
+
+        private int id;
         // protected Point _spriteSize = new Point(8, 8);
         
         /// <summary>
@@ -111,9 +112,9 @@ namespace PixelVision8.Player
                 return data;
             }
 
-            SpriteChip.ReadSpriteAt(id, ref tmpSpriteData);
+            SpriteChip.ReadSpriteAt(id, ref _tmpSpriteData);
 
-            return tmpSpriteData;
+            return _tmpSpriteData;
         }
 
         

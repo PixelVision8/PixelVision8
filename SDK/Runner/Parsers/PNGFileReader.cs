@@ -18,16 +18,16 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Runner.Utils;
+using PixelVision8.Runner;
 
 namespace PixelVision8.Runner.Importers
 {
     public class PNGFileReader : PNGReader
     {
         public string FilePath;
-        public IFileLoadHelper FileLoadHelper;
+        public IFileLoader FileLoadHelper;
 
-        public PNGFileReader(string filePath, IFileLoadHelper fileLoadHelper, string maskHex = "#FF00FF") : base(null, maskHex)
+        public PNGFileReader(string filePath, IFileLoader fileLoadHelper, string maskHex = "#FF00FF") : base(null, maskHex)
         {
             FilePath = filePath;
             FileLoadHelper = fileLoadHelper;

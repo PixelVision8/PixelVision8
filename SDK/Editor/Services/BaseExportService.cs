@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Runner
 {
     public abstract class BaseExportService : AbstractService
     {

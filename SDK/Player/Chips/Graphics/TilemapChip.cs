@@ -262,6 +262,8 @@ namespace PixelVision8.Player
             // Reset the invalidation state
             ResetValidation();
         }
+        
+        // TODO don't forget to add 'typeof(TilemapChip).FullName' to the Chip list in the GameRunner.Activate.cs class
 
     }
 }

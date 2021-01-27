@@ -22,7 +22,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MoonSharp.Interpreter;
 using PixelVision8.Runner;
-using PixelVision8.Runner.Services;
 using System;
 using System.Collections.Generic;
 using PixelVision8.Player.Audio;
@@ -227,8 +226,8 @@ namespace PixelVision8.Player
             UserData.RegisterType<InputState>();
             LuaScript.Globals["InputState"] = UserData.CreateStatic<InputState>();
 
-            UserData.RegisterType<SaveFlags>();
-            LuaScript.Globals["SaveFlags"] = UserData.CreateStatic<SaveFlags>();
+            UserData.RegisterType<FileFlags>();
+            LuaScript.Globals["SaveFlags"] = UserData.CreateStatic<FileFlags>();
 
             // Register PV8's vector type
             UserData.RegisterType<Point>();

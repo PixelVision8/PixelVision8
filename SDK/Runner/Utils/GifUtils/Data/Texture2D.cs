@@ -25,7 +25,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner.Gif
 {
     /// <summary>
     /// Stub for Texture2D from UnityEngine.CoreModule

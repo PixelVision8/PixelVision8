@@ -37,7 +37,7 @@ namespace PixelVision8.Runner
     }
 }
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Runner
 {
     public class LogService : AbstractService
     {

@@ -18,8 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Runner.Services;
-using PixelVision8.Runner.Utils;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,6 +25,8 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Runner
 {
+    
+    
 
    public class CSharpRunner : GameRunner
     {
@@ -44,7 +44,7 @@ namespace PixelVision8.Runner
             this.gamePath = gamePath;
             this.gameClass = gameClass;
         }
-
+        
         /// <summary>
         ///     This is called when the runner first starts up.
         /// </summary>
@@ -54,6 +54,7 @@ namespace PixelVision8.Runner
             // Configure the runner
             ConfigureDisplayTarget();
 
+            
             // Manually override scale on boot up
             Scale(1);
 
@@ -130,4 +131,6 @@ namespace PixelVision8.Runner
         }
 
     }
+
+   
 }

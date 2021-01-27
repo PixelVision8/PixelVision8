@@ -44,7 +44,6 @@ namespace PixelVision8.Player
         protected SpriteCollection[] metaSprites = new SpriteCollection[0];
         protected int[] tmpIDs = new int[0];
         protected int height;
-        protected int _width;
         public int maxSize = 256;
 
         protected int _TotalMetaSprites
@@ -151,30 +150,30 @@ namespace PixelVision8.Player
             var spriteCollection = metaSprites[id];
             // Get the sprite data for the meta sprite
             tmpSpritesData = spriteCollection.Sprites;
-            total = tmpSpritesData.Count;
+            _total = tmpSpritesData.Count;
 
             // When rendering in Tile Mode, switch to grid layout
             if(drawMode == DrawMode.Tile)
             {
                 
                 // TODO added this so C# code isn't corrupted, need to check performance impact
-                if (tmpIDs.Length != total) Array.Resize(ref tmpIDs, total);
+                if (tmpIDs.Length != _total) Array.Resize(ref tmpIDs, _total);
 
                 var i = 0;
 
-                for (i = 0; i < total; i++)
+                for (i = 0; i < _total; i++)
                 {
                     tmpIDs[i] = tmpSpritesData[i].Id;
                 }
 
                 var width = Utilities.CeilToInt(spriteCollection.Bounds.Width / SpriteChip.width);
 
-                height = Utilities.CeilToInt(total / width);
+                height = Utilities.CeilToInt(_total / width);
 
                 if (flipH || flipV) Utilities.FlipPixelData(ref tmpIDs, width, height, flipH, flipV);
 
                 // TODO need to offset the bounds based on the scroll position before testing against it
-                for (i = 0; i < total; i++)
+                for (i = 0; i < _total; i++)
                 {
                     // Set the sprite id
                     id = tmpIDs[i];
@@ -203,7 +202,7 @@ namespace PixelVision8.Player
             {
                 
                 // Loop through each of the sprites
-                for (var i = 0; i < total; i++)
+                for (var i = 0; i < _total; i++)
                 {
                     _currentSpriteData = tmpSpritesData[i];
 

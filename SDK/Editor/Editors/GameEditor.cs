@@ -25,8 +25,7 @@ using PixelVision8.Player.Audio;
 using PixelVision8.Runner.Chips;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner.Importers;
-using PixelVision8.Runner.Parsers;
-using PixelVision8.Runner.Services;
+using PixelVision8.Runner;
 using PixelVision8.Runner.Workspace;
 using System;
 using System.Collections.Generic;
@@ -113,13 +112,13 @@ namespace PixelVision8.Runner.Editors
         /// </summary>
         /// <param name="flags"></param>
         /// <returns></returns>
-        private SaveFlags BuildSaveFlags(SaveFlags[] flags)
+        private FileFlags BuildSaveFlags(FileFlags[] flags)
         {
             // Since Lua doesn't know how to handle bit flags, we need to do the conversion on the C# side of things
-            var saveFlags = SaveFlags.System;
+            var saveFlags = FileFlags.System;
 
             for (var i = 0; i < flags.Length; i++)
-                if (flags[i] != SaveFlags.System)
+                if (flags[i] != FileFlags.System)
                     saveFlags |= flags[i];
 
             return saveFlags;
@@ -134,7 +133,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns>Returns a bool if the loading process was successful.</returns>
 
         // TODO should use workspace path as argument
-        public bool Load(string path, SaveFlags[] flags)
+        public bool Load(string path, FileFlags[] flags)
         {
             //            // If the path is not valid, return null
             //            if (path == null)
@@ -218,7 +217,7 @@ namespace PixelVision8.Runner.Editors
             //            
             //            colorPaletteChip = targetGame.chipManager.GetChip(ColorPaletteParser.chipName, false) as ColorChip;
 
-            ChangeColorMode();
+            // ChangeColorMode();
         }
 
         /// <summary>
@@ -280,13 +279,13 @@ namespace PixelVision8.Runner.Editors
         ///     Allows you to save the current game you are editing. Pass in SaveFlags to define which files should be exported.
         /// </summary>
         /// <param name="flags"></param>
-        public void Save(string path, SaveFlags[] flags, bool useSteps = false)
+        public void Save(string path, FileFlags[] flags, bool useSteps = false)
         {
             // TODO need to get the export service
 
 
             // TODO should only save flags that are supplied
-            var saveFlags = SaveFlags.None;
+            var saveFlags = FileFlags.None;
 
             for (var i = 0; i < flags.Length; i++) saveFlags |= flags[i];
 
@@ -906,46 +905,46 @@ namespace PixelVision8.Runner.Editors
         ///     Change the color mode of the game to edit specific color spaces in the Color Chip.
         /// </summary>
         /// <param name="mode"></param>
-        public void ChangeColorMode(int mode = 0)
-        {
-            if (mode == 1)
-            {
-                // Create a new color map chip based on the exsiting color chip 
-                if (targetGame.GetChip(ColorMapParser.chipName, false) == null)
-                {
-                    // Since we need pagincation and other values only on the color chip we'll create one here
-                    // Create new color map chip
-                    var colorMapChip = new ColorChip();
-
-                    // Add the chip to the engine
-                    targetGame.ActivateChip(ColorMapParser.chipName, colorMapChip, false);
-
-                    // Register the temporary color chip as a ColorMapChip
-                    //                    targetGame.chipManager.ActivateChip(typeof(ColorMapChip).FullName, colorMapChip, false);
-
-                    var colors = colorChip.hexColors;
-
-                    colorMapChip.total = colors.Length;
-
-                    for (var i = 0; i < colors.Length; i++) colorMapChip.UpdateColorAt(i, colors[i]);
-
-                    //                    Debug.Log("Create New Color Map Chip");
-                }
-
-                //                Debug.Log("Color Map Chip Exists " + (targetGame.colorMapChip != null));
-
-                // Since we are using a color chip we need to make sure we call the rigt chip because its not registered with the engine
-                activeColorChip = targetGame.GetChip(ColorMapParser.chipName, false) as ColorChip;
-            }
-            //            else if (mode == 2)
-            //            {
-            //                activeColorChip = targetGame.GetChip(FlagColorParser.FlagColorChipName, false) as ColorChip;
-            //            }
-            else
-            {
-                activeColorChip = targetGame.ColorChip;
-            }
-        }
+        // public void ChangeColorMode(int mode = 0)
+        // {
+        //     if (mode == 1)
+        //     {
+        //         // Create a new color map chip based on the exsiting color chip 
+        //         if (targetGame.GetChip(ColorMapParser.chipName, false) == null)
+        //         {
+        //             // Since we need pagincation and other values only on the color chip we'll create one here
+        //             // Create new color map chip
+        //             var colorMapChip = new ColorChip();
+        //
+        //             // Add the chip to the engine
+        //             targetGame.ActivateChip(ColorMapParser.chipName, colorMapChip, false);
+        //
+        //             // Register the temporary color chip as a ColorMapChip
+        //             //                    targetGame.chipManager.ActivateChip(typeof(ColorMapChip).FullName, colorMapChip, false);
+        //
+        //             var colors = colorChip.hexColors;
+        //
+        //             colorMapChip.total = colors.Length;
+        //
+        //             for (var i = 0; i < colors.Length; i++) colorMapChip.UpdateColorAt(i, colors[i]);
+        //
+        //             //                    Debug.Log("Create New Color Map Chip");
+        //         }
+        //
+        //         //                Debug.Log("Color Map Chip Exists " + (targetGame.colorMapChip != null));
+        //
+        //         // Since we are using a color chip we need to make sure we call the rigt chip because its not registered with the engine
+        //         activeColorChip = targetGame.GetChip(ColorMapParser.chipName, false) as ColorChip;
+        //     }
+        //     //            else if (mode == 2)
+        //     //            {
+        //     //                activeColorChip = targetGame.GetChip(FlagColorParser.FlagColorChipName, false) as ColorChip;
+        //     //            }
+        //     else
+        //     {
+        //         activeColorChip = targetGame.ColorChip;
+        //     }
+        // }
 
 
         /// <summary>

@@ -20,17 +20,17 @@
 
 using PixelVision8.Player;
 using PixelVision8.Runner.Exporters;
-using PixelVision8.Runner.Parsers;
+using PixelVision8.Runner;
 using System.Collections.Generic;
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Runner
 {
     public class GameDataExportService : BaseExportService
     {
 
         private IPlayerChips targetEngine;
 
-        public void ExportGame(string path, IPlayerChips engine, SaveFlags saveFlags, bool useSteps = true)
+        public void ExportGame(string path, IPlayerChips engine, FileFlags fileFlags, bool useSteps = true)
         {
 
             Clear();
@@ -39,24 +39,19 @@ namespace PixelVision8.Runner.Services
             targetEngine = engine;
 
             // Step 1. Load the system snapshot
-            if ((saveFlags & SaveFlags.System) == SaveFlags.System)
+            if ((fileFlags & FileFlags.System) == FileFlags.System)
                 AddExporter(new SystemExporter(path + "data.json", targetEngine));
 
             // Step 3 (optional). Look for new colors
-            if ((saveFlags & SaveFlags.Colors) == SaveFlags.Colors)
+            if ((fileFlags & FileFlags.Colors) == FileFlags.Colors)
             {
                 var colorChip = targetEngine.ColorChip;
 
                 AddExporter(new ColorPaletteExporter(path + "colors.png", colorChip, new PNGWriter()));
             }
-
-            // Step 4 (optional). Look for color map for sprites and tile map
-            if ((saveFlags & SaveFlags.ColorMap) == SaveFlags.ColorMap)
-                if (targetEngine.GetChip(ColorMapParser.chipName, false) is ColorChip colorChip)
-                    AddExporter(new ColorPaletteExporter(path + "color-map.png", colorChip, new PNGWriter()));
-
+            
             // Step 5 (optional). Look for new sprites
-            if ((saveFlags & SaveFlags.Sprites) == SaveFlags.Sprites)
+            if ((fileFlags & FileFlags.Sprites) == FileFlags.Sprites)
             {
                 //                Console.WriteLine("Export Sprite");
 
@@ -67,7 +62,7 @@ namespace PixelVision8.Runner.Services
             }
 
             // Step 7 (optional). Look for fonts to load
-            if ((saveFlags & SaveFlags.Fonts) == SaveFlags.Fonts)
+            if ((fileFlags & FileFlags.Fonts) == FileFlags.Fonts)
             {
                 var fontChip = targetEngine.FontChip;
                 var spriteChip = targetEngine.SpriteChip;
@@ -92,27 +87,27 @@ namespace PixelVision8.Runner.Services
                 }
             }
 
-            if ((saveFlags & SaveFlags.Tilemap) == SaveFlags.Tilemap)
+            if ((fileFlags & FileFlags.Tilemap) == FileFlags.Tilemap)
                 AddExporter(new TilemapJsonExporter(path + "tilemap.json", targetEngine));
 
             // Step 8 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.Meta) == SaveFlags.Meta)
+            if ((fileFlags & FileFlags.Meta) == FileFlags.Meta)
                 AddExporter(new MetadataExporter(path + "info.json", targetEngine));
 
             // Step 9 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.Sounds) == SaveFlags.Sounds)
+            if ((fileFlags & FileFlags.Sounds) == FileFlags.Sounds)
                 AddExporter(new SfxrSoundExporter(path + "sounds.json", targetEngine));
 
             // Step 10 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.Music) == SaveFlags.Music)
+            if ((fileFlags & FileFlags.Music) == FileFlags.Music)
                 AddExporter(new MusicExporter(path + "music.json", targetEngine));
 
             // Step 11 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.SaveData) == SaveFlags.SaveData)
+            if ((fileFlags & FileFlags.SaveData) == FileFlags.SaveData)
                 AddExporter(new SavedDataExporter(path + "saves.json", targetEngine));
 
             // Step 11 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.MetaSprites) == SaveFlags.MetaSprites)
+            if ((fileFlags & FileFlags.MetaSprites) == FileFlags.MetaSprites)
                 AddExporter(new MetaSpriteExporter(path + "meta-sprites.json", targetEngine));
 
             StartExport(useSteps);

@@ -21,7 +21,7 @@
 using Microsoft.Xna.Framework;
 // using ICSharpCode.SharpZipLib.Zip;
 // using ICSharpCode.SharpZipLib.Zip;
-using PixelVision8.Runner.Utils;
+using PixelVision8.Runner;
 using PixelVision8.Runner.Workspace;
 using System;
 using System.Collections.Generic;
@@ -40,7 +40,7 @@ namespace PixelVision8.Runner.Exporters
         protected CompressionLevel compressionLevel;
 
 
-        public ZipExporter(string fileName, IFileLoadHelper fileLoadHelper, Dictionary<WorkspacePath, WorkspacePath> srcFiles, int compressionLevel = 0) : base(fileName)
+        public ZipExporter(string fileName, IFileLoader fileLoadHelper, Dictionary<WorkspacePath, WorkspacePath> srcFiles, int compressionLevel = 0) : base(fileName)
         {
             SourceFiles = srcFiles.ToList();
 

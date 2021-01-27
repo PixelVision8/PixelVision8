@@ -24,7 +24,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner.Gif
 {
     internal abstract class Block
     {

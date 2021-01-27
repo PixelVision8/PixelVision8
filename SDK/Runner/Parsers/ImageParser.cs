@@ -18,7 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class ImageParser : AbstractParser
     {

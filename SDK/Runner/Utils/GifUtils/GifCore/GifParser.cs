@@ -25,7 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner.Gif
 {
     /// <summary>
     /// Gif specs: https://www.w3.org/Graphics/GIF/spec-gif89a.txt

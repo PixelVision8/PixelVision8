@@ -20,14 +20,14 @@
 
 using PixelVision8.Player;
 using PixelVision8.Runner.Exporters;
-using PixelVision8.Runner.Utils;
+using PixelVision8.Runner;
 using PixelVision8.Runner.Workspace;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Runner
 {
     public class WorkspaceServicePlus : WorkspaceService
     {

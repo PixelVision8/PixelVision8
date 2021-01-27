@@ -24,7 +24,7 @@
 using Microsoft.Xna.Framework;
 using System;
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner.Gif
 {
     /// <summary>
     /// Converter textures.

@@ -20,7 +20,7 @@
 
 using PixelVision8.Player;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class ScriptParser : AbstractParser
     {

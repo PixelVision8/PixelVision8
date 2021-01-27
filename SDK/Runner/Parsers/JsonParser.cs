@@ -18,11 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Runner.Utils;
+using PixelVision8.Runner;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class JsonParser : AbstractParser
     {
@@ -30,7 +30,7 @@ namespace PixelVision8.Runner.Parsers
 
         protected string JsonString;
 
-        public JsonParser(string filePath, IFileLoadHelper fileLoadHelper)
+        public JsonParser(string filePath, IFileLoader fileLoadHelper)
         {
             FileLoadHelper = fileLoadHelper;
             SourcePath = filePath;

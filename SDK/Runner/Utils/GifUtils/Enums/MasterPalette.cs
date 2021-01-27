@@ -21,7 +21,7 @@
 // Shawn Rakowski - @shwany
 //
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner.Gif
 {
     /// <summary>
     /// These are selections of colors based in evenly ordered RGB levels which provide complete RGB combinations,

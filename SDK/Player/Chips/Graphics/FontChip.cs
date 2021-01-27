@@ -85,6 +85,9 @@ namespace PixelVision8.Player
 
             return null;
         }
+        
+        // TODO don't forget to add 'typeof(FontChip).FullName' to the Chip list in the GameRunner.Activate.cs class
+
     }
 }
 
