@@ -678,4 +678,23 @@ namespace PixelVision8.Runner
             }
         }
     }
+    
+    public partial class Loader
+    {
+        [FileParser("data.png")]
+        public void ParseSystem(string file, IPlayerChips engine)
+        {
+            // if (!string.IsNullOrEmpty(files[0]))
+            // {
+                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
+
+                var jsonParser = new SystemParser(file, _fileLoadHelper, engine);
+
+                jsonParser.CalculateSteps();
+
+                while (jsonParser.completed == false) jsonParser.NextStep();
+            // }
+            
+        }
+    }
 }

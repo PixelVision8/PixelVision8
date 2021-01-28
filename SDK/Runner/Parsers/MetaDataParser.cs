@@ -46,4 +46,13 @@ namespace PixelVision8.Runner
         }
 
     }
+    
+    public partial class Loader
+    {
+        [FileParser("info.json")]
+        public void ParseMetaData(string file, IPlayerChips engine)
+        {
+            AddParser(new MetaDataParser(file, _fileLoadHelper, engine));
+        }
+    }
 }

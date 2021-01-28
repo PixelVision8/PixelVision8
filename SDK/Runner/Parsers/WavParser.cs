@@ -61,10 +61,10 @@ namespace PixelVision8.Runner
 
     public partial class Loader
     {
-        [FileParser(".wav", "Music")]
-        public void ParseWave(string[] files, IPlayerChips engine)
+        [FileParser(".wav")]
+        public void ParseWave(string[] file, IPlayerChips engine)
         {
-            AddParser(new WavParser(files, _fileLoadHelper, engine ));
+            AddParser(new WavParser(file, _fileLoadHelper, engine ));
         }
     }
     

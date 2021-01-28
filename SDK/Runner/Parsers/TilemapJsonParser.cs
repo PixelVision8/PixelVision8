@@ -294,7 +294,16 @@ namespace PixelVision8.Runner
             StepCompleted();
         }
 
-
-
+    }
+    
+    public partial class Loader
+    {
+        [FileParser("tilemap.json")]
+        public void ParseTilemapJson(string file, IPlayerChips engine)
+        {
+            
+            AddParser(new TilemapJsonParser(file, _fileLoadHelper, engine));
+            
+        }
     }
 }

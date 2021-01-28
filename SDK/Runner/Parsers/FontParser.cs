@@ -47,8 +47,7 @@ namespace PixelVision8.Runner
         private List<string> uniqueFontColors;
         private int[] fontMap;
 
-        public FontParser(IImageParser parser, ColorChip colorChip, FontChip fontChip) : base(parser,
-            colorChip, fontChip)
+        public FontParser(string sourceFile, IImageParser parser, ColorChip colorChip, FontChip fontChip) : base(sourceFile, parser, colorChip, fontChip)
         {
             this.fontChip = fontChip;
         }
@@ -109,20 +108,10 @@ namespace PixelVision8.Runner
     
     public partial class Loader
     {
-        [FileParser("font.png", "Fonts")]
-        public void ParseFonts(string[] files, IPlayerChips engine)
+        [FileParser("font.png")]
+        public void ParseFonts(string file, IPlayerChips engine)
         {
-            for (int i = 0; i < files.Length; i++)
-            {
-                // We only want to parse a single sprite file so just take the first one in the list
-                // var imageParser = new PNGParser(files[i], _graphicsDevice, engine.ColorChip.maskColor);
-
-                AddParser(new FontParser(_imageParser, engine.ColorChip, engine.FontChip)
-                {
-                    SourcePath = files[i]
-                });
-            }
-            
+            AddParser(new FontParser(file, _imageParser, engine.ColorChip, engine.FontChip));
         }
     }
 }

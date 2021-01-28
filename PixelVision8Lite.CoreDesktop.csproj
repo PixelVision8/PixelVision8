@@ -35,6 +35,8 @@
     <EmbeddedResource Remove="SDK/Lua/**" />
     <Content Remove="Content/Effects/**" />
     <EmbeddedResource Remove="Disks/APIExamples/AddScript/**" />
+    <Content Remove="Content\Fonts\**" />
+    <EmbeddedResource Remove="Content\Fonts\**" />
   </ItemGroup>
 
   <!-- Point this variable to the API Example you want to run. -->
@@ -164,6 +166,9 @@
   <ItemGroup>
     <None Remove="Disks/APIExamples/AddScript/**" />
     <None Remove="SDK/Runner/Utils/GifUtils/**" />
+    <None Remove="Content\Effects\**" />
+    <None Remove="Content\Fonts\**" />
+    <None Remove="Content\PixelVisionOS\**" />
   </ItemGroup>
 
 </Project>

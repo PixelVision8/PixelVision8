@@ -65,6 +65,7 @@ namespace PixelVision8.Runner
         /// </summary>
         public string Message { get; protected set; }
 
+        
         public virtual void ParseFiles(string[] files, IPlayerChips engine, FileFlags fileFlags)
         {
             
@@ -132,7 +133,7 @@ namespace PixelVision8.Runner
                 {
                     //var imageParser = new PNGFileReader(_fileLoadHelper);
 
-                    _loader.ParseFonts(paths.ToArray(), targetEngine);
+                    _loader.ParseFonts(fileName, targetEngine);
                     // _loader.AddParser(new FontParser(imageParser, targetEngine.ColorChip, targetEngine.FontChip){
                     //     SourcePath = fileName,
                     //     MaskHex = targetEngine.ColorChip.maskColor
@@ -168,14 +169,14 @@ namespace PixelVision8.Runner
             // Step 12 (optional). Look for meta sprites
             if ((fileFlags & FileFlags.MetaSprites) == FileFlags.MetaSprites) LoadMetaSprites(files);
 
-            ParseExtraFileTypes(files, engine, fileFlags);
+            // ParseExtraFileTypes(files, engine, fileFlags);
 
         }
 
-        public virtual void ParseExtraFileTypes(string[] files, IPlayerChips engine, FileFlags fileFlags)
-        {
-            // TODO Override and add extra file parsers here.
-        }
+        // public virtual void ParseExtraFileTypes(string[] files, IPlayerChips engine, FileFlags fileFlags)
+        // {
+        //     // TODO Override and add extra file parsers here.
+        // }
 
         public void LoadAll()
         {
@@ -240,7 +241,8 @@ namespace PixelVision8.Runner
             {
                 // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
-                return new MetaDataParser(file, _fileLoadHelper, targetEngine);
+                _loader.ParseMetaData(file, targetEngine);
+                // return new MetaDataParser(file, _fileLoadHelper, targetEngine);
             }
 
             return null;
@@ -256,9 +258,11 @@ namespace PixelVision8.Runner
             {
                 // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
-                var jsonParser = new TilemapJsonParser(file, _fileLoadHelper, targetEngine);
-
-                _loader.AddParser(jsonParser);
+                _loader.ParseTilemapJson(file, targetEngine);
+                
+                // var jsonParser = new TilemapJsonParser(file, _fileLoadHelper, targetEngine);
+                //
+                // _loader.AddParser(jsonParser);
 
                 return;
             }
@@ -269,7 +273,7 @@ namespace PixelVision8.Runner
             if (!string.IsNullOrEmpty(file))
             {
 
-                _loader.ParseTilemapImage(new []{file}, targetEngine);
+                _loader.ParseTilemapImage(file, targetEngine);
                 
                 //var imageParser = new PNGFileReader(_fileLoadHelper);
                 // _loader.AddParser(new TilemapParser(imageParser, targetEngine.ColorChip, targetEngine.SpriteChip, targetEngine.TilemapChip)
@@ -291,7 +295,7 @@ namespace PixelVision8.Runner
             if (!string.IsNullOrEmpty(file))
             {
                 
-                _loader.ParseSprites(new []{file}, targetEngine);
+                _loader.ParseSprites(file, targetEngine);
                 
                 //var imageParser = new PNGFileReader(_fileLoadHelper);
 
@@ -316,13 +320,15 @@ namespace PixelVision8.Runner
 
             if (!string.IsNullOrEmpty(file))
             {
+                _loader.ParseColors(file, targetEngine);
+                
                 //                var tex = ReadTexture(ReadAllBytes(file));
                 // var imageParser = new PNGFileReader(_fileLoadHelper);
 
-                return new ColorParser(imageParser, targetEngine.ColorChip)
-                {
-                    SourcePath = file
-                };
+                // return new ColorParser(file, imageParser, targetEngine.ColorChip);
+                // {
+                //     SourcePath = file
+                // };
             }
 
             return null;
@@ -335,13 +341,15 @@ namespace PixelVision8.Runner
 
             if (!string.IsNullOrEmpty(file))
             {
-                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
-
-                var jsonParser = new SystemParser(file, _fileLoadHelper, targetEngine);
-
-                jsonParser.CalculateSteps();
-
-                while (jsonParser.completed == false) jsonParser.NextStep();
+                
+                _loader.ParseSystem(file, targetEngine);
+                // // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
+                //
+                // var jsonParser = new SystemParser(file, _fileLoadHelper, targetEngine);
+                //
+                // jsonParser.CalculateSteps();
+                //
+                // while (jsonParser.completed == false) jsonParser.NextStep();
             }
 
         }
@@ -355,8 +363,8 @@ namespace PixelVision8.Runner
             if (!string.IsNullOrEmpty(file))
             {
                 // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
-
-                _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
+                _loader.ParseSounds(file, targetEngine);
+                // _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
             }
 
         }
@@ -371,8 +379,8 @@ namespace PixelVision8.Runner
             if (!string.IsNullOrEmpty(file))
             {
                 // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
-
-                _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
+                _loader.ParseMusic(file, targetEngine);
+                // _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
             }
         }
 
@@ -383,7 +391,10 @@ namespace PixelVision8.Runner
 
             if (!string.IsNullOrEmpty(file))
             {
-                _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
+                
+                _loader.ParseMetaSprites(file, targetEngine);
+
+                // _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
             }
         }
 
@@ -395,13 +406,43 @@ namespace PixelVision8.Runner
             if (!string.IsNullOrEmpty(file))
             {
 
+                _loader.ParseSaveData(file, targetEngine);
 
                 // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
-                _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
+                // _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
 
             }
         }
 
+    }
+    
+    // Custom parsers
+    public partial class Loader
+    {
+        [FileParser("saves.json")]
+        public void ParseSaveData(string file, IPlayerChips engine)
+        {
+            AddParser(new SystemParser(file, _fileLoadHelper, engine));
+        }
+        
+        [FileParser("sounds.json")]
+        public void ParseSounds(string file, IPlayerChips engine)
+        {
+            AddParser(new SystemParser(file, _fileLoadHelper, engine));
+        }
+        
+        [FileParser("music.json")]
+        public void ParseMusic(string file, IPlayerChips engine)
+        {
+            AddParser(new SystemParser(file, _fileLoadHelper, engine));
+        }
+        
+        [FileParser("meta-sprites.json")]
+        public void ParseMetaSprites(string file, IPlayerChips engine)
+        {
+            AddParser(new SystemParser(file, _fileLoadHelper, engine));
+        }
+        
     }
 }

@@ -1149,7 +1149,7 @@ namespace PixelVision8.Runner.Editors
 
                 loadService.targetEngine = targetGame;
 
-                loadService.AddParser(new FontParser(pngReader, targetGame.ColorChip, targetGame.FontChip));
+                loadService.AddParser(new FontParser("", pngReader, targetGame.ColorChip, targetGame.FontChip));
 
                 loadService.LoadAll();
 

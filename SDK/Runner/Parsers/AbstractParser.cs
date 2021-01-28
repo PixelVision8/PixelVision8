@@ -31,7 +31,7 @@ namespace PixelVision8.Runner
 
         public int CurrentStep { get; protected set; }
 
-        public string SourcePath;
+        protected string SourcePath;
 
         public virtual byte[] bytes { get; set; }
 

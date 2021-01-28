@@ -36,8 +36,9 @@ namespace PixelVision8.Runner
         protected Color tmpColor;
         protected int totalColors;
 
-        public ColorParser(IImageParser parser, ColorChip colorChip) : base(parser)
+        public ColorParser(string sourceFile, IImageParser parser, ColorChip colorChip) : base(parser)
         {
+            SourcePath = sourceFile;
             this.colorChip = colorChip;
             // unique = colorChip.unique;
             magenta = Utilities.HexToColor(colorChip.maskColor);
@@ -57,20 +58,7 @@ namespace PixelVision8.Runner
 
         public virtual void ReadColors()
         {
-            // TODO this should be removed in future releases, it's only here to support legacy games
-
-            // If we are loading a legacy game and no system colors are defined, used the image parser's palette
-
-            //            if (colorChip.supportedColors == null)
-            //            {
-            //                string[] systemColors = imageParser.colorPalette.Select(c => ((ColorData) c).ToHex()).ToArray();
-            ////
-            //                for (int i = 0; i < systemColors.Length; i++)
-            //                {
-            //                    colorChip.AddSupportedColor(systemColors[i]);
-            //                }
-            //            }
-
+            
             // Parse colors as normal
 
             var srcColors = Parser.colorPixels;
@@ -85,24 +73,14 @@ namespace PixelVision8.Runner
                 if (tmpColor.A < 1) // && !ignoreTransparent)
                     tmpColor = magenta;
 
-                
-                    //                if(tmpColor != magenta)
-                    colors.Add(tmpColor);
+                colors.Add(tmpColor);
             }
 
             totalColors = colors.Count;
 
             CurrentStep++;
         }
-        //
-        //        public void ResetColorChip()
-        //        {
-        //            // Clear the colors first
-        ////            colorChip.Clear();
-        //
-        //            currentStep++;
-        //        }
-
+        
         public void UpdateColors()
         {
             for (var i = 0; i < totalColors; i++)
@@ -114,6 +92,15 @@ namespace PixelVision8.Runner
             }
 
             CurrentStep++;
+        }
+    }
+    
+    public partial class Loader
+    {
+        [FileParser("colors.png")]
+        public void ParseColors(string file, IPlayerChips engine)
+        {
+            AddParser(new ColorParser(file, _imageParser, engine.ColorChip));
         }
     }
 }

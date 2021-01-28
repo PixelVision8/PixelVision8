@@ -40,8 +40,10 @@ namespace PixelVision8.Runner
         protected int x, y;
         public ImageData ImageData;
 
-        public SpriteImageParser(IImageParser parser, ColorChip colorChip, SpriteChip spriteChip = null) : base(parser)
+        public SpriteImageParser(string sourceFile, IImageParser parser, ColorChip colorChip, SpriteChip spriteChip = null) : base(parser)
         {
+
+            SourcePath = sourceFile;
 
             Parser = parser;
             
@@ -249,15 +251,10 @@ namespace PixelVision8.Runner
     
     public partial class Loader
     {
-        [FileParser("sprite.png", "Sprites")]
-        public void ParseSprites(string[] files, IPlayerChips engine)
+        [FileParser("sprite.png")]
+        public void ParseSprites(string file, IPlayerChips engine)
         {
-            
-            AddParser(new SpriteImageParser(_imageParser, engine.ColorChip, engine.SpriteChip)
-            {
-                SourcePath = files[0]
-            });
-            
+            AddParser(new SpriteImageParser(file, _imageParser, engine.ColorChip, engine.SpriteChip));
         }
     }
 }

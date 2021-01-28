@@ -37,7 +37,7 @@ namespace PixelVision8.Runner.Exporters
         public int[] ids;
         public int totalSpritesInTexture;
 
-        public SpriteDataParser(IImageParser parser, ColorChip colorChip, SpriteChip spriteChip) : base(parser,
+        public SpriteDataParser(IImageParser parser, ColorChip colorChip, SpriteChip spriteChip) : base("", parser,
             colorChip, spriteChip)
         {
         }

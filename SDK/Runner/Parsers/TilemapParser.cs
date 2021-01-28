@@ -29,8 +29,8 @@ namespace PixelVision8.Runner
         private readonly TilemapChip tilemapChip;
         private bool autoResize;
 
-        public TilemapParser(IImageParser parser, ColorChip colorChip, SpriteChip spriteChip, TilemapChip tilemapChip, bool autoResize = false) :
-            base(parser, colorChip, spriteChip)
+        public TilemapParser(string sourceFile, IImageParser parser, ColorChip colorChip, SpriteChip spriteChip, TilemapChip tilemapChip, bool autoResize = false) :
+            base(sourceFile, parser, colorChip, spriteChip)
         {
             this.tilemapChip = tilemapChip;
 
@@ -101,18 +101,10 @@ namespace PixelVision8.Runner
     
     public partial class Loader
     {
-        [FileParser("tilemap.png", "Tilemap")]
-        public void ParseTilemapImage(string[] files, IPlayerChips engine)
+        [FileParser("tilemap.png")]
+        public void ParseTilemapImage(string file, IPlayerChips engine)
         {
-            
-            // We only want to parse a single sprite file so just take the first one in the list
-            // var imageParser = new PNGParser(files[0], _graphicsDevice, engine.ColorChip.maskColor);
-
-            AddParser(new TilemapParser(_imageParser, engine.ColorChip, engine.SpriteChip, engine.TilemapChip, true)
-            {
-                    SourcePath = files[0]
-            });
-
+            AddParser(new TilemapParser(file, _imageParser, engine.ColorChip, engine.SpriteChip, engine.TilemapChip, true));
         }
     }
 }

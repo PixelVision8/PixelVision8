@@ -283,7 +283,7 @@ namespace PixelVision8.Runner
 
 
 
-            var imageParser = new SpriteImageParser(reader, tmpColorChip);
+            var imageParser = new SpriteImageParser("", reader, tmpColorChip);
 
             // Manually call each step
             imageParser.ParseImageData();

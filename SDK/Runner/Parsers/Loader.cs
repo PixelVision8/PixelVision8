@@ -37,13 +37,11 @@ namespace PixelVision8.Runner
         public class FileParser : Attribute
         {
             public string FileType;
-            public string FlagType;
             public MethodInfo MethodInfo;
 
-            public FileParser(string fileType, string flagType)
+            public FileParser(string fileType)
             {
                 FileType = fileType;
-                FlagType = flagType;
             }
             
         }
@@ -60,16 +58,13 @@ namespace PixelVision8.Runner
         public int TotalSteps;
         private readonly IFileLoader _fileLoadHelper;
 
-        private GraphicsDevice _graphicsDevice;
-
         public List<FileParser> ParserMapping = new List<FileParser>();
         
         private IImageParser _imageParser;
         
-        public Loader(IFileLoader fileLoadHelper, IImageParser imageParser, GraphicsDevice graphicsDevice = null)
+        public Loader(IFileLoader fileLoadHelper, IImageParser imageParser)
         {
             _fileLoadHelper = fileLoadHelper;
-            _graphicsDevice = graphicsDevice;
             _imageParser = imageParser;
             
             var methods = GetType().GetMethods().Where(m=>m.GetCustomAttributes(typeof(FileParser), false).Length > 0).ToArray();
@@ -152,7 +147,12 @@ namespace PixelVision8.Runner
 
                 if (filesToParse.Length > 0)
                 {
-                    parserInfo.MethodInfo.Invoke(this, new object[]{filesToParse, engine});
+                    
+                    for (int j = 0; j < filesToParse.Length; j++)
+                    {
+                        parserInfo.MethodInfo.Invoke(this, new object[]{filesToParse[j], engine});
+                    }
+                    
                 }
                 
             }
