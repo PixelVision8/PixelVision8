@@ -106,9 +106,12 @@ namespace PixelVision8.Runner
         {
             
             // We only want to parse a single sprite file so just take the first one in the list
-            var imageParser = new PNGParser(files[0], _graphicsDevice, engine.ColorChip.maskColor);
+            // var imageParser = new PNGParser(files[0], _graphicsDevice, engine.ColorChip.maskColor);
 
-            AddParser(new TilemapParser(imageParser, engine.ColorChip, engine.SpriteChip, engine.TilemapChip, true));
+            AddParser(new TilemapParser(_imageParser, engine.ColorChip, engine.SpriteChip, engine.TilemapChip, true)
+            {
+                    SourcePath = files[0]
+            });
 
         }
     }

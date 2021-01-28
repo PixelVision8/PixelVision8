@@ -24,7 +24,6 @@ using PixelVision8.Player;
 using PixelVision8.Player.Audio;
 using PixelVision8.Runner.Chips;
 using PixelVision8.Runner.Exporters;
-using PixelVision8.Runner.Importers;
 using PixelVision8.Runner;
 using PixelVision8.Runner.Workspace;
 using System;
@@ -1141,8 +1140,8 @@ namespace PixelVision8.Runner.Editors
                     Name = path
                 };
 
-                var pngReader = new PNGReader(imageBytes, targetGame.ColorChip.maskColor)
-                { FileName = filePath.EntityName };
+                var pngReader = new PNGReader(imageBytes);
+                // { FileName = filePath.EntityName };
 
                 var loadService = runner.loadService;
 

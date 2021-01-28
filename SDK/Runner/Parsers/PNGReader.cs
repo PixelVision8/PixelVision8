@@ -20,19 +20,17 @@
 
 using Microsoft.Xna.Framework;
 using PixelVision8.Player;
-using PixelVision8.Runner;
-//using PixelVisionRunner.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MonoGame.Framework.Utilities;
 
-namespace PixelVision8.Runner.Importers
+namespace PixelVision8.Runner
 {
     public class PNGReader : IImageParser
     {
-        public string MaskHex => maskHex;
+        public string MaskHex { get; private set; }= "#FF00FF";
 
         protected List<Color> _colorPalette;
         protected Color[] _colors;
@@ -48,14 +46,8 @@ namespace PixelVision8.Runner.Importers
         protected Palette palette;
         public int[] pixels;
 
-        public PNGReader(byte[] bytes = null, string maskHex = "#FF00FF")
+        public PNGReader(byte[] bytes = null)
         {
-            this.maskHex = maskHex;
-
-            chunks = new List<PngChunk>();
-            dataChunks = new List<PngChunk>();
-            _colorPalette = new List<Color>();
-
             if (bytes != null) ReadBytes(bytes);
         }
 
@@ -68,8 +60,16 @@ namespace PixelVision8.Runner.Importers
 
         public virtual string FileName { get; set; } = "untitled.png";
 
+        private void Reset()
+        {
+            chunks = new List<PngChunk>();
+            dataChunks = new List<PngChunk>();
+            _colorPalette = new List<Color>();
+        }
+        
         public void ReadBytes(byte[] bytes)
         {
+            Reset();
             // this.bytes = bytes;
 
             //            this.inputStream = inputStream;
@@ -81,10 +81,13 @@ namespace PixelVision8.Runner.Importers
             ReadHeader();
         }
 
-        public virtual void ReadStream()
+        public virtual void ReadStream(string sourcePath, string maskHex)
         {
+            
             if (!IsImage()) throw new Exception("File does not have PNG signature.");
 
+            this.maskHex = maskHex;
+            
             UnpackDataChunks();
         }
 

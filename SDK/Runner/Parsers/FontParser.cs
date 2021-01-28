@@ -44,7 +44,6 @@ namespace PixelVision8.Runner
     public class FontParser : SpriteImageParser
     {
         private readonly FontChip fontChip;
-        private readonly string name;
         private List<string> uniqueFontColors;
         private int[] fontMap;
 
@@ -52,10 +51,8 @@ namespace PixelVision8.Runner
             colorChip, fontChip)
         {
             this.fontChip = fontChip;
-            // imageParser.ReadStream();
-            name = parser.FileName.Split('.').First();
         }
-
+        
         public override void CreateImage()
         {
 
@@ -83,12 +80,11 @@ namespace PixelVision8.Runner
             base.PrepareSprites();
 
             fontMap = new int[totalSprites];
-            //            base.PreCutOutSprites();
         }
 
         protected override void PostCutOutSprites()
         {
-            fontChip.AddFont(name, fontMap);
+            fontChip.AddFont(Parser.FileName.Split('.').First(), fontMap);
             base.PostCutOutSprites();
         }
 
@@ -119,9 +115,12 @@ namespace PixelVision8.Runner
             for (int i = 0; i < files.Length; i++)
             {
                 // We only want to parse a single sprite file so just take the first one in the list
-                var imageParser = new PNGParser(files[i], _graphicsDevice, engine.ColorChip.maskColor);
+                // var imageParser = new PNGParser(files[i], _graphicsDevice, engine.ColorChip.maskColor);
 
-                AddParser(new FontParser(imageParser, engine.ColorChip, engine.FontChip));
+                AddParser(new FontParser(_imageParser, engine.ColorChip, engine.FontChip)
+                {
+                    SourcePath = files[i]
+                });
             }
             
         }

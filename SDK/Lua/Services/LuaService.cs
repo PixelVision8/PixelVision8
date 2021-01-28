@@ -23,7 +23,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using MoonSharp.Interpreter;
 using PixelVision8.Runner.Exporters;
-using PixelVision8.Runner.Importers;
 using PixelVision8.Runner;
 using PixelVision8.Runner.Workspace;
 using System;
@@ -277,7 +276,7 @@ namespace PixelVision8.Runner
                     fileStream.Close();
                 }
 
-                reader = new PNGReader(memoryStream.ToArray(), maskHex);
+                reader = new PNGReader(memoryStream.ToArray());
             }
 
             var tmpColorChip = new ColorChip();

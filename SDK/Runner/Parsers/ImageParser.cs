@@ -23,7 +23,8 @@ namespace PixelVision8.Runner
     public class ImageParser : AbstractParser
     {
         protected IImageParser Parser;
-
+        protected string MaskHex = "#FF00FF";
+        
         public ImageParser(IImageParser parser)
         {
             Parser = parser;
@@ -37,7 +38,7 @@ namespace PixelVision8.Runner
 
         public void ParseImageData()
         {
-            Parser.ReadStream();
+            Parser.ReadStream(SourcePath, MaskHex);
 
             StepCompleted();
         }

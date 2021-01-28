@@ -119,8 +119,9 @@ namespace PixelVision8.Runner
             _tmpEngine.GetChip(gameClass);
 
             var fileHelper = new FileLoadHelper();
+            var imageParser = new PNGParser(_graphics.GraphicsDevice);
 
-            var loader = new Loader(fileHelper, _graphics.GraphicsDevice);
+            var loader = new Loader(fileHelper, imageParser, _graphics.GraphicsDevice);
 
             // Process the files
             loader.ParseFiles(gameFiles.ToArray(), _tmpEngine);

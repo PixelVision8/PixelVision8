@@ -18,26 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-
-/* Unmerged change from project 'PixelVision8.CoreDesktop'
-Before:
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
-After:
-using Microsoft.Xna.Framework;
-using System.Collections.Chips;
-using PixelVision8.Engine.Utils;
-using System;
-using System.Collections.Framework;
-using System.Diagnostics;
-using System.Linq;
-*/
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +28,6 @@ namespace PixelVision8.Runner
     public class SpriteImageParser : ImageParser
     {
         protected ColorChip colorChip;
-        // protected Color[] colorData;
         protected int cps;
         protected int index;
         protected int maxSprites;
@@ -64,9 +43,14 @@ namespace PixelVision8.Runner
         public SpriteImageParser(IImageParser parser, ColorChip colorChip, SpriteChip spriteChip = null) : base(parser)
         {
 
+            Parser = parser;
+            
             // this.chips = chips;
             this.spriteChip = spriteChip;
             this.colorChip = colorChip;
+            
+            // Read the color chip's mask color
+            MaskHex = colorChip.maskColor;
 
             if (spriteChip != null)
             {
@@ -141,7 +125,7 @@ namespace PixelVision8.Runner
                 // var color = imageColors[i];
                 var color = imageColors[i];
 
-                if (color == Parser.MaskHex) continue;
+                if (color == colorChip.maskColor) continue;
 
                 var id = Array.IndexOf(colorRefs, color);
 
@@ -165,17 +149,6 @@ namespace PixelVision8.Runner
             // Sort colors
             uniqueColorIDs.Sort();
 
-
-/* Unmerged change from project 'PixelVision8.CoreDesktop'
-Before:
-            var indexes = new List<int>();
-            
-            // find open slots
-After:
-            var indexes = new List<int>();
-
-            // find open slots
-*/
             var indexes = new List<int>();
 
             // find open slots
@@ -187,17 +160,6 @@ After:
                 }
             }
 
-
-/* Unmerged change from project 'PixelVision8.CoreDesktop'
-Before:
-            var totalOrphanColors = orphanColors.Count;
-            
-            for (int i = 0; i < indexes.Count; i++)
-After:
-            var totalOrphanColors = orphanColors.Count;
-
-            for (int i = 0; i < indexes.Count; i++)
-*/
             var totalOrphanColors = orphanColors.Count;
 
             for (int i = 0; i < indexes.Count; i++)
@@ -290,10 +252,12 @@ After:
         [FileParser("sprite.png", "Sprites")]
         public void ParseSprites(string[] files, IPlayerChips engine)
         {
-            // We only want to parse a single sprite file so just take the first one in the list
-            var imageParser = new PNGParser(files[0], _graphicsDevice, engine.ColorChip.maskColor);
-
-            AddParser(new SpriteImageParser(imageParser, engine.ColorChip, engine.SpriteChip));
+            
+            AddParser(new SpriteImageParser(_imageParser, engine.ColorChip, engine.SpriteChip)
+            {
+                SourcePath = files[0]
+            });
+            
         }
     }
 }

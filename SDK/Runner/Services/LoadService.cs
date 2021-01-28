@@ -20,7 +20,6 @@
 
 using Microsoft.Xna.Framework;
 using PixelVision8.Player;
-using PixelVision8.Runner.Importers;
 using PixelVision8.Runner;
 using System;
 using System.Collections.Generic;
@@ -45,12 +44,18 @@ namespace PixelVision8.Runner
         // public int TotalSteps;
         private readonly IFileLoader _fileLoadHelper;
 
+        private IImageParser imageParser;
+
         public LoadService(IFileLoader fileLoadHelper)
         {
+            
+            imageParser = new PNGFileReader(fileLoadHelper);
+
             // TODO need to create a way to pass in the graphics device
-            _loader = new Loader(fileLoadHelper);
+            _loader = new Loader(fileLoadHelper, imageParser);
             
             _fileLoadHelper = fileLoadHelper;
+            
         }
 
         public float Percent => _loader.Percent;
@@ -125,9 +130,13 @@ namespace PixelVision8.Runner
                 // Loop through each of the fonts and load them up
                 foreach (var fileName in paths)
                 {
-                    var imageParser = new PNGFileReader(fileName, _fileLoadHelper, targetEngine.ColorChip.maskColor);
+                    //var imageParser = new PNGFileReader(_fileLoadHelper);
 
-                    _loader.AddParser(new FontParser(imageParser, targetEngine.ColorChip, targetEngine.FontChip));
+                    _loader.ParseFonts(paths.ToArray(), targetEngine);
+                    // _loader.AddParser(new FontParser(imageParser, targetEngine.ColorChip, targetEngine.FontChip){
+                    //     SourcePath = fileName,
+                    //     MaskHex = targetEngine.ColorChip.maskColor
+                    // });
                 }
             }
 
@@ -260,15 +269,19 @@ namespace PixelVision8.Runner
             if (!string.IsNullOrEmpty(file))
             {
 
-                var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
-                _loader.AddParser(new TilemapParser(imageParser, targetEngine.ColorChip, targetEngine.SpriteChip, targetEngine.TilemapChip));
+                _loader.ParseTilemapImage(new []{file}, targetEngine);
+                
+                //var imageParser = new PNGFileReader(_fileLoadHelper);
+                // _loader.AddParser(new TilemapParser(imageParser, targetEngine.ColorChip, targetEngine.SpriteChip, targetEngine.TilemapChip)
+                // {
+                //     SourcePath = file,
+                //     MaskHex = targetEngine.ColorChip.maskColor
+                // });
 
             }
 
-
         }
         
-
         protected AbstractParser LoadSprites(string[] files)
         {
             
@@ -277,11 +290,18 @@ namespace PixelVision8.Runner
 
             if (!string.IsNullOrEmpty(file))
             {
-                var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
+                
+                _loader.ParseSprites(new []{file}, targetEngine);
+                
+                //var imageParser = new PNGFileReader(_fileLoadHelper);
 
-                var colorChip = targetEngine.ColorChip;
-
-                return new SpriteImageParser(imageParser, colorChip, targetEngine.SpriteChip);
+                // var colorChip = targetEngine.ColorChip;
+                //
+                // return new SpriteImageParser(imageParser, colorChip, targetEngine.SpriteChip)
+                // {
+                //     SourcePath = file,
+                //     MaskHex = targetEngine.ColorChip.maskColor
+                // };
             }
 
             return null;
@@ -297,9 +317,12 @@ namespace PixelVision8.Runner
             if (!string.IsNullOrEmpty(file))
             {
                 //                var tex = ReadTexture(ReadAllBytes(file));
-                var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
+                // var imageParser = new PNGFileReader(_fileLoadHelper);
 
-                return new ColorParser(imageParser, targetEngine.ColorChip);
+                return new ColorParser(imageParser, targetEngine.ColorChip)
+                {
+                    SourcePath = file
+                };
             }
 
             return null;

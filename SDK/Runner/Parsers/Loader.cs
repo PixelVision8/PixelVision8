@@ -64,10 +64,13 @@ namespace PixelVision8.Runner
 
         public List<FileParser> ParserMapping = new List<FileParser>();
         
-        public Loader(IFileLoader fileLoadHelper, GraphicsDevice graphicsDevice = null)
+        private IImageParser _imageParser;
+        
+        public Loader(IFileLoader fileLoadHelper, IImageParser imageParser, GraphicsDevice graphicsDevice = null)
         {
             _fileLoadHelper = fileLoadHelper;
             _graphicsDevice = graphicsDevice;
+            _imageParser = imageParser;
             
             var methods = GetType().GetMethods().Where(m=>m.GetCustomAttributes(typeof(FileParser), false).Length > 0).ToArray();
 
