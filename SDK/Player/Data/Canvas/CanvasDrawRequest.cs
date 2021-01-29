@@ -18,20 +18,22 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
 using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Player
 {
     public class CanvasDrawRequest
     {
-        public string Action;
+        public Action<CanvasDrawRequest> Action;
         public Rectangle Bounds = Rectangle.Empty;
         public int ColorOffset;
         public bool Fill;
         public bool FlipH;
         public bool FlipV;
         public PixelData PixelData = new PixelData();
-        public int x;
-        public int y;
+        public int X;
+        public int Y;
     }
+
 }

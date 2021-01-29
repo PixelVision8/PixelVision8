@@ -20,7 +20,7 @@
 
 namespace PixelVision8.Player
 {
-    public partial class Canvas
+    public sealed partial class Canvas
     {
         // Reference https://tech-algorithm.com/articles/nearest-neighbor-image-scaling/
         public int[] ResizePixels(int[] pixels, int w1, int h1, int w2, int h2)

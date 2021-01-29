@@ -19,10 +19,7 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Player;
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace PixelVision8.Player
 {
@@ -31,119 +28,34 @@ namespace PixelVision8.Player
     {
     }
     
-    public partial class Canvas : AbstractData, IDraw
+    public sealed partial class Canvas : AbstractData, IDraw
     {
 
-        private readonly GameChip gameChip;
-        private PixelData stroke = new PixelData();
-        private PixelData pattern = new PixelData();
-        private readonly Point spriteSize;
         private readonly CanvasDrawRequest[] requestPool = new CanvasDrawRequest[1024];
-        private PixelData defaultLayer = new PixelData();
-        private PixelData tmpLayer = new PixelData();
-        private Rectangle _tmpRect = Rectangle.Empty;
+        
         private int currentRequest = -1;
-        private bool canDraw;
-        private Point linePattern = new Point(1, 0);
-        // public bool wrap = false;
-        public Dictionary<string, Action<CanvasDrawRequest>> Actions = new Dictionary<string, Action<CanvasDrawRequest>>();
-        private PixelData currentTexture;
-
-        // These are temporary values we use to help speed up calculations
-        private int _x0;
-        private int _y0;
-        private int _x1;
-        private int _y1;
-        private int _w;
-        private int _h;
-        private int _total;
-        private CanvasDrawRequest _request;
-        private int tmpX;
-        private int tmpY;
-        private int tmpW;
-        private int tmpH;
-        int _counter = 0;
-        int _sx;
-        int _sy;
-        private long _a;
-        private long _b;
-        private long _b1;
-        private double _dx;
-        private double _dy;
-        private double _err;
-        private double _e2;
-        private int _size;
-        private PixelData _tmpPixelData = new PixelData();
-
-        public int width => defaultLayer.Width;
-        public int height => defaultLayer.Height;
+        
+        public int Width => defaultLayer.Width;
+        public int Height => defaultLayer.Height;
         public int[] Pixels => defaultLayer.Pixels;
 
-        public Canvas(int width, int height, GameChip gameChip = null)
+        public Canvas(int width, int height)
         {
+            Configure(width, height);
+        }
 
+        private void Configure(int width, int height)
+        {
             Resize(width, height);
-
+            
             // Make the canvas the default drawing surface
             currentTexture = defaultLayer;
-
-            this.gameChip = gameChip;
 
             // Create a pool of draw requests
             for (int i = 0; i < requestPool.Length; i++)
             {
                 requestPool[i] = new CanvasDrawRequest();
             }
-            
-            MethodInfo[] methods = typeof(Canvas).GetMethods(); 
-  
-            // for loop to read through all methods 
-  
-            // for (int i = 0; i < methods.GetLength(0); i++) { 
-            //
-            //     object[] attributesArray = methods[i].GetCustomAttributes(true); 
-            //
-            //     // foreach loop to read through  
-            //     // all attributes of the method 
-            //     foreach(Attribute item in attributesArray) 
-            //     { 
-            //         if (item is DrawActionAttribute) { 
-            //
-            //             // Display the fields of the NewAttribute 
-            //             DrawActionAttribute attributeObject = (DrawActionAttribute)item; 
-            //             Console.WriteLine("{0} - {1}", methods[i].Name, 
-            //                 attributeObject);
-            //             
-            //             
-            //             // Actions.Add("SetStroke", methods[i].CreateDelegate() => SetStrokeAction(reqatt););
-            //
-            //             // Actions.Add(new Action<CanvasDrawRequest>(request => methods[i]);
-            //             //     {method[i].Name.Replace("Action", ""), request => method[i]});
-            //
-            //             // Actions.Add("SetStroke", request => SetStrokeAction(request));
-            //         } 
-            //     } 
-            // } 
-
-            // TODO could we register external drawing calls to this?
-            Actions = new Dictionary<string, Action<CanvasDrawRequest>>()
-            {
-                {"SetStroke", request => SetStrokeAction(request)},
-                {"SetPattern", request => SetPatternAction(request)},
-                {"DrawLine", request => DrawLineAction(request)},
-                {"DrawRectangle", request => DrawRectangleAction(request)},
-                {"DrawEllipse", request => DrawEllipseAction(request)},
-                {"DrawPixelData", request => DrawPixelDataAction(request)},
-                {"FloodFill", request => FloodFillAction(request)},
-                {"ChangeTargetCanvas", request => ChangeTargetCanvasAction(request)},
-                {"SaveTmpLayer", request => SaveTmpLayerAction(request)},
-            };
-
-            if (gameChip != null)
-            {
-                spriteSize = gameChip.SpriteSize();
-            }
-
         }
 
         public void Resize(int width, int height) => Utilities.Resize(defaultLayer, width, height);
@@ -167,15 +79,18 @@ namespace PixelVision8.Player
         [DrawAction]
         private void DrawPixelDataAction(CanvasDrawRequest request)
         {
-            Utilities.MergePixels(request.PixelData, request.Bounds.X, request.Bounds.Y, request.Bounds.Width, request.Bounds.Height, defaultLayer, request.x, request.y, request.FlipH, request.FlipV, request.ColorOffset);
+            Utilities.MergePixels(request.PixelData, request.Bounds.X, request.Bounds.Y, request.Bounds.Width, request.Bounds.Height, defaultLayer, request.X, request.Y, request.FlipH, request.FlipV, request.ColorOffset);
         }
 
         private int GetPixel(PixelData pixelData, int x, int y)
         {
-            _size = pixelData.Height;
-            y = (y % _size + _size) % _size;
-            _size = pixelData.Width;
-            x = (x % _size + _size) % _size;
+            
+            // TODO this needs to be removed
+            
+            var size = pixelData.Height;
+            y = (y % size + size) % size;
+            size = pixelData.Width;
+            x = (x % size + size) % size;
 
             return pixelData[x + pixelData.Width * y];
         }
@@ -183,11 +98,13 @@ namespace PixelVision8.Player
         private void SetPixel(PixelData pixelData, int x, int y, int color)
         {
 
+            // TODO this needs to be removed
+
             // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
-            _size = pixelData.Height;
-            y = (y % _size + _size) % _size;
-            _size = pixelData.Width;
-            x = (x % _size + _size) % _size;
+            var size = pixelData.Height;
+            y = (y % size + size) % size;
+            size = pixelData.Width;
+            x = (x % size + size) % size;
 
             pixelData[x + pixelData.Width * y] = color;
 
@@ -229,6 +146,8 @@ namespace PixelVision8.Player
             // This only works when the canvas has a reference to the gameChip
             if (gameChip == null) return;
 
+            int tmpX, tmpY, tmpW, tmpH;
+            
             if (viewport.HasValue)
             {
                 tmpX = viewport.Value.X;
@@ -240,8 +159,8 @@ namespace PixelVision8.Player
             {
                 tmpX = 0;
                 tmpY = 0;
-                tmpW = width;
-                tmpH = height;
+                tmpW = Width;
+                tmpH = Height;
             }
 
             var srcPixels = GetPixels(tmpX, tmpY, tmpW, tmpH);
@@ -280,7 +199,7 @@ namespace PixelVision8.Player
 
         }
 
-        public virtual void Clear(int colorRef = -1, int x = 0, int y = 0, int? width = null, int? height = null)
+        public void Clear(int colorRef = -1, int x = 0, int y = 0, int? width = null, int? height = null)
         {
             if (width.HasValue || height.HasValue)
             {
@@ -312,7 +231,7 @@ namespace PixelVision8.Player
             return Utilities.GetPixels(defaultLayer, x, y, blockWidth, blockHeight);
         }
 
-        public virtual void SetPixels(int[] pixels)
+        public void SetPixels(int[] pixels)
         {
             // Flatten the canvas
             Draw();
@@ -335,14 +254,7 @@ namespace PixelVision8.Player
             for (int i = 0; i < _total; i++)
             {
                 // Get the next request
-                _request = requestPool[i];
-
-                // Check to see if the action exists
-                if (Actions.ContainsKey(_request.Action))
-                {
-                    // Pass the request into the action
-                    Actions[_request.Action](_request);
-                }
+                requestPool[i].Action(requestPool[i]);
             }
 
             // Reset the request

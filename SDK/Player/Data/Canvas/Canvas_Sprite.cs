@@ -1,10 +1,25 @@
+using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-    public partial class Canvas
+    
+    public sealed partial class Canvas
     {
+        private readonly Point spriteSize;
+        private readonly GameChip gameChip;
+
         // TODO need to draw pixel data to the display and route the sprite and text through it
+        
+        private int _total;
+
+        public Canvas(int width, int height, GameChip gameChip)
+        {
+            this.gameChip = gameChip;
+            spriteSize = gameChip.SpriteSize();
+            
+            Configure(width, height);
+        }
 
         public void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
@@ -15,7 +30,7 @@ namespace PixelVision8.Player
 
             var newRequest = getRequest;
 
-            newRequest.Action = "DrawPixelData";
+            newRequest.Action = DrawPixelDataAction;
 
             // We need at least 1 pixel to save the sprite ID
             if (newRequest.PixelData.Width != spriteSize.X || newRequest.PixelData.Height != spriteSize.Y)
@@ -26,8 +41,8 @@ namespace PixelVision8.Player
             // Copy over the pixel
             Utilities.SetPixels(gameChip.Sprite(id), newRequest.PixelData);
 
-            newRequest.x = x;
-            newRequest.y = y;
+            newRequest.X = x;
+            newRequest.Y = y;
             newRequest.Bounds.X = 0;
             newRequest.Bounds.Y = 0;
             newRequest.Bounds.Width = spriteSize.X;

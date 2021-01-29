@@ -20,12 +20,12 @@
 
 namespace PixelVision8.Player
 {
-    public partial class Canvas
+    public sealed partial class Canvas
     {
         public int ReadPixelAt(int x, int y)
         {
             // Calculate the index
-            var index = x + y * width;
+            var index = x + y * Width;
 
             if (index >= defaultLayer.TotalPixels) return -1;
 

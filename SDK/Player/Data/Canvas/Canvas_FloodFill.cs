@@ -23,7 +23,7 @@ using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Player
 {
-    public partial class Canvas
+    public sealed partial class Canvas
     {
         public void FloodFill(int x, int y)
         {
@@ -34,7 +34,7 @@ namespace PixelVision8.Player
 
             var newRequest = getRequest;
 
-            newRequest.Action = "FloodFill";
+            newRequest.Action = FloodFillAction;
             newRequest.Bounds.X = x;
             newRequest.Bounds.Y = y;
 
@@ -49,7 +49,7 @@ namespace PixelVision8.Player
         [DrawAction]
         public void FloodFillAction(CanvasDrawRequest request)
         {
-            if (request.Bounds.X < 0 || request.Bounds.Y < 0 || request.Bounds.X > width || request.Bounds.Y > height) return;
+            if (request.Bounds.X < 0 || request.Bounds.Y < 0 || request.Bounds.X > Width || request.Bounds.Y > Height) return;
 
             // Get the color at the point where we are trying to fill and use that to match all the color inside the shape
             var targetColor = GetPixel(currentTexture, request.Bounds.X, request.Bounds.Y);
@@ -67,7 +67,7 @@ namespace PixelVision8.Player
                 y1++;
                 var spanLeft = false;
                 var spanRight = false;
-                while (y1 < height && GetPixel(currentTexture, temp.X, y1) == targetColor)
+                while (y1 < Height && GetPixel(currentTexture, temp.X, y1) == targetColor)
                 {
                     SetPixel(currentTexture, temp.X, y1, GetPixel(pattern, temp.X, y1));
 
@@ -83,14 +83,14 @@ namespace PixelVision8.Player
                         spanLeft = false;
                     }
 
-                    if (!spanRight && temp.X < width - 1 && GetPixel(currentTexture, temp.X + 1, y1) == targetColor)
+                    if (!spanRight && temp.X < Width - 1 && GetPixel(currentTexture, temp.X + 1, y1) == targetColor)
                     {
                         if (GetPixel(currentTexture, temp.X + 1, y1) != GetPixel(pattern, temp.X, y1))
                             pixels.Push(new Point(temp.X + 1, y1));
 
                         spanRight = true;
                     }
-                    else if (spanRight && temp.X < width - 1 && GetPixel(currentTexture, temp.X + 1, y1) != targetColor)
+                    else if (spanRight && temp.X < Width - 1 && GetPixel(currentTexture, temp.X + 1, y1) != targetColor)
                     {
                         spanRight = false;
                     }

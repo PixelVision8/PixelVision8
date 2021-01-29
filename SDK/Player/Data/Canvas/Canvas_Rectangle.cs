@@ -18,10 +18,14 @@
 // Shawn Rakowski - @shwany
 //
 
+using Microsoft.Xna.Framework;
+
 namespace PixelVision8.Player
 {
-    public partial class Canvas
+    public sealed partial class Canvas
     {
+        private Rectangle _tmpRect = Rectangle.Empty;
+            
         public void DrawRectangle(int x, int y, int rectWidth, int rectHeight, bool fill = false)
         {
 
@@ -45,7 +49,7 @@ namespace PixelVision8.Player
 
             var newRequest = getRequest;
 
-            newRequest.Action = "DrawRectangle";
+            newRequest.Action = DrawRectangleAction;
 
             newRequest.Bounds.X = _tmpRect.X;
             newRequest.Bounds.Y = _tmpRect.Y;

@@ -22,16 +22,18 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-    public partial class Canvas
+    public sealed partial class Canvas
     {
+        private readonly PixelData _tmpPixelData = new PixelData();
+
         /// <summary>
         ///     Allows you to merge the pixel data of another canvas into this one without compleatly overwritting it.
         /// </summary>
         /// <param name="canvas"></param>
-        public void MergeCanvas(Canvas canvas, int colorOffset = 0, bool ignoreTransparent = false) => MergePixels(0, 0, canvas.width, canvas.height, canvas.GetPixels(), false, false, colorOffset, ignoreTransparent);
+        public void MergeCanvas(Canvas canvas, int colorOffset = 0, bool ignoreTransparent = false) => MergePixels(0, 0, canvas.Width, canvas.Height, canvas.GetPixels(), false, false, colorOffset, ignoreTransparent);
 
 
-        public virtual void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels,
+        public void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels,
             bool flipH = false, bool flipV = false, int colorOffset = 0, bool ignoreTransparent = true)
         {
 

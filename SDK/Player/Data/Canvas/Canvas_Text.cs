@@ -2,7 +2,7 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-    public partial class Canvas
+    public sealed partial class Canvas
     {
         public void DrawText(string text, int x, int y, string font = "default", int colorOffset = 0, int spacing = 0)
         {
@@ -22,7 +22,7 @@ namespace PixelVision8.Player
 
                 var newRequest = getRequest;
 
-                newRequest.Action = "DrawPixelData";
+                newRequest.Action = DrawPixelDataAction;
 
                 // We need at least 1 pixel to save the sprite ID
                 if (newRequest.PixelData.Width != spriteSize.X || newRequest.PixelData.Height != spriteSize.Y)
@@ -33,8 +33,8 @@ namespace PixelVision8.Player
                 // Copy over the pixel
                 Utilities.SetPixels(gameChip.FontChar(text[i], font), newRequest.PixelData);
 
-                newRequest.x = nextX;
-                newRequest.y = y;
+                newRequest.X = nextX;
+                newRequest.Y = y;
                 newRequest.Bounds.X = 0;
                 newRequest.Bounds.Y = 0;
                 newRequest.Bounds.Width = spriteSize.X;

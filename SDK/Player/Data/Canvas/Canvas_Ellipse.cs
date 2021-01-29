@@ -22,8 +22,13 @@ using System;
 
 namespace PixelVision8.Player
 {
-    public partial class Canvas
+    public sealed partial class Canvas
     {
+        
+        private long _a;
+        private long _b;
+        private long _b1;
+        
         public void DrawEllipse(int x, int y, int ellipseWidth, int ellipseHeight, bool fill = false)
         {
 
@@ -44,7 +49,7 @@ namespace PixelVision8.Player
 
             newRequest.Fill = fill;
 
-            newRequest.Action = "DrawEllipse";
+            newRequest.Action = DrawEllipseAction;
 
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
@@ -60,6 +65,9 @@ namespace PixelVision8.Player
         public void DrawEllipseAction(CanvasDrawRequest request)
         {
 
+            int _x0, _y0, _x1, _y1;
+            double _dx, _dy, _err, _e2;
+            
             // Save the x and y values to calculate below
             _x0 = request.Bounds.Left;
             _y0 = request.Bounds.Top;

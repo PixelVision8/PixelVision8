@@ -20,8 +20,13 @@
 
 namespace PixelVision8.Player
 {
-    public partial class Canvas
+    public sealed partial class Canvas
     {
+        // int _counter = 0;
+        private int _sx;
+        private int _sy;
+        
+        
         public void DrawLine(int x0, int y0, int x1, int y1)
         {
             var getRequest = NextRequest();
@@ -31,7 +36,7 @@ namespace PixelVision8.Player
 
             var newRequest = getRequest;
 
-            newRequest.Action = "DrawLine";
+            newRequest.Action = DrawLineAction;
 
             newRequest.Bounds.X = x0;
             newRequest.Bounds.Y = y0;
@@ -47,12 +52,14 @@ namespace PixelVision8.Player
         [DrawAction]
         private void DrawLineAction(CanvasDrawRequest drawRequest)
         {
+            int _x0, _y0, _x1, _y1, _dx, _dy, _err, _e2;
+
             _x0 = drawRequest.Bounds.X;
             _y0 = drawRequest.Bounds.Y;
             _x1 = drawRequest.Bounds.Width;// - stroke.Width;
             _y1 = drawRequest.Bounds.Height;// - stroke.Width;
 
-            _counter = 0;
+            // _counter = 0;
 
             _dx = _x1 - _x0;
 
@@ -84,7 +91,7 @@ namespace PixelVision8.Player
             {
                 SetStrokePixel(_x0, _y0);
 
-                _counter++;
+                // _counter++;
                 if (_x0 == _x1 && _y0 == _y1) break;
 
                 _e2 = _err;

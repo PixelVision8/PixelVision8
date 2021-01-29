@@ -249,4 +249,8 @@
     <PackageReference Include="MoonSharp" Version="2.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="**\saves.json" />
+  </ItemGroup>
+
 </Project>

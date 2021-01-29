@@ -22,8 +22,10 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-    public partial class Canvas
+    public sealed partial class Canvas
     {
+        private PixelData stroke = new PixelData();
+
         public void SetStroke(int color, int size = 1)
         {
             var getRequest = NextRequest();
@@ -33,7 +35,7 @@ namespace PixelVision8.Player
 
             var newRequest = getRequest;
 
-            newRequest.Action = "SetStroke";
+            newRequest.Action = SetStrokeAction;
 
             if (newRequest.PixelData.Width != size || newRequest.PixelData.Height != size)
             {

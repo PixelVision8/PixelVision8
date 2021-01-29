@@ -22,8 +22,12 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-    public partial class Canvas
+    public sealed partial class Canvas
     {
+        private readonly PixelData defaultLayer = new PixelData();
+        private readonly PixelData tmpLayer = new PixelData();
+        private PixelData currentTexture;
+        
         private void ChangeTargetCanvas(int width, int height)
         {
             var getRequest = NextRequest();
@@ -33,7 +37,7 @@ namespace PixelVision8.Player
 
             var newRequest = getRequest;
 
-            newRequest.Action = "ChangeTargetCanvas";
+            newRequest.Action = ChangeTargetCanvasAction;
             // newRequest.PixelData = textureData;
             newRequest.Bounds.Width = width;
             newRequest.Bounds.Height = height;
@@ -62,9 +66,9 @@ namespace PixelVision8.Player
 
             var newRequest = getRequest;
 
-            newRequest.Action = "SaveTmpLayer";
-            newRequest.x = x;
-            newRequest.y = y;
+            newRequest.Action = SaveTmpLayerAction;
+            newRequest.X = x;
+            newRequest.Y = y;
             newRequest.Bounds.X = 0;
             newRequest.Bounds.Y = 0;
             newRequest.Bounds.Width = blockWidth;
@@ -78,7 +82,7 @@ namespace PixelVision8.Player
         [DrawAction]
         private void SaveTmpLayerAction(CanvasDrawRequest request)
         {
-            Utilities.MergePixels(tmpLayer, request.Bounds.X, request.Bounds.Y, request.Bounds.Width, request.Bounds.Height, defaultLayer, request.x, request.y);
+            Utilities.MergePixels(tmpLayer, request.Bounds.X, request.Bounds.Y, request.Bounds.Width, request.Bounds.Height, defaultLayer, request.X, request.Y);
 
             currentTexture = defaultLayer;
         }

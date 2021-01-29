@@ -22,8 +22,10 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-    public partial class Canvas
+    public sealed partial class Canvas
     {
+        private PixelData pattern = new PixelData();
+
         public void SetPattern(int[] newPixels, int newWidth, int newHeight)
         {
             var getRequest = NextRequest();
@@ -33,7 +35,7 @@ namespace PixelVision8.Player
 
             var newRequest = getRequest;
 
-            newRequest.Action = "SetPattern";
+            newRequest.Action = SetPatternAction;
 
             if (newRequest.PixelData.Width != newWidth || newRequest.PixelData.Height != newHeight)
             {
