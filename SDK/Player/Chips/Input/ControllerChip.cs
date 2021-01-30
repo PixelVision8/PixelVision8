@@ -168,7 +168,7 @@ namespace PixelVision8.Player
         }
 
 
-        public override void Configure()
+        protected override void Configure()
         {
             Player.ControllerChip = this;
 
@@ -184,12 +184,6 @@ namespace PixelVision8.Player
             previousMouseState = currentMouseState;
 
             RegisterControllers();
-        }
-
-        public override void Deactivate()
-        {
-            base.Deactivate();
-            Player.ControllerChip = null;
         }
 
         private Controller getPlayer(int index)

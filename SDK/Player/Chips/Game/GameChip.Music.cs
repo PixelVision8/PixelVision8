@@ -31,7 +31,7 @@ namespace PixelVision8.Player
     /// </summary>
     public partial class GameChip
     {
-        protected MusicChip MusicChip => ((PixelVision) Player).MusicChip;
+        private MusicChip MusicChip => Player.MusicChip;
 
         /// <summary>
         ///     Plays a sing by it's ID. You can pass in a start position for it to being at a specific pattern ID in the song.

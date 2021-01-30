@@ -421,7 +421,7 @@ namespace PixelVision8.Runner
                 {
                     var zipPath = WorkspacePath.Parse(zipExporter.fileName);
 
-                    SaveExporterFiles(new Dictionary<string, byte[]>() {{zipExporter.fileName, zipExporter.bytes}});
+                    SaveExporterFiles(new Dictionary<string, byte[]>() {{zipExporter.fileName, zipExporter.Bytes}});
                 }
             }
             catch (Exception e)

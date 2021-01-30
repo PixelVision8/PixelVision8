@@ -51,9 +51,9 @@ namespace PixelVision8.Runner
             base.CalculateSteps();
 
             //            steps.Add(IndexColors);
-            _steps.Add(ReadColors);
+            Steps.Add(ReadColors);
             //            steps.Add(ResetColorChip);
-            _steps.Add(UpdateColors);
+            Steps.Add(UpdateColors);
         }
 
         public virtual void ReadColors()

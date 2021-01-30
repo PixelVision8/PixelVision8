@@ -65,13 +65,13 @@ namespace PixelVision8.Runner
         {
             base.CalculateSteps();
 
-            _steps.Add(StartGif);
+            Steps.Add(StartGif);
 
-            _steps.Add(IndexColors);
+            Steps.Add(IndexColors);
 
-            _steps.Add(BuildColorTable);
+            Steps.Add(BuildColorTable);
 
-            _steps.Add(ConvertFrame);
+            Steps.Add(ConvertFrame);
         }
 
         public void AddFrame(float delay = 0)
@@ -238,7 +238,7 @@ namespace PixelVision8.Runner
                     binary.AddRange(encoded.OrderBy(j => j.Key).SelectMany(j => j.Value));
                     binary.Add(0x3B); // GIF Trailer.
 
-                    bytes = binary.ToArray();
+                    Bytes = binary.ToArray();
                     // encodeProgress.Completed = true;
                 }
 

@@ -65,15 +65,15 @@ namespace PixelVision8.Runner
         {
             base.CalculateSteps();
 
-            _steps.Add(CreateImage);
+            Steps.Add(CreateImage);
 
             if (spriteChip != null)
             {
-                _steps.Add(PrepareSprites);
+                Steps.Add(PrepareSprites);
 
-                _steps.Add(CutOutSprites);
+                Steps.Add(CutOutSprites);
 
-                _steps.Add(PostCutOutSprites);
+                Steps.Add(PostCutOutSprites);
             }
         }
 

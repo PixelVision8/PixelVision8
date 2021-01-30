@@ -43,26 +43,26 @@ namespace PixelVision8.Runner
 {
     public class FontParser : SpriteImageParser
     {
-        private readonly FontChip fontChip;
-        private List<string> uniqueFontColors;
-        private int[] fontMap;
+        private readonly FontChip _fontChip;
+        private List<string> _uniqueFontColors;
+        private int[] _fontMap;
 
         public FontParser(string sourceFile, IImageParser parser, ColorChip colorChip, FontChip fontChip) : base(
             sourceFile, parser, colorChip, fontChip)
         {
-            this.fontChip = fontChip;
+            _fontChip = fontChip;
         }
 
         public override void CreateImage()
         {
             // Get all the colors from the image
-            uniqueFontColors = Parser.colorPalette.Select(c => Utilities.RgbToHex(c.R, c.G, c.B)).ToList();
+            _uniqueFontColors = Parser.colorPalette.Select(c => Utilities.RgbToHex(c.R, c.G, c.B)).ToList();
 
             // Remove the mask color
-            uniqueFontColors.Remove(colorChip.MaskColor);
+            _uniqueFontColors.Remove(colorChip.MaskColor);
 
             // Convert into an array
-            var colorRefs = uniqueFontColors.ToArray();
+            var colorRefs = _uniqueFontColors.ToArray();
 
             // Convert all of the pixels into color ids
             var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorRefs, Utilities.RgbToHex(c.R, c.G, c.B)))
@@ -78,12 +78,12 @@ namespace PixelVision8.Runner
         {
             base.PrepareSprites();
 
-            fontMap = new int[totalSprites];
+            _fontMap = new int[totalSprites];
         }
 
         protected override void PostCutOutSprites()
         {
-            fontChip.AddFont(Parser.FileName.Split('.').First(), fontMap);
+            _fontChip.AddFont(Parser.FileName.Split('.').First(), _fontMap);
             base.PostCutOutSprites();
         }
 
@@ -101,7 +101,7 @@ namespace PixelVision8.Runner
             spriteChip.UpdateSpriteAt(id, spriteData);
 
             // Set the id to the font map
-            fontMap[index] = id;
+            _fontMap[index] = id;
         }
     }
 

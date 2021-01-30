@@ -193,7 +193,7 @@ namespace PixelVision8.Player
         ///     calls Clear() to clear any data and also sets the defaut size to 8 x
         ///     8.
         /// </summary>
-        public override void Configure()
+        protected override void Configure()
         {
             Player.SpriteChip = this;
 
@@ -209,12 +209,6 @@ namespace PixelVision8.Player
         public void Clear()
         {
             _spriteMemory.Clear();
-        }
-
-        public override void Deactivate()
-        {
-            base.Deactivate();
-            Player.SpriteChip = null;
         }
 
         /// <summary>

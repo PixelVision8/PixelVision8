@@ -124,9 +124,9 @@ namespace PixelVision8.Runner
                 // Aggregate all Get all the messages
                 foreach (var exporter in exporters)
                 {
-                    if (exporter.bytes != null)
+                    if (exporter.Bytes != null)
                     {
-                        files.Add(exporter.fileName, exporter.bytes);
+                        files.Add(exporter.fileName, exporter.Bytes);
                     }
 
                     foreach (var response in exporter.Response)

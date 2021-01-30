@@ -82,7 +82,7 @@ namespace PixelVision8.Runner.Exporters
         }
 
         public Dictionary<string, object> Response => exporter.Response;
-        public byte[] bytes => exporter.bytes;
+        public byte[] Bytes => exporter.Bytes;
 
         public string fileName => exporter.fileName;
 

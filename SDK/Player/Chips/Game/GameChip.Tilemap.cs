@@ -26,10 +26,9 @@ namespace PixelVision8.Player
     {
         // TODO shared id with GameChip_Sprite
         protected TilemapChip TilemapChip => Player.TilemapChip;
+        
         private Point _tilemapSize = Point.Zero;
         private Point _scrollPos = Point.Zero;
-        // private int _total;
-        // private int _width;
 
         /// <summary>
         ///     You can scroll the tilemap by calling the ScrollPosition() method and supplying a new scroll X and Y position.
@@ -103,7 +102,7 @@ namespace PixelVision8.Player
         /// <param name="row">
         ///     The Y position of the tile in the tilemap. The 0 position is on the top of the tilemap.
         /// </param>
-        /// <param name="spriteID">
+        /// <param name="spriteId">
         ///     The sprite id to use for the tile.
         /// </param>
         /// <param name="colorOffset">
@@ -118,16 +117,16 @@ namespace PixelVision8.Player
         ///     Returns a dictionary containing the spriteID, colorOffset, and flag for an individual tile.
         /// </returns>
         //TODO this should return a custom class not a Dictionary
-        public TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null, int? flag = null,
+        public TileData Tile(int column, int row, int? spriteId = null, int? colorOffset = null, int? flag = null,
             bool? flipH = null, bool? flipV = null)
         {
             var invalidateTileMap = false;
 
             var tile = TilemapChip.GetTile(column, row);
 
-            if (spriteID.HasValue)
+            if (spriteId.HasValue)
             {
-                tile.SpriteId = spriteID.Value;
+                tile.SpriteId = spriteId.Value;
                 invalidateTileMap = true;
             }
 
@@ -237,7 +236,7 @@ namespace PixelVision8.Player
 
             for (var i = 0; i < total; i++)
             {
-                id = ids[i];
+                var id = ids[i];
 
                 var pos = Utilities.CalculatePosition(id, width);
 

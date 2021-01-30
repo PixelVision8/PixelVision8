@@ -39,7 +39,7 @@ namespace PixelVision8.Runner
         {
             base.CalculateSteps();
 
-            _steps.Add(LoadScript);
+            Steps.Add(LoadScript);
         }
 
         protected void LoadScript()

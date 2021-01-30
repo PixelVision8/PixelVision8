@@ -51,14 +51,6 @@ namespace PixelVision8.Player
     public class AbstractChip
     {
         protected IPlayerChips Player;
-        int SpriteCounter { get; set; }
-
-        /// <summary>
-        ///     Determines if the chip is enabled or active by the
-        ///     ChipManager. If marked as active it may be deleted
-        ///     when the ChipManager performs its cleanup.
-        /// </summary>
-        public bool Active { get; private set; }
 
         /// <summary>
         ///     Activate is the beginning of the chip's life cycle.
@@ -70,7 +62,6 @@ namespace PixelVision8.Player
         public void Activate(IPlayerChips parent)
         {
             Player = parent;
-            Active = true;
             Configure();
         }
 
@@ -81,19 +72,9 @@ namespace PixelVision8.Player
         ///     method must be implemented in order for a chip to activate
         ///     correctly.
         /// </summary>
-        public virtual void Configure()
+        protected virtual void Configure()
         {
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        ///     When called, this method sets the active field to
-        ///     false. It's part of the chip's life-cycle and is called when
-        ///     shutting down the ChipManager.
-        /// </summary>
-        public virtual void Deactivate()
-        {
-            Active = false;
         }
 
         public virtual void Init()

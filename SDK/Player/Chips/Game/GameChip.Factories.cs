@@ -78,7 +78,7 @@ namespace PixelVision8.Player
 
         public SpriteCollection NewMetaSprite(int id, string name, int[] spriteIDs, int width, int colorOffset = 0)
         {
-            if (id < 0 || id > _TotalMetaSprites)
+            if (id < 0 || id > metaSprites.Length)
                 return null;
 
             var collection = NewSpriteCollection(name);

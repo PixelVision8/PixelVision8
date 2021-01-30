@@ -33,7 +33,7 @@ namespace PixelVision8.Runner
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-            _steps.Add(ParseImageData);
+            Steps.Add(ParseImageData);
         }
 
         public void ParseImageData()

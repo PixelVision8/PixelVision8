@@ -55,16 +55,16 @@ namespace PixelVision8.Runner.Exporters
             base.CalculateSteps();
 
             // Create a new string builder
-            _steps.Add(CreateStringBuilder);
+            Steps.Add(CreateStringBuilder);
 
             // TODO need to see if there is a legacy flag
-            _steps.Add(SaveMapDataV1);
+            Steps.Add(SaveMapDataV1);
             // _steps.Add(SaveMapDataV2);
 
             // _steps.Add(SaveMapDataV1);
 
             // Save the final string builder
-            _steps.Add(CloseStringBuilder);
+            Steps.Add(CloseStringBuilder);
         }
 
 
@@ -602,7 +602,7 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
 
-            bytes = Encoding.UTF8.GetBytes(sb.ToString());
+            Bytes = Encoding.UTF8.GetBytes(sb.ToString());
 
             CurrentStep++;
         }

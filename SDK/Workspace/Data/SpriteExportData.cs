@@ -22,7 +22,7 @@ using Microsoft.Xna.Framework;
 using PixelVision8.Runner;
 using System;
 
-namespace PixelVision8.Runner.Data
+namespace PixelVision8.Runner
 {
     public class SpriteExportData
     {

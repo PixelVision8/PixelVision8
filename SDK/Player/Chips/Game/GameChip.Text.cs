@@ -6,8 +6,7 @@ namespace PixelVision8.Player
     {
         protected FontChip FontChip => Player.FontChip;
 
-        // protected int[] spriteIDs;
-        private const int _charOffset = 32;
+        private const int CharOffset = 32;
 
         /// <summary>
         ///     A helper method to convert a string of characters into an array of sprite IDs.
@@ -18,14 +17,10 @@ namespace PixelVision8.Player
         /// <exception cref="Exception"></exception>
         public int[] ConvertTextToSprites(string text, string fontName = "default")
         {
-            var _total = text.Length;
+            var total = text.Length;
 
             // TODO convert this to a list
-            var spriteIDs = new int[_total];
-
-            //            char character;
-
-            //            int spriteID, index;
+            var spriteIDs = new int[total];
 
             var fontMap = FontChip.ReadFont(fontName);
 
@@ -34,15 +29,15 @@ namespace PixelVision8.Player
 
             var totalCharacters = fontMap.Length;
 
-            for (var i = 0; i < _total; i++)
+            for (var i = 0; i < total; i++)
             {
                 var character = text[i];
-                var _index = Convert.ToInt32(character) - _charOffset;
-                var _spriteId = -1;
+                var index = Convert.ToInt32(character) - CharOffset;
+                var spriteId = -1;
 
-                if (_index < totalCharacters && _index > -1) _spriteId = fontMap[_index];
+                if (index < totalCharacters && index > -1) spriteId = fontMap[index];
 
-                spriteIDs[i] = _spriteId;
+                spriteIDs[i] = spriteId;
             }
 
             return spriteIDs;
@@ -56,7 +51,7 @@ namespace PixelVision8.Player
             if (fontMap == null) throw new Exception("Font '" + fontName + "' not found.");
 
             // TODO need to test this out
-            id = ConvertTextToSprites(character.ToString(), fontName)[0];
+            var id = ConvertTextToSprites(character.ToString(), fontName)[0];
 
             if (data != null)
             {

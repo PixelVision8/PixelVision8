@@ -261,7 +261,7 @@ namespace PixelVision8.Player
         /// <summary>
         ///     This method sets up the sequencer and all of its values.
         /// </summary>
-        public override void Configure()
+        protected override void Configure()
         {
             Player.MusicChip = this;
 

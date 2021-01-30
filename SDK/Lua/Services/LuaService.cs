@@ -324,7 +324,7 @@ namespace PixelVision8.Runner
 
             var output = new Dictionary<string, byte[]>
             {
-                {dest.Path, exporter.bytes}
+                {dest.Path, exporter.Bytes}
             };
 
             workspace.SaveExporterFiles(output);

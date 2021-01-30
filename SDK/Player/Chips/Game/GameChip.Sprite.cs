@@ -30,9 +30,6 @@ namespace PixelVision8.Player
         protected SpriteChip SpriteChip => Player.SpriteChip;
         private int[] _tmpSpriteData = new int[64];
 
-        private int id;
-        // protected Point _spriteSize = new Point(8, 8);
-
         /// <summary>
         ///     Pixel Vision 8 sprites have limits around how many colors they can display at once which is called
         ///     the Colors Per Sprite or CPS. The ColorsPerSprite() method returns this value from the SpriteChip.
@@ -54,13 +51,14 @@ namespace PixelVision8.Player
         /// <summary>
         ///     This method will automatically calculate the start color offset for palettes in the color chip.
         /// </summary>
-        /// <param name="paletteID">The palette number, 1 - 8</param>
+        /// <param name="paletteId">The palette number, 1 - 8</param>
+        /// <param name="paletteColorId"></param>
         /// <returns></returns>
-        public int PaletteOffset(int paletteID, int paletteColorID = 0)
+        public int PaletteOffset(int paletteId, int paletteColorId = 0)
         {
             // TODO this is hardcoded right now but there are 8 palettes with a max of 16 colors each
-            return 128 + Utilities.Clamp(paletteID, 0, 7) * 16 +
-                   Utilities.Clamp(paletteColorID, 0, ColorsPerSprite() - 1);
+            return 128 + Utilities.Clamp(paletteId, 0, 7) * 16 +
+                   Utilities.Clamp(paletteColorId, 0, ColorsPerSprite() - 1);
         }
 
         #region Sprite

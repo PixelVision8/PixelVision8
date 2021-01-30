@@ -37,8 +37,8 @@ namespace PixelVision8.Runner
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-            _steps.Add(ParseWavData);
-            _steps.Add(ConfigureSamples);
+            Steps.Add(ParseWavData);
+            Steps.Add(ConfigureSamples);
         }
 
         public void ParseWavData()

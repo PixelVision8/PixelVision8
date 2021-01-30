@@ -136,7 +136,7 @@ namespace PixelVision8.Runner
                 // Manually step through the exporter
                 while (tmpExporter.completed == false) tmpExporter.NextStep();
 
-                workspace.SaveExporterFiles(new Dictionary<string, byte[]> {{tmpExporter.fileName, tmpExporter.bytes}});
+                workspace.SaveExporterFiles(new Dictionary<string, byte[]> {{tmpExporter.fileName, tmpExporter.Bytes}});
 
                 return true;
             }

@@ -56,14 +56,14 @@ namespace PixelVision8.Runner.Exporters
         {
             base.CalculateSteps();
 
-            _steps.Add(CreateZip);
+            Steps.Add(CreateZip);
 
             for (int i = 0; i < SourceFiles.Count; i++)
             {
-                _steps.Add(AddFile);
+                Steps.Add(AddFile);
             }
 
-            _steps.Add(CloseZip);
+            Steps.Add(CloseZip);
         }
 
         public override void LoadSourceData()
@@ -123,7 +123,7 @@ namespace PixelVision8.Runner.Exporters
 
             ZipFs.Seek(0, SeekOrigin.Begin);
 
-            bytes = ZipFs.ToArray();
+            Bytes = ZipFs.ToArray();
 
             // Archive.Close();
             ZipFs.Close();

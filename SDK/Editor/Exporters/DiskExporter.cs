@@ -39,7 +39,7 @@ namespace PixelVision8.Runner.Exporters
         {
             base.CalculateSteps();
 
-            _steps.Add(ValidateSize);
+            Steps.Add(ValidateSize);
             ;
         }
 
@@ -61,7 +61,7 @@ namespace PixelVision8.Runner.Exporters
                     // Set the success back to false
                     Response["success"] = false;
 
-                    bytes = null;
+                    Bytes = null;
                 }
             }
 

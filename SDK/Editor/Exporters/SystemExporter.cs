@@ -41,48 +41,48 @@ namespace PixelVision8.Runner.Exporters
             base.CalculateSteps();
 
             // Create a new string builder
-            _steps.Add(CreateStringBuilder);
+            Steps.Add(CreateStringBuilder);
 
             // TODO all chips should export
 
             // Serialize Color Chip
             if (engine.ColorChip != null)
-                _steps.Add(delegate { SerializeColorChip(engine.ColorChip); });
+                Steps.Add(delegate { SerializeColorChip(engine.ColorChip); });
 
             // Serialize Display
             if (engine.DisplayChip != null)
-                _steps.Add(delegate { SerializeDisplay(engine.DisplayChip); });
+                Steps.Add(delegate { SerializeDisplay(engine.DisplayChip); });
 
             //             Serialize Controller
             if (engine.ControllerChip != null)
-                _steps.Add(delegate { SerializeControllerChip(engine.ControllerChip); });
+                Steps.Add(delegate { SerializeControllerChip(engine.ControllerChip); });
 
             // Serialize Font
             if (engine.FontChip != null)
-                _steps.Add(delegate { SerializeFontChip(engine.FontChip); });
+                Steps.Add(delegate { SerializeFontChip(engine.FontChip); });
 
             // Serialize Game
             if (engine.GameChip != null)
-                _steps.Add(delegate { SerializeGameChip(engine.GameChip); });
+                Steps.Add(delegate { SerializeGameChip(engine.GameChip); });
 
             // Serialize Music
             if (engine.MusicChip != null)
-                _steps.Add(delegate { SerializeMusicChip(engine.MusicChip); });
+                Steps.Add(delegate { SerializeMusicChip(engine.MusicChip); });
 
             // Serialize Sound
             if (engine.SoundChip != null /* && engine.SoundChip.export*/)
-                _steps.Add(delegate { SerializeSoundChip(engine.SoundChip as SfxrSoundChip); });
+                Steps.Add(delegate { SerializeSoundChip(engine.SoundChip as SfxrSoundChip); });
 
             // Serialize Sprite
             if (engine.SpriteChip != null)
-                _steps.Add(delegate { SerializeSpriteChip(engine.SpriteChip); });
+                Steps.Add(delegate { SerializeSpriteChip(engine.SpriteChip); });
 
             // Serialize Tilemap
             if (engine.TilemapChip != null)
-                _steps.Add(delegate { SerializeTilemapChip(engine.TilemapChip); });
+                Steps.Add(delegate { SerializeTilemapChip(engine.TilemapChip); });
 
             // Save the final string builder
-            _steps.Add(CloseStringBuilder);
+            Steps.Add(CloseStringBuilder);
         }
 
         private void CreateStringBuilder()
@@ -111,7 +111,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("}");
 
             //            Debug.Log("Save bytes");
-            bytes = Encoding.UTF8.GetBytes(sb.ToString());
+            Bytes = Encoding.UTF8.GetBytes(sb.ToString());
 
             CurrentStep++;
         }

@@ -297,7 +297,7 @@ namespace PixelVision8.Player
             if (LuaScript.Globals["Reset"] != null) LuaScript.Call(LuaScript.Globals["Reset"]);
         }
 
-        public override void Configure()
+        protected override void Configure()
         {
             base.Configure();
 

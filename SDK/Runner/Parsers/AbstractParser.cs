@@ -25,17 +25,17 @@ namespace PixelVision8.Runner
 {
     public abstract class AbstractParser : IAbstractParser
     {
-        protected List<Action> _steps = new List<Action>();
+        protected readonly List<Action> Steps = new List<Action>();
 
-        public IFileLoader FileLoadHelper;
+        protected IFileLoader FileLoadHelper;
 
-        public int CurrentStep { get; protected set; }
+        protected int CurrentStep { get; set; }
 
         protected string SourcePath;
 
-        public virtual byte[] bytes { get; set; }
+        public virtual byte[] Bytes { get; set; }
 
-        public int totalSteps => _steps.Count;
+        public int totalSteps => Steps.Count;
 
         public bool completed => CurrentStep >= totalSteps;
 
@@ -45,14 +45,14 @@ namespace PixelVision8.Runner
 
             // First step will always be to get the data needed to parse
             if (!string.IsNullOrEmpty(SourcePath))
-                _steps.Add(LoadSourceData);
+                Steps.Add(LoadSourceData);
         }
 
         public virtual void LoadSourceData()
         {
             if (FileLoadHelper != null)
             {
-                bytes = FileLoadHelper.ReadAllBytes(SourcePath);
+                Bytes = FileLoadHelper.ReadAllBytes(SourcePath);
             }
 
             StepCompleted();
@@ -62,7 +62,7 @@ namespace PixelVision8.Runner
         {
             if (completed) return;
 
-            _steps[CurrentStep]();
+            Steps[CurrentStep]();
         }
 
         public virtual void StepCompleted()
@@ -72,9 +72,9 @@ namespace PixelVision8.Runner
 
         public virtual void Dispose()
         {
-            bytes = null;
+            Bytes = null;
             FileLoadHelper = null;
-            _steps.Clear();
+            Steps.Clear();
         }
     }
 }

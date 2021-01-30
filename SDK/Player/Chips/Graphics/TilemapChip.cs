@@ -201,7 +201,7 @@ namespace PixelVision8.Player
         ///     also resizes the tile map to its default size of 32 x 30 which is a
         ///     resolution of 256 x 240.
         /// </summary>
-        public override void Configure()
+        protected override void Configure()
         {
             //ppu.tileMap = this;
             Player.TilemapChip = this;
@@ -215,12 +215,6 @@ namespace PixelVision8.Player
 
             // Resize to default nes resolution
             Resize(32, 30);
-        }
-
-        public override void Deactivate()
-        {
-            base.Deactivate();
-            Player.TilemapChip = null;
         }
 
         private void RebuildCache()

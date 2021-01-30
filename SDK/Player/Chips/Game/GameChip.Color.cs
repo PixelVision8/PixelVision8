@@ -38,7 +38,7 @@ namespace PixelVision8.Player
         ///     This method returns the current background color ID. If no color exists, it returns -1
         ///     which is magenta (#FF00FF).
         /// </returns>
-        public virtual int BackgroundColor(int? id = null)
+        public int BackgroundColor(int? id = null)
         {
             if (id.HasValue) ColorChip.BackgroundColor = id.Value;
 

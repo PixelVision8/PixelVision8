@@ -20,7 +20,6 @@
 
 using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
 using PixelVisionSDK.Player;
 
 namespace PixelVision8.Player
@@ -34,21 +33,13 @@ namespace PixelVision8.Player
     /// </summary>
     public partial class GameChip
     {
-        protected bool _tmpFlipH;
-        protected bool _tmpFlipV;
+        
         protected SpriteData _currentSpriteData;
-        protected List<SpriteData> tmpSpritesData;
-        protected int startX;
-        protected int startY;
         protected SpriteCollection[] metaSprites = new SpriteCollection[0];
         protected int[] tmpIDs = new int[0];
-        protected int height;
         public int maxSize = 256;
 
-        protected int _TotalMetaSprites
-        {
-            get => metaSprites.Length;
-        }
+        // private int _totalMetaSprites => metaSprites.Length;
 
         public int TotalMetaSprites(int? total = null)
         {
@@ -63,7 +54,7 @@ namespace PixelVision8.Player
                 }
             }
 
-            return _TotalMetaSprites;
+            return metaSprites.Length;
         }
 
         /// <summary>
@@ -102,7 +93,7 @@ namespace PixelVision8.Player
 
         public SpriteCollection MetaSprite(int id, SpriteCollection spriteCollection = null)
         {
-            if (id < 0 || id > _TotalMetaSprites)
+            if (id < 0 || id > metaSprites.Length)
                 return null;
 
             if (spriteCollection != null)
@@ -124,10 +115,12 @@ namespace PixelVision8.Player
         }
 
 
-        public int FindMetaSpriteId(string name)
+        protected int FindMetaSpriteId(string name)
         {
+            var total = metaSprites.Length;
+            
             // Loop through all of the meta sprites and find a name that matches
-            for (int i = 0; i < _TotalMetaSprites; i++)
+            for (int i = 0; i < total; i++)
             {
                 if (metaSprites[i].Name == name)
                     return i;
@@ -145,30 +138,30 @@ namespace PixelVision8.Player
 
             var spriteCollection = metaSprites[id];
             // Get the sprite data for the meta sprite
-            tmpSpritesData = spriteCollection.Sprites;
-            var _total = tmpSpritesData.Count;
+            var tmpSpritesData = spriteCollection.Sprites;
+            var total = tmpSpritesData.Count;
 
             // When rendering in Tile Mode, switch to grid layout
             if (drawMode == DrawMode.Tile)
             {
                 // TODO added this so C# code isn't corrupted, need to check performance impact
-                if (tmpIDs.Length != _total) Array.Resize(ref tmpIDs, _total);
+                if (tmpIDs.Length != total) Array.Resize(ref tmpIDs, total);
 
                 var i = 0;
 
-                for (i = 0; i < _total; i++)
+                for (i = 0; i < total; i++)
                 {
                     tmpIDs[i] = tmpSpritesData[i].Id;
                 }
 
                 var width = Utilities.CeilToInt(spriteCollection.Bounds.Width / SpriteChip.SpriteWidth);
 
-                height = Utilities.CeilToInt(_total / width);
+                var height = Utilities.CeilToInt(total / width);
 
                 if (flipH || flipV) Utilities.FlipPixelData(ref tmpIDs, width, height, flipH, flipV);
 
                 // TODO need to offset the bounds based on the scroll position before testing against it
-                for (i = 0; i < _total; i++)
+                for (i = 0; i < total; i++)
                 {
                     // Set the sprite id
                     id = tmpIDs[i];
@@ -195,28 +188,28 @@ namespace PixelVision8.Player
             else
             {
                 // Loop through each of the sprites
-                for (var i = 0; i < _total; i++)
+                for (var i = 0; i < total; i++)
                 {
                     _currentSpriteData = tmpSpritesData[i];
 
                     if (!SpriteChip.IsEmptyAt(_currentSpriteData.Id))
                     {
                         // Get sprite values
-                        startX = _currentSpriteData.X;
-                        startY = _currentSpriteData.Y;
-                        _tmpFlipH = _currentSpriteData.FlipH;
-                        _tmpFlipV = _currentSpriteData.FlipV;
+                        var startX = _currentSpriteData.X;
+                        var startY = _currentSpriteData.Y;
+                        var tmpFlipH = _currentSpriteData.FlipH;
+                        var tmpFlipV = _currentSpriteData.FlipV;
 
                         if (flipH)
                         {
                             startX = metaSprites[id].Bounds.Width - startX - SpriteSize().X;
-                            _tmpFlipH = !_tmpFlipH;
+                            tmpFlipH = !tmpFlipH;
                         }
 
                         if (flipV)
                         {
                             startY = metaSprites[id].Bounds.Height - startY - SpriteSize().Y;
-                            _tmpFlipV = !_tmpFlipV;
+                            tmpFlipV = !tmpFlipV;
                         }
 
                         startX += x;
@@ -228,8 +221,8 @@ namespace PixelVision8.Player
                             startY,
                             1,
                             1,
-                            _tmpFlipH,
-                            _tmpFlipV,
+                            tmpFlipH,
+                            tmpFlipV,
                             drawMode,
                             _currentSpriteData.ColorOffset + colorOffset
                         );

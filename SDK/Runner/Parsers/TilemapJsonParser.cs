@@ -40,7 +40,7 @@ namespace PixelVision8.Runner
         {
             base.CalculateSteps();
 
-            _steps.Add(ParseMap);
+            Steps.Add(ParseMap);
         }
 
         public void ParseMap()
@@ -49,11 +49,11 @@ namespace PixelVision8.Runner
 
             if (version == 2)
             {
-                _steps.Add(ConfigureTilemapV2);
+                Steps.Add(ConfigureTilemapV2);
             }
             else
             {
-                _steps.Add(ConfigureTilemapV1);
+                Steps.Add(ConfigureTilemapV1);
             }
 
             StepCompleted();

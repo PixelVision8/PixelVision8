@@ -60,7 +60,7 @@ namespace PixelVision8.Runner.Exporters
                 physicalPath = zipFileSystem.PhysicalRoot;
                 physicalBackupPath = zipFileSystem.PhysicalRoot + ".bak";
 
-                _steps.Add(BackupZip);
+                Steps.Add(BackupZip);
 
                 // Get all the files
                 var srcFiles = zipFileSystem.GetEntitiesRecursive(WorkspacePath.Root).ToArray();
@@ -80,15 +80,15 @@ namespace PixelVision8.Runner.Exporters
 
                 for (int i = 0; i < zipExporter.totalSteps; i++)
                 {
-                    _steps.Add(NextZipStep);
+                    Steps.Add(NextZipStep);
                 }
 
                 // Save the disk
-                _steps.Add(SaveDisk);
+                Steps.Add(SaveDisk);
 
-                _steps.Add(CheckForErrors);
+                Steps.Add(CheckForErrors);
 
-                _steps.Add(Cleanup);
+                Steps.Add(Cleanup);
             }
         }
 
@@ -150,7 +150,7 @@ namespace PixelVision8.Runner.Exporters
                 {
                     using (var fs = new FileStream(physicalPath, FileMode.Create, FileAccess.Write))
                     {
-                        fs.Write(zipExporter.bytes, 0, zipExporter.bytes.Length);
+                        fs.Write(zipExporter.Bytes, 0, zipExporter.Bytes.Length);
                     }
                 }
             }

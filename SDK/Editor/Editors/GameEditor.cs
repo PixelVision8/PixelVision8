@@ -1222,7 +1222,7 @@ namespace PixelVision8.Runner.Editors
 
             var files = new Dictionary<string, byte[]>
             {
-                {fontPath.Path, exporter.bytes}
+                {fontPath.Path, exporter.Bytes}
             };
 
             workspace.SaveExporterFiles(files);

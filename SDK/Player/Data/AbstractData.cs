@@ -18,9 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
-using System;
-
 namespace PixelVision8.Player
 {
     /// <summary>
@@ -46,12 +43,12 @@ namespace PixelVision8.Player
         ///     signaling a change in the underlying data. This method could be overridden
         ///     to provide additional logic when the AbstractData is invalidated.
         /// </summary>
-        public virtual void Invalidate()
+        public void Invalidate()
         {
             Invalid = true;
         }
 
-        public virtual void
+        public void
             ResetValidation() //Should be faster without calling 2 extra functions per tile. Adds 1-2FPS debugging.
         {
             Invalid = false;

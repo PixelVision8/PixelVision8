@@ -107,8 +107,8 @@ namespace PixelVision8.Player
                 _drawRequest = _drawCalls[i];
 
                 Utilities.MergePixels(_drawRequest.PixelData, _drawRequest.SampleRect.X, _drawRequest.SampleRect.Y,
-                    _drawRequest.SampleRect.Width, _drawRequest.SampleRect.Height, _display, _drawRequest.x,
-                    _drawRequest.y, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
+                    _drawRequest.SampleRect.Width, _drawRequest.SampleRect.Height, _display, _drawRequest.X,
+                    _drawRequest.Y, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
             }
 
             // Reset Draw Requests after they have been processed
@@ -202,7 +202,7 @@ namespace PixelVision8.Player
         ///     finally resets the resolution to its default value
         ///     of 256 x 240.
         /// </summary>
-        public override void Configure()
+        protected override void Configure()
         {
             //Debug.Log("Pixel Data Renderer: Configure ");
             Player.DisplayChip = this;
@@ -213,12 +213,6 @@ namespace PixelVision8.Player
             // layers = Enum.GetNames(typeof(DrawMode)).Length - 1;
 
             MaxDrawRequests = 1024;
-        }
-
-        public override void Deactivate()
-        {
-            base.Deactivate();
-            Player.DisplayChip = null;
         }
 
         public void ResetDrawCalls()
@@ -239,8 +233,8 @@ namespace PixelVision8.Player
 
             _drawRequest = _drawRequestPool[_drawRequestCounter];
 
-            _drawRequest.x = destX;
-            _drawRequest.y = destY;
+            _drawRequest.X = destX;
+            _drawRequest.Y = destY;
             _drawRequest.Priority = layer;
             _drawRequest.FlipH = flipH;
             _drawRequest.FlipV = flipV;

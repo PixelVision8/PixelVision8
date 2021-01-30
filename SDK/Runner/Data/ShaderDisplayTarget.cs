@@ -24,7 +24,7 @@ using System;
 using System.IO;
 using PixelVision8.Player;
 
-namespace PixelVision8.Runner.Data
+namespace PixelVision8.Runner
 {
     public class ShaderDisplayTarget : DisplayTarget
     {
@@ -91,10 +91,10 @@ namespace PixelVision8.Runner.Data
 
             if (CropScreen && !Fullscreen)
             {
-                displayWidth = Math.Min(displayWidth, (int) (VisibleRect.Width * Scale.X));
-                displayHeight = Math.Min(displayHeight, (int) (VisibleRect.Height * Scale.Y));
-                offset.X = 0;
-                offset.Y = 0;
+                DisplayWidth = Math.Min(DisplayWidth, (int) (VisibleRect.Width * Scale.X));
+                DisplayHeight = Math.Min(DisplayHeight, (int) (VisibleRect.Height * Scale.Y));
+                Offset.X = 0;
+                Offset.Y = 0;
             }
         }
 
@@ -106,8 +106,8 @@ namespace PixelVision8.Runner.Data
             {
                 // To preserve the aspect ratio,
                 // use the smaller scale factor.
-                _scale.X = Math.Min(Scale.X, Scale.Y);
-                _scale.Y = Scale.X;
+                Scale.X = Math.Min(Scale.X, Scale.Y);
+                Scale.Y = Scale.X;
             }
         }
 
@@ -119,8 +119,8 @@ namespace PixelVision8.Runner.Data
             // {
             //     renderTexture = new Texture2D(GraphicManager.GraphicsDevice, gameWidth, gameHeight);
 
-            crtShader?.Parameters["textureSize"].SetValue(new Vector2(renderTexture.Width, renderTexture.Height));
-            crtShader?.Parameters["videoSize"].SetValue(new Vector2(renderTexture.Width, renderTexture.Height));
+            crtShader?.Parameters["textureSize"].SetValue(new Vector2(RenderTexture.Width, RenderTexture.Height));
+            crtShader?.Parameters["videoSize"].SetValue(new Vector2(RenderTexture.Width, RenderTexture.Height));
 
             // }
         }
@@ -157,12 +157,12 @@ namespace PixelVision8.Runner.Data
             {
                 RebuildColorPalette(engine.ColorChip);
 
-                renderTexture.SetData(engine.DisplayChip.Pixels);
+                RenderTexture.SetData(engine.DisplayChip.Pixels);
                 SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
                 crtShader.CurrentTechnique.Passes[0].Apply();
                 GraphicManager.GraphicsDevice.Textures[1] = _colorPalette;
                 GraphicManager.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-                SpriteBatch.Draw(renderTexture, offset, VisibleRect, Color.White, 0f, Vector2.Zero, Scale,
+                SpriteBatch.Draw(RenderTexture, Offset, VisibleRect, Color.White, 0f, Vector2.Zero, Scale,
                     SpriteEffects.None, 1f);
                 SpriteBatch.End();
             }

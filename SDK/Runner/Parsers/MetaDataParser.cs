@@ -36,7 +36,7 @@ namespace PixelVision8.Runner
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-            _steps.Add(ApplySettings);
+            Steps.Add(ApplySettings);
         }
 
         public void ApplySettings()

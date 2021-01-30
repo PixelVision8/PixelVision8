@@ -29,7 +29,6 @@ using MoonSharp.Interpreter;
 using MoonSharp.VsCodeDebugger;
 using MoonSharp.VsCodeDebugger.DebuggerLogic;
 using PixelVision8.Player;
-using PixelVision8.Runner.Data;
 using PixelVision8.Runner.Editors;
 using PixelVision8.Runner;
 using PixelVision8.Runner.Workspace;

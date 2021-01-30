@@ -95,7 +95,7 @@ namespace PixelVision8
         {
             stepQueue.Add(functionName);
 
-            _steps.Add(CallStep);
+            Steps.Add(CallStep);
         }
 
         protected void CallStep()
@@ -118,7 +118,7 @@ namespace PixelVision8
             // TODO need to make sure nothing is saved if bytes is empty
             try
             {
-                bytes = Encoding.UTF8.GetBytes(value);
+                Bytes = Encoding.UTF8.GetBytes(value);
             }
             catch (Exception e)
             {
@@ -145,7 +145,7 @@ namespace PixelVision8
                     exporter.NextStep();
                 }
 
-                bytes = exporter.bytes;
+                Bytes = exporter.Bytes;
             }
             catch (Exception e)
             {

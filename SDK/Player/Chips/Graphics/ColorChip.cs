@@ -199,17 +199,11 @@ namespace PixelVision8.Player
         ///     <see cref="RevertColors" /> to add the default <see cref="colors" />
         ///     to the <see cref="colors" /> array.
         /// </summary>
-        public override void Configure()
+        protected override void Configure()
         {
             Player.ColorChip = this;
             BackgroundColor = -1;
             // total = 256;
-        }
-
-        public override void Deactivate()
-        {
-            base.Deactivate();
-            Player.ColorChip = null;
         }
     }
 

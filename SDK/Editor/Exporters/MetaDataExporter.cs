@@ -44,13 +44,13 @@ namespace PixelVision8.Runner.Exporters
             base.CalculateSteps();
 
             // Create a new string builder
-            _steps.Add(CreateStringBuilder);
+            Steps.Add(CreateStringBuilder);
 
             // Serialize Game
-            if (engine.GameChip != null) _steps.Add(delegate { SerializeGameChip(_gameChip); });
+            if (engine.GameChip != null) Steps.Add(delegate { SerializeGameChip(_gameChip); });
 
             // Save the final string builder
-            _steps.Add(CloseStringBuilder);
+            Steps.Add(CloseStringBuilder);
         }
 
         private void CreateStringBuilder()
@@ -69,7 +69,7 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
 
-            bytes = Encoding.UTF8.GetBytes(sb.ToString());
+            Bytes = Encoding.UTF8.GetBytes(sb.ToString());
 
             CurrentStep++;
         }

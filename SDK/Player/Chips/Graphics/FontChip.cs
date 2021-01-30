@@ -53,19 +53,13 @@ namespace PixelVision8.Player
         ///     engine, sets the default width and height to 8 and resizes the
         ///     <see cref="TextureData" /> to 96 x 64.
         /// </summary>
-        public override void Configure()
+        protected override void Configure()
         {
             Player.FontChip = this;
 
             Pages = 2;
             ColorsPerSprite = 2;
             Unique = true;
-        }
-
-        public override void Deactivate()
-        {
-            base.Deactivate();
-            Player.FontChip = null;
         }
 
         /// <summary>

@@ -41,9 +41,9 @@ namespace PixelVision8.Runner.Exporters
         {
             CurrentStep = 0;
 
-            _steps.Add(CopyPixels);
+            Steps.Add(CopyPixels);
 
-            _steps.Add(WriteBytes);
+            Steps.Add(WriteBytes);
         }
 
         protected virtual void CopyPixels()

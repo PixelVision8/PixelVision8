@@ -100,7 +100,7 @@ namespace PixelVision8.Player
         ///     the engine and setting up the default values for total
         ///     <see cref="Sounds" /> and total channels.
         /// </summary>
-        public override void Configure()
+        protected override void Configure()
         {
             Player.SoundChip = this;
             TotalSounds = 16;

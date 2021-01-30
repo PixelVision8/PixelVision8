@@ -40,21 +40,21 @@ namespace PixelVision8.Runner
 
         public GifReader(byte[] bytes) : base()
         {
-            this.bytes = bytes;
+            this.Bytes = bytes;
         }
 
         public override void CalculateSteps()
         {
             base.CalculateSteps();
 
-            _steps.Add(CreateGif);
-            _steps.Add(DecodeGif);
-            _steps.Add(FinishDecoding);
+            Steps.Add(CreateGif);
+            Steps.Add(DecodeGif);
+            Steps.Add(FinishDecoding);
         }
 
         public void CreateGif()
         {
-            parser = new GifParser(bytes);
+            parser = new GifParser(Bytes);
         }
 
         public void DecodeGif()

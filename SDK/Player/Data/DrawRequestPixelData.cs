@@ -19,7 +19,6 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
@@ -41,8 +40,8 @@ namespace PixelVision8.Player
         public bool FlipH;
         public bool FlipV;
         public int ColorOffset;
-        public int x;
-        public int y;
+        public int X;
+        public int Y;
 
         public byte Priority;
 

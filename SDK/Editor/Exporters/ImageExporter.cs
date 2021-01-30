@@ -47,7 +47,7 @@ namespace PixelVision8.Runner.Exporters
         {
             base.CalculateSteps();
 
-            _steps.Add(WriteBytes);
+            Steps.Add(WriteBytes);
         }
 
         protected virtual void WriteBytes()
@@ -58,7 +58,7 @@ namespace PixelVision8.Runner.Exporters
 
                 imageExporter.Write(width, height, stream, colors);
 
-                bytes = stream.ToArray();
+                Bytes = stream.ToArray();
             }
 
             CurrentStep++;

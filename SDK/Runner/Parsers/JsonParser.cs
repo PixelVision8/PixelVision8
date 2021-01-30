@@ -39,7 +39,7 @@ namespace PixelVision8.Runner
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-            _steps.Add(ParseJson);
+            Steps.Add(ParseJson);
         }
 
         public virtual void ParseJson()

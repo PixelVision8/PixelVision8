@@ -26,7 +26,7 @@ namespace PixelVision8.Runner.Exporters
     public interface IAbstractExporter : IAbstractParser
     {
         Dictionary<string, object> Response { get; }
-        byte[] bytes { get; }
+        byte[] Bytes { get; }
         string fileName { get; }
     }
 }

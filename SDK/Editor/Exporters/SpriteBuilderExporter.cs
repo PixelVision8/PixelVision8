@@ -19,7 +19,6 @@
 //
 
 using PixelVision8.Player;
-using PixelVision8.Runner.Data;
 using PixelVision8.Runner;
 using System;
 using System.Collections.Generic;
@@ -94,16 +93,16 @@ namespace PixelVision8.Runner.Exporters
 
             spriteCount = 0;
 
-            _steps.Add(ConvertFilesToTextures);
+            Steps.Add(ConvertFilesToTextures);
 
             maxTilesPerLoop = 10;
             totalTiles = files.Count;
 
             var loops = (int) Math.Ceiling((float) totalTiles / maxTilesPerLoop);
 
-            for (var i = 0; i < loops; i++) _steps.Add(ParseSpriteData);
+            for (var i = 0; i < loops; i++) Steps.Add(ParseSpriteData);
 
-            _steps.Add(GenerateSpriteJSON);
+            Steps.Add(GenerateSpriteJSON);
         }
 
 
@@ -193,7 +192,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append(endComment);
             sb.AppendLine();
 
-            bytes = Encoding.UTF8.GetBytes(sb.ToString());
+            Bytes = Encoding.UTF8.GetBytes(sb.ToString());
 
             CurrentStep++;
         }

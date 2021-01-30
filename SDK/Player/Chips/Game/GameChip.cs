@@ -19,14 +19,6 @@
 
 */
 
-#region Imports
-
-using PixelVision8.Player;
-using System;
-using Microsoft.Xna.Framework;
-
-#endregion
-
 // This is a Test
 //
 // to see how much I can put in a comment
@@ -63,7 +55,7 @@ namespace PixelVision8.Player
 
         #region Lifecycle
 
-        public override void Configure()
+        protected override void Configure()
         {
             // Set the engine's game to this instance
             Player.GameChip = this;
@@ -109,12 +101,6 @@ namespace PixelVision8.Player
         public void Clear()
         {
             DisplayChip.Clear(ColorChip.BackgroundColor);
-        }
-
-        public override void Deactivate()
-        {
-            base.Deactivate();
-            Player.GameChip = null;
         }
 
         /// <summary>

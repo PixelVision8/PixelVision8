@@ -66,10 +66,10 @@ namespace PixelVision8.Runner.Exporters
         {
             base.CalculateSteps();
 
-            for (var i = 0; i < patterns.Length; i++) _steps.Add(ExportSong);
+            for (var i = 0; i < patterns.Length; i++) Steps.Add(ExportSong);
 
-            _steps.Add(MixdownAudioClips);
-            _steps.Add(CreateSongByteData);
+            Steps.Add(MixdownAudioClips);
+            Steps.Add(CreateSongByteData);
         }
 
         public void ExportSong()
@@ -205,7 +205,7 @@ namespace PixelVision8.Runner.Exporters
         private void CreateSongByteData()
         {
             //TODO need to break this process up in to steps so it doesn't block the runner
-            bytes = result.GenerateWav();
+            Bytes = result.GenerateWav();
             CurrentStep++;
         }
 
