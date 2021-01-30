@@ -176,8 +176,6 @@ namespace PixelVision8.Player
                             id,
                             pos.X + x,
                             pos.Y + y,
-                            1,
-                            1,
                             flipH,
                             flipV,
                             drawMode,
@@ -187,6 +185,10 @@ namespace PixelVision8.Player
             }
             else
             {
+                
+                int startX, startY;
+                bool tmpFlipH, tmpFlipV;
+                
                 // Loop through each of the sprites
                 for (var i = 0; i < total; i++)
                 {
@@ -195,10 +197,10 @@ namespace PixelVision8.Player
                     if (!SpriteChip.IsEmptyAt(_currentSpriteData.Id))
                     {
                         // Get sprite values
-                        var startX = _currentSpriteData.X;
-                        var startY = _currentSpriteData.Y;
-                        var tmpFlipH = _currentSpriteData.FlipH;
-                        var tmpFlipV = _currentSpriteData.FlipV;
+                        startX = _currentSpriteData.X;
+                        startY = _currentSpriteData.Y;
+                        tmpFlipH = _currentSpriteData.FlipH;
+                        tmpFlipV = _currentSpriteData.FlipV;
 
                         if (flipH)
                         {
@@ -219,8 +221,6 @@ namespace PixelVision8.Player
                             _currentSpriteData.Id,
                             startX,
                             startY,
-                            1,
-                            1,
                             tmpFlipH,
                             tmpFlipV,
                             drawMode,

@@ -46,7 +46,7 @@ namespace PixelVision8.Player
     /// </summary>
     public class FontChip : SpriteChip
     {
-        public Dictionary<string, int[]> fonts = new Dictionary<string, int[]>();
+        public readonly Dictionary<string, int[]> Fonts = new Dictionary<string, int[]>();
 
         /// <summary>
         ///     This method configures the FontChip. It registers itself with the
@@ -72,15 +72,15 @@ namespace PixelVision8.Player
         /// <param name="fontMap"></param>
         public void AddFont(string name, int[] fontMap)
         {
-            if (fonts.ContainsKey(name))
-                fonts[name] = fontMap;
+            if (Fonts.ContainsKey(name))
+                Fonts[name] = fontMap;
             else
-                fonts.Add(name, fontMap);
+                Fonts.Add(name, fontMap);
         }
 
         public int[] ReadFont(string name)
         {
-            if (fonts.ContainsKey(name)) return fonts[name];
+            if (Fonts.ContainsKey(name)) return Fonts[name];
 
             return null;
         }

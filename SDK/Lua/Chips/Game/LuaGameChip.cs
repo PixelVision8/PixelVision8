@@ -343,7 +343,7 @@ namespace PixelVision8.Player
         public void DrawSingleSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
-            DrawSprite(id, x, y, 1, 1, flipH, flipV, drawMode, colorOffset, SpriteChip);
+            DrawSprite(id, x, y, flipH, flipV, drawMode, colorOffset, SpriteChip);
         }
 
         #endregion

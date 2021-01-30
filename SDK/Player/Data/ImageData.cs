@@ -88,7 +88,7 @@ namespace PixelVision8.Player
             _pos = Utilities.CalculatePosition(id, Columns);
 
             // _pixelData = GetPixels(_pos.X * 8, _pos.Y * 8, _spriteSize.X, _spriteSize.Y);
-            _tmpPixelData = Utilities.GetPixels(PixelData, _pos.X * 8, _pos.Y * 8, _spriteSize.X, _spriteSize.Y);
+            _tmpPixelData = Utilities.GetPixels(PixelData, _pos.X * _spriteSize.X, _pos.Y * _spriteSize.Y, _spriteSize.X, _spriteSize.Y);
             // If there is a CPS cap, we need to go through all the pixels and make sure they are in range.
             if (cps.HasValue)
             {

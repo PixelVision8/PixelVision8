@@ -24,17 +24,20 @@ namespace PixelVision8.Runner
 {
     public partial class GameRunner : Game
     {
-        protected GraphicsDeviceManager _graphics;
+        protected readonly GraphicsDeviceManager Graphics;
+        protected readonly string RootPath;
 
-        public GameRunner()
+        public GameRunner(string rootPath)
         {
             // Fix a bug related to parsing numbers in Europe, among other things
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
-            _graphics = new GraphicsDeviceManager(this);
+            Graphics = new GraphicsDeviceManager(this);
 
             IsFixedTimeStep = true;
+            
+            RootPath = rootPath;
         }
     }
 }

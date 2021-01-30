@@ -158,7 +158,7 @@ namespace PixelVision8.Player
         ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile
         ///     above the background color.
         /// </param>
-        public void DrawSprite(int id, int x, int y, int columns = 1, int rows = 1, bool flipH = false,
+        public void DrawSprite(int id, int x, int y, bool flipH = false,
             bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, SpriteChip srcChip = null)
         {
@@ -177,7 +177,7 @@ namespace PixelVision8.Player
                 {
                     srcChip.ReadSpriteAt(id, ref _tmpSpriteData);
 
-                    DrawPixels(_tmpSpriteData, x, y, SpriteChip.SpriteWidth, SpriteChip.SpriteHeight, flipH, flipV, drawMode,
+                    DrawPixels(_tmpSpriteData, x, y, srcChip.SpriteWidth, srcChip.SpriteHeight, flipH, flipV, drawMode,
                         colorOffset);
                 }
                 else
@@ -185,10 +185,10 @@ namespace PixelVision8.Player
                     if (SpriteChip.MaxSpriteCount > 0 && CurrentSprites >= SpriteChip.MaxSpriteCount) return;
 
                     var pos = Utilities.CalculatePosition(id, srcChip.Columns);
-                    pos.X *= SpriteChip.SpriteWidth;
-                    pos.Y *= SpriteChip.SpriteHeight;
+                    pos.X *= srcChip.SpriteWidth;
+                    pos.Y *= srcChip.SpriteHeight;
 
-                    DisplayChip.NewDrawCall(srcChip, x, y, SpriteChip.SpriteWidth * columns, SpriteChip.SpriteHeight * rows,
+                    DisplayChip.NewDrawCall(srcChip, x, y, srcChip.SpriteWidth, srcChip.SpriteHeight,
                         (byte) drawMode, flipH, flipV, colorOffset, pos.X, pos.Y);
 
                     Player.SpriteCounter++;
@@ -263,14 +263,14 @@ namespace PixelVision8.Player
                 drawMode = DrawMode.TilemapCache;
 
                 // Need to adjust the position since tile mode is in columns,rows
-                nextX *= 8;
-                nextY *= 8;
+                nextX *= FontChip.SpriteWidth;
+                nextY *= FontChip.SpriteHeight;
 
                 // spacing is disabled when in tilemode
                 spacing = 0;
             }
 
-            var offset = SpriteChip.SpriteWidth + spacing;
+            var offset = FontChip.SpriteWidth + spacing;
 
             for (var j = 0; j < total; j++)
             {
@@ -287,7 +287,7 @@ namespace PixelVision8.Player
                     Player.SpriteCounter++;
                 }
 
-                DrawSprite(spriteIDs[j], nextX, nextY, 1, 1, false, false, drawMode, colorOffset, FontChip);
+                DrawSprite(spriteIDs[j], nextX, nextY, false, false, drawMode, colorOffset, FontChip);
 
                 // }
 

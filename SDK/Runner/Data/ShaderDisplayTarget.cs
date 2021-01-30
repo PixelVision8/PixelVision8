@@ -147,17 +147,17 @@ namespace PixelVision8.Runner
             }
         }
 
-        public override void Render(IPlayerChips engine) //int[] pixels, int backgroundColor)
+        public override void Render(int[] pixels, int backgroundColor)
         {
             if (crtShader == null)
             {
-                base.Render(engine);
+                base.Render(pixels, backgroundColor);
             }
             else
             {
-                RebuildColorPalette(engine.ColorChip);
+                // RebuildColorPalette(engine.ColorChip);
 
-                RenderTexture.SetData(engine.DisplayChip.Pixels);
+                RenderTexture.SetData(pixels);
                 SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
                 crtShader.CurrentTechnique.Passes[0].Apply();
                 GraphicManager.GraphicsDevice.Textures[1] = _colorPalette;

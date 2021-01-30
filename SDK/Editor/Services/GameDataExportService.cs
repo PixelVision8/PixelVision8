@@ -65,7 +65,7 @@ namespace PixelVision8.Runner
                 var spriteChip = targetEngine.SpriteChip;
                 var tmpTextureData = new PixelData(96, 64);
 
-                var fonts = fontChip.fonts;
+                var fonts = fontChip.Fonts;
 
                 foreach (var font in fonts)
                 {

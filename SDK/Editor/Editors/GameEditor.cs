@@ -1189,7 +1189,7 @@ namespace PixelVision8.Runner.Editors
         {
             var engineName = targetGame.Name;
 
-            var oldName = fontChip.fonts.Keys.First();
+            var oldName = fontChip.Fonts.Keys.First();
 
             var parentFilePath = WorkspacePath.Parse(engineName).ParentPath;
 
@@ -1201,14 +1201,14 @@ namespace PixelVision8.Runner.Editors
 
                 if (workspace.Exists(oldPath)) workspace.Delete(oldPath);
 
-                var value = fontChip.fonts[oldName];
-                fontChip.fonts.Remove(oldName);
+                var value = fontChip.Fonts[oldName];
+                fontChip.Fonts.Remove(oldName);
 
                 fontPath = workspace.UniqueFilePath(fontPath);
 
                 fontName = fontPath.EntityName.Split('.')[0];
 
-                fontChip.fonts[fontName] = value;
+                fontChip.Fonts[fontName] = value;
             }
 
             //            var fontPath = workspace.UniqueFilePath(parentFilePath.AppendFile(fontName + ".font.png"));

@@ -52,8 +52,6 @@ namespace PixelVision8.Player
         private DrawRequestPixelData[] _drawRequestPool = new DrawRequestPixelData[0];
 
 
-        private List<DrawRequestPixelData> _drawRequests;
-
         // This should be part of the chip's data
         private int _maxDrawRequests = 1024;
         private bool _nextDrawRequest;

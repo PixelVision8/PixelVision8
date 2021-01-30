@@ -169,21 +169,20 @@ namespace PixelVision8.Runner
             }
         }
 
-        public virtual void Render(IPlayerChips engine) //int[] pixels, int defaultColor)
+        public virtual void Render(int[] pixels, int defaultColor)
         {
-            // Make sure the color palette doesn't need to rebuild itself
-            RebuildColorPalette(engine.ColorChip);
+            
 
             // We can only update the display if the pixel lengths match up
-            if (engine.DisplayChip.Pixels.Length != _totalPixels)
+            if (pixels.Length != _totalPixels)
                 return;
 
             SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
 
             for (_i = 0; _i < _totalPixels; _i++)
             {
-                _colorId = engine.DisplayChip.Pixels[_i];
-                _pixelData[_i] = CachedColors[_colorId < 0 ? engine.ColorChip.BackgroundColor : _colorId];
+                _colorId = pixels[_i];
+                _pixelData[_i] = CachedColors[_colorId < 0 ? defaultColor : _colorId];
             }
 
             RenderTexture.SetData(_pixelData);

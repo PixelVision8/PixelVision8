@@ -97,7 +97,6 @@ namespace PixelVision8.Runner
         protected Dictionary<string, string> nextMetaData;
         protected RunnerMode nextMode;
         protected string nextPathToLoad;
-        protected string rootPath;
         protected bool screenShotActive;
         protected float screenshotDelay = 200f;
         private ScreenshotService screenshotService;
@@ -126,15 +125,11 @@ namespace PixelVision8.Runner
         }
 
         // Default path to where PV8 workspaces will go
-        public DesktopRunner(string rootPath, string[] args = null)
+        public DesktopRunner(string rootPath, string[] args = null): base(rootPath)
         {
-            // Fix a bug related to parsing numbers in Europe, among other things
-            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
-            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
             ServiceManager = new ServiceManager();
-
-            this.rootPath = rootPath;
+            
             server = new MoonSharpVsCodeDebugServer(1985);
             server.Start();
 
@@ -270,7 +265,7 @@ namespace PixelVision8.Runner
                 .Split('x').Select(int.Parse)
                 .ToArray();
 
-            if (DisplayTarget == null) DisplayTarget = new ShaderDisplayTarget(_graphics, tmpRes[0], tmpRes[1]);
+            if (DisplayTarget == null) DisplayTarget = new ShaderDisplayTarget(Graphics, tmpRes[0], tmpRes[1]);
 
             Fullscreen(Convert.ToBoolean(
                 bios.ReadBiosData(BiosSettings.FullScreen.ToString(), "False")));
@@ -347,64 +342,64 @@ namespace PixelVision8.Runner
                 var rawValue = Convert.ToInt32(bios.ReadBiosData(keyMap.Key, keyMap.Value.ToString(), true));
                 var keyValue = rawValue;
 
-                _tmpEngine.SetMetadata(keyMap.Key, keyValue.ToString());
+                TmpEngine.SetMetadata(keyMap.Key, keyValue.ToString());
             }
 
             var player1KeyboardMap = new Dictionary<Buttons, Keys>
             {
-                {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1UpKey.ToString()))},
+                {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1UpKey.ToString()))},
                 {
                     Buttons.Left,
-                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1LeftKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1LeftKey.ToString()))
                 },
                 {
                     Buttons.Right,
-                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1RightKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1RightKey.ToString()))
                 },
                 {
                     Buttons.Down,
-                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1DownKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1DownKey.ToString()))
                 },
                 {
                     Buttons.Select,
-                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1SelectKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1SelectKey.ToString()))
                 },
                 {
                     Buttons.Start,
-                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1StartKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1StartKey.ToString()))
                 },
-                {Buttons.A, (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1AKey.ToString()))},
-                {Buttons.B, (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player1BKey.ToString()))}
+                {Buttons.A, (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1AKey.ToString()))},
+                {Buttons.B, (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1BKey.ToString()))}
             };
 
             var player2KeyboardMap = new Dictionary<Buttons, Keys>
             {
-                {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2UpKey.ToString()))},
+                {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player2UpKey.ToString()))},
                 {
                     Buttons.Left,
-                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2LeftKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player2LeftKey.ToString()))
                 },
                 {
                     Buttons.Right,
-                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2RightKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player2RightKey.ToString()))
                 },
                 {
                     Buttons.Down,
-                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2DownKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player2DownKey.ToString()))
                 },
                 {
                     Buttons.Select,
-                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2SelectKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player2SelectKey.ToString()))
                 },
                 {
                     Buttons.Start,
-                    (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2StartKey.ToString()))
+                    (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player2StartKey.ToString()))
                 },
-                {Buttons.A, (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2AKey.ToString()))},
-                {Buttons.B, (Keys) Enum.Parse(typeof(Keys), _tmpEngine.GetMetadata(InputMap.Player2BKey.ToString()))}
+                {Buttons.A, (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player2AKey.ToString()))},
+                {Buttons.B, (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player2BKey.ToString()))}
             };
 
-            _tmpEngine.ControllerChip.RegisterKeyInput(player1KeyboardMap, player2KeyboardMap);
+            TmpEngine.ControllerChip.RegisterKeyInput(player1KeyboardMap, player2KeyboardMap);
         }
 
         public override void ActivateEngine(IPlay engine)
@@ -428,7 +423,7 @@ namespace PixelVision8.Runner
 
             if (connected == false && attachScript)
             {
-                var tempQualifier = (LuaGameChip) _tmpEngine.GameChip;
+                var tempQualifier = (LuaGameChip) TmpEngine.GameChip;
                 // Kick off the first game script file
                 tempQualifier.LoadScript(tempQualifier.DefaultScriptPath);
 
@@ -539,7 +534,7 @@ namespace PixelVision8.Runner
             workspaceServicePlus = new WorkspaceServicePlus(
                 new KeyValuePair<WorkspacePath, IFileSystem>(
                     WorkspacePath.Root.AppendDirectory("App"),
-                    new PhysicalFileSystem(rootPath)
+                    new PhysicalFileSystem(RootPath)
                 )
             );
 
@@ -763,7 +758,7 @@ namespace PixelVision8.Runner
             // TODO make sure this order is correct or maybe it can be cleaned up
             if (screenShotActive)
             {
-                screenshotTime += _timeDelta;
+                screenshotTime += TimeDelta;
 
                 if (screenshotTime > screenshotDelay)
                 {
@@ -832,13 +827,13 @@ namespace PixelVision8.Runner
                 if (screenShotActive)
                 {
                     // TODO need to figure out why this is not displaying white when a screen shot happens
-                    _graphics.GraphicsDevice.Clear(Color.White);
+                    Graphics.GraphicsDevice.Clear(Color.White);
                 }
                 else
                 {
                     base.Draw(gameTime);
 
-                    if (Recording) gifEncoder.AddFrame(_timeDelta / 1000f);
+                    if (Recording) gifEncoder.AddFrame(TimeDelta / 1000f);
                 }
 
                 workspaceServicePlus.SaveLog();
@@ -943,15 +938,15 @@ namespace PixelVision8.Runner
 
                 // var engine = ActiveEngine as PixelVisionEngine;
 
-                if (_tmpEngine != null && _tmpEngine.MetaData.ContainsKey("runnerType"))
+                if (TmpEngine != null && TmpEngine.MetaData.ContainsKey("runnerType"))
                 {
-                    if (_tmpEngine.MetaData.ContainsKey("runnerType"))
+                    if (TmpEngine.MetaData.ContainsKey("runnerType"))
                     {
-                        _tmpEngine.MetaData["runnerType"] = _tmpEngine.MetaData["runnerType"];
+                        TmpEngine.MetaData["runnerType"] = TmpEngine.MetaData["runnerType"];
                     }
                     else
                     {
-                        _tmpEngine.MetaData.Add("runnerType", _tmpEngine.MetaData["runnerType"]);
+                        TmpEngine.MetaData.Add("runnerType", TmpEngine.MetaData["runnerType"]);
                     }
                 }
 
@@ -1144,7 +1139,7 @@ namespace PixelVision8.Runner
             }
         }
 
-        public override IPlay CreateNewEngine(List<string> chips)
+        public IPlay CreateNewEngine(List<string> chips)
         {
             var tmpEngine = new PixelVision(chips.ToArray())
             {
@@ -1176,21 +1171,21 @@ namespace PixelVision8.Runner
                 CreateLuaService();
 
                 // Had to disable the active game manually before this is called so copied base logic here
-                _tmpEngine = CreateNewEngine(defaultChips);
+                TmpEngine = CreateNewEngine(defaultChips);
 
                 // We need to add the Lua Game Chip after the other chips so the service locator is availible
-                _tmpEngine.ActivateChip("GameChip", new LuaGameChip());
+                TmpEngine.ActivateChip("GameChip", new LuaGameChip());
 
                 ConfigureServices();
 
                 // Pass all meta data into the engine instance
                 if (metaData != null)
                     foreach (var entry in metaData)
-                        _tmpEngine.SetMetadata(entry.Key, entry.Value);
+                        TmpEngine.SetMetadata(entry.Key, entry.Value);
 
 
                 // Get a reference to the    Lua game
-                var game = _tmpEngine.GameChip as LuaGameChip;
+                var game = TmpEngine.GameChip as LuaGameChip;
 
                 // Get the script
                 var luaScript = game.LuaScript;
@@ -1221,7 +1216,7 @@ namespace PixelVision8.Runner
                     bios.ReadBiosData(key, defaultValue));
                 luaScript.Globals["WriteBiosData"] = new Action<string, string>(bios.UpdateBiosData);
 
-                luaScript.Globals["ControllerConnected"] = new Func<int, bool>(_tmpEngine.ControllerChip.IsConnected);
+                luaScript.Globals["ControllerConnected"] = new Func<int, bool>(TmpEngine.ControllerChip.IsConnected);
 
 
                 // Get a reference to the Lua game
@@ -1304,12 +1299,12 @@ namespace PixelVision8.Runner
             else
             {
                 // Had to disable the active game manually before this is called so copied base logic here
-                _tmpEngine = CreateNewEngine(defaultChips);
+                TmpEngine = CreateNewEngine(defaultChips);
 
                 // Pass all meta data into the engine instance
                 if (metaData != null)
                     foreach (var entry in metaData)
-                        _tmpEngine.SetMetadata(entry.Key, entry.Value);
+                        TmpEngine.SetMetadata(entry.Key, entry.Value);
 
                 // ConfigureKeyboard();
                 // ConfiguredControllers();
@@ -1563,12 +1558,12 @@ namespace PixelVision8.Runner
                 ConfigureEngine(metaData);
 
                 // Path the full path to the engine's name  
-                _tmpEngine.Name = path;
+                TmpEngine.Name = path;
 
                 if (GameFiles != null)
                 {
                     // Read and Run the disk
-                    ProcessFiles(_tmpEngine, GameFiles, displayProgress);
+                    ProcessFiles(TmpEngine, GameFiles, displayProgress);
                     success = true;
                 }
                 else
@@ -1628,7 +1623,7 @@ namespace PixelVision8.Runner
             // base.ProcessFiles(tmpEngine, files, displayProgress);
             this.displayProgress = displayProgress;
 
-            _tmpEngine = tmpEngine;
+            TmpEngine = tmpEngine;
 
             ParseFiles(files);
 
@@ -1662,7 +1657,7 @@ namespace PixelVision8.Runner
                 flags |= FileFlags.MetaSprites;
             }
 
-            loadService.ParseFiles(files, _tmpEngine, flags.Value);
+            loadService.ParseFiles(files, TmpEngine, flags.Value);
         }
 
         public void BuildRoslynGameChip(string[] files, bool buildDebugData = true)
@@ -1762,7 +1757,7 @@ namespace PixelVision8.Runner
 
             if (roslynGameChipType != null)
             {
-                _tmpEngine.ActivateChip("GameChip",
+                TmpEngine.ActivateChip("GameChip",
                     (AbstractChip) Activator.CreateInstance(
                         roslynGameChipType)); //Inserts the DLL's GameChip descendent into the engine.
             }
