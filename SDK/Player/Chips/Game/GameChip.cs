@@ -24,17 +24,7 @@
 // to see how much I can put in a comment
 namespace PixelVision8.Player
 {
-    public partial interface IPlayerChips
-    {
-        /// <summary>
-        ///     This property offers direct access to the current game loaded into
-        ///     the engine's memory.
-        /// </summary>
-        GameChip GameChip { get; set; }
-
-        int SpriteCounter { get; set; }
-    }
-
+    
     public partial class PixelVision
     {
         public GameChip GameChip { get; set; }

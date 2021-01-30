@@ -284,7 +284,7 @@ namespace PixelVision8.Runner
             // If no colors are passed in, used the image's palette
             if (colorRefs == null)
             {
-                colorRefs = reader.colorPalette.Select(c => Utilities.RgbToHex(c.R, c.G, c.B)).ToArray();
+                colorRefs = reader.colorPalette.Select(c => SpriteImageParser.RgbToHex(c.R, c.G, c.B)).ToArray();
             }
 
             // Resize the color chip
@@ -312,7 +312,7 @@ namespace PixelVision8.Runner
             // convert colors
             var totalColors = hexColors.Length;
             var colors = new Color[totalColors];
-            for (var i = 0; i < totalColors; i++) colors[i] = Utilities.HexToColor(hexColors[i]);
+            for (var i = 0; i < totalColors; i++) colors[i] = ColorChip.HexToColor(hexColors[i]);
 
             var pixelData = imageData.GetPixels();
 

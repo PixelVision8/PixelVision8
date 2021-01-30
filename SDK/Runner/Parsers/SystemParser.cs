@@ -29,9 +29,9 @@ namespace PixelVision8.Runner
 {
     public class SystemParser : JsonParser
     {
-        protected IPlayerChips Target;
+        protected PixelVision Target;
 
-        public SystemParser(string filePath, IFileLoader fileLoadHelper, IPlayerChips target) : base(filePath,
+        public SystemParser(string filePath, IFileLoader fileLoadHelper, PixelVision target) : base(filePath,
             fileLoadHelper)
         {
             Target = target; // as PixelVisionEngine;
@@ -676,7 +676,7 @@ namespace PixelVision8.Runner
     public partial class Loader
     {
         [FileParser("data.png")]
-        public void ParseSystem(string file, IPlayerChips engine)
+        public void ParseSystem(string file, PixelVision engine)
         {
             // if (!string.IsNullOrEmpty(files[0]))
             // {

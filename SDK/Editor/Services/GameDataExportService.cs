@@ -27,9 +27,9 @@ namespace PixelVision8.Runner
 {
     public class GameDataExportService : BaseExportService
     {
-        private IPlayerChips targetEngine;
+        private PixelVision targetEngine;
 
-        public void ExportGame(string path, IPlayerChips engine, FileFlags fileFlags, bool useSteps = true)
+        public void ExportGame(string path, PixelVision engine, FileFlags fileFlags, bool useSteps = true)
         {
             Clear();
 
@@ -136,7 +136,7 @@ namespace PixelVision8.Runner
             var imageExporter = new PNGWriter();
 
             // TODO need to double check that we should force this into debug so transparent images have the mask color in them by default
-            var colors = Utilities.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor, true);
+            var colors = DisplayTarget.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor, true);
 
 
             AddExporter(new PixelDataExporter(path, pixelData, width, height, colors, imageExporter,

@@ -24,19 +24,6 @@ using PixelVision8.Player;
 namespace PixelVision8.Player
 {
     
-    #region Modify IPlayerChips
-
-    public partial interface IPlayerChips
-    {
-        /// <summary>
-        ///     The Fonts Chip is responsible for rendering text to the display.
-        ///     This property offers direct access to it.
-        /// </summary>
-        FontChip FontChip { get; set; }
-    }
-    
-    #endregion
-
     #region Font Chip Class
     
     /// <summary>

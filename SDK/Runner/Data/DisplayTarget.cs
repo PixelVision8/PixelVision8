@@ -27,6 +27,24 @@ namespace PixelVision8.Runner
 {
     public class DisplayTarget
     {
+        public static Color[] ConvertColors(string[] hexColors, string maskColor = "#FF00FF", bool debugMode = false, int backgroundColor = 0)
+         {
+             var t = hexColors.Length;
+             var colors = new Color[t];
+
+             for (var i = 0; i < t; i++)
+             {
+                 var colorHex = hexColors[i];
+
+                 if (colorHex == maskColor && debugMode == false) colorHex = hexColors[backgroundColor];
+
+                 var color = ColorChip.HexToColor(colorHex);
+                 colors[i] = color;
+             }
+
+             return colors;
+         }
+
         protected Vector2 Offset;
         protected Texture2D RenderTexture;
         protected readonly GraphicsDeviceManager GraphicManager;
@@ -88,7 +106,7 @@ namespace PixelVision8.Runner
             }
         }
 
-        public virtual void ResetResolution(IPlayerChips engine)
+        public virtual void ResetResolution(PixelVision engine)
         {
             var displayChip = engine.DisplayChip;
 
@@ -162,7 +180,7 @@ namespace PixelVision8.Runner
         {
             if (colorChip.Invalid)
             {
-                CachedColors = Utilities.ConvertColors(colorChip.HexColors, colorChip.MaskColor, colorChip.DebugMode,
+                CachedColors = ConvertColors(colorChip.HexColors, colorChip.MaskColor, colorChip.DebugMode,
                     colorChip.BackgroundColor);
 
                 colorChip.ResetValidation();

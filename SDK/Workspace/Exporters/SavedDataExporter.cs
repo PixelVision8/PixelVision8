@@ -28,10 +28,10 @@ namespace PixelVision8.Runner.Exporters
 {
     public class SavedDataExporter : AbstractExporter
     {
-        private readonly IPlayerChips targetEngine;
+        private readonly PixelVision targetEngine;
         private StringBuilder sb;
 
-        public SavedDataExporter(string fileName, IPlayerChips targetEngine) : base(fileName)
+        public SavedDataExporter(string fileName, PixelVision targetEngine) : base(fileName)
         {
             this.targetEngine = targetEngine;
 

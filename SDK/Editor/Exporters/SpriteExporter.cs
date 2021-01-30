@@ -27,14 +27,14 @@ namespace PixelVision8.Runner.Exporters
     public class SpriteExporter : IAbstractExporter
     {
         protected Color[] colors;
-        protected IPlayerChips engine;
+        protected PixelVision engine;
         protected PixelDataExporter exporter;
         protected string fullFileName;
         protected IImageExporter imageExporter;
         protected SpriteChip spriteChip;
 
 
-        public SpriteExporter(string fileName, IPlayerChips engine, IImageExporter imageExporter,
+        public SpriteExporter(string fileName, PixelVision engine, IImageExporter imageExporter,
             SpriteChip spriteChip = null)
         {
             fullFileName = fileName;
@@ -45,7 +45,7 @@ namespace PixelVision8.Runner.Exporters
 
             // var colorMapChip = engine.GetChip(ColorMapParser.chipName, false) as ColorChip;
 
-            colors = Utilities.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor, true);
+            colors = DisplayTarget.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor, true);
 
             // TODO removing the color map chip dependency when exporting moving forward
             // colors = colorMapChip == null ? engine.ColorChip.colors : colorMapChip.colors;

@@ -27,22 +27,6 @@ using PixelVision8.Player;
 namespace PixelVision8.Player
 {
     
-    #region Modify IPlayerChips
-
-    public partial interface IPlayerChips
-    {
-        /// <summary>
-        ///     The Sprite Chip stores all the sprite as pixel data for the engine.
-        ///     This property offers direct access to it.
-        /// </summary>
-        SpriteChip SpriteChip { get; set; }
-    }
-
-    #endregion
-
-
-    
-    
     #region Sprite Chip Class
     
     /// <summary>

@@ -28,9 +28,9 @@ namespace PixelVision8.Runner
 {
     public class TilemapJsonParser : JsonParser
     {
-        protected IPlayerChips target;
+        protected PixelVision target;
 
-        public TilemapJsonParser(string filePath, IFileLoader fileLoadHelper, IPlayerChips target) : base(filePath,
+        public TilemapJsonParser(string filePath, IFileLoader fileLoadHelper, PixelVision target) : base(filePath,
             fileLoadHelper)
         {
             this.target = target;
@@ -298,7 +298,7 @@ namespace PixelVision8.Runner
     public partial class Loader
     {
         [FileParser("tilemap.json")]
-        public void ParseTilemapJson(string file, IPlayerChips engine)
+        public void ParseTilemapJson(string file, PixelVision engine)
         {
             AddParser(new TilemapJsonParser(file, _fileLoadHelper, engine));
         }

@@ -24,19 +24,6 @@ using System.Collections.Generic;
 namespace PixelVision8.Player
 {
 
-    #region Modify IPlayerChips
-
-    public partial interface IPlayerChips
-    {
-        /// <summary>
-        ///     The Display Chip handles all rendering for the engine. This property
-        ///     offers direct access to it.
-        /// </summary>
-        DisplayChip DisplayChip { get; set; }
-    }
-    
-    #endregion
-    
     #region Display Chip Class
 
     public class DisplayChip : AbstractChip, IDraw

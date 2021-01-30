@@ -20,24 +20,12 @@
 
 using Microsoft.Xna.Framework;
 using System;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PixelVision8.Player
 {
-    
-    #region Modify IPlayerChips
-
-    public partial interface IPlayerChips
-    {
-        /// <summary>
-        ///     The color chips stores colors for the engine. It's used by several
-        ///     other systems to properly convert pixel data into color data for the
-        ///     display. This property offers direct access to it.
-        /// </summary>
-        ColorChip ColorChip { get; set; }
-    }
-
-    #endregion
 
     #region Color Chip Class
     
@@ -48,6 +36,37 @@ namespace PixelVision8.Player
     /// </summary>
     public class ColorChip : AbstractChip
     {
+    
+        public static Color HexToColor(string hex)
+        {
+            HexToRgb(hex, out var r, out var g, out var b);
+
+            return new Color(r, g, b);
+        }
+
+        /// <summary>
+        ///     Static method for converting a HEX color into an RGB value.
+        /// </summary>
+        /// <param name="hex"></param>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        public static void HexToRgb(string hex, out byte r, out byte g, out byte b)
+        {
+            if (hex == null) hex = "FF00FF";
+
+            if (hex[0] == '#') hex = hex.Substring(1);
+
+            r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
+            g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
+            b = byte.Parse(hex.Substring(4, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
+        }
+        
+        public static bool ValidateHexColor(string inputColor)
+        {
+            return Regex.Match(inputColor, "^#(?:[0-9a-fA-F]{3}){1,2}$").Success;
+        }
+
         private int _bgColor;
 
         private string[] _colors =
@@ -94,7 +113,7 @@ namespace PixelVision8.Player
             get => _maskColor;
             set
             {
-                if (Utilities.ValidateHexColor(value)) _maskColor = value.ToUpper();
+                if (ValidateHexColor(value)) _maskColor = value.ToUpper();
             }
         }
 
@@ -185,7 +204,7 @@ namespace PixelVision8.Player
             // Make sure that all colors are uppercase
             color = color.ToUpper();
 
-            if (Utilities.ValidateHexColor(color))
+            if (ValidateHexColor(color))
             {
                 _colors[index] = color;
                 Invalidate();

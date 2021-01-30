@@ -11,10 +11,10 @@ namespace PixelVision8.Runner
         private TimeSpan _elapsedTime = TimeSpan.Zero;
         private int _frameCounter;
         protected int TimeDelta;
-        protected IPlay TmpEngine;
-        public IPlay ActiveEngine { get; protected set; }
+        protected PixelVision TmpEngine;
+        public PixelVision ActiveEngine { get; protected set; }
 
-        public virtual void ActivateEngine(IPlay engine)
+        public virtual void ActivateEngine(PixelVision engine)
         {
             if (engine == null) return;
 

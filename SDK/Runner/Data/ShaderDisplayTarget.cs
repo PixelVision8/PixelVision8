@@ -111,7 +111,7 @@ namespace PixelVision8.Runner
             }
         }
 
-        public override void ResetResolution(IPlayerChips engine)
+        public override void ResetResolution(PixelVision engine)
         {
             base.ResetResolution(engine);
 

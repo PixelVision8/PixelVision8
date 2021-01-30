@@ -130,7 +130,7 @@ namespace PixelVision8
         {
             try
             {
-                var palette = imageData.Colors.Select(Utilities.HexToColor).ToArray();
+                var palette = imageData.Colors.Select(ColorChip.HexToColor).ToArray();
 
                 var imageExporter = new PNGWriter();
 

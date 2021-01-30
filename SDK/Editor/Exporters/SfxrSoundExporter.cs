@@ -26,11 +26,11 @@ namespace PixelVision8.Runner.Exporters
 {
     public class SfxrSoundExporter : AbstractExporter
     {
-        private readonly IPlayerChips targetEngine;
+        private readonly PixelVision targetEngine;
         private StringBuilder sb;
         private SfxrSoundChip _sfxrSoundChip;
 
-        public SfxrSoundExporter(string fileName, IPlayerChips targetEngine) : base(fileName)
+        public SfxrSoundExporter(string fileName, PixelVision targetEngine) : base(fileName)
         {
             this.targetEngine = targetEngine;
 

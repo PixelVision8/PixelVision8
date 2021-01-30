@@ -42,10 +42,10 @@ namespace PixelVision8.Runner.Exporters
 
     public class TilemapJsonExporter : AbstractExporter
     {
-        private readonly IPlayerChips targetEngine;
+        private readonly PixelVision targetEngine;
         private StringBuilder sb;
 
-        public TilemapJsonExporter(string fileName, IPlayerChips targetEngine) : base(fileName)
+        public TilemapJsonExporter(string fileName, PixelVision targetEngine) : base(fileName)
         {
             this.targetEngine = targetEngine;
         }

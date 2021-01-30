@@ -50,7 +50,7 @@ namespace PixelVision8.Player
     /// </example>
     public class AbstractChip
     {
-        protected IPlayerChips Player;
+        protected PixelVision Player;
 
         /// <summary>
         ///     Activate is the beginning of the chip's life cycle.
@@ -59,7 +59,7 @@ namespace PixelVision8.Player
         ///     as well as to each other through the engine's exposed APIs.
         /// </summary>
         /// <param name="parent">A reference to the engine.</param>
-        public void Activate(IPlayerChips parent)
+        public void Activate(PixelVision parent)
         {
             Player = parent;
             Configure();

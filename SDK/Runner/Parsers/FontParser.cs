@@ -18,22 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-
-/* Unmerged change from project 'PixelVision8.CoreDesktop'
-Before:
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Chips;
-After:
-using Microsoft.Xna.Framework;
-using System.Collections.Chips;
-using PixelVision8.Engine.Utils;
-using System;
-using System.Collections.Chips;
-*/
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +27,8 @@ namespace PixelVision8.Runner
 {
     public class FontParser : SpriteImageParser
     {
+        
+        
         private readonly FontChip _fontChip;
         private List<string> _uniqueFontColors;
         private int[] _fontMap;
@@ -56,7 +42,7 @@ namespace PixelVision8.Runner
         public override void CreateImage()
         {
             // Get all the colors from the image
-            _uniqueFontColors = Parser.colorPalette.Select(c => Utilities.RgbToHex(c.R, c.G, c.B)).ToList();
+            _uniqueFontColors = Parser.colorPalette.Select(c => RgbToHex(c.R, c.G, c.B)).ToList();
 
             // Remove the mask color
             _uniqueFontColors.Remove(colorChip.MaskColor);
@@ -65,7 +51,7 @@ namespace PixelVision8.Runner
             var colorRefs = _uniqueFontColors.ToArray();
 
             // Convert all of the pixels into color ids
-            var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorRefs, Utilities.RgbToHex(c.R, c.G, c.B)))
+            var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorRefs, RgbToHex(c.R, c.G, c.B)))
                 .ToArray();
 
             // Create new image
@@ -108,7 +94,7 @@ namespace PixelVision8.Runner
     public partial class Loader
     {
         [FileParser("font.png")]
-        public void ParseFonts(string file, IPlayerChips engine)
+        public void ParseFonts(string file, PixelVision engine)
         {
             AddParser(new FontParser(file, _imageParser, engine.ColorChip, engine.FontChip));
         }

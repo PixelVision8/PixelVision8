@@ -28,7 +28,6 @@ namespace PixelVision8.Player
 {
     public interface IControllerChip : IUpdate
     {
-        bool export { get; set; }
         bool ButtonReleased(Buttons buttonID, int controllerID = 0);
         bool ButtonDown(Buttons button, int controllerID = 0);
         Point ReadMousePosition();

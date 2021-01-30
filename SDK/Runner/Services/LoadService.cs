@@ -38,7 +38,7 @@ namespace PixelVision8.Runner
         // private Color maskColor = Utilities.HexToColor("#ff00ff"); // TODO this shouldn't be hard coded 
         private AbstractParser parser;
 
-        public IPlayerChips targetEngine;
+        public PixelVision targetEngine;
 
         // public int TotalSteps;
         private readonly IFileLoader _fileLoadHelper;
@@ -63,7 +63,7 @@ namespace PixelVision8.Runner
         public string Message { get; protected set; }
 
 
-        public virtual void ParseFiles(string[] files, IPlayerChips engine, FileFlags fileFlags)
+        public virtual void ParseFiles(string[] files, PixelVision engine, FileFlags fileFlags)
         {
             // TODO need to loop through parser mappings here
 
@@ -397,25 +397,25 @@ namespace PixelVision8.Runner
     public partial class Loader
     {
         [FileParser("saves.json")]
-        public void ParseSaveData(string file, IPlayerChips engine)
+        public void ParseSaveData(string file, PixelVision engine)
         {
             AddParser(new SystemParser(file, _fileLoadHelper, engine));
         }
 
         [FileParser("sounds.json")]
-        public void ParseSounds(string file, IPlayerChips engine)
+        public void ParseSounds(string file, PixelVision engine)
         {
             AddParser(new SystemParser(file, _fileLoadHelper, engine));
         }
 
         [FileParser("music.json")]
-        public void ParseMusic(string file, IPlayerChips engine)
+        public void ParseMusic(string file, PixelVision engine)
         {
             AddParser(new SystemParser(file, _fileLoadHelper, engine));
         }
 
         [FileParser("meta-sprites.json")]
-        public void ParseMetaSprites(string file, IPlayerChips engine)
+        public void ParseMetaSprites(string file, PixelVision engine)
         {
             AddParser(new SystemParser(file, _fileLoadHelper, engine));
         }

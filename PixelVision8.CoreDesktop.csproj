@@ -108,7 +108,6 @@
     <Compile Include="SDK\Player\Chips\Graphics\SpriteChip.cs" />
     <Compile Include="SDK\Player\Chips\Graphics\TilemapChip.cs" />
     <Compile Include="SDK\Player\Chips\IDraw.cs" />
-    <Compile Include="SDK\Player\Chips\IPlayerChips.cs" />
     <Compile Include="SDK\Player\Chips\Input\ControllerChip.Controller.cs" />
     <Compile Include="SDK\Player\Chips\Input\ControllerChip.cs" />
     <Compile Include="SDK\Player\Chips\Input\ControllerChip.Keyboard.cs" />
@@ -139,17 +138,14 @@
     <Compile Include="SDK\Player\Data\TileData.cs" />
     <Compile Include="SDK\Player\Data\TrackData.cs" />
     <Compile Include="SDK\Player\Data\TrackerData.cs" />
-    <Compile Include="SDK\Player\IPlay.cs" />
     <Compile Include="SDK\Player\PixelVision.Plus.cs" />
     <Compile Include="SDK\Player\PixelVision.cs" />
     <Compile Include="SDK\Player\Services\AbstractService.cs" />
     <Compile Include="SDK\Player\Services\IService.cs" />
     <Compile Include="SDK\Player\Services\IServiceLocator.cs" />
     <Compile Include="SDK\Player\Services\ServiceManager.cs" />
-    <Compile Include="SDK\Player\Utils\Utilities.Color.cs" />
     <Compile Include="SDK\Player\Utils\Utilities.Calculations.cs" />
     <Compile Include="SDK\Player\Utils\Utilities.PixelData.cs" />
-    <Compile Include="SDK\Player\Utils\Utilities.cs" />
     <Compile Include="SDK\Lua\Chips\Game\LuaGameChip.cs" />
     <Compile Include="SDK\Lua\Debugger\AsyncDebugger.cs" />
     <Compile Include="SDK\Lua\Debugger\DebugSession.cs" />

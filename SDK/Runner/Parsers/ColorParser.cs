@@ -41,7 +41,7 @@ namespace PixelVision8.Runner
             SourcePath = sourceFile;
             this.colorChip = colorChip;
             // unique = colorChip.unique;
-            magenta = Utilities.HexToColor(colorChip.MaskColor);
+            magenta = ColorChip.HexToColor(colorChip.MaskColor);
         }
 
         public override void CalculateSteps()
@@ -85,7 +85,7 @@ namespace PixelVision8.Runner
             for (var i = 0; i < totalColors; i++)
             {
                 var tmpColor = colors[i];
-                var hex = Utilities.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B);
+                var hex = SpriteImageParser.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B);
 
                 colorChip.UpdateColorAt(i, hex);
             }
@@ -97,7 +97,7 @@ namespace PixelVision8.Runner
     public partial class Loader
     {
         [FileParser("colors.png")]
-        public void ParseColors(string file, IPlayerChips engine)
+        public void ParseColors(string file, PixelVision engine)
         {
             AddParser(new ColorParser(file, _imageParser, engine.ColorChip));
         }

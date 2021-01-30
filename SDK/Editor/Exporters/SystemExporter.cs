@@ -26,10 +26,10 @@ namespace PixelVision8.Runner.Exporters
 {
     public class SystemExporter : AbstractExporter
     {
-        private readonly IPlayerChips engine;
+        private readonly PixelVision engine;
         private StringBuilder sb;
 
-        public SystemExporter(string fileName, IPlayerChips engine) : base(fileName)
+        public SystemExporter(string fileName, PixelVision engine) : base(fileName)
         {
             this.engine = engine;
 

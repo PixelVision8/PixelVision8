@@ -50,11 +50,11 @@ namespace PixelVision8.Runner
         private Dictionary<int, List<Color>> distinctColors;
         private int scale = 1;
         private Dictionary<int, List<byte>> encoded;
-        private IPlayerChips engine;
+        private PixelVision engine;
 
         public bool ExportingFinished => byteList != null;
 
-        public GifExporter(string fileName, IPlayerChips engine) : base(fileName)
+        public GifExporter(string fileName, PixelVision engine) : base(fileName)
         {
             this.engine = engine;
             DisplayChip = engine.DisplayChip;
@@ -102,7 +102,7 @@ namespace PixelVision8.Runner
             // TODO there might be a better way to do this like grabbing the pixel data from somewhere else?
             var pixels = DisplayChip.Pixels;
 
-            var cachedColors = Utilities.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor,
+            var cachedColors = DisplayTarget.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor,
                 engine.ColorChip.DebugMode, engine.ColorChip.BackgroundColor);
 
             // var cachedColors = engine.ColorChip.colors;

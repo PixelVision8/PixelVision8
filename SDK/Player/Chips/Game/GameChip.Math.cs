@@ -18,6 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
 using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 
@@ -62,7 +63,7 @@ namespace PixelVision8.Player
         /// </returns>
         public int Repeat(int val, int max)
         {
-            return Utilities.Repeat(val, max);
+            return (int) (val - Math.Floor(val / (float) max) * max);
         }
 
         /// <summary>
@@ -108,6 +109,7 @@ namespace PixelVision8.Player
 
         /// <summary>
         ///     Fast calculation to get the distance between two points
+        ///     from https://stackoverflow.com/questions/16365870/distance-between-two-points-without-using-the-square-root
         /// </summary>
         /// <param name="x0"></param>
         /// <param name="y0"></param>
@@ -118,10 +120,27 @@ namespace PixelVision8.Player
         {
             var dx = x1 - x0;
             var dy = y1 - y0;
-            var distance = Utilities.Sqrt(dx * dx + dy * dy);
-            return (int) distance;
-        }
+            
+            int x = dx * dx + dy * dy;
+            int s, t;
 
+            s = 1;
+            t = x;
+            while (s < t)
+            {
+                s <<= 1;
+                t >>= 1;
+            } //decide the value of the first tentative
+
+            do
+            {
+                t = s;
+                s = (x / s + s) >> 1; //x1=(N / x0 + x0)/2 : recurrence formula
+            } while (s < t);
+
+            return  t;
+        }
+        
         #endregion
     }
 }

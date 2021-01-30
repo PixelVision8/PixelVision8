@@ -99,7 +99,7 @@ namespace PixelVision8.Runner
     public partial class Loader
     {
         [FileParser("tilemap.png")]
-        public void ParseTilemapImage(string file, IPlayerChips engine)
+        public void ParseTilemapImage(string file, PixelVision engine)
         {
             AddParser(new TilemapParser(file, _imageParser, engine.ColorChip, engine.SpriteChip, engine.TilemapChip,
                 true));

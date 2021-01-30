@@ -128,7 +128,7 @@ namespace PixelVision8.Runner
             }
         }
 
-        public virtual void ParseFiles(string[] files, IPlayerChips engine)
+        public virtual void ParseFiles(string[] files, PixelVision engine)
         {
             Reset();
 

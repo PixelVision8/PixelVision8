@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 
@@ -76,8 +77,8 @@ namespace PixelVision8.Player
                 // Test to see if the sprite is within range
                 if (id > -1)
                 {
-                    x = Utilities.FloorToInt(i % width) * paddingW + startX;
-                    y = Utilities.FloorToInt(i / width) * paddingH + startY;
+                    x = (int)Math.Floor((double)i % width) * paddingW + startX;
+                    y = (int)Math.Floor((double)i / width) * paddingH + startY;
 
                     DrawSprite(id, x, y, flipH, flipV, colorOffset);
                 }

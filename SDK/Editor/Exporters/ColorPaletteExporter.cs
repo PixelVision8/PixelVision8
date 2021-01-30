@@ -98,7 +98,7 @@ namespace PixelVision8.Runner.Exporters
 
         public virtual void ConfigureColors()
         {
-            colors = Utilities.ConvertColors(colorChip.HexColors, colorChip.MaskColor, true);
+            colors = DisplayTarget.ConvertColors(colorChip.HexColors, colorChip.MaskColor, true);
             //
             // colorChip.colors;
             total = colors.Length;

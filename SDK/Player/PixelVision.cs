@@ -28,7 +28,7 @@ namespace PixelVision8.Player
     ///     state of all chips, the game itself and helps with communication between
     ///     the two.
     /// </summary>
-    public partial class PixelVision : IPlay
+    public partial class PixelVision
     {
         protected Dictionary<string, AbstractChip> Chips = new Dictionary<string, AbstractChip>();
         protected List<IDraw> DrawChips = new List<IDraw>();
@@ -152,9 +152,9 @@ namespace PixelVision8.Player
                 //TODO fixed bug here but need to make sure we don't need to do this above
                 Chips.Add(id, chip);
 
-                if (chip is IUpdate) UpdateChips.Add(chip as IUpdate);
+                if (chip is IUpdate update) UpdateChips.Add(update);
 
-                if (chip is IDraw) DrawChips.Add(chip as IDraw);
+                if (chip is IDraw draw) DrawChips.Add(draw);
             }
 
             if (autoActivate) chip.Activate(this);

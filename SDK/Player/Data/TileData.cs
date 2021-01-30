@@ -18,6 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
+using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 
 namespace PixelVision8.Player
@@ -80,7 +81,7 @@ namespace PixelVision8.Player
             get => _flag;
             set
             {
-                _flag = Utilities.Clamp(value, -1, 255);
+                _flag = MathHelper.Clamp(value, -1, 255);
                 Invalidate();
             }
         }

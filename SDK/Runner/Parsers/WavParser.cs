@@ -27,7 +27,7 @@ namespace PixelVision8.Runner
         public ISoundChip soundChip;
         private IFileLoader _fileLoadHelper;
 
-        public WavParser(string[] files, IFileLoader fileLoadHelper, IPlayerChips engine)
+        public WavParser(string[] files, IFileLoader fileLoadHelper, PixelVision engine)
         {
             _fileLoadHelper = fileLoadHelper;
             soundChip = engine.SoundChip;
@@ -63,7 +63,7 @@ namespace PixelVision8.Runner
     public partial class Loader
     {
         [FileParser(".wav")]
-        public void ParseWave(string[] file, IPlayerChips engine)
+        public void ParseWave(string[] file, PixelVision engine)
         {
             AddParser(new WavParser(file, _fileLoadHelper, engine));
         }

@@ -26,10 +26,10 @@ namespace PixelVision8.Runner.Exporters
 {
     public class MusicExporter : AbstractExporter
     {
-        private readonly IPlayerChips targetEngine;
+        private readonly PixelVision targetEngine;
         private StringBuilder sb;
 
-        public MusicExporter(string fileName, IPlayerChips targetEngine) : base(fileName)
+        public MusicExporter(string fileName, PixelVision targetEngine) : base(fileName)
         {
             this.targetEngine = targetEngine;
 

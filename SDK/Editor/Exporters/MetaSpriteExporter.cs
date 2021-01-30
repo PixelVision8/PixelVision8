@@ -26,11 +26,11 @@ namespace PixelVision8.Runner.Exporters
 {
     public class MetaSpriteExporter : AbstractExporter
     {
-        private readonly IPlayerChips targetEngine;
+        private readonly PixelVision targetEngine;
         private StringBuilder sb;
         private GameChip _gameChip;
 
-        public MetaSpriteExporter(string fileName, IPlayerChips targetEngine) : base(fileName)
+        public MetaSpriteExporter(string fileName, PixelVision targetEngine) : base(fileName)
         {
             this.targetEngine = targetEngine;
 

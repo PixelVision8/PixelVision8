@@ -402,7 +402,7 @@ namespace PixelVision8.Runner
             TmpEngine.ControllerChip.RegisterKeyInput(player1KeyboardMap, player2KeyboardMap);
         }
 
-        public override void ActivateEngine(IPlay engine)
+        public override void ActivateEngine(PixelVision engine)
         {
             // At this point this game is fully configured so all chips are accessible for extra configuring
 
@@ -445,7 +445,7 @@ namespace PixelVision8.Runner
             controllerChip.SetInputText(e.Character, e.Key);
         }
 
-        public virtual void BaseActivateEngine(IPlay engine)
+        public virtual void BaseActivateEngine(PixelVision engine)
         {
             if (engine == null) return;
 
@@ -1139,7 +1139,7 @@ namespace PixelVision8.Runner
             }
         }
 
-        public IPlay CreateNewEngine(List<string> chips)
+        public PixelVision CreateNewEngine(List<string> chips)
         {
             var tmpEngine = new PixelVision(chips.ToArray())
             {
@@ -1588,7 +1588,7 @@ namespace PixelVision8.Runner
             return false;
         }
 
-        public void SaveGameData(string path, IPlayerChips engine, FileFlags fileFlags, bool useSteps = true)
+        public void SaveGameData(string path, PixelVision engine, FileFlags fileFlags, bool useSteps = true)
         {
             // Export the current game
 
@@ -1611,7 +1611,7 @@ namespace PixelVision8.Runner
             ServiceManager.AddService(typeof(GameDataExportService).FullName, ExportService);
         }
 
-        public void ProcessFiles(IPlay tmpEngine, string[] files, bool displayProgress = false)
+        public void ProcessFiles(PixelVision tmpEngine, string[] files, bool displayProgress = false)
         {
             // var csFilePaths = files.Where(p => p.EndsWith(".cs")).ToArray();
             if (tmpEngine.GameChip == null)

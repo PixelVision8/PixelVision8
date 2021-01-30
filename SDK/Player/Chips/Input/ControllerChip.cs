@@ -26,16 +26,7 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-    public partial interface IPlayerChips
-    {
-        /// <summary>
-        ///     The controller chip handles all input to the engine. This property
-        ///     offers direct access to it.
-        /// </summary>
-        IControllerChip ControllerChip { get; set; }
-    }
-
-
+   
     public class Controller
     {
         public GamePadState CurrentState;

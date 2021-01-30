@@ -26,12 +26,12 @@ namespace PixelVision8.Runner.Exporters
 {
     public class SoundExporter : AbstractExporter
     {
-        private readonly IPlayerChips _targetPlay;
+        private readonly PixelVision _targetPlay;
         private StringBuilder sb;
 
-        public SoundExporter(string fileName, IPlayerChips targetPlay) : base(fileName)
+        public SoundExporter(string fileName, PixelVision targetPlay) : base(fileName)
         {
-            this._targetPlay = targetPlay;
+            _targetPlay = targetPlay;
 
             //            CalculateSteps();
         }
