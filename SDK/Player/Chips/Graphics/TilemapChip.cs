@@ -20,10 +20,12 @@
 
 using Microsoft.Xna.Framework;
 using System;
-using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
+    
+    #region Modify IPlayerChips
+
     public partial interface IPlayerChips
     {
         /// <summary>
@@ -33,6 +35,10 @@ namespace PixelVision8.Player
         /// </summary>
         TilemapChip TilemapChip { get; set; }
     }
+    
+    #endregion
+    
+    #region Tilemap Chip Class
 
     /// <summary>
     ///     The tile map chip represents a grid of sprites used to populate the background
@@ -57,61 +63,57 @@ namespace PixelVision8.Player
         /// <summary>
         ///     The total tiles in the chip.
         /// </summary>
-        public int total => columns * rows;
+        public int Total => Columns * Rows;
 
-        // public int width => viewPort.Width;
-        //
-        // public int height => viewPort.Height;
-
-        private PixelData _tilemapCache = new PixelData();
+        private readonly PixelData _tilemapCache = new PixelData();
 
         public PixelData PixelData
         {
             get
             {
-                if (invalid)
+                if (_invalid)
                     RebuildCache();
                 return _tilemapCache;
             }
         }
 
         private Rectangle _tileSize;
-        private PixelData tmpPixelData;
+        private PixelData _tmpPixelData;
 
         /// <summary>
         ///     The width of the tile map by tiles.
         /// </summary>
-        public int columns
+        public int Columns
         {
             get => _columns;
-            protected set => _columns = Utilities.Clamp(value, 0, 255);
+            private set => _columns = Utilities.Clamp(value, 0, 255);
         }
 
         /// <summary>
         ///     The height of the tile map in tiles.
         /// </summary>
-        public int rows
+        public int Rows
         {
             get => _rows;
-            protected set => _rows = Utilities.Clamp(value, 0, 255);
+            private set => _rows = Utilities.Clamp(value, 0, 255);
         }
 
-        public bool invalid { get; protected set; }
+        private bool _invalid;
 
         public void Invalidate()
         {
-            invalid = true;
+            _invalid = true;
         }
 
         /// <summary>
         ///     This goes flags all tiles with a given sprite ID that it has changed and should be redrawn
         /// </summary>
         /// <param name="id"></param>
-        public void InvalidateTileID(int id)
+        public void InvalidateTileId(int id)
         {
             //            GetTile(id).invalid = true;
 
-            for (var i = 0; i < total; i++)
+            for (var i = 0; i < Total; i++)
             {
                 var tile = tiles[i];
                 if (tile.SpriteId == id) tile.Invalidate();
@@ -121,15 +123,15 @@ namespace PixelVision8.Player
         }
 
 
-        public void ResetValidation()
+        private void ResetValidation()
         {
-            invalid = false;
-            for (var i = 0; i < total; i++) tiles[i].ResetValidation();
+            _invalid = false;
+            for (var i = 0; i < Total; i++) tiles[i].ResetValidation();
         }
 
         public TileData GetTile(int column, int row)
         {
-            return tiles[Utilities.CalculateIndex(column, row, columns)];
+            return tiles[Utilities.CalculateIndex(column, row, Columns)];
         }
 
         /// <summary>
@@ -150,11 +152,11 @@ namespace PixelVision8.Player
         public void Resize(int newColumns, int newRows, bool clear = true)
         {
             // Make sure we keep the value in range
-            columns = Utilities.Clamp(newColumns, 1, 256);
-            rows = Utilities.Clamp(newRows, 1, 256);
+            Columns = Utilities.Clamp(newColumns, 1, 256);
+            Rows = Utilities.Clamp(newRows, 1, 256);
 
             // Resize the tile array
-            Array.Resize(ref tiles, columns * rows);
+            Array.Resize(ref tiles, Columns * Rows);
 
             // Loop through all of the tiles
             for (_i = 0; _i < tiles.Length; _i++)
@@ -177,7 +179,7 @@ namespace PixelVision8.Player
                 }
             }
 
-            _tilemapCache.Resize(this.columns * SpriteChip.width, this.rows * SpriteChip.height);
+            _tilemapCache.Resize(this.Columns * SpriteChip.SpriteWidth, this.Rows * SpriteChip.SpriteHeight);
 
             Invalidate();
         }
@@ -188,7 +190,7 @@ namespace PixelVision8.Player
         /// </summary>
         public void Clear()
         {
-            for (var i = 0; i < total; i++) tiles[i].Clear();
+            for (var i = 0; i < Total; i++) tiles[i].Clear();
 
             Invalidate();
         }
@@ -207,9 +209,9 @@ namespace PixelVision8.Player
             // Get a reference to the Sprite Chip
             SpriteChip = Player.SpriteChip;
 
-            _tileSize = new Rectangle(0, 0, SpriteChip.width, SpriteChip.height);
+            _tileSize = new Rectangle(0, 0, SpriteChip.SpriteWidth, SpriteChip.SpriteHeight);
 
-            tmpPixelData = new PixelData(_tileSize.Width, _tileSize.Height);
+            _tmpPixelData = new PixelData(_tileSize.Width, _tileSize.Height);
 
             // Resize to default nes resolution
             Resize(32, 30);
@@ -221,36 +223,26 @@ namespace PixelVision8.Player
             Player.TilemapChip = null;
         }
 
-        // public PixelData texture
-        // {
-        //     get
-        //     {
-        //         if (invalid) 
-        //             RebuildCache();
-        //         return _tilemapCache;
-        //     }
-        // }
-
-        protected void RebuildCache()
+        private void RebuildCache()
         {
             // Loop through all of the tiles in the tilemap
-            for (_i = 0; _i < total; _i++)
+            for (_i = 0; _i < Total; _i++)
             {
                 _tile = tiles[_i];
 
                 if (_tile.Invalid)
                 {
                     // Get the sprite id
-                    _pos = Utilities.CalculatePosition(_i, columns);
+                    _pos = Utilities.CalculatePosition(_i, Columns);
 
-                    SpriteChip.ReadSpriteAt(_tile.SpriteId, ref tmpPixelData.Pixels);
+                    SpriteChip.ReadSpriteAt(_tile.SpriteId, ref _tmpPixelData.Pixels);
 
                     if (_tile.FlipH || _tile.FlipV)
-                        Utilities.FlipPixelData(ref tmpPixelData.Pixels, _tileSize.Width, _tileSize.Height, _tile.FlipH,
+                        Utilities.FlipPixelData(ref _tmpPixelData.Pixels, _tileSize.Width, _tileSize.Height, _tile.FlipH,
                             _tile.FlipH);
 
                     // Draw the pixel data into the cachedTilemap
-                    Utilities.MergePixels(tmpPixelData, 0, 0, _tileSize.Width, _tileSize.Height, _tilemapCache,
+                    Utilities.MergePixels(_tmpPixelData, 0, 0, _tileSize.Width, _tileSize.Height, _tilemapCache,
                         _pos.X * _tileSize.Width, _pos.Y * _tileSize.Height, false, false, _tile.ColorOffset, false);
                 }
             }
@@ -261,12 +253,17 @@ namespace PixelVision8.Player
 
         // TODO don't forget to add 'typeof(TilemapChip).FullName' to the Chip list in the GameRunner.Activate.cs class
     }
-}
-
-namespace PixelVision8.Player
-{
+    
+    
+    #endregion
+    
+    #region Modify PixelVision
+    
     public partial class PixelVision
     {
         public TilemapChip TilemapChip { get; set; }
     }
+
+    #endregion
+    
 }

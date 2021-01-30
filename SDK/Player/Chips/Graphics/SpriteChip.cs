@@ -26,6 +26,9 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
+    
+    #region Modify IPlayerChips
+
     public partial interface IPlayerChips
     {
         /// <summary>
@@ -34,6 +37,10 @@ namespace PixelVision8.Player
         /// </summary>
         SpriteChip SpriteChip { get; set; }
     }
+
+    #endregion
+
+    #region Sprite Chip Class
 
     /// <summary>
     ///     The <see cref="SpriteChip" /> represents a way to store and retrieve
@@ -44,70 +51,67 @@ namespace PixelVision8.Player
     public class SpriteChip : AbstractChip, IDisplay
     {
         // TODO these are hard coded assuming the sprites are always 8x8
-        protected readonly int[] emptySpriteData = Enumerable.Repeat(-1, 64).ToArray();
+        private readonly int[] _emptySpriteData = Enumerable.Repeat(-1, 64).ToArray();
 
-        protected int _colorsPerSprite = 8;
-        protected int _pages;
+        private int _colorsPerSprite = 8;
+        private int _pages;
 
-        private ImageData spriteMemory = new ImageData(128, 128);
+        private ImageData _spriteMemory = new ImageData(128, 128);
         private static readonly StringBuilder tmpSB = new StringBuilder();
 
         /// <summary>
-        ///     Internal <see cref="cache" /> for faster lookup
+        ///     Internal <see cref="_cache" /> for faster lookup
         /// </summary>
-        protected string[] cache;
+        private string[] _cache;
 
-        public readonly int pageHeight = 128;
-        public readonly int pageWidth = 128;
-        public bool unique = false;
+        private readonly int _pageHeight = 128;
+        private readonly int _pageWidth = 128;
+        public bool Unique = false;
 
         /// <summary>
         ///     Sets the total number of sprite draw calls for the display.
         /// </summary>
-        public int maxSpriteCount { get; set; }
+        public int MaxSpriteCount { get; set; }
 
         /// <summary>
-        ///     The global <see cref="width" /> of sprites in the engine. By default
+        ///     The global <see cref="SpriteWidth" /> of sprites in the engine. By default
         ///     this is set to 8.
         /// </summary>
-        public int width
+        public int SpriteWidth
         {
-            get => spriteMemory.SpriteWidth;
-            set => spriteMemory.SpriteWidth = value;
+            get => _spriteMemory.SpriteWidth;
+            set => _spriteMemory.SpriteWidth = value;
         }
 
         /// <summary>
-        ///     The global <see cref="width" /> of sprites in the engine. By default
+        ///     The global <see cref="SpriteWidth" /> of sprites in the engine. By default
         ///     this is set to 8.
         /// </summary>
-        public int height
+        public int SpriteHeight
         {
-            get => spriteMemory.SpriteHeight;
-            set => spriteMemory.SpriteHeight = value;
+            get => _spriteMemory.SpriteHeight;
+            set => _spriteMemory.SpriteHeight = value;
         }
 
-        public PixelData PixelData
-        {
-            get => spriteMemory.PixelData;
-        }
+        public PixelData PixelData => _spriteMemory.PixelData;
 
         /// <summary>
         ///     Return's the <see cref="Sprite" /> Ram's internal
-        ///     <see cref="texture" /> <see cref="width" />
+        ///     <see cref="texture" /> <see cref="SpriteWidth" />
         /// </summary>
-        public int textureWidth => spriteMemory.Width;
+        public int TextureWidth => _spriteMemory.Width;
 
         /// <summary>
         ///     Return's the <see cref="Sprite" /> Ram's internal
-        ///     <see cref="texture" /> <see cref="width" />
+        ///     <see cref="texture" /> <see cref="SpriteWidth" />
         /// </summary>
-        public int textureHeight => spriteMemory.Height;
+        public int TextureHeight => _spriteMemory.Height;
 
         /// <summary>
         ///     The virtual number of pages of sprite memory the SpriteChip
         ///     has. Each page contains a max number of sprites.
         /// </summary>
-        public int pages
+        public int Pages
         {
             get => _pages;
             set
@@ -116,35 +120,35 @@ namespace PixelVision8.Player
 
                 _pages = MathHelper.Clamp(value, 1, 8);
 
-                spriteMemory.Resize(
-                    (int) Math.Ceiling((float) pageWidth / width) * width,
-                    (int) Math.Ceiling((float) pageHeight * pages / height) * height
+                _spriteMemory.Resize(
+                    (int) Math.Ceiling((float) _pageWidth / SpriteWidth) * SpriteWidth,
+                    (int) Math.Ceiling((float) _pageHeight * Pages / SpriteHeight) * SpriteHeight
                 );
 
-                cache = new string[spriteMemory.TotalSprites];
+                _cache = new string[_spriteMemory.TotalSprites];
             }
         }
 
         /// <summary>
         ///     Total number of sprites that can be stored in memory.
         /// </summary>
-        public int TotalSprites => spriteMemory.TotalSprites;
+        public int TotalSprites => _spriteMemory.TotalSprites;
 
         /// <summary>
         ///     Total number of sprites that exist in memory.
         /// </summary>
-        public int SpritesInMemory => cache.Count(x => x != null);
+        public int SpritesInMemory => _cache.Count(x => x != null);
 
         /// <summary>
         ///     Number of colors per sprite.
         /// </summary>
-        public int colorsPerSprite
+        public int ColorsPerSprite
         {
             get => _colorsPerSprite;
             set => _colorsPerSprite = MathHelper.Clamp(value, 1, 16);
         }
 
-        public int Columns => textureWidth / width;
+        public int Columns => _spriteMemory.Columns;
 
         /// <summary>
         ///     Tests to see if sprite <paramref name="data" /> is empty. This method
@@ -155,7 +159,7 @@ namespace PixelVision8.Player
         /// <param name="data">An array of ints</param>
         /// <returns>
         /// </returns>
-        public bool IsEmpty(int[] data)
+        public static bool IsEmpty(int[] data)
         {
             var total = data.Length;
             for (var i = 0; i < total; i++)
@@ -167,20 +171,20 @@ namespace PixelVision8.Player
 
         public bool IsEmptyAt(int index)
         {
-            return string.IsNullOrEmpty(cache[index]);
+            return string.IsNullOrEmpty(_cache[index]);
         }
 
         /// <summary>
-        ///     Returns the next empty id in the <see cref="cache" /> index. Used for
+        ///     Returns the next empty id in the <see cref="_cache" /> index. Used for
         ///     building tools to modify the <see cref="SpriteChip" /> like importers
         ///     or if you want to add sprite dynamically at runtime and need to know
         ///     the next open index.
         /// </summary>
         /// <returns>
         /// </returns>
-        public int NextEmptyID()
+        public int NextEmptyId()
         {
-            return Array.FindIndex(cache, string.IsNullOrEmpty);
+            return Array.FindIndex(_cache, string.IsNullOrEmpty);
         }
 
         /// <summary>
@@ -193,7 +197,7 @@ namespace PixelVision8.Player
         {
             Player.SpriteChip = this;
 
-            pages = 4;
+            Pages = 4;
             // _texture.wrapMode = false;
             // width = 8;
             // height = 8;
@@ -204,7 +208,7 @@ namespace PixelVision8.Player
 
         public void Clear()
         {
-            spriteMemory.Clear();
+            _spriteMemory.Clear();
         }
 
         public override void Deactivate()
@@ -230,16 +234,16 @@ namespace PixelVision8.Player
             // TODO check to see if the cache doesn't exist and return the empty sprite as well
             if (index == -1)
             {
-                var size = width * height;
+                var size = SpriteWidth * SpriteHeight;
 
                 if (pixelData.Length < size) Array.Resize(ref pixelData, size);
 
-                Array.Copy(emptySpriteData, pixelData, size);
+                Array.Copy(_emptySpriteData, pixelData, size);
             }
             else
             {
                 // TODO need to remove the additional array copy from the Image to the Array
-                Array.Copy(spriteMemory.GetSpriteData(index, colorsPerSprite), pixelData, pixelData.Length);
+                Array.Copy(_spriteMemory.GetSpriteData(index, ColorsPerSprite), pixelData, pixelData.Length);
             }
         }
 
@@ -251,7 +255,7 @@ namespace PixelVision8.Player
         /// <param name="pixels"></param>
         public void UpdateSpriteAt(int index, int[] pixels)
         {
-            spriteMemory.WriteSpriteData(index, pixels);
+            _spriteMemory.WriteSpriteData(index, pixels);
 
             CacheSprite(index, pixels);
         }
@@ -261,7 +265,7 @@ namespace PixelVision8.Player
         /// <param name="data"></param>
         /// <returns>
         /// </returns>
-        public string SpriteDataToString(int[] data)
+        private string SpriteDataToString(int[] data)
         {
             tmpSB.Length = 0;
             var total = data.Length;
@@ -277,20 +281,20 @@ namespace PixelVision8.Player
         /// </summary>
         /// <param name="index">
         ///     Index where the sprite's cached value should be stored in the
-        ///     <see cref="cache" /> array.
+        ///     <see cref="_cache" /> array.
         /// </param>
         /// <param name="data">
         ///     An array of ints that represents the sprite's color data.
         /// </param>
-        protected void CacheSprite(int index, int[] data)
+        private void CacheSprite(int index, int[] data)
         {
-            if (index < 0 || index >= cache.Length) return;
+            if (index < 0 || index >= _cache.Length) return;
 
             // TODO need to test to see if the sprite is empty first (no need to cache)
 
-            cache[index] = SpriteDataToString(data);
+            _cache[index] = SpriteDataToString(data);
 
-            var totalPixels = width * height;
+            var totalPixels = SpriteWidth * SpriteHeight;
 
             var tmpPixels = new int[totalPixels];
             Array.Copy(data, tmpPixels, totalPixels);
@@ -315,17 +319,20 @@ namespace PixelVision8.Player
 
             var sprite = SpriteDataToString(pixels);
 
-            return Array.IndexOf(cache, sprite);
+            return Array.IndexOf(_cache, sprite);
         }
 
         // TODO don't forget to add 'typeof(SpriteChip).FullName' to the Chip list in the GameRunner.Activate.cs class
     }
-}
+    
+    #endregion
 
-namespace PixelVision8.Player
-{
+    #region Modify PixelVision
+    
     public partial class PixelVision
     {
         public SpriteChip SpriteChip { get; set; }
     }
+    
+    #endregion
 }

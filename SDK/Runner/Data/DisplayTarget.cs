@@ -160,10 +160,10 @@ namespace PixelVision8.Runner.Data
 
         public virtual void RebuildColorPalette(ColorChip colorChip)
         {
-            if (colorChip.invalid)
+            if (colorChip.Invalid)
             {
-                CachedColors = Utilities.ConvertColors(colorChip.hexColors, colorChip.maskColor, colorChip.debugMode,
-                    colorChip.backgroundColor);
+                CachedColors = Utilities.ConvertColors(colorChip.HexColors, colorChip.MaskColor, colorChip.DebugMode,
+                    colorChip.BackgroundColor);
 
                 colorChip.ResetValidation();
             }
@@ -183,7 +183,7 @@ namespace PixelVision8.Runner.Data
             for (_i = 0; _i < _totalPixels; _i++)
             {
                 _colorID = engine.DisplayChip.Pixels[_i];
-                _pixelData[_i] = CachedColors[_colorID < 0 ? engine.ColorChip.backgroundColor : _colorID];
+                _pixelData[_i] = CachedColors[_colorID < 0 ? engine.ColorChip.BackgroundColor : _colorID];
             }
 
             renderTexture.SetData(_pixelData);

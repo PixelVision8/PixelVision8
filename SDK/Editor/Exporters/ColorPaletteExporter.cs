@@ -54,21 +54,21 @@ namespace PixelVision8.Runner.Exporters
 
         public void CalculateSteps()
         {
-            var currentDebugMode = colorChip.debugMode;
+            var currentDebugMode = colorChip.DebugMode;
 
             // Force the color chip to not replace empty colors with background value
-            colorChip.debugMode = true;
+            colorChip.DebugMode = true;
 
             ConfigureColors();
 
             // Restore the color chip debug value
-            colorChip.debugMode = currentDebugMode;
+            colorChip.DebugMode = currentDebugMode;
 
             BuildPixelData();
 
             // Create Pixel Data Exporter
             exporter = new PixelDataExporter(fullFileName, pixels, width, height, colors, imageExporter,
-                colorChip.maskColor);
+                colorChip.MaskColor);
 
             // calculate steps for exporter
             exporter.CalculateSteps();
@@ -98,7 +98,7 @@ namespace PixelVision8.Runner.Exporters
 
         public virtual void ConfigureColors()
         {
-            colors = Utilities.ConvertColors(colorChip.hexColors, colorChip.maskColor, true);
+            colors = Utilities.ConvertColors(colorChip.HexColors, colorChip.MaskColor, true);
             //
             // colorChip.colors;
             total = colors.Length;

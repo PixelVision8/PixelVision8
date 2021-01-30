@@ -45,7 +45,7 @@ namespace PixelVision8.Runner.Exporters
 
             // var colorMapChip = engine.GetChip(ColorMapParser.chipName, false) as ColorChip;
 
-            colors = Utilities.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);
+            colors = Utilities.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor, true);
 
             // TODO removing the color map chip dependency when exporting moving forward
             // colors = colorMapChip == null ? engine.ColorChip.colors : colorMapChip.colors;
@@ -90,8 +90,8 @@ namespace PixelVision8.Runner.Exporters
         // TODO this should be a step in the exporter
         public virtual void ConfigurePixelData()
         {
-            var width = spriteChip.textureWidth;
-            var height = spriteChip.textureHeight;
+            var width = spriteChip.TextureWidth;
+            var height = spriteChip.TextureHeight;
             var pixelData = new int[width * height];
 
             Utilities.CopyPixels(spriteChip.PixelData, 0, 0, width, height, ref pixelData);
@@ -99,7 +99,7 @@ namespace PixelVision8.Runner.Exporters
             // spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
 
             exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, imageExporter,
-                engine.ColorChip.maskColor);
+                engine.ColorChip.MaskColor);
         }
     }
 }

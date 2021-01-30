@@ -48,7 +48,7 @@ namespace PixelVision8.Player
         public int ColorsPerSprite()
         {
             // This can not be changed at run time so it will never need to be invalidated
-            return SpriteChip.colorsPerSprite; //colorsPerSpriteCached;//;
+            return SpriteChip.ColorsPerSprite; //colorsPerSpriteCached;//;
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace PixelVision8.Player
         /// </returns>
         public Point SpriteSize()
         {
-            return new Point(SpriteChip.width, SpriteChip.height);
+            return new Point(SpriteChip.SpriteWidth, SpriteChip.SpriteHeight);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace PixelVision8.Player
             {
                 SpriteChip.UpdateSpriteAt(id, data);
 
-                TilemapChip.InvalidateTileID(id);
+                TilemapChip.InvalidateTileId(id);
 
                 return data;
             }

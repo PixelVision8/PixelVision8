@@ -106,8 +106,8 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.GetLineBreak(sb, 4);
 
 
-            var total = tilemapChip.total;
-            var cols = tilemapChip.columns;
+            var total = tilemapChip.Total;
+            var cols = tilemapChip.Columns;
             var tileCounter = 0;
 
             for (var i = 0; i < total; i++)
@@ -220,13 +220,13 @@ namespace PixelVision8.Runner.Exporters
 
             // Width
             sb.Append("\"width\":");
-            sb.Append(tilemapChip.columns);
+            sb.Append(tilemapChip.Columns);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
             // Height
             sb.Append("\"height\":");
-            sb.Append(tilemapChip.rows);
+            sb.Append(tilemapChip.Rows);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
@@ -280,7 +280,7 @@ namespace PixelVision8.Runner.Exporters
 
             // background color
             sb.Append("\"backgroundcolor\":");
-            sb.Append("\"" + colorChip.maskColor + "\"");
+            sb.Append("\"" + colorChip.MaskColor + "\"");
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
@@ -291,7 +291,7 @@ namespace PixelVision8.Runner.Exporters
             {
                 {
                     "sprites.png",
-                    new SpriteVector(spriteChip.textureWidth, spriteChip.textureHeight, spriteChip.TotalSprites)
+                    new SpriteVector(spriteChip.TextureWidth, spriteChip.TextureHeight, spriteChip.TotalSprites)
                 }
             };
 
@@ -306,7 +306,7 @@ namespace PixelVision8.Runner.Exporters
 
                 // columns
                 sb.Append("\"columns\":");
-                sb.Append(spriteChip.textureWidth / spriteSize.X);
+                sb.Append(spriteChip.TextureWidth / spriteSize.X);
                 sb.Append(",");
                 JsonUtil.GetLineBreak(sb, 2);
 
@@ -373,7 +373,7 @@ namespace PixelVision8.Runner.Exporters
 
                 // transparentcolor
                 sb.Append("\"transparentcolor\":");
-                sb.Append("\"" + targetEngine.ColorChip.maskColor + "\"");
+                sb.Append("\"" + targetEngine.ColorChip.MaskColor + "\"");
                 JsonUtil.GetLineBreak(sb, 2);
 
                 // tilesets end
@@ -451,8 +451,8 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.GetLineBreak(sb, 4);
 
 
-            var total = tilemapChip.total;
-            var cols = tilemapChip.columns;
+            var total = tilemapChip.Total;
+            var cols = tilemapChip.Columns;
             var tileCounter = 0;
 
             for (var i = 0; i < total; i++)

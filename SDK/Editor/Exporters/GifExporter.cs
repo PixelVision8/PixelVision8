@@ -102,8 +102,8 @@ namespace PixelVision8.Runner
             // TODO there might be a better way to do this like grabbing the pixel data from somewhere else?
             var pixels = DisplayChip.Pixels;
 
-            var cachedColors = Utilities.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor,
-                engine.ColorChip.debugMode, engine.ColorChip.backgroundColor);
+            var cachedColors = Utilities.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor,
+                engine.ColorChip.DebugMode, engine.ColorChip.BackgroundColor);
 
             // var cachedColors = engine.ColorChip.colors;
             var displaySize = engine.GameChip.Display();

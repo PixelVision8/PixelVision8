@@ -108,7 +108,7 @@ namespace PixelVision8.Player
         /// </summary>
         public void Clear()
         {
-            DisplayChip.Clear(ColorChip.backgroundColor);
+            DisplayChip.Clear(ColorChip.BackgroundColor);
         }
 
         public override void Deactivate()

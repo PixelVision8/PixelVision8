@@ -155,7 +155,7 @@ namespace PixelVision8.Runner
         public void ResizeColorMemory(int newSize, int maxColors = -1)
         {
             // runner.ActiveEngine.ColorChip.maxColors = maxColors;
-            runner.ActiveEngine.ColorChip.total = newSize;
+            runner.ActiveEngine.ColorChip.Total = newSize;
         }
 
         public string CurrentTime()
@@ -288,7 +288,7 @@ namespace PixelVision8.Runner
             }
 
             // Resize the color chip
-            tmpColorChip.total = colorRefs.Length;
+            tmpColorChip.Total = colorRefs.Length;
 
             // Add the colors
             for (int i = 0; i < colorRefs.Length; i++)

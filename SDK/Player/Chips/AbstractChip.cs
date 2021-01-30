@@ -67,7 +67,7 @@ namespace PixelVision8.Player
         ///     as well as to each other through the engine's exposed APIs.
         /// </summary>
         /// <param name="parent">A reference to the engine.</param>
-        public virtual void Activate(IPlayerChips parent)
+        public void Activate(IPlayerChips parent)
         {
             Player = parent;
             Active = true;

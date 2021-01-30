@@ -136,11 +136,11 @@ namespace PixelVision8.Runner
             var imageExporter = new PNGWriter();
 
             // TODO need to double check that we should force this into debug so transparent images have the mask color in them by default
-            var colors = Utilities.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);
+            var colors = Utilities.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor, true);
 
 
             AddExporter(new PixelDataExporter(path, pixelData, width, height, colors, imageExporter,
-                engine.ColorChip.maskColor));
+                engine.ColorChip.MaskColor));
         }
     }
 }

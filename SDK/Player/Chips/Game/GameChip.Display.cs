@@ -19,7 +19,6 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
@@ -159,7 +158,7 @@ namespace PixelVision8.Player
         ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile
         ///     above the background color.
         /// </param>
-        public virtual void DrawSprite(int id, int x, int y, int columns = 1, int rows = 1, bool flipH = false,
+        public void DrawSprite(int id, int x, int y, int columns = 1, int rows = 1, bool flipH = false,
             bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, SpriteChip srcChip = null)
         {
@@ -178,18 +177,18 @@ namespace PixelVision8.Player
                 {
                     srcChip.ReadSpriteAt(id, ref _tmpSpriteData);
 
-                    DrawPixels(_tmpSpriteData, x, y, SpriteChip.width, SpriteChip.height, flipH, flipV, drawMode,
+                    DrawPixels(_tmpSpriteData, x, y, SpriteChip.SpriteWidth, SpriteChip.SpriteHeight, flipH, flipV, drawMode,
                         colorOffset);
                 }
                 else
                 {
-                    if (SpriteChip.maxSpriteCount > 0 && CurrentSprites >= SpriteChip.maxSpriteCount) return;
+                    if (SpriteChip.MaxSpriteCount > 0 && CurrentSprites >= SpriteChip.MaxSpriteCount) return;
 
                     var pos = Utilities.CalculatePosition(id, srcChip.Columns);
-                    pos.X *= SpriteChip.width;
-                    pos.Y *= SpriteChip.height;
+                    pos.X *= SpriteChip.SpriteWidth;
+                    pos.Y *= SpriteChip.SpriteHeight;
 
-                    DisplayChip.NewDrawCall(srcChip, x, y, SpriteChip.width * columns, SpriteChip.height * rows,
+                    DisplayChip.NewDrawCall(srcChip, x, y, SpriteChip.SpriteWidth * columns, SpriteChip.SpriteHeight * rows,
                         (byte) drawMode, flipH, flipV, colorOffset, pos.X, pos.Y);
 
                     Player.SpriteCounter++;
@@ -271,7 +270,7 @@ namespace PixelVision8.Player
                 spacing = 0;
             }
 
-            var offset = SpriteChip.width + spacing;
+            var offset = SpriteChip.SpriteWidth + spacing;
 
             for (var j = 0; j < total; j++)
             {
@@ -283,7 +282,7 @@ namespace PixelVision8.Player
                     drawMode == DrawMode.SpriteBelow)
                 {
                     // If the sprite counter has been met, exit out of the draw call
-                    if (SpriteChip.maxSpriteCount > 0 && CurrentSprites >= SpriteChip.maxSpriteCount) return;
+                    if (SpriteChip.MaxSpriteCount > 0 && CurrentSprites >= SpriteChip.MaxSpriteCount) return;
 
                     Player.SpriteCounter++;
                 }
@@ -355,8 +354,8 @@ namespace PixelVision8.Player
                 TilemapChip,
                 x,
                 y,
-                columns == 0 ? DisplayChip.Width : columns * SpriteChip.width,
-                rows == 0 ? DisplayChip.Height : rows * SpriteChip.height,
+                columns == 0 ? DisplayChip.Width : columns * SpriteChip.SpriteWidth,
+                rows == 0 ? DisplayChip.Height : rows * SpriteChip.SpriteHeight,
                 (byte) DrawMode.Tile,
                 false,
                 false,

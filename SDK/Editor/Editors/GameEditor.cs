@@ -426,7 +426,7 @@ namespace PixelVision8.Runner.Editors
             //            if (TotalDisks.HasValue)
             //                activeColorChip.maxColors = TotalDisks.Value;
 
-            return ignoreEmpty ? activeColorChip.totalUsedColors : activeColorChip.total;
+            return ignoreEmpty ? activeColorChip.TotalUsedColors : activeColorChip.Total;
         }
 
         // public int MaximumColors(int? value)
@@ -451,7 +451,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int MaxSpriteCount(int? total)
         {
-            if (total.HasValue) targetGame.SpriteChip.maxSpriteCount = total.Value;
+            if (total.HasValue) targetGame.SpriteChip.MaxSpriteCount = total.Value;
 
             return _gameChip.MaxSpriteCount();
         }
@@ -738,7 +738,7 @@ namespace PixelVision8.Runner.Editors
         public void FloodFillTilemap(int value, int column, int row, int mode = 0, int scaleX = 1, int scaleY = 1,
             int colorOffset = -1)
         {
-            var canvas = NewCanvas(tilemapChip.columns, tilemapChip.rows);
+            var canvas = NewCanvas(tilemapChip.Columns, tilemapChip.Rows);
 
             var tiles = tilemapChip.tiles;
 
@@ -862,14 +862,14 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public bool UniqueSprites(bool? flag = null)
         {
-            if (flag.HasValue) spriteChip.unique = flag.Value;
+            if (flag.HasValue) spriteChip.Unique = flag.Value;
 
-            return spriteChip.unique;
+            return spriteChip.Unique;
         }
 
         public string[] Colors()
         {
-            return colorChip.hexColors;
+            return colorChip.HexColors;
         }
 
         /// <summary>
@@ -891,9 +891,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public bool DebugColor(bool? flag = null)
         {
-            if (flag.HasValue) colorChip.debugMode = flag.Value;
+            if (flag.HasValue) colorChip.DebugMode = flag.Value;
 
-            return colorChip.debugMode;
+            return colorChip.DebugMode;
         }
 
         /// <summary>
@@ -1131,7 +1131,7 @@ namespace PixelVision8.Runner.Editors
                 targetGame = new PixelVision(chips, "GameEditor")
                 {
                     ServiceLocator = serviceManager,
-                    FontChip = {unique = false, pages = 1},
+                    FontChip = {Unique = false, Pages = 1},
                     Name = path
                 };
 
@@ -1377,7 +1377,7 @@ namespace PixelVision8.Runner.Editors
         /// </summary>
         public void ResizeToolColorMemory()
         {
-            runner.ActiveEngine.ColorChip.total = 512;
+            runner.ActiveEngine.ColorChip.Total = 512;
             runner.ActiveEngine.ColorChip.Invalidate();
         }
 
@@ -1388,9 +1388,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public string MaskColor(string value = null)
         {
-            if (value != null) colorChip.maskColor = value;
+            if (value != null) colorChip.MaskColor = value;
 
-            return colorChip.maskColor;
+            return colorChip.MaskColor;
         }
 
         #endregion
@@ -1411,9 +1411,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int SpritePages(int? total = null)
         {
-            if (total.HasValue) spriteChip.pages = total.Value;
+            if (total.HasValue) spriteChip.Pages = total.Value;
 
-            return spriteChip.pages;
+            return spriteChip.Pages;
         }
 
         /// <summary>
@@ -1424,9 +1424,9 @@ namespace PixelVision8.Runner.Editors
         public int ColorsPerSprite(int? total)
         {
             // 
-            if (total.HasValue) spriteChip.colorsPerSprite = total.Value;
+            if (total.HasValue) spriteChip.ColorsPerSprite = total.Value;
 
-            return spriteChip.colorsPerSprite;
+            return spriteChip.ColorsPerSprite;
         }
 
         /// <summary>
@@ -1435,9 +1435,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int DrawCalls(int? total = null)
         {
-            if (total.HasValue) spriteChip.maxSpriteCount = total.Value;
+            if (total.HasValue) spriteChip.MaxSpriteCount = total.Value;
 
-            return spriteChip.maxSpriteCount;
+            return spriteChip.MaxSpriteCount;
         }
 
         #endregion
@@ -1982,12 +1982,12 @@ namespace PixelVision8.Runner.Editors
         {
             //            var scale = 1;
 
-            var blockSizeX = scaleX * spriteChip.width;
-            var blockSizeY = scaleY * spriteChip.height;
+            var blockSizeX = scaleX * spriteChip.SpriteWidth;
+            var blockSizeY = scaleY * spriteChip.SpriteHeight;
 
             var pixelData = new int[blockSizeX * blockSizeY];
 
-            var pos = _gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
+            var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / spriteChip.SpriteWidth);
 
             Utilities.CopyPixels(spriteChip.PixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY, ref pixelData);
             // spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
@@ -2007,10 +2007,10 @@ namespace PixelVision8.Runner.Editors
         /// <param name="flipV"></param>
         public void WriteSpriteData(int id, int[] pixelData, int scaleX = 1, int scaleY = 1)
         {
-            var blockSizeX = scaleX * spriteChip.width;
-            var blockSizeY = scaleY * spriteChip.height;
+            var blockSizeX = scaleX * spriteChip.SpriteWidth;
+            var blockSizeY = scaleY * spriteChip.SpriteHeight;
 
-            var pos = _gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
+            var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / spriteChip.SpriteWidth);
 
             //            var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
 
@@ -2274,7 +2274,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public string[] ToolColors()
         {
-            return runner.ActiveEngine.ColorChip.hexColors;
+            return runner.ActiveEngine.ColorChip.HexColors;
         }
 
         /// <summary>
@@ -2283,7 +2283,7 @@ namespace PixelVision8.Runner.Editors
         /// <param name="total"></param>
         public void ToolRebuildColorPages(int total)
         {
-            runner.ActiveEngine.ColorChip.total = total;
+            runner.ActiveEngine.ColorChip.Total = total;
         }
 
         /// <summary>

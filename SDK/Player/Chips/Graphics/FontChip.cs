@@ -23,6 +23,9 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
+    
+    #region Modify IPlayerChips
+
     public partial interface IPlayerChips
     {
         /// <summary>
@@ -31,7 +34,11 @@ namespace PixelVision8.Player
         /// </summary>
         FontChip FontChip { get; set; }
     }
+    
+    #endregion
 
+    #region Font Chip Class
+    
     /// <summary>
     ///     The font chip allows you to render text to the display. It is built on
     ///     top of the same APIs as the <see cref="SpriteChip" /> but has custom
@@ -50,9 +57,9 @@ namespace PixelVision8.Player
         {
             Player.FontChip = this;
 
-            pages = 2;
-            colorsPerSprite = 2;
-            unique = true;
+            Pages = 2;
+            ColorsPerSprite = 2;
+            Unique = true;
         }
 
         public override void Deactivate()
@@ -86,12 +93,15 @@ namespace PixelVision8.Player
 
         // TODO don't forget to add 'typeof(FontChip).FullName' to the Chip list in the GameRunner.Activate.cs class
     }
-}
+    
+    #endregion
 
-namespace PixelVision8.Player
-{
+    #region Modify PixelVision
+
     public partial class PixelVision
     {
         public FontChip FontChip { get; set; }
     }
+    
+    #endregion
 }

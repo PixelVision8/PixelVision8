@@ -59,7 +59,7 @@ namespace PixelVision8.Runner
             uniqueFontColors = Parser.colorPalette.Select(c => Utilities.RgbToHex(c.R, c.G, c.B)).ToList();
 
             // Remove the mask color
-            uniqueFontColors.Remove(colorChip.maskColor);
+            uniqueFontColors.Remove(colorChip.MaskColor);
 
             // Convert into an array
             var colorRefs = uniqueFontColors.ToArray();
@@ -92,10 +92,10 @@ namespace PixelVision8.Runner
             var id = -1;
 
             // If the sprite chip has unique sprites, try to find an existing sprite first
-            if (spriteChip.unique) id = spriteChip.FindSprite(spriteData);
+            if (spriteChip.Unique) id = spriteChip.FindSprite(spriteData);
 
             // If the sprite ID is -1 look for an empty sprite
-            if (id == -1) id = spriteChip.NextEmptyID();
+            if (id == -1) id = spriteChip.NextEmptyId();
 
             // Add the font character sprite data
             spriteChip.UpdateSpriteAt(id, spriteData);

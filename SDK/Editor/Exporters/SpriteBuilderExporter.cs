@@ -46,8 +46,8 @@ namespace PixelVision8.Runner.Exporters
         {
             // Get the total number of sprites
             //TODO this needs to be double checked at different size sprites
-            var cols = Utilities.FloorToInt(ImageData.Width / spriteChip.width);
-            var rows = Utilities.FloorToInt(ImageData.Height / spriteChip.height);
+            var cols = Utilities.FloorToInt(ImageData.Width / spriteChip.SpriteWidth);
+            var rows = Utilities.FloorToInt(ImageData.Height / spriteChip.SpriteHeight);
             totalSpritesInTexture = cols * rows;
 
             ids = Enumerable.Repeat(-1, totalSpritesInTexture).ToArray();

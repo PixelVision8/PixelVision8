@@ -128,7 +128,7 @@ namespace PixelVision8.Runner.Data
 
         public override void RebuildColorPalette(ColorChip colorChip)
         {
-            var invalid = colorChip.invalid;
+            var invalid = colorChip.Invalid;
 
             base.RebuildColorPalette(colorChip);
 

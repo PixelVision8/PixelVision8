@@ -40,9 +40,9 @@ namespace PixelVision8.Player
         /// </returns>
         public virtual int BackgroundColor(int? id = null)
         {
-            if (id.HasValue) ColorChip.backgroundColor = id.Value;
+            if (id.HasValue) ColorChip.BackgroundColor = id.Value;
 
-            return ColorChip.backgroundColor;
+            return ColorChip.BackgroundColor;
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace PixelVision8.Player
         /// </returns>
         public int TotalColors(bool ignoreEmpty = false)
         {
-            return ignoreEmpty ? ColorChip.totalUsedColors : ColorChip.total;
+            return ignoreEmpty ? ColorChip.TotalUsedColors : ColorChip.Total;
         }
 
         /// <summary>

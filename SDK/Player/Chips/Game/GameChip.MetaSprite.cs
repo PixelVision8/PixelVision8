@@ -97,7 +97,7 @@ namespace PixelVision8.Player
         {
             //            if (total.HasValue) spriteChip.maxSpriteCount = total.Value;
 
-            return SpriteChip.maxSpriteCount;
+            return SpriteChip.MaxSpriteCount;
         }
 
         public SpriteCollection MetaSprite(int id, SpriteCollection spriteCollection = null)
@@ -161,7 +161,7 @@ namespace PixelVision8.Player
                     tmpIDs[i] = tmpSpritesData[i].Id;
                 }
 
-                var width = Utilities.CeilToInt(spriteCollection.Bounds.Width / SpriteChip.width);
+                var width = Utilities.CeilToInt(spriteCollection.Bounds.Width / SpriteChip.SpriteWidth);
 
                 height = Utilities.CeilToInt(_total / width);
 

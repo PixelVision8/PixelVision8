@@ -52,12 +52,12 @@ namespace PixelVision8.Runner
             this.colorChip = colorChip;
 
             // Read the color chip's mask color
-            MaskHex = colorChip.maskColor;
+            MaskHex = colorChip.MaskColor;
 
             if (spriteChip != null)
             {
-                spriteWidth = this.spriteChip.width;
-                spriteHeight = this.spriteChip.height;
+                spriteWidth = this.spriteChip.SpriteWidth;
+                spriteHeight = this.spriteChip.SpriteHeight;
             }
         }
 
@@ -79,13 +79,13 @@ namespace PixelVision8.Runner
 
         public virtual void PrepareSprites()
         {
-            cps = spriteChip.colorsPerSprite;
+            cps = spriteChip.ColorsPerSprite;
 
             totalSprites = ImageData.TotalSprites;
 
             //TODO this needs to be double checked at different size sprites
-            var cols = Utilities.FloorToInt(spriteChip.textureWidth / spriteWidth);
-            var rows = Utilities.FloorToInt(spriteChip.textureHeight / spriteHeight);
+            var cols = Utilities.FloorToInt(spriteChip.TextureWidth / spriteWidth);
+            var rows = Utilities.FloorToInt(spriteChip.TextureHeight / spriteHeight);
 
             maxSprites = cols * rows;
 
@@ -98,14 +98,14 @@ namespace PixelVision8.Runner
         public virtual void CreateImage()
         {
             // Get the chip colors and replace any transparent ones with the first color so we don't parse transparency
-            var colorData = Utilities.ConvertColors(colorChip.hexColors, colorChip.maskColor);
+            var colorData = Utilities.ConvertColors(colorChip.HexColors, colorChip.MaskColor);
 
             // colorData = colorChip.colors;
 
             var colorRefs = colorData.Select(c => Utilities.RgbToHex(c.R, c.G, c.B)).ToArray();
 
             // Remove the colors that are not supported
-            Array.Resize(ref colorRefs, colorChip.totalUsedColors);
+            Array.Resize(ref colorRefs, colorChip.TotalUsedColors);
 
             var imageColors = Parser.colorPalette.Select(c => Utilities.RgbToHex(c.R, c.G, c.B)).ToArray();
 
@@ -122,7 +122,7 @@ namespace PixelVision8.Runner
                 // var color = imageColors[i];
                 var color = imageColors[i];
 
-                if (color == colorChip.maskColor) continue;
+                if (color == colorChip.MaskColor) continue;
 
                 var id = Array.IndexOf(colorRefs, color);
 
@@ -210,7 +210,7 @@ namespace PixelVision8.Runner
             if (spritesAdded < maxSprites)
             {
                 // TODO need to deprecate this since the sprite file should load up exactly how it is read
-                if (spriteChip.unique)
+                if (spriteChip.Unique)
                 {
                     if (spriteChip.FindSprite(spriteData) == -1)
                     {
@@ -220,7 +220,7 @@ namespace PixelVision8.Runner
                 }
                 else
                 {
-                    if (spriteChip.IsEmpty(spriteData) == false)
+                    if (SpriteChip.IsEmpty(spriteData) == false)
                     {
                         spriteChip.UpdateSpriteAt(index, spriteData);
                         spritesAdded++;

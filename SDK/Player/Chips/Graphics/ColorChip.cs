@@ -24,6 +24,23 @@ using System.Linq;
 
 namespace PixelVision8.Player
 {
+    
+    #region Modify IPlayerChips
+
+    public partial interface IPlayerChips
+    {
+        /// <summary>
+        ///     The color chips stores colors for the engine. It's used by several
+        ///     other systems to properly convert pixel data into color data for the
+        ///     display. This property offers direct access to it.
+        /// </summary>
+        ColorChip ColorChip { get; set; }
+    }
+
+    #endregion
+
+    #region Color Chip Class
+    
     /// <summary>
     ///     The <see cref="ColorChip" /> represents the system colors of the engine.
     ///     It allows the engine to work in color indexes that the display can map
@@ -31,9 +48,9 @@ namespace PixelVision8.Player
     /// </summary>
     public class ColorChip : AbstractChip
     {
-        protected int _bgColor;
+        private int _bgColor;
 
-        protected string[] _colors =
+        private string[] _colors =
         {
             "#2d1b2e",
             "#218a91",
@@ -55,24 +72,24 @@ namespace PixelVision8.Player
 
         private bool _debugMode;
 
-        protected string _maskColor = "#FF00FF";
+        private string _maskColor = "#FF00FF";
 
         /// <summary>
         ///     The background color reference to use when rendering transparent in
         ///     the ScreenBufferTexture.
         /// </summary>
-        public int backgroundColor
+        public int BackgroundColor
         {
             get => _bgColor;
             set
             {
                 // We make sure that the bg color is never set to a value out of the range of the color chip
-                _bgColor = MathHelper.Clamp(value, 0, total);
+                _bgColor = MathHelper.Clamp(value, 0, Total);
                 Invalidate();
             }
         }
 
-        public string maskColor
+        public string MaskColor
         {
             get => _maskColor;
             set
@@ -88,15 +105,15 @@ namespace PixelVision8.Player
         /// </summary>
         /// <value>Int</value>
         // TODO need to change this to totalSet colors or something more descriptive
-        public int totalUsedColors => hexColors.Length - hexColors.ToList().RemoveAll(c => c == maskColor);
+        public int TotalUsedColors => HexColors.Length - HexColors.ToList().RemoveAll(c => c == MaskColor);
 
-        public string[] hexColors
+        public string[] HexColors
         {
             get
             {
-                var colors = new string[total];
+                var colors = new string[Total];
 
-                Array.Copy(_colors, colors, total);
+                Array.Copy(_colors, colors, Total);
 
                 return colors;
             }
@@ -108,7 +125,7 @@ namespace PixelVision8.Player
         ///     array will never be larger than this value.
         /// </summary>
         /// <value>Int</value>
-        public int total
+        public int Total
         {
             get => _colors.Length;
             set
@@ -118,14 +135,14 @@ namespace PixelVision8.Player
                 Array.Resize(ref _colors, value);
                 if (oldTotal < value)
                     for (var i = oldTotal; i < value; i++)
-                        _colors[i] = maskColor;
+                        _colors[i] = MaskColor;
 
                 Invalidate();
             }
         }
 
         // Setting this to true will use the mask color for empty colors instead of replacing them with the bg color
-        public bool debugMode
+        public bool DebugMode
         {
             get => _debugMode;
             set
@@ -135,27 +152,26 @@ namespace PixelVision8.Player
             }
         }
 
-        public bool invalid { get; protected set; } = true;
+        public bool Invalid { get; protected set; } = true;
 
         public void Invalidate()
         {
-            invalid = true;
+            Invalid = true;
         }
 
         public void ResetValidation(int value = 0)
         {
-            invalid = false;
+            Invalid = false;
         }
 
         public string ReadColorAt(int index)
         {
-            return index < 0 || index > _colors.Length - 1 ? maskColor : _colors[index];
+            return index < 0 || index > _colors.Length - 1 ? MaskColor : _colors[index];
         }
 
         public void Clear(string color = null)
         {
-            if (color == null)
-                color = maskColor;
+            color ??= MaskColor;
 
             // Console.WriteLine("Clear " + color);
             var t = _colors.Length;
@@ -186,7 +202,7 @@ namespace PixelVision8.Player
         public override void Configure()
         {
             Player.ColorChip = this;
-            backgroundColor = -1;
+            BackgroundColor = -1;
             // total = 256;
         }
 
@@ -197,18 +213,14 @@ namespace PixelVision8.Player
         }
     }
 
-    public partial interface IPlayerChips
-    {
-        /// <summary>
-        ///     The color chips stores colors for the engine. It's used by several
-        ///     other systems to properly convert pixel data into color data for the
-        ///     display. This property offers direct access to it.
-        /// </summary>
-        ColorChip ColorChip { get; set; }
-    }
+    #endregion
 
+    #region Modify PixelVision
+    
     public partial class PixelVision
     {
         public ColorChip ColorChip { get; set; }
     }
+        
+    #endregion
 }

@@ -181,8 +181,8 @@ namespace PixelVision8.Player
         public Point TilemapSize(int? width = null, int? height = null, bool clear = false)
         {
             // Update with the latest value
-            _tilemapSize.X = TilemapChip.columns;
-            _tilemapSize.Y = TilemapChip.rows;
+            _tilemapSize.X = TilemapChip.Columns;
+            _tilemapSize.Y = TilemapChip.Rows;
 
             var resize = false;
 

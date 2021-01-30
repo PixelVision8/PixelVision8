@@ -41,7 +41,7 @@ namespace PixelVision8.Runner
             SourcePath = sourceFile;
             this.colorChip = colorChip;
             // unique = colorChip.unique;
-            magenta = Utilities.HexToColor(colorChip.maskColor);
+            magenta = Utilities.HexToColor(colorChip.MaskColor);
         }
 
         public override void CalculateSteps()

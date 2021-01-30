@@ -48,8 +48,8 @@ namespace PixelVision8.Runner
 
             // if(autoResize)
             // 
-            var tmpColumns = ImageData.Columns > tilemapChip.columns ? tilemapChip.columns : ImageData.Columns;
-            var tmpRows = ImageData.Rows > tilemapChip.rows ? tilemapChip.rows : ImageData.Rows;
+            var tmpColumns = ImageData.Columns > tilemapChip.Columns ? tilemapChip.Columns : ImageData.Columns;
+            var tmpRows = ImageData.Rows > tilemapChip.Rows ? tilemapChip.Rows : ImageData.Rows;
 
             // Make sure the tilemap matches the image size
             // tilemapChip.Resize(image.Columns, image.Rows);
@@ -71,7 +71,7 @@ namespace PixelVision8.Runner
 
             if (tmpColumns < ImageData.Columns || tmpRows < ImageData.Rows)
             {
-                ImageData.Resize(tmpColumns * tmpColumns * spriteChip.width, tmpRows * spriteChip.height);
+                ImageData.Resize(tmpColumns * tmpColumns * spriteChip.SpriteWidth, tmpRows * spriteChip.SpriteHeight);
             }
 
             StepCompleted();
@@ -83,7 +83,7 @@ namespace PixelVision8.Runner
 
             if (id == -1 && autoImport)
             {
-                id = spriteChip.NextEmptyID();
+                id = spriteChip.NextEmptyId();
                 spriteChip.UpdateSpriteAt(id, spriteData);
             }
 

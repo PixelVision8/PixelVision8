@@ -179,12 +179,12 @@ namespace PixelVision8.Runner.Exporters
             // JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"backgroundColor\":");
-            sb.Append(colorChip.backgroundColor);
+            sb.Append(colorChip.BackgroundColor);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"maskColor\":\"");
-            sb.Append(colorChip.maskColor);
+            sb.Append(colorChip.MaskColor);
             sb.Append("\"");
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
@@ -195,7 +195,7 @@ namespace PixelVision8.Runner.Exporters
             // JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"debug\":");
-            sb.Append(colorChip.debugMode.ToString().ToLower());
+            sb.Append(colorChip.DebugMode.ToString().ToLower());
 
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
@@ -232,12 +232,12 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.GetLineBreak(sb, 1);
             // Mode
             sb.Append("\"unique\":");
-            sb.Append(fontChip.unique.ToString().ToLower());
+            sb.Append(fontChip.Unique.ToString().ToLower());
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"pages\":");
-            sb.Append(fontChip.pages);
+            sb.Append(fontChip.Pages);
 
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
@@ -379,35 +379,35 @@ namespace PixelVision8.Runner.Exporters
 
             // Max Sprite Count Value
             sb.Append("\"maxSpriteCount\":");
-            sb.Append(spriteChip.maxSpriteCount);
+            sb.Append(spriteChip.MaxSpriteCount);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
             // Mode
             sb.Append("\"unique\":");
-            sb.Append(spriteChip.unique.ToString().ToLower());
+            sb.Append(spriteChip.Unique.ToString().ToLower());
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
             // Mode
             sb.Append("\"spriteWidth\":");
-            sb.Append(spriteChip.width);
+            sb.Append(spriteChip.SpriteWidth);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"spriteHeight\":");
-            sb.Append(spriteChip.height);
+            sb.Append(spriteChip.SpriteHeight);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"pages\":");
-            sb.Append(spriteChip.pages);
+            sb.Append(spriteChip.Pages);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
             // Height
             sb.Append("\"cps\":");
-            sb.Append(spriteChip.colorsPerSprite);
+            sb.Append(spriteChip.ColorsPerSprite);
 
             //            if (serializePixelData)
             //            {
@@ -446,13 +446,13 @@ namespace PixelVision8.Runner.Exporters
 
             // Columns
             sb.Append("\"columns\":");
-            sb.Append(tilemapChip.columns);
+            sb.Append(tilemapChip.Columns);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
             // Rows
             sb.Append("\"rows\":");
-            sb.Append(tilemapChip.rows);
+            sb.Append(tilemapChip.Rows);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 

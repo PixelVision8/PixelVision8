@@ -112,7 +112,7 @@ namespace PixelVision8.Runner
             //            if (data.ContainsKey("colorsPerPage"))
             //                colorChip.colorsPerPage = (int) (long) data["colorsPerPage"];
 
-            if (data.ContainsKey("maskColor")) colorChip.maskColor = (string) data["maskColor"];
+            if (data.ContainsKey("maskColor")) colorChip.MaskColor = (string) data["maskColor"];
 
             // if (data.ContainsKey("maxColors")) colorChip.maxColors = (int)(long)data["maxColors"];
 
@@ -143,9 +143,9 @@ namespace PixelVision8.Runner
             //            if (data.ContainsKey("total"))
             //                colorChip.total = (int) (long) data["total"];
 
-            if (data.ContainsKey("backgroundColor")) colorChip.backgroundColor = (int) (long) data["backgroundColor"];
+            if (data.ContainsKey("backgroundColor")) colorChip.BackgroundColor = (int) (long) data["backgroundColor"];
 
-            if (data.ContainsKey("debug")) colorChip.debugMode = Convert.ToBoolean(data["debug"]);
+            if (data.ContainsKey("debug")) colorChip.DebugMode = Convert.ToBoolean(data["debug"]);
 
             // if (data.ContainsKey("unique")) colorChip.unique = Convert.ToBoolean(data["unique"]);
 
@@ -185,9 +185,9 @@ namespace PixelVision8.Runner
         {
             var fontChip = Target.FontChip;
 
-            if (data.ContainsKey("pages")) fontChip.pages = (int) (long) data["pages"];
+            if (data.ContainsKey("pages")) fontChip.Pages = (int) (long) data["pages"];
 
-            if (data.ContainsKey("unique")) fontChip.unique = Convert.ToBoolean(data["unique"]);
+            if (data.ContainsKey("unique")) fontChip.Unique = Convert.ToBoolean(data["unique"]);
 
             // fontChip.Resize(fontChip.pageWidth, fontChip.pageHeight * fontChip.pages);
         }
@@ -549,15 +549,15 @@ namespace PixelVision8.Runner
 
             if (data.ContainsKey("maxSpriteCount")) displayChip.MaxDrawRequests = (int) (long) data["maxSpriteCount"];
 
-            if (data.ContainsKey("spriteWidth")) spriteChip.width = (int) (long) data["spriteWidth"];
+            if (data.ContainsKey("spriteWidth")) spriteChip.SpriteWidth = (int) (long) data["spriteWidth"];
 
-            if (data.ContainsKey("spriteHeight")) spriteChip.height = (int) (long) data["spriteHeight"];
+            if (data.ContainsKey("spriteHeight")) spriteChip.SpriteHeight = (int) (long) data["spriteHeight"];
 
-            if (data.ContainsKey("cps")) spriteChip.colorsPerSprite = (int) (long) data["cps"];
+            if (data.ContainsKey("cps")) spriteChip.ColorsPerSprite = (int) (long) data["cps"];
 
-            if (data.ContainsKey("pages")) spriteChip.pages = (int) (long) data["pages"];
+            if (data.ContainsKey("pages")) spriteChip.Pages = (int) (long) data["pages"];
 
-            if (data.ContainsKey("unique")) spriteChip.unique = Convert.ToBoolean(data["unique"]);
+            if (data.ContainsKey("unique")) spriteChip.Unique = Convert.ToBoolean(data["unique"]);
 
             // spriteChip.Resize(spriteChip.pageWidth, spriteChip.pageHeight * spriteChip.pages);
         }
@@ -569,8 +569,8 @@ namespace PixelVision8.Runner
             // Flag chip to export
             //tilemapChip.export = true;
 
-            var columns = tilemapChip.columns;
-            var rows = tilemapChip.rows;
+            var columns = tilemapChip.Columns;
+            var rows = tilemapChip.Rows;
 
             if (data.ContainsKey("columns")) columns = (int) (long) data["columns"];
 

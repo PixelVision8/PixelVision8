@@ -180,10 +180,10 @@ namespace PixelVision8.Runner
                             var dataValues = rawLayerData
                                 .Select(x => (int) (long) x - offset < -1 ? -1 : (int) (long) x - offset).ToArray();
 
-                            if (columns != tilemapChip.columns || rows > tilemapChip.rows)
+                            if (columns != tilemapChip.Columns || rows > tilemapChip.Rows)
                             {
                                 // Create texture data that matches the memory of the tilemap chip
-                                var tmpPixelData = new PixelData(tilemapChip.columns, tilemapChip.rows);
+                                var tmpPixelData = new PixelData(tilemapChip.Columns, tilemapChip.Rows);
                                 Utilities.Clear(tmpPixelData);
                                 // tmpPixelData.Clear();
 
@@ -193,8 +193,8 @@ namespace PixelVision8.Runner
                                 Utilities.SetPixels(dataValues, 0, 0, columns, rows, jsonData);
                                 // jsonData.SetPixels(0, 0, columns, rows, dataValues);
 
-                                var tmpCol = columns > tilemapChip.columns ? tilemapChip.columns : columns;
-                                var tmpRow = rows > tilemapChip.rows ? tilemapChip.rows : rows;
+                                var tmpCol = columns > tilemapChip.Columns ? tilemapChip.Columns : columns;
+                                var tmpRow = rows > tilemapChip.Rows ? tilemapChip.Rows : rows;
 
                                 if (tmpCol > columns) tmpCol = columns;
 
@@ -211,14 +211,14 @@ namespace PixelVision8.Runner
                                 // TODO why is this happening twice?
                                 // PixelDataUtil.CopyPixels(ref dataValues, tmpPixelData, 0, 0, tmpPixelData.Width, tmpPixelData.Height);
                                 // tmpPixelData.CopyPixels(ref dataValues, 0, 0, tmpPixelData.width, tmpPixelData.height);
-                                Utilities.CopyPixels(tmpPixelData, 0, 0, tilemapChip.columns, tilemapChip.rows,
+                                Utilities.CopyPixels(tmpPixelData, 0, 0, tilemapChip.Columns, tilemapChip.Rows,
                                     ref dataValues);
 
                                 // tmpPixelData.CopyPixels(ref dataValues, 0, 0, tilemapChip.columns, tilemapChip.rows);
                             }
 
 
-                            for (var j = 0; j < tilemapChip.total; j++)
+                            for (var j = 0; j < tilemapChip.Total; j++)
                             {
                                 var tile = tilemapChip.tiles[j];
 
