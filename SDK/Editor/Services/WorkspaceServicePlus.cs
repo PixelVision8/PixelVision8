@@ -62,7 +62,6 @@ namespace PixelVision8.Runner
             Mounts.Add(
                 new KeyValuePair<WorkspacePath, IFileSystem>(WorkspacePath.Root.AppendDirectory("Workspace"),
                     workspaceDisk));
-
         }
 
         public void RebuildWorkspace()
@@ -87,7 +86,6 @@ namespace PixelVision8.Runner
 
             // Mount the PixelVisionOS directory
             AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(osPath, new MergedFileSystem(systemPaths)));
-
         }
 
         // Exports the active song in the music chip
@@ -115,7 +113,8 @@ namespace PixelVision8.Runner
 
 
                     // TODO exporting sprites doesn't work
-                    if (locator.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
+                    if (locator.GetService(typeof(GameDataExportService).FullName) is GameDataExportService
+                        exportService)
                     {
                         exportService.ExportSong(filePath.Path, musicChip, soundChip, selectedPatterns);
                         //
@@ -270,7 +269,6 @@ namespace PixelVision8.Runner
 
         public void SaveActiveDisk()
         {
-
             // Create a new mount point for the current game
             var rootPath = WorkspacePath.Root.AppendDirectory("Game");
 
@@ -283,7 +281,6 @@ namespace PixelVision8.Runner
 
         public override void ShutdownSystem()
         {
-
             foreach (var disk in Disks) SaveDisk(disk);
 
             base.ShutdownSystem();
@@ -324,8 +321,8 @@ namespace PixelVision8.Runner
             {
                 // Get all the files in the folder
                 var files = from file in GetEntities(srcPath)
-                            where file.GetExtension() == ".png"
-                            select file;
+                    where file.GetExtension() == ".png"
+                    select file;
 
                 foreach (var file in files)
                 {
@@ -345,7 +342,8 @@ namespace PixelVision8.Runner
                 try
                 {
                     // TODO exporting sprites doesn't work
-                    if (locator.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
+                    if (locator.GetService(typeof(GameDataExportService).FullName) is GameDataExportService
+                        exportService)
                     {
                         exportService.ExportSpriteBuilder(path + "sb-sprites.lua", targetGame, fileData);
                         //
@@ -396,7 +394,6 @@ namespace PixelVision8.Runner
 
         public void SaveDisk(WorkspacePath path)
         {
-
             var diskExporter = new ZipDiskExporter(path.Path, this);
             diskExporter.CalculateSteps();
 
@@ -404,10 +401,10 @@ namespace PixelVision8.Runner
             {
                 diskExporter.NextStep();
             }
-
         }
 
-        public Dictionary<string, object> CreateZipFile(WorkspacePath path, Dictionary<WorkspacePath, WorkspacePath> files)
+        public Dictionary<string, object> CreateZipFile(WorkspacePath path,
+            Dictionary<WorkspacePath, WorkspacePath> files)
         {
             var fileHelper = new WorkspaceFileLoadHelper(this);
             var zipExporter = new ZipExporter(path.Path, fileHelper, files);
@@ -420,11 +417,11 @@ namespace PixelVision8.Runner
 
             try
             {
-                if ((bool)zipExporter.Response["success"])
+                if ((bool) zipExporter.Response["success"])
                 {
                     var zipPath = WorkspacePath.Parse(zipExporter.fileName);
 
-                    SaveExporterFiles(new Dictionary<string, byte[]>() { { zipExporter.fileName, zipExporter.bytes } });
+                    SaveExporterFiles(new Dictionary<string, byte[]>() {{zipExporter.fileName, zipExporter.bytes}});
                 }
             }
             catch (Exception e)

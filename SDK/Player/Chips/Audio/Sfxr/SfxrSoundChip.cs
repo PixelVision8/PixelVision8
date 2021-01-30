@@ -22,14 +22,12 @@ using PixelVision8.Player.Audio;
 
 namespace PixelVision8.Player
 {
-
     /// <summary>
     ///     The SoundChip is responsible for playing back sound
     ///     effects in the engine. It's powered by SFxr.
     /// </summary>
     public class SfxrSoundChip : SoundChip
     {
-
         /// <summary>
         ///     Updates a sound in the collection.
         /// </summary>
@@ -89,7 +87,7 @@ namespace PixelVision8.Player
         public WaveType ChannelType(int id, WaveType? type = null)
         {
             // The channel will handle this so pass the values over to its API.
-            return ((SfxrSynthChannel)Channels[id]).ChannelType(type);
+            return ((SfxrSynthChannel) Channels[id]).ChannelType(type);
         }
 
         /// <summary>
@@ -111,6 +109,5 @@ namespace PixelVision8.Player
 
             channel.Play(new SfxSoundData("untitled", data), frequency);
         }
-
     }
 }

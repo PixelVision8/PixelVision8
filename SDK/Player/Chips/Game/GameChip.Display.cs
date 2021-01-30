@@ -27,10 +27,7 @@ namespace PixelVision8.Player
     {
         private PixelData _tmpPixelData = new PixelData();
         public int CurrentSprites => Player.SpriteCounter;
-        protected int charWidth;
-        protected int nextX;
-        protected int nextY;
-        
+
         #region Display
 
         /// <summary>
@@ -108,13 +105,15 @@ namespace PixelVision8.Player
                     _tmpPixelData.Pixels = pixelData;
 
                     // Copy pixel data directly into the tilemap chip's texture
-                    Utilities.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, TilemapChip.PixelData, x, y, flipH, flipV, colorOffset);
+                    Utilities.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, TilemapChip.PixelData, x, y,
+                        flipH, flipV, colorOffset);
 
                     break;
 
                 default:
 
-                    DisplayChip.NewDrawCall(pixelData, x, y, blockWidth, blockHeight, (byte)drawMode, flipH, flipV, colorOffset);
+                    DisplayChip.NewDrawCall(pixelData, x, y, blockWidth, blockHeight, (byte) drawMode, flipH, flipV,
+                        colorOffset);
 
                     break;
             }
@@ -160,7 +159,8 @@ namespace PixelVision8.Player
         ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile
         ///     above the background color.
         /// </param>
-        public virtual void DrawSprite(int id, int x, int y, int columns = 1, int rows =1, bool flipH = false, bool flipV = false,
+        public virtual void DrawSprite(int id, int x, int y, int columns = 1, int rows = 1, bool flipH = false,
+            bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, SpriteChip srcChip = null)
         {
             // Only apply the max sprite count to sprite draw modes
@@ -173,16 +173,13 @@ namespace PixelVision8.Player
             }
             else
             {
-                // x -=(useScrollPos ? _scrollPos.X : 0);
-                // y -=(useScrollPos ? _scrollPos.Y : 0);
-
+                
                 if (drawMode == DrawMode.TilemapCache)
                 {
-
                     srcChip.ReadSpriteAt(id, ref _tmpSpriteData);
 
-                    DrawPixels(_tmpSpriteData, x, y, SpriteChip.width, SpriteChip.height, flipH, flipV, drawMode, colorOffset);
-
+                    DrawPixels(_tmpSpriteData, x, y, SpriteChip.width, SpriteChip.height, flipH, flipV, drawMode,
+                        colorOffset);
                 }
                 else
                 {
@@ -192,21 +189,21 @@ namespace PixelVision8.Player
                     pos.X *= SpriteChip.width;
                     pos.Y *= SpriteChip.height;
 
-                    DisplayChip.NewDrawCall(srcChip, x, y, SpriteChip.width * columns, SpriteChip.height * rows, (byte)drawMode, flipH, flipV, colorOffset, pos.X, pos.Y);
+                    DisplayChip.NewDrawCall(srcChip, x, y, SpriteChip.width * columns, SpriteChip.height * rows,
+                        (byte) drawMode, flipH, flipV, colorOffset, pos.X, pos.Y);
 
                     Player.SpriteCounter++;
                     // }
                 }
-
             }
         }
-        
+
         public virtual void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
             // TODO need to delete this after the refactoring
         }
-        
+
         /// <summary>
         ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render
         ///     characters as individual sprites (DrawMode.Sprite), tiles (DrawMode.Tile) or drawn directly into the tilemap
@@ -249,15 +246,12 @@ namespace PixelVision8.Player
         public void DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default",
             int colorOffset = 0, int spacing = 0)
         {
-            // TODO this should use DrawSprites() API
-            // spriteSize = SpriteSize();
-            charWidth = SpriteChip.width;
+            
+            var nextX = x;
+            var nextY = y;
 
-            nextX = x;
-            nextY = y;
-
-            spriteIDs = ConvertTextToSprites(text, font);
-            _total = spriteIDs.Length;
+            var spriteIDs = ConvertTextToSprites(text, font);
+            var total = spriteIDs.Length;
 
             var clearTiles = false;
 
@@ -277,11 +271,10 @@ namespace PixelVision8.Player
                 spacing = 0;
             }
 
-            var offset = charWidth + spacing;
+            var offset = SpriteChip.width + spacing;
 
-            for (var j = 0; j < _total; j++)
+            for (var j = 0; j < total; j++)
             {
-                
                 // Clear the background when in tile mode
                 if (clearTiles) Tile(nextX / 8, nextY / 8, -1);
 
@@ -295,7 +288,7 @@ namespace PixelVision8.Player
                     Player.SpriteCounter++;
                 }
 
-                DrawSprite(spriteIDs[j], nextX, nextY, 1, 1,false, false, drawMode, colorOffset, FontChip);
+                DrawSprite(spriteIDs[j], nextX, nextY, 1, 1, false, false, drawMode, colorOffset, FontChip);
 
                 // }
 
@@ -321,9 +314,8 @@ namespace PixelVision8.Player
             // TODO is there a faster way to do this?
             DrawPixels(pixels, x, y, width, height, false, false, drawMode, color);
         }
-        
-        
-        
+
+
         /// <summary>
         ///     By default, the tilemap renders to the display by simply calling DrawTilemap(). This automatically fills the entire
         ///     display with the visible portion of the tilemap. To have more granular control over how to render the tilemap, you
@@ -359,24 +351,21 @@ namespace PixelVision8.Player
         public void DrawTilemap(int x = 0, int y = 0, int columns = 0, int rows = 0, int? offsetX = null,
             int? offsetY = null)
         {
-
             DisplayChip.NewDrawCall(
                 TilemapChip,
                 x,
                 y,
                 columns == 0 ? DisplayChip.Width : columns * SpriteChip.width,
                 rows == 0 ? DisplayChip.Height : rows * SpriteChip.height,
-                (byte)DrawMode.Tile,
+                (byte) DrawMode.Tile,
                 false,
                 false,
                 0,
                 offsetX ?? _scrollPos.X,
                 offsetY ?? _scrollPos.Y
             );
-
-
         }
-        
+
         /// <summary>
         ///     You can use RedrawDisplay to make clearing and drawing the tilemap easier. This is a helper method automatically
         ///     calls both Clear() and DrawTilemap() for you.

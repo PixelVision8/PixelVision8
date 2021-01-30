@@ -22,7 +22,6 @@ using System.Collections.Generic;
 
 namespace PixelVision8.Player
 {
-
     /// <summary>
     ///     The GameChip represents the foundation of a game class
     ///     with all the logic it needs to work correctly in the PixelVisionEngine.
@@ -32,7 +31,7 @@ namespace PixelVision8.Player
     /// </summary>
     public partial class GameChip
     {
-        protected MusicChip MusicChip => ((PixelVision)Player).MusicChip;
+        protected MusicChip MusicChip => ((PixelVision) Player).MusicChip;
 
         /// <summary>
         ///     Plays a sing by it's ID. You can pass in a start position for it to being at a specific pattern ID in the song.
@@ -59,7 +58,7 @@ namespace PixelVision8.Player
         /// </param>
         public void PlayPattern(int id, bool loop = true)
         {
-            MusicChip.PlayPatterns(new[] { id }, loop);
+            MusicChip.PlayPatterns(new[] {id}, loop);
         }
 
         /// <summary>
@@ -121,8 +120,5 @@ namespace PixelVision8.Player
             //TODO need to add in better support for rewinding a song across multiple loops
             MusicChip.RewindSong();
         }
-
     }
-
-
 }

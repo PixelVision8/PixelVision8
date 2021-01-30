@@ -26,8 +26,8 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-
-    public partial interface IPlayerChips{
+    public partial interface IPlayerChips
+    {
         /// <summary>
         ///     The Sprite Chip stores all the sprite as pixel data for the engine.
         ///     This property offers direct access to it.
@@ -56,6 +56,7 @@ namespace PixelVision8.Player
         ///     Internal <see cref="cache" /> for faster lookup
         /// </summary>
         protected string[] cache;
+
         public readonly int pageHeight = 128;
         public readonly int pageWidth = 128;
         public bool unique = false;
@@ -116,12 +117,11 @@ namespace PixelVision8.Player
                 _pages = MathHelper.Clamp(value, 1, 8);
 
                 spriteMemory.Resize(
-                    (int)Math.Ceiling((float)pageWidth / width) * width,
-                    (int)Math.Ceiling((float)pageHeight * pages / height) * height
-                    );
+                    (int) Math.Ceiling((float) pageWidth / width) * width,
+                    (int) Math.Ceiling((float) pageHeight * pages / height) * height
+                );
 
                 cache = new string[spriteMemory.TotalSprites];
-
             }
         }
 
@@ -255,7 +255,7 @@ namespace PixelVision8.Player
 
             CacheSprite(index, pixels);
         }
-        
+
         /// <summary>
         /// </summary>
         /// <param name="data"></param>
@@ -317,7 +317,7 @@ namespace PixelVision8.Player
 
             return Array.IndexOf(cache, sprite);
         }
-        
+
         // TODO don't forget to add 'typeof(SpriteChip).FullName' to the Chip list in the GameRunner.Activate.cs class
     }
 }

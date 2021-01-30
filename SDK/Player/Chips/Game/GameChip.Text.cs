@@ -5,13 +5,10 @@ namespace PixelVision8.Player
     public partial class GameChip
     {
         protected FontChip FontChip => Player.FontChip;
-        
-        protected int[] spriteIDs;
-        protected int _index;
-        protected int _spriteId;
-        protected char character;
-        protected int charOffset = 32;
-       
+
+        // protected int[] spriteIDs;
+        private const int _charOffset = 32;
+
         /// <summary>
         ///     A helper method to convert a string of characters into an array of sprite IDs.
         /// </summary>
@@ -21,9 +18,10 @@ namespace PixelVision8.Player
         /// <exception cref="Exception"></exception>
         public int[] ConvertTextToSprites(string text, string fontName = "default")
         {
-            _total = text.Length;
+            var _total = text.Length;
 
-            spriteIDs = new int[_total];
+            // TODO convert this to a list
+            var spriteIDs = new int[_total];
 
             //            char character;
 
@@ -38,9 +36,9 @@ namespace PixelVision8.Player
 
             for (var i = 0; i < _total; i++)
             {
-                character = text[i];
-                _index = Convert.ToInt32(character) - charOffset;
-                _spriteId = -1;
+                var character = text[i];
+                var _index = Convert.ToInt32(character) - _charOffset;
+                var _spriteId = -1;
 
                 if (_index < totalCharacters && _index > -1) _spriteId = fontMap[_index];
 
@@ -49,10 +47,9 @@ namespace PixelVision8.Player
 
             return spriteIDs;
         }
-        
+
         public int[] FontChar(char character, string fontName, int[] data = null)
         {
-
             var fontMap = FontChip.ReadFont(fontName);
 
             // Test to make sure font exists

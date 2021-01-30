@@ -24,7 +24,6 @@ using System.Linq;
 
 namespace PixelVision8.Player
 {
-    
     /// <summary>
     ///     The <see cref="ColorChip" /> represents the system colors of the engine.
     ///     It allows the engine to work in color indexes that the display can map
@@ -196,9 +195,8 @@ namespace PixelVision8.Player
             base.Deactivate();
             Player.ColorChip = null;
         }
-        
     }
-    
+
     public partial interface IPlayerChips
     {
         /// <summary>
@@ -208,7 +206,7 @@ namespace PixelVision8.Player
         /// </summary>
         ColorChip ColorChip { get; set; }
     }
-    
+
     public partial class PixelVision
     {
         public ColorChip ColorChip { get; set; }

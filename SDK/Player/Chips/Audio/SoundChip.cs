@@ -25,7 +25,6 @@ using PixelVision8.Player.Audio;
 
 namespace PixelVision8.Player
 {
-
     public partial interface IPlayerChips
     {
         /// <summary>
@@ -34,7 +33,7 @@ namespace PixelVision8.Player
         /// </summary>
         ISoundChip SoundChip { get; set; }
     }
-    
+
     /// <summary>
     ///     The <see cref="SfxrSoundChip" /> is responsible for playing back sound
     ///     effects in the engine. It's powered by SFxr.
@@ -186,7 +185,6 @@ namespace PixelVision8.Player
                 Sounds[i].bytes = soundBank.ContainsKey(name) ? soundBank[name] : null;
             }
         }
-
     }
 }
 

@@ -35,7 +35,7 @@ namespace PixelVision8.Runner
         {
             FilePath = sourcePath;
             this.maskHex = maskHex;
-            
+
             if (!string.IsNullOrEmpty(FilePath))
             {
                 ReadBytes(FileLoadHelper.ReadAllBytes(FilePath));

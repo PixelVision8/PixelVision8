@@ -44,7 +44,8 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
                     variables.Add(new Variable("(length)", v.Table.Length.ToString()));
 
                     foreach (TablePair p in v.Table.Pairs)
-                        variables.Add(new Variable("[" + p.Key.ToDebugPrintString() + "]", p.Value.ToDebugPrintString()));
+                        variables.Add(
+                            new Variable("[" + p.Key.ToDebugPrintString() + "]", p.Value.ToDebugPrintString()));
 
                     break;
                 case DataType.UserData:
@@ -58,7 +59,8 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
                         variables.Add(new Variable("(descriptor)", "null!"));
                     }
 
-                    variables.Add(new Variable("(native object)", v.UserData.Object != null ? v.UserData.Object.ToString() : "(null)"));
+                    variables.Add(new Variable("(native object)",
+                        v.UserData.Object != null ? v.UserData.Object.ToString() : "(null)"));
                     break;
                 case DataType.Thread:
                     variables.Add(new Variable("(coroutine state)", v.Coroutine.State.ToString()));

@@ -23,6 +23,7 @@
 
 using PixelVision8.Player;
 using System;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -31,7 +32,6 @@ using System;
 // to see how much I can put in a comment
 namespace PixelVision8.Player
 {
-
     public partial interface IPlayerChips
     {
         /// <summary>
@@ -39,15 +39,15 @@ namespace PixelVision8.Player
         ///     the engine's memory.
         /// </summary>
         GameChip GameChip { get; set; }
-        
+
         int SpriteCounter { get; set; }
     }
-    
+
     public partial class PixelVision
     {
         public GameChip GameChip { get; set; }
     }
-    
+
     /// <summary>
     ///     The GameChip represents the foundation of a game class
     ///     with all the logic it needs to work correctly in the PixelVisionEngine.
@@ -58,18 +58,15 @@ namespace PixelVision8.Player
     /// </summary>
     public partial class GameChip : AbstractChip, IUpdate, IDraw
     {
-
         protected ColorChip ColorChip => Player.ColorChip;
         protected DisplayChip DisplayChip => Player.DisplayChip;
-        
+
         #region Lifecycle
 
         public override void Configure()
         {
-
             // Set the engine's game to this instance
             Player.GameChip = this;
-
         }
 
         /// <summary>
@@ -99,7 +96,7 @@ namespace PixelVision8.Player
         {
             // Override this method and add your own draw logic.
         }
-        
+
         /// <summary>
         ///     Clearing the display removed all of the existing pixel data, replacing it with the default background
         ///     color. The Clear() method allows you specify what region of the display to clear. By simply calling
@@ -111,17 +108,13 @@ namespace PixelVision8.Player
         /// </summary>
         public void Clear()
         {
-            
             DisplayChip.Clear(ColorChip.backgroundColor);
-
         }
-        
+
         public override void Deactivate()
         {
-
             base.Deactivate();
             Player.GameChip = null;
-
         }
 
         /// <summary>
@@ -133,9 +126,7 @@ namespace PixelVision8.Player
         {
             // Put save logic here
         }
-
+        
         #endregion
-
     }
-
 }

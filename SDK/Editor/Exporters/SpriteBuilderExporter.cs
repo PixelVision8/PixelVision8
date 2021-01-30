@@ -80,7 +80,8 @@ namespace PixelVision8.Runner.Exporters
         private SpriteChip spriteChip;
         private ColorChip colorChip;
 
-        public SpriteBuilderExporter(string fileName, ColorChip colorChip, SpriteChip spriteChip, Dictionary<string, byte[]> files) : base(fileName)
+        public SpriteBuilderExporter(string fileName, ColorChip colorChip, SpriteChip spriteChip,
+            Dictionary<string, byte[]> files) : base(fileName)
         {
             this.files = files;
             this.spriteChip = spriteChip;
@@ -98,7 +99,7 @@ namespace PixelVision8.Runner.Exporters
             maxTilesPerLoop = 10;
             totalTiles = files.Count;
 
-            var loops = (int)Math.Ceiling((float)totalTiles / maxTilesPerLoop);
+            var loops = (int) Math.Ceiling((float) totalTiles / maxTilesPerLoop);
 
             for (var i = 0; i < loops; i++) _steps.Add(ParseSpriteData);
 

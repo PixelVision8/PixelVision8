@@ -104,7 +104,7 @@ namespace PixelVision8.Runner.Exporters
             total = colors.Length;
 
             width = 8;
-            height = (int)Math.Ceiling(total / (float)width);
+            height = (int) Math.Ceiling(total / (float) width);
         }
 
         public virtual void BuildPixelData()

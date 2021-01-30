@@ -88,7 +88,7 @@ namespace PixelVision8.Runner.Chips
             {
                 _instrumentType = value;
 
-                var typeID = (int)InstrumentType;
+                var typeID = (int) InstrumentType;
 
                 //                if (typeID < defaultOctaves.Length)
                 //                {
@@ -105,7 +105,7 @@ namespace PixelVision8.Runner.Chips
         public bool Generate => InstrumentType != InstrumentType.None;
 
 
-        public string InstrumentSettings => ReadInstrumentSoundData((int)InstrumentType);
+        public string InstrumentSettings => ReadInstrumentSoundData((int) InstrumentType);
 
         public string ReadInstrumentSoundData(int value)
         {
@@ -260,12 +260,12 @@ namespace PixelVision8.Runner.Chips
                     settings = trackSettings[i];
                 }
 
-                settings.InstrumentType = (InstrumentType)i;
+                settings.InstrumentType = (InstrumentType) i;
                 settings.SfxId = i;
             }
 
             // forces scale to the default value
-            UpdateScale((int)Scale.Major);
+            UpdateScale((int) Scale.Major);
 
             //workspace.InvalidateSave();
         }
@@ -352,7 +352,7 @@ namespace PixelVision8.Runner.Chips
                 if (trackSettings[trackNum] == null)
                     trackSettings[trackNum] = new TrackSettings
                     {
-                        InstrumentType = (InstrumentType)trackNum,
+                        InstrumentType = (InstrumentType) trackNum,
                         SfxId = trackNum
                     };
 
@@ -447,7 +447,7 @@ namespace PixelVision8.Runner.Chips
 
                     // is silence appropriate for this moment?
                     //restHere = UnityEngine.Random.Range(0f,1f - noteChangeBoost) > pcgComplexity;
-                    randy = (float)r.NextDouble(); //Random.value;
+                    randy = (float) r.NextDouble(); //Random.value;
                     restHere = randy + noteChangeBoost < pcgComplexity;
 
                     // never rest the first beat of the song on bass
@@ -488,8 +488,8 @@ namespace PixelVision8.Runner.Chips
                         }
                         else if (instrument == InstrumentType.Kick
 
-                        //|| (trackNum == pcgTrackSFX)		// snare drum, usually
-                        //|| (trackNum == pcgTrackDRUMS)
+                            //|| (trackNum == pcgTrackSFX)		// snare drum, usually
+                            //|| (trackNum == pcgTrackDRUMS)
                         ) // high hat, usually
                         {
                             // drums have no tonality
@@ -497,16 +497,16 @@ namespace PixelVision8.Runner.Chips
                         }
                         else if (instrument == InstrumentType.Bass) // and not beat 1, done above
                         {
-                            if (!wasFunkyLastNote && (float)r.NextDouble() < pcgFunk
+                            if (!wasFunkyLastNote && (float) r.NextDouble() < pcgFunk
                             ) // we want a funky OCTAVE bass note
                             {
                                 wasFunkyLastNote = true;
 
                                 // either stay the same, or jump higher or lower by an entire octave
                                 var funkyOffset = 12;
-                                if ((float)r.NextDouble() > 0.5f) // octave higher half the time
+                                if ((float) r.NextDouble() > 0.5f) // octave higher half the time
                                 {
-                                    if ((float)r.NextDouble() > 0.5f) // stay same 25% of the time
+                                    if ((float) r.NextDouble() > 0.5f) // stay same 25% of the time
                                         funkyOffset = 0;
                                     else // octave lower %25 of the time
                                         funkyOffset = -12;
@@ -542,18 +542,18 @@ namespace PixelVision8.Runner.Chips
         public void UpdateScale(int value)
         {
             scale = value;
-            pcgScale = scaleTable[(Scale)value];
+            pcgScale = scaleTable[(Scale) value];
         }
 
         /////////////////////////////////////////////////////////////////////////////
         private int RandomNote() // output a random MIDI note number
-                                 /////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////
         {
             // TODO use pcg params to select notes that fit the current scale/mode/chord/harmony
             var aNote = 0;
             var noteDistance = r.Next(pcgNoteDistanceMin, pcgNoteDistanceMax); // 0,1,2
             var noteDir = 1; // +1 or -1 only
-            if ((float)r.NextDouble() > 0.5f) noteDir = -1; // down
+            if ((float) r.NextDouble() > 0.5f) noteDir = -1; // down
 
             // pure random noise - works
             // aNote = Mathf.CeilToInt(UnityEngine.Random.Range(32f,64f));

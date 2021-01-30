@@ -15,7 +15,7 @@ namespace PixelVision8.Runner
         protected int _timeDelta;
         protected IPlay _tmpEngine;
         public virtual IPlay ActiveEngine { get; protected set; }
- 
+
         public virtual IPlay CreateNewEngine(List<string> chips)
         {
             return new PixelVision(chips.ToArray());
@@ -32,17 +32,15 @@ namespace PixelVision8.Runner
 
             // After loading the game, we are ready to run it.
             ActiveEngine.RunGame();
-
         }
 
         public virtual void RunGame()
         {
             ActivateEngine(_tmpEngine);
         }
-        
+
         public virtual void ConfigureEngine(List<string> chips)
         {
-
             // It's now time to set up a new instance of the PixelVisionEngine. Here we are passing in the string 
             // names of the chips it should use.
             _tmpEngine = CreateNewEngine(chips);
@@ -66,8 +64,7 @@ namespace PixelVision8.Runner
             // TODO need to move this over to the workspace
         }
 
-        
-        
+
         protected override void Update(GameTime gameTime)
         {
             // Before trying to update the PixelVisionEngine instance, we need to make sure it exists. The guard clause protects us from throwing an 
@@ -88,7 +85,7 @@ namespace PixelVision8.Runner
 
             if (RunnerActive)
             {
-                _timeDelta = (int)(gameTime.ElapsedGameTime.TotalSeconds * 1000);
+                _timeDelta = (int) (gameTime.ElapsedGameTime.TotalSeconds * 1000);
 
                 // It's important that we pass in the Time.deltaTime to the PixelVisionEngine. It is passed along to any Chip that registers itself with 
                 // the ChipManager to be updated. The ControlsChip, GamesChip, and others use this time delta to synchronize their actions based on the 
@@ -96,7 +93,5 @@ namespace PixelVision8.Runner
                 ActiveEngine.Update(_timeDelta);
             }
         }
-        
-        
     }
 }

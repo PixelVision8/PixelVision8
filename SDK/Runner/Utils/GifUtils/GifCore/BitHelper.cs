@@ -39,7 +39,7 @@ namespace PixelVision8.Runner.Gif
 
         public static ushort ReadInt16(byte[] bytes, ref int index)
         {
-            var value = (ushort)BitConverter.ToInt16(bytes, index);
+            var value = (ushort) BitConverter.ToInt16(bytes, index);
 
             index += 2;
 
@@ -52,10 +52,11 @@ namespace PixelVision8.Runner.Gif
             var mask = (1 << count) - 1;
             var result = (input >> shift) & mask;
 
-            return (byte)result;
+            return (byte) result;
         }
 
-        public static byte PackByte(bool bit0, bool bit1, bool bit2, bool bit3, bool bit4, bool bit5, bool bit6, bool bit7)
+        public static byte PackByte(bool bit0, bool bit1, bool bit2, bool bit3, bool bit4, bool bit5, bool bit6,
+            bool bit7)
         {
             byte packedByte = 0;
 

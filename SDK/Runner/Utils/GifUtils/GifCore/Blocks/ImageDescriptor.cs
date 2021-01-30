@@ -70,7 +70,7 @@ namespace PixelVision8.Runner.Gif
 
         public List<byte> GetBytes()
         {
-            var bytes = new List<byte> { ImageDescriptorLabel };
+            var bytes = new List<byte> {ImageDescriptorLabel};
 
             bytes.AddRange(BitConverter.GetBytes(ImageLeftPosition));
             bytes.AddRange(BitConverter.GetBytes(ImageTopPosition));

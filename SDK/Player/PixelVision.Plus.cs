@@ -24,25 +24,23 @@ using System.Collections.Generic;
 
 namespace PixelVision8.Player
 {
-
     public partial interface IPlayerChips
     {
-
         Dictionary<string, string> MetaData { get; }
-        
+
         /// <summary>
         /// </summary>
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
         string GetMetadata(string key, string defaultValue = "");
-    
+
         /// <summary>
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
         void SetMetadata(string key, string value);
-    
+
         /// <summary>
         /// </summary>
         /// <param name="target"></param>
@@ -57,9 +55,8 @@ namespace PixelVision8.Player
     /// </summary>
     public partial class PixelVision : IServiceLocator
     {
-        
         public IServiceLocator ServiceLocator;
-        
+
         public Dictionary<string, string> MetaData { get; } = new Dictionary<string, string>
         {
             {"name", "untitled"}
@@ -114,7 +111,6 @@ namespace PixelVision8.Player
                     MetaData.Remove(key);
                 else
                     MetaData[key] = value;
-
             }
         }
 
@@ -128,6 +124,5 @@ namespace PixelVision8.Player
 
             foreach (var data in MetaData) target.Add(data.Key, data.Value);
         }
-
     }
 }

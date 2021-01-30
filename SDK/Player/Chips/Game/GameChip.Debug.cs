@@ -22,10 +22,9 @@ namespace PixelVision8.Player
 {
     public partial class GameChip
     {
-        
         public int ReadFPS()
         {
-            return ((PixelVision)Player).FPS;
+            return ((PixelVision) Player).FPS;
         }
 
         public int ReadTotalSprites()

@@ -23,18 +23,16 @@ using System;
 
 namespace PixelVision8.Player
 {
-
     internal class DrawActionAttribute : Attribute
     {
     }
-    
+
     public sealed partial class Canvas : AbstractData, IDraw
     {
-
         private readonly CanvasDrawRequest[] requestPool = new CanvasDrawRequest[1024];
-        
+
         private int currentRequest = -1;
-        
+
         public int Width => defaultLayer.Width;
         public int Height => defaultLayer.Height;
         public int[] Pixels => defaultLayer.Pixels;
@@ -47,7 +45,7 @@ namespace PixelVision8.Player
         private void Configure(int width, int height)
         {
             Resize(width, height);
-            
+
             // Make the canvas the default drawing surface
             currentTexture = defaultLayer;
 
@@ -79,14 +77,15 @@ namespace PixelVision8.Player
         [DrawAction]
         private void DrawPixelDataAction(CanvasDrawRequest request)
         {
-            Utilities.MergePixels(request.PixelData, request.Bounds.X, request.Bounds.Y, request.Bounds.Width, request.Bounds.Height, defaultLayer, request.X, request.Y, request.FlipH, request.FlipV, request.ColorOffset);
+            Utilities.MergePixels(request.PixelData, request.Bounds.X, request.Bounds.Y, request.Bounds.Width,
+                request.Bounds.Height, defaultLayer, request.X, request.Y, request.FlipH, request.FlipV,
+                request.ColorOffset);
         }
 
         private int GetPixel(PixelData pixelData, int x, int y)
         {
-            
             // TODO this needs to be removed
-            
+
             var size = pixelData.Height;
             y = (y % size + size) % size;
             size = pixelData.Width;
@@ -97,7 +96,6 @@ namespace PixelVision8.Player
 
         private void SetPixel(PixelData pixelData, int x, int y, int color)
         {
-
             // TODO this needs to be removed
 
             // Note: + size and the second modulo operation are required to get wrapped values between 0 and +size
@@ -107,9 +105,8 @@ namespace PixelVision8.Player
             x = (x % size + size) % size;
 
             pixelData[x + pixelData.Width * y] = color;
-
         }
-        
+
 
         public void CopyPixels(ref int[] data, int x, int y, int blockWidth, int blockHeight)
         {
@@ -125,7 +122,6 @@ namespace PixelVision8.Player
             Draw();
 
             Utilities.SetPixels(pixels, x, y, blockWidth, blockHeight, defaultLayer);
-
         }
 
         /// <summary>
@@ -142,12 +138,11 @@ namespace PixelVision8.Player
             int maskColor = -1, int maskColorID = -1, int colorOffset = 0, Rectangle? viewport = null,
             int[] isolateColors = null)
         {
-
             // This only works when the canvas has a reference to the gameChip
             if (gameChip == null) return;
 
             int tmpX, tmpY, tmpW, tmpH;
-            
+
             if (viewport.HasValue)
             {
                 tmpX = viewport.Value.X;
@@ -182,8 +177,8 @@ namespace PixelVision8.Player
             }
 
             // Covert the width and height into ints based on scale
-            var newWidth = (int)(tmpW * scale);
-            var newHeight = (int)(tmpH * scale);
+            var newWidth = (int) (tmpW * scale);
+            var newHeight = (int) (tmpH * scale);
 
             var destPixels = scale > 1 ? ResizePixels(srcPixels, tmpW, tmpH, newWidth, newHeight) : srcPixels;
 
@@ -196,7 +191,6 @@ namespace PixelVision8.Player
             Draw();
 
             return Utilities.GetPixels(defaultLayer);
-
         }
 
         public void Clear(int colorRef = -1, int x = 0, int y = 0, int? width = null, int? height = null)
@@ -220,7 +214,6 @@ namespace PixelVision8.Player
                 Utilities.Clear(defaultLayer, colorRef);
                 ResetValidation();
             }
-
         }
 
         public int[] GetPixels(int x, int y, int blockWidth, int blockHeight)
@@ -241,7 +234,7 @@ namespace PixelVision8.Player
             // Invalidate();
         }
 
-        
+
         public void Draw()
         {
             if (Invalid == false)
@@ -262,9 +255,5 @@ namespace PixelVision8.Player
 
             ResetValidation();
         }
-
     }
-
-    
-
 }

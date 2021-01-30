@@ -26,7 +26,6 @@ namespace PixelVision8.Player.Audio
 {
     public class SoundChannel : IChannel
     {
-
         private readonly Dictionary<string, SoundEffectInstance> wavCache =
             new Dictionary<string, SoundEffectInstance>();
 
@@ -54,7 +53,6 @@ namespace PixelVision8.Player.Audio
         /// </summary>
         public virtual void Play(SoundData soundData, float? frequency = null)
         {
-
             // TODO this probably doesn't work in the lite version
             // Stop any playing sound
             Stop();

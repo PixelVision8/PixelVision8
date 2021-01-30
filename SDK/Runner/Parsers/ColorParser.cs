@@ -58,7 +58,6 @@ namespace PixelVision8.Runner
 
         public virtual void ReadColors()
         {
-            
             // Parse colors as normal
 
             var srcColors = Parser.colorPixels;
@@ -80,7 +79,7 @@ namespace PixelVision8.Runner
 
             CurrentStep++;
         }
-        
+
         public void UpdateColors()
         {
             for (var i = 0; i < totalColors; i++)
@@ -94,7 +93,7 @@ namespace PixelVision8.Runner
             CurrentStep++;
         }
     }
-    
+
     public partial class Loader
     {
         [FileParser("colors.png")]

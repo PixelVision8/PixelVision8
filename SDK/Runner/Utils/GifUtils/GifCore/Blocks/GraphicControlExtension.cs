@@ -39,7 +39,8 @@ namespace PixelVision8.Runner.Gif
         public GraphicControlExtension(byte[] bytes, ref int index)
         {
             if (bytes[index++] != ExtensionIntroducer) throw new Exception("Expected: " + ExtensionIntroducer);
-            if (bytes[index++] != GraphicControlExtensionLabel) throw new Exception("Expected: " + GraphicControlExtensionLabel);
+            if (bytes[index++] != GraphicControlExtensionLabel)
+                throw new Exception("Expected: " + GraphicControlExtensionLabel);
 
             BlockSize = bytes[index++];
 
@@ -54,7 +55,8 @@ namespace PixelVision8.Runner.Gif
             if (bytes[index++] != BlockTerminatorLabel) throw new Exception("Expected: " + BlockTerminatorLabel);
         }
 
-        public GraphicControlExtension(byte blockSize, byte reserved, byte disposalMethod, byte userInputFlag, byte transparentColorFlag, ushort delayTime, byte transparentColorIndex)
+        public GraphicControlExtension(byte blockSize, byte reserved, byte disposalMethod, byte userInputFlag,
+            byte transparentColorFlag, ushort delayTime, byte transparentColorIndex)
         {
             BlockSize = blockSize;
             Reserved = reserved;
@@ -67,7 +69,7 @@ namespace PixelVision8.Runner.Gif
 
         public List<byte> GetBytes()
         {
-            var bytes = new List<byte> { ExtensionIntroducer, GraphicControlExtensionLabel, BlockSize };
+            var bytes = new List<byte> {ExtensionIntroducer, GraphicControlExtensionLabel, BlockSize};
             var packedByte = BitHelper.PackByte(
                 BitHelper.ReadByte(Reserved, 2),
                 BitHelper.ReadByte(Reserved, 1),

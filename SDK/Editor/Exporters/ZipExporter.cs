@@ -40,7 +40,8 @@ namespace PixelVision8.Runner.Exporters
         protected CompressionLevel compressionLevel;
 
 
-        public ZipExporter(string fileName, IFileLoader fileLoadHelper, Dictionary<WorkspacePath, WorkspacePath> srcFiles, int compressionLevel = 0) : base(fileName)
+        public ZipExporter(string fileName, IFileLoader fileLoadHelper,
+            Dictionary<WorkspacePath, WorkspacePath> srcFiles, int compressionLevel = 0) : base(fileName)
         {
             SourceFiles = srcFiles.ToList();
 
@@ -48,7 +49,7 @@ namespace PixelVision8.Runner.Exporters
 
             ZipFs = new MemoryStream();
 
-            this.compressionLevel = (CompressionLevel)MathHelper.Clamp(compressionLevel, 0, 2);
+            this.compressionLevel = (CompressionLevel) MathHelper.Clamp(compressionLevel, 0, 2);
         }
 
         public override void CalculateSteps()
@@ -95,7 +96,6 @@ namespace PixelVision8.Runner.Exporters
                         var stream = new MemoryStream(FileLoadHelper.ReadAllBytes(srcFile.Path));
                         stream.CopyTo(entryStream);
                     }
-
                 }
 
                 CurrentFile++;
@@ -114,7 +114,6 @@ namespace PixelVision8.Runner.Exporters
 
         public void CloseZip()
         {
-
             Response.Add("fileSize", ZipFs.Length / 1024);
             Response["success"] = true;
 
@@ -140,5 +139,4 @@ namespace PixelVision8.Runner.Exporters
             ZipFs.Dispose();
         }
     }
-
 }

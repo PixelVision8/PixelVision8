@@ -30,7 +30,7 @@ namespace PixelVision8.Runner
 {
     public class PNGReader : IImageParser
     {
-        public string MaskHex { get; private set; }= "#FF00FF";
+        public string MaskHex { get; private set; } = "#FF00FF";
 
         protected List<Color> _colorPalette;
         protected Color[] _colors;
@@ -66,7 +66,7 @@ namespace PixelVision8.Runner
             dataChunks = new List<PngChunk>();
             _colorPalette = new List<Color>();
         }
-        
+
         public void ReadBytes(byte[] bytes)
         {
             Reset();
@@ -83,11 +83,10 @@ namespace PixelVision8.Runner
 
         public virtual void ReadStream(string sourcePath, string maskHex)
         {
-            
             if (!IsImage()) throw new Exception("File does not have PNG signature.");
 
             this.maskHex = maskHex;
-            
+
             UnpackDataChunks();
         }
 
@@ -100,8 +99,8 @@ namespace PixelVision8.Runner
                 memoryStream.Read(numArray1, 0, 4);
                 var num = numArray1.ToUInt();
                 memoryStream.Position -= 4L;
-                var numArray2 = new byte[12 + (int)num];
-                memoryStream.Read(numArray2, 0, 12 + (int)num);
+                var numArray2 = new byte[12 + (int) num];
+                memoryStream.Read(numArray2, 0, 12 + (int) num);
                 ProcessChunk(numArray2);
             }
         }
@@ -153,8 +152,8 @@ namespace PixelVision8.Runner
             {
                 var headerChunk = new HeaderChunk();
                 headerChunk.Decode(chunkBytes);
-                width = (int)headerChunk.Width;
-                height = (int)headerChunk.Height;
+                width = (int) headerChunk.Width;
+                height = (int) headerChunk.Height;
 
                 bitsPerSample = headerChunk.BitDepth;
                 colorType = headerChunk.ColorType;

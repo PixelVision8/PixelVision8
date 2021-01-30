@@ -6,7 +6,6 @@ namespace PixelVision8.Player
     {
         public void DrawText(string text, int x, int y, string font = "default", int colorOffset = 0, int spacing = 0)
         {
-
             // This only works when the canvas has a reference to the gameChip
             if (gameChip == null) return;
 
@@ -48,7 +47,6 @@ namespace PixelVision8.Player
 
                 nextX += spriteSize.X + spacing;
             }
-
         }
     }
 }

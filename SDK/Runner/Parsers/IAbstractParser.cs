@@ -28,6 +28,5 @@ namespace PixelVision8.Runner
         void NextStep();
         void StepCompleted();
         void Dispose();
-
     }
 }

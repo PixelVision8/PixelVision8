@@ -22,7 +22,6 @@ using System.IO;
 
 namespace PixelVision8.Runner
 {
-
     public class FileLoadHelper : IFileLoader
     {
         public string GetFileName(string path)
@@ -32,7 +31,6 @@ namespace PixelVision8.Runner
 
         public byte[] ReadAllBytes(string file)
         {
-
             // TODO this should be a service
             return File.ReadAllBytes(file);
         }
@@ -42,5 +40,4 @@ namespace PixelVision8.Runner
             return File.Exists(path);
         }
     }
-
 }

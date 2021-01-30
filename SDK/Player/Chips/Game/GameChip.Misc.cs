@@ -22,7 +22,6 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-
     /// <summary>
     ///     The GameChip represents the foundation of a game class
     ///     with all the logic it needs to work correctly in the PixelVisionEngine.
@@ -32,9 +31,8 @@ namespace PixelVision8.Player
     /// </summary>
     public partial class GameChip
     {
-        
         public bool lockSpecs = false;
-        
+
         /// <summary>
         ///     This method allows your read and write raw sound data on the SoundChip.
         /// </summary>
@@ -42,12 +40,9 @@ namespace PixelVision8.Player
         /// <param name="data"></param>
         public string Sound(int id, string data = null)
         {
-            if (data != null) ((SfxrSoundChip)SoundChip).UpdateSound(id, data);
+            if (data != null) ((SfxrSoundChip) SoundChip).UpdateSound(id, data);
 
-            return ((SfxrSoundChip)SoundChip).ReadSound(id).param;
+            return ((SfxrSoundChip) SoundChip).ReadSound(id).param;
         }
-
     }
-
-
 }

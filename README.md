@@ -18,7 +18,20 @@ The platform was designed to be incredibly modular. This allows you to customize
 
 ### Credits
 
-Pixel Vision 8 was created by Jesse Freeman ([@jessefreeman](http://twitter.com/jessefreeman)) in collaboration with Christina-Antoinette Neofotistou ([@CastPixel](http://twitter.com/CastPixel)), Pedro Medeiros ([@saint11](http://twitter.com/saint11)) for art and Christer Kaitila ([@McFunkypants](http://twitter.com/McFunkypants)) for music. With additional coding contributions by Drake Williams and Shawn Rakowski ([@shwany](http://twitter.com/shwany)).
+Pixel Vision 8 was created by Jesse Freeman ([@jessefreeman](http://twitter.com/jessefreeman)) in collaboration with Christina-Antoinette Neofotistou ([@CastPixel](http://twitter.com/CastPixel)) for art, and Christer Kaitila ([@McFunkypants](http://twitter.com/McFunkypants)) for music. 
+
+With additional contributions by the following people:
+
+* Pedro Medeiros
+* Shawn Rakowski
+* Drake Williams
+* Matt Hughson
+* Dean Ellis
+
+And special thanks to the following sponsors:
+
+* Jan Rochat
+* Ethan Shaughnessy
 
 ### License
 

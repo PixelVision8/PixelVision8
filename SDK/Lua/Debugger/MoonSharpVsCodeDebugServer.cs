@@ -96,7 +96,10 @@ namespace MoonSharp.VsCodeDebugger
         /// </summary>
         public int? CurrentId
         {
-            get { lock (m_Lock) return m_Current != null ? m_Current.Id : (int?)null; }
+            get
+            {
+                lock (m_Lock) return m_Current != null ? m_Current.Id : (int?) null;
+            }
             set
             {
                 lock (m_Lock)
@@ -124,7 +127,10 @@ namespace MoonSharp.VsCodeDebugger
         /// </summary>
         public Script Current
         {
-            get { lock (m_Lock) return m_Current != null ? m_Current.Script : null; }
+            get
+            {
+                lock (m_Lock) return m_Current != null ? m_Current.Script : null;
+            }
             set
             {
                 lock (m_Lock)
@@ -170,7 +176,6 @@ namespace MoonSharp.VsCodeDebugger
                     else
                         m_Current = null;
                 }
-
             }
         }
 
@@ -293,8 +298,6 @@ namespace MoonSharp.VsCodeDebugger
         }
 
 
-
-
         private void RunSession(string sessionId, NetworkStream stream)
         {
             DebugSession debugSession = null;
@@ -310,7 +313,6 @@ namespace MoonSharp.VsCodeDebugger
                 {
                     debugSession = new EmptyDebugSession(this);
                 }
-
             }
 
 
@@ -335,11 +337,11 @@ namespace MoonSharp.VsCodeDebugger
 			System.Threading.Tasks.Task.Run(() => threadProc());
 #else
             new System.Threading.Thread(() => threadProc())
-            {
-                IsBackground = true,
-                Name = name
-            }
-            .Start();
+                {
+                    IsBackground = true,
+                    Name = name
+                }
+                .Start();
 #endif
         }
     }

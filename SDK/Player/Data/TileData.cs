@@ -22,7 +22,6 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-
     public sealed class TileData : AbstractData
     {
         private int _colorOffset;
@@ -118,6 +117,5 @@ namespace PixelVision8.Player
 
             Invalidate();
         }
-
     }
 }

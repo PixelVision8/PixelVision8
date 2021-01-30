@@ -20,7 +20,6 @@
 
 namespace PixelVision8.Player
 {
-
     public interface ISoundChip
     {
         /// <summary>
@@ -60,6 +59,5 @@ namespace PixelVision8.Player
         ///     Goes through the sounds and the sound bank and adds the sample byte data
         /// </summary>
         void RefreshSamples();
-
     }
 }

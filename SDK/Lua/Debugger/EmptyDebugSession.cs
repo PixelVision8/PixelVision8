@@ -24,13 +24,14 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
 					 Script.GlobalOptions.Platform.GetPlatformName());
 #else
             SendText("Empty Debug Session - Connected to MoonSharp {0} [{1}] on process {2} (PID {3})",
-                     Script.VERSION,
-                     Script.GlobalOptions.Platform.GetPlatformName(),
-                     System.Diagnostics.Process.GetCurrentProcess().ProcessName,
-                     System.Diagnostics.Process.GetCurrentProcess().Id);
+                Script.VERSION,
+                Script.GlobalOptions.Platform.GetPlatformName(),
+                System.Diagnostics.Process.GetCurrentProcess().ProcessName,
+                System.Diagnostics.Process.GetCurrentProcess().Id);
 #endif
 
-            SendText("No script is set as default for debugging; use the debug console to select the script to debug.\n");
+            SendText(
+                "No script is set as default for debugging; use the debug console to select the script to debug.\n");
 
             SendText("Debugger is ready to be hacked");
 
@@ -70,6 +71,7 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
                 string isdef = (pair.Key == currId) ? " (default)" : "";
                 SendText("{0} : {1}{2}", pair.Key.ToString().PadLeft(9), pair.Value, isdef);
             }
+
             SendText("");
             SendText("Type the number of the script to debug, or '!' to refresh");
         }
@@ -92,16 +94,18 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
 
         private static string getString(Table args, string property, string dflt = null)
         {
-            var s = (string)args[property];
+            var s = (string) args[property];
             if (s == null)
             {
                 return dflt;
             }
+
             s = s.Trim();
             if (s.Length == 0)
             {
                 return dflt;
             }
+
             return s;
         }
 
@@ -181,7 +185,7 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
 
         public override void Threads(Response response, Table arguments)
         {
-            var threads = new List<Thread>() { new Thread(0, "Main Thread") };
+            var threads = new List<Thread>() {new Thread(0, "Main Thread")};
             SendResponse(response, new ThreadsResponseBody(threads));
         }
 

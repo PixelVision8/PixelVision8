@@ -27,7 +27,8 @@ namespace PixelVision8.Runner
     {
         private readonly IPlayerChips engine;
 
-        public MetaDataParser(string filePath, IFileLoader fileLoadHelper, IPlayerChips target) : base(filePath, fileLoadHelper)
+        public MetaDataParser(string filePath, IFileLoader fileLoadHelper, IPlayerChips target) : base(filePath,
+            fileLoadHelper)
         {
             engine = target;
         }
@@ -44,9 +45,8 @@ namespace PixelVision8.Runner
 
             StepCompleted();
         }
-
     }
-    
+
     public partial class Loader
     {
         [FileParser("info.json")]

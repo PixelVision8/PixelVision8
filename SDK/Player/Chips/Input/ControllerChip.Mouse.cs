@@ -12,7 +12,7 @@ namespace PixelVision8.Player
         Button2,
         None
     }
-    
+
     public partial class ControllerChip
     {
         public MouseState currentMouseState;
@@ -30,7 +30,7 @@ namespace PixelVision8.Player
 
             return false;
         }
-        
+
         #region Mouse APIs
 
         public bool GetMouseButtonDown(int id = 0)
@@ -53,7 +53,8 @@ namespace PixelVision8.Player
 
         public Point ReadMouseWheel()
         {
-            mouseWheelPos.X = currentMouseState.HorizontalScrollWheelValue - previousMouseState.HorizontalScrollWheelValue;
+            mouseWheelPos.X = currentMouseState.HorizontalScrollWheelValue -
+                              previousMouseState.HorizontalScrollWheelValue;
             mouseWheelPos.Y = currentMouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue;
 
             return mouseWheelPos;
@@ -80,8 +81,5 @@ namespace PixelVision8.Player
         }
 
         #endregion
-
     }
-    
-    
 }

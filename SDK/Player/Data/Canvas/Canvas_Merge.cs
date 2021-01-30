@@ -30,13 +30,13 @@ namespace PixelVision8.Player
         ///     Allows you to merge the pixel data of another canvas into this one without compleatly overwritting it.
         /// </summary>
         /// <param name="canvas"></param>
-        public void MergeCanvas(Canvas canvas, int colorOffset = 0, bool ignoreTransparent = false) => MergePixels(0, 0, canvas.Width, canvas.Height, canvas.GetPixels(), false, false, colorOffset, ignoreTransparent);
+        public void MergeCanvas(Canvas canvas, int colorOffset = 0, bool ignoreTransparent = false) => MergePixels(0, 0,
+            canvas.Width, canvas.Height, canvas.GetPixels(), false, false, colorOffset, ignoreTransparent);
 
 
         public void MergePixels(int x, int y, int blockWidth, int blockHeight, int[] pixels,
             bool flipH = false, bool flipV = false, int colorOffset = 0, bool ignoreTransparent = true)
         {
-
             // Flatten the canvas
             Draw();
 
@@ -48,7 +48,8 @@ namespace PixelVision8.Player
             // _tmpRect.Width = blockWidth;
             // _tmpRect.Height = blockHeight;
 
-            Utilities.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, defaultLayer, x, y, flipH, flipV, colorOffset, ignoreTransparent);
+            Utilities.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, defaultLayer, x, y, flipH, flipV,
+                colorOffset, ignoreTransparent);
         }
     }
 }

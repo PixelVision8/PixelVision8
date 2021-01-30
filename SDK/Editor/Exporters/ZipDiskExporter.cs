@@ -38,11 +38,9 @@ namespace PixelVision8.Runner.Exporters
 
         public ZipDiskExporter(string fileName, WorkspaceService workspaceService) : base(fileName)
         {
-
             diskPath = WorkspacePath.Parse(fileName);
             this.workspaceService = workspaceService;
             this.FileLoadHelper = new WorkspaceFileLoadHelper(this.workspaceService);
-
         }
 
         public override void CalculateSteps()
@@ -91,9 +89,7 @@ namespace PixelVision8.Runner.Exporters
                 _steps.Add(CheckForErrors);
 
                 _steps.Add(Cleanup);
-
             }
-
         }
 
         private void NextZipStep()
@@ -105,15 +101,13 @@ namespace PixelVision8.Runner.Exporters
             Response["message"] = zipExporter.Response["message"];
 
             StepCompleted();
-
         }
 
         private void CheckForErrors()
         {
             // Need to check for an error
-            if ((bool)Response["success"] == false)
+            if ((bool) Response["success"] == false)
             {
-
                 // Restore the old zip
                 if (File.Exists(physicalBackupPath))
                 {
@@ -135,7 +129,6 @@ namespace PixelVision8.Runner.Exporters
 
         private void Cleanup()
         {
-
             // Restore the old zip
             if (File.Exists(physicalBackupPath))
             {
@@ -144,7 +137,6 @@ namespace PixelVision8.Runner.Exporters
                 {
                     File.Delete(physicalBackupPath);
                 }
-
             }
 
             StepCompleted();
@@ -154,22 +146,19 @@ namespace PixelVision8.Runner.Exporters
         {
             try
             {
-                if ((bool)zipExporter.Response["success"])
+                if ((bool) zipExporter.Response["success"])
                 {
                     using (var fs = new FileStream(physicalPath, FileMode.Create, FileAccess.Write))
                     {
                         fs.Write(zipExporter.bytes, 0, zipExporter.bytes.Length);
                     }
-
                 }
-
             }
             catch (Exception e)
             {
                 // Change the success to false
                 Response["success"] = false;
                 Response["message"] = e.Message;
-
             }
 
             StepCompleted();
@@ -181,5 +170,4 @@ namespace PixelVision8.Runner.Exporters
             zipExporter.Dispose();
         }
     }
-
 }

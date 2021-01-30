@@ -23,20 +23,14 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-
     public interface IDisplay
     {
-        
         /// <summary>
         ///     A public getter for the internal
         ///     TextureData. When requested, a clone of the <see cref="_texture" />
         ///     field is returned. This is expensive and only used for tools.
         /// </summary>
-        PixelData PixelData
-        {
-            get;
-        }
-
+        PixelData PixelData { get; }
     }
 
     public struct DrawRequestPixelData
@@ -80,8 +74,5 @@ namespace PixelVision8.Player
             SampleRect.Width = blockWidth;
             SampleRect.Height = blockHeight;
         }
-
-
-
     }
 }

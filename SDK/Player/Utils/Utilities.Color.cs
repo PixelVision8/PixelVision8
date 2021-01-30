@@ -67,8 +67,9 @@ namespace PixelVision8.Player
 
             return new Color(r, g, b);
         }
-        
-        public static Color[] ConvertColors(string[] hexColors, string maskColor = "#FF00FF", bool debugMode = false, int backgroundColor = 0)
+
+        public static Color[] ConvertColors(string[] hexColors, string maskColor = "#FF00FF", bool debugMode = false,
+            int backgroundColor = 0)
         {
             var t = hexColors.Length;
             var colors = new Color[t];

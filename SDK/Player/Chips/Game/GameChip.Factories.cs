@@ -23,7 +23,6 @@ using PixelVisionSDK.Player;
 
 namespace PixelVision8.Player
 {
-
     // /// <summary>
     ///     The GameChip represents the foundation of a game class
     ///     with all the logic it needs to work correctly in the PixelVisionEngine.
@@ -79,18 +78,17 @@ namespace PixelVision8.Player
 
         public SpriteCollection NewMetaSprite(int id, string name, int[] spriteIDs, int width, int colorOffset = 0)
         {
-
-            if(id < 0 || id > _TotalMetaSprites)
+            if (id < 0 || id > _TotalMetaSprites)
                 return null;
 
             var collection = NewSpriteCollection(name);
 
             for (int i = 0; i < spriteIDs.Length; i++)
             {
-
                 var pos = CalculatePosition(i, width);
 
-                collection.AddSprite(spriteIDs[i], pos.X * SpriteChip.width,pos.Y * SpriteChip.height, false, false, colorOffset);
+                collection.AddSprite(spriteIDs[i], pos.X * SpriteChip.width, pos.Y * SpriteChip.height, false, false,
+                    colorOffset);
             }
 
             // TODO need to figure out how to do this better where meta sprites 
@@ -100,8 +98,5 @@ namespace PixelVision8.Player
         }
 
         #endregion
-
     }
-
-
 }

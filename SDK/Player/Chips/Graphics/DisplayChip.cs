@@ -24,7 +24,6 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-
     public partial interface IPlayerChips
     {
         /// <summary>
@@ -90,7 +89,6 @@ namespace PixelVision8.Player
 
             if (_clearFlag)
             {
-
                 Array.Copy(ClearPixels, Pixels, TotalPixels);
 
                 // Reset the clear flag for the next frame
@@ -104,13 +102,13 @@ namespace PixelVision8.Player
             {
                 _drawRequest = DrawCalls[_i];
 
-                Utilities.MergePixels(_drawRequest.PixelData, _drawRequest.SampleRect.X, _drawRequest.SampleRect.Y, _drawRequest.SampleRect.Width, _drawRequest.SampleRect.Height, Display, _drawRequest.x, _drawRequest.y, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
-
+                Utilities.MergePixels(_drawRequest.PixelData, _drawRequest.SampleRect.X, _drawRequest.SampleRect.Y,
+                    _drawRequest.SampleRect.Width, _drawRequest.SampleRect.Height, Display, _drawRequest.x,
+                    _drawRequest.y, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
             }
 
             // Reset Draw Requests after they have been processed
             ResetDrawCalls();
-
         }
 
         public void Clear(int color = -1)
@@ -125,7 +123,6 @@ namespace PixelVision8.Player
                     // We always set the clear color to -1 since the display target will automatically convert this into the background color
                     ClearPixels[_i] = clearColor;
                 }
-
             }
 
             _clearFlag = true;
@@ -135,7 +132,6 @@ namespace PixelVision8.Player
             bool flipH = false,
             bool flipV = false, int colorOffset = 0, int srcX = 0, int srcY = 0)
         {
-
             NextDrawRequest(destX, destY, layer, flipH, flipV, colorOffset);
 
             if (nextDrawRequest)
@@ -143,7 +139,6 @@ namespace PixelVision8.Player
                 _drawRequest.SampleFrom(pixels, srcX, srcY, blockWidth, blockHeight);
                 DrawCalls.Add(_drawRequest);
             }
-
         }
 
 
@@ -167,7 +162,8 @@ namespace PixelVision8.Player
         /// </param>
         /// <param name="colorOffset"></param>
         /// <param name="layerOrder"></param>
-        public void NewDrawCall(IDisplay src, int destX, int destY, int blockWidth, int blockHeight, byte layer = 0, bool flipH = false,
+        public void NewDrawCall(IDisplay src, int destX, int destY, int blockWidth, int blockHeight, byte layer = 0,
+            bool flipH = false,
             bool flipV = false, int colorOffset = 0, int srcX = 0, int srcY = 0)
         {
             NextDrawRequest(destX, destY, layer, flipH, flipV, colorOffset);
@@ -177,9 +173,7 @@ namespace PixelVision8.Player
                 // _drawRequest = request.Value;
                 _drawRequest.SampleFrom(src, srcX, srcY, blockWidth, blockHeight);
                 DrawCalls.Add(_drawRequest);
-
             }
-
         }
 
         /// <summary>
@@ -189,7 +183,6 @@ namespace PixelVision8.Player
         /// <param name="height"></param>
         public void ResetResolution(int width, int height)
         {
-
             Display.Resize(width, height);
 
             // Make sure the clear pixel array is the same size
@@ -228,7 +221,6 @@ namespace PixelVision8.Player
 
         public void ResetDrawCalls()
         {
-
             drawRequestCounter = -1;
             DrawCalls.Clear();
         }
@@ -236,7 +228,8 @@ namespace PixelVision8.Player
         private bool nextDrawRequest;
         // private bool _bgFlag;
 
-        public void NextDrawRequest(int destX, int destY, byte layer = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
+        public void NextDrawRequest(int destX, int destY, byte layer = 0, bool flipH = false, bool flipV = false,
+            int colorOffset = 0)
         {
             drawRequestCounter++;
 
@@ -253,11 +246,9 @@ namespace PixelVision8.Player
             _drawRequest.FlipH = flipH;
             _drawRequest.FlipV = flipV;
             _drawRequest.ColorOffset = colorOffset;
-
         }
-
     }
-    
+
     public partial class PixelVision
     {
         public DisplayChip DisplayChip { get; set; }

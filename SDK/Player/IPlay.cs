@@ -27,7 +27,6 @@ namespace PixelVision8.Player
     /// </summary>
     public interface IPlay : IPlayerChips, IUpdate, IDraw
     {
-
         /// <summary>
         ///     Reset the game in memory
         /// </summary>
@@ -41,10 +40,9 @@ namespace PixelVision8.Player
         /// <summary>
         /// </summary>
         void Shutdown();
-        
-        int FPS { get; set; }
-        
-        string Name { get; set; }
 
+        int FPS { get; set; }
+
+        string Name { get; set; }
     }
 }

@@ -35,7 +35,6 @@ namespace PixelVision8.Runner.Workspace
             {
                 foreach (ZipArchiveEntry zipEntry in zf.Entries)
                 {
-
                     var filePath = WorkspacePath.Root.AppendPath(zipEntry.FullName);
 
                     if (!filePath.Path.StartsWith("/__"))
@@ -52,7 +51,6 @@ namespace PixelVision8.Runner.Workspace
                                 zipStream.CopyTo(fsOutput);
                                 // StreamUtils.Copy(zipStream, fsOutput, buffer);
                             }
-
                         }
                         catch
                         {
@@ -79,6 +77,5 @@ namespace PixelVision8.Runner.Workspace
         {
             return new ZipFileSystem(new ZipArchive(s), Path.GetFullPath(name));
         }
-
     }
 }

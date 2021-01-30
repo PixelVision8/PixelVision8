@@ -62,53 +62,53 @@ namespace PixelVision8.Runner.Gif
                 switch (bytes[index])
                 {
                     case Block.ExtensionIntroducer:
+                    {
+                        Block extension;
+
+                        switch (bytes[index + 1])
                         {
-                            Block extension;
-
-                            switch (bytes[index + 1])
-                            {
-                                case Block.PlainTextExtensionLabel:
-                                    extension = new PlainTextExtension(bytes, ref index);
-                                    break;
-                                case Block.GraphicControlExtensionLabel:
-                                    extension = new GraphicControlExtension(bytes, ref index);
-                                    break;
-                                case Block.CommentExtensionLabel:
-                                    extension = new CommentExtension(bytes, ref index);
-                                    break;
-                                case Block.ApplicationExtensionLabel:
-                                    extension = new ApplicationExtension(bytes, ref index);
-                                    break;
-                                default:
-                                    throw new NotSupportedException("Unknown extension!");
-                            }
-
-                            blocks.Add(extension);
-                            break;
+                            case Block.PlainTextExtensionLabel:
+                                extension = new PlainTextExtension(bytes, ref index);
+                                break;
+                            case Block.GraphicControlExtensionLabel:
+                                extension = new GraphicControlExtension(bytes, ref index);
+                                break;
+                            case Block.CommentExtensionLabel:
+                                extension = new CommentExtension(bytes, ref index);
+                                break;
+                            case Block.ApplicationExtensionLabel:
+                                extension = new ApplicationExtension(bytes, ref index);
+                                break;
+                            default:
+                                throw new NotSupportedException("Unknown extension!");
                         }
+
+                        blocks.Add(extension);
+                        break;
+                    }
                     case Block.ImageDescriptorLabel:
+                    {
+                        var descriptor = new ImageDescriptor(bytes, ref index);
+
+                        blocks.Add(descriptor);
+
+                        if (descriptor.LocalColorTableFlag == 1)
                         {
-                            var descriptor = new ImageDescriptor(bytes, ref index);
+                            var localColorTable = new ColorTable(descriptor.LocalColorTableSize, bytes, ref index);
 
-                            blocks.Add(descriptor);
-
-                            if (descriptor.LocalColorTableFlag == 1)
-                            {
-                                var localColorTable = new ColorTable(descriptor.LocalColorTableSize, bytes, ref index);
-
-                                blocks.Add(localColorTable);
-                            }
-
-                            var data = new TableBasedImageData(bytes, ref index);
-
-                            blocks.Add(data);
-
-                            break;
+                            blocks.Add(localColorTable);
                         }
+
+                        var data = new TableBasedImageData(bytes, ref index);
+
+                        blocks.Add(data);
+
+                        break;
+                    }
                     case 0x3B: // End
-                        {
-                            return blocks;
-                        }
+                    {
+                        return blocks;
+                    }
                     default:
                         throw new NotSupportedException($"Unsupported GIF block: {bytes[index]:X}.");
                 }

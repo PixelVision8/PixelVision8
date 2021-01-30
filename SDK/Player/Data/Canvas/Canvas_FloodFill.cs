@@ -49,7 +49,8 @@ namespace PixelVision8.Player
         [DrawAction]
         public void FloodFillAction(CanvasDrawRequest request)
         {
-            if (request.Bounds.X < 0 || request.Bounds.Y < 0 || request.Bounds.X > Width || request.Bounds.Y > Height) return;
+            if (request.Bounds.X < 0 || request.Bounds.Y < 0 || request.Bounds.X > Width ||
+                request.Bounds.Y > Height) return;
 
             // Get the color at the point where we are trying to fill and use that to match all the color inside the shape
             var targetColor = GetPixel(currentTexture, request.Bounds.X, request.Bounds.Y);

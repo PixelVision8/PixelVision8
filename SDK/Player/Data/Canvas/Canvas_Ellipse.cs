@@ -24,14 +24,12 @@ namespace PixelVision8.Player
 {
     public sealed partial class Canvas
     {
-        
         private long _a;
         private long _b;
         private long _b1;
-        
+
         public void DrawEllipse(int x, int y, int ellipseWidth, int ellipseHeight, bool fill = false)
         {
-
             if (fill)
                 ChangeTargetCanvas(ellipseWidth, ellipseHeight);
 
@@ -64,10 +62,9 @@ namespace PixelVision8.Player
         [DrawAction]
         public void DrawEllipseAction(CanvasDrawRequest request)
         {
-
             int _x0, _y0, _x1, _y1;
             double _dx, _dy, _err, _e2;
-            
+
             // Save the x and y values to calculate below
             _x0 = request.Bounds.Left;
             _y0 = request.Bounds.Top;
@@ -101,14 +98,14 @@ namespace PixelVision8.Player
             if (_x0 > _x1)
             {
                 _x0 = _x1;
-                _x1 += (int)(_a);
+                _x1 += (int) (_a);
             } /* if called with swapped points */
 
             if (_y0 > _y1)
                 _y0 = _y1; /* .. exchange them */
 
-            _y0 += (int)((_b + 1) / 2);
-            _y1 = (int)(_y0 - _b1); /* starting pixel */
+            _y0 += (int) ((_b + 1) / 2);
+            _y1 = (int) (_y0 - _b1); /* starting pixel */
             _a = 8 * _a * _a;
             _b1 = 8 * _b * _b;
             do
@@ -144,7 +141,6 @@ namespace PixelVision8.Player
 
             if (request.Fill)
             {
-
                 // Save the center X & Y position before we save it back
                 _x1 = request.Bounds.Center.X;
                 _y1 = request.Bounds.Center.Y;
@@ -155,9 +151,7 @@ namespace PixelVision8.Player
                     request.Bounds.Y = _y1;
 
                     FloodFillAction(request);
-
                 }
-
             }
         }
     }

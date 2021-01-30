@@ -47,14 +47,14 @@ namespace PixelVision8.Runner
         private List<string> uniqueFontColors;
         private int[] fontMap;
 
-        public FontParser(string sourceFile, IImageParser parser, ColorChip colorChip, FontChip fontChip) : base(sourceFile, parser, colorChip, fontChip)
+        public FontParser(string sourceFile, IImageParser parser, ColorChip colorChip, FontChip fontChip) : base(
+            sourceFile, parser, colorChip, fontChip)
         {
             this.fontChip = fontChip;
         }
-        
+
         public override void CreateImage()
         {
-
             // Get all the colors from the image
             uniqueFontColors = Parser.colorPalette.Select(c => Utilities.RgbToHex(c.R, c.G, c.B)).ToList();
 
@@ -65,13 +65,13 @@ namespace PixelVision8.Runner
             var colorRefs = uniqueFontColors.ToArray();
 
             // Convert all of the pixels into color ids
-            var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorRefs, Utilities.RgbToHex(c.R, c.G, c.B))).ToArray();
+            var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorRefs, Utilities.RgbToHex(c.R, c.G, c.B)))
+                .ToArray();
 
             // Create new image
             ImageData = new ImageData(Parser.width, Parser.height, pixelIDs, colorRefs);
 
             StepCompleted();
-
         }
 
         public override void PrepareSprites()
@@ -103,9 +103,8 @@ namespace PixelVision8.Runner
             // Set the id to the font map
             fontMap[index] = id;
         }
-
     }
-    
+
     public partial class Loader
     {
         [FileParser("font.png")]

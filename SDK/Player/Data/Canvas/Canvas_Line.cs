@@ -25,8 +25,8 @@ namespace PixelVision8.Player
         // int _counter = 0;
         private int _sx;
         private int _sy;
-        
-        
+
+
         public void DrawLine(int x0, int y0, int x1, int y1)
         {
             var getRequest = NextRequest();
@@ -56,8 +56,8 @@ namespace PixelVision8.Player
 
             _x0 = drawRequest.Bounds.X;
             _y0 = drawRequest.Bounds.Y;
-            _x1 = drawRequest.Bounds.Width;// - stroke.Width;
-            _y1 = drawRequest.Bounds.Height;// - stroke.Width;
+            _x1 = drawRequest.Bounds.Width; // - stroke.Width;
+            _y1 = drawRequest.Bounds.Height; // - stroke.Width;
 
             // _counter = 0;
 
@@ -87,7 +87,7 @@ namespace PixelVision8.Player
 
             _err = (_dx > _dy ? _dx : -_dy) / 2;
 
-            for (; ; )
+            for (;;)
             {
                 SetStrokePixel(_x0, _y0);
 

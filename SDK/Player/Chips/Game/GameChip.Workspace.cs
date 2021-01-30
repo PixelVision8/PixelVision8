@@ -24,7 +24,6 @@ using System.Linq;
 
 namespace PixelVision8.Player
 {
-
     /// <summary>
     ///     The GameChip represents the foundation of a game class
     ///     with all the logic it needs to work correctly in the PixelVisionEngine.
@@ -114,7 +113,7 @@ namespace PixelVision8.Player
         /// <returns></returns>
         public string ReadMetadata(string key, string defaultValue = "undefined")
         {
-            return ((PixelVision)Player).GetMetadata(key, defaultValue);
+            return ((PixelVision) Player).GetMetadata(key, defaultValue);
         }
 
         /// <summary>
@@ -124,19 +123,16 @@ namespace PixelVision8.Player
         /// <param name="value"></param>
         public void WriteMetadata(string key, string value)
         {
-            ((PixelVision)Player).SetMetadata(key, value);
+            ((PixelVision) Player).SetMetadata(key, value);
         }
 
         public Dictionary<string, string> ReadAllMetadata()
         {
             var tmpMetadata = new Dictionary<string, string>();
 
-            ((PixelVision)Player).ReadAllMetadata(tmpMetadata);
+            ((PixelVision) Player).ReadAllMetadata(tmpMetadata);
 
             return tmpMetadata;
         }
-
     }
-
-
 }

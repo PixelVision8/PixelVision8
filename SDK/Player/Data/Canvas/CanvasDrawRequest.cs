@@ -35,5 +35,4 @@ namespace PixelVision8.Player
         public int X;
         public int Y;
     }
-
 }

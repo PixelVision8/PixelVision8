@@ -24,7 +24,6 @@ namespace PixelVision8.Player
 {
     public static partial class Utilities
     {
-
         /// <summary>
         ///     Converts an X and Y position into an index. This is useful for finding positions in 1D
         ///     arrays that represent 2D data.
@@ -63,6 +62,5 @@ namespace PixelVision8.Player
         {
             return new Point(index % width, index / width);
         }
-        
     }
 }

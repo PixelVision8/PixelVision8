@@ -47,7 +47,7 @@ namespace PixelVision8.Player
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
         }
-        
+
         [DrawAction]
         public void SetPatternAction(CanvasDrawRequest request)
         {
@@ -55,7 +55,6 @@ namespace PixelVision8.Player
                 Utilities.Resize(pattern, request.PixelData.Width, request.PixelData.Height);
 
             Utilities.SetPixels(request.PixelData.Pixels, pattern);
-
         }
     }
 }

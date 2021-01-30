@@ -28,50 +28,44 @@ local checkeredPattern = {
 function Init()
 
   -- Set the canvas stroke to a 1x1 pixel brush
-  canvas:SetStroke({6}, 1, 1)
+  canvas:SetStroke(6, 1)
 
   -- Draw the line label to the canvas
-  canvas:DrawText("Line", 8, 8, "large", 15)
+  canvas:DrawText("Line Lua", 8, 8, "large", 15)
 
   -- Draw a line between the two points
-  canvas:DrawLine(8, 24, 80, 32)
-
-  -- Change the spacing between the line's x pixels to 2 for a dotted line
-  canvas:LinePattern(2, 0)
+  canvas:DrawLine(8, 24, 80, 24)
 
   -- Draw a line between the two points
   canvas:DrawLine(93, 24, 165, 32)
 
-  -- Reset the space between the line's pixels back to 1
-  canvas:LinePattern(1, 0)
+  -- Draw the Ellipse label to the canvas
+  canvas:DrawText("Ellipse", 8, 40, "large", 15)
 
-  -- Draw the circle label to the canvas
-  canvas:DrawText("Circle", 8, 40, "large", 15)
+  -- Ellipse 1
+  canvas:DrawEllipse(8, 52, 64, 64)
 
-  -- Circle 1
-  canvas:DrawCircle(8, 80, 64, 80)
-
-  -- Circle 2
+  -- Ellipse 2
   canvas:SetPattern(solidPattern, 1, 1)
-  canvas:DrawCircle(74, 80, 130, 80, true)
+  canvas:DrawEllipse(79, 52, 64, 64, true)
 
-  -- Circle 3
+  -- Ellipse 3
   canvas:SetPattern(checkeredPattern, 4, 4)
-  canvas:DrawCircle(140, 80, 196, 80, true)
+  canvas:DrawEllipse(150, 52, 64, 64, true)
 
-  -- Draw the square label to the canvas
-  canvas:DrawText("Square", 8, 120, "large", 15)
+  -- Draw the Rectangle label to the canvas
+  canvas:DrawText("Rectangle", 8, 120, "large", 15)
 
-  -- Square 1
-  canvas:DrawSquare(8, 136, 64, 192)
+  -- Rectangle 1
+  canvas:DrawRectangle(8, 136, 64, 64)
 
-  -- Square 2
+  -- Rectangle 2
   canvas:SetPattern(solidPattern, 1, 1)
-  canvas:DrawSquare(76, 136, 132, 192, true)
+  canvas:DrawRectangle(79, 136, 64, 64, true)
 
-  -- Square 3
+  -- Rectangle 3
   canvas:SetPattern(checkeredPattern, 4, 4)
-  canvas:DrawSquare(142, 136, 198, 192, true)
+  canvas:DrawRectangle(150, 136, 64, 64, true)
 
   -- Draw the canvas to the display
   canvas:DrawPixels()

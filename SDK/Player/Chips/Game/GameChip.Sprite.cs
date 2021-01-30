@@ -25,15 +25,14 @@ namespace PixelVision8.Player
 {
     public partial class GameChip
     {
-        
         // TODO this shares tmpSpriteData with GameChip_Display
-        
+
         protected SpriteChip SpriteChip => Player.SpriteChip;
         private int[] _tmpSpriteData = new int[64];
 
         private int id;
         // protected Point _spriteSize = new Point(8, 8);
-        
+
         /// <summary>
         ///     Pixel Vision 8 sprites have limits around how many colors they can display at once which is called
         ///     the Colors Per Sprite or CPS. The ColorsPerSprite() method returns this value from the SpriteChip.
@@ -51,7 +50,7 @@ namespace PixelVision8.Player
             // This can not be changed at run time so it will never need to be invalidated
             return SpriteChip.colorsPerSprite; //colorsPerSpriteCached;//;
         }
-        
+
         /// <summary>
         ///     This method will automatically calculate the start color offset for palettes in the color chip.
         /// </summary>
@@ -60,9 +59,10 @@ namespace PixelVision8.Player
         public int PaletteOffset(int paletteID, int paletteColorID = 0)
         {
             // TODO this is hardcoded right now but there are 8 palettes with a max of 16 colors each
-            return 128 + Utilities.Clamp(paletteID, 0, 7) * 16 + Utilities.Clamp(paletteColorID, 0, ColorsPerSprite() - 1);
+            return 128 + Utilities.Clamp(paletteID, 0, 7) * 16 +
+                   Utilities.Clamp(paletteColorID, 0, ColorsPerSprite() - 1);
         }
-        
+
         #region Sprite
 
         /// <summary>
@@ -79,7 +79,6 @@ namespace PixelVision8.Player
         /// </returns>
         public Point SpriteSize()
         {
-            
             return new Point(SpriteChip.width, SpriteChip.height);
         }
 
@@ -102,7 +101,6 @@ namespace PixelVision8.Player
         /// </returns>
         public int[] Sprite(int id, int[] data = null)
         {
-
             if (data != null)
             {
                 SpriteChip.UpdateSpriteAt(id, data);
@@ -116,8 +114,6 @@ namespace PixelVision8.Player
 
             return _tmpSpriteData;
         }
-
-        
 
         #endregion
     }

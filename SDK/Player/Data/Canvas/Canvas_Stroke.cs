@@ -62,8 +62,8 @@ namespace PixelVision8.Player
 
             Utilities.SetPixels(request.PixelData.Pixels, stroke);
         }
-        
-        private void SetStrokePixel(int x, int y) => Utilities.SetPixels(stroke.Pixels, x, y, stroke.Width, stroke.Height, currentTexture);
 
+        private void SetStrokePixel(int x, int y) =>
+            Utilities.SetPixels(stroke.Pixels, x, y, stroke.Width, stroke.Height, currentTexture);
     }
 }

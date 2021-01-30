@@ -25,7 +25,6 @@ using PixelVisionSDK.Player;
 
 namespace PixelVision8.Player
 {
-
     /// <summary>
     ///     The GameChip represents the foundation of a game class
     ///     with all the logic it needs to work correctly in the PixelVisionEngine.
@@ -59,7 +58,7 @@ namespace PixelVision8.Player
                 Array.Resize(ref metaSprites, MathHelper.Clamp(total.Value, 0, 96));
                 for (int i = 0; i < total.Value; i++)
                 {
-                    if(metaSprites[i] == null)
+                    if (metaSprites[i] == null)
                         metaSprites[i] = new SpriteCollection("EmptyMetaSprite");
                 }
             }
@@ -103,10 +102,9 @@ namespace PixelVision8.Player
 
         public SpriteCollection MetaSprite(int id, SpriteCollection spriteCollection = null)
         {
-
-            if(id < 0 || id > _TotalMetaSprites)
+            if (id < 0 || id > _TotalMetaSprites)
                 return null;
-            
+
             if (spriteCollection != null)
                 metaSprites[id] = spriteCollection;
             else if (metaSprites[id] == null)
@@ -128,17 +126,15 @@ namespace PixelVision8.Player
 
         public int FindMetaSpriteId(string name)
         {
-
             // Loop through all of the meta sprites and find a name that matches
             for (int i = 0; i < _TotalMetaSprites; i++)
             {
-                if(metaSprites[i].Name == name)
+                if (metaSprites[i].Name == name)
                     return i;
             }
 
             // If no match is found
             return -1;
-
         }
 
         public void DrawMetaSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
@@ -150,12 +146,11 @@ namespace PixelVision8.Player
             var spriteCollection = metaSprites[id];
             // Get the sprite data for the meta sprite
             tmpSpritesData = spriteCollection.Sprites;
-            _total = tmpSpritesData.Count;
+            var _total = tmpSpritesData.Count;
 
             // When rendering in Tile Mode, switch to grid layout
-            if(drawMode == DrawMode.Tile)
+            if (drawMode == DrawMode.Tile)
             {
-                
                 // TODO added this so C# code isn't corrupted, need to check performance impact
                 if (tmpIDs.Length != _total) Array.Resize(ref tmpIDs, _total);
 
@@ -182,9 +177,8 @@ namespace PixelVision8.Player
                     // Test to see if the sprite is within range
                     if (id > -1)
                     {
-
                         var pos = CalculatePosition(i, width);
-                        
+
                         DrawSprite(
                             id,
                             pos.X + x,
@@ -200,7 +194,6 @@ namespace PixelVision8.Player
             }
             else
             {
-                
                 // Loop through each of the sprites
                 for (var i = 0; i < _total; i++)
                 {
@@ -214,19 +207,15 @@ namespace PixelVision8.Player
                         _tmpFlipH = _currentSpriteData.FlipH;
                         _tmpFlipV = _currentSpriteData.FlipV;
 
-                        // Get the width and height of the meta sprite's bounds
-                        _width = metaSprites[id].Bounds.Width;
-                        height = metaSprites[id].Bounds.Height;
-
                         if (flipH)
                         {
-                            startX = _width - startX - SpriteSize().X;
+                            startX = metaSprites[id].Bounds.Width - startX - SpriteSize().X;
                             _tmpFlipH = !_tmpFlipH;
                         }
 
                         if (flipV)
                         {
-                            startY = height - startY - SpriteSize().Y;
+                            startY = metaSprites[id].Bounds.Height - startY - SpriteSize().Y;
                             _tmpFlipV = !_tmpFlipV;
                         }
 
@@ -248,8 +237,5 @@ namespace PixelVision8.Player
                 }
             }
         }
-
     }
-
-
 }

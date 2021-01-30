@@ -38,10 +38,10 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
 					 Script.GlobalOptions.Platform.GetPlatformName());
 #else
             SendText("MoonSharp Debug Session - Connected to MoonSharp {0} [{1}] on process {2} (PID {3})",
-                     Script.VERSION,
-                     Script.GlobalOptions.Platform.GetPlatformName(),
-                     System.Diagnostics.Process.GetCurrentProcess().ProcessName,
-                     System.Diagnostics.Process.GetCurrentProcess().Id);
+                Script.VERSION,
+                Script.GlobalOptions.Platform.GetPlatformName(),
+                System.Diagnostics.Process.GetCurrentProcess().ProcessName,
+                System.Diagnostics.Process.GetCurrentProcess().Id);
 #endif
 
             SendText("Debugging script '{0}'; use the debug console to debug another script.", m_Debug.Name);
@@ -79,7 +79,7 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
 
         public override void Continue(Response response, Table arguments)
         {
-            m_Debug.QueueAction(new DebuggerAction() { Action = DebuggerAction.ActionType.Run });
+            m_Debug.QueueAction(new DebuggerAction() {Action = DebuggerAction.ActionType.Run});
             SendResponse(response);
         }
 
@@ -91,16 +91,18 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
 
         private static string getString(Table args, string property, string dflt = null)
         {
-            var s = (string)args[property];
+            var s = (string) args[property];
             if (s == null)
             {
                 return dflt;
             }
+
             s = s.Trim();
             if (s.Length == 0)
             {
                 return dflt;
             }
+
             return s;
         }
 
@@ -219,7 +221,8 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
                 SendText("    !switch <id> - switch to another script (same as select + disconnect)");
                 SendText("    !seterror <regex> - sets the regex which tells which errors to trap");
                 SendText("    !geterror - gets the current value of the regex which tells which errors to trap");
-                SendText("    !execendnotify [on|off] - sets the notification of end of execution on or off (default = off)");
+                SendText(
+                    "    !execendnotify [on|off] - sets the notification of end of execution on or off (default = off)");
                 SendText("    ... or type an expression to evaluate it on the fly.");
             }
         }
@@ -232,7 +235,7 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
 
         public override void Next(Response response, Table arguments)
         {
-            m_Debug.QueueAction(new DebuggerAction() { Action = DebuggerAction.ActionType.StepOver });
+            m_Debug.QueueAction(new DebuggerAction() {Action = DebuggerAction.ActionType.StepOver});
             SendResponse(response);
         }
 
@@ -273,7 +276,8 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
 
             if (path == null)
             {
-                SendErrorResponse(response, 3010, "setBreakpoints: property 'source' is empty or misformed", null, false, true);
+                SendErrorResponse(response, 3010, "setBreakpoints: property 'source' is empty or misformed", null,
+                    false, true);
                 return;
             }
 
@@ -290,7 +294,8 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
 
             Table clientLines = args.Get("lines").Table;
 
-            var lin = new HashSet<int>(clientLines.Values.Select(jt => ConvertClientLineToDebugger(jt.ToObject<int>())).ToArray());
+            var lin = new HashSet<int>(clientLines.Values.Select(jt => ConvertClientLineToDebugger(jt.ToObject<int>()))
+                .ToArray());
 
             var lin2 = m_Debug.DebugService.ResetBreakPoints(src, lin);
 
@@ -300,7 +305,8 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
                 breakpoints.Add(new Breakpoint(lin2.Contains(l), l));
             }
 
-            response.SetBody(new SetBreakpointsResponseBody(breakpoints)); SendResponse(response);
+            response.SetBody(new SetBreakpointsResponseBody(breakpoints));
+            SendResponse(response);
         }
 
         public override void StackTrace(Response response, Table args)
@@ -365,19 +371,19 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
 
         public override void StepIn(Response response, Table arguments)
         {
-            m_Debug.QueueAction(new DebuggerAction() { Action = DebuggerAction.ActionType.StepIn });
+            m_Debug.QueueAction(new DebuggerAction() {Action = DebuggerAction.ActionType.StepIn});
             SendResponse(response);
         }
 
         public override void StepOut(Response response, Table arguments)
         {
-            m_Debug.QueueAction(new DebuggerAction() { Action = DebuggerAction.ActionType.StepOut });
+            m_Debug.QueueAction(new DebuggerAction() {Action = DebuggerAction.ActionType.StepOut});
             SendResponse(response);
         }
 
         public override void Threads(Response response, Table arguments)
         {
-            var threads = new List<Thread>() { new Thread(0, "Main Thread") };
+            var threads = new List<Thread>() {new Thread(0, "Main Thread")};
             SendResponse(response, new ThreadsResponseBody(threads));
         }
 
@@ -425,7 +431,8 @@ namespace MoonSharp.VsCodeDebugger.DebuggerLogic
         void IAsyncDebuggerClient.OnSourceCodeChanged(int sourceID)
         {
             if (m_Debug.IsSourceOverride(sourceID))
-                SendText("Loaded source '{0}' -> '{1}'", m_Debug.GetSource(sourceID).Name, m_Debug.GetSourceFile(sourceID));
+                SendText("Loaded source '{0}' -> '{1}'", m_Debug.GetSource(sourceID).Name,
+                    m_Debug.GetSourceFile(sourceID));
             else
                 SendText("Loaded source '{0}'", m_Debug.GetSource(sourceID).Name);
         }

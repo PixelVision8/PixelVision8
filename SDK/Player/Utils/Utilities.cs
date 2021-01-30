@@ -10,18 +10,18 @@ namespace PixelVision8.Player
         /// <param name="value"></param>
         public static int CeilToInt(float value)
         {
-            return (int)Math.Ceiling(value);
+            return (int) Math.Ceiling(value);
         }
-        
+
         /// <summary>
         ///     Returns Floor value as an int.
         /// </summary>
         /// <param name="value"></param>
         public static int FloorToInt(float value)
         {
-            return (int)Math.Floor(value);
+            return (int) Math.Floor(value);
         }
-        
+
         /// <summary>
         ///     Repeats a value based on the max. When the value is greater than the max, it starts
         ///     over at 0 plus the remaining value.
@@ -37,29 +37,33 @@ namespace PixelVision8.Player
         /// </returns>
         public static int Repeat(int val, int max)
         {
-            return (int)(val - Math.Floor(val / (float)max) * max);
+            return (int) (val - Math.Floor(val / (float) max) * max);
         }
-        
+
         public static int Clamp(int value, int min, int max)
         {
             value = value > max ? max : value;
             value = value < min ? min : value;
             return value;
         }
-        
+
         // from https://stackoverflow.com/questions/16365870/distance-between-two-points-without-using-the-square-root
-        public static int Sqrt(int x){
+        public static int Sqrt(int x)
+        {
             int s, t;
 
-            s = 1;  t = x;
-            while (s < t) {
+            s = 1;
+            t = x;
+            while (s < t)
+            {
                 s <<= 1;
                 t >>= 1;
-            }//decide the value of the first tentative
+            } //decide the value of the first tentative
 
-            do {
+            do
+            {
                 t = s;
-                s = (x / s + s) >> 1;//x1=(N / x0 + x0)/2 : recurrence formula
+                s = (x / s + s) >> 1; //x1=(N / x0 + x0)/2 : recurrence formula
             } while (s < t);
 
             return t;

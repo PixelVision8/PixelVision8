@@ -26,10 +26,8 @@ namespace PixelVision8.Player
     /// </summary>
     public partial interface IPlayerChips
     {
-        
         AbstractChip GetChip(string id, bool activeOnCreate = true);
 
         void ActivateChip(string id, AbstractChip chip, bool autoActivate = true);
-
     }
 }

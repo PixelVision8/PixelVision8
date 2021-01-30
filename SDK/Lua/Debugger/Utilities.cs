@@ -48,21 +48,23 @@ namespace MoonSharp.VsCodeDebugger.SDK
             {
                 variables = new { };
             }
+
             Type type = variables.GetType();
             return VARIABLE.Replace(format, match =>
             {
                 string name = match.Groups[1].Value;
                 if (!underscoredOnly || name.StartsWith("_"))
                 {
-
                     PropertyInfo property = Framework.Do.GetProperty(type, name);
                     if (property != null)
                     {
                         object value = property.GetValue(variables, null);
                         return value.ToString();
                     }
+
                     return '{' + name + ": not found}";
                 }
+
                 return match.Groups[0].Value;
             });
         }
@@ -76,10 +78,12 @@ namespace MoonSharp.VsCodeDebugger.SDK
             {
                 dirPath += "/";
             }
+
             if (absPath.StartsWith(dirPath))
             {
                 return absPath.Replace(dirPath, "");
             }
+
             return absPath;
             /*
 			Uri uri1 = new Uri(path);

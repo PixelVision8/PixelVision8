@@ -29,7 +29,8 @@ namespace PixelVision8.Runner
         private readonly TilemapChip tilemapChip;
         private bool autoResize;
 
-        public TilemapParser(string sourceFile, IImageParser parser, ColorChip colorChip, SpriteChip spriteChip, TilemapChip tilemapChip, bool autoResize = false) :
+        public TilemapParser(string sourceFile, IImageParser parser, ColorChip colorChip, SpriteChip spriteChip,
+            TilemapChip tilemapChip, bool autoResize = false) :
             base(sourceFile, parser, colorChip, spriteChip)
         {
             this.tilemapChip = tilemapChip;
@@ -40,7 +41,6 @@ namespace PixelVision8.Runner
 
         public override void CutOutSprites()
         {
-
             // TODO the image should be the right size from the beginning
 
             if (autoResize)
@@ -56,7 +56,6 @@ namespace PixelVision8.Runner
 
             for (var i = 0; i < totalSprites; i++)
             {
-
                 var pos = Utilities.CalculatePosition(i, ImageData.Columns);
 
                 if (pos.X < tmpColumns && pos.Y < tmpRows)
@@ -68,7 +67,6 @@ namespace PixelVision8.Runner
                 }
 
                 index++;
-
             }
 
             if (tmpColumns < ImageData.Columns || tmpRows < ImageData.Rows)
@@ -95,16 +93,16 @@ namespace PixelVision8.Runner
             var tile = tilemapChip.GetTile(x, y);
 
             tile.SpriteId = id;
-
         }
     }
-    
+
     public partial class Loader
     {
         [FileParser("tilemap.png")]
         public void ParseTilemapImage(string file, IPlayerChips engine)
         {
-            AddParser(new TilemapParser(file, _imageParser, engine.ColorChip, engine.SpriteChip, engine.TilemapChip, true));
+            AddParser(new TilemapParser(file, _imageParser, engine.ColorChip, engine.SpriteChip, engine.TilemapChip,
+                true));
         }
     }
 }

@@ -26,7 +26,6 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-
     public partial interface IPlayerChips
     {
         /// <summary>
@@ -35,14 +34,10 @@ namespace PixelVision8.Player
         /// </summary>
         IControllerChip ControllerChip { get; set; }
     }
-    
-    
 
-    
 
     public class Controller
     {
-
         public GamePadState CurrentState;
         public Dictionary<Buttons, Keys> KeyboardMap;
 
@@ -63,11 +58,9 @@ namespace PixelVision8.Player
         private DateTime downSince = DateTime.Now;
         private DateTime lastRep = DateTime.Now;
 
-        
 
         private Keys? repChar;
 
-        
 
         public void Update(int timeDelta)
         {
@@ -96,26 +89,21 @@ namespace PixelVision8.Player
 
             foreach (var key in currentKeyboardState.GetPressedKeys())
             {
-
-                var pv8Key = (Keys)(int)key;
+                var pv8Key = (Keys) (int) key;
 
                 if (JustPressed(pv8Key))
                 {
-
                     downSince = DateTime.Now;
                     repChar = pv8Key;
 
                     // BuildInputString(pv8Key);
-
                 }
                 else if (GetKeyUp(pv8Key))
                 {
-
                     if (repChar == pv8Key) repChar = null;
-
                 }
 
-                var tmpKey = (Keys)(int)key;
+                var tmpKey = (Keys) (int) key;
 
                 if (repChar != null && repChar == pv8Key && currentKeyboardState.IsKeyDown(tmpKey))
                 {
@@ -134,7 +122,6 @@ namespace PixelVision8.Player
                     }
                 }
             }
-
         }
 
         public new bool export { get; set; }
@@ -150,7 +137,7 @@ namespace PixelVision8.Player
             {
                 Keys key = player.KeyboardMap.TryGetValue(button, out key) ? key : default;
 
-                var tmpKey = (Keys)(int)key;
+                var tmpKey = (Keys) (int) key;
 
                 // Test the keyboard or the controller
                 value = !currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey) ||
@@ -170,7 +157,7 @@ namespace PixelVision8.Player
             {
                 Keys key = player.KeyboardMap.TryGetValue(button, out key) ? key : default;
 
-                var tmpKey = (Keys)(int)key;
+                var tmpKey = (Keys) (int) key;
 
                 // Test the keyboard or the controller
                 value = currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey) ||
@@ -180,7 +167,6 @@ namespace PixelVision8.Player
             return value;
         }
 
-        
 
         public override void Configure()
         {
@@ -235,7 +221,6 @@ namespace PixelVision8.Player
 
             return false;
         }
-
     }
 }
 

@@ -24,7 +24,7 @@ namespace PixelVision8.Runner
     {
         protected IImageParser Parser;
         protected string MaskHex = "#FF00FF";
-        
+
         public ImageParser(IImageParser parser)
         {
             Parser = parser;

@@ -245,7 +245,7 @@ namespace PixelVision8.Runner.Workspace
         [Pure]
         public override bool Equals(object obj)
         {
-            if (obj is WorkspacePath) return Equals((WorkspacePath)obj);
+            if (obj is WorkspacePath) return Equals((WorkspacePath) obj);
 
             return false;
         }

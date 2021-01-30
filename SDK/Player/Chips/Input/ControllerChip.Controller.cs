@@ -12,7 +12,7 @@ namespace PixelVision8.Player
         {
             return players[id].IsConnected();
         }
-        
+
         public void RegisterControllers()
         {
             var state = GamePad.GetState(0, gamePadDeadZone);

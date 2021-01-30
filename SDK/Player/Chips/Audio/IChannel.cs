@@ -41,6 +41,5 @@ namespace PixelVision8.Player.Audio
         ///     Stops the current sound from playing
         /// </summary>
         void Stop();
-
     }
 }

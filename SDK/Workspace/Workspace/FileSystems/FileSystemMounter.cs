@@ -38,7 +38,7 @@ namespace PixelVision8.Runner.Workspace
         }
 
         public FileSystemMounter(params KeyValuePair<WorkspacePath, IFileSystem>[] mounts)
-            : this((IEnumerable<KeyValuePair<WorkspacePath, IFileSystem>>)mounts)
+            : this((IEnumerable<KeyValuePair<WorkspacePath, IFileSystem>>) mounts)
         {
         }
 

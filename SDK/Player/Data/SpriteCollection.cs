@@ -25,7 +25,6 @@ using PixelVision8.Player;
 
 namespace PixelVisionSDK.Player
 {
-
     public struct SpriteData
     {
         public int Id;
@@ -49,7 +48,9 @@ namespace PixelVisionSDK.Player
     public class SpriteCollection
     {
         public readonly List<SpriteData> Sprites;
+
         public Rectangle Bounds;
+
         // public Rectangle MaxBoundary;
         public string Name;
         public int SpriteHeight;

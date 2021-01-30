@@ -508,8 +508,6 @@ namespace PixelVision8.Runner.Editors
         //
         //     return new Point(displayChip.OverscanX, displayChip.OverscanY);
         // }
-
-
         public void RedrawDisplay()
         {
             throw new NotImplementedException();
@@ -774,7 +772,7 @@ namespace PixelVision8.Runner.Editors
             }
             else if (mode == 1)
             {
-                canvas.SetPattern(new[] { value }, 1, 1);
+                canvas.SetPattern(new[] {value}, 1, 1);
             }
 
             canvas.FloodFill(column, row);
@@ -796,7 +794,7 @@ namespace PixelVision8.Runner.Editors
                 }
                 else if (mode == 1)
                 {
-                    tiles[i].Flag = unchecked((byte)canvas.Pixels[i]);
+                    tiles[i].Flag = unchecked((byte) canvas.Pixels[i]);
                 }
 
             tilemapChip.Invalidate();
@@ -830,33 +828,31 @@ namespace PixelVision8.Runner.Editors
 
         public bool RunBackgroundScript(string scriptName, string[] args = null)
         {
-
             try
             {
                 // filePath = UniqueFilePath(filePath.AppendFile("pattern+" + id + ".wav"));
 
                 // TODO exporting sprites doesn't work
-                if (serviceManager.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
+                if (serviceManager.GetService(typeof(GameDataExportService).FullName) is GameDataExportService
+                    exportService)
                 {
                     exportService.Restart();
 
-                    exportService.AddExporter(new BackgroundScriptRunner(scriptName, serviceManager.GetService(typeof(LuaService).FullName) as LuaService, args));
+                    exportService.AddExporter(new BackgroundScriptRunner(scriptName,
+                        serviceManager.GetService(typeof(LuaService).FullName) as LuaService, args));
                     //
                     exportService.StartExport();
 
                     return true;
                 }
-
             }
             catch (Exception e)
             {
                 // TODO this needs to go through the error system?
                 Console.WriteLine(e);
-
             }
 
             return false;
-
         }
 
         /// <summary>
@@ -1121,7 +1117,6 @@ namespace PixelVision8.Runner.Editors
 
             try
             {
-
                 // We only need a few chips to make this work
                 string[] chips =
                 {
@@ -1136,7 +1131,7 @@ namespace PixelVision8.Runner.Editors
                 targetGame = new PixelVision(chips, "GameEditor")
                 {
                     ServiceLocator = serviceManager,
-                    FontChip = { unique = false, pages = 1 },
+                    FontChip = {unique = false, pages = 1},
                     Name = path
                 };
 
@@ -1152,11 +1147,9 @@ namespace PixelVision8.Runner.Editors
                 loadService.AddParser(new FontParser("", pngReader, targetGame.ColorChip, targetGame.FontChip));
 
                 loadService.LoadAll();
-
             }
             catch
             {
-
                 return false;
             }
 
@@ -1269,11 +1262,11 @@ namespace PixelVision8.Runner.Editors
         {
             WaveType? type = null;
 
-            if (typeID.HasValue) type = (WaveType)typeID.Value;
+            if (typeID.HasValue) type = (WaveType) typeID.Value;
 
             //            Console.WriteLine("Set Wave Type " + type  + (typeID.HasValue ? " - " + typeID.Value.ToString() : ""));
 
-            return (int)soundChip.ChannelType(id, type);
+            return (int) soundChip.ChannelType(id, type);
         }
 
         #endregion
@@ -1707,9 +1700,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int ConfigTrackInstrument(int track, int? id)
         {
-            if (id.HasValue) songGenerator.trackSettings[track].InstrumentType = (InstrumentType)id.Value;
+            if (id.HasValue) songGenerator.trackSettings[track].InstrumentType = (InstrumentType) id.Value;
 
-            return (int)songGenerator.trackSettings[track].InstrumentType;
+            return (int) songGenerator.trackSettings[track].InstrumentType;
         }
 
         /// <summary>
@@ -1891,7 +1884,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int ReadInstrumentID(int track)
         {
-            return (int)songGenerator.trackSettings[track].InstrumentType;
+            return (int) songGenerator.trackSettings[track].InstrumentType;
         }
 
         /// <summary>
@@ -1949,7 +1942,7 @@ namespace PixelVision8.Runner.Editors
         /// <param name="sfxID"></param>
         public void SetTrack(int track, int instrument, int sfxID)
         {
-            songGenerator.trackSettings[track].InstrumentType = (InstrumentType)instrument;
+            songGenerator.trackSettings[track].InstrumentType = (InstrumentType) instrument;
             songGenerator.trackSettings[track].SfxId = sfxID;
         }
 
@@ -2333,6 +2326,5 @@ namespace PixelVision8.Runner.Editors
         {
             return spriteChip.IsEmptyAt(index);
         }
-
     }
 }

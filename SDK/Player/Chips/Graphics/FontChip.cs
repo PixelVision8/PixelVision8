@@ -23,7 +23,6 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-
     public partial interface IPlayerChips
     {
         /// <summary>
@@ -54,7 +53,6 @@ namespace PixelVision8.Player
             pages = 2;
             colorsPerSprite = 2;
             unique = true;
-
         }
 
         public override void Deactivate()
@@ -85,9 +83,8 @@ namespace PixelVision8.Player
 
             return null;
         }
-        
-        // TODO don't forget to add 'typeof(FontChip).FullName' to the Chip list in the GameRunner.Activate.cs class
 
+        // TODO don't forget to add 'typeof(FontChip).FullName' to the Chip list in the GameRunner.Activate.cs class
     }
 }
 

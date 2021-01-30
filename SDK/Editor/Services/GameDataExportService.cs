@@ -27,12 +27,10 @@ namespace PixelVision8.Runner
 {
     public class GameDataExportService : BaseExportService
     {
-
         private IPlayerChips targetEngine;
 
         public void ExportGame(string path, IPlayerChips engine, FileFlags fileFlags, bool useSteps = true)
         {
-
             Clear();
 
             // Save the engine so we can work with it during loading
@@ -49,7 +47,7 @@ namespace PixelVision8.Runner
 
                 AddExporter(new ColorPaletteExporter(path + "colors.png", colorChip, new PNGWriter()));
             }
-            
+
             // Step 5 (optional). Look for new sprites
             if ((fileFlags & FileFlags.Sprites) == FileFlags.Sprites)
             {
@@ -58,7 +56,6 @@ namespace PixelVision8.Runner
                 var imageExporter = new PNGWriter();
 
                 AddExporter(new SpriteExporter(path + "sprites.png", targetEngine, imageExporter));
-
             }
 
             // Step 7 (optional). Look for fonts to load
@@ -145,6 +142,5 @@ namespace PixelVision8.Runner
             AddExporter(new PixelDataExporter(path, pixelData, width, height, colors, imageExporter,
                 engine.ColorChip.maskColor));
         }
-
     }
 }

@@ -39,7 +39,6 @@ namespace PixelVision8.Player
 
         public IService GetService(string id)
         {
-
             if (services.ContainsKey(id)) return services[id];
 
             throw new Exception("The requested service '" + id + "' is not registered");

@@ -609,7 +609,7 @@ namespace PixelVision8.Runner.Exporters
 
         public uint CreateGID(int id, bool flipH, bool flipV)
         {
-            var gid = (uint)id;
+            var gid = (uint) id;
 
             if (flipH) gid |= 1U << 31;
 

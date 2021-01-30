@@ -22,7 +22,6 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-
     /// <summary>
     ///     The GameChip represents the foundation of a game class
     ///     with all the logic it needs to work correctly in the PixelVisionEngine.
@@ -33,7 +32,7 @@ namespace PixelVision8.Player
     public partial class GameChip
     {
         protected int[] tilemapCachePixels;
-        
+
         public void SaveTilemapCache()
         {
             tilemapCachePixels = Utilities.GetPixels(TilemapChip.PixelData);
@@ -45,6 +44,5 @@ namespace PixelVision8.Player
 
             Utilities.SetPixels(tilemapCachePixels, TilemapChip.PixelData);
         }
-
     }
 }

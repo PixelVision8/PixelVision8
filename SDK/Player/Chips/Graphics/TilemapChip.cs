@@ -24,7 +24,6 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-
     public partial interface IPlayerChips
     {
         /// <summary>
@@ -34,7 +33,7 @@ namespace PixelVision8.Player
         /// </summary>
         TilemapChip TilemapChip { get; set; }
     }
-    
+
     /// <summary>
     ///     The tile map chip represents a grid of sprites used to populate the background
     ///     layer of the game. These sprites are fixed and laid out in column and row
@@ -150,7 +149,6 @@ namespace PixelVision8.Player
         /// </param>
         public void Resize(int newColumns, int newRows, bool clear = true)
         {
-
             // Make sure we keep the value in range
             columns = Utilities.Clamp(newColumns, 1, 256);
             rows = Utilities.Clamp(newRows, 1, 256);
@@ -161,7 +159,6 @@ namespace PixelVision8.Player
             // Loop through all of the tiles
             for (_i = 0; _i < tiles.Length; _i++)
             {
-
                 // Create a new tile if it doesn't exist
                 if (tiles[_i] == null)
                 {
@@ -236,7 +233,6 @@ namespace PixelVision8.Player
 
         protected void RebuildCache()
         {
-
             // Loop through all of the tiles in the tilemap
             for (_i = 0; _i < total; _i++)
             {
@@ -254,17 +250,16 @@ namespace PixelVision8.Player
                             _tile.FlipH);
 
                     // Draw the pixel data into the cachedTilemap
-                    Utilities.MergePixels(tmpPixelData, 0, 0, _tileSize.Width, _tileSize.Height, _tilemapCache, _pos.X * _tileSize.Width, _pos.Y * _tileSize.Height, false, false, _tile.ColorOffset, false);
-
+                    Utilities.MergePixels(tmpPixelData, 0, 0, _tileSize.Width, _tileSize.Height, _tilemapCache,
+                        _pos.X * _tileSize.Width, _pos.Y * _tileSize.Height, false, false, _tile.ColorOffset, false);
                 }
             }
 
             // Reset the invalidation state
             ResetValidation();
         }
-        
-        // TODO don't forget to add 'typeof(TilemapChip).FullName' to the Chip list in the GameRunner.Activate.cs class
 
+        // TODO don't forget to add 'typeof(TilemapChip).FullName' to the Chip list in the GameRunner.Activate.cs class
     }
 }
 

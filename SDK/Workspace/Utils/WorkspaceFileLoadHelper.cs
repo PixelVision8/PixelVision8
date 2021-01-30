@@ -25,7 +25,6 @@ using System.IO;
 
 namespace PixelVision8.Runner
 {
-
     public class WorkspaceFileLoadHelper : IFileLoader
     {
         protected WorkspaceService WorkspaceService;
@@ -39,9 +38,9 @@ namespace PixelVision8.Runner
         {
             return WorkspacePath.Parse(path).EntityName;
         }
+
         public byte[] ReadAllBytes(string file)
         {
-
             var path = WorkspacePath.Parse(file);
 
             using (var memoryStream = new MemoryStream())
@@ -54,13 +53,11 @@ namespace PixelVision8.Runner
 
                 return memoryStream.ToArray();
             }
-
         }
 
-        public bool Exists( string path)
+        public bool Exists(string path)
         {
             return WorkspaceService.Exists(WorkspacePath.Parse(path));
         }
     }
-
 }

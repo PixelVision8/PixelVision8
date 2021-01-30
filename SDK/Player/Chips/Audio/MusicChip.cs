@@ -24,12 +24,11 @@ using System.Collections.Generic;
 
 namespace PixelVision8.Player
 {
-
     public partial interface IPlayerChips
     {
         public MusicChip MusicChip { get; set; }
     }
-    
+
     /// <summary>
     ///     The MusicChpip is a sequencer for playing back ISoundData. It
     ///     keeps track of playback time and moves through TrackData playing
@@ -53,7 +52,7 @@ namespace PixelVision8.Player
 
         public float[] noteStartFrequency; // same, but for sfxr frequency 0..1 range
 
-        protected float swingRhythmFactor = 1.0f;//0.7f;
+        protected float swingRhythmFactor = 1.0f; //0.7f;
         protected float noteTickS = 15.0f / 120.0f; // (15.0f/120.0f) = 120BPM sixteenth notes
         protected float noteTickSOdd; // small beat
         protected float noteTickSEven; // long beat
@@ -81,7 +80,10 @@ namespace PixelVision8.Player
 
         protected float time = 0;
         public float nextBeatTimestamp = 0;
-        public const float maxDelta = 10; // This is so high to keep things accurate. Lower if songs are "skipping" / playing many beats all at once
+
+        public const float
+            maxDelta = 10; // This is so high to keep things accurate. Lower if songs are "skipping" / playing many beats all at once
+
         public const float tickOffset = -0.0105f; // Set up to account for extra delay
 
         public TrackerData[] trackerDataCollection = new TrackerData[0];
@@ -221,12 +223,14 @@ namespace PixelVision8.Player
                     // If the time between when the note is supposed to be played and when it would be delayed to is too large, reset it.
                     if (delta > maxDelta)
                     {
-                        nextBeatTimestamp = time + noteTickS;//(SequencerBeatNumber % 2 == 1 ? noteTickSOdd : noteTickSEven);
+                        nextBeatTimestamp =
+                            time + noteTickS; //(SequencerBeatNumber % 2 == 1 ? noteTickSOdd : noteTickSEven);
                     }
                     else
                     {
                         nextBeatTimestamp += noteTickS;
                     }
+
                     OnBeat();
                     // time = 0;
                 }
@@ -277,7 +281,7 @@ namespace PixelVision8.Player
             for (var x = 0; x < maxNoteNum; ++x)
             {
                 // what Hz is a particular musical note? (eg A#)
-                hertz = a / 32.0f * (float)Math.Pow(2.0f, (x - 9.0f) / 12.0f);
+                hertz = a / 32.0f * (float) Math.Pow(2.0f, (x - 9.0f) / 12.0f);
                 noteHZ[x] = hertz; // this appears to be correct: C = 60 = 261.6255Hz
 
                 // derive the SFXR sine wave frequency to play this Hz
@@ -286,7 +290,7 @@ namespace PixelVision8.Player
                 // maybe the algorithm assumes 1 based array etc?
                 if (x < 126) // let's just hack in one semitone lower sounds (but not overflow array)
                     noteStartFrequency[x + 1] =
-                        (float)Math.Sqrt(hertz / preRenderBitrate * 100.0f / 8.0f - 0.001f) - 0.0018f;
+                        (float) Math.Sqrt(hertz / preRenderBitrate * 100.0f / 8.0f - 0.001f) - 0.0018f;
 
                 // last num is a hack using my ears to "tune"
             }
@@ -334,7 +338,7 @@ namespace PixelVision8.Player
         public void PlayPatterns(int[] ids, bool loop = false, int startAt = 0, int? endAt = null)
         {
             // Create a new song data object for the pattern IDs
-            currentSong = new SongData { patterns = ids, start = startAt };
+            currentSong = new SongData {patterns = ids, start = startAt};
 
             // Set the end of the song if a value has been supplied
             if (endAt.HasValue) currentSong.end = endAt.Value;
@@ -396,13 +400,11 @@ namespace PixelVision8.Player
                     RewindSong();
                     nextBeatTimestamp = time;
                     return;
-
                 }
 
                 //                Console.WriteLine("Load new pattern");
 
                 //                    RewindSong();
-
 
 
                 // Load the next song in the playlist
@@ -440,7 +442,8 @@ namespace PixelVision8.Player
 
         public void UpdateNoteTickLengths()
         {
-            noteTickS = 15.0f / ActiveTrackerData.speedInBPM + tickOffset; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
+            noteTickS = 15.0f / ActiveTrackerData.speedInBPM +
+                        tickOffset; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
             noteTickSOdd = noteTickS * swingRhythmFactor; // small beat
             noteTickSEven = noteTickS * 2 - noteTickSOdd; // long beat
         }
@@ -536,6 +539,5 @@ namespace PixelVision8.Player
             //            else
             songCurrentlyPlaying = true;
         }
-
     }
 }

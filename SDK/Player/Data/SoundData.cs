@@ -21,10 +21,8 @@
 
 namespace PixelVision8.Player
 {
-
     public class SoundData : AbstractData
     {
-        
         public SoundData(string name, byte[] bytes = null)
         {
             this.name = name;
@@ -32,7 +30,7 @@ namespace PixelVision8.Player
         }
 
         public string name { get; set; }
-        
+
         public byte[] bytes { get; set; }
     }
 }

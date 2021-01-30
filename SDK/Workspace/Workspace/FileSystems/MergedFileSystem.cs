@@ -52,9 +52,9 @@ namespace PixelVision8.Runner.Workspace
         {
             var entities = new SortedList<WorkspacePath, WorkspacePath>();
             foreach (var fs in FileSystems.Where(fs => fs.Exists(path)))
-                foreach (var entity in fs.GetEntities(path))
-                    if (!entities.ContainsKey(entity))
-                        entities.Add(entity, entity);
+            foreach (var entity in fs.GetEntities(path))
+                if (!entities.ContainsKey(entity))
+                    entities.Add(entity, entity);
 
             return entities.Values;
         }

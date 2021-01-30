@@ -27,10 +27,8 @@ using System.Text.RegularExpressions;
 
 namespace PixelVision8.Runner
 {
-
     public class ScriptLoaderUtil : IScriptLoader
     {
-
         private readonly WorkspaceService _workspace;
 
         public ScriptLoaderUtil(WorkspaceService workspace)
@@ -45,7 +43,6 @@ namespace PixelVision8.Runner
 
         public object LoadFile(string file, Table globalContext)
         {
-
             List<WorkspacePath> sharedLibPaths = _workspace.SharedLibDirectories();
 
             sharedLibPaths.Insert(0, WorkspacePath.Root.AppendDirectory("Game"));
@@ -62,7 +59,6 @@ namespace PixelVision8.Runner
 
                 if (!string.IsNullOrEmpty(script))
                 {
-
                     // Replace math operators
                     var pattern = @"(\S+)\s*([+\-*/%])\s*=";
                     var replacement = "$1 = $1 $2 ";
@@ -75,10 +71,10 @@ namespace PixelVision8.Runner
 
                     return script;
                 }
-
             }
 
-            _workspace.UpdateLog($"Could not load '{file}' file because it is either missing or empty.", LogType.Warning);
+            _workspace.UpdateLog($"Could not load '{file}' file because it is either missing or empty.",
+                LogType.Warning);
 
             return script;
 
@@ -91,7 +87,6 @@ namespace PixelVision8.Runner
             // }
 
             // return script;
-
         }
 
         public string ResolveFileName(string filename, Table globalContext)
@@ -112,7 +107,6 @@ namespace PixelVision8.Runner
 
         public string ResolveModuleName(string modname, Table globalContext)
         {
-
             if (!modname.EndsWith(".lua"))
             {
                 modname = modname + ".lua";
@@ -143,5 +137,4 @@ namespace PixelVision8.Runner
             return modname;
         }
     }
-
 }

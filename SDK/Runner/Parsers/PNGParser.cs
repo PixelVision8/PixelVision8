@@ -27,17 +27,16 @@ namespace PixelVision8.Runner
 {
     public class PNGParser : IImageParser
     {
-
         public GraphicsDevice GraphicsDevice;
 
         public string FileName { get; set; } = "untitled";
-        
+
         public PNGParser(GraphicsDevice graphicsDevice)
         {
             GraphicsDevice = graphicsDevice;
         }
 
-        public string MaskHex { get; private set; }= "#FF00FF";
+        public string MaskHex { get; private set; } = "#FF00FF";
         public int width { get; private set; }
         public int height { get; private set; }
         public Color[] colorPixels { get; private set; }
@@ -45,10 +44,9 @@ namespace PixelVision8.Runner
 
         public void ReadStream(string sourcePath, string maskHex)
         {
-
             // TODO not using mask color here
             FileName = Path.GetFileName(sourcePath);
-              
+
             // Load the png file into a Texture 2D
             var t2D = Texture2D.FromFile(GraphicsDevice, sourcePath);
 
@@ -72,9 +70,6 @@ namespace PixelVision8.Runner
             }
 
             // }
-
         }
-
-        
     }
 }

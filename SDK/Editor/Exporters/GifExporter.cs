@@ -32,12 +32,15 @@ namespace PixelVision8.Runner
 {
     public class GifExporter : AbstractExporter
     {
-
         private DisplayChip DisplayChip;
+
         private List<GifFrame> Frames = new List<GifFrame>();
+
         // private Rectangle bounds;
         List<byte> byteList = new List<byte>();
+
         const string header = "GIF89a";
+
         // private Gif tmpGif;
         private ushort Width;
         private ushort Height;
@@ -69,12 +72,10 @@ namespace PixelVision8.Runner
             _steps.Add(BuildColorTable);
 
             _steps.Add(ConvertFrame);
-
         }
 
         public void AddFrame(float delay = 0)
         {
-
             var tmpFrame = new GifFrame();
 
             // var tmpT2D = new Texture2D(DisplayChip.Width, DisplayChip.Height);
@@ -93,7 +94,6 @@ namespace PixelVision8.Runner
 
         public Color[] VisiblePixels()
         {
-
             // TODO this should just copy the frame from the Display Target
             // var color = Utilities.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, engine.ColorChip.debugMode,
             //     engine.ColorChip.backgroundColor);
@@ -102,7 +102,8 @@ namespace PixelVision8.Runner
             // TODO there might be a better way to do this like grabbing the pixel data from somewhere else?
             var pixels = DisplayChip.Pixels;
 
-            var cachedColors = Utilities.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, engine.ColorChip.debugMode, engine.ColorChip.backgroundColor);
+            var cachedColors = Utilities.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor,
+                engine.ColorChip.debugMode, engine.ColorChip.backgroundColor);
 
             // var cachedColors = engine.ColorChip.colors;
             var displaySize = engine.GameChip.Display();
@@ -135,9 +136,8 @@ namespace PixelVision8.Runner
 
         public void StartGif()
         {
-
-            Width = (ushort)(Frames[0].Texture.width);
-            Height = (ushort)(Frames[0].Texture.height);
+            Width = (ushort) (Frames[0].Texture.width);
+            Height = (ushort) (Frames[0].Texture.height);
             globalColorTable = new List<Color>();
             applicationExtension = new ApplicationExtension();
             // byteList = new List<byte>();
@@ -157,7 +157,6 @@ namespace PixelVision8.Runner
                 var distinct = frame.Texture.GetPixels32().Distinct().ToList();
 
                 distinctColors.Add(i, distinct);
-
             }
 
             CurrentStep++;
@@ -194,15 +193,18 @@ namespace PixelVision8.Runner
         {
             for (var i = 0; i < Frames.Count; i++)
             {
-                var index = i;//(int)context;
+                var index = i; //(int)context;
                 var colorTable = colorTables[index];
-                var localColorTableFlag = (byte)(colorTable == globalColorTable ? 0 : 1);
+                var localColorTableFlag = (byte) (colorTable == globalColorTable ? 0 : 1);
                 var localColorTableSize = GetColorTableSize(colorTable);
                 byte transparentColorFlag = 0, transparentColorIndex = 0;
                 byte max;
-                var colorIndexes = GetColorIndexes(Frames[index].Texture, scale, colorTable, localColorTableFlag, ref transparentColorFlag, ref transparentColorIndex, out max);
-                var graphicControlExtension = new GraphicControlExtension(4, 0, (byte)Frames[index].DisposalMethod, 0, transparentColorFlag, (ushort)(100 * Frames[index].Delay), transparentColorIndex);
-                var imageDescriptor = new ImageDescriptor(0, 0, Width, Height, localColorTableFlag, 0, 0, 0, localColorTableSize);
+                var colorIndexes = GetColorIndexes(Frames[index].Texture, scale, colorTable, localColorTableFlag,
+                    ref transparentColorFlag, ref transparentColorIndex, out max);
+                var graphicControlExtension = new GraphicControlExtension(4, 0, (byte) Frames[index].DisposalMethod, 0,
+                    transparentColorFlag, (ushort) (100 * Frames[index].Delay), transparentColorIndex);
+                var imageDescriptor = new ImageDescriptor(0, 0, Width, Height, localColorTableFlag, 0, 0, 0,
+                    localColorTableSize);
                 var minCodeSize = LzwEncoder.GetMinCodeSize(max);
                 var lzw = LzwEncoder.Encode(colorIndexes, minCodeSize);
                 var tableBasedImageData = new TableBasedImageData(minCodeSize, lzw);
@@ -225,7 +227,8 @@ namespace PixelVision8.Runner
                 if (encoded.Count == Frames.Count)
                 {
                     var globalColorTableSize = GetColorTableSize(globalColorTable);
-                    var logicalScreenDescriptor = new LogicalScreenDescriptor(Width, Height, 1, 7, 0, globalColorTableSize, 0, 0);
+                    var logicalScreenDescriptor =
+                        new LogicalScreenDescriptor(Width, Height, 1, 7, 0, globalColorTableSize, 0, 0);
                     var binary = new List<byte>();
 
                     binary.AddRange(Encoding.UTF8.GetBytes(header));
@@ -240,7 +243,6 @@ namespace PixelVision8.Runner
                 }
 
                 // onProgress(encodeProgress);
-
             }
 
             CurrentStep++;
@@ -248,7 +250,8 @@ namespace PixelVision8.Runner
 
         private static byte[] ColorTableToBytes(List<Color> colorTable, byte colorTableSize)
         {
-            if (colorTable.Count > 256) throw new Exception("Color table size exceeds 256 size limit: " + colorTable.Count);
+            if (colorTable.Count > 256)
+                throw new Exception("Color table size exceeds 256 size limit: " + colorTable.Count);
 
             var size = 1 << (colorTableSize + 1);
             var byteList = new byte[3 * size];
@@ -262,6 +265,7 @@ namespace PixelVision8.Runner
 
             return byteList;
         }
+
         private static void ReplaceTransparentColor(ref List<Color> colors)
         {
             for (var i = 0; i < colors.Count; i++)
@@ -276,7 +280,8 @@ namespace PixelVision8.Runner
             }
         }
 
-        private static byte[] GetColorIndexes(Texture2D texture, int scale, List<Color> colorTable, byte localColorTableFlag, ref byte transparentColorFlag, ref byte transparentColorIndex, out byte max)
+        private static byte[] GetColorIndexes(Texture2D texture, int scale, List<Color> colorTable,
+            byte localColorTableFlag, ref byte transparentColorFlag, ref byte transparentColorIndex, out byte max)
         {
             var indexes = new Dictionary<Color, int>();
 
@@ -316,7 +321,7 @@ namespace PixelVision8.Runner
 
                             if (localColorTableFlag == 1)
                             {
-                                transparentColorIndex = (byte)indexes[pixel];
+                                transparentColorIndex = (byte) indexes[pixel];
                                 colorTable[transparentColorIndex] = GetTransparentColor(colorTable);
                             }
                         }
@@ -338,7 +343,7 @@ namespace PixelVision8.Runner
 
                         if (index >= 0)
                         {
-                            var i = (byte)index;
+                            var i = (byte) index;
 
                             if (scale == 1)
                             {
@@ -394,7 +399,5 @@ namespace PixelVision8.Runner
 
             return size;
         }
-
     }
-
 }

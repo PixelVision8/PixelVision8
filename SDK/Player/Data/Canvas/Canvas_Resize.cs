@@ -42,8 +42,8 @@ namespace PixelVision8.Player
 
             return temp;
         }
-        
-        
+
+
         // Performance improvement
         // for (int i=0;i<h2;i++)
         // {
@@ -58,6 +58,5 @@ namespace PixelVision8.Player
         //     rat += x_ratio;
         // }
         // }
-
     }
 }

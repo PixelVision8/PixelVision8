@@ -7,7 +7,7 @@ namespace PixelVision8.Runner
         protected static bool _mute;
         protected static int _lastVolume;
         protected static int _muteVolume;
-        
+
         public virtual int Volume(int? value = null)
         {
             if (value.HasValue)
@@ -27,7 +27,6 @@ namespace PixelVision8.Runner
         {
             if (value.HasValue)
             {
-
                 _mute = value.Value;
 
                 if (_mute)
@@ -43,9 +42,9 @@ namespace PixelVision8.Runner
                     {
                         _muteVolume = 50;
                     }
+
                     Volume(_muteVolume);
                 }
-
             }
 
             return SoundEffect.MasterVolume == 0 || _mute;

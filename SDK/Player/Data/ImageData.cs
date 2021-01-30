@@ -30,7 +30,7 @@ namespace PixelVision8.Player
     /// </summary>
     public struct ImageData
     {
-        public PixelData PixelData { get;}
+        public PixelData PixelData { get; }
         public int Width => PixelData.Width;
         public int Height => PixelData.Height;
         public int Columns => Width / _spriteSize.X;
@@ -66,7 +66,6 @@ namespace PixelVision8.Player
             if (pixels != null)
             {
                 Utilities.SetPixels(pixels, PixelData);
-
             }
 
             Colors = colors;
@@ -76,7 +75,6 @@ namespace PixelVision8.Player
             _colorId = 0;
             _pos = Point.Zero;
             _tmpPixelData = null;
-
         }
 
         /// <summary>
@@ -94,7 +92,6 @@ namespace PixelVision8.Player
             // If there is a CPS cap, we need to go through all the pixels and make sure they are in range.
             if (cps.HasValue)
             {
-
                 _colorIDs.Clear();
 
                 for (int i = 0; i < _tmpPixelData.Length; i++)
@@ -117,12 +114,10 @@ namespace PixelVision8.Player
 
             // Return the new sprite image
             return _tmpPixelData;
-
         }
 
         public void WriteSpriteData(int id, int[] pixels)
         {
-
             // The total sprite pixel size should be cached
             if (pixels.Length != _spriteSize.X * _spriteSize.Y)
                 return;
@@ -135,7 +130,6 @@ namespace PixelVision8.Player
             pos.Y *= _spriteSize.Y;
 
             Utilities.SetPixels(pixels, pos.X, pos.Y, _spriteSize.X, _spriteSize.Y, PixelData);
-
         }
 
         public int[] GetPixels() => Utilities.GetPixels(PixelData);
@@ -143,6 +137,5 @@ namespace PixelVision8.Player
         public void Resize(int newWidth, int newHeight) => Utilities.Resize(PixelData, newWidth, newHeight);
 
         public void Clear(int color = -1) => Utilities.Clear(PixelData, color);
-
     }
 }

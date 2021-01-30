@@ -46,7 +46,6 @@ namespace PixelVision8
 
         public BackgroundScriptRunner(string scriptName, LuaService luaService, string[] args = null) : base(null)
         {
-
             LuaScript.DoFile(scriptName);
 
             // Add all of the core File System APIs to the scrip
@@ -56,8 +55,8 @@ namespace PixelVision8
             LuaScript.Globals["AddStep"] = new Action<string>(AddStep);
             LuaScript.Globals["SetStringAsData"] = new Action<string>(SetStringAsData);
             LuaScript.Globals["SetImageAsData"] = new Action<ImageData, string>(SetImageAsData);
-            LuaScript.Globals["BackgroundScriptData"] = new Func<string, string, string>(luaService.BackgroundScriptData);
-
+            LuaScript.Globals["BackgroundScriptData"] =
+                new Func<string, string, string>(luaService.BackgroundScriptData);
         }
 
         public override void CalculateSteps()
@@ -75,7 +74,6 @@ namespace PixelVision8
                 Console.WriteLine(e);
                 Exit();
             }
-
         }
 
         public override void LoadSourceData()
@@ -102,7 +100,6 @@ namespace PixelVision8
 
         protected void CallStep()
         {
-
             try
             {
                 // Console.WriteLine("calling " + stepQueue[currentStep]);
@@ -114,12 +111,10 @@ namespace PixelVision8
                 Console.WriteLine(e);
                 Exit();
             }
-
         }
 
         public void SetStringAsData(string value)
         {
-
             // TODO need to make sure nothing is saved if bytes is empty
             try
             {
@@ -128,21 +123,19 @@ namespace PixelVision8
             catch (Exception e)
             {
                 Console.WriteLine(e);
-
             }
-
         }
 
         public void SetImageAsData(ImageData imageData, string maskColor = "#FF00FF")
         {
-
             try
             {
                 var palette = imageData.Colors.Select(Utilities.HexToColor).ToArray();
 
                 var imageExporter = new PNGWriter();
 
-                var exporter = new PixelDataExporter(fileName, imageData.GetPixels(), imageData.Width, imageData.Height, palette, imageExporter,
+                var exporter = new PixelDataExporter(fileName, imageData.GetPixels(), imageData.Width, imageData.Height,
+                    palette, imageExporter,
                     maskColor);
 
                 exporter.CalculateSteps();
@@ -157,9 +150,7 @@ namespace PixelVision8
             catch (Exception e)
             {
                 Console.WriteLine(e);
-
             }
-
         }
 
         public void Exit()

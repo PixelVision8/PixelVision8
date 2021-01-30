@@ -31,7 +31,6 @@ namespace PixelVision8.Player
     /// </summary>
     public abstract class AbstractData
     {
-
         /// <summary>
         ///     The invalid flag allows you to quickly see if data has been changed
         ///     on the data instance. This is used in conjunction with the
@@ -52,7 +51,8 @@ namespace PixelVision8.Player
             Invalid = true;
         }
 
-        public virtual void ResetValidation() //Should be faster without calling 2 extra functions per tile. Adds 1-2FPS debugging.
+        public virtual void
+            ResetValidation() //Should be faster without calling 2 extra functions per tile. Adds 1-2FPS debugging.
         {
             Invalid = false;
         }

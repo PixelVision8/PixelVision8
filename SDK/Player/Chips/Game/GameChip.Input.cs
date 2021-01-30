@@ -25,11 +25,10 @@ namespace PixelVision8.Player
 {
     public partial class GameChip
     {
-        
         // TODO mouse position reads display from GameChip_Display
-        
+
         protected IControllerChip ControllerChip => Player.ControllerChip;
-        
+
         /// <summary>
         ///     While the main form of input in Pixel Vision 8 comes from the controllers, you can test for keyboard
         ///     input by calling the Key() method. When called, this method returns the current state of a key. The
@@ -155,6 +154,5 @@ namespace PixelVision8.Player
         {
             return ControllerChip.ReadInputString();
         }
-
     }
 }

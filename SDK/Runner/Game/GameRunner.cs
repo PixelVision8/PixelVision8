@@ -24,9 +24,8 @@ namespace PixelVision8.Runner
 {
     public partial class GameRunner : Game
     {
-        
         protected GraphicsDeviceManager _graphics;
-        
+
         public GameRunner()
         {
             // Fix a bug related to parsing numbers in Europe, among other things
@@ -37,6 +36,5 @@ namespace PixelVision8.Runner
 
             IsFixedTimeStep = true;
         }
-
     }
 }

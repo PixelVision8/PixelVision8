@@ -5,7 +5,6 @@ namespace PixelVision8.Runner
 {
     public static class Program
     {
-
         [STAThread]
         public static void Main(string[] args)
         {
@@ -15,7 +14,6 @@ namespace PixelVision8.Runner
             {
                 game.Run();
             }
-
         }
     }
 }

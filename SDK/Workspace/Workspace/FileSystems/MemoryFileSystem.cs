@@ -162,16 +162,16 @@ namespace PixelVision8.Runner.Workspace
 
             public override void SetLength(long value)
             {
-                var newLength = (int)value;
+                var newLength = (int) value;
                 var newContent = new byte[newLength];
-                Buffer.BlockCopy(Content, 0, newContent, 0, Math.Min(newLength, (int)Length));
+                Buffer.BlockCopy(Content, 0, newContent, 0, Math.Min(newLength, (int) Length));
                 Content = newContent;
             }
 
             public override int Read(byte[] buffer, int offset, int count)
             {
-                var mincount = Math.Min(count, Math.Abs((int)(Length - Position)));
-                Buffer.BlockCopy(Content, (int)Position, buffer, offset, mincount);
+                var mincount = Math.Min(count, Math.Abs((int) (Length - Position)));
+                Buffer.BlockCopy(Content, (int) Position, buffer, offset, mincount);
                 Position += mincount;
                 return mincount;
             }
@@ -180,7 +180,7 @@ namespace PixelVision8.Runner.Workspace
             {
                 if (Length - Position < count) SetLength(Position + count);
 
-                Buffer.BlockCopy(buffer, offset, Content, (int)Position, count);
+                Buffer.BlockCopy(buffer, offset, Content, (int) Position, count);
                 Position += count;
             }
         }

@@ -25,10 +25,9 @@ namespace PixelVision8.Player
     public sealed partial class Canvas
     {
         private Rectangle _tmpRect = Rectangle.Empty;
-            
+
         public void DrawRectangle(int x, int y, int rectWidth, int rectHeight, bool fill = false)
         {
-
             _tmpRect.X = x;
             _tmpRect.Y = y;
 
@@ -39,7 +38,6 @@ namespace PixelVision8.Player
                 // Reset the tmp Rect to 0,0 when drawing into the new layer
                 _tmpRect.X = 0;
                 _tmpRect.Y = 0;
-
             }
 
             var getRequest = NextRequest();
@@ -72,11 +70,10 @@ namespace PixelVision8.Player
 
                     // Copy pixels data to the main drawing surface
                     SaveTmpLayer(x, y, rectWidth, rectHeight);
-
                 }
             }
         }
-        
+
         [DrawAction]
         public void DrawRectangleAction(CanvasDrawRequest request)
         {
@@ -124,7 +121,6 @@ namespace PixelVision8.Player
             request.Bounds.Height = _tmpRect.Bottom;
 
             DrawLineAction(request);
-
         }
     }
 }

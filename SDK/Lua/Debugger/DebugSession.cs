@@ -64,7 +64,8 @@ namespace MoonSharp.VsCodeDebugger.SDK
         public int? endLine { get; private set; }
         public int? endColumn { get; private set; }
 
-        public StackFrame(int id, string name, Source source, int line, int column = 0, int? endLine = null, int? endColumn = null)
+        public StackFrame(int id, string name, Source source, int line, int column = 0, int? endLine = null,
+            int? endColumn = null)
         {
             this.id = id;
             this.name = name;
@@ -161,7 +162,9 @@ namespace MoonSharp.VsCodeDebugger.SDK
     public class InitializedEvent : Event
     {
         public InitializedEvent()
-            : base("initialized") { }
+            : base("initialized")
+        {
+        }
     }
 
     public class StoppedEvent : Event
@@ -173,19 +176,24 @@ namespace MoonSharp.VsCodeDebugger.SDK
                 reason = reasn,
                 text = txt
             })
-        { }
+        {
+        }
     }
 
     public class ExitedEvent : Event
     {
         public ExitedEvent(int exCode)
-            : base("exited", new { exitCode = exCode }) { }
+            : base("exited", new {exitCode = exCode})
+        {
+        }
     }
 
     public class TerminatedEvent : Event
     {
         public TerminatedEvent()
-            : base("terminated") { }
+            : base("terminated")
+        {
+        }
     }
 
     public class ThreadEvent : Event
@@ -196,7 +204,8 @@ namespace MoonSharp.VsCodeDebugger.SDK
                 reason = reasn,
                 threadId = tid
             })
-        { }
+        {
+        }
     }
 
     public class OutputEvent : Event
@@ -207,14 +216,14 @@ namespace MoonSharp.VsCodeDebugger.SDK
                 category = cat,
                 output = outpt
             })
-        { }
+        {
+        }
     }
 
     // ---- Response -------------------------------------------------------------------------
 
     public class Capabilities : ResponseBody
     {
-
         public bool supportsConfigurationDoneRequest;
         public bool supportsFunctionBreakpoints;
         public bool supportsConditionalBreakpoints;
@@ -224,7 +233,6 @@ namespace MoonSharp.VsCodeDebugger.SDK
 
     public class ErrorResponseBody : ResponseBody
     {
-
         public Message error { get; private set; }
 
         public ErrorResponseBody(Message error)
@@ -333,10 +341,12 @@ namespace MoonSharp.VsCodeDebugger.SDK
             {
                 response.SetBody(body);
             }
+
             SendMessage(response);
         }
 
-        public void SendErrorResponse(Response response, int id, string format, object arguments = null, bool user = true, bool telemetry = false)
+        public void SendErrorResponse(Response response, int id, string format, object arguments = null,
+            bool user = true, bool telemetry = false)
         {
             var msg = new Message(id, format, arguments, user, telemetry);
             var message = Utilities.ExpandVariables(msg.format, msg.variables);
@@ -355,7 +365,6 @@ namespace MoonSharp.VsCodeDebugger.SDK
             {
                 switch (command)
                 {
-
                     case "initialize":
 
                         if (args["linesStartAt1"] != null)
@@ -373,10 +382,12 @@ namespace MoonSharp.VsCodeDebugger.SDK
                                     _clientPathsAreURI = false;
                                     break;
                                 default:
-                                    SendErrorResponse(response, 1015, "initialize: bad value '{_format}' for pathFormat", new { _format = pathFormat });
+                                    SendErrorResponse(response, 1015,
+                                        "initialize: bad value '{_format}' for pathFormat", new {_format = pathFormat});
                                     return;
                             }
                         }
+
                         Initialize(response, args);
                         break;
 
@@ -449,13 +460,15 @@ namespace MoonSharp.VsCodeDebugger.SDK
                         break;
 
                     default:
-                        SendErrorResponse(response, 1014, "unrecognized request: {_request}", new { _request = command });
+                        SendErrorResponse(response, 1014, "unrecognized request: {_request}", new {_request = command});
                         break;
                 }
             }
             catch (Exception e)
             {
-                SendErrorResponse(response, 1104, "error while processing request '{_request}' (exception: {_exception})", new { _request = command, _exception = e.Message });
+                SendErrorResponse(response, 1104,
+                    "error while processing request '{_request}' (exception: {_exception})",
+                    new {_request = command, _exception = e.Message});
             }
 
             if (command == "disconnect")
@@ -596,6 +609,7 @@ namespace MoonSharp.VsCodeDebugger.SDK
                         Uri uri = new Uri(clientPath);
                         return uri.LocalPath;
                     }
+
                     Console.Error.WriteLine("path not well formed: '{0}'", clientPath);
                     return null;
                 }

@@ -29,13 +29,12 @@ using System.Threading;
 
 namespace PixelVision8.Runner
 {
-
-
     public class LoadService : AbstractService
     {
-
         private Loader _loader;
+
         private BackgroundWorker loadingWorker;
+
         // private Color maskColor = Utilities.HexToColor("#ff00ff"); // TODO this shouldn't be hard coded 
         private AbstractParser parser;
 
@@ -48,14 +47,12 @@ namespace PixelVision8.Runner
 
         public LoadService(IFileLoader fileLoadHelper)
         {
-            
             imageParser = new PNGFileReader(fileLoadHelper);
 
             // TODO need to create a way to pass in the graphics device
             _loader = new Loader(fileLoadHelper, imageParser);
-            
+
             _fileLoadHelper = fileLoadHelper;
-            
         }
 
         public float Percent => _loader.Percent;
@@ -65,13 +62,11 @@ namespace PixelVision8.Runner
         /// </summary>
         public string Message { get; protected set; }
 
-        
+
         public virtual void ParseFiles(string[] files, IPlayerChips engine, FileFlags fileFlags)
         {
-            
-            
             // TODO need to loop through parser mappings here
-            
+
             _loader.Reset();
 
             // Save the engine so we can work with it during loading
@@ -83,11 +78,10 @@ namespace PixelVision8.Runner
             if ((fileFlags & test) == test) LoadSystem(files);
 
             test = (FileFlags) Enum.Parse(typeof(FileFlags), "Colors");
-            
+
             // Step 3 (optional). Look for new colors
             if ((fileFlags & test) == test)
             {
-
                 // Add the color parser
                 parser = LoadColors(files);
                 if (parser != null) _loader.AddParser(parser);
@@ -108,21 +102,21 @@ namespace PixelVision8.Runner
             // Step 7 (optional). Look for fonts to load
             if ((fileFlags & FileFlags.Fonts) == FileFlags.Fonts)
             {
-
                 // these are the defaul font names
-                var defaultFonts = new string[]{
+                var defaultFonts = new string[]
+                {
                     "large",
                     "medium",
                     "small",
                 };
-                
+
                 // Get the list of fonts in the directory
                 var paths = files.Where(s => s.EndsWith(".font.png")).ToList();
 
                 // Make sure the default fonts are either in the project or in /App/Fonts/*
                 foreach (var font in defaultFonts)
                 {
-                    if(paths.Contains("/Game/" + font + ".font.png") == false)
+                    if (paths.Contains("/Game/" + font + ".font.png") == false)
                     {
                         paths.Add("/App/Fonts/" + font + ".font.png");
                     }
@@ -170,7 +164,6 @@ namespace PixelVision8.Runner
             if ((fileFlags & FileFlags.MetaSprites) == FileFlags.MetaSprites) LoadMetaSprites(files);
 
             // ParseExtraFileTypes(files, engine, fileFlags);
-
         }
 
         // public virtual void ParseExtraFileTypes(string[] files, IPlayerChips engine, FileFlags fileFlags)
@@ -195,7 +188,6 @@ namespace PixelVision8.Runner
 
         public void StartLoading()
         {
-
             loadingWorker = new BackgroundWorker
             {
                 // TODO need a way to of locking this.
@@ -213,12 +205,11 @@ namespace PixelVision8.Runner
 
         protected void WorkerLoaderSteps(object sender, DoWorkEventArgs e)
         {
-
             for (var i = 0; i <= _loader.TotalSteps; i++) //some number (total)
             {
                 _loader.NextParser();
                 Thread.Sleep(1);
-                loadingWorker.ReportProgress((int)(_loader.Percent * 100), i);
+                loadingWorker.ReportProgress((int) (_loader.Percent * 100), i);
             }
         }
 
@@ -234,7 +225,6 @@ namespace PixelVision8.Runner
 
         protected AbstractParser LoadMetaData(string[] files)
         {
-
             var file = files.FirstOrDefault(x => x.EndsWith("info.json"));
 
             if (!string.IsNullOrEmpty(file))
@@ -250,7 +240,6 @@ namespace PixelVision8.Runner
 
         protected void LoadTilemap(string[] files)
         {
-
             // If a tilemap json file exists, try to load that
             var file = files.FirstOrDefault(x => x.EndsWith("tilemap.json"));
 
@@ -259,7 +248,7 @@ namespace PixelVision8.Runner
                 // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
                 _loader.ParseTilemapJson(file, targetEngine);
-                
+
                 // var jsonParser = new TilemapJsonParser(file, _fileLoadHelper, targetEngine);
                 //
                 // _loader.AddParser(jsonParser);
@@ -272,31 +261,26 @@ namespace PixelVision8.Runner
 
             if (!string.IsNullOrEmpty(file))
             {
-
                 _loader.ParseTilemapImage(file, targetEngine);
-                
+
                 //var imageParser = new PNGFileReader(_fileLoadHelper);
                 // _loader.AddParser(new TilemapParser(imageParser, targetEngine.ColorChip, targetEngine.SpriteChip, targetEngine.TilemapChip)
                 // {
                 //     SourcePath = file,
                 //     MaskHex = targetEngine.ColorChip.maskColor
                 // });
-
             }
-
         }
-        
+
         protected AbstractParser LoadSprites(string[] files)
         {
-            
             // TODO need to depricate this
             var file = files.FirstOrDefault(x => x.EndsWith("sprites.png"));
 
             if (!string.IsNullOrEmpty(file))
             {
-                
                 _loader.ParseSprites(file, targetEngine);
-                
+
                 //var imageParser = new PNGFileReader(_fileLoadHelper);
 
                 // var colorChip = targetEngine.ColorChip;
@@ -321,7 +305,7 @@ namespace PixelVision8.Runner
             if (!string.IsNullOrEmpty(file))
             {
                 _loader.ParseColors(file, targetEngine);
-                
+
                 //                var tex = ReadTexture(ReadAllBytes(file));
                 // var imageParser = new PNGFileReader(_fileLoadHelper);
 
@@ -333,6 +317,7 @@ namespace PixelVision8.Runner
 
             return null;
         }
+
         protected void LoadSystem(string[] files)
         {
             // var fileName = ;
@@ -341,7 +326,6 @@ namespace PixelVision8.Runner
 
             if (!string.IsNullOrEmpty(file))
             {
-                
                 _loader.ParseSystem(file, targetEngine);
                 // // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
                 //
@@ -351,12 +335,10 @@ namespace PixelVision8.Runner
                 //
                 // while (jsonParser.completed == false) jsonParser.NextStep();
             }
-
         }
 
         protected void LoadSounds(string[] files)
         {
-
             var file = files.FirstOrDefault(x => x.EndsWith("sounds.json"));
 
 
@@ -366,7 +348,6 @@ namespace PixelVision8.Runner
                 _loader.ParseSounds(file, targetEngine);
                 // _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
             }
-
         }
 
         protected void LoadMusic(string[] files)
@@ -391,7 +372,6 @@ namespace PixelVision8.Runner
 
             if (!string.IsNullOrEmpty(file))
             {
-                
                 _loader.ParseMetaSprites(file, targetEngine);
 
                 // _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
@@ -400,23 +380,19 @@ namespace PixelVision8.Runner
 
         protected void LoadSaveData(string[] files)
         {
-
             var file = files.FirstOrDefault(x => x.EndsWith("saves.json"));
 
             if (!string.IsNullOrEmpty(file))
             {
-
                 _loader.ParseSaveData(file, targetEngine);
 
                 // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
                 // _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
-
             }
         }
-
     }
-    
+
     // Custom parsers
     public partial class Loader
     {
@@ -425,24 +401,23 @@ namespace PixelVision8.Runner
         {
             AddParser(new SystemParser(file, _fileLoadHelper, engine));
         }
-        
+
         [FileParser("sounds.json")]
         public void ParseSounds(string file, IPlayerChips engine)
         {
             AddParser(new SystemParser(file, _fileLoadHelper, engine));
         }
-        
+
         [FileParser("music.json")]
         public void ParseMusic(string file, IPlayerChips engine)
         {
             AddParser(new SystemParser(file, _fileLoadHelper, engine));
         }
-        
+
         [FileParser("meta-sprites.json")]
         public void ParseMetaSprites(string file, IPlayerChips engine)
         {
             AddParser(new SystemParser(file, _fileLoadHelper, engine));
         }
-        
     }
 }

@@ -197,7 +197,7 @@ namespace MoonSharp.VsCodeDebugger.SDK
 
                         Dispatch(Encoding.GetString(buf));
 
-                        continue;   // there may be more complete messages to process
+                        continue; // there may be more complete messages to process
                     }
                 }
                 else
@@ -213,10 +213,11 @@ namespace MoonSharp.VsCodeDebugger.SDK
 
                             _rawData.RemoveFirst(idx + TWO_CRLF.Length);
 
-                            continue;   // try to handle a complete message
+                            continue; // try to handle a complete message
                         }
                     }
                 }
+
                 break;
             }
         }
@@ -251,9 +252,10 @@ namespace MoonSharp.VsCodeDebugger.SDK
             {
                 Console.Error.WriteLine(string.Format(" R: {0}", JsonTableConverter.ObjectToJson(message)));
             }
+
             if (TRACE && message.type == "event")
             {
-                Event e = (Event)message;
+                Event e = (Event) message;
                 Console.Error.WriteLine(string.Format("E {0}: {1}", e.@event, JsonTableConverter.ObjectToJson(e.body)));
             }
 
@@ -324,18 +326,6 @@ namespace MoonSharp.VsCodeDebugger.SDK
             _buffer = newBuffer;
             return b;
         }
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }
 #endif

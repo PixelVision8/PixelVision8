@@ -119,7 +119,7 @@ namespace PixelVision8.Player
             var dx = x1 - x0;
             var dy = y1 - y0;
             var distance = Utilities.Sqrt(dx * dx + dy * dy);
-            return (int)distance;
+            return (int) distance;
         }
 
         #endregion

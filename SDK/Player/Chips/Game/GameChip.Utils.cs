@@ -24,7 +24,6 @@ using System.Text;
 
 namespace PixelVision8.Player
 {
-
     /// <summary>
     ///     The GameChip represents the foundation of a game class
     ///     with all the logic it needs to work correctly in the PixelVisionEngine.
@@ -34,9 +33,8 @@ namespace PixelVision8.Player
     /// </summary>
     public partial class GameChip
     {
-        
         private readonly string newline = "\n";
-        
+
         private StringBuilder _sb = new StringBuilder();
 
         /// <summary>
@@ -49,7 +47,6 @@ namespace PixelVision8.Player
         /// <returns></returns>
         public string WordWrap(string text, int width)
         {
-
             if (text == null)
             {
                 return "";
@@ -128,7 +125,7 @@ namespace PixelVision8.Player
         public string[] SplitLines(string str)
         {
             var lines = str.Split(
-                new[] { newline },
+                new[] {newline},
                 StringSplitOptions.None
             );
 
@@ -145,8 +142,5 @@ namespace PixelVision8.Player
 
             return intArray;
         }
-
     }
-
-
 }

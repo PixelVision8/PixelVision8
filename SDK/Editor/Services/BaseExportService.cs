@@ -39,7 +39,7 @@ namespace PixelVision8.Runner
         protected int totalParsers => exporters.Count;
         public int totalSteps;
         public bool completed => currentParserID >= totalParsers;
-        protected float percent => currentStep / (float)totalSteps;
+        protected float percent => currentStep / (float) totalSteps;
 
         public virtual bool IsExporting()
         {
@@ -49,7 +49,7 @@ namespace PixelVision8.Runner
         // TODO need to make this work like loading does
         public virtual int ReadExportPercent()
         {
-            return (int)(percent * 100);
+            return (int) (percent * 100);
         }
 
         public virtual Dictionary<string, object> ReadExportMessage()
@@ -74,8 +74,6 @@ namespace PixelVision8.Runner
             if (useSteps == false)
             {
                 ExportAll();
-
-
             }
             else
             {
@@ -100,7 +98,6 @@ namespace PixelVision8.Runner
 
         protected virtual void WorkerExportSteps(object sender, DoWorkEventArgs e)
         {
-
             var total = totalSteps; //some number (this is your variable to change)!!
 
             for (var i = 0; i <= total; i++) //some number (total)
@@ -116,7 +113,7 @@ namespace PixelVision8.Runner
                 }
 
                 Thread.Sleep(1);
-                exportWorker.ReportProgress((int)(percent * 100), i);
+                exportWorker.ReportProgress((int) (percent * 100), i);
             }
         }
 
@@ -124,7 +121,6 @@ namespace PixelVision8.Runner
         {
             if (locator.GetService(typeof(WorkspaceService).FullName) is WorkspaceService workspaceService)
             {
-
                 // Aggregate all Get all the messages
                 foreach (var exporter in exporters)
                 {
@@ -148,7 +144,6 @@ namespace PixelVision8.Runner
                 workspaceService.SaveExporterFiles(files);
 
                 files.Clear();
-
             }
 
             exporting = false;

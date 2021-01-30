@@ -23,7 +23,6 @@ using System.Collections.Generic;
 
 namespace PixelVision8.Player
 {
-
     /// <summary>
     ///     This is the default engine class for Pixel Vision 8. It manages the
     ///     state of all chips, the game itself and helps with communication between
@@ -35,7 +34,7 @@ namespace PixelVision8.Player
         protected List<IDraw> DrawChips = new List<IDraw>();
         protected List<IUpdate> UpdateChips = new List<IUpdate>();
         public int SpriteCounter { get; set; }
-        
+
         public PixelVision(string[] chips = null, string name = "Engine")
         {
             Name = name;
@@ -45,13 +44,11 @@ namespace PixelVision8.Player
                 foreach (var chip in chips) GetChip(chip);
             }
         }
-        
+
         public virtual void ResetGame()
         {
-            // if (GameChip == null) return;
-
+            
             foreach (var chip in Chips) chip.Value.Reset();
-
         }
 
         /// <summary>
@@ -66,7 +63,6 @@ namespace PixelVision8.Player
             // if (GameChip == null) return;
 
             foreach (var chip in Chips) chip.Value.Init();
-
         }
 
         /// <summary>
@@ -74,7 +70,6 @@ namespace PixelVision8.Player
         /// <tocexclude />
         public string Name { get; set; }
 
-        
 
         public int FPS { get; set; }
 
@@ -110,7 +105,6 @@ namespace PixelVision8.Player
         {
             // Shutdown chips
             foreach (var chip in Chips) chip.Value.Shutdown();
-
         }
 
         #region Chip Manager
@@ -148,7 +142,6 @@ namespace PixelVision8.Player
 
         public void ActivateChip(string id, AbstractChip chip, bool autoActivate = true)
         {
-
             if (HasChip(id))
             {
                 //TODO do we need to disable the old chip first

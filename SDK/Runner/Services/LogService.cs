@@ -65,7 +65,7 @@ namespace PixelVision8.Runner
 
         public void UpdateLog(string logString, LogType type = LogType.Log, string stackTrace = "")
         {
-            var typeCharacter = logCharacters[(int)type];
+            var typeCharacter = logCharacters[(int) type];
 
             // Clear string builder
             sb.Clear();

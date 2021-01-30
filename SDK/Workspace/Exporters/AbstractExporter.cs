@@ -25,7 +25,6 @@ namespace PixelVision8.Runner.Exporters
 {
     public class AbstractExporter : AbstractParser, IAbstractExporter
     {
-
         public AbstractExporter(string fileName)
         {
             this.fileName = fileName;

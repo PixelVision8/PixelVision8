@@ -28,8 +28,8 @@ namespace PixelVision8.Player
         protected TilemapChip TilemapChip => Player.TilemapChip;
         private Point _tilemapSize = Point.Zero;
         private Point _scrollPos = Point.Zero;
-        private int _total;
-        private int _width;
+        // private int _total;
+        // private int _width;
 
         /// <summary>
         ///     You can scroll the tilemap by calling the ScrollPosition() method and supplying a new scroll X and Y position.
@@ -50,7 +50,6 @@ namespace PixelVision8.Player
         /// </returns>
         public Point ScrollPosition(int? x = null, int? y = null)
         {
-
             if (x.HasValue)
             {
                 _scrollPos.X = x.Value;
@@ -63,6 +62,7 @@ namespace PixelVision8.Player
 
             return _scrollPos;
         }
+
         #region Tilemap
 
         /// <summary>
@@ -180,7 +180,6 @@ namespace PixelVision8.Player
         /// </returns>
         public Point TilemapSize(int? width = null, int? height = null, bool clear = false)
         {
-
             // Update with the latest value
             _tilemapSize.X = TilemapChip.columns;
             _tilemapSize.Y = TilemapChip.rows;
@@ -231,16 +230,16 @@ namespace PixelVision8.Player
         /// </param>
         public void UpdateTiles(int[] ids, int? colorOffset = null, int? flag = null)
         {
-            _total = ids.Length;
-            _width = TilemapSize().X;
+            var total = ids.Length;
+            var width = TilemapSize().X;
 
             //TODO need to get offset and flags working
 
-            for (var i = 0; i < _total; i++)
+            for (var i = 0; i < total; i++)
             {
                 id = ids[i];
 
-                var pos = Utilities.CalculatePosition(id, _width);
+                var pos = Utilities.CalculatePosition(id, width);
 
                 Tile(pos.X, pos.Y, null, colorOffset, flag);
             }

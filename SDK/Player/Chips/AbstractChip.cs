@@ -51,6 +51,7 @@ namespace PixelVision8.Player
     public class AbstractChip
     {
         protected IPlayerChips Player;
+        int SpriteCounter { get; set; }
 
         /// <summary>
         ///     Determines if the chip is enabled or active by the
@@ -107,6 +108,5 @@ namespace PixelVision8.Player
         {
         }
         
-        int SpriteCounter { get; set; }
     }
 }

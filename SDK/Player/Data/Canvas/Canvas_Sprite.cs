@@ -3,21 +3,20 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
-    
     public sealed partial class Canvas
     {
         private readonly Point spriteSize;
         private readonly GameChip gameChip;
 
         // TODO need to draw pixel data to the display and route the sprite and text through it
-        
+
         private int _total;
 
         public Canvas(int width, int height, GameChip gameChip)
         {
             this.gameChip = gameChip;
             spriteSize = gameChip.SpriteSize();
-            
+
             Configure(width, height);
         }
 
@@ -54,7 +53,7 @@ namespace PixelVision8.Player
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
         }
-        
+
         public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
             int colorOffset = 0)
         {
@@ -83,7 +82,6 @@ namespace PixelVision8.Player
                     DrawSprite(id, x, y, flipH, flipV, colorOffset);
                 }
             }
-        }    
-
+        }
     }
 }

@@ -38,7 +38,8 @@ namespace PixelVision8.Runner.Exporters
         private SfxrSynthChannel result;
 
 
-        public float swing_rhythm_factor = 1.0f; //0.7f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
+        public float
+            swing_rhythm_factor = 1.0f; //0.7f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
 
         private SfxrSynthChannel[] trackresult;
 
@@ -90,7 +91,7 @@ namespace PixelVision8.Runner.Exporters
             note_tick_s = 15.0f / songData.speedInBPM; // (30.0f/120.0f) = 120BPM eighth notes [tempo]
             note_tick_s_odd = note_tick_s * swing_rhythm_factor; // small beat
 
-            var notedatalength = (int)(preRenderBitrate * 2f * note_tick_s_odd); // one note worth of stereo audio (x2)
+            var notedatalength = (int) (preRenderBitrate * 2f * note_tick_s_odd); // one note worth of stereo audio (x2)
 
             // TODO this is off. It is happening to fast and not matching up to the correct speed of the song.
             var beatlength = preRenderBitrate * note_tick_s_odd; // one note worth of time
@@ -136,14 +137,15 @@ namespace PixelVision8.Runner.Exporters
                     // generate one note worth of audio data
                     if (gotANote > 0 && instrument[tracknum] != null)
                     {
-
                         //instrument[tracknum].Reset(true); // seems to do nothing
 
                         // doing this for every note played is insane:
                         // try a fresh new instrument (RAM and GC spammy)
-                        instrument[tracknum] = new SfxrSynthChannel(); // shouldn't be required, but for some reason it is
+                        instrument[tracknum] =
+                            new SfxrSynthChannel(); // shouldn't be required, but for some reason it is
                         // set the params to current track's instrument string
-                        instrument[tracknum].parameters.SetSettingsString(soundChip.ReadSound(songData.tracks[tracknum].sfxID).param);
+                        instrument[tracknum].parameters
+                            .SetSettingsString(soundChip.ReadSound(songData.tracks[tracknum].sfxID).param);
 
 
                         // pitch shift the sound to the correct musical note frequency
@@ -183,7 +185,7 @@ namespace PixelVision8.Runner.Exporters
                     }
 
                     // TODO converted this to an int, may break?
-                    songdataCurrentPos += (int)beatlength; //notedatalength; this is x2 due to stereo
+                    songdataCurrentPos += (int) beatlength; //notedatalength; this is x2 due to stereo
 
                     //yield return null; // if here, min one frame PER note PER track PER loop: too slow
                 } // for all notes

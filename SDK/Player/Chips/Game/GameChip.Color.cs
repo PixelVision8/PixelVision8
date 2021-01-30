@@ -22,7 +22,6 @@ namespace PixelVision8.Player
 {
     public partial class GameChip
     {
-        
         /// <summary>
         ///     The background color is used to fill the screen when clearing the display. You can use
         ///     this method to read or update the background color at any point during the GameChip's
@@ -109,7 +108,5 @@ namespace PixelVision8.Player
         {
             ColorChip.UpdateColorAt(index, ColorChip.ReadColorAt(id));
         }
-
     }
-    
 }

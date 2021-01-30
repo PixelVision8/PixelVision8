@@ -22,9 +22,8 @@ namespace PixelVision8.Player
 {
     public partial class GameChip
     {
-    
         protected ISoundChip SoundChip => Player.SoundChip;
-        
+
         #region Sound
 
         /// <summary>

@@ -34,17 +34,15 @@ namespace PixelVision8.Runner.Data
         private readonly int paletteWidth = 256;
         public bool StretchScreen { get; set; }
         public bool CropScreen { get; set; } = true;
-        
-        public ShaderDisplayTarget(GraphicsDeviceManager graphicManager, int width, int height) : base(graphicManager, width, height)
+
+        public ShaderDisplayTarget(GraphicsDeviceManager graphicManager, int width, int height) : base(graphicManager,
+            width, height)
         {
         }
 
         public bool useCRT
         {
-            get
-            {
-                return _useCRT;
-            }
+            get { return _useCRT; }
             set
             {
                 if (crtShader == null) return;
@@ -53,7 +51,6 @@ namespace PixelVision8.Runner.Data
 
                 crtShader?.Parameters["crtOn"].SetValue(value ? 1f : 0f);
                 crtShader?.Parameters["warp"].SetValue(value ? new Vector2(0.008f, 0.01f) : Vector2.Zero);
-
             }
         }
 
@@ -78,17 +75,16 @@ namespace PixelVision8.Runner.Data
         {
             set
             {
-
                 using (var reader = new BinaryReader(value))
                 {
                     crtShader = new Effect(GraphicManager.GraphicsDevice,
-                        reader.ReadBytes((int)reader.BaseStream.Length));
+                        reader.ReadBytes((int) reader.BaseStream.Length));
                 }
 
                 useCRT = true;
             }
         }
-        
+
         protected override void CalculateDisplayOffset()
         {
             base.CalculateDisplayOffset();
@@ -101,7 +97,7 @@ namespace PixelVision8.Runner.Data
                 offset.Y = 0;
             }
         }
-        
+
         protected override void CalculateDisplayScale()
         {
             base.CalculateDisplayScale();
@@ -117,11 +113,8 @@ namespace PixelVision8.Runner.Data
 
         public override void ResetResolution(IPlayerChips engine)
         {
-            
-            
-
             base.ResetResolution(engine);
-            
+
             // if (renderTexture == null || renderTexture.Width != gameWidth || renderTexture.Height != gameHeight)
             // {
             //     renderTexture = new Texture2D(GraphicManager.GraphicsDevice, gameWidth, gameHeight);
@@ -130,54 +123,49 @@ namespace PixelVision8.Runner.Data
             crtShader?.Parameters["videoSize"].SetValue(new Vector2(renderTexture.Width, renderTexture.Height));
 
             // }
-
         }
 
 
         public override void RebuildColorPalette(ColorChip colorChip)
         {
-
             var invalid = colorChip.invalid;
-            
+
             base.RebuildColorPalette(colorChip);
 
             if (invalid)
             {
-                _colorPalette = new Texture2D(GraphicManager.GraphicsDevice, paletteWidth, (int)Math.Ceiling(CachedColors.Length / (double)paletteWidth));
+                _colorPalette = new Texture2D(GraphicManager.GraphicsDevice, paletteWidth,
+                    (int) Math.Ceiling(CachedColors.Length / (double) paletteWidth));
 
                 // We need at least 256 colors for the shader to work so pad the array
                 if (CachedColors.Length < 256)
                 {
                     Array.Resize(ref CachedColors, 256);
                 }
-                
+
                 _colorPalette.SetData(CachedColors);
             }
-            
         }
 
-        public override void Render(IPlayerChips engine)//int[] pixels, int backgroundColor)
+        public override void Render(IPlayerChips engine) //int[] pixels, int backgroundColor)
         {
-
             if (crtShader == null)
             {
                 base.Render(engine);
             }
             else
             {
-
                 RebuildColorPalette(engine.ColorChip);
-                
+
                 renderTexture.SetData(engine.DisplayChip.Pixels);
                 SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
                 crtShader.CurrentTechnique.Passes[0].Apply();
                 GraphicManager.GraphicsDevice.Textures[1] = _colorPalette;
                 GraphicManager.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-                SpriteBatch.Draw(renderTexture, offset, VisibleRect, Color.White, 0f, Vector2.Zero, Scale, SpriteEffects.None, 1f);
+                SpriteBatch.Draw(renderTexture, offset, VisibleRect, Color.White, 0f, Vector2.Zero, Scale,
+                    SpriteEffects.None, 1f);
                 SpriteBatch.End();
             }
-
         }
-
     }
 }

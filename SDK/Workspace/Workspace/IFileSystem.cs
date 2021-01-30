@@ -36,6 +36,5 @@ namespace PixelVision8.Runner.Workspace
         Stream OpenFile(WorkspacePath path, FileAccess access);
         void CreateDirectory(WorkspacePath path);
         void Delete(WorkspacePath path);
-
     }
 }

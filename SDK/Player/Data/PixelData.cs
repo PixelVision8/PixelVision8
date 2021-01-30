@@ -26,8 +26,8 @@ namespace PixelVision8.Player
     {
         public int[] Pixels = new int[0];
         public int Width { get; private set; }
-        public int Height { get;  private set; }
-        public int TotalPixels { get;  private set; }
+        public int Height { get; private set; }
+        public int TotalPixels { get; private set; }
 
         public PixelData(int width = 1, int height = 1)
         {
@@ -48,6 +48,7 @@ namespace PixelVision8.Player
             set => Pixels[i] = value;
         }
 
-        public override string ToString() => "{Width:" + Width + " Height:" + Height + " Total Pixels:" + TotalPixels + "}";
+        public override string ToString() =>
+            "{Width:" + Width + " Height:" + Height + " Total Pixels:" + TotalPixels + "}";
     }
 }

@@ -1,4 +1,3 @@
-
 using Microsoft.Xna.Framework;
 using PixelVision8.Runner.Data;
 
@@ -8,7 +7,7 @@ namespace PixelVision8.Runner
     {
         protected bool _resolutionInvalid = true;
         public DisplayTarget DisplayTarget;
-        
+
         /// <summary>
         ///     Scale the resolution.
         /// </summary>
@@ -25,7 +24,7 @@ namespace PixelVision8.Runner
 
             return DisplayTarget.MonitorScale;
         }
-        
+
         public virtual bool Fullscreen(bool? value = null)
         {
             if (value.HasValue)
@@ -38,7 +37,7 @@ namespace PixelVision8.Runner
             return
                 DisplayTarget.Fullscreen;
         }
-        
+
         public virtual void ConfigureDisplayTarget()
         {
             // Create the default display target
@@ -54,14 +53,12 @@ namespace PixelVision8.Runner
         {
             _resolutionInvalid = false;
         }
-        
+
         public virtual void ResetResolution()
         {
-            
             DisplayTarget.ResetResolution(ActiveEngine);
-            
         }
-        
+
         protected override void Draw(GameTime gameTime)
         {
             if (ActiveEngine == null) return;
@@ -77,7 +74,8 @@ namespace PixelVision8.Runner
             // Only call draw if the window has focus
             if (RunnerActive) ActiveEngine.Draw();
 
-            DisplayTarget.Render(ActiveEngine);//ActiveEngine.DisplayChip.Pixels, ActiveEngine.ColorChip.backgroundColor);
+            DisplayTarget
+                .Render(ActiveEngine); //ActiveEngine.DisplayChip.Pixels, ActiveEngine.ColorChip.backgroundColor);
 
             // displayTarget.spriteBatch.End();
             if (_resolutionInvalid)
@@ -86,7 +84,5 @@ namespace PixelVision8.Runner
                 ResetResolutionValidation();
             }
         }
-
     }
 }
-

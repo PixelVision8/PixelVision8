@@ -110,7 +110,7 @@ namespace PixelVision8.Runner.Workspace
                 throw new ArgumentException("The specified path is not member of the PhysicalRoot.", "physicalPath");
 
             var virtualPath = WorkspacePath.DirectorySeparator + physicalPath.Remove(0, PhysicalRoot.Length)
-                                  .Replace(Path.DirectorySeparatorChar, WorkspacePath.DirectorySeparator);
+                .Replace(Path.DirectorySeparatorChar, WorkspacePath.DirectorySeparator);
             return WorkspacePath.Parse(virtualPath);
         }
 
@@ -120,7 +120,7 @@ namespace PixelVision8.Runner.Workspace
                 throw new ArgumentException("The specified path is not member of the PhysicalRoot.", "physicalPath");
 
             var virtualPath = WorkspacePath.DirectorySeparator + physicalPath.Remove(0, PhysicalRoot.Length)
-                                  .Replace(Path.DirectorySeparatorChar, WorkspacePath.DirectorySeparator);
+                .Replace(Path.DirectorySeparatorChar, WorkspacePath.DirectorySeparator);
             if (virtualPath[virtualPath.Length - 1] != WorkspacePath.DirectorySeparator)
                 virtualPath += WorkspacePath.DirectorySeparator;
 

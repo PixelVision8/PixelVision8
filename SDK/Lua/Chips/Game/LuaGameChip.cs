@@ -49,7 +49,7 @@ namespace PixelVision8.Player
             try
             {
                 // Look to see if there are any lua services registered in the game engine
-                var luaService = ((PixelVision)Player).GetService(typeof(LuaService).FullName) as LuaService;
+                var luaService = ((PixelVision) Player).GetService(typeof(LuaService).FullName) as LuaService;
 
                 // Run the lua service to configure the script
                 luaService.ConfigureScript(LuaScript);
@@ -82,8 +82,7 @@ namespace PixelVision8.Player
                 new Action<int[], int, int, int, bool, bool, DrawMode, int>(DrawSprites);
             LuaScript.Globals["DrawSpriteBlock"] =
                 // new Action<int, int, int, int, int, bool, bool, DrawMode, int>(DrawSpriteBlock);
-
-            LuaScript.Globals["DrawText"] = new Action<string, int, int, DrawMode, string, int, int>(DrawText);
+                LuaScript.Globals["DrawText"] = new Action<string, int, int, DrawMode, string, int, int>(DrawText);
             LuaScript.Globals["DrawTilemap"] = new Action<int, int, int, int, int?, int?>(DrawTilemap);
 
             LuaScript.Globals["DrawRect"] = new Action<int, int, int, int, int, DrawMode>(DrawRect);
@@ -129,7 +128,8 @@ namespace PixelVision8.Player
             // LuaScript.Globals["Sound"] = new Func<int, string, string>(Sound);
             LuaScript.Globals["PlaySound"] = new Action<int, int>(PlaySound);
             LuaScript.Globals["StopSound"] = new Action<int>(StopSound);
-            LuaScript.Globals["PlayRawSound"] = new Action<string, int, float>(((SfxrSoundChip)SoundChip).PlayRawSound);
+            LuaScript.Globals["PlayRawSound"] =
+                new Action<string, int, float>(((SfxrSoundChip) SoundChip).PlayRawSound);
 
             LuaScript.Globals["IsChannelPlaying"] = new Func<int, bool>(IsChannelPlaying);
             LuaScript.Globals["PlayPattern"] = new Action<int, bool>(PlayPattern);
@@ -255,8 +255,6 @@ namespace PixelVision8.Player
 
             LuaScript.Globals["NewMetaSprite"] =
                 new Func<int, string, int[], int, int, SpriteCollection>(NewMetaSprite);
-
-
         }
 
         #region Lifecycle
@@ -289,7 +287,6 @@ namespace PixelVision8.Player
             if (LuaScript?.Globals["Shutdown"] == null) return;
 
             LuaScript.Call(LuaScript.Globals["Shutdown"]);
-
         }
 
         public override void Reset()
@@ -298,7 +295,6 @@ namespace PixelVision8.Player
             base.Reset();
 
             if (LuaScript.Globals["Reset"] != null) LuaScript.Call(LuaScript.Globals["Reset"]);
-
         }
 
         public override void Configure()

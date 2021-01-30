@@ -19,7 +19,6 @@
 //
 
 
-
 using Microsoft.Xna.Framework.Graphics;
 using PixelVision8.Player;
 using System;
@@ -30,10 +29,8 @@ using System.Reflection;
 namespace PixelVision8.Runner
 
 {
-
     public partial class Loader
     {
-        
         public class FileParser : Attribute
         {
             public string FileType;
@@ -43,15 +40,14 @@ namespace PixelVision8.Runner
             {
                 FileType = fileType;
             }
-            
         }
-        
+
         public int currentStep;
-        
+
         protected readonly List<IAbstractParser> parsers = new List<IAbstractParser>();
         protected int currentParserID;
         public bool Completed => currentParserID >= TotalParsers;
-        public float Percent => TotalSteps == 0 ? 1f : currentStep / (float)TotalSteps;
+        public float Percent => TotalSteps == 0 ? 1f : currentStep / (float) TotalSteps;
 
         public int TotalParsers => parsers.Count;
 
@@ -59,20 +55,21 @@ namespace PixelVision8.Runner
         private readonly IFileLoader _fileLoadHelper;
 
         public List<FileParser> ParserMapping = new List<FileParser>();
-        
+
         private IImageParser _imageParser;
-        
+
         public Loader(IFileLoader fileLoadHelper, IImageParser imageParser)
         {
             _fileLoadHelper = fileLoadHelper;
             _imageParser = imageParser;
-            
-            var methods = GetType().GetMethods().Where(m=>m.GetCustomAttributes(typeof(FileParser), false).Length > 0).ToArray();
+
+            var methods = GetType().GetMethods().Where(m => m.GetCustomAttributes(typeof(FileParser), false).Length > 0)
+                .ToArray();
 
             for (int i = 0; i < methods.Length; i++)
             {
                 Console.WriteLine("Method " + i + " " + methods[i].Name);
-                
+
                 Type thisType = this.GetType();
                 MethodInfo theMethod = thisType.GetMethod(methods[i].Name);
 
@@ -83,7 +80,6 @@ namespace PixelVision8.Runner
                 attributes.MethodInfo = theMethod;
 
                 ParserMapping.Add(attributes);
-                
             }
         }
 
@@ -94,7 +90,7 @@ namespace PixelVision8.Runner
             TotalSteps = 0;
             currentStep = 0;
         }
-        
+
         public void AddParser(IAbstractParser parser)
         {
             parser.CalculateSteps();
@@ -107,7 +103,7 @@ namespace PixelVision8.Runner
         public void LoadAll()
         {
             while (Completed == false) NextParser();
-        
+
             parsers.Clear();
         }
 
@@ -124,14 +120,14 @@ namespace PixelVision8.Runner
             parser.NextStep();
 
             currentStep++;
-            
+
             if (parser.completed)
             {
                 parser.Dispose();
                 currentParserID++;
             }
         }
-        
+
         public virtual void ParseFiles(string[] files, IPlayerChips engine)
         {
             Reset();
@@ -140,24 +136,18 @@ namespace PixelVision8.Runner
 
             for (int i = 0; i < ParserMapping.Count; i++)
             {
-
                 var parserInfo = ParserMapping[i];
-                
+
                 var filesToParse = files.Where(f => f.EndsWith(parserInfo.FileType)).ToArray();
 
                 if (filesToParse.Length > 0)
                 {
-                    
                     for (int j = 0; j < filesToParse.Length; j++)
                     {
-                        parserInfo.MethodInfo.Invoke(this, new object[]{filesToParse[j], engine});
+                        parserInfo.MethodInfo.Invoke(this, new object[] {filesToParse[j], engine});
                     }
-                    
                 }
-                
             }
-            
         }
-
     }
 }

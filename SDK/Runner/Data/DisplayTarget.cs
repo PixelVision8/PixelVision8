@@ -44,7 +44,7 @@ namespace PixelVision8.Runner.Data
         protected Vector2 _scale = new Vector2(1, 1);
         protected int displayWidth;
         protected int displayHeight;
-        
+
         public bool StretchScreen { get; set; }
         public bool Fullscreen { get; set; }
 
@@ -74,7 +74,8 @@ namespace PixelVision8.Runner.Data
                     var newWidth = _monitorWidth * value;
                     var newHeight = _monitorHeight * value;
 
-                    if (newWidth < GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width && newHeight < GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height)
+                    if (newWidth < GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width &&
+                        newHeight < GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height)
                     {
                         fits = true;
                         _monitorScale = value;
@@ -93,7 +94,7 @@ namespace PixelVision8.Runner.Data
 
             var gameWidth = displayChip.Width;
             var gameHeight = displayChip.Height;
-            
+
             if (renderTexture == null || renderTexture.Width != gameWidth || renderTexture.Height != gameHeight)
             {
                 renderTexture = new Texture2D(GraphicManager.GraphicsDevice, gameWidth, gameHeight);
@@ -147,7 +148,7 @@ namespace PixelVision8.Runner.Data
             // Calculate the game scale
             _scale.X = (float) displayWidth / VisibleRect.Width;
             _scale.Y = (float) displayHeight / VisibleRect.Height;
-            
+
             if (!StretchScreen)
             {
                 // To preserve the aspect ratio,
@@ -163,18 +164,16 @@ namespace PixelVision8.Runner.Data
             {
                 CachedColors = Utilities.ConvertColors(colorChip.hexColors, colorChip.maskColor, colorChip.debugMode,
                     colorChip.backgroundColor);
-                
+
                 colorChip.ResetValidation();
-            
             }
         }
 
-        public virtual void Render(IPlayerChips engine)//int[] pixels, int defaultColor)
+        public virtual void Render(IPlayerChips engine) //int[] pixels, int defaultColor)
         {
-
             // Make sure the color palette doesn't need to rebuild itself
             RebuildColorPalette(engine.ColorChip);
-             
+
             // We can only update the display if the pixel lengths match up
             if (engine.DisplayChip.Pixels.Length != _totalPixels)
                 return;
@@ -188,10 +187,9 @@ namespace PixelVision8.Runner.Data
             }
 
             renderTexture.SetData(_pixelData);
-            SpriteBatch.Draw(renderTexture, offset, VisibleRect, Color.White, 0f, Vector2.Zero, Scale, SpriteEffects.None, 1f);
+            SpriteBatch.Draw(renderTexture, offset, VisibleRect, Color.White, 0f, Vector2.Zero, Scale,
+                SpriteEffects.None, 1f);
             SpriteBatch.End();
-
         }
-
     }
 }

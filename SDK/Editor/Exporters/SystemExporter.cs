@@ -70,7 +70,7 @@ namespace PixelVision8.Runner.Exporters
                 _steps.Add(delegate { SerializeMusicChip(engine.MusicChip); });
 
             // Serialize Sound
-            if (engine.SoundChip != null/* && engine.SoundChip.export*/)
+            if (engine.SoundChip != null /* && engine.SoundChip.export*/)
                 _steps.Add(delegate { SerializeSoundChip(engine.SoundChip as SfxrSoundChip); });
 
             // Serialize Sprite
@@ -353,7 +353,7 @@ namespace PixelVision8.Runner.Exporters
             {
                 //                Console.WriteLine("Channel "+i +" type "+soundChip.ChannelType(i));
 
-                sb.Append((int)soundChip.ChannelType(i));
+                sb.Append((int) soundChip.ChannelType(i));
                 if (i < total - 1) sb.Append(",");
             }
 

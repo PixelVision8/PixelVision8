@@ -52,7 +52,8 @@ namespace PixelVision8.Runner.Gif
         }
 
         public LogicalScreenDescriptor(ushort logicalScreenWidth, ushort logicalScreenHeight,
-            byte globalColorTableFlag, byte colorResolution, byte sortFlag, byte gobalColorTableSize, byte backgroundColorIndex, byte pixelAspecRatio)
+            byte globalColorTableFlag, byte colorResolution, byte sortFlag, byte gobalColorTableSize,
+            byte backgroundColorIndex, byte pixelAspecRatio)
         {
             LogicalScreenWidth = logicalScreenWidth;
             LogicalScreenHeight = logicalScreenHeight;

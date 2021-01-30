@@ -27,7 +27,7 @@ namespace PixelVision8.Player
         private readonly PixelData defaultLayer = new PixelData();
         private readonly PixelData tmpLayer = new PixelData();
         private PixelData currentTexture;
-        
+
         private void ChangeTargetCanvas(int width, int height)
         {
             var getRequest = NextRequest();
@@ -45,7 +45,7 @@ namespace PixelVision8.Player
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
         }
-        
+
         [DrawAction]
         private void ChangeTargetCanvasAction(CanvasDrawRequest drawRequest)
         {
@@ -56,7 +56,7 @@ namespace PixelVision8.Player
             else
                 Utilities.Clear(currentTexture);
         }
-        
+
         private void SaveTmpLayer(int x, int y, int blockWidth, int blockHeight)
         {
             var getRequest = NextRequest();
@@ -77,12 +77,13 @@ namespace PixelVision8.Player
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
         }
-        
+
         // private Rectangle _tmpRect = Rectangle.Empty;
         [DrawAction]
         private void SaveTmpLayerAction(CanvasDrawRequest request)
         {
-            Utilities.MergePixels(tmpLayer, request.Bounds.X, request.Bounds.Y, request.Bounds.Width, request.Bounds.Height, defaultLayer, request.X, request.Y);
+            Utilities.MergePixels(tmpLayer, request.Bounds.X, request.Bounds.Y, request.Bounds.Width,
+                request.Bounds.Height, defaultLayer, request.X, request.Y);
 
             currentTexture = defaultLayer;
         }
