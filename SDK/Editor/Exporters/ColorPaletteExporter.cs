@@ -48,9 +48,9 @@ namespace PixelVision8.Runner.Exporters
 
         protected ColorChip colorChip { get; set; }
 
-        public int totalSteps => exporter.totalSteps;
+        public int TotalSteps => exporter.TotalSteps;
 
-        public bool completed => exporter.completed;
+        public bool Completed => exporter.Completed;
 
         public void CalculateSteps()
         {

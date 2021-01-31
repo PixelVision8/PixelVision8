@@ -64,7 +64,7 @@ namespace PixelVision8.Runner
 
             exporters.Add(exporter);
 
-            totalSteps += exporter.totalSteps;
+            totalSteps += exporter.TotalSteps;
         }
 
         public virtual void StartExport(bool useSteps = true)
@@ -169,7 +169,7 @@ namespace PixelVision8.Runner
 
             currentStep++;
 
-            if (parser.completed)
+            if (parser.Completed)
             {
                 currentParserID++;
             }

@@ -48,8 +48,7 @@ namespace PixelVision8.Player
             Invalid = true;
         }
 
-        public void
-            ResetValidation() //Should be faster without calling 2 extra functions per tile. Adds 1-2FPS debugging.
+        public void ResetValidation() //Should be faster without calling 2 extra functions per tile. Adds 1-2FPS debugging.
         {
             Invalid = false;
         }

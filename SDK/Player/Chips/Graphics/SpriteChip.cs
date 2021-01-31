@@ -22,7 +22,6 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 using System.Text;
-using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {

@@ -111,40 +111,31 @@ namespace PixelVision8.Runner
             }
         }
 
-        public override void ResetResolution(PixelVision engine)
+        public override void ResetResolution(int width, int height)
         {
-            base.ResetResolution(engine);
-
-            // if (renderTexture == null || renderTexture.Width != gameWidth || renderTexture.Height != gameHeight)
-            // {
-            //     renderTexture = new Texture2D(GraphicManager.GraphicsDevice, gameWidth, gameHeight);
+            base.ResetResolution(width, height);
 
             crtShader?.Parameters["textureSize"].SetValue(new Vector2(RenderTexture.Width, RenderTexture.Height));
             crtShader?.Parameters["videoSize"].SetValue(new Vector2(RenderTexture.Width, RenderTexture.Height));
 
-            // }
         }
 
 
-        public override void RebuildColorPalette(ColorChip colorChip)
+        public override void RebuildColorPalette(string[] hexColors, int bgColorId = 0, string maskColor = "#FF00FF", bool debugMode = false)
         {
-            var invalid = colorChip.Invalid;
+            base.RebuildColorPalette(hexColors, bgColorId, maskColor, debugMode);
 
-            base.RebuildColorPalette(colorChip);
+            _colorPalette = new Texture2D(GraphicManager.GraphicsDevice, paletteWidth,
+                (int) Math.Ceiling(CachedColors.Length / (double) paletteWidth));
 
-            if (invalid)
+            // We need at least 256 colors for the shader to work so pad the array
+            if (CachedColors.Length < 256)
             {
-                _colorPalette = new Texture2D(GraphicManager.GraphicsDevice, paletteWidth,
-                    (int) Math.Ceiling(CachedColors.Length / (double) paletteWidth));
-
-                // We need at least 256 colors for the shader to work so pad the array
-                if (CachedColors.Length < 256)
-                {
-                    Array.Resize(ref CachedColors, 256);
-                }
-
-                _colorPalette.SetData(CachedColors);
+                Array.Resize(ref CachedColors, 256);
             }
+
+            _colorPalette.SetData(CachedColors);
+            
         }
 
         public override void Render(int[] pixels, int backgroundColor)

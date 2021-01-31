@@ -48,7 +48,6 @@ namespace PixelVision8.Player
             set => Pixels[i] = value;
         }
 
-        public override string ToString() =>
-            "{Width:" + Width + " Height:" + Height + " Total Pixels:" + TotalPixels + "}";
+        public override string ToString() => "{Width:" + Width + " Height:" + Height + " Total Pixels:" + TotalPixels + "}";
     }
 }

@@ -19,7 +19,6 @@
 //
 
 using System.Collections.Generic;
-using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {

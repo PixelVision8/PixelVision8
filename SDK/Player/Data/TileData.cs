@@ -37,12 +37,12 @@ namespace PixelVision8.Player
             bool flipV = false)
         {
             Index = index;
-            this.SpriteId = spriteID;
-            this.ColorOffset = colorOffset;
-            this.Flag = flag;
+            SpriteId = spriteID;
+            ColorOffset = colorOffset;
+            Flag = flag;
 
-            this.FlipH = flipH;
-            this.FlipV = flipV;
+            FlipH = flipH;
+            FlipV = flipV;
             Invalidate();
         }
 

@@ -108,7 +108,7 @@ namespace PixelVision8.Runner.Exporters
                 Response["success"] = false;
 
                 // Finish running the exporter since there was an error
-                CurrentStep = totalSteps;
+                CurrentStep = TotalSteps;
             }
         }
 

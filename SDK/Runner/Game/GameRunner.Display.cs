@@ -56,7 +56,7 @@ namespace PixelVision8.Runner
 
         public virtual void ResetResolution()
         {
-            DisplayTarget.ResetResolution(ActiveEngine);
+            DisplayTarget.ResetResolution(ActiveEngine.DisplayChip.Width, ActiveEngine.DisplayChip.Height);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -73,9 +73,19 @@ namespace PixelVision8.Runner
 
             // Only call draw if the window has focus
             if (RunnerActive) ActiveEngine.Draw();
-            
-            // Make sure the color palette doesn't need to rebuild itself
-            DisplayTarget.RebuildColorPalette(ActiveEngine.ColorChip);
+
+            if (ActiveEngine.ColorChip.Invalid)
+            {
+                // Make sure the color palette doesn't need to rebuild itself
+                DisplayTarget.RebuildColorPalette(
+                    ActiveEngine.ColorChip.HexColors, 
+                    ActiveEngine.ColorChip.BackgroundColor,
+                    ActiveEngine.ColorChip.MaskColor,
+                    ActiveEngine.ColorChip.DebugMode
+                );
+                
+                ActiveEngine.ColorChip.ResetValidation();
+            }
 
             DisplayTarget.Render(ActiveEngine.DisplayChip.Pixels, ActiveEngine.ColorChip.BackgroundColor);
 

@@ -686,7 +686,7 @@ namespace PixelVision8.Runner
 
             jsonParser.CalculateSteps();
 
-            while (jsonParser.completed == false) jsonParser.NextStep();
+            while (jsonParser.Completed == false) jsonParser.NextStep();
             // }
         }
     }

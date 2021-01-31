@@ -397,7 +397,7 @@ namespace PixelVision8.Runner
             var diskExporter = new ZipDiskExporter(path.Path, this);
             diskExporter.CalculateSteps();
 
-            while (diskExporter.completed == false)
+            while (diskExporter.Completed == false)
             {
                 diskExporter.NextStep();
             }
@@ -410,7 +410,7 @@ namespace PixelVision8.Runner
             var zipExporter = new ZipExporter(path.Path, fileHelper, files);
             zipExporter.CalculateSteps();
 
-            while (zipExporter.completed == false)
+            while (zipExporter.Completed == false)
             {
                 zipExporter.NextStep();
             }

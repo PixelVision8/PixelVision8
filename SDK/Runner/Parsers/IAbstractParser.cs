@@ -22,8 +22,8 @@ namespace PixelVision8.Runner
 {
     public interface IAbstractParser
     {
-        int totalSteps { get; }
-        bool completed { get; }
+        int TotalSteps { get; }
+        bool Completed { get; }
         void CalculateSteps();
         void NextStep();
         void StepCompleted();

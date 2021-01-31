@@ -140,7 +140,7 @@ namespace PixelVision8
 
                 exporter.CalculateSteps();
 
-                while (exporter.completed == false)
+                while (exporter.Completed == false)
                 {
                     exporter.NextStep();
                 }
@@ -155,7 +155,7 @@ namespace PixelVision8
 
         public void Exit()
         {
-            CurrentStep = totalSteps;
+            CurrentStep = TotalSteps;
         }
     }
 }

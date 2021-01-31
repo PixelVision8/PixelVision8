@@ -134,7 +134,7 @@ namespace PixelVision8.Runner
                 tmpExporter.CalculateSteps();
 
                 // Manually step through the exporter
-                while (tmpExporter.completed == false) tmpExporter.NextStep();
+                while (tmpExporter.Completed == false) tmpExporter.NextStep();
 
                 workspace.SaveExporterFiles(new Dictionary<string, byte[]> {{tmpExporter.fileName, tmpExporter.Bytes}});
 

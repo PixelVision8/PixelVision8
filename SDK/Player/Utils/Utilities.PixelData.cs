@@ -26,14 +26,7 @@ namespace PixelVision8.Player
 {
     public static partial class Utilities
     {
-        // private static int _mergeDestWidth;
-        // private static int _mergeCol;
-        // private static int _mergeRow;
-        // private static int _mergeX;
-        // private static int _mergeY;
-        // private static int _total;
-        // private static int _tmpPixel;
-        // private static int[] _tmpPixels;
+        
         private static int[] _pixels = new int[0];
 
         public static int[] GetPixels(PixelData pixelData) =>

@@ -126,7 +126,7 @@ namespace PixelVision8.Runner.Exporters
 
                 spriteParser.CalculateSteps();
 
-                while (spriteParser.completed == false) spriteParser.NextStep();
+                while (spriteParser.Completed == false) spriteParser.NextStep();
 
                 Array.Copy(spriteParser.ids, spriteData.ids, spriteParser.ids.Length);
 

@@ -47,7 +47,6 @@ namespace PixelVision8.Player
 
         public virtual void ResetGame()
         {
-            
             foreach (var chip in Chips) chip.Value.Reset();
         }
 
@@ -60,8 +59,6 @@ namespace PixelVision8.Player
         /// <tocexclude />
         public virtual void RunGame()
         {
-            // if (GameChip == null) return;
-
             foreach (var chip in Chips) chip.Value.Init();
         }
 
@@ -97,16 +94,6 @@ namespace PixelVision8.Player
             foreach (var chip in DrawChips) chip.Draw();
         }
 
-        /// <summary>
-        ///     This method is called when shutting down the engine
-        /// </summary>
-        /// <tocexclude />
-        public virtual void Shutdown()
-        {
-            // Shutdown chips
-            foreach (var chip in Chips) chip.Value.Shutdown();
-        }
-
         #region Chip Manager
 
         public bool HasChip(string id)
@@ -129,9 +116,9 @@ namespace PixelVision8.Player
                     chipInstance = Activator.CreateInstance(type) as AbstractChip;
                     ActivateChip(id, chipInstance, activeOnCreate);
                 }
-                catch // (Exception)
+                catch (Exception)
                 {
-                    //Console.WriteLine("Chip '" + id + "' could not be created.");
+                    Console.WriteLine("Chip '" + id + "' could not be created.");
                 }
 
                 return chipInstance;

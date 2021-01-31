@@ -289,7 +289,7 @@ namespace PixelVision8.Runner
             }
 
             if (ActiveEngine != null)
-                DisplayTarget.ResetResolution(ActiveEngine);
+                DisplayTarget.ResetResolution(ActiveEngine.DisplayChip.Width, ActiveEngine.DisplayChip.Height);
 
             // Configure the shader from the bios
             Brightness(Convert.ToSingle(bios.ReadBiosData(CRTSettings.Brightness.ToString(), "100")) / 100F);

@@ -1218,7 +1218,7 @@ namespace PixelVision8.Runner.Editors
             var exporter = new FontExporter(fontPath.EntityName, targetGame, pngWriter);
             exporter.CalculateSteps();
 
-            while (exporter.completed == false) exporter.NextStep();
+            while (exporter.Completed == false) exporter.NextStep();
 
             var files = new Dictionary<string, byte[]>
             {

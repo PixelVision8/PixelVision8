@@ -120,7 +120,7 @@ namespace PixelVision8.Runner
             // Remove the colors that are not supported
             Array.Resize(ref colorRefs, colorChip.TotalUsedColors);
 
-            var imageColors = Parser.colorPalette.Select(c => RgbToHex(c.R, c.G, c.B)).ToArray();
+            var imageColors = Parser.ColorPalette.Select(c => RgbToHex(c.R, c.G, c.B)).ToArray();
 
             var colorMap = new string[colorRefs.Length];
 
@@ -189,10 +189,10 @@ namespace PixelVision8.Runner
             }
 
             // Convert all of the pixels into color ids
-            var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorMap, RgbToHex(c.R, c.G, c.B)))
+            var pixelIDs = Parser.ColorPixels.Select(c => Array.IndexOf(colorMap, RgbToHex(c.R, c.G, c.B)))
                 .ToArray();
 
-            ImageData = new ImageData(Parser.width, Parser.height, pixelIDs, colorMap);
+            ImageData = new ImageData(Parser.Width, Parser.Height, pixelIDs, colorMap);
 
             StepCompleted();
         }

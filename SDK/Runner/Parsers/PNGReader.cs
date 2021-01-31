@@ -51,12 +51,12 @@ namespace PixelVision8.Runner
             if (bytes != null) ReadBytes(bytes);
         }
 
-        public int width { get; private set; }
+        public int Width { get; private set; }
 
-        public int height { get; private set; }
+        public int Height { get; private set; }
 
-        public Color[] colorPixels => _colors;
-        public List<Color> colorPalette => _colorPalette;
+        public Color[] ColorPixels => _colors;
+        public List<Color> ColorPalette => _colorPalette;
 
         public virtual string FileName { get; set; } = "untitled.png";
 
@@ -152,8 +152,8 @@ namespace PixelVision8.Runner
             {
                 var headerChunk = new HeaderChunk();
                 headerChunk.Decode(chunkBytes);
-                width = (int) headerChunk.Width;
-                height = (int) headerChunk.Height;
+                Width = (int) headerChunk.Width;
+                Height = (int) headerChunk.Height;
 
                 bitsPerSample = headerChunk.BitDepth;
                 colorType = headerChunk.ColorType;
@@ -191,7 +191,7 @@ namespace PixelVision8.Runner
         {
             bytesPerPixel = CalculateBytesPerPixel();
             bytesPerSample = bitsPerSample / 8;
-            bytesPerScanline = bytesPerPixel * width + 1;
+            bytesPerScanline = bytesPerPixel * Width + 1;
             var length = pixelData.Length / bytesPerScanline;
             if (pixelData.Length % bytesPerScanline != 0)
                 throw new Exception(
@@ -211,11 +211,11 @@ namespace PixelVision8.Runner
         private void DecodePixelData(byte[][] pixelData)
         {
             //            data = new Color[_width * _height];
-            _colors = new Color[width * height];
-            pixels = new int[width * height];
+            _colors = new Color[Width * Height];
+            pixels = new int[Width * Height];
 
             var previousScanline = new byte[bytesPerScanline];
-            for (var y = 0; y < height; ++y)
+            for (var y = 0; y < Height; ++y)
             {
                 var scanline = pixelData[y];
                 byte[] defilteredScanline;
@@ -258,7 +258,7 @@ namespace PixelVision8.Runner
                 //                    }
                 //                    break;
                 case ColorType.Rgb:
-                    for (var index1 = 0; index1 < width; ++index1)
+                    for (var index1 = 0; index1 < Width; ++index1)
                     {
                         var index2 = 1 + index1 * bytesPerPixel;
                         var r = defilteredScanline[index2]; // / (float)byte.MaxValue;
@@ -272,22 +272,22 @@ namespace PixelVision8.Runner
 
 
                         var color = new Color(r, g, b);
-                        _colors[y * width + index1] = color;
+                        _colors[y * Width + index1] = color;
 
-                        pixels[y * width + index1] = IndexColor(color);
+                        pixels[y * Width + index1] = IndexColor(color);
                     }
 
                     break;
                 case ColorType.Palette:
-                    for (var index = 0; index < width; ++index)
+                    for (var index = 0; index < Width; ++index)
                     {
                         //                        Color color = palette[defilteredScanline[index + 1]];
                         //                        data[y * _width + index] = color;
 
                         var colorData = palette[defilteredScanline[index + 1]];
-                        _colors[y * width + index] = colorData;
+                        _colors[y * Width + index] = colorData;
 
-                        pixels[y * width + index] = IndexColor(colorData);
+                        pixels[y * Width + index] = IndexColor(colorData);
 
                         //                        IndexColor(colorData);
                     }
@@ -304,7 +304,7 @@ namespace PixelVision8.Runner
                 //                    }
                 //                    break;
                 case ColorType.RgbWithAlpha:
-                    for (var index1 = 0; index1 < width; ++index1)
+                    for (var index1 = 0; index1 < Width; ++index1)
                     {
                         var index2 = 1 + index1 * bytesPerPixel;
                         var r = defilteredScanline[index2]; // / (float)byte.MaxValue;
@@ -321,8 +321,8 @@ namespace PixelVision8.Runner
                         var color = alpha < 1 ? ColorChip.HexToColor(maskHex) : new Color(r, g, b);
 
                         //                        var color = new ColorData(r, g, b);
-                        _colors[y * width + index1] = color;
-                        pixels[y * width + index1] = IndexColor(color);
+                        _colors[y * Width + index1] = color;
+                        pixels[y * Width + index1] = IndexColor(color);
                         //                        IndexColor(color);
                     }
 
@@ -332,12 +332,12 @@ namespace PixelVision8.Runner
 
         private int IndexColor(Color color)
         {
-            var id = colorPalette.IndexOf(color);
+            var id = ColorPalette.IndexOf(color);
             // Add color to unique color
             if (id == -1)
             {
-                id = colorPalette.Count;
-                colorPalette.Add(color);
+                id = ColorPalette.Count;
+                ColorPalette.Add(color);
 
                 //                Console.WriteLine("New Color " + id + " " + color.r + " " + color.g + " " + color.b + " " + color.a);
             }

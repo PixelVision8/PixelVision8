@@ -60,7 +60,7 @@ namespace PixelVision8.Runner
         {
             // Parse colors as normal
 
-            var srcColors = Parser.colorPixels;
+            var srcColors = Parser.ColorPixels;
             var total = srcColors.Length;
 
             // Loop through each color and find the unique ones

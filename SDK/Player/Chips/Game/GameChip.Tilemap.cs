@@ -158,7 +158,6 @@ namespace PixelVision8.Player
             if (invalidateTileMap) TilemapChip.Invalidate();
 
             return tile;
-            //            return new TileData(CalculateIndex(column, row, tilemapChip.columns), tilemapChip.ReadSpriteAt(column, row), tilemapChip.ReadTileColorAt(column, row), tilemapChip.ReadFlagAt(column, row));
         }
 
         /// <summary>

@@ -35,9 +35,9 @@ namespace PixelVision8.Runner
 
         public virtual byte[] Bytes { get; set; }
 
-        public int totalSteps => Steps.Count;
+        public int TotalSteps => Steps.Count;
 
-        public bool completed => CurrentStep >= totalSteps;
+        public bool Completed => CurrentStep >= TotalSteps;
 
         public virtual void CalculateSteps()
         {
@@ -60,7 +60,7 @@ namespace PixelVision8.Runner
 
         public virtual void NextStep()
         {
-            if (completed) return;
+            if (Completed) return;
 
             Steps[CurrentStep]();
         }

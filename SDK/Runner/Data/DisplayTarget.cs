@@ -27,6 +27,15 @@ namespace PixelVision8.Runner
 {
     public class DisplayTarget
     {
+        /// <summary>
+        ///     The display target is in charge of converting system colors into MonoGame colors. This utility method
+        ///     can be used by any external runner class to correctly convert hex colors into Colors.
+        /// </summary>
+        /// <param name="hexColors"></param>
+        /// <param name="maskColor"></param>
+        /// <param name="debugMode"></param>
+        /// <param name="backgroundColor"></param>
+        /// <returns></returns>
         public static Color[] ConvertColors(string[] hexColors, string maskColor = "#FF00FF", bool debugMode = false, int backgroundColor = 0)
          {
              var t = hexColors.Length;
@@ -66,8 +75,6 @@ namespace PixelVision8.Runner
         public bool StretchScreen { get; set; }
         public bool Fullscreen { get; set; }
 
-        // public Vector2 Scale => _scale;
-
         public DisplayTarget(GraphicsDeviceManager graphicManager, int width, int height)
         {
             GraphicManager = graphicManager;
@@ -78,6 +85,8 @@ namespace PixelVision8.Runner
 
             _monitorWidth = MathHelper.Clamp(width, 64, 640);
             _monitorHeight = MathHelper.Clamp(height, 64, 480);
+            
+            ResetResolution(_monitorWidth, _monitorHeight);
         }
 
         public int MonitorScale
@@ -106,13 +115,9 @@ namespace PixelVision8.Runner
             }
         }
 
-        public virtual void ResetResolution(PixelVision engine)
+        public virtual void ResetResolution(int gameWidth, int gameHeight)
         {
-            var displayChip = engine.DisplayChip;
-
-            var gameWidth = displayChip.Width;
-            var gameHeight = displayChip.Height;
-
+            
             if (RenderTexture == null || RenderTexture.Width != gameWidth || RenderTexture.Height != gameHeight)
             {
                 RenderTexture = new Texture2D(GraphicManager.GraphicsDevice, gameWidth, gameHeight);
@@ -149,6 +154,7 @@ namespace PixelVision8.Runner
             }
 
             _totalPixels = gameWidth * gameHeight;
+            
             if (_pixelData.Length != _totalPixels)
             {
                 Array.Resize(ref _pixelData, _totalPixels);
@@ -176,21 +182,21 @@ namespace PixelVision8.Runner
             }
         }
 
-        public virtual void RebuildColorPalette(ColorChip colorChip)
+        public virtual void RebuildColorPalette(string[] hexColors, int bgColorId = 0, string maskColor = "#FF00FF", bool debugMode = false)
         {
-            if (colorChip.Invalid)
-            {
-                CachedColors = ConvertColors(colorChip.HexColors, colorChip.MaskColor, colorChip.DebugMode,
-                    colorChip.BackgroundColor);
-
-                colorChip.ResetValidation();
-            }
+            
+            CachedColors = ConvertColors(
+                hexColors, 
+                maskColor, 
+                debugMode,
+                bgColorId
+            );
+            
         }
 
         public virtual void Render(int[] pixels, int defaultColor)
         {
             
-
             // We can only update the display if the pixel lengths match up
             if (pixels.Length != _totalPixels)
                 return;

@@ -25,10 +25,10 @@ namespace PixelVision8.Runner
 {
     public interface IImageParser
     {
-        int width { get; }
-        int height { get; }
-        Color[] colorPixels { get; }
-        List<Color> colorPalette { get; }
+        int Width { get; }
+        int Height { get; }
+        Color[] ColorPixels { get; }
+        List<Color> ColorPalette { get; }
         void ReadStream(string sourcePath, string maskHex);
         string FileName { get; set; }
     }

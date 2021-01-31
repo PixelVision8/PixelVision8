@@ -40,8 +40,8 @@ namespace PixelVision8.Player
     /// </summary>
     public partial class GameChip : AbstractChip, IUpdate, IDraw
     {
-        protected ColorChip ColorChip => Player.ColorChip;
-        protected DisplayChip DisplayChip => Player.DisplayChip;
+        private ColorChip ColorChip => Player.ColorChip;
+        public DisplayChip DisplayChip => Player.DisplayChip;
 
         #region Lifecycle
 
@@ -90,7 +90,7 @@ namespace PixelVision8.Player
         /// </summary>
         public void Clear()
         {
-            DisplayChip.Clear(ColorChip.BackgroundColor);
+            DisplayChip.Clear(Player.ColorChip.BackgroundColor);
         }
 
         /// <summary>

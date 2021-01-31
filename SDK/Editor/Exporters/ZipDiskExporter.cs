@@ -78,7 +78,7 @@ namespace PixelVision8.Runner.Exporters
                 // Calculate all the zip steps
                 zipExporter.CalculateSteps();
 
-                for (int i = 0; i < zipExporter.totalSteps; i++)
+                for (int i = 0; i < zipExporter.TotalSteps; i++)
                 {
                     Steps.Add(NextZipStep);
                 }

@@ -51,9 +51,9 @@ namespace PixelVision8.Runner.Exporters
             // colors = colorMapChip == null ? engine.ColorChip.colors : colorMapChip.colors;
         }
 
-        public int totalSteps => exporter.totalSteps;
+        public int TotalSteps => exporter.TotalSteps;
 
-        public bool completed => exporter.completed;
+        public bool Completed => exporter.Completed;
 
         public virtual void CalculateSteps()
         {

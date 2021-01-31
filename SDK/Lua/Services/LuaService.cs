@@ -284,7 +284,7 @@ namespace PixelVision8.Runner
             // If no colors are passed in, used the image's palette
             if (colorRefs == null)
             {
-                colorRefs = reader.colorPalette.Select(c => SpriteImageParser.RgbToHex(c.R, c.G, c.B)).ToArray();
+                colorRefs = reader.ColorPalette.Select(c => SpriteImageParser.RgbToHex(c.R, c.G, c.B)).ToArray();
             }
 
             // Resize the color chip
@@ -320,7 +320,7 @@ namespace PixelVision8.Runner
                 new PixelDataExporter(dest.EntityName, pixelData, width, height, colors, _pngWriter, "#FF00FF");
             exporter.CalculateSteps();
 
-            while (exporter.completed == false) exporter.NextStep();
+            while (exporter.Completed == false) exporter.NextStep();
 
             var output = new Dictionary<string, byte[]>
             {

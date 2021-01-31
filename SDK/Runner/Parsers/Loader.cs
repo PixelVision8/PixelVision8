@@ -97,7 +97,7 @@ namespace PixelVision8.Runner
 
             parsers.Add(parser);
 
-            TotalSteps += parser.totalSteps;
+            TotalSteps += parser.TotalSteps;
         }
 
         public void LoadAll()
@@ -121,7 +121,7 @@ namespace PixelVision8.Runner
 
             currentStep++;
 
-            if (parser.completed)
+            if (parser.Completed)
             {
                 parser.Dispose();
                 currentParserID++;
