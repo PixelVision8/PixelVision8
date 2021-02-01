@@ -80,7 +80,7 @@ namespace PixelVision8.Runner
         public bool backKeyEnabled = true;
         public BiosService bios;
         protected WorkspacePath biosPath = WorkspacePath.Root.AppendDirectory("App").AppendFile("bios.json");
-        protected IControllerChip controllerChip;
+        protected ControllerChip controllerChip;
         protected string documentsPath;
 
         protected bool ejectingDisk;

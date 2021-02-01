@@ -20,7 +20,7 @@
 
 namespace PixelVision8.Runner
 {
-    public interface IAbstractParser
+    public interface IParser
     {
         int TotalSteps { get; }
         bool Completed { get; }

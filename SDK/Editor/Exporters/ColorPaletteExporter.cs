@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Exporters
 {
-    public class ColorPaletteExporter : IAbstractExporter
+    public class ColorPaletteExporter : IExporter
     {
         protected Color[] colors;
         protected PixelDataExporter exporter;

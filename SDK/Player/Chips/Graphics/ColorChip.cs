@@ -20,7 +20,6 @@
 
 using Microsoft.Xna.Framework;
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -37,31 +36,6 @@ namespace PixelVision8.Player
     public class ColorChip : AbstractChip
     {
     
-        public static Color HexToColor(string hex)
-        {
-            HexToRgb(hex, out var r, out var g, out var b);
-
-            return new Color(r, g, b);
-        }
-
-        /// <summary>
-        ///     Static method for converting a HEX color into an RGB value.
-        /// </summary>
-        /// <param name="hex"></param>
-        /// <param name="r"></param>
-        /// <param name="g"></param>
-        /// <param name="b"></param>
-        public static void HexToRgb(string hex, out byte r, out byte g, out byte b)
-        {
-            if (hex == null) hex = "FF00FF";
-
-            if (hex[0] == '#') hex = hex.Substring(1);
-
-            r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
-            g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
-            b = byte.Parse(hex.Substring(4, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
-        }
-        
         public static bool ValidateHexColor(string inputColor)
         {
             return Regex.Match(inputColor, "^#(?:[0-9a-fA-F]{3}){1,2}$").Success;
@@ -103,7 +77,7 @@ namespace PixelVision8.Player
             set
             {
                 // We make sure that the bg color is never set to a value out of the range of the color chip
-                _bgColor = MathHelper.Clamp(value, 0, Total);
+                _bgColor = value >= Total || value < -1 ? -1 : value;
                 Invalidate();
             }
         }
@@ -178,7 +152,7 @@ namespace PixelVision8.Player
             Invalid = true;
         }
 
-        public void ResetValidation(int value = 0)
+        public void ResetValidation()
         {
             Invalid = false;
         }
@@ -222,7 +196,6 @@ namespace PixelVision8.Player
         {
             Player.ColorChip = this;
             BackgroundColor = -1;
-            // total = 256;
         }
     }
 

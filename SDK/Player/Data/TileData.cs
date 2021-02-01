@@ -19,7 +19,6 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
@@ -29,15 +28,15 @@ namespace PixelVision8.Player
         private int _flag = -1;
         private bool _flipH;
         private bool _flipV;
-        private int _spriteID;
+        private int _spriteId;
 
         private int _index;
 
-        public TileData(int index, int spriteID = -1, int colorOffset = 0, int flag = -1, bool flipH = false,
+        public TileData(int index, int spriteId = -1, int colorOffset = 0, int flag = -1, bool flipH = false,
             bool flipV = false)
         {
             Index = index;
-            SpriteId = spriteID;
+            SpriteId = spriteId;
             ColorOffset = colorOffset;
             Flag = flag;
 
@@ -58,10 +57,10 @@ namespace PixelVision8.Player
 
         public int SpriteId
         {
-            get => _spriteID;
+            get => _spriteId;
             set
             {
-                _spriteID = value;
+                _spriteId = value;
                 Invalidate();
             }
         }

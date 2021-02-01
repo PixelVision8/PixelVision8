@@ -396,25 +396,25 @@ namespace PixelVision8.Runner
     // Custom parsers
     public partial class Loader
     {
-        [FileParser("saves.json")]
+        [FileParser("saves.json", FileFlags.SaveData)]
         public void ParseSaveData(string file, PixelVision engine)
         {
             AddParser(new SystemParser(file, _fileLoadHelper, engine));
         }
 
-        [FileParser("sounds.json")]
+        [FileParser("sounds.json", FileFlags.Sounds)]
         public void ParseSounds(string file, PixelVision engine)
         {
             AddParser(new SystemParser(file, _fileLoadHelper, engine));
         }
 
-        [FileParser("music.json")]
+        [FileParser("music.json", FileFlags.Music)]
         public void ParseMusic(string file, PixelVision engine)
         {
             AddParser(new SystemParser(file, _fileLoadHelper, engine));
         }
 
-        [FileParser("meta-sprites.json")]
+        [FileParser("meta-sprites.json", FileFlags.MetaSprites)]
         public void ParseMetaSprites(string file, PixelVision engine)
         {
             AddParser(new SystemParser(file, _fileLoadHelper, engine));

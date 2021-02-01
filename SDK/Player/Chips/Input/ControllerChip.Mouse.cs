@@ -3,16 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Player
 {
-    public enum MouseInput
-    {
-        LeftButton,
-        RightButton,
-        MiddleButton,
-        Button1,
-        Button2,
-        None
-    }
-
+    
     public partial class ControllerChip
     {
         public MouseState currentMouseState;
@@ -82,4 +73,5 @@ namespace PixelVision8.Player
 
         #endregion
     }
+
 }

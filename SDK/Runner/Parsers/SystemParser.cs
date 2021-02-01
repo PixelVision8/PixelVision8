@@ -549,9 +549,9 @@ namespace PixelVision8.Runner
 
             if (data.ContainsKey("maxSpriteCount")) displayChip.MaxDrawRequests = (int) (long) data["maxSpriteCount"];
 
-            if (data.ContainsKey("spriteWidth")) spriteChip.SpriteWidth = (int) (long) data["spriteWidth"];
-
-            if (data.ContainsKey("spriteHeight")) spriteChip.SpriteHeight = (int) (long) data["spriteHeight"];
+            // if (data.ContainsKey("spriteWidth")) SpriteChip.DefaultSpriteSize = (int) (long) data["spriteWidth"];
+            //
+            // if (data.ContainsKey("spriteHeight")) SpriteChip.DefaultSpriteSize = (int) (long) data["spriteHeight"];
 
             if (data.ContainsKey("cps")) spriteChip.ColorsPerSprite = (int) (long) data["cps"];
 
@@ -675,7 +675,7 @@ namespace PixelVision8.Runner
 
     public partial class Loader
     {
-        [FileParser("data.png")]
+        [FileParser("data.png", FileFlags.System)]
         public void ParseSystem(string file, PixelVision engine)
         {
             // if (!string.IsNullOrEmpty(files[0]))

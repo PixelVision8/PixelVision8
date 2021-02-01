@@ -23,7 +23,7 @@ using System.Collections.Generic;
 
 namespace PixelVision8.Runner
 {
-    public abstract class AbstractParser : IAbstractParser
+    public abstract class AbstractParser : IParser
     {
         protected readonly List<Action> Steps = new List<Action>();
 

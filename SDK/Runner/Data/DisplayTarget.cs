@@ -21,12 +21,39 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Globalization;
 using PixelVision8.Player;
 
 namespace PixelVision8.Runner
 {
     public class DisplayTarget
     {
+    
+        public static Color HexToColor(string hex)
+        {
+            HexToRgb(hex, out var r, out var g, out var b);
+
+            return new Color(r, g, b);
+        }
+        
+        /// <summary>
+        ///     Static method for converting a HEX color into an RGB value.
+        /// </summary>
+        /// <param name="hex"></param>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        public static void HexToRgb(string hex, out byte r, out byte g, out byte b)
+        {
+            if (hex == null) hex = "FF00FF";
+
+            if (hex[0] == '#') hex = hex.Substring(1);
+
+            r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
+            g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
+            b = byte.Parse(hex.Substring(4, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
+        }
+        
         /// <summary>
         ///     The display target is in charge of converting system colors into MonoGame colors. This utility method
         ///     can be used by any external runner class to correctly convert hex colors into Colors.
@@ -47,7 +74,7 @@ namespace PixelVision8.Runner
 
                  if (colorHex == maskColor && debugMode == false) colorHex = hexColors[backgroundColor];
 
-                 var color = ColorChip.HexToColor(colorHex);
+                 var color = HexToColor(colorHex);
                  colors[i] = color;
              }
 

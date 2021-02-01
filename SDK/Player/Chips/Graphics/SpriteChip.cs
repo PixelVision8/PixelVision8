@@ -60,25 +60,25 @@ namespace PixelVision8.Player
         /// </summary>
         public int MaxSpriteCount { get; set; }
 
-        /// <summary>
-        ///     The global <see cref="SpriteWidth" /> of sprites in the engine. By default
-        ///     this is set to 8.
-        /// </summary>
-        public int SpriteWidth
-        {
-            get => _spriteMemory.SpriteWidth;
-            set => _spriteMemory.SpriteWidth = value;
-        }
-
-        /// <summary>
-        ///     The global <see cref="SpriteWidth" /> of sprites in the engine. By default
-        ///     this is set to 8.
-        /// </summary>
-        public int SpriteHeight
-        {
-            get => _spriteMemory.SpriteHeight;
-            set => _spriteMemory.SpriteHeight = value;
-        }
+        // /// <summary>
+        // ///     The global <see cref="SpriteWidth" /> of sprites in the engine. By default
+        // ///     this is set to 8.
+        // /// </summary>
+        // public int SpriteWidth
+        // {
+        //     get => _spriteMemory.SpriteWidth;
+        //     set => _spriteMemory.SpriteWidth = value;
+        // }
+        //
+        // /// <summary>
+        // ///     The global <see cref="SpriteWidth" /> of sprites in the engine. By default
+        // ///     this is set to 8.
+        // /// </summary>
+        // public int SpriteHeight
+        // {
+        //     get => _spriteMemory.SpriteHeight;
+        //     set => _spriteMemory.SpriteHeight = value;
+        // }
 
         public PixelData PixelData => _spriteMemory.PixelData;
 
@@ -94,7 +94,7 @@ namespace PixelVision8.Player
         /// </summary>
         public int TextureHeight => _spriteMemory.Height;
 
-        private const int DefaultSpriteSize = 8;
+        public const int DefaultSpriteSize = 8;
         /// <summary>
         ///     The virtual number of pages of sprite memory the SpriteChip
         ///     has. Each page contains a max number of sprites.
@@ -139,20 +139,9 @@ namespace PixelVision8.Player
         public int Columns => _spriteMemory.Columns;
 
 
-        private Point[] _spriteSizes = new[]
-        {
-            new Point(1, 1),
-            new Point(1, 2),
-            new Point(2, 1),
-            new Point(2, 2),
-            new Point(4, 4),
-        };
+        
             
-        public void ChangeSizeMode(SpriteSizes mode)
-        {
-            SpriteWidth = _spriteSizes[(int) mode].X * DefaultSpriteSize;
-            SpriteHeight = _spriteSizes[(int) mode].Y * DefaultSpriteSize;
-        }
+        
         
         /// <summary>
         ///     Tests to see if sprite <paramref name="data" /> is empty. This method
@@ -201,8 +190,6 @@ namespace PixelVision8.Player
         {
             Player.SpriteChip = this;
             
-            ChangeSizeMode(SpriteSizes.Mode1);
-
             Pages = 4;
             
         }
@@ -226,7 +213,7 @@ namespace PixelVision8.Player
             // TODO check to see if the cache doesn't exist and return the empty sprite as well
             if (index == -1)
             {
-                var size = SpriteWidth * SpriteHeight;
+                var size = DefaultSpriteSize * DefaultSpriteSize;
 
                 if (pixelData.Length < size) Array.Resize(ref pixelData, size);
 
@@ -286,7 +273,7 @@ namespace PixelVision8.Player
 
             _cache[index] = SpriteDataToString(data);
 
-            var totalPixels = SpriteWidth * SpriteHeight;
+            var totalPixels = DefaultSpriteSize * DefaultSpriteSize;
 
             var tmpPixels = new int[totalPixels];
             Array.Copy(data, tmpPixels, totalPixels);

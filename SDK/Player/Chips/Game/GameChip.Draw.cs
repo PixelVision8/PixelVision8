@@ -30,18 +30,6 @@ namespace PixelVision8.Player
         #region Display
 
         /// <summary>
-        ///     The display's size defines the visible area where pixel data exists on the screen. Calculating this is
-        ///     important for knowing how to position sprites on the screen. The Display() method allows you to get
-        ///     the resolution of the display at run time. By default, this will return the visble screen area based on
-        ///     the overscan value set on the display chip. To calculate the exact overscan in pixels, you must subtract
-        ///     the full size from the visible size. Simply supply false as an argument to get the full display dimensions.
-        /// </summary>
-        public Point Display()
-        {
-            return new Point(DisplayChip.Width, DisplayChip.Height);
-        }
-
-        /// <summary>
         ///     This method allows you to draw raw pixel data directly to the display. Depending on which draw mode you
         ///     use, the pixel data could be rendered as a sprite or drawn directly onto the tilemap cache. Sprites drawn
         ///     with this method still count against the total number the display can render but you can draw irregularly
@@ -177,7 +165,7 @@ namespace PixelVision8.Player
                 {
                     srcChip.ReadSpriteAt(id, ref _tmpSpriteData);
 
-                    DrawPixels(_tmpSpriteData, x, y, srcChip.SpriteWidth, srcChip.SpriteHeight, flipH, flipV, drawMode,
+                    DrawPixels(_tmpSpriteData, x, y, SpriteWidth, SpriteHeight, flipH, flipV, drawMode,
                         colorOffset);
                 }
                 else
@@ -185,10 +173,10 @@ namespace PixelVision8.Player
                     if (SpriteChip.MaxSpriteCount > 0 && CurrentSprites >= SpriteChip.MaxSpriteCount) return;
 
                     var pos = Utilities.CalculatePosition(id, srcChip.Columns);
-                    pos.X *= srcChip.SpriteWidth;
-                    pos.Y *= srcChip.SpriteHeight;
+                    pos.X *= SpriteWidth;
+                    pos.Y *= SpriteHeight;
 
-                    DisplayChip.NewDrawCall(srcChip, x, y, srcChip.SpriteWidth, srcChip.SpriteHeight,
+                    DisplayChip.NewDrawCall(srcChip, x, y, SpriteWidth, SpriteHeight,
                         (byte) drawMode, flipH, flipV, colorOffset, pos.X, pos.Y);
 
                     Player.SpriteCounter++;
@@ -201,98 +189,6 @@ namespace PixelVision8.Player
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
             // TODO need to delete this after the refactoring
-        }
-
-        /// <summary>
-        ///     The DrawText() method allows you to render text to the display. By supplying a custom DrawMode, you can render
-        ///     characters as individual sprites (DrawMode.Sprite), tiles (DrawMode.Tile) or drawn directly into the tilemap
-        ///     cache (DrawMode.TilemapCache). When drawing text as sprites, you have more flexibility over position, but each
-        ///     character counts against the displays' maximum sprite count. When rendering text to the tilemap, more characters
-        ///     are shown and also increase performance when rendering large amounts of text. You can also define the color offset,
-        ///     letter spacing which only works for sprite and tilemap cache rendering, and a width in characters if you want the
-        ///     text to wrap.
-        /// </summary>
-        /// <param name="text">
-        ///     A text string to display on the screen.
-        /// </param>
-        /// <param name="x">
-        ///     An int value representing the X position to start the text on the display. If set to 0, it renders on the far
-        ///     left-hand side of the screen.
-        /// </param>
-        /// <param name="y">
-        ///     An int value representing the Y position to place sprite on the display. If set to 0, it renders on the top
-        ///     of the screen.
-        /// </param>
-        /// <param name="drawMode">
-        ///     This argument accepts the DrawMode enum. You can use Sprite, SpriteBelow, and TilemapCache to change where the
-        ///     pixel data is drawn to. By default, this value is DrawMode.Sprite.
-        /// </param>
-        /// <param name="font">
-        ///     The name of the font to use. You do not need to add the font's file extension. If the file is called
-        ///     The name of the font to use. You do not need to add the font's file extension. If the file is called
-        ///     default.font.png,
-        ///     you can simply refer to it as "default" when supplying an argument value.
-        /// </param>
-        /// <param name="colorOffset">
-        ///     This optional argument accepts an int that offsets all the color IDs in the pixel data array. This value is added
-        ///     to each color ID in the font's pixel data, allowing you to simulate palette shifting.
-        /// </param>
-        /// <param name="spacing">
-        ///     This optional argument sets the number of pixels between each character when rendering text. This value is ignored
-        ///     when rendering text as tiles. This value can be positive or negative depending on your needs. By default, it is 0.
-        /// </param>
-        /// <returns></returns>
-        public void DrawText(string text, int x, int y, DrawMode drawMode = DrawMode.Sprite, string font = "Default",
-            int colorOffset = 0, int spacing = 0)
-        {
-            
-            var nextX = x;
-            var nextY = y;
-
-            var spriteIDs = ConvertTextToSprites(text, font);
-            var total = spriteIDs.Length;
-
-            var clearTiles = false;
-
-            if (drawMode == DrawMode.Tile)
-            {
-                // Set the clear tile flag
-                clearTiles = true;
-
-                // Change to Tilemap Cache since we are not actually drawing the tiles
-                drawMode = DrawMode.TilemapCache;
-
-                // Need to adjust the position since tile mode is in columns,rows
-                nextX *= FontChip.SpriteWidth;
-                nextY *= FontChip.SpriteHeight;
-
-                // spacing is disabled when in tilemode
-                spacing = 0;
-            }
-
-            var offset = FontChip.SpriteWidth + spacing;
-
-            for (var j = 0; j < total; j++)
-            {
-                // Clear the background when in tile mode
-                if (clearTiles) Tile(nextX / 8, nextY / 8, -1);
-
-                // Manually increase the sprite counter if drawing to one of the sprite layers
-                if (drawMode == DrawMode.Sprite || drawMode == DrawMode.SpriteAbove ||
-                    drawMode == DrawMode.SpriteBelow)
-                {
-                    // If the sprite counter has been met, exit out of the draw call
-                    if (SpriteChip.MaxSpriteCount > 0 && CurrentSprites >= SpriteChip.MaxSpriteCount) return;
-
-                    Player.SpriteCounter++;
-                }
-
-                DrawSprite(spriteIDs[j], nextX, nextY, false, false, drawMode, colorOffset, FontChip);
-
-                // }
-
-                nextX += offset;
-            }
         }
 
         /// <summary>
@@ -354,8 +250,8 @@ namespace PixelVision8.Player
                 TilemapChip,
                 x,
                 y,
-                columns == 0 ? DisplayChip.Width : columns * SpriteChip.SpriteWidth,
-                rows == 0 ? DisplayChip.Height : rows * SpriteChip.SpriteHeight,
+                columns == 0 ? DisplayChip.Width : columns * SpriteChip.DefaultSpriteSize,
+                rows == 0 ? DisplayChip.Height : rows * SpriteChip.DefaultSpriteSize,
                 (byte) DrawMode.Tile,
                 false,
                 false,

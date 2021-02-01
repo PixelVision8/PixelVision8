@@ -318,7 +318,7 @@ namespace PixelVision8.Runner
                         //                        var colorVector = tmpColor.ToVector4();
                         //                        
 
-                        var color = alpha < 1 ? ColorChip.HexToColor(maskHex) : new Color(r, g, b);
+                        var color = alpha < 1 ? DisplayTarget.HexToColor(maskHex) : new Color(r, g, b);
 
                         //                        var color = new ColorData(r, g, b);
                         _colors[y * Width + index1] = color;

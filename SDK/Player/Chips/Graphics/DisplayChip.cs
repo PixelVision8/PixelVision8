@@ -29,15 +29,13 @@ namespace PixelVision8.Player
     public class DisplayChip : AbstractChip, IDraw
     {
         private readonly PixelData _display = new PixelData();
-        private readonly List<DrawRequestPixelData> _drawCalls = new List<DrawRequestPixelData>();
+        private readonly List<DrawRequest> _drawCalls = new List<DrawRequest>();
         private int _clearColor = -1;
-
         private bool _clearFlag = true;
         private int[] _clearPixels = new int[0];
-        private DrawRequestPixelData _drawRequest;
+        private DrawRequest _drawRequest;
         private int _drawRequestCounter = -1;
-        private DrawRequestPixelData[] _drawRequestPool = new DrawRequestPixelData[0];
-
+        private DrawRequest[] _drawRequestPool = new DrawRequest[0];
 
         // This should be part of the chip's data
         private int _maxDrawRequests = 1024;
@@ -91,9 +89,20 @@ namespace PixelVision8.Player
             {
                 _drawRequest = _drawCalls[i];
 
-                Utilities.MergePixels(_drawRequest.PixelData, _drawRequest.SampleRect.X, _drawRequest.SampleRect.Y,
-                    _drawRequest.SampleRect.Width, _drawRequest.SampleRect.Height, _display, _drawRequest.X,
-                    _drawRequest.Y, _drawRequest.FlipH, _drawRequest.FlipV, _drawRequest.ColorOffset);
+                Utilities.MergePixels(
+                    _drawRequest.PixelData, 
+                    _drawRequest.SampleRect.X, 
+                    _drawRequest.SampleRect.Y,
+                    _drawRequest.SampleRect.Width, 
+                    _drawRequest.SampleRect.Height, 
+                    _display, 
+                    _drawRequest.X,
+                    _drawRequest.Y, 
+                    _drawRequest.FlipH, 
+                    _drawRequest.FlipV, 
+                    _drawRequest.ColorOffset
+                );
+                
             }
 
             // Reset Draw Requests after they have been processed

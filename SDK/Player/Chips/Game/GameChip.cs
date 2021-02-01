@@ -22,6 +22,9 @@
 // This is a Test
 //
 // to see how much I can put in a comment
+
+using Microsoft.Xna.Framework;
+
 namespace PixelVision8.Player
 {
     
@@ -104,5 +107,104 @@ namespace PixelVision8.Player
         }
         
         #endregion
+        
+        /// <summary>
+        ///     The background color is used to fill the screen when clearing the display. You can use
+        ///     this method to read or update the background color at any point during the GameChip's
+        ///     draw phase. When calling BackgroundColor(), without an argument, it returns the current
+        ///     background color int. You can pass in an optional int to update the background color by
+        ///     calling BackgroundColor(0) where 0 is any valid ID in the ColorChip. Passing in a value
+        ///     such as -1, or one that is out of range, defaults the background color to magenta (#ff00ff)
+        ///     which is the engine's default transparent color.
+        /// </summary>
+        /// <param name="id">
+        ///     This argument is optional. Supply an int to update the existing background color value.
+        /// </param>
+        /// <returns>
+        ///     This method returns the current background color ID. If no color exists, it returns -1
+        ///     which is magenta (#FF00FF).
+        /// </returns>
+        public int BackgroundColor(int? id = null)
+        {
+            if (id.HasValue) ColorChip.BackgroundColor = id.Value;
+
+            return ColorChip.BackgroundColor;
+        }
+
+        /// <summary>
+        ///     The Color() method allows you to read and update color values in the ColorChip. This
+        ///     method has two modes which require a color ID to work. By calling the method with just
+        ///     an ID, like Color(0), it returns a hex string for the given color at the supplied color
+        ///     ID. By passing in a new hex string, like Color(0, "#FFFF00"), you can change the color
+        ///     with the given ID. While you can use this method to modify color values directly, you
+        ///     should avoid doing this at run time since the DisplayChip must parse and cache the new
+        ///     hex value. If you just want to change a color to an existing value, use the ReplaceColor()
+        ///     method.
+        /// </summary>
+        /// <param name="id">
+        ///     The ID of the color you want to access.
+        /// </param>
+        /// <param name="value">
+        ///     This argument is optional. It accepts a hex as a string and updates the supplied color ID's value.
+        /// </param>
+        /// <returns>
+        ///     This method returns a hex string for the supplied color ID. If the color has not been set
+        ///     or is out of range, it returns magenta (#FF00FF) which is the default transparent system color.
+        /// </returns>
+        public string Color(int id, string value = null)
+        {
+            if (value == null) return ColorChip.ReadColorAt(id);
+
+            ColorChip.UpdateColorAt(id, value);
+
+            return value;
+        }
+
+        /// <summary>
+        ///     The TotalColors() method simply returns the total number of colors in the ColorChip. By default,
+        ///     it returns only colors that have been set to value other than magenta (#FF00FF) which is the
+        ///     default transparent value used by the engine. By calling TotalColors(false), it returns the total
+        ///     available color slots in the ColorChip.
+        /// </summary>
+        /// <param name="ignoreEmpty">
+        ///     This is an optional value that defaults to true. When set to true, the ColorChip returns the total
+        ///     number of colors not set to magenta (#FF00FF). Set this value to false if you want to get all of
+        ///     the available color slots in the ColorChip regardless if they are empty or not.
+        /// </param>
+        /// <returns>
+        ///     This method returns the total number of colors in the color chip based on the ignoreEmpty argument's
+        ///     value.
+        /// </returns>
+        public int TotalColors(bool ignoreEmpty = false)
+        {
+            return ignoreEmpty ? ColorChip.TotalUsedColors : ColorChip.Total;
+        }
+
+        /// <summary>
+        ///     The ReplaceColor() method allows you to quickly change a color to an existing color without triggering
+        ///     the DisplayChip to parse and cache a new hex value. Consider this an alternative to the Color() method.
+        ///     It is useful for simulating palette swapping animation on sprites pointed to a fixed group of color IDs.
+        ///     Simply call the ReplaceColor() method and supply a target color ID position, then the new color ID it
+        ///     should point to. Since you are only changing the color's ID pointer, there is little to no performance
+        ///     penalty during the GameChip's draw phase.
+        /// </summary>
+        /// <param name="index">The ID of the color you want to change.</param>
+        /// <param name="id">The ID of the color you want to replace it with.</param>
+        public void ReplaceColor(int index, int id)
+        {
+            ColorChip.UpdateColorAt(index, ColorChip.ReadColorAt(id));
+        }
+        
+        /// <summary>
+        ///     The display's size defines the visible area where pixel data exists on the screen. Calculating this is
+        ///     important for knowing how to position sprites on the screen. The Display() method allows you to get
+        ///     the resolution of the display at run time. By default, this will return the visble screen area based on
+        ///     the overscan value set on the display chip. To calculate the exact overscan in pixels, you must subtract
+        ///     the full size from the visible size. Simply supply false as an argument to get the full display dimensions.
+        /// </summary>
+        public Point Display()
+        {
+            return new Point(DisplayChip.Width, DisplayChip.Height);
+        }
     }
 }

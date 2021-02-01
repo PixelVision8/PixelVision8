@@ -204,7 +204,7 @@ namespace PixelVision8.Runner.Exporters
             CurrentStep++;
         }
 
-        private void SerializeControllerChip(IControllerChip controllerChip)
+        private void SerializeControllerChip(ControllerChip controllerChip)
         {
             // if (controllerChip.export == false) return;
 
@@ -390,15 +390,15 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.GetLineBreak(sb, 1);
 
             // Mode
-            sb.Append("\"spriteWidth\":");
-            sb.Append(spriteChip.SpriteWidth);
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
-
-            sb.Append("\"spriteHeight\":");
-            sb.Append(spriteChip.SpriteHeight);
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
+            // sb.Append("\"spriteWidth\":");
+            // sb.Append(spriteChip.SpriteWidth);
+            // sb.Append(",");
+            // JsonUtil.GetLineBreak(sb, 1);
+            //
+            // sb.Append("\"spriteHeight\":");
+            // sb.Append(spriteChip.SpriteHeight);
+            // sb.Append(",");
+            // JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"pages\":");
             sb.Append(spriteChip.Pages);

@@ -69,7 +69,7 @@ namespace PixelVision8.Runner
             //            var oldColor = colors[colorIndex];
 
             // TODO this could be cleaner
-            colors[colorIndex] = ColorChip.HexToColor(maskHex);
+            colors[colorIndex] = DisplayTarget.HexToColor(maskHex);
         }
 
         internal void AddAlphaToColors(IList<byte> alphas)

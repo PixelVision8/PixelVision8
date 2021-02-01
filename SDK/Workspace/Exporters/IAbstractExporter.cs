@@ -23,7 +23,7 @@ using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Exporters
 {
-    public interface IAbstractExporter : IAbstractParser
+    public interface IExporter : IParser
     {
         Dictionary<string, object> Response { get; }
         byte[] Bytes { get; }

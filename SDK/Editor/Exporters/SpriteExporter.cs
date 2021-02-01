@@ -24,7 +24,7 @@ using System.Collections.Generic;
 
 namespace PixelVision8.Runner.Exporters
 {
-    public class SpriteExporter : IAbstractExporter
+    public class SpriteExporter : IExporter
     {
         protected Color[] colors;
         protected PixelVision engine;

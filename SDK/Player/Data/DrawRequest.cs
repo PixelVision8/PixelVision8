@@ -32,7 +32,7 @@ namespace PixelVision8.Player
         PixelData PixelData { get; }
     }
 
-    public struct DrawRequestPixelData
+    public struct DrawRequest
     {
         private PixelData _tmpPixelData;
 

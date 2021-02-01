@@ -297,7 +297,7 @@ namespace PixelVision8.Runner
 
     public partial class Loader
     {
-        [FileParser("tilemap.json")]
+        [FileParser("tilemap.json", FileFlags.Tilemap)]
         public void ParseTilemapJson(string file, PixelVision engine)
         {
             AddParser(new TilemapJsonParser(file, _fileLoadHelper, engine));

@@ -67,4 +67,5 @@ namespace PixelVision8.Player
             return currentKeyboardState.IsKeyDown(tmpKey) && !previousKeyboardState.IsKeyDown(tmpKey);
         }
     }
+
 }

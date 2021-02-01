@@ -165,7 +165,7 @@ namespace PixelVision8.Player
                 }
             }
 
-            _tilemapCache.Resize(this.Columns * SpriteChip.SpriteWidth, this.Rows * SpriteChip.SpriteHeight);
+            _tilemapCache.Resize(this.Columns * 8, this.Rows * 8);
 
             Invalidate();
         }
@@ -195,7 +195,7 @@ namespace PixelVision8.Player
             // Get a reference to the Sprite Chip
             SpriteChip = Player.SpriteChip;
 
-            _tileSize = new Rectangle(0, 0, SpriteChip.SpriteWidth, SpriteChip.SpriteHeight);
+            _tileSize = new Rectangle(0, 0, 8, 8);
 
             _tmpPixelData = new PixelData(_tileSize.Width, _tileSize.Height);
 

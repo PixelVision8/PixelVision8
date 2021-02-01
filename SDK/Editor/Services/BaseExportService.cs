@@ -29,7 +29,7 @@ namespace PixelVision8.Runner
 {
     public abstract class BaseExportService : AbstractService
     {
-        protected readonly List<IAbstractExporter> exporters = new List<IAbstractExporter>();
+        protected readonly List<IExporter> exporters = new List<IExporter>();
         protected int currentParserID;
         protected int currentStep;
         protected bool exporting;
@@ -57,7 +57,7 @@ namespace PixelVision8.Runner
             return message;
         }
 
-        public virtual void AddExporter(IAbstractExporter exporter)
+        public virtual void AddExporter(IExporter exporter)
         {
             // Calculate the steps for the exporter
             exporter.CalculateSteps();

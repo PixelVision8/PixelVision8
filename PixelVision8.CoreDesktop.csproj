@@ -83,12 +83,13 @@
     <Compile Include="SDK\Player\Chips\Audio\SoundChip.cs" />
     <Compile Include="SDK\Player\Chips\Game\Buttons.cs" />
     <Compile Include="SDK\Player\Chips\Game\DrawMode.cs" />
-    <Compile Include="SDK\Player\Chips\Game\GameChip.Color.cs" />
     <Compile Include="SDK\Player\Chips\Game\GameChip.Debug.cs" />
-    <Compile Include="SDK\Player\Chips\Game\GameChip.Display.cs" />
+    <Compile Include="SDK\Player\Chips\Game\GameChip.Draw.cs" />
     <Compile Include="SDK\Player\Chips\Game\GameChip.Input.cs" />
+    <Compile Include="SDK\Player\Chips\Game\GameChip.Keyboard.cs" />
     <Compile Include="SDK\Player\Chips\Game\GameChip.Math.cs" />
     <Compile Include="SDK\Player\Chips\Game\GameChip.Misc.cs" />
+    <Compile Include="SDK\Player\Chips\Game\GameChip.Mouse.cs" />
     <Compile Include="SDK\Player\Chips\Game\GameChip.Sound.cs" />
     <Compile Include="SDK\Player\Chips\Game\GameChip.Sprite.cs" />
     <Compile Include="SDK\Player\Chips\Game\GameChip.Text.cs" />
@@ -112,7 +113,6 @@
     <Compile Include="SDK\Player\Chips\Input\ControllerChip.cs" />
     <Compile Include="SDK\Player\Chips\Input\ControllerChip.Keyboard.cs" />
     <Compile Include="SDK\Player\Chips\Input\ControllerChip.Mouse.cs" />
-    <Compile Include="SDK\Player\Chips\Input\IControllerChip.cs" />
     <Compile Include="SDK\Player\Chips\Input\InputMap.cs" />
     <Compile Include="SDK\Player\Chips\IUpdate.cs" />
     <Compile Include="SDK\Player\Data\AbstractData.cs" />
@@ -130,7 +130,7 @@
     <Compile Include="SDK\Player\Data\Canvas\Canvas_Sprite.cs" />
     <Compile Include="SDK\Player\Data\Canvas\Canvas_Stroke.cs" />
     <Compile Include="SDK\Player\Data\Canvas\Canvas_Text.cs" />
-    <Compile Include="SDK\Player\Data\DrawRequestPixelData.cs" />
+    <Compile Include="SDK\Player\Data\DrawRequest.cs" />
     <Compile Include="SDK\Player\Data\PixelData.cs" />
     <Compile Include="SDK\Player\Data\SongData.cs" />
     <Compile Include="SDK\Player\Data\SoundData.cs" />
@@ -174,7 +174,7 @@
     <Compile Include="SDK\Runner\Parsers\ColorParser.cs" />
     <Compile Include="SDK\Runner\Parsers\FontParser.cs" />
     <Compile Include="SDK\Runner\Parsers\GifReader.cs" />
-    <Compile Include="SDK\Runner\Parsers\IAbstractParser.cs" />
+    <Compile Include="SDK\Runner\Parsers\IParser.cs" />
     <Compile Include="SDK\Runner\Parsers\IFileLoader.cs" />
     <Compile Include="SDK\Runner\Parsers\IImageParser.cs" />
     <Compile Include="SDK\Runner\Parsers\ImageParser.cs" />

@@ -312,7 +312,7 @@ namespace PixelVision8.Runner
             // convert colors
             var totalColors = hexColors.Length;
             var colors = new Color[totalColors];
-            for (var i = 0; i < totalColors; i++) colors[i] = ColorChip.HexToColor(hexColors[i]);
+            for (var i = 0; i < totalColors; i++) colors[i] = DisplayTarget.HexToColor(hexColors[i]);
 
             var pixelData = imageData.GetPixels();
 

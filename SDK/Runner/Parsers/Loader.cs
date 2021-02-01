@@ -35,16 +35,18 @@ namespace PixelVision8.Runner
         {
             public string FileType;
             public MethodInfo MethodInfo;
-
-            public FileParser(string fileType)
+            public FileFlags FileFlag;
+            
+            public FileParser(string fileType, FileFlags fileFlag)
             {
                 FileType = fileType;
+                FileFlag = fileFlag;
             }
         }
 
         public int currentStep;
 
-        protected readonly List<IAbstractParser> parsers = new List<IAbstractParser>();
+        protected readonly List<IParser> parsers = new List<IParser>();
         protected int currentParserID;
         public bool Completed => currentParserID >= TotalParsers;
         public float Percent => TotalSteps == 0 ? 1f : currentStep / (float) TotalSteps;
@@ -81,6 +83,7 @@ namespace PixelVision8.Runner
 
                 ParserMapping.Add(attributes);
             }
+
         }
 
         public void Reset()
@@ -91,7 +94,7 @@ namespace PixelVision8.Runner
             currentStep = 0;
         }
 
-        public void AddParser(IAbstractParser parser)
+        public void AddParser(IParser parser)
         {
             parser.CalculateSteps();
 
@@ -132,14 +135,17 @@ namespace PixelVision8.Runner
         {
             Reset();
 
-            Array.Sort(files);
+            var values = Enum.GetValues(typeof(FileFlags)).Cast<FileFlags>().ToArray();
 
-            for (int i = 0; i < ParserMapping.Count; i++)
+            for (var i = 0; i < values.Length; i++)
             {
-                var parserInfo = ParserMapping[i];
-
+                var parserInfo = ParserMapping.FirstOrDefault(p => p.FileFlag == values[i]);
+                
+                if(parserInfo == null)
+                    continue;
+                
                 var filesToParse = files.Where(f => f.EndsWith(parserInfo.FileType)).ToArray();
-
+                
                 if (filesToParse.Length > 0)
                 {
                     for (int j = 0; j < filesToParse.Length; j++)

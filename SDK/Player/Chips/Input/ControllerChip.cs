@@ -40,7 +40,7 @@ namespace PixelVision8.Player
         }
     }
 
-    public partial class ControllerChip : AbstractChip, IControllerChip
+    public partial class ControllerChip : AbstractChip, IUpdate
     {
         private static readonly int repsPerSec = 20;
 
@@ -114,8 +114,6 @@ namespace PixelVision8.Player
                 }
             }
         }
-
-        public new bool export { get; set; }
 
         public bool ButtonReleased(Buttons button, int controllerID = 0)
         {
@@ -213,6 +211,6 @@ namespace PixelVision8.Player
 {
     public partial class PixelVision
     {
-        public IControllerChip ControllerChip { get; set; }
+        public ControllerChip ControllerChip { get; set; }
     }
 }

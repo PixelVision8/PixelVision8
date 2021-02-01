@@ -62,7 +62,7 @@ namespace PixelVision8.Runner
 
     public partial class Loader
     {
-        [FileParser(".wav")]
+        [FileParser(".wav", FileFlags.Sounds)]
         public void ParseWave(string[] file, PixelVision engine)
         {
             AddParser(new WavParser(file, _fileLoadHelper, engine));

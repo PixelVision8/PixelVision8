@@ -154,7 +154,7 @@ namespace PixelVision8.Player
                     tmpIDs[i] = tmpSpritesData[i].Id;
                 }
 
-                var width = (int)Math.Ceiling((double)spriteCollection.Bounds.Width / SpriteChip.SpriteWidth);
+                var width = (int)Math.Ceiling((double)spriteCollection.Bounds.Width / SpriteChip.DefaultSpriteSize);
 
                 var height = (int)Math.Ceiling((double)total / width);
 

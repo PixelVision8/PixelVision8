@@ -34,7 +34,7 @@ namespace PixelVision8.Runner.Exporters
         {
             this.paletteColors = paletteColors;
             this.pixelData = pixelData;
-            maskColor = ColorChip.HexToColor(maskHex);
+            maskColor = DisplayTarget.HexToColor(maskHex);
         }
 
         public override void CalculateSteps()

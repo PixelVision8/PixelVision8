@@ -48,17 +48,17 @@ namespace PixelVision8.Runner.Exporters
 
             var total = 96;
 
-            var maxCol = width / spriteChip.SpriteWidth;
+            var maxCol = width / SpriteChip.DefaultSpriteSize;
 
-            var tmpPixelData = new int[spriteChip.SpriteWidth * spriteChip.SpriteHeight];
+            var tmpPixelData = new int[SpriteChip.DefaultSpriteSize * SpriteChip.DefaultSpriteSize];
 
             for (var i = 0; i < total; i++)
             {
                 var pos = Utilities.CalculatePosition(i, maxCol);
 
                 spriteChip.ReadSpriteAt(i, ref tmpPixelData);
-                Utilities.SetPixels(tmpPixelData, pos.X * spriteChip.SpriteWidth, pos.Y * spriteChip.SpriteHeight, spriteChip.SpriteWidth,
-                    spriteChip.SpriteHeight, textureData);
+                Utilities.SetPixels(tmpPixelData, pos.X * SpriteChip.DefaultSpriteSize, pos.Y * SpriteChip.DefaultSpriteSize, SpriteChip.DefaultSpriteSize,
+                    SpriteChip.DefaultSpriteSize, textureData);
             }
 
             // var convertedColors = Utilities.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);

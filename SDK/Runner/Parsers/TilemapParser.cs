@@ -71,7 +71,7 @@ namespace PixelVision8.Runner
 
             if (tmpColumns < ImageData.Columns || tmpRows < ImageData.Rows)
             {
-                ImageData.Resize(tmpColumns * tmpColumns * spriteChip.SpriteWidth, tmpRows * spriteChip.SpriteHeight);
+                ImageData.Resize(tmpColumns * tmpColumns * SpriteChip.DefaultSpriteSize, tmpRows * SpriteChip.DefaultSpriteSize);
             }
 
             StepCompleted();
@@ -98,7 +98,7 @@ namespace PixelVision8.Runner
 
     public partial class Loader
     {
-        [FileParser("tilemap.png")]
+        [FileParser("tilemap.png", FileFlags.Tilemap)]
         public void ParseTilemapImage(string file, PixelVision engine)
         {
             AddParser(new TilemapParser(file, _imageParser, engine.ColorChip, engine.SpriteChip, engine.TilemapChip,

@@ -49,7 +49,7 @@ namespace PixelVision8.Runner
 
     public partial class Loader
     {
-        [FileParser("info.json")]
+        [FileParser("info.json", FileFlags.Meta)]
         public void ParseMetaData(string file, PixelVision engine)
         {
             AddParser(new MetaDataParser(file, _fileLoadHelper, engine));

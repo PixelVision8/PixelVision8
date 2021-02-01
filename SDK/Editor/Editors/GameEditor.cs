@@ -1982,12 +1982,12 @@ namespace PixelVision8.Runner.Editors
         {
             //            var scale = 1;
 
-            var blockSizeX = scaleX * spriteChip.SpriteWidth;
-            var blockSizeY = scaleY * spriteChip.SpriteHeight;
+            var blockSizeX = scaleX * SpriteChip.DefaultSpriteSize;
+            var blockSizeY = scaleY * SpriteChip.DefaultSpriteSize;
 
             var pixelData = new int[blockSizeX * blockSizeY];
 
-            var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / spriteChip.SpriteWidth);
+            var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / SpriteChip.DefaultSpriteSize);
 
             Utilities.CopyPixels(spriteChip.PixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY, ref pixelData);
             // spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
@@ -2007,10 +2007,10 @@ namespace PixelVision8.Runner.Editors
         /// <param name="flipV"></param>
         public void WriteSpriteData(int id, int[] pixelData, int scaleX = 1, int scaleY = 1)
         {
-            var blockSizeX = scaleX * spriteChip.SpriteWidth;
-            var blockSizeY = scaleY * spriteChip.SpriteHeight;
+            var blockSizeX = scaleX * SpriteChip.DefaultSpriteSize;
+            var blockSizeY = scaleY * SpriteChip.DefaultSpriteSize;
 
-            var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / spriteChip.SpriteWidth);
+            var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / SpriteChip.DefaultSpriteSize);
 
             //            var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
 

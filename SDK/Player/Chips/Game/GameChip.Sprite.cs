@@ -22,13 +22,51 @@ using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Player
 {
+    
     public partial class GameChip
     {
         // TODO this shares tmpSpriteData with GameChip_Display
 
         protected SpriteChip SpriteChip => Player.SpriteChip;
+        protected int SpriteWidth = SpriteChip.DefaultSpriteSize;
+        protected int SpriteHeight = SpriteChip.DefaultSpriteSize;
+        
         private int[] _tmpSpriteData = new int[64];
 
+        private Point[] _spriteSizes = new[]
+        {
+            new Point(1, 1),
+            new Point(1, 2),
+            new Point(2, 1),
+            new Point(2, 2),
+            new Point(4, 4),
+        };
+        
+        public void ChangeSizeMode(SpriteSizes mode)
+        {
+            SpriteWidth = _spriteSizes[(int) mode].X * SpriteChip.DefaultSpriteSize;
+            SpriteHeight = _spriteSizes[(int) mode].Y * SpriteChip.DefaultSpriteSize;
+        }
+
+        /// <summary>
+        ///     Returns the size of the sprite as a Vector where X and Y represent the width and height.
+        /// </summary>
+        /// <param name="width">
+        ///     Optional argument to change the width of the sprite. Currently not enabled.
+        /// </param>
+        /// <param name="height">
+        ///     Optional argument to change the height of the sprite. Currently not enabled.
+        /// </param>
+        /// <returns>
+        ///     Returns a vector where the X and Y for the sprite's width and height.
+        /// </returns>
+        public Point SpriteSize()
+        {
+            
+            // We return a new point because we don't want any external code to modify the internal sprite size.
+            return new Point(SpriteWidth, SpriteHeight);
+        }
+        
         /// <summary>
         ///     Pixel Vision 8 sprites have limits around how many colors they can display at once which is called
         ///     the Colors Per Sprite or CPS. The ColorsPerSprite() method returns this value from the SpriteChip.
@@ -62,22 +100,7 @@ namespace PixelVision8.Player
 
         #region Sprite
 
-        /// <summary>
-        ///     Returns the size of the sprite as a Vector where X and Y represent the width and height.
-        /// </summary>
-        /// <param name="width">
-        ///     Optional argument to change the width of the sprite. Currently not enabled.
-        /// </param>
-        /// <param name="height">
-        ///     Optional argument to change the height of the sprite. Currently not enabled.
-        /// </param>
-        /// <returns>
-        ///     Returns a vector where the X and Y for the sprite's width and height.
-        /// </returns>
-        public Point SpriteSize()
-        {
-            return new Point(SpriteChip.SpriteWidth, SpriteChip.SpriteHeight);
-        }
+        
 
         /// <summary>
         ///     This allows you to return the pixel data of a sprite or overwrite it with new data. Sprite

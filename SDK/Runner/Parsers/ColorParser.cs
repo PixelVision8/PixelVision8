@@ -41,7 +41,7 @@ namespace PixelVision8.Runner
             SourcePath = sourceFile;
             this.colorChip = colorChip;
             // unique = colorChip.unique;
-            magenta = ColorChip.HexToColor(colorChip.MaskColor);
+            magenta = DisplayTarget.HexToColor(colorChip.MaskColor);
         }
 
         public override void CalculateSteps()
@@ -96,7 +96,7 @@ namespace PixelVision8.Runner
 
     public partial class Loader
     {
-        [FileParser("colors.png")]
+        [FileParser("colors.png", FileFlags.Colors)]
         public void ParseColors(string file, PixelVision engine)
         {
             AddParser(new ColorParser(file, _imageParser, engine.ColorChip));

@@ -69,8 +69,8 @@ namespace PixelVision8.Runner
 
             if (spriteChip != null)
             {
-                spriteWidth = this.spriteChip.SpriteWidth;
-                spriteHeight = this.spriteChip.SpriteHeight;
+                spriteWidth = SpriteChip.DefaultSpriteSize;
+                spriteHeight = SpriteChip.DefaultSpriteSize;
             }
         }
 
@@ -257,7 +257,7 @@ namespace PixelVision8.Runner
 
     public partial class Loader
     {
-        [FileParser("sprites.png")]
+        [FileParser("sprites.png", FileFlags.Sprites)]
         public void ParseSprites(string file, PixelVision engine)
         {
             AddParser(new SpriteImageParser(file, _imageParser, engine.ColorChip, engine.SpriteChip));
