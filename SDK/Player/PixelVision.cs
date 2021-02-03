@@ -116,9 +116,9 @@ namespace PixelVision8.Player
                     chipInstance = Activator.CreateInstance(type) as AbstractChip;
                     ActivateChip(id, chipInstance, activeOnCreate);
                 }
-                catch (Exception)
+                catch (Exception error)
                 {
-                    Console.WriteLine("Chip '" + id + "' could not be created.");
+                    Console.WriteLine("Chip '" + id + "' could not be created. " + error.Message);
                 }
 
                 return chipInstance;

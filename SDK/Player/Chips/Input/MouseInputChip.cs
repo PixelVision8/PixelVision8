@@ -1,14 +1,32 @@
-using Microsoft.Xna.Framework.Input;
+
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace PixelVision8.Player
 {
-    
-    public partial class ControllerChip
+    public class MouseInputChip : AbstractChip, IUpdate
     {
         public MouseState currentMouseState;
         public MouseState previousMouseState;
+        
+        protected override void Configure()
+        {
+            Player.MouseInputChip = this;
 
+            // Setup Mouse
+            currentMouseState = Mouse.GetState();
+            previousMouseState = currentMouseState;
+
+        }
+        
+        public void Update(int timeDelta)
+        {
+            
+            // Save the one and only (if available) mousestate 
+            previousMouseState = currentMouseState;
+            currentMouseState = Mouse.GetState();
+        }
+        
         private bool IsPressed(MouseState state, int input)
         {
             switch (input)
@@ -70,8 +88,13 @@ namespace PixelVision8.Player
             var invertedMatrix = Matrix.Invert(scaleMatrix);
             return Vector2.Transform(new Vector2(vx, vy), invertedMatrix).ToPoint();
         }
-
+        
         #endregion
-    }
 
+    }
+    
+    public partial class PixelVision
+    {
+        public MouseInputChip MouseInputChip { get; set; }
+    }
 }

@@ -80,7 +80,7 @@ namespace PixelVision8.Runner
         public bool backKeyEnabled = true;
         public BiosService bios;
         protected WorkspacePath biosPath = WorkspacePath.Root.AppendDirectory("App").AppendFile("bios.json");
-        protected ControllerChip controllerChip;
+        protected KeyboardInputChip keyboardInputChip;
         protected string documentsPath;
 
         protected bool ejectingDisk;
@@ -344,10 +344,23 @@ namespace PixelVision8.Runner
 
                 TmpEngine.SetMetadata(keyMap.Key, keyValue.ToString());
             }
+            
+            // TODO This was disabled so remapping the controllers will not work
 
+
+            var controller1 = TmpEngine.ControllerChip.GetController(0);
+
+            controller1.KeyboardMap[Buttons.Up] = (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1UpKey.ToString()));
+            controller1.KeyboardMap[Buttons.Right] = (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1RightKey.ToString()));
+            controller1.KeyboardMap[Buttons.Down] = (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1DownKey.ToString()));
+            controller1.KeyboardMap[Buttons.Left] = (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1LeftKey.ToString()));
+
+            
             var player1KeyboardMap = new Dictionary<Buttons, Keys>
             {
                 {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1UpKey.ToString()))},
+                
+                
                 {
                     Buttons.Left,
                     (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1LeftKey.ToString()))
@@ -371,7 +384,7 @@ namespace PixelVision8.Runner
                 {Buttons.A, (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1AKey.ToString()))},
                 {Buttons.B, (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player1BKey.ToString()))}
             };
-
+            
             var player2KeyboardMap = new Dictionary<Buttons, Keys>
             {
                 {Buttons.Up, (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player2UpKey.ToString()))},
@@ -398,8 +411,8 @@ namespace PixelVision8.Runner
                 {Buttons.A, (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player2AKey.ToString()))},
                 {Buttons.B, (Keys) Enum.Parse(typeof(Keys), TmpEngine.GetMetadata(InputMap.Player2BKey.ToString()))}
             };
-
-            TmpEngine.ControllerChip.RegisterKeyInput(player1KeyboardMap, player2KeyboardMap);
+            
+            // TmpEngine.ControllerChip.RegisterKeyInput(player1KeyboardMap, player2KeyboardMap);
         }
 
         public override void ActivateEngine(PixelVision engine)
@@ -411,7 +424,7 @@ namespace PixelVision8.Runner
                     new Func<bool>(AwaitDebuggerAttach);
 
             // Save a reference to the controller chip so we can listen for special key events
-            controllerChip = engine.ControllerChip;
+            keyboardInputChip = engine.KeyboardInputChip;
 
             // Activate the game
             BaseActivateEngine(engine);
@@ -442,7 +455,7 @@ namespace PixelVision8.Runner
         protected void OnTextInput(object sender, TextInputEventArgs e)
         {
             // Pass this to the input chip
-            controllerChip.SetInputText(e.Character, e.Key);
+            keyboardInputChip.SetInputText(e.Character, e.Key);
         }
 
         public virtual void BaseActivateEngine(PixelVision engine)
@@ -480,7 +493,7 @@ namespace PixelVision8.Runner
             IsMouseVisible = false;
             // Update the mouse to use the new monitor scale
             var scale = ((ShaderDisplayTarget) DisplayTarget).Scale;
-            ActiveEngine.ControllerChip.MouseScale(scale.X, scale.Y);
+            ActiveEngine.MouseInputChip.MouseScale(scale.X, scale.Y);
         }
 
         protected void ConfigureRunner()
@@ -769,31 +782,31 @@ namespace PixelVision8.Runner
                 UpdateTitle();
             }
 
-            if (controllerChip.GetKeyDown(Keys.LeftControl) ||
-                controllerChip.GetKeyDown(Keys.LeftControl))
+            if (keyboardInputChip.GetKeyDown(Keys.LeftControl) ||
+                keyboardInputChip.GetKeyDown(Keys.LeftControl))
             {
-                if (controllerChip.GetKeyUp(actionKeys[ActionKeys.ScreenShotKey]))
+                if (keyboardInputChip.GetKeyUp(actionKeys[ActionKeys.ScreenShotKey]))
                 {
                     // Only take a screenshot when one isn't being saved
                     if (!screenShotActive)
                         screenShotActive = screenshotService.TakeScreenshot(ActiveEngine);
                 }
-                else if (controllerChip.GetKeyUp(actionKeys[ActionKeys.RecordKey]))
+                else if (keyboardInputChip.GetKeyUp(actionKeys[ActionKeys.RecordKey]))
                 {
                     if (Recording)
                         StopRecording();
                     else
                         StartRecording();
                 }
-                else if (controllerChip.GetKeyUp(actionKeys[ActionKeys.RestartKey]))
+                else if (keyboardInputChip.GetKeyUp(actionKeys[ActionKeys.RestartKey]))
                 {
-                    if (controllerChip.GetKeyDown(Keys.LeftShift) || controllerChip.GetKeyDown(Keys.RightShift))
+                    if (keyboardInputChip.GetKeyDown(Keys.LeftShift) || keyboardInputChip.GetKeyDown(Keys.RightShift))
                         AutoLoadDefaultGame();
                     else
                         ResetGame();
                 }
             }
-            else if (controllerChip.GetKeyUp(Keys.Escape) && backKeyEnabled)
+            else if (keyboardInputChip.GetKeyUp(Keys.Escape) && backKeyEnabled)
             {
                 Back();
             }
@@ -1156,6 +1169,8 @@ namespace PixelVision8.Runner
             typeof(TilemapChip).FullName,
             typeof(FontChip).FullName,
             typeof(ControllerChip).FullName,
+            typeof(MouseInputChip).FullName,
+            typeof(KeyboardInputChip).FullName,
             typeof(DisplayChip).FullName,
             typeof(SfxrSoundChip).FullName,
             typeof(MusicChip).FullName
@@ -1216,7 +1231,7 @@ namespace PixelVision8.Runner
                     bios.ReadBiosData(key, defaultValue));
                 luaScript.Globals["WriteBiosData"] = new Action<string, string>(bios.UpdateBiosData);
 
-                luaScript.Globals["ControllerConnected"] = new Func<int, bool>(TmpEngine.ControllerChip.IsConnected);
+                luaScript.Globals["ControllerConnected"] = new Func<int, bool>(IsControllerConnected);
 
 
                 // Get a reference to the Lua game
@@ -1987,6 +2002,8 @@ namespace PixelVision8.Runner
 
         private delegate void QuitCurrentToolDelagator(Dictionary<string, string> metaData, string tool = null);
 
+        public bool IsControllerConnected(int id) => TmpEngine.ControllerChip.GetController(MathHelper.Clamp(id, 0, 1)).IsConnected();
+        
         #region Runner settings
 
         /// <summary>

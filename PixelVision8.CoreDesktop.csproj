@@ -109,11 +109,10 @@
     <Compile Include="SDK\Player\Chips\Graphics\SpriteChip.cs" />
     <Compile Include="SDK\Player\Chips\Graphics\TilemapChip.cs" />
     <Compile Include="SDK\Player\Chips\IDraw.cs" />
-    <Compile Include="SDK\Player\Chips\Input\ControllerChip.Controller.cs" />
     <Compile Include="SDK\Player\Chips\Input\ControllerChip.cs" />
-    <Compile Include="SDK\Player\Chips\Input\ControllerChip.Keyboard.cs" />
-    <Compile Include="SDK\Player\Chips\Input\ControllerChip.Mouse.cs" />
     <Compile Include="SDK\Player\Chips\Input\InputMap.cs" />
+    <Compile Include="SDK\Player\Chips\Input\KeyboardInputChip.cs" />
+    <Compile Include="SDK\Player\Chips\Input\MouseInputChip.cs" />
     <Compile Include="SDK\Player\Chips\IUpdate.cs" />
     <Compile Include="SDK\Player\Data\AbstractData.cs" />
     <Compile Include="SDK\Player\Data\Canvas\Canvas.cs" />

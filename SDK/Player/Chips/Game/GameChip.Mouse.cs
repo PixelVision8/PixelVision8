@@ -25,6 +25,9 @@ namespace PixelVision8.Player
 {
     public partial class GameChip
     {
+        
+        protected MouseInputChip MouseInputChip => Player.MouseInputChip;
+        
         /// <summary>
         ///     Pixel Vision 8 supports mouse input. You can get the current state of the mouse's left (0) and
         ///     right (1) buttons by calling MouseButton(). In addition to supplying a button ID, you also need
@@ -45,8 +48,8 @@ namespace PixelVision8.Player
         public bool MouseButton(int button, InputState state = InputState.Down)
         {
             return state == InputState.Released
-                ? ControllerChip.GetMouseButtonUp(button)
-                : ControllerChip.GetMouseButtonDown(button);
+                ? MouseInputChip.GetMouseButtonUp(button)
+                : MouseInputChip.GetMouseButtonDown(button);
         }
 
         /// <summary>
@@ -60,7 +63,7 @@ namespace PixelVision8.Player
         /// 
         public Point MouseWheel()
         {
-            return ControllerChip.ReadMouseWheel();
+            return MouseInputChip.ReadMouseWheel();
         }
         
         /// <summary>
@@ -73,7 +76,7 @@ namespace PixelVision8.Player
         /// </returns>
         public Point MousePosition()
         {
-            var pos = ControllerChip.ReadMousePosition();
+            var pos = MouseInputChip.ReadMousePosition();
 
             // var bounds = DisplayChip.VisibleBounds;
 

@@ -22,7 +22,6 @@
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
@@ -30,9 +29,9 @@ namespace PixelVision8.Player
     public class Controller
     {
         public GamePadState CurrentState;
-        public Dictionary<Buttons, Keys> KeyboardMap;
-
         public GamePadState PreviousState;
+        
+        public Dictionary<Buttons, Keys> KeyboardMap;
 
         public bool IsConnected()
         {
@@ -40,87 +39,96 @@ namespace PixelVision8.Player
         }
     }
 
-    public partial class ControllerChip : AbstractChip, IUpdate
+    public class ControllerChip : AbstractChip, IUpdate
     {
-        private static readonly int repsPerSec = 20;
+        private KeyboardState _currentKeyboardState;
+        private KeyboardState _previousKeyboardState;
+        
+        private readonly Controller[] _controllers = new Controller[]
+        {
+            
+            new Controller()
+            {
+                
+                KeyboardMap = new Dictionary<Buttons, Keys>()
+                {
+                    {Buttons.Up, Keys.Up},
+                    {Buttons.Down, Keys.Down},
+                    {Buttons.Right, Keys.Right},
+                    {Buttons.Left, Keys.Left},
+                    {Buttons.Select, Keys.A},
+                    {Buttons.Start, Keys.S},
+                    {Buttons.A, Keys.X},
+                    {Buttons.B, Keys.C},
+                }
+                
+            },
+            
+            new Controller()
+            {
+            
+                KeyboardMap = new Dictionary<Buttons, Keys>()
+                {
+                    {Buttons.Up, Keys.I},
+                    {Buttons.Down, Keys.K},
+                    {Buttons.Right, Keys.J},
+                    {Buttons.Left, Keys.L},
+                    {Buttons.Select, Keys.OemSemicolon},
+                    {Buttons.Start, Keys.OemComma},
+                    {Buttons.A, Keys.Enter},
+                    {Buttons.B, Keys.RightShift},
+                }
+                
+            }
+            
+        };
 
-        private readonly float timeUntilRepInMillis = 500f;
+        public void RegisterControllers()
+        {
+            var state = GamePad.GetState(0, GamePadDeadZone.IndependentAxes);
+            if (state.IsConnected)
+            {
+                var player1 = GetController(0);
+                player1.CurrentState = state;
+            }
 
-        private DateTime downSince = DateTime.Now;
-        private DateTime lastRep = DateTime.Now;
-
-
-        private Keys? repChar;
-
-
+            state = GamePad.GetState(1, GamePadDeadZone.IndependentAxes);
+            if (state.IsConnected)
+            {
+                var player2 = GetController(1);
+                player2.CurrentState = state;
+            }
+        }
+        
         public void Update(int timeDelta)
         {
-            // Build the input string
-            // inputStringBuilder.Clear();
-
             // Save the one and only (if available) keyboardstate 
-            previousKeyboardState = currentKeyboardState;
-            currentKeyboardState = Keyboard.GetState();
+            _previousKeyboardState = _currentKeyboardState;
+            _currentKeyboardState = Keyboard.GetState();
 
             // Save the one and only (if available) mousestate 
-            previousMouseState = currentMouseState;
-            currentMouseState = Mouse.GetState();
+            // previousMouseState = currentMouseState;
+            // currentMouseState = Mouse.GetState();
 
-            for (var i = players.Count - 1; i >= 0; i--)
+            for (var i = _controllers.Length - 1; i >= 0; i--)
             {
-                var player = players[i];
+                var player = _controllers[i];
                 if (player.IsConnected())
                 {
                     // Update gamepad state
                     player.PreviousState = player.CurrentState;
-                    player.CurrentState = GamePad.GetState(i, gamePadDeadZone);
-                    //                    players[i] = player;//TODO: needed?
+                    player.CurrentState = GamePad.GetState(i, GamePadDeadZone.IndependentAxes);
                 }
             }
-
-            foreach (var key in currentKeyboardState.GetPressedKeys())
-            {
-                var pv8Key = (Keys) (int) key;
-
-                if (JustPressed(pv8Key))
-                {
-                    downSince = DateTime.Now;
-                    repChar = pv8Key;
-
-                    // BuildInputString(pv8Key);
-                }
-                else if (GetKeyUp(pv8Key))
-                {
-                    if (repChar == pv8Key) repChar = null;
-                }
-
-                var tmpKey = (Keys) (int) key;
-
-                if (repChar != null && repChar == pv8Key && currentKeyboardState.IsKeyDown(tmpKey))
-                {
-                    var now = DateTime.Now;
-                    var downFor = now.Subtract(downSince);
-                    if (downFor.CompareTo(TimeSpan.FromMilliseconds(timeUntilRepInMillis)) > 0)
-                    {
-                        // Should repeat since the wait time is over now.
-                        var repeatSince = now.Subtract(lastRep);
-                        if (repeatSince.CompareTo(TimeSpan.FromMilliseconds(1000f / repsPerSec)) > 0)
-                        {
-                            // Time for another key-stroke.
-                            lastRep = now;
-                            // BuildInputString(pv8Key);
-                        }
-                    }
-                }
-            }
+            
         }
 
-        public bool ButtonReleased(Buttons button, int controllerID = 0)
+        public bool ButtonReleased(Buttons button, int controllerId = 0)
         {
             // TODO need to test this out
             var value = false;
 
-            var player = getPlayer(controllerID);
+            var player = GetController(controllerId);
 
             if (player != null)
             {
@@ -129,18 +137,18 @@ namespace PixelVision8.Player
                 var tmpKey = (Keys) (int) key;
 
                 // Test the keyboard or the controller
-                value = !currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey) ||
+                value = !_currentKeyboardState.IsKeyDown(tmpKey) && _previousKeyboardState.IsKeyDown(tmpKey) ||
                         !IsPressed(player.CurrentState, button) && IsPressed(player.PreviousState, button);
             }
 
             return value;
         }
 
-        public bool ButtonDown(Buttons button, int controllerID = 0)
+        public bool ButtonDown(Buttons button, int controllerId = 0)
         {
             var value = false;
 
-            var player = getPlayer(controllerID);
+            var player = GetController(controllerId);
 
             if (player != null)
             {
@@ -149,7 +157,7 @@ namespace PixelVision8.Player
                 var tmpKey = (Keys) (int) key;
 
                 // Test the keyboard or the controller
-                value = currentKeyboardState.IsKeyDown(tmpKey) && previousKeyboardState.IsKeyDown(tmpKey) ||
+                value = _currentKeyboardState.IsKeyDown(tmpKey) && _previousKeyboardState.IsKeyDown(tmpKey) ||
                         IsPressed(player.CurrentState, button) && IsPressed(player.PreviousState, button);
             }
 
@@ -161,25 +169,18 @@ namespace PixelVision8.Player
         {
             Player.ControllerChip = this;
 
-            players = new List<Controller>
-            {
-                new Controller(),
-                new Controller()
-            };
-
-
-            // Setup Mouse
-            currentMouseState = Mouse.GetState();
-            previousMouseState = currentMouseState;
-
             RegisterControllers();
+            
+            _currentKeyboardState = Keyboard.GetState();
+            _previousKeyboardState = _currentKeyboardState;
+            
         }
 
-        private Controller getPlayer(int index)
+        public Controller GetController(int index)
         {
-            return index >= 0 && index < players.Count ? players[index] : null;
+            return index >= 0 && index < _controllers.Length ? _controllers[index] : null;
         }
-
+        
         private bool IsPressed(GamePadState state, Buttons input)
         {
             switch (input)
@@ -205,10 +206,7 @@ namespace PixelVision8.Player
             return false;
         }
     }
-}
-
-namespace PixelVision8.Player
-{
+    
     public partial class PixelVision
     {
         public ControllerChip ControllerChip { get; set; }
