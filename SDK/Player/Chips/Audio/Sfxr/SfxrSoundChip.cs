@@ -48,12 +48,12 @@ namespace PixelVision8.Player
         ///     create new sound instances that implement the ISoundData interface.
         /// </summary>
         /// <returns></returns>
-        public override IChannel CreateSoundChannel()
+        public override SoundChannel CreateSoundChannel()
         {
             return new SfxrSynthChannel();
         }
 
-        public override SoundData CreateSoundData(string name)
+        public override SoundData CreateSoundData(string name, byte[] bytes = null)
         {
             return new SfxSoundData(name);
         }
@@ -71,6 +71,12 @@ namespace PixelVision8.Player
         /// </returns>
         public SfxSoundData ReadSound(int id)
         {
+            if (id < 0 || id >= TotalSounds)
+                return null;
+
+            if (Sounds[id] == null)
+                Sounds[id] = CreateSoundData("Untitled" + id.ToString("D2"));
+            
             return Sounds[id] as SfxSoundData;
         }
 

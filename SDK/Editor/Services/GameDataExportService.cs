@@ -110,7 +110,7 @@ namespace PixelVision8.Runner
             StartExport(useSteps);
         }
 
-        public void ExportSong(string path, MusicChip musicChip, ISoundChip soundChip, int[] patterns)
+        public void ExportSong(string path, MusicChip musicChip, SoundChip soundChip, int[] patterns)
         {
             Restart();
 

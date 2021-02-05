@@ -26,36 +26,30 @@ using PixelVision8.Player.Audio;
 
 namespace PixelVision8.Player
 {
-    public partial interface IPlayerChips
-    {
-        /// <summary>
-        ///     The Sound Chip stores and manages playback of sound effects in the
-        ///     game engine. This property offers direct access to it.
-        /// </summary>
-        ISoundChip SoundChip { get; set; }
-    }
-
+    
     /// <summary>
     ///     The <see cref="SfxrSoundChip" /> is responsible for playing back sound
     ///     effects in the engine. It's powered by SFxr.
     /// </summary>
-    public class SoundChip : AbstractChip, ISoundChip
+    public class SoundChip : AbstractChip
     {
-        protected readonly Dictionary<string, byte[]> soundBank = new Dictionary<string, byte[]>();
-        protected IChannel[] Channels = new IChannel[0];
+        // private readonly Dictionary<string, byte[]> _soundBank = new Dictionary<string, byte[]>();
+        protected SoundChannel[] Channels = new SoundChannel[0];
         protected SoundData[] Sounds;
 
         /// <summary>
         ///     The total number of <see cref="Channels" /> available for playing
         ///     back sounds.
         /// </summary>
-        public int totalChannels
+        public int TotalChannels
         {
             get => Channels.Length;
             set
             {
                 value = MathHelper.Clamp(value, 1, 5);
                 Array.Resize(ref Channels, value);
+                
+                // There should never be an empty sound channel so loop through them and make sure one is created
                 for (var i = 0; i < value; i++)
                     if (Channels[i] == null)
                         Channels[i] = CreateSoundChannel();
@@ -75,15 +69,15 @@ namespace PixelVision8.Player
 
                 Array.Resize(ref Sounds, value);
 
-                for (var i = 0; i < value; i++)
-                    if (Sounds[i] == null)
-                        Sounds[i] = CreateSoundData("Untitled" + i.ToString("D2"));
+                // for (var i = 0; i < value; i++)
+                //     if (Sounds[i] == null)
+                //         Sounds[i] = CreateSoundData("Untitled" + i.ToString("D2"));
             }
         }
 
-        public virtual SoundData CreateSoundData(string name)
+        public virtual SoundData CreateSoundData(string name, byte[] bytes = null)
         {
-            return new SoundData(name);
+            return new SoundData(name, bytes);
         }
 
         /// <summary>
@@ -91,7 +85,7 @@ namespace PixelVision8.Player
         ///     create new sound instances that implement the ISoundData interface.
         /// </summary>
         /// <returns></returns>
-        public virtual IChannel CreateSoundChannel()
+        public virtual SoundChannel CreateSoundChannel()
         {
             return new SoundChannel();
         }
@@ -105,7 +99,7 @@ namespace PixelVision8.Player
         {
             Player.SoundChip = this;
             TotalSounds = 16;
-            totalChannels = 5;
+            TotalChannels = 5;
         }
 
         /// <summary>
@@ -121,35 +115,49 @@ namespace PixelVision8.Player
         /// <param name="channel">
         ///     The channel the sound should play back on.
         /// </param>
-        public void PlaySound(int index, int channelID = 0, float? frequency = null)
+        /// <param name="channelId"></param>
+        public void PlaySound(int index, int channelId = 0, float? frequency = null)
         {
-            if (index > Sounds.Length) return;
+            if (index < 0 || index >= Sounds.Length || Sounds[index] == null) 
+                return;
+            
+            channelId = MathHelper.Clamp(channelId, 0, TotalChannels - 1);
 
-            channelID = MathHelper.Clamp(channelID, 0, totalChannels - 1);
+            Channels[channelId].Play(Sounds[index], frequency);
 
-            var channel = Channels[channelID];
-
-            channel?.Stop();
-
-            //            channel = sounds[index];
-
-            channel.Play(Sounds[index], frequency);
         }
 
-        public void PlaySound(string name, int channelID = 0, float? frequency = null)
+        protected int FindNextEmptySound()
+        {
+
+            for (int i = 0; i < TotalSounds; i++)
+            {
+                if (Sounds[i] == null)
+                    return i;
+            }
+
+            return -1;
+
+        }
+
+        protected int FindSoundId(string name)
         {
             for (int i = 0; i < TotalSounds; i++)
             {
-                if (Sounds[i].name == name)
+                if (Sounds[i] != null && Sounds[i].name == name)
                 {
-                    PlaySound(i, channelID, frequency);
+                    return i;
                 }
             }
+
+            return - 1;
         }
 
-        public bool IsChannelPlaying(int channelID)
+        public void PlaySound(string name, int channelID = 0, float? frequency = null) => PlaySound(FindSoundId(name), channelID, frequency);
+        
+        public bool IsChannelPlaying(int channelId)
         {
-            return Channels[channelID] != null && Channels[channelID].Playing;
+            return Channels[channelId] != null && Channels[channelId].Playing;
         }
 
         public void StopSound(int channel)
@@ -157,6 +165,21 @@ namespace PixelVision8.Player
             if (Channels[channel] != null) Channels[channel].Stop();
         }
 
+        public void AddSample(string name, byte[] bytes)
+        {
+
+            var id = FindSoundId(name);
+
+            if (id == -1)
+                id = FindNextEmptySound();
+            
+            if(id == -1)
+                return;
+
+            Sounds[id] = CreateSoundData(name, bytes);
+            
+        }
+        
         public override void Shutdown()
         {
             foreach (var channel in Channels)
@@ -166,26 +189,6 @@ namespace PixelVision8.Player
             base.Shutdown();
         }
 
-        public void AddSample(string name, byte[] bytes)
-        {
-            // Add the wav sample to the sound bank
-            if (soundBank.ContainsKey(name))
-                soundBank[name] = bytes;
-            else
-                soundBank.Add(name, bytes);
-        }
-
-        /// <summary>
-        ///     Goes through the sounds and the sound bank and adds the sample byte data
-        /// </summary>
-        public void RefreshSamples()
-        {
-            for (var i = 0; i < TotalSounds; i++)
-            {
-                var name = Sounds[i].name;
-                Sounds[i].bytes = soundBank.ContainsKey(name) ? soundBank[name] : null;
-            }
-        }
     }
 }
 
@@ -193,6 +196,6 @@ namespace PixelVision8.Player
 {
     public partial class PixelVision
     {
-        public ISoundChip SoundChip { get; set; }
+        public SoundChip SoundChip { get; set; }
     }
 }

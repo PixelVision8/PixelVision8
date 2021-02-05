@@ -150,8 +150,10 @@ namespace PixelVision8.Runner
                 // Get all of the wav files
                 var wavFiles = files.Where(x => x.EndsWith(".wav")).ToArray();
 
-                if (wavFiles.Length > 0)
-                    _loader.AddParser(new WavParser(wavFiles, _fileLoadHelper, targetEngine));
+                for (int i = 0; i < wavFiles.Length; i++)
+                {
+                    _loader.AddParser(new WavParser(wavFiles[i], _fileLoadHelper, targetEngine.SoundChip));
+                }
             }
 
             // Step 10 (optional). Look for meta data and override the game

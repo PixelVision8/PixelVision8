@@ -18,25 +18,18 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework.Audio;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Audio;
 using System.IO;
 
 namespace PixelVision8.Player.Audio
 {
-    public class SoundChannel : IChannel
+    public class SoundChannel
     {
-        private readonly Dictionary<string, SoundEffectInstance> wavCache =
-            new Dictionary<string, SoundEffectInstance>();
-
-        //        private float amp; // Used in other calculations
+        
         private SoundEffectInstance _soundInstance;
-
-        /// <summary>
-        ///     Sound parameters
-        /// </summary>
-        // public SfxrParams parameters { get; } = new SfxrParams();
-
+        protected readonly Dictionary<string, SoundEffectInstance> SoundInstanceCache = new Dictionary<string, SoundEffectInstance>();
+        
         public bool Playing
         {
             get
@@ -57,34 +50,32 @@ namespace PixelVision8.Player.Audio
             // Stop any playing sound
             Stop();
 
-            // Clear the last sound instance
-            _soundInstance = null;
-
-            // See if this is a wav
-            if (soundData.bytes != null)
+            if (SoundInstanceCache.ContainsKey(soundData.name))
+                _soundInstance = SoundInstanceCache[soundData.name];
+            else
             {
-                // if (waveLock == WaveType.Sample || waveLock == WaveType.None)
-                using (var stream = new MemoryStream(soundData.bytes))
+                // Clear the last sound instance
+                _soundInstance = null;
+
+                // See if this is a wav
+                if (soundData.bytes != null)
                 {
-                    var soundEffect = SoundEffect.FromStream(stream);
+                    // if (waveLock == WaveType.Sample || waveLock == WaveType.None)
+                    using (var stream = new MemoryStream(soundData.bytes))
+                    {
+                        var soundEffect = SoundEffect.FromStream(stream);
 
-                    // var param = new SfxrParams();
-                    // param.SetSettingsString(soundData.param);
+                        _soundInstance = soundEffect.CreateInstance();
 
-                    // TODO This should be cached?
-                    _soundInstance = soundEffect.CreateInstance();
-                    // TODO need to set the volume?
-                    // _soundInstance.Volume = param.masterVolume;
+                        // TODO need to make sure this is correct and we can use the frequency to manipulate the pitch
+                        if (frequency.HasValue)
+                            _soundInstance.Pitch = frequency.Value;
+
+                    }
                 }
-            }
-            // else
-            // {
-            //     parameters.SetSettingsString(soundData.param);
-            //
-            //     if (frequency.HasValue) parameters.startFrequency = frequency.Value;
-            //
-            //     if (parameters.invalid) CacheSound();
-            // }
+
+                SoundInstanceCache[soundData.name] = _soundInstance;
+            }    
 
             // Only play if there is a sound instance
             _soundInstance?.Play();
@@ -98,11 +89,5 @@ namespace PixelVision8.Player.Audio
             _soundInstance?.Stop();
         }
 
-        public void Dispose()
-        {
-            _soundInstance?.Dispose();
-
-            foreach (var wav in wavCache) wav.Value?.Dispose();
-        }
     }
 }

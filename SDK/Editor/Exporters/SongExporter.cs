@@ -45,7 +45,7 @@ namespace PixelVision8.Runner.Exporters
 
         //        int songdataCurrentPos = 0;
 
-        public SongExporter(string path, MusicChip musicChip, ISoundChip soundChip, int[] patterns) : base(path)
+        public SongExporter(string path, MusicChip musicChip, SoundChip soundChip, int[] patterns) : base(path)
         {
             // Rebuild the path by adding the active song name and wav extension
             fileName = path;

@@ -1486,9 +1486,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int TotalChannels(int? total = null)
         {
-            if (total.HasValue) soundChip.totalChannels = total.Value;
+            if (total.HasValue) soundChip.TotalChannels = total.Value;
 
-            return soundChip.totalChannels;
+            return soundChip.TotalChannels;
         }
 
         /// <summary>
@@ -1569,7 +1569,7 @@ namespace PixelVision8.Runner.Editors
             {
                 soundChip.UpdateLabel(index, value);
 
-                soundChip.RefreshSamples();
+                // soundChip.RefreshSamples();
             }
 
             return soundChip.ReadLabel(index);

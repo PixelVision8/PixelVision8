@@ -415,7 +415,7 @@ namespace PixelVision8.Runner
             // Flag chip to export
             //soundChip.export = true;
 
-            if (data.ContainsKey("totalChannels")) soundChip.totalChannels = (int) (long) data["totalChannels"];
+            if (data.ContainsKey("totalChannels")) soundChip.TotalChannels = (int) (long) data["totalChannels"];
 
             if (data.ContainsKey("totalSounds")) soundChip.TotalSounds = (int) (long) data["totalSounds"];
 
@@ -425,7 +425,7 @@ namespace PixelVision8.Runner
 
                 for (var i = 0; i < types.Count; i++)
                     // Make sure we are only changing channels that exist
-                    if (i < soundChip.totalChannels)
+                    if (i < soundChip.TotalChannels)
                         soundChip.ChannelType(i, (WaveType) Convert.ToInt32(types[i]));
             }
 

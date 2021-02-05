@@ -35,8 +35,8 @@ namespace PixelVision8.Player.Audio
 
         //        private int _overtones; // Minimum frequency before stopping
 
-        private readonly Dictionary<string, SoundEffectInstance> wavCache =
-            new Dictionary<string, SoundEffectInstance>();
+        // private readonly Dictionary<string, SoundEffectInstance> wavCache =
+        //     new Dictionary<string, SoundEffectInstance>();
 
         private float _changeAmount; // Amount to change the note by
 
@@ -171,6 +171,8 @@ namespace PixelVision8.Player.Audio
                 // Stop any playing sound
                 Stop();
 
+                // TODO this logic isn't working correctly. Need to double check the cache
+                
                 // Clear the last sound instance
                 _soundInstance = null;
 
@@ -411,13 +413,12 @@ namespace PixelVision8.Player.Audio
         {
             Stop();
 
-
             var paramKey = parameters.GetSettingsString();
 
 
-            if (wavCache.ContainsKey(paramKey))
+            if (SoundInstanceCache.ContainsKey(paramKey))
             {
-                _soundInstance = wavCache[paramKey];
+                _soundInstance = SoundInstanceCache[paramKey];
             }
             else
             {
@@ -442,7 +443,7 @@ namespace PixelVision8.Player.Audio
                     _soundInstance = soundEffect.CreateInstance();
                 }
 
-                wavCache[paramKey] = _soundInstance;
+                SoundInstanceCache[paramKey] = _soundInstance;
             }
         }
 
@@ -881,21 +882,5 @@ namespace PixelVision8.Player.Audio
             return false;
         }
 
-        /// <summary>
-        ///     Returns a random value: 0 <= n < 1
-        /// </summary>
-        /// <returns></returns>
-        //        private float parameters.GetRandom()
-        //        {
-        //            // We can't use Unity's Random.value because it cannot be called from a separate thread
-        //            // (We get the error "get_value can only be called from the main thread" when this is called to generate the sound data)
-        //            return (float) (_random.NextDouble() % 1);
-        //        }
-        public void Dispose()
-        {
-            _soundInstance?.Dispose();
-
-            foreach (var wav in wavCache) wav.Value?.Dispose();
-        }
     }
 }

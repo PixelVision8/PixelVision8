@@ -24,10 +24,10 @@ using System.Collections.Generic;
 
 namespace PixelVision8.Player
 {
-    public partial interface IPlayerChips
-    {
-        public MusicChip MusicChip { get; set; }
-    }
+    // public partial interface IPlayerChips
+    // {
+    //     public MusicChip MusicChip { get; set; }
+    // }
 
     /// <summary>
     ///     The MusicChpip is a sequencer for playing back ISoundData. It
@@ -172,7 +172,7 @@ namespace PixelVision8.Player
             }
         }
 
-        public int totalTracks => SoundChip.totalChannels;
+        public int totalTracks => SoundChip.TotalChannels;
         //        {
         //            get => _totalTracks;
         //            set
@@ -200,7 +200,7 @@ namespace PixelVision8.Player
             }
         }
 
-        protected ISoundChip SoundChip => Player.SoundChip;
+        protected SoundChip SoundChip => Player.SoundChip;
 
         /// <summary>
         ///     Updates the sequencer if it is in playback mode. This will

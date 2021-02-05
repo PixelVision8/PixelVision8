@@ -72,8 +72,6 @@
     <Compile Include="SDK\Editor\Services\ScreenshotService.cs" />
     <Compile Include="SDK\Editor\Services\WorkspaceServicePlus.cs" />
     <Compile Include="SDK\Player\Chips\AbstractChip.cs" />
-    <Compile Include="SDK\Player\Chips\Audio\IChannel.cs" />
-    <Compile Include="SDK\Player\Chips\Audio\ISoundChip.cs" />
     <Compile Include="SDK\Player\Chips\Audio\MusicChip.cs" />
     <Compile Include="SDK\Player\Chips\Audio\Sfxr\SfxrParams.cs" />
     <Compile Include="SDK\Player\Chips\Audio\Sfxr\SfxrSoundChip.cs" />

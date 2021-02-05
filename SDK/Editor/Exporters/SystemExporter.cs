@@ -336,7 +336,7 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"totalChannels\":");
-            sb.Append(soundChip.totalChannels);
+            sb.Append(soundChip.TotalChannels);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
@@ -347,7 +347,7 @@ namespace PixelVision8.Runner.Exporters
 
             sb.Append("\"channelTypes\":[");
 
-            var total = soundChip.totalChannels;
+            var total = soundChip.TotalChannels;
 
             for (var i = 0; i < total; i++)
             {
