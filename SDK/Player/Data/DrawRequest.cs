@@ -59,13 +59,9 @@ namespace PixelVision8.Player
 
         public void SampleFrom(int[] pixels, int srcX, int srcY, int blockWidth, int blockHeight)
         {
-            if (_tmpPixelData == null)
-                _tmpPixelData = new PixelData(blockWidth, blockHeight);
+            _tmpPixelData ??= new PixelData(blockWidth, blockHeight);
 
-            if (_tmpPixelData.Width != blockWidth || _tmpPixelData.Height != blockHeight)
-                _tmpPixelData.Resize(blockWidth, blockHeight);
-
-            _tmpPixelData.Pixels = pixels;
+            _tmpPixelData.SetPixels(pixels, blockWidth, blockHeight);
 
             PixelData = _tmpPixelData;
             SampleRect.X = srcX;

@@ -76,7 +76,7 @@ namespace PixelVision8.Player
 
             if (_clearFlag)
             {
-                Array.Copy(_clearPixels, Pixels, _display.TotalPixels);
+                Array.Copy(_clearPixels, Pixels, _display.Total);
 
                 // Reset the clear flag for the next frame
                 _clearFlag = false;
@@ -116,7 +116,7 @@ namespace PixelVision8.Player
                 _clearColor = color;
 
                 // Loop through all of the display pixels
-                for (var i = _display.TotalPixels - 1; i > -1; i--)
+                for (var i = _display.Total - 1; i > -1; i--)
                     // We always set the clear color to -1 since the display target will automatically convert this into the background color
                     _clearPixels[i] = _clearColor;
             }
@@ -182,7 +182,7 @@ namespace PixelVision8.Player
             _display.Resize(width, height);
 
             // Make sure the clear pixel array is the same size
-            Array.Resize(ref _clearPixels, _display.TotalPixels);
+            Array.Resize(ref _clearPixels, _display.Total);
 
             // Force the screen to clear after a resolution reset   
             _clearFlag = true;

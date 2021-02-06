@@ -18,8 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Player;
-
 namespace PixelVision8.Player
 {
     public sealed partial class Canvas
@@ -40,13 +38,7 @@ namespace PixelVision8.Player
             // Flatten the canvas
             Draw();
 
-            if (_tmpPixelData.Width != blockWidth || _tmpPixelData.Height != blockHeight)
-                _tmpPixelData.Resize(blockWidth, blockHeight);
-
-            _tmpPixelData.Pixels = pixels;
-
-            // _tmpRect.Width = blockWidth;
-            // _tmpRect.Height = blockHeight;
+            _tmpPixelData.SetPixels(pixels, blockWidth, blockHeight);
 
             Utilities.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, defaultLayer, x, y, flipH, flipV,
                 colorOffset, ignoreTransparent);

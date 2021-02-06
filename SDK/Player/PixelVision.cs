@@ -35,7 +35,7 @@ namespace PixelVision8.Player
         protected List<IUpdate> UpdateChips = new List<IUpdate>();
         public int SpriteCounter { get; set; }
 
-        public PixelVision(string[] chips = null, string name = "Engine")
+        public PixelVision(string[] chips = null, string name = "Player")
         {
             Name = name;
 
@@ -103,6 +103,7 @@ namespace PixelVision8.Player
 
         public AbstractChip GetChip(string id, bool activeOnCreate = true)
         {
+            
             if (HasChip(id)) return Chips[id];
 
             var type = Type.GetType(id);

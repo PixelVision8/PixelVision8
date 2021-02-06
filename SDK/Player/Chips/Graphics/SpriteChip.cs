@@ -60,26 +60,6 @@ namespace PixelVision8.Player
         /// </summary>
         public int MaxSpriteCount { get; set; }
 
-        // /// <summary>
-        // ///     The global <see cref="SpriteWidth" /> of sprites in the engine. By default
-        // ///     this is set to 8.
-        // /// </summary>
-        // public int SpriteWidth
-        // {
-        //     get => _spriteMemory.SpriteWidth;
-        //     set => _spriteMemory.SpriteWidth = value;
-        // }
-        //
-        // /// <summary>
-        // ///     The global <see cref="SpriteWidth" /> of sprites in the engine. By default
-        // ///     this is set to 8.
-        // /// </summary>
-        // public int SpriteHeight
-        // {
-        //     get => _spriteMemory.SpriteHeight;
-        //     set => _spriteMemory.SpriteHeight = value;
-        // }
-
         public PixelData PixelData => _spriteMemory.PixelData;
 
         /// <summary>
@@ -137,11 +117,6 @@ namespace PixelVision8.Player
         }
 
         public int Columns => _spriteMemory.Columns;
-
-
-        
-            
-        
         
         /// <summary>
         ///     Tests to see if sprite <paramref name="data" /> is empty. This method

@@ -24,10 +24,13 @@ namespace PixelVision8.Player
 {
     public class PixelData
     {
-        public int[] Pixels = new int[0];
-        public int Width { get; private set; }
-        public int Height { get; private set; }
-        public int TotalPixels { get; private set; }
+        private int[] _pixels;
+
+        public int[] Pixels => _pixels;
+        
+        public int Width { get; private set; } = 1;
+        public int Height { get; private set; } = 1;
+        public int Total { get; private set; } = 1;
 
         public PixelData(int width = 1, int height = 1)
         {
@@ -36,18 +39,37 @@ namespace PixelVision8.Player
 
         public void Resize(int width, int height)
         {
-            Width = width;
-            Height = height;
-            TotalPixels = Width * Height;
-            Array.Resize(ref Pixels, TotalPixels);
+            if(width > 0)
+                Width = width;
+            
+            if(height > 0)
+                Height = height;
+            
+            Total = Width * Height;
+
+            _pixels = Pixels;
+            Array.Resize(ref _pixels, Total);
         }
 
         public int this[in int i]
         {
-            get => Pixels[i];
-            set => Pixels[i] = value;
+            get => _pixels[i];
+            set => _pixels[i] = value;
         }
 
-        public override string ToString() => "{Width:" + Width + " Height:" + Height + " Total Pixels:" + TotalPixels + "}";
+        public void SetPixels(int[] pixels, int width, int height)
+        {
+
+            if (width * height != pixels.Length)
+                return;
+            
+            _pixels = pixels;
+            Width = width;
+            Height = height;
+            Total = pixels.Length;
+            
+        }
+
+        public override string ToString() => "{Width:" + Width + " Height:" + Height + " Total Pixels:" + Total + "}";
     }
 }

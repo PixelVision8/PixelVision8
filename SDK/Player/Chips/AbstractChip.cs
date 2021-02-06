@@ -18,8 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-
 namespace PixelVision8.Player
 {
     /// <summary>
@@ -74,7 +72,6 @@ namespace PixelVision8.Player
         /// </summary>
         protected virtual void Configure()
         {
-            throw new NotImplementedException();
         }
 
         public virtual void Init()

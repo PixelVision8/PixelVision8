@@ -27,7 +27,7 @@ namespace PixelVision8.Player
             // Calculate the index
             var index = x + y * Width;
 
-            if (index >= defaultLayer.TotalPixels) return -1;
+            if (index >= defaultLayer.Total) return -1;
 
             // Flatten the canvas
             Draw();

@@ -117,7 +117,7 @@ namespace PixelVision8.Player
 
         public static void Clear(PixelData pixelData, int colorRef = -1)
         {
-            for (var i = pixelData.TotalPixels - 1; i > -1; i--) pixelData[i] = colorRef;
+            for (var i = pixelData.Total - 1; i > -1; i--) pixelData[i] = colorRef;
         }
 
         public static void MergePixels(PixelData src, int sampleX, int sampleY, int sampleWidth, int sampleHeight,
@@ -198,6 +198,7 @@ namespace PixelVision8.Player
 
         public static void Resize(PixelData pixelData, int blockWidth, int blockHeight)
         {
+            
             pixelData.Resize(MathHelper.Clamp(blockWidth, 1, 2048), MathHelper.Clamp(blockHeight, 1, 2048));
 
             Clear(pixelData);

@@ -45,7 +45,8 @@ namespace PixelVision8.Player
         private int _i;
         private TileData _tile;
         private Point _pos;
-
+        private int[] pixels;
+        
         /// <summary>
         ///     The total tiles in the chip.
         /// </summary>
@@ -195,16 +196,19 @@ namespace PixelVision8.Player
             // Get a reference to the Sprite Chip
             SpriteChip = Player.SpriteChip;
 
-            _tileSize = new Rectangle(0, 0, 8, 8);
+            _tileSize = new Rectangle(0, 0, SpriteChip.DefaultSpriteSize, SpriteChip.DefaultSpriteSize);
 
             _tmpPixelData = new PixelData(_tileSize.Width, _tileSize.Height);
-
+            
+            pixels = new int[SpriteChip.DefaultSpriteSize * SpriteChip.DefaultSpriteSize];
+            
             // Resize to default nes resolution
             Resize(32, 30);
         }
 
         private void RebuildCache()
         {
+            
             // Loop through all of the tiles in the tilemap
             for (_i = 0; _i < Total; _i++)
             {
@@ -214,16 +218,15 @@ namespace PixelVision8.Player
                 {
                     // Get the sprite id
                     _pos = Utilities.CalculatePosition(_i, Columns);
+                    
+                    SpriteChip.ReadSpriteAt(_tile.SpriteId, ref pixels);
 
-                    SpriteChip.ReadSpriteAt(_tile.SpriteId, ref _tmpPixelData.Pixels);
-
-                    if (_tile.FlipH || _tile.FlipV)
-                        Utilities.FlipPixelData(ref _tmpPixelData.Pixels, _tileSize.Width, _tileSize.Height, _tile.FlipH,
-                            _tile.FlipH);
-
+                    _tmpPixelData.SetPixels(pixels, _tileSize.Width, _tileSize.Height);
+                    
                     // Draw the pixel data into the cachedTilemap
                     Utilities.MergePixels(_tmpPixelData, 0, 0, _tileSize.Width, _tileSize.Height, _tilemapCache,
-                        _pos.X * _tileSize.Width, _pos.Y * _tileSize.Height, false, false, _tile.ColorOffset, false);
+                        _pos.X * _tileSize.Width, _pos.Y * _tileSize.Height, _tile.FlipH,
+                        _tile.FlipH, _tile.ColorOffset, false);
                 }
             }
 

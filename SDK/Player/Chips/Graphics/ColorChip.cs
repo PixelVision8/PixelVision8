@@ -45,22 +45,22 @@ namespace PixelVision8.Player
 
         private string[] _colors =
         {
-            "#2d1b2e",
-            "#218a91",
-            "#3cc2fa",
-            "#9af6fd",
-            "#4a247c",
-            "#574b67",
-            "#937ac5",
-            "#8ae25d",
-            "#8e2b45",
-            "#f04156",
-            "#f272ce",
-            "#d3c0a8",
-            "#c5754a",
-            "#f2a759",
-            "#f7db53",
-            "#f9f4ea"
+            "#2D1B2E",
+            "#218A91",
+            "#3CC2FA",
+            "#9AF6FD",
+            "#4A247C",
+            "#574B67",
+            "#937AC5",
+            "#8AE25D",
+            "#8E2B45",
+            "#F04156",
+            "#F272CE",
+            "#D3C0A8",
+            "#C5754A",
+            "#F2A759",
+            "#F7DB53",
+            "#F9F4EA"
         };
 
         private bool _debugMode;
@@ -76,8 +76,12 @@ namespace PixelVision8.Player
             get => _bgColor;
             set
             {
+                if (_bgColor == value)
+                    return;
+                
                 // We make sure that the bg color is never set to a value out of the range of the color chip
                 _bgColor = value >= Total || value < -1 ? -1 : value;
+                
                 Invalidate();
             }
         }
@@ -123,6 +127,10 @@ namespace PixelVision8.Player
             get => _colors.Length;
             set
             {
+                
+                // Make sure the total is in range
+                if (value < 2) value = 2;
+                
                 var oldTotal = _colors.Length;
 
                 Array.Resize(ref _colors, value);
@@ -159,7 +167,7 @@ namespace PixelVision8.Player
 
         public string ReadColorAt(int index)
         {
-            return index < 0 || index > _colors.Length - 1 ? MaskColor : _colors[index];
+            return index < 0 || index >= _colors.Length ? MaskColor : _colors[index];
         }
 
         public void Clear(string color = null)
@@ -178,7 +186,7 @@ namespace PixelVision8.Player
             // Make sure that all colors are uppercase
             color = color.ToUpper();
 
-            if (ValidateHexColor(color))
+            if (ValidateHexColor(color) && _colors[index] != color)
             {
                 _colors[index] = color;
                 Invalidate();

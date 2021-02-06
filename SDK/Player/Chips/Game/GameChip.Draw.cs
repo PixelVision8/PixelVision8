@@ -86,10 +86,10 @@ namespace PixelVision8.Player
 
                 case DrawMode.TilemapCache:
 
-                    if (_tmpPixelData.Width != blockWidth || _tmpPixelData.Height != blockHeight)
-                        _tmpPixelData.Resize(blockWidth, blockHeight);
+                    // if (_tmpPixelData.Width != blockWidth || _tmpPixelData.Height != blockHeight)
+                    //     _tmpPixelData.Resize(blockWidth, blockHeight);
 
-                    _tmpPixelData.Pixels = pixelData;
+                    _tmpPixelData.SetPixels(pixelData, blockWidth, blockHeight);
 
                     // Copy pixel data directly into the tilemap chip's texture
                     Utilities.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, TilemapChip.PixelData, x, y,
