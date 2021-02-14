@@ -39,15 +39,12 @@ namespace PixelVision8.Player
 
         public void Resize(int width, int height)
         {
-            if(width > 0)
-                Width = width;
+            Width = Math.Max(width, 1);
             
-            if(height > 0)
-                Height = height;
-            
+            Height = Math.Max(height, 1);
+
             Total = Width * Height;
 
-            _pixels = Pixels;
             Array.Resize(ref _pixels, Total);
         }
 
@@ -57,10 +54,14 @@ namespace PixelVision8.Player
             set => _pixels[i] = value;
         }
 
-        public void SetPixels(int[] pixels, int width, int height)
+        public void SetPixels(int[] pixels, int? width = null, int? height = null)
         {
 
-            if (width * height != pixels.Length)
+            // Create a new width and height by reading the new dimensions and making sure they are greater than 0
+            var newWidth = Math.Max(width ?? Width , 1);
+            var newHeight = Math.Max(height ?? Height, 1);
+            
+            if (newWidth * newHeight != pixels.Length)
                 return;
             
             Total = pixels.Length;
@@ -70,11 +71,11 @@ namespace PixelVision8.Player
                 
             Array.Copy(pixels, _pixels, Total);
              
-            Width = width;
-            Height = height;
+            Width = newWidth;
+            Height = newHeight;
             
         }
-
+        
         public override string ToString() => "{Width:" + Width + " Height:" + Height + " Total Pixels:" + Total + "}";
     }
 }

@@ -19,7 +19,6 @@
 //
 
 using System;
-using System.Diagnostics;
 using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Player
@@ -46,23 +45,26 @@ namespace PixelVision8.Player
             // Create a new temporary array to copy the pixel data into
             var tmpPixels = new int[blockWidth * blockHeight];
 
-            CopyPixels(pixelData, x, y, blockWidth, blockHeight, ref tmpPixels);
-
+            // Copy each entire line at once.
+            for (var i = blockHeight - 1; i > -1; --i)
+            {
+                Array.Copy(
+                    pixelData.Pixels,
+                    x + (y + i) * pixelData.Width,
+                    tmpPixels,
+                    i * blockWidth,
+                    blockWidth
+                );
+            }
+            
             return tmpPixels;
         }
 
-        public static void SetPixels(int[] srcPixels, PixelData destPixelData)
-        {
-            if (srcPixels.Length != destPixelData.Total)
-                return;
-            
-            destPixelData.SetPixels(srcPixels, destPixelData.Width, destPixelData.Height);
-        }
+        // public static void SetPixels(int[] srcPixels, PixelData destPixelData) => destPixelData.SetPixels(srcPixels, destPixelData.Width, destPixelData.Height);
 
         public static void SetPixels(int[] srcPixels, int x, int y, int blockWidth, int blockHeight,
             PixelData destPixelData)
         {
-            
 
             for (var i = blockHeight - 1; i > -1; i--)
             {
@@ -76,41 +78,6 @@ namespace PixelVision8.Player
             }
         }
         
-        /// <summary>
-        ///     A fast copy method that takes a selection of ints from a PixelData sources and copies them
-        ///     in-line to a supplied destination array. The destPixels array will be resized to accomidate the
-        ///     pixels about to be copied into it.
-        /// </summary>
-        /// <param name="srcPixelData"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="sampleWidth"></param>
-        /// <param name="sampleHeight"></param>
-        /// <param name="destPixels"></param>
-        public static void CopyPixels(PixelData srcPixelData, int x, int y, int sampleWidth, int sampleHeight,
-            ref int[] destPixels)
-        {
-            // ValidateBounds(ref sampleWidth, ref sampleHeight, ref x, ref y, srcPixelData.Width, srcPixelData.Height);
-
-            if (sampleWidth < 1 || sampleHeight < 1)
-                return;
-            
-            if(destPixels.Length != (sampleWidth * sampleHeight))
-                Array.Resize(ref destPixels, sampleWidth * sampleHeight);
-            
-            // Copy each entire line at once.
-            for (var i = sampleHeight - 1; i > -1; --i)
-            {
-                Array.Copy(
-                    srcPixelData.Pixels,
-                    x + (y + i) * srcPixelData.Width,
-                    destPixels,
-                    i * sampleWidth,
-                    sampleWidth
-                );
-            }
-        }
-
         public static void Clear(PixelData pixelData, int colorRef = -1)
         {
             for (var i = pixelData.Total - 1; i > -1; i--) pixelData[i] = colorRef;

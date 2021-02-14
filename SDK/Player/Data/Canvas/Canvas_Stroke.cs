@@ -48,7 +48,7 @@ namespace PixelVision8.Player
                 newPixels[i] = color;
             }
 
-            Utilities.SetPixels(newPixels, newRequest.PixelData);
+            newRequest.PixelData.SetPixels(newPixels);
 
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
@@ -57,10 +57,10 @@ namespace PixelVision8.Player
         [DrawAction]
         private void SetStrokeAction(CanvasDrawRequest request)
         {
-            if (stroke.Width != request.PixelData.Width || pattern.Height != request.PixelData.Height)
-                Utilities.Resize(stroke, request.PixelData.Width, request.PixelData.Height);
+            // if (stroke.Width != request.PixelData.Width || pattern.Height != request.PixelData.Height)
+            //     Utilities.Resize(stroke, request.PixelData.Width, request.PixelData.Height);
 
-            Utilities.SetPixels(request.PixelData.Pixels, stroke);
+            stroke.SetPixels(request.PixelData.Pixels, request.PixelData.Width, request.PixelData.Height);
         }
 
         private void SetStrokePixel(int x, int y) =>

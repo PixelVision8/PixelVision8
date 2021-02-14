@@ -33,14 +33,13 @@ namespace PixelVision8.Player
             newRequest.Action = DrawPixelDataAction;
 
             // We need at least 1 pixel to save the sprite ID
-            if (newRequest.PixelData.Width != spriteSize.X || newRequest.PixelData.Height != spriteSize.Y)
-            {
-                Utilities.Resize(newRequest.PixelData, spriteSize.X, spriteSize.X);
-            }
+            // if (newRequest.PixelData.Width != spriteSize.X || newRequest.PixelData.Height != spriteSize.Y)
+            // {
+            //     Utilities.Resize(newRequest.PixelData, spriteSize.X, spriteSize.X);
+            // }
 
             // Copy over the pixel
-            Utilities.SetPixels(gameChip.Sprite(id), newRequest.PixelData);
-
+            newRequest.PixelData.SetPixels(gameChip.Sprite(id), spriteSize.X, spriteSize.X);
             newRequest.X = x;
             newRequest.Y = y;
             newRequest.Bounds.X = 0;

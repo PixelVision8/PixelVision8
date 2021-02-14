@@ -30,7 +30,7 @@ namespace PixelVision8.Player
                 }
 
                 // Copy over the pixel
-                Utilities.SetPixels(gameChip.FontChar(text[i], font), newRequest.PixelData);
+                newRequest.PixelData.SetPixels(gameChip.FontChar(text[i], font));
 
                 newRequest.X = nextX;
                 newRequest.Y = y;

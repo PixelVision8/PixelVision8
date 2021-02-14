@@ -42,7 +42,7 @@ namespace PixelVision8.Player
                 Utilities.Resize(newRequest.PixelData, newWidth, newHeight);
             }
 
-            Utilities.SetPixels(newPixels, newRequest.PixelData);
+            newRequest.PixelData.SetPixels(newPixels, newWidth, newHeight);
 
             // Save the changes to the request
             requestPool[currentRequest] = newRequest;
@@ -51,10 +51,10 @@ namespace PixelVision8.Player
         [DrawAction]
         public void SetPatternAction(CanvasDrawRequest request)
         {
-            if (pattern.Width != request.PixelData.Width || pattern.Height != request.PixelData.Height)
-                Utilities.Resize(pattern, request.PixelData.Width, request.PixelData.Height);
+            // if (pattern.Width != request.PixelData.Width || pattern.Height != request.PixelData.Height)
+            //     Utilities.Resize(pattern, request.PixelData.Width, request.PixelData.Height);
 
-            Utilities.SetPixels(request.PixelData.Pixels, pattern);
+            pattern.SetPixels(request.PixelData.Pixels, request.PixelData.Width, request.PixelData.Height);
         }
     }
 }

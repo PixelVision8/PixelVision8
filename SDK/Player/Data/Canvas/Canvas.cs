@@ -108,13 +108,13 @@ namespace PixelVision8.Player
         }
 
 
-        public void CopyPixels(ref int[] data, int x, int y, int blockWidth, int blockHeight)
-        {
-            // Flatten the canvas
-            Draw();
-
-            Utilities.CopyPixels(defaultLayer, x, y, blockWidth, blockHeight, ref data);
-        }
+        // public void CopyPixels(ref int[] data, int x, int y, int blockWidth, int blockHeight)
+        // {
+        //     // Flatten the canvas
+        //     Draw();
+        //
+        //     Utilities.CopyPixels(defaultLayer, x, y, blockWidth, blockHeight, ref data);
+        // }
 
         public void SetPixels(int x, int y, int blockWidth, int blockHeight, int[] pixels)
         {
@@ -229,7 +229,7 @@ namespace PixelVision8.Player
             // Flatten the canvas
             Draw();
 
-            Utilities.SetPixels(pixels, defaultLayer);
+            defaultLayer.SetPixels(pixels, defaultLayer.Width, defaultLayer.Height);
 
             // Invalidate();
         }

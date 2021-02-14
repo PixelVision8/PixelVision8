@@ -65,7 +65,7 @@ namespace PixelVision8.Player
 
             if (pixels != null)
             {
-                Utilities.SetPixels(pixels, PixelData);
+                PixelData.SetPixels(pixels);
             }
 
             Colors = colors;

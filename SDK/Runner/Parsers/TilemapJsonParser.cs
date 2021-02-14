@@ -200,9 +200,9 @@ namespace PixelVision8.Runner
 
                                 if (tmpRow > rows) tmpRow = rows;
 
-                                var tmpData = new int[tmpCol * tmpRow];
+                                // var tmpData = new int[tmpCol * tmpRow];
 
-                                Utilities.CopyPixels(jsonData, 0, 0, tmpCol, tmpRow, ref tmpData);
+                                var tmpData = Utilities.GetPixels(jsonData, 0, 0, tmpCol, tmpRow);
                                 // jsonData.CopyPixels(ref tmpData, 0, 0, tmpCol, tmpRow);
 
                                 Utilities.SetPixels(tmpData, 0, 0, tmpCol, tmpRow, tmpPixelData);
@@ -211,8 +211,7 @@ namespace PixelVision8.Runner
                                 // TODO why is this happening twice?
                                 // PixelDataUtil.CopyPixels(ref dataValues, tmpPixelData, 0, 0, tmpPixelData.Width, tmpPixelData.Height);
                                 // tmpPixelData.CopyPixels(ref dataValues, 0, 0, tmpPixelData.width, tmpPixelData.height);
-                                Utilities.CopyPixels(tmpPixelData, 0, 0, tilemapChip.Columns, tilemapChip.Rows,
-                                    ref dataValues);
+                                dataValues = Utilities.GetPixels(tmpPixelData, 0, 0, tilemapChip.Columns, tilemapChip.Rows);
 
                                 // tmpPixelData.CopyPixels(ref dataValues, 0, 0, tilemapChip.columns, tilemapChip.rows);
                             }

@@ -1985,11 +1985,11 @@ namespace PixelVision8.Runner.Editors
             var blockSizeX = scaleX * SpriteChip.DefaultSpriteSize;
             var blockSizeY = scaleY * SpriteChip.DefaultSpriteSize;
 
-            var pixelData = new int[blockSizeX * blockSizeY];
+            // var pixelData = new int[blockSizeX * blockSizeY];
 
             var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / SpriteChip.DefaultSpriteSize);
 
-            Utilities.CopyPixels(spriteChip.PixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY, ref pixelData);
+            var pixelData = Utilities.GetPixels(spriteChip.PixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
             // spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
 
             //            var pixelData = Sprite(id);

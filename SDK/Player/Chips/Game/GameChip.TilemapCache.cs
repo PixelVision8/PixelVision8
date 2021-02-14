@@ -18,8 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Player;
-
 namespace PixelVision8.Player
 {
     /// <summary>
@@ -42,7 +40,7 @@ namespace PixelVision8.Player
         {
             if (tilemapCachePixels == null) return;
 
-            Utilities.SetPixels(tilemapCachePixels, TilemapChip.PixelData);
+            TilemapChip.PixelData.SetPixels(tilemapCachePixels);
         }
     }
 }
