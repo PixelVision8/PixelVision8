@@ -24,6 +24,34 @@ using PixelVisionSDK.Player;
 
 namespace PixelVision8.Player
 {
+
+    public partial class Utilities
+    {
+        public static void FlipPixelData(ref int[] pixelData, int sWidth, int sHeight, bool flipH = false,
+            bool flipV = false)
+        {
+            var total = pixelData.Length;
+            
+            var pixels = new int[total];
+
+            // if (pixels.Length < total) Array.Resize(ref pixels, total);
+
+            Array.Copy(pixelData, pixels, total);
+
+            for (var ix = 0; ix < sWidth; ix++)
+            for (var iy = 0; iy < sHeight; iy++)
+            {
+                var newx = ix;
+                var newY = iy;
+                if (flipH) newx = sWidth - 1 - ix;
+
+                if (flipV) newY = sHeight - 1 - iy;
+
+                pixelData[ix + iy * sWidth] = pixels[newx + newY * sWidth];
+            }
+        }
+    }
+    
     /// <summary>
     ///     The GameChip represents the foundation of a game class
     ///     with all the logic it needs to work correctly in the PixelVisionEngine.

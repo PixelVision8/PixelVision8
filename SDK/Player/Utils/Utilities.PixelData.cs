@@ -27,81 +27,77 @@ namespace PixelVision8.Player
     public static partial class Utilities
     {
         
-        private static int[] _pixels = new int[0];
+        public static int[] GetPixels(PixelData pixelData)
+        {
+            
+            // Create a new temporary array to copy the pixel data into
+            var tmpPixels = new int[pixelData.Total];
+            
+            // Use the Array.Copy() method to quickly copy all of the pixel data into the new temporary array
+            Array.Copy(pixelData.Pixels, tmpPixels, pixelData.Total);
 
-        public static int[] GetPixels(PixelData pixelData) =>
-            GetPixels(pixelData, 0, 0, pixelData.Width, pixelData.Height);
+            // Return the temporary pixels
+            return tmpPixels;
+        }
 
         public static int[] GetPixels(PixelData pixelData, int x, int y, int blockWidth, int blockHeight)
         {
-            var _tmpPixels = new int[blockWidth * blockHeight];
+            
+            // Create a new temporary array to copy the pixel data into
+            var tmpPixels = new int[blockWidth * blockHeight];
 
-            CopyPixels(pixelData, x, y, blockWidth, blockHeight, ref _tmpPixels);
+            CopyPixels(pixelData, x, y, blockWidth, blockHeight, ref tmpPixels);
 
-            return _tmpPixels;
+            return tmpPixels;
         }
 
-        public static void FlipPixelData(ref int[] pixelData, int sWidth, int sHeight, bool flipH = false,
-            bool flipV = false)
+        public static void SetPixels(int[] srcPixels, PixelData destPixelData)
         {
-            var total = pixelData.Length;
-            if (_pixels.Length < total) Array.Resize(ref _pixels, total);
-
-            Array.Copy(pixelData, _pixels, total);
-
-            for (var ix = 0; ix < sWidth; ix++)
-            for (var iy = 0; iy < sHeight; iy++)
-            {
-                var newx = ix;
-                var newY = iy;
-                if (flipH) newx = sWidth - 1 - ix;
-
-                if (flipV) newY = sHeight - 1 - iy;
-
-                pixelData[ix + iy * sWidth] = _pixels[newx + newY * sWidth];
-            }
+            if (srcPixels.Length != destPixelData.Total)
+                return;
+            
+            destPixelData.SetPixels(srcPixels, destPixelData.Width, destPixelData.Height);
         }
-
-        public static void SetPixels(int[] srcPixels, PixelData destPixelData) => SetPixels(srcPixels, 0, 0,
-            destPixelData.Width, destPixelData.Height, destPixelData);
 
         public static void SetPixels(int[] srcPixels, int x, int y, int blockWidth, int blockHeight,
             PixelData destPixelData)
         {
-            ValidateBounds(ref blockWidth, ref blockHeight, ref x, ref y, destPixelData.Width, destPixelData.Height);
-
-            // Exit if the width or height is not valid
-            if (blockWidth < 1 || blockHeight < 1)
-                return;
+            
 
             for (var i = blockHeight - 1; i > -1; i--)
             {
-                try
-                {
-                    Array.Copy(
-                        srcPixels,
-                        i * blockWidth,
-                        destPixelData.Pixels,
-                        x + (i + y) * destPixelData.Width,
-                        blockWidth
-                    );
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    // throw;
-                }
+                Array.Copy(
+                    srcPixels,
+                    i * blockWidth,
+                    destPixelData.Pixels,
+                    x + (i + y) * destPixelData.Width,
+                    blockWidth
+                );
             }
         }
-
+        
+        /// <summary>
+        ///     A fast copy method that takes a selection of ints from a PixelData sources and copies them
+        ///     in-line to a supplied destination array. The destPixels array will be resized to accomidate the
+        ///     pixels about to be copied into it.
+        /// </summary>
+        /// <param name="srcPixelData"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="sampleWidth"></param>
+        /// <param name="sampleHeight"></param>
+        /// <param name="destPixels"></param>
         public static void CopyPixels(PixelData srcPixelData, int x, int y, int sampleWidth, int sampleHeight,
             ref int[] destPixels)
         {
-            ValidateBounds(ref sampleWidth, ref sampleHeight, ref x, ref y, srcPixelData.Width, srcPixelData.Height);
+            // ValidateBounds(ref sampleWidth, ref sampleHeight, ref x, ref y, srcPixelData.Width, srcPixelData.Height);
 
             if (sampleWidth < 1 || sampleHeight < 1)
                 return;
-
+            
+            if(destPixels.Length != (sampleWidth * sampleHeight))
+                Array.Resize(ref destPixels, sampleWidth * sampleHeight);
+            
             // Copy each entire line at once.
             for (var i = sampleHeight - 1; i > -1; --i)
             {
@@ -119,80 +115,66 @@ namespace PixelVision8.Player
         {
             for (var i = pixelData.Total - 1; i > -1; i--) pixelData[i] = colorRef;
         }
-
-        public static void MergePixels(PixelData src, int sampleX, int sampleY, int sampleWidth, int sampleHeight,
+        
+        public static void MergePixels(
+            // The source pixel data
+            PixelData src, 
+            // The sample area
+            int srcX, 
+            int srcY, 
+            int srcWidth, 
+            int srcHeight,
+            // The destination pixel data
             PixelData dest,
-            int destX, int destY, bool flipH = false, bool flipV = false, int colorOffset = 0,
-            bool ignoreTransparent = true)
+            // Destination position
+            int destX,
+            int destY,
+            // Flip pixel data when copying
+            bool flipH = false,
+            bool flipV = false,
+            // Apply a color offset
+            int colorOffset = 0,
+            bool ignoreTransparent = true
+        )
         {
+
+            var srcPWidth = src.Width;
+            var destPWidth = dest.Width;
+            var destPHeight = dest.Height;
             
-            ValidateBounds(ref sampleWidth, ref sampleHeight, ref destX, ref destY, dest.Width, dest.Height);
-
-            if (sampleWidth < 1 || sampleHeight < 1)
-                return;
-
-            var total = sampleWidth * sampleHeight;
-
+            var total = srcWidth * srcHeight;
+        
             if (total == 0)
                 return;
+        
+            int col = 0, row = 0;
 
-            int mergeCol = 0, mergeRow = 0;
-
-            for (var i = 0; i < total; i++)
+            int tmpX, tmpY, tmpPixel, i;
+        
+            for (i = 0; i < total; i++)
             {
-                var mergeX = mergeCol;
-                var mergeY = mergeRow;
-
-                var tmpPixel = src.Pixels[(mergeX + sampleX) + (src.Width * (mergeY + sampleY))];
-
+                tmpX = col + srcX;
+                tmpY = row+ srcY;
+        
+                tmpPixel = src.Pixels[tmpX + srcPWidth * tmpY];
+                
                 if (tmpPixel != -1 || ignoreTransparent != true)
                 {
-                    if (flipH)
-                        mergeX = sampleWidth - 1 - mergeX;
-
-                    if (flipV)
-                        mergeY = sampleWidth - 1 - mergeY;
-
-                    dest.Pixels[(mergeX + destX) + dest.Width * (mergeY + destY)] = tmpPixel + colorOffset;
+                    tmpX = (flipH ? srcWidth - 1 - col : col) + destX;
+        
+                    tmpY = (flipV ? srcWidth - 1 - row : row) + destY;
+                    
+                    if (tmpX >= 0 && tmpX < destPWidth && tmpY >= 0 && tmpY < destPHeight)
+                    {
+                        dest.Pixels[tmpX + destPWidth * tmpY] = tmpPixel + colorOffset;
+                    }
                 }
+        
+                col++;
 
-                mergeCol++;
-
-                if (mergeCol >= sampleWidth)
-                {
-                    mergeCol = 0;
-                    mergeRow++;
-                }
-            }
-        }
-
-        private static void ValidateBounds(ref int srcWidth, ref int srcHeight, ref int destX,
-            ref int destY, int destWidth, int destHeight)
-        {
-            // Adjust X
-            if (destX < 0)
-            {
-                srcWidth += destX;
-                destX = 0;
-            }
-
-            // Adjust Y
-            if (destY < 0)
-            {
-                srcHeight += destY;
-                destY = 0;
-            }
-
-            // Adjust Width
-            if (destX + srcWidth > destWidth)
-            {
-                srcWidth -= (destX + srcWidth) - destWidth;
-            }
-
-            // Adjust Height.
-            if (destY + srcHeight > destHeight)
-            {
-                srcHeight -= destY + srcHeight - destHeight;
+                if (col < srcWidth) continue;
+                col = 0;
+                row++;
             }
         }
 
@@ -203,5 +185,6 @@ namespace PixelVision8.Player
 
             Clear(pixelData);
         }
+        
     }
 }

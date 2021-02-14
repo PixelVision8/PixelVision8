@@ -63,10 +63,15 @@ namespace PixelVision8.Player
             if (width * height != pixels.Length)
                 return;
             
-            _pixels = pixels;
+            Total = pixels.Length;
+            
+            if(_pixels.Length != Total)
+                Array.Resize(ref _pixels, Total);
+                
+            Array.Copy(pixels, _pixels, Total);
+             
             Width = width;
             Height = height;
-            Total = pixels.Length;
             
         }
 

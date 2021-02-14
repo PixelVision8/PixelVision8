@@ -47,17 +47,17 @@ namespace PixelVision8.Player
         private Point _pos;
         private int[] _tmpPixelData;
 
-        public int SpriteWidth
-        {
-            get => _spriteSize.X;
-            set => _spriteSize.X = value; // TODO this should be divisible by 8
-        }
-
-        public int SpriteHeight
-        {
-            get => _spriteSize.Y;
-            set => _spriteSize.Y = value; // TODO this should be divisible by 8
-        }
+        // public int SpriteWidth
+        // {
+        //     get => _spriteSize.X;
+        //     set => _spriteSize.X = value; // TODO this should be divisible by 8
+        // }
+        //
+        // public int SpriteHeight
+        // {
+        //     get => _spriteSize.Y;
+        //     set => _spriteSize.Y = value; // TODO this should be divisible by 8
+        // }
 
         public ImageData(int width, int height, int[] pixels = null, string[] colors = null) // : base(width, height)
         {
