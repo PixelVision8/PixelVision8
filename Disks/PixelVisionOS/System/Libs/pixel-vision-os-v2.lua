@@ -139,7 +139,7 @@ function PixelVisionOS:ChangeTitle(text, titleIconName)
         text = string.rpad(text, maxChars, "")
     end
 
-    self.titleBar.titleIcon = _G[titleIconName] and _G[titleIconName].spriteIDs[1] or nil
+    self.titleBar.titleIcon = FindMetaSpriteId(titleIconName)-- and _G[titleIconName].spriteIDs[1] or nil
     self.titleBar.title = text
     self.editorUI:Invalidate(self.titleBar)
 end

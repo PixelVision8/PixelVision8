@@ -526,7 +526,7 @@ function PixelVisionOS:DrawTitleBar(data)
         -- Draw title icon
         if(data.titleIcon ~= nil) then
             data.titleIconDrawArgs[1] = data.titleIcon
-            self.editorUI:NewDraw("DrawSprite", data.titleIconDrawArgs)
+            self.editorUI:NewDraw("DrawMetaSprite", data.titleIconDrawArgs)
         end
 
         -- Draw title text

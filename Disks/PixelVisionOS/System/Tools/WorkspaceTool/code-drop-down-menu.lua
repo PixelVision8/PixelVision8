@@ -119,13 +119,13 @@ function WorkspaceTool:CreateDropDownMenu()
         addAt = addAt + 1
     end
 
-    if(PathExists(self.fileTemplatePath.AppendFile("large.font.png"))) then
+    -- if(PathExists(self.fileTemplatePath.AppendFile("large.font.png"))) then
 
         table.insert(menuOptions, addAt, {name = "New Font", action = function() self:OnNewFile("untitled", "font.png", "font") end, enabled = false, toolTip = "Run the current game."})
         table.insert(self.newFileOptions, {name = "New Font"})
         addAt = addAt + 1
 
-    end
+    -- end
 
     if(PathExists(self.fileTemplatePath.AppendFile("tilemap.json"))) then
 

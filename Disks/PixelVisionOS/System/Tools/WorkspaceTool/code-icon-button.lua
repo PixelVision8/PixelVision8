@@ -93,13 +93,24 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
     else
         
         -- A list of states to build
-        local states = {"up", "over", "openup", "selectedup", "disabled", "dragging"}
+        local states = {"up",  "selectedup"}--, "disabled" }
+
+
+        if(data.onOverDropTarget ~= nil) then
+            table.insert(states, "over")
+            table.insert(states, "openup")
+        end
+
+        if(data.dragDelay > -1) then
+            table.insert(states, "dragging")
+        end
+
 
         -- Loop through each state to make a custom sprite for it
         for i = 1, #states do
 
             local state = states[i]
-            local canvas = NewCanvas(data.rect.w - 1, data.rect.h)
+            -- local canvas = NewCanvas(data.rect.w - 1, data.rect.h)
 
             -- Change the sprite state to accommodate for the fact that there is no dragging sprite
             local spriteState = state == "dragging" and "up" or state
@@ -112,29 +123,31 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
 
             -- Get the background color
             local bgColor = state ~= "dragging" and data.bgDrawArgs[5] or - 1
-
-            -- Clear the canvas to the default background color
-            canvas:Clear(bgColor)
-
-            -- Set the stroke and pattern to clear any previous icon this draws over
-            canvas:SetStroke(bgColor, 1)
-            canvas:SetPattern({bgColor}, 1, 1)
-
+            
             -- Create states
             if(spriteName == nil) then
                 spriteName = "fileunknown"
             end
 
-            local spriteData = _G[spriteName .. spriteState]
+            local metaSpriteId = FindMetaSpriteId(spriteName .. spriteState)
             
-            if(spriteData ~= nil) then
-                
-                local tmpX = math.floor((data.rect.w - spriteData.width * 8) * .5)
+            if(metaSpriteId > -1) then
 
-                canvas:DrawSprites(spriteData.spriteIDs, tmpX, 0, spriteData.width)
+                if(data.cachedPixelData[states[i]] == nil) then
+
+                    data.cachedPixelData[states[i]] = NewCanvas(data.rect.w - 1, data.rect.h)
+
+                end
+
+                local canvas =  data.cachedPixelData[states[i]]
+
+                -- Clear the canvas to the default background color
+                canvas:Clear(bgColor)
+
+                canvas:DrawMetaSprite(metaSpriteId, 12, 0)
 
                 local lines = {""}
-                local counter = 0
+                -- local counter = 0
                 local maxWidth = 11
                 local maxChars = maxWidth * 2
 
@@ -153,7 +166,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
                 end
 
                 -- Clear the area for the text
-                canvas:DrawRectangle(0, 24, data.rect.w - 2, 14, true)
+                -- canvas:DrawRectangle(0, 24, data.rect.w - 2, 14, true)
 
                 for i = 1, #lines do
 
@@ -194,7 +207,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
                 -- TODO need to look into why we need to force the canvas to draw here before saving
                 canvas:Draw()
                 
-                data.cachedPixelData[states[i]] = canvas
+                
 
             end
         end

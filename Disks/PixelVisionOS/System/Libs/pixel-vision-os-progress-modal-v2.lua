@@ -127,7 +127,11 @@ function ProgressModal:UpdatePercentage(percent)
   -- Progress
   self.canvas:Clear(6, startX + 1, startY + 9, width - 2, 6)
 
-  self.canvas:DrawSprites(self.cancelBtnData.cachedSpriteData["up"].spriteIDs, self.cancelBtnData.rect.x - self.rect.x, self.cancelBtnData.rect.y - self.rect.y, self.cancelBtnData.tiles.w)
+  local metaSpriteId = FindMetaSpriteId("modalcancelbutton")
+  local metaSprite = MetaSprite(metaSpriteId)
+
+  self.canvas:DrawMetaSprite(metaSpriteId, 32 - self.rect.x, 16 - self.rect.y )
+  -- self.canvas:DrawSprites(self.cancelBtnData.cachedSpriteData["up"].spriteIDs, self.cancelBtnData.rect.x - self.rect.x, self.cancelBtnData.rect.y - self.rect.y, self.cancelBtnData.tiles.w)
 
   self.canvas:DrawPixels(self.rect.x, self.rect.y, DrawMode.TilemapCache)
 

@@ -42,7 +42,7 @@ namespace PixelVision8.Runner.Editors
     {
         protected bool _invalid;
 
-        public ColorChip activeColorChip;
+        // public ColorChip activeColorChip;
 
         //        private GCControllerChip controllerChip;
         private ColorChip colorChip;
@@ -398,9 +398,9 @@ namespace PixelVision8.Runner.Editors
 
         public string Color(int id, string value = null)
         {
-            if (value == null) return activeColorChip.ReadColorAt(id);
+            if (value == null) return colorChip.ReadColorAt(id);
 
-            activeColorChip.UpdateColorAt(id, value);
+            colorChip.UpdateColorAt(id, value);
 
             return value;
         }
@@ -426,7 +426,7 @@ namespace PixelVision8.Runner.Editors
             //            if (TotalDisks.HasValue)
             //                activeColorChip.maxColors = TotalDisks.Value;
 
-            return ignoreEmpty ? activeColorChip.TotalUsedColors : activeColorChip.Total;
+            return ignoreEmpty ? colorChip.TotalUsedColors : colorChip.Total;
         }
 
         // public int MaximumColors(int? value)

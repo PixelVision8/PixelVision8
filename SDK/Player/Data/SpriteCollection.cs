@@ -95,5 +95,7 @@ namespace PixelVisionSDK.Player
         {
             Sprites.Clear();
         }
+
+        // TODO need a ToString() method
     }
 }

@@ -36,7 +36,7 @@ namespace PixelVision8.Runner
             GraphicsDevice = graphicsDevice;
         }
 
-        public string MaskHex { get; private set; } = "#FF00FF";
+        // public string MaskHex { get; private set; } = "#FF00FF";
         public int Width { get; private set; }
         public int Height { get; private set; }
         public Color[] ColorPixels { get; private set; }

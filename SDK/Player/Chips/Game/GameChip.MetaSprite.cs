@@ -142,7 +142,6 @@ namespace PixelVision8.Player
             return metaSprites[id];
         }
 
-
         protected int FindMetaSpriteId(string name)
         {
             var total = metaSprites.Length;

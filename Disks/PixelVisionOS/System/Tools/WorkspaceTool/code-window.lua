@@ -51,7 +51,13 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     self.pathHistory = {}
     self.focus = true
     self.maxChars = 43
-    self.windowRect = NewRect(8, 16, windowchrome.width * 8, math.floor(#windowchrome.spriteIDs/windowchrome.width * 8))
+
+    local windowChrome = MetaSprite( FindMetaSpriteId("windowchrome") )
+
+    print("WindowChrome", dump(windowChrome))
+
+
+    self.windowRect = NewRect(8, 16, windowChrome.width, windowChrome.height)
     self.dragCountBGArgs = {0, 0, 9, 6, 0, DrawMode.SpriteAbove}
     self.dragCountTextArgs = {"00", 0, 0, DrawMode.SpriteAbove, "small", 15, -4}
     self.fileCount = 0
@@ -103,7 +109,8 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     self.isGameDir = pixelVisionOS:ValidateGameInDir(self.currentPath, requiredFiles) and self:TrashOpen() == false
 
     -- Draw the window chrome
-    DrawSprites(windowchrome.spriteIDs, 8, 16, windowchrome.width, false, false, DrawMode.TilemapCache)
+    DrawMetaSprite(FindMetaSpriteId("windowChrome"), 8, 16, false, false, DrawMode.TilemapCache)
+    -- DrawSprites(windowchrome.spriteIDs, 8, 16, windowchrome.width, false, false, DrawMode.TilemapCache)
 
     if(self.vSliderData == nil) then
 
@@ -111,11 +118,17 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
         self.vSliderData = editorUI:CreateSlider({x = 192, y = 26, w = 16, h = 195}, "vsliderhandle", "This is a vertical slider")
         self.vSliderData.onAction = function(value)
 
-            -- Set the scroll position
-            self.lastStartID = Clamp(self.hiddenRows * value, 0, self.hiddenRows - 1) * self.totalPerColumn
+            local newStartID = Clamp(self.hiddenRows * value, 0, self.hiddenRows - 1) * self.totalPerColumn
 
-            -- Refresh the window at the end of the frame
-            self:RefreshWindow()
+            if(newStartID ~= self.lastStartID) then
+
+                -- Set the scroll position
+                self.lastStartID = newStartID
+
+                -- Refresh the window at the end of the frame
+                self:RefreshWindow()
+
+            end
 
         end
 
@@ -286,17 +299,11 @@ end
 
 function WorkspaceTool:ChangeFocus(value)
 
-    if(MousePosition().Y < 12) then
+    if(editorUI.mouseCursor.pos.Y < 12) then
         return
     end
-
-    value = value or (self.windowRect.contains(MousePosition()))
-
-    -- if(value == self.focus) then
-    --     return
-    -- end
-
-    -- print("ChangeFocus", value, self.focus)
+    
+    value = value or (self.windowRect.contains(editorUI.mouseCursor.pos))
 
     self.focus = value
 
@@ -825,7 +832,6 @@ function WorkspaceTool:DrawWindow()
 
         end
 
-        pixelVisionOS:CreateIconButtonStates(button, spriteName, item ~= nil and item.name or "", item ~= nil and item.bgColor or self.windowBGColor)
 
         -- Set the button values
         button.fileID = item ~= nil and fileID or -1
@@ -871,6 +877,9 @@ function WorkspaceTool:DrawWindow()
             end
 
         end
+
+        pixelVisionOS:CreateIconButtonStates(button, spriteName, item ~= nil and item.name or "", item ~= nil and item.bgColor or self.windowBGColor)
+
 
     end
 
@@ -1199,11 +1208,7 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
                 -- TODO load it up
                 local customIcon = ReadImage(customIconPath, "#FF00FF", self.systemColors)
 
-
-                -- TODO copy 3 x 3 sprites out of it into memory
-                -- local spriteIDs = {}
-
-                self.customSpriteStartIndex = 767
+                local spriteNames = {"filecustomiconup", "filecustomiconselectedup"}
 
                 local spriteMap = {
                     {0, 1, 2,
@@ -1214,26 +1219,17 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
                      15, 16, 17},
                 }
 
-                _G["filecustomiconup"] = {spriteIDs = {}, width = 3, colorOffset = 0}
+                local cps = ColorsPerSprite()
 
+                for i = 1, #spriteNames do
+                    
+                    local metaSprite = MetaSprite(FindMetaSpriteId(spriteNames[i]))
 
+                    for j = 1, #metaSprite.Sprites do
+                        Sprite(metaSprite.Sprites[j].Id, customIcon.GetSpriteData(spriteMap[i][j]), cps)
+                    end
 
-                for i = 1, 9 do
-                    local index = self.customSpriteStartIndex + i
-                    Sprite(index, customIcon.GetSpriteData(spriteMap[1][i]), ColorsPerSprite())
-                    table.insert(_G["filecustomiconup"].spriteIDs, index)
                 end
-
-
-                _G["filecustomiconselectedup"] = {spriteIDs = {}, width = 3, colorOffset = 0}
-
-                for i = 1, 9 do
-                    local index = self.customSpriteStartIndex + i + 9
-                    Sprite(index, customIcon.GetSpriteData(spriteMap[2][i]), ColorsPerSprite())
-                    table.insert(_G["filecustomiconselectedup"].spriteIDs, index)
-                end
-
-                -- print("filecustomiconup", dump(_G["filecustomiconup"]))
 
                 -- local sprites = 
                 FileTypeMap.run = "filecustomicon"

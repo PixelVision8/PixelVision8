@@ -79,7 +79,7 @@ function MouseCursor:Init()
             },
             animated = true,
             frames = 10,
-            spriteName = "cursorwait"
+            spriteName = "cursorwait1"
         },
         -- Pencil 6
         {

@@ -608,7 +608,7 @@ function WorkspaceTool:OnNewFile(fileName, ext, type, editable)
 
       elseif(type == "font") then
 
-        tmpPath = self.fileTemplatePath.AppendFile("large.font.png")
+        tmpPath = NewWorkspacePath("/App/Fonts/large.font.png")
         CopyTo(tmpPath, filePath)
 
       else

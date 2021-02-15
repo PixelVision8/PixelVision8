@@ -29,7 +29,6 @@ namespace PixelVision8.Player
         private bool _flipH;
         private bool _flipV;
         private int _spriteId;
-
         private int _index;
 
         public TileData(int index, int spriteId = -1, int colorOffset = 0, int flag = -1, bool flipH = false,

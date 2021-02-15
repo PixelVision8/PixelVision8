@@ -21,8 +21,8 @@ EditorUI.__index = EditorUI
 -- Core Framework UI Components
 LoadScript("pixel-vision-ui-utils-v2")
 LoadScript("pixel-vision-ui-collision-manager-v2")
-LoadScript("pixel-vision-ui-slider-v3")
-LoadScript("pixel-vision-ui-knob-v2")
+LoadScript("pixel-vision-ui-slider-v4")
+LoadScript("pixel-vision-ui-knob-v3")
 LoadScript("pixel-vision-ui-button-v3")
 LoadScript("pixel-vision-ui-toggle-group-v2")
 LoadScript("pixel-vision-ui-text-v2")
