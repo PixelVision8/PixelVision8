@@ -66,15 +66,45 @@ namespace PixelVision8.Player
             PixelData destPixelData)
         {
 
-            for (var i = blockHeight - 1; i > -1; i--)
+            // var srcPixelData = new PixelData(blockWidth, blockHeight);
+            // srcPixelData.SetPixels(srcPixels);
+
+            // var srcPWidth = blockWidth;
+            var destPWidth = destPixelData.Width;
+            var destPHeight = destPixelData.Height;
+
+            var total = blockWidth * blockHeight;
+        
+            // Console.WriteLine("Run Set Pixels {0} {1}", total, srcPixels.Length);
+            //
+            //
+            // if (total == 0 || total != srcPixels.Length)
+            //     return;
+            
+        
+            int col = 0, row = 0;
+
+            int tmpX, tmpY, tmpPixel, i;
+        
+            for (i = 0; i < total; i++)
             {
-                Array.Copy(
-                    srcPixels,
-                    i * blockWidth,
-                    destPixelData.Pixels,
-                    x + (i + y) * destPixelData.Width,
-                    blockWidth
-                );
+                
+                tmpPixel = srcPixels[col + blockWidth * row];
+                
+                tmpX = col + x;
+    
+                tmpY = row + y;
+                
+                if (tmpX >= 0 && tmpX < destPWidth && tmpY >= 0 && tmpY < destPHeight)
+                {
+                    destPixelData.Pixels[tmpX + destPWidth * tmpY] = tmpPixel;
+                }
+                
+                col++;
+
+                if (col < blockWidth) continue;
+                col = 0;
+                row++;
             }
         }
         

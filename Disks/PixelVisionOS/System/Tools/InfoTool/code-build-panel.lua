@@ -22,6 +22,8 @@ function InfoTool:CreateBuildInfoPanel()
     
     local winRunnerExists = PathExists(NewWorkspacePath(self.buildTemplatePaths[1].path))
     
+    print("self.buildFlagLabels[1]", dump(self.buildFlagLabels), "'"..gameEditor:ReadMetadata(self.buildFlagLabels[1]).."'", winRunnerExists)
+
     if(winRunnerExists) then
        editorUI:ToggleButton(buildFlagWin, gameEditor:ReadMetadata(self.buildFlagLabels[1]) == "true")
     end
@@ -96,18 +98,23 @@ function InfoTool:CreateBuildInfoPanel()
     
        -- buildFlagWin
     
-       pixelVisionOS:ShowMessageModal("Build Game", "Are you sure you want to build ".. self.nameInputData.text .."'? This will create a new PV8 disk and executables for any selected platforms.", 160, true,
+       pixelVisionOS:ShowMessageModal(
+           "Build Game", 
+           "Are you sure you want to build ".. self.nameInputData.text .."'? This will create a new PV8 disk and executables for any selected platforms.", 
+           160, 
+           true,
            function()
     
                if(pixelVisionOS.messageModal.selectionValue == true) then
     
-                   self:OnExportGame()
+                    pixelVisionOS:OnExportGame(NewWorkspacePath(self.rootDirectory))
                    -- TODO need to call the build function
                    -- OnInstall()
     
                end
     
-           end
+           end,
+           "build"
        )
     
     end
@@ -159,64 +166,90 @@ function InfoTool:BuildInfoPanelUpdate()
     end
 
    editorUI:UpdateButton(self.buildButtonData)
+
+--    if(IsExporting() == true) then
+
+--     local percent = ReadExportPercent()
+
+--     -- self.progressModal:UpdateMessage("Building disk", percent)
+
+--     if(percent >= 100) then
+        
+--         self.buildingDisk = false;
+
+--         -- TODO display results from build
+
+--     end
+
+--     print("ReadExportPercent", ReadExportPercent())
+
+--    end
    -- editorUI:UpdateButton(self.cleanCheckboxData)
 
 end
 
-function InfoTool:OnExportGame()
-
-   local srcPath = NewWorkspacePath(self.rootDirectory)
-   local destPath = srcPath.AppendDirectory("Builds")
-   local infoFile = srcPath.AppendFile("info.json")
-   local dataFile = srcPath.AppendFile("data.json")
-
-   -- TODO need to read game name from info file
-   if(PathExists(srcPath.AppendDirectory("info.json")) == false) then
-       SaveText(infoFile, "{\"name\":\""..srcPath.EntityName.."\"}")
-   end
-
-   local metaData = ReadJson(infoFile)
-
-   local gameName = (metaData ~= nil and metaData["name"] ~= nil) and metaData["name"] or srcPath.EntityName
+-- function InfoTool:OnExportGame()
 
 
-   local systemData = ReadJson(dataFile)
 
-   local maxSize = 512
 
-   if(systemData["GameChip"]) then
 
-       if(systemData["GameChip"]["maxSize"]) then
-           maxSize = systemData["GameChip"]["maxSize"]
-       end
-   end
+--    local srcPath = NewWorkspacePath(self.rootDirectory)
+--    local destPath = srcPath.AppendDirectory("Builds")
+--    local infoFile = srcPath.AppendFile("info.json")
+--    local dataFile = srcPath.AppendFile("data.json")
 
-   -- Manually create a game disk from the current folder's files
-   local srcFiles = GetEntities(srcPath)
-   local pathOffset = #srcPath.Path
+--    -- TODO need to read game name from info file
+--    if(PathExists(srcPath.AppendDirectory("info.json")) == false) then
+--        SaveText(infoFile, "{\"name\":\""..srcPath.EntityName.."\"}")
+--    end
 
-   local gameFiles = {}
+--    local metaData = ReadJson(infoFile)
+
+--    local gameName = (metaData ~= nil and metaData["name"] ~= nil) and metaData["name"] or srcPath.EntityName
+
+
+--    local systemData = ReadJson(dataFile)
+
+--    local maxSize = 512
+
+--    if(systemData["GameChip"]) then
+
+--        if(systemData["GameChip"]["maxSize"]) then
+--            maxSize = systemData["GameChip"]["maxSize"]
+--        end
+--    end
+
+--    -- Manually create a game disk from the current folder's files
+--    local srcFiles = GetEntities(srcPath)
+--    local pathOffset = #srcPath.Path
+
+--    local gameFiles = {}
    
-   for i = 1, #srcFiles do
-       local srcFile = srcFiles[i]
-       local destFile = NewWorkspacePath(srcFile.Path:sub(pathOffset))
-       gameFiles[srcFile] = destFile
-   end
+--    for i = 1, #srcFiles do
+--        local srcFile = srcFiles[i]
+--        local destFile = NewWorkspacePath(srcFile.Path:sub(pathOffset))
+--        gameFiles[srcFile] = destFile
+--    end
 
-   local response = CreateDisk(gameName, gameFiles, destPath, maxSize)
+--    -- Instantly create a pv8 disk which we will use for all of the other builds
+--    local response = CreateDisk(gameName, gameFiles, destPath, maxSize)
 
-   self.buildingDisk = true
+--    print("Response", dump(response))
 
-   if(self.progressModal == nil) then
-       --
-       --   -- Create the model
-       self.progressModal = ProgressModal:Init("File Action ", editorUI)
+--    -- Toggle the build disk flag
+--    self.buildingDisk = true
 
-       -- Open the modal
-       pixelVisionOS:OpenModal(self.progressModal)
+--    if(self.progressModal == nil) then
+--        --
+--        --   -- Create the model
+--        self.progressModal = ProgressModal:Init("File Action ")
 
-   end
+--        -- Open the modal
+--        pixelVisionOS:OpenModal(self.progressModal)
 
-   -- end
+--    end
 
-end
+--    -- end
+
+-- end

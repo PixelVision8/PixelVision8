@@ -7,10 +7,11 @@
   https://www.pixelvision8.com/getting-started
 ]]--
 
-local pointA = NewPoint(8, 8)
+local pointA = NewPoint(8, 32)
 local pointB = NewPoint(248, 232)
 local canvas = NewCanvas(256, 240)
 local distance = 0
+local display = Display()
 
 function Init()
 
@@ -24,8 +25,12 @@ function Update(timeDelta)
   -- Update position B with the MousePosition
   pointB = MousePosition()
 
-  -- Calculate the distance between pointA and pointB
-  distance = CalculateDistance(pointA.x, pointA.y, pointB.x, pointB.x)
+  if(pointB.X > 0 and pointB.Y < display.X and pointB.Y > 0 and pointB.Y < display.Y) then
+
+    -- Calculate the distance between pointA and pointB
+    distance = CalculateDistance(pointA.x, pointA.y, pointB.x, pointB.x)
+
+  end
 
 end
 
@@ -49,5 +54,8 @@ function Draw()
 
   -- Draw the canvas to the display
   canvas:DrawPixels()
+
+  DrawText("CalculateDistance()", 8, 8, DrawMode.Sprite, "large", 15);
+  DrawText("Lua Example", 8, 16, DrawMode.Sprite, "medium", 15, -4);
 
 end

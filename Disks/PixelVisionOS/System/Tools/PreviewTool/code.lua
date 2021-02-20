@@ -32,7 +32,9 @@ function Init()
   EnableAutoRun(false)
 
   -- Update background
-  BackgroundColor(5)
+  BackgroundColor(0)
+
+  pixelVisionOS.messageBar.clearColorID = 2
 
   -- Create new tool instance based on the file extension
   currentTool = CreateTool()

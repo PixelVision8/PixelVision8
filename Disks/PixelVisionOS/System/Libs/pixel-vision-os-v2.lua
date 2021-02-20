@@ -28,6 +28,7 @@ LoadScript("pixel-vision-os-message-modal-v3")
 LoadScript("pixel-vision-os-color-utils-v2")
 LoadScript("pixel-vision-os-undo-v2")
 LoadScript("pixel-vision-os-clipboard-v2")
+LoadScript("pixel-vision-os-export-game-v1")
 LoadScript("pixel-vision-os-version")
 
 function PixelVisionOS:Init()
@@ -162,7 +163,7 @@ function PixelVisionOS:ShowMessageModal(title, message, width, showCancel, onClo
     if(self.messageModal == nil) then
 
         -- Create the model
-        self.messageModal = MessageModal:Init(title, message, width, showCancel )
+        self.messageModal = MessageModal:Init(title, message, width, showCancel, okButtonSpriteName )
 
         -- Pass a reference of the editorUI to the modal
         self.messageModal.editorUI = self.editorUI
@@ -318,3 +319,57 @@ function PixelVisionOS:RegisterUI(data, updateCall, scope, ignoreModal)
     -- end
   
   end
+
+-- Shared function to help load a custom icon into memory
+function PixelVisionOS:LoadCustomIcon(iconWorkspacePath, iconUpName, iconSelectedName)
+
+    iconUpName = iconUpName or "filecustomiconup"
+    iconSelectedName = iconSelectedName or "filecustomiconselectedup"
+    
+    -- We'll return this value at the end of the function
+    local success = false
+    
+    
+    -- Look to see if the file exisits
+    if(PathExists(iconWorkspacePath)) then
+        
+        -- Build a list of system colors to use as a reference from the default OS colors
+        local systemColors = {}
+        for i = 1, 16 do
+            table.insert(systemColors, Color(i-1))
+        end
+
+        -- Create a new image and supply the system colors
+        local customIcon = ReadImage(iconWorkspacePath, "#FF00FF", systemColors)
+
+        -- Create an array with the two icon meta sprite names
+        local spriteNames = {iconUpName, iconSelectedName}
+
+        local spriteMap = {
+            {0, 1, 2,
+                6, 7, 8,
+                12, 13, 14},
+            {3, 4, 5,
+                9, 10, 11,
+                15, 16, 17},
+        }
+
+        local cps = ColorsPerSprite()
+
+        for i = 1, #spriteNames do
+            
+            local metaSprite = MetaSprite(FindMetaSpriteId(spriteNames[i]))
+
+            for j = 1, #metaSprite.Sprites do
+                Sprite(metaSprite.Sprites[j].Id, customIcon.GetSpriteData(spriteMap[i][j]), cps)
+            end
+
+        end
+
+        success = true
+
+    end
+
+    return success
+
+end

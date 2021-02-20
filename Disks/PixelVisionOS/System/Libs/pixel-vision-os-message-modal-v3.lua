@@ -1,22 +1,23 @@
 MessageModal = {}
 MessageModal.__index = MessageModal
 
-function MessageModal:Init(title, message, width, showCancel)
+function MessageModal:Init(title, message, width, showCancel, okButtonSpriteName, cancelButtonSpriteName)
 
   local _messageModal = {} -- our new object
   setmetatable(_messageModal, MessageModal) -- make Account handle lookup
 
-  _messageModal:Configure(title, message, width, showCancel)
+  _messageModal:Configure(title, message, width, showCancel, okButtonSpriteName, cancelButtonSpriteName)
 
   return _messageModal
 
 end
 
-function MessageModal:Configure(title, message, width, showCancel, okButtonSpriteName)
+function MessageModal:Configure(title, message, width, showCancel, okButtonSpriteName, cancelButtonSpriteName)
 
   self.showCancel = showCancel or false
 
   self.okButtonSpriteName = okButtonSpriteName or "ok"
+  self.cancelButtonSpriteName = cancelButtonSpriteName or "cancel"
   -- Reset the modal so it redraws correctly when opened
   self.firstRun = nil
 
@@ -114,7 +115,7 @@ function MessageModal:Open()
       -- Offset the bX value and snap to the grid
       bX = math.floor((bX - buttonSize.x - 8) / 8) * 8
 
-      local cancelBtnData = editorUI:CreateButton({x = bX, y = bY}, "modalcancelbutton", "")
+      local cancelBtnData = editorUI:CreateButton({x = bX, y = bY}, "modal".. self.cancelButtonSpriteName .. "button", "")
 
       cancelBtnData.onAction = function()
 

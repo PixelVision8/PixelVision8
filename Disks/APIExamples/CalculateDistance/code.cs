@@ -12,8 +12,7 @@ https://www.pixelvision8.com/getting-started
 **/
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
+using PixelVision8.Player;
 
 namespace PixelVision8.Examples
 {
@@ -39,10 +38,10 @@ namespace PixelVision8.Examples
         {
 
             // // Update position B with the MousePosition
-            // pointB = MousePosition();
+            pointB = MousePosition();
 
             // // Calculate the distance between pointA and pointB
-            // distance = CalculateDistance(pointA.X, pointA.Y, pointB.X, pointB.X);
+            distance = CalculateDistance(pointA.X, pointA.Y, pointB.X, pointB.X);
 
         }
 
@@ -50,23 +49,23 @@ namespace PixelVision8.Examples
         {
 
             // Redraw the display
-            // RedrawDisplay();
+            RedrawDisplay();
 
             // // Clear the canvas with the background color
-            // canvas.Clear(0);
+            canvas.Clear(0);
 
             // // Draw 2 circles around each point
-            // canvas.DrawEllipse(pointA.X - 4, pointA.Y - 4, 10, 10);
-            // canvas.DrawEllipse(pointB.X - 4, pointB.Y - 4, 10, 10);
+            canvas.DrawEllipse(pointA.X - 4, pointA.Y - 4, 10, 10);
+            canvas.DrawEllipse(pointB.X - 4, pointB.Y - 4, 10, 10);
 
             // // Draw a line between the two points
-            // canvas.DrawLine(pointA.X, pointA.Y, pointB.X, pointB.Y);
+            canvas.DrawLine(pointA.X, pointA.Y, pointB.X, pointB.Y);
 
             // // Draw the distance value above pointB
-            // canvas.DrawText(distance.ToString(), pointB.X, pointB.Y - 12, "small", 15, -4);
+            canvas.DrawText(distance.ToString(), pointB.X, pointB.Y - 12, "small", 15, -4);
 
-            // // Draw the canvas to the display
-            // canvas.DrawPixels();
+            // Draw the canvas to the display
+            canvas.DrawPixels();
 
         }
     }

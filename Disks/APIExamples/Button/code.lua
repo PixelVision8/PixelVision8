@@ -22,6 +22,11 @@ local buttons = {
   Buttons.Start
 }
 
+function Init()
+  DrawText("Button()", 1, 1, DrawMode.Tile, "large", 15);
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
+end
+
 function Update(timeDelta)
 
   -- Clear the pressedButtons array on each frame
@@ -41,11 +46,11 @@ end
 function Draw()
 
   -- Clear the display
-  Clear()
+  RedrawDisplay()
 
   -- Convert the pressedButtons into a string and draw to the display
   local message = table.concat(pressedButtons, ", "):upper()
-  DrawText("Buttons Down:", 8, 8, DrawMode.Sprite, "large", 15)
-  DrawText(message:sub(0, #message), 8, 16, DrawMode.Sprite, "medium", 14, - 4)
+  -- DrawText("Buttons Down:", 8, 8, DrawMode.Sprite, "large", 15)
+  DrawText(message:sub(0, #message), 8, 24, DrawMode.Sprite, "medium", 14, - 4)
 
 end

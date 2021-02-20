@@ -26,15 +26,14 @@ function InfoTool:CreateGameInfoPanelPanel()
 
 
     -- TODO need to read the custom icon
-    local customIconPath = NewWorkspacePath(self.rootDirectory).AppendFile("icon.png")
+    -- local customIconPath = NewWorkspacePath(self.rootDirectory).AppendFile("icon.png")
 
-    if(PathExists(customIconPath) == true) then
+    -- Attempt to load a custom icon
+    pixelVisionOS:LoadCustomIcon(NewWorkspacePath(self.rootDirectory).AppendFile("icon.png"))
     
-    else
-    
-        DrawSprites( iconrunnerup.spriteIDs, 8 + 4, 32 + 3, iconrunnerup.width, false, false, DrawMode.TilemapCache)
-    
-    end
+    -- Draw the custom icon to the info panel
+    DrawMetaSprite(FindMetaSpriteId("filecustomiconup"), 12, 35, false, false, DrawMode.TilemapCache)
+
 
     local name = gameEditor:ReadMetadata("name", "untitled")
 

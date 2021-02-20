@@ -152,8 +152,9 @@ function WorkspaceTool:CreateDropDownMenu()
 
     end
 
-    if(PathExists(self.fileTemplatePath.AppendFile("code.lua")) or PathExists(self.fileTemplatePath.AppendFile("code.cs"))) then
+    -- if(PathExists(self.currentPath.AppendFile("code.lua")) or PathExists(self.currentPath.AppendFile("code.cs"))) then
 
+        -- print("GAME")
         -- TODO need to add to the offset
         addAt = addAt + 6
 
@@ -161,7 +162,7 @@ function WorkspaceTool:CreateDropDownMenu()
         table.insert(menuOptions, addAt, {name = "Run", key = Keys.R, action = function() self:OnRun() end, enabled = false, toolTip = "Run the current game."})
         addAt = addAt + 1
 
-        table.insert(menuOptions, addAt, {name = "Build", action = function() self:OnExportGame() end, enabled = false, toolTip = "Create a PV8 file from the current game."})
+        table.insert(menuOptions, addAt, {name = "Build", action = function() self:ExportGame() end, enabled = false, toolTip = "Create a PV8 file from the current game."})
         addAt = addAt + 1
 
         table.insert(menuOptions, addAt, {divider = true})
@@ -170,9 +171,33 @@ function WorkspaceTool:CreateDropDownMenu()
         RunShortcut = "Run"
         BuildShortcut = "Build"
 
-    end
+    -- end
 
     pixelVisionOS:CreateTitleBarMenu(menuOptions, "See menu options for this tool.")
+
+end
+
+function WorkspaceTool:ExportGame()
+
+    pixelVisionOS:OnExportGame(
+        self.currentPath,
+        function (value)
+            self:OnBuildGameClose(value)
+        end
+    )
+
+end
+
+function WorkspaceTool:OnBuildGameClose(response)
+
+    local response = ReadExportMessage()
+    local success = response.DiskExporter_success
+    local message = response.DiskExporter_message
+    local path = response.DiskExporter_path
+
+    if(success == true) then
+        self:OpenWindow(NewWorkspacePath(path).ParentPath)
+    end
 
 end
 
@@ -318,6 +343,18 @@ function WorkspaceTool:UpdateContextMenu()
 
     -- Check to see if currentPath is a game
     local canRun = self.focus == true and self.isGameDir--and pixelVisionOS:ValidateGameInDir(self.currentPath, {"code.lua"})-- and selections
+
+    -- if(canRun) then
+
+    --     if(self.runnerType == "csharp" and PathExists(self.currentPath.AppendFile("code.cs"))) then
+    --         canRun = true
+    --     elseif(self.runnerType == "lua" and PathExists(self.currentPath.AppendFile("lua.cs"))) then
+    --         canRun = true
+    --     else
+    --         canRun = false
+    --     end
+
+    -- end
 
     -- Look to see if the selection is a special file (parent dir or run)
     local specialFile = false

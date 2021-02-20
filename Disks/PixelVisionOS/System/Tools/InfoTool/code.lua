@@ -9,7 +9,7 @@
 ]]--
 
 -- Load sprites and libs
-LoadScript("sb-sprites")
+-- LoadScript("sb-sprites")
 LoadScript("pixel-vision-os-v2")
 LoadScript("code-info-tool")
 

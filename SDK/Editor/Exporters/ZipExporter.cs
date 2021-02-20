@@ -98,6 +98,8 @@ namespace PixelVision8.Runner.Exporters
                     }
                 }
 
+                Console.WriteLine("Adding File " + file);
+
                 CurrentFile++;
 
                 StepCompleted();
@@ -127,6 +129,8 @@ namespace PixelVision8.Runner.Exporters
 
             // Archive.Close();
             ZipFs.Close();
+
+            Console.WriteLine("Zip Closed");
 
             StepCompleted();
         }

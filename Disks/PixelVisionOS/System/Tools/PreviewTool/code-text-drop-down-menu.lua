@@ -15,7 +15,7 @@ function TextTool:CreateDropDownMenu()
     local menuOptions =
     {
         -- About ID 1
-        {name = "About", action = function() pixelVisionOS:ShowAboutModal(toolName) end, toolTip = "Learn about PV8."},
+        {name = "About", action = function() pixelVisionOS:ShowAboutModal(self.toolName) end, toolTip = "Learn about PV8."},
         {divider = true},
         {name = "New", action = function() self:NewFile() end, enabled = false, key = Keys.N, toolTip = "Create a new text file."}, -- Reset all the values
         {name = "Rename", action = function() self:RenameFile() end, enabled = false, key = Keys.N, toolTip = "Create a new text file."}, -- Reset all the values

@@ -18,7 +18,7 @@ function InfoTool:CreateDropDownMenu()
    local menuOptions = 
    {
      -- About ID 1
-     {name = "About", action = function() pixelVisionOS:ShowAboutModal(toolName) end, toolTip = "Learn about PV8."},
+     {name = "About", action = function() pixelVisionOS:ShowAboutModal(self.toolName) end, toolTip = "Learn about PV8."},
      {divider = true},
      {name = "Edit JSON", enabled = self.textEditorPath ~= nil, action = function() self:OnEditJSON() end, toolTip = "Edit the raw info file's json data."}, -- Reset all the values
      {name = "Reset", action = function() self:OnReset() end, key = Keys.R, toolTip = "Revert the installer to its default state."}, -- Reset all the values

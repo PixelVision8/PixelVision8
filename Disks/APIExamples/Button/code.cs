@@ -7,7 +7,7 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Engine.Chips;
+using PixelVision8.Player;
 using System.Collections.Generic;
 
 namespace PixelVision8.Examples
@@ -29,6 +29,12 @@ namespace PixelVision8.Examples
             Buttons.Select,
             Buttons.Start
         };
+
+        public override void Init()
+        {
+            DrawText("Button()", 1, 1, DrawMode.Tile, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
+        }
 
         public override void Update(int timeDelta)
         {
@@ -53,12 +59,12 @@ namespace PixelVision8.Examples
         {
 
             // Clear the display
-            Clear();
+            RedrawDisplay();
 
             // Convert the pressedButtons into a string and draw to the display
             var message = string.Join(", ", pressedButtons.ToArray()).ToUpper();
-            DrawText("Buttons Down:", 8, 8, DrawMode.Sprite, "large", 15);
-            DrawText(message.Substring(0, message.Length), 8, 16, DrawMode.Sprite, "medium", 14, -4);
+            // DrawText("Buttons Down:", 8, 8, DrawMode.Sprite, "large", 15);
+            DrawText(message.Substring(0, message.Length), 8, 24, DrawMode.Sprite, "medium", 14, -4);
 
         }
     }

@@ -142,12 +142,8 @@ end
 
 function TextTool:RefreshEditor()
 
-    -- print("Load Text File", targetFile)
-    local tmpText = ReadTextFile(self.targetFile)
-
-    -- fileSize = GetFileSizeAsString(targetFile)
-
-    editorUI:ChangeInputArea(self.inputAreaData, tmpText)
+    -- Read the text file and update the input area
+    editorUI:ChangeInputArea(self.inputAreaData, ReadTextFile(self.targetFile))
 
     self:ResetDataValidation()
 
@@ -242,9 +238,11 @@ function TextTool:DrawLineNumbers()
         return
     end
 
+
     local offset = self.inputAreaData.vy - 1
     -- local totalLines = self.inputAreaData.tiles.h
     local padWidth = (self.lineWidth / 8) - 1
+
     for i = 1, self.inputAreaData.tiles.h do
 
         DrawText(string.lpad(tostring(i + offset), padWidth, "0") .. " ", 1, 2 + i, DrawMode.Tile, "large", 6)
@@ -264,7 +262,6 @@ function TextTool:CalculateLineGutter()
     local newWidth = 224 - self.lineWidth
 
     if(self.inputAreaData.rect.w ~= newWidth) then
-
         editorUI:ResizeTexdtEditor(self.inputAreaData, newWidth, self.inputAreaData.rect.h, 8 + self.lineWidth, self.inputAreaData.rect.y)
     end
 

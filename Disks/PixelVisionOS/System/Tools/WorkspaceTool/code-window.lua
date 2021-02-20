@@ -364,6 +364,8 @@ function WorkspaceTool:RefreshWindow(updateFileList)
 
     self.runnerType = "none"
 
+    -- TODO need to enable or disable the Run command based on what runner type and code file exist
+
     if(PathExists(infoPath)) then
 
         local data = ReadJson(infoPath)
@@ -1185,51 +1187,7 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
                     }
             )
 
-            local customIconPath = workspacePath.AppendFile("icon.png")
-
-            -- TOOD should we cache this since the window refreshes?
-
-            -- TODO look to see if there is a custom icon.png
-            if(PathExists(customIconPath)) then
-                -- print("Found custom icon")
-
-
-                -- Check to see if we have a list of the first 16 system colors
-                if(self.systemColors == nil) then
-
-                    -- Build a list of system colors to use as a reference
-                    self.systemColors = {}
-                    for i = 1, 16 do
-                        table.insert(self.systemColors, Color(i-1))
-                    end
-
-                end
-
-                -- TODO load it up
-                local customIcon = ReadImage(customIconPath, "#FF00FF", self.systemColors)
-
-                local spriteNames = {"filecustomiconup", "filecustomiconselectedup"}
-
-                local spriteMap = {
-                    {0, 1, 2,
-                     6, 7, 8,
-                     12, 13, 14},
-                    {3, 4, 5,
-                     9, 10, 11,
-                     15, 16, 17},
-                }
-
-                local cps = ColorsPerSprite()
-
-                for i = 1, #spriteNames do
-                    
-                    local metaSprite = MetaSprite(FindMetaSpriteId(spriteNames[i]))
-
-                    for j = 1, #metaSprite.Sprites do
-                        Sprite(metaSprite.Sprites[j].Id, customIcon.GetSpriteData(spriteMap[i][j]), cps)
-                    end
-
-                end
+            if(pixelVisionOS:LoadCustomIcon(workspacePath.AppendFile("icon.png"))) then
 
                 -- local sprites = 
                 FileTypeMap.run = "filecustomicon"

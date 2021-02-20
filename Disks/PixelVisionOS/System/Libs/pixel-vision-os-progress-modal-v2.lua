@@ -19,7 +19,7 @@ function ProgressModal:Configure(title, width)
   -- Reset the modal so it redraws correctly when opened
   self.firstRun = nil
 
-  local width = width or 128
+  width = width or 128
   local height = 88
 
   -- Make sure width and height are on the grid
@@ -127,10 +127,12 @@ function ProgressModal:UpdatePercentage(percent)
   -- Progress
   self.canvas:Clear(6, startX + 1, startY + 9, width - 2, 6)
 
-  local metaSpriteId = FindMetaSpriteId("modalcancelbutton")
+  local metaSpriteId = FindMetaSpriteId("modalcancelbuttonup")
   local metaSprite = MetaSprite(metaSpriteId)
 
-  self.canvas:DrawMetaSprite(metaSpriteId, 32 - self.rect.x, 16 - self.rect.y )
+  -- print("metaSpriteId", metaSpriteId)
+
+  self.canvas:DrawMetaSprite(metaSpriteId, self.cancelBtnData.rect.x - self.rect.x, self.cancelBtnData.rect.y - self.rect.y)
   -- self.canvas:DrawSprites(self.cancelBtnData.cachedSpriteData["up"].spriteIDs, self.cancelBtnData.rect.x - self.rect.x, self.cancelBtnData.rect.y - self.rect.y, self.cancelBtnData.tiles.w)
 
   self.canvas:DrawPixels(self.rect.x, self.rect.y, DrawMode.TilemapCache)
