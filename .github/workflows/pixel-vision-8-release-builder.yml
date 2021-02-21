@@ -83,11 +83,11 @@ jobs:
           REPORT="${REPORT//$'\r'/'%0D'}"
           echo "REPORT=$REPORT" >> $GITHUB_ENV
 
-     # Setup dotnet v3.1
+     # Setup dotnet v5.0.x
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.301
+          dotnet-version: 5.0.x
 
       - name: Use Node.js
         uses: actions/setup-node@v1
