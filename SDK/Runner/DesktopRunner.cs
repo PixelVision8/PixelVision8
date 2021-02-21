@@ -637,7 +637,7 @@ namespace PixelVision8.Runner
                 tmpBios.Close();
 
                 // Write the default workspace path into the system bios
-                workspaceService.SaveTextToFile(systemBiosPath, "{\"workspacePath\":\"" + Documents + "\"}");
+                workspaceService.SaveTextToFile(systemBiosPath, "{\"workspacePath\":\"" + Documents.Replace("\\","\\\\") + "\"}");
             }
 
             // Define PV8 disk extensions from the bios

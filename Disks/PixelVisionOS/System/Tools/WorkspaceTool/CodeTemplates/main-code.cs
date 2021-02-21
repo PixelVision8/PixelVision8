@@ -12,9 +12,7 @@
 // https://www.pixelvision8.com/getting-started
 // 
 
-using PixelVision8.Player;
-
-namespace PixelVision8.Engine.Chips
+namespace PixelVision8.Player
 {
 	public class CustomGameChip : GameChip
 	{
@@ -22,7 +20,7 @@ namespace PixelVision8.Engine.Chips
 		{
 
 			var message = "EMPTY C# GAME\n\n\nThis is an empty game template.\n\n\nVisit 'www.pixelvision8.com' to learn more about creating games from scratch.";
-
+			var display = Display();
 			var wrap = WordWrap(message, (display.X / 8) - 2);
 			var lines = SplitLines(wrap);
 			var total = lines.Length;

@@ -107,10 +107,11 @@ function NewFileModal:Open()
   table.insert(self.buttons, backBtnData)
   table.insert(self.buttons, cancelBtnData)
 
-  local spriteData = renameinputfield
+  -- local spriteData = renameinputfield
 
-  self.canvas:DrawSprites(spriteData.spriteIDs, 8, 16 + 8, spriteData.width)
-
+  -- self.canvas:DrawSprites(spriteData.spriteIDs, 8, 16 + 8, spriteData.width)
+  self.canvas:DrawMetaSprite(FindMetaSpriteId("renameinputfield"), 8, 16 + 8)
+  
   self.inputField = self.editorUI:CreateInputField({x = self.rect.x + 16, y = self.rect.y + 32, w = 192}, "Untitled", "Enter a new filename.", "file")
 
   local startX = 16

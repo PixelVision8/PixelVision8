@@ -12,9 +12,7 @@
 // https://www.pixelvision8.com/getting-started
 // 
 
-using PixelVision8.Player;
-
-namespace PixelVision8.Engine.Chips
+namespace PixelVision8.Player
 {
 	public class CustomClass
 	{
