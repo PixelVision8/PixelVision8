@@ -85,7 +85,7 @@ namespace PixelVision8.Runner
 
             if (logBuffer.Count > totalItems) logBuffer.RemoveAt(0);
 
-            Debug.WriteLine(sb.ToString());
+            // Debug.WriteLine(sb.ToString());
 
             Console.WriteLine(sb.ToString());
 

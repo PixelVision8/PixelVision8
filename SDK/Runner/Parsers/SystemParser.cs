@@ -116,6 +116,9 @@ namespace PixelVision8.Runner
 
             // if (data.ContainsKey("maxColors")) colorChip.maxColors = (int)(long)data["maxColors"];
 
+            // Force the color chip to have 256 colors
+            colorChip.Total = 256;
+
             // Make sure we have data to parse
             if (data.ContainsKey("colors"))
             {
@@ -123,9 +126,6 @@ namespace PixelVision8.Runner
 
                 // Pull out the color data
                 var colors = (List<object>) data["colors"];
-
-                // Force the color chip to have 256 colors
-                //                colorChip.total = 256;
 
                 // Clear the colors
                 colorChip.Clear();
@@ -234,7 +234,7 @@ namespace PixelVision8.Runner
 
             if (data.ContainsKey("metaSprites"))
             {
-                Console.WriteLine("ContainsKey  metaSprites");
+                // Console.WriteLine("ContainsKey  metaSprites");
 
                 var metaSprites = data["metaSprites"] as List<object>;
 

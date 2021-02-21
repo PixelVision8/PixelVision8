@@ -63,12 +63,15 @@ function EditorUI:CreateKnob(rect, spriteName, toolTip)
   data.handleY = 0
   data.handleSize = 1
 
-  data.colorOffsetUp = 20
-  data.colorOffsetOver = 24
-  data.colorOffsetDisabled = 16
+  data.colorOffsetDisabled = 144
+
+  data.colorOffsetUp = data.colorOffsetDisabled + 4
+  data.colorOffsetOver = data.colorOffsetDisabled + 8
+  
 
   -- This is applied to the top when horizontal and the left when vertical
-  data.offset = offset or 0
+  -- data.offset = offset or 0
+
 
   -- Calculate the handle's size based on the sprite
   -- local spriteData = _G[data.spriteName .. data.rotation[1]]
@@ -159,7 +162,7 @@ function EditorUI:UpdateKnob(data, hitRect)
   if(data.invalid == true) then
 
     data.handleX = data.handleX + (data.value * size)
-    data.handleY = data.handleY + data.offset
+    data.handleY = data.handleY
 
     self:DrawKnobSprite(data)
 
@@ -198,9 +201,9 @@ function EditorUI:DrawKnobSprite(data, mode)
 
     -- Color Offset
     if(data.enabled) then
-      data.spriteDrawArgs[8] = data.inFocus == true and data.colorOffsetOver or data.colorOffsetUp
+      data.spriteDrawArgs[7] = data.inFocus == true and data.colorOffsetOver or data.colorOffsetUp
     else
-      data.spriteDrawArgs[8] = data.colorOffsetDisabled
+      data.spriteDrawArgs[7] = data.colorOffsetDisabled
     end
 
     self:NewDraw("DrawMetaSprite", data.spriteDrawArgs)

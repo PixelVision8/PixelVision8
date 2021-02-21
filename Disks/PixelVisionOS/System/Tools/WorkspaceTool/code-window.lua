@@ -54,7 +54,7 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
 
     local windowChrome = MetaSprite( FindMetaSpriteId("windowchrome") )
 
-    print("WindowChrome", dump(windowChrome))
+    -- print("WindowChrome", dump(windowChrome))
 
 
     self.windowRect = NewRect(8, 16, windowChrome.width, windowChrome.height)

@@ -19,7 +19,7 @@ function SettingsTool:Init()
       runnerName = SystemName(),
       rootPath = ReadMetadata("RootPath", "/"),
       invalid = true,
-      SaveShortcut = 6
+      -- SaveShortcut = 6
     }
   
     -- Create a global reference of the new workspace tool
@@ -66,7 +66,7 @@ function SettingsTool:InvalidateData()
   
     self.invalid = true
   
-    pixelVisionOS:EnableMenuItem(self.self.SaveShortcut, true)
+    -- pixelVisionOS:EnableMenuItem(self.self.SaveShortcut, true)
   
   end
   
@@ -80,6 +80,6 @@ function SettingsTool:InvalidateData()
     pixelVisionOS:ChangeTitle(toolName, "toolbaricontool")
     self.invalid = false
   
-    pixelVisionOS:EnableMenuItem(self.self.SaveShortcut, false)
+    -- pixelVisionOS:EnableMenuItem(self.self.SaveShortcut, false)
   
   end

@@ -79,7 +79,7 @@ function MessageModal:Open()
 
     -- We want to render the text from the bottom of the screen so we offset it and loop backwards.
     for i = 1, total do
-      self.canvas:DrawText(self.lines[i]:upper(), startX, (startY + ((i - 1) * 8)), "medium", 0, - 4)
+      self.canvas:DrawText(self.lines[i], startX, (startY + ((i - 1) * 8)), "medium", 0, - 4)
     end
 
     self.buttons = {}

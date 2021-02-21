@@ -185,11 +185,11 @@ namespace PixelVision8.Player
             }
         }
 
-        public virtual void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
-        {
-            // TODO need to delete this after the refactoring
-        }
+        // public virtual void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
+        //     DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
+        // {
+        //     // TODO need to delete this after the refactoring
+        // }
 
         /// <summary>
         ///     This method allows you to draw a rectangle with a fill color. By default, this method is used to clear the screen

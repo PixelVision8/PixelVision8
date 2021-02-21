@@ -15,7 +15,7 @@
 -- Shawn Rakowski - @shwany
 --
 
-print("Enable clipboard")
+-- print("Enable clipboard")
 
 function PixelVisionOS:SystemCopy(data)
 

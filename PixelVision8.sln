@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelVision8.CoreDesktop", "PixelVision8.CoreDesktop.csproj", "{2590A596-C437-4B7D-A91C-0AD59CB2DBBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelVisoin8.Tests", "Tests\PixelVisoin8.Tests.csproj", "{97F0347F-2A33-4302-9376-C8B46934F154}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2590A596-C437-4B7D-A91C-0AD59CB2DBBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2590A596-C437-4B7D-A91C-0AD59CB2DBBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2590A596-C437-4B7D-A91C-0AD59CB2DBBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2590A596-C437-4B7D-A91C-0AD59CB2DBBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97F0347F-2A33-4302-9376-C8B46934F154}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97F0347F-2A33-4302-9376-C8B46934F154}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97F0347F-2A33-4302-9376-C8B46934F154}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97F0347F-2A33-4302-9376-C8B46934F154}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

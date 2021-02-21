@@ -70,7 +70,7 @@ namespace PixelVision8.Runner
 
             for (int i = 0; i < methods.Length; i++)
             {
-                Console.WriteLine("Method " + i + " " + methods[i].Name);
+                // Console.WriteLine("Method " + i + " " + methods[i].Name);
 
                 Type thisType = this.GetType();
                 MethodInfo theMethod = thisType.GetMethod(methods[i].Name);

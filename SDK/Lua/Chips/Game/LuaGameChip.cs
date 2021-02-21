@@ -74,21 +74,14 @@ namespace PixelVision8.Player
 
             LuaScript.Globals["Clear"] = new Action(Clear);
             LuaScript.Globals["Display"] = new Func<Point>(Display);
-            LuaScript.Globals["DrawPixels"] =
-                new Action<int[], int, int, int, int, bool, bool, DrawMode, int>(DrawPixels);
-            LuaScript.Globals["DrawSprite"] =
-                new Action<int, int, int, bool, bool, DrawMode, int>(DrawSingleSprite);
-            LuaScript.Globals["DrawSprites"] =
-                new Action<int[], int, int, int, bool, bool, DrawMode, int>(DrawSprites);
-            LuaScript.Globals["DrawSpriteBlock"] =
-                // new Action<int, int, int, int, int, bool, bool, DrawMode, int>(DrawSpriteBlock);
-                LuaScript.Globals["DrawText"] = new Action<string, int, int, DrawMode, string, int, int>(DrawText);
+            LuaScript.Globals["DrawPixels"] = new Action<int[], int, int, int, int, bool, bool, DrawMode, int>(DrawPixels);
+            LuaScript.Globals["DrawSprite"] = new Action<int, int, int, bool, bool, DrawMode, int>(DrawSingleSprite);
+            LuaScript.Globals["DrawText"] = new Action<string, int, int, DrawMode, string, int, int>(DrawText);
             LuaScript.Globals["DrawTilemap"] = new Action<int, int, int, int, int?, int?>(DrawTilemap);
-
             LuaScript.Globals["DrawRect"] = new Action<int, int, int, int, int, DrawMode>(DrawRect);
             LuaScript.Globals["RedrawDisplay"] = new Action(RedrawDisplay);
             LuaScript.Globals["ScrollPosition"] = new Func<int?, int?, Point>(ScrollPosition);
-
+            
             #endregion
 
             #region File IO APIs
@@ -145,7 +138,7 @@ namespace PixelVision8.Player
             #region Sprite APIs
 
             LuaScript.Globals["Sprite"] = new Func<int, int[], int[]>(Sprite);
-            //            luaScript.Globals["Sprites"] = new Func<int[], int, int[]>(Sprites);
+            LuaScript.Globals["ChangeSizeMode"] = new Action<SpriteSizes>(ChangeSizeMode);
             LuaScript.Globals["SpriteSize"] = new Func<Point>(SpriteSize);
             LuaScript.Globals["TotalSprites"] = new Func<bool, int>(TotalSprites);
             LuaScript.Globals["MaxSpriteCount"] = new Func<int>(MaxSpriteCount);
@@ -216,6 +209,9 @@ namespace PixelVision8.Player
 
             UserData.RegisterType<DrawMode>();
             LuaScript.Globals["DrawMode"] = UserData.CreateStatic<DrawMode>();
+
+            UserData.RegisterType<SpriteSizes>();
+            LuaScript.Globals["SpriteSizes"] = UserData.CreateStatic<SpriteSizes>();
 
             UserData.RegisterType<Buttons>();
             LuaScript.Globals["Buttons"] = UserData.CreateStatic<Buttons>();
