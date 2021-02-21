@@ -11,6 +11,8 @@
 ]]--
 
 function Init()
+  
+  ChangeSizeMode(SpriteSizes.Mode4)
 
   -- Draw the large font as tiles
   DrawText("Large Font - Tiles", 1, 1, DrawMode.Tile, "large", 5)

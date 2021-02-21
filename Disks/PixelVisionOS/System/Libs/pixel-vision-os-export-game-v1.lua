@@ -94,17 +94,17 @@ end
 
 function PixelVisionOS:UpdateDiskExport()
 
-    print("UpdateDiskExport")
+    -- print("UpdateDiskExport")
 
     if(self.buildingDisk) then
 
         local total = ReadExportPercent()
 
-        print("percent", total)
+        -- print("percent", total)
 
         if(total >=100) then
             
-            print("Done")
+            -- print("Done")
 
             self.buildingDisk = false
             
@@ -115,7 +115,7 @@ function PixelVisionOS:UpdateDiskExport()
             local message = response.DiskExporter_message
             local path = response.DiskExporter_path
 
-            print("response", dump(response))
+            -- print("response", dump(response))
 
             self.progressModal = nil
 

@@ -46,7 +46,7 @@ gulp.task('runner-platform', function(cb) {
 
     });
 
-    return gulp.src(fileList)
+    return gulp.src(fileList, {'allowEmpty':true})
     .pipe(gulp.dest(runnerPath + process.env.CURRENT_PLATFORM));
 
     }

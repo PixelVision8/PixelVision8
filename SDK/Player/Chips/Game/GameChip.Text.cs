@@ -134,6 +134,14 @@ namespace PixelVision8.Player
 
             var offset = SpriteChip.DefaultSpriteSize + spacing;
 
+            // Save the current sprite mode
+            var oldSpriteWidth = SpriteWidth;
+            var oldSpriteHeight = SpriteHeight;
+
+            // Change the sprite width and height to the default value
+            SpriteWidth = SpriteChip.DefaultSpriteSize;
+            SpriteHeight = SpriteChip.DefaultSpriteSize;
+
             for (var j = 0; j < total; j++)
             {
                 // Clear the background when in tile mode
@@ -151,10 +159,13 @@ namespace PixelVision8.Player
 
                 DrawSprite(spriteIDs[j], nextX, nextY, false, false, drawMode, colorOffset, FontChip);
 
-                // }
-
                 nextX += offset;
             }
+
+            // Restore the previous sprite width and height
+            SpriteWidth = oldSpriteWidth;
+            SpriteHeight = oldSpriteHeight;
+
         }
     }
 }
