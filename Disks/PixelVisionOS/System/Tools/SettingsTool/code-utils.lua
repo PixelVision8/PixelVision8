@@ -158,13 +158,13 @@ function SettingsTool:RemapKey(keyName, keyCode)
     return false
   end
 
-  print("Write Bios", keyName, tostring(keyCode))
+  -- print("Write Bios", keyName, tostring(keyCode))
 
   -- Save the new mapped key to the bios
   WriteBiosData(keyName, tostring(keyCode));
 
 
-  print("Read Bios", ReadBiosData(keyName), self:ConvertKeyCodeToChar(ReadBiosData(keyName)))
+  -- print("Read Bios", ReadBiosData(keyName), self:ConvertKeyCodeToChar(ReadBiosData(keyName)))
 
   self.usedKeysInvalid = true
 

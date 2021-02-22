@@ -62,7 +62,7 @@ function ImageTool:OnRunGame()
 
     local data = {runnerType = self.extension == ".lua" and "lua" or "csharp"}
 
-    print("runnerType", data["runnerType"], self.extension)
+    -- print("runnerType", data["runnerType"], self.extension)
 
     -- if(self.codeMode == true) then
     --    data["codeFile"] = _textTool.targetFile

@@ -329,7 +329,7 @@ function SettingsTool:GetUsedKeys()
 
     self.usedKeysInvalid = false
 
-    print("rebuild used keys", self.selectedInputID, dump(self.usedControllerKeys))
+    -- print("rebuild used keys", self.selectedInputID, dump(self.usedControllerKeys))
 
   end
 

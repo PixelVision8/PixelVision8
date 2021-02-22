@@ -216,7 +216,7 @@ function WorkspaceTool:CreateNewCodeFile(defaultPath)
 
         local data = ReadJson(infoFilePath)
 
-        print(dump(data))
+        -- print(dump(data))
 
         if(data["runnerType"] ~= nil) then
             ext = data["runnerType"] ~= "lua" and  ".cs" or ".lua"
@@ -230,13 +230,13 @@ function WorkspaceTool:CreateNewCodeFile(defaultPath)
 
     local empty = PathExists(defaultPath.AppendFile(fileName .. ext))
 
-    print("Create new code file at", defaultPath, fileName, ext)
+    -- print("Create new code file at", defaultPath, fileName, ext)
 
     if(empty ~= true) then
 
         local newPath = defaultPath.AppendFile(fileName .. ext)
 
-        print("Create file", templatePath.AppendFile("main-" .. fileName .. ext), "in", defaultPath.AppendFile(fileName .. ext))
+        -- print("Create file", templatePath.AppendFile("main-" .. fileName .. ext), "in", defaultPath.AppendFile(fileName .. ext))
 
         CopyTo(templatePath.AppendFile("main-" .. fileName .. ext), newPath)
 
@@ -270,7 +270,7 @@ function WorkspaceTool:CreateNewCodeFile(defaultPath)
                         codeTemplate = codeTemplate:gsub( "CustomClass", newClassName)
 
 
-                        print("newClassName", newClassName)
+                        -- print("newClassName", newClassName)
                         
                         SaveTextToFile(newPath, codeTemplate)
 

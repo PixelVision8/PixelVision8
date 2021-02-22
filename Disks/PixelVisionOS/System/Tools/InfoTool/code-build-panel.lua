@@ -22,7 +22,7 @@ function InfoTool:CreateBuildInfoPanel()
     
     local winRunnerExists = PathExists(NewWorkspacePath(self.buildTemplatePaths[1].path))
     
-    print("self.buildFlagLabels[1]", dump(self.buildFlagLabels), "'"..gameEditor:ReadMetadata(self.buildFlagLabels[1]).."'", winRunnerExists)
+   --  print("self.buildFlagLabels[1]", dump(self.buildFlagLabels), "'"..gameEditor:ReadMetadata(self.buildFlagLabels[1]).."'", winRunnerExists)
 
     if(winRunnerExists) then
        editorUI:ToggleButton(buildFlagWin, gameEditor:ReadMetadata(self.buildFlagLabels[1]) == "true")
