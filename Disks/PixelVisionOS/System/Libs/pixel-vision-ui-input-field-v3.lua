@@ -24,7 +24,7 @@ local patterns = {
   variable = '[%w]'
 }
 
-function EditorUI:CreateInputField(rect, text, toolTip, pattern, font, colorOffset)
+function EditorUI:CreateInputField(rect, text, toolTip, pattern, font, colorOffset, spacing)
 
   -- Set the edit flag if it's not yet set
   if(self.editingInputField == nil) then
@@ -35,8 +35,11 @@ function EditorUI:CreateInputField(rect, text, toolTip, pattern, font, colorOffs
   if(rect.h == nil) then
     rect.h = self.spriteSize.y
   end
-
-  local data = self:CreateInputArea(rect, nil, toolTip, font, colorOffset)
+  
+  font = font or "large"
+  spacing = spacing or 0
+  
+  local data = self:CreateInputArea(rect, nil, toolTip, font, colorOffset, spacing)
 
   -- Create a unique name by removing the InputArea string from the data's name
   data.name = "InputField" .. data.name:sub(10, - 1)

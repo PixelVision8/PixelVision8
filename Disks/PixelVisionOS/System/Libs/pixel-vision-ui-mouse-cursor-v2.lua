@@ -58,7 +58,7 @@ function MouseCursor:Init()
             spriteData = "cursortext",
             offset = {
                 x = -4,
-                y = -10
+                y = -8
             }
         },
 

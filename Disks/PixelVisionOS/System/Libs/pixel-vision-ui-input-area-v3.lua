@@ -15,9 +15,13 @@
 -- Shawn Rakowski - @shwany
 --
 
-function EditorUI:CreateInputArea(rect, text, toolTip, font, colorOffset)
+function EditorUI:CreateInputArea(rect, text, toolTip, font, colorOffset, spacing)
 
-  local data = self:CreateTextEditor(rect, text, toolTip, font, colorOffset)
+  font = font or "medium"
+  spacing = spacing or -4
+  colorOffset = colorOffset or 15
+
+  local data = self:CreateTextEditor(rect, text, toolTip, font, colorOffset, spacing)
 
   data.name = "InputArea" .. data.name
   data.drawMode = DrawMode.Tile
@@ -28,9 +32,6 @@ function EditorUI:CreateInputArea(rect, text, toolTip, font, colorOffset)
   data.scrollValue = {h = 0, v = 0}
   data.totalLines = 0
   data.maxLineWidth = 0
-
-  -- Disable lua color highlighting by default
-  data.colorize = true
 
   if(text ~= nil) then
     self:ChangeInputArea(data, text)

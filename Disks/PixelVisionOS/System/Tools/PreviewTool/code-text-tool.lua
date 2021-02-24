@@ -48,7 +48,7 @@ function TextTool:Init()
     
         _textTool.extension = _textTool.targetFilePath.GetExtension()
 
-        _textTool.codeMode = _textTool.extension == ".lua" or _textTool.extension == ".cs"
+        _textTool.codeMode = _textTool.extension == ".lua" or _textTool.extension == ".cs" or _textTool.extension == ".json"
        
         local pathSplit = string.split(_textTool.targetFile, "/")
         

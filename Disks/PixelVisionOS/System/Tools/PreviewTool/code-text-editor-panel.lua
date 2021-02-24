@@ -24,7 +24,19 @@ function TextTool:CreateEditorPanel()
     self.inputAreaData.editable = true
     self.inputAreaData.autoDeselect = false
     self.inputAreaData.colorize = self.codeMode
+    
+    if(self.codeMode == true) then
+        
+        if(self.extension == ".cs") then
+            self.inputAreaData.language = "csharp"
+        elseif(self.extension == ".lua") then
+            self.inputAreaData.language = "lua"
+        elseif(self.extension == ".json") then
+            self.inputAreaData.language = "json"
+        end
 
+    end
+    
     -- Prepare the input area for scrolling
     self.inputAreaData.scrollValue = {x = 0, y = 0}
 
@@ -59,6 +71,9 @@ function TextTool:UpdateEditorPanel(timeDelta)
         if(self.vSliderData.enabled ~= showVSlider) then
 
             editorUI:Enable(self.vSliderData, showVSlider)
+            -- if(showVSlider == false) then
+            --     self.inputAreaData.vy = 0
+            -- end
         end
 
         if(wheelDir.Y ~= 0) then
@@ -241,11 +256,13 @@ function TextTool:DrawLineNumbers()
 
     local offset = self.inputAreaData.vy - 1
     -- local totalLines = self.inputAreaData.tiles.h
-    local padWidth = (self.lineWidth / 8) - 1
+    local padWidth = (self.lineWidth / self.inputAreaData.charSize.x) - 1
 
-    for i = 1, self.inputAreaData.tiles.h do
+    DrawRect( 8, 16 + 8, self.lineWidth, self.inputAreaData.rect.h, 0 )
 
-        DrawText(string.lpad(tostring(i + offset), padWidth, "0") .. " ", 1, 2 + i, DrawMode.Tile, "large", 6)
+    for i = 1, self.totalLines do
+
+        DrawText(string.lpad(tostring(i + offset), padWidth, "0") .. " ", 8, 16 + (i*8), DrawMode.TilemapCache, self.inputAreaData.font, 6, self.inputAreaData.spacing)
 
     end
 
@@ -254,9 +271,9 @@ end
 function TextTool:CalculateLineGutter()
 
     -- Update total
-    self.totalLines = #self.inputAreaData.buffer
+    self.totalLines = math.min(#self.inputAreaData.buffer, self.inputAreaData.tiles.h)
 
-    self.lineWidth = self.showLines == true and ((#tostring(self.totalLines) + 1) * 8) or 0
+    self.lineWidth = self.showLines == true and ((math.max(2, #tostring(self.totalLines)) + 1) * self.inputAreaData.charSize.x) or 0
 
     -- Only resize the input field if the size doesn't match
     local newWidth = 224 - self.lineWidth

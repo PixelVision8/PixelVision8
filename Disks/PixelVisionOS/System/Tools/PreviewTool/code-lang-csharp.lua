@@ -1,21 +1,40 @@
 LoadScript("pixel-vision-os-api-list-v1")
 
-print("Lua Lang")
---Lua syntax parser
+print("CSharp Lang")
 
---Lua Keywords
+--C# syntax parser
+
+--C# Keywords
 local keywords = {
-  "and", "break", "do", "else", "elseif",
-  "end", "false", "for", "function", "if",
-  "in", "local", "nil", "not", "or",
-  "repeat", "return", "then", "true", "until", "while"
+  "abstract", "as", "base", "bool", "break", 
+  "byte", "case", "catch", "char", "checked", 
+  "class", "const", "continue", "decimal", 
+  "default", "delegate", "do", "double", "else", 
+    "enum", "event", "explicit", "extern", "false", 
+    "finally", "fixed", "float", "for", "foreach", 
+    "goto", "if", "implicit", "in", "int", 
+    "interface", "internal", "is", "lock", 
+    "long", "namespace", "new", "null", "object", 
+    "operator", "out", "override", "params", 
+    "private", "protected", "public", "readonly", 
+    "ref", "return", "sbyte", "sealed", "short", 
+    "sizeof", "stackalloc", "static", "string", 
+    "struct", "switch", "this", "throw", "true", 
+    "try", "typeof", "uint", "ulong", "unchecked", 
+    "unsafe", "ushort", "using", "virtual", "void", 
+    "add", "alias", "ascendingasync", "await", 
+    "bydescending", "dynamic", "equalsfrom", "get", 
+    "globalgroup", "into", "joinlet", "nameof", 
+    "notnullon", "orderby", "partial", "remove", 
+    "selectset", "unmanaged", "value", "var", "when", 
+    "where", "with", "yield", "volatile", "while"
 }
 
---Lua escapable characters
+--C# escapable characters
 local escapable = {"a", "b", "f", "n", "r", "t", "v", "\\", '"', "'"}
 
 --Pixel Vision 8 Callbacks
-local callbacks = {"Init", "Update", "Draw", "Shutdown", "self"}
+local callbacks = {"Init", "Update", "Draw", "Shutdown"}
 
 --Convert values to keys for instant searching
 for _, list in ipairs({keywords, _G["api"] == nil and {} or _G["api"], callbacks, escapable}) do
@@ -31,7 +50,7 @@ local function token(stream, state)
     local pos = stream.pos --The position of the next character
 
     --Comment and multiline comment matching
-    if char == "-" and stream:eat('%-') then --Parse the '--'
+    if char == "/" and stream:eat('%/') or char == "/" and stream:eat('%//') then --Parse the '--'
       if stream:match("^%[=*%[") then --It's a multilineComment
         state.tokenizer = "multilineComment"
         state.multilen = stream.pos - pos - 3

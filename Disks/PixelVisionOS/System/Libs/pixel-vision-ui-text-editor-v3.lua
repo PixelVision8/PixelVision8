@@ -73,43 +73,6 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset, spaci
   data.font = font or "large"
   data.charSize = NewPoint(8 - math.abs(data.spacing), 8)
 
-  data.bgMaskDrawArguments = {
-    data.rect.x,
-    data.rect.y,
-    data.rect.w,
-    data.rect.h,
-    data.theme.bg,
-    DrawMode.TilemapCache
-  }
-
-  data.lineMaskDrawArguments = {
-    data.rect.x,
-    data.rect.y,
-    data.rect.w,
-    data.rect.h,
-    data.theme.bg,
-    DrawMode.TilemapCache
-  }
-
-  data.cursorBGDrawArguments = {
-    0,
-    0,
-    data.charSize.X,
-    data.charSize.Y,
-    data.theme.cursorBG,
-    DrawMode.Sprite
-  }
-
-  data.cursorDrawArguments = {
-    data.blinkChar,
-    0,
-    0,
-    DrawMode.SpriteAbove,
-    data.font,
-    data.theme.cursor,
-    data.spacing
-  }
-
   -- Create input callbacks. These can be overridden to add special functionality to each input field
   data.captureInput = function()
     return InputString()
@@ -417,14 +380,16 @@ function EditorUI:TextEditorDrawCharactersAtCursor(data, text, x, y)
     data.cursorPos.x = data.cursorPos.x + 1
 
     tmpChar = text:sub(i, i)
+    
+    if(x > (data.viewPort.width - data.charSize.x)) then
+      return
+    end
 
+    -- DrawRect( data.rect.x + x, data.rect.y + y, data.charSize.x, data.charSize.y, 1, DrawMode.TilemapCache )
+    
     if(x >= 0 and tmpChar ~= " ") then
-
-      if(x > (data.viewPort.width - data.charSize.x)) then
-        return
-      end
-
-      local drawArguments = {
+      
+      DrawText( 
         tmpChar,
         data.rect.x + x,
         data.rect.y + y,
@@ -432,11 +397,9 @@ function EditorUI:TextEditorDrawCharactersAtCursor(data, text, x, y)
         data.font,
         data.enabled == true and data.cursorPos.color or data.highlighterTheme.disabled,
         data.spacing
-      }
-
-      self:NewDraw("DrawText", drawArguments)
-
-    end 
+      )
+      
+    end
 
     -- Increase X to the next character
     x = x + data.charSize.X
@@ -516,18 +479,29 @@ function EditorUI:TextEditorDrawBlink(data)
     if(char == "" or char == "\r") then
       char = " "
     end
+    
+    local tmpX = data.rect.x + (data.cx - data.vx) * (data.charSize.x)
+    local tmpY = data.rect.y + (data.cy - data.vy) * (data.charSize.y)
 
-    data.cursorDrawArguments[1] = char
-    data.cursorDrawArguments[2] = data.rect.x + (data.cx - data.vx) * (data.charSize.x)
-    data.cursorDrawArguments[3] = data.rect.y + (data.cy - data.vy) * (data.charSize.y)
-
-    data.cursorBGDrawArguments[1] = data.cursorDrawArguments[2]
-    data.cursorBGDrawArguments[2] = data.cursorDrawArguments[3]
-
-    self:NewDraw("DrawRect", data.cursorBGDrawArguments)
-
-    self:NewDraw("DrawText", data.cursorDrawArguments)
-
+    DrawRect( 
+      tmpX,
+      tmpY,
+      data.charSize.X,
+      data.charSize.Y,
+      data.theme.cursorBG,
+      DrawMode.Sprite
+    )
+    
+    DrawText( 
+      char,
+      tmpX,
+      tmpY,
+      DrawMode.SpriteAbove,
+      data.font,
+      data.theme.cursor,
+      data.spacing
+    )
+    
   end
 
 end
@@ -542,7 +516,15 @@ function EditorUI:TextEditorDrawBuffer(data)
   local vbuffer = lume.slice(data.buffer, data.vy, data.vy + data.tiles.h - 1) --Visible buffer
   local cbuffer = (data.colorize and highlighter ~= nil) and highlighter:highlightLines(vbuffer, data.vy) or vbuffer
 
-  self:NewDraw("DrawRect", data.bgMaskDrawArguments)
+  DrawRect( 
+    data.rect.x,
+    data.rect.y,
+    data.rect.w,
+    data.rect.h,
+    data.theme.bg,
+    DrawMode.TilemapCache
+   )
+  -- self:NewDraw("DrawRect", data.bgMaskDrawArguments)
 
   for k, l in ipairs(cbuffer) do
 
@@ -618,9 +600,17 @@ function EditorUI:TextEditorDrawLine(data)
 
   local y = (data.cy - data.vy + 1) * (data.charSize.y)
 
-  data.lineMaskDrawArguments[2] = data.rect.y + y - data.charSize.Y
-  data.lineMaskDrawArguments[4] = data.charSize.y
+  -- data.lineMaskDrawArguments[2] = data.rect.y + y - data.charSize.Y
+  -- data.lineMaskDrawArguments[4] = data.charSize.y
 
+  DrawRect( 
+    data.rect.x,
+    data.rect.y + y - data.charSize.Y,
+    data.rect.w,
+    data.charSize.y,
+    data.theme.bg,
+    DrawMode.TilemapCache
+  )
   -- self:NewDraw("DrawRect", data.lineMaskDrawArguments)
 
   self:TextEditorMoveCursor(data, - (data.vx - 2) - 1, y / data.charSize.Y, data.theme.bg)
@@ -763,7 +753,7 @@ function EditorUI:TextEditorTextInput(data, t)
     self:TextEditorResetCursorBlink(data)
     self:TextEditorInvalidateLine(data)
     self:TextEditorCheckPosition(data)
-    self:TextEditorDrawLineNum(data)
+    -- self:TextEditorDrawLineNum(data)
     self:TextEditorEndUndoable(data)
     self:TextEditorInvalidateText(data)
   end
@@ -926,7 +916,7 @@ function EditorUI:TextEditorPasteText(data)
   end
   if self:TextEditorCheckPosition(data) then self:TextEditorDrawBuffer(data) else self:TextEditorDrawLine(data) end
 
-  self:TextEditorDrawLineNum(data)
+  -- self:TextEditorDrawLineNum(data)
   self:TextEditorEndUndoable(data)
   self:TextEditorInvalidateText(data)
 end
@@ -1045,7 +1035,7 @@ function EditorUI:TextEditorSetState(data, state)
 
   self:TextEditorCheckPosition(data)
   self:TextEditorDrawBuffer(data)
-  self:TextEditorDrawLineNum(data)
+  -- self:TextEditorDrawLineNum(data)
 end
 
 -- Last used key, this should be set to the last keymap used from the data.keymap table
@@ -1340,7 +1330,7 @@ function EditorUI:TextEditorUpdate(data, dt)
           self:TextEditorTextInput(data, lastInput)
         end
       end
-
+      
       --Blink timer
       if not data.sxs then --If not selecting
         data.btimer = data.btimer + dt
@@ -1518,14 +1508,14 @@ function EditorUI:ResizeTexdtEditor(data, width, height, x, y)
   data.tiles.w = math.ceil(data.rect.w / data.charSize.x)
   data.tiles.h = math.ceil(data.rect.h / data.charSize.y)
   data.viewPort = NewRect(data.rect.x, data.rect.y, data.rect.w, data.rect.h)
-  data.bgMaskDrawArguments[1] = data.rect.x
-  data.bgMaskDrawArguments[2] = data.rect.y
-  data.bgMaskDrawArguments[3] = data.rect.w
-  data.bgMaskDrawArguments[4] = data.rect.h
-  data.lineMaskDrawArguments[1] = data.rect.x
-  data.lineMaskDrawArguments[2] = data.rect.y
-  data.lineMaskDrawArguments[3] = data.rect.w
-  data.lineMaskDrawArguments[4] = data.rect.h
+  -- data.bgMaskDrawArguments[1] = data.rect.x
+  -- data.bgMaskDrawArguments[2] = data.rect.y
+  -- data.bgMaskDrawArguments[3] = data.rect.w
+  -- data.bgMaskDrawArguments[4] = data.rect.h
+  -- data.lineMaskDrawArguments[1] = data.rect.x
+  -- data.lineMaskDrawArguments[2] = data.rect.y
+  -- data.lineMaskDrawArguments[3] = data.rect.w
+  -- data.lineMaskDrawArguments[4] = data.rect.h
 
   self:TextEditorInvalidateBuffer(data)
 
