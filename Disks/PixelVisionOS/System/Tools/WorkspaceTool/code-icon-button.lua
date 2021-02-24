@@ -54,7 +54,7 @@ function PixelVisionOS:CreateIconButton(point, spriteName, label, toolTip, bgCol
         self:RedrawIconButton(tmpData)
     end
 
-    data.bgDrawArgs = {data.rect.x, data.rect.y, data.rect.w - 1, data.rect.h, BackgroundColor(), DrawMode.TilemapCache}
+    -- data.bgDrawArgs = {data.rect.x, data.rect.y, data.rect.w - 1, data.rect.h, BackgroundColor(), DrawMode.TilemapCache}
 
     self:CreateIconButtonStates(data, spriteName, label, bgColor)
 
@@ -81,14 +81,22 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
     data.cachedPixelData = {}
 
     -- Make sure the background has been updated
-    if(bgColor ~= nil) then
-        data.bgDrawArgs[5] = bgColor
-    end
+    -- if(bgColor ~= nil) then
+    --     data.bgDrawArgs[5] = bgColor
+    -- end
 
     if(spriteName == "none") then
 
+        DrawRect( 
+            data.rect.x, 
+            data.rect.y, 
+            data.rect.w - 1, 
+            data.rect.h, 
+            bgColor, 
+            DrawMode.TilemapCache
+        )
         -- Clear the bakground since there is nothing to display
-        editorUI:NewDraw("DrawRect", data.bgDrawArgs)
+        -- editorUI:NewDraw("DrawRect", data.bgDrawArgs)
 
     else
         
@@ -122,7 +130,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
             end
 
             -- Get the background color
-            local bgColor = state ~= "dragging" and data.bgDrawArgs[5] or - 1
+            local bgColor = state ~= "dragging" and bgColor or - 1
             
             -- Create states
             if(spriteName == nil) then
@@ -447,7 +455,7 @@ function PixelVisionOS:CreateIconGroup(singleSelection)
     data.singleSelection = singleSelection
     data.dragOverTime = 0
     data.dragOverDelay = .3
-    data.drawIconArgs = {nil, 0, 0, 47, 40, false, false, DrawMode.UI}
+    -- data.drawIconArgs = {nil, 0, 0, 47, 40, false, false, DrawMode.UI}
 
     return data
 
@@ -614,14 +622,24 @@ function PixelVisionOS:UpdateIconGroup(data)
 
                 if(editorUI.collisionManager.mousePos.x > - 1 and editorUI.collisionManager.mousePos.y > - 1) then
 
-                    data.drawIconArgs[1] = btn.cachedPixelData["dragging"].pixels
-                    data.drawIconArgs[2] = editorUI.collisionManager.mousePos.x - 24
-                    data.drawIconArgs[3] = editorUI.collisionManager.mousePos.y - 12
+                    -- data.drawIconArgs[1] = btn.cachedPixelData["dragging"].pixels
+                    -- data.drawIconArgs[2] = editorUI.collisionManager.mousePos.x - 24
+                    -- data.drawIconArgs[3] = editorUI.collisionManager.mousePos.y - 12
                     -- data.drawIconArgs[4] = btn.cachedPixelData["dragging"].width
                     -- data.drawIconArgs[5] = clipSize.h
 
+                    DrawPixels(
+                        btn.cachedPixelData["dragging"].pixels,
+                        editorUI.collisionManager.mousePos.x - 24,
+                        editorUI.collisionManager.mousePos.y - 12,
+                        47, 
+                        40, 
+                        false, 
+                        false, 
+                        DrawMode.UI
+                    )
                     -- DrawPixels(btn.cachedPixelData["up"], 0,0)
-                    editorUI:NewDraw("DrawPixels", data.drawIconArgs)
+                    -- editorUI:NewDraw("DrawPixels", data.drawIconArgs)
                     
                     -- TODO need a file count when dragging
                     -- editorUI:NewDraw("DrawText", {string.format("%02d", 1), data.drawIconArgs[2], data.drawIconArgs[3], DrawMode.Sprite, "small", 15, -4})

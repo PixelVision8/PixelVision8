@@ -85,7 +85,7 @@
             {"name":"filedriveopenup","width":3,"spriteIDs":[419,420,421,431,432,433,443,444,445]},
             {"name":"filedisabledcodeluaup","width":3,"spriteIDs":[276,277,278,291,292,293,303,304,305]},
             {"name":"filecustomiconselectedup","width":3,"spriteIDs":[555,556,557,573,574,575,582,587,584]},
-            {"name":"vsliderhandle","width":2,"spriteIDs":[156,157,182,183,197,198]},
+            {"name":"vsliderhandleup","width":2,"spriteIDs":[156,157,182,183,197,198]},
             {"name":"filegifselectedup","width":3,"spriteIDs":[550,551,114,383,384,385,405,406,407]},
             {"name":"filespritesselectedup","width":3,"spriteIDs":[97,212,99,241,242,243,252,110,111]},
             {"name":"cursorhand","width":2,"spriteIDs":[458,459,474,475]},

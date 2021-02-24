@@ -37,25 +37,6 @@ function PixelVisionOS:CreateMessageBar(x, y, maxChars, clearColorID)
     length = 0
   }
 
-  data.textDrawArgs = {
-    "",
-    data.pos.x,
-    data.pos.y,
-    DrawMode.TilemapCache,
-    data.font,
-    data.textColorOffset,
-    data.offset
-  }
-
-  data.clearDrawArgs = {
-    data.pos.x,
-    data.pos.y,
-    data.maxChars * 4,
-    8,
-    data.clearColorID,
-    DrawMode.TilemapCache
-  }
-
   return data
 
 end
@@ -99,11 +80,25 @@ function PixelVisionOS:DrawMessageBar(data)
       self.length = 0
     end
 
-    data.textDrawArgs[1] = string.upper(data.currentMessage)
-
-    editorUI:NewDraw("DrawRect", data.clearDrawArgs)
-    editorUI:NewDraw("DrawText", data.textDrawArgs)
-
+    DrawRect( 
+      data.pos.x,
+      data.pos.y,
+      data.maxChars * 4,
+      8,
+      data.clearColorID,
+      DrawMode.TilemapCache
+    )
+    
+    DrawText(
+      string.upper(data.currentMessage),
+      data.pos.x,
+      data.pos.y,
+      DrawMode.TilemapCache,
+      data.font,
+      data.textColorOffset,
+      data.offset
+    )
+    
     editorUI:ResetValidation(data)
   end
 end

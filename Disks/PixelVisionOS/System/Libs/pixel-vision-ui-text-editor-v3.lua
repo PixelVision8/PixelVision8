@@ -524,7 +524,6 @@ function EditorUI:TextEditorDrawBuffer(data)
     data.theme.bg,
     DrawMode.TilemapCache
    )
-  -- self:NewDraw("DrawRect", data.bgMaskDrawArguments)
 
   for k, l in ipairs(cbuffer) do
 
@@ -598,10 +597,7 @@ function EditorUI:TextEditorDrawLine(data)
   end
   if not cline then cline = data.buffer[data.cy] end
 
-  local y = (data.cy - data.vy + 1) * (data.charSize.y)
-
-  -- data.lineMaskDrawArguments[2] = data.rect.y + y - data.charSize.Y
-  -- data.lineMaskDrawArguments[4] = data.charSize.y
+  local y = ((data.cy - data.vy + 1) * (data.charSize.y))
 
   DrawRect( 
     data.rect.x,
@@ -611,8 +607,7 @@ function EditorUI:TextEditorDrawLine(data)
     data.theme.bg,
     DrawMode.TilemapCache
   )
-  -- self:NewDraw("DrawRect", data.lineMaskDrawArguments)
-
+  
   self:TextEditorMoveCursor(data, - (data.vx - 2) - 1, y / data.charSize.Y, data.theme.bg)
   if not colateral then
     self:TextEditorDrawColoredTextAtCursor(data, cline)

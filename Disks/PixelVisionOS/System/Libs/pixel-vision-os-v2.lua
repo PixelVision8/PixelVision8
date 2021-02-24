@@ -128,22 +128,7 @@ function PixelVisionOS:Draw()
 
 end
 
--- This is a helper for changing the text on the title bar
-function PixelVisionOS:ChangeTitle(text, titleIconName)
 
-    DrawRect(30, 0, 140, 8, 0, DrawMode.TilemapCache)
-
-    local maxChars = 35
-    if(#text > maxChars) then
-        text = text:sub(0, maxChars - 3) .. "..."
-    else
-        text = string.rpad(text, maxChars, "")
-    end
-
-    self.titleBar.titleIcon = FindMetaSpriteId(titleIconName)-- and _G[titleIconName].spriteIDs[1] or nil
-    self.titleBar.title = text
-    self.editorUI:Invalidate(self.titleBar)
-end
 
 function PixelVisionOS:ShowAboutModal(toolTitle, optionalText, width)
 

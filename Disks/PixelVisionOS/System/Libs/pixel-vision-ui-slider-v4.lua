@@ -32,21 +32,23 @@ function EditorUI:CreateSlider(rect, spriteName, toolTip, horizontal, offset)
   data.value = 0
   data.handleX = 0
   data.handleY = 0
-  data.handleSize = 0
+  data.handleSize = -1
 
   -- This is applied to the top when horizontal and the left when vertical
   data.offset = offset or 0
 
   -- If there is a sprite calculate the handle size
-  if(spriteData ~= nil) then
+  if(data.cachedMetaSpriteIds["up"] > -1) then
     -- Determine if the slider is horizontal or vertical and use the correct sprite dimensions
     if(horizontal == true) then
-      data.handleSize = spriteData.Width
+      data.handleSize = MetaSprite(data.cachedMetaSpriteIds["up"]).Width
     else
-      data.handleSize = spriteData.Height
+      data.handleSize = MetaSprite(data.cachedMetaSpriteIds["up"]).Height
     end
+      data.size = data.size - data.handleSize
+    -- end
 
-    data.spriteDrawArgs = {FindMetaSpriteId(spriteName), 0, 0, false, false, DrawMode.Sprite, 0, false}
+    -- data.spriteDrawArgs = {FindMetaSpriteId(spriteName), 0, 0, false, false, DrawMode.Sprite, 0, false}
 
   end
   -- Need to account for the correct orientation
@@ -60,11 +62,12 @@ end
 function EditorUI:UpdateSlider(data)
 
   -- Make sure we have data to work with and the component isn't disabled, if not return out of the update method
-  if(data == nil) then
+  if(data == nil or data.handleSize < 0) then
     return
   end
+  
 
-  local size = data.size - data.handleSize
+  -- local size = data.size - data.handleSize
 
   if(data.enabled == true) then
 
@@ -106,11 +109,11 @@ function EditorUI:UpdateSlider(data)
     data.handleY = data.rect.y
 
     if(data.horizontal == true) then
-      data.handleX = data.handleX + (data.value * size)
+      data.handleX = data.handleX + (data.value * data.size)
       data.handleY = data.handleY + data.offset
     else
       data.handleX = data.handleX + data.offset
-      data.handleY = data.handleY + (data.value * size)
+      data.handleY = data.handleY + (data.value * data.size)
 
     end
 
@@ -121,19 +124,8 @@ function EditorUI:UpdateSlider(data)
 
   if(data.enabled == true) then
 
-    -- Make sure we have sprite data to render
-    if(data.spriteDrawArgs ~= nil) then
-
-      data.spriteDrawArgs[1] = FindMetaSpriteId(data.spriteName .. (data.inFocus and "over" or ""))
-      -- Update X, Y, and Color Offset
-      data.spriteDrawArgs[2] = data.handleX
-      data.spriteDrawArgs[3] = data.handleY
-      -- data.spriteDrawArgs[7] =  and 12 or 8
-
-      self:NewDraw("DrawMetaSprite", data.spriteDrawArgs)
-
-    end
-
+    DrawMetaSprite(data.cachedMetaSpriteIds[(data.inFocus and "over" or "up")], data.handleX, data.handleY)--, false, false, DrawMode.Sprite, 0, false)
+      
   end
 
   -- Return the slider data value
@@ -143,7 +135,11 @@ end
 
 function EditorUI:UpdateSliderPosition(data)
 
-  local size = data.size - data.handleSize
+  if(data.handleSize < 0) then
+    return
+  end
+
+  -- local size = data.size - data.handleSize
   local dir = data.horizontal and "x" or "y"
   local prop = "handle" .. string.upper(dir)
 
@@ -153,8 +149,8 @@ function EditorUI:UpdateSliderPosition(data)
   if(newPos > - 1) then
 
     -- Make sure the position is in range
-    if(newPos > size + data.rect[dir]) then
-      newPos = size + data.rect[dir]
+    if(newPos > data.size + data.rect[dir]) then
+      newPos = data.size + data.rect[dir]
     elseif(newPos < data.rect[dir]) then
       newPos = data.rect[dir]
     end
@@ -163,7 +159,7 @@ function EditorUI:UpdateSliderPosition(data)
     data[prop] = newPos
 
     -- Need to calculate the value
-    local percent = math.ceil(((data[prop] - data.rect[dir]) / size) * 100) / 100
+    local percent = math.ceil(((data[prop] - data.rect[dir]) / data.size) * 100) / 100
 
     self:ChangeSlider(data, percent)
 

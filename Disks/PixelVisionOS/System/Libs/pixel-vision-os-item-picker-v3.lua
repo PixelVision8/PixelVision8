@@ -157,12 +157,12 @@ function PixelVisionOS:CreateItemPicker(rect, itemSize, columns, rows, colorOffs
 
     end
 
-    --print(data.name, "scroller", data.viewport.height < data.realHeight, _G["vsliderhandle"])
+    --print(data.name, "scroller", data.viewport.height < data.realHeight, _G["vsliderhandleup"])
     if(_G["vsliderhandleup"] ~= nil and data.viewport.height < data.realHeight) then
 
         data.vSlider = editorUI:CreateSlider(
             { x = rect.x + rect.w + 1, y = rect.y, w = 16, h = rect.h},
-            "vsliderhandle",
+            "vsliderhandleup",
             "Scroll vertically.",
             false
         )

@@ -59,7 +59,7 @@ _G["flagup"]={spriteIDs={271,272,290,291,183,184},width=2,colorOffset=0}
 _G["gamecolortext"]={spriteIDs={9,10,11,12,13,5,25,26,27,28,29,19},width=6,colorOffset=0}
 _G["gamepalettetext"]={spriteIDs={9,10,273,12,7,4,5,25,26,292,293,294,18,19},width=7,colorOffset=0}
 _G["hsliderhandleover"]={spriteIDs={204,205,206,231,232,233},width=3,colorOffset=0}
-_G["hsliderhandleup"]={spriteIDs={142,143,144,174,175,176},width=3,colorOffset=0}
+_G["hsliderhandle"]={spriteIDs={142,143,144,174,175,176},width=3,colorOffset=0}
 _G["modalcancelbuttonover"]={spriteIDs={373,374,375,376,387,388,389,390},width=4,colorOffset=0}
 _G["modalcancelbuttonup"]={spriteIDs={395,396,397,398,425,426,427,428},width=4,colorOffset=0}
 _G["modalnobuttonover"]={spriteIDs={391,392,393,394,421,422,423,424},width=4,colorOffset=0}
@@ -158,6 +158,6 @@ _G["titlebarvolumeoff"]={spriteIDs={141},width=1,colorOffset=0}
 _G["titlebarvolumeon"]={spriteIDs={140},width=1,colorOffset=0}
 _G["toolbariconfile"]={spriteIDs={201},width=1,colorOffset=0}
 _G["vsliderhandleover"]={spriteIDs={172,173,202,203,229,230},width=2,colorOffset=0}
-_G["vsliderhandleup"]={spriteIDs={255,256,274,275,295,296},width=2,colorOffset=0}
+_G["vsliderhandle"]={spriteIDs={255,256,274,275,295,296},width=2,colorOffset=0}
 
 -- spritelib-end

@@ -96,9 +96,9 @@ function EditorUI:UpdateButtonSizeFromCache(data)
     data.rect.h = data.tiles.h * self.spriteSize.y
 
     -- Cache the tile draw arguments for rendering
-    data.spriteDrawArgs = {spriteData, 0, 0, false, false, DrawMode.Sprite, 0, false, false}
-    data.tileDrawArgs = {spriteData, data.rect.x, data.rect.y, false, false, DrawMode.TilemapCache, 0}
-    data.bgDrawArgs = {data.rect.x, data.rect.y, data.rect.w, data.rect.h, BackgroundColor(), DrawMode.TilemapCache}
+    -- data.spriteDrawArgs = {spriteData, 0, 0, false, false, DrawMode.Sprite, 0, false, false}
+    -- data.tileDrawArgs = {spriteData, data.rect.x, data.rect.y, false, false, DrawMode.TilemapCache, 0}
+    -- data.bgDrawArgs = {data.rect.x, data.rect.y, data.rect.w, data.rect.h, BackgroundColor(), DrawMode.TilemapCache}
 
   end
 
@@ -169,21 +169,9 @@ function EditorUI:UpdateButton(data, hitRect)
 
     local spriteData = data.cachedSpriteData ~= nil and data.cachedSpriteData[self.tmpState] or nil
 
-    if(spriteData ~= nil and data.spriteDrawArgs ~= nil) then
+    if(spriteData ~= nil) then-- and data.spriteDrawArgs ~= nil) then
 
-      -- Sprite Data
-      data.spriteDrawArgs[1] = FindMetaSpriteId(spriteData)--.spriteIDs
-
-      -- X pos
-      data.spriteDrawArgs[2] = data.rect.x
-
-      -- Y pos
-      data.spriteDrawArgs[3] = data.rect.y
-
-      -- Color Offset
-      data.spriteDrawArgs[8] = spriteData.colorOffset or 0
-
-      self:NewDraw("DrawMetaSprite", data.spriteDrawArgs)
+      DrawMetaSprite(FindMetaSpriteId(spriteData), data.rect.x, data.rect.y)
 
     end
 
@@ -250,25 +238,23 @@ function EditorUI:RedrawButton(data, stateOverride)
     end
 
     -- Test to see if the sprite data exist before updating the tiles
-    if(data.cachedSpriteData ~= nil and data.cachedSpriteData[self.tmpState] ~= nil and data.tileDrawArgs ~= nil) then
-
-      -- Update the tile draw arguments
-      data.tileDrawArgs[1] = FindMetaSpriteId(data.cachedSpriteData[self.tmpState])--.spriteIDs
-
-      -- Color offset
-      data.tileDrawArgs[8] = data.cachedSpriteData[self.tmpState].colorOffset or 0
+    if(data.cachedSpriteData ~= nil and data.cachedSpriteData[self.tmpState] ~= nil) then-- and data.tileDrawArgs ~= nil) then
 
       if(data.redrawBackground == true) then
 
-        -- Make sure we always have the current BG color
-        data.bgDrawArgs[5] = data.bgColorOverride ~= nil and data.bgColorOverride or BackgroundColor()
-
-        self:NewDraw("DrawRect", data.bgDrawArgs)
-
+        DrawRect( data.rect.x, data.rect.y, data.rect.w, data.rect.h, data.bgColorOverride ~= nil and data.bgColorOverride or BackgroundColor(), DrawMode.TilemapCache)
+        
       end
 
-      self:NewDraw("DrawMetaSprite", data.tileDrawArgs)
-
+      DrawMetaSprite(
+        FindMetaSpriteId(data.cachedSpriteData[self.tmpState]), 
+        data.rect.x, 
+        data.rect.y, 
+        false, 
+        false, 
+        DrawMode.TilemapCache, 0
+      )
+      
     end
 
     self:ResetValidation(data)
@@ -292,14 +278,15 @@ function EditorUI:ClearButton(data, flag)
   -- make sure we have sprite data to draw
   if(self.tmpSpriteData ~= nil) then
 
-    -- Update the tile draw arguments
-    data.tileDrawArgs[1] = FindMetaSpriteId(data.cachedSpriteData["empty"])--.spriteIDs
-
-    -- Color offset
-    data.tileDrawArgs[8] = self.tmpSpriteData.colorOffset or 0
-
-    self:NewDraw("DrawMetaSprite", data.tileDrawArgs)
-
+    DrawMetaSprite(
+        FindMetaSpriteId(data.cachedSpriteData["empty"]), 
+        data.rect.x, 
+        data.rect.y, 
+        false, 
+        false, 
+        DrawMode.TilemapCache, 0
+      )
+    
   end
 
 end

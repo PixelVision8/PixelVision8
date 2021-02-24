@@ -23,9 +23,9 @@
             {"name":"emptytile","width":1,"spriteIDs":[53]},
             {"name":"cursorhanddown","width":2,"spriteIDs":[14,15,34,35]},
             {"name":"emptytileedge","width":1,"spriteIDs":[54]},
-            {"name":"vsliderhandle","width":2,"spriteIDs":[55,56,72,73,89,90]},
+            {"name":"vsliderhandleup","width":2,"spriteIDs":[55,56,72,73,89,90]},
             {"name":"cursorhand","width":2,"spriteIDs":[12,13,32,33]},
-            {"name":"hsliderhandle","width":3,"spriteIDs":[69,70,71,86,87,88]},
+            {"name":"hsliderhandleup","width":3,"spriteIDs":[69,70,71,86,87,88]},
             {"name":"modalnobuttonover","width":4,"spriteIDs":[57,61,62,60,74,78,79,77]}
         ],
         "total": 96

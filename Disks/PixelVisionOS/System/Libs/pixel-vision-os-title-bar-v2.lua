@@ -15,7 +15,7 @@
 -- Shawn Rakowski - @shwany
 --
 
-function PixelVisionOS:CreateTitleBar(x, y, title, product)
+function PixelVisionOS:CreateTitleBar(x, y, title)
 
     local data = {} -- our new object
 
@@ -27,81 +27,24 @@ function PixelVisionOS:CreateTitleBar(x, y, title, product)
     data.invalid = true
     data.textColorOffset = 15
     data.font = "medium"
+    data.fontSpacing = -4
     data.lastTimeStamp = ""
     data.timeDelay = .3
     data.time = .3
     data.invalid = true
     data.showTimeDivider = true
-    data.productName = product or SystemName()
-    data.title = title or "Untitled"
+    data.title = "Untitled"
     data.debugTime = ReadBiosData("DebugTime") == "True"
-
-    data.productDrawArgs = {
-        data.productName,
-        20,
-        1,
-        DrawMode.TilemapCache,
-        data.font,
-        data.textColorOffset,
-        - 4
-    }
-
-    data.timeDrawArgs = {
-        "",
-        0,
-        1,
-        DrawMode.TilemapCache,
-        data.font,
-        data.textColorOffset,
-        - 4
-    }
-
-    data.muteDrawArgs = {
-        "titlebarvolumeon",
-        172,
-        0,
-        false,
-        false,
-        DrawMode.TilemapCache,
-    }
-
-    data.titleIconDrawArgs = {
-        0,
-        23,
-        2,
-        false,
-        false,
-        DrawMode.TilemapCache,
-    }
-
-    data.titleDrawArgs = {
-        data.title,
-        23 + 8,
-        1,
-        DrawMode.TilemapCache,
-        "medium",
-        data.textColorOffset,
-        - 4
-    }
+    data.charWidth = 4
+    data.timeTextTemplate = (data.debugTime and "SAT" or "%a") .. "         1985"
+    data.timeOffsetX = Display().x - 72 -- time text chars * charWidth + offset (8)
 
     -- Create the time mask sprite data
-    local timeMask = {}
+    data.timeMask = {}
 
     for i = 1, 8 * 4 do
-        timeMask[i] = 0
+        data.timeMask[i] = 0
     end
-
-    data.timeMaskDrawArgs = {
-        timeMask,
-        208,
-        0,
-        4,
-        8,
-        false,
-        false,
-        DrawMode.Sprite,
-        0
-    }
 
     self.editorUI:Invalidate(data)
 
@@ -126,9 +69,11 @@ function PixelVisionOS:CreateTitleBar(x, y, title, product)
     -- Disable the button but default until the tool creates an option menu
     self.editorUI:Enable(data.iconButton, false)
 
+    
+
     -- Create mute button
-    data.muteBtnData = self.editorUI:CreateButton({x = data.muteDrawArgs[2], y = data.muteDrawArgs[3]}, "", "Toggle systme wide mute.")
-    data.muteBtnData.hitRect = {x = data.muteDrawArgs[2], y = data.muteDrawArgs[3], w = 8, h = 11}
+    data.muteBtnData = self.editorUI:CreateButton({x = 172, y = 0}, "", "Toggle systme wide mute.")
+    data.muteBtnData.hitRect = {x = data.muteBtnData.rect.x, y = data.muteBtnData.rect.y, w = 8, h = 11}
 
     data.muteBtnData.onAction = function()
         Mute(not Mute())
@@ -140,6 +85,24 @@ function PixelVisionOS:CreateTitleBar(x, y, title, product)
     data.muteInvalid = true
 
     return data
+
+end
+
+-- This is a helper for changing the text on the title bar
+function PixelVisionOS:ChangeTitle(text, titleIconName)
+
+    DrawRect(30, 0, 140, 8, 0, DrawMode.TilemapCache)
+
+    local maxChars = 34
+    if(#text > maxChars) then
+        text = text:sub(0, maxChars - 3) .. "..."
+    else
+        text = string.rpad(text, maxChars, "")
+    end
+
+    self.titleBar.titleIcon = FindMetaSpriteId(titleIconName)-- and _G[titleIconName].spriteIDs[1] or nil
+    self.titleBar.title = string.upper(text)
+    self.editorUI:Invalidate(self.titleBar)
 
 end
 
@@ -220,8 +183,6 @@ function PixelVisionOS:CreateTitleBarMenu(items, toolTip)
         -- Draw the up state
         self:DrawTitleBarMenuItem(tmpCanvas, option, 14)
 
-        --print(option.name, tmpCanvas.width, tmpCanvas.height, #tmpCanvas:GetPixels())
-        
         canvas:MergePixels(tmpX, tmpY, tmpCanvas.width, tmpCanvas.height, tmpCanvas:GetPixels(), false, false, 0, true)
 
         if(option.divider ~= true) then
@@ -292,12 +253,14 @@ function PixelVisionOS:DrawTitleBarMenuItem(canvas, option, bgColor2)
     local t2Color = t2Color or 12
 
     if(option.divider == true) then
+
         canvas:SetStroke(divColor, 1)
         local y = 2
         canvas:DrawLine(0, y, canvas.width, y)
+
     else
 
-        canvas:DrawText(option.name:upper(), 4, 0, "medium", t1Color, - 4)
+        canvas:DrawText(option.name:upper(), 4, 0, "medium", t1Color, -4)
 
         if(option.key ~= nil) then
 
@@ -311,7 +274,7 @@ function PixelVisionOS:DrawTitleBarMenuItem(canvas, option, bgColor2)
 
             canvas:DrawRectangle(tmpX, tmpY, 12, 7, true)
             
-            canvas:DrawText(("^" .. tostring(option.key)):upper(), tmpX + 2, tmpY - 1, "small", t2Color, - 4)
+            canvas:DrawText(("^" .. tostring(option.key)):upper(), tmpX + 2, tmpY - 1, "small", t2Color, -4)
             
         end
 
@@ -442,7 +405,7 @@ function PixelVisionOS:UpdateTitleBar(data, timeDelta)
 
             DrawRect( 200, 0, 32, 8, 0, DrawMode.TilemapCache )
 
-            DrawText(newTimeStamp, 200, 1, DrawMode.TilemapCache, "medium", data.textColorOffset, - 4)
+            DrawText(newTimeStamp, 200, 1, DrawMode.TilemapCache, data.font, data.textColorOffset, data.fontSpacing)
 
             data.lastTimeStamp = newTimeStamp
 
@@ -511,28 +474,40 @@ function PixelVisionOS:DrawTitleBar(data)
     end
 
     if(data.invalid == true) then
-        local displayWidth = Display().x
-        local offsetRight = 8
-        local charWidth = 4
-        local date = ReadBiosData("DebugTime") == "True" and string.upper(os.date("SAT         1985")) or string.upper(os.date("%a         1985"))
-
-        offsetRight = ((#date * charWidth) + offsetRight)
-
-        data.timeDrawArgs[1] = string.upper(date)
-        data.timeDrawArgs[2] = displayWidth - offsetRight,
-
-        self.editorUI:NewDraw("DrawText", data.timeDrawArgs)
+        
+        
+        DrawText(
+            string.upper(os.date(data.timeTextTemplate)),
+            data.timeOffsetX,
+            1,
+            DrawMode.TilemapCache,
+            data.font,
+            data.textColorOffset,
+            data.fontSpacing
+        )
 
         -- Draw title icon
         if(data.titleIcon ~= nil) then
-            data.titleIconDrawArgs[1] = data.titleIcon
-            self.editorUI:NewDraw("DrawMetaSprite", data.titleIconDrawArgs)
+            DrawMetaSprite(
+                data.titleIcon,
+                23,
+                2,
+                false,
+                false,
+                DrawMode.TilemapCache
+            )
+            
         end
 
-        -- Draw title text
-        local nameWidth = #data.title * charWidth
-        data.titleDrawArgs[1] = string.upper(data.title)
-        self.editorUI:NewDraw("DrawText", data.titleDrawArgs)
+        DrawText( 
+            data.title,
+            23 + 8,
+            1,
+            DrawMode.TilemapCache,
+            data.font,
+            data.textColorOffset,
+            data.fontSpacing
+        )
 
         data.lastTimeStamp = ""
 
@@ -542,22 +517,31 @@ function PixelVisionOS:DrawTitleBar(data)
 
     if(data.showTimeDivider == true) then
 
-        self.editorUI:NewDraw("DrawPixels", data.timeMaskDrawArgs)
+        DrawPixels( 
+            data.timeMask,
+            208,
+            0,
+            4,
+            8,
+            false,
+            false,
+            DrawMode.Sprite,
+            0
+        )
 
     end
 
-    -- TODO need to make sure this is cached in the lua bridge somewhere?
-   
-    -- if(self.lastMuteValue ~= newMuteValue) then
     if(data.muteInvalid == true) then
-        -- print("Redraw mute")
-        local newMuteValue = Mute()
 
-        data.muteDrawArgs[1] = FindMetaSpriteId(newMuteValue and "titlebarvolumeoff" or "titlebarvolumeon")
-
-        self.editorUI:NewDraw("DrawMetaSprite", data.muteDrawArgs)
-        -- self.lastMuteValue = newMuteValue
-
+        DrawMetaSprite(
+            FindMetaSpriteId(Mute() and "titlebarvolumeoff" or "titlebarvolumeon"),
+            data.muteBtnData.rect.x,
+            data.muteBtnData.rect.y,
+            false,
+            false,
+            DrawMode.TilemapCache
+        )
+       
         data.muteInvalid = false
 
     end
@@ -569,10 +553,22 @@ function PixelVisionOS:DrawTitleBar(data)
         menuData.canvas:DrawPixels(menuData.menuDrawArgs[2], menuData.menuDrawArgs[3], DrawMode.UI)
 
         if(menuData.menuSelection > 0) then
+            
             local pixelData = menuData.options[menuData.menuSelection].overPixelData
 
             if(pixelData ~= nil)then
-                self.editorUI:NewDraw("DrawPixels", pixelData)
+                
+                DrawPixels(
+                    pixelData[1],
+                    pixelData[2],
+                    pixelData[3],
+                    pixelData[4],
+                    pixelData[5],
+                    false,
+                    false,
+                    DrawMode.UI
+                )
+                
             end
 
         end

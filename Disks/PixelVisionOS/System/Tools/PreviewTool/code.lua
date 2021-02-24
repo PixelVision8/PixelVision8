@@ -34,7 +34,7 @@ function Init()
   -- Update background
   BackgroundColor(0)
 
-  pixelVisionOS.messageBar.clearColorID = 2
+  -- pixelVisionOS.messageBar.clearColorID = 2
 
   -- Create new tool instance based on the file extension
   currentTool = CreateTool()

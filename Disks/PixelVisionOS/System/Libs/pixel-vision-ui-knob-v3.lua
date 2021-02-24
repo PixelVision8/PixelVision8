@@ -15,10 +15,10 @@
 -- Shawn Rakowski - @shwany
 --
 
-function EditorUI:CreateKnob(rect, spriteName, toolTip)
+function EditorUI:CreateKnob(rect, spriteName, toolTip, colorOffset)
 
   -- Create a generic component data object
-  local data = self:CreateData(rect, spriteName, toolTip, forceDraw)
+  local data = self:CreateData(rect, spriteName, toolTip)
 
   data.rotation = 
   {
@@ -63,27 +63,11 @@ function EditorUI:CreateKnob(rect, spriteName, toolTip)
   data.handleY = 0
   data.handleSize = 1
 
-  data.colorOffsetDisabled = 144
-
+  -- Map the color offset to the correct palette
+  data.colorOffsetDisabled = colorOffset or 144
   data.colorOffsetUp = data.colorOffsetDisabled + 4
   data.colorOffsetOver = data.colorOffsetDisabled + 8
   
-
-  -- This is applied to the top when horizontal and the left when vertical
-  -- data.offset = offset or 0
-
-
-  -- Calculate the handle's size based on the sprite
-  -- local spriteData = _G[data.spriteName .. data.rotation[1]]
-
-  -- local metaSpriteId = 
-
-  -- if(spriteData ~= nil) then
-
-  data.spriteDrawArgs = {FindMetaSpriteId(data.spriteName .. data.rotation[1]), data.rect.x, data.rect.y, false, false, DrawMode.TilemapCache, 0, false}
-
-  -- end
-
   -- Need to account for the correct orientation
   data.handleCenter = data.handleSize / 2
 
@@ -191,24 +175,23 @@ end
 
 function EditorUI:DrawKnobSprite(data, mode)
 
-  -- local metaSpriteId = FindMetaSpriteId(data.spriteName .. data.rotation[self:CalculateKnobRotationID(data)])--_G[data.spriteName .. data.rotation[self:CalculateKnobRotationID(data)]] -- data.enabled == true
-
-  -- Make sure we have sprite data to render
-  if(data.spriteDrawArgs ~= nil) then
-
-    -- Sprite Data
-    data.spriteDrawArgs[1] = FindMetaSpriteId(data.spriteName .. data.rotation[self:CalculateKnobRotationID(data)])
-
     -- Color Offset
     if(data.enabled) then
-      data.spriteDrawArgs[7] = data.inFocus == true and data.colorOffsetOver or data.colorOffsetUp
+      data.tmpColorOffset = data.inFocus == true and data.colorOffsetOver or data.colorOffsetUp
     else
-      data.spriteDrawArgs[7] = data.colorOffsetDisabled
+      data.tmpColorOffset = data.colorOffsetDisabled
     end
 
-    self:NewDraw("DrawMetaSprite", data.spriteDrawArgs)
-
-  end
+    DrawMetaSprite(
+      FindMetaSpriteId(data.spriteName .. data.rotation[self:CalculateKnobRotationID(data)]), 
+      data.rect.x, 
+      data.rect.y, 
+      false, 
+      false, 
+      DrawMode.TilemapCache, 
+      data.tmpColorOffset, 
+      false
+    )
 
 end
 
@@ -222,7 +205,6 @@ function EditorUI:ChangeKnob(data, percent, trigger)
   -- Set the new value
   data.value = percent
 
-  -- TODO shouldn't this be onUpdate?
   if(data.onAction ~= nil and trigger ~= false) then
     data.onAction(percent)
   end
