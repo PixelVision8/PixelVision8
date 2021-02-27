@@ -21,7 +21,6 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using PixelVision8.Player;
 
 namespace PixelVisionSDK.Player
 {
@@ -66,7 +65,7 @@ namespace PixelVisionSDK.Player
             Name = name;
             Sprites = new List<SpriteData>();
             Bounds = Rectangle.Empty;
-            SpriteMax = 1024;
+            // SpriteMax = 1024;
             // MaxBoundary = new Rectangle(0, 0, 128, 128);
             SpriteWidth = 8;
             SpriteHeight = 8;
@@ -81,6 +80,9 @@ namespace PixelVisionSDK.Player
 
         public void AddSprite(int id, int x = 0, int y = 0, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
+            if(id == -1)
+                return;
+                
             // var newX = MathHelper.Clamp(x, MaxBoundary.X, MaxBoundary.Width);
             // var newY = MathHelper.Clamp(y, MaxBoundary.Y, MaxBoundary.Height);
 
@@ -88,7 +90,8 @@ namespace PixelVisionSDK.Player
             Bounds.Width = Math.Max(Bounds.Width, x + SpriteWidth);
             Bounds.Height = Math.Max(Bounds.Height, y + SpriteHeight);
 
-            Sprites.Add(new SpriteData(MathHelper.Clamp(id, 0, SpriteMax), x, y, flipH, flipV, colorOffset));
+            // Sprites.Add(new SpriteData(MathHelper.Clamp(id, 0, SpriteMax), x, y, flipH, flipV, colorOffset));
+            Sprites.Add(new SpriteData(id, x, y, flipH, flipV, colorOffset));
         }
 
         public void Clear()

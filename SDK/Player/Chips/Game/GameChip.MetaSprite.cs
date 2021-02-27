@@ -74,7 +74,7 @@ namespace PixelVision8.Player
             if (total.HasValue)
             {
                 // Console.WriteLine("Change meta sprite total");
-                Array.Resize(ref metaSprites, MathHelper.Clamp(total.Value, 0, 96));
+                Array.Resize(ref metaSprites, MathHelper.Clamp(total.Value, 0, 256));
                 for (int i = 0; i < total.Value; i++)
                 {
                     if (metaSprites[i] == null)
@@ -127,6 +127,8 @@ namespace PixelVision8.Player
             if (spriteCollection != null)
                 metaSprites[id] = spriteCollection;
             else if (metaSprites[id] == null)
+            {
+                Console.WriteLine("New Meta Sprite");
                 metaSprites[id] =
                     new SpriteCollection(
                         "MetaSprite" + id.ToString().PadLeft(metaSprites.Length.ToString().Length, '0'))
@@ -138,6 +140,8 @@ namespace PixelVision8.Player
                         //     metaSpriteMaxBounds.Width - SpriteSize().X,
                         //     metaSpriteMaxBounds.Height - SpriteSize().Y)
                     };
+            }
+                
 
             return metaSprites[id];
         }
