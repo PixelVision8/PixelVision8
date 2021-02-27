@@ -104,12 +104,6 @@ function ChipEditorTool:OnSave()
         self.invalidateColors = false
     end
 
-    if(self.invalidateColorMap == true) then
-
-        table.insert(flags, SaveFlags.ColorMap)
-        self.invalidateColorMap = false
-    end
-
     -- TODO need to save music and sounds when those are broken out
     gameEditor:Save(self.rootDirectory, flags)
 

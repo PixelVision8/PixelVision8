@@ -105,26 +105,28 @@ function PixelVisionOS:Draw()
     self:DrawMessageBar(self.messageBar)
 
 
-    -- Draw the editor UI
-    self.editorUI:Draw()
-
+    
     -- Draw modals on top
     self:DrawModal()
 
     --if(self.displayFPS == true) then
 
-        local fps = ReadFPS()
+    local fps = ReadFPS()
 
-        local color = 7
+    local color = 7
 
-        if(fps < 30) then
-            color = 9
-        elseif(fps <= 40 and fps >= 30) then
-            color = 14
-        end
+    if(fps < 30) then
+        color = 9
+    elseif(fps <= 40 and fps >= 30) then
+        color = 14
+    end
 
-        DrawText(tostring(fps), Display().x - 10, Display().y - 10, DrawMode.Sprite, "medium", color, -4)
+    DrawText(tostring(fps), Display().x - 10, Display().y - 10, DrawMode.Sprite, "medium", color, -4)
     --end
+
+    -- Draw the editor UI
+    self.editorUI:Draw()
+
 
 end
 
@@ -142,22 +144,22 @@ function PixelVisionOS:ShowAboutModal(toolTitle, optionalText, width)
 
 end
 
-function PixelVisionOS:ShowMessageModal(title, message, width, showCancel, onCloseCallback, okButtonSpriteName)
+function PixelVisionOS:ShowMessageModal(title, message, width, showCancel, onCloseCallback, okButtonSpriteName, cancelButtonSpriteName)
 
     -- Look to see if the modal exists
     if(self.messageModal == nil) then
 
         -- Create the model
-        self.messageModal = MessageModal:Init(title, message, width, showCancel, okButtonSpriteName )
+        self.messageModal = MessageModal:Init(title, message, width, showCancel)
 
         -- Pass a reference of the editorUI to the modal
         self.messageModal.editorUI = self.editorUI
-
-    else
+    end
+    -- else
 
         -- If the modal exists, configure it with the new values
-        self.messageModal:Configure(title, message, width, showCancel, okButtonSpriteName)
-    end
+        self.messageModal:Configure(title, message, width, showCancel, okButtonSpriteName, cancelButtonSpriteName)
+    -- end
 
     -- Open the modal
     self:OpenModal(self.messageModal, onCloseCallback)

@@ -92,7 +92,6 @@ end
 
 function ChipEditorTool:CopyChipSprites(srcMetaSpriteName, destMetaSpriteName)
 
-  print("CopyChipSprites", srcMetaSpriteName, destMetaSpriteName)
   local srcMetaSprite = MetaSprite(FindMetaSpriteId(srcMetaSpriteName))
 
   local destMetaSprite = MetaSprite(FindMetaSpriteId(destMetaSpriteName))
@@ -160,6 +159,7 @@ function ChipEditorTool:ChipSelectorUpdate()
     if(overFlag == 0) then
 
       if(self.chipPicker.isDragging == false) then
+        
         editorUI:ClearGroupSelections(self.chipEditorGroup)
       end
 
@@ -191,7 +191,7 @@ function ChipEditorTool:OnSelectChip(value)
 
     editorUI:CloseChipPicker(self.chipPicker)
 
-    editorUI:ClearGroupSelections(chipEditorGroup)
+    editorUI:ClearGroupSelections(self.chipEditorGroup)
 
     editorUI:ClearFocus()
 
@@ -202,13 +202,6 @@ function ChipEditorTool:OnSelectChip(value)
     end
 
   else
-
-    -- Force the chip to go into the correct mode based on the version of the runner
-    -- if(runnerName == DrawVersion) then
-    --   self.editorMode = 1
-    -- elseif(runnerName == TuneVersion) then
-    --   self.editorMode = 3
-    -- end
 
     local targetButton = nil
 
@@ -221,7 +214,7 @@ function ChipEditorTool:OnSelectChip(value)
       editorUI:TextEditorInvalidateBuffer(self.drawsInputData)
 
       editorUI:TextEditorInvalidateBuffer(self.cpsInputData)
-      -- editorUI:TextEditorInvalidateBuffer(totalColorsInputData)
+      editorUI:TextEditorInvalidateBuffer(self.maskInputData)
 
       if(runnerName == DrawVersion) then
         editorUI:TextEditorInvalidateBuffer(self.spritePagesInputData)
@@ -267,7 +260,6 @@ function ChipEditorTool:OnSelectChip(value)
       self.selectedLineDrawArgs[1] = FindMetaSpriteId("chipsoundselectedline")--.spriteIDs
       self.selectedLineDrawArgs[2] = 104
       self.selectedLineDrawArgs[3] = 144
-      -- selectedLineDrawArgs[4] = chipsoundselectedline.width
 
       -- Reset this to 0 when opening up the tray
       editorUI:ChangeNumberStepperValue(self.channelIDInputData, 0)
@@ -285,22 +277,24 @@ function ChipEditorTool:OnSelectChip(value)
     if(self.specsLocked == true and self.showWarning == true) then
 
       -- Force the button to not redraw over the modal
-      self.targetButton.invalid = false
+      targetButton.invalid = false
 
       pixelVisionOS:ShowMessageModal("Warning", "The system specs are locked. Do you want to unlock them so you can make changes?", 160, true,
         function()
 
           if(pixelVisionOS.messageModal.selectionValue == true) then
-            specsLocked = not specsLocked
-            gameEditor:GameSpecsLocked(specsLocked)
-            UpdateFieldLock()
-            InvalidateData()
+            self.specsLocked = not self.specsLocked
+            gameEditor:GameSpecsLocked(self.specsLocked)
+            self:UpdateFieldLock()
+            self:InvalidateData()
 
           end
 
-          showWarning = false
+          self.showWarning = false
 
-        end
+        end,
+        "yes",
+        "no"
 
       )
 
@@ -349,8 +343,6 @@ end
 
 function ChipEditorTool:ReplaceChip(chipData, chipID)
 
-  print("ReplaceChip", dump(chipData))
-
   local fields = chipData["fields"]
 
   for i = 1, #fields do
@@ -358,7 +350,7 @@ function ChipEditorTool:ReplaceChip(chipData, chipID)
     local name = fields[i]["name"]
     local value = fields[i]["value"]
 
-    local field = _G[name]
+    local field = self[name]
 
     if(field ~= nil) then
 
@@ -374,8 +366,6 @@ function ChipEditorTool:ReplaceChip(chipData, chipID)
 
     local totalColors = #chipData.colors
 
-    -- gameEditor:MaximumColors(totalColors)
-
     for i = 1, totalColors do
       gameEditor:Color(i - 1, chipData.colors[i])
     end
@@ -389,8 +379,6 @@ function ChipEditorTool:ReplaceChip(chipData, chipID)
 
     if(usePalettes == true) then
 
-      -- TODO need to add color-map
-
       self.invalidateColorMap = true
 
       gameEditor:ReindexSprites()
@@ -403,18 +391,8 @@ function ChipEditorTool:ReplaceChip(chipData, chipID)
         end
 
       end
-    -- else
-
-    --   local colorMapPath = NewWorkspacePath(self.rootDirectory).AppendFile("color-map.png")
-
-    --   if(PathExists(colorMapPath)) then
-    --     Delete(colorMapPath)
-    --   end
 
     end
-
-    -- Update the colors based on the list of colors
-    -- editorUI:ChangeInputField(totalColorsInputData, totalColors, true)
 
   end
 

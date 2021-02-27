@@ -44,20 +44,20 @@ function ChipEditorTool:CreateSettingsPanel()
 
   table.insert(self.inputFields, self.cpsInputData)
 
-  self.maskColor = editorUI:CreateInputField({x = 136+8+32+8, y = 208, w = 6*8}, tostring(gameEditor:MaskColor():sub(2, 7)), "The color that will be treated as transparent.", "hex")
+  self.maskInputData = editorUI:CreateInputField({x = 136+8+32+8, y = 208, w = 6*8}, tostring(gameEditor:MaskColor():sub(2, 7)), "The color that will be treated as transparent.", "hex")
 
-  self.maskColor.captureInput = function(targetData)
+  self.maskInputData.captureInput = function(targetData)
 
     return editorUI:ValidateInputFieldText(targetData, InputString():upper())
 
   end
 
-  self.maskColor.onAction = function(value)
+  self.maskInputData.onAction = function(value)
     gameEditor:MaskColor("#"..value)
     self:InvalidateData()
   end
 
-  table.insert(self.inputFields, self.maskColor)
+  table.insert(self.inputFields, self.maskInputData)
 
   self.mapWidthInputData = editorUI:CreateInputField({x = 32, y = 208, w = 24}, tostring(mapSize.x), "Number of columns of tiles in the map.", "number")
   self.mapWidthInputData.min = math.ceil(displaySize.x / 8)
@@ -229,7 +229,7 @@ function ChipEditorTool:CreateSettingsPanel()
   self.channelIDInputData = editorUI:CreateNumberStepper({x = 72, y = 200}, 8, 0, 0, gameEditor:TotalChannels() - 1, "top", "Select a channel to preview its wave type.")
   self.channelIDInputData.onInputAction = function(value)
 
-    UpdateWaveStepper()
+    self:UpdateWaveStepper()
 
   end
 
@@ -239,7 +239,7 @@ function ChipEditorTool:CreateSettingsPanel()
   self.waveStepper.inputField.forceCase = "upper"
   self.waveStepper.inputField.allowEmptyString = true
 
-  self.waveStepper.onInputAction = UpdateWaveType
+  self.waveStepper.onInputAction = function(value) self:UpdateWaveType(value) end
 
   self.saveSlotsInputData = editorUI:CreateInputField({x = 216, y = 208, w = 8}, tostring(gameEditor:GameSaveSlots()), "Enter the total save slots the disk can have.", "number")
   self.saveSlotsInputData.min = 2
@@ -256,6 +256,21 @@ function ChipEditorTool:CreateSettingsPanel()
 
 end
 
+function ChipEditorTool:UpdateWaveType(value)
+
+  value = table.indexOf(self.validWaves, value)
+
+  gameEditor:ChannelType(tonumber(self.channelIDInputData.inputField.text), self.waveTypeIDs[value])
+
+  -- print("UpdateWaveType", value, waveTypeIDs[value])
+
+  self.waveStepper.inputField.toolTip = self.waveToolTips[value]
+
+  self:ChangeChipGraphic(3, "chipcustomsound" )
+
+  self:InvalidateData()
+
+end
 
 function ChipEditorTool:SettingsPanelUpdate()
 
@@ -267,7 +282,6 @@ function ChipEditorTool:SettingsPanelUpdate()
     self.settingPanelInvalid = false
 
     if(self.editorMode == 0) then
-
 
       local panelSprites = FindMetaSpriteId("settingspanel")
       local maxColorPos = {x = 144, y = 184}
@@ -334,8 +348,6 @@ function ChipEditorTool:SettingsPanelUpdate()
         metaSpriteName = "settingssound"
       end
 
-      print("DRAW", FindMetaSpriteId("settingscart"))
-
       if(metaSpriteName ~= nil) then
         DrawMetaSprite(FindMetaSpriteId(metaSpriteName), 8, 176, false, false, DrawMode.TilemapCache)
       end
@@ -344,22 +356,23 @@ function ChipEditorTool:SettingsPanelUpdate()
 
   end
 
+  -- Draw Settings
   if(self.editorMode == 1) then
-
-    -- if(runnerName ~= DrawVersion) then
     editorUI:UpdateInputField(self.displayWidthInputData)
     editorUI:UpdateInputField(self.displayHeightInputData)
     editorUI:UpdateInputField(self.drawsInputData)
     editorUI:UpdateInputField(self.cpsInputData)
-    editorUI:UpdateInputField(self.maskColor)
+    editorUI:UpdateInputField(self.maskInputData)
 
-    
+  -- Cart Settings 
   elseif(self.editorMode == 2) then
     editorUI:UpdateInputField(self.sizeInputData)
     editorUI:UpdateInputField(self.spritePagesInputData)
     editorUI:UpdateInputField(self.saveSlotsInputData)
     editorUI:UpdateInputField(self.mapWidthInputData)
     editorUI:UpdateInputField(self.mapHeightInputData)
+
+  -- Sound Settings
   elseif(self.editorMode == 3) then
     editorUI:UpdateInputField(self.soundTotalInputData)
     editorUI:UpdateInputField(self.channelTotalInputData)
@@ -369,28 +382,18 @@ function ChipEditorTool:SettingsPanelUpdate()
     editorUI:UpdateStepper(self.waveStepper)
   end
 
-  
-
 end
 
 function ChipEditorTool:ChangeChipGraphic(chipID, chipSpriteName, name)
-
-    -- Force the chipID to always be 3 if we are only editing sounds
-    -- if(runnerName == TuneVersion) then
-    --     chipID = 3
-    -- end
 
     name = name or "Custom"
 
     local button = self.chipEditorGroup.buttons[chipID]
     local spriteName = self.chipSpriteNames[chipID]
 
-    -- _G[spriteName .. "up"] = _G[chipSpriteName .. "up"]
-    -- _G[spriteName .. "down"] = _G[chipSpriteName .. "up"]
+    self:CopyChipSprites(chipSpriteName .. "up", spriteName .. "up")
 
-    -- self:CopyChipSprites(chipSpriteName .. "up", "spriteNameup")
-
-    -- editorUI:RebuildSpriteCache(button)
+    editorUI:Invalidate(button)
 
     -- Save the chip name to the info.json file
     if(chipID == 1) then

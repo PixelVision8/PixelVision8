@@ -678,21 +678,21 @@ end
 
 
 
-function UpdateWaveType(value)
+-- function UpdateWaveType(value)
 
-  value = table.indexOf(validWaves, value)
+--   value = table.indexOf(validWaves, value)
 
-  gameEditor:ChannelType(tonumber(channelIDInputData.inputField.text), waveTypeIDs[value])
+--   gameEditor:ChannelType(tonumber(channelIDInputData.inputField.text), waveTypeIDs[value])
 
-  -- print("UpdateWaveType", value, waveTypeIDs[value])
+--   -- print("UpdateWaveType", value, waveTypeIDs[value])
 
-  waveStepper.inputField.toolTip = waveToolTips[value]
+--   waveStepper.inputField.toolTip = waveToolTips[value]
 
-  ChangeChipGraphic(3, "chipcustomsound" )
+--   ChangeChipGraphic(3, "chipcustomsound" )
 
-  InvalidateData()
+--   InvalidateData()
 
-end
+-- end
 
 -- function UpdateWaveStepper()
 --   --
@@ -713,45 +713,45 @@ end
 
 -- end
 
-local rootPath = ReadMetadata("RootPath", "/")
+-- local rootPath = ReadMetadata("RootPath", "/")
 
-function OnEditJSON()
+-- function OnEditJSON()
 
-  if(invalid == true) then
+--   if(invalid == true) then
 
-    pixelVisionOS:ShowMessageModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before you edit the raw data file?", 160, true,
-      function()
+--     pixelVisionOS:ShowMessageModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before you edit the raw data file?", 160, true,
+--       function()
 
-        if(pixelVisionOS.messageModal.selectionValue == true) then
-          -- Save changes
-          OnSave()
+--         if(pixelVisionOS.messageModal.selectionValue == true) then
+--           -- Save changes
+--           OnSave()
 
-        end
+--         end
 
-        -- Quit the tool
-        EditJSON()
+--         -- Quit the tool
+--         EditJSON()
 
-      end
-    )
+--       end
+--     )
 
-  else
-    -- Quit the tool
-    EditJSON()
-  end
+--   else
+--     -- Quit the tool
+--     EditJSON()
+--   end
 
-end
+-- end
 
-function EditJSON()
+-- function EditJSON()
 
-  local metaData = {
-    directory = rootDirectory,
-    file = rootDirectory .. "data.json",
-  }
+--   local metaData = {
+--     directory = rootDirectory,
+--     file = rootDirectory .. "data.json",
+--   }
 
-  LoadGame(textEditorPath, metaData)
+--   LoadGame(textEditorPath, metaData)
 
 
-end
+-- end
 
 -- local settingPanelInvalid = false
 
@@ -889,336 +889,336 @@ end
 -- end
 
 
-function Update(timeDelta)
+-- function Update(timeDelta)
 
-  -- Convert timeDelta to a float
-  timeDelta = timeDelta / 1000
+--   -- Convert timeDelta to a float
+--   timeDelta = timeDelta / 1000
 
-  -- This needs to be the first call to make sure all of the OS and editor UI is updated first
-  pixelVisionOS:Update(timeDelta)
+--   -- This needs to be the first call to make sure all of the OS and editor UI is updated first
+--   pixelVisionOS:Update(timeDelta)
 
-  -- Only update the UI when the modal isn't active
-  if(pixelVisionOS:IsModalActive() == false) then
-    if(success == true) then
+--   -- Only update the UI when the modal isn't active
+--   if(pixelVisionOS:IsModalActive() == false) then
+--     if(success == true) then
 
-      if(editorMode > 0 and editorUI.collisionManager.mouseReleased == true and editorUI.collisionManager:MouseInRect(cancelSelectionRect)) then
+--       if(editorMode > 0 and editorUI.collisionManager.mouseReleased == true and editorUI.collisionManager:MouseInRect(cancelSelectionRect)) then
 
 
-        local overFlag = 0
+--         local overFlag = 0
 
-        for i = 1, #chipEditorGroup.buttons do
+--         for i = 1, #chipEditorGroup.buttons do
 
-          if(editorUI.collisionManager:MouseInRect(chipEditorGroup.buttons[i].hitRect)) then
-            overFlag = i
+--           if(editorUI.collisionManager:MouseInRect(chipEditorGroup.buttons[i].hitRect)) then
+--             overFlag = i
 
 
-            if(chipPicker.isDragging == true) then
+--             if(chipPicker.isDragging == true) then
 
-              if(chipEditorGroup.buttons[i].selected == true) then
-                -- print("Copy chip settings", overFlag)
+--               if(chipEditorGroup.buttons[i].selected == true) then
+--                 -- print("Copy chip settings", overFlag)
 
-                local data = editorUI:ChipPickerSelectedData(chipPicker)
+--                 local data = editorUI:ChipPickerSelectedData(chipPicker)
 
-                OnReplaceChip(data, i)
+--                 OnReplaceChip(data, i)
 
-              else
+--               else
 
-                overFlag = 0
+--                 overFlag = 0
 
-                -- TODO this is a bit of a hack to disable this message when specs are locked and you get the warning message
-                if(specsLocked == false) then
-                  pixelVisionOS:ShowMessageModal(
-                    "Chip Error", "You can't use this chip here. Please drag the chip onto the open slot.", 160, false,
-                    function()
-                      editorUI:ClearChipPickerSelection(chipPicker)
-                    end
-                  )
-                end
+--                 -- TODO this is a bit of a hack to disable this message when specs are locked and you get the warning message
+--                 if(specsLocked == false) then
+--                   pixelVisionOS:ShowMessageModal(
+--                     "Chip Error", "You can't use this chip here. Please drag the chip onto the open slot.", 160, false,
+--                     function()
+--                       editorUI:ClearChipPickerSelection(chipPicker)
+--                     end
+--                   )
+--                 end
 
-              end
+--               end
 
-              return
+--               return
 
-            end
+--             end
 
-          end
+--           end
 
-        end
+--         end
 
-        if(overFlag == 0) then
+--         if(overFlag == 0) then
 
-          if(chipPicker.isDragging == false) then
-            editorUI:ClearGroupSelections(chipEditorGroup)
-          end
+--           if(chipPicker.isDragging == false) then
+--             editorUI:ClearGroupSelections(chipEditorGroup)
+--           end
 
-          OnSelectChip(0)
+--           OnSelectChip(0)
 
-        end
+--         end
 
-        editorUI:ClearChipPickerSelection(chipPicker)
+--         editorUI:ClearChipPickerSelection(chipPicker)
 
-      end
+--       end
 
-      -- TODO this should use the UI delayed draw API
-      if(settingPanelInvalid == true) then
-        DrawRect(1, 176, 254, 56, BackgroundColor(), DrawMode.TilemapCache)
-        settingPanelInvalid = false
+--       -- TODO this should use the UI delayed draw API
+--       if(settingPanelInvalid == true) then
+--         DrawRect(1, 176, 254, 56, BackgroundColor(), DrawMode.TilemapCache)
+--         settingPanelInvalid = false
 
-        if(editorMode == 0) then
+--         if(editorMode == 0) then
 
 
-          local panelSprites = FindMetaSpriteId("settingspanel")
-          local maxColorPos = {x = 144, y = 184}
-          local totalColorPos = {x = 144, y = 189}
-          local spritePagePos = {x = 200, y = 184}
-          local cpsPos = {x = 200, y = 189}
-          local channelsPos = {x = 144, y = 208}
-          local soundsPos = {x = 144, y = 213}
-          local musicChannels = {x = 212, y = 208}
-          local musicLoops = {x = 212, y = 213}
+--           local panelSprites = FindMetaSpriteId("settingspanel")
+--           local maxColorPos = {x = 144, y = 184}
+--           local totalColorPos = {x = 144, y = 189}
+--           local spritePagePos = {x = 200, y = 184}
+--           local cpsPos = {x = 200, y = 189}
+--           local channelsPos = {x = 144, y = 208}
+--           local soundsPos = {x = 144, y = 213}
+--           local musicChannels = {x = 212, y = 208}
+--           local musicLoops = {x = 212, y = 213}
 
 
-          if(runnerName == DrawVersion) then
+--           if(runnerName == DrawVersion) then
 
-            panelSprites = FindMetaSpriteId("settingspaneldraw")
+--             panelSprites = FindMetaSpriteId("settingspaneldraw")
 
-            maxColorPos.x = maxColorPos.x - 32
-            totalColorPos.x = totalColorPos.x - 32
-            spritePagePos.x = spritePagePos.x - 32
-            cpsPos.x = cpsPos.x - 32
+--             maxColorPos.x = maxColorPos.x - 32
+--             totalColorPos.x = totalColorPos.x - 32
+--             spritePagePos.x = spritePagePos.x - 32
+--             cpsPos.x = cpsPos.x - 32
 
-          elseif(runnerName == TuneVersion) then
-            panelSprites = FindMetaSpriteId("settingspaneltune")
+--           elseif(runnerName == TuneVersion) then
+--             panelSprites = FindMetaSpriteId("settingspaneltune")
 
-            channelsPos.x = channelsPos.x - 32
-            channelsPos.y = channelsPos.y - 24
-            soundsPos.x = soundsPos.x - 32
-            soundsPos.y = soundsPos.y - 24
-            musicChannels.x = musicChannels.x - 32
-            musicChannels.y = musicChannels.y - 24
-            musicLoops.x = musicLoops.x - 32
-            musicLoops.y = musicLoops.y - 24
+--             channelsPos.x = channelsPos.x - 32
+--             channelsPos.y = channelsPos.y - 24
+--             soundsPos.x = soundsPos.x - 32
+--             soundsPos.y = soundsPos.y - 24
+--             musicChannels.x = musicChannels.x - 32
+--             musicChannels.y = musicChannels.y - 24
+--             musicLoops.x = musicLoops.x - 32
+--             musicLoops.y = musicLoops.y - 24
 
-          end
+--           end
 
-          print("Draw", panelSprites, FindMetaSpriteId("topstepperbackup"))
-          DrawMetaSprite(panelSprites, 40, 166 + 8, false, false, DrawMode.TilemapCache)
-          -- DrawSprites(panelSprites.spriteIDs, 40, 166 + 8, panelSprites.width, false, false, DrawMode.TilemapCache)
+--           print("Draw", panelSprites, FindMetaSpriteId("topstepperbackup"))
+--           DrawMetaSprite(panelSprites, 40, 166 + 8, false, false, DrawMode.TilemapCache)
+--           -- DrawSprites(panelSprites.spriteIDs, 40, 166 + 8, panelSprites.width, false, false, DrawMode.TilemapCache)
 
-          if(runnerName ~= DrawVersion and runnerName ~= TuneVersion) then
-            -- Display
-            DrawText(displayWidthInputData.text, 64, 184, DrawMode.TilemapCache, "small", 15, - 4)
-            DrawText(displayHeightInputData.text, 64, 189, DrawMode.TilemapCache, "small", 15, - 4)
+--           if(runnerName ~= DrawVersion and runnerName ~= TuneVersion) then
+--             -- Display
+--             DrawText(displayWidthInputData.text, 64, 184, DrawMode.TilemapCache, "small", 15, - 4)
+--             DrawText(displayHeightInputData.text, 64, 189, DrawMode.TilemapCache, "small", 15, - 4)
 
 
 
-            -- Tilemap
-            DrawText(mapWidthInputData.text, 72, 208, DrawMode.TilemapCache, "small", 15, - 4)
-            DrawText(mapHeightInputData.text, 72, 213, DrawMode.TilemapCache, "small", 15, - 4)
+--             -- Tilemap
+--             DrawText(mapWidthInputData.text, 72, 208, DrawMode.TilemapCache, "small", 15, - 4)
+--             DrawText(mapHeightInputData.text, 72, 213, DrawMode.TilemapCache, "small", 15, - 4)
 
-          end
+--           end
 
-          if(runnerName ~= TuneVersion) then
+--           if(runnerName ~= TuneVersion) then
 
-            -- Colors
-            -- DrawText(gameEditor:MaximumColors(), maxColorPos.x, maxColorPos.y, DrawMode.TilemapCache, "small", 15, - 4)
-            DrawText(math.ceil(gameEditor:TotalColors() / 64), totalColorPos.x, totalColorPos.y, DrawMode.TilemapCache, "small", 15, - 4)
+--             -- Colors
+--             -- DrawText(gameEditor:MaximumColors(), maxColorPos.x, maxColorPos.y, DrawMode.TilemapCache, "small", 15, - 4)
+--             DrawText(math.ceil(gameEditor:TotalColors() / 64), totalColorPos.x, totalColorPos.y, DrawMode.TilemapCache, "small", 15, - 4)
 
 
-            -- Sprites
-            DrawText(gameEditor:SpritePages(), spritePagePos.x, spritePagePos.y, DrawMode.TilemapCache, "small", 15, - 4)
-            DrawText(gameEditor:ColorsPerSprite(), cpsPos.x, cpsPos.y, DrawMode.TilemapCache, "small", 15, - 4)
+--             -- Sprites
+--             DrawText(gameEditor:SpritePages(), spritePagePos.x, spritePagePos.y, DrawMode.TilemapCache, "small", 15, - 4)
+--             DrawText(gameEditor:ColorsPerSprite(), cpsPos.x, cpsPos.y, DrawMode.TilemapCache, "small", 15, - 4)
 
-          end
+--           end
 
-          if(runnerName ~= DrawVersion) then
+--           if(runnerName ~= DrawVersion) then
 
-            -- SFX
-            DrawText(gameEditor:TotalChannels(), channelsPos.x, channelsPos.y, DrawMode.TilemapCache, "small", 15, - 4)
-            DrawText(gameEditor:TotalSounds(), soundsPos.x, soundsPos.y, DrawMode.TilemapCache, "small", 15, - 4)
+--             -- SFX
+--             DrawText(gameEditor:TotalChannels(), channelsPos.x, channelsPos.y, DrawMode.TilemapCache, "small", 15, - 4)
+--             DrawText(gameEditor:TotalSounds(), soundsPos.x, soundsPos.y, DrawMode.TilemapCache, "small", 15, - 4)
 
-            -- Music
-            DrawText(gameEditor:TotalChannels(), musicChannels.x, musicChannels.y, DrawMode.TilemapCache, "small", 15, - 4)
-            DrawText(gameEditor:TotalLoops(), musicLoops.x, musicLoops.y, DrawMode.TilemapCache, "small", 15, - 4)
-          end
+--             -- Music
+--             DrawText(gameEditor:TotalChannels(), musicChannels.x, musicChannels.y, DrawMode.TilemapCache, "small", 15, - 4)
+--             DrawText(gameEditor:TotalLoops(), musicLoops.x, musicLoops.y, DrawMode.TilemapCache, "small", 15, - 4)
+--           end
 
-        else
+--         else
 
-          DrawRect(40, 166 + 8, 176, 48, BackgroundColor(), DrawMode.TilemapCache)
+--           DrawRect(40, 166 + 8, 176, 48, BackgroundColor(), DrawMode.TilemapCache)
 
-          local spriteData = nil
+--           local spriteData = nil
 
-          if(editorMode == 1) then
-            spriteData = runnerName == DrawVersion and _G["settingsgpudraw"] or _G["settingsgpu"]
+--           if(editorMode == 1) then
+--             spriteData = runnerName == DrawVersion and _G["settingsgpudraw"] or _G["settingsgpu"]
 
-          elseif(editorMode == 2) then
-            spriteData = _G["settingscart"]
+--           elseif(editorMode == 2) then
+--             spriteData = _G["settingscart"]
 
-          elseif(editorMode == 3) then
-            spriteData = _G["settingssound"]
+--           elseif(editorMode == 3) then
+--             spriteData = _G["settingssound"]
 
-          end
+--           end
 
-          if(spriteData ~= nil) then
-            DrawSprites(spriteData.spriteIDs, 8, 176, spriteData.width, false, false, DrawMode.TilemapCache)
-          end
-          -- end
-        end
+--           if(spriteData ~= nil) then
+--             DrawSprites(spriteData.spriteIDs, 8, 176, spriteData.width, false, false, DrawMode.TilemapCache)
+--           end
+--           -- end
+--         end
 
 
-      end
+--       end
 
-      if(editorMode == 1) then
+--       if(editorMode == 1) then
 
-        if(runnerName ~= DrawVersion) then
-          editorUI:UpdateInputField(displayWidthInputData)
-          editorUI:UpdateInputField(displayHeightInputData)
-          --editorUI:UpdateInputField(overscanRightInputData)
-          --editorUI:UpdateInputField(overscanBottomInputData)
-          editorUI:UpdateInputField(drawsInputData)
-        else
-          editorUI:UpdateInputField(spritePagesInputData)
-        end
+--         if(runnerName ~= DrawVersion) then
+--           editorUI:UpdateInputField(displayWidthInputData)
+--           editorUI:UpdateInputField(displayHeightInputData)
+--           --editorUI:UpdateInputField(overscanRightInputData)
+--           --editorUI:UpdateInputField(overscanBottomInputData)
+--           editorUI:UpdateInputField(drawsInputData)
+--         else
+--           editorUI:UpdateInputField(spritePagesInputData)
+--         end
 
-        editorUI:UpdateInputField(cpsInputData)
-        -- editorUI:UpdateInputField(totalColorsInputData)
+--         editorUI:UpdateInputField(cpsInputData)
+--         -- editorUI:UpdateInputField(totalColorsInputData)
 
-      elseif(editorMode == 2) then
-        editorUI:UpdateInputField(sizeInputData)
-        editorUI:UpdateInputField(spritePagesInputData)
-        editorUI:UpdateInputField(saveSlotsInputData)
+--       elseif(editorMode == 2) then
+--         editorUI:UpdateInputField(sizeInputData)
+--         editorUI:UpdateInputField(spritePagesInputData)
+--         editorUI:UpdateInputField(saveSlotsInputData)
 
-        editorUI:UpdateInputField(mapWidthInputData)
-        editorUI:UpdateInputField(mapHeightInputData)
+--         editorUI:UpdateInputField(mapWidthInputData)
+--         editorUI:UpdateInputField(mapHeightInputData)
 
-      elseif(editorMode == 3) then
-        editorUI:UpdateInputField(soundTotalInputData)
-        editorUI:UpdateInputField(channelTotalInputData)
-        editorUI:UpdateInputField(loopTotalInputData)
-        editorUI:UpdateInputField(songTotalInputData)
-        editorUI:UpdateStepper(channelIDInputData)
-        editorUI:UpdateStepper(waveStepper)
-      end
+--       elseif(editorMode == 3) then
+--         editorUI:UpdateInputField(soundTotalInputData)
+--         editorUI:UpdateInputField(channelTotalInputData)
+--         editorUI:UpdateInputField(loopTotalInputData)
+--         editorUI:UpdateInputField(songTotalInputData)
+--         editorUI:UpdateStepper(channelIDInputData)
+--         editorUI:UpdateStepper(waveStepper)
+--       end
 
-      -- Update toggle groups
-      editorUI:UpdateToggleGroup(chipEditorGroup)
-      --
-      editorUI:UpdateChipPicker(chipPicker)
+--       -- Update toggle groups
+--       editorUI:UpdateToggleGroup(chipEditorGroup)
+--       --
+--       editorUI:UpdateChipPicker(chipPicker)
 
-    end
-  end
+--     end
+--   end
 
-end
+-- end
 
-function OnReplaceChip(chipData, chipID)
+-- function OnReplaceChip(chipData, chipID)
 
-  pixelVisionOS:ShowMessageModal("Replace Chip", "Do you want to use the " .. chipData["name"] .. " chip? ".. chipData.message .. " This will affect " .. #chipData["fields"] .. " values and can not be undone.", 160, true,
-    function()
-      if(pixelVisionOS.messageModal.selectionValue == true) then
-        -- Save changes
-        ReplaceChip(chipData, chipID)
+--   pixelVisionOS:ShowMessageModal("Replace Chip", "Do you want to use the " .. chipData["name"] .. " chip? ".. chipData.message .. " This will affect " .. #chipData["fields"] .. " values and can not be undone.", 160, true,
+--     function()
+--       if(pixelVisionOS.messageModal.selectionValue == true) then
+--         -- Save changes
+--         ReplaceChip(chipData, chipID)
 
-      end
+--       end
 
-    end
-  )
+--     end
+--   )
 
-end
+-- end
 
 
 
-function ReplaceChip(chipData, chipID)
+-- function ReplaceChip(chipData, chipID)
 
-  local fields = chipData["fields"]
+--   local fields = chipData["fields"]
 
-  for i = 1, #fields do
+--   for i = 1, #fields do
 
-    local name = fields[i]["name"]
-    local value = fields[i]["value"]
+--     local name = fields[i]["name"]
+--     local value = fields[i]["value"]
 
-    local field = _G[name]
+--     local field = _G[name]
 
-    if(field ~= nil) then
+--     if(field ~= nil) then
 
-      editorUI:ChangeInputField(field, value, true)
+--       editorUI:ChangeInputField(field, value, true)
 
-    end
+--     end
 
-  end
+--   end
 
-  if(chipData.colors ~= nil) then
+--   if(chipData.colors ~= nil) then
 
-    gameEditor:ClearColors(chipData.colors[1])
+--     gameEditor:ClearColors(chipData.colors[1])
 
-    local totalColors = #chipData.colors
+--     local totalColors = #chipData.colors
 
-    gameEditor:MaximumColors(totalColors)
+--     gameEditor:MaximumColors(totalColors)
 
-    for i = 1, totalColors do
-      gameEditor:Color(i - 1, chipData.colors[i])
-    end
+--     for i = 1, totalColors do
+--       gameEditor:Color(i - 1, chipData.colors[i])
+--     end
 
-    invalidateColors = true
+--     invalidateColors = true
 
-    local usePalettes = chipData.paletteMode
+--     local usePalettes = chipData.paletteMode
 
-    -- Save palette mode to the info file for the color editor
-    gameEditor:WriteMetadata("paletteMode", usePalettes and "true" or "false")
+--     -- Save palette mode to the info file for the color editor
+--     gameEditor:WriteMetadata("paletteMode", usePalettes and "true" or "false")
 
-    if(usePalettes == true) then
+--     if(usePalettes == true) then
 
-      -- TODO need to add color-map
+--       -- TODO need to add color-map
 
-      invalidateColorMap = true
+--       invalidateColorMap = true
 
-      gameEditor:ReindexSprites()
+--       gameEditor:ReindexSprites()
 
-      for i = 1, #chipData.palette do
-        -- Find the palette start index
-        local offset = ((i - 1) * 16) + 128
-        for j = 1, 10 do
-          gameEditor:Color(offset + (j - 1), chipData.palette[i][j])
-        end
+--       for i = 1, #chipData.palette do
+--         -- Find the palette start index
+--         local offset = ((i - 1) * 16) + 128
+--         for j = 1, 10 do
+--           gameEditor:Color(offset + (j - 1), chipData.palette[i][j])
+--         end
 
-      end
-    else
+--       end
+--     else
 
-      local colorMapPath = NewWorkspacePath(rootDirectory).AppendFile("color-map.png")
+--       local colorMapPath = NewWorkspacePath(rootDirectory).AppendFile("color-map.png")
 
-      if(PathExists(colorMapPath)) then
-        Delete(colorMapPath)
-      end
+--       if(PathExists(colorMapPath)) then
+--         Delete(colorMapPath)
+--       end
 
-    end
+--     end
 
-    -- Update the colors based on the list of colors
-    -- editorUI:ChangeInputField(totalColorsInputData, totalColors, true)
+--     -- Update the colors based on the list of colors
+--     -- editorUI:ChangeInputField(totalColorsInputData, totalColors, true)
 
-  end
+--   end
 
-  -- Reset channels
-  for i = 1, gameEditor:TotalChannels() do
+--   -- Reset channels
+--   for i = 1, gameEditor:TotalChannels() do
 
-    local type = -1
+--     local type = -1
 
-    if(chipData.channels ~= nil) then
+--     if(chipData.channels ~= nil) then
 
-      if(i <= #chipData.channels) then
-        type = chipData.channels[i]
-      end
+--       if(i <= #chipData.channels) then
+--         type = chipData.channels[i]
+--       end
 
-    end
+--     end
 
-    gameEditor:ChannelType(i - 1, type)
+--     gameEditor:ChannelType(i - 1, type)
 
-  end
+--   end
 
-  ChangeChipGraphic(chipID, chipData.spriteName, chipData.name)
+--   ChangeChipGraphic(chipID, chipData.spriteName, chipData.name)
 
-  InvalidateData()
-  -- Need to look for special values like colors and what not
+--   InvalidateData()
+--   -- Need to look for special values like colors and what not
 
-end
+-- end
 
 -- function ChangeChipGraphic(chipID, chipSpriteName, name)
 
