@@ -148,20 +148,3 @@ function InfoTool:OnFileValueChange(value)
     self:DrawFileList(offset)
 
 end
-
-function InfoTool:OnReset()
-
-    pixelVisionOS:ShowMessageModal("Reset Installer", "Do you want to reset the installer to its default values?", 160, true,
-        function()
-            if(pixelVisionOS.messageModal.selectionValue == true) then
-
-                for i = 1, #self.filePaths do
-                    self.filePaths[i].selected = true
-                end
-
-                self:DrawFileList(self.fileListOffset)
-            end
-        end
-    )
-
-end

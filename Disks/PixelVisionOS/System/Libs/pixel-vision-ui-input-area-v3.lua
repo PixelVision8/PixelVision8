@@ -33,6 +33,8 @@ function EditorUI:CreateInputArea(rect, text, toolTip, font, colorOffset, spacin
   data.totalLines = 0
   data.maxLineWidth = 0
 
+
+
   if(text ~= nil) then
     self:ChangeInputArea(data, text)
   end
@@ -40,6 +42,8 @@ function EditorUI:CreateInputArea(rect, text, toolTip, font, colorOffset, spacin
   return data
 
 end
+
+
 
 function EditorUI:UpdateInputArea(data)
 

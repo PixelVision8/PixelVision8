@@ -92,6 +92,8 @@ function WorkspaceTool:RestoreLastPath()
   -- Convert the path to a Workspace Path
   newPath = newPath == "none" and self.workspacePath or NewWorkspacePath(newPath)
 
+  self:OpenWindow(newPath, lastScrollPos, lastSelection)
+
   -- Open the window to the new path
   if(newPath.Path == self.workspacePath.Path) then
     
@@ -99,40 +101,75 @@ function WorkspaceTool:RestoreLastPath()
 
     if(#files == 0 or (#files == 1 and files[1] != "System")) then
 
-      self:AutoCreateFirstProject()
+
+      self.createProjectTime = 0
+      self.createProjectDelay = .1
+
+      pixelVisionOS:RegisterUI({name = "CreateDelay"}, "CreateProjectDelay", self)
     
-      return
+      -- return
       
     end
     
   end
 
-  self:OpenWindow(newPath, lastScrollPos, lastSelection)
+
+end
+
+function WorkspaceTool:CreateProjectDelay()
+
+  if(self.createProjectTime == -1) then
+    return
+  end
+
+  self.createProjectTime = self.createProjectTime + editorUI.timeDelta
+  
+  if(self.createProjectTime > self.createProjectDelay) then
+
+    pixelVisionOS:RemoveUI("CreateDelay")
+
+    self.createProjectTime = -1
+
+    self:AutoCreateFirstProject()
+
+  end
 
 end
 
 function WorkspaceTool:AutoCreateFirstProject()
 
-  pixelVisionOS:ShowMessageModal("Welcome to Pixel Vision 8", "It looks like you are running Pixel Vision 8 for the first time. We have automatically created a new 'Workspace drive' for you on your computer at: \n\n" .. DocumentPath().."\n\nYou can learn more about the Workspace and using PV8 by reading the documentation at:\n\nhttps://www.pixelvision8.com/documentation\n\nBefore getting started, would you like to create a new project?", 224, true,
-    function()
+  -- TODO need to add buttons here
 
-      local defaultPath = self.workspacePath
+  local buttons = 
+  {
+      {
+          name = "modalyesbutton",
+          action = function(target)
+              
+            target.onParentClose()
+              
+            local readmePath = NewWorkspacePath("/PixelVisionOS/README.txt")
 
-      if(pixelVisionOS.messageModal.selectionValue == true) then
+            if(PathExists(readmePath)) then
+              CopyTo(readmePath, self.workspacePath.AppendFile(readmePath.EntityName))
+            end
 
-        defaultPath = self:CreateNewProject("MyFirstGame", self.workspacePath)
+            self:OpenWindow(self:CreateNewProject("MyFirstGame", self.workspacePath))
 
-        local readmePath = NewWorkspacePath("/PixelVisionOS/README.txt")
-
-        if(PathExists(readmePath)) then
-          CopyTo(readmePath, self.workspacePath.AppendFile(readmePath.EntityName))
-        end
-
-      end
-
-      self:OpenWindow(defaultPath)
-
-    end
-  )
+          end,
+          key = Keys.Enter,
+          tooltip = "Press 'enter' to create a new project"
+      },
+      {
+          name = "modalnobutton",
+          action = function(target)
+              target.onParentClose()
+          end,
+          key = Keys.Escape,
+          tooltip = "Press 'esc' to exit"
+      }
+  }
+  
+  pixelVisionOS:ShowMessageModal("Welcome to Pixel Vision 8", "It looks like you are running Pixel Vision 8 for the first time. We have automatically created a new 'Workspace drive' for you on your computer at: \n\n" .. DocumentPath().."\n\nYou can learn more about the Workspace and using PV8 by reading the documentation at:\n\nhttps://www.pixelvision8.com/documentation\n\nBefore getting started, would you like to create a new project?", 224, buttons)
 
 end

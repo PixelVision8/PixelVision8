@@ -19,7 +19,9 @@
 
 function PixelVisionOS:SystemCopy(data)
 
-    self.clipboardContents = data
+    SetClipboardText(data)
+    -- print("Copy", data)
+    -- self.clipboardContents = data
 
 end
 
@@ -27,15 +29,15 @@ function PixelVisionOS:SystemPaste()
 
     autoClear = autoClear or true
 
-    local data = self.clipboardContents
+    -- local data = self.clipboardContents
 
-    return data
+    return GetClipboardText()
 
 end
 
 function PixelVisionOS:ClipboardFull()
 
-    return self.enableClipboard == false and false or self.clipboardContents ~= nil
+    return self.enableClipboard == false and false or GetClipboardText() ~= ""
 
 end
 
@@ -47,6 +49,8 @@ end
 
 function PixelVisionOS:ClearClipboard()
 
-    self.clipboardContents = nil
+    ClearClipboardText()
+
+    -- self.clipboardContents = nil
 
 end

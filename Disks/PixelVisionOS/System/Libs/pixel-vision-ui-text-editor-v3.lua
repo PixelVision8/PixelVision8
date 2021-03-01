@@ -7,15 +7,16 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset, spaci
 
   data.highlighterTheme = {
     text = 15, -- White
-    selection = 14, -- Yellow,
-    keyword = 13, -- 
-    number = 2, -- 
-    comment = 6, -- 
+    selection = 0, -- Yellow,
+    keyword = 14, -- 
+    number = 6, -- 
+    comment = 5, -- 
     string = 11, -- 
     api = 7, -- 
-    callback = 8, -- 
+    callback = 9, -- 
     escape = 15, -- 
     disabled = 5, -- 
+    selectionBackground = 11
   }
 
   -- Default language is lua
@@ -139,13 +140,13 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset, spaci
       -- self:TextEditorDrawLineNum(targetData)
     end,
 
-    ["shift-ctrl-f"] = function(targetData)
-      self:TextEditorSearchPreviousFunction(targetData)
-    end,
+    -- ["shift-ctrl-f"] = function(targetData)
+    --   self:TextEditorSearchPreviousFunction(targetData)
+    -- end,
 
-    ["ctrl-f"] = function(targetData)
-      self:TextEditorSearchNextFunction(targetData)
-    end,
+    -- ["ctrl-f"] = function(targetData)
+    --   self:TextEditorSearchNextFunction(targetData)
+    -- end,
 
     ["shift-down"] = function(targetData)
       --last line check, we do not go further than buffer
@@ -247,7 +248,7 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset, spaci
     end,
 
     ["backspace"] = function(targetData)
-      if targetData.readonly then _systemMessage("The file is readonly !", 1, 9, 4) return end
+      -- if targetData.readonly then _systemMessage("The file is readonly !", 1, 9, 4) return end
       if targetData.sxs then self:TextEditorDeleteSelection(targetData) return end
       if targetData.cx == 1 and targetData.cy == 1 then return end
       local lineChange
@@ -258,7 +259,7 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset, spaci
     end,
 
     ["delete"] = function(targetData)
-      if targetData.readonly then _systemMessage("The file is readonly !", 1, 9, 4) return end
+      -- if targetData.readonly then _systemMessage("The file is readonly !", 1, 9, 4) return end
       if targetData.sxs then self:TextEditorDeleteSelection(targetData) return end
       local lineChange
       targetData.cx, targetData.cy, lineChange = self:TextEditorDeleteCharAt(targetData, targetData.cx, targetData.cy)
@@ -304,39 +305,39 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset, spaci
       self:TextEditorTextInput(targetData, targetData.tabChar)
     end,
 
-    ["ctrl-k"] = function(targetData)
-      if targetData.incsearch == true then
-        self:TextEditorSearchTextAndNavigate(targetData, targetData.cy)
-      end
-    end,
-    ["ctrl-x"] = function(targetData)
-      if targetData.readonly then _systemMessage("The file is readonly !", 1, 9, 4) return end
-      self:TextEditorCutText(targetData)
-    end,
+    -- ["ctrl-k"] = function(targetData)
+    --   if targetData.incsearch == true then
+    --     self:TextEditorSearchTextAndNavigate(targetData, targetData.cy)
+    --   end
+    -- end,
+    -- ["ctrl-x"] = function(targetData)
+    --   if targetData.readonly then _systemMessage("The file is readonly !", 1, 9, 4) return end
+    --   self:TextEditorCutText(targetData)
+    -- end,
 
-    ["ctrl-c"] = function(targetData) self:TextEditorCopyText(targetData) end,
+    -- ["ctrl-c"] = function(targetData) self:TextEditorCopyText(targetData) end,
 
-    ["ctrl-v"] = function(targetData)
-      if targetData.readonly then _systemMessage("The file is readonly !", 1, 9, 4) return end
-      self:TextEditorPasteText(targetData)
-    end,
+    -- ["ctrl-v"] = function(targetData)
+    --   if targetData.readonly then _systemMessage("The file is readonly !", 1, 9, 4) return end
+    --   self:TextEditorPasteText(targetData)
+    -- end,
 
     ["ctrl-a"] = function(targetData) self:TextEditorSelectAll(targetData) end,
 
-    ["ctrl-z"] = function(targetData)
-      if targetData.readonly then _systemMessage("The file is readonly !", 1, 9, 4) return end
-      self:TextEditorUndo(targetData)
-    end,
+    -- ["ctrl-z"] = function(targetData)
+    --   -- if targetData.readonly then _systemMessage("The file is readonly !", 1, 9, 4) return end
+    --   self:TextEditorUndo(targetData)
+    -- end,
 
-    ["shift-ctrl-z"] = function(targetData)
-      if targetData.readonly then _systemMessage("The file is readonly !", 1, 9, 4) return end
-      self:TextEditorRedo(targetData)
-    end,
+    -- ["shift-ctrl-z"] = function(targetData)
+    --   -- if targetData.readonly then _systemMessage("The file is readonly !", 1, 9, 4) return end
+    --   self:TextEditorRedo(targetData)
+    -- end,
 
-    ["ctrl-y"] = function(targetData)
-      if targetData.readonly then _systemMessage("The file is readonly !", 1, 9, 4) return end
-      self:TextEditorRedo(targetData)
-    end
+    -- ["ctrl-y"] = function(targetData)
+    --   -- if targetData.readonly then _systemMessage("The file is readonly !", 1, 9, 4) return end
+    --   self:TextEditorRedo(targetData)
+    -- end
   }
 
   return data
@@ -385,10 +386,21 @@ function EditorUI:TextEditorDrawCharactersAtCursor(data, text, x, y)
       return
     end
 
-    -- DrawRect( data.rect.x + x, data.rect.y + y, data.charSize.x, data.charSize.y, 1, DrawMode.TilemapCache )
+    
+    if(data.cursorPos.color == data.highlighterTheme.selection) then
+        
+      DrawRect( 
+        data.rect.x + x,
+        data.rect.y + y, 
+        data.charSize.x, 
+        data.charSize.y, 
+        data.highlighterTheme.selectionBackground, 
+        DrawMode.TilemapCache 
+      )
+    end
     
     if(x >= 0 and tmpChar ~= " ") then
-      
+
       DrawText( 
         tmpChar,
         data.rect.x + x,
@@ -671,59 +683,59 @@ end
 
 -- end
 
-function EditorUI:TextEditorSearchNextFunction(data)
-  for i, t in ipairs(data.buffer)
-  do
-    if i > data.cy then
-      if string.find(t, "function ") then
-        data.cy = i
-        self:TextEditorCheckPosition(data)
-        -- Force the buffer to redraw
-        self:TextEditorInvalidateBuffer(data)
+-- function EditorUI:TextEditorSearchNextFunction(data)
+--   for i, t in ipairs(data.buffer)
+--   do
+--     if i > data.cy then
+--       if string.find(t, "function ") then
+--         data.cy = i
+--         self:TextEditorCheckPosition(data)
+--         -- Force the buffer to redraw
+--         self:TextEditorInvalidateBuffer(data)
 
-        break
-      end
-    end
-  end
-end
+--         break
+--       end
+--     end
+--   end
+-- end
 
-function EditorUI:TextEditorSearchPreviousFunction(data)
-  highermatch = -1
-  for i, t in ipairs(data.buffer)
-  do
-    if i < data.cy then
-      if string.find(t, "function ") then
-        highermatch = i
-      end
-    end
-  end
+-- function EditorUI:TextEditorSearchPreviousFunction(data)
+--   highermatch = -1
+--   for i, t in ipairs(data.buffer)
+--   do
+--     if i < data.cy then
+--       if string.find(t, "function ") then
+--         highermatch = i
+--       end
+--     end
+--   end
 
-  if highermatch > - 1 then
-    data.cy = highermatch
-    data.vy = highermatch
-    self:TextEditorCheckPosition(data)
-    -- Force the buffer to redraw
-    self:TextEditorInvalidateBuffer(data)
-  end
+--   if highermatch > - 1 then
+--     data.cy = highermatch
+--     data.vy = highermatch
+--     self:TextEditorCheckPosition(data)
+--     -- Force the buffer to redraw
+--     self:TextEditorInvalidateBuffer(data)
+--   end
 
-end
+-- end
 
-function EditorUI:TextEditorSearchTextAndNavigate(data, from_line)
-  for i, t in ipairs(data.buffer)
-  do
-    if from_line ~= nil and i > from_line then
-      if string.find(t, data.searchtxt) then
-        data.cy = i
-        data.vy = i
-        self:TextEditorCheckPosition(data)
-        self:TextEditorInvalidateBuffer(data)
+-- function EditorUI:TextEditorSearchTextAndNavigate(data, from_line)
+--   for i, t in ipairs(data.buffer)
+--   do
+--     if from_line ~= nil and i > from_line then
+--       if string.find(t, data.searchtxt) then
+--         data.cy = i
+--         data.vy = i
+--         self:TextEditorCheckPosition(data)
+--         self:TextEditorInvalidateBuffer(data)
 
-        break
-      end
-    end
-  end
+--         break
+--       end
+--     end
+--   end
 
-end
+-- end
 
 function EditorUI:TextEditorTextInput(data, t)
 
@@ -857,64 +869,65 @@ function EditorUI:TextEditorDeleteSelection(data)
   self:TextEditorInvalidateText(data)
 end
 
---Copy selection text (Only if selecting)
-function EditorUI:TextEditorCopyText(data)
-  local sxs, sys, sxe, sye = self:TextEditorGetOrderedSelect(data)
-  if sxs then --If there are any selection
-    local clipbuffer = {}
-    for lnum = sys, sye do
-      local line = data.buffer[lnum]
+-- --Copy selection text (Only if selecting)
+-- function EditorUI:TextEditorCopyText(data)
+--   local sxs, sys, sxe, sye = self:TextEditorGetOrderedSelect(data)
+--   if sxs then --If there are any selection
+--     local clipbuffer = {}
+--     for lnum = sys, sye do
+--       local line = data.buffer[lnum]
 
-      if lnum == sys and lnum == sye then --Single line selection
-        line = line:sub(sxs, sxe)
-      elseif lnum == sys then
-        line = line:sub(sxs, - 1)
-      elseif lnum == sye then
-        line = line:sub(1, sxe)
-      end
+--       if lnum == sys and lnum == sye then --Single line selection
+--         line = line:sub(sxs, sxe)
+--       elseif lnum == sys then
+--         line = line:sub(sxs, - 1)
+--       elseif lnum == sye then
+--         line = line:sub(1, sxe)
+--       end
 
-      table.insert(clipbuffer, line)
-    end
+--       table.insert(clipbuffer, line)
+--     end
 
-    local clipdata = table.concat(clipbuffer, "\n")
-    self:TextEditorClipboard(clipdata)
-  end
-end
+--     local clipdata = table.concat(clipbuffer, "\n")
 
---Cut selection text
-function EditorUI:TextEditorCutText(data)
-  if data.sxs then
-    self:TextEditorCopyText(data)
-    self:TextEditorDeleteSelection(data)
-  end
-end
+--     self:TextEditorClipboard(clipdata)
+--   end
+-- end
 
--- Paste the text from the clipboard
-function EditorUI:TextEditorPasteText(data)
-  self:TextEditorBeginUndoable(data)
-  if data.sxs then self:TextEditorDeleteSelection(data) end
-  local text = self:TextEditorClipboard()
+-- --Cut selection text
+-- function EditorUI:TextEditorCutText(data)
+--   if data.sxs then
+--     self:TextEditorCopyText(data)
+--     self:TextEditorDeleteSelection(data)
+--   end
+-- end
+
+-- -- Paste the text from the clipboard
+-- function EditorUI:TextEditorPasteText(data)
+--   self:TextEditorBeginUndoable(data)
+--   if data.sxs then self:TextEditorDeleteSelection(data) end
+--   local text = self:TextEditorClipboard()
   
-  if(text == nil) then
-    return
-  end
+--   if(text == nil) then
+--     return
+--   end
   
-  text = text:gsub("\t", " ") -- tabs mess up the layout, replace them with spaces
-  local firstLine = true
-  for line in string.gmatch(text.."\n", "([^\r\n]*)\r?\n") do
-    if not firstLine then
-      self:TextEditorInsertNewLine(data) data.cx = 1
-    else
-      firstLine = false
-    end
-    self:TextEditorTextInput(data, line)
-  end
-  if self:TextEditorCheckPosition(data) then self:TextEditorDrawBuffer(data) else self:TextEditorDrawLine(data) end
+--   text = text:gsub("\t", " ") -- tabs mess up the layout, replace them with spaces
+--   local firstLine = true
+--   for line in string.gmatch(text.."\n", "([^\r\n]*)\r?\n") do
+--     if not firstLine then
+--       self:TextEditorInsertNewLine(data) data.cx = 1
+--     else
+--       firstLine = false
+--     end
+--     self:TextEditorTextInput(data, line)
+--   end
+--   if self:TextEditorCheckPosition(data) then self:TextEditorDrawBuffer(data) else self:TextEditorDrawLine(data) end
 
-  -- self:TextEditorDrawLineNum(data)
-  self:TextEditorEndUndoable(data)
-  self:TextEditorInvalidateText(data)
-end
+--   -- self:TextEditorDrawLineNum(data)
+--   self:TextEditorEndUndoable(data)
+--   self:TextEditorInvalidateText(data)
+-- end
 
 --Select all text
 function EditorUI:TextEditorSelectAll(data)
@@ -961,47 +974,47 @@ function EditorUI:TextEditorEndUndoable(data)
   end
 end
 
--- Perform an undo. This will pop one entry off the undo
--- stack and restore the editor's contents & cursor state.
-function EditorUI:TextEditorUndo(data)
-  if #data.undoStack == 0 then
-    -- beep?
-    return
-  end
-  -- pull one entry from the undo stack
-  local text, state = unpack(table.remove(data.undoStack))
+-- -- Perform an undo. This will pop one entry off the undo
+-- -- stack and restore the editor's contents & cursor state.
+-- function EditorUI:TextEditorUndo(data)
+--   if #data.undoStack == 0 then
+--     -- beep?
+--     return
+--   end
+--   -- pull one entry from the undo stack
+--   local text, state = unpack(table.remove(data.undoStack))
 
-  -- push a new entry onto the redo stack
-  table.insert(data.redoStack, {
-    self:TextEditorExport(data),
-    self:TextEditorGetState(data)
-  })
+--   -- push a new entry onto the redo stack
+--   table.insert(data.redoStack, {
+--     self:TextEditorExport(data),
+--     self:TextEditorGetState(data)
+--   })
 
-  -- restore the editor contents
-  self:TextEditorImport(data, text)
-  -- restore the cursor state
-  self:TextEditorSetState(data, state)
-end
+--   -- restore the editor contents
+--   self:TextEditorImport(data, text)
+--   -- restore the cursor state
+--   self:TextEditorSetState(data, state)
+-- end
 
--- Perform a redo. This will pop one entry off the redo
--- stack and restore the editor's contents & cursor state.
-function EditorUI:TextEditorRedo(data)
-  if #data.redoStack == 0 then
-    -- beep?
-    return
-  end
-  -- pull one entry from the redo stack
-  local text, state = unpack(table.remove(data.redoStack))
-  -- push a new entry onto the undo stack
-  table.insert(data.undoStack, {
-    self:TextEditorExport(data),
-    self:TextEditorGetState(data)
-  })
-  -- restore the editor contents
-  self:TextEditorImport(data, text)
-  -- restore the cursor state
-  self:TextEditorSetState(data, state)
-end
+-- -- Perform a redo. This will pop one entry off the redo
+-- -- stack and restore the editor's contents & cursor state.
+-- function EditorUI:TextEditorRedo(data)
+--   if #data.redoStack == 0 then
+--     -- beep?
+--     return
+--   end
+--   -- pull one entry from the redo stack
+--   local text, state = unpack(table.remove(data.redoStack))
+--   -- push a new entry onto the undo stack
+--   table.insert(data.undoStack, {
+--     self:TextEditorExport(data),
+--     self:TextEditorGetState(data)
+--   })
+--   -- restore the editor contents
+--   self:TextEditorImport(data, text)
+--   -- restore the cursor state
+--   self:TextEditorSetState(data, state)
+-- end
 
 -- Get the state of the cursor, selection, etc.
 -- This is used for the undo/redo feature.
@@ -1180,7 +1193,7 @@ function EditorUI:TextEditorUpdate(data, dt)
     if(data.enabled == true and data.editable == true) then
 
       if(data.inFocus == false) then
-        print("in focus")
+        -- print("in focus")
         -- Set focus
         self:SetFocus(data, 3)
       end
@@ -1417,23 +1430,10 @@ function EditorUI:TextEditorImport(data, text)
 
   self:TextEditorResetTextValidation(data)
   self:TextEditorInvalidateBuffer(data)
-  -- EditorUI:TextEditorDrawBuffer(data)
 end
 
 function EditorUI:TextEditorExport(data)
   return table.concat(data.buffer, "\n")
-end
-
-function EditorUI:TextEditorClipboard(value)
-
-  -- TODO this should be tied to the OS scope
-  if(value ~= nil) then
-
-    self.codeEditorClipboardValue = value
-  end
-
-  return self.codeEditorClipboardValue
-
 end
 
 function EditorUI:EditTextEditor(data, value, callAction)
@@ -1503,15 +1503,7 @@ function EditorUI:ResizeTexdtEditor(data, width, height, x, y)
   data.tiles.w = math.ceil(data.rect.w / data.charSize.x)
   data.tiles.h = math.ceil(data.rect.h / data.charSize.y)
   data.viewPort = NewRect(data.rect.x, data.rect.y, data.rect.w, data.rect.h)
-  -- data.bgMaskDrawArguments[1] = data.rect.x
-  -- data.bgMaskDrawArguments[2] = data.rect.y
-  -- data.bgMaskDrawArguments[3] = data.rect.w
-  -- data.bgMaskDrawArguments[4] = data.rect.h
-  -- data.lineMaskDrawArguments[1] = data.rect.x
-  -- data.lineMaskDrawArguments[2] = data.rect.y
-  -- data.lineMaskDrawArguments[3] = data.rect.w
-  -- data.lineMaskDrawArguments[4] = data.rect.h
-
+ 
   self:TextEditorInvalidateBuffer(data)
 
 end

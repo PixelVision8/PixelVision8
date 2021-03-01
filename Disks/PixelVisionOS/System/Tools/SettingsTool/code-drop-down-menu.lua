@@ -19,17 +19,29 @@ function SettingsTool:CreateDropDownMenu()
 
   function SettingsTool:OnReset()
   
+    local buttons = 
+    {
+        {
+            name = "modalyesbutton",
+            action = function(target)
+                target.onParentClose()
+                self:ResetControllers()
+                self:ResetShortcuts()
+            end,
+            key = Keys.Enter,
+            tooltip = "Press 'enter' to reset mapping to the default value"
+        },
+        {
+            name = "modalnobutton",
+            action = function(target)
+                target.onParentClose()
+            end,
+            key = Keys.Escape,
+            tooltip = "Press 'esc' to avoid making any changes"
+        }
+    }
 
-    pixelVisionOS:ShowMessageModal("Reset Key Mapping", "Do you want to reset all of the controller and shortcut key mappings back to their default values?", 160, true,
-        function()
-          if(pixelVisionOS.messageModal.selectionValue == true) then
-            -- Save changes
-            self:ResetControllers()
-            self:ResetShortcuts()
-  
-          end
-        end
-      )
+    pixelVisionOS:ShowMessageModal("Reset Key Mapping", "Do you want to reset all of the controller and shortcut key mappings back to their default values?", 160, buttons)
 
   end
   

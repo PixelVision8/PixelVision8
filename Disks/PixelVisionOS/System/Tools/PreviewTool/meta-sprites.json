@@ -9,6 +9,7 @@
             {"name":"modalokbuttonup","width":4,"spriteIDs":[20,96,97,23,40,106,107,43]},
             {"name":"modalcancelbuttonover","width":4,"spriteIDs":[116,117,118,119,126,127,128,129]},
             {"name":"modalsavebuttonup","width":4,"spriteIDs":[20,91,92,23,40,100,101,43]},
+            {"name":"modalsavebuttonover","width":4,"spriteIDs":[57,93,94,60,74,102,103,77]},
             {"name":"vsliderhandleover","width":2,"spriteIDs":[104,105,110,111,120,121]},
             {"name":"cursorhelp","width":2,"spriteIDs":[18,19,38,39]},
             {"name":"toolbariconfile","width":1,"spriteIDs":[52]},

@@ -122,18 +122,40 @@ function PixelVisionOS:UpdateDiskExport()
             -- Remove the callback from the UI update loop
             pixelVisionOS:RemoveUI("UpdateDiskExport")
 
-            pixelVisionOS:ShowMessageModal("Build " .. (success == true and "Complete" or "Failed"), message, 160, false,
+            local buttons = 
+            {
+                {
+                    name = "modalyesbutton",
+                    action = function(target)
+                        target.onParentClose()
+                        self:OpenPath(path)
+                        -- if(self.OnCloseBuildModalCallback ~= nil) then
+                        --     self.OnCloseBuildModalCallback(response)
+                        -- end
+                    end,
+                    key = Keys.Enter,
+                    tooltip = "Press 'enter' to apply the new chip values"
+                },
+                {
+                    name = "modalnobutton",
+                    action = function(target)
+                        target.onParentClose()
+                    end,
+                    key = Keys.Escape,
+                    tooltip = "Press 'esc' to not open the build folder"
+                }
+            }
 
-                function()
-                    if(success == true) then
-                        print("Callback action when closing build after success")
-                        -- self:OpenWindow(NewWorkspacePath(path).ParentPath)
-                        if(self.OnCloseBuildModalCallback ~= nil) then
-                            self.OnCloseBuildModalCallback(response)
-                        end
-                    end
-                end
-            )
+            pixelVisionOS:ShowMessageModal("Build " .. (success == true and "Complete" or "Failed"), message .. " Do you want to go to the new build folder?", 160, buttons)--false,
+
+            --     function()
+            --         if(success == true) then
+            --             print("Callback action when closing build after success")
+            --             -- self:OpenWindow(NewWorkspacePath(path).ParentPath)
+                        
+            --         end
+            --     end
+            -- )
         else
 
             if(self.progressModal ~= nil) then

@@ -48,7 +48,7 @@ function TextTool:OnRunGame()
 
     local data = {runnerType = self.extension == ".lua" and "lua" or "csharp"}
 
-    print("runnerType", data["runnerType"], self.extension)
+    -- print("runnerType", data["runnerType"], self.extension)
 
     -- if(self.codeMode == true) then
     --    data["codeFile"] = _textTool.targetFile
@@ -58,17 +58,20 @@ function TextTool:OnRunGame()
 
     if(self.invalid == true) then
 
-        pixelVisionOS:ShowMessageModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before running the game?", 160, true,
-                function()
-                    if(pixelVisionOS.messageModal.selectionValue == true) then
-                        -- Save changes
-                        self:OnSave()
-
-                    end
-
-                    -- TODO should check that this is a game directory or that this file is at least a code.lua file
-                    LoadGame(parentPath.Path, data)
-                end
+        pixelVisionOS:ShowSaveModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before running the game?", 160,
+          -- Accept
+          function(target)
+            self:OnSave()
+            LoadGame(parentPath.Path, data)
+          end,
+          -- Decline
+          function (target)
+            LoadGame(parentPath.Path, data)
+          end,
+          -- Cancel
+          function(target)
+            target.onParentClose()
+          end
         )
 
     else
@@ -82,16 +85,22 @@ function TextTool:OnQuit()
 
       if(self.invalid == true) then
 
-        pixelVisionOS:ShowMessageModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before you quit?", 160, true,
-          function()
-            if(pixelVisionOS.messageModal.selectionValue == true) then
-              -- Save changes
-              self:OnSave()
-
-            end
-
-            -- Quit the tool
+        pixelVisionOS:ShowSaveModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before you quit?", 160,
+          -- Accept
+          function(target)
+            -- print("Save/quit")
+            self:OnSave()
             QuitCurrentTool()
+          end,
+          -- Decline
+          function (target)
+            -- print("Quit")
+            QuitCurrentTool()
+          end,
+          -- Cancel
+          function(target)
+            -- print("Cancle")
+            target.onParentClose()
           end
         )
 

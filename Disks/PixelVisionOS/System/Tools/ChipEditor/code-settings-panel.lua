@@ -5,7 +5,7 @@ function ChipEditorTool:CreateSettingsPanel()
   local mapSize = gameEditor:TilemapSize()
   local displaySize = gameEditor:DisplaySize()
 
-  self.sizeInputData = editorUI:CreateInputField({x = 168, y = 208, w = 24}, gameEditor:GameMaxSize(), "CPG", "number")
+  self.sizeInputData = pixelVisionOS:CreateInputField({x = 168, y = 208, w = 24}, gameEditor:GameMaxSize(), "CPG", "number")
   self.sizeInputData.min = 64
   self.sizeInputData.max = 960
   self.sizeInputData.onAction = function(value)
@@ -17,7 +17,7 @@ function ChipEditorTool:CreateSettingsPanel()
 
   table.insert(self.inputFields, self.sizeInputData)
 
-  self.spritePagesInputData = editorUI:CreateInputField({x = 128, y = 208, w = 8}, tostring(gameEditor:SpritePages()), "Total number of sprite pages. Each page has 256 sprites.", "number")
+  self.spritePagesInputData = pixelVisionOS:CreateInputField({x = 128, y = 208, w = 8}, tostring(gameEditor:SpritePages()), "Total number of sprite pages. Each page has 256 sprites.", "number")
   self.spritePagesInputData.min = 1
   self.spritePagesInputData.max = 8
   self.spritePagesInputData.onAction = function(value)
@@ -30,7 +30,7 @@ function ChipEditorTool:CreateSettingsPanel()
   table.insert(self.inputFields, self.spritePagesInputData)
 
 
-  self.cpsInputData = editorUI:CreateInputField({x = 136+8, y = 208, w = 16}, tostring(gameEditor:ColorsPerSprite()), "Number of colors per sprite. Minimum is 2 and max is 16.", "number")
+  self.cpsInputData = pixelVisionOS:CreateInputField({x = 136+8, y = 208, w = 16}, tostring(gameEditor:ColorsPerSprite()), "Number of colors per sprite. Minimum is 2 and max is 16.", "number")
   self.cpsInputData.min = 2
   -- TODO This should be tied to how many colors there are?
   self.cpsInputData.max = 16
@@ -44,7 +44,7 @@ function ChipEditorTool:CreateSettingsPanel()
 
   table.insert(self.inputFields, self.cpsInputData)
 
-  self.maskInputData = editorUI:CreateInputField({x = 136+8+32+8, y = 208, w = 6*8}, tostring(gameEditor:MaskColor():sub(2, 7)), "The color that will be treated as transparent.", "hex")
+  self.maskInputData = pixelVisionOS:CreateInputField({x = 136+8+32+8, y = 208, w = 6*8}, tostring(gameEditor:MaskColor():sub(2, 7)), "The color that will be treated as transparent.", "hex")
 
   self.maskInputData.captureInput = function(targetData)
 
@@ -59,7 +59,7 @@ function ChipEditorTool:CreateSettingsPanel()
 
   table.insert(self.inputFields, self.maskInputData)
 
-  self.mapWidthInputData = editorUI:CreateInputField({x = 32, y = 208, w = 24}, tostring(mapSize.x), "Number of columns of tiles in the map.", "number")
+  self.mapWidthInputData = pixelVisionOS:CreateInputField({x = 32, y = 208, w = 24}, tostring(mapSize.x), "Number of columns of tiles in the map.", "number")
   self.mapWidthInputData.min = math.ceil(displaySize.x / 8)
   self.mapWidthInputData.max = 256
   self.mapWidthInputData.onAction = function(value)
@@ -82,7 +82,7 @@ function ChipEditorTool:CreateSettingsPanel()
   table.insert(self.inputFields, self.mapWidthInputData)
 
 
-  self.mapHeightInputData = editorUI:CreateInputField({x = 72, y = 208, w = 24}, tostring(mapSize.y), "Number of rows of tiles in the map.", "number")
+  self.mapHeightInputData = pixelVisionOS:CreateInputField({x = 72, y = 208, w = 24}, tostring(mapSize.y), "Number of rows of tiles in the map.", "number")
   self.mapHeightInputData.min = math.ceil(displaySize.y / 8)
   self.mapHeightInputData.max = 256
   self.mapHeightInputData.onAction = function(value)
@@ -102,7 +102,7 @@ function ChipEditorTool:CreateSettingsPanel()
   table.insert(self.inputFields, self.mapHeightInputData)
 
 
-  self.displayWidthInputData = editorUI:CreateInputField({x = 24, y = 208, w = 24}, tostring(displaySize.x), "The width in pixels of the display.", "number")
+  self.displayWidthInputData = pixelVisionOS:CreateInputField({x = 24, y = 208, w = 24}, tostring(displaySize.x), "The width in pixels of the display.", "number")
   self.displayWidthInputData.min = 64
   self.displayWidthInputData.max = 512
   self.displayWidthInputData.onAction = function(value)
@@ -130,7 +130,7 @@ function ChipEditorTool:CreateSettingsPanel()
   table.insert(self.inputFields, self.displayWidthInputData)
 
 
-  self.displayHeightInputData = editorUI:CreateInputField({x = 64, y = 208, w = 24}, tostring(displaySize.y), "The height in pixel of the display.", "number")
+  self.displayHeightInputData = pixelVisionOS:CreateInputField({x = 64, y = 208, w = 24}, tostring(displaySize.y), "The height in pixel of the display.", "number")
   self.displayHeightInputData.min = 64
   self.displayHeightInputData.max = 480
   self.displayHeightInputData.onAction = function(value)
@@ -157,7 +157,7 @@ function ChipEditorTool:CreateSettingsPanel()
 
   table.insert(self.inputFields, self.displayHeightInputData)
 
-  self.drawsInputData = editorUI:CreateInputField({x = 104, y = 208, w = 24}, tostring(gameEditor:MaxSpriteCount()), "Caps the total spites on the screen. Zero removes the limit.", "number")
+  self.drawsInputData = pixelVisionOS:CreateInputField({x = 104, y = 208, w = 24}, tostring(gameEditor:MaxSpriteCount()), "Caps the total spites on the screen. Zero removes the limit.", "number")
   self.drawsInputData.min = 0
   self.drawsInputData.max = 512
   self.drawsInputData.onAction = function(value)
@@ -170,7 +170,7 @@ function ChipEditorTool:CreateSettingsPanel()
 
 
 
-  self.soundTotalInputData = editorUI:CreateInputField({x = 16, y = 208, w = 16}, tostring(gameEditor:TotalSounds()), "Total number of sounds.", "number")
+  self.soundTotalInputData = pixelVisionOS:CreateInputField({x = 16, y = 208, w = 16}, tostring(gameEditor:TotalSounds()), "Total number of sounds.", "number")
   self.soundTotalInputData.min = 8
   self.soundTotalInputData.max = 32
   self.soundTotalInputData.onAction = function(value)
@@ -183,7 +183,7 @@ function ChipEditorTool:CreateSettingsPanel()
   table.insert(self.inputFields, self.soundTotalInputData)
 
 
-  self.channelTotalInputData = editorUI:CreateInputField({x = 48, y = 208, w = 8}, tostring(gameEditor:TotalChannels()), "Total number of channels available to play sounds.", "number")
+  self.channelTotalInputData = pixelVisionOS:CreateInputField({x = 48, y = 208, w = 8}, tostring(gameEditor:TotalChannels()), "Total number of channels available to play sounds.", "number")
   self.channelTotalInputData.min = 1
   self.channelTotalInputData.max = 5
   self.channelTotalInputData.onAction = function(value)
@@ -203,7 +203,7 @@ function ChipEditorTool:CreateSettingsPanel()
   table.insert(self.inputFields, self.channelTotalInputData)
 
 
-  self.loopTotalInputData = editorUI:CreateInputField({x = 216, y = 208, w = 16}, tostring(gameEditor:TotalLoops()), "Total number of song patterns.", "number")
+  self.loopTotalInputData = pixelVisionOS:CreateInputField({x = 216, y = 208, w = 16}, tostring(gameEditor:TotalLoops()), "Total number of song patterns.", "number")
   self.loopTotalInputData.min = 8
   self.loopTotalInputData.max = 32
   self.loopTotalInputData.onAction = function(value)
@@ -214,7 +214,7 @@ function ChipEditorTool:CreateSettingsPanel()
 
   table.insert(self.inputFields, self.loopTotalInputData)
 
-  self.songTotalInputData = editorUI:CreateInputField({x = 184, y = 208, w = 16}, tostring(gameEditor:TotalSongs()), "Total number of songs.", "number")
+  self.songTotalInputData = pixelVisionOS:CreateInputField({x = 184, y = 208, w = 16}, tostring(gameEditor:TotalSongs()), "Total number of songs.", "number")
   self.songTotalInputData.min = 8
   self.songTotalInputData.max = 32
   self.songTotalInputData.onAction = function(value)
@@ -241,7 +241,7 @@ function ChipEditorTool:CreateSettingsPanel()
 
   self.waveStepper.onInputAction = function(value) self:UpdateWaveType(value) end
 
-  self.saveSlotsInputData = editorUI:CreateInputField({x = 216, y = 208, w = 8}, tostring(gameEditor:GameSaveSlots()), "Enter the total save slots the disk can have.", "number")
+  self.saveSlotsInputData = pixelVisionOS:CreateInputField({x = 216, y = 208, w = 8}, tostring(gameEditor:GameSaveSlots()), "Enter the total save slots the disk can have.", "number")
   self.saveSlotsInputData.min = 2
   self.saveSlotsInputData.max = 8
   self.saveSlotsInputData.onAction = function(value)

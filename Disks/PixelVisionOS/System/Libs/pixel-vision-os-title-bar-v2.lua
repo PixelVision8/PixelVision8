@@ -475,7 +475,6 @@ function PixelVisionOS:DrawTitleBar(data)
 
     if(data.invalid == true) then
         
-        
         DrawText(
             string.upper(os.date(data.timeTextTemplate)),
             data.timeOffsetX,

@@ -35,20 +35,21 @@ function ChipEditorTool:OnEditJSON()
 
   if(self.invalid == true) then
 
-      pixelVisionOS:ShowMessageModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before you edit the raw data file?", 160, true,
-          function()
-
-              if(pixelVisionOS.messageModal.selectionValue == true) then
-                  -- Save changes
-                  self:OnSave()
-
-              end
-
-              -- Quit the tool
-              self:EditJSON()
-
-          end
-      )
+    pixelVisionOS:ShowSaveModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before you edit the raw data file?", 160,
+      -- Accept
+      function(target)
+        self:OnSave()
+        self:EditJSON()
+      end,
+      -- Decline
+      function (target)
+        self:EditJSON()
+      end,
+      -- Cancel
+      function(target)
+        target.onParentClose()
+      end
+    )
 
   else
       -- Quit the tool
@@ -72,19 +73,21 @@ function ChipEditorTool:OnQuit()
 
   if(self.invalid == true) then
 
-    pixelVisionOS:ShowMessageModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before you edit the raw data file?", 160, true,
-        function()
-
-            if(pixelVisionOS.messageModal.selectionValue == true) then
-                -- Save changes
-                self:OnSave()
-
-            end
-
-            -- Quit the tool
-            QuitCurrentTool()
-
-        end
+    pixelVisionOS:ShowSaveModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before you quit?", 160,
+      -- Accept
+      function(target)
+        self:OnSave()
+        QuitCurrentTool()
+      end,
+      -- Decline
+      function (target)
+        -- Quit the tool
+        QuitCurrentTool()
+      end,
+      -- Cancel
+      function(target)
+        target.onParentClose()
+      end
     )
 
   else
@@ -120,21 +123,42 @@ function ChipEditorTool:OnToggleLock()
   
     local title = self.specsLocked == true and "Unlock" or "Lock"
   
-    pixelVisionOS:ShowMessageModal(title .. " System Specs", "Are you sure you want to ".. title .." the system specs?", 160, true,
-      function()
-        if(pixelVisionOS.messageModal.selectionValue == true) then
-  
-         self.specsLocked = not self.specsLocked
+    local buttons = 
+    {
+      {
+        name = "modalyesbutton",
+        action = function(target)
+          self.specsLocked = not self.specsLocked
           gameEditor:GameSpecsLocked(self.specsLocked)
           self:UpdateFieldLock()
           self:InvalidateData()
-        end
-  
-      end,
-      "yes",
-      "no"
-    )
-  
+
+          if(target.onParentClose ~= nil) then
+            target.onParentClose()
+          end
+
+          self.showWarning = true
+
+        end,
+        key = Keys.Enter,
+        tooltip = "Press 'enter' to unlock the chips for editing"
+      },
+      {
+        name = "modalnobutton",
+        action = function(target)
+          if(target.onParentClose ~= nil) then
+            target.onParentClose()
+          end
+
+          self.showWarning = false
+        end,
+        key = Keys.Enter,
+        tooltip = "Press 'esc' to keep the chips locked and view their values"
+      }
+    }
+    
+    pixelVisionOS:ShowMessageModal(title .. " System Specs", "Are you sure you want to ".. title .." the system specs?", 160, buttons)
+   
   end
 
   function ChipEditorTool:UpdateFieldLock()

@@ -27,12 +27,22 @@ function SettingsTool:CreateControllerPanel()
     self.inputButtonGroupData.onAction = 
     function(value) 
         
+        
         if(value == 2 and ControllerConnected(self.selectedPlayerID-1) == false) then 
-            pixelVisionOS:ShowMessageModal("No Controller", "It doesn't look like Player " .. self.selectedPlayerID .. "'s controller was detected.", 160, false, 
-            function()
-                self:OnTriggerInputSelection(value)
-            end
-        )
+            local buttons = 
+            {
+                {
+                name = "modalokbutton",
+                action = function(target)
+                    self:OnTriggerInputSelection(value)
+                end,
+                key = Keys.Enter,
+                tooltip = "Press 'enter' to close this warning"
+                }
+            }
+            
+            pixelVisionOS:ShowMessageModal("No Controller", "It doesn't look like Player " .. self.selectedPlayerID .. "'s controller was detected.", 160, buttons)
+
         else
             self:OnTriggerInputSelection(value)
         end
@@ -43,14 +53,14 @@ function SettingsTool:CreateControllerPanel()
 
 
     self.inputFields = {
-        editorUI:CreateInputField({x = 56, y = 80, w = 8}, "", "Up"),
-        editorUI:CreateInputField({x = 56, y = 96, w = 8}, "", "Down"),
-        editorUI:CreateInputField({x = 56, y = 112, w = 8}, "", "Left"),
-        editorUI:CreateInputField({x = 56, y = 128, w = 8}, "", "Right"),
-        editorUI:CreateInputField({x = 120, y = 120, w = 8}, "", "Select"),
-        editorUI:CreateInputField({x = 144, y = 120, w = 8}, "", "Start"),
-        editorUI:CreateInputField({x = 184, y = 120, w = 8}, "", "A"),
-        editorUI:CreateInputField({x = 208, y = 120, w = 8}, "", "B")
+        pixelVisionOS:CreateInputField({x = 56, y = 80, w = 8}, "", "Up"),
+        pixelVisionOS:CreateInputField({x = 56, y = 96, w = 8}, "", "Down"),
+        pixelVisionOS:CreateInputField({x = 56, y = 112, w = 8}, "", "Left"),
+        pixelVisionOS:CreateInputField({x = 56, y = 128, w = 8}, "", "Right"),
+        pixelVisionOS:CreateInputField({x = 120, y = 120, w = 8}, "", "Select"),
+        pixelVisionOS:CreateInputField({x = 144, y = 120, w = 8}, "", "Start"),
+        pixelVisionOS:CreateInputField({x = 184, y = 120, w = 8}, "", "A"),
+        pixelVisionOS:CreateInputField({x = 208, y = 120, w = 8}, "", "B")
     }
     
     self.inputBlinkSpriteId = FindMetaSpriteId("inputbuttonon")
@@ -254,11 +264,19 @@ function SettingsTool:OnTriggerInputSelection(value)
 
     -- make sure the controller is connected first
     if(value == 2 and ControllerConnected(self.selectedPlayerID-1) == false) then 
-        pixelVisionOS:ShowMessageModal("No Controller", "It doesn't look like Player " .. self.selectedPlayerID .. "'s controller was detected.", 160, false, 
-        function()
-            self:TriggerInputSelection(value)
-        end
-    )
+        local buttons = 
+        {
+            {
+            name = "modalokbutton",
+            action = function(target)
+                self:OnTriggerInputSelection(value)
+            end,
+            key = Keys.Enter,
+            tooltip = "Press 'enter' to close this warning"
+            }
+        }
+        
+        pixelVisionOS:ShowMessageModal("No Controller", "It doesn't look like Player " .. self.selectedPlayerID .. "'s controller was detected.", 160, buttons)
     else
         self:TriggerInputSelection(value)
     end

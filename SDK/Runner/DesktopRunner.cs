@@ -40,6 +40,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using TextCopy;
 using Buttons = PixelVision8.Player.Buttons;
 
 namespace PixelVision8.Runner
@@ -1298,6 +1299,12 @@ namespace PixelVision8.Runner
                     // Register the game editor with  the lua service
                     UserData.RegisterType<GameEditor>();
                     luaScript.Globals["gameEditor"] = Editor;
+
+
+
+                    luaScript.Globals["SetClipboardText"] = new Action<string>(ClipboardService.SetText);
+                    luaScript.Globals["GetClipboardText"] = new Func<string>(ClipboardService.GetText);
+                    luaScript.Globals["ClearClipboardText"] = new Action(() => { ClipboardService.SetText("");});
                 }
 
                 if (mode == RunnerMode.Booting)

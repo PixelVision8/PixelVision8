@@ -40,7 +40,7 @@ namespace PixelVision8.Runner
         private readonly WorkspaceServicePlus workspace;
 
         private SoundEffectInstance currentSound;
-        public DateTime now = DateTime.Now;
+        
 
         /// <summary>
         ///     The LuaService exposes core Runner APIs to the Lua Game Chip
@@ -160,7 +160,7 @@ namespace PixelVision8.Runner
 
         public string CurrentTime()
         {
-            return now.ToString("HH:mmtt");
+            return DateTime.Now.ToString("HH:mmtt");
         }
 
         public void PlayWav(WorkspacePath workspacePath)

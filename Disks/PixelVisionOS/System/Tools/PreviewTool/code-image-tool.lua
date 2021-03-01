@@ -59,13 +59,28 @@ function ImageTool:Init()
                 
     else
     
-        pixelVisionOS:ChangeTitle(_imageTool.toolName, "toolbaricontool")
-        
-        pixelVisionOS:ShowMessageModal(_imageTool.toolName .. " Error", "The tool could not load without a reference to a file to edit.", 160, false,
-          function()
+      pixelVisionOS:ChangeTitle(_imageTool.toolName, "toolbaricontool")
+      
+      local buttons = 
+      {
+        {
+          name = "modalokbutton",
+          action = function(target)
             QuitCurrentTool()
-          end
-        )
+          end,
+          key = Keys.Enter,
+          tooltip = "Press 'enter' to quit the tool"
+        }
+      }
+      
+      pixelVisionOS:ShowMessageModal(_imageTool.toolName .. " Error", "The tool could not load without a reference to a file to edit.", 160, buttons)
+
+        
+        -- pixelVisionOS:ShowMessageModal(_imageTool.toolName .. " Error", "The tool could not load without a reference to a file to edit.", 160, false,
+        --   function()
+        --     QuitCurrentTool()
+        --   end
+        -- )
         
     end
     

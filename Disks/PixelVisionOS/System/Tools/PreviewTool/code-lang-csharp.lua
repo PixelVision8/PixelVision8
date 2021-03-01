@@ -1,6 +1,6 @@
 LoadScript("pixel-vision-os-api-list-v1")
 
-print("CSharp Lang")
+-- print("CSharp Lang")
 
 --C# syntax parser
 

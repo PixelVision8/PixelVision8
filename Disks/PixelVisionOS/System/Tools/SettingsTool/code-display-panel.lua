@@ -1,7 +1,7 @@
 
 function SettingsTool:CreateDisplayPanel()
 
-    self.scaleInputData = editorUI:CreateInputField({x = 112, y = 200, w = 8}, Scale(), "This changes the scale of the window when not in fullscreen.", "number")
+    self.scaleInputData = pixelVisionOS:CreateInputField({x = 112, y = 200, w = 8}, Scale(), "This changes the scale of the window when not in fullscreen.", "number")
     self.scaleInputData.min = 1
     self.scaleInputData.max = 4
     self.scaleInputData.onAction = function(value) self:OnChangeScale(value) end

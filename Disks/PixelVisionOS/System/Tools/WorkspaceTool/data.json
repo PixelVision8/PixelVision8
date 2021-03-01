@@ -43,7 +43,7 @@
     
     "SpriteChip":{
         "maxSpriteCount":0,
-        "unique":true,
+        "unique":false,
         "spriteWidth":8,
         "spriteHeight":8,
         "pages":6,

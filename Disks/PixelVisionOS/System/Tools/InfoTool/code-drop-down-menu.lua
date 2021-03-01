@@ -33,27 +33,28 @@ end
 
 function InfoTool:OnEditJSON()
 
-  if(self.invalid == true) then
+    if(self.invalid == true) then
 
-      pixelVisionOS:ShowMessageModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before you edit the raw data file?", 160, true,
-          function()
+    pixelVisionOS:ShowSaveModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before you edit the raw data file?", 160,
+        -- Accept
+        function(target)
+        self:OnSave()
+        self:EditJSON()
+        end,
+        -- Decline
+        function (target)
+        self:EditJSON()
+        end,
+        -- Cancel
+        function(target)
+        target.onParentClose()
+        end
+    )
 
-              if(pixelVisionOS.messageModal.selectionValue == true) then
-                  -- Save changes
-                  self:OnSave()
-
-              end
-
-              -- Quit the tool
-              self:EditJSON()
-
-          end
-      )
-
-  else
-      -- Quit the tool
-      self:EditJSON()
-  end
+    else
+        -- Quit the tool
+        self:EditJSON()
+    end
 
 end
 
@@ -72,19 +73,21 @@ function InfoTool:OnQuit()
 
   if(self.invalid == true) then
 
-    pixelVisionOS:ShowMessageModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before you edit the raw data file?", 160, true,
-        function()
-
-            if(pixelVisionOS.messageModal.selectionValue == true) then
-                -- Save changes
-                self:OnSave()
-
-            end
-
-            -- Quit the tool
-            QuitCurrentTool()
-
-        end
+    pixelVisionOS:ShowSaveModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before you quit?", 160,
+      -- Accept
+      function(target)
+        self:OnSave()
+        QuitCurrentTool()
+      end,
+      -- Decline
+      function (target)
+        -- Quit the tool
+        QuitCurrentTool()
+      end,
+      -- Cancel
+      function(target)
+        target.onParentClose()
+      end
     )
 
   else

@@ -2,14 +2,10 @@
 highlighter = {}
 
 --The parser is for parsing the syntax and identifying which is text, which is comment, which is number, etc...
-
 LoadScript("code-syntax-parser")
-
--- local parser = require("Libraries.SyntaxParser")
 
 --The colorizer is for applying a colors theme on parser output, so it could be used for printing.
 LoadScript("code-colorizer")
--- local colorizer = require("Libraries.SyntaxHighlighter.colorizer")
 
 --Set the highlighter theme, example:
 --[[
@@ -31,7 +27,12 @@ end
 
 --Set the highlighter syntax/lanuage, example: lua
 function highlighter:setSyntax(syntax)
-  parser:loadParser(syntax)
+
+  if(self.currentSyntax ~= syntax) then
+    self.currentSyntax = syntax
+    parser:loadParser(syntax)
+  end
+
 end
 
 --Highlight a single line, lineIndex is the number of the line inside of a lines buffer, made for use in Code editors.
@@ -51,4 +52,4 @@ function highlighter:highlightLines(lines, lineIndex)
   return highlightedLines, colateral
 end
 
-return highlighter
+-- return highlighter

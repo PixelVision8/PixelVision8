@@ -1,4 +1,4 @@
-print("JSON Lang")
+-- print("JSON Lang")
 
 local function token(stream, state)
   if state.tokenizer == "base" then

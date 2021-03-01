@@ -31,6 +31,7 @@ FileTypeMap =
 
 function WorkspaceTool:OpenWindow(path, scrollTo, selection)
 
+    -- print("path", path)
     -- Make sure the path exists before loading it up
     if(PathExists(path) == false) then
 
@@ -360,6 +361,10 @@ end
 
 function WorkspaceTool:RefreshWindow(updateFileList)
 
+    if(self.currentPath == nil) then
+        self.currentPath = NewWorkspacePath("/Workspace/")
+    end
+    -- print("self.currentPath", self.currentPath)
     local infoPath = self.currentPath.AppendFile("info.json")
 
     self.runnerType = "none"
@@ -625,7 +630,7 @@ function WorkspaceTool:OnWindowIconClick(id)
     elseif(self:TrashOpen()) then
 
         -- Show warning message about trying to edit files in the trash
-        pixelVisionOS:ShowMessageModal(self.toolName .. " Error", "You are not able to edit files inside of the trash.", 160, false)
+        pixelVisionOS:ShowMessageModal(self.toolName .. " Error", "You are not able to edit files inside of the trash.", 160)
 
         -- Check to see if the file is an executable
     elseif(type == "run") then
@@ -641,24 +646,30 @@ function WorkspaceTool:OnWindowIconClick(id)
 
     elseif(type == "pv8") then
 
+        local buttons = 
+      {
+        {
+          name = "modalyesbutton",
+          action = function(target)
+            MountDisk(NewWorkspacePath(path))
+          end,
+          key = Keys.Enter,
+          tooltip = "Press 'enter' to quit the tool"
+        },
+        {
+            name = "modalnobutton",
+            action = function(target)
+              target:onParentClose()
+            end,
+            key = Keys.Enter,
+            tooltip = "Press 'enter' to quit the tool"
+          }
+      }
+
         -- TODO need to see if there is space to mount another disk
         -- TODO need to know if this disk is being mounted as read only
         -- TODO don't run
-        pixelVisionOS:ShowMessageModal("Run Disk", "Do you want to mount this disk?", 160, true,
-                function()
-
-                    -- Only perform the copy if the user selects OK from the modal
-                    if(pixelVisionOS.messageModal.selectionValue) then
-
-                        MountDisk(NewWorkspacePath(path))
-
-                        -- TODO need to load the game in read only mode
-                        -- LoadGame(path)
-
-                    end
-
-                end
-        )
+        pixelVisionOS:ShowMessageModal("Run Disk", "Do you want to mount this disk?", 160, buttons)
 
     elseif(type == "wav") then
 
@@ -669,8 +680,7 @@ function WorkspaceTool:OnWindowIconClick(id)
         -- Check to see if there is an editor for the type or if the type is unknown
     elseif(self.editorMapping[type] == nil or type == "unknown") then
 
-        pixelVisionOS:ShowMessageModal(self.toolName .. " Error", "There is no tool installed to edit this file.", 160, false
-        )
+        pixelVisionOS:ShowMessageModal(self.toolName .. " Error", "There is no tool installed to edit this file.", 160)
 
         -- Now we are ready to try to edit a file
     else
@@ -679,7 +689,7 @@ function WorkspaceTool:OnWindowIconClick(id)
 
             if(PathExists(NewWorkspacePath("/Workspace/")) == false) then
 
-                pixelVisionOS:ShowMessageModal("Installer Error", "You need to create a 'Workspace' drive before you can run an install script.", 160, false)
+                pixelVisionOS:ShowMessageModal("Installer Error", "You need to create a 'Workspace' drive before you can run an install script.", 160)
 
                 return
 
@@ -689,7 +699,7 @@ function WorkspaceTool:OnWindowIconClick(id)
                 -- TODO need to see if there is space to mount another disk
                 -- TODO need to know if this disk is being mounted as read only
                 -- TODO don't run
-                pixelVisionOS:ShowMessageModal("Installer Error", "Installers can only be run from a disk.", 160, false)
+                pixelVisionOS:ShowMessageModal("Installer Error", "Installers can only be run from a disk.", 160)
 
                 return
 
@@ -1089,7 +1099,7 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
 
     local disks = DiskPaths()
 
-    -- TODO this should loop through the maxium number of disks
+    -- TODO this should loop through the maximum number of disks
     for i = 1, self.totalDisk do
 
         local noDisk = i > #disks

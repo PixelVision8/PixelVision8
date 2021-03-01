@@ -138,12 +138,24 @@ function ChipEditorTool:ChipSelectorUpdate()
 
             -- TODO this is a bit of a hack to disable this message when specs are locked and you get the warning message
             if(self.specsLocked == false) then
-              pixelVisionOS:ShowMessageModal(
-                "Chip Error", "You can't use this chip here. Please drag the chip onto the open slot.", 160, false,
-                function()
-                  editorUI:ClearChipPickerSelection(self.chipPicker)
-                end
-              )
+
+              local buttons = 
+              {
+                {
+                  name = "modalokbutton",
+                  action = function(target)
+                    if(target.onParentClose ~= nil) then
+                      target.onParentClose()
+                    end
+                    editorUI:ClearChipPickerSelection(self.chipPicker)
+                  end,
+                  key = Keys.Enter,
+                  tooltip = "Press 'enter' to return"
+                }
+              }
+              
+              pixelVisionOS:ShowMessageModal( "Chip Error", "You can't use this chip here. Please drag the chip onto the open slot.", 160, buttons )
+
             end
 
           end
@@ -279,24 +291,7 @@ function ChipEditorTool:OnSelectChip(value)
       -- Force the button to not redraw over the modal
       targetButton.invalid = false
 
-      pixelVisionOS:ShowMessageModal("Warning", "The system specs are locked. Do you want to unlock them so you can make changes?", 160, true,
-        function()
-
-          if(pixelVisionOS.messageModal.selectionValue == true) then
-            self.specsLocked = not self.specsLocked
-            gameEditor:GameSpecsLocked(self.specsLocked)
-            self:UpdateFieldLock()
-            self:InvalidateData()
-
-          end
-
-          self.showWarning = false
-
-        end,
-        "yes",
-        "no"
-
-      )
+      self:OnToggleLock()
 
     elseif(self.specsLocked == false) then
       editorUI:OpenChipPicker(self.chipPicker)
@@ -328,17 +323,29 @@ end
 
 function ChipEditorTool:OnReplaceChip(chipData, chipID)
 
-  pixelVisionOS:ShowMessageModal("Replace Chip", "Do you want to use the " .. chipData["name"] .. " chip? ".. chipData.message .. " This will affect " .. #chipData["fields"] .. " values and can not be undone.", 160, true,
-    function()
-      if(pixelVisionOS.messageModal.selectionValue == true) then
-        -- Save changes
+  local buttons = 
+  {
+    {
+      name = "modalyesbutton",
+      action = function(target)
         self:ReplaceChip(chipData, chipID)
+        target:onParentClose()
+      end,
+      key = Keys.Enter,
+      tooltip = "Press 'enter' to apply the new chip values"
+    },
+    {
+      name = "modalnobutton",
+      action = function(target)
+        target:onParentClose()
+      end,
+      key = Keys.Escape,
+      tooltip = "Press 'esc' to not make any changes"
+    }
+  }
 
-      end
-
-    end
-  )
-
+  pixelVisionOS:ShowMessageModal("Replace Chip", "Do you want to use the " .. chipData["name"] .. " chip? ".. chipData.message .. " This will affect " .. #chipData["fields"] .. " values and can not be undone.", 160, buttons)
+  
 end
 
 function ChipEditorTool:ReplaceChip(chipData, chipID)

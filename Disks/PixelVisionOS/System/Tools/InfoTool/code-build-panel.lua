@@ -98,63 +98,36 @@ function InfoTool:CreateBuildInfoPanel()
     
        -- buildFlagWin
     
+      local buttons = 
+      {
+         {
+            name = "modalbuildbutton",
+            action = function(target)
+               target:onParentClose()
+               pixelVisionOS:OnExportGame(NewWorkspacePath(self.rootDirectory))
+            end,
+            key = Keys.Enter,
+            tooltip = "Press 'enter' to create a new build"
+         },
+         {
+            name = "modalcancelbutton",
+            action = function(target)
+               target:onParentClose()
+            end,
+            key = Keys.Escape,
+            tooltip = "Press 'esc' to not make any changes"
+         }
+      }
+      
        pixelVisionOS:ShowMessageModal(
            "Build Game", 
            "Are you sure you want to build ".. self.nameInputData.text .."'? This will create a new PV8 disk and executables for any selected platforms.", 
            160, 
-           true,
-           function()
-    
-               if(pixelVisionOS.messageModal.selectionValue == true) then
-    
-                    pixelVisionOS:OnExportGame(NewWorkspacePath(self.rootDirectory))
-                   -- TODO need to call the build function
-                   -- OnInstall()
-    
-               end
-    
-           end,
-           "build"
+           buttons
        )
     
     end
     
-      -- self.cleanCheckboxData = editorUI:CreateToggleButton({x = 216, y = 56, w = 8, h = 8}, "radiobutton", "Toggles doing a clean build and removes all previous builds.")
-      
-      -- editorUI:ToggleButton(self.cleanCheckboxData, gameEditor:ReadMetadata("clear", "false") == "true", false)
-      
-      -- self.cleanCheckboxData.onAction = function(value)
-    
-      --  -- print("Clean build", value)
-    
-      --  if(value == false) then
-      --      self:InvalidateData()
-      --      return
-      --  end
-    
-      --  pixelVisionOS:ShowMessageModal("Warning", "Are you sure you want to do a clean build? This will delete the build directory before creating the PV8 disk. Old builds will be deleted. This can not be undone.", 160, true,
-      --      function()
-    
-    
-      --          if(pixelVisionOS.messageModal.selectionValue == false) then
-    
-      --              -- Force the checkbox back into the false state
-      --              editorUI:ToggleButton(self.cleanCheckboxData, false, false)
-    
-      --          else
-      --              -- Force the checkbox back into the false state
-      --              editorUI:ToggleButton(self.cleanCheckboxData, true, false)
-      --          end
-    
-      --          -- Force the button to redraw since restoring the modal will show the old state
-      --          editorUI:Invalidate(self.cleanCheckboxData)
-      --          self:InvalidateData()
-      --      end
-      --  )
-    
---    end
-    
-
     pixelVisionOS:RegisterUI({name = buildInfoPanelID}, "BuildInfoPanelUpdate", self)
 
 end 
@@ -167,89 +140,4 @@ function InfoTool:BuildInfoPanelUpdate()
 
    editorUI:UpdateButton(self.buildButtonData)
 
---    if(IsExporting() == true) then
-
---     local percent = ReadExportPercent()
-
---     -- self.progressModal:UpdateMessage("Building disk", percent)
-
---     if(percent >= 100) then
-        
---         self.buildingDisk = false;
-
---         -- TODO display results from build
-
---     end
-
---     print("ReadExportPercent", ReadExportPercent())
-
---    end
-   -- editorUI:UpdateButton(self.cleanCheckboxData)
-
 end
-
--- function InfoTool:OnExportGame()
-
-
-
-
-
---    local srcPath = NewWorkspacePath(self.rootDirectory)
---    local destPath = srcPath.AppendDirectory("Builds")
---    local infoFile = srcPath.AppendFile("info.json")
---    local dataFile = srcPath.AppendFile("data.json")
-
---    -- TODO need to read game name from info file
---    if(PathExists(srcPath.AppendDirectory("info.json")) == false) then
---        SaveText(infoFile, "{\"name\":\""..srcPath.EntityName.."\"}")
---    end
-
---    local metaData = ReadJson(infoFile)
-
---    local gameName = (metaData ~= nil and metaData["name"] ~= nil) and metaData["name"] or srcPath.EntityName
-
-
---    local systemData = ReadJson(dataFile)
-
---    local maxSize = 512
-
---    if(systemData["GameChip"]) then
-
---        if(systemData["GameChip"]["maxSize"]) then
---            maxSize = systemData["GameChip"]["maxSize"]
---        end
---    end
-
---    -- Manually create a game disk from the current folder's files
---    local srcFiles = GetEntities(srcPath)
---    local pathOffset = #srcPath.Path
-
---    local gameFiles = {}
-   
---    for i = 1, #srcFiles do
---        local srcFile = srcFiles[i]
---        local destFile = NewWorkspacePath(srcFile.Path:sub(pathOffset))
---        gameFiles[srcFile] = destFile
---    end
-
---    -- Instantly create a pv8 disk which we will use for all of the other builds
---    local response = CreateDisk(gameName, gameFiles, destPath, maxSize)
-
---    print("Response", dump(response))
-
---    -- Toggle the build disk flag
---    self.buildingDisk = true
-
---    if(self.progressModal == nil) then
---        --
---        --   -- Create the model
---        self.progressModal = ProgressModal:Init("File Action ")
-
---        -- Open the modal
---        pixelVisionOS:OpenModal(self.progressModal)
-
---    end
-
---    -- end
-
--- end

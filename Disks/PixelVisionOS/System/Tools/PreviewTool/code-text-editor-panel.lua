@@ -19,7 +19,7 @@ function TextTool:CreateEditorPanel()
     self.hSliderData.onAction = function(value) self:OnHorizontalScroll(value) end
 
     -- Create input area
-    self.inputAreaData = editorUI:CreateInputArea({x = 8, y = 24, w = 224, h = 184}, nil, "Click to edit the text.")
+    self.inputAreaData = pixelVisionOS:CreateInputArea({x = 8, y = 24, w = 224, h = 184}, nil, "Click to edit the text.")
     self.inputAreaData.wrap = false
     self.inputAreaData.editable = true
     self.inputAreaData.autoDeselect = false
@@ -262,7 +262,7 @@ function TextTool:DrawLineNumbers()
 
     for i = 1, self.totalLines do
 
-        DrawText(string.lpad(tostring(i + offset), padWidth, "0") .. " ", 8, 16 + (i*8), DrawMode.TilemapCache, self.inputAreaData.font, 6, self.inputAreaData.spacing)
+        DrawText(string.lpad(tostring(i + offset), padWidth, "0") .. " ", 8, 16 + (i*8), DrawMode.TilemapCache, self.inputAreaData.font, 5, self.inputAreaData.spacing)
 
     end
 

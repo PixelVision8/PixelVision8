@@ -2,9 +2,9 @@
 function SettingsTool:CreateShortcutPanel()
 
     self.shortcutFields = {
-        editorUI:CreateInputField({x = 176, y = 200, w = 8}, "", "ScreenShot"),
-        editorUI:CreateInputField({x = 200, y = 200, w = 8}, "", "Record"),
-        editorUI:CreateInputField({x = 224, y = 200, w = 8}, "", "Restart"),
+        pixelVisionOS:CreateInputField({x = 176, y = 200, w = 8}, "", "ScreenShot"),
+        pixelVisionOS:CreateInputField({x = 200, y = 200, w = 8}, "", "Record"),
+        pixelVisionOS:CreateInputField({x = 224, y = 200, w = 8}, "", "Restart"),
     }
     
     self.usedShortcutKeys = {}

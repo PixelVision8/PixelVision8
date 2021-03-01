@@ -42,7 +42,7 @@ function EditorUI:CreateChipPicker(rect, itemWidth, itemHeight, total, spriteNam
 end
 
 function EditorUI:ConfigureChipPicker(data, options)
-print("Configure Picker")
+-- print("Configure Picker")
   -- if(data.lastType ~= type) then
     -- Reset offset
     data.buttonOffset = 0

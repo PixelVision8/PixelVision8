@@ -24,22 +24,17 @@ function InfoTool:CreateGameInfoPanelPanel()
 
     end
 
-
-    -- TODO need to read the custom icon
-    -- local customIconPath = NewWorkspacePath(self.rootDirectory).AppendFile("icon.png")
-
     -- Attempt to load a custom icon
     pixelVisionOS:LoadCustomIcon(NewWorkspacePath(self.rootDirectory).AppendFile("icon.png"))
     
     -- Draw the custom icon to the info panel
     DrawMetaSprite(FindMetaSpriteId("filecustomiconup"), 12, 35, false, false, DrawMode.TilemapCache)
 
-
     local name = gameEditor:ReadMetadata("name", "untitled")
 
     local description = gameEditor:ReadMetadata("description", "")
 
-    self.nameInputData = editorUI:CreateInputField({x = 48, y = 40, w = 160}, name, "Enter in a file name to this string input field.", "file")
+    self.nameInputData = pixelVisionOS:CreateInputField({x = 48, y = 40, w = 160}, name, "Enter in a file name to this string input field.", "file")
 
     self.nameInputData.onAction = function(value)
 
@@ -49,11 +44,11 @@ function InfoTool:CreateGameInfoPanelPanel()
 
     end
 
-    self.inputAreaData = editorUI:CreateInputArea({x = 16, y = 72, w = 208, h = 56}, description, "Click to edit the text.")
-    self.inputAreaData.wrap = false
+    self.inputAreaData = pixelVisionOS:CreateInputArea({x = 16, y = 72, w = 208, h = 56}, description, "Change the game description.")
+    -- self.inputAreaData.wrap = false
     self.inputAreaData.editable = true
     self.inputAreaData.autoDeselect = false
-    self.inputAreaData.colorize = codeMode
+    -- self.inputAreaData.colorize = codeMode
     
     self.inputAreaData.onAction = function(value)
     
@@ -117,9 +112,7 @@ function InfoTool:GameInfoPanelUpdate()
 		self.inputAreaData.scrollValue.x = (self.inputAreaData.vx - 1) / ((self.inputAreaData.maxLineWidth + 1) - self.inputAreaData.tiles.w)
 
 		if(self.hSliderData.value ~= self.inputAreaData.scrollValue.x) then
-			-- print(self.inputAreaData.vx, self.inputAreaData.maxLineWidth, self.inputAreaData.tiles.w)
-			-- print("self.inputAreaData.scrollValue.x", self.inputAreaData.scrollValue.x)
-
+			
 			editorUI:ChangeSlider(self.hSliderData, self.inputAreaData.scrollValue.x, false)
 		end
 
@@ -143,7 +136,7 @@ end
 
 function InfoTool:OnVerticalScroll(value)
 
-    print("value", value)
+    -- print("value", value)
 
     local line = math.ceil((#self.inputAreaData.buffer - (self.inputAreaData.tiles.h - 1)) * value)
     if(self.inputAreaData.vy ~= line) then

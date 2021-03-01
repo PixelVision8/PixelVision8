@@ -57,9 +57,6 @@ function InfoTool:Init()
     -- Create a global reference of the new workspace tool
     setmetatable(_infoTool, InfoTool)
 
-
-    
-
     if(_infoTool.targetFile ~= nil) then
 
         local pathSplit = string.split(_infoTool.rootDirectory, "/")
@@ -82,11 +79,19 @@ function InfoTool:Init()
         DrawRect(16, 72, 208, 64, 0, DrawMode.TilemapCache)
         DrawRect(16, 168, 228, 56, 11, DrawMode.TilemapCache)
 
-        pixelVisionOS:ShowMessageModal(_infoTool.toolName .. " Error", "The tool could not load without a reference to a file to edit.", 160, false,
-            function()
-                QuitCurrentTool()
-            end
-        )
+        local buttons = 
+        {
+            {
+                name = "modalokbutton",
+                action = function(target)
+                    QuitCurrentTool()
+                end,
+                key = Keys.Enter,
+                tooltip = "Press 'enter' to quit the tool"
+            }
+        }
+        
+        pixelVisionOS:ShowMessageModal(_infoTool.toolName .. " Error", "The tool could not load without a reference to a file to edit.", 160, buttons)
 
     end
     

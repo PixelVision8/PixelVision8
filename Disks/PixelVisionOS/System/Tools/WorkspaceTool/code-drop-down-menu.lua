@@ -316,21 +316,29 @@ function WorkspaceTool:OnEjectDisk()
         return
     end
         
+    local buttons = 
+    {
+        {
+            name = "modalyesbutton",
+            action = function(target)
+                target.onParentClose()
+                EjectDisk(currentSelection.path)
+            end,
+            key = Keys.Enter,
+            tooltip = "Press 'enter' to reset mapping to the default value"
+        },
+        {
+            name = "modalnobutton",
+            action = function(target)
+                target.onParentClose()
+            end,
+            key = Keys.Escape,
+            tooltip = "Press 'esc' to avoid making any changes"
+        }
+    }
+
     -- Ask before ejecting a disk
-    pixelVisionOS:ShowMessageModal("Eject Disk", "Do you want to eject the '".. currentSelection.name .."'disk?", 160, true,
-            function()
-
-                -- Only perform the copy if the user selects OK from the modal
-                if(pixelVisionOS.messageModal.selectionValue) then
-
-                    EjectDisk(currentSelection.path)
-
-                    --ResetGame()
-
-                end
-
-            end
-    )
+    pixelVisionOS:ShowMessageModal("Eject Disk", "Do you want to eject the '".. currentSelection.name .."'disk?", 160, buttons)
 
 end
 
@@ -503,22 +511,29 @@ function WorkspaceTool:OnShutdown()
 
     self:CancelFileActions()
 
-    local runnerName = SystemName()
+    local buttons = 
+    {
+        {
+            name = "modalyesbutton",
+            action = function(target)
+                target.onParentClose()
+                ShutdownSystem()
+                -- Save changes
+                self.shuttingDown = true
+            end,
+            key = Keys.Enter,
+            tooltip = "Press 'enter' to reset mapping to the default value"
+        },
+        {
+            name = "modalnobutton",
+            action = function(target)
+                target.onParentClose()
+            end,
+            key = Keys.Escape,
+            tooltip = "Press 'esc' to avoid making any changes"
+        }
+    }
 
-    local this = self
-
-    pixelVisionOS:ShowMessageModal("Shutdown " .. runnerName, "Are you sure you want to shutdown "..runnerName.."?", 160, true,
-            function()
-                if(pixelVisionOS.messageModal.selectionValue == true) then
-
-                    ShutdownSystem()
-
-                    -- Save changes
-                    this.shuttingDown = true
-
-                end
-
-            end
-    )
+    pixelVisionOS:ShowMessageModal("Shutdown " .. self.runnerName, "Are you sure you want to shutdown "..self.runnerName.."?", 160, buttons)
 
 end
