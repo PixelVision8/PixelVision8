@@ -675,7 +675,7 @@ namespace PixelVision8.Runner
 
     public partial class Loader
     {
-        [FileParser("data.png", FileFlags.System)]
+        [FileParser("data.json", FileFlags.System)]
         public void ParseSystem(string file, PixelVision engine)
         {
             // if (!string.IsNullOrEmpty(files[0]))

@@ -32,16 +32,16 @@ namespace PixelVision8.Runner
     {
 
         // Store the path to the game's files
-        private readonly string gamePath;
+        // private readonly string gamePath;
         private readonly string gameClass;
         
         /// <summary>
         ///     This constructor saves the path to the game's files and kicks off the base constructor
         /// </summary>
         /// <param name="gamePath"></param>
-        public CSharpRunner(string gamePath, string gameClass) : base()
+        public CSharpRunner(string gamePath, string gameClass) : base(gamePath)
         {
-            this.gamePath = gamePath;
+            // this.gamePath = gamePath;
             this.gameClass = gameClass;
         }
         
@@ -62,7 +62,7 @@ namespace PixelVision8.Runner
             LoadDefaultGame();
         }
 
-        public override void ActivateEngine(IPlay engine)
+        public override void ActivateEngine(PixelVision engine)
         {
             base.ActivateEngine(engine);
             
@@ -90,7 +90,7 @@ namespace PixelVision8.Runner
             var gameFiles = new List<string>();
 
             // Get only the files we need from the directory base on their extension above.
-            var files = from p in Directory.EnumerateFiles(gamePath)
+            var files = from p in Directory.EnumerateFiles(RootPath)
                         where fileExtensions.Any(val => p.EndsWith(val))
                         select p;
 
@@ -113,18 +113,18 @@ namespace PixelVision8.Runner
             };
 
             // Configure a new PV8 engine to play the game
-            ConfigureEngine(chips);
+            TmpEngine = new PixelVision(chips.ToArray());
 
             // Load the default class based on it's full package path
-            _tmpEngine.GetChip(gameClass);
+            TmpEngine.GetChip(gameClass);
 
             var fileHelper = new FileLoadHelper();
-            var imageParser = new PNGParser(_graphics.GraphicsDevice);
+            var imageParser = new PNGParser(Graphics.GraphicsDevice);
 
             var loader = new Loader(fileHelper, imageParser);
 
             // Process the files
-            loader.ParseFiles(gameFiles.ToArray(), _tmpEngine);
+            loader.ParseFiles(gameFiles.ToArray(), TmpEngine);
             loader.LoadAll();
 
             RunGame();
