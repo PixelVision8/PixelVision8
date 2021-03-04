@@ -3,6 +3,7 @@ const requireDir  = require('require-dir');
 const fs = require('fs');
 const libxmljs = require("libxmljs");
 const { platform } = require('os');
+const { task } = require('gulp');
 
 // Set the path to the .csproj file
 process.env.STAGING = "../Builds/"
@@ -76,11 +77,18 @@ tasks.push('reset-platforms');
 
 for (let index = 0; index < process.env.PLATFORMS.split(",").length; index++) {
   
+  
+
   tasks.push('release');
 
   if(index == 0) {
     tasks.push('mac-icon');
     tasks.push('mac-plist');
+  }
+  else if(index == 2)
+  {
+    // Copy pre-compiled linux launcher over
+    tasks.push('linux64-launcher')
   }
 
   tasks.push('release-zip');

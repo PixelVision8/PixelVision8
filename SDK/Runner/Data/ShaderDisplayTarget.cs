@@ -149,12 +149,11 @@ namespace PixelVision8.Runner
                 // RebuildColorPalette(engine.ColorChip);
 
                 RenderTexture.SetData(pixels);
-                SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
+                SpriteBatch.Begin(SpriteSortMode.Immediate, null);
                 crtShader.CurrentTechnique.Passes[0].Apply();
                 GraphicManager.GraphicsDevice.Textures[1] = _colorPalette;
                 GraphicManager.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-                SpriteBatch.Draw(RenderTexture, Offset, VisibleRect, Color.White, 0f, Vector2.Zero, Scale,
-                    SpriteEffects.None, 1f);
+                SpriteBatch.Draw(RenderTexture, Offset, VisibleRect, Color.White, Vector2.Zero, Scale, 1f);
                 SpriteBatch.End();
             }
         }

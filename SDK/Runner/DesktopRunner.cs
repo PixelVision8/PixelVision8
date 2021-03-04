@@ -1713,9 +1713,7 @@ namespace PixelVision8.Runner
                 MetadataReference.CreateFromFile(Assembly.Load("System.Console").Location),
                 MetadataReference.CreateFromFile(Assembly.Load("Microsoft.CSharp").Location),
                 MetadataReference.CreateFromFile(Assembly.Load("Pixel Vision 8").Location),
-                MetadataReference.CreateFromFile(Assembly.Load("MonoGame.Framework").Location),
-                MetadataReference.CreateFromFile(Assembly.Load("netstandard")
-                    .Location), //Required due to a .NET Standard 2.0 dependency somewhere.
+                MetadataReference.CreateFromFile(Assembly.Load("netstandard").Location), //Required due to a .NET Standard 2.0 dependency somewhere.
                 MetadataReference.CreateFromFile(Assembly.Load("System.Collections").Location), //required for Linq
                 MetadataReference.CreateFromFile(Assembly.Load("System.Linq").Location),
                 MetadataReference.CreateFromFile(Assembly.Load("System.Linq.Expressions").Location),

@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <DefineConstants>OPENGL;OPENAL;XNADESIGNPROVIDED;LINUX;DESKTOPGL;SUPPORTS_EFX;NETSTANDARD;STBSHARP_INTERNAL</DefineConstants>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <UseAppHost>true</UseAppHost>
@@ -10,6 +11,7 @@
     <PublishTrimmed>false</PublishTrimmed>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     
   </PropertyGroup>
 
@@ -167,6 +169,166 @@
     <Compile Include="SDK\Runner\Game\GameRunner.Engine.cs" />
     <Compile Include="SDK\Runner\Game\GameRunner.Shutdown.cs" />
     <Compile Include="SDK\Runner\Game\GameRunner.Sound.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Audio\AudioChannels.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Audio\InstancePlayLimitException.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Audio\NoAudioHardwareException.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Audio\SoundEffect.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Audio\SoundEffectInstance.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Audio\SoundEffectInstancePool.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Audio\SoundState.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Color.cs" />
+    <Compile Include="SDK\Runner\MonoVision\EventHelpers.cs" />
+    <Compile Include="SDK\Runner\MonoVision\FrameworkDispatcher.cs" />
+    <Compile Include="SDK\Runner\MonoVision\FrameworkResources.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Game.cs" />
+    <Compile Include="SDK\Runner\MonoVision\GamePlatform.cs" />
+    <Compile Include="SDK\Runner\MonoVision\GameRunBehavior.cs" />
+    <Compile Include="SDK\Runner\MonoVision\GameServiceContainer.cs" />
+    <Compile Include="SDK\Runner\MonoVision\GameTime.cs" />
+    <Compile Include="SDK\Runner\MonoVision\GameWindow.cs" />
+    <Compile Include="SDK\Runner\MonoVision\GraphicsDeviceInformation.cs" />
+    <Compile Include="SDK\Runner\MonoVision\GraphicsDeviceManager.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\DisplayMode.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Effect\Effect.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Effect\EffectParameter.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Effect\EffectParameterClass.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Effect\EffectParameterCollection.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Effect\EffectParameterType.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Effect\EffectPass.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Effect\EffectPassCollection.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Effect\EffectResource.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Effect\EffectTechnique.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Effect\EffectTechniqueCollection.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Effect\SpriteEffect.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\GraphicsCapabilities.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\GraphicsDevice.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\GraphicsExtensions.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\GraphicsResource.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\IGraphicsDeviceService.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\NoSuitableGraphicsDeviceException.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\PresentationEventArgs.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\PresentationParameters.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\PresentInterval.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\SamplerStateCollection.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\SetDataOptions.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Shader\ConstantBuffer.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Shader\ConstantBufferCollection.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Shader\Shader.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Shader\ShaderStage.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\SpriteBatch.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\SpriteBatcher.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\SpriteBatchItem.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\SpriteSortMode.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\States\CompareFunction.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\States\SamplerState.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\States\TextureAddressMode.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\States\TextureFilterMode.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\SurfaceFormat.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Texture.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Texture2D.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\TextureCollection.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\IVertexType.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\PrimitiveType.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\VertexBuffer.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\VertexBufferBinding.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\VertexBufferBindings.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\VertexDeclaration.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\VertexDeclarationCache.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\VertexElement.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\VertexElementFormat.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\VertexElementUsage.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\VertexInputLayout.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\VertexPosition.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\VertexPositionColor.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\VertexPositionColorTexture.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\VertexPositionNormalTexture.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Vertices\VertexPositionTexture.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Graphics\Viewport.cs" />
+    <Compile Include="SDK\Runner\MonoVision\IGraphicsDeviceManager.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\Buttons.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\ButtonState.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\GamePad.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\GamePadButtons.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\GamePadCapabilities.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\GamePadDeadZone.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\GamePadDPad.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\GamePadState.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\GamePadThumbSticks.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\GamePadTriggers.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\GamePadType.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\Joystick.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\JoystickCapabilities.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\JoystickHat.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\JoystickState.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\Keyboard.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\KeyboardState.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\Keys.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\KeyState.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\Mouse.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\MouseCursor.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Input\MouseState.cs" />
+    <Compile Include="SDK\Runner\MonoVision\LaunchParameters.cs" />
+    <Compile Include="SDK\Runner\MonoVision\MathHelper.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Matrix.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Audio\AudioLoader.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Audio\OALSoundBuffer.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Audio\OpenAL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Audio\OpenALSoundController.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Audio\SoundEffect.OpenAL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Audio\SoundEffectInstance.OpenAL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\GamePlatform.Desktop.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\GraphicsDeviceManager.SDL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\Effect\EffectResource.OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\GraphicsAdapter.Legacy.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\GraphicsCapabilities.OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\GraphicsContext.SDL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\GraphicsDevice.OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\GraphicsDevice.OpenGL.FramebufferHelper.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\IGraphicsContext.OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\IWindowInfo.OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\OpenGL.Common.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\OpenGL.SDL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\SamplerStateCollection.OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\Shader\ConstantBuffer.OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\Shader\Shader.OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\Shader\ShaderProgramCache.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\States\SamplerState.OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\Texture.OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\Texture2D.OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\TextureCollection.OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\Vertices\VertexBuffer.OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\Vertices\VertexDeclaration.OpenGL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Graphics\WindowInfo.SDL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Input\GamePad.SDL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Input\InputKeyEventArgs.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Input\Joystick.SDL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Input\Keyboard.SDL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Input\KeyboardUtil.SDL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Input\KeysHelper.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Input\Mouse.SDL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Input\MouseCursor.SDL.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\PrimaryThreadLoader.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\SDL\SDL2.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\SDL\SDLGamePlatform.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\SDL\SDLGameWindow.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Threading.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Utilities\AssemblyHelper.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Utilities\CurrentPlatform.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Utilities\FuncLoader.Desktop.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Utilities\InteropHelpers.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Platform\Utilities\ReflectionHelpers.Default.cs" />
+    <Compile Include="SDK\Runner\MonoVision\PlayerIndex.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Point.cs" />
+    <Compile Include="SDK\Runner\MonoVision\PreparingDeviceSettingsEventArgs.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Rectangle.cs" />
+    <Compile Include="SDK\Runner\MonoVision\TextInputEventArgs.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Utilities\BinaryReaderEx.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Utilities\Hash.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Utilities\ReflectionHelpers.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Vector2.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Vector3.cs" />
+    <Compile Include="SDK\Runner\MonoVision\Vector4.cs" />
     <Compile Include="SDK\Runner\Parsers\AbstractParser.cs" />
     <Compile Include="SDK\Runner\Parsers\ColorParser.cs" />
     <Compile Include="SDK\Runner\Parsers\FontParser.cs" />
@@ -179,7 +341,7 @@
     <Compile Include="SDK\Runner\Parsers\Loader.cs" />
     <Compile Include="SDK\Runner\Parsers\MetaDataParser.cs" />
     <Compile Include="SDK\Runner\Parsers\PNGFileReader.cs" />
-    <Compile Include="SDK\Runner\Parsers\PNGParser.cs" />
+<!--    <Compile Include="SDK\Runner\Parsers\PNGParser.cs" />-->
     <Compile Include="SDK\Runner\Parsers\PNGReader.cs" />
     <Compile Include="SDK\Runner\Parsers\SpriteImageParser.cs" />
     <Compile Include="SDK\Runner\Parsers\SystemParser.cs" />
@@ -213,6 +375,7 @@
     <Compile Include="SDK\Runner\Utils\MiniJSON.cs" />
     <Compile Include="SDK\Runner\Utils\PNGUtils.cs" />
     <Compile Include="SDK\Runner\Utils\TiledUtil.cs" />
+    <Compile Include="SDK\Runner\Utils\ZLibStream\ZlibStream.cs" />
     <Compile Include="SDK\Workspace\Data\SpriteExportData.cs" />
     <Compile Include="SDK\Workspace\Exporters\AbstractExporter.cs" />
     <Compile Include="SDK\Workspace\Exporters\IAbstractExporter.cs" />
@@ -240,17 +403,50 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.6.0" />
-    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
     <PackageReference Include="MoonSharp" Version="2.0.0" />
     <PackageReference Include="TextCopy" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="**\saves.json" />
+
+    <Content Include="SDK\Runner\MonoVision\Dependencies\soft_oal.dll">
+      <Link>soft_oal.dll</Link>
+      <PackagePath>runtimes\win-x64\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SDK\Runner\MonoVision\Dependencies\SDL2.dll">
+      <Link>SDL2.dll</Link>
+      <PackagePath>runtimes\win-x64\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="SDK\Runner\MonoVision\Dependencies\libopenal.so.1">
+      <Link>libopenal.so.1</Link>
+      <PackagePath>runtimes\linux-x64\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SDK\Runner\MonoVision\Dependencies\libSDL2-2.0.so.0">
+      <Link>libSDL2-2.0.so.0</Link>
+      <PackagePath>runtimes\linux-x64\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="SDK\Runner\MonoVision\Dependencies\libopenal.1.dylib">
+      <Link>libopenal.1.dylib</Link>
+      <PackagePath>runtimes\osx\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SDK\Runner\MonoVision\Dependencies\libSDL2-2.0.0.dylib">
+      <Link>libSDL2-2.0.0.dylib</Link>
+      <PackagePath>runtimes\osx\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\Images" />
+    <None Remove="**\saves.json" />
+    <None Remove="SDK\Runner\MonoVision\Platform\Graphics\Effect\Resources\**" />
+    <None Remove="SDK\Runner\MonoVision\Dependencies\**" />
   </ItemGroup>
 
 </Project>
