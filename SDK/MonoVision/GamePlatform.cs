@@ -14,12 +14,10 @@ namespace Microsoft.Xna.Framework
     {
         #region Fields
 
-        // protected TimeSpan _inactiveSleepTime = TimeSpan.FromMilliseconds(20.0);
         protected bool _needsToResetElapsedTime = false;
         bool disposed;
         protected bool InFullScreenMode = false;
-        // protected bool IsDisposed { get { return disposed; } }
-
+        
         #endregion
 
         #region Construction/Destruction
@@ -39,12 +37,6 @@ namespace Microsoft.Xna.Framework
         #endregion Construction/Destruction
 
         #region Public Properties
-
-        /// <summary>
-        /// When implemented in a derived class, reports the default
-        /// GameRunBehavior for this platform.
-        /// </summary>
-        // public abstract GameRunBehavior DefaultRunBehavior { get; }
 
         /// <summary>
         /// Gets the Game instance that owns this GamePlatform instance.

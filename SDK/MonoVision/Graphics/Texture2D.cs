@@ -93,8 +93,8 @@ namespace Microsoft.Xna.Framework.Graphics
         
         protected Texture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipmap, SurfaceFormat format, SurfaceType type, bool shared, int arraySize)
 		{
-            if (graphicsDevice == null)
-                throw new ArgumentNullException("graphicsDevice", FrameworkResources.ResourceCreationWhenDeviceIsNull);
+            // if (graphicsDevice == null)
+            //     throw new ArgumentNullException("graphicsDevice", FrameworkResources.ResourceCreationWhenDeviceIsNull);
             if (width <= 0)
                 throw new ArgumentOutOfRangeException("width","Texture width must be greater than zero");
             if (height <= 0)

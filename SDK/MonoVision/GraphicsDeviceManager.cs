@@ -11,7 +11,7 @@ namespace Microsoft.Xna.Framework
     /// <summary>
     /// Used to initialize and control the presentation of the graphics device.
     /// </summary>
-    public partial class GraphicsDeviceManager : IGraphicsDeviceService, IDisposable, IGraphicsDeviceManager
+    public partial class GraphicsDeviceManager : IGraphicsDeviceService, IDisposable
     {
         private readonly Game _game;
         private GraphicsDevice _graphicsDevice;
@@ -88,12 +88,12 @@ namespace Microsoft.Xna.Framework
             // Let the plaform optionally overload construction defaults.
             // PlatformConstruct();
 
-            if (_game.Services.GetService(typeof(IGraphicsDeviceManager)) != null)
-                throw new ArgumentException("A graphics device manager is already registered.  The graphics device manager cannot be changed once it is set.");
+            // if (_game.Services.GetService(typeof(IGraphicsDeviceManager)) != null)
+            //     throw new ArgumentException("A graphics device manager is already registered.  The graphics device manager cannot be changed once it is set.");
             _game.graphicsDeviceManager = this;
 
-            _game.Services.AddService(typeof(IGraphicsDeviceManager), this);
-            _game.Services.AddService(typeof(IGraphicsDeviceService), this);
+            // _game.Services.AddService(typeof(IGraphicsDeviceManager), this);
+            // _game.Services.AddService(typeof(IGraphicsDeviceService), this);
         }
 
         ~GraphicsDeviceManager()
@@ -101,7 +101,7 @@ namespace Microsoft.Xna.Framework
             Dispose(false);
         }
 
-        private void CreateDevice()
+        public void CreateDevice()
         {
             if (_graphicsDevice != null)
                 return;
@@ -143,10 +143,10 @@ namespace Microsoft.Xna.Framework
             OnDeviceCreated(EventArgs.Empty);
         }
 
-        void IGraphicsDeviceManager.CreateDevice()
-        {
-            CreateDevice();
-        }
+        // void IGraphicsDeviceManager.CreateDevice()
+        // {
+        //     CreateDevice();
+        // }
 
         public bool BeginDraw()
         {

@@ -48,10 +48,10 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="graphicsDevice"/> is null.</exception>
         public SpriteBatch (GraphicsDevice graphicsDevice, int capacity)
 		{
-			if (graphicsDevice == null)
-            {
-				throw new ArgumentNullException ("graphicsDevice", FrameworkResources.ResourceCreationWhenDeviceIsNull);
-			}
+			// if (graphicsDevice == null)
+   //          {
+			// 	throw new ArgumentNullException ("graphicsDevice", FrameworkResources.ResourceCreationWhenDeviceIsNull);
+			// }
 
 			this.GraphicsDevice = graphicsDevice;
 

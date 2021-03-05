@@ -51,10 +51,10 @@ namespace Microsoft.Xna.Framework.Graphics
 
         internal Effect(GraphicsDevice graphicsDevice)
 		{
-            if (graphicsDevice == null)
-            {
-                throw new ArgumentNullException("graphicsDevice", FrameworkResources.ResourceCreationWhenDeviceIsNull);
-            }
+            // if (graphicsDevice == null)
+            // {
+            //     throw new ArgumentNullException("graphicsDevice", FrameworkResources.ResourceCreationWhenDeviceIsNull);
+            // }
             this.GraphicsDevice = graphicsDevice;
 		}
 			

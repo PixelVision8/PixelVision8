@@ -13,7 +13,7 @@ namespace Microsoft.Xna.Framework
     public partial class Game : IDisposable
     {
         // private GameComponentCollection _components;
-        private GameServiceContainer _services;
+        // private GameServiceContainer _services;
         // private ContentManager _content;
         internal GamePlatform Platform;
 
@@ -35,7 +35,7 @@ namespace Microsoft.Xna.Framework
         //         (u, handler) => u.UpdateOrderChanged += handler,
         //         (u, handler) => u.UpdateOrderChanged -= handler);
 
-        private IGraphicsDeviceManager _graphicsDeviceManager;
+        private GraphicsDeviceManager _graphicsDeviceManager;
         private IGraphicsDeviceService _graphicsDeviceService;
 
         private bool _initialized = false;
@@ -54,11 +54,11 @@ namespace Microsoft.Xna.Framework
         public Game()
         {
             
-            _services = new GameServiceContainer();
+            // _services = new GameServiceContainer();
             Platform = new SdlGamePlatform(this);
             Platform.Activated += OnActivated;
             Platform.Deactivated += OnDeactivated;
-            _services.AddService(typeof(GamePlatform), Platform);
+            // _services.AddService(typeof(GamePlatform), Platform);
 
         }
 
@@ -100,7 +100,7 @@ namespace Microsoft.Xna.Framework
                     {
                         Platform.Activated -= OnActivated;
                         Platform.Deactivated -= OnDeactivated;
-                        _services.RemoveService(typeof(GamePlatform));
+                        // _services.RemoveService(typeof(GamePlatform));
 
                         Platform.Dispose();
                         Platform = null;
@@ -174,9 +174,9 @@ namespace Microsoft.Xna.Framework
             }
         }
 
-        public GameServiceContainer Services {
-            get { return _services; }
-        }
+        // public GameServiceContainer Services {
+        //     get { return _services; }
+        // }
 
         public GraphicsDevice GraphicsDevice
         {
@@ -184,8 +184,9 @@ namespace Microsoft.Xna.Framework
             {
                 if (_graphicsDeviceService == null)
                 {
-                    _graphicsDeviceService = (IGraphicsDeviceService)
-                        Services.GetService(typeof(IGraphicsDeviceService));
+                    _graphicsDeviceService = graphicsDeviceManager;
+                    // (IGraphicsDeviceService)
+                    //     Services.GetService(typeof(IGraphicsDeviceService));
 
                     if (_graphicsDeviceService == null)
                         throw new InvalidOperationException("No Graphics Device Service");
@@ -368,14 +369,14 @@ namespace Microsoft.Xna.Framework
             // Initialize all existing components
             // InitializeExistingComponents();
 
-            _graphicsDeviceService = (IGraphicsDeviceService)
-                Services.GetService(typeof(IGraphicsDeviceService));
+            // _graphicsDeviceService = (IGraphicsDeviceService)
+            //     Services.GetService(typeof(IGraphicsDeviceService));
 
-            if (_graphicsDeviceService != null &&
-                _graphicsDeviceService.GraphicsDevice != null)
-            {
-                // LoadContent();
-            }
+            // if (_graphicsDeviceService != null &&
+            //     _graphicsDeviceService.GraphicsDevice != null)
+            // {
+            //     // LoadContent();
+            // }
         }
 
         // private static readonly Action<IDrawable, GameTime> DrawAction =
@@ -469,11 +470,11 @@ namespace Microsoft.Xna.Framework
         {
             get
             {
-                if (_graphicsDeviceManager == null)
-                {
-                    _graphicsDeviceManager = (IGraphicsDeviceManager)
-                        Services.GetService(typeof(IGraphicsDeviceManager));
-                }
+                // if (_graphicsDeviceManager == null)
+                // {
+                //     _graphicsDeviceManager = (IGraphicsDeviceManager)
+                //         Services.GetService(typeof(IGraphicsDeviceManager));
+                // }
                 return (GraphicsDeviceManager)_graphicsDeviceManager;
             }
             set

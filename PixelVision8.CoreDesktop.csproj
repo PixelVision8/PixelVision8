@@ -83,10 +83,8 @@
     <Compile Include="SDK\MonoVision\Audio\SoundState.cs" />
     <Compile Include="SDK\MonoVision\Color.cs" />
     <Compile Include="SDK\MonoVision\EventHelpers.cs" />
-    <Compile Include="SDK\MonoVision\FrameworkResources.cs" />
     <Compile Include="SDK\MonoVision\Game.cs" />
     <Compile Include="SDK\MonoVision\GamePlatform.cs" />
-    <Compile Include="SDK\MonoVision\GameServiceContainer.cs" />
     <Compile Include="SDK\MonoVision\GameTime.cs" />
     <Compile Include="SDK\MonoVision\GameWindow.cs" />
     <Compile Include="SDK\MonoVision\GraphicsDeviceInformation.cs" />
