@@ -1504,7 +1504,7 @@ namespace MonoGame.OpenGL
 
         static partial void LoadPlatformEntryPoints();
 
-        internal static IGraphicsContext CreateContext(IWindowInfo info)
+        internal static IGraphicsContext CreateContext(WindowInfo info)
         {
             return PlatformCreateContext(info);
         }

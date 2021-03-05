@@ -149,7 +149,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// </summary>
         /// <param name="sortMode">The type of depth sorting desired for the rendering.</param>
         /// <param name="effect">The custom effect to apply to the drawn geometry</param>
-        public unsafe void DrawBatch(SpriteSortMode sortMode, Effect effect)
+        public unsafe void DrawBatch(/*SpriteSortMode sortMode, */Effect effect)
 		{
             if (effect != null && effect.IsDisposed)
                 throw new ObjectDisposedException("effect");
@@ -159,14 +159,14 @@ namespace Microsoft.Xna.Framework.Graphics
 				return;
 			
 			// sort the batch items
-			switch ( sortMode )
-			{
-			case SpriteSortMode.Texture :                
-			case SpriteSortMode.FrontToBack :
-			case SpriteSortMode.BackToFront :
-                Array.Sort(_batchItemList, 0, _batchItemCount);
-				break;
-			}
+			// switch ( sortMode )
+			// {
+			// case SpriteSortMode.Texture :                
+			// case SpriteSortMode.FrontToBack :
+			// case SpriteSortMode.BackToFront :
+   //              Array.Sort(_batchItemList, 0, _batchItemCount);
+			// 	break;
+			// }
 
             // Determine how many iterations through the drawing code we need to make
             int batchIndex = 0;

@@ -10,7 +10,7 @@ namespace MonoGame.OpenGL
     {
         // int SwapInterval { get; set; }
         bool IsDisposed { get; }
-        void MakeCurrent(IWindowInfo info);
+        void MakeCurrent(WindowInfo info);
         void SwapBuffers();
         bool IsCurrent { get; }
     }

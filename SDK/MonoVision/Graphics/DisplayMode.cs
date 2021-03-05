@@ -39,7 +39,7 @@ namespace Microsoft.Xna.Framework.Graphics
     {
         #region Fields
 
-        private SurfaceFormat format;
+        // private SurfaceFormat format;
         private int height;
         private int width;
 
@@ -51,9 +51,9 @@ namespace Microsoft.Xna.Framework.Graphics
             get { return (float)width / (float)height; }
         }
 
-        public SurfaceFormat Format {
-            get { return format; }
-        }
+        // public SurfaceFormat Format {
+        //     get { return format; }
+        // }
 
         public int Height {
             get { return this.height; }
@@ -67,11 +67,11 @@ namespace Microsoft.Xna.Framework.Graphics
 
         #region Constructors
         
-        internal DisplayMode(int width, int height, SurfaceFormat format)
+        internal DisplayMode(int width, int height/*, SurfaceFormat format*/)
         {
             this.width = width;
             this.height = height;
-            this.format = format;
+            // this.format = format;
         }
 
         #endregion Constructors
@@ -93,7 +93,7 @@ namespace Microsoft.Xna.Framework.Graphics
             {
                 return false;
             }
-            return (left.format == right.format) &&
+            return /*(left.format == right.format) &&*/
                 (left.height == right.height) &&
                 (left.width == right.width);
         }
@@ -109,12 +109,12 @@ namespace Microsoft.Xna.Framework.Graphics
 
         public override int GetHashCode()
         {
-            return (this.width.GetHashCode() ^ this.height.GetHashCode() ^ this.format.GetHashCode());
+            return (this.width.GetHashCode() ^ this.height.GetHashCode() /*^ this.format.GetHashCode()*/);
         }
 
         public override string ToString()
         {
-            return "{Width:" + this.width + " Height:" + this.height + " Format:" + this.Format + " AspectRatio:" + this.AspectRatio + "}";
+            return "{Width:" + this.width + " Height:" + this.height + /*" Format:" + this.Format +*/ " AspectRatio:" + this.AspectRatio + "}";
         }
 
         #endregion Public Methods

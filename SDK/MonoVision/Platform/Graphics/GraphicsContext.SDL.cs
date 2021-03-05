@@ -35,7 +35,7 @@ namespace MonoGame.OpenGL
 			get { return true; }
 		}
 
-        public GraphicsContext(IWindowInfo info)
+        public GraphicsContext(WindowInfo info)
         {
             if (_disposed)
                 return;
@@ -56,7 +56,7 @@ namespace MonoGame.OpenGL
             }
         }
 
-        public void MakeCurrent(IWindowInfo info)
+        public void MakeCurrent(WindowInfo info)
         {
             if (_disposed)
                 return;
@@ -83,7 +83,7 @@ namespace MonoGame.OpenGL
             _disposed = true;
         }
 
-        private void SetWindowHandle(IWindowInfo info)
+        private void SetWindowHandle(WindowInfo info)
         {
             if (info == null)
                 _winHandle = IntPtr.Zero;

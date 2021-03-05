@@ -2,7 +2,7 @@
 
 namespace MonoGame.OpenGL
 {
-    internal class WindowInfo : IWindowInfo
+    internal class WindowInfo
     {
         public IntPtr Handle { get; private set; }
 

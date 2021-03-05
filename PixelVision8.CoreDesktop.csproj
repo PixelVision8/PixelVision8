@@ -144,7 +144,6 @@
     <Compile Include="SDK\MonoVision\Graphics\Vertices\VertexPositionNormalTexture.cs" />
     <Compile Include="SDK\MonoVision\Graphics\Vertices\VertexPositionTexture.cs" />
     <Compile Include="SDK\MonoVision\Graphics\Viewport.cs" />
-    <Compile Include="SDK\MonoVision\IGraphicsDeviceManager.cs" />
     <Compile Include="SDK\MonoVision\Input\Buttons.cs" />
     <Compile Include="SDK\MonoVision\Input\ButtonState.cs" />
     <Compile Include="SDK\MonoVision\Input\GamePad.cs" />

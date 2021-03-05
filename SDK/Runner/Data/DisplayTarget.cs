@@ -228,7 +228,7 @@ namespace PixelVision8.Runner
             if (pixels.Length != _totalPixels)
                 return;
 
-            SpriteBatch.Begin(SpriteSortMode.Immediate);
+            SpriteBatch.Begin(); //SpriteSortMode.Immediate
 
             for (_i = 0; _i < _totalPixels; _i++)
             {
@@ -237,7 +237,7 @@ namespace PixelVision8.Runner
             }
 
             RenderTexture.SetData(_pixelData);
-            SpriteBatch.Draw(RenderTexture, Offset, VisibleRect, Color.White, Vector2.Zero, Scale, 1f);
+            SpriteBatch.Draw(RenderTexture, Offset, VisibleRect, Color.White, Vector2.Zero, Scale);
             SpriteBatch.End();
         }
     }

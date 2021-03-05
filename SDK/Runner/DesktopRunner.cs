@@ -1302,9 +1302,9 @@ namespace PixelVision8.Runner
 
 
 
-                    luaScript.Globals["SetClipboardText"] = new Action<string>(ClipboardService.SetText);
-                    luaScript.Globals["GetClipboardText"] = new Func<string>(ClipboardService.GetText);
-                    luaScript.Globals["ClearClipboardText"] = new Action(() => { ClipboardService.SetText("");});
+                    luaScript.Globals["SetClipboardText"] = new Action<string>(SetClipboardText);
+                    luaScript.Globals["GetClipboardText"] = new Func<string>(GetClipboardText);
+                    luaScript.Globals["ClearClipboardText"] = new Action(() => { SetClipboardText("");});
                 }
 
                 if (mode == RunnerMode.Booting)
@@ -1338,6 +1338,37 @@ namespace PixelVision8.Runner
 
             // Make sure the current state of the system is saved back to the bios
             SaveBiosChanges();
+        }
+
+        private string _clipboard;
+        
+        private void SetClipboardText(string value)
+        {
+            try
+            {
+                ClipboardService.SetText(value);
+            }
+            catch
+            {
+                // ignored
+            }
+
+            _clipboard = value;
+        }
+        
+        private string GetClipboardText()
+        {
+            
+            try
+            {
+                _clipboard = ClipboardService.GetText();
+            }
+            catch
+            {
+                // ignored
+            }
+
+            return _clipboard;
         }
 
         protected string OperatingSystem()

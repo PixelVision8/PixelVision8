@@ -31,7 +31,12 @@ namespace Microsoft.Xna.Framework.Graphics
         private void PlatformConstruct(int width, int height, bool mipmap, SurfaceFormat format, SurfaceType type, bool shared)
         {
             this.glTarget = TextureTarget.Texture2D;
-            format.GetGLFormat(GraphicsDevice, out glInternalFormat, out glFormat, out glType);
+            // format.GetGLFormat(GraphicsDevice, out glInternalFormat, out glFormat, out glType);
+            
+            glInternalFormat = PixelInternalFormat.Rgba;
+            glFormat = PixelFormat.Rgba;
+            glType = PixelType.UnsignedByte;
+            
             Threading.BlockOnUIThread(() =>
             {
                 GenerateGLTextureIfRequired();
@@ -42,7 +47,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 {
                     if (glFormat == (PixelFormat)GLPixelFormat.CompressedTextureFormats)
                     {
-                        int imageSize = 0;
+                        // int imageSize = 0;
                         // PVRTC has explicit calculations for imageSize
                         // https://www.khronos.org/registry/OpenGL/extensions/IMG/IMG_texture_compression_pvrtc.txt
                         // if (format == SurfaceFormat.RgbPvrtc2Bpp || format == SurfaceFormat.RgbaPvrtc2Bpp)
@@ -55,14 +60,14 @@ namespace Microsoft.Xna.Framework.Graphics
                         // }
                         // else
                         // {
-                            int blockSize = format.GetSize();
-                            int blockWidth, blockHeight;
-                            format.GetBlockSize(out blockWidth, out blockHeight);
-                            int wBlocks = (w + (blockWidth - 1)) / blockWidth;
-                            int hBlocks = (h + (blockHeight - 1)) / blockHeight;
-                            imageSize = wBlocks * hBlocks * blockSize;
+                        // int blockSize = 4;//format.GetSize();
+                        //     int blockWidth, blockHeight;
+                        //     format.GetBlockSize(out blockWidth, out blockHeight);
+                        //     int wBlocks = (w + (blockWidth - 1)) / blockWidth;
+                        //     int hBlocks = (h + (blockHeight - 1)) / blockHeight;
+                        //     imageSize = wBlocks * hBlocks * blockSize;
                         // }
-                        GL.CompressedTexImage2D(TextureTarget.Texture2D, level, glInternalFormat, w, h, 0, imageSize, IntPtr.Zero);
+                        GL.CompressedTexImage2D(TextureTarget.Texture2D, level, glInternalFormat, w, h, 0, w * h * 4, IntPtr.Zero);
                         GraphicsExtensions.CheckGLError();
                     }
                     else
@@ -105,7 +110,7 @@ namespace Microsoft.Xna.Framework.Graphics
                     }
 
                     GenerateGLTextureIfRequired();
-                    GL.PixelStore(PixelStoreParameter.UnpackAlignment, Math.Min(_format.GetSize(), 8));
+                    GL.PixelStore(PixelStoreParameter.UnpackAlignment, Math.Min(4, 8));
 
                     if (glFormat == (PixelFormat)GLPixelFormat.CompressedTextureFormats)
                     {
@@ -158,7 +163,7 @@ namespace Microsoft.Xna.Framework.Graphics
                     }
 
                     GenerateGLTextureIfRequired();
-                    GL.PixelStore(PixelStoreParameter.UnpackAlignment, Math.Min(_format.GetSize(), 8));
+                    GL.PixelStore(PixelStoreParameter.UnpackAlignment, Math.Min(4, 8));
 
                     if (glFormat == (PixelFormat)GLPixelFormat.CompressedTextureFormats)
                     {
@@ -218,14 +223,14 @@ namespace Microsoft.Xna.Framework.Graphics
             if (glFormat == (PixelFormat) GLPixelFormat.CompressedTextureFormats)
             {
                 // Note: for compressed format Format.GetSize() returns the size of a 4x4 block
-                var pixelToT = Format.GetSize() / tSizeInByte;
+                var pixelToT = 4 / tSizeInByte;
                 var tFullWidth = Math.Max(this.width >> level, 1) / 4 * pixelToT;
                 var temp = new T[Math.Max(this.height >> level, 1) / 4 * tFullWidth];
                 GL.GetCompressedTexImage(TextureTarget.Texture2D, level, temp);
                 GraphicsExtensions.CheckGLError();
 
                 var rowCount = rect.Height / 4;
-                var tRectWidth = rect.Width / 4 * Format.GetSize() / tSizeInByte;
+                var tRectWidth = rect.Width / 4 * 4 / tSizeInByte;
                 for (var r = 0; r < rowCount; r++)
                 {
                     var tempStart = rect.X / 4 * pixelToT + (rect.Top / 4 + r) * tFullWidth;
@@ -236,12 +241,12 @@ namespace Microsoft.Xna.Framework.Graphics
             else
             {
                 // we need to convert from our format size to the size of T here
-                var tFullWidth = Math.Max(this.width >> level, 1) * Format.GetSize() / tSizeInByte;
+                var tFullWidth = Math.Max(this.width >> level, 1) * 4 / tSizeInByte;
                 var temp = new T[Math.Max(this.height >> level, 1) * tFullWidth];
                 GL.GetTexImage(TextureTarget.Texture2D, level, glFormat, glType, temp);
                 GraphicsExtensions.CheckGLError();
 
-                var pixelToT = Format.GetSize() / tSizeInByte;
+                var pixelToT = 4 / tSizeInByte;
                 var rowCount = rect.Height;
                 var tRectWidth = rect.Width * pixelToT;
                 for (var r = 0; r < rowCount; r++)
