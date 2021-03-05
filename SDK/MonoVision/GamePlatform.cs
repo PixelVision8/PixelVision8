@@ -44,7 +44,7 @@ namespace Microsoft.Xna.Framework
         /// When implemented in a derived class, reports the default
         /// GameRunBehavior for this platform.
         /// </summary>
-        public abstract GameRunBehavior DefaultRunBehavior { get; }
+        // public abstract GameRunBehavior DefaultRunBehavior { get; }
 
         /// <summary>
         /// Gets the Game instance that owns this GamePlatform instance.

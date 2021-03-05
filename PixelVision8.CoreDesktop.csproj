@@ -86,7 +86,6 @@
     <Compile Include="SDK\MonoVision\FrameworkResources.cs" />
     <Compile Include="SDK\MonoVision\Game.cs" />
     <Compile Include="SDK\MonoVision\GamePlatform.cs" />
-    <Compile Include="SDK\MonoVision\GameRunBehavior.cs" />
     <Compile Include="SDK\MonoVision\GameServiceContainer.cs" />
     <Compile Include="SDK\MonoVision\GameTime.cs" />
     <Compile Include="SDK\MonoVision\GameWindow.cs" />
@@ -171,7 +170,6 @@
     <Compile Include="SDK\MonoVision\Input\Mouse.cs" />
     <Compile Include="SDK\MonoVision\Input\MouseCursor.cs" />
     <Compile Include="SDK\MonoVision\Input\MouseState.cs" />
-    <Compile Include="SDK\MonoVision\LaunchParameters.cs" />
     <Compile Include="SDK\MonoVision\MathHelper.cs" />
     <Compile Include="SDK\MonoVision\Matrix.cs" />
     <Compile Include="SDK\MonoVision\Platform\Audio\AudioLoader.cs" />

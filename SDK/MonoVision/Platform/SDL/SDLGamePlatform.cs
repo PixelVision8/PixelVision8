@@ -15,10 +15,10 @@ namespace Microsoft.Xna.Framework
 {
     internal class SdlGamePlatform : GamePlatform
     {
-        public override GameRunBehavior DefaultRunBehavior
-        {
-            get { return GameRunBehavior.Synchronous; }
-        }
+        // public override GameRunBehavior DefaultRunBehavior
+        // {
+        //     get { return GameRunBehavior.Synchronous; }
+        // }
 
         private readonly Game _game;
         private readonly List<Keys> _keys;

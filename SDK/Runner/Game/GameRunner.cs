@@ -35,7 +35,7 @@ namespace PixelVision8.Runner
 
             Graphics = new GraphicsDeviceManager(this);
 
-            IsFixedTimeStep = true;
+            // IsFixedTimeStep = true;
             
             RootPath = rootPath;
         }

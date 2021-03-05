@@ -4,14 +4,8 @@
 
 using System;
 using System.Diagnostics;
-// #if WINDOWS_UAP
-// // using System.Threading.Tasks;
-// // using Windows.ApplicationModel.Activation;
-// #endif
 using Microsoft.Xna.Framework.Audio;
-// using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-// using Microsoft.Xna.Framework.Input.Touch;
 
 
 namespace Microsoft.Xna.Framework
@@ -45,7 +39,7 @@ namespace Microsoft.Xna.Framework
         private IGraphicsDeviceService _graphicsDeviceService;
 
         private bool _initialized = false;
-        private bool _isFixedTimeStep = true;
+        // private bool _isFixedTimeStep = true;
 
         private TimeSpan _targetElapsedTime = TimeSpan.FromTicks(166667); // 60fps
         private TimeSpan _inactiveSleepTime = TimeSpan.FromSeconds(0.02);
@@ -59,23 +53,12 @@ namespace Microsoft.Xna.Framework
 
         public Game()
         {
-            _instance = this;
-
-            LaunchParameters = new LaunchParameters();
+            
             _services = new GameServiceContainer();
-            // _components = new GameComponentCollection();
-            // _content = new ContentManager(_services);
-
-            Platform = GamePlatform.PlatformCreate(this);
+            Platform = new SdlGamePlatform(this);
             Platform.Activated += OnActivated;
             Platform.Deactivated += OnDeactivated;
             _services.AddService(typeof(GamePlatform), Platform);
-
-            // Calling Update() for first time initializes some systems
-            // FrameworkDispatcher.Update();
-
-            // Allow some optional per-platform construction to occur too.
-            // PlatformConstruct();
 
         }
 
@@ -106,21 +89,7 @@ namespace Microsoft.Xna.Framework
             {
                 if (disposing)
                 {
-                    // Dispose loaded game components
-                    // for (int i = 0; i < _components.Count; i++)
-                    // {
-                    //     var disposable = _components[i] as IDisposable;
-                    //     if (disposable != null)
-                    //         disposable.Dispose();
-                    // }
-                    // _components = null;
-                    //
-                    // if (_content != null)
-                    // {
-                    //     _content.Dispose();
-                    //     _content = null;
-                    // }
-
+                    
                     if (_graphicsDeviceManager != null)
                     {
                         (_graphicsDeviceManager as GraphicsDeviceManager).Dispose();
@@ -137,16 +106,12 @@ namespace Microsoft.Xna.Framework
                         Platform = null;
                     }
 
-                    // ContentTypeReaderManager.ClearTypeCreators();
-
                     if (SoundEffect._systemState == SoundEffect.SoundSystemState.Initialized)
                         SoundEffect.PlatformShutdown();
                 }
-// #if ANDROID
-//                 Activity = null;
-// #endif
+
                 _isDisposed = true;
-                _instance = null;
+                
             }
         }
 
@@ -165,20 +130,6 @@ namespace Microsoft.Xna.Framework
 
         #region Properties
 
-#if ANDROID
-        [CLSCompliant(false)]
-        public static AndroidGameActivity Activity { get; internal set; }
-#endif
-        private static Game _instance = null;
-        internal static Game Instance { get { return Game._instance; } }
-
-        public LaunchParameters LaunchParameters { get; private set; }
-
-        // public GameComponentCollection Components
-        // {
-        //     get { return _components; }
-        // }
-
         public TimeSpan InactiveSleepTime
         {
             get { return _inactiveSleepTime; }
@@ -190,24 +141,6 @@ namespace Microsoft.Xna.Framework
                 _inactiveSleepTime = value;
             }
         }
-
-        /// <summary>
-        /// The maximum amount of time we will frameskip over and only perform Update calls with no Draw calls.
-        /// MonoGame extension.
-        /// </summary>
-        // public TimeSpan MaxElapsedTime
-        // {
-        //     get { return _maxElapsedTime; }
-        //     set
-        //     {
-        //         if (value < TimeSpan.Zero)
-        //             throw new ArgumentOutOfRangeException("The time must be positive.", default(Exception));
-        //         if (value < _targetElapsedTime)
-        //             throw new ArgumentOutOfRangeException("The time must be at least TargetElapsedTime", default(Exception));
-        //
-        //         _maxElapsedTime = value;
-        //     }
-        // }
 
         public bool IsActive
         {
@@ -241,27 +174,9 @@ namespace Microsoft.Xna.Framework
             }
         }
 
-        public bool IsFixedTimeStep
-        {
-            get { return _isFixedTimeStep; }
-            set { _isFixedTimeStep = value; }
-        }
-
         public GameServiceContainer Services {
             get { return _services; }
         }
-
-        // public ContentManager Content
-        // {
-        //     get { return _content; }
-        //     set
-        //     {
-        //         if (value == null)
-        //             throw new ArgumentNullException();
-        //
-        //         _content = value;
-        //     }
-        // }
 
         public GraphicsDevice GraphicsDevice
         {
@@ -287,76 +202,9 @@ namespace Microsoft.Xna.Framework
 
         #endregion Properties
 
-        #region Events
-
-        // public event EventHandler<EventArgs> Activated;
-        // public event EventHandler<EventArgs> Deactivated;
-        // public event EventHandler<EventArgs> Disposed;
-        // public event EventHandler<EventArgs> Exiting;
-
-#if WINDOWS_UAP
-        [CLSCompliant(false)]
-        public ApplicationExecutionState PreviousExecutionState { get; internal set; }
-#endif
-
-        #endregion
-
         #region Public Methods
 
-#if IOS
-        [Obsolete("This platform's policy does not allow programmatically closing.", true)]
-#endif
-        public void Exit()
-        {
-            _shouldExit = true;
-            _suppressDraw = true;
-        }
-
-        // public void ResetElapsedTime()
-        // {
-        //     Platform.ResetElapsedTime();
-        //     _gameTimer.Reset();
-        //     _gameTimer.Start();
-        //     _accumulatedElapsedTime = TimeSpan.Zero;
-        //     _gameTime.ElapsedGameTime = TimeSpan.Zero;
-        //     _previousTicks = 0L;
-        // }
-        //
-        // public void SuppressDraw()
-        // {
-        //     _suppressDraw = true;
-        // }
-        //
-        // public void RunOneFrame()
-        // {
-        //     if (Platform == null)
-        //         return;
-        //
-        //     if (!Platform.BeforeRun())
-        //         return;
-        //
-        //     if (!_initialized)
-        //     {
-        //         DoInitialize ();
-        //         _gameTimer = Stopwatch.StartNew();
-        //         _initialized = true;
-        //     }
-        //
-        //     BeginRun();
-        //
-        //     //Not quite right..
-        //     Tick ();
-        //
-        //     EndRun ();
-        //
-        // }
-
         public void Run()
-        {
-            Run(Platform.DefaultRunBehavior);
-        }
-
-        public void Run(GameRunBehavior runBehavior)
         {
             AssertNotDisposed();
             if (!Platform.BeforeRun())
@@ -373,24 +221,14 @@ namespace Microsoft.Xna.Framework
 
             BeginRun();
             _gameTimer = Stopwatch.StartNew();
-            switch (runBehavior)
-            {
-            case GameRunBehavior.Asynchronous:
-                Platform.AsyncRunLoopEnded += Platform_AsyncRunLoopEnded;
-                Platform.StartRunLoop();
-                break;
-            case GameRunBehavior.Synchronous:
-                // XNA runs one Update even before showing the window
-                DoUpdate(new GameTime());
 
-                Platform.RunLoop();
-                EndRun();
-				DoExiting();
-                break;
-            default:
-                throw new ArgumentException(string.Format(
-                    "Handling for the run behavior {0} is not implemented.", runBehavior));
-            }
+            // XNA runs one Update even before showing the window
+            DoUpdate(new GameTime());
+
+            Platform.RunLoop();
+            EndRun();
+			DoExiting();
+
         }
 
         private TimeSpan _accumulatedElapsedTime;
@@ -398,9 +236,6 @@ namespace Microsoft.Xna.Framework
         private Stopwatch _gameTimer;
         private long _previousTicks = 0;
         private int _updateFrameLag;
-#if WINDOWS_UAP
-        private readonly object _locker = new object();
-#endif
 
         public void Tick()
         {
@@ -413,12 +248,9 @@ namespace Microsoft.Xna.Framework
 
             if (!IsActive && (InactiveSleepTime.TotalMilliseconds >= 1.0))
             {
-#if WINDOWS_UAP
-                lock (_locker)
-                    System.Threading.Monitor.Wait(_locker, (int)InactiveSleepTime.TotalMilliseconds);
-#else
+
                 System.Threading.Thread.Sleep((int)InactiveSleepTime.TotalMilliseconds);
-#endif
+
             }
 
             // Advance the accumulated elapsed time.
@@ -426,21 +258,15 @@ namespace Microsoft.Xna.Framework
             _accumulatedElapsedTime += TimeSpan.FromTicks(currentTicks - _previousTicks);
             _previousTicks = currentTicks;
 
-            if (IsFixedTimeStep && _accumulatedElapsedTime < TargetElapsedTime)
+            if (_accumulatedElapsedTime < TargetElapsedTime)
             {
                 // Sleep for as long as possible without overshooting the update time
                 var sleepTime = (TargetElapsedTime - _accumulatedElapsedTime).TotalMilliseconds;
                 // We only have a precision timer on Windows, so other platforms may still overshoot
-#if WINDOWS && !DESKTOPGL
-                MonoGame.Utilities.TimerHelper.SleepForNoMoreThan(sleepTime);
-#elif WINDOWS_UAP
-                lock (_locker)
-                    if (sleepTime >= 2.0)
-                        System.Threading.Monitor.Wait(_locker, 1);
-#elif DESKTOPGL || ANDROID || IOS
+
                 if (sleepTime >= 2.0)
                     System.Threading.Thread.Sleep(1);
-#endif
+
                 // Keep looping until it's time to perform the next update
                 goto RetryTick;
             }
@@ -449,8 +275,8 @@ namespace Microsoft.Xna.Framework
             if (_accumulatedElapsedTime > _maxElapsedTime)
                 _accumulatedElapsedTime = _maxElapsedTime;
 
-            if (IsFixedTimeStep)
-            {
+            // if (IsFixedTimeStep)
+            // {
                 _gameTime.ElapsedGameTime = TargetElapsedTime;
                 var stepCount = 0;
 
@@ -486,16 +312,16 @@ namespace Microsoft.Xna.Framework
                 // Draw needs to know the total elapsed time
                 // that occured for the fixed length updates.
                 _gameTime.ElapsedGameTime = TimeSpan.FromTicks(TargetElapsedTime.Ticks * stepCount);
-            }
-            else
-            {
-                // Perform a single variable length update.
-                _gameTime.ElapsedGameTime = _accumulatedElapsedTime;
-                _gameTime.TotalGameTime += _accumulatedElapsedTime;
-                _accumulatedElapsedTime = TimeSpan.Zero;
-
-                DoUpdate(_gameTime);
-            }
+            // }
+            // else
+            // {
+            //     // Perform a single variable length update.
+            //     _gameTime.ElapsedGameTime = _accumulatedElapsedTime;
+            //     _gameTime.TotalGameTime += _accumulatedElapsedTime;
+            //     _accumulatedElapsedTime = TimeSpan.Zero;
+            //
+            //     DoUpdate(_gameTime);
+            // }
 
             // Draw unless the update suppressed it.
             if (_suppressDraw)
@@ -525,8 +351,8 @@ namespace Microsoft.Xna.Framework
         protected virtual void BeginRun() { }
         protected virtual void EndRun() { }
 
-        protected virtual void LoadContent() { }
-        protected virtual void UnloadContent() { }
+        // protected virtual void LoadContent() { }
+        // protected virtual void UnloadContent() { }
 
         protected virtual void Initialize()
         {
@@ -548,7 +374,7 @@ namespace Microsoft.Xna.Framework
             if (_graphicsDeviceService != null &&
                 _graphicsDeviceService.GraphicsDevice != null)
             {
-                LoadContent();
+                // LoadContent();
             }
         }
 
@@ -588,70 +414,14 @@ namespace Microsoft.Xna.Framework
 
         #endregion Protected Methods
 
-        #region Event Handlers
-
-        // private void Components_ComponentAdded(
-        //     object sender, GameComponentCollectionEventArgs e)
-        // {
-        //     // Since we only subscribe to ComponentAdded after the graphics
-        //     // devices are set up, it is safe to just blindly call Initialize.
-        //     e.GameComponent.Initialize();
-        //     CategorizeComponent(e.GameComponent);
-        // }
-        //
-        // private void Components_ComponentRemoved(
-        //     object sender, GameComponentCollectionEventArgs e)
-        // {
-        //     DecategorizeComponent(e.GameComponent);
-        // }
-
-        private void Platform_AsyncRunLoopEnded(object sender, EventArgs e)
-        {
-            AssertNotDisposed();
-
-            var platform = (GamePlatform)sender;
-            platform.AsyncRunLoopEnded -= Platform_AsyncRunLoopEnded;
-            EndRun();
-			DoExiting();
-        }
-
-        #endregion Event Handlers
-
         #region Internal Methods
-
-        // FIXME: We should work toward eliminating internal methods.  They
-        //        break entirely the possibility that additional platforms could
-        //        be added by third parties without changing MonoGame itself.
-
-// #if !(WINDOWS && DIRECTX)
-//         internal void applyChanges(GraphicsDeviceManager manager)
-//         {
-// 			Platform.BeginScreenDeviceChange(GraphicsDevice.PresentationParameters.IsFullScreen);
-//
-//             if (GraphicsDevice.PresentationParameters.IsFullScreen)
-//                 Platform.EnterFullScreen();
-//             else
-//                 Platform.ExitFullScreen();
-//             var viewport = new Viewport(0, 0,
-// 			                            GraphicsDevice.PresentationParameters.BackBufferWidth,
-// 			                            GraphicsDevice.PresentationParameters.BackBufferHeight);
-//
-//             GraphicsDevice.Viewport = viewport;
-// 			Platform.EndScreenDeviceChange(string.Empty, viewport.Width, viewport.Height);
-//         }
-// #endif
 
         internal void DoUpdate(GameTime gameTime)
         {
             AssertNotDisposed();
             if (Platform.BeforeUpdate(gameTime))
             {
-                // FrameworkDispatcher.Update();
-
                 Update(gameTime);
-
-                //The TouchPanel needs to know the time for when touches arrive
-                // TouchPanelState.CurrentTimestamp = gameTime.TotalGameTime;
             }
         }
 
@@ -690,7 +460,7 @@ namespace Microsoft.Xna.Framework
 		internal void DoExiting()
 		{
 			OnExiting(this, EventArgs.Empty);
-			UnloadContent();
+			// UnloadContent();
 		}
 
         #endregion Internal Methods
