@@ -21,19 +21,6 @@ namespace Microsoft.Xna.Framework
             IsRunningSlowly = false;
         }
 
-  //       public GameTime(TimeSpan totalGameTime, TimeSpan elapsedGameTime)
-  //       {
-  //           TotalGameTime = totalGameTime;
-  //           ElapsedGameTime = elapsedGameTime;
-  //           IsRunningSlowly = false;
-  //       }
-  //
-		// public GameTime (TimeSpan totalRealTime, TimeSpan elapsedRealTime, bool isRunningSlowly)
-		// {
-  //           TotalGameTime = totalRealTime;
-  //           ElapsedGameTime = elapsedRealTime;
-		//     IsRunningSlowly = isRunningSlowly;
-		// }
     }
 }
 

@@ -48,10 +48,10 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// The GraphicsDevice is resetting, so GPU resources must be recreated.
         /// </summary>
-        internal protected override void GraphicsDeviceResetting()
-        {
-            PlatformGraphicsDeviceResetting();
-        }
+        // internal protected override void GraphicsDeviceResetting()
+        // {
+        //     PlatformGraphicsDeviceResetting();
+        // }
 
         /// <summary>
         /// Get the vertex data froom this VertexBuffer.

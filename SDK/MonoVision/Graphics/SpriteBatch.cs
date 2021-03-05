@@ -144,26 +144,6 @@ namespace Microsoft.Xna.Framework.Graphics
                 throw new InvalidOperationException("Draw was called, but Begin has not yet been called. Begin must be called successfully before you can call Draw.");
         }
 
-        // void CheckValid(SpriteFont spriteFont, string text)
-        // {
-        //     if (spriteFont == null)
-        //         throw new ArgumentNullException("spriteFont");
-        //     if (text == null)
-        //         throw new ArgumentNullException("text");
-        //     if (!_beginCalled)
-        //         throw new InvalidOperationException("DrawString was called, but Begin has not yet been called. Begin must be called successfully before you can call DrawString.");
-        // }
-        //
-        // void CheckValid(SpriteFont spriteFont, StringBuilder text)
-        // {
-        //     if (spriteFont == null)
-        //         throw new ArgumentNullException("spriteFont");
-        //     if (text == null)
-        //         throw new ArgumentNullException("text");
-        //     if (!_beginCalled)
-        //         throw new InvalidOperationException("DrawString was called, but Begin has not yet been called. Begin must be called successfully before you can call DrawString.");
-        // }
-
         /// <summary>
         /// Submit a sprite for drawing in the current batch.
         /// </summary>
@@ -217,34 +197,6 @@ namespace Microsoft.Xna.Framework.Graphics
 			// {
 				_batcher.DrawBatch(/*_sortMode, */_effect);
 			// }
-		}
-
-        /// <summary>
-        /// Submit a sprite for drawing in the current batch.
-        /// </summary>
-        /// <param name="texture">A texture.</param>
-        /// <param name="destinationRectangle">The drawing bounds on screen.</param>
-        /// <param name="color">A color mask.</param>
-        public void Draw(Texture2D texture, Rectangle destinationRectangle, Color color)
-		{
-            CheckValid(texture);
-
-            var item = _batcher.CreateBatchItem();
-            item.Texture = texture;
-
-            // set SortKey based on SpriteSortMode.
-            item.SortKey = /*_sortMode == SpriteSortMode.Texture ? texture.SortingKey : */0;
-
-            item.Set(destinationRectangle.X,
-                     destinationRectangle.Y,
-                     destinationRectangle.Width,
-                     destinationRectangle.Height,
-                     color,
-                     Vector2.Zero,
-                     Vector2.One/*,
-                     0*/);
-
-            FlushIfNeeded();
 		}
 
         /// <summary>

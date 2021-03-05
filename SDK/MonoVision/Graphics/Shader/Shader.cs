@@ -80,9 +80,9 @@ namespace Microsoft.Xna.Framework.Graphics
 				if (reader.ReadBoolean())
 				{
 					Samplers[s].state = new SamplerState();
-					Samplers[s].state.AddressU = (TextureAddressMode)reader.ReadByte();
-					Samplers[s].state.AddressV = (TextureAddressMode)reader.ReadByte();
-					Samplers[s].state.AddressW = (TextureAddressMode)reader.ReadByte();
+					// Samplers[s].state.AddressU = (TextureAddressMode)reader.ReadByte();
+					// Samplers[s].state.AddressV = (TextureAddressMode)reader.ReadByte();
+					// Samplers[s].state.AddressW = (TextureAddressMode)reader.ReadByte();
                     Samplers[s].state.BorderColor = new Color(
                         reader.ReadByte(),
                         reader.ReadByte(),
@@ -116,10 +116,10 @@ namespace Microsoft.Xna.Framework.Graphics
             PlatformConstruct(Stage, shaderBytecode);
         }
 
-        internal protected override void GraphicsDeviceResetting()
-        {
-            PlatformGraphicsDeviceResetting();
-        }
+        // internal protected override void GraphicsDeviceResetting()
+        // {
+        //     PlatformGraphicsDeviceResetting();
+        // }
 	}
 }
 

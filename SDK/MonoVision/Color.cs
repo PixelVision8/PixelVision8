@@ -242,15 +242,6 @@ namespace Microsoft.Xna.Framework
         }
         
         /// <summary>
-        /// CornflowerBlue color (R:100,G:149,B:237,A:255).
-        /// </summary>
-        public static Color CornflowerBlue
-        {
-            get;
-            private set;
-        }
-        
-        /// <summary>
         /// Magenta color (R:255,G:0,B:255,A:255).
         /// </summary>
         public static Color Magenta
@@ -270,32 +261,6 @@ namespace Microsoft.Xna.Framework
        
         #endregion
 
-        /// <summary>
-        /// Performs linear interpolation of <see cref="Color"/>.
-        /// </summary>
-        /// <param name="value1">Source <see cref="Color"/>.</param>
-        /// <param name="value2">Destination <see cref="Color"/>.</param>
-        /// <param name="amount">Interpolation factor.</param>
-        /// <returns>Interpolated <see cref="Color"/>.</returns>
-   //      public static Color Lerp(Color value1, Color value2, Single amount)
-   //      {
-			// amount = MathHelper.Clamp(amount, 0, 1);
-   //          return new Color(   
-   //              (int)MathHelper.Lerp(value1.R, value2.R, amount),
-   //              (int)MathHelper.Lerp(value1.G, value2.G, amount),
-   //              (int)MathHelper.Lerp(value1.B, value2.B, amount),
-   //              (int)MathHelper.Lerp(value1.A, value2.A, amount) );
-   //      }
-
-        /// <summary>
-        /// Gets a <see cref="Vector4"/> representation for this object.
-        /// </summary>
-        /// <returns>A <see cref="Vector4"/> representation for this object.</returns>
-        // public Vector4 ToVector4()
-        // {
-        //     return new Vector4(R / 255.0f, G / 255.0f, B / 255.0f, A / 255.0f);
-        // }
-	
         /// <summary>
         /// Gets or sets packed value of this <see cref="Color"/>.
         /// </summary>

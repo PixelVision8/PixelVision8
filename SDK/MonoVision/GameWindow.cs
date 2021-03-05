@@ -11,9 +11,6 @@ namespace Microsoft.Xna.Framework {
 	public abstract class GameWindow {
 		#region Properties
 
-		[DefaultValue(false)]
-		public abstract bool AllowUserResizing { get; set; }
-
 		public abstract Rectangle ClientBounds { get; }
 
 	    internal bool _allowAltF4 = true;
@@ -96,8 +93,8 @@ namespace Microsoft.Xna.Framework {
 		#region Events
 
 		public event EventHandler<EventArgs> ClientSizeChanged;
-		public event EventHandler<EventArgs> OrientationChanged;
-		public event EventHandler<EventArgs> ScreenDeviceNameChanged;
+		// public event EventHandler<EventArgs> OrientationChanged;
+		// public event EventHandler<EventArgs> ScreenDeviceNameChanged;
 
 #if WINDOWS || WINDOWS_UAP || DESKTOPGL|| ANGLE
 
@@ -147,24 +144,6 @@ namespace Microsoft.Xna.Framework {
 		{
             EventHelpers.Raise(this, ClientSizeChanged, EventArgs.Empty);
 		}
-
-		// protected void OnDeactivated ()
-		// {
-		// }
-  //
-		// protected void OnOrientationChanged ()
-		// {
-  //           EventHelpers.Raise(this, OrientationChanged, EventArgs.Empty);
-		// }
-  //
-		// protected void OnPaint ()
-		// {
-		// }
-  //
-		// protected void OnScreenDeviceNameChanged ()
-		// {
-  //           EventHelpers.Raise(this, ScreenDeviceNameChanged, EventArgs.Empty);
-		// }
 
 #if WINDOWS || WINDOWS_UAP || DESKTOPGL || ANGLE
 		internal void OnTextInput(TextInputEventArgs e)

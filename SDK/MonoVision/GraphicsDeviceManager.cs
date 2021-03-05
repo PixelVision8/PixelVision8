@@ -201,10 +201,7 @@ namespace Microsoft.Xna.Framework
 
         private void Initialize()
         {
-            
-            /*var presentationParameters = new PresentationParameters();
-            PreparePresentationParameters(presentationParameters);*/
-
+           
             // Allow for any per-platform changes to the presentation.
             PlatformInitialize(/*presentationParameters*/);
 
@@ -257,26 +254,6 @@ namespace Microsoft.Xna.Framework
             {
                 _shouldApplyChanges = true;
                 _hardwareModeSwitch = value;
-            }
-        }
-
-        /// <summary>
-        /// Indicates the desired back buffer color format.
-        /// </summary>
-        /// <remarks>
-        /// When called at startup this will automatically set the format during initialization.  If
-        /// set after startup you must call ApplyChanges() for the format to be changed.
-        /// </remarks>
-        public SurfaceFormat PreferredBackBufferFormat
-        {
-            get
-            {
-                return _preferredBackBufferFormat;
-            }
-            set
-            {
-                _shouldApplyChanges = true;
-                _preferredBackBufferFormat = value;
             }
         }
 

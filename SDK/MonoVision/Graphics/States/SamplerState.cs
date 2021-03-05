@@ -10,63 +10,16 @@ namespace Microsoft.Xna.Framework.Graphics
     {
         static SamplerState()
         {
-            // AnisotropicClamp = new SamplerState("SamplerState.AnisotropicClamp", TextureFilter.Anisotropic, TextureAddressMode.Clamp);
-            // AnisotropicWrap = new SamplerState("SamplerState.AnisotropicWrap", TextureFilter.Anisotropic, TextureAddressMode.Wrap);
-            // LinearClamp = new SamplerState("SamplerState.LinearClamp", TextureFilter.Linear, TextureAddressMode.Clamp);
-            // LinearWrap = new SamplerState("SamplerState.LinearWrap", TextureFilter.Linear, TextureAddressMode.Wrap);
-            PointClamp = new SamplerState("SamplerState.PointClamp", /*TextureFilter.Point,*/ TextureAddressMode.Clamp);
-            // PointWrap = new SamplerState("SamplerState.PointWrap", TextureFilter.Point, TextureAddressMode.Wrap);
+            PointClamp = new SamplerState("SamplerState.PointClamp");
         }
 
-        // public static readonly SamplerState AnisotropicClamp;
-        // public static readonly SamplerState AnisotropicWrap;
-        // public static readonly SamplerState LinearClamp;
-        // public static readonly SamplerState LinearWrap;
         public static readonly SamplerState PointClamp;
-        // public static readonly SamplerState PointWrap;
-
         private readonly bool _defaultStateObject;
-
-        private TextureAddressMode _addressU;
-        private TextureAddressMode _addressV;
-        private TextureAddressMode _addressW;
         private Color _borderColor;
-        // private TextureFilter _filter;
         private int _maxAnisotropy;
         private int _maxMipLevel;
         private float _mipMapLevelOfDetailBias;
-        private TextureFilterMode _filterMode;
-        private CompareFunction _comparisonFunction;
-
-        public TextureAddressMode AddressU
-        {
-            get { return _addressU; }
-            set
-            {
-                ThrowIfBound();
-                _addressU = value;
-            }
-        }
-
-        public TextureAddressMode AddressV
-        {
-            get { return _addressV; }
-            set
-            {
-                ThrowIfBound();
-                _addressV = value;
-            }
-        }
-
-        public TextureAddressMode AddressW
-        {
-            get { return _addressW; }
-            set
-            {
-                ThrowIfBound();
-                _addressW = value;
-            }
-        }
+        // private CompareFunction _comparisonFunction;
 
         public Color BorderColor
         {
@@ -77,16 +30,6 @@ namespace Microsoft.Xna.Framework.Graphics
                 _borderColor = value;
             }
         }
-
-        // public TextureFilter Filter
-        // {
-        //     get { return _filter; }
-        //     set
-        //     {
-        //         ThrowIfBound();
-        //         _filter = value;
-        //     }
-        // }
 
         public int MaxAnisotropy
         {
@@ -121,25 +64,15 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// When using comparison sampling, also set <see cref="FilterMode"/> to <see cref="TextureFilterMode.Comparison"/>.
         /// </summary>
-        public CompareFunction ComparisonFunction
-        {
-            get { return _comparisonFunction; }
-            set
-            {
-                ThrowIfBound();
-                _comparisonFunction = value;
-            }
-        }
-
-        public TextureFilterMode FilterMode
-        {
-            get { return _filterMode; }
-            set
-            {
-                ThrowIfBound();
-                _filterMode = value;
-            }
-        }
+        // public CompareFunction ComparisonFunction
+        // {
+        //     get { return _comparisonFunction; }
+        //     set
+        //     {
+        //         ThrowIfBound();
+        //         _comparisonFunction = value;
+        //     }
+        // }
 
         internal void BindToGraphicsDevice(GraphicsDevice device)
         {
@@ -160,42 +93,30 @@ namespace Microsoft.Xna.Framework.Graphics
 
         public SamplerState()
         {
-            // Filter = TextureFilter.Linear;
-            // AddressU = TextureAddressMode.Wrap;
-            // AddressV = TextureAddressMode.Wrap;
-            // AddressW = TextureAddressMode.Wrap;
             BorderColor = Color.White;
             MaxAnisotropy = 4;
             MaxMipLevel = 0;
             MipMapLevelOfDetailBias = 0.0f;
-            ComparisonFunction = CompareFunction.Never;
-            FilterMode = TextureFilterMode.Default;
+            // ComparisonFunction = CompareFunction.Never;
         }
 
-        private SamplerState(string name, /*TextureFilter filter,*/ TextureAddressMode addressMode)
+        private SamplerState(string name/*, TextureFilter filter, TextureAddressMode addressMode*/)
             : this()
         {
             Name = name;
-            // _filter = filter;
-            _addressU = addressMode;
-            _addressV = addressMode;
-            _addressW = addressMode;
+            
             _defaultStateObject = true;
         }
 
         private SamplerState(SamplerState cloneSource)
         {
             Name = cloneSource.Name;
-            // _filter = cloneSource._filter;
-            _addressU = cloneSource._addressU;
-            _addressV = cloneSource._addressV;
-            _addressW = cloneSource._addressW;
+            
             _borderColor = cloneSource._borderColor;
             _maxAnisotropy = cloneSource._maxAnisotropy;
             _maxMipLevel = cloneSource._maxMipLevel;
             _mipMapLevelOfDetailBias = cloneSource._mipMapLevelOfDetailBias;
-            _comparisonFunction = cloneSource._comparisonFunction;
-            _filterMode = cloneSource._filterMode;
+            // _comparisonFunction = cloneSource._comparisonFunction;
         }
 
         internal SamplerState Clone()

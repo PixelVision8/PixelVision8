@@ -52,7 +52,7 @@ namespace Microsoft.Xna.Framework.Graphics
         // disposed yet.
         GraphicsDevice graphicsDevice;
 
-        private WeakReference _selfReference;
+        // private WeakReference _selfReference;
 
         internal GraphicsResource()
         {
@@ -71,10 +71,10 @@ namespace Microsoft.Xna.Framework.Graphics
         /// Warning: This may be called after a call to Dispose() up until
         /// the resource is garbage collected.
         /// </summary>
-        internal protected virtual void GraphicsDeviceResetting()
-        {
-
-        }
+        // internal protected virtual void GraphicsDeviceResetting()
+        // {
+        //
+        // }
 
         public void Dispose()
         {
@@ -110,7 +110,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 // if (graphicsDevice != null)
                 //     graphicsDevice.RemoveResourceReference(_selfReference);
 
-                _selfReference = null;
+                // _selfReference = null;
                 graphicsDevice = null;
                 disposed = true;
             }
@@ -137,12 +137,12 @@ namespace Microsoft.Xna.Framework.Graphics
                 if (graphicsDevice != null)
                 {
                     // graphicsDevice.RemoveResourceReference(_selfReference);
-                    _selfReference = null;
+                    // _selfReference = null;
                 }
 
                 graphicsDevice = value;
 
-                _selfReference = new WeakReference(this);
+                // _selfReference = new WeakReference(this);
                 // graphicsDevice.AddResourceReference(_selfReference);
             }
 		}

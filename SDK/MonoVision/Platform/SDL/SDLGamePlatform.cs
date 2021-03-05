@@ -208,7 +208,6 @@ namespace Microsoft.Xna.Framework
                     case Sdl.EventType.DropFile:
                         Debug.WriteLine("File Drop " + Sdl.GetString(ev.Drop.File));
                         _view.CallFileDrop(Sdl.GetString(ev.Drop.File));
-                        // _view.CallFileDrop(Sdl.GetString(ev.Drop.File));
                         break;
                     case Sdl.EventType.WindowEvent:
 
@@ -234,11 +233,6 @@ namespace Microsoft.Xna.Framework
                         break;
                 }
             }
-        }
-
-        public void CallFileDrop(string filepath)
-        {
-            // OnFileDropped(this, filepath);
         }
 
         private int UTF8ToUnicode(int utf8)

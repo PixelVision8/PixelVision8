@@ -121,8 +121,6 @@
     <Compile Include="SDK\MonoVision\Graphics\SpriteSortMode.cs" />
     <Compile Include="SDK\MonoVision\Graphics\States\CompareFunction.cs" />
     <Compile Include="SDK\MonoVision\Graphics\States\SamplerState.cs" />
-    <Compile Include="SDK\MonoVision\Graphics\States\TextureAddressMode.cs" />
-    <Compile Include="SDK\MonoVision\Graphics\States\TextureFilterMode.cs" />
     <Compile Include="SDK\MonoVision\Graphics\SurfaceFormat.cs" />
     <Compile Include="SDK\MonoVision\Graphics\Texture.cs" />
     <Compile Include="SDK\MonoVision\Graphics\Texture2D.cs" />
@@ -218,7 +216,6 @@
     <Compile Include="SDK\MonoVision\Platform\Utilities\ReflectionHelpers.Default.cs" />
     <Compile Include="SDK\MonoVision\PlayerIndex.cs" />
     <Compile Include="SDK\MonoVision\Point.cs" />
-    <Compile Include="SDK\MonoVision\PreparingDeviceSettingsEventArgs.cs" />
     <Compile Include="SDK\MonoVision\Rectangle.cs" />
     <Compile Include="SDK\MonoVision\TextInputEventArgs.cs" />
     <Compile Include="SDK\MonoVision\Utilities\BinaryReaderEx.cs" />
