@@ -657,13 +657,13 @@ namespace Microsoft.Xna.Framework
         /// <param name="value2">The second vector.</param>
         /// <param name="amount">Weighting value(between 0.0 and 1.0).</param>
         /// <returns>The result of linear interpolation of the specified vectors.</returns>
-        public static Vector3 Lerp(Vector3 value1, Vector3 value2, float amount)
-        {
-            return new Vector3(
-                MathHelper.Lerp(value1.X, value2.X, amount),
-                MathHelper.Lerp(value1.Y, value2.Y, amount),
-                MathHelper.Lerp(value1.Z, value2.Z, amount));
-        }
+        // public static Vector3 Lerp(Vector3 value1, Vector3 value2, float amount)
+        // {
+        //     return new Vector3(
+        //         MathHelper.Lerp(value1.X, value2.X, amount),
+        //         MathHelper.Lerp(value1.Y, value2.Y, amount),
+        //         MathHelper.Lerp(value1.Z, value2.Z, amount));
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector3"/> that contains linear interpolation of the specified vectors.
@@ -672,12 +672,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="value2">The second vector.</param>
         /// <param name="amount">Weighting value(between 0.0 and 1.0).</param>
         /// <param name="result">The result of linear interpolation of the specified vectors as an output parameter.</param>
-        public static void Lerp(ref Vector3 value1, ref Vector3 value2, float amount, out Vector3 result)
-        {
-            result.X = MathHelper.Lerp(value1.X, value2.X, amount);
-            result.Y = MathHelper.Lerp(value1.Y, value2.Y, amount);
-            result.Z = MathHelper.Lerp(value1.Z, value2.Z, amount);
-        }
+        // public static void Lerp(ref Vector3 value1, ref Vector3 value2, float amount, out Vector3 result)
+        // {
+        //     result.X = MathHelper.Lerp(value1.X, value2.X, amount);
+        //     result.Y = MathHelper.Lerp(value1.Y, value2.Y, amount);
+        //     result.Z = MathHelper.Lerp(value1.Z, value2.Z, amount);
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Vector3"/> that contains linear interpolation of the specified vectors.

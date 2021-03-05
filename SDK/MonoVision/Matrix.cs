@@ -399,26 +399,26 @@ namespace Microsoft.Xna.Framework
         /// <param name="matrix1">The first matrix to add.</param>
         /// <param name="matrix2">The second matrix to add.</param>
         /// <returns>The result of the matrix addition.</returns>
-        public static Matrix Add(Matrix matrix1, Matrix matrix2)
-        {
-            matrix1.M11 += matrix2.M11;
-            matrix1.M12 += matrix2.M12;
-            matrix1.M13 += matrix2.M13;
-            matrix1.M14 += matrix2.M14;
-            matrix1.M21 += matrix2.M21;
-            matrix1.M22 += matrix2.M22;
-            matrix1.M23 += matrix2.M23;
-            matrix1.M24 += matrix2.M24;
-            matrix1.M31 += matrix2.M31;
-            matrix1.M32 += matrix2.M32;
-            matrix1.M33 += matrix2.M33;
-            matrix1.M34 += matrix2.M34;
-            matrix1.M41 += matrix2.M41;
-            matrix1.M42 += matrix2.M42;
-            matrix1.M43 += matrix2.M43;
-            matrix1.M44 += matrix2.M44;
-            return matrix1;
-        }
+        // public static Matrix Add(Matrix matrix1, Matrix matrix2)
+        // {
+        //     matrix1.M11 += matrix2.M11;
+        //     matrix1.M12 += matrix2.M12;
+        //     matrix1.M13 += matrix2.M13;
+        //     matrix1.M14 += matrix2.M14;
+        //     matrix1.M21 += matrix2.M21;
+        //     matrix1.M22 += matrix2.M22;
+        //     matrix1.M23 += matrix2.M23;
+        //     matrix1.M24 += matrix2.M24;
+        //     matrix1.M31 += matrix2.M31;
+        //     matrix1.M32 += matrix2.M32;
+        //     matrix1.M33 += matrix2.M33;
+        //     matrix1.M34 += matrix2.M34;
+        //     matrix1.M41 += matrix2.M41;
+        //     matrix1.M42 += matrix2.M42;
+        //     matrix1.M43 += matrix2.M43;
+        //     matrix1.M44 += matrix2.M44;
+        //     return matrix1;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Matrix"/> which contains sum of two matrixes.
@@ -426,26 +426,26 @@ namespace Microsoft.Xna.Framework
         /// <param name="matrix1">The first matrix to add.</param>
         /// <param name="matrix2">The second matrix to add.</param>
         /// <param name="result">The result of the matrix addition as an output parameter.</param>
-        public static void Add(ref Matrix matrix1, ref Matrix matrix2, out Matrix result)
-        {
-            result.M11 = matrix1.M11 + matrix2.M11;
-            result.M12 = matrix1.M12 + matrix2.M12;
-            result.M13 = matrix1.M13 + matrix2.M13;
-            result.M14 = matrix1.M14 + matrix2.M14;
-            result.M21 = matrix1.M21 + matrix2.M21;
-            result.M22 = matrix1.M22 + matrix2.M22;
-            result.M23 = matrix1.M23 + matrix2.M23;
-            result.M24 = matrix1.M24 + matrix2.M24;
-            result.M31 = matrix1.M31 + matrix2.M31;
-            result.M32 = matrix1.M32 + matrix2.M32;
-            result.M33 = matrix1.M33 + matrix2.M33;
-            result.M34 = matrix1.M34 + matrix2.M34;
-            result.M41 = matrix1.M41 + matrix2.M41;
-            result.M42 = matrix1.M42 + matrix2.M42;
-            result.M43 = matrix1.M43 + matrix2.M43;
-            result.M44 = matrix1.M44 + matrix2.M44;
-
-        }
+        // public static void Add(ref Matrix matrix1, ref Matrix matrix2, out Matrix result)
+        // {
+        //     result.M11 = matrix1.M11 + matrix2.M11;
+        //     result.M12 = matrix1.M12 + matrix2.M12;
+        //     result.M13 = matrix1.M13 + matrix2.M13;
+        //     result.M14 = matrix1.M14 + matrix2.M14;
+        //     result.M21 = matrix1.M21 + matrix2.M21;
+        //     result.M22 = matrix1.M22 + matrix2.M22;
+        //     result.M23 = matrix1.M23 + matrix2.M23;
+        //     result.M24 = matrix1.M24 + matrix2.M24;
+        //     result.M31 = matrix1.M31 + matrix2.M31;
+        //     result.M32 = matrix1.M32 + matrix2.M32;
+        //     result.M33 = matrix1.M33 + matrix2.M33;
+        //     result.M34 = matrix1.M34 + matrix2.M34;
+        //     result.M41 = matrix1.M41 + matrix2.M41;
+        //     result.M42 = matrix1.M42 + matrix2.M42;
+        //     result.M43 = matrix1.M43 + matrix2.M43;
+        //     result.M44 = matrix1.M44 + matrix2.M44;
+        //
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Matrix"/> for spherical billboarding that rotates around specified object position.
@@ -455,16 +455,16 @@ namespace Microsoft.Xna.Framework
         /// <param name="cameraUpVector">The camera up vector.</param>
         /// <param name="cameraForwardVector">Optional camera forward vector.</param>
         /// <returns>The <see cref="Matrix"/> for spherical billboarding.</returns>
-        public static Matrix CreateBillboard(Vector3 objectPosition, Vector3 cameraPosition,
-            Vector3 cameraUpVector, Nullable<Vector3> cameraForwardVector)
-        {
-            Matrix result;
-
-            // Delegate to the other overload of the function to do the work
-            CreateBillboard(ref objectPosition, ref cameraPosition, ref cameraUpVector, cameraForwardVector, out result);
-
-            return result;
-        }
+        // public static Matrix CreateBillboard(Vector3 objectPosition, Vector3 cameraPosition,
+        //     Vector3 cameraUpVector, Nullable<Vector3> cameraForwardVector)
+        // {
+        //     Matrix result;
+        //
+        //     // Delegate to the other overload of the function to do the work
+        //     CreateBillboard(ref objectPosition, ref cameraPosition, ref cameraUpVector, cameraForwardVector, out result);
+        //
+        //     return result;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Matrix"/> for spherical billboarding that rotates around specified object position.
@@ -522,14 +522,14 @@ namespace Microsoft.Xna.Framework
         /// <param name="cameraForwardVector">Optional camera forward vector.</param>
         /// <param name="objectForwardVector">Optional object forward vector.</param>
         /// <returns>The <see cref="Matrix"/> for cylindrical billboarding.</returns>
-        public static Matrix CreateConstrainedBillboard(Vector3 objectPosition, Vector3 cameraPosition,
-            Vector3 rotateAxis, Nullable<Vector3> cameraForwardVector, Nullable<Vector3> objectForwardVector)
-        {
-            Matrix result;
-            CreateConstrainedBillboard(ref objectPosition, ref cameraPosition, ref rotateAxis,
-                cameraForwardVector, objectForwardVector, out result);
-            return result;
-        }
+        // public static Matrix CreateConstrainedBillboard(Vector3 objectPosition, Vector3 cameraPosition,
+        //     Vector3 rotateAxis, Nullable<Vector3> cameraForwardVector, Nullable<Vector3> objectForwardVector)
+        // {
+        //     Matrix result;
+        //     CreateConstrainedBillboard(ref objectPosition, ref cameraPosition, ref rotateAxis,
+        //         cameraForwardVector, objectForwardVector, out result);
+        //     return result;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Matrix"/> for cylindrical billboarding that rotates around specified axis.
@@ -615,12 +615,12 @@ namespace Microsoft.Xna.Framework
         /// <param name="axis">The axis of rotation.</param>
         /// <param name="angle">The angle of rotation in radians.</param>
         /// <returns>The rotation <see cref="Matrix"/>.</returns>
-        public static Matrix CreateFromAxisAngle(Vector3 axis, float angle)
-        {
-            Matrix result;
-            CreateFromAxisAngle(ref axis, angle, out result);
-            return result;
-        }
+        // public static Matrix CreateFromAxisAngle(Vector3 axis, float angle)
+        // {
+        //     Matrix result;
+        //     CreateFromAxisAngle(ref axis, angle, out result);
+        //     return result;
+        // }
 
         /// <summary>
         /// Creates a new <see cref="Matrix"/> which contains the rotation moment around specified axis.
@@ -2437,37 +2437,37 @@ namespace Microsoft.Xna.Framework
         /// Helper method for using the Laplace expansion theorem using two rows expansions to calculate major and 
         /// minor determinants of a 4x4 matrix. This method is used for inverting a matrix.
         /// </summary>
-        private static void FindDeterminants(ref Matrix matrix, out float major, 
-                                             out float minor1, out float minor2, out float minor3, out float minor4, out float minor5, out float minor6,
-                                             out float minor7, out float minor8, out float minor9, out float minor10, out float minor11, out float minor12)
-        {
-                double det1 = (double)matrix.M11 * (double)matrix.M22 - (double)matrix.M12 * (double)matrix.M21;
-                double det2 = (double)matrix.M11 * (double)matrix.M23 - (double)matrix.M13 * (double)matrix.M21;
-                double det3 = (double)matrix.M11 * (double)matrix.M24 - (double)matrix.M14 * (double)matrix.M21;
-                double det4 = (double)matrix.M12 * (double)matrix.M23 - (double)matrix.M13 * (double)matrix.M22;
-                double det5 = (double)matrix.M12 * (double)matrix.M24 - (double)matrix.M14 * (double)matrix.M22;
-                double det6 = (double)matrix.M13 * (double)matrix.M24 - (double)matrix.M14 * (double)matrix.M23;
-                double det7 = (double)matrix.M31 * (double)matrix.M42 - (double)matrix.M32 * (double)matrix.M41;
-                double det8 = (double)matrix.M31 * (double)matrix.M43 - (double)matrix.M33 * (double)matrix.M41;
-                double det9 = (double)matrix.M31 * (double)matrix.M44 - (double)matrix.M34 * (double)matrix.M41;
-                double det10 = (double)matrix.M32 * (double)matrix.M43 - (double)matrix.M33 * (double)matrix.M42;
-                double det11 = (double)matrix.M32 * (double)matrix.M44 - (double)matrix.M34 * (double)matrix.M42;
-                double det12 = (double)matrix.M33 * (double)matrix.M44 - (double)matrix.M34 * (double)matrix.M43;
-                
-                major = (float)(det1*det12 - det2*det11 + det3*det10 + det4*det9 - det5*det8 + det6*det7);
-                minor1 = (float)det1;
-                minor2 = (float)det2;
-                minor3 = (float)det3;
-                minor4 = (float)det4;
-                minor5 = (float)det5;
-                minor6 = (float)det6;
-                minor7 = (float)det7;
-                minor8 = (float)det8;
-                minor9 = (float)det9;
-                minor10 = (float)det10;
-                minor11 = (float)det11;
-                minor12 = (float)det12;
-        }
+        // private static void FindDeterminants(ref Matrix matrix, out float major, 
+        //                                      out float minor1, out float minor2, out float minor3, out float minor4, out float minor5, out float minor6,
+        //                                      out float minor7, out float minor8, out float minor9, out float minor10, out float minor11, out float minor12)
+        // {
+        //         double det1 = (double)matrix.M11 * (double)matrix.M22 - (double)matrix.M12 * (double)matrix.M21;
+        //         double det2 = (double)matrix.M11 * (double)matrix.M23 - (double)matrix.M13 * (double)matrix.M21;
+        //         double det3 = (double)matrix.M11 * (double)matrix.M24 - (double)matrix.M14 * (double)matrix.M21;
+        //         double det4 = (double)matrix.M12 * (double)matrix.M23 - (double)matrix.M13 * (double)matrix.M22;
+        //         double det5 = (double)matrix.M12 * (double)matrix.M24 - (double)matrix.M14 * (double)matrix.M22;
+        //         double det6 = (double)matrix.M13 * (double)matrix.M24 - (double)matrix.M14 * (double)matrix.M23;
+        //         double det7 = (double)matrix.M31 * (double)matrix.M42 - (double)matrix.M32 * (double)matrix.M41;
+        //         double det8 = (double)matrix.M31 * (double)matrix.M43 - (double)matrix.M33 * (double)matrix.M41;
+        //         double det9 = (double)matrix.M31 * (double)matrix.M44 - (double)matrix.M34 * (double)matrix.M41;
+        //         double det10 = (double)matrix.M32 * (double)matrix.M43 - (double)matrix.M33 * (double)matrix.M42;
+        //         double det11 = (double)matrix.M32 * (double)matrix.M44 - (double)matrix.M34 * (double)matrix.M42;
+        //         double det12 = (double)matrix.M33 * (double)matrix.M44 - (double)matrix.M34 * (double)matrix.M43;
+        //         
+        //         major = (float)(det1*det12 - det2*det11 + det3*det10 + det4*det9 - det5*det8 + det6*det7);
+        //         minor1 = (float)det1;
+        //         minor2 = (float)det2;
+        //         minor3 = (float)det3;
+        //         minor4 = (float)det4;
+        //         minor5 = (float)det5;
+        //         minor6 = (float)det6;
+        //         minor7 = (float)det7;
+        //         minor8 = (float)det8;
+        //         minor9 = (float)det9;
+        //         minor10 = (float)det10;
+        //         minor11 = (float)det11;
+        //         minor12 = (float)det12;
+        // }
 		
         #endregion
     }

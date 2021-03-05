@@ -27,18 +27,5 @@ namespace Microsoft.Xna.Framework
                 handler(sender, e);
         }
 
-        /// <summary>
-        /// Safely raises an event by storing a copy of the event's delegate
-        /// in the <paramref name="handler"/> parameter and checking it for
-        /// null before invoking it.
-        /// </summary>
-        /// <param name="sender">The object raising the event.</param>
-        /// <param name="handler"><see cref="EventHandler"/> to be invoked</param>
-        /// <param name="e">The <see cref="EventArgs"/> passed to <see cref="EventHandler"/></param>
-        // internal static void Raise(object sender, EventHandler handler, EventArgs e)
-        // {
-        //     if (handler != null)
-        //         handler(sender, e);
-        // }
     }
 }

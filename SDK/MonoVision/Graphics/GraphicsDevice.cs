@@ -563,16 +563,6 @@ namespace Microsoft.Xna.Framework.Graphics
             // }
         }
 
-		// public void Clear(ClearOptions options, Vector4 color, float depth, int stencil)
-		// {
-  //           PlatformClear(options, color, depth, stencil);
-  //
-  //           unchecked
-  //           {
-  //               _graphicsMetrics._clearCount++;
-  //           }
-  //       }
-
         public void Dispose()
         {
             Dispose(true);
