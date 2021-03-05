@@ -55,7 +55,7 @@ namespace Microsoft.Xna.Framework
         private bool _shouldExit;
         private bool _suppressDraw;
 
-        partial void PlatformConstruct();
+        // partial void PlatformConstruct();
 
         public Game()
         {
@@ -72,10 +72,10 @@ namespace Microsoft.Xna.Framework
             _services.AddService(typeof(GamePlatform), Platform);
 
             // Calling Update() for first time initializes some systems
-            FrameworkDispatcher.Update();
+            // FrameworkDispatcher.Update();
 
             // Allow some optional per-platform construction to occur too.
-            PlatformConstruct();
+            // PlatformConstruct();
 
         }
 
@@ -646,7 +646,7 @@ namespace Microsoft.Xna.Framework
             AssertNotDisposed();
             if (Platform.BeforeUpdate(gameTime))
             {
-                FrameworkDispatcher.Update();
+                // FrameworkDispatcher.Update();
 
                 Update(gameTime);
 

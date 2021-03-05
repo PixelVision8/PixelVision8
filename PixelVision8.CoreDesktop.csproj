@@ -83,7 +83,6 @@
     <Compile Include="SDK\MonoVision\Audio\SoundState.cs" />
     <Compile Include="SDK\MonoVision\Color.cs" />
     <Compile Include="SDK\MonoVision\EventHelpers.cs" />
-    <Compile Include="SDK\MonoVision\FrameworkDispatcher.cs" />
     <Compile Include="SDK\MonoVision\FrameworkResources.cs" />
     <Compile Include="SDK\MonoVision\Game.cs" />
     <Compile Include="SDK\MonoVision\GamePlatform.cs" />
@@ -233,7 +232,6 @@
     <Compile Include="SDK\MonoVision\Utilities\ReflectionHelpers.cs" />
     <Compile Include="SDK\MonoVision\Vector2.cs" />
     <Compile Include="SDK\MonoVision\Vector3.cs" />
-    <Compile Include="SDK\MonoVision\Vector4.cs" />
     <Compile Include="SDK\Player\Chips\AbstractChip.cs" />
     <Compile Include="SDK\Player\Chips\Audio\MusicChip.cs" />
     <Compile Include="SDK\Player\Chips\Audio\Sfxr\SfxrParams.cs" />

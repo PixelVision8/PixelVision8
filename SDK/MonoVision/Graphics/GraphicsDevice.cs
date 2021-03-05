@@ -545,7 +545,7 @@ namespace Microsoft.Xna.Framework.Graphics
             // var options = ClearOptions.Target;
             // options |= ClearOptions.DepthBuffer;
             // options |= ClearOptions.Stencil;
-            PlatformClear(/*options,*/ color.ToVector4(), _viewport.MaxDepth, 0);
+            PlatformClear(/*options,*/ color, _viewport.MaxDepth, 0);
 
             // unchecked
             // {
@@ -553,15 +553,15 @@ namespace Microsoft.Xna.Framework.Graphics
             // }
         }
 
-        public void Clear(/*ClearOptions options,*/ Color color, float depth, int stencil)
-        {
-            PlatformClear(/*options,*/ color.ToVector4(), depth, stencil);
-
-            // unchecked
-            // {
-            //     _graphicsMetrics._clearCount++;
-            // }
-        }
+        // public void Clear(/*ClearOptions options,*/ Color color, float depth, int stencil)
+        // {
+        //     PlatformClear(/*options,*/ color.ToVector4(), depth, stencil);
+        //
+        //     // unchecked
+        //     // {
+        //     //     _graphicsMetrics._clearCount++;
+        //     // }
+        // }
 
         public void Dispose()
         {

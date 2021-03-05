@@ -133,7 +133,7 @@ namespace Microsoft.Xna.Framework.Graphics
         // internal BlendState _lastBlendState = new BlendState();
         // internal DepthStencilState _lastDepthStencilState = new DepthStencilState();
         // internal RasterizerState _lastRasterizerState = new RasterizerState();
-        private Vector4 _lastClearColor = Vector4.Zero;
+        private Color _lastClearColor = Color.Magenta;
         private float _lastClearDepth = 1.0f;
         private int _lastClearStencil = 0;
 
@@ -353,7 +353,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
         // private DepthStencilState clearDepthStencilState = new DepthStencilState { StencilEnable = true };
 
-        private void PlatformClear(/*ClearOptions options,*/ Vector4 color, float depth, int stencil)
+        private void PlatformClear(/*ClearOptions options,*/ Color color, float depth, int stencil)
         {
             // TODO: We need to figure out how to detect if we have a
             // depth stencil buffer or not, and clear options relating
@@ -385,7 +385,10 @@ namespace Microsoft.Xna.Framework.Graphics
             // {
                 if (color != _lastClearColor)
                 {
-                    GL.ClearColor(color.X, color.Y, color.Z, color.W);
+                    
+                    // (R / 255.0f, G / 255.0f, B / 255.0f, A / 255.0f)
+                        
+                    GL.ClearColor(color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
                     GraphicsExtensions.CheckGLError();
                     _lastClearColor = color;
                 }

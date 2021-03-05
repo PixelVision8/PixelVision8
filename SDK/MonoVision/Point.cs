@@ -78,16 +78,6 @@ namespace Microsoft.Xna.Framework
             this.Y = y;
         }
 
-        /// <summary>
-        /// Constructs a point with X and Y set to the same value.
-        /// </summary>
-        /// <param name="value">The x and y coordinates in 2d-space.</param>
-        // public Point(int value)
-        // {
-        //     this.X = value;
-        //     this.Y = value;
-        // }
-
         #endregion
 
         #region Operators
@@ -207,27 +197,6 @@ namespace Microsoft.Xna.Framework
         {
             return "{X:" + X + " Y:" + Y + "}";
         }
-
-        /// <summary>
-        /// Gets a <see cref="Vector2"/> representation for this object.
-        /// </summary>
-        /// <returns>A <see cref="Vector2"/> representation for this object.</returns>
-        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        // public Vector2 ToVector2()
-        // {
-        //     return new Vector2(X, Y);
-        // }
-
-        /// <summary>
-        /// Deconstruction method for <see cref="Point"/>.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        // public void Deconstruct(out int x, out int y)
-        // {
-        //     x = X;
-        //     y = Y;
-        // }
 
         #endregion
     }
