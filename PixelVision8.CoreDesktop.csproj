@@ -109,7 +109,6 @@
     <Compile Include="SDK\MonoVision\Graphics\NoSuitableGraphicsDeviceException.cs" />
     <Compile Include="SDK\MonoVision\Graphics\PresentationEventArgs.cs" />
     <Compile Include="SDK\MonoVision\Graphics\PresentationParameters.cs" />
-    <Compile Include="SDK\MonoVision\Graphics\PresentInterval.cs" />
     <Compile Include="SDK\MonoVision\Graphics\SamplerStateCollection.cs" />
     <Compile Include="SDK\MonoVision\Graphics\SetDataOptions.cs" />
     <Compile Include="SDK\MonoVision\Graphics\Shader\ConstantBuffer.cs" />

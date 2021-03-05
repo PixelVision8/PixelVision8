@@ -22,12 +22,6 @@ namespace Microsoft.Xna.Framework.Graphics
         /// </summary>
         internal bool SupportsFramebufferObjectEXT { get; private set; }
 
-        /// <summary>
-        /// True, if GL_IMG_multisampled_render_to_texture is supported; false otherwise.
-        /// </summary>
-        internal bool SupportsFramebufferObjectIMG { get; private set; }
-
-
         private void PlatformInitialize(GraphicsDevice device)
         {
 #if GLES

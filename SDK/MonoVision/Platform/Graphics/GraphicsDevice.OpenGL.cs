@@ -250,7 +250,7 @@ namespace Microsoft.Xna.Framework.Graphics
             }
 
             Context.MakeCurrent(windowInfo);
-            Context.SwapInterval = PresentationParameters.PresentationInterval.GetSwapInterval();
+            // Context.SwapInterval = -1;//PresentationParameters.PresentationInterval.GetSwapInterval();
 
             Context.MakeCurrent(windowInfo);
 #endif
@@ -1253,7 +1253,7 @@ namespace Microsoft.Xna.Framework.Graphics
         {
 #if DESKTOPGL || ANGLE
             Context.MakeCurrent(new WindowInfo(SdlGameWindow.Instance.Handle));
-            Context.SwapInterval = PresentationParameters.PresentationInterval.GetSwapInterval();
+            // Context.SwapInterval = -1;//PresentationParameters.PresentationInterval.GetSwapInterval();
 #endif
 
             ApplyRenderTargets();
@@ -1276,30 +1276,5 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
-// #if DESKTOPGL
-//         private void GetModeSwitchedSize(out int width, out int height)
-//         {
-//             var mode = new Sdl.Display.Mode
-//             {
-//                 Width = PresentationParameters.BackBufferWidth,
-//                 Height = PresentationParameters.BackBufferHeight,
-//                 Format = 0,
-//                 RefreshRate = 0,
-//                 DriverData = IntPtr.Zero
-//             };
-//             Sdl.Display.Mode closest;
-//             Sdl.Display.GetClosestDisplayMode(0, mode, out closest);
-//             width = closest.Width;
-//             height = closest.Height;
-//         }
-//
-//         private void GetDisplayResolution(out int width, out int height)
-//         {
-//             Sdl.Display.Mode mode;
-//             Sdl.Display.GetCurrentDisplayMode(0, out mode);
-//             width = mode.Width;
-//             height = mode.Height;
-//         }
-// #endif
     }
 }

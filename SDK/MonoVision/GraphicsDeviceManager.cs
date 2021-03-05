@@ -16,21 +16,16 @@ namespace Microsoft.Xna.Framework
         private readonly Game _game;
         private GraphicsDevice _graphicsDevice;
         private bool _initialized = false;
-
         private int _preferredBackBufferHeight;
         private int _preferredBackBufferWidth;
         private SurfaceFormat _preferredBackBufferFormat;
-        // private DepthFormat _preferredDepthStencilFormat;
         private bool _preferMultiSampling;
-        // private DisplayOrientation _supportedOrientations;
         private bool _synchronizedWithVerticalRetrace = true;
         private bool _drawBegun;
         private bool _disposed;
         private bool _hardwareModeSwitch = true;
         private bool _preferHalfPixelOffset = false;
         private bool _wantFullScreen;
-        // private GraphicsProfile _graphicsProfile;
-        // dirty flag for ApplyChanges
         private bool _shouldApplyChanges;
 
         /// <summary>
@@ -44,11 +39,6 @@ namespace Microsoft.Xna.Framework
         public static readonly int DefaultBackBufferHeight = 480;
 
         /// <summary>
-        /// Optional override for platform specific defaults.
-        /// </summary>
-        // partial void PlatformConstruct();
-
-        /// <summary>
         /// Associates this graphics device manager to a game instances.
         /// </summary>
         /// <param name="game">The game instance to attach.</param>
@@ -59,9 +49,7 @@ namespace Microsoft.Xna.Framework
 
             _game = game;
 
-            // _supportedOrientations = DisplayOrientation.Default;
             _preferredBackBufferFormat = SurfaceFormat.Color;
-            // _preferredDepthStencilFormat = DepthFormat.Depth24;
             _synchronizedWithVerticalRetrace = true;
 
             // Assume the window client size as the default back
@@ -81,19 +69,8 @@ namespace Microsoft.Xna.Framework
             // Default to windowed mode... this is ignored on platforms that don't support it.
             _wantFullScreen = false;
 
-            // XNA would read this from the manifest, but it would always default
-            // to reach unless changed.  So lets mimic that without the manifest bit.
-            // GraphicsProfile = GraphicsProfile.Reach;
-
-            // Let the plaform optionally overload construction defaults.
-            // PlatformConstruct();
-
-            // if (_game.Services.GetService(typeof(IGraphicsDeviceManager)) != null)
-            //     throw new ArgumentException("A graphics device manager is already registered.  The graphics device manager cannot be changed once it is set.");
             _game.graphicsDeviceManager = this;
 
-            // _game.Services.AddService(typeof(IGraphicsDeviceManager), this);
-            // _game.Services.AddService(typeof(IGraphicsDeviceService), this);
         }
 
         ~GraphicsDeviceManager()
@@ -129,71 +106,15 @@ namespace Microsoft.Xna.Framework
             if (_graphicsDevice != null)
                 return;
 
-            _graphicsDevice = new GraphicsDevice(gdi.Adapter/*, gdi.GraphicsProfile*/, this.PreferHalfPixelOffset, gdi.PresentationParameters);
+            _graphicsDevice = new GraphicsDevice(gdi.Adapter/*, gdi.GraphicsProfile, this.PreferHalfPixelOffset*/, gdi.PresentationParameters);
             _shouldApplyChanges = false;
 
-            // hook up reset events
-            GraphicsDevice.DeviceReset     += (sender, args) => OnDeviceReset(args);
-            GraphicsDevice.DeviceResetting += (sender, args) => OnDeviceResetting(args);
-
-            // update the touchpanel display size when the graphicsdevice is reset
-            // _graphicsDevice.DeviceReset += UpdateTouchPanel;
             _graphicsDevice.PresentationChanged += OnPresentationChanged;
 
-            OnDeviceCreated(EventArgs.Empty);
-        }
-
-        // void IGraphicsDeviceManager.CreateDevice()
-        // {
-        //     CreateDevice();
-        // }
-
-        public bool BeginDraw()
-        {
-            if (_graphicsDevice == null)
-                return false;
-
-            _drawBegun = true;
-            return true;
-        }
-
-        public void EndDraw()
-        {
-            if (_graphicsDevice != null && _drawBegun)
-            {
-                _drawBegun = false;
-                _graphicsDevice.Present();
-            }
         }
 
         #region IGraphicsDeviceService Members
 
-        public event EventHandler<EventArgs> DeviceCreated;
-        public event EventHandler<EventArgs> DeviceDisposing;
-        public event EventHandler<EventArgs> DeviceReset;
-        public event EventHandler<EventArgs> DeviceResetting;
-        public event EventHandler<PreparingDeviceSettingsEventArgs> PreparingDeviceSettings;
-        public event EventHandler<EventArgs> Disposed;
-
-        protected void OnDeviceDisposing(EventArgs e)
-        {
-            // EventHelpers.Raise(this, DeviceDisposing, e);
-        }
-
-        protected void OnDeviceResetting(EventArgs e)
-        {
-            // EventHelpers.Raise(this, DeviceResetting, e);
-        }
-
-        internal void OnDeviceReset(EventArgs e)
-        {
-            // EventHelpers.Raise(this, DeviceReset, e);
-        }
-
-        internal void OnDeviceCreated(EventArgs e)
-        {
-            // EventHelpers.Raise(this, DeviceCreated, e);
-        }
 
         /// <summary>
         /// This populates a GraphicsDeviceInformation instance and invokes PreparingDeviceSettings to
@@ -204,18 +125,6 @@ namespace Microsoft.Xna.Framework
         {
             var gdi = new GraphicsDeviceInformation();
             PrepareGraphicsDeviceInformation(gdi);
-            var preparingDeviceSettingsHandler = PreparingDeviceSettings;
-
-            if (preparingDeviceSettingsHandler != null)
-            {
-                // this allows users to overwrite settings through the argument
-                var args = new PreparingDeviceSettingsEventArgs(gdi);
-                preparingDeviceSettingsHandler(this, args);
-
-                if (gdi.PresentationParameters == null || gdi.Adapter == null)
-                    throw new NullReferenceException("Members should not be set to null in PreparingDeviceSettingsEventArgs");
-            }
-
             return gdi;
         }
 
@@ -242,43 +151,20 @@ namespace Microsoft.Xna.Framework
                     }
                 }
                 _disposed = true;
-                EventHelpers.Raise(this, Disposed, EventArgs.Empty);
+                // EventHelpers.Raise(this, Disposed, EventArgs.Empty);
             }
         }
 
         #endregion
 
-        // partial void PlatformApplyChanges();
-
-        // partial void PlatformPreparePresentationParameters(PresentationParameters presentationParameters);
-
+ 
         private void PreparePresentationParameters(PresentationParameters presentationParameters)
         {
-            // presentationParameters.BackBufferFormat = _preferredBackBufferFormat;
             presentationParameters.BackBufferWidth = _preferredBackBufferWidth;
             presentationParameters.BackBufferHeight = _preferredBackBufferHeight;
-            // presentationParameters.DepthStencilFormat = _preferredDepthStencilFormat;
             presentationParameters.IsFullScreen = _wantFullScreen;
             presentationParameters.HardwareModeSwitch = _hardwareModeSwitch;
-            presentationParameters.PresentationInterval = _synchronizedWithVerticalRetrace ? PresentInterval.One : PresentInterval.Immediate;
-            // presentationParameters.DisplayOrientation = _game.Window.CurrentOrientation;
-            // presentationParameters.DeviceWindowHandle = _game.Window.Handle;
-
-            // if (_preferMultiSampling)
-            // {
-            //     // always initialize MultiSampleCount to the maximum, if users want to overwrite
-            //     // this they have to respond to the PreparingDeviceSettingsEvent and modify
-            //     // args.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount
-            //     presentationParameters.MultiSampleCount = GraphicsDevice != null
-            //         ? GraphicsDevice.GraphicsCapabilities.MaxMultiSampleCount
-            //         : 32;
-            // }
-            // else
-            // {
-            //     presentationParameters.MultiSampleCount = 0;
-            // }
-
-            // PlatformPreparePresentationParameters(presentationParameters);
+            // presentationParameters.PresentationInterval = _synchronizedWithVerticalRetrace ? PresentInterval.One : PresentInterval.Immediate;
         }
 
         private void PrepareGraphicsDeviceInformation(GraphicsDeviceInformation gdi)
@@ -304,87 +190,31 @@ namespace Microsoft.Xna.Framework
 
             _shouldApplyChanges = false;
 
-            // _game.Window.SetSupportedOrientations(_supportedOrientations);
-
-            // Allow for optional platform specific behavior.
-            // PlatformApplyChanges();
-
             // populates a gdi with settings in this gdm and allows users to override them with
             // PrepareDeviceSettings event this information should be applied to the GraphicsDevice
             var gdi = DoPreparingDeviceSettings();
 
-            // if (gdi.GraphicsProfile != GraphicsDevice.GraphicsProfile)
-            // {
-            //     // if the GraphicsProfile changed we need to create a new GraphicsDevice
-            //     DisposeGraphicsDevice();
-            //     CreateDevice(gdi);
-            //     return;
-            // }
-
             GraphicsDevice.Reset(gdi.PresentationParameters);
         }
 
-        // private void DisposeGraphicsDevice()
-        // {
-        //     _graphicsDevice.Dispose();
-        //     EventHelpers.Raise(this, DeviceDisposing, EventArgs.Empty);
-        //     _graphicsDevice = null;
-        // }
-
-        partial void PlatformInitialize(PresentationParameters presentationParameters);
+        partial void PlatformInitialize(/*PresentationParameters presentationParameters*/);
 
         private void Initialize()
         {
-            // _game.Window.SetSupportedOrientations(_supportedOrientations);
-
-            var presentationParameters = new PresentationParameters();
-            PreparePresentationParameters(presentationParameters);
+            
+            /*var presentationParameters = new PresentationParameters();
+            PreparePresentationParameters(presentationParameters);*/
 
             // Allow for any per-platform changes to the presentation.
-            PlatformInitialize(presentationParameters);
+            PlatformInitialize(/*presentationParameters*/);
 
             _initialized = true;
-        }
-
-        // private void UpdateTouchPanel(object sender, EventArgs eventArgs)
-        // {
-        //     TouchPanel.DisplayWidth = _graphicsDevice.PresentationParameters.BackBufferWidth;
-        //     TouchPanel.DisplayHeight = _graphicsDevice.PresentationParameters.BackBufferHeight;
-        //     TouchPanel.DisplayOrientation = _graphicsDevice.PresentationParameters.DisplayOrientation;
-        // }
-
-        /// <summary>
-        /// Toggles between windowed and fullscreen modes.
-        /// </summary>
-        /// <remarks>
-        /// Note that on platforms that do not support windowed modes this has no affect.
-        /// </remarks>
-        public void ToggleFullScreen()
-        {
-            IsFullScreen = !IsFullScreen;
-            ApplyChanges();
         }
 
         private void OnPresentationChanged(object sender, PresentationEventArgs args)
         {
             _game.Platform.OnPresentationChanged(args.PresentationParameters);
         }
-
-        /// <summary>
-        /// The profile which determines the graphics feature level.
-        /// </summary>
-        // public GraphicsProfile GraphicsProfile
-        // {
-        //     get
-        //     {
-        //         return _graphicsProfile;
-        //     }
-        //     set
-        //     {
-        //         _shouldApplyChanges = true;
-        //         _graphicsProfile = value;
-        //     }
-        // }
 
         /// <summary>
         /// Returns the graphics device for this manager.
@@ -427,51 +257,6 @@ namespace Microsoft.Xna.Framework
             {
                 _shouldApplyChanges = true;
                 _hardwareModeSwitch = value;
-            }
-        }
-
-        /// <summary>
-        /// Indicates if DX9 style pixel addressing or current standard
-        /// pixel addressing should be used. This flag is set to
-        /// <c>false</c> by default. It should be set to <c>true</c>
-        /// for XNA compatibility. It is recommended to leave this flag
-        /// set to <c>false</c> for projects that are not ported from
-        /// XNA. This value is passed to <see cref="GraphicsDevice.UseHalfPixelOffset"/>.
-        /// </summary>
-        /// <remarks>
-        /// XNA uses DirectX9 for its graphics. DirectX9 interprets UV
-        /// coordinates differently from other graphics API's. This is
-        /// typically referred to as the half-pixel offset. MonoGame
-        /// replicates XNA behavior if this flag is set to <c>true</c>.
-        /// </remarks>
-        public bool PreferHalfPixelOffset
-        {
-            get { return _preferHalfPixelOffset; }
-            set
-            {
-                if (this.GraphicsDevice != null)
-                    throw new InvalidOperationException("Setting PreferHalfPixelOffset is not allowed after the creation of GraphicsDevice.");
-                _preferHalfPixelOffset = value;
-            }
-        }
-
-        /// <summary>
-        /// Indicates the desire for a multisampled back buffer.
-        /// </summary>
-        /// <remarks>
-        /// When called at startup this will automatically set the MSAA mode during initialization.  If
-        /// set after startup you must call ApplyChanges() for the MSAA mode to be changed.
-        /// </remarks>
-        public bool PreferMultiSampling
-        {
-            get
-            {
-                return _preferMultiSampling;
-            }
-            set
-            {
-                _shouldApplyChanges = true;
-                _preferMultiSampling = value;
             }
         }
 
@@ -535,67 +320,5 @@ namespace Microsoft.Xna.Framework
             }
         }
 
-        /// <summary>
-        /// Indicates the desired depth-stencil buffer format.
-        /// </summary>
-        /// <remarks>
-        /// The depth-stencil buffer format defines the scene depth precision and stencil bits available for effects during rendering.
-        /// When called at startup this will automatically set the format during initialization.  If
-        /// set after startup you must call ApplyChanges() for the format to be changed.
-        /// </remarks>
-        // public DepthFormat PreferredDepthStencilFormat
-        // {
-        //     get
-        //     {
-        //         return _preferredDepthStencilFormat;
-        //     }
-        //     set
-        //     {
-        //         _shouldApplyChanges = true;
-        //         _preferredDepthStencilFormat = value;
-        //     }
-        // }
-
-        /// <summary>
-        /// Indicates the desire for vsync when presenting the back buffer.
-        /// </summary>
-        /// <remarks>
-        /// Vsync limits the frame rate of the game to the monitor referesh rate to prevent screen tearing.
-        /// When called at startup this will automatically set the vsync mode during initialization.  If
-        /// set after startup you must call ApplyChanges() for the vsync mode to be changed.
-        /// </remarks>
-        // public bool SynchronizeWithVerticalRetrace
-        // {
-        //     get
-        //     {
-        //         return _synchronizedWithVerticalRetrace;
-        //     }
-        //     set
-        //     {
-        //         _shouldApplyChanges = true;
-        //         _synchronizedWithVerticalRetrace = value;
-        //     }
-        // }
-
-        /// <summary>
-        /// Indicates the desired allowable display orientations when the device is rotated.
-        /// </summary>
-        /// <remarks>
-        /// This property only applies to mobile platforms with automatic display rotation.
-        /// When called at startup this will automatically apply the supported orientations during initialization.  If
-        /// set after startup you must call ApplyChanges() for the supported orientations to be changed.
-        /// </remarks>
-        // public DisplayOrientation SupportedOrientations
-        // {
-        //     get
-        //     {
-        //         return _supportedOrientations;
-        //     }
-        //     set
-        //     {
-        //         _shouldApplyChanges = true;
-        //         _supportedOrientations = value;
-        //     }
-        // }
     }
 }

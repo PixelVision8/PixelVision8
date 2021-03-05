@@ -93,22 +93,22 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             if (!disposed)
             {
-                if (disposing)
-                {
-                    // Release managed objects
-                    // ...
-                }
+                // if (disposing)
+                // {
+                //     // Release managed objects
+                //     // ...
+                // }
 
                 // Release native objects
                 // ...
 
                 // Do not trigger the event if called from the finalizer
-                if (disposing)
-                    EventHelpers.Raise(this, Disposing, EventArgs.Empty);
+                // if (disposing)
+                //     EventHelpers.Raise(this, Disposing, EventArgs.Empty);
 
                 // Remove from the global list of graphics resources
-                if (graphicsDevice != null)
-                    graphicsDevice.RemoveResourceReference(_selfReference);
+                // if (graphicsDevice != null)
+                //     graphicsDevice.RemoveResourceReference(_selfReference);
 
                 _selfReference = null;
                 graphicsDevice = null;
@@ -116,7 +116,7 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
-		public event EventHandler<EventArgs> Disposing;
+		// public event EventHandler<EventArgs> Disposing;
 		
 		public GraphicsDevice GraphicsDevice
 		{
@@ -136,14 +136,14 @@ namespace Microsoft.Xna.Framework.Graphics
                 // during their lifetime. But only one GraphicsDevice should retain ownership.
                 if (graphicsDevice != null)
                 {
-                    graphicsDevice.RemoveResourceReference(_selfReference);
+                    // graphicsDevice.RemoveResourceReference(_selfReference);
                     _selfReference = null;
                 }
 
                 graphicsDevice = value;
 
                 _selfReference = new WeakReference(this);
-                graphicsDevice.AddResourceReference(_selfReference);
+                // graphicsDevice.AddResourceReference(_selfReference);
             }
 		}
 		
@@ -157,7 +157,7 @@ namespace Microsoft.Xna.Framework.Graphics
 		
 		public string Name { get; set; }
 		
-		public Object Tag { get; set; }
+		// public Object Tag { get; set; }
 
         public override string ToString()
         {

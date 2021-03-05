@@ -13,17 +13,17 @@ namespace MonoGame.OpenGL
         private IntPtr _winHandle;
         private bool _disposed;
 
-        public int SwapInterval
-        {
-            get
-            {
-                return Sdl.GL.GetSwapInterval();
-            }
-            set
-            {
-                Sdl.GL.SetSwapInterval(value);
-            }
-        }
+        // public int SwapInterval
+        // {
+        //     get
+        //     {
+        //         return Sdl.GL.GetSwapInterval();
+        //     }
+        //     set
+        //     {
+        //         Sdl.GL.SetSwapInterval(value);
+        //     }
+        // }
 
         public bool IsDisposed
         {
