@@ -19,7 +19,7 @@ namespace Microsoft.Xna.Framework.Graphics
             Passes = cloneSource.Passes.Clone(effect);
         }
 
-        internal EffectTechnique(Effect effect, string name, EffectPassCollection passes/*, EffectAnnotationCollection annotations*/)
+        internal EffectTechnique(string name, EffectPassCollection passes)
         {
             Name = name;
             Passes = passes;

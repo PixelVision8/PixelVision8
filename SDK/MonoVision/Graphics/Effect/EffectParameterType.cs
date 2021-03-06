@@ -29,25 +29,25 @@ namespace Microsoft.Xna.Framework.Graphics
         /// String type.
         /// </summary>
 		String,
-        /// <summary>
-        /// Any texture type.
-        /// </summary>
-		Texture,
-        /// <summary>
-        /// 1D-texture type.
-        /// </summary>
-        Texture1D,  
-        /// <summary>
-        /// 2D-texture type.
-        /// </summary>
-        Texture2D,
-        /// <summary>
-        /// 3D-texture type.
-        /// </summary>
-        Texture3D,
-        /// <summary>
-        /// Cubic texture type.
-        /// </summary>
-		TextureCube
+  //       /// <summary>
+  //       /// Any texture type.
+  //       /// </summary>
+		// Texture,
+  //       /// <summary>
+  //       /// 1D-texture type.
+  //       /// </summary>
+  //       Texture1D,  
+  //       /// <summary>
+  //       /// 2D-texture type.
+  //       /// </summary>
+  //       Texture2D,
+  //       /// <summary>
+  //       /// 3D-texture type.
+  //       /// </summary>
+  //       Texture3D,
+  //       /// <summary>
+  //       /// Cubic texture type.
+  //       /// </summary>
+		// TextureCube
 	}
 }

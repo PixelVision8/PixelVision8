@@ -14,7 +14,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// </summary>
         internal static ulong NextStateKey { get; private set; }
 
-        internal EffectParameter(   EffectParameterClass class_, 
+        internal EffectParameter(   /*EffectParameterClass class_,*/ 
                                     EffectParameterType type, 
                                     string name, 
                                     int rowCount, 
@@ -22,10 +22,10 @@ namespace Microsoft.Xna.Framework.Graphics
                                     string semantic, 
                                     // EffectAnnotationCollection annotations,
                                     EffectParameterCollection elements,
-                                    EffectParameterCollection structMembers,
+                                    /*EffectParameterCollection structMembers,*/
                                     object data )
 		{
-            ParameterClass = class_;
+            // ParameterClass = class_;
             ParameterType = type;
 
             Name = name;
@@ -36,7 +36,7 @@ namespace Microsoft.Xna.Framework.Graphics
 			ColumnCount = columnCount;
 
             Elements = elements;
-            StructureMembers = structMembers;
+            // StructureMembers = structMembers;
 
             Data = data;
             StateKey = unchecked(NextStateKey++);
@@ -45,7 +45,7 @@ namespace Microsoft.Xna.Framework.Graphics
         internal EffectParameter(EffectParameter cloneSource)
         {
             // Share all the immutable types.
-            ParameterClass = cloneSource.ParameterClass;
+            // ParameterClass = cloneSource.ParameterClass;
             ParameterType = cloneSource.ParameterType;
             Name = cloneSource.Name;
             Semantic = cloneSource.Semantic;
@@ -55,7 +55,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
             // Clone the mutable types.
             Elements = cloneSource.Elements.Clone();
-            StructureMembers = cloneSource.StructureMembers.Clone();
+            // StructureMembers = cloneSource.StructureMembers.Clone();
 
             // The data is mutable, so we have to clone it.
             var array = cloneSource.Data as Array;
@@ -68,7 +68,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
         public string Semantic { get; private set; }
 
-		public EffectParameterClass ParameterClass { get; private set; }
+		// public EffectParameterClass ParameterClass { get; private set; }
 
 		public EffectParameterType ParameterType { get; private set; }
 
@@ -78,7 +78,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
         public EffectParameterCollection Elements { get; private set; }
 
-        public EffectParameterCollection StructureMembers { get; private set; }
+        // public EffectParameterCollection StructureMembers { get; private set; }
 
         // public EffectAnnotationCollection Annotations { get; private set; }
 
@@ -98,15 +98,15 @@ namespace Microsoft.Xna.Framework.Graphics
 		public Single GetValueSingle ()
 		{
             // TODO: Should this fetch int and bool as a float?
-            if (ParameterClass != EffectParameterClass.Scalar || ParameterType != EffectParameterType.Single)
-                throw new InvalidCastException();
+            // if (ParameterClass != EffectParameterClass.Scalar || ParameterType != EffectParameterType.Single)
+            //     throw new InvalidCastException();
 
 			return ((float[])Data)[0];
 		}
 
         public void SetValue(Matrix value)
         {
-            if (ParameterClass != EffectParameterClass.Matrix || ParameterType != EffectParameterType.Single)
+            if (/*ParameterClass != EffectParameterClass.Matrix ||*/ ParameterType != EffectParameterType.Single)
                 throw new InvalidCastException();
 
             // HLSL expects matrices to be transposed by default.
@@ -208,16 +208,16 @@ namespace Microsoft.Xna.Framework.Graphics
 
 		public void SetValue (Single value)
 		{
-            if (ParameterType != EffectParameterType.Single)
-                throw new InvalidCastException();
+            // if (ParameterType != EffectParameterType.Single)
+            //     throw new InvalidCastException();
 			((float[])Data)[0] = value;
             StateKey = unchecked(NextStateKey++);
 		}
 
 		public void SetValue (Vector2 value)
 		{
-            if (ParameterClass != EffectParameterClass.Vector || ParameterType != EffectParameterType.Single)
-                throw new InvalidCastException();
+            // if (/*ParameterClass != EffectParameterClass.Vector ||*/ ParameterType != EffectParameterType.Single)
+            //     throw new InvalidCastException();
 
             var fData = (float[])Data;
             fData[0] = value.X;

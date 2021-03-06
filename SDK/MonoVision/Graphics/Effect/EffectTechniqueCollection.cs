@@ -27,20 +27,20 @@ namespace Microsoft.Xna.Framework.Graphics
             get { return _techniques [index]; }
         }
 
-        public EffectTechnique this[string name]
-        {
-            get 
-            {
-                // TODO: Add a name to technique lookup table.
-				foreach (var technique in _techniques) 
-                {
-					if (technique.Name == name)
-						return technique;
-			    }
-
-			    return null;
-		    }
-        }
+    //     public EffectTechnique this[string name]
+    //     {
+    //         get 
+    //         {
+    //             // TODO: Add a name to technique lookup table.
+				// foreach (var technique in _techniques) 
+    //             {
+				// 	if (technique.Name == name)
+				// 		return technique;
+			 //    }
+    //
+			 //    return null;
+		  //   }
+    //     }
 
         public IEnumerator<EffectTechnique> GetEnumerator()
         {

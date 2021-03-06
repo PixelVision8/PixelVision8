@@ -79,7 +79,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
 				if (reader.ReadBoolean())
 				{
-					Samplers[s].state = new SamplerState();
+					// Samplers[s].state = new SamplerState();
 					// Samplers[s].state.AddressU = (TextureAddressMode)reader.ReadByte();
 					// Samplers[s].state.AddressV = (TextureAddressMode)reader.ReadByte();
 					// Samplers[s].state.AddressW = (TextureAddressMode)reader.ReadByte();
@@ -89,9 +89,9 @@ namespace Microsoft.Xna.Framework.Graphics
                         reader.ReadByte(),
                         reader.ReadByte());
 					// Samplers[s].state.Filter = (TextureFilter)reader.ReadByte();
-					Samplers[s].state.MaxAnisotropy = reader.ReadInt32();
-					Samplers[s].state.MaxMipLevel = reader.ReadInt32();
-					Samplers[s].state.MipMapLevelOfDetailBias = reader.ReadSingle();
+					// Samplers[s].state.MaxAnisotropy = reader.ReadInt32();
+					// Samplers[s].state.MaxMipLevel = reader.ReadInt32();
+					// Samplers[s].state.MipMapLevelOfDetailBias = reader.ReadSingle();
 				}
 
                 Samplers[s].name = reader.ReadString();

@@ -19,10 +19,10 @@ namespace Microsoft.Xna.Framework.Graphics
         private ulong _stateKey;
 
         private bool _dirty;
-        private bool Dirty
-        {
-            get { return _dirty; }
-        }
+        // private bool Dirty
+        // {
+        //     get { return _dirty; }
+        // }
 
         public ConstantBuffer(ConstantBuffer cloneSource)
         {
@@ -56,10 +56,10 @@ namespace Microsoft.Xna.Framework.Graphics
             PlatformInitialize();
         }
 
-        internal void Clear()
-        {
-            PlatformClear();
-        }
+        // internal void Clear()
+        // {
+        //     PlatformClear();
+        // }
 
         private void SetData(int offset, int rows, int columns, object data)
         {
@@ -86,9 +86,9 @@ namespace Microsoft.Xna.Framework.Graphics
             // Take care of the single copy case!
             else if (rows == 1 || (rows == 4 && columns == 4)) {
                 // take care of shader compiler optimization
-                int len = rows * columns * elementSize;
-                if (_buffer.Length - offset > len)
-                len = _buffer.Length - offset;
+                // int len = rows * columns * elementSize;
+                // if (_buffer.Length - offset > len)
+                // len = _buffer.Length - offset;
                 Buffer.BlockCopy(data as Array, 0, _buffer, offset, rows*columns*elementSize);
             } else
             {
@@ -119,27 +119,10 @@ namespace Microsoft.Xna.Framework.Graphics
             }
             else if (param.Data != null)
             {
-                switch (param.ParameterType)
-                {
-                    case EffectParameterType.Single:
-                    case EffectParameterType.Int32:
-                    case EffectParameterType.Bool:
-                        // HLSL assumes matrices are column-major, whereas in-memory we use row-major.
-                        // TODO: HLSL can be told to use row-major. We should handle that too.
-                        if (param.ParameterClass == EffectParameterClass.Matrix)
-                        {
-                            rowsUsed = param.ColumnCount;
-                            SetData(offset, param.ColumnCount, param.RowCount, param.Data);
-                        }
-                        else
-                        {
-                            rowsUsed = param.RowCount;
-                            SetData(offset, param.RowCount, param.ColumnCount, param.Data);
-                        }
-                        break;
-                    default:
-                        throw new NotSupportedException("Not supported!");
-                }
+                
+                rowsUsed = param.RowCount;
+                SetData(offset, param.RowCount, param.ColumnCount, param.Data);
+                        
             }
 
             return rowsUsed;

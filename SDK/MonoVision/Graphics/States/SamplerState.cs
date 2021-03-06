@@ -14,11 +14,11 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 
         public static readonly SamplerState PointClamp;
-        private readonly bool _defaultStateObject;
+        // private readonly bool _defaultStateObject;
         private Color _borderColor;
-        private int _maxAnisotropy;
-        private int _maxMipLevel;
-        private float _mipMapLevelOfDetailBias;
+        // private int _maxAnisotropy;
+        // private int _maxMipLevel;
+        // private float _mipMapLevelOfDetailBias;
         // private CompareFunction _comparisonFunction;
 
         public Color BorderColor
@@ -26,40 +26,40 @@ namespace Microsoft.Xna.Framework.Graphics
             get { return _borderColor; }
             set
             {
-                ThrowIfBound();
+                // ThrowIfBound();
                 _borderColor = value;
             }
         }
 
-        public int MaxAnisotropy
-        {
-            get { return _maxAnisotropy; }
-            set
-            {
-                ThrowIfBound();
-                _maxAnisotropy = value;
-            }
-        }
+        // public int MaxAnisotropy
+        // {
+        //     get { return _maxAnisotropy; }
+        //     set
+        //     {
+        //         ThrowIfBound();
+        //         _maxAnisotropy = value;
+        //     }
+        // }
 
-        public int MaxMipLevel
-        {
-            get { return _maxMipLevel; }
-            set
-            {
-                ThrowIfBound();
-                _maxMipLevel = value;
-            }
-        }
+        // public int MaxMipLevel
+        // {
+        //     get { return _maxMipLevel; }
+        //     set
+        //     {
+        //         ThrowIfBound();
+        //         _maxMipLevel = value;
+        //     }
+        // }
 
-        public float MipMapLevelOfDetailBias
-        {
-            get { return _mipMapLevelOfDetailBias; }
-            set
-            {
-                ThrowIfBound();
-                _mipMapLevelOfDetailBias = value;
-            }
-        }
+        // public float MipMapLevelOfDetailBias
+        // {
+        //     get { return _mipMapLevelOfDetailBias; }
+        //     set
+        //     {
+        //         ThrowIfBound();
+        //         _mipMapLevelOfDetailBias = value;
+        //     }
+        // }
 
         /// <summary>
         /// When using comparison sampling, also set <see cref="FilterMode"/> to <see cref="TextureFilterMode.Comparison"/>.
@@ -74,29 +74,29 @@ namespace Microsoft.Xna.Framework.Graphics
         //     }
         // }
 
-        internal void BindToGraphicsDevice(GraphicsDevice device)
-        {
-            if (_defaultStateObject)
-                throw new InvalidOperationException("You cannot bind a default state object.");
-            if (GraphicsDevice != null && GraphicsDevice != device)
-                throw new InvalidOperationException("This sampler state is already bound to a different graphics device.");
-            GraphicsDevice = device;
-        }
+        // internal void BindToGraphicsDevice(GraphicsDevice device)
+        // {
+        //     if (_defaultStateObject)
+        //         throw new InvalidOperationException("You cannot bind a default state object.");
+        //     if (GraphicsDevice != null && GraphicsDevice != device)
+        //         throw new InvalidOperationException("This sampler state is already bound to a different graphics device.");
+        //     GraphicsDevice = device;
+        // }
 
-        internal void ThrowIfBound()
-        {
-            if (_defaultStateObject)
-                throw new InvalidOperationException("You cannot modify a default sampler state object.");
-            if (GraphicsDevice != null)
-                throw new InvalidOperationException("You cannot modify the sampler state after it has been bound to the graphics device!");
-        }
+        // internal void ThrowIfBound()
+        // {
+        //     if (_defaultStateObject)
+        //         throw new InvalidOperationException("You cannot modify a default sampler state object.");
+        //     if (GraphicsDevice != null)
+        //         throw new InvalidOperationException("You cannot modify the sampler state after it has been bound to the graphics device!");
+        // }
 
         public SamplerState()
         {
             BorderColor = Color.White;
-            MaxAnisotropy = 4;
-            MaxMipLevel = 0;
-            MipMapLevelOfDetailBias = 0.0f;
+            // MaxAnisotropy = 4;
+            // MaxMipLevel = 0;
+            // MipMapLevelOfDetailBias = 0.0f;
             // ComparisonFunction = CompareFunction.Never;
         }
 
@@ -105,7 +105,7 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             Name = name;
             
-            _defaultStateObject = true;
+            // _defaultStateObject = true;
         }
 
         private SamplerState(SamplerState cloneSource)
@@ -113,9 +113,9 @@ namespace Microsoft.Xna.Framework.Graphics
             Name = cloneSource.Name;
             
             _borderColor = cloneSource._borderColor;
-            _maxAnisotropy = cloneSource._maxAnisotropy;
-            _maxMipLevel = cloneSource._maxMipLevel;
-            _mipMapLevelOfDetailBias = cloneSource._mipMapLevelOfDetailBias;
+            // _maxAnisotropy = cloneSource._maxAnisotropy;
+            // _maxMipLevel = cloneSource._maxMipLevel;
+            // _mipMapLevelOfDetailBias = cloneSource._mipMapLevelOfDetailBias;
             // _comparisonFunction = cloneSource._comparisonFunction;
         }
 

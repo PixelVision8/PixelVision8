@@ -74,7 +74,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 // else if (ReferenceEquals(value, SamplerState.PointWrap))
                 //     newSamplerState = _samplerStatePointWrap;
 
-                _samplerStatePointClamp.BindToGraphicsDevice(_graphicsDevice);
+                // _samplerStatePointClamp.BindToGraphicsDevice(_graphicsDevice);
 
                 _actualSamplers[index] = _samplerStatePointClamp;
 

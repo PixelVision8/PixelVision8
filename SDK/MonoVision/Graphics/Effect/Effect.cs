@@ -222,12 +222,6 @@ namespace Microsoft.Xna.Framework.Graphics
             base.Dispose(disposing);
         }
 
-        // internal protected override void GraphicsDeviceResetting()
-        // {
-        //     for (var i = 0; i < ConstantBuffers.Length; i++)
-        //         ConstantBuffers[i].Clear();
-        // }
-
         #region Effect File Reader
 
 		private void ReadEffect (BinaryReaderEx reader)
@@ -280,9 +274,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
                 ReadAnnotations(reader);
 
-                var passes = ReadPasses(reader, this, _shaders);
-
-                techniques[t] = new EffectTechnique(this, name, passes/*, annotations*/);
+                techniques[t] = new EffectTechnique(name, ReadPasses(reader, this, _shaders));
             }
 
             Techniques = new EffectTechniqueCollection(techniques);
@@ -324,61 +316,6 @@ namespace Microsoft.Xna.Framework.Graphics
                 if (shaderIndex != 255)
                     pixelShader = shaders[shaderIndex];
 
-				// BlendState blend = null;
-				// DepthStencilState depth = null;
-				// RasterizerState raster = null;
-				// if (reader.ReadBoolean())
-				// {
-					// blend = new BlendState
-					// {
-					// 	AlphaBlendFunction = (BlendFunction)reader.ReadByte(),
-					// 	AlphaDestinationBlend = (Blend)reader.ReadByte(),
-					// 	AlphaSourceBlend = (Blend)reader.ReadByte(),
-					// 	BlendFactor = new Color(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte()),
-					// 	ColorBlendFunction = (BlendFunction)reader.ReadByte(),
-					// 	ColorDestinationBlend = (Blend)reader.ReadByte(),
-					// 	ColorSourceBlend = (Blend)reader.ReadByte(),
-					// 	ColorWriteChannels = (ColorWriteChannels)reader.ReadByte(),
-					// 	ColorWriteChannels1 = (ColorWriteChannels)reader.ReadByte(),
-					// 	ColorWriteChannels2 = (ColorWriteChannels)reader.ReadByte(),
-					// 	ColorWriteChannels3 = (ColorWriteChannels)reader.ReadByte(),
-					// 	MultiSampleMask = reader.ReadInt32(),
-					// };
-				// }
-				// if (reader.ReadBoolean())
-				// {
-					// depth = new DepthStencilState
-					// {
-					// 	CounterClockwiseStencilDepthBufferFail = (StencilOperation)reader.ReadByte(),
-					// 	CounterClockwiseStencilFail = (StencilOperation)reader.ReadByte(),
-					// 	CounterClockwiseStencilFunction = (CompareFunction)reader.ReadByte(),
-					// 	CounterClockwiseStencilPass = (StencilOperation)reader.ReadByte(),
-					// 	DepthBufferEnable = reader.ReadBoolean(),
-					// 	DepthBufferFunction = (CompareFunction)reader.ReadByte(),
-					// 	DepthBufferWriteEnable = reader.ReadBoolean(),
-					// 	ReferenceStencil = reader.ReadInt32(),
-					// 	StencilDepthBufferFail = (StencilOperation)reader.ReadByte(),
-					// 	StencilEnable = reader.ReadBoolean(),
-					// 	StencilFail = (StencilOperation)reader.ReadByte(),
-					// 	StencilFunction = (CompareFunction)reader.ReadByte(),
-					// 	StencilMask = reader.ReadInt32(),
-					// 	StencilPass = (StencilOperation)reader.ReadByte(),
-					// 	StencilWriteMask = reader.ReadInt32(),
-					// 	TwoSidedStencilMode = reader.ReadBoolean(),
-					// };
-				// }
-				// if (reader.ReadBoolean())
-				// {
-				// 	raster = new RasterizerState
-				// 	{
-				// 		CullMode = (CullMode)reader.ReadByte(),
-				// 		DepthBias = reader.ReadSingle(),
-				// 		FillMode = (FillMode)reader.ReadByte(),
-				// 		MultiSampleAntiAlias = reader.ReadBoolean(),
-				// 		ScissorTestEnable = reader.ReadBoolean(),
-				// 		SlopeScaleDepthBias = reader.ReadSingle(),
-				// 	};
-				// }
 
                 passes[i] = new EffectPass(effect, name, vertexShader, pixelShader/*, blend, depth,*/ /*raster,*//* annotations*/);
 			}
@@ -395,7 +332,7 @@ namespace Microsoft.Xna.Framework.Graphics
             var parameters = new EffectParameter[count];
 			for (var i = 0; i < count; i++)
 			{
-				var class_ = (EffectParameterClass)reader.ReadByte();				
+				var class_ = /*(EffectParameterClass)*/reader.ReadByte();				
                 var type = (EffectParameterType)reader.ReadByte();
 				var name = reader.ReadString();
 				var semantic = reader.ReadString();
@@ -409,50 +346,17 @@ namespace Microsoft.Xna.Framework.Graphics
 				object data = null;
 				if (elements.Count == 0 && structMembers.Count == 0)
 				{
-					switch (type)
-					{						
-                        case EffectParameterType.Bool:
-                        case EffectParameterType.Int32:
-#if !OPENGL
-                            // Under most platforms we properly store integers and 
-                            // booleans in an integer type.
-                            //
-                            // MojoShader on the otherhand stores everything in float
-                            // types which is why this code is disabled under OpenGL.
-					        {
-					            var buffer = new int[rowCount * columnCount];								
-                                for (var j = 0; j < buffer.Length; j++)
-                                    buffer[j] = reader.ReadInt32();
-                                data = buffer;
-                                break;
-					        }
-#endif
-
-						case EffectParameterType.Single:
-							{
-								var buffer = new float[rowCount * columnCount];
-								for (var j = 0; j < buffer.Length; j++)
-                                    buffer[j] = reader.ReadSingle();
-                                data = buffer;
-                                break;							
-                            }
-
-                        case EffectParameterType.String:
-                            // TODO: We have not investigated what a string
-                            // type should do in the parameter list.  Till then
-                            // throw to let the user know.
-							throw new NotSupportedException();
-
-                        default:
-                            // NOTE: We skip over all other types as they 
-                            // don't get added to the constant buffer.
-					        break;
-					}
+					
+					var buffer = new float[rowCount * columnCount];
+					for (var j = 0; j < buffer.Length; j++)
+                        buffer[j] = reader.ReadSingle();
+                    data = buffer;
+                            
                 }
 
 				parameters[i] = new EffectParameter(
-					class_, type, name, rowCount, columnCount, semantic, 
-					/*annotations,*/ elements, structMembers, data);
+					/*class_,*/ type, name, rowCount, columnCount, semantic, 
+					/*annotations,*/ elements, /*structMembers,*/ data);
 			}
 
 			return new EffectParameterCollection(parameters);

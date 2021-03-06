@@ -119,7 +119,6 @@
     <Compile Include="SDK\MonoVision\Graphics\SpriteBatcher.cs" />
     <Compile Include="SDK\MonoVision\Graphics\SpriteBatchItem.cs" />
     <Compile Include="SDK\MonoVision\Graphics\SpriteSortMode.cs" />
-    <Compile Include="SDK\MonoVision\Graphics\States\CompareFunction.cs" />
     <Compile Include="SDK\MonoVision\Graphics\States\SamplerState.cs" />
     <Compile Include="SDK\MonoVision\Graphics\SurfaceFormat.cs" />
     <Compile Include="SDK\MonoVision\Graphics\Texture.cs" />
