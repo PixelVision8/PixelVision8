@@ -60,14 +60,19 @@ function DrawTool:CreateCanvas()
 
     end
 
-    self.clearBackgroundPattern = {}
+    local clearBackgroundPattern = {}
 
     local totalTiles = 128/8 * 128/8
-    local tileID = emptycolor.spriteIDs[1]
+    local tileID = MetaSprite(FindMetaSpriteId("emptycolor")).Sprites[1].Id
     
     for i = 1, totalTiles do
-        table.insert(self.clearBackgroundPattern, tileID)
+        table.insert(clearBackgroundPattern, tileID)
     end
+
+    self.clearBGPatterId = 250
+
+    -- TODO need to make sure this is an empty sprite
+    NewMetaSprite(250, "clearBackgroundPattern", clearBackgroundPattern, 128/8, 0)
 
 end
 
@@ -174,14 +179,19 @@ function DrawTool:ClearCanvasPanelBackground()
     -- print("Canvas BG Cleared")
     
     -- Need to draw immediately since the canvas doesn't run through the UI draw queue
-    DrawSprites(self.clearBackgroundPattern, 4, 4, 16, false, false, DrawMode.Tile)
+    -- DrawSprites()
+
+    DrawMetaSprite(FindMetaSpriteId(self.clearBGPatterId), 4, 4, false, false, DrawMode.Tile)
 
     self.canvasPanelBackgroundInvalid = false
+    
 end
 
 
 function DrawTool:UpdateCanvas(value, flipH, flipV)
 
+    if(value == nil) then return end
+    print("value", value)
     self:InvalidateCanvasPanelBackground()
 
     flipH = flipH or false

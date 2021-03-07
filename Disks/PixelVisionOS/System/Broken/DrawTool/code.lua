@@ -9,7 +9,7 @@
 ]]--
 
 -- Load sprites and libs
-LoadScript("sb-sprites")
+-- LoadScript("sb-sprites")
 LoadScript("pixel-vision-os-v2")
 LoadScript("code-draw-tool")
 
@@ -17,8 +17,7 @@ LoadScript("code-draw-tool")
 _G["pixelVisionOS"] = PixelVisionOS:Init()
 
 function Init()
-  print("Init")
-
+  
   -- Disable the back key in this tool
   EnableBackKey(false)
   EnableAutoRun(false)

@@ -10,11 +10,11 @@
 
 local colorPanelID = "ColorPanelUI"
 
--- Now we need to create the item picker over sprite by using the color selection spriteIDs and changing the color offset
-_G["itempickerover"] = {spriteIDs = selection2x2over.spriteIDs, width = selection2x2over.width, colorOffset = 0}
+-- -- Now we need to create the item picker over sprite by using the color selection spriteIDs and changing the color offset
+-- _G["itempickerover"] = {spriteIDs = selection2x2over.spriteIDs, width = selection2x2over.width, colorOffset = 0}
 
--- Next we need to create the item picker selected up sprite by using the color selection spriteIDs and changing the color offset
-_G["itempickerselectedup"] = {spriteIDs = selection2x2selected.spriteIDs, width = selection2x2selected.width, colorOffset = 0}
+-- -- Next we need to create the item picker selected up sprite by using the color selection spriteIDs and changing the color offset
+-- _G["itempickerselectedup"] = {spriteIDs = selection2x2selected.spriteIDs, width = selection2x2selected.width, colorOffset = 0}
 
 function DrawTool:CreateColorPanel()
 
@@ -35,13 +35,9 @@ function DrawTool:CreateColorPanel()
 
     self.bgDrawArgs =
     {
-        bgflagicon.spriteIDs,
+        FindMetaSpriteId("bgflagicon"),
         0,
-        0,
-        bgflagicon.width,
-        false,
-        false,
-        DrawMode.Sprite
+        0
     }
 
     self.systemColorPickerData.ctrlCopyEnabled = false
@@ -169,14 +165,14 @@ function DrawTool:CreateColorPanel()
             local colorID = id + data.altColorOffset
 
             if(Color(colorID) == self.maskColor) then
-            data.canvas.DrawSprites(emptymaskcolor.spriteIDs, x, y, emptymaskcolor.width, false, false)
+            data.canvas.DrawMetaSprite(FindMetaSpriteId("emptymaskcolor"), x, y)
             else
             data.canvas.Clear(colorID, x, y, data.itemSize.x, data.itemSize.y)
             end
             
         else
 
-            data.canvas.DrawSprites(emptycolor.spriteIDs, x, y, emptycolor.width, false, false)
+            data.canvas.DrawMetaSprite(FindMetaSpriteId("emptycolor"), x, y)
             
         end
 
@@ -212,8 +208,16 @@ function DrawTool:ShowColorPanel()
     pixelVisionOS:InvalidateItemPickerPageButton(self.systemColorPickerData)
     -- TODO clear page area?
 
-    editorUI:NewDraw("DrawSprites", {pickerbottompageedge.spriteIDs, 20, 20, pickerbottompageedge.width, false, false,  DrawMode.Tile})
+    -- editorUI:NewDraw("DrawSprites", {pickerbottompageedge.spriteIDs, 20, 20, pickerbottompageedge.width, false, false,  DrawMode.Tile})
 
+    DrawMetaSprite(
+        FindMetaSpriteId("pickerbottompageedge"),
+        20,
+        20,
+        false,
+        false,
+        DrawMode.Tile
+    )
 
 end
 
@@ -229,11 +233,27 @@ function DrawTool:HideColorPanel()
 
     -- Clear bottom of the main window
     for i = 1, 8 do
-        editorUI:NewDraw("DrawSprites", {pagebuttonempty.spriteIDs, 11 + i, 20, pagebuttonempty.width, false, false,  DrawMode.Tile})
+        -- editorUI:NewDraw("DrawSprites", {pagebuttonempty.spriteIDs, 11 + i, 20, pagebuttonempty.width, false, false,  DrawMode.Tile})
+        DrawMetaSprite(
+            FindMetaSpriteId("pagebuttonempty"),
+            11 + i,
+            20,
+            false,
+            false,
+            DrawMode.Tile
+        )
     end
 
-    editorUI:NewDraw("DrawSprites", {canvasbottomrightcorner.spriteIDs, 20, 20, canvasbottomrightcorner.width, false, false,  DrawMode.Tile})
-
+    -- editorUI:NewDraw("DrawSprites", {canvasbottomrightcorner.spriteIDs, 20, 20, canvasbottomrightcorner.width, false, false,  DrawMode.Tile})
+    
+    DrawMetaSprite(
+        FindMetaSpriteId("canvasbottomrightcorner"),
+        20,
+        20,
+        false,
+        false,
+        DrawMode.Tile
+    )
 
 end
 
@@ -341,7 +361,12 @@ function DrawTool:UpdateColorPanel()
         end
 
         if(self.showBGIcon == true) then
-            editorUI:NewDraw("DrawSprites", self.bgDrawArgs)
+            DrawMetaSprite(
+                self.bgDrawArgs[1],
+                self.bgDrawArgs[2],
+                self.bgDrawArgs[3]
+            )
+            -- editorUI:NewDraw("DrawSprites", self.bgDrawArgs)
         end
 
     end

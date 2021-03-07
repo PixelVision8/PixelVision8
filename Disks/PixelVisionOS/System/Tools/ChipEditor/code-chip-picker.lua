@@ -70,7 +70,7 @@ function EditorUI:RedrawChipPickerButtons(data)
     local button = data.buttons[i]
     button.spriteName = data.options[i + offset]["spriteName"] .. "icon"
     button.toolTip = "Drag the " .. data.options[i + offset]["name"] .. " " .. data.options[i + offset]["type"] .. " chip to the empty socket."
-    self:RebuildSpriteCache(button)
+    self:RebuildMetaSpriteCache(button)
 
   end
 

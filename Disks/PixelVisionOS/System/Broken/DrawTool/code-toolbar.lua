@@ -23,7 +23,7 @@ function DrawTool:CreateToolbar()
     self.lastSelectedToolID = 1
 
     -- Labels for mode changes
-    self.editorLabelArgs = {nil, 4, 2, nil, false, false, DrawMode.Tile}
+    -- self.editorLabelArgs = {nil, 4, 2, nil, false, false, DrawMode.Tile}
 
     -- Add the eraser if we are in direct color mode
     -- table.insert(tools, 2, "eraser")
@@ -126,8 +126,10 @@ function DrawTool:ChangeEditMode(mode)
        
         self:ToggleToolBar(false)
 
-        self.editorLabelArgs[1] = systemcolorlabel.spriteIDs
-        self.editorLabelArgs[4] = systemcolorlabel.width
+        self.editorLabelSprite = "systemcolorlabel"
+
+        -- self.editorLabelArgs[1] = systemcolorlabel.spriteIDs
+        -- self.editorLabelArgs[4] = systemcolorlabel.width
 
         editorUI:Enable(self.sizeBtnData,false)
         editorUI:Enable(self.spriteIDInputData,false)
@@ -158,8 +160,10 @@ function DrawTool:ChangeEditMode(mode)
        
         self:ToggleToolBar(true)
 
-        self.editorLabelArgs[1] = spriteeditorlabel.spriteIDs
-        self.editorLabelArgs[4] = spriteeditorlabel.width
+        self.editorLabelSprite = "systemcolorlabel"
+
+        -- self.editorLabelArgs[1] = spriteeditorlabel.spriteIDs
+        -- self.editorLabelArgs[4] = spriteeditorlabel.width
 
         editorUI:Enable(self.sizeBtnData, true)
         editorUI:Enable(self.spriteIDInputData, true)
@@ -173,7 +177,16 @@ function DrawTool:ChangeEditMode(mode)
 
     end
 
-    editorUI:NewDraw("DrawSprites", self.editorLabelArgs)
+    -- editorUI:NewDraw("DrawSprites", self.editorLabelArgs)
+
+    DrawMetaSprite(
+        FindMetaSpriteId(self.editorLabelSprite),
+        4, 
+        2, 
+        false, 
+        false, 
+        DrawMode.Tile
+    )
 
     self:UpdateTitle()
 

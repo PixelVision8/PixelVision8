@@ -19,6 +19,7 @@ function EditColorModal:Init(editorUI, maskColor, title)
     _editColorModal.title = title or "Edit Color"
     _editColorModal.editorUI = editorUI
     _editColorModal.maskColor = maskColor
+    _editColorModal.warningMetaSpriteId = FindMetaSpriteId("colorwarningicon")
 
     _editColorModal:Configure()
     -- _editColorModal.currentSelection = 1
@@ -310,8 +311,10 @@ function EditColorModal:Open()
 
     self.canvas:DrawPixels(self.rect.x, self.rect.y, DrawMode.TilemapCache)
 
-    DrawSprites(coloreditorpanel.spriteIDs, self.rect.x + 8, self.rect.y + 16, coloreditorpanel.width, false, false, DrawMode.TilemapCache)
+    -- DrawSprites(coloreditorpanel.spriteIDs, self.rect.x + 8, self.rect.y + 16, coloreditorpanel.width, false, false, DrawMode.TilemapCache)
 
+    DrawMetaSprite(FindMetaSpriteId("coloreditorpanel"), self.rect.x + 8, self.rect.y + 16, false, false, DrawMode.TilemapCache)
+    
     -- Invalidate all of the UI buttons so they display correctly when re-opening the modal
     for i = 1, #self.buttons do
         editorUI:Invalidate(self.buttons[i])
@@ -362,22 +365,22 @@ function EditColorModal:ChangeColorMode(value)
         self.greenInputData.max = 255
         self.blueInputData.max = 255
 
-        DrawSprites(colorlabelred.spriteIDs, self.rect.x + 112, self.rect.y + 64, colorlabelred.width, false, false, DrawMode.TilemapCache)
-        DrawSprites(colorlabelgreen.spriteIDs, self.rect.x + 112, self.rect.y + 96, colorlabelgreen.width, false, false, DrawMode.TilemapCache)
-        DrawSprites(colorlabelblue.spriteIDs, self.rect.x + 112, self.rect.y + 128, colorlabelblue.width, false, false, DrawMode.TilemapCache)
+        DrawMetaSprite(FindMetaSpriteId("colorlabelred"), self.rect.x + 112, self.rect.y + 64, false, false, DrawMode.TilemapCache)
+        DrawMetaSprite(FindMetaSpriteId("colorlabelgreen"), self.rect.x + 112, self.rect.y + 96, false, false, DrawMode.TilemapCache)
+        DrawMetaSprite(FindMetaSpriteId("colorlabelblue"), self.rect.x + 112, self.rect.y + 128, false, false, DrawMode.TilemapCache)
 
-        DrawSprites(rgbcolorspace.spriteIDs, self.rect.x + 16, self.rect.y + 32, hsvcolorspace.width, false, false, DrawMode.TilemapCache)
+        DrawMetaSprite(FindMetaSpriteId("rgbcolorspace"), self.rect.x + 16, self.rect.y + 32, false, false, DrawMode.TilemapCache)
 
     else
         self.redInputData.max = 100
         self.greenInputData.max = 100
         self.blueInputData.max = 100
 
-        DrawSprites(colorlabelhue.spriteIDs, self.rect.x + 112, self.rect.y + 64, colorlabelred.width, false, false, DrawMode.TilemapCache)
-        DrawSprites(colorlabelsaturation.spriteIDs, self.rect.x + 112, self.rect.y + 96, colorlabelsaturation.width, false, false, DrawMode.TilemapCache)
-        DrawSprites(colorlabelvalue.spriteIDs, self.rect.x + 112, self.rect.y + 128, colorlabelvalue.width, false, false, DrawMode.TilemapCache)
+        DrawMetaSprite(FindMetaSpriteId("colorlabelhue"), self.rect.x + 112, self.rect.y + 64, false, false, DrawMode.TilemapCache)
+        DrawMetaSprite(FindMetaSpriteId("colorlabelsaturation"), self.rect.x + 112, self.rect.y + 96, false, false, DrawMode.TilemapCache)
+        DrawMetaSprite(FindMetaSpriteId("colorlabelvalue"), self.rect.x + 112, self.rect.y + 128, false, false, DrawMode.TilemapCache)
 
-        DrawSprites(hsvcolorspace.spriteIDs, self.rect.x + 16, self.rect.y + 32, hsvcolorspace.width, false, false, DrawMode.TilemapCache)
+        DrawMetaSprite(FindMetaSpriteId("hsvcolorspace"), self.rect.x + 16, self.rect.y + 32, false, false, DrawMode.TilemapCache)
 
     end
 
@@ -609,7 +612,8 @@ end
 
 function EditColorModal:Draw()
     if(self.showWarning == true) then
-        DrawSprites(colorwarningicon.spriteIDs, self.rect.x + 124, self.rect.y + 35, colorwarningicon.width, false, false, DrawMode.Sprite)
+        -- DrawSprites(colorwarningicon.spriteIDs, self.rect.x + 124, self.rect.y + 35, colorwarningicon.width, false, false, DrawMode.Sprite)
+        DrawMetaSprite(self.warningMetaSpriteId, self.rect.x + 124, self.rect.y + 35)
     end
 end
 

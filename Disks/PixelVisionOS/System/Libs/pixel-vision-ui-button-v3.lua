@@ -76,9 +76,9 @@ function EditorUI:UpdateButtonSizeFromCache(data)
   local spriteData = -1
 
   -- Get the default sprite data for the button
-  if(data.cachedSpriteData ~= nil) then
+  if(data.cachedMetaSpriteIds ~= nil) then
 
-    spriteData = FindMetaSpriteId(data.cachedSpriteData.up or data.cachedSpriteData.disabled)
+    spriteData = data.cachedMetaSpriteIds.up or data.cachedMetaSpriteIds.disabled
 
   end
 
@@ -167,11 +167,11 @@ function EditorUI:UpdateButton(data, hitRect)
       self.tmpState = "selected" .. self.tmpState
     end
 
-    local spriteData = data.cachedSpriteData ~= nil and data.cachedSpriteData[self.tmpState] or nil
+    local spriteData = data.cachedMetaSpriteIds ~= nil and data.cachedMetaSpriteIds[self.tmpState] or nil
 
     if(spriteData ~= nil) then-- and data.spriteDrawArgs ~= nil) then
 
-      DrawMetaSprite(FindMetaSpriteId(spriteData), data.rect.x, data.rect.y)
+      DrawMetaSprite(spriteData, data.rect.x, data.rect.y)
 
     end
 
@@ -231,14 +231,14 @@ function EditorUI:RedrawButton(data, stateOverride)
       end
 
       -- Test to see if the button is disabled. If there is a disabled sprite data, we'll change the state to disabled. By default, always use the up state.
-      if(data.enabled == false and data.cachedSpriteData["disabled"] ~= nil and data.selected ~= true) then --_G[spriteName .. "disabled"] ~= nil) then
+      if(data.enabled == false and data.cachedMetaSpriteIds["disabled"] ~= nil and data.selected ~= true) then --_G[spriteName .. "disabled"] ~= nil) then
         self.tmpState = "disabled"
       end
 
     end
 
     -- Test to see if the sprite data exist before updating the tiles
-    if(data.cachedSpriteData ~= nil and data.cachedSpriteData[self.tmpState] ~= nil) then-- and data.tileDrawArgs ~= nil) then
+    if(data.cachedMetaSpriteIds ~= nil and data.cachedMetaSpriteIds[self.tmpState] ~= nil) then-- and data.tileDrawArgs ~= nil) then
 
       if(data.redrawBackground == true) then
 
@@ -247,7 +247,7 @@ function EditorUI:RedrawButton(data, stateOverride)
       end
 
       DrawMetaSprite(
-        FindMetaSpriteId(data.cachedSpriteData[self.tmpState]), 
+        data.cachedMetaSpriteIds[self.tmpState], 
         data.rect.x, 
         data.rect.y, 
         false, 
@@ -268,18 +268,15 @@ function EditorUI:ClearButton(data, flag)
   -- We want to clear the flag if no value is supplied
   flag = flag or - 1
 
-  if(data.cachedSpriteData == nil) then
+  if(data.cachedMetaSpriteIds == nil) then
     return
   end
-
-  -- Get the cached empty sprite data
-  -- self.tmpSpriteData = data.cachedSpriteData["empty"]
 
   -- make sure we have sprite data to draw
   if(self.tmpSpriteData ~= nil) then
 
     DrawMetaSprite(
-        FindMetaSpriteId(data.cachedSpriteData["empty"]), 
+        data.cachedMetaSpriteIds["empty"], 
         data.rect.x, 
         data.rect.y, 
         false, 

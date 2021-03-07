@@ -30,7 +30,7 @@ LoadScript("pixel-vision-ui-text-editor-v3")
 LoadScript("pixel-vision-ui-input-field-v3")
 LoadScript("pixel-vision-ui-input-area-v3")
 LoadScript("pixel-vision-ui-mouse-cursor-v2")
-LoadScript("pixel-vision-ui-picker-v2")
+LoadScript("pixel-vision-ui-picker-v3")
 LoadScript("pixel-vision-ui-number-stepper-v2")
 LoadScript("pixel-vision-ui-string-stepper-v2")
 
@@ -147,35 +147,10 @@ function EditorUI:CreateData(rect, spriteName, toolTip, forceDraw)
 
     end
 
-    self:RebuildSpriteCache(data)
+    
     self:RebuildMetaSpriteCache(data)
 
     return data
-
-end
-
-function EditorUI:RebuildSpriteCache(data, invalidate)
-
-    invalidate = invalidate or true
-    local spriteName = data.spriteName
-
-    -- TODO this should cache the meta sprite id
-
-    -- If a sprite name is provided then look for the correct sprite states
-    if(spriteName ~= nil) then
-        data.cachedSpriteData = {
-            up = spriteName .. "up",
-            down = spriteName .. "down" ~= nil and spriteName .. "down" or spriteName .. "selectedup",
-            over = spriteName .. "over",
-            selectedup = spriteName .. "selectedup",
-            selectedover = spriteName .. "selectedover",
-            selecteddown = spriteName .. "selecteddown" ~= nil and spriteName .. "selecteddown" or spriteName .. "selectedover",
-            disabled = spriteName .. "disabled",
-            empty = spriteName .. "empty" -- used to clear the sprites
-        }
-    end
-
-    self:Invalidate(data)
 
 end
 

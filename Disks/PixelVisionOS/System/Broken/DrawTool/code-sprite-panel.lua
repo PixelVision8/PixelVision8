@@ -49,6 +49,9 @@ function DrawTool:CreateSpritePanel()
         "SpritePicker"
     )
 
+    -- Shift the picker color back for the selection
+    self.spritePickerData.picker.colorOffser = PaletteOffset( 0 )
+
     self.spritePickerData.picker.borderOffset = 8
 
     self.spritePickerData.onAction = function(value) self:ChangeSpriteID(value) end
@@ -127,14 +130,14 @@ function DrawTool:UpdateSpritePanel()
 
     -- DrawText(  )
 
-    editorUI:NewDraw("DrawText", {self.offsetDisplayText, 172, 224-2, DrawMode.Sprite, "medium", 6, -4})
+    DrawText(self.offsetDisplayText, 172, 224-2, DrawMode.Sprite, "medium", 6, -4)
 
     if(self.lastSpriteSize ~= self.selectionSizes[self.spriteMode]) then
         self.lastSpriteSize = self.selectionSizes[self.spriteMode]
         self.sizeDisplayText = string.format("%02dx%02d", self.lastSpriteSize.x * editorUI.spriteSize.x, self.lastSpriteSize.y * editorUI.spriteSize.y)
     end
 
-    editorUI:NewDraw("DrawText", {self.sizeDisplayText, 224-2, 224-2, DrawMode.Sprite, "medium", 6, -4 })
+    -- DrawText(self.sizeDisplayText, 224-2, 224-2, DrawMode.Sprite, "medium", 6, -4 )
 
 end
 
@@ -162,26 +165,26 @@ function DrawTool:OnNextSpriteSize(reverse)
     local spriteName = "spritemode"..self.selectionSizes[self.spriteMode].x.."x" .. self.selectionSizes[self.spriteMode].y
 
     -- Change sprite button graphic
-    self.sizeBtnData.cachedSpriteData = {
-        up = _G[spriteName .. "up"],
-        down = _G[spriteName .. "down"] ~= nil and _G[spriteName .. "down"] or _G[spriteName .. "selectedup"],
-        over = _G[spriteName .. "over"],
-        selectedup = _G[spriteName .. "selectedup"],
-        selectedover = _G[spriteName .. "selectedover"],
-        selecteddown = _G[spriteName .. "selecteddown"] ~= nil and _G[spriteName .. "selecteddown"] or _G[spriteName .. "selectedover"],
-        disabled = _G[spriteName .. "disabled"],
-        empty = _G[spriteName .. "empty"] -- used to clear the sprites
+    self.sizeBtnData.cachedMetaSpriteIds = {
+        up = FindMetaSpriteId(spriteName .. "up"),
+        down = FindMetaSpriteId(spriteName .. "down") ~= -1 and FindMetaSpriteId(spriteName .. "down") or FindMetaSpriteId(spriteName .. "selectedup"),
+        over = FindMetaSpriteId(spriteName .. "over"),
+        selectedup = FindMetaSpriteId(spriteName .. "selectedup"),
+        selectedover = FindMetaSpriteId(spriteName .. "selectedover"),
+        selecteddown = FindMetaSpriteId(spriteName .. "selecteddown") ~= -1 and FindMetaSpriteId(spriteName .. "selecteddown") or FindMetaSpriteId(spriteName .. "selectedover"),
+        disabled = FindMetaSpriteId(spriteName .. "disabled"),
+        empty = FindMetaSpriteId(spriteName .. "empty") -- used to clear the sprites
     }
 
     self:ConfigureSpritePickerSelector(self.spriteMode)
 
     editorUI:Invalidate(self.sizeBtnData)
 
-    -- TODO need to rewire this
+    -- -- TODO need to rewire this
     pixelVisionOS:ChangeCanvasPixelSize(self.canvasData, self.selectionSizes[self.spriteMode].scale)
 
-    -- -- Force the sprite editor to update to the new selection from the sprite picker
-    self:ChangeSpriteID(self.spritePickerData.currentSelection)
+    -- -- -- Force the sprite editor to update to the new selection from the sprite picker
+    -- self:ChangeSpriteID(self.spritePickerData.currentSelection)
 
 end
 
@@ -193,12 +196,14 @@ function DrawTool:ConfigureSpritePickerSelector(size)
     local y = self.selectionSize.y
 
     local spriteName = "selection"..x.."x" .. y
-    
-    _G["spritepickerover"] = {spriteIDs = _G[spriteName .. "over"].spriteIDs, width = _G[spriteName .. "over"].width, colorOffset = 0}
+
+    -- print(self.spritePickerData.cachedMetaSpriteIds)
+ 
+    -- _G["spritepickerover"] = {spriteIDs = _G[spriteName .. "over"].spriteIDs, width = _G[spriteName .. "over"].width, colorOffset = 0}
 
     -- local state = self.selectionMode == SpriteMode and "selected" or "over"
 
-    _G["spritepickerselectedup"] = {spriteIDs = _G[spriteName .. "selected"].spriteIDs, width = _G[spriteName .. "selected"].width, colorOffset = 0}
+    -- _G["spritepickerselectedup"] = {spriteIDs = _G[spriteName .. "selected"].spriteIDs, width = _G[spriteName .. "selected"].width, colorOffset = 0}
 
     pixelVisionOS:ChangeItemPickerScale(self.spritePickerData, size, self.selectionSize)
 
@@ -215,7 +220,7 @@ function DrawTool:ChangeSpriteID(value)
 
     editorUI:ChangeInputField(self.spriteIDInputData, self.spritePickerData.currentSelection, false)
 
-    -- -- ClearHistory()
+    -- -- -- ClearHistory()
 
     self:UpdateCanvas(self.spritePickerData.currentSelection)
     
@@ -223,7 +228,7 @@ function DrawTool:ChangeSpriteID(value)
 
     self:ForcePickerFocus(self.spritePickerData)
 
-    -- Update the input field
+    -- -- -- Update the input field
     editorUI:ChangeInputField(self.spriteIDInputData, value, false)
 
     self:UpdateCanvas(value)

@@ -9,10 +9,10 @@
 ]]--
 
 -- Global UI used by this tool
-LoadScript("pixel-vision-os-item-picker-v3")
-LoadScript("pixel-vision-os-color-picker-v4")
+LoadScript("pixel-vision-os-item-picker-v4")
+LoadScript("pixel-vision-os-color-picker-v5")
 LoadScript("pixel-vision-os-sprite-picker-v4")
-LoadScript("pixel-vision-os-canvas-v3")
+LoadScript("pixel-vision-os-canvas-v4")
 LoadScript("pixel-vision-os-progress-modal-v2")
 
 -- Create table to store the workspace tool logic
@@ -46,12 +46,13 @@ function DrawTool:Init()
         invalid = true,
         success = false,
         canEdit = EditColorModal ~= nil,
-        debugMode = false,
+        debugMode = true,
         colorOffset = 0,
         lastMode = nil,
         showBGColor = false,
         panelInFocus = nil,
-        ignoreProcessing = false
+        ignoreProcessing = false,
+        toolTitle = "sprites.png" -- TODO this should just read from the file
     }
 
     -- Reset the undo history so it's ready for the tool
@@ -202,24 +203,25 @@ function DrawTool:LoadSuccess()
         
     end
 
-    -- Change the sprite mode
+    -- -- Change the sprite mode
     self:OnNextSpriteSize()
 
     -- Select the start sprite
     self:ChangeSpriteID(self.lastSpriteID)
 
     -- print("SCALE", self.spriteMode)
+    -- print("self.spriteMode", self.spriteMode)
     self:ConfigureSpritePickerSelector(self.spriteMode)
 
-    -- Set default tool
+    -- -- Set default tool
     editorUI:SelectToggleButton(self.toolBtnData, defaultToolID)
 
-    -- Set default mode
+    -- -- Set default mode
     self:ChangeEditMode(defaultMode)
     
     self:ResetDataValidation()
 
-    -- print("Test", self.systemColorPickerData)
+    -- -- print("Test", self.systemColorPickerData)
 
     self:ForcePickerFocus(self.systemColorPickerData)
     
@@ -353,7 +355,8 @@ function DrawTool:ForcePickerFocus(src)
         self.selectionMode = SystemColorMode
 
         -- Change sprite picker focus color
-        self.spritePickerData.picker.selectedDrawArgs[1] = _G["spritepickerover"].spriteIDs
+        -- TODO Need to change the selector
+        -- self.spritePickerData.picker.selectedDrawArgs[1] = _G["spritepickerover"].spriteIDs
 
         -- Toggle menu options
         pixelVisionOS:EnableMenuItem(CopyShortcut, false)
@@ -384,8 +387,8 @@ function DrawTool:ForcePickerFocus(src)
         pixelVisionOS:ClearItemPickerSelection(self.systemColorPickerData)
 
         -- Change selection focus colors
-        self.spritePickerData.picker.selectedDrawArgs[1] = _G["spritepickerover"].spriteIDs
-        self.paletteColorPickerData.picker.selectedDrawArgs[1] = _G["itempickerselectedup"].spriteIDs
+        -- self.spritePickerData.picker.selectedDrawArgs[1] = _G["spritepickerover"].spriteIDs
+        -- self.paletteColorPickerData.picker.selectedDrawArgs[1] = _G["itempickerselectedup"].spriteIDs
 
         -- Toggle menu options
         pixelVisionOS:EnableMenuItem(CopyShortcut, true)
@@ -405,8 +408,8 @@ function DrawTool:ForcePickerFocus(src)
     --     -- Clear the system color picker selection
         pixelVisionOS:ClearItemPickerSelection(self.systemColorPickerData)
 
-        self.spritePickerData.picker.selectedDrawArgs[1] = _G["spritepickerselectedup"].spriteIDs
-        self.paletteColorPickerData.picker.selectedDrawArgs[1] = _G["itempickerover"].spriteIDs
+        -- self.spritePickerData.picker.selectedDrawArgs[1] = _G["spritepickerselectedup"].spriteIDs
+        -- self.paletteColorPickerData.picker.selectedDrawArgs[1] = _G["itempickerover"].spriteIDs
 
         pixelVisionOS:EnableMenuItem(CopyShortcut, true)
         pixelVisionOS:EnableMenuItem(PasteShortcut, false)

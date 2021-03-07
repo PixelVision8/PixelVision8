@@ -17,7 +17,7 @@ function DrawTool:CreatePalettePanel()
     -- local maxPages = 16
     -- self.colorOffset = pixelVisionOS.colorOffset
 
-    self.paletteLabelArgs = {gamecolortext.spriteIDs, 4, 21, gamecolortext.width, false, false, DrawMode.Tile}
+    -- self.paletteLabelArgs = {gamecolortext.spriteIDs, 4, 21, gamecolortext.width, false, false, DrawMode.Tile}
     
     -- Create the palette color picker
     self.paletteColorPickerData = pixelVisionOS:CreateColorPicker(
@@ -158,34 +158,35 @@ function DrawTool:CreatePalettePanel()
         self:UpdateCanvas(self.lastSelection)
 
         -- Need to reselect the current color in the new palette if we are in draw mode
-        if(self.canvasData.tool ~= "eraser" and self.canvasData.tool ~= "select") then
+        -- if(self.canvasData.tool ~= "eraser" and self.canvasData.tool ~= "select") then
 
-            local colorID = (self.lastPaletteColorID % 16) + pageOffset
+        --     local colorID = (self.lastPaletteColorID % 16) + pageOffset
 
-            -- print("colorID", colorID, self.paletteColorPickerData.picker.selected, pageOffset, self.lastPaletteColorID % 16)
-            if(self.paletteColorPickerData.currentSelection ~= colorID) then
-                pixelVisionOS:SelectItemPickerIndex(self.paletteColorPickerData, colorID, false, false)
-                self:OnSelectPaletteColor(colorID)
-            end
+        --     -- print("colorID", colorID, self.paletteColorPickerData.picker.selected, pageOffset, self.lastPaletteColorID % 16)
+        --     if(self.paletteColorPickerData.currentSelection ~= colorID) then
+        --         pixelVisionOS:SelectItemPickerIndex(self.paletteColorPickerData, colorID, false, false)
+        --         self:OnSelectPaletteColor(colorID)
+        --     end
             
-        end
+        -- end
 
     end
 
     self.paletteColorPickerData.onDrawColor = function(data, id, x, y)
 
-        if(id < data.total and (id % data.totalPerPage) < data.visiblePerPage) then
+        -- if(id < data.total and (id % data.totalPerPage) < data.visiblePerPage) then
             local colorID = id + data.altColorOffset
             
-            if(Color(colorID) == pixelVisionOS.maskColor) then
-                data.canvas.DrawSprites(emptymaskcolor.spriteIDs, x, y, emptymaskcolor.width, false, false)
-            else
-                data.canvas.Clear(colorID, x, y, data.itemSize.x, data.itemSize.y)
-            end
+        --     if(Color(colorID) == pixelVisionOS.maskColor) then
+        --         -- data.canvas.DrawSprites(emptymaskcolor.spriteIDs, x, y, emptymaskcolor.width, false, false)
+        --     else
+                data.canvas.Clear(colorID+10, x, y, data.itemSize.x, data.itemSize.y)
+        --     end
             
-        else
-            data.canvas.DrawSprites(emptycolor.spriteIDs, x, y, emptycolor.width, false, false)
-        end
+        -- else
+        -- print("Find", FindMetaSpriteId("emptycolor"))
+            -- data.canvas.DrawMetaSprite(FindMetaSpriteId("emptycolor"), x, y)
+        -- end
 
     end
 
@@ -226,8 +227,8 @@ function DrawTool:DrawPalettePanelLabel()
 
     -- if(self.usePalettes == true) then
         
-        self.paletteLabelArgs[1] = gamepalettetext.spriteIDs
-        self.paletteLabelArgs[4] = gamepalettetext.width
+        -- self.paletteLabelArgs[1] = gamepalettetext.spriteIDs
+        -- self.paletteLabelArgs[4] = gamepalettetext.width
 
     -- else
 
@@ -236,7 +237,16 @@ function DrawTool:DrawPalettePanelLabel()
 
     -- end
 
-    editorUI:NewDraw("DrawSprites", self.paletteLabelArgs)
+    DrawMetaSprite(
+        FindMetaSpriteId("gamepalettetext"), 
+        4, 
+        21, 
+        false, 
+        false, 
+        DrawMode.Tile
+    )
+
+    -- editorUI:NewDraw("DrawSprites", self.paletteLabelArgs)
 end
 
 function DrawTool:UpdatePalettePanel()
