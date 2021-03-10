@@ -60,7 +60,7 @@ end
 -- NOTE: Make sure to balance each call to :BeginUndoable(data) with a call
 -- to :EndUndoable(data). They can nest fine, just don't forget one.
 function PixelVisionOS:BeginUndoable(data)
-  print("test start", data)
+
   if data.currentUndo then
     -- we have already stashed the data & state, just track how deep we are
     data.currentUndo.count = data.currentUndo.count + 1
@@ -75,7 +75,7 @@ end
 
 -- Call :EndUndoable(data) after each modification to the text in the editor.
 function PixelVisionOS:EndUndoable(data)
-  print("test end",data)
+  
   -- We might be inside several nested calls to begin/endUndoable
   data.currentUndo.count = data.currentUndo.count - 1
   -- If this was the last of the nesting
@@ -103,7 +103,7 @@ function PixelVisionOS:Undo(data)
   table.insert(data.redoStack, data:GetState())
 
   -- restore the cursor state
-  data:SetState(state)
+  self:SetState(state)
 
 end
 
@@ -120,7 +120,7 @@ function PixelVisionOS:Redo(data)
   table.insert(data.undoStack, data:GetState())
   
   -- restore the cursor state
-  data:SetState(state)
+  self:SetState(state)
 end
 
 function PixelVisionOS:UpdateHistoryButtons(data)
@@ -131,7 +131,7 @@ function PixelVisionOS:UpdateHistoryButtons(data)
 end
 
 function PixelVisionOS:BeginUndo(data)
-  self:BeginUndoable(self)
+  self:BeginUndoable(data)
 end
 
 function PixelVisionOS:EndUndo(data)

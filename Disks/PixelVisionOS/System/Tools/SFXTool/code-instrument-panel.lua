@@ -92,13 +92,17 @@ function SFXTool:OnSFXAction(name)
 
   function SFXTool:OnSoundTemplatePress(value)
 
-    gameEditor:GenerateSound(self:CurrentSoundID(), value)
-  
-    if(self.playButton.enabled) then
-      gameEditor:PlaySound(self:CurrentSoundID())
-    end
-  
     local id = self:CurrentSoundID()
+
+    pixelVisionOS:BeginUndo(self)
+
+    gameEditor:GenerateSound(id, value)
+  
+    pixelVisionOS:EndUndo(self)
+
+    if(self.playButton.enabled) then
+      gameEditor:PlaySound(id)
+    end
   
     -- Reload the sound data
     self:LoadSound(id)
@@ -157,7 +161,7 @@ function SFXTool:OnSFXAction(name)
   
     for i = 1, self.totalSFXButtons do
   
-      local data = self.sfxButtonData[i].buttonUI
+      -- local data = self.sfxButtonData[i].buttonUI
       editorUI:Enable(self.sfxButtonData[i].buttonUI, enabled)
   
     end

@@ -119,7 +119,10 @@ end
 function SFXTool:OnMutate()
   local id = self:CurrentSoundID()
 
+  pixelVisionOS:BeginUndo(self)
   gameEditor:Mutate(id)
+  pixelVisionOS:EndUndo(self)
+  
   gameEditor:PlaySound(id, tonumber(self.channelIDStepper.inputField.text))
 
   self:LoadSound(id)
@@ -129,25 +132,65 @@ end
 
 function SFXTool:GetState()
 
-  -- local pixelData = pixelVisionOS:GetCanvasPixelData(self.canvasData)
-
-  -- local selectedChar = self.charStepper.inputField.text
-
-  -- TODO Current sfx ID
+  -- Current sfx ID
   local id = self:CurrentSoundID()
-  -- TODO Sfx setting string
+  
+  -- Sfx setting string
+  local data = gameEditor:Sound(id)
 
   local state = {
       
       Action = function()
 
-        print("Action", id)
-        -- TODO go back to SFX Id
-        -- TODO Set SFX setting value
+        gameEditor:Sound(id, data)
 
+        self:LoadSound(id)
+
+        self:OnPlaySound()
+
+        self:InvalidateData()
       end
   }
 
   return state
+
+end
+
+function SFXTool:OnCopySound()
+  
+  local id = self:CurrentSoundID()
+
+  pixelVisionOS:SystemCopy(gameEditor:Sound(id))
+
+  -- soundClipboard = {name = songNameFieldData.text, data = gameEditor:Sound(id)}
+
+  pixelVisionOS:DisplayMessage("Sound data has been copied.", 5)
+
+  pixelVisionOS:EnableMenuItem(self.PasteShortcut, true)
+end
+
+function SFXTool:OnPasteSound()
+  
+  local id = self:CurrentSoundID()
+  
+  local data = pixelVisionOS:SystemPaste()
+  
+  -- TODO need to validate the data
+
+  pixelVisionOS:BeginUndo(self)
+
+  gameEditor:Sound(id, data)
+
+  pixelVisionOS:EndUndo(self)
+
+  pixelVisionOS:DisplayMessage("New sound data has been pasted into sound '".. id .. "'.", 5)
+
+  self:LoadSound(id)
+
+  self:InvalidateData()
+
+  self:OnPlaySound()
+
+  pixelVisionOS:EnableMenuItem(self.PasteShortcut, false)
 
 end

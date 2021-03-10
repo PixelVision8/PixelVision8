@@ -42,9 +42,11 @@ function Draw()
 
   RedrawDisplay()
 
+  sfxTool:Draw()
+  
   pixelVisionOS:Draw()
 
-  sfxTool:Draw()
+  
 
 end
 

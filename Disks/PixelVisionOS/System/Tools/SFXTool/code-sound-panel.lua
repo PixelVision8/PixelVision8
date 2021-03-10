@@ -61,59 +61,6 @@ function SFXTool:CurrentSoundID()
     return tonumber(self.soundIDStepper.inputField.text)
 end
 
-function SFXTool:LoadSound(value, clearHistory, updateHistory)
-    -- print("Load Sound Clear", clearHistory)
-    self.currentID = value
-  
-    local data = gameEditor:Sound(value)
-  
-    if(self.originalSounds[value] == nil) then
-      -- Make a copy of the sound
-      self.originalSounds[value] = data
-    end
-  
-    -- Load the current sounds string data so we can edit it
-    self.soundData = {}
-  
-    local tmpValue = ""
-  
-    for i = 1, #data do
-      local c = data:sub(i, i)
-  
-      if(c == ",") then
-  
-        table.insert(self.soundData, tmpValue)
-        tmpValue = ""
-  
-      else
-        tmpValue = tmpValue .. c
-  
-      end
-  
-    end
-  
-    -- Always add the last value since it doesn't end in a comma
-    table.insert(self.soundData, tmpValue)
-  
-    self:Refresh()
-  
-    local label = gameEditor:SoundLabel(value)
-  
-    editorUI:ChangeInputField(self.songNameFieldData, label, false)
-    editorUI:ChangeNumberStepperValue(self.soundIDStepper, currentID, false, true)
-  
-    if(self.clearHistory == true) then
-      -- Reset the undo history so it's ready for the tool
-      -- pixelVisionOS:ResetUndoHistory()
-      -- UpdateHistoryButtons()
-      -- TODO Undo logic here too that needs to be restored
-    end
-  
-    if(self.updateHistory ~= false) then
-        self:UpdateHistory(data)
-    end
-  
-end
 
 function SFXTool:OnChangeSoundID(text)
 
@@ -125,64 +72,60 @@ function SFXTool:OnChangeSoundID(text)
   
   end
 
-  function SFXTool:LoadSound(value, clearHistory, updateHistory)
-    -- print("Load Sound Clear", clearHistory)
-    self.currentID = value
-  
-    local data = gameEditor:Sound(value)
-  
-    if(self.originalSounds[value] == nil) then
-      -- Make a copy of the sound
-      self.originalSounds[value] = data
-    end
-  
-    -- Load the current sounds string data so we can edit it
-    self.soundData = {}
-  
-    local tmpValue = ""
-  
-    for i = 1, #data do
-      local c = data:sub(i, i)
-  
-      if(c == ",") then
-  
-        table.insert(self.soundData, tmpValue)
-        tmpValue = ""
-  
-      else
-        tmpValue = tmpValue .. c
-  
-      end
-  
-    end
-  
-    -- Always add the last value since it doesn't end in a comma
-    table.insert(self.soundData, tmpValue)
-  
-    self:Refresh()
-  
-    local label = gameEditor:SoundLabel(value)
-  
-    editorUI:ChangeInputField(self.songNameFieldData, label, false)
-    editorUI:ChangeNumberStepperValue(self.soundIDStepper, self.currentID, false, true)
-  
-    if(clearHistory == true) then
-      -- Reset the undo history so it's ready for the tool
-      -- pixelVisionOS:ResetUndoHistory()
-      -- UpdateHistoryButtons()
-      -- TODO Undo logic here too that needs to be restored
-    end
-  
-    if(updateHistory ~= false) then
-        self:UpdateHistory(data)
-    end
-  
-  
-  
-  
-  
-    -- TODO need to refresh the editor panels
+function SFXTool:LoadSound(value)
+  -- print("Load Sound Clear", clearHistory)
+  self.currentID = value
+
+  local data = gameEditor:Sound(value)
+
+  if(self.originalSounds[value] == nil) then
+    -- Make a copy of the sound
+    self.originalSounds[value] = data
   end
+
+  -- Load the current sounds string data so we can edit it
+  self.soundData = {}
+
+  local tmpValue = ""
+
+  for i = 1, #data do
+    local c = data:sub(i, i)
+
+    if(c == ",") then
+
+      table.insert(self.soundData, tmpValue)
+      tmpValue = ""
+
+    else
+      tmpValue = tmpValue .. c
+
+    end
+
+  end
+
+  -- Always add the last value since it doesn't end in a comma
+  table.insert(self.soundData, tmpValue)
+
+  self:Refresh()
+
+  local label = gameEditor:SoundLabel(value)
+
+  editorUI:ChangeInputField(self.songNameFieldData, label, false)
+  editorUI:ChangeNumberStepperValue(self.soundIDStepper, self.currentID, false, true)
+
+  -- if(clearHistory == true) then
+  --   -- Reset the undo history so it's ready for the tool
+  --   -- pixelVisionOS:ResetUndoHistory()
+  --   -- UpdateHistoryButtons()
+  --   -- TODO Undo logic here too that needs to be restored
+  -- end
+
+  -- if(updateHistory ~= false) then
+  --     self:UpdateHistory(data)
+  -- end
+
+  -- TODO need to refresh the editor panels
+end
 
   function SFXTool:OnChangeChannelID(value)
 
@@ -201,9 +144,11 @@ function SFXTool:OnChangeSoundID(text)
     if(self.playButton.enabled == false) then
       return
     end
+
+    local channel = tonumber(self.channelIDStepper.inputField.text)
     -- print("Play Sound")
-    gameEditor:StopSound()
-    gameEditor:PlaySound(self:CurrentSoundID(), tonumber(self.channelIDStepper.inputField.text))
+    gameEditor:StopSound(channel)
+    gameEditor:PlaySound(self:CurrentSoundID(), channel)
   end
 
   function SFXTool:UpdatePlayButton()

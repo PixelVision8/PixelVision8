@@ -62,7 +62,7 @@ function ChipEditorTool:EditJSON()
 
   local metaData = {
       directory = self.rootDirectory,
-      file = self.rootDirectory .. "info.json",
+      file = self.rootDirectory .. "data.json",
   }
 
   LoadGame(self.textEditorPath, metaData)

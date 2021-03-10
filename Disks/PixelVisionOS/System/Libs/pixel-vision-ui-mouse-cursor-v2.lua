@@ -162,7 +162,7 @@ function MouseCursor:Draw()
             self.pos.y + self.cursorData.offset.y,
             false,
             false,
-            DrawMode.SpriteAbove
+            10 -- This forces a layer higher than the default DrawModes
         )
            
     end

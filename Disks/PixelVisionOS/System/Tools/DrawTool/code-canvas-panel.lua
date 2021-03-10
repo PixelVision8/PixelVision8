@@ -38,7 +38,7 @@ function DrawTool:CreateCanvas()
             
         --print("First Press!", editorUI.inFocusUI.name, self.canvasData.inDrawMode, self.canvasData.mouseState)
         
-        self:BeginUndo(data)
+        self:BeginUndo()
 
         self.canvasData.inDrawMode = true
 
@@ -55,7 +55,7 @@ function DrawTool:CreateCanvas()
         if(editorUI.inFocusUI ~= nil and editorUI.inFocusUI.name == self.canvasData.name) then
             print("Release")
             self:OnSaveCanvasChanges() 
-            self:EndUndo(data)
+            self:EndUndo()
         end
 
     end

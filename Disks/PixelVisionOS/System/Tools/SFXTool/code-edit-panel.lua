@@ -93,7 +93,7 @@ function SFXTool:UpdateEditPanel()
 
       if(editorUI.collisionManager.mouseDown == false and self.playSound == true) then
         self.playSound = false
-        self:ApplySoundChanges()
+        self:ApplySoundChanges(true)
       end
 
 end
@@ -153,7 +153,7 @@ function SFXTool:UpdateSound(settings, autoPlay, addToHistory)
   
     gameEditor:Sound(id, settings)
   
-    if(self.autoPlay ~= false) then
+    if(autoPlay ~= false) then
       gameEditor:PlaySound(self:CurrentSoundID(), tonumber(self.channelIDStepper.inputField.text))
     end
   
@@ -164,12 +164,14 @@ function SFXTool:UpdateSound(settings, autoPlay, addToHistory)
   
   end
 
-  function SFXTool:ApplySoundChanges(autoPlay, saveHistory)
+  function SFXTool:ApplySoundChanges(autoPlay)
 
     -- Save sound changes
     local settingsString = ""
     local total = #self.soundData
   
+    pixelVisionOS:BeginUndo(self)
+
     --print("total", total)
     for i = 1, total do
       local value = self.soundData[i]
@@ -185,10 +187,8 @@ function SFXTool:UpdateSound(settings, autoPlay, addToHistory)
     gameEditor:Sound(id, settingsString)
     self:InvalidateData()
   
-    if(saveHistory ~= false) then
-      self:UpdateHistory(settingsString)
-    end
-  
+    pixelVisionOS:EndUndo(self)
+
     if(autoPlay ~= false) then
       self:OnPlaySound()
     end
