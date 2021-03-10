@@ -565,7 +565,7 @@ function PixelVisionOS:DrawTitleBar(data)
                     pixelData[5],
                     false,
                     false,
-                    DrawMode.UI
+                    DrawMode.SpriteAbove
                 )
                 
             end

@@ -244,8 +244,6 @@ function EditorUI:RedrawPicker(data)
 
   if(data.selected > - 1 and data.drawSelected ~= false) then
 
-    -- print("ata.selectedPos-", data.colorOffset)
-    -- if(data.cachedMetaSpriteIds ~= nil) then
     DrawMetaSprite(
       data.cachedMetaSpriteIds.up,
       data.selectedPos.x,
@@ -255,8 +253,7 @@ function EditorUI:RedrawPicker(data)
       DrawMode.Sprite, 
       data.colorOffset
     )
-    -- end
-
+    
   end
 
   if(data.overIndex > - 1) then
@@ -267,17 +264,15 @@ function EditorUI:RedrawPicker(data)
       data.overPos.x = (data.tmpX * data.itemWidth) + data.rect.x - data.borderOffset
       data.overPos.y = (data.tmpY * data.itemHeight) + data.rect.y - data.borderOffset
 
-      if(data.cachedMetaSpriteIds ~= nil) then
-        DrawMetaSprite(
-          data.cachedMetaSpriteIds.over,
-          data.overPos.x,
-          data.overPos.y,
-          false, 
-          false, 
-          DrawMode.Sprite, 
-          data.colorOffset + data.overShift
-        )
-      end
+      DrawMetaSprite(
+        data.cachedMetaSpriteIds.over,
+        data.overPos.x,
+        data.overPos.y,
+        false, 
+        false, 
+        DrawMode.Sprite, 
+        data.colorOffset + data.overShift
+      )
 
     end
 
@@ -295,7 +290,7 @@ function EditorUI:RedrawPicker(data)
     end
 
     -- Test to see if the button is disabled. If there is a disabled sprite data, we'll change the state to disabled. By default, always use the up state.
-    if(data.enabled == false and data.cachedSpriteData["disabled"] ~= nil and data.selected ~= true) then --_G[spriteName .. "disabled"] ~= nil) then
+    if(data.enabled == false and data.cachedMetaSpriteIds["disabled"] ~= nil and data.selected ~= true) then --_G[spriteName .. "disabled"] ~= nil) then
       state = "disabled"
 
     end

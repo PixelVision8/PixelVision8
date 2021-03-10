@@ -28,6 +28,8 @@ function SFXTool:Init()
 
     }
   
+    pixelVisionOS:ResetUndoHistory(_sfxTool)
+  
     -- Create a global reference of the new workspace tool
     setmetatable(_sfxTool, SFXTool)
 

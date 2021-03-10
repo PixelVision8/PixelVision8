@@ -23,6 +23,23 @@ function PixelVisionOS:ResetUndoHistory(data)
   data.undoStack = {} -- Keep a stack of undo info, each one is {self, state}
   data.redoStack = {} -- Keep a stack of redo info, each one is {data, state}
 
+  -- Add Callbacks
+  data.OnUndo = function (targetData)
+
+    pixelVisionOS:Undo(targetData)
+
+    self:UpdateHistoryButtons(targetData)
+    
+  end
+
+  data.OnRedo = function (targetData)
+
+    pixelVisionOS:Redo(targetData)
+  
+    self:UpdateHistoryButtons(targetData)
+  
+  end
+
 end
 
 -- return whether the operation is undoable
@@ -106,10 +123,31 @@ function PixelVisionOS:Redo(data)
   data:SetState(state)
 end
 
+function PixelVisionOS:UpdateHistoryButtons(data)
 
+  self:EnableMenuItem(data.UndoShortcut, self:IsUndoable(data))
+  self:EnableMenuItem(data.RedoShortcut, self:IsRedoable(data))
 
+end
 
+function PixelVisionOS:BeginUndo(data)
+  self:BeginUndoable(self)
+end
 
+function PixelVisionOS:EndUndo(data)
+  self:EndUndoable(data)
+  self:UpdateHistoryButtons(data)
+end
+
+function PixelVisionOS:SetState(state)
+
+  if(state.Action == nil) then
+      return
+  end
+
+  state:Action()
+
+end
 
 
 

@@ -1769,9 +1769,9 @@ namespace PixelVision8.Runner.Editors
         /// <summary>
         ///     Generate a new song
         /// </summary>
-        public void GenerateSong()
+        public void GenerateSong(bool resetInstruments = false)
         {
-            songGenerator.GenerateSong(targetGame);
+            songGenerator.GenerateSong(targetGame, resetInstruments);
         }
 
         /// <summary>

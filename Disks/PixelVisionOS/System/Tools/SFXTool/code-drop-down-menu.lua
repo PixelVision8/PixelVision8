@@ -17,7 +17,7 @@ function SFXTool:CreateDropDownMenu()
       {name = "Export All", action = function() self:OnExportAll() end, enabled = self.canExport, toolTip = "Export all sound effects to wavs."}, -- Reset all the values
       {name = "Revert", action = nil, key = Keys.R, enabled = false, toolTip = "Revert the sounds.json file to its previous state."}, -- Reset all the values
       {divider = true},
-      {name = "Undo", action = function() self:OnUndo() end, enabled = false, key = Keys.Z, toolTip = "Undo the last action."}, -- Reset all the values
+      {name = "Undo", action = function() self:OnUndo() end, enabled = true, key = Keys.Z, toolTip = "Undo the last action."}, -- Reset all the values
       {name = "Redo", action = function() self:OnRedo() end, enabled = false, key = Keys.Y, toolTip = "Redo the last undo."}, -- Reset all the values
       {name = "Copy", action = function() self:OnCopySound() end, key = Keys.C, toolTip = "Copy the currently selected sound."}, -- Reset all the values
       {name = "Paste", action = function() self:OnPasteSound() end, key = Keys.V, enabled = false, toolTip = "Paste the last copied sound."}, -- Reset all the values
@@ -57,54 +57,6 @@ function SFXTool:OnSave()
   -- Clear the sound cache
   self.originalSounds = {}
 
-end
-
-function SFXTool:UpdateHistory(settingsString)
-
-  -- local historyAction = {
-  --   sound = settingsString,
-  --   Action = function()
-  --     UpdateSound(settingsString, true, false)
-  --   end
-  -- }
-
-  -- pixelVisionOS:AddUndoHistory(historyAction)
-
-  -- UpdateHistoryButtons()
-
-end
-
--- local historyPos = 1
-
-function SFXTool:OnUndo()
-
-  -- local action = pixelVisionOS:Undo()
-
-  -- if(action ~= nil and action.Action ~= nil) then
-  --   action.Action()
-  -- end
-
-  -- UpdateHistoryButtons()
-end
-
-function SFXTool:OnRedo()
-
-  -- local action = pixelVisionOS:Redo()
-
-  -- if(action ~= nil and action.Action ~= nil) then
-  --   action.Action()
-  -- end
-
-  -- UpdateHistoryButtons()
-end
-
-function SFXTool:UpdateHistoryButtons()
-
-  -- TODO need to update the menu buttons
-
-  -- pixelVisionOS:EnableMenuItem(UndoShortcut, pixelVisionOS:IsUndoable())
-  -- pixelVisionOS:EnableMenuItem(RedoShortcut, pixelVisionOS:IsRedoable())
-  
 end
 
 function SFXTool:OnRunGame()
@@ -173,4 +125,29 @@ function SFXTool:OnMutate()
   self:LoadSound(id)
 
   self:InvalidateData()
+end
+
+function SFXTool:GetState()
+
+  -- local pixelData = pixelVisionOS:GetCanvasPixelData(self.canvasData)
+
+  -- local selectedChar = self.charStepper.inputField.text
+
+  -- TODO Current sfx ID
+  local id = self:CurrentSoundID()
+  -- TODO Sfx setting string
+
+  local state = {
+      
+      Action = function()
+
+        print("Action", id)
+        -- TODO go back to SFX Id
+        -- TODO Set SFX setting value
+
+      end
+  }
+
+  return state
+
 end
