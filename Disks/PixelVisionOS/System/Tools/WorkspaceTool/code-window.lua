@@ -29,17 +29,9 @@ FileTypeMap =
     tiles = "filetiles"
 }
 
-function WorkspaceTool:OpenWindow(path, scrollTo, selection)
+function WorkspaceTool:CreateWindow()
 
-    -- print("path", path)
-    -- Make sure the path exists before loading it up
-    if(PathExists(path) == false) then
-
-        -- Use the fault workspace path
-        path = self.workspacePath
-
-    end
-
+    self.pathHistory = {}
     -- Configure window settings
     self.iconPadding = 16
     self.iconWidth = 48
@@ -49,31 +41,17 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     self.totalPerWindow = 12
     self.totalPerColumn = 3
     self.totalPerPage = 12
-    self.pathHistory = {}
-    self.focus = true
+    
+    self.refreshDelay = 5
     self.maxChars = 43
 
-    local windowChrome = MetaSprite( FindMetaSpriteId("windowchrome") )
+    local windowChrome = MetaSprite( FindMetaSpriteId("windowchrome" ) )
 
-    -- print("WindowChrome", dump(windowChrome))
-
+    self.totalDisks = tonumber(ReadBiosData("MaxDisks", 2))
 
     self.windowRect = NewRect(8, 16, windowChrome.width, windowChrome.height)
     self.dragCountBGArgs = {0, 0, 9, 6, 0, DrawMode.SpriteAbove}
     self.dragCountTextArgs = {"00", 0, 0, DrawMode.SpriteAbove, "small", 15, -4}
-    self.fileCount = 0
-    self.totalSelections = 0
-    -- Clear the window refresh time
-    self.refreshTime = 0
-    self.refreshDelay = 5
-    self.runnerType = "none"
-    
-    -- Make sure the last selections are cleared
-    self:ClearSelections()
-
-    -- print("window chrome", self.windowRect)
-
-    self.totalDisk = tonumber(ReadBiosData("MaxDisks", 2))
 
     -- TODO this should come from the bios file
     self.validFiles =
@@ -89,19 +67,68 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
         ".cs"
     }
 
+    self.files = nil
+
+end
+
+function WorkspaceTool:UpdateWindowState()
+    -- Pass the current path's window scroll and selection to the history
+    self.pathHistory[self.currentPath.Path] = {
+        scrollPos = self.vSliderData.value,
+        selection = #self.selectedFiles > 0 and self.files[self.selectedFiles[1]].path or nil
+    }
+end
+
+function WorkspaceTool:OpenWindow(path, scrollTo, selectedPath)
+
+    -- Make sure the path exists before loading it up
+    if(PathExists(path) == false) then
+
+        -- Use the fault workspace path
+        path = self.workspacePath
+
+    end
+
+    -- Check to see if there is a path we need to save
+    if(self.currentPath ~= nil) then
+
+        self:UpdateWindowState()
+        
+    end
+
+    -- Reset values
+    self.focus = true
+    self.fileCount = 0
+    self.totalSelections = 0
+
+    -- Clear the window refresh time
+    self.refreshTime = 0
+
+    -- Reset runner type
+    self.runnerType = "none"
+    
+    -- Make sure the last selections are cleared
+    self:ClearSelections()
+
+    -- print("self.pathHistory", dump(self.pathHistory))
+
     -- Look for the last scroll position of this path
-    if(scrollTo == nil and self.pathHistory[path] ~= nil) then
+    if(self.pathHistory[path.Path] ~= nil) then
 
         -- if there is a path history object, change the scrollTO and selection  value
-        scrollTo = self.pathHistory[path].scrollPos
-        selection = self.pathHistory[path].selection
+        scrollTo = scrollTo or self.pathHistory[path.Path].scrollPos
+
+        if(self.pathHistory[path.Path].selection ~= nil) then
+            selectedPath = selectedPath or NewWorkspacePath(self.pathHistory[path.Path].selection)
+        end
 
     end
 
     -- Set a default scrollTo value if none is provided
     scrollTo = scrollTo or 0
-    selection = selection or 0
+    selectedPath = selectedPath or nil
 
+    -- print("Selections", path.Path, dump(selection))
 
     -- save the current directory
     self.currentPath = path
@@ -109,10 +136,7 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     -- TODO make sure the trash path check is valid
     self.isGameDir = pixelVisionOS:ValidateGameInDir(self.currentPath, requiredFiles) and self:TrashOpen() == false
 
-    -- Draw the window chrome
-    DrawMetaSprite(FindMetaSpriteId("windowChrome"), 8, 16, false, false, DrawMode.TilemapCache)
-    -- DrawSprites(windowchrome.spriteIDs, 8, 16, windowchrome.width, false, false, DrawMode.TilemapCache)
-
+    
     if(self.vSliderData == nil) then
 
         -- Create the slider for the window
@@ -136,8 +160,7 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     end
 
     -- self:RegisterUI(self.closeButton, "UpdateButton", editorUI)
-    self.desktopIconCount = 2 + self.totalDisk
-
+    self.desktopIconCount = 2 + self.totalDisks
 
     self.tmpY = 0
     self.tmpPos = null
@@ -149,7 +172,7 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
         self.windowIconButtons = pixelVisionOS:CreateIconGroup(false)
 
         self.tmpY  = 16
-        for i = 1, self.totalDisk + 1 do
+        for i = 1, self.totalDisks + 1 do
 
             pixelVisionOS:NewIconGroupButton(self.windowIconButtons, NewPoint(208, self.tmpY), "none", nil, toolTip)
 
@@ -186,8 +209,7 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     -- TODO this shouldn't be called since it's handled in the window refresh but throws an error when taken out
     self:UpdateFileList()
 
-    -- Update the slider
-    editorUI:ChangeSlider(self.vSliderData, scrollTo)
+    
 
     self:ChangeWindowTitle()
 
@@ -195,12 +217,21 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selection)
     pixelVisionOS:RegisterUI({name = "Window"}, "UpdateWindow", self)
 
 
-    self:UpdateContextMenu("OpenWindow")
+    self:UpdateContextMenu()
 
-    -- TODO restore any selections
-
-    -- Redraw the window
+    -- Redraw the window without refreshing the list since we did it above
     self:RefreshWindow(true)
+
+    -- print("selectedPath", selectedPath)
+
+    if(selectedPath ~= nil and PathExists(selectedPath)) then
+
+        self:SelectFile(selectedPath)
+
+    end
+
+    -- Update the slider
+    editorUI:ChangeSlider(self.vSliderData, scrollTo)
 
 end
 
@@ -238,7 +269,21 @@ end
 
 function WorkspaceTool:UpdateWindow()
 
-    editorUI:UpdateSlider(self.vSliderData)
+    if(self.vSliderData.enabled) then
+        editorUI:UpdateSlider(self.vSliderData)
+
+        -- Check for mouse wheel scrolling
+        local wheelDir = MouseWheel()
+
+        if(wheelDir.Y ~= 0) then
+
+            local scrollValue = Clamp(wheelDir.y, -1, 1) * -5
+
+            editorUI:ChangeSlider(self.vSliderData, (Clamp(self.vSliderData.value * 100 + scrollValue, 0, 100)/100))
+             
+        
+        end
+    end
 
     pixelVisionOS:UpdateIconGroup(self.windowIconButtons)
 
@@ -623,6 +668,18 @@ function WorkspaceTool:OnWindowIconClick(id)
 
     -- If the type is a folder, open it
     if(type == "folder" or type == "updirectory" or type == "disk" or type == "drive" or type == "trash") then
+
+
+        if(#self.selectedFiles > 0 and type == "folder") then
+            self.selectedFiles = {realFileID}
+        else
+            self.selectedFiles = {}
+        end
+
+        self.totalSelections = #self.selectedFiles
+
+        -- self.selectedFiles = {}
+        print("Open Click", realFileID, dump(self.selectedFiles), dump(tmpItem))
 
         self:OpenWindow(tmpItem.path)
 
@@ -1100,7 +1157,7 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
     local disks = DiskPaths()
 
     -- TODO this should loop through the maximum number of disks
-    for i = 1, self.totalDisk do
+    for i = 1, self.totalDisks do
 
         local noDisk = i > #disks
 

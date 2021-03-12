@@ -164,6 +164,7 @@ function EditorUI:UpdateSliderPosition(data)
     self:ChangeSlider(data, percent)
 
   end
+
 end
 
 function EditorUI:ChangeSlider(data, percent, trigger)

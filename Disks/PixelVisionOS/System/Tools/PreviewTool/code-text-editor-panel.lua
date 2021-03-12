@@ -64,9 +64,6 @@ function TextTool:UpdateEditorPanel(timeDelta)
         -- Check to see if we should show the horizontal slider
         local showVSlider = #self.inputAreaData.buffer > self.inputAreaData.tiles.h
 
-        -- Check for mouse wheel scrolling
-        local wheelDir = MouseWheel()
-
         -- Test if we need to show or hide the slider
         if(self.vSliderData.enabled ~= showVSlider) then
 
@@ -75,6 +72,9 @@ function TextTool:UpdateEditorPanel(timeDelta)
             --     self.inputAreaData.vy = 0
             -- end
         end
+
+        -- Check for mouse wheel scrolling
+        local wheelDir = MouseWheel()
 
         if(wheelDir.Y ~= 0) then
 

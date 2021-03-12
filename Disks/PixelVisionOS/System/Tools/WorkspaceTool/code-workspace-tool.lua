@@ -44,6 +44,8 @@ function WorkspaceTool:Init()
   -- Create dropdown menu
   _workspaceTool:CreateDropDownMenu()
 
+  _workspaceTool:CreateWindow()
+
   _workspaceTool:RestoreLastPath()
 
   -- Return the new instance of the editor ui
@@ -52,6 +54,8 @@ function WorkspaceTool:Init()
 end
 
 function WorkspaceTool:Shutdown()
+
+  self:UpdateWindowState()
 
   -- Save the current session ID
   WriteSaveData("sessionID", SessionID())
@@ -65,14 +69,55 @@ function WorkspaceTool:Shutdown()
   -- Save the current selection
   WriteSaveData("selection", (self.windowIconButtons ~= nil and editorUI:ToggleGroupSelections(self.windowIconButtons)[1] or 0))
 
+
+  local history = ""
+
+  for key, value in pairs(self.pathHistory) do
+    -- print("key", key, dump(value))
+
+    history = history .. key .. ":" .. value.scrollPos .. (value.selection == nil and "" or ("," .. value.selection.Path)) .. ";"
+
+  end
+
+  -- Make sure we don't save paths in the tmp directory
+  WriteSaveData("history", history)
+
+
 end
 
 function WorkspaceTool:RestoreLastPath()
 
   -- TODO ned  to restore selections correctly
   local newPath = SessionID() == ReadSaveData("sessionID", "") and ReadSaveData("lastPath", "none") or "none"
-  local lastScrollPos = tonumber(ReadSaveData("scrollPos", "0"))
-  local lastSelection = tonumber(ReadSaveData("selection", "0"))
+  -- local lastScrollPos = tonumber(ReadSaveData("scrollPos", "0"))
+  -- local lastSelection = tonumber(ReadSaveData("selection", nil))
+
+  local historyString = ReadSaveData("history", "")
+
+  self.pathHistory = {}
+
+  local paths = string.split(historyString, ";")
+
+  -- print("Restore Paths", dump(paths))
+
+  for i = 1, #paths do
+    local keyValue = string.split(paths[i], ":")
+
+    local props = string.split(keyValue[2], ",")
+
+    print("keyValue",  dump(keyValue), "props", dump(props))
+
+    local state = {
+      scrollPos = tonumber(props[1])
+    }
+
+    if(props[2] ~= nil) then
+      state.selection = NewWorkspacePath(props[2])
+    end
+
+    self.pathHistory[keyValue[1]] = state
+
+  end
 
   -- Read metadata last path and default to the newPath
   local lastPath = ReadMetadata("overrideLastPath", newPath)
@@ -84,15 +129,16 @@ function WorkspaceTool:RestoreLastPath()
 
     -- override the default path to open
     newPath = lastPath
-    lastScrollPos = 0
-    lastSelection = 0
+    -- lastScrollPos = 0
+    -- lastSelection = 0
 
   end
 
   -- Convert the path to a Workspace Path
   newPath = newPath == "none" and self.workspacePath or NewWorkspacePath(newPath)
 
-  self:OpenWindow(newPath, lastScrollPos, lastSelection)
+  -- TODO need to restore the folder history and last path
+  self:OpenWindow(newPath)
 
   -- Open the window to the new path
   if(newPath.Path == self.workspacePath.Path) then
