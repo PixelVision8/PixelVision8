@@ -432,8 +432,8 @@
   
   <ItemGroup>
     <None Remove="**\saves.json" />
-    <None Remove="SDK\Runner\MonoVision\Platform\Graphics\Effect\Resources\**" />
-    <None Remove="SDK\Runner\MonoVision\Dependencies\**" />
+    <None Remove="SDK\MonoVision\Platform\Graphics\Effect\Resources\**" />
+    <None Remove="SDK\MonoVision\Dependencies\**" />
   </ItemGroup>
 
 </Project>

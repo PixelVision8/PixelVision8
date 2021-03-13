@@ -71,29 +71,7 @@ function SFXTool:Init()
     
     else
 
-        -- Patch background when loading fails
-    
-        -- Left panel
-        DrawRect(104, 24, 88, 8, 0, DrawMode.TilemapCache)
-    
-        DrawRect(214, 18, 25, 19, BackgroundColor(), DrawMode.TilemapCache)
-    
-        pixelVisionOS:ChangeTitle(_sfxTool.toolName, "toolbaricontool")
-    
-        local buttons = 
-        {
-            {
-            name = "modalokbutton",
-            action = function(target)
-                QuitCurrentTool()
-            end,
-            key = Keys.Enter,
-            tooltip = "Press 'enter' to quit the tool"
-            }
-        }
-        
-        pixelVisionOS:ShowMessageModal(_sfxTool.toolName .. " Error", "The tool could not load without a reference to a file to edit.", 160, buttons)
-
+      pixelVisionOS:LoadError(_sfxTool.toolName)
     
     end
 

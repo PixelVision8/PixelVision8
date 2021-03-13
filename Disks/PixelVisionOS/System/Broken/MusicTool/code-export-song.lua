@@ -1,13 +1,13 @@
 
-function MusicTool:OnExportSong(songID, showWarning)
+function OnExportSong(songID, showWarning)
 
-  songID = songID or self.currentSongID
+  songID = songID or currentSongID
 
   -- local workspacePath = NewWorkspacePath(rootDirectory).AppendDirectory("Wavs").AppendDirectory("Songs")
 
   if(showWarning == true) then
 
-    local workspacePath = NewWorkspacePath(self.rootDirectory).AppendDirectory("Wavs").AppendDirectory("Songs")
+    local workspacePath = NewWorkspacePath(rootDirectory).AppendDirectory("Wavs").AppendDirectory("Songs")
 
     local buttons = 
     {
@@ -15,7 +15,7 @@ function MusicTool:OnExportSong(songID, showWarning)
         name = "modalyesbutton",
         action = function(target)
           
-          gameEditor:ExportSong(self.rootDirectory, songID)
+          gameEditor:ExportSong(rootDirectory, songID)
           target.onParentClose()
         end,
         key = Keys.Enter,
@@ -35,33 +35,30 @@ function MusicTool:OnExportSong(songID, showWarning)
   
   else
   
-    gameEditor:ExportSong(self.rootDirectory, songID)
+    gameEditor:ExportSong(rootDirectory, songID)
   
   end
 
 end
 
-function MusicTool:OnExportAllSongs()
+function OnExportAllSongs()
 
-  local workspacePath = NewWorkspacePath(self.rootDirectory).AppendDirectory("Wavs").AppendDirectory("Songs")
+  local workspacePath = NewWorkspacePath(rootDirectory).AppendDirectory("Wavs").AppendDirectory("Songs")
 
   local buttons = 
   {
     {
       name = "modalyesbutton",
       action = function(target)
-        -- self.installing = true
+        installing = true
 
-        self.installingTime = 0
-        self.installingDelay = .1
-        self.installingCounter = 0
-        self.installingTotal = songIDStepper.inputField.max
+        installingTime = 0
+        installingDelay = .1
+        installingCounter = 0
+        installingTotal = songIDStepper.inputField.max
 
         installRoot = rootPath
         target.onParentClose()
-
-        pixelVisionOS:RegisterUI({name = "UpdateExportLoop"}, "UpdateExport", self)
-
       end,
       key = Keys.Enter,
       tooltip = "Press 'enter' to export all songs"
@@ -78,47 +75,66 @@ function MusicTool:OnExportAllSongs()
   
   pixelVisionOS:ShowMessageModal("Export All Songs", "Do you want to export all of the songs to '"..workspacePath.Path.."'?", 200, buttons)
 
+
+  -- pixelVisionOS:ShowMessageModal("Export All Sounds", "Do you want to export all of the sound effects to '"..workspacePath.Path.."'?", 200, true,
+  --   function()
+  --     if(pixelVisionOS.messageModal.selectionValue == true) then
+
+  --       installing = true
+
+  --       installingTime = 0
+  --       installingDelay = .1
+  --       installingCounter = 0
+  --       installingTotal = songIDStepper.inputField.max
+
+  --       installRoot = rootPath
+
+  --     end
+
+  --   end
+  -- )
+
 end
 
-function MusicTool:OnInstallNextStep()
+function OnInstallNextStep()
 
   -- print("Next step")
   -- Look to see if the modal exists
-  if(self.installingModal == nil) then
+  if(installingModal == nil) then
 
     -- Create the model
-    self.installingModal = ProgressModal:Init("Exporting", editorUI)
+    installingModal = ProgressModal:Init("Exporting", editorUI)
 
     -- Open the modal
-    pixelVisionOS:OpenModal(self.installingModal)
+    pixelVisionOS:OpenModal(installingModal)
 
   end
 
-  OnExportSong(self.installingCounter, false)
+  OnExportSong(installingCounter, false)
 
-  self.installingCounter = self.installingCounter + 1
+  installingCounter = installingCounter + 1
 
-  local message = "Exporting song "..string.lpad(tostring(self.installingCounter), string.len(tostring(self.installingTotal)), "0") .. " of " .. self.installingTotal .. ".\n\n\n\nDo not restart or shut down Pixel Vision 8."
+  local message = "Exporting song "..string.lpad(tostring(installingCounter), string.len(tostring(installingTotal)), "0") .. " of " .. installingTotal .. ".\n\n\n\nDo not restart or shut down Pixel Vision 8."
 
-  local percent = (self.installingCounter / self.installingTotal)
+  local percent = (installingCounter / installingTotal)
 
-  self.installingModal:UpdateMessage(message, percent)
+  installingModal:UpdateMessage(message, percent)
 
-  if(self.installingCounter >= self.installingTotal) then
-    self.installingDelay = .5
+  if(installingCounter >= installingTotal) then
+    installingDelay = .5
   end
 
 end
 
-function MusicTool:OnInstallComplete()
+function OnInstallComplete()
 
-  pixelVisionOS:RemoveUI("UpdateExportLoop")
+  installing = false
 
   pixelVisionOS:CloseModal()
 
 end
 
-function MusicTool:OnResetConfig()
+function OnResetConfig()
 
   local buttons = 
   {
@@ -152,27 +168,5 @@ function MusicTool:OnResetConfig()
   }
   
   pixelVisionOS:ShowMessageModal("Reset Music Generator", "Do you want to restore the music generator to its default values?", 160, buttons)
-
-end
-
-
--- TODO this needs to be wired up
-function MusicTool:UpdateExport()
-  
-    self.installingTime = self.installingTime + editorUI.timeDelta
-
-    if(self.installingTime > self.installingDelay) then
-      self.installingTime = 0
-
-
-      self:OnInstallNextStep()
-
-      if(self.installingCounter >= self.installingTotal) then
-
-        self:OnInstallComplete()
-
-      end
-
-    end
 
 end

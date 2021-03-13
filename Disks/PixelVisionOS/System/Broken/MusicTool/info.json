@@ -1,0 +1,10 @@
+{
+  "name": "MusicEditor",
+  "version": "v0.9.4",
+  "ext": ".pvt",
+  "gpuChip": "PV8",
+  "cartChip": "Custom",
+  "soundChip": "PV8",
+  "editType": "music",
+  "paletteMode": "false",
+}

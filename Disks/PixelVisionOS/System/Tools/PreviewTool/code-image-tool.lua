@@ -39,7 +39,6 @@ function ImageTool:Init()
     -- Create a global reference of the new workspace tool
     setmetatable(_imageTool, ImageTool)
 
-
     -- Get the target file
     
     if(_imageTool.targetFile ~= nil) then
@@ -48,8 +47,6 @@ function ImageTool:Init()
     
         _imageTool.extension = _imageTool.targetFilePath.GetExtension()
 
-        -- _imageTool.codeMode = _imageTool.extension == ".lua" or _imageTool.extension == ".cs"
-       
         local pathSplit = string.split(_imageTool.targetFile, "/")
         
         -- Update title with file path
@@ -59,29 +56,8 @@ function ImageTool:Init()
                 
     else
     
-      pixelVisionOS:ChangeTitle(_imageTool.toolName, "toolbaricontool")
+      pixelVisionOS:LoadError(_imageTool.toolName)
       
-      local buttons = 
-      {
-        {
-          name = "modalokbutton",
-          action = function(target)
-            QuitCurrentTool()
-          end,
-          key = Keys.Enter,
-          tooltip = "Press 'enter' to quit the tool"
-        }
-      }
-      
-      pixelVisionOS:ShowMessageModal(_imageTool.toolName .. " Error", "The tool could not load without a reference to a file to edit.", 160, buttons)
-
-        
-        -- pixelVisionOS:ShowMessageModal(_imageTool.toolName .. " Error", "The tool could not load without a reference to a file to edit.", 160, false,
-        --   function()
-        --     QuitCurrentTool()
-        --   end
-        -- )
-        
     end
     
     -- Return the draw tool data

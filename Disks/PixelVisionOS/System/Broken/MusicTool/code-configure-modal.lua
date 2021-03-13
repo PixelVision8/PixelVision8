@@ -73,6 +73,8 @@ function ConfigureModal:Configure()
 
     -- Melody
     {
+      x = 40,
+      y = 96,
       octMin = 1,
       octMax = 5,
       value = 0,
@@ -80,6 +82,8 @@ function ConfigureModal:Configure()
     },
     -- Drums
     {
+      x = 40,
+      y = 104,
       octMin = 1,
       octMax = 5,
       value = 1,
@@ -87,6 +91,8 @@ function ConfigureModal:Configure()
     },
     -- Snare
     {
+      x = 160,
+      y = 96,
       octMin = 4,
       octMax = 8,
       value = 2,
@@ -94,6 +100,8 @@ function ConfigureModal:Configure()
     },
     -- Bass
     {
+      x = 80,
+      y = 96,
       octMin = 2,
       octMax = 6,
       value = 3,
@@ -101,6 +109,8 @@ function ConfigureModal:Configure()
     },
     -- Random
     {
+      x = 80,
+      y = 104,
       octMin = 1,
       octMax = 9,
       value = 4,
@@ -108,6 +118,8 @@ function ConfigureModal:Configure()
     },
     -- Harmony
     {
+      x = 160,
+      y = 104,
       octMin = 4,
       octMax = 8,
       value = 5,
@@ -115,6 +127,8 @@ function ConfigureModal:Configure()
     },
     -- Lead
     {
+      x = 120,
+      y = 96,
       octMin = 3,
       octMax = 7,
       value = 6,
@@ -122,6 +136,8 @@ function ConfigureModal:Configure()
     },
     -- Kick
     {
+      x = 120,
+      y = 104,
       octMin = 3,
       octMax = 7,
       value = 7,
@@ -129,6 +145,8 @@ function ConfigureModal:Configure()
     },
     -- Pad
     {
+      x = 192,
+      y = 96,
       octMin = 5,
       octMax = 9,
       value = 8,
@@ -136,6 +154,8 @@ function ConfigureModal:Configure()
     },
     -- None
     {
+      x = 192,
+      y = 104,
       octMin = 2,
       octMax = 9,
       value = 9,
@@ -348,7 +368,7 @@ function ConfigureModal:Open()
 
     local y = 64
     local cols = 4
-    local columnX = {40, 80, 120, 160, 192}
+    local columnX = {16, 56, 96, 136, 168}
     local col = 1
 
 

@@ -32,7 +32,7 @@ function Init()
   EnableAutoRun(false)
 
   -- Update background
-  BackgroundColor(0)
+  BackgroundColor(5)
 
   -- pixelVisionOS.messageBar.clearColorID = 2
 

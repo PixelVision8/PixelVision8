@@ -174,15 +174,13 @@ function PixelVisionOS:ShowSaveModal(title, message, width, onAccept, onDecline,
         name = "modalyesbutton",
         action = onAccept,
         key = Keys.Enter,
-        tooltip = "Press 'enter' to save",
-        border = {name = "modaldefaultbuttonborder", offsetX = -4, offsetY = -4}
+        tooltip = "Press 'enter' to save"
       },
       {
         name = "modalnobutton",
         action = onDecline,
         key = Keys.N,
-        tooltip = "Press 'n' to not save",
-        border = {name = "modaldefaultbuttonborder", offsetX = -4, offsetY = -4}
+        tooltip = "Press 'n' to not save"
       }
     }
 
@@ -193,8 +191,7 @@ function PixelVisionOS:ShowSaveModal(title, message, width, onAccept, onDecline,
                 name = "modalcancelbutton",
                 action = onCancel,
                 key = Keys.Escape,
-                tooltip = "Press 'escape' to cancel",
-                border = {name = "modaldefaultbuttonborder", offsetX = -4, offsetY = -4}
+                tooltip = "Press 'escape' to cancel"
             }
         )
     end
@@ -422,6 +419,31 @@ function PixelVisionOS:OpenPath(path)
     
     -- TODO this is not working
     -- LoadGame("/PixelVisionOS/Tools/WorkspaceTool/", metaData)
+
+end
+
+function PixelVisionOS:LoadError(toolName, bgColor)
+
+    DrawRect( 1, 11, 254, 227, bgColor or BackgroundColor(), DrawMode.TilemapCache)
+
+    self:ChangeTitle(toolName, "toolbariconfile")
+
+    self:CreateTitleBarMenu({}, "See menu options for this tool.")
+
+    local buttons =
+      {
+        {
+          name = "modalokbutton",
+          action = function(target)
+            QuitCurrentTool()
+          end,
+          key = Keys.Enter,
+          tooltip = "Press 'enter' to quit the tool"
+        }
+      }
+      
+      pixelVisionOS:ShowMessageModal(toolName .. " Error", "The tool could not load without a reference to a file to edit.", 160, buttons)
+
 
 end
 

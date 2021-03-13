@@ -113,22 +113,7 @@ function ChipEditorTool:Init()
 
   else
 
-    -- TODO need to mask off the background
-    pixelVisionOS:ChangeTitle(_chipEditorTool.toolName, "toolbaricontool")
-
-    local buttons = 
-    {
-      {
-        name = "modalokbutton",
-        action = function(target)
-          QuitCurrentTool()
-        end,
-        key = Keys.Enter,
-        tooltip = "Press 'enter' to quit the tool"
-      }
-    }
-    
-    pixelVisionOS:ShowMessageModal(_chipEditorTool.toolName .. " Error", "The tool could not load without a reference to a file to edit.", 160, buttons)
+    pixelVisionOS:LoadError(_chipEditorTool.toolName)
 
   end
   

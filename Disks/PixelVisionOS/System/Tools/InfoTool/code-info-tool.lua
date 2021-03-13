@@ -73,26 +73,8 @@ function InfoTool:Init()
 
     else
 
-        pixelVisionOS:ChangeTitle(_infoTool.toolName, "toolbaricontool")
-
-        DrawRect(48, 40, 160, 8, 0, DrawMode.TilemapCache)
-        DrawRect(16, 72, 208, 64, 0, DrawMode.TilemapCache)
-        DrawRect(16, 168, 228, 56, 11, DrawMode.TilemapCache)
-
-        local buttons = 
-        {
-            {
-                name = "modalokbutton",
-                action = function(target)
-                    QuitCurrentTool()
-                end,
-                key = Keys.Enter,
-                tooltip = "Press 'enter' to quit the tool"
-            }
-        }
+        pixelVisionOS:LoadError(_infoTool.toolName)
         
-        pixelVisionOS:ShowMessageModal(_infoTool.toolName .. " Error", "The tool could not load without a reference to a file to edit.", 160, buttons)
-
     end
     
     -- Return the draw tool data
