@@ -31,7 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.compute_tag.outputs.next_tag }}
-          release_name: Pixel Vision 8 ${{ steps.compute_tag.outputs.next_tag }} Experimental Release
+          release_name: Pixel Vision 8 ${{ steps.compute_tag.outputs.next_tag }} Release
           draft: false
           prerelease: true
 
@@ -69,6 +69,9 @@ jobs:
           FROM: v${{ env.PREVIOUS }}
           TO: v${{ env.CURRENT }}
 
+      - name: View Changelog
+        run: cat .github/CHANGELOG.md
+
       - name: save Changelog
         id: log
         run: |
@@ -79,6 +82,25 @@ jobs:
           REPORT="${REPORT//$'<br/><br/>'/'<br/>'}"
           REPORT="${REPORT//$'<br/>*'/'*'}"
           echo -e "REPORT=$REPORT" >> $GITHUB_ENV
+
+      # Setup dotnet 5.0.x
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+
+      - name: Build
+        run: |
+          sed -i 's/0.0.0/${{env.CURRENT}}/g' Content/bios.json
+          sed -i 's/0.0.0/${{env.CURRENT}}/g' PixelVision8.CoreDesktop.csproj
+          cd .gulp
+          npm install
+          npm install gulp -g
+          echo $VERSION
+          gulp
 
       # Update the release with the change log
       - name: Update Release
