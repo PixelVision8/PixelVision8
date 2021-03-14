@@ -1,0 +1,55 @@
+{
+    "ColorChip":
+    {
+        "backgroundColor":0,
+        "maskColor":"#FF00FF",
+        "debug":false
+    },
+    "DisplayChip":
+    {
+        "width":128,
+        "height":128,
+        
+    },
+    "ControllerChip":
+    {
+    },
+    "FontChip":
+    {
+        "unique":true,
+        "pages":2
+    },
+    "GameChip":
+    {
+        "totalMetaSprites":0,
+        "lockSpecs":false,
+        "maxSize":64,
+        "saveSlots":8
+    },
+    "MusicChip":
+    {
+        "totalSongs":8,
+        "notesPerTrack":127,
+        "totalPatterns":8,
+        
+    },
+    "SoundChip":
+    {
+        "totalChannels":4,
+        "totalSounds":16,
+        "channelTypes":[-1,-1,-1,-1]
+    },
+    
+    "SpriteChip":{
+        "maxSpriteCount":0,
+        "unique":false,
+        "pages":1,
+        "cps":16
+    },
+    "TilemapChip":
+    {
+        "columns":128,
+        "rows":32,
+        "autoImport":false
+    }
+}

@@ -4,7 +4,7 @@
       "backgroundColor":0,
       "maskColor":"#FF00FF",
       "unique":false,
-      "debug":false
+      "debug":true
   },
   "DisplayChip":
   {

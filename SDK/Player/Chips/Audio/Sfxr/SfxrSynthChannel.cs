@@ -182,8 +182,17 @@ namespace PixelVision8.Player.Audio
 
                 if (parameters.Invalid) CacheSound();
 
-                // Only play if there is a sound instance
-                _soundInstance?.Play();
+                try
+                {
+                    // Only play if there is a sound instance
+                                _soundInstance?.Play();
+                }
+                catch (System.Exception error)
+                {
+                    
+                    Console.WriteLine("Audio Error {0}", error.Message);
+                }
+                
             }
 
             if (waveLock == WaveType.Sample || waveLock == WaveType.None)

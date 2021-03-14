@@ -72,37 +72,20 @@ function ImageTool:LoadSuccess()
 
     -- TODO need to copy out colors from the image  
     local imageColors = self.image.colors
-    local totalColors = math.max(8, #imageColors)
-    
+
     -- Get the last color index for the offset
-    local colorOffset = TotalColors()
+    self.colorOffset = 16
+    self.maskColor = self.colorOffset
 
-    -- Double the color memory
-    ResizeColorMemory(512)
-
-    -- Create the canvas to display the image color palette
-    self.colorMemoryCanvas = NewCanvas(8, totalColors / 8)
-    local pixels = {}
+    Color(self.maskColor, "FF00FF")
 
     -- Add the image colors to the color chip
-    for i = 1, totalColors do
-        Color(colorOffset + (i-1), imageColors[i])
-
-        local index = i + 255
-        table.insert(pixels, index)
+    for i = 1, #imageColors do
+        Color(self.colorOffset - 1 + i , imageColors[i])
     end
 
-        -- TODO each pixel should be set above
-    self.colorMemoryCanvas:SetPixels(pixels)
-    
     -- Get the image pixels
     local pixelData = self.image.GetPixels()
-
-    -- TODO we may not need to do this if we just offset the canvas when drawing?
-    -- Shift colors
-    for i = 1, #pixelData do
-        pixelData[i] = pixelData[i] + colorOffset
-    end
 
     -- Create a new canvas
     self.imageCanvas = NewCanvas(self.image.width, self.image.height)
@@ -112,22 +95,30 @@ function ImageTool:LoadSuccess()
 
     -- The image is loaded at this point
     self.toolLoaded = true
-    
-    -- Create tool title from path
-    -- local pathSplit = string.split(targetFile, "/")
-    -- self.toolTitle = pathSplit[#pathSplit - 1] .. "/" .. pathSplit[#pathSplit]
 
-
-    -- -- Configure the menu
+    -- Configure the menu
     self:CreateDropDownMenu()
 
     self:CreateEditorPanel()
 
-    -- CreateViewport()
-
     -- Reset Tool Validation
     self:ResetDataValidation()
     
+end
+
+function DumpColors(start)
+
+  start = start or 1
+
+  local tmpColors = {}
+
+  for i = start, TotalColors() do
+    table.insert(tmpColors, Color(i-1))
+  end
+
+  print("Colors", dump(tmpColors))
+  
+
 end
 
 function ImageTool:InvalidateData()
@@ -174,16 +165,6 @@ function ImageTool:OnSave()
   -- end
 
 end
-
--- function ImageTool:Draw()
-
---   -- if(self.lineNumbersInvalid == true) then
---   --     self:DrawLineNumbers()
-
---   --     self:ResetLineNumberInvalidation()
---   -- end
-
--- end
 
 function ImageTool:Shutdown()
 

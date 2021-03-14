@@ -1073,6 +1073,7 @@ namespace PixelVision8.Runner
 
         public void MountDisk(string path)
         {
+
             try
             {
                 mountingDisk = true;
@@ -1095,8 +1096,10 @@ namespace PixelVision8.Runner
 
                 mountingDisk = false;
             }
-            catch
+            catch (System.Exception error)
             {
+
+                Console.WriteLine("Error " + error.Message);
                 // TODO need to make sure we show a better error to explain why the disk couldn't load
                 DisplayError(ErrorCode.NoAutoRun);
             }

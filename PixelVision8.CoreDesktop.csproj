@@ -45,35 +45,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Program.cs" />
-    <Compile Include="SDK\Editor\Audio\SfxrMusicGeneratorChip.cs" />
-    <Compile Include="SDK\Editor\Editors\GameEditor.cs" />
-    <Compile Include="SDK\Editor\Exporters\BackgroundScriptRunner.cs" />
-    <Compile Include="SDK\Editor\Exporters\ColorPaletteExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\DiskExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\FontExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\GifExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\IImageExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\ImageExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\MetaDataExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\MetaSpriteExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\MusicExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\PixelDataExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\PNGWriter.cs" />
-    <Compile Include="SDK\Editor\Exporters\SfxrSoundExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\SongExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\SoundExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\SpriteBuilderExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\SpriteExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\SystemExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\TilemapJsonExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\ZipDiskExporter.cs" />
-    <Compile Include="SDK\Editor\Exporters\ZipExporter.cs" />
-    <Compile Include="SDK\Editor\Services\BaseExportService.cs" />
-    <Compile Include="SDK\Editor\Services\GameDataExportService.cs" />
-    <Compile Include="SDK\Editor\Services\LuaPlatformAccessorService.cs" />
-    <Compile Include="SDK\Editor\Services\ScreenshotService.cs" />
-    <Compile Include="SDK\Editor\Services\WorkspaceServicePlus.cs" />
     <Compile Include="SDK\MonoVision\Audio\AudioChannels.cs" />
     <Compile Include="SDK\MonoVision\Audio\InstancePlayLimitException.cs" />
     <Compile Include="SDK\MonoVision\Audio\NoAudioHardwareException.cs" />
@@ -222,6 +193,38 @@
     <Compile Include="SDK\MonoVision\Utilities\ReflectionHelpers.cs" />
     <Compile Include="SDK\MonoVision\Vector2.cs" />
     <Compile Include="SDK\MonoVision\Vector3.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="SDK\Editor\Audio\SfxrMusicGeneratorChip.cs" />
+    <Compile Include="SDK\Editor\Editors\GameEditor.cs" />
+    <Compile Include="SDK\Editor\Exporters\BackgroundScriptRunner.cs" />
+    <Compile Include="SDK\Editor\Exporters\ColorPaletteExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\DiskExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\FontExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\GifExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\IImageExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\ImageExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\MetaDataExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\MetaSpriteExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\MusicExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\PixelDataExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\PNGWriter.cs" />
+    <Compile Include="SDK\Editor\Exporters\SfxrSoundExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\SongExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\SoundExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\SpriteBuilderExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\SpriteExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\SystemExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\TilemapJsonExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\ZipDiskExporter.cs" />
+    <Compile Include="SDK\Editor\Exporters\ZipExporter.cs" />
+    <Compile Include="SDK\Editor\Services\BaseExportService.cs" />
+    <Compile Include="SDK\Editor\Services\GameDataExportService.cs" />
+    <Compile Include="SDK\Editor\Services\LuaPlatformAccessorService.cs" />
+    <Compile Include="SDK\Editor\Services\ScreenshotService.cs" />
+    <Compile Include="SDK\Editor\Services\WorkspaceServicePlus.cs" />
     <Compile Include="SDK\Player\Chips\AbstractChip.cs" />
     <Compile Include="SDK\Player\Chips\Audio\MusicChip.cs" />
     <Compile Include="SDK\Player\Chips\Audio\Sfxr\SfxrParams.cs" />

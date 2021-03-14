@@ -122,3 +122,35 @@ function ExplodeSettings(str)
   table.insert(arr, tonumber(string.sub(str, pos)))
   return arr
 end
+
+function PrintSprite(pixels, colorOffset, w, h,)
+
+  w = w or 8
+  h = h or 8
+  colorOffset = colorOffset or 0
+
+  print("Sprite " .. string.format("%02d", w).. " x " .. string.format("%02d", h))
+
+  for r = 1, h+1 do
+    local row = ""
+    
+    for c = 1, w do
+      if(r > 1) then
+        -- print(c, r, (c-1) + (r-2) * w)
+        local pixel = pixels[((c-1) + (r-2) * w) + 1] 
+        -- print("px", dump(pixels))
+        row = row .. (pixel == -1 and "-1" or string.format("%02d", (pixel + colorOffset))) .. "  "
+      else
+        row = row .. "C" .. string.format("%02d", c) .. " "
+      end
+    end
+
+    if(r > 1) then
+      print("R" .. string.format("%02d", r-1) .. "   " .. row)
+    else
+      print("     " .. row)
+    end
+
+  end
+
+end

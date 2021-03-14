@@ -1,4 +1,4 @@
-﻿/**
+/**
 Pixel Vision 8 - Display Example
 Copyright(C) 2017, Pixel Vision 8 (http.//pixelvision8.com)
 Created by Jesse Freeman(@jessefreeman)

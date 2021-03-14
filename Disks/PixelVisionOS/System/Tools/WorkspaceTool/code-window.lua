@@ -50,8 +50,7 @@ function WorkspaceTool:CreateWindow()
     self.totalDisks = tonumber(ReadBiosData("MaxDisks", 2))
 
     self.windowRect = NewRect(8, 16, windowChrome.width, windowChrome.height)
-    self.dragCountBGArgs = {0, 0, 9, 6, 0, DrawMode.SpriteAbove}
-    self.dragCountTextArgs = {"00", 0, 0, DrawMode.SpriteAbove, "small", 15, -4}
+    
 
     -- TODO this should come from the bios file
     self.validFiles =
@@ -296,15 +295,12 @@ function WorkspaceTool:UpdateWindow()
 
         if(self.totalSelections > 1) then
 
-            self.dragCountBGArgs[1] = self.windowIconButtons.drawIconArgs[2] + 30
-            self.dragCountBGArgs[2] = self.windowIconButtons.drawIconArgs[3] - 2
+            local x = editorUI.collisionManager.mousePos.x - 24 + 30
+            local y = editorUI.collisionManager.mousePos.y - 12 - 2
 
-            editorUI:NewDraw("DrawRect", self.dragCountBGArgs)
-
-            self.dragCountTextArgs[1] = string.format("%02d", self.totalSelections)
-            self.dragCountTextArgs[2] = self.dragCountBGArgs[1] + 1
-            self.dragCountTextArgs[3] = self.dragCountBGArgs[2] - 1
-            editorUI:NewDraw("DrawText", self.dragCountTextArgs)
+            DrawRect(x, y, 9, 6, 0, DrawMode.SpriteAbove)
+            DrawText(string.format("%02d", self.totalSelections), x + 1, y - 1, DrawMode.SpriteAbove, "small", 15, -4)
+            
         end
     end
 
@@ -652,7 +648,7 @@ function WorkspaceTool:OnWindowIconClick(id)
 
 
     -- Make sure desktop icons are not selected
-    pixelVisionOS:ClearIconGroupSelections(self.desktopIconButtons)
+    -- pixelVisionOS:ClearIconGroupSelections(self.desktopIconButtons)
 
     -- -- local index = id + (lastStartID)-- TODO need to add the scrolling offset
 
@@ -679,7 +675,7 @@ function WorkspaceTool:OnWindowIconClick(id)
         self.totalSelections = #self.selectedFiles
 
         -- self.selectedFiles = {}
-        print("Open Click", realFileID, dump(self.selectedFiles), dump(tmpItem))
+        -- print("Open Click", realFileID, dump(self.selectedFiles), dump(tmpItem))
 
         self:OpenWindow(tmpItem.path)
 

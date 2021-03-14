@@ -1,0 +1,15 @@
+{
+    "name":"Demo-06",
+    "description":"Demo-06 by Julio-Choy.",
+    "version":"v0.0.0",
+    "ext":".pv8",
+    "gpuChip":"Custom",
+    "cartChip":"PV8",
+    "soundChip":"PV8",
+    "buildWin":"false",
+    "buildExtras":"",
+    "runnerType":"lua",
+    "buildMac":"false",
+    "buildLinux":"false",
+    
+}

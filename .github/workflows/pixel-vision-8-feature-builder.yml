@@ -6,7 +6,7 @@ on:
 
 jobs:
 
-  # This runs before the builds and cretes the new feature release
+  # This runs before the builds and creates the new feature release
   create-release:
 
     name: "Create Release"
@@ -31,7 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.compute_tag.outputs.next_tag }}
-          release_name: Pixel Vision 8 ${{ steps.compute_tag.outputs.next_tag }} Release
+          release_name: Pixel Vision 8 ${{ steps.compute_tag.outputs.next_tag }} Experimental Release
           draft: false
           prerelease: true
 
@@ -69,36 +69,16 @@ jobs:
           FROM: v${{ env.PREVIOUS }}
           TO: v${{ env.CURRENT }}
 
-      - name: View Changelog
-        run: cat .github/CHANGELOG.md
-
       - name: save Changelog
         id: log
         run: |
           REPORT="$(cat .github/CHANGELOG.md)"
           REPORT="${REPORT//'%'/'%25'}"
-          REPORT="${REPORT//$'\n'/'%0A'}"
-          REPORT="${REPORT//$'\r'/'%0D'}"
-          echo "REPORT=$REPORT" >> $GITHUB_ENV
-
-      # Setup dotnet 5.0.x
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 5.0.x
-
-      - name: Use Node.js
-        uses: actions/setup-node@v1
-
-      - name: Build
-        run: |
-          sed -i 's/0.0.0/${{env.CURRENT}}/g' Content/bios.json
-          sed -i 's/0.0.0/${{env.CURRENT}}/g' PixelVision8.CoreDesktop.csproj
-          cd .gulp
-          npm install
-          npm install gulp -g
-          echo $VERSION
-          gulp
+          REPORT="${REPORT//$'\n'/'<br/>'}"
+          REPORT="${REPORT//$'## v${{ env.CURRENT }}'/''}"
+          REPORT="${REPORT//$'<br/><br/>'/'<br/>'}"
+          REPORT="${REPORT//$'<br/>*'/'*'}"
+          echo -e "REPORT=$REPORT" >> $GITHUB_ENV
 
       # Update the release with the change log
       - name: Update Release
@@ -110,14 +90,32 @@ jobs:
           tag: v${{env.CURRENT}}
           gzip: false
           body: >
-            You'll be able to download a preview build of Pixel Vision 8 for Windows, Mac, and Linux (x64 & ARM 64) below. This project is continually updated, and automated builds are made available to allow users to preview new features, bug fixes, and optimizations to the underlying codebase. Please make sure to backup your [Workspace](https://docs.pixelvision8.com/pixelvisionos) before running this or any new build of Pixel Vision 8.
+          
+            This is an **experimental build** of a new renderer and APIs. A lot of tools are broken, changes are not documented, and there is a new version of the core engine called PV8 Lite that is intended for developers looking to build games in pure C# as close to the metal as possible with no extra dependencies. 
+
+
+            You have been warned!
+
+            ***
+            
+            
+            You'll be able to download a preview build of Pixel Vision 8 for Windows, Mac, and Linux below. This project is continually updated, and automated builds are made available to allow users to preview new features, bug fixes, and optimizations to the underlying codebase. Please make sure to backup your [Workspace](https://docs.pixelvision8.com/pixelvisionos) before running this or any new build of Pixel Vision 8.
 
 
             Due to how large and complex the codebase is, these incremental builds help reduce the time between releases and allow the collection developer feedback. Here is a list of the most recent changes:
 
 
-            ${{ env.REPORT }}. In addition, you can see the current open issues [here](https://github.com/PixelVision8/PixelVision8/issues) or use one of the following links to submit a new [bug](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=bug_report.md), [feature](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=feature_request.md) or [question](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=question.md). To learn more about Pixel Vision 8, check out [the documentation](https://docs.pixelvision8.com/), explore [the examples](https://www.pixelvision8.com/examples), join [the Discord server](https://discord.gg/pixelvision8), and visit [the main website](https://www.pixelvision8.com/).
+            ## v${{env.CURRENT}}
+            
+            ${{ env.REPORT }}. 
+            
+            
+            In addition, you can see the current open issues [here](https://github.com/PixelVision8/PixelVision8/issues) or use one of the following links to submit a new [bug](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=bug_report.md), [feature](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=feature_request.md) or [question](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=question.md). To learn more about Pixel Vision 8, check out [the documentation](https://docs.pixelvision8.com/), explore [the examples](https://www.pixelvision8.com/examples), join [the Discord server](https://discord.gg/pixelvision8), and visit [the main website](https://www.pixelvision8.com/).
           files: >
-            PixelVision8-v${{env.CURRENT}}-macOS.zip:Releases/PixelVision8-macOS.zip
-            PixelVision8-v${{env.CURRENT}}-win.zip:Releases/PixelVision8-win.zip
-            PixelVision8-v${{env.CURRENT}}-linux.zip:Releases/PixelVision8-linux.zip
+            PixelVision8-v${{env.CURRENT}}-macOS.zip:Releases/Final/PixelVision8-macOS.zip
+            PixelVision8-v${{env.CURRENT}}-win.zip:Releases/Final/PixelVision8-win.zip
+            PixelVision8-v${{env.CURRENT}}-linux.zip:Releases/Final/PixelVision8-linux.zip
+            API-Examples-Disk-v${{env.CURRENT}}.pv8:Releases/Final/APIExamples.pv8
+            Art-Packs-Disk-v${{env.CURRENT}}.pv8:Releases/Final/ArtPacks.pv8
+            Demoscene-Disk-v${{env.CURRENT}}.pv8:Releases/Final/Demoscene.pv8
+            Example-Games-Disk-v${{env.CURRENT}}.pv8:Releases/Final/Games.pv8

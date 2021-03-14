@@ -1,0 +1,12 @@
+{
+    "name":"Terminal",
+    "description":"A PV8 Game Template.",
+    "version":"v0.0.0",
+    "ext":".pv8",
+    "ignoreProcessing":"False",
+    "gpuChip":"PV8",
+    "cartChip":"PV8",
+    "soundChip":"PV8",
+    "paletteMode":"false",
+    
+}

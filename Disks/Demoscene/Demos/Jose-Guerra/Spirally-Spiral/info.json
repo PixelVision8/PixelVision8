@@ -1,0 +1,17 @@
+{
+    "name":"SpirallySpiralDemo",
+    "description":"Spirally Spiral Demo by Jose-Guerra
+",
+    "version":"v0.0.0",
+    "ext":".pv8",
+    "buildWin":"false",
+    "buildExtras":"",
+    "runnerType":"lua",
+    "buildMac":"false",
+    "buildLinux":"false",
+    "gpuChip":"Pico",
+    "cartChip":"Pico",
+    "soundChip":"Pico",
+    "paletteMode":"false",
+    
+}

@@ -87,11 +87,11 @@ function ImageTool:Draw()
     if(self.displayInvalid == true and pixelVisionOS:IsModalActive() == false) then
 
         -- Draw the pixel data in the upper left hand cornver of the tool's window
-        self.imageCanvas:DrawPixels(8, 24, DrawMode.TilemapCache, 1, -1, -1, 0, self.viewportRect)
+        self.imageCanvas:DrawPixels(8, 24, DrawMode.TilemapCache, 1, -1, self.maskColor, self.colorOffset, self.viewportRect)
 
-        if(self.debugMode) then
-            self.colorMemoryCanvas:DrawPixels(8, 24, self.DrawMode.UI, 3)
-        end
+        -- if(self.debugMode) then
+        --     self.colorMemoryCanvas:DrawPixels(8, 24, self.DrawMode.UI, 3)
+        -- end
 
     end
 

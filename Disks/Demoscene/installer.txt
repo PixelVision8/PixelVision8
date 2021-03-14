@@ -1,0 +1,16 @@
+# installer values
+
+$readme=Welcome to the Pixel Vision 8 Demoscene installer. This will install all of the Lua Demoscene projects to the root of the Workspace folder.
+
+$dir=Demos
+
+#Files to install
+
+# Demos
+/Demos/Julio-Choy/Demo-01/|/Julio-Choy/Demo-01/
+/Demos/Julio-Choy/Demo-02/|/Julio-Choy/Demo-02/
+/Demos/Julio-Choy/Demo-03/|/Julio-Choy/Demo-03/
+/Demos/Julio-Choy/Demo-04/|/Julio-Choy/Demo-04/
+/Demos/Julio-Choy/Demo-05/|/Julio-Choy/Demo-05/
+/Demos/Julio-Choy/Demo-06/|/Julio-Choy/Demo-06/
+/Demos/Jose-Guerra/Spirally-Spiral/|/Jose-Guerra/Spirally-Spiral/

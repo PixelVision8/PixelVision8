@@ -99,8 +99,7 @@ namespace PixelVision8.Player
 
                 default:
 
-                    DisplayChip.NewDrawCall(pixelData, x, y, blockWidth, blockHeight, (byte) drawMode, flipH, flipV,
-                        colorOffset);
+                    DisplayChip.NewDrawCall(pixelData, x, y, blockWidth, blockHeight, (byte) drawMode, flipH, flipV, colorOffset);
 
                     break;
             }

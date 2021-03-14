@@ -195,6 +195,7 @@ namespace PixelVision8.Player
 
         public void Clear(int colorRef = -1, int x = 0, int y = 0, int? width = null, int? height = null)
         {
+            
             if (width.HasValue || height.HasValue)
             {
                 var tmpWidth = width ?? 1;

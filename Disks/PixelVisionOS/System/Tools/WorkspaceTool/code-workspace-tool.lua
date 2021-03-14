@@ -13,7 +13,6 @@ LoadScript("code-icon-button")
 LoadScript("code-process-file-actions")
 LoadScript("code-file-actions")
 LoadScript("code-export")
-LoadScript("pixel-vision-os-item-picker-v1")
 
 function WorkspaceTool:Init()
 
@@ -89,10 +88,8 @@ function WorkspaceTool:RestoreLastPath()
 
   -- TODO ned  to restore selections correctly
   local newPath = SessionID() == ReadSaveData("sessionID", "") and ReadSaveData("lastPath", "none") or "none"
-  -- local lastScrollPos = tonumber(ReadSaveData("scrollPos", "0"))
-  -- local lastSelection = tonumber(ReadSaveData("selection", nil))
-
-  local historyString = ReadSaveData("history", "")
+  
+  local historyString = newPath ~= "none" and ReadSaveData("history", "") or ""
 
   self.pathHistory = {}
 
@@ -104,8 +101,6 @@ function WorkspaceTool:RestoreLastPath()
     local keyValue = string.split(paths[i], ":")
 
     local props = string.split(keyValue[2], ",")
-
-    print("keyValue",  dump(keyValue), "props", dump(props))
 
     local state = {
       scrollPos = tonumber(props[1])
@@ -145,7 +140,7 @@ function WorkspaceTool:RestoreLastPath()
     
     local files =  GetEntities(self.workspacePath)
 
-    if(#files == 0 or (#files == 1 and files[1] != "System")) then
+    if(#files == 0) then
 
 
       self.createProjectTime = 0
