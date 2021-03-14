@@ -96,7 +96,6 @@ jobs:
         run: |
           sed -i 's/0.0.0/${{env.CURRENT}}/g' Content/bios.json
           sed -i 's/0.0.0/${{env.CURRENT}}/g' PixelVision8.CoreDesktop.csproj
-          cd .gulp
           npm install
           npm install gulp -g
           echo $VERSION
