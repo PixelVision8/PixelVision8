@@ -142,6 +142,9 @@
 
   <!-- Parser -->
   <ItemGroup>
+    <Compile Include="..\..\SDK\Runner\Data\DisplayTarget.MonoGame.cs">
+      <Link>SDK\Runner\Data\DisplayTarget.MonoGame.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Runner\Parsers\AbstractParser.cs">
       <Link>SDK/Runner/Parsers/AbstractParser.cs</Link>
     </Compile>
@@ -216,13 +219,13 @@
     <Compile Include="../../SDK/Player/Chips/Input/ControllerChip.cs">
       <Link>SDK/Player/Chips/Input/ControllerChip.cs</Link>
     </Compile>
-    <Compile Include="..\..\SDK\Player\Chips\Input\InputMap.cs" >
+    <Compile Include="..\..\SDK\Player\Chips\Input\InputMap.cs">
       <Link>SDK/Player/Chips/Input/InputMap.cs</Link>
     </Compile>
-    <Compile Include="..\..\SDK\Player\Chips\Input\KeyboardInputChip.cs" >
+    <Compile Include="..\..\SDK\Player\Chips\Input\KeyboardInputChip.cs">
       <Link>SDK/Player/Chips/Input/KeyboardInputChip.cs</Link>
     </Compile>
-    <Compile Include="..\..\SDK\Player\Chips\Input\MouseInputChip.cs" >
+    <Compile Include="..\..\SDK\Player\Chips\Input\MouseInputChip.cs">
       <Link>SDK/Player/Chips/Input/MouseInputChip.cs</Link>
     </Compile>
 

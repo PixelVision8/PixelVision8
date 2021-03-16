@@ -1564,7 +1564,7 @@ namespace PixelVision8.Runner
                     ignoreExtension = metaData["runnerType"] == "csharp" ? ".lua" : ".cs";
                 }
                 // Read the game's meta file to see if the runner is defined there
-                else if (Array.IndexOf(GameFiles, "/Game/info.json") != -1)
+                else if (Array.IndexOf(GameFiles, "/Game/info.json") != -1) // TODO this are is throwing a random issue
                 {
                     var json = workspaceService.ReadTextFromFile(
                         WorkspacePath.Parse(GameFiles[Array.IndexOf(GameFiles, "/Game/info.json")]));

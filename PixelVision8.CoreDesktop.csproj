@@ -309,6 +309,7 @@
     <Compile Include="SDK\Lua\Debugger\VariableInspector.cs" />
     <Compile Include="SDK\Lua\Parsers\ScriptParser.cs" />
     <Compile Include="SDK\Lua\Services\LuaService.cs" />
+    <Compile Include="SDK\Runner\Data\DisplayTarget.MonoVision.cs" />
     <Compile Include="SDK\Runner\Data\ShaderDisplayTarget.cs" />
     <Compile Include="SDK\Runner\Data\DisplayTarget.cs" />
     <Compile Include="SDK\Player\Data\ImageData.cs" />
