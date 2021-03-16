@@ -16,10 +16,10 @@ process.env.STAGING = process.env.RELEASE  + "Source/"
 // Set the path to the .csproj file
 process.env.FINAL = process.env.RELEASE  + "Final/"
 
-process.env.DISKS = "./Disks/"
+process.env.DISKS = "../../Disks/"
 
 // Set the path to the .csproj file
-process.env.PROJECT = "./PixelVision8.CoreDesktop.csproj"
+process.env.PROJECT = "./Projects/PixelVision8/PixelVision8.CoreDesktop.csproj"
 
 var xml = fs.readFileSync(process.env.PROJECT, "utf8");
 var xmlDoc = libxmljs.parseXml(xml);

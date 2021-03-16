@@ -13,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\PixelVision8.CoreDesktop.csproj" />
+      <ProjectReference Include="..\PixelVision8\PixelVision8.CoreDesktop.csproj" />
     </ItemGroup>
 
 </Project>

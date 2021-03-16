@@ -3,7 +3,7 @@ const rename = require('gulp-rename');
 const replace = require('gulp-string-replace');
 
 gulp.task('mac-icon', function() {
-    return gulp.src("./Icon.icns")
+    return gulp.src("./Projects/PixelVision8/Icon.icns")
         .pipe(rename('App.icns'))
         .pipe(gulp.dest(process.env.FINAL + "/osx-x64/" + process.env.APP_NAME + ".app/Contents/Resources/"));
     }

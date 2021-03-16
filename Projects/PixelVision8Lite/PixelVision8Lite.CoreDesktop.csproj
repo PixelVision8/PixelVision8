@@ -15,7 +15,7 @@
 
   <PropertyGroup>
     <Product>Pixel Vision 8 Lite</Product>
-    <ApplicationIcon>../../Icon.ico</ApplicationIcon>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
     <AssemblyName>Pixel Vision 8 Lite</AssemblyName>
     <RootNamespace>com.pixelvision8.lite</RootNamespace>
     <Version>0.0.0</Version>
@@ -26,8 +26,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="../../Icon.ico" />
-    <EmbeddedResource Include="../../Icon.bmp" />
+    <EmbeddedResource Include="Icon.ico" />
+    <EmbeddedResource Include="Icon.bmp" />
   </ItemGroup>
 
   <!-- Point this variable to the API Example you want to run. -->

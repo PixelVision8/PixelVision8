@@ -1,0 +1,1137 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <DefineConstants>OPENGL;OPENAL;XNADESIGNPROVIDED;LINUX;DESKTOPGL;SUPPORTS_EFX;NETSTANDARD;STBSHARP_INTERNAL</DefineConstants>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <UseAppHost>true</UseAppHost>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+	  <IsPackable>true</IsPackable>
+    <PublishSingleFile>false</PublishSingleFile>
+    <PublishTrimmed>false</PublishTrimmed>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Product>Pixel Vision 8</Product>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <AssemblyName>Pixel Vision 8</AssemblyName>
+    <RootNamespace>com.pixelvision8</RootNamespace>
+    <Version>0.0.0</Version>
+    <PackageId>Pixel Vision 8</PackageId>
+    <PackageIcon>Icon.png</PackageIcon>
+    <Company>Pixel Vision 8</Company>
+    <Copyright>Jesse Freeman 2020</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Icon.ico">
+      <LogicalName>Icon.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icon.bmp">
+      <LogicalName>Icon.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Remove="SDK\MonoVision\Dependencies\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\Content\**\*.*">
+      <Link>Content\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="..\..\SDK\Editor\Audio\SfxrMusicGeneratorChip.cs" >
+      <Link>SDK\Editor\Audio\SfxrMusicGeneratorChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Editors\GameEditor.cs" >
+      <Link>SDK\Editor\Editors\GameEditor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\BackgroundScriptRunner.cs" >
+      <Link>SDK\Editor\Exporters\BackgroundScriptRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\ColorPaletteExporter.cs" >
+      <Link>SDK\Editor\Exporters\ColorPaletteExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\DiskExporter.cs" >
+      <Link>SDK\Editor\Exporters\DiskExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\FontExporter.cs" >
+      <Link>SDK\Editor\Exporters\FontExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\GifExporter.cs" >
+      <Link>SDK\Editor\Exporters\GifExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\IImageExporter.cs" >
+      <Link>SDK\Editor\Exporters\IImageExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\ImageExporter.cs" >
+      <Link>SDK\Editor\Exporters\ImageExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\MetaDataExporter.cs" >
+      <Link>SDK\Editor\Exporters\MetaDataExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\MetaSpriteExporter.cs" >
+      <Link>SDK\Editor\Exporters\MetaSpriteExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\MusicExporter.cs" >
+      <Link>SDK\Editor\Exporters\MusicExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\PixelDataExporter.cs" >
+      <Link>SDK\Editor\Exporters\PixelDataExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\PNGWriter.cs" >
+      <Link>SDK\Editor\Exporters\PNGWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\SfxrSoundExporter.cs" >
+      <Link>SDK\Editor\Exporters\SfxrSoundExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\SongExporter.cs" >
+      <Link>SDK\Editor\Exporters\SongExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\SoundExporter.cs" >
+      <Link>SDK\Editor\Exporters\SoundExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\SpriteBuilderExporter.cs" >
+      <Link>SDK\Editor\Exporters\SpriteBuilderExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\SpriteExporter.cs" >
+      <Link>SDK\Editor\Exporters\SpriteExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\SystemExporter.cs" >
+      <Link>SDK\Editor\Exporters\SystemExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\TilemapJsonExporter.cs" >
+      <Link>SDK\Editor\Exporters\TilemapJsonExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\ZipDiskExporter.cs" >
+      <Link>SDK\Editor\Exporters\ZipDiskExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Exporters\ZipExporter.cs" >
+      <Link>SDK\Editor\Exporters\ZipExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Services\BaseExportService.cs" >
+      <Link>SDK\Editor\Services\BaseExportService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Services\GameDataExportService.cs" >
+      <Link>SDK\Editor\Services\GameDataExportService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Services\LuaPlatformAccessorService.cs" >
+      <Link>SDK\Editor\Services\LuaPlatformAccessorService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Services\ScreenshotService.cs" >
+      <Link>SDK\Editor\Services\ScreenshotService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Editor\Services\WorkspaceServicePlus.cs" >
+      <Link>SDK\Editor\Services\WorkspaceServicePlus.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\AbstractChip.cs" >
+      <Link>SDK\Player\Chips\AbstractChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Audio\MusicChip.cs" >
+      <Link>SDK\Player\Chips\Audio\MusicChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Audio\Sfxr\SfxrParams.cs" >
+      <Link>SDK\Player\Chips\Audio\Sfxr\SfxrParams.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Audio\Sfxr\SfxrSoundChip.cs" >
+      <Link>SDK\Player\Chips\Audio\Sfxr\SfxrSoundChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Audio\Sfxr\SfxrSynthChannel.cs" >
+      <Link>SDK\Player\Chips\Audio\Sfxr\SfxrSynthChannel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Audio\Sfxr\SfxSoundData.cs" >
+      <Link>SDK\Player\Chips\Audio\Sfxr\SfxSoundData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Audio\SoundChannel.cs" >
+      <Link>SDK\Player\Chips\Audio\SoundChannel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Audio\SoundChip.cs" >
+      <Link>SDK\Player\Chips\Audio\SoundChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\Buttons.cs" >
+      <Link>SDK\Player\Chips\Game\Buttons.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\DrawMode.cs" >
+      <Link>SDK\Player\Chips\Game\DrawMode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Debug.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Debug.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Draw.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Draw.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Input.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Input.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Keyboard.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Keyboard.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Math.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Math.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Misc.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Misc.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Mouse.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Mouse.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Sound.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Sound.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Sprite.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Sprite.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Text.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Text.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Tilemap.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Tilemap.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.TilemapCache.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.TilemapCache.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Factories.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Factories.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.MetaSprite.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.MetaSprite.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Music.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Music.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Utils.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Utils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Workspace.cs" >
+      <Link>SDK\Player\Chips\Game\GameChip.Workspace.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\InputMode.cs" >
+      <Link>SDK\Player\Chips\Game\InputMode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\SpriteSizes.cs" >
+      <Link>SDK\Player\Chips\Game\SpriteSizes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Graphics\ColorChip.cs" >
+      <Link>SDK\Player\Chips\Graphics\ColorChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Graphics\DisplayChip.cs" >
+      <Link>SDK\Player\Chips\Graphics\DisplayChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Graphics\FontChip.cs" >
+      <Link>SDK\Player\Chips\Graphics\FontChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Graphics\SpriteChip.cs" >
+      <Link>SDK\Player\Chips\Graphics\SpriteChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Graphics\TilemapChip.cs" >
+      <Link>SDK\Player\Chips\Graphics\TilemapChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\IDraw.cs" >
+      <Link>SDK\Player\Chips\IDraw.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Input\ControllerChip.cs" >
+      <Link>SDK\Player\Chips\Input\ControllerChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Input\InputMap.cs" >
+      <Link>SDK\Player\Chips\Input\InputMap.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Input\KeyboardInputChip.cs" >
+      <Link>SDK\Player\Chips\Input\KeyboardInputChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Input\MouseInputChip.cs" >
+      <Link>SDK\Player\Chips\Input\MouseInputChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\IUpdate.cs" >
+      <Link>SDK\Player\Chips\IUpdate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\AbstractData.cs" >
+      <Link>SDK\Player\Data\AbstractData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.cs" >
+      <Link>SDK\Player\Data\Canvas\Canvas.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\CanvasDrawRequest.cs" >
+      <Link>SDK\Player\Data\Canvas\CanvasDrawRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.Ellipse.cs" >
+      <Link>SDK\Player\Data\Canvas\Canvas.Ellipse.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.FloodFill.cs" >
+      <Link>SDK\Player\Data\Canvas\Canvas.FloodFill.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.Layers.cs" >
+      <Link>SDK\Player\Data\Canvas\Canvas.Layers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.Line.cs" >
+      <Link>SDK\Player\Data\Canvas\Canvas.Line.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.Merge.cs" >
+      <Link>SDK\Player\Data\Canvas\Canvas.Merge.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.Pattern.cs" >
+      <Link>SDK\Player\Data\Canvas\Canvas.Pattern.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.Rectangle.cs" >
+      <Link>SDK\Player\Data\Canvas\Canvas.Rectangle.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.Resize.cs" >
+      <Link>SDK\Player\Data\Canvas\Canvas.Resize.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.Sample.cs" >
+      <Link>SDK\Player\Data\Canvas\Canvas.Sample.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.Sprite.cs" >
+      <Link>SDK\Player\Data\Canvas\Canvas.Sprite.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.Stroke.cs" >
+      <Link>SDK\Player\Data\Canvas\Canvas.Stroke.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.Text.cs" >
+      <Link>SDK\Player\Data\Canvas\Canvas.Text.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\DrawRequest.cs" >
+      <Link>SDK\Player\Data\DrawRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\PixelData.cs" >
+      <Link>SDK\Player\Data\PixelData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\SongData.cs" >
+      <Link>SDK\Player\Data\SongData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\SoundData.cs" >
+      <Link>SDK\Player\Data\SoundData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\SpriteCollection.cs" >
+      <Link>SDK\Player\Data\SpriteCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\TileData.cs" >
+      <Link>SDK\Player\Data\TileData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\TrackData.cs" >
+      <Link>SDK\Player\Data\TrackData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\TrackerData.cs" >
+      <Link>SDK\Player\Data\TrackerData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\PixelVision.Plus.cs" >
+      <Link>SDK\Player\PixelVision.Plus.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\PixelVision.cs" >
+      <Link>SDK\Player\PixelVision.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Services\AbstractService.cs" >
+      <Link>SDK\Player\Services\AbstractService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Services\IService.cs" >
+      <Link>SDK\Player\Services\IService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Services\IServiceLocator.cs" >
+      <Link>SDK\Player\Services\IServiceLocator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Services\ServiceManager.cs" >
+      <Link>SDK\Player\Services\ServiceManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Utils\Utilities.Calculations.cs" >
+      <Link>SDK\Player\Utils\Utilities.Calculations.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Utils\Utilities.PixelData.cs" >
+      <Link>SDK\Player\Utils\Utilities.PixelData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Chips\Game\LuaGameChip.cs">
+      <Link>SDK\Lua\Chips\Game\LuaGameChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Debugger\AsyncDebugger.cs">
+      <Link>SDK\Lua\Debugger\AsyncDebugger.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Debugger\DebugSession.cs">
+      <Link>SDK\Lua\Debugger\DebugSession.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Debugger\EmptyDebugSession.cs">
+      <Link>SDK\Lua\Debugger\EmptyDebugSession.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Debugger\IAsyncDebuggerClient.cs">
+      <Link>SDK\Lua\Debugger\IAsyncDebuggerClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Debugger\MoonSharpDebugSession.cs">
+      <Link>SDK\Lua\Debugger\MoonSharpDebugSession.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Debugger\MoonSharpVsCodeDebugServer.cs">
+      <Link>SDK\Lua\Debugger\MoonSharpVsCodeDebugServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Debugger\Protocol.cs">
+      <Link>SDK\Lua\Debugger\Protocol.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Debugger\Utilities.cs">
+      <Link>SDK\Lua\Debugger\Utilities.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Debugger\VariableInspector.cs">
+      <Link>SDK\Lua\Debugger\VariableInspector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Parsers\ScriptParser.cs">
+      <Link>SDK\Lua\Parsers\ScriptParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Services\LuaService.cs">
+      <Link>SDK\Lua\Services\LuaService.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\SDK\Runner\Data\DisplayTarget.MonoVision.cs">
+      <Link>SDK\Runner\Data\DisplayTarget.MonoVision.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Data\ShaderDisplayTarget.cs">
+      <Link>SDK\Runner\Data\ShaderDisplayTarget.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Data\DisplayTarget.cs">
+      <Link>SDK\Runner\Data\DisplayTarget.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\ImageData.cs">
+      <Link>SDK\Runner\SDK\Player\Data\ImageData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\DesktopRunner.cs">
+      <Link>SDK\Runner\DesktopRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Enums\ActionKeys.cs">
+      <Link>SDK\Runner\Enums\ActionKeys.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Enums\BiosSettings.cs">
+      <Link>SDK\Runner\Enums\BiosSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Enums\CRTSettings.cs">
+      <Link>SDK\Runner\Enums\CRTSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Game\GameRunner.cs">
+      <Link>SDK\Runner\Game\GameRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Game\GameRunner.Display.cs">
+      <Link>SDK\Runner\Game\GameRunner.Display.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Game\GameRunner.Engine.cs">
+      <Link>SDK\Runner\Game\GameRunner.Engine.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Game\GameRunner.Shutdown.cs">
+      <Link>SDK\Runner\Game\GameRunner.Shutdown.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Game\GameRunner.Sound.cs">
+      <Link>SDK\Runner\Game\GameRunner.Sound.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\AbstractParser.cs">
+      <Link>SDK\Runner\Parsers\AbstractParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\ColorParser.cs">
+      <Link>SDK\Runner\Parsers\ColorParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\FontParser.cs">
+      <Link>SDK\Runner\Parsers\FontParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\GifReader.cs">
+      <Link>SDK\Runner\Parsers\GifReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\IParser.cs">
+      <Link>SDK\Runner\Parsers\IParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\IFileLoader.cs">
+      <Link>SDK\Runner\Parsers\IFileLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\IImageParser.cs">
+      <Link>SDK\Runner\Parsers\IImageParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\ImageParser.cs">
+      <Link>SDK\Runner\Parsers\ImageParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\JsonParser.cs">
+      <Link>SDK\Runner\Parsers\JsonParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\Loader.cs">
+      <Link>SDK\Runner\Parsers\Loader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\MetaDataParser.cs">
+      <Link>SDK\Runner\Parsers\MetaDataParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\PNGFileReader.cs">
+      <Link>SDK\Runner\Parsers\PNGFileReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\PNGReader.cs">
+      <Link>SDK\Runner\Parsers\PNGReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SpriteImageParser.cs">
+      <Link>SDK\Runner\Parsers\SpriteImageParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\TilemapJsonParser.cs">
+      <Link>SDK\Runner\Parsers\TilemapJsonParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\TilemapParser.cs">
+      <Link>SDK\Runner\Parsers\TilemapParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\WavParser.cs">
+      <Link>SDK\Runner\Parsers\WavParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Services\LoadService.cs">
+      <Link>SDK\Runner\Services\LoadService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Services\LogService.cs">
+      <Link>SDK\Runner\Services\LogService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Services\SaveFlags.cs">
+      <Link>SDK\Runner\Services\SaveFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\FileLoadHelper.cs">
+      <Link>SDK\Runner\Utils\FileLoadHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\Data\GifFrame.cs">
+      <Link>SDK\Runner\Utils\GifUtils\Data\GifFrame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\Data\Texture2D.cs">
+      <Link>SDK\Runner\Utils\GifUtils\Data\Texture2D.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\Enums\DisposalMethod.cs">
+      <Link>SDK\Runner\Utils\GifUtils\Enums\DisposalMethod.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\Enums\MasterPalette.cs">
+      <Link>SDK\Runner\Utils\GifUtils\Enums\MasterPalette.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\BitHelper.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\BitHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\Blocks\ApplicationExtension.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\Blocks\ApplicationExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\Blocks\Block.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\Blocks\Block.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\Blocks\ColorTable.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\Blocks\ColorTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\Blocks\CommentExtension.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\Blocks\CommentExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\Blocks\GraphicControlExtension.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\Blocks\GraphicControlExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\Blocks\ImageDescriptor.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\Blocks\ImageDescriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\Blocks\PlainTextExtension.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\Blocks\PlainTextExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\ByteArrayComparer.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\ByteArrayComparer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\GifParser.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\GifParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\LogicalScreenDescriptor.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\LogicalScreenDescriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\LzwDecoder.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\LzwDecoder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\LzwEncoder.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\LzwEncoder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\TableBasedImageData.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\TableBasedImageData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\GifUtils\GifCore\TextureConverter.cs">
+      <Link>SDK\Runner\Utils\GifUtils\GifCore\TextureConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\JsonUtil.cs">
+      <Link>SDK\Runner\Utils\JsonUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\MiniJSON.cs">
+      <Link>SDK\Runner\Utils\MiniJSON.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\PNGUtils.cs">
+      <Link>SDK\Runner\Utils\PNGUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\TiledUtil.cs">
+      <Link>SDK\Runner\Utils\TiledUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\ZLibStream\ZlibStream.cs">
+      <Link>SDK\Runner\Utils\ZLibStream\ZlibStream.cs</Link>
+    </Compile>
+    </ItemGroup>
+
+  <!-- Workspace -->
+  <ItemGroup>
+    <Compile Include="..\..\SDK\Workspace\Data\SpriteExportData.cs" >
+      <Link>SDK\Workspace\Data\SpriteExportData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Exporters\AbstractExporter.cs" >
+      <Link>SDK\Workspace\Exporters\AbstractExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Exporters\IAbstractExporter.cs" >
+      <Link>SDK\Workspace\Exporters\IAbstractExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Exporters\SavedDataExporter.cs" >
+      <Link>SDK\Workspace\Exporters\SavedDataExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Services\BiosService.cs" >
+      <Link>SDK\Workspace\Services\BiosService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Services\WorkspaceService.cs" >
+      <Link>SDK\Workspace\Services\WorkspaceService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Utils\ScriptLoaderUtil.cs" >
+      <Link>SDK\Workspace\Utils\ScriptLoaderUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Utils\WorkspaceFileLoadHelper.cs" >
+      <Link>SDK\Workspace\Utils\WorkspaceFileLoadHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\Collections\EnumerableCollection.cs" >
+      <Link>SDK\Workspace\Collections\EnumerableCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\Collections\InverseComparer.cs" >
+      <Link>SDK\Workspace\Collections\InverseComparer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\FileSystemExtensions.cs" >
+      <Link>SDK\Workspace\FileSystemExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\FileSystems\FileSystemMounter.cs" >
+      <Link>SDK\Workspace\Workspace\Workspace\FileSystems\FileSystemMounter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\FileSystems\MemoryFileSystem.cs" >
+      <Link>SDK\Workspace\FileSystems\FileSystemMounter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\FileSystems\MergedFileSystem.cs" >
+      <Link>SDK\Workspace\FileSystems\MergedFileSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\FileSystems\PhysicalFileSystem.cs" >
+      <Link>SDK\Workspace\FileSystems\PhysicalFileSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\FileSystems\ReadOnlyFileSystem.cs" >
+      <Link>SDK\Workspace\FileSystems\ReadOnlyFileSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\FileSystems\SubFileSystem.cs" >
+      <Link>SDK\Workspace\FileSystems\SubFileSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\FileSystems\ZipFileSystem.cs" >
+      <Link>SDK\Workspace\FileSystems\ZipFileSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\IFileSystem.cs" >
+      <Link>SDK\Workspace\IFileSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\IO\EmptyStream.cs" >
+      <Link>SDK\Workspace\IO\EmptyStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\IO\StreamExtensions.cs" >
+      <Link>SDK\Workspace\IO\StreamExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\ParseException.cs" >
+      <Link>SDK\Workspace\ParseException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Workspace\Workspace\WorkspacePath.cs" >
+      <Link>SDK\Workspace\WorkspacePath.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <!-- Mono Vision-->
+  <ItemGroup>
+    <Compile Include="..\..\SDK\MonoVision\Audio\AudioChannels.cs" >
+      <Link>SDK\MonoVision\Audio\AudioChannels.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Audio\InstancePlayLimitException.cs" >
+      <Link>SDK\MonoVision\Audio\InstancePlayLimitException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Audio\NoAudioHardwareException.cs" >
+      <Link>SDK\MonoVision\Audio\NoAudioHardwareException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Audio\SoundEffect.cs" >
+      <Link>SDK\MonoVision\Audio\SoundEffect.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Audio\SoundEffectInstance.cs" >
+      <Link>SDK\MonoVision\Audio\SoundEffectInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Audio\SoundEffectInstancePool.cs" >
+      <Link>SDK\MonoVision\Audio\SoundEffectInstancePool.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Audio\SoundState.cs" >
+      <Link>SDK\MonoVision\Audio\SoundState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Color.cs" >
+      <Link>SDK\MonoVision\Color.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\EventHelpers.cs" >
+      <Link>SDK\MonoVision\EventHelpers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Game.cs" >
+      <Link>SDK\MonoVision\Game.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\GamePlatform.cs" >
+      <Link>SDK\MonoVision\GamePlatform.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\GameTime.cs" >
+      <Link>SDK\MonoVision\GameTime.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\GameWindow.cs" >
+      <Link>SDK\MonoVision\GameWindow.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\GraphicsDeviceInformation.cs" >
+      <Link>SDK\MonoVision\GraphicsDeviceInformation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\GraphicsDeviceManager.cs" >
+      <Link>SDK\MonoVision\GraphicsDeviceManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\DisplayMode.cs" >
+      <Link>SDK\MonoVision\Graphics\DisplayMode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Effect\Effect.cs" >
+      <Link>SDK\MonoVision\Graphics\Effect\Effect.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Effect\EffectParameter.cs" >
+      <Link>SDK\MonoVision\Graphics\Effect\EffectParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Effect\EffectParameterClass.cs" >
+      <Link>SDK\MonoVision\Graphics\Effect\EffectParameterClass.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Effect\EffectParameterCollection.cs" >
+      <Link>SDK\MonoVision\Graphics\Effect\EffectParameterCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Effect\EffectParameterType.cs" >
+      <Link>SDK\MonoVision\Graphics\Effect\EffectParameterType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Effect\EffectPass.cs" >
+      <Link>SDK\MonoVision\Graphics\Effect\EffectPass.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Effect\EffectPassCollection.cs" >
+      <Link>SDK\MonoVision\Graphics\Effect\EffectPassCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Effect\EffectResource.cs" >
+      <Link>SDK\MonoVision\Graphics\Effect\EffectResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Effect\EffectTechnique.cs" >
+      <Link>SDK\MonoVision\Graphics\Effect\EffectTechnique.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Effect\EffectTechniqueCollection.cs" >
+      <Link>SDK\MonoVision\Graphics\Effect\EffectTechniqueCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Effect\SpriteEffect.cs" >
+      <Link>SDK\MonoVision\Graphics\Effect\SpriteEffect.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\GraphicsCapabilities.cs" >
+      <Link>SDK\MonoVision\Graphics\GraphicsCapabilities.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\GraphicsDevice.cs" >
+      <Link>SDK\MonoVision\Graphics\GraphicsDevice.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\GraphicsExtensions.cs" >
+      <Link>SDK\MonoVision\Graphics\GraphicsExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\GraphicsResource.cs" >
+      <Link>SDK\MonoVision\Graphics\GraphicsResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\IGraphicsDeviceService.cs" >
+      <Link>SDK\MonoVision\Graphics\IGraphicsDeviceService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\NoSuitableGraphicsDeviceException.cs" >
+      <Link>SDK\MonoVision\Graphics\NoSuitableGraphicsDeviceException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\PresentationEventArgs.cs" >
+      <Link>SDK\MonoVision\Graphics\PresentationEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\PresentationParameters.cs" >
+      <Link>SDK\MonoVision\Graphics\PresentationParameters.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\SamplerStateCollection.cs" >
+      <Link>SDK\MonoVision\Graphics\SamplerStateCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\SetDataOptions.cs" >
+      <Link>SDK\MonoVision\Graphics\SetDataOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Shader\ConstantBuffer.cs" >
+      <Link>SDK\MonoVision\Graphics\Shader\ConstantBuffer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Shader\ConstantBufferCollection.cs" >
+      <Link>SDK\MonoVision\Graphics\Shader\ConstantBufferCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Shader\Shader.cs" >
+      <Link>SDK\MonoVision\Graphics\Shader\Shader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Shader\ShaderStage.cs" >
+      <Link>SDK\MonoVision\Graphics\Shader\ShaderStage.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\SpriteBatch.cs" >
+      <Link>SDK\MonoVision\Graphics\SpriteBatch.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\SpriteBatcher.cs" >
+      <Link>SDK\MonoVision\Graphics\SpriteBatcher.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\SpriteBatchItem.cs" >
+      <Link>SDK\MonoVision\Graphics\SpriteBatchItem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\SpriteSortMode.cs" >
+      <Link>SDK\MonoVision\Graphics\SpriteSortMode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\States\SamplerState.cs" >
+      <Link>SDK\MonoVision\Graphics\States\SamplerState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\SurfaceFormat.cs" >
+      <Link>SDK\MonoVision\Graphics\SurfaceFormat.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Texture.cs" >
+      <Link>SDK\MonoVision\Graphics\Texture.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Texture2D.cs" >
+      <Link>SDK\MonoVision\Graphics\Texture2D.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\TextureCollection.cs" >
+      <Link>SDK\MonoVision\Graphics\TextureCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\IVertexType.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\IVertexType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\PrimitiveType.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\PrimitiveType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\VertexBuffer.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\VertexBuffer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\VertexBufferBinding.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\VertexBufferBinding.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\VertexBufferBindings.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\VertexBufferBindings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\VertexDeclaration.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\VertexDeclaration.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\VertexDeclarationCache.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\VertexDeclarationCache.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\VertexElement.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\VertexElement.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\VertexElementFormat.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\VertexElementFormat.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\VertexElementUsage.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\VertexElementUsage.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\VertexInputLayout.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\VertexInputLayout.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\VertexPosition.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\VertexPosition.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\VertexPositionColor.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\VertexPositionColor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\VertexPositionColorTexture.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\VertexPositionColorTexture.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\VertexPositionNormalTexture.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\VertexPositionNormalTexture.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Vertices\VertexPositionTexture.cs" >
+      <Link>SDK\MonoVision\Graphics\Vertices\VertexPositionTexture.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Graphics\Viewport.cs" >
+      <Link>SDK\MonoVision\Graphics\Viewport.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\Buttons.cs" >
+      <Link>SDK\MonoVision\Input\Buttons.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\ButtonState.cs" >
+      <Link>SDK\MonoVision\Input\ButtonState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\GamePad.cs" >
+      <Link>SDK\MonoVision\Input\GamePad.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\GamePadButtons.cs" >
+      <Link>SDK\MonoVision\Input\GamePadButtons.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\GamePadCapabilities.cs" >
+      <Link>SDK\MonoVision\Input\GamePadCapabilities.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\GamePadDeadZone.cs" >
+      <Link>SDK\MonoVision\Input\GamePadDeadZone.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\GamePadDPad.cs" >
+      <Link>SDK\MonoVision\Input\GamePadDPad.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\GamePadState.cs" >
+      <Link>SDK\MonoVision\Input\GamePadState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\GamePadThumbSticks.cs" >
+      <Link>SDK\MonoVision\Input\GamePadThumbSticks.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\GamePadTriggers.cs" >
+      <Link>SDK\MonoVision\Input\GamePadTriggers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\GamePadType.cs" >
+      <Link>SDK\MonoVision\Input\GamePadType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\Joystick.cs" >
+      <Link>SDK\MonoVision\Input\Joystick.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\JoystickCapabilities.cs" >
+      <Link>SDK\MonoVision\Input\JoystickCapabilities.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\JoystickHat.cs" >
+      <Link>SDK\MonoVision\Input\JoystickHat.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\JoystickState.cs" >
+      <Link>SDK\MonoVision\Input\JoystickState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\Keyboard.cs" >
+      <Link>SDK\MonoVision\Input\Keyboard.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\KeyboardState.cs" >
+      <Link>SDK\MonoVision\Input\KeyboardState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\Keys.cs" >
+      <Link>SDK\MonoVision\Input\Keys.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\KeyState.cs" >
+      <Link>SDK\MonoVision\Input\KeyState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\Mouse.cs" >
+      <Link>SDK\MonoVision\Input\Mouse.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\MouseCursor.cs" >
+      <Link>SDK\MonoVision\Input\MouseCursor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Input\MouseState.cs" >
+      <Link>SDK\MonoVision\Input\MouseState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\MathHelper.cs" >
+      <Link>SDK\MonoVision\MathHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Matrix.cs" >
+      <Link>SDK\MonoVision\Matrix.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Audio\AudioLoader.cs" >
+      <Link>SDK\MonoVision\Platform\Audio\AudioLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Audio\OALSoundBuffer.cs" >
+      <Link>SDK\MonoVision\Platform\Audio\OALSoundBuffer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Audio\OpenAL.cs" >
+      <Link>SDK\MonoVision\Platform\Audio\OpenAL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Audio\OpenALSoundController.cs" >
+      <Link>SDK\MonoVision\Platform\Audio\OpenALSoundController.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Audio\SoundEffect.OpenAL.cs" >
+      <Link>SDK\MonoVision\Platform\Audio\SoundEffect.OpenAL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Audio\SoundEffectInstance.OpenAL.cs" >
+      <Link>SDK\MonoVision\Platform\Audio\SoundEffectInstance.OpenAL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\GamePlatform.Desktop.cs" >
+      <Link>SDK\MonoVision\Platform\GamePlatform.Desktop.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\GraphicsDeviceManager.SDL.cs" >
+      <Link>SDK\MonoVision\Platform\GraphicsDeviceManager.SDL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\Effect\EffectResource.OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\Effect\EffectResource.OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\GraphicsAdapter.Legacy.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\GraphicsAdapter.Legacy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\GraphicsCapabilities.OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\GraphicsCapabilities.OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\GraphicsContext.SDL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\GraphicsContext.SDL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\GraphicsDevice.OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\GraphicsDevice.OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\GraphicsDevice.OpenGL.FramebufferHelper.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\GraphicsDevice.OpenGL.FramebufferHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\IGraphicsContext.OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\IGraphicsContext.OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\IWindowInfo.OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\IWindowInfo.OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\OpenGL.Common.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\OpenGL.Common.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\OpenGL.SDL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\OpenGL.SDL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\SamplerStateCollection.OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\SamplerStateCollection.OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\Shader\ConstantBuffer.OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\Shader\ConstantBuffer.OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\Shader\Shader.OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\Shader\Shader.OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\Shader\ShaderProgramCache.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\Shader\ShaderProgramCache.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\States\SamplerState.OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\States\SamplerState.OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\Texture.OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\Texture.OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\Texture2D.OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\Texture2D.OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\TextureCollection.OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\TextureCollection.OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\Vertices\VertexBuffer.OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\Vertices\VertexBuffer.OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\Vertices\VertexDeclaration.OpenGL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\Vertices\VertexDeclaration.OpenGL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Graphics\WindowInfo.SDL.cs" >
+      <Link>SDK\MonoVision\Platform\Graphics\WindowInfo.SDL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Input\GamePad.SDL.cs" >
+      <Link>SDK\MonoVision\Platform\Input\GamePad.SDL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Input\InputKeyEventArgs.cs" >
+      <Link>SDK\MonoVision\Platform\Input\InputKeyEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Input\Joystick.SDL.cs" >
+      <Link>SDK\MonoVision\Platform\Input\Joystick.SDL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Input\Keyboard.SDL.cs" >
+      <Link>SDK\MonoVision\Platform\Input\Keyboard.SDL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Input\KeyboardUtil.SDL.cs" >
+      <Link>SDK\MonoVision\Platform\Input\KeyboardUtil.SDL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Input\KeysHelper.cs" >
+      <Link>SDK\MonoVision\Platform\Input\KeysHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Input\Mouse.SDL.cs" >
+      <Link>SDK\MonoVision\Platform\Input\Mouse.SDL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Input\MouseCursor.SDL.cs" >
+      <Link>SDK\MonoVision\Platform\Input\MouseCursor.SDL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\PrimaryThreadLoader.cs" >
+      <Link>SDK\MonoVision\Platform\PrimaryThreadLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\SDL\SDL2.cs" >
+      <Link>SDK\MonoVision\Platform\SDL\SDL2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\SDL\SDLGamePlatform.cs" >
+      <Link>SDK\MonoVision\Platform\SDL\SDLGamePlatform.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\SDL\SDLGameWindow.cs" >
+      <Link>SDK\MonoVision\Platform\SDL\SDLGameWindow.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Threading.cs" >
+      <Link>SDK\MonoVision\Platform\Threading.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Utilities\AssemblyHelper.cs" >
+      <Link>SDK\MonoVision\Platform\Utilities\AssemblyHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Utilities\CurrentPlatform.cs" >
+      <Link>SDK\MonoVision\Platform\Utilities\CurrentPlatform.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Utilities\FuncLoader.Desktop.cs" >
+      <Link>SDK\MonoVision\Platform\Utilities\FuncLoader.Desktop.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Utilities\InteropHelpers.cs" >
+      <Link>SDK\MonoVision\Platform\Utilities\InteropHelpers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Platform\Utilities\ReflectionHelpers.Default.cs" >
+      <Link>SDK\MonoVision\Platform\Utilities\ReflectionHelpers.Default.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\PlayerIndex.cs" >
+      <Link>SDK\MonoVision\PlayerIndex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Point.cs" >
+      <Link>SDK\MonoVision\Point.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Rectangle.cs" >
+      <Link>SDK\MonoVision\Rectangle.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\TextInputEventArgs.cs" >
+      <Link>SDK\MonoVision\TextInputEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Utilities\BinaryReaderEx.cs" >
+      <Link>SDK\MonoVision\Utilities\BinaryReaderEx.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Utilities\Hash.cs" >
+      <Link>SDK\MonoVision\Utilities\Hash.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Utilities\ReflectionHelpers.cs" >
+      <Link>SDK\MonoVision\Utilities\ReflectionHelpers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Vector2.cs" >
+      <Link>SDK\MonoVision\Vector2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\MonoVision\Vector3.cs" >
+      <Link>SDK\MonoVision\Vector3.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <!-- Mono Vision Dependencies-->
+  <ItemGroup>
+    <None Remove="..\..\SDK\MonoVision\Dependencies\**" />
+    <Content Include="..\..\SDK\MonoVision\Dependencies\soft_oal.dll">
+      <Link>soft_oal.dll</Link>
+      <PackagePath>runtimes\win-x64\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\SDK\MonoVision\Dependencies\SDL2.dll">
+      <Link>SDL2.dll</Link>
+      <PackagePath>runtimes\win-x64\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\SDK\MonoVision\Dependencies\libopenal.so.1">
+      <Link>libopenal.so.1</Link>
+      <PackagePath>runtimes\linux-x64\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\SDK\MonoVision\Dependencies\libSDL2-2.0.so.0">
+      <Link>libSDL2-2.0.so.0</Link>
+      <PackagePath>runtimes\linux-x64\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\SDK\MonoVision\Dependencies\libopenal.1.dylib">
+      <Link>libopenal.1.dylib</Link>
+      <PackagePath>runtimes\osx\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\SDK\MonoVision\Dependencies\libSDL2-2.0.0.dylib">
+      <Link>libSDL2-2.0.0.dylib</Link>
+      <PackagePath>runtimes\osx\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  
+  <!-- Nuget Projects -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.6.0" />
+    <PackageReference Include="MoonSharp" Version="2.0.0" />
+    <PackageReference Include="TextCopy" Version="4.3.0" />
+  </ItemGroup>
+  
+  <!-- Hide extra files -->
+  <ItemGroup>
+    <None Remove="..\..\**\saves.json" />
+    <None Remove="..\..\SDK\MonoVision\Platform\Graphics\Effect\Resources\**" />
+    <None Remove="..\..\SDK\MonoVision\Dependencies\**" />
+  </ItemGroup>
+
+</Project>

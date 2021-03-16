@@ -136,7 +136,7 @@ jobs:
             PixelVision8-v${{env.CURRENT}}-macOS.zip:Releases/Final/PixelVision8-macOS.zip
             PixelVision8-v${{env.CURRENT}}-win.zip:Releases/Final/PixelVision8-win.zip
             PixelVision8-v${{env.CURRENT}}-linux.zip:Releases/Final/PixelVision8-linux.zip
-            API-Examples-Disk-v${{env.CURRENT}}.pv8:Releases/Final/APIExamples.pv8
-            Art-Packs-Disk-v${{env.CURRENT}}.pv8:Releases/Final/ArtPacks.pv8
-            Demoscene-Disk-v${{env.CURRENT}}.pv8:Releases/Final/Demoscene.pv8
-            Example-Games-Disk-v${{env.CURRENT}}.pv8:Releases/Final/Games.pv8
+            API-Examples-Disk-v${{env.CURRENT}}.pv8:Releases/Final/Disks/APIExamples.pv8
+            Art-Packs-Disk-v${{env.CURRENT}}.pv8:Releases/Final/Disks/ArtPacks.pv8
+            Demoscene-Disk-v${{env.CURRENT}}.pv8:Releases/Final/Disks/Demoscene.pv8
+            Example-Games-Disk-v${{env.CURRENT}}.pv8:Releases/Final/Disks/Games.pv8
