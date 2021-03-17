@@ -25,10 +25,8 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Runner
 {
-    
-    
 
-   public class CSharpRunner : GameRunner
+    public class CSharpRunner : GameRunner
     {
 
         // Store the path to the game's files

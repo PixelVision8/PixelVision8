@@ -18,10 +18,9 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
-using PixelVision8.Runner;
 using System;
 using System.Text;
+using PixelVision8.Runner;
 
 namespace PixelVision8.Player
 {
@@ -60,7 +59,7 @@ namespace PixelVision8.Player
         public int speedInBPM
         {
             get => _speedInBPM;
-            set => _speedInBPM = MathHelper.Clamp(value, 1, 480);
+            set => _speedInBPM = Utilities.Clamp(value, 1, 480);
         }
 
         /// <summary>

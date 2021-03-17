@@ -24,8 +24,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
+using PixelVision8.Runner;
 
-namespace PixelVision8.Runner
+namespace PixelVision8.Editor
 {
     public abstract class BaseExportService : AbstractService
     {

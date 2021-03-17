@@ -18,8 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
-using PixelVision8.Player;
 using System.Collections.Generic;
 
 namespace PixelVision8.Player
@@ -73,7 +71,7 @@ namespace PixelVision8.Player
             _spriteSize = new Point(8, 8);
             _colorIDs = new List<int>();
             _colorId = 0;
-            _pos = Point.Zero;
+            _pos = new Point();
             _tmpPixelData = null;
         }
 
@@ -123,7 +121,7 @@ namespace PixelVision8.Player
                 return;
 
             // Make sure we stay in bounds
-            id = MathHelper.Clamp(id, 0, TotalSprites - 1);
+            id = Utilities.Clamp(id, 0, TotalSprites - 1);
 
             var pos = Utilities.CalculatePosition(id, Columns);
             pos.X *= _spriteSize.X;

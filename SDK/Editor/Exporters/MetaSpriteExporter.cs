@@ -21,8 +21,9 @@
 using PixelVision8.Player;
 using PixelVision8.Runner;
 using System.Text;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class MetaSpriteExporter : AbstractExporter
     {

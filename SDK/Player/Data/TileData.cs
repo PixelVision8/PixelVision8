@@ -18,8 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
-
 namespace PixelVision8.Player
 {
     public sealed class TileData : AbstractData
@@ -79,7 +77,7 @@ namespace PixelVision8.Player
             get => _flag;
             set
             {
-                _flag = MathHelper.Clamp(value, -1, 255);
+                _flag = Utilities.Clamp(value, -1, 255);
                 Invalidate();
             }
         }

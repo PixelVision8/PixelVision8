@@ -18,8 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
-
 namespace PixelVision8.Player
 {
     public partial class GameChip
@@ -27,8 +25,8 @@ namespace PixelVision8.Player
         // TODO shared id with GameChip_Sprite
         protected TilemapChip TilemapChip => Player.TilemapChip;
         
-        private Point _tilemapSize = Point.Zero;
-        private Point _scrollPos = Point.Zero;
+        private Point _tilemapSize = new Point();
+        private Point _scrollPos = new Point();
 
         /// <summary>
         ///     You can scroll the tilemap by calling the ScrollPosition() method and supplying a new scroll X and Y position.

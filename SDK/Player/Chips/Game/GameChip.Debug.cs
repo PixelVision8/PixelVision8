@@ -18,16 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Text;
-using PixelVision8.Runner;
-
 namespace PixelVision8.Player
 {
     public partial class GameChip
     {
-
-        private StringBuilder _printSB = new StringBuilder();
-        
+      
         public int ReadFPS()
         {
             return ((PixelVision) Player).FPS;

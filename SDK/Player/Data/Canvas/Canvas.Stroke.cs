@@ -18,8 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Player;
-
 namespace PixelVision8.Player
 {
     public sealed partial class Canvas

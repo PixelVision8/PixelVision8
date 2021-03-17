@@ -22,8 +22,10 @@ using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 using System;
 using System.Collections.Generic;
+using PixelVision8.Runner;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class ColorPaletteExporter : IExporter
     {

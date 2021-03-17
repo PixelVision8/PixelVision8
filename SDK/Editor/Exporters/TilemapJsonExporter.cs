@@ -23,8 +23,9 @@ using PixelVision8.Runner;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     internal class SpriteVector
     {

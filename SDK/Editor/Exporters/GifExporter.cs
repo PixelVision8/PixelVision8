@@ -20,15 +20,15 @@
 
 using Microsoft.Xna.Framework;
 using PixelVision8.Runner.Exporters;
-using PixelVision8.Runner;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PixelVision8.Player;
+using PixelVision8.Runner;
 using PixelVision8.Runner.Gif;
 
-namespace PixelVision8.Runner
+namespace PixelVision8.Editor
 {
     public class GifExporter : AbstractExporter
     {

@@ -19,14 +19,13 @@
 //
 
 using System;
-using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Player
 {
     public class CanvasDrawRequest
     {
         public Action<CanvasDrawRequest> Action;
-        public Rectangle Bounds = Rectangle.Empty;
+        public Rectangle Bounds = new Rectangle();
         public int ColorOffset;
         public bool Fill;
         public bool FlipH;

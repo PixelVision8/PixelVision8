@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 
@@ -103,7 +102,7 @@ namespace PixelVision8.Player
             {
                 if (songs.Length != value)
                 {
-                    Array.Resize(ref songs, MathHelper.Clamp(value, 1, 96));
+                    Array.Resize(ref songs, Utilities.Clamp(value, 1, 96));
                     var total = songs.Length;
                     for (var i = 0; i < total; i++)
                     {
@@ -119,7 +118,7 @@ namespace PixelVision8.Player
             get => _notesPerTrack;
             set
             {
-                _notesPerTrack = MathHelper.Clamp(value, 4, 32);
+                _notesPerTrack = Utilities.Clamp(value, 4, 32);
 
                 for (var i = 0; i < totalTracks; i++) ActiveTrackerData.tracks[i].totalNotes = _notesPerTrack;
 
@@ -146,7 +145,7 @@ namespace PixelVision8.Player
             {
                 if (trackerDataCollection.Length != value)
                 {
-                    Array.Resize(ref trackerDataCollection, MathHelper.Clamp(value, 1, 96));
+                    Array.Resize(ref trackerDataCollection, Utilities.Clamp(value, 1, 96));
                     var total = trackerDataCollection.Length;
                     for (var i = 0; i < total; i++)
                     {
@@ -177,7 +176,7 @@ namespace PixelVision8.Player
         //            get => _totalTracks;
         //            set
         //            {
-        //                value = MathHelper.Clamp(value, 1, maxTracks);
+        //                value = Utilities.Clamp(value, 1, maxTracks);
         //
         //                var total = trackerDataCollection.Length;
         //                for (var i = 0; i < total; i++)

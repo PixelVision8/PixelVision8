@@ -23,7 +23,6 @@
 
 using Microsoft.Xna.Framework.Audio;
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace PixelVision8.Player.Audio

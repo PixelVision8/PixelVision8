@@ -18,8 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
-
 namespace PixelVision8.Player
 {
     public interface IDisplay

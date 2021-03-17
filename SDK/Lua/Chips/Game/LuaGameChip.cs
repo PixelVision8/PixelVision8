@@ -18,14 +18,12 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MoonSharp.Interpreter;
 using PixelVision8.Runner;
 using System;
 using System.Collections.Generic;
 using PixelVision8.Player.Audio;
-using PixelVisionSDK.Player;
 
 namespace PixelVision8.Player
 {

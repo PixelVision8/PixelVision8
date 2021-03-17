@@ -18,14 +18,15 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Runner;
 using PixelVision8.Runner.Workspace;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using PixelVision8.Runner;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class ZipDiskExporter : AbstractExporter
     {

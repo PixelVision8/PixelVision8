@@ -22,9 +22,10 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using PixelVision8.Runner;
 using PixelVisionRunner.Utils;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class PNGWriter : IImageExporter
     {

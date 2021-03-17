@@ -18,12 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 using System;
 using System.Collections.Generic;
 
-namespace PixelVision8.Runner.Chips
+namespace PixelVision8.Editor
 {
     public enum InstrumentType
     {

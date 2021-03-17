@@ -19,7 +19,6 @@
 //
 
 using System;
-using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Player
 {
@@ -178,7 +177,7 @@ namespace PixelVision8.Player
         public static void Resize(PixelData pixelData, int blockWidth, int blockHeight)
         {
             
-            pixelData.Resize(MathHelper.Clamp(blockWidth, 1, 2048), MathHelper.Clamp(blockHeight, 1, 2048));
+            pixelData.Resize(Utilities.Clamp(blockWidth, 1, 2048), Utilities.Clamp(blockHeight, 1, 2048));
 
             Clear(pixelData);
         }

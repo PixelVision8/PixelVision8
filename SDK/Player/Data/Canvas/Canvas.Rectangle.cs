@@ -18,13 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
-
 namespace PixelVision8.Player
 {
     public sealed partial class Canvas
     {
-        private Rectangle _tmpRect = Rectangle.Empty;
+        private Rectangle _tmpRect;
 
         public void DrawRectangle(int x, int y, int rectWidth, int rectHeight, bool fill = false)
         {

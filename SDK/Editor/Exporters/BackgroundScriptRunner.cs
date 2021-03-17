@@ -27,7 +27,7 @@ using System.Linq;
 using System.Text;
 using PixelVision8.Player;
 
-namespace PixelVision8
+namespace PixelVision8.Editor
 {
     class BackgroundScriptRunner : AbstractExporter
     {

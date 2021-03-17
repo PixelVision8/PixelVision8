@@ -20,8 +20,9 @@
 
 using Microsoft.Xna.Framework;
 using System.IO;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class ImageExporter : AbstractExporter
     {

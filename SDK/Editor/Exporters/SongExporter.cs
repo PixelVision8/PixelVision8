@@ -20,8 +20,9 @@
 
 using PixelVision8.Player.Audio;
 using PixelVision8.Player;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class SongExporter : AbstractExporter
     {

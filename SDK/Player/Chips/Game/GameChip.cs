@@ -23,8 +23,6 @@
 //
 // to see how much I can put in a comment
 
-using Microsoft.Xna.Framework;
-
 namespace PixelVision8.Player
 {
     

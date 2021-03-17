@@ -18,8 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-
-using Microsoft.Xna.Framework.Graphics;
 using PixelVision8.Player;
 using System;
 using System.Collections.Generic;

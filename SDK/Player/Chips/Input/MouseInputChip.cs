@@ -1,4 +1,5 @@
 
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -54,7 +55,7 @@ namespace PixelVision8.Player
 
         public Point ReadMousePosition()
         {
-            var pos = PointToScreen(currentMouseState.Position);
+            var pos = PointToScreen(currentMouseState.Position.X, currentMouseState.Position.Y);
             return new Point(pos.X, pos.Y);
         }
 
@@ -76,17 +77,18 @@ namespace PixelVision8.Player
             scaleMatrix = Matrix.CreateScale(x, y, 1.0f);
         }
 
-        public Point PointToScreen(Point point)
-        {
-            return PointToScreen(point.X, point.Y);
-        }
+        // public Point PointToScreen(int x, int y)
+        // {
+        //     return PointToScreen(point.X, point.Y);
+        // }
 
         public Point PointToScreen(int x, int y)
         {
             var vx = x;
             var vy = y;
             var invertedMatrix = Matrix.Invert(scaleMatrix);
-            return Vector2.Transform(new Vector2(vx, vy), invertedMatrix).ToPoint();
+            var vector = Vector2.Transform(new Vector2(vx, vy), invertedMatrix);
+            return new Point((int)vector.X, (int)vector.Y);
         }
         
         #endregion

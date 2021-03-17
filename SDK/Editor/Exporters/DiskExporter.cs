@@ -21,8 +21,9 @@
 using PixelVision8.Runner;
 using PixelVision8.Runner.Workspace;
 using System.Collections.Generic;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class DiskExporter : ZipExporter
     {

@@ -19,7 +19,6 @@
 //
 
 using System;
-using Microsoft.Xna.Framework;
 using PixelVision8.Player.Audio;
 
 namespace PixelVision8.Player
@@ -44,7 +43,7 @@ namespace PixelVision8.Player
             get => Channels.Length;
             set
             {
-                value = MathHelper.Clamp(value, 1, 5);
+                value = Utilities.Clamp(value, 1, 5);
                 Array.Resize(ref Channels, value);
                 
                 // There should never be an empty sound channel so loop through them and make sure one is created
@@ -63,7 +62,7 @@ namespace PixelVision8.Player
             set
             {
                 // TODO need to copy over existing sounds
-                value = MathHelper.Clamp(value, 1, 96);
+                value = Utilities.Clamp(value, 1, 96);
 
                 Array.Resize(ref Sounds, value);
 
@@ -119,7 +118,7 @@ namespace PixelVision8.Player
             if (index < 0 || index >= Sounds.Length || Sounds[index] == null) 
                 return;
             
-            channelId = MathHelper.Clamp(channelId, 0, TotalChannels - 1);
+            channelId = Utilities.Clamp(channelId, 0, TotalChannels - 1);
 
             Channels[channelId].Play(Sounds[index], frequency);
 

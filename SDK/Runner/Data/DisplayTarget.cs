@@ -23,6 +23,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Globalization;
 using PixelVision8.Player;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace PixelVision8.Runner
 {
@@ -86,16 +87,16 @@ namespace PixelVision8.Runner
         protected readonly GraphicsDeviceManager GraphicManager;
         protected readonly SpriteBatch SpriteBatch;
         protected Color[] CachedColors;
+        public Vector2 Scale = new Vector2(1, 1);
+        private Color[] _pixelData = new Color[0];
+        
         protected Rectangle VisibleRect;
         private readonly int _monitorHeight;
         private readonly int _monitorWidth;
         private int _monitorScale = 1;
         private int _totalPixels;
-        private Color[] _pixelData = new Color[0];
         private int _colorId;
         private int _i;
-
-        public Vector2 Scale = new Vector2(1, 1);
         protected int DisplayWidth;
         protected int DisplayHeight;
 
@@ -110,8 +111,8 @@ namespace PixelVision8.Runner
 
             SpriteBatch = new SpriteBatch(graphicManager.GraphicsDevice);
 
-            _monitorWidth = MathHelper.Clamp(width, 64, 640);
-            _monitorHeight = MathHelper.Clamp(height, 64, 480);
+            _monitorWidth = Utilities.Clamp(width, 64, 640);
+            _monitorHeight = Utilities.Clamp(height, 64, 480);
             
             ResetResolution(_monitorWidth, _monitorHeight);
         }
@@ -221,24 +222,5 @@ namespace PixelVision8.Runner
             
         }
 
-        // public virtual void Render(int[] pixels, int defaultColor)
-        // {
-        //     
-        //     // We can only update the display if the pixel lengths match up
-        //     if (pixels.Length != _totalPixels)
-        //         return;
-        //
-        //     SpriteBatch.Begin(); //SpriteSortMode.Immediate
-        //
-        //     for (_i = 0; _i < _totalPixels; _i++)
-        //     {
-        //         _colorId = pixels[_i];
-        //         _pixelData[_i] = CachedColors[_colorId < 0 ? defaultColor : _colorId];
-        //     }
-        //
-        //     RenderTexture.SetData(_pixelData);
-        //     SpriteBatch.Draw(RenderTexture, Offset, VisibleRect, Color.White, Vector2.Zero, Scale);
-        //     SpriteBatch.End();
-        // }
     }
 }

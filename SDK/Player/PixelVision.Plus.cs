@@ -18,35 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
-using PixelVision8.Player;
 using System.Collections.Generic;
 
 namespace PixelVision8.Player
 {
-    public partial interface IPlayerChips
-    {
-        Dictionary<string, string> MetaData { get; }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        string GetMetadata(string key, string defaultValue = "");
-
-        /// <summary>
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        void SetMetadata(string key, string value);
-
-        /// <summary>
-        /// </summary>
-        /// <param name="target"></param>
-        /// <param name="ignoreKeys"></param>
-        void ReadAllMetadata(Dictionary<string, string> target);
-    }
 
     /// <summary>
     ///     This is the default engine class for Pixel Vision 8. It manages the

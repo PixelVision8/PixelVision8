@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
 using System;
 
 namespace PixelVision8.Player
@@ -73,7 +72,7 @@ namespace PixelVision8.Player
         public int Columns
         {
             get => _columns;
-            private set => _columns = MathHelper.Clamp(value, 0, 255);
+            private set => _columns = Utilities.Clamp(value, 0, 255);
         }
 
         /// <summary>
@@ -82,7 +81,7 @@ namespace PixelVision8.Player
         public int Rows
         {
             get => _rows;
-            private set => _rows = MathHelper.Clamp(value, 0, 255);
+            private set => _rows = Utilities.Clamp(value, 0, 255);
         }
 
         private bool _invalid;
@@ -139,8 +138,8 @@ namespace PixelVision8.Player
         public void Resize(int newColumns, int newRows, bool clear = true)
         {
             // Make sure we keep the value in range
-            Columns = MathHelper.Clamp(newColumns, 1, 256);
-            Rows = MathHelper.Clamp(newRows, 1, 256);
+            Columns = Utilities.Clamp(newColumns, 1, 256);
+            Rows = Utilities.Clamp(newRows, 1, 256);
 
             // Resize the tile array
             Array.Resize(ref tiles, Columns * Rows);

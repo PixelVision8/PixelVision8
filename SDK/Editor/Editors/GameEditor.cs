@@ -22,7 +22,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using PixelVision8.Player;
 using PixelVision8.Player.Audio;
-using PixelVision8.Runner.Chips;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner;
 using PixelVision8.Runner.Workspace;
@@ -31,8 +30,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Buttons = PixelVision8.Player.Buttons;
+using Point = PixelVision8.Player.Point;
 
-namespace PixelVision8.Runner.Editors
+namespace PixelVision8.Editor
 {
     /// <summary>
     ///     This class allows you to edit the current sandbox game.
@@ -1459,13 +1459,13 @@ namespace PixelVision8.Runner.Editors
             _gameChip.StopSound(channel);
         }
 
-        public void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false,
-            bool flipV = false,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
-            Rectangle? bounds = null)
-        {
-            throw new NotImplementedException();
-        }
+        // public void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false,
+        //     bool flipV = false,
+        //     DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
+        //     Rectangle? bounds = null)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
         /// <summary>
         ///     Get or change the TotalDisks number of sounds

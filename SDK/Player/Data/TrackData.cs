@@ -18,11 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
-using PixelVision8.Runner;
 using System;
 using System.Linq;
 using System.Text;
+using PixelVision8.Runner;
 
 namespace PixelVision8.Player
 {
@@ -67,7 +66,7 @@ namespace PixelVision8.Player
         public int totalNotes
         {
             get => notes.Length;
-            set => Array.Resize(ref notes, MathHelper.Clamp(value, 0, maxNotes));
+            set => Array.Resize(ref notes, Utilities.Clamp(value, 0, maxNotes));
         }
 
         /// <summary>

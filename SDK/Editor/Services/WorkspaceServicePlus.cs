@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace PixelVision8.Runner
+namespace PixelVision8.Editor
 {
     public class WorkspaceServicePlus : WorkspaceService
     {

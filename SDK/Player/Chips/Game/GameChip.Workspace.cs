@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -46,7 +45,7 @@ namespace PixelVision8.Player
             get => _saveSlots;
             set
             {
-                value = MathHelper.Clamp(value, 2, 16);
+                value = Utilities.Clamp(value, 2, 16);
                 _saveSlots = value;
 
                 // resize dictionary?

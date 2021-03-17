@@ -24,8 +24,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     /// <summary>
     ///     Leverage the built in sprite parser to do the cutting up and indexing work for us

@@ -28,8 +28,6 @@ namespace PixelVision8.Runner
     {
         protected readonly List<Color> colors = new List<Color>();
 
-        // protected readonly bool unique;
-
         protected ColorChip colorChip;
 
         protected Color magenta;

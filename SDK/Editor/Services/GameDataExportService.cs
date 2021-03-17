@@ -22,8 +22,9 @@ using PixelVision8.Player;
 using PixelVision8.Runner.Exporters;
 using PixelVision8.Runner;
 using System.Collections.Generic;
+using PixelVision8.Editor;
 
-namespace PixelVision8.Runner
+namespace PixelVision8.Editor
 {
     public class GameDataExportService : BaseExportService
     {

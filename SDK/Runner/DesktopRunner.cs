@@ -29,17 +29,15 @@ using MoonSharp.Interpreter;
 using MoonSharp.VsCodeDebugger;
 using MoonSharp.VsCodeDebugger.DebuggerLogic;
 using PixelVision8.Player;
-using PixelVision8.Runner.Editors;
-using PixelVision8.Runner;
 using PixelVision8.Runner.Workspace;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using PixelVision8.Editor;
 using TextCopy;
 using Buttons = PixelVision8.Player.Buttons;
 

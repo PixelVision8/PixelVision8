@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace PixelVision8Runner.Runner.Services
+namespace PixelVision8.Editor
 {
     public class LuaPlatformAccessorService : AbstractService, IPlatformAccessor
     {

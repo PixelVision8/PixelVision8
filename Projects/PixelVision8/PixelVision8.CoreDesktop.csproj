@@ -48,8 +48,11 @@
     <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Log.cs">
       <Link>SDK\Player\Chips\Game\GameChip.Log.cs</Link>
     </Compile>
-    <Compile Include="..\..\SDK\Player\Utils\Utilities.Math.cs">
-      <Link>SDK\Player\Utils\Utilities.Math.cs</Link>
+    <Compile Include="..\..\SDK\Player\Data\Point.cs">
+      <Link>SDK\Player\Data\Point.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Rectangle.cs">
+      <Link>SDK\Player\Data\Rectangle.cs</Link>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="..\..\SDK\Editor\Audio\SfxrMusicGeneratorChip.cs">

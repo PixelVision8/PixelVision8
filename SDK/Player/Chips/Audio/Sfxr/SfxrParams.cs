@@ -117,7 +117,7 @@ namespace PixelVision8.Player.Audio
             get => _masterVolume;
             set
             {
-                _masterVolume = MathHelper.Clamp(value, 0, 1);
+                _masterVolume = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -130,7 +130,7 @@ namespace PixelVision8.Player.Audio
             get => _attackTime;
             set
             {
-                _attackTime = MathHelper.Clamp(value, 0, 1);
+                _attackTime = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -143,7 +143,7 @@ namespace PixelVision8.Player.Audio
             get => _sustainTime;
             set
             {
-                _sustainTime = MathHelper.Clamp(value, 0, 1);
+                _sustainTime = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -156,7 +156,7 @@ namespace PixelVision8.Player.Audio
             get => _sustainPunch;
             set
             {
-                _sustainPunch = MathHelper.Clamp(value, 0, 1);
+                _sustainPunch = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -169,7 +169,7 @@ namespace PixelVision8.Player.Audio
             get => _decayTime;
             set
             {
-                _decayTime = MathHelper.Clamp(value, 0, 1);
+                _decayTime = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -182,7 +182,7 @@ namespace PixelVision8.Player.Audio
             get => _startFrequency;
             set
             {
-                _startFrequency = MathHelper.Clamp(value, 0, 1);
+                _startFrequency = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -195,7 +195,7 @@ namespace PixelVision8.Player.Audio
             get => _minFrequency;
             set
             {
-                _minFrequency = MathHelper.Clamp(value, 0, 1);
+                _minFrequency = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -208,7 +208,7 @@ namespace PixelVision8.Player.Audio
             get => _slide;
             set
             {
-                _slide = MathHelper.Clamp(value, -1, 1);
+                _slide = Clamp(value, -1, 1);
                 Invalidate();
             }
         }
@@ -221,7 +221,7 @@ namespace PixelVision8.Player.Audio
             get => _deltaSlide;
             set
             {
-                _deltaSlide = MathHelper.Clamp(value, -1, 1);
+                _deltaSlide = Clamp(value, -1, 1);
                 Invalidate();
             }
         }
@@ -234,7 +234,7 @@ namespace PixelVision8.Player.Audio
             get => _vibratoDepth;
             set
             {
-                _vibratoDepth = MathHelper.Clamp(value, 0, 1);
+                _vibratoDepth = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -247,7 +247,7 @@ namespace PixelVision8.Player.Audio
             get => _vibratoSpeed;
             set
             {
-                _vibratoSpeed = MathHelper.Clamp(value, 0, 1);
+                _vibratoSpeed = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -260,7 +260,7 @@ namespace PixelVision8.Player.Audio
             get => _changeAmount;
             set
             {
-                _changeAmount = MathHelper.Clamp(value, -1, 1);
+                _changeAmount = Clamp(value, -1, 1);
                 Invalidate();
             }
         }
@@ -273,7 +273,7 @@ namespace PixelVision8.Player.Audio
             get => _changeSpeed;
             set
             {
-                _changeSpeed = MathHelper.Clamp(value, 0, 1);
+                _changeSpeed = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -286,7 +286,7 @@ namespace PixelVision8.Player.Audio
             get => _squareDuty;
             set
             {
-                _squareDuty = MathHelper.Clamp(value, 0, 1);
+                _squareDuty = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -299,7 +299,7 @@ namespace PixelVision8.Player.Audio
             get => _dutySweep;
             set
             {
-                _dutySweep = MathHelper.Clamp(value, -1, 1);
+                _dutySweep = Clamp(value, -1, 1);
                 Invalidate();
             }
         }
@@ -312,7 +312,7 @@ namespace PixelVision8.Player.Audio
             get => _repeatSpeed;
             set
             {
-                _repeatSpeed = MathHelper.Clamp(value, 0, 1);
+                _repeatSpeed = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -325,7 +325,7 @@ namespace PixelVision8.Player.Audio
             get => _phaserOffset;
             set
             {
-                _phaserOffset = MathHelper.Clamp(value, -1, 1);
+                _phaserOffset = Clamp(value, -1, 1);
                 Invalidate();
             }
         }
@@ -338,7 +338,7 @@ namespace PixelVision8.Player.Audio
             get => _phaserSweep;
             set
             {
-                _phaserSweep = MathHelper.Clamp(value, -1, 1);
+                _phaserSweep = Clamp(value, -1, 1);
                 Invalidate();
             }
         }
@@ -351,7 +351,7 @@ namespace PixelVision8.Player.Audio
             get => _lpFilterCutoff;
             set
             {
-                _lpFilterCutoff = MathHelper.Clamp(value, 0, 1);
+                _lpFilterCutoff = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -364,7 +364,7 @@ namespace PixelVision8.Player.Audio
             get => _lpFilterCutoffSweep;
             set
             {
-                _lpFilterCutoffSweep = MathHelper.Clamp(value, -1, 1);
+                _lpFilterCutoffSweep = Clamp(value, -1, 1);
                 Invalidate();
             }
         }
@@ -377,7 +377,7 @@ namespace PixelVision8.Player.Audio
             get => _lpFilterResonance;
             set
             {
-                _lpFilterResonance = MathHelper.Clamp(value, 0, 1);
+                _lpFilterResonance = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -390,7 +390,7 @@ namespace PixelVision8.Player.Audio
             get => _hpFilterCutoff;
             set
             {
-                _hpFilterCutoff = MathHelper.Clamp(value, 0, 1);
+                _hpFilterCutoff = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -403,7 +403,7 @@ namespace PixelVision8.Player.Audio
             get => _hpFilterCutoffSweep;
             set
             {
-                _hpFilterCutoffSweep = MathHelper.Clamp(value, -1, 1);
+                _hpFilterCutoffSweep = Clamp(value, -1, 1);
                 Invalidate();
             }
         }
@@ -418,7 +418,7 @@ namespace PixelVision8.Player.Audio
             get => _changeRepeat;
             set
             {
-                _changeRepeat = MathHelper.Clamp(value, 0, 1);
+                _changeRepeat = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -431,7 +431,7 @@ namespace PixelVision8.Player.Audio
             get => _changeSpeed2;
             set
             {
-                _changeSpeed2 = MathHelper.Clamp(value, 0, 1);
+                _changeSpeed2 = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -445,7 +445,7 @@ namespace PixelVision8.Player.Audio
             get => _compressionAmount;
             set
             {
-                _compressionAmount = MathHelper.Clamp(value, 0, 1);
+                _compressionAmount = Clamp(value, 0, 1);
                 Invalidate();
             }
         }
@@ -1006,6 +1006,13 @@ namespace PixelVision8.Player.Audio
         private bool GetRandomBool()
         {
             return GetRandom() < .5f;
+        }
+        
+        public float Clamp(float value, float min, float max)
+        {
+            value = (value > max) ? max : value;
+            value = (value < min) ? min : value;
+            return value;
         }
     }
 }

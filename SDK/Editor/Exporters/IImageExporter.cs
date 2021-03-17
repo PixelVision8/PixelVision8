@@ -21,7 +21,7 @@
 using Microsoft.Xna.Framework;
 using System.IO;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public interface IImageExporter
     {

@@ -19,8 +19,9 @@
 //
 
 using PixelVision8.Player;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class FontExporter : SpriteExporter
     {

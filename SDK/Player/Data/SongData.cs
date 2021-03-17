@@ -18,10 +18,9 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
-using PixelVision8.Runner;
 using System;
 using System.Text;
+using PixelVision8.Runner;
 
 namespace PixelVision8.Player
 {
@@ -59,14 +58,14 @@ namespace PixelVision8.Player
         {
             get => _start;
             // Make sure the start is always less than the end position or the total patterns per song
-            set => _start = MathHelper.Clamp(value, 0, Math.Min(_end, totalPatternsPerSong) - 1);
+            set => _start = Utilities.Clamp(value, 0, Math.Min(_end, totalPatternsPerSong) - 1);
         }
 
         public int end
         {
             get => _end;
             // Always make sure the end position is greater than the start position and less than the total patterns per song
-            set => _end = MathHelper.Clamp(value, start + 1, totalPatternsPerSong);
+            set => _end = Utilities.Clamp(value, start + 1, totalPatternsPerSong);
         }
 
         //        public SongData(int[] patterns, int start, int end, bool loops = true)
@@ -100,7 +99,7 @@ namespace PixelVision8.Player
 
         public int SeekTo(int index)
         {
-            currentPos = MathHelper.Clamp(index, -1, _patterns.Length - 1);
+            currentPos = Utilities.Clamp(index, -1, _patterns.Length - 1);
 
             return currentPos;
         }

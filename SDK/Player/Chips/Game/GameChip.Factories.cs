@@ -18,9 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
-using PixelVisionSDK.Player;
-
 namespace PixelVision8.Player
 {
     // /// <summary>

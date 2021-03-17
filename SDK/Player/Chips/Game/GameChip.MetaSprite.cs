@@ -18,9 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
 using System;
-using PixelVisionSDK.Player;
 
 namespace PixelVision8.Player
 {
@@ -74,7 +72,7 @@ namespace PixelVision8.Player
             if (total.HasValue)
             {
                 // Console.WriteLine("Change meta sprite total");
-                Array.Resize(ref metaSprites, MathHelper.Clamp(total.Value, 0, 256));
+                Array.Resize(ref metaSprites, Utilities.Clamp(total.Value, 0, 256));
                 for (int i = 0; i < total.Value; i++)
                 {
                     if (metaSprites[i] == null)

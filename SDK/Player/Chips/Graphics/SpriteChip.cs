@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 using System.Text;
@@ -86,7 +85,7 @@ namespace PixelVision8.Player
             {
                 if (_pages == value) return;
 
-                _pages = MathHelper.Clamp(value, 1, 8);
+                _pages = Utilities.Clamp(value, 1, 8);
 
                 _spriteMemory.Resize(
                     (int) Math.Ceiling((float) PageWidth / DefaultSpriteSize) * DefaultSpriteSize,
@@ -113,7 +112,7 @@ namespace PixelVision8.Player
         public int ColorsPerSprite
         {
             get => _colorsPerSprite;
-            set => _colorsPerSprite = MathHelper.Clamp(value, 1, 16);
+            set => _colorsPerSprite = Utilities.Clamp(value, 1, 16);
         }
 
         public int Columns => _spriteMemory.Columns;
