@@ -55,6 +55,7 @@ function Draw()
   -- Draw the canvas to the display
   canvas:DrawPixels()
 
+  --
   DrawText("CalculateDistance()", 8, 8, DrawMode.Sprite, "large", 15);
   DrawText("Lua Example", 8, 16, DrawMode.Sprite, "medium", 15, -4);
 

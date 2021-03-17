@@ -23,8 +23,11 @@ local buttons = {
 }
 
 function Init()
+
+  -- Example Title
   DrawText("Button()", 1, 1, DrawMode.Tile, "large", 15);
-  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
+  DrawText("Lua Example - Press a direction or action button", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
+
 end
 
 function Update(timeDelta)
@@ -39,6 +42,7 @@ function Update(timeDelta)
     if(Button(buttons[i], InputState.Down, 0)) then
       table.insert(pressedButtons, tostring(buttons[i]))
     end
+    
   end
 
 end
@@ -50,7 +54,8 @@ function Draw()
 
   -- Convert the pressedButtons into a string and draw to the display
   local message = table.concat(pressedButtons, ", "):upper()
+
   -- DrawText("Buttons Down:", 8, 8, DrawMode.Sprite, "large", 15)
-  DrawText(message:sub(0, #message), 8, 24, DrawMode.Sprite, "medium", 14, - 4)
+  DrawText(message:sub(0, #message), 8, 32, DrawMode.Sprite, "medium", 14, - 4)
 
 end

@@ -121,6 +121,9 @@ namespace PixelVision8.Player
             var dx = x1 - x0;
             var dy = y1 - y0;
             
+            if(dx == 0 || dy == 0)
+                return 0;
+
             int x = dx * dx + dy * dy;
             int s, t;
 

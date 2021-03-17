@@ -43,7 +43,7 @@ namespace PixelVision8.Runner
         };
 
         protected WorkspacePath logFilePath;
-        protected LogService logService;
+        // protected LogService logService;
         public WorkspacePath osLibPath;
 
         public List<string> requiredFiles = new List<string>
@@ -300,13 +300,13 @@ namespace PixelVision8.Runner
 
         public void SetupLogFile(WorkspacePath filePath)
         {
-            if (logService == null)
-            {
-                var
-                    total = 500; //MathHelper.Clamp(Convert.ToInt32((long) ReadBiosData("TotalLogItems", 100L, true)), 1, 500);
+            // if (logService == null)
+            // {
+            //     var
+            //         total = 500; //MathHelper.Clamp(Convert.ToInt32((long) ReadBiosData("TotalLogItems", 100L, true)), 1, 500);
 
-                logService = new LogService(total);
-            }
+            //     logService = new LogService(total);
+            // }
 
             logFilePath = filePath;
 
@@ -315,9 +315,9 @@ namespace PixelVision8.Runner
 
         public virtual void UpdateLog(string logString, LogType type = LogType.Log, string stackTrace = "")
         {
-            if (logService == null) return;
+            // if (logService == null) return;
 
-            logService.UpdateLog(logString, type, stackTrace);
+            Log.Print(logString, type, stackTrace);
 
             LogInvalidated = true;
         }
@@ -326,7 +326,7 @@ namespace PixelVision8.Runner
         {
             if (LogInvalidated)
             {
-                SaveTextToFile(logFilePath, logService.ReadLog(), true);
+                SaveTextToFile(logFilePath, Log.ReadLog(), true);
                 LogInvalidated = false;
             }
         }
@@ -334,15 +334,15 @@ namespace PixelVision8.Runner
         public void ClearLog()
         {
             // Clear all the log entries
-            logService.Clear();
+            Log.Clear();
 
             // Update the log file now that it is empty
-            SaveTextToFile(logFilePath, logService.ReadLog(), true);
+            SaveTextToFile(logFilePath, Log.ReadLog(), true);
         }
 
         public List<string> ReadLogItems()
         {
-            return logService.ReadLogItems();
+            return Log.ReadLogItems();
         }
 
         public string[] LoadGame(string path)

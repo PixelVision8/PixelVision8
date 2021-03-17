@@ -32,8 +32,9 @@ namespace PixelVision8.Examples
 
         public override void Init()
         {
+            // Example Title
             DrawText("Button()", 1, 1, DrawMode.Tile, "large", 15);
-            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
+            DrawText("C Sharp Example - Press a direction or action button", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
         }
 
         public override void Update(int timeDelta)
@@ -63,8 +64,9 @@ namespace PixelVision8.Examples
 
             // Convert the pressedButtons into a string and draw to the display
             var message = string.Join(", ", pressedButtons.ToArray()).ToUpper();
+            
             // DrawText("Buttons Down:", 8, 8, DrawMode.Sprite, "large", 15);
-            DrawText(message.Substring(0, message.Length), 8, 24, DrawMode.Sprite, "medium", 14, -4);
+            DrawText(message.Substring(0, message.Length), 8, 32, DrawMode.Sprite, "medium", 14, -4);
 
         }
     }

@@ -11,7 +11,7 @@
 local textFile =
 [===[
 function test()
-  DrawText("Hello World", 1, 1, DrawMode.Tile, "large", 15)
+  DrawText("Hello World", 1, 8, DrawMode.Tile, "large", 15)
 end
 ]===]
 
@@ -19,6 +19,11 @@ end
 AddScript("textFile", textFile)
 
 function Init()
+
+  -- Example Title
+  DrawText("AddScript()", 1, 1, DrawMode.Tile, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
+
   -- Call the text method
   test()
 end

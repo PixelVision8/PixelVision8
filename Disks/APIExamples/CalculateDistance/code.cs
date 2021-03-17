@@ -26,8 +26,12 @@ namespace PixelVision8.Examples
         public override void Init()
         {
 
+            // Example Title
+            DrawText("CalculateDistance()", 1, 1, DrawMode.Tile, "large", 15);
+            DrawText("C Sharp Example - Drag the mouse to measure the distance", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
+
             // Create a new canvas and pass this GameChip into the constructor
-            canvas = new Canvas(256, 240, this);
+            canvas = new Canvas(256, 240-32, this);
 
             // Set the canvas stroke to a white 1x1 pixel brush
             canvas.SetStroke(15, 1);
@@ -40,9 +44,11 @@ namespace PixelVision8.Examples
             // // Update position B with the MousePosition
             pointB = MousePosition();
 
-            // // Calculate the distance between pointA and pointB
+            // Calculate the distance between pointA and pointB
             distance = CalculateDistance(pointA.X, pointA.Y, pointB.X, pointB.X);
 
+            Print(distance);
+            
         }
 
         public override void Draw()
@@ -52,7 +58,7 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // // Clear the canvas with the background color
-            canvas.Clear(0);
+            canvas.Clear(5);
 
             // // Draw 2 circles around each point
             canvas.DrawEllipse(pointA.X - 4, pointA.Y - 4, 10, 10);
@@ -65,7 +71,7 @@ namespace PixelVision8.Examples
             canvas.DrawText(distance.ToString(), pointB.X, pointB.Y - 12, "small", 15, -4);
 
             // Draw the canvas to the display
-            canvas.DrawPixels();
+            canvas.DrawPixels(0, 32);
 
         }
     }
