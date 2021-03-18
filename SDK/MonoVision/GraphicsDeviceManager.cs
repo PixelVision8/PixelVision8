@@ -31,7 +31,7 @@ namespace Microsoft.Xna.Framework
         /// <summary>
         /// The default back buffer width.
         /// </summary>
-        public static readonly int DefaultBackBufferWidth = 800;
+        public static readonly int DefaultBackBufferWidth = 512;
 
         /// <summary>
         /// The default back buffer height.

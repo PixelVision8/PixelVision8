@@ -254,10 +254,10 @@ namespace Microsoft.Xna.Framework
         /// White color (R:255,G:255,B:255,A:255).
         /// </summary>
         public static Color White
-    {
-        get;
-        private set;
-    }
+        {
+            get;
+            private set;
+        }
        
         #endregion
 

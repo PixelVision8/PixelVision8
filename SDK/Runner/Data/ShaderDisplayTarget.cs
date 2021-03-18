@@ -84,42 +84,6 @@ namespace PixelVision8.Runner
             }
         }
 
-        protected override void CalculateDisplayOffset()
-        {
-            base.CalculateDisplayOffset();
-
-            if (CropScreen && !Fullscreen)
-            {
-                DisplayWidth = Math.Min(DisplayWidth, (int) (VisibleRect.Width * Scale.X));
-                DisplayHeight = Math.Min(DisplayHeight, (int) (VisibleRect.Height * Scale.Y));
-                Offset.X = 0;
-                Offset.Y = 0;
-            }
-        }
-
-        protected override void CalculateDisplayScale()
-        {
-            base.CalculateDisplayScale();
-
-            if (!StretchScreen)
-            {
-                // To preserve the aspect ratio,
-                // use the smaller scale factor.
-                Scale.X = Math.Min(Scale.X, Scale.Y);
-                Scale.Y = Scale.X;
-            }
-        }
-
-        public override void ResetResolution(int width, int height)
-        {
-            base.ResetResolution(width, height);
-
-            crtShader?.Parameters["textureSize"].SetValue(new Vector2(RenderTexture.Width, RenderTexture.Height));
-            crtShader?.Parameters["videoSize"].SetValue(new Vector2(RenderTexture.Width, RenderTexture.Height));
-
-        }
-
-
         public override void RebuildColorPalette(string[] hexColors, int bgColorId = 0, string maskColor = "#FF00FF", bool debugMode = false)
         {
             base.RebuildColorPalette(hexColors, bgColorId, maskColor, debugMode);
@@ -136,25 +100,59 @@ namespace PixelVision8.Runner
             _colorPalette.SetData(CachedColors);
             
         }
+        
+        private void UpdateShader()
+        {
+            crtShader?.Parameters["textureSize"].SetValue(new Vector2(RenderTexture.Width, RenderTexture.Height));
+            crtShader?.Parameters["videoSize"].SetValue(new Vector2(RenderTexture.Width, RenderTexture.Height));
+        }
+
+        private void CalculateCrop()
+        {
+            if (CropScreen && !Fullscreen)
+            {
+                DisplayWidth = Math.Min(DisplayWidth, (int) (GameWidth * Scale.X));
+                DisplayHeight = Math.Min(DisplayHeight, (int) (GameHeight * Scale.Y));
+                OffsetX = 0;
+                OffsetY = 0;
+            }
+        }
+
+        public void ConfigureDisplay()
+        {
+            CalculateResolution();
+
+            CalculateDisplayScale();
+
+            CalculateDisplayOffset();
+                
+            CalculateCrop();
+
+            Apply();
+                
+            UpdateShader();
+
+            ResetValidation();
+        }
 
         public override void Render(int[] pixels, int backgroundColor)
         {
-            if (crtShader == null)
+            
+            if (Invalid)
             {
-                base.Render(pixels, backgroundColor);
+                ConfigureDisplay();
             }
-            else
-            {
-                // RebuildColorPalette(engine.ColorChip);
-
-                RenderTexture.SetData(pixels);
-                SpriteBatch.Begin();
-                crtShader.CurrentTechnique.Passes[0].Apply();
-                GraphicManager.GraphicsDevice.Textures[1] = _colorPalette;
-                GraphicManager.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-                SpriteBatch.Draw(RenderTexture, Offset, VisibleRect, Color.White, Vector2.Zero, Scale);
-                SpriteBatch.End();
-            }
+            
+            RenderTexture.SetData(pixels);
+            SpriteBatch.Begin();
+            crtShader.CurrentTechnique.Passes[0].Apply();
+            GraphicManager.GraphicsDevice.Textures[1] = _colorPalette;
+            GraphicManager.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
+            SpriteBatch.Draw(RenderTexture, Offset, VisibleRect, Color.White, Vector2.Zero, Scale);
+            SpriteBatch.End();
+            
         }
+
+        
     }
 }

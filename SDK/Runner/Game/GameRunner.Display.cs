@@ -86,14 +86,16 @@ namespace PixelVision8.Runner
                 ActiveEngine.ColorChip.ResetValidation();
             }
 
-            DisplayTarget.Render(ActiveEngine.DisplayChip.Pixels, ActiveEngine.ColorChip.BackgroundColor);
-
             // displayTarget.spriteBatch.End();
             if (_resolutionInvalid)
             {
                 ResetResolution();
                 ResetResolutionValidation();
             }
+            
+            DisplayTarget.Render(ActiveEngine.DisplayChip.Pixels, ActiveEngine.ColorChip.BackgroundColor);
+
+            
         }
     }
 }

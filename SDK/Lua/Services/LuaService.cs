@@ -90,7 +90,7 @@ namespace PixelVision8.Runner
             luaScript.Globals["Scale"] = new Func<int?, int>(runner.Scale);
             luaScript.Globals["Fullscreen"] = new Func<bool?, bool>(runner.Fullscreen);
             luaScript.Globals["CropScreen"] = new Func<bool?, bool>(runner.CropScreen);
-            luaScript.Globals["StretchScreen"] = new Func<bool?, bool>(runner.StretchScreen);
+            // luaScript.Globals["StretchScreen"] = new Func<bool?, bool>(runner.StretchScreen);
             luaScript.Globals["EnableCRT"] = new Func<bool?, bool>(runner.EnableCRT);
 
             // File APIs

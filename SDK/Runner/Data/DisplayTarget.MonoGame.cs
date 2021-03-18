@@ -7,6 +7,20 @@ namespace PixelVision8.Runner
     {
         public virtual void Render(int[] pixels, int defaultColor)
         {
+            if (Invalid)
+            {
+                
+                CalculateResolution();
+
+                CalculateDisplayScale();
+
+                CalculateDisplayOffset();
+
+                Apply();
+                
+                ResetValidation();
+                
+            }
             
             // We can only update the display if the pixel lengths match up
             if (pixels.Length != _totalPixels)

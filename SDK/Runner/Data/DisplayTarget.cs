@@ -27,7 +27,7 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace PixelVision8.Runner
 {
-    public partial class DisplayTarget
+    public partial class DisplayTarget : AbstractData
     {
     
         public static Color HexToColor(string hex)
@@ -89,8 +89,12 @@ namespace PixelVision8.Runner
         protected Color[] CachedColors;
         public Vector2 Scale = new Vector2(1, 1);
         private Color[] _pixelData = new Color[0];
-        
+        public int RealWidth => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+        public int RealHeight => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
         protected Rectangle VisibleRect;
+        
+        protected int GameWidth;
+        protected int GameHeight;
         private readonly int _monitorHeight;
         private readonly int _monitorWidth;
         private int _monitorScale = 1;
@@ -99,8 +103,9 @@ namespace PixelVision8.Runner
         private int _i;
         protected int DisplayWidth;
         protected int DisplayHeight;
+        protected float OffsetX;
+        protected float OffsetY;
 
-        public bool StretchScreen { get; set; }
         public bool Fullscreen { get; set; }
 
         public DisplayTarget(GraphicsDeviceManager graphicManager, int width, int height)
@@ -129,7 +134,7 @@ namespace PixelVision8.Runner
                     var newWidth = _monitorWidth * value;
                     var newHeight = _monitorHeight * value;
 
-                    if (newWidth < GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width &&
+                    if (newWidth < RealWidth &&
                         newHeight < GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height)
                     {
                         fits = true;
@@ -143,33 +148,50 @@ namespace PixelVision8.Runner
             }
         }
 
-        public virtual void ResetResolution(int gameWidth, int gameHeight)
+        public void ResetResolution(int gameWidth, int gameHeight)
+        {
+            GameWidth = gameWidth;
+            GameHeight = gameHeight;
+
+            Invalidate();
+            
+        }
+
+        protected void CalculateResolution()
         {
             
-            if (RenderTexture == null || RenderTexture.Width != gameWidth || RenderTexture.Height != gameHeight)
-            {
-                RenderTexture = new Texture2D(GraphicManager.GraphicsDevice, gameWidth, gameHeight);
-            }
-
-            // Calculate the game's resolution
-            VisibleRect.Width = RenderTexture.Width;
-            VisibleRect.Height = RenderTexture.Height;
-
             var tmpMonitorScale = Fullscreen ? 1 : MonitorScale;
 
             // Calculate the monitor's resolution
             DisplayWidth = Fullscreen
-                ? GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width
+                ? RealWidth
                 : _monitorWidth *
                   tmpMonitorScale;
             DisplayHeight = Fullscreen
-                ? GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height
+                ? RealHeight
                 : _monitorHeight * tmpMonitorScale;
+        }
+        
+        protected void CalculateDisplayScale()
+        {
+            // Calculate the game scale
+            Scale.X = (float) DisplayWidth / GameWidth;
+            Scale.Y = (float) DisplayHeight / GameHeight;
 
-            CalculateDisplayScale();
+            // To preserve the aspect ratio,
+            // use the smaller scale factor.
+            Scale.X = Math.Min(Scale.X, Scale.Y);
+            Scale.Y = Scale.X;
+        }
+        
+        protected void CalculateDisplayOffset()
+        {
+            OffsetX = (DisplayWidth - GameWidth * Scale.X) * .5f;
+            OffsetY = (DisplayHeight - GameHeight * Scale.Y) * .5f;
+        }
 
-            CalculateDisplayOffset();
-
+        protected void Apply()
+        {
             // Apply changes
             GraphicManager.IsFullScreen = Fullscreen;
 
@@ -180,34 +202,27 @@ namespace PixelVision8.Runner
                 GraphicManager.PreferredBackBufferHeight = DisplayHeight;
                 GraphicManager.ApplyChanges();
             }
-
-            _totalPixels = gameWidth * gameHeight;
             
-            if (_pixelData.Length != _totalPixels)
+            if (RenderTexture == null || RenderTexture.Width != GameWidth || RenderTexture.Height != GameHeight)
             {
-                Array.Resize(ref _pixelData, _totalPixels);
+                RenderTexture = new Texture2D(GraphicManager.GraphicsDevice, GameWidth, GameHeight);
+                
+                _totalPixels = RenderTexture.Width * RenderTexture.Height;
+
+                if (_pixelData.Length != _totalPixels)
+                {
+                    Array.Resize(ref _pixelData, _totalPixels);
+                }
+                
+                // Calculate the game's resolution
+                VisibleRect.Width = RenderTexture.Width;
+                VisibleRect.Height = RenderTexture.Height;
+                
             }
-        }
-
-        protected virtual void CalculateDisplayOffset()
-        {
-            Offset.X = (DisplayWidth - VisibleRect.Width * Scale.X) * .5f;
-            Offset.Y = (DisplayHeight - VisibleRect.Height * Scale.Y) * .5f;
-        }
-
-        protected virtual void CalculateDisplayScale()
-        {
-            // Calculate the game scale
-            Scale.X = (float) DisplayWidth / VisibleRect.Width;
-            Scale.Y = (float) DisplayHeight / VisibleRect.Height;
-
-            if (!StretchScreen)
-            {
-                // To preserve the aspect ratio,
-                // use the smaller scale factor.
-                Scale.X = Math.Min(Scale.X, Scale.Y);
-                Scale.Y = Scale.X;
-            }
+            
+            Offset.X = OffsetX;
+            Offset.Y = OffsetY;
+            
         }
 
         public virtual void RebuildColorPalette(string[] hexColors, int bgColorId = 0, string maskColor = "#FF00FF", bool debugMode = false)

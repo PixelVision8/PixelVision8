@@ -112,6 +112,7 @@ namespace PixelVision8.Runner
         protected bool displayProgress;
         private List<string> bootDisks = new List<string>();
         private Dictionary<string, string> bootBios = new Dictionary<string, string>();
+        private bool invalidateMouse = true;
 
         protected override bool RunnerActive
         {
@@ -259,6 +260,7 @@ namespace PixelVision8.Runner
 
         public override void ConfigureDisplayTarget()
         {
+            
             // Get the virtual monitor resolution
             var tmpRes = bios.ReadBiosData(BiosSettings.Resolution.ToString(), "512x480")
                 .Split('x').Select(int.Parse)
@@ -268,9 +270,9 @@ namespace PixelVision8.Runner
 
             Fullscreen(Convert.ToBoolean(
                 bios.ReadBiosData(BiosSettings.FullScreen.ToString(), "False")));
-            StretchScreen(
-                Convert.ToBoolean(
-                    bios.ReadBiosData(BiosSettings.StretchScreen.ToString(), "False")));
+            // StretchScreen(
+            //     Convert.ToBoolean(
+            //         bios.ReadBiosData(BiosSettings.StretchScreen.ToString(), "False")));
             CropScreen(Convert.ToBoolean(
                 bios.ReadBiosData(BiosSettings.CropScreen.ToString(), "True")));
 
@@ -287,9 +289,13 @@ namespace PixelVision8.Runner
                         workspaceService.OpenFile(shaderPath, FileAccess.Read);
             }
 
-            if (ActiveEngine != null)
-                DisplayTarget.ResetResolution(ActiveEngine.DisplayChip.Width, ActiveEngine.DisplayChip.Height);
-
+            // if (ActiveEngine != null)
+            DisplayTarget.ResetResolution(256, 240);
+           
+            ((ShaderDisplayTarget)DisplayTarget).ConfigureDisplay();
+            
+            Console.WriteLine("Configure display");
+            
             // Configure the shader from the bios
             Brightness(Convert.ToSingle(bios.ReadBiosData(CRTSettings.Brightness.ToString(), "100")) / 100F);
             Sharpness(Convert.ToSingle(bios.ReadBiosData(CRTSettings.Sharpness.ToString(), "-6")));
@@ -484,15 +490,13 @@ namespace PixelVision8.Runner
             // No ned to  call the base method since the logic is copied here
         }
 
-
+        
         public override void ResetResolution()
         {
             base.ResetResolution();
 
-            IsMouseVisible = false;
-            // Update the mouse to use the new monitor scale
-            var scale = ((ShaderDisplayTarget) DisplayTarget).Scale;
-            ActiveEngine.MouseInputChip.MouseScale(scale.X, scale.Y);
+            invalidateMouse = true;
+            
         }
 
         protected void ConfigureRunner()
@@ -844,8 +848,20 @@ namespace PixelVision8.Runner
                 else
                 {
                     base.Draw(gameTime);
+                    
+                    if (invalidateMouse)
+                    {
+                        IsMouseVisible = false;
+                        // Update the mouse to use the new monitor scale
+                        var scale = ((ShaderDisplayTarget) DisplayTarget).Scale;
+                        ActiveEngine.MouseInputChip.MouseScale(scale.X, scale.Y);
+
+                        invalidateMouse = false;
+                    }
 
                     if (Recording) gifEncoder.AddFrame(TimeDelta / 1000f);
+
+                    
                 }
 
                 workspaceServicePlus.SaveLog();
@@ -2100,20 +2116,20 @@ namespace PixelVision8.Runner
             return full;
         }
 
-        public bool StretchScreen(bool? value = null)
-        {
-            if (value.HasValue)
-            {
-                ((ShaderDisplayTarget) DisplayTarget).StretchScreen = value.Value;
-                InvalidateResolution();
-            }
-
-            var stretch = ((ShaderDisplayTarget) DisplayTarget).StretchScreen;
-
-            bios.UpdateBiosData(BiosSettings.StretchScreen.ToString(), stretch.ToString());
-
-            return stretch;
-        }
+        // public bool StretchScreen(bool? value = null)
+        // {
+        //     if (value.HasValue)
+        //     {
+        //         ((ShaderDisplayTarget) DisplayTarget).StretchScreen = value.Value;
+        //         ResetResolution();
+        //     }
+        //
+        //     var stretch = ((ShaderDisplayTarget) DisplayTarget).StretchScreen;
+        //
+        //     bios.UpdateBiosData(BiosSettings.StretchScreen.ToString(), stretch.ToString());
+        //
+        //     return stretch;
+        // }
 
         public bool CropScreen(bool? value = null)
         {
