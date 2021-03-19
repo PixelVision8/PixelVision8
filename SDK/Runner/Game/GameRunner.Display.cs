@@ -40,7 +40,10 @@ namespace PixelVision8.Runner
         public virtual void ConfigureDisplayTarget()
         {
             // Create the default display target
-            DisplayTarget = new DisplayTarget(Graphics, 512, 480);
+            DisplayTarget = new DisplayTarget(512, 480)
+            {
+                GraphicsManager = Graphics
+            };
         }
 
         public void InvalidateResolution()
@@ -86,14 +89,13 @@ namespace PixelVision8.Runner
                 ActiveEngine.ColorChip.ResetValidation();
             }
 
-            // displayTarget.spriteBatch.End();
             if (_resolutionInvalid)
             {
                 ResetResolution();
                 ResetResolutionValidation();
             }
             
-            DisplayTarget.Render(ActiveEngine.DisplayChip.Pixels, ActiveEngine.ColorChip.BackgroundColor);
+            DisplayTarget.Render(ActiveEngine.DisplayChip.Pixels);
 
             
         }

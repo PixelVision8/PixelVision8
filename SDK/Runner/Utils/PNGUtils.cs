@@ -19,7 +19,6 @@
 //
 
 using Microsoft.Xna.Framework;
-using PixelVision8.Player;
 using System;
 using System.Collections;
 using System.Collections.Generic;

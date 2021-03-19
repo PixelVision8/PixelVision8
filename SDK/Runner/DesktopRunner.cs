@@ -266,7 +266,13 @@ namespace PixelVision8.Runner
                 .Split('x').Select(int.Parse)
                 .ToArray();
 
-            if (DisplayTarget == null) DisplayTarget = new ShaderDisplayTarget(Graphics, tmpRes[0], tmpRes[1]);
+            if (DisplayTarget == null)
+            {
+                DisplayTarget = new DisplayTarget(tmpRes[0], tmpRes[1])
+                {
+                    GraphicsManager = Graphics
+                };
+            }
 
             Fullscreen(Convert.ToBoolean(
                 bios.ReadBiosData(BiosSettings.FullScreen.ToString(), "False")));
@@ -278,23 +284,21 @@ namespace PixelVision8.Runner
 
             Scale(Convert.ToInt32(bios.ReadBiosData(BiosSettings.Scale.ToString(), "1")));
 
-            if (((ShaderDisplayTarget) DisplayTarget).HasShader() == false)
+            if ( DisplayTarget.HasShader() == false)
             {
                 // Configure CRT shader
                 var shaderPath = WorkspacePath.Parse(bios.ReadBiosData(CRTSettings.CRTEffectPath.ToString(),
                     "/App/Effects/crt-lottes-mg.ogl.mgfxo"));
 
                 if (workspaceService.Exists(shaderPath))
-                    ((ShaderDisplayTarget) DisplayTarget).shaderPath =
+                     DisplayTarget.shaderPath =
                         workspaceService.OpenFile(shaderPath, FileAccess.Read);
             }
 
-            // if (ActiveEngine != null)
+            
             DisplayTarget.ResetResolution(256, 240);
            
-            ((ShaderDisplayTarget)DisplayTarget).ConfigureDisplay();
-            
-            Console.WriteLine("Configure display");
+            DisplayTarget.ConfigureDisplay();
             
             // Configure the shader from the bios
             Brightness(Convert.ToSingle(bios.ReadBiosData(CRTSettings.Brightness.ToString(), "100")) / 100F);
@@ -853,7 +857,7 @@ namespace PixelVision8.Runner
                     {
                         IsMouseVisible = false;
                         // Update the mouse to use the new monitor scale
-                        var scale = ((ShaderDisplayTarget) DisplayTarget).Scale;
+                        var scale =  DisplayTarget.Scale;
                         ActiveEngine.MouseInputChip.MouseScale(scale.X, scale.Y);
 
                         invalidateMouse = false;
@@ -2120,11 +2124,11 @@ namespace PixelVision8.Runner
         // {
         //     if (value.HasValue)
         //     {
-        //         ((ShaderDisplayTarget) DisplayTarget).StretchScreen = value.Value;
+        //          DisplayTarget.StretchScreen = value.Value;
         //         ResetResolution();
         //     }
         //
-        //     var stretch = ((ShaderDisplayTarget) DisplayTarget).StretchScreen;
+        //     var stretch =  DisplayTarget.StretchScreen;
         //
         //     bios.UpdateBiosData(BiosSettings.StretchScreen.ToString(), stretch.ToString());
         //
@@ -2135,11 +2139,11 @@ namespace PixelVision8.Runner
         {
             if (value.HasValue)
             {
-                ((ShaderDisplayTarget) DisplayTarget).CropScreen = value.Value;
+                 DisplayTarget.CropScreen = value.Value;
                 InvalidateResolution();
             }
 
-            var crop = ((ShaderDisplayTarget) DisplayTarget).CropScreen;
+            var crop =  DisplayTarget.CropScreen;
 
             bios.UpdateBiosData(BiosSettings.CropScreen.ToString(), crop.ToString());
 
@@ -2154,34 +2158,34 @@ namespace PixelVision8.Runner
         {
             if (toggle.HasValue)
             {
-                ((ShaderDisplayTarget) DisplayTarget).useCRT = toggle.Value;
+                 DisplayTarget.useCRT = toggle.Value;
                 bios.UpdateBiosData(CRTSettings.CRT.ToString(), toggle.Value.ToString());
                 InvalidateResolution();
             }
 
-            return ((ShaderDisplayTarget) DisplayTarget).useCRT;
+            return  DisplayTarget.useCRT;
         }
 
         public float Brightness(float? brightness = null)
         {
             if (brightness.HasValue)
             {
-                ((ShaderDisplayTarget) DisplayTarget).brightness = brightness.Value;
+                 DisplayTarget.brightness = brightness.Value;
                 bios.UpdateBiosData(CRTSettings.Brightness.ToString(), (brightness * 100).ToString());
             }
 
-            return ((ShaderDisplayTarget) DisplayTarget).brightness;
+            return  DisplayTarget.brightness;
         }
 
         public float Sharpness(float? sharpness = null)
         {
             if (sharpness.HasValue)
             {
-                ((ShaderDisplayTarget) DisplayTarget).sharpness = sharpness.Value;
+                 DisplayTarget.sharpness = sharpness.Value;
                 bios.UpdateBiosData(CRTSettings.Sharpness.ToString(), sharpness.ToString());
             }
 
-            return ((ShaderDisplayTarget) DisplayTarget).sharpness;
+            return  DisplayTarget.sharpness;
         }
 
         #endregion

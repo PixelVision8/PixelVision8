@@ -18,27 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Audio;
-using System.IO;
-
-namespace PixelVision8.Player.Audio
+namespace PixelVision8.Player
 {
-    public class SoundChannel
+    public partial class SoundChannel
     {
-        
-        private SoundEffectInstance _soundInstance;
-        protected readonly Dictionary<string, SoundEffectInstance> SoundInstanceCache = new Dictionary<string, SoundEffectInstance>();
-        
-        public bool Playing
-        {
-            get
-            {
-                if (_soundInstance == null) return false;
-
-                return _soundInstance.State == SoundState.Playing;
-            }
-        }
 
         /// <summary>
         ///     Plays the sound. If the parameters are dirty, synthesises sound as it plays, caching it for later.
@@ -61,17 +44,7 @@ namespace PixelVision8.Player.Audio
                 if (soundData.bytes != null)
                 {
                     // if (waveLock == WaveType.Sample || waveLock == WaveType.None)
-                    using (var stream = new MemoryStream(soundData.bytes))
-                    {
-                        var soundEffect = SoundEffect.FromStream(stream);
-
-                        _soundInstance = soundEffect.CreateInstance();
-
-                        // TODO need to make sure this is correct and we can use the frequency to manipulate the pitch
-                        if (frequency.HasValue)
-                            _soundInstance.Pitch = frequency.Value;
-
-                    }
+                    CreateSoundEffect(soundData.bytes, frequency);
                 }
 
                 SoundInstanceCache[soundData.name] = _soundInstance;

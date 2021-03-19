@@ -21,7 +21,6 @@
 //  
 //  @author Zeh Fernando
 
-using Microsoft.Xna.Framework;
 using System;
 
 namespace PixelVision8.Player.Audio

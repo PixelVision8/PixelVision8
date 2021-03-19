@@ -45,6 +45,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\SDK\Player\Chips\Audio\SoundChannel.MonoGame.cs">
+      <Link>SDK\Player\Chips\Audio\SoundChannel.MonoGame.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Log.cs">
       <Link>SDK\Player\Chips\Game\GameChip.Log.cs</Link>
     </Compile>
@@ -397,14 +400,11 @@
     <Compile Include="..\..\SDK\Runner\Data\DisplayTarget.MonoVision.cs">
       <Link>SDK\Runner\Data\DisplayTarget.MonoVision.cs</Link>
     </Compile>
-    <Compile Include="..\..\SDK\Runner\Data\ShaderDisplayTarget.cs">
-      <Link>SDK\Runner\Data\ShaderDisplayTarget.cs</Link>
-    </Compile>
     <Compile Include="..\..\SDK\Runner\Data\DisplayTarget.cs">
       <Link>SDK\Runner\Data\DisplayTarget.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Player\Data\ImageData.cs">
-      <Link>SDK\Runner\SDK\Player\Data\ImageData.cs</Link>
+      <Link>SDK\Player\Data\ImageData.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Runner\DesktopRunner.cs">
       <Link>SDK\Runner\DesktopRunner.cs</Link>
@@ -495,9 +495,6 @@
     </Compile>
     <Compile Include="..\..\SDK\Runner\Services\SaveFlags.cs">
       <Link>SDK\Runner\Services\SaveFlags.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Runner\Utils\FileLoadHelper.cs">
-      <Link>SDK\Runner\Utils\FileLoadHelper.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Runner\Utils\GifUtils\Data\GifFrame.cs">
       <Link>SDK\Runner\Utils\GifUtils\Data\GifFrame.cs</Link>

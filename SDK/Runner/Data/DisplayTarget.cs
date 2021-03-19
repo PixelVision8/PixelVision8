@@ -84,14 +84,28 @@ namespace PixelVision8.Runner
 
         protected Vector2 Offset;
         protected Texture2D RenderTexture;
-        protected readonly GraphicsDeviceManager GraphicManager;
-        protected readonly SpriteBatch SpriteBatch;
+        protected GraphicsDeviceManager _graphicManager;
+        protected SpriteBatch SpriteBatch;
         protected Color[] CachedColors;
         public Vector2 Scale = new Vector2(1, 1);
         private Color[] _pixelData = new Color[0];
         public int RealWidth => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
         public int RealHeight => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
         protected Rectangle VisibleRect;
+        
+        public GraphicsDeviceManager GraphicsManager
+        {
+            set
+            {
+                _graphicManager = value;
+
+                _graphicManager.HardwareModeSwitch = false;
+
+                SpriteBatch = new SpriteBatch(_graphicManager.GraphicsDevice);
+            }
+        }
+        
+        
         
         protected int GameWidth;
         protected int GameHeight;
@@ -108,14 +122,8 @@ namespace PixelVision8.Runner
 
         public bool Fullscreen { get; set; }
 
-        public DisplayTarget(GraphicsDeviceManager graphicManager, int width, int height)
+        public DisplayTarget(int width, int height)
         {
-            GraphicManager = graphicManager;
-
-            GraphicManager.HardwareModeSwitch = false;
-
-            SpriteBatch = new SpriteBatch(graphicManager.GraphicsDevice);
-
             _monitorWidth = Utilities.Clamp(width, 64, 640);
             _monitorHeight = Utilities.Clamp(height, 64, 480);
             
@@ -135,7 +143,7 @@ namespace PixelVision8.Runner
                     var newHeight = _monitorHeight * value;
 
                     if (newWidth < RealWidth &&
-                        newHeight < GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height)
+                        newHeight < RealHeight)
                     {
                         fits = true;
                         _monitorScale = value;
@@ -189,23 +197,37 @@ namespace PixelVision8.Runner
             OffsetX = (DisplayWidth - GameWidth * Scale.X) * .5f;
             OffsetY = (DisplayHeight - GameHeight * Scale.Y) * .5f;
         }
+        
+        public void ConfigureDisplay()
+        {
+            CalculateResolution();
+
+            CalculateDisplayScale();
+
+            CalculateDisplayOffset();
+                
+
+            Apply();
+
+            ResetValidation();
+        }
 
         protected void Apply()
         {
             // Apply changes
-            GraphicManager.IsFullScreen = Fullscreen;
+            _graphicManager.IsFullScreen = Fullscreen;
 
-            if (GraphicManager.PreferredBackBufferWidth != DisplayWidth ||
-                GraphicManager.PreferredBackBufferHeight != DisplayHeight)
+            if (_graphicManager.PreferredBackBufferWidth != DisplayWidth ||
+                _graphicManager.PreferredBackBufferHeight != DisplayHeight)
             {
-                GraphicManager.PreferredBackBufferWidth = DisplayWidth;
-                GraphicManager.PreferredBackBufferHeight = DisplayHeight;
-                GraphicManager.ApplyChanges();
+                _graphicManager.PreferredBackBufferWidth = DisplayWidth;
+                _graphicManager.PreferredBackBufferHeight = DisplayHeight;
+                _graphicManager.ApplyChanges();
             }
             
             if (RenderTexture == null || RenderTexture.Width != GameWidth || RenderTexture.Height != GameHeight)
             {
-                RenderTexture = new Texture2D(GraphicManager.GraphicsDevice, GameWidth, GameHeight);
+                RenderTexture = new Texture2D(_graphicManager.GraphicsDevice, GameWidth, GameHeight);
                 
                 _totalPixels = RenderTexture.Width * RenderTexture.Height;
 
@@ -222,18 +244,6 @@ namespace PixelVision8.Runner
             
             Offset.X = OffsetX;
             Offset.Y = OffsetY;
-            
-        }
-
-        public virtual void RebuildColorPalette(string[] hexColors, int bgColorId = 0, string maskColor = "#FF00FF", bool debugMode = false)
-        {
-            
-            CachedColors = ConvertColors(
-                hexColors, 
-                maskColor, 
-                debugMode,
-                bgColorId
-            );
             
         }
 

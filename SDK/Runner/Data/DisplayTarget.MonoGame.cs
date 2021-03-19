@@ -3,9 +3,27 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace PixelVision8.Runner
 {
+    
+    
     public partial class DisplayTarget
     {
-        public virtual void Render(int[] pixels, int defaultColor)
+        private int _defaultColor;
+        
+        public void RebuildColorPalette(string[] hexColors, int bgColorId = 0, string maskColor = "#FF00FF", bool debugMode = false)
+        {
+            
+            CachedColors = ConvertColors(
+                hexColors, 
+                maskColor, 
+                debugMode,
+                bgColorId
+            );
+
+            _defaultColor = bgColorId;
+
+        }
+        
+        public virtual void Render(int[] pixels)
         {
             if (Invalid)
             {
@@ -31,7 +49,7 @@ namespace PixelVision8.Runner
             for (_i = 0; _i < _totalPixels; _i++)
             {
                 _colorId = pixels[_i];
-                _pixelData[_i] = CachedColors[_colorId < 0 ? defaultColor : _colorId];
+                _pixelData[_i] = CachedColors[_colorId < 0 ? _defaultColor : _colorId];
             }
 
             RenderTexture.SetData(_pixelData);

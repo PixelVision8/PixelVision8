@@ -19,7 +19,6 @@
 //
 
 using System;
-using PixelVision8.Player.Audio;
 
 namespace PixelVision8.Player
 {
@@ -154,7 +153,7 @@ namespace PixelVision8.Player
         
         public bool IsChannelPlaying(int channelId)
         {
-            return Channels[channelId] != null && Channels[channelId].Playing;
+            return Channels[channelId] != null && Channels[channelId].IsPlaying();
         }
 
         public void StopSound(int channel)
@@ -180,7 +179,7 @@ namespace PixelVision8.Player
         public override void Shutdown()
         {
             foreach (var channel in Channels)
-                if (channel.Playing)
+                if (channel.IsPlaying())
                     channel.Stop();
 
             base.Shutdown();
