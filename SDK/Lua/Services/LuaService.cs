@@ -32,7 +32,12 @@ using PixelVision8.Player;
 
 namespace PixelVision8.Runner
 {
-    public class LuaService : AbstractService
+    public class RegisterLuaService : Attribute
+    {
+         
+    }
+    
+    public partial class LuaService : AbstractService
     {
         protected DesktopRunner runner;
         private readonly PNGWriter _pngWriter = new PNGWriter();
@@ -82,72 +87,18 @@ namespace PixelVision8.Runner
         /// <param name="luaScript"></param>
         public virtual void ConfigureScript(Script luaScript)
         {
-            luaScript.Options.DebugPrint = runner.DisplayWarning;
+            var methods = GetType().GetMethods().Where(m => m.GetCustomAttributes(typeof(RegisterLuaService), false).Length > 0)
+                .ToArray();
 
-            luaScript.Globals["Volume"] = new Func<int?, int>(runner.Volume);
-            luaScript.Globals["Mute"] = new Func<bool?, bool>(runner.Mute);
-
-            luaScript.Globals["Scale"] = new Func<int?, int>(runner.Scale);
-            luaScript.Globals["Fullscreen"] = new Func<bool?, bool>(runner.Fullscreen);
-            luaScript.Globals["CropScreen"] = new Func<bool?, bool>(runner.CropScreen);
-            // luaScript.Globals["StretchScreen"] = new Func<bool?, bool>(runner.StretchScreen);
-            luaScript.Globals["EnableCRT"] = new Func<bool?, bool>(runner.EnableCRT);
-
-            // File APIs
-            luaScript.Globals["UniqueFilePath"] = new Func<WorkspacePath, WorkspacePath>(workspace.UniqueFilePath);
-            luaScript.Globals["CreateDirectory"] = new Action<WorkspacePath>(workspace.CreateDirectoryRecursive);
-            luaScript.Globals["MoveTo"] = new Action<WorkspacePath, WorkspacePath>(workspace.Move);
-            luaScript.Globals["CopyTo"] = new Action<WorkspacePath, WorkspacePath>(workspace.Copy);
-            luaScript.Globals["Delete"] = new Action<WorkspacePath>(workspace.Delete);
-            luaScript.Globals["PathExists"] = new Func<WorkspacePath, bool>(workspace.Exists);
-            luaScript.Globals["GetEntities"] = new Func<WorkspacePath, List<WorkspacePath>>(path =>
-                workspace.GetEntities(path).OrderBy(o => o.EntityName, StringComparer.OrdinalIgnoreCase).ToList());
-            luaScript.Globals["GetEntitiesRecursive"] = new Func<WorkspacePath, List<WorkspacePath>>(path =>
-                workspace.GetEntitiesRecursive(path).ToList());
-
-            luaScript.Globals["RunBackgroundScript"] = new Func<string, string[], bool>(RunBackgroundScript);
-            luaScript.Globals["BackgroundScriptData"] = new Func<string, string, string>(BackgroundScriptData);
-            luaScript.Globals["CancelExport"] = new Action(CancelExport);
-
-            luaScript.Globals["PlayWav"] = new Action<WorkspacePath>(PlayWav);
-            luaScript.Globals["StopWav"] = new Action(StopWav);
-
-            luaScript.Globals["CreateDisk"] =
-                new Func<string, Dictionary<WorkspacePath, WorkspacePath>, WorkspacePath, int,
-                    Dictionary<string, object>>(CreateDisk);
-
-            luaScript.Globals["ClearLog"] = new Action(workspace.ClearLog);
-            luaScript.Globals["ReadLogItems"] = new Func<List<string>>(workspace.ReadLogItems);
-
-            // TODO these are deprecated
-            luaScript.Globals["ReadTextFile"] = new Func<string, string>(ReadTextFile);
-            luaScript.Globals["SaveTextToFile"] = (SaveTextToFileDelegator) SaveTextToFile;
-
-            // File helpers
-            luaScript.Globals["NewImage"] = new Func<int, int, string[], int[], ImageData>(NewImage);
-
-            // Read file helpers
-            luaScript.Globals["ReadJson"] = new Func<WorkspacePath, Dictionary<string, object>>(ReadJson);
-            luaScript.Globals["ReadText"] = new Func<WorkspacePath, string>(ReadText);
-            luaScript.Globals["ReadImage"] = new Func<WorkspacePath, string, string[], ImageData>(ReadImage);
-
-            // Save file helpers
-            luaScript.Globals["SaveText"] = new Action<WorkspacePath, string>(SaveText);
-            luaScript.Globals["SaveImage"] = new Action<WorkspacePath, ImageData>(SaveImage);
-
-            // luaScript.Globals["AddExporter"] = new Action<WorkspacePath, ImageData>(SaveImage);
-
-            luaScript.Globals["NewWorkspacePath"] = new Func<string, WorkspacePath>(WorkspacePath.Parse);
-
-            luaScript.Globals["CurrentTime"] = new Func<string>(CurrentTime);
-
-
-            UserData.RegisterType<WorkspacePath>();
-            UserData.RegisterType<ImageData>();
+            for (int i = 0; i < methods.Length; i++)
+            {
+                // Call API register functions to add them to the service
+                GetType().GetMethod(methods[i].Name)?.Invoke(this, new object[] {luaScript});
+                
+            }
 
             // Experimental
-            // luaScript.Globals["DebugLayers"] = new Action<bool>(runner.DebugLayers);
-            // luaScript.Globals["ToggleLayers"] = new Action<int>(runner.ToggleLayers);
+            // TODO remove this when tools are fixed to run at 256 colors
             luaScript.Globals["ResizeColorMemory"] = new Action<int, int>(ResizeColorMemory);
         }
 
@@ -237,7 +188,7 @@ namespace PixelVision8.Runner
             return Json.Deserialize(text) as Dictionary<string, object>;
         }
 
-        public void Write(WorkspacePath dest, Dictionary<string, object> data)
+        public void SaveJson(WorkspacePath dest, Dictionary<string, object> data)
         {
             SaveText(dest, Json.Serialize(data));
         }

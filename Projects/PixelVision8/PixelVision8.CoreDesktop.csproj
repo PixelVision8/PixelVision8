@@ -45,6 +45,84 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\SDK\Lua\Chips\Game\LuaGameChip.Canvas.cs">
+      <Link>SDK\Lua\Chips\Game\LuaGameChip.Canvas.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Chips\Game\LuaGameChip.Color.cs">
+      <Link>SDK\Lua\Chips\Game\LuaGameChip.Color.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Chips\Game\LuaGameChip.Debug.cs">
+      <Link>SDK\Lua\Chips\Game\LuaGameChip.Debug.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Chips\Game\LuaGameChip.Display.cs">
+      <Link>SDK\Lua\Chips\Game\LuaGameChip.Display.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Chips\Game\LuaGameChip.FileIO.cs">
+      <Link>SDK\Lua\Chips\Game\LuaGameChip.FileIO.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Chips\Game\LuaGameChip.Input.cs">
+      <Link>SDK\Lua\Chips\Game\LuaGameChip.Input.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Chips\Game\LuaGameChip.Math.cs">
+      <Link>SDK\Lua\Chips\Game\LuaGameChip.Math.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Chips\Game\LuaGameChip.MetaSprite.cs">
+      <Link>SDK\Lua\Chips\Game\LuaGameChip.MetaSprite.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Chips\Game\LuaGameChip.Data.cs">
+      <Link>SDK\Lua\Chips\Game\LuaGameChip.Data.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Chips\Game\LuaGameChip.Sound.cs">
+      <Link>SDK\Lua\Chips\Game\LuaGameChip.Sound.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Chips\Game\LuaGameChip.Sprites.cs">
+      <Link>SDK\Lua\Chips\Game\LuaGameChip.Sprites.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Chips\Game\LuaGameChip.Tilemap.cs">
+      <Link>SDK\Lua\Chips\Game\LuaGameChip.Tilemap.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Chips\Game\LuaGameChip.Utils.cs">
+      <Link>SDK\Lua\Chips\Game\LuaGameChip.Utils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Services\LuaService.Audio.cs">
+      <Link>SDK\Lua\Services\LuaService.Audio.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Services\LuaService.Boot.cs">
+      <Link>SDK\Lua\Services\LuaService.Boot.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Services\LuaService.Clipboard.cs">
+      <Link>SDK\Lua\Services\LuaService.Clipboard.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Services\LuaService.Debug.cs">
+      <Link>SDK\Lua\Services\LuaService.Debug.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Services\LuaService.Disks.cs">
+      <Link>SDK\Lua\Services\LuaService.Disks.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Services\LuaService.Display.cs">
+      <Link>SDK\Lua\Services\LuaService.Display.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Services\LuaService.Editor.cs">
+      <Link>SDK\Lua\Services\LuaService.Editor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Services\LuaService.Export.cs">
+      <Link>SDK\Lua\Services\LuaService.Export.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Services\LuaService.Input.cs">
+      <Link>SDK\Lua\Services\LuaService.Input.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Services\LuaService.Load.cs">
+      <Link>SDK\Lua\Services\LuaService.Load.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Services\LuaService.Preload.cs">
+      <Link>SDK\Lua\Services\LuaService.Preload.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Services\LuaService.SystemIO.cs">
+      <Link>SDK\Lua\Services\LuaService.SystemIO.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Lua\Services\LuaService.Threading.cs">
+      <Link>SDK\Lua\Services\LuaService.Threading.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Player\Chips\Audio\SoundChannel.MonoGame.cs">
       <Link>SDK\Player\Chips\Audio\SoundChannel.MonoGame.cs</Link>
     </Compile>
@@ -405,9 +483,6 @@
     </Compile>
     <Compile Include="..\..\SDK\Lua\Debugger\VariableInspector.cs">
       <Link>SDK\Lua\Debugger\VariableInspector.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Lua\Parsers\ScriptParser.cs">
-      <Link>SDK\Lua\Parsers\ScriptParser.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Lua\Services\LuaService.cs">
       <Link>SDK\Lua\Services\LuaService.cs</Link>

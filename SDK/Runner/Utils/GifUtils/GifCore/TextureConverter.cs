@@ -34,7 +34,7 @@ namespace PixelVision8.Runner.Gif
         /// <summary>
         /// /// Apply master palette to convert true color image to 256-color image.
         /// </summary>
-        public static void ConvertTo8Bits(ref Texture2D texture, MasterPalette palette)
+        public static void ConvertTo8Bits(ref GifTexture2D texture, MasterPalette palette)
         {
             if (palette == MasterPalette.DontApply) return;
 

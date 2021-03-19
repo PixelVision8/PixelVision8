@@ -84,7 +84,7 @@ namespace PixelVision8.Editor
             //
             // var pixels = tmpT2D.GetPixels(0, 0, bounds.Width, bounds.Height);
 
-            tmpFrame.Texture = new Texture2D(DisplayChip.Width, DisplayChip.Height);
+            tmpFrame.Texture = new GifTexture2D(DisplayChip.Width, DisplayChip.Height);
             tmpFrame.Texture.SetPixels32(VisiblePixels()); // TODO need to crop this
 
             tmpFrame.Delay = delay;
@@ -280,7 +280,7 @@ namespace PixelVision8.Editor
             }
         }
 
-        private static byte[] GetColorIndexes(Texture2D texture, int scale, List<Color> colorTable,
+        private static byte[] GetColorIndexes(GifTexture2D texture, int scale, List<Color> colorTable,
             byte localColorTableFlag, ref byte transparentColorFlag, ref byte transparentColorIndex, out byte max)
         {
             var indexes = new Dictionary<Color, int>();

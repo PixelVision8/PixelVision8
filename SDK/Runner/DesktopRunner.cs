@@ -38,7 +38,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using PixelVision8.Editor;
-using TextCopy;
 using Buttons = PixelVision8.Player.Buttons;
 
 namespace PixelVision8.Runner
@@ -74,13 +73,13 @@ namespace PixelVision8.Runner
             {ActionKeys.RestartKey, Keys.D4}
         };
 
-        private GameEditor _editor;
+        
         public bool autoRunEnabled = true;
         public bool backKeyEnabled = true;
         public BiosService bios;
         protected WorkspacePath biosPath = WorkspacePath.Root.AppendDirectory("App").AppendFile("bios.json");
         protected KeyboardInputChip keyboardInputChip;
-        protected string documentsPath;
+        public string documentsPath;
 
         protected bool ejectingDisk;
 
@@ -103,12 +102,12 @@ namespace PixelVision8.Runner
         protected bool shutdown;
         public string systemName;
         public string SystemVersion;
-        protected string tmpPath;
+        public string tmpPath;
         public WorkspaceService workspaceService;
-        protected WorkspaceServicePlus workspaceServicePlus;
+        public WorkspaceServicePlus workspaceServicePlus;
         public LoadService loadService;
         public IServiceLocator ServiceManager { get; }
-        protected RunnerMode mode;
+        public RunnerMode mode;
         protected bool displayProgress;
         private List<string> bootDisks = new List<string>();
         private Dictionary<string, string> bootBios = new Dictionary<string, string>();
@@ -241,15 +240,7 @@ namespace PixelVision8.Runner
             bios.ReadBiosData(BiosSettings.SystemName.ToString(), "Pixel Vision 8 Runner") + " " +
             bios.ReadBiosData(BiosSettings.SystemVersion.ToString(), "0.0.0");
 
-        public GameEditor Editor
-        {
-            get
-            {
-                if (_editor == null) _editor = new GameEditor(this, ServiceManager);
-
-                return _editor;
-            }
-        }
+        
 
         public void CreateLoadService()
         {
@@ -428,9 +419,9 @@ namespace PixelVision8.Runner
         {
             // At this point this game is fully configured so all chips are accessible for extra configuring
 
-            if (mode == RunnerMode.Loading)
-                ((LuaGameChip) engine.GameChip).LuaScript.Globals["DebuggerAttached"] =
-                    new Func<bool>(AwaitDebuggerAttach);
+            // if (mode == RunnerMode.Loading)
+            //     ((LuaGameChip) engine.GameChip).LuaScript.Globals["DebuggerAttached"] =
+            //         new Func<bool>(AwaitDebuggerAttach);
 
             // Save a reference to the controller chip so we can listen for special key events
             keyboardInputChip = engine.KeyboardInputChip;
@@ -439,7 +430,7 @@ namespace PixelVision8.Runner
             BaseActivateEngine(engine);
         }
 
-        private bool AwaitDebuggerAttach()
+        public bool AwaitDebuggerAttach()
         {
             var connected = server.Connected;
 
@@ -863,8 +854,8 @@ namespace PixelVision8.Runner
                         invalidateMouse = false;
                     }
 
-                    if (Recording) gifEncoder.AddFrame(TimeDelta / 1000f);
-
+                    // TODO not sure why converting this back to milliseconds didn't work but this appears to speed up the gif animation
+                    if (Recording) gifEncoder.AddFrame(TimeDelta / 500f);
                     
                 }
 
@@ -1220,124 +1211,6 @@ namespace PixelVision8.Runner
                     foreach (var entry in metaData)
                         TmpEngine.SetMetadata(entry.Key, entry.Value);
 
-
-                // Get a reference to the    Lua game
-                var game = TmpEngine.GameChip as LuaGameChip;
-
-                // Get the script
-                var luaScript = game.LuaScript;
-
-                // Limit which APIs are exposed based on the mode for security
-                // if (mode == RunnerMode.Loading)
-                // {
-                luaScript.Globals["StartNextPreload"] = new Action(StartNextPreload);
-                luaScript.Globals["PreloaderComplete"] = new Action(RunGame);
-                luaScript.Globals["ReadPreloaderPercent"] =
-                    new Func<int>(() => (int) MathHelper.Clamp(loadService.Percent * 100, 0, 100));
-
-                // }else
-                if (mode == RunnerMode.Booting)
-                    luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
-                else
-                    luaScript.Globals["LoadGame"] =
-                        new Func<string, Dictionary<string, string>, bool>((path, metadata) =>
-                            Load(path, RunnerMode.Loading, metadata));
-
-                // Global System APIs
-                luaScript.Globals["Brightness"] = new Func<float?, float>(Brightness);
-                luaScript.Globals["Sharpness"] = new Func<float?, float>(Sharpness);
-                luaScript.Globals["SystemVersion"] = new Func<string>(() => SystemVersion);
-                luaScript.Globals["SystemName"] = new Func<string>(() => systemName);
-                luaScript.Globals["SessionID"] = new Func<string>(() => SessionId);
-                luaScript.Globals["ReadBiosData"] = new Func<string, string, string>((key, defaultValue) =>
-                    bios.ReadBiosData(key, defaultValue));
-                luaScript.Globals["WriteBiosData"] = new Action<string, string>(bios.UpdateBiosData);
-
-                luaScript.Globals["ControllerConnected"] = new Func<int, bool>(IsControllerConnected);
-
-
-                // Get a reference to the Lua game
-                // var game = tmpEngine.GameChip as LuaGameChip;
-
-                // Get the script
-                // var luaScript = game.LuaScript;
-
-                luaScript.Globals["EnableAutoRun"] = new Action<bool>(EnableAutoRun);
-                luaScript.Globals["EnableBackKey"] = new Action<bool>(EnableBackKey);
-
-
-                if (mode == RunnerMode.Playing)
-                {
-                    // Inject the PV8 runner special global function
-                    luaScript.Globals["IsExporting"] = new Func<bool>(ExportService.IsExporting);
-                    luaScript.Globals["ReadExportPercent"] = new Func<int>(ExportService.ReadExportPercent);
-                    luaScript.Globals["ReadExportMessage"] =
-                        new Func<Dictionary<string, object>>(ExportService.ReadExportMessage);
-                    luaScript.Globals["ShutdownSystem"] = new Action(ShutdownSystem);
-                    luaScript.Globals["QuitCurrentTool"] = (QuitCurrentToolDelagator) QuitCurrentTool;
-                    luaScript.Globals["RefreshActionKeys"] = new Action(RefreshActionKeys);
-                    luaScript.Globals["DocumentPath"] = new Func<string>(() => documentsPath);
-                    luaScript.Globals["TmpPath"] = new Func<string>(() => tmpPath);
-                    luaScript.Globals["DiskPaths"] = new Func<WorkspacePath[]>(() => workspaceServicePlus.Disks);
-                    luaScript.Globals["SharedLibPaths"] =
-                        new Func<WorkspacePath[]>(() => workspaceServicePlus.SharedLibDirectories().ToArray());
-                    // luaScript.Globals["SaveActiveDisks"] = new Action(() =>
-                    // {
-                    //     var disks = workspaceServicePlus.Disks;
-                    //
-                    //     foreach (var disk in disks) workspaceServicePlus.SaveDisk(disk);
-                    // });
-                    luaScript.Globals["EjectDisk"] = new Action<string>(EjectDisk);
-                    luaScript.Globals["RebuildWorkspace"] = new Action(workspaceServicePlus.RebuildWorkspace);
-                    luaScript.Globals["MountDisk"] = new Action<WorkspacePath>(path =>
-                    {
-                        var segments = path.GetDirectorySegments();
-
-                        var systemPath = Path.PathSeparator.ToString();
-
-                        if (segments[0] == "Disk")
-                        {
-                        }
-                        else if (segments[0] == "Workspace")
-                        {
-                            // TODO the workspace could have a different name so we should check the bios
-                            systemPath = Path.Combine(documentsPath, segments[0]);
-                        }
-
-                        for (var i = 1; i < segments.Length; i++) systemPath = Path.Combine(systemPath, segments[i]);
-
-                        systemPath = Path.Combine(systemPath,
-                            path.IsDirectory ? Path.PathSeparator.ToString() : path.EntityName);
-
-
-                        //                Console.WriteLine("Mount Disk From " + systemPath);
-
-                        MountDisk(systemPath);
-                    });
-
-                    luaScript.Globals["OperatingSystem"] = new Func<string>(OperatingSystem);
-
-                    // Register the game editor with  the lua service
-                    UserData.RegisterType<GameEditor>();
-                    luaScript.Globals["gameEditor"] = Editor;
-
-
-
-                    luaScript.Globals["SetClipboardText"] = new Action<string>(SetClipboardText);
-                    luaScript.Globals["GetClipboardText"] = new Func<string>(GetClipboardText);
-                    luaScript.Globals["ClearClipboardText"] = new Action(() => { SetClipboardText("");});
-                }
-
-                if (mode == RunnerMode.Booting)
-                    // Force the lua script to use this boot done logic instead
-                    luaScript.Globals["BootDone"] = new Action<bool>(BootDone);
-
-                if (mode == RunnerMode.Loading)
-                {
-                    luaScript.Globals["StartUnload"] = new Action(StartUnload);
-                    luaScript.Globals["UnloadProgress"] = new Func<int>(UnloadProgress);
-                    luaScript.Globals["EndUnload"] = new Action(EndUnload);
-                }
             }
             else
             {
@@ -1349,83 +1222,29 @@ namespace PixelVision8.Runner
                     foreach (var entry in metaData)
                         TmpEngine.SetMetadata(entry.Key, entry.Value);
 
-                // ConfigureKeyboard();
-                // ConfiguredControllers();
             }
 
             // TODO moved this out of the normal configuration order so make sure this still makes sense here
             ConfigureKeyboard();
-            // ConfigureControllers();
 
             // Make sure the current state of the system is saved back to the bios
             SaveBiosChanges();
         }
-
-        private string _clipboard;
         
-        private void SetClipboardText(string value)
-        {
-            try
-            {
-                ClipboardService.SetText(value);
-            }
-            catch
-            {
-                // ignored
-            }
 
-            _clipboard = value;
-        }
-        
-        private string GetClipboardText()
-        {
-            
-            try
-            {
-                _clipboard = ClipboardService.GetText();
-            }
-            catch
-            {
-                // ignored
-            }
-
-            return _clipboard;
-        }
-
-        protected string OperatingSystem()
-        {
-            var os = Environment.OSVersion;
-            var pid = os.Platform;
-            switch (pid)
-            {
-                case PlatformID.Win32NT:
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.WinCE:
-                    return "Windows";
-
-                case PlatformID.Unix:
-                    return "Linux";
-                case PlatformID.MacOSX:
-                    return "Mac";
-                default:
-                    return "Unknown";
-            }
-        }
-
-        protected void StartUnload()
+        public void StartUnload()
         {
             Console.WriteLine("StartUnload");
         }
 
-        protected int UnloadProgress()
+        public int UnloadProgress()
         {
             Console.WriteLine("UnloadProgress");
 
             return 0;
         }
 
-        protected void EndUnload()
+        public void EndUnload()
         {
             Console.WriteLine("EndUnload");
         }
@@ -2057,7 +1876,7 @@ namespace PixelVision8.Runner
             UpdateTitle();
         }
 
-        private delegate void QuitCurrentToolDelagator(Dictionary<string, string> metaData, string tool = null);
+        
 
         public bool IsControllerConnected(int id) => TmpEngine.ControllerChip.GetController(MathHelper.Clamp(id, 0, 1)).IsConnected();
         
@@ -2189,5 +2008,6 @@ namespace PixelVision8.Runner
         }
 
         #endregion
+
     }
 }

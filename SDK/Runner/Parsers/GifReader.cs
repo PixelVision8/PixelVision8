@@ -219,7 +219,7 @@ namespace PixelVision8.Runner
                 }
             }
 
-            frame.Texture = new Texture2D(Width, Height);
+            frame.Texture = new GifTexture2D(Width, Height);
             frame.Texture.SetPixels32(pixels);
             // frame.Texture.Apply();
 

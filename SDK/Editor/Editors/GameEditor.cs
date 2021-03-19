@@ -74,10 +74,10 @@ namespace PixelVision8.Editor
         /// <param name="workspace"></param>
         /// <param name="luaService"></param>
         //        [MoonSharpHidden]
-        public GameEditor(DesktopRunner runner, IServiceLocator serviceManager)
+        public GameEditor(DesktopRunner runner)
         {
             this.runner = runner;
-            this.serviceManager = serviceManager;
+            this.serviceManager = runner.ServiceManager;
             // Get a reference to the workspace from the runner instance
             workspace = runner.workspaceService as WorkspaceServicePlus;
         }
