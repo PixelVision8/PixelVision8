@@ -16,7 +16,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace PixelVision8.Player
+namespace PixelVision8.Runner
 {
     public class ServiceManager : IServiceLocator
     {

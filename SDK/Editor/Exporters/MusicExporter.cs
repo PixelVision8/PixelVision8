@@ -18,6 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
+using System.Linq;
 using PixelVision8.Player;
 using PixelVision8.Runner;
 using System.Text;
@@ -50,6 +51,43 @@ namespace PixelVision8.Editor
             // Save the final string builder
             Steps.Add(CloseStringBuilder);
         }
+        
+        public string SerializeData(SongData songData)
+        {
+            var sb = new StringBuilder();
+            JsonUtil.GetLineBreak(sb);
+            sb.Append("{");
+            JsonUtil.GetLineBreak(sb, 1);
+
+            sb.Append("\"songName\":\"");
+            sb.Append(songData.name);
+            sb.Append("\",");
+            JsonUtil.GetLineBreak(sb, 1);
+
+            sb.Append("\"start\":");
+            sb.Append(songData.start);
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+
+            sb.Append("\"end\":");
+            sb.Append(songData.end);
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+
+            sb.Append("\"patterns\":");
+            JsonUtil.GetLineBreak(sb, 1);
+            sb.Append("[");
+
+            sb.Append(string.Join(",", songData.patterns));
+
+            sb.Append("]");
+
+            JsonUtil.GetLineBreak(sb);
+
+            sb.Append("}");
+
+            return sb.ToString();
+        }
 
         private void SaveGameData()
         {
@@ -66,7 +104,7 @@ namespace PixelVision8.Editor
                 if (songData != null)
                 {
                     JsonUtil.indentLevel++;
-                    sb.Append(songData.SerializeData());
+                    sb.Append(SerializeData(songData));
                     JsonUtil.indentLevel--;
                 }
 
@@ -87,7 +125,7 @@ namespace PixelVision8.Editor
                 if (songData != null)
                 {
                     JsonUtil.indentLevel++;
-                    sb.Append(songData.SerializeData());
+                    sb.Append(SerializeTrackerData(songData));
                     JsonUtil.indentLevel--;
                 }
 
@@ -99,6 +137,74 @@ namespace PixelVision8.Editor
             sb.Append("]");
 
             CurrentStep++;
+        }
+        
+        public string SerializeTrackerData(TrackerData trackerData)
+        {
+            var sb = new StringBuilder();
+            JsonUtil.GetLineBreak(sb);
+            sb.Append("{");
+            JsonUtil.GetLineBreak(sb, 1);
+
+            //            sb.Append("\"patternName\":\"");
+            //            sb.Append(songName);
+            //            sb.Append("\",");
+            //            JsonUtil.GetLineBreak(sb, 1);
+
+            sb.Append("\"speedInBPM\":");
+            sb.Append(trackerData.speedInBPM);
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+
+            sb.Append("\"tracks\":");
+            JsonUtil.GetLineBreak(sb, 1);
+            sb.Append("[");
+            JsonUtil.indentLevel++;
+            var total = trackerData.tracks.Length;
+            for (var i = 0; i < total; i++)
+                if (trackerData.tracks[i] != null)
+                {
+                    JsonUtil.indentLevel++;
+                    var track = trackerData.tracks[i];
+
+                    if (track != null) sb.Append(SerializeTrackData(track));
+
+                    if (i < total - 1) sb.Append(",");
+
+                    JsonUtil.indentLevel--;
+                }
+
+            JsonUtil.indentLevel--;
+            JsonUtil.GetLineBreak(sb, 1);
+            sb.Append("]");
+
+            JsonUtil.GetLineBreak(sb);
+            sb.Append("}");
+
+            return sb.ToString();
+        }
+        
+        public string SerializeTrackData(TrackData trackData)
+        {
+            var sb = new StringBuilder();
+            JsonUtil.GetLineBreak(sb);
+            sb.Append("{");
+            JsonUtil.GetLineBreak(sb, 1);
+
+            sb.Append("\"SfxId\":");
+            sb.Append(trackData.sfxID);
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+
+            sb.Append("\"notes\":[");
+
+            sb.Append(string.Join(",", trackData.notes.Select(x => x.ToString()).ToArray()));
+            sb.Append("]");
+
+            JsonUtil.GetLineBreak(sb);
+            sb.Append("}");
+
+            return sb.ToString();
         }
 
         private void CreateStringBuilder()

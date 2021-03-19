@@ -18,7 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-namespace PixelVision8.Player
+namespace PixelVision8.Runner
 {
     public interface IService
     {

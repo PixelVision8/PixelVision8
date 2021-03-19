@@ -57,6 +57,36 @@
     <Compile Include="..\..\SDK\Player\Data\Rectangle.cs">
       <Link>SDK\Player\Data\Rectangle.cs</Link>
     </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.ColorChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.ColorChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.ControllerChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.ControllerChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.DisplayChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.DisplayChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.FontChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.FontChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.GameChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.GameChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.MetaSprites.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.MetaSprites.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.MusicChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.MusicChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.SoundChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.SoundChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.SpriteChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.SpriteChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.TilemapChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.TilemapChip.cs</Link>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="..\..\SDK\Editor\Audio\SfxrMusicGeneratorChip.cs">
       <Link>SDK\Editor\Audio\SfxrMusicGeneratorChip.cs</Link>
@@ -340,18 +370,6 @@
     <Compile Include="..\..\SDK\Player\PixelVision.cs">
       <Link>SDK\Player\PixelVision.cs</Link>
     </Compile>
-    <Compile Include="..\..\SDK\Player\Services\AbstractService.cs">
-      <Link>SDK\Player\Services\AbstractService.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Player\Services\IService.cs">
-      <Link>SDK\Player\Services\IService.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Player\Services\IServiceLocator.cs">
-      <Link>SDK\Player\Services\IServiceLocator.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Player\Services\ServiceManager.cs">
-      <Link>SDK\Player\Services\ServiceManager.cs</Link>
-    </Compile>
     <Compile Include="..\..\SDK\Player\Utils\Utilities.Calculations.cs">
       <Link>SDK\Player\Utils\Utilities.Calculations.cs</Link>
     </Compile>
@@ -486,6 +504,18 @@
     </Compile>
     <Compile Include="..\..\SDK\Runner\Parsers\WavParser.cs">
       <Link>SDK\Runner\Parsers\WavParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Services\AbstractService.cs">
+      <Link>SDK\Runner\Services\AbstractService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Services\IService.cs">
+      <Link>SDK\Runner\Services\IService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Services\IServiceLocator.cs">
+      <Link>SDK\Runner\Services\IServiceLocator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Services\ServiceManager.cs">
+      <Link>SDK\Runner\Services\ServiceManager.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Runner\Services\LoadService.cs">
       <Link>SDK\Runner\Services\LoadService.cs</Link>

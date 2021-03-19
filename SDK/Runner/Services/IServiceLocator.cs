@@ -18,25 +18,14 @@
 // Shawn Rakowski - @shwany
 //
 
-namespace PixelVision8.Player
+namespace PixelVision8.Runner
 {
-    /// <summary>
-    ///     The AbstractService allows you to expose classes and API to the chips in
-    ///     a save, decoupled way. The Service implements the IService interface
-    ///     allowing each instance to take advantage of the RegisterService, getInstance
-    ///     and Execute methods.
-    /// </summary>
-    public abstract class AbstractService : IService
+    public interface IServiceLocator
     {
-        public IServiceLocator locator { get; set; }
+        void AddService(string id, IService service);
 
-        /// <summary>
-        ///     This method registers the service with the service locator.
-        /// </summary>
-        /// <param name="locator"></param>
-        public virtual void RegisterService(IServiceLocator locator)
-        {
-            this.locator = locator;
-        }
+        IService GetService(string id);
+
+        void RemoveService(string id);
     }
 }

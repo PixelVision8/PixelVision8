@@ -199,6 +199,30 @@
     <Compile Include="..\..\SDK\Runner\Parsers\SpriteImageParser.cs">
       <Link>SDK/Runner/Parsers/SpriteImageParser.cs</Link>
     </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.ColorChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.ColorChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.ControllerChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.ControllerChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.DisplayChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.DisplayChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.FontChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.FontChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.MetaSprites.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.MetaSprites.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.SpriteChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.SpriteChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.TilemapChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.TilemapChip.cs</Link>
+    </Compile>
     <!-- <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.cs">
       <Link>SDK/Runner/Parsers/SystemParser.cs</Link>
     </Compile> -->

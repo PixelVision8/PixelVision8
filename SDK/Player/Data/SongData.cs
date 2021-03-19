@@ -20,7 +20,7 @@
 
 using System;
 using System.Text;
-using PixelVision8.Runner;
+// using PixelVision8.Runner;
 
 namespace PixelVision8.Player
 {
@@ -109,41 +109,5 @@ namespace PixelVision8.Player
             _patterns[index] = id;
         }
 
-        public string SerializeData()
-        {
-            var sb = new StringBuilder();
-            JsonUtil.GetLineBreak(sb);
-            sb.Append("{");
-            JsonUtil.GetLineBreak(sb, 1);
-
-            sb.Append("\"songName\":\"");
-            sb.Append(name);
-            sb.Append("\",");
-            JsonUtil.GetLineBreak(sb, 1);
-
-            sb.Append("\"start\":");
-            sb.Append(start);
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
-
-            sb.Append("\"end\":");
-            sb.Append(end);
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
-
-            sb.Append("\"patterns\":");
-            JsonUtil.GetLineBreak(sb, 1);
-            sb.Append("[");
-
-            sb.Append(string.Join(",", _patterns));
-
-            sb.Append("]");
-
-            JsonUtil.GetLineBreak(sb);
-
-            sb.Append("}");
-
-            return sb.ToString();
-        }
     }
 }
