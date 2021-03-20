@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace PixelVision8.Runner.Workspace
+namespace PixelVision8.Workspace
 {
     public class PhysicalFileSystem : IFileSystem
     {

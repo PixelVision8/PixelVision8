@@ -21,7 +21,7 @@
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Loaders;
 using PixelVision8.Runner;
-using PixelVision8.Runner.Workspace;
+using PixelVision8.Workspace;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 

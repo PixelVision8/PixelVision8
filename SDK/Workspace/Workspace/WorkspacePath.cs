@@ -28,7 +28,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
-namespace PixelVision8.Runner.Workspace
+namespace PixelVision8.Workspace
 {
     public struct WorkspacePath : IEquatable<WorkspacePath>, IComparable<WorkspacePath>
     {

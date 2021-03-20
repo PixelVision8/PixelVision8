@@ -2,7 +2,7 @@ using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Platforms;
 using PixelVision8.Player;
 using PixelVision8.Runner;
-using PixelVision8.Runner.Workspace;
+using PixelVision8.Workspace;
 using System;
 using System.IO;
 using System.Text;

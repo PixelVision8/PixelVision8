@@ -19,31 +19,24 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using MoonSharp.Interpreter;
-using PixelVision8.Runner.Workspace;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using PixelVision8.Editor;
-using PixelVision8.Player;
 
 namespace PixelVision8.Runner
 {
     public class RegisterLuaService : Attribute
     {
-         
     }
-    
+
     public partial class LuaService : AbstractService
     {
         protected DesktopRunner runner;
-        private readonly PNGWriter _pngWriter = new PNGWriter();
+        
         private readonly WorkspaceServicePlus workspace;
 
-        private SoundEffectInstance currentSound;
+        
         
 
         /// <summary>
@@ -57,29 +50,7 @@ namespace PixelVision8.Runner
             workspace = runner.workspaceService as WorkspaceServicePlus;
         }
 
-        private Dictionary<string, string> bgScriptData = new Dictionary<string, string>();
-
-        public string BackgroundScriptData(string key, string value = null)
-        {
-            if (value != null)
-            {
-                if (bgScriptData.ContainsKey(key))
-                {
-                    bgScriptData[key] = value;
-                }
-                else
-                {
-                    bgScriptData.Add(key, value);
-                }
-            }
-
-            if (bgScriptData.ContainsKey(key))
-            {
-                return bgScriptData[key];
-            }
-
-            return "undefined";
-        }
+        
 
         /// <summary>
         ///     This service exposes some of the runner's APIs to Lua Games.
@@ -97,248 +68,8 @@ namespace PixelVision8.Runner
                 
             }
 
-            // Experimental
-            // TODO remove this when tools are fixed to run at 256 colors
-            luaScript.Globals["ResizeColorMemory"] = new Action<int, int>(ResizeColorMemory);
         }
 
-        public void ResizeColorMemory(int newSize, int maxColors = -1)
-        {
-            // runner.ActiveEngine.ColorChip.maxColors = maxColors;
-            runner.ActiveEngine.ColorChip.Total = newSize;
-        }
 
-        public string CurrentTime()
-        {
-            return DateTime.Now.ToString("HH:mmtt");
-        }
-
-        public void PlayWav(WorkspacePath workspacePath)
-        {
-            if (workspace.Exists(workspacePath) && workspacePath.GetExtension() == ".wav")
-            {
-                if (currentSound != null) StopWav();
-
-                using (var stream = workspace.OpenFile(workspacePath, FileAccess.Read))
-                {
-                    currentSound = SoundEffect.FromStream(stream).CreateInstance();
-                }
-
-                currentSound.Play();
-            }
-        }
-
-        public bool RunBackgroundScript(string scriptName, string[] args = null)
-        {
-            try
-            {
-                // filePath = UniqueFilePath(filePath.AppendFile("pattern+" + id + ".wav"));
-
-                // TODO exporting sprites doesn't work
-                if (runner.ServiceManager.GetService(typeof(GameDataExportService).FullName) is GameDataExportService
-                    exportService)
-                {
-                    exportService.Restart();
-
-                    bgScriptData.Clear();
-
-                    exportService.AddExporter(new BackgroundScriptRunner(scriptName, this, args));
-                    //
-                    exportService.StartExport();
-
-                    return true;
-                }
-            }
-            catch (Exception e)
-            {
-                // TODO this needs to go through the error system?
-                Console.WriteLine(e);
-            }
-
-            return false;
-        }
-
-        public void CancelExport()
-        {
-            if (runner.ServiceManager.GetService(typeof(GameDataExportService).FullName) is GameDataExportService
-                exportService)
-            {
-                exportService.Cancel();
-            }
-        }
-
-        public void StopWav()
-        {
-            if (currentSound != null)
-            {
-                currentSound.Stop();
-                currentSound = null;
-            }
-        }
-
-        public ImageData NewImage(int width, int height, string[] colors, int[] pixelData = null)
-        {
-            return new ImageData(width, height, pixelData, colors);
-        }
-
-        public Dictionary<string, object> ReadJson(WorkspacePath src)
-        {
-            var text = ReadText(src);
-
-            return Json.Deserialize(text) as Dictionary<string, object>;
-        }
-
-        public void SaveJson(WorkspacePath dest, Dictionary<string, object> data)
-        {
-            SaveText(dest, Json.Serialize(data));
-        }
-
-        public string ReadText(WorkspacePath src)
-        {
-            return workspace.ReadTextFromFile(src);
-        }
-
-        /// <summary>
-        ///     Helper function to create a new text file.
-        /// </summary>
-        /// <param name="dest"></param>
-        /// <param name="defaultText"></param>
-        public void SaveText(WorkspacePath dest, string defaultText = "")
-        {
-            workspace.SaveTextToFile(dest, defaultText, true);
-        }
-
-        public ImageData ReadImage(WorkspacePath src, string maskHex = "#ff00ff", string[] colorRefs = null)
-        {
-            PNGReader reader = null;
-
-            using (var memoryStream = new MemoryStream())
-            {
-                using (var fileStream = workspace.OpenFile(src, FileAccess.Read))
-                {
-                    fileStream.CopyTo(memoryStream);
-                    fileStream.Close();
-                }
-
-                reader = new PNGReader(memoryStream.ToArray());
-            }
-
-            var tmpColorChip = new ColorChip();
-
-
-            var imageParser = new SpriteImageParser("", reader, tmpColorChip);
-
-            // Manually call each step
-            imageParser.ParseImageData();
-
-            // If no colors are passed in, used the image's palette
-            if (colorRefs == null)
-            {
-                colorRefs = reader.ColorPalette.Select(c => SpriteImageParser.RgbToHex(c.R, c.G, c.B)).ToArray();
-            }
-
-            // Resize the color chip
-            tmpColorChip.Total = colorRefs.Length;
-
-            // Add the colors
-            for (int i = 0; i < colorRefs.Length; i++)
-            {
-                tmpColorChip.UpdateColorAt(i, colorRefs[i]);
-            }
-
-            // Parse the image with the new colors
-            imageParser.CreateImage();
-
-            // Return the new image from the parser
-            return imageParser.ImageData;
-        }
-
-        public void SaveImage(WorkspacePath dest, ImageData imageData)
-        {
-            var width = imageData.Width;
-            var height = imageData.Height;
-            var hexColors = imageData.Colors;
-
-            // convert colors
-            var totalColors = hexColors.Length;
-            var colors = new Color[totalColors];
-            for (var i = 0; i < totalColors; i++) colors[i] = DisplayTarget.HexToColor(hexColors[i]);
-
-            var pixelData = imageData.GetPixels();
-
-            var exporter =
-                new PixelDataExporter(dest.EntityName, pixelData, width, height, colors, _pngWriter, "#FF00FF");
-            exporter.CalculateSteps();
-
-            while (exporter.Completed == false) exporter.NextStep();
-
-            var output = new Dictionary<string, byte[]>
-            {
-                {dest.Path, exporter.Bytes}
-            };
-
-            workspace.SaveExporterFiles(output);
-        }
-
-        /// <summary>
-        ///     This will read a text file from a valid workspace path and return it as a string. This can read .txt, .json and
-        ///     .lua files.
-        /// </summary>
-        /// <param name="path">A valid workspace path.</param>
-        /// <returns>Returns the contents of the file as a string.</returns>
-        public string ReadTextFile(string path)
-        {
-            var filePath = WorkspacePath.Parse(path);
-
-            return workspace.ReadTextFromFile(filePath);
-        }
-
-        public bool SaveTextToFile(string filePath, string text, bool autoCreate = false)
-        {
-            var path = WorkspacePath.Parse(filePath);
-
-            return workspace.SaveTextToFile(path, text, autoCreate);
-        }
-
-        public long FileSize(WorkspacePath workspacePath)
-        {
-            if (workspace.Exists(workspacePath) == false) return -1;
-
-            if (workspacePath.IsDirectory) return 0;
-
-            return workspace.OpenFile(workspacePath, FileAccess.Read).ReadAllBytes().Length / 1024;
-        }
-
-        public Dictionary<string, object> CreateDisk(string name, Dictionary<WorkspacePath, WorkspacePath> files,
-            WorkspacePath dest, int maxFileSize = 512)
-        {
-            var fileLoader = new WorkspaceFileLoadHelper(workspace);
-
-            dest = workspace.UniqueFilePath(dest.AppendDirectory("Build")).AppendPath(name + ".pv8");
-            var diskExporter = new DiskExporter(dest.Path, fileLoader, files, maxFileSize);
-
-            if (((DesktopRunner) runner).ExportService is GameDataExportService exportService)
-            {
-                exportService.Clear();
-
-                exportService.AddExporter(diskExporter);
-
-                exportService.StartExport();
-
-                // Update the response
-                diskExporter.Response["success"] = true;
-                diskExporter.Response["message"] = "A new build was created in " + dest + ".";
-                diskExporter.Response["path"] = dest.Path;
-            }
-            else
-            {
-                diskExporter.Response["success"] = false;
-                diskExporter.Response["message"] = "Couldn't find the service to save a disk.";
-            }
-
-            return diskExporter.Response;
-        }
-
-        private delegate bool SaveTextToFileDelegator(string filePath, string text, bool autoCreate = false);
     }
 }

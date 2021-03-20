@@ -1,6 +1,5 @@
 using System;
 using MoonSharp.Interpreter;
-using PixelVision8.Runner.Workspace;
 
 namespace PixelVision8.Runner
 {
@@ -16,6 +15,15 @@ namespace PixelVision8.Runner
             luaScript.Globals["EnableCRT"] = new Func<bool?, bool>(runner.EnableCRT);
             luaScript.Globals["Brightness"] = new Func<float?, float>(runner.Brightness);
             luaScript.Globals["Sharpness"] = new Func<float?, float>(runner.Sharpness);
+            
+            // TODO remove this when tools are fixed to run at 256 colors
+            luaScript.Globals["ResizeColorMemory"] = new Action<int, int>(ResizeColorMemory);
+        }
+        
+        public void ResizeColorMemory(int newSize, int maxColors = -1)
+        {
+            // runner.ActiveEngine.ColorChip.maxColors = maxColors;
+            runner.ActiveEngine.ColorChip.Total = newSize;
         }
     }
 }

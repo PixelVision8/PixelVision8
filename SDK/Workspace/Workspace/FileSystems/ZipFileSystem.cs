@@ -21,7 +21,7 @@
 using System.IO;
 using System.IO.Compression;
 
-namespace PixelVision8.Runner.Workspace
+namespace PixelVision8.Workspace
 {
     public class ZipFileSystem : MemoryFileSystem
     {

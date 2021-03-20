@@ -711,10 +711,10 @@
       <Link>SDK\Workspace\FileSystemExtensions.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Workspace\Workspace\FileSystems\FileSystemMounter.cs">
-      <Link>SDK\Workspace\Workspace\Workspace\FileSystems\FileSystemMounter.cs</Link>
+      <Link>SDK\Workspace\FileSystems\FileSystemMounter.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Workspace\Workspace\FileSystems\MemoryFileSystem.cs">
-      <Link>SDK\Workspace\FileSystems\FileSystemMounter.cs</Link>
+      <Link>SDK\Workspace\FileSystems\MemoryFileSystem.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Workspace\Workspace\FileSystems\MergedFileSystem.cs">
       <Link>SDK\Workspace\FileSystems\MergedFileSystem.cs</Link>

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using MoonSharp.Interpreter;
-using PixelVision8.Runner.Workspace;
+using PixelVision8.Workspace;
 
 namespace PixelVision8.Runner
 {

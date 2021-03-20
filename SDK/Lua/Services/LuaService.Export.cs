@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using MoonSharp.Interpreter;
-using PixelVision8.Runner.Workspace;
+using PixelVision8.Workspace;
 
 namespace PixelVision8.Runner
 {
@@ -12,13 +12,13 @@ namespace PixelVision8.Runner
         public void RegisterExport(Script luaScript)
         {
             
-            if (runner.mode == RunnerMode.Loading)
-            {
+            // if (runner.mode == RunnerMode.Loading)
+            // {
                 // Inject the PV8 runner special global function
                 luaScript.Globals["IsExporting"] = new Func<bool>(runner.ExportService.IsExporting);
                 luaScript.Globals["ReadExportPercent"] = new Func<int>(runner.ExportService.ReadExportPercent);
                 luaScript.Globals["ReadExportMessage"] = new Func<Dictionary<string, object>>(runner.ExportService.ReadExportMessage);
-            }
+            // }
         }
     }
 }

@@ -197,8 +197,8 @@ namespace PixelVision8.Player
             
             if (width.HasValue || height.HasValue)
             {
-                var tmpWidth = width ?? 1;
-                var tmpHeight = height ?? 1;
+                var tmpWidth = Math.Max(1, width ?? 1);
+                var tmpHeight = Math.Max(1, height ?? 1);
 
                 var tmpPixels = new int[tmpWidth * tmpHeight];
 

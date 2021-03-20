@@ -19,7 +19,7 @@
 //
 
 using PixelVision8.Player;
-using PixelVision8.Runner.Workspace;
+using PixelVision8.Workspace;
 using System;
 using System.Collections.Generic;
 using System.IO;

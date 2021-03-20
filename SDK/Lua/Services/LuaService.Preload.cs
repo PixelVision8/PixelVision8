@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MoonSharp.Interpreter;
 using PixelVision8.Player;
-using PixelVision8.Runner.Workspace;
+using PixelVision8.Workspace;
 
 namespace PixelVision8.Runner
 {
@@ -12,10 +12,13 @@ namespace PixelVision8.Runner
         [RegisterLuaService]
         public void RegisterPreload(Script luaScript)
         {
-            luaScript.Globals["StartNextPreload"] = new Action(runner.StartNextPreload);
-            luaScript.Globals["PreloaderComplete"] = new Action(runner.RunGame);
-            luaScript.Globals["ReadPreloaderPercent"] =
-                new Func<int>(() => Utilities.Clamp((int)(runner.loadService.Percent * 100), 0, 100));
+            if (runner.mode == RunnerMode.Loading)
+            {
+                luaScript.Globals["StartNextPreload"] = new Action(runner.StartNextPreload);
+                luaScript.Globals["PreloaderComplete"] = new Action(runner.RunGame);
+                luaScript.Globals["ReadPreloaderPercent"] =
+                    new Func<int>(() => Utilities.Clamp((int)(runner.loadService.Percent * 100), 0, 100));
+            }
         }
     }
 }
