@@ -304,10 +304,6 @@ function EditColorModal:Open()
         table.insert(self.colorCache, Color(pixelVisionOS.colorOffset + (i - 1)))
 
     end
-    --
-    -- for i = 1, #self.colorCache do
-    --   print(i, self.colorCache[i])
-    -- end
 
     self.canvas:DrawPixels(self.rect.x, self.rect.y, DrawMode.TilemapCache)
 

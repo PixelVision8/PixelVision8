@@ -75,12 +75,7 @@ function PixelVisionOS:CreateColorPicker(rect, tileSize, total, totalPerPage, ma
 
     self:SelectItemPickerIndex(data, value.index, true, false)
 
-
-    
-
     data.selectedPixelDrawArgs[1] = self:ReadItemPickerOverPixelData(data, value.x, value.y)
-
-    -- print(data.name, "Data", dump(data.selectedPixelDrawArgs))
 
     if(data.onAction ~= nil) then
       data.onAction(value.index, doubleClick)
@@ -246,7 +241,7 @@ function PixelVisionOS:DrawColorPickerColorItem(data, id)
 
     
   if(data.onDrawColor ~= nil) then 
-    print("Draw Color", id)
+    -- print("Draw Color", id)
     data.onDrawColor(data, id, x ,y)
   else
     data.canvas.DrawSprites(emptycolor.spriteIDs, x, y, emptycolor.width, false, false)
@@ -286,7 +281,7 @@ function PixelVisionOS:UpdateColorPicker(data)
 
     -- Draw selection sprites when we are not dragging
     -- self.editorUI:NewDraw("DrawSprites", data.picker.selectedDrawArgs)
-    print("-- TODO draw selection", data.picker.cachedMetaSpriteIds.up, data.picker.colorOffset)
+    -- TODO draw selection", data.picker.cachedMetaSpriteIds.up, data.picker.colorOffset)
     DrawMetaSprite(
       data.picker.cachedMetaSpriteIds.up,
       data.picker.selectedPos.x,
@@ -401,7 +396,7 @@ function PixelVisionOS:SelectColorPickerIndex(data, value)
   -- Calculate the correct page from the position y value
   local tmpPage = math.floor((pos.y * 8) / data.pageSize)
 
-  print(data.name, value, tmpPage, dump(pos),data.pageSize)
+  -- print(data.name, value, tmpPage, dump(pos),data.pageSize)
 
   self:OnColorPickerPage(data, tmpPage + 1)
 
@@ -476,13 +471,9 @@ function PixelVisionOS:RebuildPickerPages(data, totalPages)
   rect = {x = rect.x, y = position.y, w = 8, h = 16}
 
   if(data.totalPages > 0) then
-    if(pickerbottompageedge ~= nil) then
-      -- DrawSprites(pickerbottompageedge.spriteIDs, rect.x + 8, rect.y, pickerbottompageedge.width, false, false, DrawMode.TilemapCache)
-    end
+    DrawMetaSprite(FindMetaSpriteId("pickerbottompageedge"), rect.x + 8, rect.y, false, false, DrawMode.TilemapCache)
   else
-    if(pickerbottompage ~= nil) then
-      -- DrawSprites(pickerbottompage.spriteIDs, rect.x + 8, rect.y, pagebuttonempty.width, false, false, DrawMode.TilemapCache)
-    end
+    DrawMetaSprite(FindMetaSpriteId("pickerbottompage"), rect.x + 8, rect.y, false, false, DrawMode.TilemapCache)
   end
 
 end

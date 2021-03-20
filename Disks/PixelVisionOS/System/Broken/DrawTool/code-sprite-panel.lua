@@ -137,7 +137,7 @@ function DrawTool:UpdateSpritePanel()
         self.sizeDisplayText = string.format("%02dx%02d", self.lastSpriteSize.x * editorUI.spriteSize.x, self.lastSpriteSize.y * editorUI.spriteSize.y)
     end
 
-    -- DrawText(self.sizeDisplayText, 224-2, 224-2, DrawMode.Sprite, "medium", 6, -4 )
+    DrawText(self.sizeDisplayText, 224-2, 224-2, DrawMode.Sprite, "medium", 6, -4 )
 
 end
 
@@ -241,22 +241,6 @@ function DrawTool:ChangeSpriteID(value)
 
 end
 
--- function DrawTool:OnSelectSprite(value)
-
-    
-
-    -- Reset history
-    -- ClearHistory()
-
-    -- print("Sprite", dump(gameEditor:Sprite(value)))
-
-    -- print("test", self.spritePickerData)
-    
-
-    -- ResetColorInvalidation()
-
--- end
-
 function DrawTool:OnSpritePickerDrop(src, dest)
 
     if(dest.inDragArea == false) then
@@ -289,7 +273,7 @@ function DrawTool:OnSpritePickerDrop(src, dest)
 
             local selection = self.selectionSizes[self.spriteMode]
 
-            self:BeginUndo()
+            self:BeginUndo(self)
 
             local srcSprite = gameEditor:ReadGameSpriteData(srcSpriteID, selection.x, selection.y)
             local destSprite = gameEditor:ReadGameSpriteData(destSpriteID, selection.x, selection.y)

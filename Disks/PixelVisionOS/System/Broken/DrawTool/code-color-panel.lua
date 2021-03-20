@@ -206,10 +206,7 @@ function DrawTool:ShowColorPanel()
 
     pixelVisionOS:InvalidateItemPickerDisplay(self.systemColorPickerData)
     pixelVisionOS:InvalidateItemPickerPageButton(self.systemColorPickerData)
-    -- TODO clear page area?
-
-    -- editorUI:NewDraw("DrawSprites", {pickerbottompageedge.spriteIDs, 20, 20, pickerbottompageedge.width, false, false,  DrawMode.Tile})
-
+   
     DrawMetaSprite(
         FindMetaSpriteId("pickerbottompageedge"),
         20,
@@ -233,7 +230,6 @@ function DrawTool:HideColorPanel()
 
     -- Clear bottom of the main window
     for i = 1, 8 do
-        -- editorUI:NewDraw("DrawSprites", {pagebuttonempty.spriteIDs, 11 + i, 20, pagebuttonempty.width, false, false,  DrawMode.Tile})
         DrawMetaSprite(
             FindMetaSpriteId("pagebuttonempty"),
             11 + i,
@@ -244,8 +240,6 @@ function DrawTool:HideColorPanel()
         )
     end
 
-    -- editorUI:NewDraw("DrawSprites", {canvasbottomrightcorner.spriteIDs, 20, 20, canvasbottomrightcorner.width, false, false,  DrawMode.Tile})
-    
     DrawMetaSprite(
         FindMetaSpriteId("canvasbottomrightcorner"),
         20,
@@ -364,9 +358,12 @@ function DrawTool:UpdateColorPanel()
             DrawMetaSprite(
                 self.bgDrawArgs[1],
                 self.bgDrawArgs[2],
-                self.bgDrawArgs[3]
+                self.bgDrawArgs[3], 
+                false,
+                false,
+                DrawMode.UI
             )
-            -- editorUI:NewDraw("DrawSprites", self.bgDrawArgs)
+            
         end
 
     end

@@ -28,7 +28,7 @@ function DrawTool:CreateCanvas()
             y = 128
         },
         1,
-        256,
+        pixelVisionOS.colorOffset,
         "Draw on the canvas",
         pixelVisionOS.emptyColorID
     )

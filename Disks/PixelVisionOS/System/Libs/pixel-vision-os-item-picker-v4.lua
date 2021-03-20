@@ -357,7 +357,7 @@ end
 
 function PixelVisionOS:InvalidateItemPickerDisplay(data)
 
-    -- data.invalidateDisplay = true
+    data.invalidateDisplay = true
 
 end
 

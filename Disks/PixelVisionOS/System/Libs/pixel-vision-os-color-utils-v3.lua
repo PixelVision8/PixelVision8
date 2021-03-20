@@ -18,7 +18,7 @@
 function PixelVisionOS:ImportColorsFromGame()
 
     -- Resize the tool's color memory to 512 so it can store the tool and game colors
-    gameEditor:ResizeToolColorMemory()
+    -- gameEditor:ResizeToolColorMemory()
 
     -- We'll save the game's mask color
     self.maskColor = gameEditor:MaskColor()
@@ -26,16 +26,16 @@ function PixelVisionOS:ImportColorsFromGame()
     self.colorsPerSprite = gameEditor:ColorsPerSprite()
 
     -- Games are capped at 256 colors
-    self.totalColors = 256
+    self.totalColors = 128
 
     -- Set the last color to the empty color ID (which accounts for -1 in game color space)
-    self.emptyColorID = self.totalColors - 1
+    self.emptyColorID = 63
 
     -- Change the empty color to match the game's mask color
     Color(self.emptyColorID, self.maskColor)
 
     -- The color offset is the first position where a game's colors are stored in the tool's memory
-    self.colorOffset = self.totalColors
+    self.colorOffset = self.emptyColorID + 1
 
     -- Clear all the tool's colors
     for i = 1, self.totalColors do
@@ -135,7 +135,7 @@ function PixelVisionOS:ImportColorsFromGame()
             self.palettesAreEmpty = false
         end
 
-        Color(index + self.colorOffset, color)
+        -- Color(index + self.colorOffset, color)
 
     end
 
