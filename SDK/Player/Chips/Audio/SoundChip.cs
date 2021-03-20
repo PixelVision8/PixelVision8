@@ -27,8 +27,9 @@ namespace PixelVision8.Player
     ///     The <see cref="SfxrSoundChip" /> is responsible for playing back sound
     ///     effects in the engine. It's powered by SFxr.
     /// </summary>
-    public class SoundChip : AbstractChip
+    public partial class SoundChip : AbstractChip
     {
+        
         // private readonly Dictionary<string, byte[]> _soundBank = new Dictionary<string, byte[]>();
         protected SoundChannel[] Channels = new SoundChannel[0];
         protected SoundData[] Sounds;

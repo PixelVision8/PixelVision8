@@ -282,7 +282,7 @@ namespace PixelVision8.Editor
             bool wasFunkyLastNote;
 
             var musicChip = chips.MusicChip;
-            var soundChip = chips.SoundChip as SfxrSoundChip;
+            var soundChip = chips.SoundChip;
 
             var activeTrackerData = musicChip.ActiveTrackerData;
 

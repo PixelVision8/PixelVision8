@@ -1185,7 +1185,7 @@ namespace PixelVision8.Runner
             typeof(MouseInputChip).FullName,
             typeof(KeyboardInputChip).FullName,
             typeof(DisplayChip).FullName,
-            typeof(SfxrSoundChip).FullName,
+            typeof(SoundChip).FullName,
             typeof(MusicChip).FullName
         };
 

@@ -137,7 +137,7 @@ function SFXTool:Draw()
 
     -- TODO this is not working
     if(gameEditor:IsChannelPlaying(0)) then
-        DrawMeta(self.powerMetaSpriteId, 16, 88)
+        DrawMetaSprite(self.powerMetaSpriteId, 16, 88)
       end
 
 end

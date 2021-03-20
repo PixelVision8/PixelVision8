@@ -53,7 +53,7 @@ namespace PixelVision8.Editor
 
         private void SaveGameData()
         {
-            var soundChip = _targetPlay.SoundChip as SfxrSoundChip;
+            var soundChip = _targetPlay.SoundChip;
 
             sb.Append("\"version\":\"v2\",");
             JsonUtil.GetLineBreak(sb, 1);

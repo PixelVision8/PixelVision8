@@ -126,6 +126,15 @@
     <Compile Include="..\..\SDK\Player\Chips\Audio\SoundChannel.MonoGame.cs">
       <Link>SDK\Player\Chips\Audio\SoundChannel.MonoGame.cs</Link>
     </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Audio\SoundChannel.Sfxr.cs">
+      <Link>SDK\Player\Chips\Audio\SoundChannel.Sfxr.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Audio\SoundChip.Sfxr.cs">
+      <Link>SDK\Player\Chips\Audio\SoundChip.Sfxr.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Audio\WaveType.cs">
+      <Link>SDK\Player\Chips\Audio\WaveType.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Log.cs">
       <Link>SDK\Player\Chips\Game\GameChip.Log.cs</Link>
     </Compile>
@@ -134,6 +143,9 @@
     </Compile>
     <Compile Include="..\..\SDK\Player\Data\Rectangle.cs">
       <Link>SDK\Player\Data\Rectangle.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\SoundData.Sfxr.cs">
+      <Link>SDK\Player\Data\SoundData.Sfxr.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.ColorChip.cs">
       <Link>SDK\Runner\Parsers\SystemParser.ColorChip.cs</Link>
@@ -255,21 +267,6 @@
     </Compile>
     <Compile Include="..\..\SDK\Player\Chips\Audio\MusicChip.cs">
       <Link>SDK\Player\Chips\Audio\MusicChip.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Player\Chips\Audio\Sfxr\SfxrParams.cs">
-      <Link>SDK\Player\Chips\Audio\Sfxr\SfxrParams.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Player\Chips\Audio\Sfxr\SfxrSoundChip.cs">
-      <Link>SDK\Player\Chips\Audio\Sfxr\SfxrSoundChip.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Player\Chips\Audio\Sfxr\SfxrSynthChannel.cs">
-      <Link>SDK\Player\Chips\Audio\Sfxr\SfxrSynthChannel.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Player\Chips\Audio\Sfxr\SoundData.Sfxr.cs">
-      <Link>SDK\Player\Chips\Audio\Sfxr\SoundData.Sfxr.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Player\Chips\Audio\SoundChannel.cs">
-      <Link>SDK\Player\Chips\Audio\SoundChannel.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Player\Chips\Audio\SoundChip.cs">
       <Link>SDK\Player\Chips\Audio\SoundChip.cs</Link>
@@ -1243,6 +1240,11 @@
     <None Remove="..\..\**\saves.json" />
     <None Remove="..\..\SDK\MonoVision\Platform\Graphics\Effect\Resources\**" />
     <None Remove="..\..\SDK\MonoVision\Dependencies\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="..\..\SDK\Player\Chips\Audio\Sfxr">
+      <Link>SDK\Player\Chips\Audio\Sfxr</Link>
+    </Folder>
   </ItemGroup>
 
 </Project>

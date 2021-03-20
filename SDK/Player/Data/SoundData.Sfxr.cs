@@ -1,43 +1,58 @@
-﻿//  SfxrSynth
+﻿//   
+// Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
-//  Copyright 2010 Thomas Vian
-//  Copyright 2013 Zeh Fernando
+// Licensed under the Microsoft Public License (MS-PL) except for a few
+// portions of the code. See LICENSE file in the project root for full 
+// license information. Third-party libraries used by Pixel Vision 8 are 
+// under their own licenses. Please refer to those libraries for details 
+// on the license they use.
+// 
+// Contributors
+// --------------------------------------------------------
+// This is the official list of Pixel Vision 8 contributors:
 //  
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//  
-//  	http://www.apache.org/licenses/LICENSE-2.0
-//  
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//  
-//  
-//  SfxrParams
-//  Holds parameters used by SfxrSynth
-//  
-//  @author Zeh Fernando
+// Jesse Freeman - @JesseFreeman
+// Christina-Antoinette Neofotistou @CastPixel
+// Christer Kaitila - @McFunkypants
+// Pedro Medeiros - @saint11
+// Shawn Rakowski - @shwany
+//
 
 using System;
+using PixelVision8.Workspace;
 
 namespace PixelVision8.Player
 {
-    public enum WaveType
+    public partial class SoundData
     {
-        None = -1,
-        Square = 0,
-        Saw = 1,
-        Sine = 2,
-        Noise = 3,
-        Triangle = 4,
-        Sample = 5
-    }
+        public static readonly string DEFAULT_SOUND_PARAM = "0,,.0185,.4397,.1783,.8434,,,,,,,,,,,,,1,,,,,.5";
 
-    public class SfxrParams : AbstractData
-    {
+        public static SoundData Empty(string name = "Empty")
+        {
+            return new SoundData(name, DEFAULT_SOUND_PARAM);
+        }
+        
+        public string param {
+            get
+            {
+                return GetSettingsString();
+            }
+            set
+            {
+                SetSettingsString(value);
+            }
+        }
+
+        public bool isWav => bytes != null;
+
+        public SoundData(string name, string param)
+        {
+            this.param = param != "" ? param : DEFAULT_SOUND_PARAM;
+            // SetSettingsString(param);
+        }
+
+        #region Sfxr Props
+        
         private static readonly Random _random = new Random();
 
         private float _attackTime; // Length of the volume envelope attack (0 to 1)
@@ -831,7 +846,7 @@ namespace PixelVision8.Player
         ///     SFXR/AS3SFXR compatible)
         /// </summary>
         /// <returns>A comma-delimited list of parameter values</returns>
-        public string GetSettingsString()
+        private string GetSettingsString()
         {
             var str = "";
 
@@ -870,7 +885,7 @@ namespace PixelVision8.Player
         /// </summary>
         /// <param name="__string">string Settings string to parse</param>
         /// <returns>If the string successfully parsed</returns>
-        public void SetSettingsString(string __string)
+        private void SetSettingsString(string __string)
         {
             var values = __string.Split(',');
 
@@ -912,9 +927,10 @@ namespace PixelVision8.Player
         ///     Returns a copy of this SfxrParams with all settings duplicated
         /// </summary>
         /// <returns>A copy of this SfxrParams</returns>
-        public SfxrParams Clone()
+        public SoundData Clone()
         {
-            var outp = new SfxrParams();
+            var outp = new SoundData(name, param);
+            
             outp.CopyFrom(this);
 
             return outp;
@@ -925,7 +941,7 @@ namespace PixelVision8.Player
         /// </summary>
         /// <param name="__params">Instance to copy parameters from</param>
         /// <param name="__makeDirty"></param>
-        public void CopyFrom(SfxrParams __params, bool __makeDirty = false)
+        public void CopyFrom(SoundData __params, bool __makeDirty = false)
         {
             var wasDirty = Invalid;
             SetSettingsString(GetSettingsString());
@@ -1013,5 +1029,9 @@ namespace PixelVision8.Player
             value = (value < min) ? min : value;
             return value;
         }
+
+        
+
+        #endregion
     }
 }

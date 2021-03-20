@@ -17,6 +17,7 @@ function MusicTool:OnExportSong(songID, showWarning)
           
           gameEditor:ExportSong(self.rootDirectory, songID)
           target.onParentClose()
+          
         end,
         key = Keys.Enter,
         tooltip = "Press 'enter' to export the song"
@@ -60,6 +61,7 @@ function MusicTool:OnExportAllSongs()
         installRoot = rootPath
         target.onParentClose()
 
+        print("Trigger Export")
         pixelVisionOS:RegisterUI({name = "UpdateExportLoop"}, "UpdateExport", self)
 
       end,
@@ -159,6 +161,7 @@ end
 -- TODO this needs to be wired up
 function MusicTool:UpdateExport()
   
+  print("Update Export")
     self.installingTime = self.installingTime + editorUI.timeDelta
 
     if(self.installingTime > self.installingDelay) then

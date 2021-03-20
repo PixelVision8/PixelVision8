@@ -24,7 +24,7 @@ namespace PixelVision8.Player
     ///     The SoundChip is responsible for playing back sound
     ///     effects in the engine. It's powered by SFxr.
     /// </summary>
-    public class SfxrSoundChip : SoundChip
+    public partial class SoundChip
     {
         /// <summary>
         ///     Updates a sound in the collection.
@@ -40,22 +40,6 @@ namespace PixelVision8.Player
 
             ReadSound(index).param = param;
         }
-
-        /// <summary>
-        ///     This stub methods is designed to be overridden with a Factory to
-        ///     create new sound instances that implement the ISoundData interface.
-        /// </summary>
-        /// <returns></returns>
-        public override SoundChannel CreateSoundChannel()
-        {
-            return new SfxrSynthChannel();
-        }
-
-        public override SoundData CreateSoundData(string name, byte[] bytes = null)
-        {
-            return new SoundData(name, "");
-        }
-
 
         /// <summary>
         ///     Returns a Sfxr Synth to be played back at run time by the SoundChip.
@@ -91,7 +75,7 @@ namespace PixelVision8.Player
         public WaveType ChannelType(int id, WaveType? type = null)
         {
             // The channel will handle this so pass the values over to its API.
-            return ((SfxrSynthChannel) Channels[id]).ChannelType(type);
+            return Channels[id].ChannelType(type);
         }
 
         /// <summary>

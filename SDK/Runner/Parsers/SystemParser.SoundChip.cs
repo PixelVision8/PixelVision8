@@ -10,7 +10,7 @@ namespace PixelVision8.Runner
         [ChipParser("SoundChip")]
         public void ConfigureSoundChip(Dictionary<string, object> data)
         {
-            var soundChip = Target.SoundChip as SfxrSoundChip;
+            var soundChip = Target.SoundChip;// as SfxrSoundChip;
 
             if (soundChip == null) return;
 

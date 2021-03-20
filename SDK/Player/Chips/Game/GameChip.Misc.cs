@@ -38,9 +38,9 @@ namespace PixelVision8.Player
         /// <param name="data"></param>
         public string Sound(int id, string data = null)
         {
-            if (data != null) ((SfxrSoundChip) SoundChip).UpdateSound(id, data);
+            if (data != null) SoundChip.UpdateSound(id, data);
 
-            return ((SfxrSoundChip) SoundChip).ReadSound(id).param;
+            return SoundChip.ReadSound(id).param;
         }
     }
 }

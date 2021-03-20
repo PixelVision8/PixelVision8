@@ -21,13 +21,11 @@
 //  
 //  @author Zeh Fernando
 
-using Microsoft.Xna.Framework.Audio;
 using System;
-using System.IO;
 
 namespace PixelVision8.Player
 {
-    public class SfxrSynthChannel : SoundChannel
+    public partial class SoundChannel
     {
         
         private const int LO_RES_NOISE_PERIOD = 8; // Should be < 32
@@ -74,7 +72,7 @@ namespace PixelVision8.Player
 
         // Pre-calculated data
         private float[] _noiseBuffer; // Buffer of random values used to generate noise
-        private SfxrParams _original; // Copied properties for mutation base
+        private SoundData _original; // Copied properties for mutation base
         private float _period; // Period of the wave
         private float _periodTemp; // Period modified by vibrato
         private int _periodTempInt; // Period modified by vibrato (as an Int)
@@ -103,7 +101,7 @@ namespace PixelVision8.Player
 
         public float[] data;
 
-        public SfxrSynthChannel(int samples = 0, int channels = 1, int frequency = 22050)
+        public SoundChannel(int samples = 0, int channels = 1, int frequency = 22050)
         {
             this.samples = samples;
             this.channels = channels;
@@ -124,50 +122,96 @@ namespace PixelVision8.Player
             set => _waveType = value;
         }
 
+        private SoundData _params;
+
         /// <summary>
         ///     Sound parameters
         /// </summary>
-        public SfxrParams parameters { get; } = new SfxrParams();
+        public SoundData parameters
+        {
+            get
+            {
+                if (_params == null)
+                {
+                    _params = SoundData.Empty();
+                }
+
+                return _params;
+            }
+            set
+            {
+                if (_params == null)
+                {
+                    _params = value.Clone();
+                }
+                else
+                {
+                    _params.param = value.param;
+                }
+            }
+        }
 
         /// <summary>
         ///     Plays the sound. If the parameters are dirty, synthesises sound as it plays, caching it for later.
         ///     If they're not, plays from the cached sound. Won't play if caching asynchronously.
         /// </summary>
-        public override void Play(SoundData soundData, float? frequency = null)
+        public void Play(SoundData soundData, float? frequency = null)
         {
+            Stop();
+            
             if (waveLock == WaveType.Sample)
             {
-                base.Play(soundData, frequency);
+                if (SoundInstanceCache.ContainsKey(soundData.name))
+                    _soundInstance = SoundInstanceCache[soundData.name];
+                else
+                {
+                    // Clear the last sound instance
+                    _soundInstance = null;
+
+                    // See if this is a wav
+                    if (soundData.bytes != null)
+                    {
+                        // if (waveLock == WaveType.Sample || waveLock == WaveType.None)
+                        _soundInstance = CreateSoundEffect(soundData.bytes, frequency);
+                    }
+
+                    SoundInstanceCache[soundData.name] = _soundInstance;
+                }   
             }
             else
             {
                 
                 // Stop any playing sound
-                Stop();
+                
 
                 // TODO this logic isn't working correctly. Need to double check the cache
                 
                 // Clear the last sound instance
                 _soundInstance = null;
 
-                parameters.SetSettingsString(soundData.param);
+                parameters = soundData.Clone();
+
+                // parameters.param = soundData.param;
 
                 if (frequency.HasValue) parameters.startFrequency = frequency.Value;
 
                 if (parameters.Invalid) CacheSound();
 
-                try
-                {
-                    // Only play if there is a sound instance
-                    _soundInstance?.Play();
-                }
-                catch (Exception error)
-                {
-                    
-                    Console.WriteLine("Audio Error {0}", error.Message);
-                }
+                // try
+                // {
+                //     // Only play if there is a sound instance
+                //     _soundInstance?.Play();
+                // }
+                // catch (Exception error)
+                // {
+                //     
+                //     Console.WriteLine("Audio Error {0}", error.Message);
+                // }
                 
             }
+            
+            // Only play if there is a sound instance
+            _soundInstance?.Play();
 
             
         }
@@ -175,9 +219,9 @@ namespace PixelVision8.Player
         /// <summary>
         ///     Stops the currently playing sound
         /// </summary>
-        public override void Stop()
+        public void Stop()
         {
-            base.Stop();
+            _soundInstance?.Stop();
 
             if (_original != null)
             {
@@ -395,13 +439,12 @@ namespace PixelVision8.Player
         {
             Stop();
 
-            var paramKey = parameters.GetSettingsString();
+            var paramKey = parameters.param;
 
             if (SoundInstanceCache.ContainsKey(paramKey))
             {
                 _soundInstance = SoundInstanceCache[paramKey];
                 
-                Console.WriteLine("Cached Sound {0}", _soundInstance != null);
             }
             else
             {
@@ -416,9 +459,7 @@ namespace PixelVision8.Player
                 
                 SoundInstanceCache[paramKey] = _soundInstance;
                 
-                Console.WriteLine("New Sound {0}", _soundInstance != null);
             }
-            
             
         }
 

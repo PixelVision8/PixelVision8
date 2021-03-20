@@ -17,7 +17,7 @@ namespace PixelVision8.Player
             LuaScript.Globals["PlaySound"] = new Action<int, int>(PlaySound);
             LuaScript.Globals["StopSound"] = new Action<int>(StopSound);
             LuaScript.Globals["PlayRawSound"] =
-                new Action<string, int, float>(((SfxrSoundChip) SoundChip).PlayRawSound);
+                new Action<string, int, float>(SoundChip.PlayRawSound);
 
             LuaScript.Globals["IsChannelPlaying"] = new Func<int, bool>(IsChannelPlaying);
             LuaScript.Globals["PlayPattern"] = new Action<int, bool>(PlayPattern);

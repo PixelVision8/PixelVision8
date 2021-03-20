@@ -29,13 +29,13 @@ namespace PixelVision8.Editor
     {
         private readonly PixelVision targetEngine;
         private StringBuilder sb;
-        private SfxrSoundChip _sfxrSoundChip;
+        private SoundChip _sfxrSoundChip;
 
         public SfxrSoundExporter(string fileName, PixelVision targetEngine) : base(fileName)
         {
             this.targetEngine = targetEngine;
 
-            _sfxrSoundChip = targetEngine.SoundChip as SfxrSoundChip;
+            _sfxrSoundChip = targetEngine.SoundChip;
 
             //            CalculateSteps();
         }

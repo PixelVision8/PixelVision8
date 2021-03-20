@@ -27,7 +27,7 @@ namespace PixelVision8.Player
         ///     Plays the sound. If the parameters are dirty, synthesises sound as it plays, caching it for later.
         ///     If they're not, plays from the cached sound. Won't play if caching asynchronously.
         /// </summary>
-        public virtual void Play(SoundData soundData, float? frequency = null)
+        public void Play(SoundData soundData, float? frequency = null)
         {
             // TODO this probably doesn't work in the lite version
             // Stop any playing sound

@@ -28,20 +28,20 @@ namespace PixelVision8.Editor
         private readonly MusicChip musicChip;
 
         private readonly int[] patterns;
-        private readonly SfxrSoundChip soundChip;
+        private readonly SoundChip soundChip;
         private int currentPattern;
 
         // to avoid clipping, all tracks are a bit quieter since we ADD values - set to 1f for full mix
         public float mixdownTrackVolume = 0.6f;
         public float note_tick_s = 15.0f / 120.0f; // (15.0f/120.0f) = 120BPM sixteenth notes
         public float note_tick_s_odd;
-        private SfxrSynthChannel result;
+        private SoundChannel result;
 
 
         public float
             swing_rhythm_factor = 1.0f; //0.7f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
 
-        private SfxrSynthChannel[] trackresult;
+        private SoundChannel[] trackresult;
 
         //        int songdataCurrentPos = 0;
 
@@ -52,7 +52,7 @@ namespace PixelVision8.Editor
 
             // Save references to the currentc chips
             this.musicChip = musicChip;
-            this.soundChip = soundChip as SfxrSoundChip;
+            this.soundChip = soundChip;
 
             this.patterns = patterns;
         }
@@ -104,14 +104,14 @@ namespace PixelVision8.Editor
             if (trackresult == null)
             {
                 // all the tracks we need - an array of audioclips that will be merged into result
-                trackresult = new SfxrSynthChannel[tcount];
+                trackresult = new SoundChannel[tcount];
 
                 for (var i = 0; i < tcount; i++)
-                    trackresult[i] = new SfxrSynthChannel(0, 1,
+                    trackresult[i] = new SoundChannel(0, 1,
                         preRenderBitrate);
             }
 
-            var instrument = new SfxrSynthChannel[songData.totalTracks];
+            var instrument = new SoundChannel[songData.totalTracks];
 
             var newStartPos = trackresult[0].samples / 2;
             var newLength = trackresult[0].samples + songdatalength;
@@ -119,14 +119,13 @@ namespace PixelVision8.Editor
 
             for (tracknum = 0; tracknum < tcount; tracknum++)
             {
-                if (instrument[tracknum] == null) instrument[tracknum] = new SfxrSynthChannel();
+                if (instrument[tracknum] == null) instrument[tracknum] = new SoundChannel();
 
                 var songdataCurrentPos = newStartPos;
                 trackresult[tracknum].Resize(newLength);
 
                 // set the params to current track's instrument string
-                instrument[tracknum].parameters
-                    .SetSettingsString(soundChip.ReadSound(songData.tracks[tracknum].sfxID).param);
+                instrument[tracknum].parameters.param = soundChip.ReadSound(songData.tracks[tracknum].sfxID).param;
 
                 // Loop through all of the notes in the track
                 for (notenum = 0; notenum < ncount; notenum++)
@@ -141,11 +140,9 @@ namespace PixelVision8.Editor
 
                         // doing this for every note played is insane:
                         // try a fresh new instrument (RAM and GC spammy)
-                        instrument[tracknum] =
-                            new SfxrSynthChannel(); // shouldn't be required, but for some reason it is
+                        instrument[tracknum] = new SoundChannel(); // shouldn't be required, but for some reason it is
                         // set the params to current track's instrument string
-                        instrument[tracknum].parameters
-                            .SetSettingsString(soundChip.ReadSound(songData.tracks[tracknum].sfxID).param);
+                        instrument[tracknum].parameters.param = soundChip.ReadSound(songData.tracks[tracknum].sfxID).param;
 
 
                         // pitch shift the sound to the correct musical note frequency
@@ -210,7 +207,7 @@ namespace PixelVision8.Editor
         }
 
         // pre-rendered waveforms - OPTIMIZATION - SLOW SLOW SLOW - FIXME
-        public SfxrSynthChannel MixdownAudioClips(params SfxrSynthChannel[] clips)
+        public SoundChannel MixdownAudioClips(params SoundChannel[] clips)
         {
             if (clips == null || clips.Length == 0) return null;
 
@@ -254,7 +251,7 @@ namespace PixelVision8.Editor
             // stereo
             //AudioClip result = AudioClip.Create("MixdownSTEREO", length / 2, 2, preRenderBitrate, false);
             // mono
-            var result = new SfxrSynthChannel(length / 2, 1, preRenderBitrate);
+            var result = new SoundChannel(length / 2, 1, preRenderBitrate);
             result.SetData(data); // TODO: we can get a warning here: data too large to fit: discarded x samples
             // the truncation can happen with a large sustain of a note that could go on after the song is over
             // one solution is to pad the end with 4sec of 0000s then maybe search and TRIM

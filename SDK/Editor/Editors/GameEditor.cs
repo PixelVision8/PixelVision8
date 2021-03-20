@@ -58,7 +58,7 @@ namespace PixelVision8.Editor
         protected DesktopRunner runner;
 
         protected IServiceLocator serviceManager;
-        private SfxrSoundChip soundChip;
+        private SoundChip soundChip;
         private SpriteChip spriteChip;
         private PixelVision targetGame;
         private TilemapChip tilemapChip;
@@ -93,7 +93,7 @@ namespace PixelVision8.Editor
                     typeof(FontChip).FullName,
                     typeof(ControllerChip).FullName,
                     typeof(DisplayChip).FullName,
-                    typeof(SfxrSoundChip).FullName,
+                    typeof(SoundChip).FullName,
                     typeof(MusicChip).FullName,
                     typeof(LuaGameChip).FullName
                 };
@@ -206,7 +206,7 @@ namespace PixelVision8.Editor
             spriteChip = targetGame.SpriteChip;
             fontChip = targetGame.FontChip;
             tilemapChip = targetGame.TilemapChip;
-            soundChip = targetGame.SoundChip as SfxrSoundChip;
+            soundChip = targetGame.SoundChip;
             musicChip = targetGame.MusicChip; // TODO need to create a SfxrMusicChip
 
             //            Console.WriteLine("MC Tracks " + musicChip.totalTracks);
@@ -1498,7 +1498,7 @@ namespace PixelVision8.Editor
         public void GenerateSound(int index, int template)
         {
             // Create a tmp synth parameter
-            var settings = new SfxrSynthChannel().parameters;
+            var settings = new SoundChannel().parameters;
 
             // Apply sound template
             switch (template)
@@ -1529,7 +1529,7 @@ namespace PixelVision8.Editor
                     break;
             }
 
-            soundChip.UpdateSound(index, settings.GetSettingsString());
+            soundChip.UpdateSound(index, settings.param);
         }
 
         /// <summary>
@@ -1538,10 +1538,10 @@ namespace PixelVision8.Editor
         /// <param name="id"></param>
         public void Mutate(int id)
         {
-            var param = new SfxrParams();
-            param.SetSettingsString(soundChip.ReadSound(id).param);
-            param.Mutate();
-            soundChip.UpdateSound(id, param.GetSettingsString());
+            var data = new SoundData("Untitled", soundChip.ReadSound(id).param);
+            // param.SetSettingsString();
+            data.Mutate();
+            soundChip.UpdateSound(id, data.param);
             //            soundChip.ReadSound(id).Mutate();
         }
 
@@ -2297,8 +2297,8 @@ namespace PixelVision8.Editor
             workspacePath = workspacePath.AppendFile(sfx.name + ".wav");
 
             // TODO need to wire this up
-            var synth = new SfxrSynthChannel();
-            synth.parameters.SetSettingsString(sfx.param);
+            var synth = new SoundChannel();
+            synth.parameters.param = sfx.param;
             //            var stream = workspace.CreateFile(path);
 
             var files = new Dictionary<string, byte[]>
