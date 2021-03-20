@@ -29,22 +29,14 @@ namespace PixelVision8.Player
 {
     public class SfxrSynthChannel : SoundChannel
     {
+        
         private const int LO_RES_NOISE_PERIOD = 8; // Should be < 32
-        //        private float _overtoneFalloff; // Minimum frequency before stopping
-
-        //        private int _overtones; // Minimum frequency before stopping
-
-        // private readonly Dictionary<string, SoundEffectInstance> wavCache =
-        //     new Dictionary<string, SoundEffectInstance>();
-
         private float _changeAmount; // Amount to change the note by
-
         private int _changeLimit; // Once the time reaches this limit, the note changes
 
         // From BFXR
         private float _changePeriod;
         private int _changePeriodTime;
-
         private bool _changeReached;
         private int _changeTime; // Counter for the note change
         private float _compressionFactor;
@@ -60,16 +52,13 @@ namespace PixelVision8.Player
         private float _envelopeOverLength2; // 1 / _envelopeLength2 (for quick calculations)
         private int _envelopeStage; // Current stage of the envelope (attack, sustain, decay, end)
         private float _envelopeTime; // Current time through current enelope stage
-
         private float _envelopeVolume; // Current volume of the envelope
-
         private bool _filters; // If the filters are active
 
         // Synth properies
         private bool _finished; // If the sound has finished
         private float _hpFilterCutoff; // Cutoff multiplier which adjusts the amount the wave position can move
         private float _hpFilterDeltaCutoff; // Speed of the high-pass cutoff multiplier
-
         private float _hpFilterPos; // Adjusted wave position after high-pass filter
         private float[] _loResNoiseBuffer; // Buffer of random values used to generate Tan waveform
         private float _lpFilterCutoff; // Cutoff multiplier which adjusts the amount the wave position can move
@@ -79,21 +68,18 @@ namespace PixelVision8.Player
         private float _lpFilterOldPos; // Previous low-pass wave position
         private bool _lpFilterOn; // If the low pass filter is active
         private float _lpFilterPos; // Adjusted wave position after low-pass filter
-
         private float _masterVolume; // masterVolume * masterVolume (for quick calculations)
         private float _maxPeriod; // Maximum period before sound stops (from minFrequency)
         private float _minFrequency; // Minimum frequency before stopping
 
         // Pre-calculated data
         private float[] _noiseBuffer; // Buffer of random values used to generate noise
-
         private SfxrParams _original; // Copied properties for mutation base
         private float _period; // Period of the wave
         private float _periodTemp; // Period modified by vibrato
         private int _periodTempInt; // Period modified by vibrato (as an Int)
 
         private int _phase; // Phase through the wave
-
         private bool _phaser; // If the phaser is active
         private float[] _phaserBuffer; // Buffer of wave values used to create the out of phase second wave
         private float _phaserDeltaOffset; // Change in phase offset
@@ -102,33 +88,17 @@ namespace PixelVision8.Player
         private int _phaserPos; // Position through the phaser buffer
 
         private float _pos; // Phase expresed as a Number from 0-1, used for fast sin approx
-
-        //
-        //        private readonly Random _random = new Random();
         private int _repeatLimit; // Once the time reaches this limit, some of the variables are reset
-
         private int _repeatTime; // Counter for the repeats
-
         private float _sample; // Sub-sample calculated 8 times per actual sample, averaged out to get the super sample
-        //        private float _sample2; // Used in other calculations
-
         private float _slide; // Note slide
-
-
-        //        private float amp; // Used in other calculations
-        private SoundEffectInstance _soundInstance;
-
         private float _squareDuty; // Offset of center switching point in the square wave
-
         // Temp
         private float _superSample; // Actual sample writen to the wave
-
         private float _sustainPunch; // The punch factor (louder at begining of sustain)
         private float _vibratoAmplitude; // Amount to change the period of the wave by at the peak of the vibrato wave
-
         private float _vibratoPhase; // Phase through the vibrato sine wave
         private float _vibratoSpeed; // Speed at which the vibrato phase moves
-
         private WaveType _waveType; // Shape of wave to generate (see enum WaveType)
 
         public float[] data;
@@ -165,8 +135,13 @@ namespace PixelVision8.Player
         /// </summary>
         public override void Play(SoundData soundData, float? frequency = null)
         {
-            // if (soundData is SfxSoundData)
-            // {
+            if (waveLock == WaveType.Sample)
+            {
+                base.Play(soundData, frequency);
+            }
+            else
+            {
+                
                 // Stop any playing sound
                 Stop();
 
@@ -184,18 +159,17 @@ namespace PixelVision8.Player
                 try
                 {
                     // Only play if there is a sound instance
-                                _soundInstance?.Play();
+                    _soundInstance?.Play();
                 }
-                catch (System.Exception error)
+                catch (Exception error)
                 {
                     
                     Console.WriteLine("Audio Error {0}", error.Message);
                 }
                 
-            // }
+            }
 
-            if (waveLock == WaveType.Sample || waveLock == WaveType.None)
-                base.Play(soundData, frequency);
+            
         }
 
         /// <summary>
@@ -423,36 +397,29 @@ namespace PixelVision8.Player
 
             var paramKey = parameters.GetSettingsString();
 
-
             if (SoundInstanceCache.ContainsKey(paramKey))
             {
                 _soundInstance = SoundInstanceCache[paramKey];
+                
+                Console.WriteLine("Cached Sound {0}", _soundInstance != null);
             }
             else
             {
-                // Needs to cache new data
-                //                _cachedWavePos = 0;
-                //                _cachingNormal = true;
-                //                _waveData = null;
-
+                
                 Reset(true);
 
-
-                if (_soundInstance != null) _soundInstance.Stop();
-
-                //                _waveData = GenerateWav();
+                _soundInstance?.Stop();
 
                 parameters.ResetValidation();
 
-                using (var stream = new MemoryStream(GenerateWav()))
-                {
-                    var soundEffect = SoundEffect.FromStream(stream);
-
-                    _soundInstance = soundEffect.CreateInstance();
-                }
-
+                _soundInstance = CreateSoundEffect(GenerateWav());
+                
                 SoundInstanceCache[paramKey] = _soundInstance;
+                
+                Console.WriteLine("New Sound {0}", _soundInstance != null);
             }
+            
+            
         }
 
         /**

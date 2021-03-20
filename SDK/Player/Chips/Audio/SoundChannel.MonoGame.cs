@@ -6,7 +6,7 @@ namespace PixelVision8.Player
 {
     public partial class SoundChannel
     {
-        private SoundEffectInstance _soundInstance;
+        protected SoundEffectInstance _soundInstance;
         protected readonly Dictionary<string, SoundEffectInstance> SoundInstanceCache = new Dictionary<string, SoundEffectInstance>();
         
         public bool IsPlaying()
@@ -18,18 +18,19 @@ namespace PixelVision8.Player
             
         }
         
-        protected void CreateSoundEffect(byte[] bytes, float? frequency = null)
+        protected SoundEffectInstance CreateSoundEffect(byte[] bytes, float? frequency = null)
         {
-            using (var stream = new MemoryStream(bytes))
-            {
-                var soundEffect = SoundEffect.FromStream(stream);
+            
+            using var stream = new MemoryStream(bytes);
+            var soundEffect = SoundEffect.FromStream(stream);
 
-                _soundInstance = soundEffect.CreateInstance();
+            SoundEffectInstance sound = soundEffect.CreateInstance();
 
-                // TODO need to make sure this is correct and we can use the frequency to manipulate the pitch
-                if (frequency.HasValue)
-                    _soundInstance.Pitch = frequency.Value;
-            }
+            // TODO need to make sure this is correct and we can use the frequency to manipulate the pitch
+            if (frequency.HasValue)
+                sound.Pitch = frequency.Value;
+
+            return sound;
         }
     }
 }

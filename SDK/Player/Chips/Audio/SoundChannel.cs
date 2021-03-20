@@ -44,7 +44,7 @@ namespace PixelVision8.Player
                 if (soundData.bytes != null)
                 {
                     // if (waveLock == WaveType.Sample || waveLock == WaveType.None)
-                    CreateSoundEffect(soundData.bytes, frequency);
+                    _soundInstance = CreateSoundEffect(soundData.bytes, frequency);
                 }
 
                 SoundInstanceCache[soundData.name] = _soundInstance;
