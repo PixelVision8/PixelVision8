@@ -23,7 +23,7 @@
 
 using System;
 
-namespace PixelVision8.Player.Audio
+namespace PixelVision8.Player
 {
     public enum WaveType
     {

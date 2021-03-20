@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Player.Audio;
 using PixelVision8.Player;
 using PixelVision8.Runner.Exporters;
 

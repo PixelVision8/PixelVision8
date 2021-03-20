@@ -18,8 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Player.Audio;
-
 namespace PixelVision8.Player
 {
     /// <summary>
@@ -55,7 +53,7 @@ namespace PixelVision8.Player
 
         public override SoundData CreateSoundData(string name, byte[] bytes = null)
         {
-            return new SfxSoundData(name);
+            return new SoundData(name, "");
         }
 
 
@@ -69,7 +67,7 @@ namespace PixelVision8.Player
         /// <returns>
         ///     A reference to a SfxrSynth which contains the sound data.
         /// </returns>
-        public SfxSoundData ReadSound(int id)
+        public SoundData ReadSound(int id)
         {
             if (id < 0 || id >= TotalSounds)
                 return null;
@@ -77,7 +75,7 @@ namespace PixelVision8.Player
             if (Sounds[id] == null)
                 Sounds[id] = CreateSoundData("Untitled" + id.ToString("D2"));
             
-            return Sounds[id] as SfxSoundData;
+            return Sounds[id];
         }
 
         public string ReadLabel(int id)
@@ -113,7 +111,7 @@ namespace PixelVision8.Player
         {
             var channel = Channels[channelID];
 
-            channel.Play(new SfxSoundData("untitled", data), frequency);
+            channel.Play(new SoundData("untitled", data), frequency);
         }
     }
 }

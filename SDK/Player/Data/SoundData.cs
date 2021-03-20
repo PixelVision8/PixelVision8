@@ -21,7 +21,7 @@
 
 namespace PixelVision8.Player
 {
-    public class SoundData : AbstractData
+    public partial class SoundData : AbstractData
     {
         public SoundData(string name, byte[] bytes = null)
         {

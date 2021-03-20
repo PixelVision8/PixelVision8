@@ -20,7 +20,7 @@
 
 namespace PixelVision8.Player
 {
-    public class SfxSoundData : SoundData
+    public partial class SoundData
     {
         //public static readonly string DEFAULT_SOUND_PARAM = "0,,.0185,.4397,.1783,.8434,,,,,,,,,,,,,1,,,,,.5";
 
@@ -28,8 +28,7 @@ namespace PixelVision8.Player
 
         public bool isWav => bytes != null;
 
-        public SfxSoundData(string name, string param = "0,,.0185,.4397,.1783,.8434,,,,,,,,,,,,,1,,,,,.5") : base(name,
-            null)
+        public SoundData(string name, string param = "0,,.0185,.4397,.1783,.8434,,,,,,,,,,,,,1,,,,,.5")
         {
             this.param = param;
         }

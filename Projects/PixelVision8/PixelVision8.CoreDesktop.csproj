@@ -265,8 +265,8 @@
     <Compile Include="..\..\SDK\Player\Chips\Audio\Sfxr\SfxrSynthChannel.cs">
       <Link>SDK\Player\Chips\Audio\Sfxr\SfxrSynthChannel.cs</Link>
     </Compile>
-    <Compile Include="..\..\SDK\Player\Chips\Audio\Sfxr\SfxSoundData.cs">
-      <Link>SDK\Player\Chips\Audio\Sfxr\SfxSoundData.cs</Link>
+    <Compile Include="..\..\SDK\Player\Chips\Audio\Sfxr\SoundData.Sfxr.cs">
+      <Link>SDK\Player\Chips\Audio\Sfxr\SoundData.Sfxr.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Player\Chips\Audio\SoundChannel.cs">
       <Link>SDK\Player\Chips\Audio\SoundChannel.cs</Link>

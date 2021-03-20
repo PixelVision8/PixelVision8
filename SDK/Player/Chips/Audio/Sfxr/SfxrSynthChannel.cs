@@ -25,7 +25,7 @@ using Microsoft.Xna.Framework.Audio;
 using System;
 using System.IO;
 
-namespace PixelVision8.Player.Audio
+namespace PixelVision8.Player
 {
     public class SfxrSynthChannel : SoundChannel
     {
@@ -165,8 +165,8 @@ namespace PixelVision8.Player.Audio
         /// </summary>
         public override void Play(SoundData soundData, float? frequency = null)
         {
-            if (soundData is SfxSoundData)
-            {
+            // if (soundData is SfxSoundData)
+            // {
                 // Stop any playing sound
                 Stop();
 
@@ -175,7 +175,7 @@ namespace PixelVision8.Player.Audio
                 // Clear the last sound instance
                 _soundInstance = null;
 
-                parameters.SetSettingsString(((SfxSoundData) soundData).param);
+                parameters.SetSettingsString(soundData.param);
 
                 if (frequency.HasValue) parameters.startFrequency = frequency.Value;
 
@@ -192,7 +192,7 @@ namespace PixelVision8.Player.Audio
                     Console.WriteLine("Audio Error {0}", error.Message);
                 }
                 
-            }
+            // }
 
             if (waveLock == WaveType.Sample || waveLock == WaveType.None)
                 base.Play(soundData, frequency);

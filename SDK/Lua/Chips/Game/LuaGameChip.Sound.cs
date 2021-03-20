@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using MoonSharp.Interpreter;
-using PixelVision8.Player.Audio;
+using PixelVision8.Player;
 
 namespace PixelVision8.Player
 {
