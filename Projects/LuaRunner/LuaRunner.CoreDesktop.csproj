@@ -1,0 +1,341 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseAppHost>true</UseAppHost>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+	  <IsPackable>true</IsPackable>
+    <PublishSingleFile>false</PublishSingleFile>
+    <PublishTrimmed>false</PublishTrimmed>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Product>Pixel Vision 8: Lua Runner</Product>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <AssemblyName>Lua Runner</AssemblyName>
+    <RootNamespace>com.pixelvision8.lua</RootNamespace>
+    <Version>0.0.0</Version>
+    <PackageId>Lua Runner</PackageId>
+    <PackageIcon>Icon.png</PackageIcon>
+    <Company>Pixel Vision 8</Company>
+    <Copyright>Jesse Freeman 2020</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Icon.ico" />
+    <EmbeddedResource Include="Icon.bmp" />
+  </ItemGroup>
+
+  <!-- Point this variable to the API Example you want to run. -->
+  <PropertyGroup>
+    <ApiExample>BackgroundColor</ApiExample>
+  </PropertyGroup>
+
+<!-- Load the correct project -->
+  <ItemGroup>
+    
+    <Compile Include="../../SDK/Player/PixelVision.cs">
+      <Link>SDK/Player/PixelVision.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Utils/Utilities.Calculations.cs">
+      <Link>SDK/Player/Utils/Utilities.Calculations.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Utils/Utilities.PixelData.cs">
+      <Link>SDK/Player/Utils/Utilities.PixelData.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Runner/Game/GameRunner.Sound.cs">
+      <Link>SDK/Runner/Game/GameRunner.Sound.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Runner/Game/GameRunner.cs">
+      <Link>SDK/Runner/Game/GameRunner.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Runner/Game/GameRunner.Display.cs">
+      <Link>SDK/Runner/Game/GameRunner.Display.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Runner/Game/GameRunner.Engine.cs">
+      <Link>SDK/Runner/Game/GameRunner.Engine.cs</Link>
+    </Compile>
+    <Content Include="../../Disks/APIExamples/$(ApiExample)/**/*.*">
+      <Link>Content/%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    
+    <Content Remove="../../Disks/APIExamples/$(ApiExample)/code.cs" />
+    <Content Remove="**/saves.json" />
+  </ItemGroup>
+
+  <!-- Core Game Chip Features-->
+  <ItemGroup>
+    <Compile Include="../../SDK/Player/Chips/Game/Buttons.cs">
+      <Link>SDK/Player/Chips/Game/Buttons.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/DrawMode.cs">
+      <Link>SDK/Player/Chips/Game/DrawMode.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/InputMode.cs">
+      <Link>SDK/Player/Chips/Game/InputMode.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/SpriteSizes.cs">
+      <Link>SDK/Player/Chips/Game/SpriteSizes.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/GameChip.cs">
+      <Link>SDK/Player/Chips/Game/GameChip.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/GameChip.Draw.cs">
+      <Link>SDK/Player/Chips/Game/GameChip.Draw.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/GameChip.Debug.cs">
+      <Link>SDK/Player/Chips/Game/GameChip.Debug.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/GameChip.Input.cs">
+      <Link>SDK/Player/Chips/Game/GameChip.Input.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/GameChip.Math.cs">
+      <Link>SDK/Player/Chips/Game/GameChip.Math.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/GameChip.Sound.cs">
+      <Link>SDK/Player/Chips/Game/GameChip.Sound.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/GameChip.Sprite.cs">
+      <Link>SDK/Player/Chips/Game/GameChip.Sprite.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/GameChip.Text.cs">
+      <Link>SDK/Player/Chips/Game/GameChip.Text.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/GameChip.Tilemap.cs">
+      <Link>SDK/Player/Chips/Game/GameChip.Tilemap.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/GameChip.TilemapCache.cs">
+      <Link>SDK/Player/Chips/Game/GameChip.TilemapCache.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/GameChip.Utils.cs">
+      <Link>SDK/Player/Chips/Game/GameChip.Utils.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <!-- Extra Features - Meta Sprites -->
+  <ItemGroup>
+    <Compile Include="../../SDK/Player/Chips/Game/GameChip.MetaSprite.cs">
+      <Link>SDK/Player/Chips/Game/GameChip.MetaSprite.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Data/SpriteCollection.cs">
+      <Link>SDK/Player/Data/SpriteCollection.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <!-- Extra Features -->
+
+  <!-- Include System Fonts -->
+  <ItemGroup>
+    <Content Include="../../Content/Fonts/**/*.*">
+      <Link>Content/%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!-- Parser -->
+  <ItemGroup>
+    <Compile Include="..\..\SDK\Player\Chips\Audio\SoundChannel.MonoGame.cs">
+      <Link>SDK\Player\Chips\Audio\SoundChannel.MonoGame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Input\ControllerChip.MonogGame.cs">
+      <Link>SDK\Player\Chips\Input\ControllerChip.MonogGame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Input\KeyboardInputChip.MonoGame.cs">
+      <Link>SDK\Player\Chips\Input\KeyboardInputChip.MonoGame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Input\MouseInputChip.MonoGame.cs">
+      <Link>SDK\Player\Chips\Input\MouseInputChip.MonoGame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Point.cs">
+      <Link>SDK\Player\Data\Point.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Rectangle.cs">
+      <Link>SDK\Player\Data\Rectangle.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Data\ColorData.cs">
+      <Link>SDK\Runner\Data\ColorData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Data\DisplayTarget.MonoGame.cs">
+      <Link>SDK\Runner\Data\DisplayTarget.MonoGame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\AbstractParser.cs">
+      <Link>SDK/Runner/Parsers/AbstractParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\ColorParser.cs">
+      <Link>SDK/Runner/Parsers/ColorParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\FontParser.cs">
+      <Link>SDK/Runner/Parsers/FontParser.cs</Link>
+    </Compile>
+    <!-- <Compile Include="..\..\SDK\Runner\Parsers\GifReader.cs" >
+      <Link>SDK/Runner/Parsers/GifReader.cs</Link>
+    </Compile> -->
+    <Compile Include="..\..\SDK\Runner\Parsers\IParser.cs">
+      <Link>SDK/Runner/Parsers/IParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\IFileLoader.cs">
+      <Link>SDK/Runner/Parsers/IFileLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\IImageParser.cs">
+      <Link>SDK/Runner/Parsers/IImageParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\ImageParser.cs">
+      <Link>SDK/Runner/Parsers/ImageParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\JsonParser.cs">
+      <Link>SDK/Runner/Parsers/JsonParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\Loader.cs">
+      <Link>SDK/Runner/Parsers/Loader.cs</Link>
+    </Compile>
+    <!-- <Compile Include="..\..\SDK\Runner\Parsers\MetaDataParser.cs" >
+      <Link>SDK/Runner/Parsers/MetaDataParser.cs</Link>
+    </Compile> -->
+    <!-- <Compile Include="..\..\SDK\Runner\Parsers\PNGFileReader.cs">
+      <Link>SDK/Runner/Parsers/PNGFileReader.cs</Link>
+    </Compile> -->
+    <Compile Include="..\..\SDK\Runner\Parsers\PNGParser.cs">
+      <Link>SDK/Runner/Parsers/PNGParser.cs</Link>
+    </Compile>
+    <!-- <Compile Include="..\..\SDK\Runner\Parsers\PNGReader.cs">
+      <Link>SDK/Runner/Parsers/PNGReader.cs</Link>
+    </Compile> -->
+    <Compile Include="..\..\SDK\Runner\Parsers\SpriteImageParser.cs">
+      <Link>SDK/Runner/Parsers/SpriteImageParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.ColorChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.ColorChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.ControllerChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.ControllerChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.DisplayChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.DisplayChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.FontChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.FontChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.MetaSprites.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.MetaSprites.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.SpriteChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.SpriteChip.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.TilemapChip.cs">
+      <Link>SDK\Runner\Parsers\SystemParser.TilemapChip.cs</Link>
+    </Compile>
+    <!-- <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.cs">
+      <Link>SDK/Runner/Parsers/SystemParser.cs</Link>
+    </Compile> -->
+    <Compile Include="..\..\SDK\Runner\Parsers\TilemapJsonParser.cs">
+      <Link>SDK/Runner/Parsers/TilemapJsonParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\TilemapParser.cs">
+      <Link>SDK/Runner/Parsers/TilemapParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\WavParser.cs">
+      <Link>SDK/Runner/Parsers/WavParser.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <!-- Services -->
+  <ItemGroup>
+    <Compile Include="..\..\SDK\Runner\Services\SaveFlags.cs">
+      <Link>SDK/Runner/Services/SaveFlags.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <!-- Chips -->
+  <ItemGroup>
+    <Compile Include="../../SDK/Player/Chips/IDraw.cs">
+      <Link>SDK/Player/Chips/IDraw.cs</Link>
+    </Compile>
+
+    <Compile Include="../../SDK/Player/Chips/IUpdate.cs">
+      <Link>SDK/Player/Chips/IUpdate.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Audio/SoundChip.cs">
+      <Link>SDK/Player/Chips/Audio/SoundChip.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Audio/SoundChannel.cs">
+      <Link>SDK/Player/Chips/Audio/SoundChannel.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/AbstractChip.cs">
+      <Link>SDK/Player/Chips/AbstractChip.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Graphics/SpriteChip.cs">
+      <Link>SDK/Player/Chips/Graphics/SpriteChip.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Graphics/TilemapChip.cs">
+      <Link>SDK/Player/Chips/Graphics/TilemapChip.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Graphics/ColorChip.cs">
+      <Link>SDK/Player/Chips/Graphics/ColorChip.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Graphics/DisplayChip.cs">
+      <Link>SDK/Player/Chips/Graphics/DisplayChip.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Chips/Graphics/FontChip.cs">
+      <Link>SDK/Player/Chips/Graphics/FontChip.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <!-- Utils -->
+  <ItemGroup>
+    <Compile Include="../../SDK/Runner/Utils/FileLoadHelper.cs">
+      <Link>SDK/Runner/Utils/FileLoadHelper.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Runner/Utils/MiniJSON.cs">
+      <Link>SDK/Runner/Utils/MiniJSON.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <!-- Data -->
+  <ItemGroup>
+    <Compile Include="../../SDK/Player/Data/AbstractData.cs">
+      <Link>SDK/Player/Data/AbstractData.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Data/PixelData.cs">
+      <Link>SDK/Player/Data/PixelData.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Data/SoundData.cs">
+      <Link>SDK/Player/Data/SoundData.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Data/TileData.cs">
+      <Link>SDK/Player/Data/TileData.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Data/DrawRequest.cs">
+      <Link>SDK/Player/Data/DrawRequest.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Player/Data/ImageData.cs">
+      <Link>SDK/Player/Data/ImageData.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <!-- Core Classes -->
+  <ItemGroup>
+    <Compile Include="..\..\SDK\Runner\Utils\ColorUtils.MonoGame.cs">
+      <Link>SDK\Runner\Utils\ColorUtils.MonoGame.cs</Link>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="../../SDK/Runner/Data/DisplayTarget.cs">
+      <Link>SDK/Runner/Data/DisplayTarget.cs</Link>
+    </Compile>
+    <Compile Include="../../SDK/Runner/CSharpRunner.cs">
+      <Link>SDK/Runner/CSharpRunner.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+  </ItemGroup>
+
+</Project>

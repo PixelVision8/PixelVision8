@@ -51,7 +51,6 @@ namespace PixelVision8.Runner
 
             // Configure the runner
             ConfigureDisplayTarget();
-
             
             // Manually override scale on boot up
             Scale(1);

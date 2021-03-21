@@ -77,6 +77,7 @@ namespace PixelVision8.Player
 
         public override void Init()
         {
+            
             if (LuaScript?.Globals["Init"] == null) return;
 
             LuaScript.Call(LuaScript.Globals["Init"]);

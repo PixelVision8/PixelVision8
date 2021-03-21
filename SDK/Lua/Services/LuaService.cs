@@ -22,7 +22,6 @@
 using MoonSharp.Interpreter;
 using System;
 using System.Linq;
-using PixelVision8.Editor;
 
 namespace PixelVision8.Runner
 {
@@ -32,25 +31,12 @@ namespace PixelVision8.Runner
 
     public partial class LuaService : AbstractService
     {
-        protected DesktopRunner runner;
-        
-        private readonly WorkspaceServicePlus workspace;
 
+        private GameRunner _runner;
         
-        
-
-        /// <summary>
-        ///     The LuaService exposes core Runner APIs to the Lua Game Chip
-        /// </summary>
-        /// <param name="runner"></param>
-        public LuaService(DesktopRunner runner)
+        public LuaService(GameRunner runner)
         {
-            this.runner = runner;
-
-            workspace = runner.workspaceService as WorkspaceServicePlus;
         }
-
-        
 
         /// <summary>
         ///     This service exposes some of the runner's APIs to Lua Games.
@@ -69,7 +55,6 @@ namespace PixelVision8.Runner
             }
 
         }
-
 
     }
 }

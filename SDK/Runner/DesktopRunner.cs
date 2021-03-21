@@ -59,6 +59,24 @@ namespace PixelVision8.Runner
         Error
     }
 
+    public partial class LuaService
+    {
+        protected DesktopRunner runner;
+        
+        private readonly WorkspaceServicePlus workspace;
+
+        /// <summary>
+        ///     The LuaService exposes core Runner APIs to the Lua Game Chip
+        /// </summary>
+        /// <param name="runner"></param>
+        public LuaService(DesktopRunner runner)
+        {
+            this.runner = runner;
+
+            workspace = runner.workspaceService as WorkspaceServicePlus;
+        }
+    }
+
     /// <summary>
     ///     This is the main type for your game.
     /// </summary>

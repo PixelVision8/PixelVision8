@@ -20,7 +20,6 @@
 
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Loaders;
-using PixelVision8.Runner;
 using PixelVision8.Workspace;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -43,6 +42,7 @@ namespace PixelVision8.Runner
 
         public object LoadFile(string file, Table globalContext)
         {
+            
             List<WorkspacePath> sharedLibPaths = _workspace.SharedLibDirectories();
 
             sharedLibPaths.Insert(0, WorkspacePath.Root.AppendDirectory("Game"));
@@ -78,15 +78,6 @@ namespace PixelVision8.Runner
 
             return script;
 
-            // TODO need to throw an error when a script is not found
-            // if (string.IsNullOrEmpty(script))
-            // { 
-            // If script is empty or null then throw error
-            // throw new Exception(
-            //         $"Could not load '{file}' file because it is either missing or empty.");
-            // }
-
-            // return script;
         }
 
         public string ResolveFileName(string filename, Table globalContext)
