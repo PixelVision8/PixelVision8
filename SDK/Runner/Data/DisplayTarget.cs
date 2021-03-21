@@ -18,10 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Globalization;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using PixelVision8.Player;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 

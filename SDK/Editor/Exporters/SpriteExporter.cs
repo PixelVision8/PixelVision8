@@ -21,6 +21,7 @@
 using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 using System.Collections.Generic;
+using System.Linq;
 using PixelVision8.Runner;
 using PixelVision8.Runner.Exporters;
 
@@ -28,7 +29,7 @@ namespace PixelVision8.Editor
 {
     public class SpriteExporter : IExporter
     {
-        protected Color[] colors;
+        protected ColorData[] colors;
         protected PixelVision engine;
         protected PixelDataExporter exporter;
         protected string fullFileName;
@@ -47,7 +48,7 @@ namespace PixelVision8.Editor
 
             // var colorMapChip = engine.GetChip(ColorMapParser.chipName, false) as ColorChip;
 
-            colors = DisplayTarget.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor, true);
+            colors = DisplayTarget.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor, true).Select(c=>new ColorData(c.R, c.G, c.B)).ToArray();
 
             // TODO removing the color map chip dependency when exporting moving forward
             // colors = colorMapChip == null ? engine.ColorChip.colors : colorMapChip.colors;

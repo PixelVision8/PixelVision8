@@ -18,7 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
+// using Microsoft.Xna.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,19 +31,19 @@ namespace PixelVision8.Runner
     {
         private readonly string maskHex;
 
-        public IList<Color> colors;
+        public IList<ColorData> colors;
         //        public List<Color> uniqueColors = new List<Color>();
 
         internal Palette(string maskHex = "#FF00FF")
         {
             // TODO this wasn't set before, make sure it still works
             this.maskHex = maskHex;
-            colors = new List<Color>();
+            colors = new List<ColorData>();
         }
 
-        internal Color this[int index] => colors[index];
+        internal ColorData this[int index] => colors[index];
 
-        internal void AddColor(Color color)
+        internal void AddColor(ColorData color)
         {
             //            if (colors.IndexOf(color) == -1)
             //            {
@@ -68,7 +68,7 @@ namespace PixelVision8.Runner
             //            var oldColor = colors[colorIndex];
 
             // TODO this could be cleaner
-            colors[colorIndex] = DisplayTarget.HexToColor(maskHex);
+            colors[colorIndex] = new ColorData(maskHex);
         }
 
         internal void AddAlphaToColors(IList<byte> alphas)
@@ -254,7 +254,7 @@ namespace PixelVision8.Runner
                 var green = chunkData.Skip(3 * i + 1).Take(1).First(); ///(float)byte.MaxValue;
                 var blue = chunkData.Skip(3 * i + 2).Take(1).First(); ///(float)byte.MaxValue;
 
-                Palette.AddColor(new Color(red, green, blue));
+                Palette.AddColor(new ColorData(red, green, blue));
             }
         }
     }

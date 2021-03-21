@@ -151,6 +151,9 @@
     <Compile Include="..\..\SDK\Player\Data\Rectangle.cs">
       <Link>SDK\Player\Data\Rectangle.cs</Link>
     </Compile>
+    <Compile Include="..\..\SDK\Runner\Data\ColorData.cs">
+      <Link>SDK\Runner\Data\ColorData.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Runner\Data\DisplayTarget.MonoGame.cs">
       <Link>SDK\Runner\Data\DisplayTarget.MonoGame.cs</Link>
     </Compile>

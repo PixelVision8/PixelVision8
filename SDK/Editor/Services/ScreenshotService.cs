@@ -22,6 +22,7 @@ using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 using PixelVision8.Workspace;
 using System.Collections.Generic;
+using System.Linq;
 using PixelVision8.Runner;
 
 namespace PixelVision8.Editor
@@ -99,7 +100,7 @@ namespace PixelVision8.Editor
             {
                 // var cachedColors = engine.ColorChip.colors;
 
-                var cachedColors = DisplayTarget.ConvertColors(engine.ColorChip.HexColors, "#FF00FF", true);
+                var cachedColors = DisplayTarget.ConvertColors(engine.ColorChip.HexColors, "#FF00FF", true).Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
 
                 var pixels = engine.DisplayChip.Pixels;
 
@@ -112,7 +113,7 @@ namespace PixelVision8.Editor
 
 
                 // Need to crop the image
-                var newPixels = new Color[visibleWidth * visibleHeight];
+                var newPixels = new ColorData[visibleWidth * visibleHeight];
 
                 var totalPixels = pixels.Length;
                 var newTotalPixels = newPixels.Length;

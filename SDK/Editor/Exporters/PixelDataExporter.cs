@@ -18,23 +18,23 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
+// using Microsoft.Xna.Framework;
 using PixelVision8.Runner;
 
 namespace PixelVision8.Editor
 {
     public class PixelDataExporter : ImageExporter
     {
-        protected Color maskColor = new Color(255, 0, 255);
-        protected Color[] paletteColors;
+        protected ColorData maskColor = new ColorData(255, 0, 255);
+        protected ColorData[] paletteColors;
         protected int[] pixelData;
 
-        public PixelDataExporter(string fileName, int[] pixelData, int width, int height, Color[] paletteColors,
+        public PixelDataExporter(string fileName, int[] pixelData, int width, int height, ColorData[] paletteColors,
             IImageExporter imageExporter, string maskHex) : base(fileName, imageExporter, null, width, height)
         {
             this.paletteColors = paletteColors;
             this.pixelData = pixelData;
-            maskColor = DisplayTarget.HexToColor(maskHex);
+            maskColor = new ColorData(maskHex);
         }
 
         public override void CalculateSteps()
@@ -50,7 +50,7 @@ namespace PixelVision8.Editor
         {
             var total = width * height;
 
-            colors = new Color[total];
+            colors = new ColorData[total];
 
             for (var i = 0; i < total; i++)
             {

@@ -38,7 +38,7 @@ namespace PixelVision8.Runner.Gif
         // ReSharper disable once InconsistentNaming (original naming saved)
         public readonly int height;
 
-        private Color[] _pixels;
+        private ColorData[] _pixels;
 
         public GifTexture2D(int width, int height)
         {
@@ -46,12 +46,12 @@ namespace PixelVision8.Runner.Gif
             this.height = height;
         }
 
-        public void SetPixels32(Color[] pixels)
+        public void SetPixels32(ColorData[] pixels)
         {
             _pixels = pixels.ToArray();
         }
 
-        public Color[] GetPixels32()
+        public ColorData[] GetPixels32()
         {
             return _pixels.ToArray();
         }

@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,8 +30,8 @@ namespace PixelVision8.Runner
     {
         public string MaskHex { get; private set; } = "#FF00FF";
 
-        protected List<Color> _colorPalette;
-        protected Color[] _colors;
+        protected List<ColorData> _colorPalette;
+        protected ColorData[] _colors;
         protected int bitsPerSample;
         protected int bytesPerPixel;
         protected int bytesPerSample;
@@ -54,8 +53,8 @@ namespace PixelVision8.Runner
 
         public int Height { get; private set; }
 
-        public Color[] ColorPixels => _colors;
-        public List<Color> ColorPalette => _colorPalette;
+        public ColorData[] ColorPixels => _colors;
+        public List<ColorData> ColorPalette => _colorPalette;
 
         public virtual string FileName { get; set; } = "untitled.png";
 
@@ -63,7 +62,7 @@ namespace PixelVision8.Runner
         {
             chunks = new List<PngChunk>();
             dataChunks = new List<PngChunk>();
-            _colorPalette = new List<Color>();
+            _colorPalette = new List<ColorData>();
         }
 
         public void ReadBytes(byte[] bytes)
@@ -210,7 +209,7 @@ namespace PixelVision8.Runner
         private void DecodePixelData(byte[][] pixelData)
         {
             //            data = new Color[_width * _height];
-            _colors = new Color[Width * Height];
+            _colors = new ColorData[Width * Height];
             pixels = new int[Width * Height];
 
             var previousScanline = new byte[bytesPerScanline];
@@ -270,7 +269,7 @@ namespace PixelVision8.Runner
                         //                        var colorVector = new Vector3((float) r / (float) byte.MaxValue, (float) g / (float) byte.MaxValue, (float) b / (float) byte.MaxValue);
 
 
-                        var color = new Color(r, g, b);
+                        var color = new ColorData(r, g, b);
                         _colors[y * Width + index1] = color;
 
                         pixels[y * Width + index1] = IndexColor(color);
@@ -317,7 +316,7 @@ namespace PixelVision8.Runner
                         //                        var colorVector = tmpColor.ToVector4();
                         //                        
 
-                        var color = alpha < 1 ? DisplayTarget.HexToColor(maskHex) : new Color(r, g, b);
+                        var color = alpha < 1 ? new ColorData(maskHex) : new ColorData(r, g, b);
 
                         //                        var color = new ColorData(r, g, b);
                         _colors[y * Width + index1] = color;
@@ -329,7 +328,7 @@ namespace PixelVision8.Runner
             }
         }
 
-        private int IndexColor(Color color)
+        private int IndexColor(ColorData color)
         {
             var id = ColorPalette.IndexOf(color);
             // Add color to unique color

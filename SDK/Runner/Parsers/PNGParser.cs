@@ -39,8 +39,8 @@ namespace PixelVision8.Runner
         // public string MaskHex { get; private set; } = "#FF00FF";
         public int Width { get; private set; }
         public int Height { get; private set; }
-        public Color[] ColorPixels { get; private set; }
-        public List<Color> ColorPalette { get; private set; }
+        public ColorData[] ColorPixels { get; private set; }
+        public List<ColorData> ColorPalette { get; private set; }
 
         public void ReadStream(string sourcePath, string maskHex)
         {
@@ -58,11 +58,11 @@ namespace PixelVision8.Runner
             var totalPixels = t2D.Width * t2D.Height;
 
             // Get the color pixels from the texture 2D
-            ColorPixels = new Color[totalPixels];
+            ColorPixels = new ColorData[totalPixels];
             t2D.GetData(ColorPixels);
 
             // Create a palette made up of unique colors
-            ColorPalette = new List<Color>();
+            ColorPalette = new List<ColorData>();
             for (int i = 0; i < totalPixels; i++)
             {
                 if (ColorPalette.IndexOf(ColorPixels[i]) == -1)

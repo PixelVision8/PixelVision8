@@ -18,7 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
+// using Microsoft.Xna.Framework;
 using PixelVision8.Runner.Exporters;
 using System;
 using System.Collections.Generic;
@@ -44,10 +44,10 @@ namespace PixelVision8.Editor
         // private Gif tmpGif;
         private ushort Width;
         private ushort Height;
-        private List<Color> globalColorTable;
+        private List<ColorData> globalColorTable;
         private ApplicationExtension applicationExtension;
-        private List<Color>[] colorTables;
-        private Dictionary<int, List<Color>> distinctColors;
+        private List<ColorData>[] colorTables;
+        private Dictionary<int, List<ColorData>> distinctColors;
         private int scale = 1;
         private Dictionary<int, List<byte>> encoded;
         private PixelVision engine;
@@ -92,7 +92,7 @@ namespace PixelVision8.Editor
             Frames.Add(tmpFrame);
         }
 
-        public Color[] VisiblePixels()
+        public ColorData[] VisiblePixels()
         {
             // TODO this should just copy the frame from the Display Target
             // var color = Utilities.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, engine.ColorChip.debugMode,
@@ -103,7 +103,7 @@ namespace PixelVision8.Editor
             var pixels = DisplayChip.Pixels;
 
             var cachedColors = DisplayTarget.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor,
-                engine.ColorChip.DebugMode, engine.ColorChip.BackgroundColor);
+                engine.ColorChip.DebugMode, engine.ColorChip.BackgroundColor).Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
 
             // var cachedColors = engine.ColorChip.colors;
             var displaySize = engine.GameChip.Display();
@@ -113,7 +113,7 @@ namespace PixelVision8.Editor
             var width = engine.DisplayChip.Width;
 
             // Need to crop the image
-            var newPixels = new Color[visibleWidth * visibleHeight];
+            var newPixels = new ColorData[visibleWidth * visibleHeight];
 
             var totalPixels = pixels.Length;
             var newTotalPixels = newPixels.Length;
@@ -138,12 +138,12 @@ namespace PixelVision8.Editor
         {
             Width = (ushort) (Frames[0].Texture.width);
             Height = (ushort) (Frames[0].Texture.height);
-            globalColorTable = new List<Color>();
+            globalColorTable = new List<ColorData>();
             applicationExtension = new ApplicationExtension();
             // byteList = new List<byte>();
             encoded = new Dictionary<int, List<byte>>();
-            colorTables = new List<Color>[Frames.Count];
-            distinctColors = new Dictionary<int, List<Color>>();
+            colorTables = new List<ColorData>[Frames.Count];
+            distinctColors = new Dictionary<int, List<ColorData>>();
 
             CurrentStep++;
         }
@@ -248,7 +248,7 @@ namespace PixelVision8.Editor
             CurrentStep++;
         }
 
-        private static byte[] ColorTableToBytes(List<Color> colorTable, byte colorTableSize)
+        private static byte[] ColorTableToBytes(List<ColorData> colorTable, byte colorTableSize)
         {
             if (colorTable.Count > 256)
                 throw new Exception("Color table size exceeds 256 size limit: " + colorTable.Count);
@@ -266,7 +266,7 @@ namespace PixelVision8.Editor
             return byteList;
         }
 
-        private static void ReplaceTransparentColor(ref List<Color> colors)
+        private static void ReplaceTransparentColor(ref List<ColorData> colors)
         {
             for (var i = 0; i < colors.Count; i++)
             {
@@ -280,10 +280,10 @@ namespace PixelVision8.Editor
             }
         }
 
-        private static byte[] GetColorIndexes(GifTexture2D texture, int scale, List<Color> colorTable,
+        private static byte[] GetColorIndexes(GifTexture2D texture, int scale, List<ColorData> colorTable,
             byte localColorTableFlag, ref byte transparentColorFlag, ref byte transparentColorIndex, out byte max)
         {
-            var indexes = new Dictionary<Color, int>();
+            var indexes = new Dictionary<ColorData, int>();
 
             for (var i = 0; i < colorTable.Count; i++)
             {
@@ -367,7 +367,7 @@ namespace PixelVision8.Editor
             return colorIndexes;
         }
 
-        private static Color GetTransparentColor(List<Color> colorTable)
+        private static ColorData GetTransparentColor(List<ColorData> colorTable)
         {
             for (byte r = 0; r < 0xFF; r++)
             {
@@ -375,7 +375,7 @@ namespace PixelVision8.Editor
                 {
                     for (byte b = 0; b < 0xFF; b++)
                     {
-                        var transparentColor = new Color(r, g, b, Convert.ToByte(1));
+                        var transparentColor = new ColorData(r, g, b, Convert.ToByte(1));
 
                         if (!colorTable.Contains(transparentColor))
                         {
@@ -388,7 +388,7 @@ namespace PixelVision8.Editor
             throw new Exception("Unable to resolve transparent color!");
         }
 
-        private static byte GetColorTableSize(List<Color> colorTable)
+        private static byte GetColorTableSize(List<ColorData> colorTable)
         {
             byte size = 0;
 

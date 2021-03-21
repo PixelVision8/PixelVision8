@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 using System.Collections.Generic;
 
@@ -26,12 +25,12 @@ namespace PixelVision8.Runner
 {
     public class ColorParser : ImageParser
     {
-        protected readonly List<Color> colors = new List<Color>();
+        protected readonly List<ColorData> colors = new List<ColorData>();
 
         protected ColorChip colorChip;
 
-        protected Color magenta;
-        protected Color tmpColor;
+        protected ColorData magenta;
+        protected ColorData tmpColor;
         protected int totalColors;
 
         public ColorParser(string sourceFile, IImageParser parser, ColorChip colorChip) : base(parser)
@@ -39,7 +38,7 @@ namespace PixelVision8.Runner
             SourcePath = sourceFile;
             this.colorChip = colorChip;
             // unique = colorChip.unique;
-            magenta = DisplayTarget.HexToColor(colorChip.MaskColor);
+            magenta = new ColorData(colorChip.MaskColor);
         }
 
         public override void CalculateSteps()

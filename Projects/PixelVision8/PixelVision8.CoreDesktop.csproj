@@ -147,6 +147,9 @@
     <Compile Include="..\..\SDK\Player\Data\SoundData.Sfxr.cs">
       <Link>SDK\Player\Data\SoundData.Sfxr.cs</Link>
     </Compile>
+    <Compile Include="..\..\SDK\Runner\Data\ColorData.cs">
+      <Link>SDK\Runner\Data\ColorData.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.ColorChip.cs">
       <Link>SDK\Runner\Parsers\SystemParser.ColorChip.cs</Link>
     </Compile>

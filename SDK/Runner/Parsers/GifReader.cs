@@ -18,7 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
+// using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,10 +28,10 @@ namespace PixelVision8.Runner
 {
     class GifReader : AbstractParser
     {
-        private static readonly Color EmptyColor = new Color();
+        private static readonly ColorData EmptyColor = new ColorData();
         private static int Width;
         private static int Height;
-        private static Color[] state;
+        private static ColorData[] state;
         private static bool filled;
         private static List<GifFrame> frames;
         GifParser parser;
@@ -122,7 +122,7 @@ namespace PixelVision8.Runner
             GraphicControlExtension gcExtension = null;
             Width = parser.LogicalScreenDescriptor.LogicalScreenWidth;
             Height = parser.LogicalScreenDescriptor.LogicalScreenHeight;
-            state = new Color[Width * Height];
+            state = new ColorData[Width * Height];
             filled = false;
             frames = new List<GifFrame>();
 
@@ -180,7 +180,7 @@ namespace PixelVision8.Runner
         }
 
         private static GifFrame DecodeFrame(GraphicControlExtension extension, ImageDescriptor descriptor,
-            byte[] colorIndexes, bool filled, int Width, int Height, Color[] state)
+            byte[] colorIndexes, bool filled, int Width, int Height, ColorData[] state)
         {
             var frame = new GifFrame();
             var pixels = state;

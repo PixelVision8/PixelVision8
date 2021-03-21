@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
 namespace PixelVision8.Runner
@@ -27,8 +26,8 @@ namespace PixelVision8.Runner
     {
         int Width { get; }
         int Height { get; }
-        Color[] ColorPixels { get; }
-        List<Color> ColorPalette { get; }
+        ColorData[] ColorPixels { get; }
+        List<ColorData> ColorPalette { get; }
         void ReadStream(string sourcePath, string maskHex);
         string FileName { get; set; }
     }
