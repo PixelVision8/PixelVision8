@@ -14,12 +14,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Product>Pixel Vision 8 CSharp Runner</Product>
+    <Product>Pixel Vision 8 Roslyn Runner</Product>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
-    <AssemblyName>CSharp Runner</AssemblyName>
-    <RootNamespace>com.pixelvision8.csharp</RootNamespace>
+    <AssemblyName>Roslyn Runner</AssemblyName>
+    <RootNamespace>com.pixelvision8.roslyn</RootNamespace>
     <Version>0.0.0</Version>
-    <PackageId>CSharp Runner</PackageId>
+    <PackageId>Pixel Vision 8 Roslyn Runner</PackageId>
     <PackageIcon>Icon.png</PackageIcon>
     <Company>Pixel Vision 8</Company>
     <Copyright>Jesse Freeman 2020</Copyright>
@@ -37,9 +37,6 @@
 
 <!-- Load the correct project -->
   <ItemGroup>
-    <Compile Include="../../Disks/APIExamples/$(ApiExample)/**/*.cs">
-      <Link>SDK/Game/%(Filename)%(Extension)</Link>
-    </Compile>
     <Compile Include="../../SDK/Player/PixelVision.cs">
       <Link>SDK/Player/PixelVision.cs</Link>
     </Compile>
@@ -66,7 +63,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Remove="../../Disks/APIExamples/$(ApiExample)/**/*.lua" />
-    <Content Remove="../../Disks/APIExamples/$(ApiExample)/**/*.cs" />
     <Content Remove="**/saves.json" />
   </ItemGroup>
 
@@ -141,8 +137,17 @@
 
   <!-- Parser -->
   <ItemGroup>
+    <Compile Include="..\..\SDK\Player\Chips\Audio\MusicChip.cs">
+      <Link>SDK\Player\Chips\Audio\MusicChip.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Player\Chips\Audio\SoundChannel.MonoGame.cs">
       <Link>SDK\Player\Chips\Audio\SoundChannel.MonoGame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Keyboard.cs">
+      <Link>SDK\Player\Chips\Game\GameChip.Keyboard.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Music.cs">
+      <Link>SDK\Player\Chips\Game\GameChip.Music.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Player\Chips\Input\ControllerChip.MonogGame.cs">
       <Link>SDK\Player\Chips\Input\ControllerChip.MonogGame.cs</Link>
@@ -158,6 +163,15 @@
     </Compile>
     <Compile Include="..\..\SDK\Player\Data\Rectangle.cs">
       <Link>SDK\Player\Data\Rectangle.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\SongData.cs">
+      <Link>SDK\Player\Data\SongData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\TrackData.cs">
+      <Link>SDK\Player\Data\TrackData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\TrackerData.cs">
+      <Link>SDK\Player\Data\TrackerData.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Runner\Data\ColorData.cs">
       <Link>SDK\Runner\Data\ColorData.cs</Link>
@@ -250,6 +264,9 @@
 
   <!-- Services -->
   <ItemGroup>
+    <Compile Include="..\..\SDK\Runner\RoslynRunner.cs">
+      <Link>SDK\Runner\RoslynRunner.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Runner\Services\SaveFlags.cs">
       <Link>SDK/Runner/Services/SaveFlags.cs</Link>
     </Compile>
@@ -331,12 +348,11 @@
     <Compile Include="../../SDK/Runner/Data/DisplayTarget.cs">
       <Link>SDK/Runner/Data/DisplayTarget.cs</Link>
     </Compile>
-    <Compile Include="../../SDK/Runner/CSharpRunner.cs">
-      <Link>SDK/Runner/CSharpRunner.cs</Link>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.6.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.6.0" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
   </ItemGroup>
 

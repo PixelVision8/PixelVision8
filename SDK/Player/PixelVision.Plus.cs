@@ -38,12 +38,6 @@ namespace PixelVision8.Player
             {"name", "untitled"}
         };
 
-        /// <summary>
-        ///     Access to the MusicChip.
-        /// </summary>
-        /// <tocexclude />
-        public MusicChip MusicChip { get; set; }
-
         public void AddService(string id, IService service)
         {
             ServiceLocator.AddService(id, service);

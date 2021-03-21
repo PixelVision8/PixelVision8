@@ -64,7 +64,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     
-    <Content Remove="../../Disks/APIExamples/$(ApiExample)/code.cs" />
+    <Content Remove="../../Disks/APIExamples/$(ApiExample)/**/*.cs" />
     <Content Remove="**/saves.json" />
   </ItemGroup>
 

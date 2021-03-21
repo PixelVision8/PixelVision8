@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelVision8.CSharpRunner",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelVision8.LuaRunner", "Projects\LuaRunner\PixelVision8.LuaRunner.csproj", "{3110A80A-C768-4075-B92B-46300A60A0B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelVision8.RoslynRunner", "Projects\RoslynRunner\PixelVision8.RoslynRunner.csproj", "{F8BF76F8-6C53-435D-8CF8-C1AFDFA57226}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{3110A80A-C768-4075-B92B-46300A60A0B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3110A80A-C768-4075-B92B-46300A60A0B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3110A80A-C768-4075-B92B-46300A60A0B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8BF76F8-6C53-435D-8CF8-C1AFDFA57226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8BF76F8-6C53-435D-8CF8-C1AFDFA57226}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8BF76F8-6C53-435D-8CF8-C1AFDFA57226}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8BF76F8-6C53-435D-8CF8-C1AFDFA57226}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

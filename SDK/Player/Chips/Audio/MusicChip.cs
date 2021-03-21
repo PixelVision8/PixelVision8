@@ -23,13 +23,24 @@ using System.Collections.Generic;
 
 namespace PixelVision8.Player
 {
+
+    public partial class PixelVision
+    {
+        
+        /// <summary>
+        ///     Access to the MusicChip.
+        /// </summary>
+        /// <tocexclude />
+        public MusicChip MusicChip { get; set; }
+    }
+    
     // public partial interface IPlayerChips
     // {
     //     public MusicChip MusicChip { get; set; }
     // }
 
     /// <summary>
-    ///     The MusicChpip is a sequencer for playing back ISoundData. It
+    ///     The MusicChip is a sequencer for playing back ISoundData. It
     ///     keeps track of playback time and moves through TrackData playing
     ///     each beat based on the supplied note frequency.
     ///     Loop = one set of 32 beats in X number of tracks. Stored in SongData class.
