@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Input;
 using MoonSharp.Interpreter;
 
 namespace PixelVision8.Player

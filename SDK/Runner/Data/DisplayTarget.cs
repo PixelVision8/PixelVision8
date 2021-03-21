@@ -19,115 +19,34 @@
 //
 
 using System;
-using System.Globalization;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using PixelVision8.Player;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace PixelVision8.Runner
 {
     public partial class DisplayTarget : AbstractData
     {
     
-        public static Color HexToColor(string hex)
-        {
-            HexToRgb(hex, out var r, out var g, out var b);
-
-            return new Color(r, g, b);
-        }
-        
-        /// <summary>
-        ///     Static method for converting a HEX color into an RGB value.
-        /// </summary>
-        /// <param name="hex"></param>
-        /// <param name="r"></param>
-        /// <param name="g"></param>
-        /// <param name="b"></param>
-        public static void HexToRgb(string hex, out byte r, out byte g, out byte b)
-        {
-            if (hex == null) hex = "FF00FF";
-
-            if (hex[0] == '#') hex = hex.Substring(1);
-
-            r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
-            g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
-            b = byte.Parse(hex.Substring(4, 2), NumberStyles.HexNumber); // / (float) byte.MaxValue;
-        }
-        
-        /// <summary>
-        ///     The display target is in charge of converting system colors into MonoGame colors. This utility method
-        ///     can be used by any external runner class to correctly convert hex colors into Colors.
-        /// </summary>
-        /// <param name="hexColors"></param>
-        /// <param name="maskColor"></param>
-        /// <param name="debugMode"></param>
-        /// <param name="backgroundColor"></param>
-        /// <returns></returns>
-        public static Color[] ConvertColors(string[] hexColors, string maskColor = "#FF00FF", bool debugMode = false, int backgroundColor = 0)
-         {
-             var t = hexColors.Length;
-             var colors = new Color[t];
-
-             for (var i = 0; i < t; i++)
-             {
-                 var colorHex = hexColors[i];
-
-                 if (colorHex == maskColor && debugMode == false) colorHex = hexColors[backgroundColor];
-
-                 var color = HexToColor(colorHex);
-                 colors[i] = color;
-             }
-
-             return colors;
-         }
-
-        protected Vector2 Offset;
-        protected Texture2D RenderTexture;
-        protected GraphicsDeviceManager _graphicManager;
-        protected SpriteBatch SpriteBatch;
-        protected Color[] CachedColors;
-        public Vector2 Scale = new Vector2(1, 1);
-        private Color[] _pixelData = new Color[0];
-        public int RealWidth => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-        public int RealHeight => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-        protected Rectangle VisibleRect;
-        
-        public GraphicsDeviceManager GraphicsManager
-        {
-            set
-            {
-                _graphicManager = value;
-
-                _graphicManager.HardwareModeSwitch = false;
-
-                SpriteBatch = new SpriteBatch(_graphicManager.GraphicsDevice);
-            }
-        }
-        
-        
-        
-        protected int GameWidth;
-        protected int GameHeight;
-        private readonly int _monitorHeight;
-        private readonly int _monitorWidth;
+        private int _gameWidth;
+        private int _gameHeight;
+        private readonly int _displayHeight;
+        private readonly int _displayWidth;
         private int _monitorScale = 1;
         private int _totalPixels;
-        private int _colorId;
-        private int _i;
-        protected int DisplayWidth;
-        protected int DisplayHeight;
-        protected float OffsetX;
-        protected float OffsetY;
+        private int _visibleWidth;
+        private int _visibleHeight;
+        private float _offsetX;
+        private float _offsetY;
+        private float _scaleX;
+        private float _scaleY;
 
         public bool Fullscreen { get; set; }
 
         public DisplayTarget(int width, int height)
         {
-            _monitorWidth = Utilities.Clamp(width, 64, 640);
-            _monitorHeight = Utilities.Clamp(height, 64, 480);
+            _displayWidth = Utilities.Clamp(width, 64, 640);
+            _displayHeight = Utilities.Clamp(height, 64, 480);
             
-            ResetResolution(_monitorWidth, _monitorHeight);
+            ResetResolution(_displayWidth, _displayHeight);
         }
 
         public int MonitorScale
@@ -139,8 +58,8 @@ namespace PixelVision8.Runner
 
                 while (fits == false)
                 {
-                    var newWidth = _monitorWidth * value;
-                    var newHeight = _monitorHeight * value;
+                    var newWidth = _displayWidth * value;
+                    var newHeight = _displayHeight * value;
 
                     if (newWidth < RealWidth &&
                         newHeight < RealHeight)
@@ -158,93 +77,44 @@ namespace PixelVision8.Runner
 
         public void ResetResolution(int gameWidth, int gameHeight)
         {
-            GameWidth = gameWidth;
-            GameHeight = gameHeight;
+            _gameWidth = gameWidth;
+            _gameHeight = gameHeight;
 
             Invalidate();
             
         }
 
-        protected void CalculateResolution()
+        private void CalculateResolution()
         {
             
             var tmpMonitorScale = Fullscreen ? 1 : MonitorScale;
 
             // Calculate the monitor's resolution
-            DisplayWidth = Fullscreen
+            _visibleWidth = Fullscreen
                 ? RealWidth
-                : _monitorWidth *
+                : _displayWidth *
                   tmpMonitorScale;
-            DisplayHeight = Fullscreen
+            _visibleHeight = Fullscreen
                 ? RealHeight
-                : _monitorHeight * tmpMonitorScale;
+                : _displayHeight * tmpMonitorScale;
         }
-        
-        protected void CalculateDisplayScale()
+
+        private void CalculateDisplayScale()
         {
             // Calculate the game scale
-            Scale.X = (float) DisplayWidth / GameWidth;
-            Scale.Y = (float) DisplayHeight / GameHeight;
+            _scaleX = (float) _visibleWidth / _gameWidth;
+            _scaleY = (float) _visibleHeight / _gameHeight;
 
             // To preserve the aspect ratio,
             // use the smaller scale factor.
-            Scale.X = Math.Min(Scale.X, Scale.Y);
-            Scale.Y = Scale.X;
-        }
-        
-        protected void CalculateDisplayOffset()
-        {
-            OffsetX = (DisplayWidth - GameWidth * Scale.X) * .5f;
-            OffsetY = (DisplayHeight - GameHeight * Scale.Y) * .5f;
-        }
-        
-        public void ConfigureDisplay()
-        {
-            CalculateResolution();
-
-            CalculateDisplayScale();
-
-            CalculateDisplayOffset();
-                
-
-            Apply();
-
-            ResetValidation();
+            _scaleX = Math.Min(_scaleX, _scaleY);
+            _scaleY = _scaleX;
         }
 
-        protected void Apply()
+        private void CalculateDisplayOffset()
         {
-            // Apply changes
-            _graphicManager.IsFullScreen = Fullscreen;
-
-            if (_graphicManager.PreferredBackBufferWidth != DisplayWidth ||
-                _graphicManager.PreferredBackBufferHeight != DisplayHeight)
-            {
-                _graphicManager.PreferredBackBufferWidth = DisplayWidth;
-                _graphicManager.PreferredBackBufferHeight = DisplayHeight;
-                _graphicManager.ApplyChanges();
-            }
-            
-            if (RenderTexture == null || RenderTexture.Width != GameWidth || RenderTexture.Height != GameHeight)
-            {
-                RenderTexture = new Texture2D(_graphicManager.GraphicsDevice, GameWidth, GameHeight);
-                
-                _totalPixels = RenderTexture.Width * RenderTexture.Height;
-
-                if (_pixelData.Length != _totalPixels)
-                {
-                    Array.Resize(ref _pixelData, _totalPixels);
-                }
-                
-                // Calculate the game's resolution
-                VisibleRect.Width = RenderTexture.Width;
-                VisibleRect.Height = RenderTexture.Height;
-                
-            }
-            
-            Offset.X = OffsetX;
-            Offset.Y = OffsetY;
-            
+            _offsetX = (_visibleWidth - _gameWidth * _scaleX) * .5f;
+            _offsetY = (_visibleHeight - _gameHeight * _scaleY) * .5f;
         }
 
     }

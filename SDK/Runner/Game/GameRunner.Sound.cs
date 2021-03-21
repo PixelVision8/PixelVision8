@@ -4,9 +4,9 @@ namespace PixelVision8.Runner
 {
     public partial class GameRunner
     {
-        protected static bool _mute;
-        protected static int _lastVolume;
-        protected static int _muteVolume;
+        private static bool _mute;
+        private static int _lastVolume;
+        private static int _muteVolume;
 
         public virtual int Volume(int? value = null)
         {

@@ -18,11 +18,8 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
 using PixelVision8.Player;
-using PixelVision8.Runner;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;

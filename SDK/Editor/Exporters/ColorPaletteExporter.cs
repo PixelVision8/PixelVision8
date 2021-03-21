@@ -101,7 +101,7 @@ namespace PixelVision8.Editor
 
         public virtual void ConfigureColors()
         {
-            colors = DisplayTarget.ConvertColors(colorChip.HexColors, colorChip.MaskColor, true).Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
+            colors = ColorUtils.ConvertColors(colorChip.HexColors, colorChip.MaskColor, true).Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
             //
             // colorChip.colors;
             total = colors.Length;

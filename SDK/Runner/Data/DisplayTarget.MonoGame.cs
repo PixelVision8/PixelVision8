@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -7,12 +8,36 @@ namespace PixelVision8.Runner
     
     public partial class DisplayTarget
     {
+        private static int RealWidth => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+        private static int RealHeight => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+        
         private int _defaultColor;
+        private Vector2 _offset;
+        private Texture2D _renderTexture;
+        private GraphicsDeviceManager _graphicManager;
+        private SpriteBatch _spriteBatch;
+        private Color[] _cachedColors;
+        private Color[] _pixelData = new Color[0];
+        private Rectangle _renderRect;
+        
+        public Vector2 Scale = new Vector2(1, 1);
+
+        public GraphicsDeviceManager GraphicsManager
+        {
+            set
+            {
+                _graphicManager = value;
+
+                _graphicManager.HardwareModeSwitch = false;
+
+                _spriteBatch = new SpriteBatch(_graphicManager.GraphicsDevice);
+            }
+        }
         
         public void RebuildColorPalette(string[] hexColors, int bgColorId = 0, string maskColor = "#FF00FF", bool debugMode = false)
         {
             
-            CachedColors = ConvertColors(
+            _cachedColors = ColorUtils.ConvertColors(
                 hexColors, 
                 maskColor, 
                 debugMode,
@@ -23,38 +48,76 @@ namespace PixelVision8.Runner
 
         }
         
+        private void Apply()
+        {
+            // Apply changes
+            _graphicManager.IsFullScreen = Fullscreen;
+
+            if (_graphicManager.PreferredBackBufferWidth != _visibleWidth ||
+                _graphicManager.PreferredBackBufferHeight != _visibleHeight)
+            {
+                _graphicManager.PreferredBackBufferWidth = _visibleWidth;
+                _graphicManager.PreferredBackBufferHeight = _visibleHeight;
+                _graphicManager.ApplyChanges();
+            }
+            
+            if (_renderTexture == null || _renderTexture.Width != _gameWidth || _renderTexture.Height != _gameHeight)
+            {
+                _renderTexture = new Texture2D(_graphicManager.GraphicsDevice, _gameWidth, _gameHeight);
+                
+                _totalPixels = _renderTexture.Width * _renderTexture.Height;
+
+                if (_pixelData.Length != _totalPixels)
+                {
+                    Array.Resize(ref _pixelData, _totalPixels);
+                }
+                
+                // Calculate the game's resolution
+                _renderRect.Width = _renderTexture.Width;
+                _renderRect.Height = _renderTexture.Height;
+                
+            }
+            
+            _offset.X = _offsetX;
+            _offset.Y = _offsetY;
+            
+            Scale.X = _scaleX;
+            Scale.Y = _scaleY;
+            
+        }
+        
+        public void ConfigureDisplay()
+        {
+            CalculateResolution();
+
+            CalculateDisplayScale();
+
+            CalculateDisplayOffset();
+
+            Apply();
+
+            ResetValidation();
+        }
+        
         public virtual void Render(int[] pixels)
         {
             if (Invalid)
-            {
-                
-                CalculateResolution();
-
-                CalculateDisplayScale();
-
-                CalculateDisplayOffset();
-
-                Apply();
-                
-                ResetValidation();
-                
-            }
+                ConfigureDisplay();
             
             // We can only update the display if the pixel lengths match up
             if (pixels.Length != _totalPixels)
                 return;
 
-            SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
+            _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
 
-            for (_i = 0; _i < _totalPixels; _i++)
+            for (var i = 0; i < _totalPixels; i++)
             {
-                _colorId = pixels[_i];
-                _pixelData[_i] = CachedColors[_colorId < 0 ? _defaultColor : _colorId];
+                _pixelData[i] = _cachedColors[pixels[i] < 0 ? _defaultColor : pixels[i]];
             }
 
-            RenderTexture.SetData(_pixelData);
-            SpriteBatch.Draw(RenderTexture, Offset, VisibleRect, Color.White, 0f, Vector2.Zero, Scale, SpriteEffects.None, 1f);
-            SpriteBatch.End();
+            _renderTexture.SetData(_pixelData);
+            _spriteBatch.Draw(_renderTexture, _offset, _renderRect, Color.White, 0f, Vector2.Zero, Scale, SpriteEffects.None, 1f);
+            _spriteBatch.End();
         }
     }
 }

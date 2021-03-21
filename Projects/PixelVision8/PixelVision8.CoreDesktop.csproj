@@ -180,6 +180,9 @@
     <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.TilemapChip.cs">
       <Link>SDK\Runner\Parsers\SystemParser.TilemapChip.cs</Link>
     </Compile>
+    <Compile Include="..\..\SDK\Runner\Utils\ColorUtils.MonoGame.cs">
+      <Link>SDK\Runner\Utils\ColorUtils.MonoGame.cs</Link>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="..\..\SDK\Editor\Audio\SfxrMusicGeneratorChip.cs">
       <Link>SDK\Editor\Audio\SfxrMusicGeneratorChip.cs</Link>
@@ -358,17 +361,17 @@
     <Compile Include="..\..\SDK\Player\Chips\IDraw.cs">
       <Link>SDK\Player\Chips\IDraw.cs</Link>
     </Compile>
-    <Compile Include="..\..\SDK\Player\Chips\Input\ControllerChip.cs">
-      <Link>SDK\Player\Chips\Input\ControllerChip.cs</Link>
+    <Compile Include="..\..\SDK\Player\Chips\Input\ControllerChip.MonogGame.cs">
+      <Link>SDK\Player\Chips\Input\ControllerChip.MonogGame.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Player\Chips\Input\InputMap.cs">
       <Link>SDK\Player\Chips\Input\InputMap.cs</Link>
     </Compile>
-    <Compile Include="..\..\SDK\Player\Chips\Input\KeyboardInputChip.cs">
-      <Link>SDK\Player\Chips\Input\KeyboardInputChip.cs</Link>
+    <Compile Include="..\..\SDK\Player\Chips\Input\KeyboardInputChip.MonoGame.cs">
+      <Link>SDK\Player\Chips\Input\KeyboardInputChip.MonoGame.cs</Link>
     </Compile>
-    <Compile Include="..\..\SDK\Player\Chips\Input\MouseInputChip.cs">
-      <Link>SDK\Player\Chips\Input\MouseInputChip.cs</Link>
+    <Compile Include="..\..\SDK\Player\Chips\Input\MouseInputChip.MonoGame.cs">
+      <Link>SDK\Player\Chips\Input\MouseInputChip.MonoGame.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Player\Chips\IUpdate.cs">
       <Link>SDK\Player\Chips\IUpdate.cs</Link>
@@ -1243,11 +1246,6 @@
     <None Remove="..\..\**\saves.json" />
     <None Remove="..\..\SDK\MonoVision\Platform\Graphics\Effect\Resources\**" />
     <None Remove="..\..\SDK\MonoVision\Dependencies\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="..\..\SDK\Player\Chips\Audio\Sfxr">
-      <Link>SDK\Player\Chips\Audio\Sfxr</Link>
-    </Folder>
   </ItemGroup>
 
 </Project>

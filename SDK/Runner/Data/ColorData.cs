@@ -1,116 +1,51 @@
-// MIT License - Copyright (C) The Mono.Xna Team
-// This file is subject to the terms and conditions defined in
-// file 'LICENSE.txt', which is part of this source code package.
-
 using System;
+using System.Globalization;
 using System.Text;
-
-// using System.Runtime.Serialization;
-// using System.Diagnostics;
 
 namespace PixelVision8.Runner
 {
-    /// <summary>
-    /// Describes a 32-bit packed color.
-    /// </summary>
-    // [DataContract]
-    // [DebuggerDisplay("{DebugDisplayString,nq}")]
-    public struct ColorData
+    
+    public readonly struct ColorData
     {
+        public readonly byte B;
+        public readonly byte G;
+        public readonly byte R;
+        public readonly byte A;
         
-        // Stored as RGBA with R in the least significant octet:
-        // |-------|-------|-------|-------
-        // A       B       G       R
-        private readonly uint _packedValue;
-	  
         /// <summary>
-        /// Constructs an RGBA color from scalars representing red, green, blue and alpha values.
+        ///     Static method for converting a HEX color into an RGB value.
         /// </summary>
-        /// <remarks>
-        /// This overload sets the values directly without clamping, and may therefore be faster than the other overloads.
-        /// </remarks>
+        /// <param name="hex"></param>
         /// <param name="r"></param>
         /// <param name="g"></param>
         /// <param name="b"></param>
-        /// <param name="alpha"></param>
+        public static void HexToRgb(string hex, out byte r, out byte g, out byte b)
+        {
+            hex ??= "FF00FF";
+
+            if (hex[0] == '#') hex = hex.Substring(1);
+
+            r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber);
+            g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber);
+            b = byte.Parse(hex.Substring(4, 2), NumberStyles.HexNumber);
+        }
+        
         public ColorData(byte r, byte g, byte b, byte alpha = Byte.MaxValue)
         {
-            _packedValue = ((uint)alpha << 24) | ((uint)b << 16) | ((uint)g << 8) | (r);
+            R = r;
+            G = g;
+            B = b;
+            A = alpha;
         }
 
         public ColorData(string hex)
         {
-            DisplayTarget.HexToRgb(hex, out var r, out var g, out var b);
-
-            _packedValue = ((uint)Byte.MaxValue << 24) | ((uint)b << 16) | ((uint)g << 8) | (r);
+            HexToRgb(hex, out R, out G, out B);
             
+            A = Byte.MaxValue;
         }
 
-        /// <summary>
-        /// Gets or sets the blue component.
-        /// </summary>
-        // [DataMember]
-        public byte B
-        {
-            get
-            {
-                unchecked
-                {
-                    return (byte) (_packedValue >> 16);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the green component.
-        /// </summary>
-        // [DataMember]
-        public byte G
-        {
-            get
-            {
-                unchecked
-                {
-                    return (byte)(_packedValue >> 8);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the red component.
-        /// </summary>
-        // [DataMember]
-        public byte R
-        {
-            get
-            {
-                unchecked
-                {
-                    return (byte) _packedValue;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the alpha component.
-        /// </summary>
-        // [DataMember]
-        public byte A
-        {
-            get
-            {
-                unchecked
-                {
-                    return (byte)(_packedValue >> 24);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Returns a <see cref="String"/> representation of this <see cref="ColorData"/> in the format:
-        /// {R:[red] G:[green] B:[blue] A:[alpha]}
-        /// </summary>
-        /// <returns><see cref="String"/> representation of this <see cref="ColorData"/>.</returns>
+        
 	    public override string ToString ()
 	    {
             StringBuilder sb = new StringBuilder(25);

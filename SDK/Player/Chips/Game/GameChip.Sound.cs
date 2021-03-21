@@ -41,12 +41,7 @@ namespace PixelVision8.Player
         {
             SoundChip.PlaySound(id, channel);
         }
-
-        public void PlaySample(string name, int channel = 0)
-        {
-            SoundChip.PlaySound(name, channel);
-        }
-
+        
         /// <summary>
         ///     Use StopSound() to stop any sound playing on a specific channel.
         /// </summary>

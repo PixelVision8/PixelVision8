@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
 using PixelVision8.Editor;
 using PixelVision8.Player;

@@ -19,7 +19,6 @@
 //
 
 using System;
-using PixelVision8.Workspace;
 
 namespace PixelVision8.Player
 {

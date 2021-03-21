@@ -282,7 +282,7 @@ namespace PixelVision8.Runner
                     "/App/Effects/crt-lottes-mg.ogl.mgfxo"));
 
                 if (workspaceService.Exists(shaderPath))
-                     DisplayTarget.shaderPath =
+                     DisplayTarget.ShaderPath =
                         workspaceService.OpenFile(shaderPath, FileAccess.Read);
             }
 
@@ -1977,34 +1977,34 @@ namespace PixelVision8.Runner
         {
             if (toggle.HasValue)
             {
-                 DisplayTarget.useCRT = toggle.Value;
+                 DisplayTarget.UseCrt = toggle.Value;
                 bios.UpdateBiosData(CRTSettings.CRT.ToString(), toggle.Value.ToString());
                 InvalidateResolution();
             }
 
-            return  DisplayTarget.useCRT;
+            return  DisplayTarget.UseCrt;
         }
 
         public float Brightness(float? brightness = null)
         {
             if (brightness.HasValue)
             {
-                 DisplayTarget.brightness = brightness.Value;
+                 DisplayTarget.Brightness = brightness.Value;
                 bios.UpdateBiosData(CRTSettings.Brightness.ToString(), (brightness * 100).ToString());
             }
 
-            return  DisplayTarget.brightness;
+            return  DisplayTarget.Brightness;
         }
 
         public float Sharpness(float? sharpness = null)
         {
             if (sharpness.HasValue)
             {
-                 DisplayTarget.sharpness = sharpness.Value;
+                 DisplayTarget.Sharpness = sharpness.Value;
                 bios.UpdateBiosData(CRTSettings.Sharpness.ToString(), sharpness.ToString());
             }
 
-            return  DisplayTarget.sharpness;
+            return  DisplayTarget.Sharpness;
         }
 
         #endregion

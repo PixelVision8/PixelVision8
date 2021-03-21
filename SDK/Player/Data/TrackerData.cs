@@ -19,7 +19,6 @@
 //
 
 using System;
-using System.Text;
 
 namespace PixelVision8.Player
 {

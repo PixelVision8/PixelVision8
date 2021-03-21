@@ -102,7 +102,7 @@ namespace PixelVision8.Editor
             // TODO there might be a better way to do this like grabbing the pixel data from somewhere else?
             var pixels = DisplayChip.Pixels;
 
-            var cachedColors = DisplayTarget.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor,
+            var cachedColors = ColorUtils.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor,
                 engine.ColorChip.DebugMode, engine.ColorChip.BackgroundColor).Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
 
             // var cachedColors = engine.ColorChip.colors;

@@ -145,6 +145,15 @@
     <Compile Include="..\..\SDK\Player\Chips\Audio\SoundChannel.MonoGame.cs">
       <Link>SDK\Player\Chips\Audio\SoundChannel.MonoGame.cs</Link>
     </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Input\ControllerChip.MonogGame.cs">
+      <Link>SDK\Player\Chips\Input\ControllerChip.MonogGame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Input\KeyboardInputChip.MonoGame.cs">
+      <Link>SDK\Player\Chips\Input\KeyboardInputChip.MonoGame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Input\MouseInputChip.MonoGame.cs">
+      <Link>SDK\Player\Chips\Input\MouseInputChip.MonoGame.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Player\Data\Point.cs">
       <Link>SDK\Player\Data\Point.cs</Link>
     </Compile>
@@ -252,15 +261,6 @@
     <Compile Include="../../SDK/Player/Chips/IDraw.cs">
       <Link>SDK/Player/Chips/IDraw.cs</Link>
     </Compile>
-    <Compile Include="../../SDK/Player/Chips/Input/ControllerChip.cs">
-      <Link>SDK/Player/Chips/Input/ControllerChip.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Player\Chips\Input\KeyboardInputChip.cs">
-      <Link>SDK/Player/Chips/Input/KeyboardInputChip.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Player\Chips\Input\MouseInputChip.cs">
-      <Link>SDK/Player/Chips/Input/MouseInputChip.cs</Link>
-    </Compile>
 
     <Compile Include="../../SDK/Player/Chips/IUpdate.cs">
       <Link>SDK/Player/Chips/IUpdate.cs</Link>
@@ -325,6 +325,9 @@
 
   <!-- Core Classes -->
   <ItemGroup>
+    <Compile Include="..\..\SDK\Runner\Utils\ColorUtils.MonoGame.cs">
+      <Link>SDK\Runner\Utils\ColorUtils.MonoGame.cs</Link>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="../../SDK/Runner/Data/DisplayTarget.cs">
       <Link>SDK/Runner/Data/DisplayTarget.cs</Link>
