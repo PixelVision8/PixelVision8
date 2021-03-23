@@ -44,22 +44,11 @@ namespace PixelVision8.Runner
             
             A = Byte.MaxValue;
         }
-
         
-	    public override string ToString ()
-	    {
-            StringBuilder sb = new StringBuilder(25);
-            sb.Append("{R:");
-            sb.Append(R);
-            sb.Append(" G:");
-            sb.Append(G);
-            sb.Append(" B:");
-            sb.Append(B);
-            sb.Append(" A:");
-            sb.Append(A);
-            sb.Append("}");
-            return sb.ToString();
-	    }
+        public override string ToString ()
+        {
+            return "#" + string.Format("{0:X2}{1:X2}{2:X2}", R, G, B);
+        }
 	
     }
 }

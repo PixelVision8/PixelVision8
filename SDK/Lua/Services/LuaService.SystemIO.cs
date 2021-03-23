@@ -249,7 +249,7 @@ namespace PixelVision8.Runner
             // If no colors are passed in, used the image's palette
             if (colorRefs == null)
             {
-                colorRefs = reader.ColorPalette.Select(c => SpriteImageParser.RgbToHex(c.R, c.G, c.B)).ToArray();
+                colorRefs = reader.ColorPalette.Select(c => c.ToString()).ToArray();
             }
 
             // Resize the color chip

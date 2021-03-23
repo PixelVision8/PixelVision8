@@ -445,8 +445,8 @@
     <Compile Include="..\..\SDK\Player\Data\TrackerData.cs">
       <Link>SDK\Player\Data\TrackerData.cs</Link>
     </Compile>
-    <Compile Include="..\..\SDK\Player\PixelVision.Plus.cs">
-      <Link>SDK\Player\PixelVision.Plus.cs</Link>
+    <Compile Include="..\..\SDK\Player\PixelVisionMetaData.cs">
+      <Link>SDK\Player\PixelVisionMetaData.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Player\PixelVision.cs">
       <Link>SDK\Player\PixelVision.cs</Link>

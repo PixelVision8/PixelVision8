@@ -257,9 +257,6 @@
     <Compile Include="..\..\SDK\Player\Data\TrackerData.cs">
       <Link>SDK\Player\Data\TrackerData.cs</Link>
     </Compile>
-    <Compile Include="..\..\SDK\Player\PixelVision.Plus.cs">
-      <Link>SDK\Player\PixelVision.Plus.cs</Link>
-    </Compile>
     <Compile Include="..\..\SDK\Runner\Data\ColorData.cs">
       <Link>SDK\Runner\Data\ColorData.cs</Link>
     </Compile>
@@ -440,7 +437,7 @@
     <Compile Include="..\..\SDK\Runner\Utils\ColorUtils.MonoGame.cs">
       <Link>SDK\Runner\Utils\ColorUtils.MonoGame.cs</Link>
     </Compile>
-    <Compile Include="..\..\SDK\Runner\LuaRunner.cs" >
+    <Compile Include="..\..\SDK\Runner\LuaRunner.cs">
       <Link>SDK\Runner\LuaRunner.cs</Link>
     </Compile>
     <Compile Include="Program.cs" />

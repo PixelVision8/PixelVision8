@@ -15,7 +15,34 @@
 
 using System;
 using System.Collections.Generic;
+using PixelVision8.Runner;
 
+namespace PixelVision8.Player
+{
+    public partial class PixelVision : IServiceLocator
+    {
+        public IServiceLocator ServiceLocator;
+
+        
+
+        public void AddService(string id, IService service)
+        {
+            ServiceLocator.AddService(id, service);
+        }
+
+        public IService GetService(string id)
+        {
+            return ServiceLocator.GetService(id);
+        }
+
+        public void RemoveService(string id)
+        {
+            ServiceLocator.RemoveService(id);
+        }
+        
+    }
+    
+}
 namespace PixelVision8.Runner
 {
     public class ServiceManager : IServiceLocator

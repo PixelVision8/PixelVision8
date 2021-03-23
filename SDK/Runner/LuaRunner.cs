@@ -34,9 +34,7 @@ namespace PixelVision8.Runner
     public class LuaRunner : GameRunner
     {
         private KeyboardInputChip _controllerChip;
-        private LuaService _luaService;
-        private IServiceLocator _serviceManager;
-        
+       
         public LuaRunner(string rootPath) : base(rootPath)
         {
         }
@@ -49,15 +47,9 @@ namespace PixelVision8.Runner
             // Configure the runner
             ConfigureDisplayTarget();
             
-            _serviceManager = new ServiceManager();
-            
-            _luaService = new LuaService(this);
-            
             // Create a script loader that looks for files in the root path
             Script.DefaultOptions.ScriptLoader = new ScriptLoader(RootPath);
-            
-            // Register Lua Service
-            _serviceManager.AddService(typeof(LuaService).FullName, _luaService);
+            Script.DefaultOptions.DebugPrint = s => Console.WriteLine(s);
             
             // Manually override scale on boot up
             Scale(1);
@@ -109,11 +101,7 @@ namespace PixelVision8.Runner
             };
 
             // Configure a new PV8 engine to play the game
-            TmpEngine = new PixelVision(chips.ToArray())
-            {
-                ServiceLocator = _serviceManager
-            };
-            TmpEngine.AddService(typeof(LuaService).FullName, _luaService);
+            TmpEngine = new PixelVision(chips.ToArray());
             
             var fileHelper = new FileLoadHelper();
             var imageParser = new PNGParser(Graphics.GraphicsDevice);

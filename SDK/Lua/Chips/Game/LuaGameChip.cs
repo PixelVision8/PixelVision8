@@ -33,8 +33,8 @@ namespace PixelVision8.Player
     
     public partial class LuaGameChip : GameChip
     {
-        protected Script _luaScript;
-        public string DefaultScriptPath = "code";
+        private Script _luaScript;
+        public readonly string DefaultScriptPath = "code";
 
         public Script LuaScript
         {
@@ -46,32 +46,7 @@ namespace PixelVision8.Player
             }
         }
 
-        protected virtual void RegisterLuaServices()
-        {
-            try
-            {
-                // Look to see if there are any lua services registered in the game engine
-                var luaService = Player.GetService(typeof(LuaService).FullName) as LuaService;
-
-                // Run the lua service to configure the script
-                luaService.ConfigureScript(LuaScript);
-            }
-            catch
-            {
-                // Do nothing if the lua service isn't found
-            }
-            
-            var methods = GetType().GetMethods().Where(m => m.GetCustomAttributes(typeof(LuaGameChipAPI), false).Length > 0)
-                .ToArray();
-
-            for (int i = 0; i < methods.Length; i++)
-            {
-                // Call API register functions to add them to the service
-                GetType().GetMethod(methods[i].Name)?.Invoke(this, new object[] {});
-                
-            }
-            
-        }
+        
 
         #region Lifecycle
 
@@ -112,14 +87,6 @@ namespace PixelVision8.Player
             base.Reset();
 
             if (LuaScript.Globals["Reset"] != null) LuaScript.Call(LuaScript.Globals["Reset"]);
-        }
-
-        protected override void Configure()
-        {
-            base.Configure();
-
-            // Register any extra services
-            RegisterLuaServices();
         }
 
         #endregion

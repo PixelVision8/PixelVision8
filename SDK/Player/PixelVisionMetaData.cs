@@ -19,7 +19,6 @@
 //
 
 using System.Collections.Generic;
-using PixelVision8.Runner;
 
 namespace PixelVision8.Player
 {
@@ -29,30 +28,13 @@ namespace PixelVision8.Player
     ///     state of all chips, the game itself and helps with communication between
     ///     the two.
     /// </summary>
-    public partial class PixelVision : IServiceLocator
+    public partial class PixelVision
     {
-        public IServiceLocator ServiceLocator;
-
         public Dictionary<string, string> MetaData { get; } = new Dictionary<string, string>
         {
             {"name", "untitled"}
         };
-
-        public void AddService(string id, IService service)
-        {
-            ServiceLocator.AddService(id, service);
-        }
-
-        public IService GetService(string id)
-        {
-            return ServiceLocator.GetService(id);
-        }
-
-        public void RemoveService(string id)
-        {
-            ServiceLocator.RemoveService(id);
-        }
-
+        
         /// <summary>
         /// </summary>
         /// <param name="key"></param>
