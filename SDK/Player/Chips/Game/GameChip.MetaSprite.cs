@@ -117,6 +117,11 @@ namespace PixelVision8.Player
             return SpriteChip.MaxSpriteCount;
         }
 
+        public SpriteCollection MetaSprite(string name, SpriteCollection spriteCollection = null)
+        {
+            return MetaSprite(FindMetaSpriteId(name), spriteCollection);
+        }
+
         public SpriteCollection MetaSprite(int id, SpriteCollection spriteCollection = null)
         {
             if (id < 0 || id > metaSprites.Length)
@@ -159,16 +164,30 @@ namespace PixelVision8.Player
             return -1;
         }
 
+        public void DrawMetaSprite(string name, int x, int y, bool flipH = false, bool flipV = false,
+            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
+        {
+            DrawMetaSprite(FindMetaSpriteId(name), x, y, flipH, flipV, drawMode, colorOffset);
+        }
+
         public void DrawMetaSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
             DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
             // This draw method doesn't support background or tile draw modes
             if (id == -1) return;
 
-            var spriteCollection = metaSprites[id];
+            DrawMetaSprite(metaSprites[id], x, y, flipH, flipV, drawMode, colorOffset);
+
+        }
+
+        public void DrawMetaSprite(SpriteCollection spriteCollection, int x, int y, bool flipH = false, bool flipV = false,
+            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
+        {
+
             // Get the sprite data for the meta sprite
             var tmpSpritesData = spriteCollection.Sprites;
             var total = tmpSpritesData.Count;
+            var id = 0;
 
             // When rendering in Tile Mode, switch to grid layout
             if (drawMode == DrawMode.Tile)
