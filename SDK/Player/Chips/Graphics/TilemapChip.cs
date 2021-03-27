@@ -225,7 +225,7 @@ namespace PixelVision8.Player
                     // Draw the pixel data into the cachedTilemap
                     Utilities.MergePixels(_tmpPixelData, 0, 0, _tileSize.Width, _tileSize.Height, _tilemapCache,
                         _pos.X * _tileSize.Width, _pos.Y * _tileSize.Height, _tile.FlipH,
-                        _tile.FlipH, _tile.ColorOffset, false);
+                        _tile.FlipV, _tile.ColorOffset, false);
                 }
             }
 

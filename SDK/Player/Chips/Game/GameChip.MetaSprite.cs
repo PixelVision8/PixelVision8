@@ -189,53 +189,57 @@ namespace PixelVision8.Player
             var total = tmpSpritesData.Count;
             var id = 0;
 
-            // When rendering in Tile Mode, switch to grid layout
-            if (drawMode == DrawMode.Tile)
-            {
-                // TODO added this so C# code isn't corrupted, need to check performance impact
-                if (tmpIDs.Length != total) Array.Resize(ref tmpIDs, total);
+            // // When rendering in Tile Mode, switch to grid layout
+            // if (drawMode == DrawMode.Tile)
+            // {
+            //     // TODO added this so C# code isn't corrupted, need to check performance impact
+            //     if (tmpIDs.Length != total) Array.Resize(ref tmpIDs, total);
 
-                var i = 0;
+            //     var i = 0;
 
-                for (i = 0; i < total; i++)
-                {
-                    tmpIDs[i] = tmpSpritesData[i].Id;
-                }
+            //     for (i = 0; i < total; i++)
+            //     {
+            //         tmpIDs[i] = tmpSpritesData[i].Id;
+            //     }
 
-                var width = (int)Math.Ceiling((double)spriteCollection.Bounds.Width / SpriteChip.DefaultSpriteSize);
+            //     var width = (int)Math.Ceiling((double)spriteCollection.Bounds.Width / SpriteChip.DefaultSpriteSize);
 
-                var height = (int)Math.Ceiling((double)total / width);
+            //     var height = (int)Math.Ceiling((double)total / width);
 
-                if (flipH || flipV) Utilities.FlipPixelData(ref tmpIDs, width, height, flipH, flipV);
+            //     if (flipH || flipV) Utilities.FlipPixelData(ref tmpIDs, width, height, flipH, flipV);
 
-                // TODO need to offset the bounds based on the scroll position before testing against it
-                for (i = 0; i < total; i++)
-                {
-                    // Set the sprite id
-                    id = tmpIDs[i];
+            //     // TODO need to offset the bounds based on the scroll position before testing against it
+            //     for (i = 0; i < total; i++)
+            //     {
+            //         // Set the sprite id
+            //         id = tmpIDs[i];
 
-                    // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
-                    // Test to see if the sprite is within range
-                    if (id > -1)
-                    {
-                        var pos = CalculatePosition(i, width);
+            //         // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
+            //         // Test to see if the sprite is within range
+            //         if (id > -1)
+            //         {
+            //             var pos = CalculatePosition(i, width);
 
-                        DrawSprite(
-                            id,
-                            pos.X + x,
-                            pos.Y + y,
-                            flipH,
-                            flipV,
-                            drawMode,
-                            _currentSpriteData.ColorOffset + colorOffset);
-                    }
-                }
-            }
-            else
-            {
+            //             DrawSprite(
+            //                 id,
+            //                 pos.X + x,
+            //                 pos.Y + y,
+            //                 flipH,
+            //                 flipV,
+            //                 drawMode,
+            //                 _currentSpriteData.ColorOffset + colorOffset);
+            //         }
+            //     }
+            // }
+            // else
+            // {
                 
                 int startX, startY;
                 bool tmpFlipH, tmpFlipV;
+
+                var spriteSize = SpriteChip.DefaultSpriteSize;
+                var width = spriteCollection.Bounds.Width;
+                var height = spriteCollection.Bounds.Height;
                 
                 // Loop through each of the sprites
                 for (var i = 0; i < total; i++)
@@ -252,14 +256,22 @@ namespace PixelVision8.Player
 
                         if (flipH)
                         {
-                            startX = spriteCollection.Bounds.Width - startX - SpriteSize().X;
+                            startX = width - startX - spriteSize;
                             tmpFlipH = !tmpFlipH;
                         }
 
                         if (flipV)
                         {
-                            startY = spriteCollection.Bounds.Height - startY - SpriteSize().Y;
+                            startY = height - startY - spriteSize;
                             tmpFlipV = !tmpFlipV;
+                        }
+
+                        if (drawMode == DrawMode.Tile){
+                        
+                            // Get sprite values
+                            startX = (int)Math.Ceiling((double)startX/ spriteSize);
+                            startY = (int)Math.Ceiling((double)startY / spriteSize);
+
                         }
 
                         startX += x;
@@ -276,7 +288,7 @@ namespace PixelVision8.Player
                         );
                     }
                 }
-            }
+            // }
         }
     }
 }

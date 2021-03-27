@@ -153,7 +153,7 @@ namespace PixelVision8.Player
 
             if (drawMode == DrawMode.Tile)
             {
-                Tile(x, y, id, colorOffset);
+                Tile(x, y, id, colorOffset, null, flipH, flipV);
             }
             else
             {
