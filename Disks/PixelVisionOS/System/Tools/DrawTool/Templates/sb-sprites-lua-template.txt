@@ -1,0 +1,1 @@
+_G["%s"]={spriteIDs={%s},width=%d,colorOffset=0}

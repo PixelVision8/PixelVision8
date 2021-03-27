@@ -1,0 +1,11 @@
+{
+    "name":"DrawEditor",
+    "description":"",
+    "version":"v0.9.8",
+    "ext":".pvt",
+    "gpuChip":"PV8",
+    "cartChip":"PV8",
+    "soundChip":"PV8",
+    "editType":"colors,sprites",
+    "paletteMode":"false"
+}
