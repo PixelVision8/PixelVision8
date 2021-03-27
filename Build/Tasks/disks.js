@@ -25,7 +25,7 @@ gulp.task('release-games-disk', function(){
 
 })
 
-gulp.task('release-Demoscene-disk', function(){
+gulp.task('release-demoscene-disk', function(){
 
   return gulp.src("./Disks/Demoscene/**/*")
   .pipe(zip("Demoscene.pv8"))

@@ -81,7 +81,10 @@ namespace PixelVision8.Runner
         {
             for (var i = 0; i < _totalColors; i++)
             {
-                _colorChip.UpdateColorAt(i, _colors[i].ToString());
+                var tmpColor = _colors[i];
+                var hex = SpriteImageParser.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B);
+
+                _colorChip.UpdateColorAt(i, hex);
             }
 
             CurrentStep++;

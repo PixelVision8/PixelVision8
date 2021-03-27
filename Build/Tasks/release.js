@@ -9,7 +9,8 @@ var sources = {
     "osx-x64" : ["osx-x64", "unix", "shared"],
     "win-x64" : ["win-x64", "shared"],
     "linux-x64" : ["linux-x64", "unix", "shared"],
-    "linux-arm64" : ["linux-arm64"]
+    "linux-arm64" : ["linux-arm64"],
+    "unity" : ["unity"]
 
 }
 

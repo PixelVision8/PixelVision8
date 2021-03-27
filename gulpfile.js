@@ -84,8 +84,6 @@ tasks.push('reset-platforms');
 
 for (let index = 0; index < process.env.PLATFORMS.split(",").length; index++) {
   
-  
-
   tasks.push('release');
 
   if(index == 0) {
@@ -106,22 +104,13 @@ for (let index = 0; index < process.env.PLATFORMS.split(",").length; index++) {
 tasks.push('release-api-examples-disk')
 tasks.push('release-art-pack-disk')
 tasks.push('release-games-disk')
-tasks.push('release-Demoscene-disk')
+tasks.push('release-demoscene-disk')
+
+// Build unity project
+tasks.push('build-unity-project')
 
 // Perform all of the builds
 gulp.task(
   'default', 
   gulp.series( tasks )
-);
-
-// Perform all of the builds
-gulp.task(
-  'launch', 
-  gulp.series( ['build-run'] )
-);
-
-// Perform all of the builds
-gulp.task(
-  'launch-lite', 
-  gulp.series( ['build-run-lite'] )
 );

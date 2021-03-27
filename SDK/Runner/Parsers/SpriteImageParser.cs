@@ -27,6 +27,17 @@ namespace PixelVision8.Runner
 {
     public class SpriteImageParser : ImageParser
     {
+        /// <summary>
+        ///     Static method for converting RGB colors into HEX values
+        /// </summary>
+        /// <param name="r">Red value</param>
+        /// <param name="g">Green value</param>
+        /// <param name="b">Blue value</param>
+        /// <returns></returns>
+        public static string RgbToHex(byte r, byte g, byte b)
+        {
+            return "#" + string.Format("{0:X2}{1:X2}{2:X2}", r, g, b);
+        }
         
         protected ColorChip colorChip;
         protected int cps;
@@ -99,12 +110,16 @@ namespace PixelVision8.Runner
         public virtual void CreateImage()
         {
             // Get the chip colors and replace any transparent ones with the first color so we don't parse transparency
-            var colorRefs = colorChip.HexColors;//colorData.Select(c => RgbToHex(c.R, c.G, c.B)).ToArray();
+            var colorData = ColorUtils.ConvertColors(colorChip.HexColors, colorChip.MaskColor);
+
+            // colorData = colorChip.colors;
+
+            var colorRefs = colorData.Select(c => RgbToHex(c.R, c.G, c.B)).ToArray();
 
             // Remove the colors that are not supported
             Array.Resize(ref colorRefs, colorChip.TotalUsedColors);
 
-            var imageColors = Parser.ColorPalette.Select(c => c.ToString()).ToArray();
+            var imageColors = Parser.ColorPalette.Select(c => RgbToHex(c.R, c.G, c.B)).ToArray();
 
             var colorMap = new string[colorRefs.Length];
 
@@ -173,7 +188,7 @@ namespace PixelVision8.Runner
             }
 
             // Convert all of the pixels into color ids
-            var pixelIDs = Parser.ColorPixels.Select(c => Array.IndexOf(colorMap, c.ToString()))
+            var pixelIDs = Parser.ColorPixels.Select(c => Array.IndexOf(colorMap, RgbToHex(c.R, c.G, c.B)))
                 .ToArray();
 
             ImageData = new ImageData(Parser.Width, Parser.Height, pixelIDs, colorMap);

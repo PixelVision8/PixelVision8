@@ -252,13 +252,13 @@ namespace PixelVision8.Player
 
                         if (flipH)
                         {
-                            startX = metaSprites[id].Bounds.Width - startX - SpriteSize().X;
+                            startX = spriteCollection.Bounds.Width - startX - SpriteSize().X;
                             tmpFlipH = !tmpFlipH;
                         }
 
                         if (flipV)
                         {
-                            startY = metaSprites[id].Bounds.Height - startY - SpriteSize().Y;
+                            startY = spriteCollection.Bounds.Height - startY - SpriteSize().Y;
                             tmpFlipV = !tmpFlipV;
                         }
 
