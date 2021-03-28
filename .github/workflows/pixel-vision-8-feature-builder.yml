@@ -140,3 +140,4 @@ jobs:
             Art-Packs-Disk-v${{env.CURRENT}}.pv8:Releases/Final/Disks/ArtPacks.pv8
             Demoscene-Disk-v${{env.CURRENT}}.pv8:Releases/Final/Disks/Demoscene.pv8
             Example-Games-Disk-v${{env.CURRENT}}.pv8:Releases/Final/Disks/Games.pv8
+            Unity-Runner-v${{env.CURRENT}}.pv8:Releases/Final/UnityRunner.zip

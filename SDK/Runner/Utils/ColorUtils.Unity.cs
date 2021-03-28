@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+using UnityEngine;
 
 namespace PixelVision8.Runner
 {
@@ -24,15 +24,19 @@ namespace PixelVision8.Runner
 
                 if (colorHex == maskColor && debugMode == false) colorHex = hexColors[backgroundColor];
 
-                ColorData.HexToRgb(colorHex, out var r, out var g, out var b);
+                // ColorData.HexToRgb(colorHex, out var r, out var g, out var b);
 
-                colors[i] = new Color(r, g, b);
+                // Debug.Log("Color " + i+ " r" + r +" g" + b " b" + b);
+
+                ColorUtility.TryParseHtmlString(colorHex, out var newCol);
+
+                colors[i] = newCol;
                  
             }
 
             return colors;
         }
-        
+
         public static string RgbToHex(ColorData colorData)
         {
             return "#" + string.Format("{0:X2}{1:X2}{2:X2}", colorData.R, colorData.G, colorData.B);
@@ -40,7 +44,7 @@ namespace PixelVision8.Runner
         
         public static string RgbToHex(Color color)
         {
-            return "#" + string.Format("{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B);
+            return "#" + string.Format("{0:X2}{1:X2}{2:X2}", color.r, color.g, color.b);
         }
     }
 }

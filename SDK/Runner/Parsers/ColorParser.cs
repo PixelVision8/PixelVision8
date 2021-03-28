@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -82,7 +82,7 @@ namespace PixelVision8.Runner
             for (var i = 0; i < _totalColors; i++)
             {
                 var tmpColor = _colors[i];
-                var hex = SpriteImageParser.RgbToHex(tmpColor.R, tmpColor.G, tmpColor.B);
+                var hex = ColorUtils.RgbToHex(tmpColor);
 
                 _colorChip.UpdateColorAt(i, hex);
             }

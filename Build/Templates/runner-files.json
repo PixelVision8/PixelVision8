@@ -430,8 +430,6 @@
       "./SDK/Player/Data/Rectangle.cs",
       "./SDK/Runner/Utils/ColorUtils.Unity.cs",
       "./SDK/Runner/Utils/ZipFileHelper.Unity.cs",
-      "./SDK/Runner/Game/UnityGameRunner.cs",
-      "./SDK/Runner/Data/DisplayTarget.Unity.cs",
-      "./SDK/Runner/UnityLuaRunner.cs"
+      "./SDK/Runner/Data/DisplayTarget.Unity.cs"
     ]
 }

@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -41,7 +41,7 @@ namespace PixelVision8.Runner
         public override void CreateImage()
         {
             // Get all the colors from the image
-            _uniqueFontColors = Parser.ColorPalette.Select(c => RgbToHex(c.R, c.G, c.B)).ToList();
+            _uniqueFontColors = Parser.ColorPalette.Select(c => ColorUtils.RgbToHex(c)).ToList();
 
             // Remove the mask color
             _uniqueFontColors.Remove(colorChip.MaskColor);
@@ -50,7 +50,7 @@ namespace PixelVision8.Runner
             var colorRefs = _uniqueFontColors.ToArray();
 
             // Convert all of the pixels into color ids
-            var pixelIDs = Parser.ColorPixels.Select(c => Array.IndexOf(colorRefs, RgbToHex(c.R, c.G, c.B)))
+            var pixelIDs = Parser.ColorPixels.Select(c => Array.IndexOf(colorRefs, ColorUtils.RgbToHex(c)))
                 .ToArray();
 
             // Create new image
