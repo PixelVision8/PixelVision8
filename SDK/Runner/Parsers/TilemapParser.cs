@@ -28,6 +28,8 @@ namespace PixelVision8.Runner
 
         private readonly TilemapChip tilemapChip;
         private bool autoResize;
+        private int Columns;
+        private int Rows;
 
         public TilemapParser(string sourceFile, IImageParser parser, ColorChip colorChip, SpriteChip spriteChip,
             TilemapChip tilemapChip, bool autoResize = false) :
@@ -43,20 +45,24 @@ namespace PixelVision8.Runner
         {
             // TODO the image should be the right size from the beginning
 
+            Columns = ImageData.Width / Constants.SpriteSize;
+            Rows = ImageData.Height / Constants.SpriteSize;
+            // int TotalSprites = Columns * Rows;
+            
             if (autoResize)
-                tilemapChip.Resize(ImageData.Columns, ImageData.Rows);
+                tilemapChip.Resize(Columns, Rows);
 
             // if(autoResize)
             // 
-            var tmpColumns = ImageData.Columns > tilemapChip.Columns ? tilemapChip.Columns : ImageData.Columns;
-            var tmpRows = ImageData.Rows > tilemapChip.Rows ? tilemapChip.Rows : ImageData.Rows;
+            var tmpColumns = Columns > tilemapChip.Columns ? tilemapChip.Columns : Columns;
+            var tmpRows = Rows > tilemapChip.Rows ? tilemapChip.Rows : Rows;
 
             // Make sure the tilemap matches the image size
             // tilemapChip.Resize(image.Columns, image.Rows);
 
             for (var i = 0; i < totalSprites; i++)
             {
-                var pos = Utilities.CalculatePosition(i, ImageData.Columns);
+                var pos = Utilities.CalculatePosition(i, Columns);
 
                 if (pos.X < tmpColumns && pos.Y < tmpRows)
                 {
@@ -69,9 +75,9 @@ namespace PixelVision8.Runner
                 index++;
             }
 
-            if (tmpColumns < ImageData.Columns || tmpRows < ImageData.Rows)
+            if (tmpColumns < Columns || tmpRows < Rows)
             {
-                ImageData.Resize(tmpColumns * tmpColumns * SpriteChip.DefaultSpriteSize, tmpRows * SpriteChip.DefaultSpriteSize);
+                ImageData.Resize(tmpColumns * tmpColumns * Constants.SpriteSize, tmpRows * Constants.SpriteSize);
             }
 
             StepCompleted();
@@ -87,8 +93,8 @@ namespace PixelVision8.Runner
                 spriteChip.UpdateSpriteAt(id, spriteData);
             }
 
-            x = index % ImageData.Columns;
-            y = index / ImageData.Columns;
+            x = index % Columns;
+            y = index / Columns;
 
             var tile = tilemapChip.GetTile(x, y);
 

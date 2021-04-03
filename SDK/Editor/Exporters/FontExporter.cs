@@ -49,17 +49,17 @@ namespace PixelVision8.Editor
 
             var total = 96;
 
-            var maxCol = width / SpriteChip.DefaultSpriteSize;
+            var maxCol = width / Constants.SpriteSize;
 
-            var tmpPixelData = new int[SpriteChip.DefaultSpriteSize * SpriteChip.DefaultSpriteSize];
+            var tmpPixelData = new int[Constants.SpriteSize * Constants.SpriteSize];
 
             for (var i = 0; i < total; i++)
             {
                 var pos = Utilities.CalculatePosition(i, maxCol);
 
                 spriteChip.ReadSpriteAt(i, ref tmpPixelData);
-                Utilities.SetPixels(tmpPixelData, pos.X * SpriteChip.DefaultSpriteSize, pos.Y * SpriteChip.DefaultSpriteSize, SpriteChip.DefaultSpriteSize,
-                    SpriteChip.DefaultSpriteSize, textureData);
+                Utilities.SetPixels(tmpPixelData, pos.X * Constants.SpriteSize, pos.Y * Constants.SpriteSize, Constants.SpriteSize,
+                    Constants.SpriteSize, textureData);
             }
 
             // var convertedColors = Utilities.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);

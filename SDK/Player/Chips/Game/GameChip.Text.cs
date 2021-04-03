@@ -125,22 +125,22 @@ namespace PixelVision8.Player
                 drawMode = DrawMode.TilemapCache;
 
                 // Need to adjust the position since tile mode is in columns,rows
-                nextX *= SpriteChip.DefaultSpriteSize;
-                nextY *= SpriteChip.DefaultSpriteSize;
+                nextX *= Constants.SpriteSize;
+                nextY *= Constants.SpriteSize;
 
                 // spacing is disabled when in tilemode
                 spacing = 0;
             }
 
-            var offset = SpriteChip.DefaultSpriteSize + spacing;
+            var offset = Constants.SpriteSize + spacing;
 
             // Save the current sprite mode
             var oldSpriteWidth = SpriteWidth;
             var oldSpriteHeight = SpriteHeight;
 
             // Change the sprite width and height to the default value
-            SpriteWidth = SpriteChip.DefaultSpriteSize;
-            SpriteHeight = SpriteChip.DefaultSpriteSize;
+            SpriteWidth = Constants.SpriteSize;
+            SpriteHeight = Constants.SpriteSize;
 
             for (var j = 0; j < total; j++)
             {

@@ -202,7 +202,7 @@ namespace PixelVision8.Player
             //         tmpIDs[i] = tmpSpritesData[i].Id;
             //     }
 
-            //     var width = (int)Math.Ceiling((double)spriteCollection.Bounds.Width / SpriteChip.DefaultSpriteSize);
+            //     var width = (int)Math.Ceiling((double)spriteCollection.Bounds.Width / Constants.SpriteSize);
 
             //     var height = (int)Math.Ceiling((double)total / width);
 
@@ -237,7 +237,7 @@ namespace PixelVision8.Player
                 int startX, startY;
                 bool tmpFlipH, tmpFlipV;
 
-                var spriteSize = SpriteChip.DefaultSpriteSize;
+                var spriteSize = Constants.SpriteSize;
                 var width = spriteCollection.Bounds.Width;
                 var height = spriteCollection.Bounds.Height;
                 

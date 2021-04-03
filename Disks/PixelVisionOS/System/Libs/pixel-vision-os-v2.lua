@@ -81,7 +81,7 @@ function PixelVisionOS:Update(timeDelta)
         if(ref ~= nil) then
 
             -- Only update UI when the modal is not active
-            if(pixelVisionOS:IsModalActive() == false or ref.ignoreModal) then
+            if((pixelVisionOS:IsModalActive() == false or ref.ignoreModal == false) and ref.cycle == "update") then
 
                 -- Call the UI scope's update and pass back in the UI data
                 ref.uiScope[ref.uiUpdate](ref.uiScope, ref.uiData)
@@ -100,6 +100,26 @@ function PixelVisionOS:Draw()
         self:DisplayToolTip(self.editorUI.inFocusUI.toolTip)
     else
         self:ClearToolTip()
+    end
+
+    -- Loop through all of the registered UI and update them
+    for i = 1, self.uiTotal do
+
+        -- Get a reference to the UI data
+        local ref = self.uiComponents[i]
+
+        if(ref ~= nil) then
+
+            -- Only update UI when the modal is not active
+            if((pixelVisionOS:IsModalActive() == false or ref.ignoreModal) and ref.cycle == "draw") then
+
+                -- Call the UI scope's update and pass back in the UI data
+                ref.uiScope[ref.uiUpdate](ref.uiScope, ref.uiData)
+
+            end
+
+        end
+
     end
 
     -- We manually call draw on the message bar since it can be updated at any point outside of its own update call
@@ -300,14 +320,16 @@ function PixelVisionOS:ValidateGameInDir(workspacePath, requiredFiles)
 
 end
 
-function PixelVisionOS:RegisterUI(data, updateCall, scope, ignoreModal)
+function PixelVisionOS:RegisterUI(data, updateCall, scope, ignoreModal, cycle)
 
     scope = scope or self
+    ignoreModal = ignoreModal or true
+    cycle = cycle or "update"
   
     -- Try to remove an existing instance of the component
     self:RemoveUI(data.name)
   
-    table.insert(self.uiComponents, {uiData = data, uiUpdate = updateCall, uiScope = scope, ignoreModal = ignoreModal or false})
+    table.insert(self.uiComponents, {uiData = data, uiUpdate = updateCall, uiScope = scope, ignoreModal = ignoreModal or false, cycle = cycle})
   
     self.uiTotal = #self.uiComponents
   

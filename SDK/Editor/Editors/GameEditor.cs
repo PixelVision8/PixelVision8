@@ -176,6 +176,11 @@ namespace PixelVision8.Editor
             return true;
         }
 
+        public void ImportFromCanvas(Canvas canvas, bool resetChips = true)
+        {
+            
+        }
+
         public void Reset()
         {
             //            targetGame = new PixelVisionEngine(null, null, runner.defaultChips.ToArray());
@@ -1981,12 +1986,12 @@ namespace PixelVision8.Editor
         {
             //            var scale = 1;
 
-            var blockSizeX = scaleX * SpriteChip.DefaultSpriteSize;
-            var blockSizeY = scaleY * SpriteChip.DefaultSpriteSize;
+            var blockSizeX = scaleX * Constants.SpriteSize;
+            var blockSizeY = scaleY * Constants.SpriteSize;
 
             // var pixelData = new int[blockSizeX * blockSizeY];
 
-            var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / SpriteChip.DefaultSpriteSize);
+            var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / Constants.SpriteSize);
 
             var pixelData = Utilities.GetPixels(spriteChip.PixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
             // spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
@@ -2006,10 +2011,10 @@ namespace PixelVision8.Editor
         /// <param name="flipV"></param>
         public void WriteSpriteData(int id, int[] pixelData, int scaleX = 1, int scaleY = 1)
         {
-            var blockSizeX = scaleX * SpriteChip.DefaultSpriteSize;
-            var blockSizeY = scaleY * SpriteChip.DefaultSpriteSize;
+            var blockSizeX = scaleX * Constants.SpriteSize;
+            var blockSizeY = scaleY * Constants.SpriteSize;
 
-            var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / SpriteChip.DefaultSpriteSize);
+            var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / Constants.SpriteSize);
 
             //            var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
 

@@ -123,7 +123,7 @@ function ExplodeSettings(str)
   return arr
 end
 
-function PrintSprite(pixels, colorOffset, w, h,)
+function PrintSprite(pixels, colorOffset, w, h)
 
   w = w or 8
   h = h or 8

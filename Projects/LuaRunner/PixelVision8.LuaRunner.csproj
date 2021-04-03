@@ -37,7 +37,9 @@
 
 <!-- Load the correct project -->
   <ItemGroup>
-    
+    <Compile Include="..\..\SDK\Player\Constants.cs">
+      <Link>SDK\Player\Constants.cs</Link>
+    </Compile>
     <Compile Include="../../SDK/Player/PixelVision.cs">
       <Link>SDK/Player/PixelVision.cs</Link>
     </Compile>

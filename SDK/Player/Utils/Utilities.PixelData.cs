@@ -19,6 +19,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 
 namespace PixelVision8.Player
 {
@@ -107,9 +108,9 @@ namespace PixelVision8.Player
             }
         }
         
-        public static void Clear(PixelData pixelData, int colorRef = -1)
+        public static void Clear(PixelData pixelData, int colorRef = Constants.EmptyPixel)
         {
-            for (var i = pixelData.Total - 1; i > -1; i--) pixelData[i] = colorRef;
+            for (var i = pixelData.Total - 1; i > Constants.EmptyPixel; i--) pixelData[i] = colorRef;
         }
         
         public static void MergePixels(
@@ -180,6 +181,86 @@ namespace PixelVision8.Player
             pixelData.Resize(Utilities.Clamp(blockWidth, 1, 2048), Utilities.Clamp(blockHeight, 1, 2048));
 
             Clear(pixelData);
+        }
+
+        /// <summary>
+        ///     Tests to see if sprite <paramref name="data" /> is empty. This method
+        ///     iterates over all the ints in the supplied <paramref name="data" />
+        ///     array and looks for a value of -1. If all values are -1 then it
+        ///     returns true.
+        /// </summary>
+        /// <param name="data">An array of ints</param>
+        /// <param name="emptyPixel"></param>
+        /// <returns>
+        /// </returns>
+        public static bool IsEmpty(int[] data, int emptyPixel = -1)
+        {
+            var total = data.Length;
+            for (var i = 0; i < total; i++)
+                if (data[i] > emptyPixel)
+                    return false;
+
+            return true;
+        }
+        
+        /// <summary>
+        ///     Get a single sprite from the Image.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cps">Total number of colors supported by the sprite.</param>
+        /// <returns></returns>
+        public static int[] GetSpriteData(PixelData pixelData, int id, int? cps = null)
+        {
+
+            var Columns = pixelData.Width / Constants.SpriteSize;
+            
+            var _pos = CalculatePosition(id, Columns);
+
+            // _pixelData = GetPixels(_pos.X * 8, _pos.Y * 8, _spriteSize.X, _spriteSize.Y);
+            var _tmpPixelData = GetPixels(pixelData, _pos.X * Constants.SpriteSize, _pos.Y * Constants.SpriteSize, Constants.SpriteSize, Constants.SpriteSize);
+            // If there is a CPS cap, we need to go through all the pixels and make sure they are in range.
+            if (cps.HasValue)
+            {
+                var _colorIDs = new List<int>();
+
+                for (int i = 0; i < _tmpPixelData.Length; i++)
+                {
+                    var _colorId = _tmpPixelData[i];
+
+                    if (_colorId > -1 && _colorIDs.IndexOf(_colorId) == -1)
+                    {
+                        if (_colorIDs.Count < cps.Value)
+                        {
+                            _colorIDs.Add(_colorId);
+                        }
+                        else
+                        {
+                            _tmpPixelData[i] = -1;
+                        }
+                    }
+                }
+            }
+
+            // Return the new sprite image
+            return _tmpPixelData;
+        }
+
+        public static void WriteSpriteData(PixelData pixelData, int id, int[] pixels)
+        {
+            var Columns = pixelData.Width / Constants.SpriteSize;
+            
+            // The total sprite pixel size should be cached
+            if (pixels.Length != Constants.SpriteSize * Constants.SpriteSize)
+                return;
+
+            // Make sure we stay in bounds
+            // id = Utilities.Clamp(id, 0, TotalSprites - 1);
+
+            var pos = Utilities.CalculatePosition(id, Columns);
+            pos.X *= Constants.SpriteSize;
+            pos.Y *= Constants.SpriteSize;
+
+            SetPixels(pixels, pos.X, pos.Y, Constants.SpriteSize, Constants.SpriteSize, pixelData);
         }
         
     }

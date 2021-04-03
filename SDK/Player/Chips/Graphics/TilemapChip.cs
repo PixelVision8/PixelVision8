@@ -195,11 +195,11 @@ namespace PixelVision8.Player
             // Get a reference to the Sprite Chip
             SpriteChip = Player.SpriteChip;
 
-            _tileSize = new Rectangle(0, 0, SpriteChip.DefaultSpriteSize, SpriteChip.DefaultSpriteSize);
+            _tileSize = new Rectangle(0, 0, Constants.SpriteSize, Constants.SpriteSize);
 
             _tmpPixelData = new PixelData(_tileSize.Width, _tileSize.Height);
             
-            pixels = new int[SpriteChip.DefaultSpriteSize * SpriteChip.DefaultSpriteSize];
+            pixels = new int[Constants.SpriteSize * Constants.SpriteSize];
             
             // Resize to default nes resolution
             Resize(32, 30);

@@ -46,8 +46,8 @@ namespace PixelVision8.Editor
         {
             // Get the total number of sprites
             //TODO this needs to be double checked at different size sprites
-            var cols = (int)Math.Floor((double)ImageData.Width / SpriteChip.DefaultSpriteSize);
-            var rows = (int)Math.Floor((double)ImageData.Height / SpriteChip.DefaultSpriteSize);
+            var cols = (int)Math.Floor((double)ImageData.Width / Constants.SpriteSize);
+            var rows = (int)Math.Floor((double)ImageData.Height / Constants.SpriteSize);
             totalSpritesInTexture = cols * rows;
 
             ids = Enumerable.Repeat(-1, totalSpritesInTexture).ToArray();

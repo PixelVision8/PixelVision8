@@ -1,9 +1,0 @@
-{
-    "MetaSprites": {
-        "version": "v1",
-        "collections": [
-%s
-        ],
-        "total": %d
-    }
-}

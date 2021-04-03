@@ -56,8 +56,8 @@ namespace PixelVision8.Runner
 
             if (spriteChip != null)
             {
-                spriteWidth = SpriteChip.DefaultSpriteSize;
-                spriteHeight = SpriteChip.DefaultSpriteSize;
+                spriteWidth = Constants.SpriteSize;
+                spriteHeight = Constants.SpriteSize;
             }
         }
 
@@ -81,12 +81,17 @@ namespace PixelVision8.Runner
         {
             cps = spriteChip.ColorsPerSprite;
 
-            totalSprites = ImageData.TotalSprites;
+            // Break the image into rows and columns
+            var cols = (int)Math.Floor((double)ImageData.Width / Constants.SpriteSize);
+            var rows = (int)Math.Floor((double) ImageData.Height / Constants.SpriteSize);
+            
+            totalSprites = cols * rows;
 
-            //TODO this needs to be double checked at different size sprites
-            var cols = (int)Math.Floor((double)spriteChip.TextureWidth / spriteWidth);
-            var rows = (int)Math.Floor((double)spriteChip.TextureHeight / spriteHeight);
+            // Switch over to the sprite chip dimensions
+            cols = (int)Math.Floor((double)spriteChip.TextureWidth / spriteWidth);
+            rows = (int)Math.Floor((double)spriteChip.TextureHeight / spriteHeight);
 
+            // Calculate the total sprites the spriteChip can hold
             maxSprites = cols * rows;
 
             // // Keep track of number of sprites added
@@ -220,7 +225,7 @@ namespace PixelVision8.Runner
                 }
                 else
                 {
-                    if (SpriteChip.IsEmpty(spriteData) == false)
+                    if (Utilities.IsEmpty(spriteData) == false)
                     {
                         spriteChip.UpdateSpriteAt(index, spriteData);
                         spritesAdded++;
@@ -231,7 +236,7 @@ namespace PixelVision8.Runner
 
         public virtual void ConvertColorsToIndexes(int totalColors)
         {
-            spriteData = ImageData.GetSpriteData(index, totalColors);
+            spriteData = Utilities.GetSpriteData(ImageData.PixelData, index, totalColors);
         }
 
         public override void Dispose()

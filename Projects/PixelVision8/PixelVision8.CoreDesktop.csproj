@@ -138,6 +138,9 @@
     <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Log.cs">
       <Link>SDK\Player\Chips\Game\GameChip.Log.cs</Link>
     </Compile>
+    <Compile Include="..\..\SDK\Player\Constants.cs">
+      <Link>SDK\Player\Constants.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Player\Data\Point.cs">
       <Link>SDK\Player\Data\Point.cs</Link>
     </Compile>

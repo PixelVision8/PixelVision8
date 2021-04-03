@@ -146,8 +146,8 @@ namespace PixelVision8.Player
             {
                 tmpX = viewport.Value.X;
                 tmpY = viewport.Value.Y;
-                tmpW = viewport.Value.Width;
-                tmpH = viewport.Value.Height;
+                tmpW = Math.Min(viewport.Value.Width, Width);
+                tmpH = Math.Min(viewport.Value.Height, Height);
             }
             else
             {
@@ -179,7 +179,7 @@ namespace PixelVision8.Player
             var newWidth = (int) (tmpW * scale);
             var newHeight = (int) (tmpH * scale);
 
-            var destPixels = scale > 1 ? ResizePixels(srcPixels, tmpW, tmpH, newWidth, newHeight) : srcPixels;
+            var destPixels = ResizePixels(srcPixels, tmpW, tmpH, newWidth, newHeight);
 
             gameChip.DrawPixels(destPixels, x, y, newWidth, newHeight, false, false, drawMode, colorOffset);
         }

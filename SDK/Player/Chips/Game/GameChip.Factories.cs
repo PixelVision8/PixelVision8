@@ -84,7 +84,7 @@ namespace PixelVision8.Player
             {
                 var pos = CalculatePosition(i, width);
 
-                collection.AddSprite(spriteIDs[i], pos.X * SpriteChip.DefaultSpriteSize, pos.Y * SpriteChip.DefaultSpriteSize, false, false,
+                collection.AddSprite(spriteIDs[i], pos.X * Constants.SpriteSize, pos.Y * Constants.SpriteSize, false, false,
                     colorOffset);
             }
 

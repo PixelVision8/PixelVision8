@@ -42,26 +42,8 @@ namespace PixelVision8.Player
 
         private int _bgColor;
 
-        private string[] _colors =
-        {
-            "#2D1B2E",
-            "#218A91",
-            "#3CC2FA",
-            "#9AF6FD",
-            "#4A247C",
-            "#574B67",
-            "#937AC5",
-            "#8AE25D",
-            "#8E2B45",
-            "#F04156",
-            "#F272CE",
-            "#D3C0A8",
-            "#C5754A",
-            "#F2A759",
-            "#F7DB53",
-            "#F9F4EA"
-        };
-
+        private string[] _colors = Constants.DefaultColors.Split(',');
+        
         private bool _debugMode;
 
         private string _maskColor = "#FF00FF";
