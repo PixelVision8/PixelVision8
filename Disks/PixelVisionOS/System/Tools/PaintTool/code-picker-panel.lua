@@ -18,18 +18,19 @@ function PaintTool:CreatePickerPanel()
 
     self.pickerGridPos = NewPoint()
     
-    -- Selected position
-    self.selectedPos = {id = -1}
-    self.selectedId = -1
 
-    self.overPos = {id = -1}
-
+    -- self.currentState = {
+    --     selectedPos = {id = -1},
+    --     selectedId = -1,
+    --     overPos = {id = -1},
+    -- }
+    
     -- Used to sample pixel data from the active canvas
     self.pickerSampleRect = NewRect( 0, 0, 8, 8 )
 
-    self.pickerTotal = 0
+    -- self.currentState.pickerTotal = 0
 
-    self.pickerPanelRect = NewRect(112, 22, 128, 16)
+    self.pickerPanelRect = NewRect(112-2, 22+5, 128, 16)
     
     self.pickerSampleArea = NewRect( 0, 0, self.pickerPanelRect.Width, self.pickerPanelRect.Height )
     
@@ -67,20 +68,33 @@ function PaintTool:CreatePickerPanel()
     self.pickerSelectedCanvas:DrawRectangle( 1, 1, self.pickerOverCanvas.width - 2, self.pickerOverCanvas.height -2)
 
 
-    self.backButton = editorUI:CreateButton({x = 104, y = 16}, "stepperback", "This is the picker back button.")
+    self.backButton = editorUI:CreateButton({x = self.pickerPanelRect.X - 10, y = self.pickerPanelRect.Y-6}, "stepperback", "This is the picker back button.")
 
     self.backButton.onAction = function() self:OnPickerBack() end
 
 
-    self.nextButton = editorUI:CreateButton({x = 240, y = 16}, "steppernext", "This is the picker next button.")
+    self.nextButton = editorUI:CreateButton({x = self.pickerPanelRect.X + self.pickerPanelRect.Width + 2, y = self.pickerPanelRect.Y-6}, "steppernext", "This is the picker next button.")
 
     self.nextButton.onAction = function() self:OnPickerNext() end
 
     self.pickerModes = {ColorMode, SpriteMode, FlagMode}
     self.pickerMode = 0
 
+    -- Create states
+    for i = 1, #self.pickerModes do
+
+        self.pickerPanel[self.pickerModes[i] .. "State"] ={
+            selectedPos = {id = -1},
+            selectedId = 0,
+            overPos = {id = -1},
+            pickerTotal = 0,
+            pickerLabel = self.pickerModes[i]:upper()
+        }
+        
+    end
+
     -- Create size button
-    self.modeButton = editorUI:CreateButton({x = 80, y = 16}, "colormode", "Change mode")
+    self.modeButton = editorUI:CreateButton({x = 80 - 7, y = 16 + 7}, "colormode", "Change mode")
     self.modeButton.onAction = function() self:OnNextMode() end
 
 
@@ -98,6 +112,7 @@ function PaintTool:UpdatePickerPanel(timeDelta)
     local overrideFocus = (self.pickerPanel.inFocus == true and editorUI.collisionManager.mouseDown)
 
     local inRect = self.pickerPanelRect.Contains(editorUI.mouseCursor.pos) == true
+    
     if(inRect or overrideFocus) then
 
         if(self.pickerPanel.inFocus ~= true and editorUI.inFocusUI == nil) then
@@ -115,36 +130,38 @@ function PaintTool:UpdatePickerPanel(timeDelta)
                     16
                 )
 
-                if(tmpId >= self.pickerTotal or tmpId == self.selectedId) then
+                if(tmpId >= self.currentState.pickerTotal or tmpId == self.currentState.selectedId) then
 
-                    editorUI:ClearFocus(self.pickerPanel)
+                    self:ClearPickerFocus()
 
-                end
+                else
 
-                -- Test to see if the over id has changed
-                if(self.overPos.id ~= tmpId) then
+                    -- Test to see if the over id has changed
+                    if(self.currentState.overPos.id ~= tmpId) then
 
-                    -- save the over position
-                    self.overPos.pos = CalculatePosition( tmpId, 16 )
+                        -- save the over position
+                        self.currentState.overPos.pos = CalculatePosition( tmpId, 16 )
 
-                    -- Calculate the current page
-                    self.overPos.page = math.floor(self.overPos.pos.Y / 2)
+                        -- Calculate the current page
+                        self.currentState.overPos.page = math.floor(self.currentState.overPos.pos.Y / 2)
 
-                    -- Cache the over position
-                    self.overPos.id = tmpId
-                    self.overPos.X = self.overPos.pos.X * 8
-                    self.overPos.Y = (self.overPos.pos.Y - self.overPos.page * 2) * 8
+                        -- Cache the over position
+                        self.currentState.overPos.id = tmpId
+                        self.currentState.overPos.X = self.currentState.overPos.pos.X * 8
+                        self.currentState.overPos.Y = (self.currentState.overPos.pos.Y - self.currentState.overPos.page * 2) * 8
 
-                end
+                    end
 
-                self.pickerColumn = math.floor((editorUI.mouseCursor.pos.X - self.pickerPanelRect.X)/8)
-                self.pickerRow = math.floor((editorUI.mouseCursor.pos.Y - self.pickerPanelRect.Y)/8)
+                    self.pickerColumn = math.floor((editorUI.mouseCursor.pos.X - self.pickerPanelRect.X)/8)
+                    self.pickerRow = math.floor((editorUI.mouseCursor.pos.Y - self.pickerPanelRect.Y)/8)
 
-                -- self.pickerMessage = string.format("Over " .. self.pickerModes[self.pickerMode] .. " %04d (%02d,%02d)", self.pickerOverId, self.pickerGridPos.X, self.pickerGridPos.Y)
-            
-                if(MouseButton(0, InputState.Released) == true) then
+                    -- self.pickerMessage = string.format("Over " .. self.pickerModes[self.pickerMode] .. " %04d (%02d,%02d)", self.pickerOverId, self.pickerGridPos.X, self.pickerGridPos.Y)
+                
+                    if(MouseButton(0, InputState.Released) == true) then
 
-                    self.selectedId = tmpId
+                        self:OnPickerSelection(tmpId)
+
+                    end
 
                 end
             
@@ -156,13 +173,23 @@ function PaintTool:UpdatePickerPanel(timeDelta)
     else
         
         if(self.pickerPanel.inFocus == true) then
-            editorUI:ClearFocus(self.pickerPanel)
 
-            self.pickerMessage = nil
-
-            pixelVisionOS:ClearMessage()
+            self:ClearPickerFocus()
+            
         end
     end
+
+end
+
+function PaintTool:ClearPickerFocus()
+
+    editorUI:ClearFocus(self.pickerPanel)
+
+    self.pickerMessage = nil
+
+    pixelVisionOS:ClearMessage()
+
+    self.currentState.overPos.id = -1
 
 end
 
@@ -175,29 +202,13 @@ function PaintTool:DrawPickerPanel()
     editorUI:UpdateButton(self.modeButton)
 
     -- Look for a selection
-    if(self.selectedId > -1) then
+    if(self.currentState.selectedId > -1) then
 
-        -- Test to see if the selection has changed
-        if(self.selectedPos.id ~= self.selectedId) then
-
-            -- Calculate the selector position
-            self.selectedPos.pos = CalculatePosition( self.selectedId, 16 )
-
-            -- Calculate the current page
-            self.selectedPos.page = math.floor(self.selectedPos.pos.Y / 2)
-
-            -- Cache the selected position
-            self.selectedPos.id = self.selectedPosId
-            self.selectedPos.X = self.selectedPos.pos.X * 8
-            self.selectedPos.Y = (self.selectedPos.pos.Y - self.selectedPos.page * 2) * 8
-
-        end
-
-        if(self.selectedPos.page == self.currentPage) then
+        if(self.currentState.selectedPos.page == self.currentPage) then
 
             self.pickerSelectedCanvas:DrawPixels( 
-                self.selectedPos.X + self.pickerPanelRect.X - 2 ,
-                self.selectedPos.Y + self.pickerPanelRect.Y - 2,
+                self.currentState.selectedPos.X + self.pickerPanelRect.X - 2 ,
+                self.currentState.selectedPos.Y + self.pickerPanelRect.Y - 2,
                 DrawMode.UI
             )
 
@@ -206,36 +217,14 @@ function PaintTool:DrawPickerPanel()
     end
     
     if(self.pickerPanel.inFocus == true) then
-
-        -- print(editorUI.mouseCursor.pos)
-
-        -- self.scale = 1
-
-        -- local tmpX = self.pickerColumn * 8
-        -- local tmpY = self.pickerRow * 8
-        
-        -- TODO need to test if we are over a valid index
-        -- if(tmpX < (self.imageCanvas.width * self.scale) and tmpY < (self.imageCanvas.height * self.scale)) then
-
-            -- TODO If dragging, snap this to the mouse position
-
-            -- tmpX = tmpX + self.pickerPanelRect.X-- - self.scaledViewport.X
-            -- tmpY = tmpY + self.pickerPanelRect.Y--- self.scaledViewport.Y
-
             
-            -- Update the sample rect position and adjust for the page
-            self.pickerSampleRect.X = self.overPos.X
-            self.pickerSampleRect.Y = self.overPos.pos.Y * 8
-            
+        -- Update the sample rect position and adjust for the page
+        self.pickerSampleRect.X = self.currentState.overPos.X
+        self.pickerSampleRect.Y = self.currentState.overPos.pos.Y * 8
 
-            self.currentCanvas:DrawPixels(self.overPos.X + self.pickerPanelRect.X , self.overPos.Y+ self.pickerPanelRect.Y, DrawMode.SpriteAbove, 1, -1, self.maskColor, 0, self.pickerSampleRect)
+        self.currentCanvas:DrawPixels(self.currentState.overPos.X + self.pickerPanelRect.X , self.currentState.overPos.Y+ self.pickerPanelRect.Y, DrawMode.SpriteAbove, 1, -1, self.maskColor, 0, self.pickerSampleRect)
 
-            self.pickerOverCanvas:DrawPixels( self.overPos.X + self.pickerPanelRect.X - 2 , self.overPos.Y+ self.pickerPanelRect.Y - 2, DrawMode.SpriteAbove )
-
-
-        -- else
-        --     editorUI:ClearFocus(self.editorPanel)
-        -- end
+        self.pickerOverCanvas:DrawPixels( self.currentState.overPos.X + self.pickerPanelRect.X - 2 , self.currentState.overPos.Y+ self.pickerPanelRect.Y - 2, DrawMode.SpriteAbove )
 
         if(self.pickerMessage ~= nil) then
             
@@ -265,9 +254,10 @@ function PaintTool:ChangeMode(value)
 
     local modeLabel = self.pickerModes[value]
 
-    if(modeLabel == ColorMode) then
 
-        self.pickerLabel = "Image Colors - Page %02d of %02d"
+    self.currentState = self.pickerPanel[modeLabel .. "State"]
+
+    if(modeLabel == ColorMode) then
 
         self.currentCanvas = self.colorCanvas
 
@@ -275,16 +265,12 @@ function PaintTool:ChangeMode(value)
 
     elseif(modeLabel == SpriteMode) then
 
-        self.pickerLabel = "Unique Sprites - Page %02d of %02d"
-
         -- Get all of the unique sprites from the canvas
         self.currentCanvas = self.spriteCanvas
     
         self:IndexSprites()
 
     elseif(modeLabel == FlagMode) then
-
-        self.pickerLabel = "Tilemap Flags"
 
         self.currentCanvas = self.flagCanvas
 
@@ -298,10 +284,52 @@ function PaintTool:ChangeMode(value)
     end
 
     -- Recalculate pages based on the canvas
-    self.totalPages = ((self.currentCanvas.Height / 8) / 2) - 1 -- Account for zero based pages by subtracting 1
+    self.totalPages = math.ceil(self.currentState.pickerTotal / 16) - 1
 
     -- Reset current page
-    self:GoToPickerPage(0)
+    
+
+    self:OnPickerSelection(self.currentState.selectedId)
+
+end
+
+function PaintTool:OnPickerSelection(value)
+
+
+    value = Clamp(value, 0, self.currentState.pickerTotal)
+
+    -- Test to see if the selection has changed
+    if(self.currentState.selectedPos.id ~= value) then
+
+        -- Calculate the selector position
+        self.currentState.selectedPos.pos = CalculatePosition( value, 16 )
+
+        -- Calculate the current page
+        self.currentState.selectedPos.page = math.floor(self.currentState.selectedPos.pos.Y / 2)
+
+        self.currentState.selectedId = value
+
+        -- Cache the selected position
+        self.currentState.selectedPos.id = self.currentState.selectedPosId
+        self.currentState.selectedPos.X = self.currentState.selectedPos.pos.X * 8
+        self.currentState.selectedPos.Y = (self.currentState.selectedPos.pos.Y - self.currentState.selectedPos.page * 2) * 8
+
+    end
+
+
+    self:GoToPickerPage(self.currentState.selectedPos.page)
+
+    -- Switch mode on canvas
+
+    -- print("Test", self.pickerMode, self.pickerModes[self.pickerMode], ColorMode)
+
+    if(self.pickerModes[self.pickerMode] == ColorMode) then
+        
+        self.brushColor  = value
+        -- self.tmpPaintCanvas:SetStroke(value + self.colorOffset, 1)
+
+    end
+    
 
 end
 
@@ -331,9 +359,9 @@ function PaintTool:GoToPickerPage(value)
     self.currentCanvas:DrawPixels(self.pickerPanelRect.X, self.pickerPanelRect.Y, DrawMode.TilemapCache, 1, -1, self.maskColor, 0, self.pickerSampleArea)
 
     -- -- TODO clear label area 
-    DrawRect(100, 11, 130, 8, BackgroundColor())
-    
-    DrawText( string.format(self.pickerLabel, self.currentPage, self.totalPages):upper(), 104, 11, DrawMode.TilemapCache, "small", 6, -4 )
+    DrawRect(98, 15, 130, 8, BackgroundColor())
+
+    DrawText( string.format(self.currentState.pickerLabel, self.currentPage, self.totalPages):upper(), 100, 14, DrawMode.TilemapCache, "small", 6, -4 )
 
 end
 
@@ -393,6 +421,21 @@ function PaintTool:InvalidatePicker()
     elseif(self.pickerMode == FlagMode) then
         
         self:InvalidateFlags()
+
+    end
+
+end
+
+function PaintTool:SetPickerLabel(title)
+
+    print("SetPickerLabel")
+
+    self.currentState.pickerLabel = title
+
+    if(self.totalPages > 1) then
+        
+        local padding = #tostring(self.totalPages)
+        self.currentState.pickerLabel = self.currentState.pickerLabel .. " - Page %0".. padding .."d/%0".. padding .."d"
 
     end
 

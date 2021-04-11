@@ -80,7 +80,7 @@ function PaintTool:CreateToolbar()
     }
 
 
-    self.toolbarPos = NewPoint(8, 16)
+    self.toolbarPos = NewPoint(4, 23)
 
     self.toolBtnData = editorUI:CreateToggleGroup()
     self.toolBtnData.onAction = function(value) self:OnPickTool(value) end
@@ -92,7 +92,7 @@ function PaintTool:CreateToolbar()
     -- Build tools
     for i = 1, #self.defaultTools do
 
-        offsetX = ((i - 1) * 16) + self.toolbarPos.X - 4
+        offsetX = ((i - 1) * 16) + self.toolbarPos.X
         local rect = {x = offsetX, y = self.toolbarPos.Y, w = 16, h = 16}
 
         local btn = editorUI:CreateButton(rect, self.defaultTools[i].name, self.defaultTools[i].toolTip .. " - shortcut: ".. tostring(self.defaultTools[i].key))

@@ -6,11 +6,11 @@ function PaintTool:IndexFlags()
 
     self:ClearCurrentCanvas()
 
+    self.currentState.pickerTotal = 16
+
     local flagPath = NewWorkspacePath(self.rootDirectory).AppendFile("flags.png")
 
     if(PathExists(flagPath)) then
-
-        
 
         local colors = {}
 
@@ -26,9 +26,9 @@ function PaintTool:IndexFlags()
 
         print("size", columns, rows)
 
-        local totalFlagSprites = columns * rows
+        self.currentState.pickerTotal = columns * rows
 
-        local totalFlags = math.max(32, math.min(totalFlagSprites, 255))
+        local totalFlags = math.max(32, math.min(self.currentState.pickerTotal, 255))
 
         print("total flags", totalFlags)
 
@@ -36,7 +36,7 @@ function PaintTool:IndexFlags()
 
         for i = 1, totalFlags do
             
-            if(i > totalFlagSprites) then
+            if(i > self.currentState.pickerTotal) then
                 pixelData = self.emptyPatternPixelData
             else
                 local pos = CalculatePosition( i-1, columns )
@@ -61,7 +61,7 @@ function PaintTool:IndexFlags()
             local index = i - 1
             local pos = CalculatePosition( index, 16 )
 
-            if(index < 16) then
+            if(index < self.currentState.pickerTotal) then
                 
                 self.currentCanvas:DrawMetaSprite(FindMetaSpriteId("flag".. i .. "small"), pos.X * 8, pos.Y * 8)
 
@@ -71,6 +71,8 @@ function PaintTool:IndexFlags()
             
         end
     end
+
+    self:SetPickerLabel("Flags")
 
     self:ResetFlagValidation()
     

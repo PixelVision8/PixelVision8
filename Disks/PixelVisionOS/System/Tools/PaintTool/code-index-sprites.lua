@@ -20,7 +20,7 @@ function PaintTool:IndexSprites()
     self.spriteColumns = math.ceil(self.imageCanvas.Width / 8)
     self.spriteRows = math.ceil(self.imageCanvas.Height / 8)
 
-    self.totalSprites = self.spriteColumns * self.spriteRows
+    self.currentState.pickerTotal = self.spriteColumns * self.spriteRows
 
     self.currentPage = 0
 
@@ -86,11 +86,13 @@ function PaintTool:UpdateSpriteIndex()
         -- Recalculate pages base on the total number of sprites
         self.totalPages = (math.ceil(#self.uniqueSprites / 16 / 2)) - 1 -- Account for zero based pages by subtracting 1
 
+        self:SetPickerLabel("Sprites")
+
         -- Reset current page
         self:GoToPickerPage(self.currentPage)
 
         -- Test to see if we read all the sprites in this batch
-        if(self.spriteCounter >= self.totalSprites) then
+        if(self.spriteCounter >= self.currentState.pickerTotal) then
 
             -- Stop the update loop
             pixelVisionOS:RemoveUI("OnUpdateSpriteIndex")
@@ -99,12 +101,13 @@ function PaintTool:UpdateSpriteIndex()
             pixelVisionOS:DisplayMessage("Indexing Done")
     
             -- Update the final sprite total
-            self.totalSprites = #self.uniqueSprites
+            self.currentState.pickerTotal = #self.uniqueSprites
 
             -- Reset the validation
             self:ResetSpriteInvalidation()
             
             self.indexingSprites = false
+
             -- Exit the loop
             return
     
@@ -115,7 +118,7 @@ function PaintTool:UpdateSpriteIndex()
     end
 
     -- Display the current sprite indexing progress
-    pixelVisionOS:DisplayMessage("Indexing Sprites " .. (self.spriteCounter) .. "/" .. self.totalSprites)
+    pixelVisionOS:DisplayMessage("Indexing Sprites " .. (self.spriteCounter) .. "/" .. self.currentState.pickerTotal)
 
 end
 

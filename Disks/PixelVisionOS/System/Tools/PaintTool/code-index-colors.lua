@@ -13,13 +13,7 @@ function PaintTool:IndexColors()
 
     -- Create a pattern
     local tmpPattern = {}
-    -- for i = 1, 64 do
-    --     table.insert(tmpPattern, 0)
-    -- end
-
-    -- Set pattern
-    -- self.colorCanvas:SetPattern(tmpPattern, 8, 8)
-
+    
     -- Find unique colors
     local uniqueColors = {}
 
@@ -39,23 +33,12 @@ function PaintTool:IndexColors()
 
     end
 
-    self.pickerTotal = #uniqueColors
+    self.currentState.pickerTotal = #uniqueColors
 
-    -- Save the transparent color pixel data
-    -- local transparentColorData = Sprite(MetaSprite( "emptymaskcolor" ).Sprites[1].Id)
-
-    for i = 1, self.pickerTotal do
+    for i = 1, self.currentState.pickerTotal do
 
         
         local pos = CalculatePosition( i-1, 16 )
-
-        -- if(tmpColor == "#FF00FF")then
-
-        --     -- print("Empty Color")
-        
-        --     self.colorCanvas:SetPattern(transparentColorData, 8, 8)
-
-        -- else
 
         for j = 1, 64 do
             tmpPattern[j] = uniqueColors[i]
@@ -67,38 +50,11 @@ function PaintTool:IndexColors()
 
         self.colorCanvas:DrawRectangle(pos.X * 8, pos.Y * 8, 8, 8, true)
 
-        -- -- local colorIndex = i - 1
-
-        -- -- Get the color accounting for the offset
-        -- local tmpColor = Color()
-
-        -- -- Calculate the color's position
-        -- local pos = CalculatePosition( colorIndex, 16 )
-
-        -- if(tmpColor == "#FF00FF")then
-
-        --     -- print("Empty Color")
-        
-        --     self.colorCanvas:SetPattern(transparentColorData, 8, 8)
-
-        -- else
-
-        --     for i = 1, #tmpColorPattern do
-        --         tmpColorPattern[i] = colorIndex + self.colorOffset
-        --     end
-
-        --     self.colorCanvas:SetPattern(tmpColorPattern, 8, 8)
-
-        --     self.pickerTotal = self.pickerTotal + 1
-
-        -- end
-
-        -- self.colorCanvas:DrawRectangle(pos.X * 8, pos.Y * 8, 8, 8, true)
-
     end
 
-    self:ResetColorValidation()
+    self:SetPickerLabel("Colors")
 
+    self:ResetColorValidation()
 
 end
 

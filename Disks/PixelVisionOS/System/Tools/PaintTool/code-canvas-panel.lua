@@ -15,7 +15,7 @@ function PaintTool:CreateCanvasPanel()
     }
 
     self.tmpPaintCanvas = nil
-    self.viewportRect = NewRect(8, 48, 224, 160)
+    self.viewportRect = NewRect(8, 48+8, 224, 160-8)
     self.boundaryRect = NewRect(0,0,0,0)
     self.displayInvalid = true
     self.gridSize = 8
@@ -25,7 +25,6 @@ function PaintTool:CreateCanvasPanel()
     self.scaledViewport = NewRect()
     self.scaleValues = {.5, 1, 2, 4, 8}--, 8}
     self.scaleMode = 1 -- TODO need to read last scale
-    
 
     -- Change the pointer to a hand when inside of the component
     self.focusCursor = 2
@@ -58,7 +57,7 @@ function PaintTool:CreateCanvasPanel()
     self.tmpPaintCanvas = NewCanvas(self.viewportRect.width, self.viewportRect.height)
     self.tmpPaintCanvas.Clear(-1);
     
-    self.vSliderData = editorUI:CreateSlider({x = 235-3, y = 44+3, w = 10, h = 193-24 - 7}, "vsliderhandle", "Scroll text vertically.")
+    self.vSliderData = editorUI:CreateSlider({x = 235-3, y = 44+3 + 8, w = 10, h = 193-24 - 7 - 8}, "vsliderhandle", "Scroll text vertically.")
     self.vSliderData.onAction = function(value) self:OnVerticalScroll(value) end
     
     self.hSliderData = editorUI:CreateSlider({ x = 4+3, y = 211-3, w = 233-7, h = 10}, "hsliderhandle", "Scroll text horizontally.", true)
@@ -73,7 +72,6 @@ function PaintTool:CreateCanvasPanel()
 
     pixelVisionOS:RegisterUI({name = "OnUpdateCanvasPanel"}, "UpdateCanvasPanel", self)
     pixelVisionOS:RegisterUI({name = "OnDrawCanvasPanel"}, "DrawCanvasPanel", self)
-
 
     self.onClick = function()
         print("On Click")
@@ -578,11 +576,11 @@ function PaintTool:ResetCanvasStroke()
 
     local tmpColor = self.brushColor
   
-    local realBrushColor = tmpColor + self.colorOffset
+    -- local realBrushColor = tmpColor + self.colorOffset
   
     -- Change the stroke to a single pixel
-    self.tmpPaintCanvas:SetStroke(0, 1)--realBrushColor, self.defaultStrokeWidth)
-    self.tmpPaintCanvas:SetPattern({0}, 1, 1)
+    self.tmpPaintCanvas:SetStroke(self.brushColor, self.defaultStrokeWidth)--realBrushColor, )
+    self.tmpPaintCanvas:SetPattern({self.brushColor}, 1, 1)
   
     -- ReplaceColor(self.brushColorID, tmpColor + self.colorOffset)
   
