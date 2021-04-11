@@ -22,6 +22,5 @@
     "markdown-pdf": "^10.0.0",
     "require-dir": "^1.2.0",
     "through2": "^4.0.2"
-  },
-  "dependencies": {}
+  }
 }

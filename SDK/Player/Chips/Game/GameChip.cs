@@ -129,6 +129,16 @@ namespace PixelVision8.Player
             return ColorChip.BackgroundColor;
         }
 
+        public string MaskColor(string value = "")
+        {
+            if(value != "")
+            {
+                ColorChip.MaskColor = value;
+            }
+
+            return ColorChip.MaskColor;
+        }
+
         /// <summary>
         ///     The Color() method allows you to read and update color values in the ColorChip. This
         ///     method has two modes which require a color ID to work. By calling the method with just

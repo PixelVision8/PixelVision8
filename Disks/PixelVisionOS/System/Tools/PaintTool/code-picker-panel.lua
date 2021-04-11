@@ -8,13 +8,26 @@
 	distributing is allowed.
 ]]--
 
-ColorMode, pickerMode, FlagMode = "color", "sprite", "flag"
+ColorMode, SpriteMode, FlagMode = "color", "sprite", "flag"
 
-function ImageTool:CreatePickerPanel()
+function PaintTool:CreatePickerPanel()
 
     self.pickerPanel = {
         name = "pickerPanel"
     }
+
+    self.pickerGridPos = NewPoint()
+    
+    -- Selected position
+    self.selectedPos = {id = -1}
+    self.selectedId = -1
+
+    self.overPos = {id = -1}
+
+    -- Used to sample pixel data from the active canvas
+    self.pickerSampleRect = NewRect( 0, 0, 8, 8 )
+
+    self.pickerTotal = 0
 
     self.pickerPanelRect = NewRect(112, 22, 128, 16)
     
@@ -28,6 +41,7 @@ function ImageTool:CreatePickerPanel()
     self.currentPage = 0
 
     self.emptyPatternPixelData = Sprite(MetaSprite( "emptycolor" ).Sprites[1].Id)
+
     self.colorPixelData = {}
     
     for i = 1, 8*8 do
@@ -35,14 +49,22 @@ function ImageTool:CreatePickerPanel()
     end
 
     self.colorCanvas = NewCanvas(128, 128) -- TODO need to account for missing colors and color offset
-    self.colorCanvas.Clear(0)
-    
     self.spriteCanvas = NewCanvas(128, 1024)
-    self.colorCanvas.Clear(1)
-
-    -- TODO read the flags from memory or if there is a flag file in the folder
     self.flagCanvas = NewCanvas(128, 16)
-    self.colorCanvas.Clear(2)
+
+
+    self.pickerOverCanvas = NewCanvas( 12, 12 )
+    self.pickerOverCanvas:Clear()
+    self.pickerOverCanvas:SetStroke(0, 1);
+    self.pickerOverCanvas:DrawRectangle( 0, 0, self.pickerOverCanvas.width, self.pickerOverCanvas.height)
+    self.pickerOverCanvas:DrawRectangle( 2, 2, self.pickerOverCanvas.width - 4, self.pickerOverCanvas.height -4)
+    self.pickerOverCanvas:SetStroke(15, 1);
+    self.pickerOverCanvas:DrawRectangle( 1, 1, self.pickerOverCanvas.width - 2, self.pickerOverCanvas.height -2)
+
+    self.pickerSelectedCanvas = NewCanvas( 12, 12 )
+    self.pickerSelectedCanvas:SetPixels(self.pickerOverCanvas:GetPixels())
+    self.pickerSelectedCanvas:SetStroke(14, 1);
+    self.pickerSelectedCanvas:DrawRectangle( 1, 1, self.pickerOverCanvas.width - 2, self.pickerOverCanvas.height -2)
 
 
     self.backButton = editorUI:CreateButton({x = 104, y = 16}, "stepperback", "This is the picker back button.")
@@ -54,7 +76,7 @@ function ImageTool:CreatePickerPanel()
 
     self.nextButton.onAction = function() self:OnPickerNext() end
 
-    self.pickerModes = {ColorMode, pickerMode, FlagMode}
+    self.pickerModes = {ColorMode, SpriteMode, FlagMode}
     self.pickerMode = 0
 
     -- Create size button
@@ -71,18 +93,66 @@ function ImageTool:CreatePickerPanel()
 
 end
 
-function ImageTool:UpdatePickerPanel(timeDelta)
+function PaintTool:UpdatePickerPanel(timeDelta)
 
-    if(self.pickerPanelRect.Contains(editorUI.mouseCursor.pos)) then
+    local overrideFocus = (self.pickerPanel.inFocus == true and editorUI.collisionManager.mouseDown)
 
-        if(self.pickerPanel.inFocus ~= true) then
+    local inRect = self.pickerPanelRect.Contains(editorUI.mouseCursor.pos) == true
+    if(inRect or overrideFocus) then
+
+        if(self.pickerPanel.inFocus ~= true and editorUI.inFocusUI == nil) then
             editorUI:SetFocus(self.pickerPanel, self.focusCursor)
         end
 
-        self.mCol = math.floor((editorUI.mouseCursor.pos.X - self.pickerPanelRect.X)/8)
-        self.mRow = math.floor((editorUI.mouseCursor.pos.Y - self.pickerPanelRect.Y)/8)
+        if(self.pickerPanel.inFocus == true) then
 
-        self.pickerMessage = string.format("Over " .. self.pickerModes[self.pickerMode] .. " %04d (%02d,%02d)", CalculateIndex( self.mCol, self.mRow, 16 ), self.mCol, self.mRow)
+            if(inRect and editorUI.collisionManager.mouseDown == false) then
+
+                -- Calculate the over index id
+                local tmpId = CalculateIndex( 
+                    math.floor((editorUI.mouseCursor.pos.X - self.pickerPanelRect.X)/8),
+                    math.floor((editorUI.mouseCursor.pos.Y - self.pickerPanelRect.Y)/8) + (2 * self.currentPage),
+                    16
+                )
+
+                if(tmpId >= self.pickerTotal or tmpId == self.selectedId) then
+
+                    editorUI:ClearFocus(self.pickerPanel)
+
+                end
+
+                -- Test to see if the over id has changed
+                if(self.overPos.id ~= tmpId) then
+
+                    -- save the over position
+                    self.overPos.pos = CalculatePosition( tmpId, 16 )
+
+                    -- Calculate the current page
+                    self.overPos.page = math.floor(self.overPos.pos.Y / 2)
+
+                    -- Cache the over position
+                    self.overPos.id = tmpId
+                    self.overPos.X = self.overPos.pos.X * 8
+                    self.overPos.Y = (self.overPos.pos.Y - self.overPos.page * 2) * 8
+
+                end
+
+                self.pickerColumn = math.floor((editorUI.mouseCursor.pos.X - self.pickerPanelRect.X)/8)
+                self.pickerRow = math.floor((editorUI.mouseCursor.pos.Y - self.pickerPanelRect.Y)/8)
+
+                -- self.pickerMessage = string.format("Over " .. self.pickerModes[self.pickerMode] .. " %04d (%02d,%02d)", self.pickerOverId, self.pickerGridPos.X, self.pickerGridPos.Y)
+            
+                if(MouseButton(0, InputState.Released) == true) then
+
+                    self.selectedId = tmpId
+
+                end
+            
+            else
+                self.pickerMessage = nil
+            end
+        end
+
     else
         
         if(self.pickerPanel.inFocus == true) then
@@ -96,39 +166,72 @@ function ImageTool:UpdatePickerPanel(timeDelta)
 
 end
 
-function ImageTool:DrawPickerPanel()
-
-    if(self.currentCanvas ~= nil) then
+function PaintTool:DrawPickerPanel()
 
 
-        
-        -- TODO draw the canvas to the screen
-
-    end
-
+    -- Update the picker buttons
     editorUI:UpdateButton(self.backButton)
     editorUI:UpdateButton(self.nextButton)
     editorUI:UpdateButton(self.modeButton)
 
-    -- DrawRect( self.pickerPanelRect.X, self.pickerPanelRect.Y, self.pickerPanelRect.Width, self.pickerPanelRect.Height, 2, DrawMode.SpriteAbove )
+    -- Look for a selection
+    if(self.selectedId > -1) then
 
+        -- Test to see if the selection has changed
+        if(self.selectedPos.id ~= self.selectedId) then
+
+            -- Calculate the selector position
+            self.selectedPos.pos = CalculatePosition( self.selectedId, 16 )
+
+            -- Calculate the current page
+            self.selectedPos.page = math.floor(self.selectedPos.pos.Y / 2)
+
+            -- Cache the selected position
+            self.selectedPos.id = self.selectedPosId
+            self.selectedPos.X = self.selectedPos.pos.X * 8
+            self.selectedPos.Y = (self.selectedPos.pos.Y - self.selectedPos.page * 2) * 8
+
+        end
+
+        if(self.selectedPos.page == self.currentPage) then
+
+            self.pickerSelectedCanvas:DrawPixels( 
+                self.selectedPos.X + self.pickerPanelRect.X - 2 ,
+                self.selectedPos.Y + self.pickerPanelRect.Y - 2,
+                DrawMode.UI
+            )
+
+        end
+
+    end
+    
     if(self.pickerPanel.inFocus == true) then
 
         -- print(editorUI.mouseCursor.pos)
 
-        -- local tmpX = self.mCol * self.scrollScale
-        -- local tmpY = self.mRow * self.scrollScale
+        -- self.scale = 1
+
+        -- local tmpX = self.pickerColumn * 8
+        -- local tmpY = self.pickerRow * 8
         
+        -- TODO need to test if we are over a valid index
         -- if(tmpX < (self.imageCanvas.width * self.scale) and tmpY < (self.imageCanvas.height * self.scale)) then
 
-        --     -- TODO If dragging, snap this to the mouse position
+            -- TODO If dragging, snap this to the mouse position
 
-        --     tmpX = tmpX + self.viewportRect.X - self.scaledViewport.X
-        --     tmpY = tmpY + self.viewportRect.Y- self.scaledViewport.Y
+            -- tmpX = tmpX + self.pickerPanelRect.X-- - self.scaledViewport.X
+            -- tmpY = tmpY + self.pickerPanelRect.Y--- self.scaledViewport.Y
 
-        --     self.overCanvas:DrawPixels( tmpX - 3 , tmpY - 3, DrawMode.UI )
+            
+            -- Update the sample rect position and adjust for the page
+            self.pickerSampleRect.X = self.overPos.X
+            self.pickerSampleRect.Y = self.overPos.pos.Y * 8
+            
 
-        --     self.imageCanvas:DrawPixels(tmpX, tmpY, DrawMode.SpriteAbove, self.scale, -1, self.maskColor, 0, NewRect( self.mCol * 8  + self.scaledViewport.X, self.mRow * 8   + self.scaledViewport.Y, 8, 8 ))
+            self.currentCanvas:DrawPixels(self.overPos.X + self.pickerPanelRect.X , self.overPos.Y+ self.pickerPanelRect.Y, DrawMode.SpriteAbove, 1, -1, self.maskColor, 0, self.pickerSampleRect)
+
+            self.pickerOverCanvas:DrawPixels( self.overPos.X + self.pickerPanelRect.X - 2 , self.overPos.Y+ self.pickerPanelRect.Y - 2, DrawMode.SpriteAbove )
+
 
         -- else
         --     editorUI:ClearFocus(self.editorPanel)
@@ -143,7 +246,20 @@ function ImageTool:DrawPickerPanel()
 
 end
 
-function ImageTool:ChangeMode(value)
+function PaintTool:ClearCurrentCanvas()
+
+    -- Clear the sprite canvas
+    self.currentCanvas:Clear(-1)
+
+    self.currentCanvas:SetStroke(-1, 0)
+
+    self.currentCanvas:SetPattern(self.emptyPatternPixelData, 8, 8)
+
+    self.currentCanvas:DrawRectangle(0, 0, self.currentCanvas.Width, self.currentCanvas.Height, true)
+
+end
+
+function PaintTool:ChangeMode(value)
 
     self.pickerMode = value
 
@@ -153,84 +269,35 @@ function ImageTool:ChangeMode(value)
 
         self.pickerLabel = "Image Colors - Page %02d of %02d"
 
-        -- TODO update colors from memory
         self.currentCanvas = self.colorCanvas
 
-        self.currentCanvas:SetStroke(-1, 0)
+        self:IndexColors()
 
-        for i = 1, 255-16 do
-
-            local colorIndex = i - 1 + self.colorOffset
-
-            local tmpColor = Color(colorIndex)
-            local pos = CalculatePosition( i-1, 16 )
-
-            if(tmpColor == "#FF00FF")then
-                
-                self.currentCanvas:SetPattern(self.emptyPatternPixelData, 8, 8)
-
-            else
-
-                for j = 1, #self.colorPixelData do
-                    self.colorPixelData[j] = colorIndex
-                end
-
-                self.currentCanvas:SetPattern(self.colorPixelData, 8, 8)
-                
-            end
-
-            self.currentCanvas:DrawRectangle(pos.X * 8, pos.Y * 8, 8, 8, true)
-
-        end
-
-    elseif(modeLabel == pickerMode) then
+    elseif(modeLabel == SpriteMode) then
 
         self.pickerLabel = "Unique Sprites - Page %02d of %02d"
 
         -- Get all of the unique sprites from the canvas
         self.currentCanvas = self.spriteCanvas
-
-        local targetSize = NewPoint(math.ceil(self.imageCanvas.Width / 8) * 8, math.ceil(self.imageCanvas.height / 8) * 8)
-
-        print("Resize canvas", self.imageCanvas.Width,targetSize.X,self.imageCanvas.Height,targetSize.Y)
-
-        if(self.imageCanvas.Width ~= targetSize.X or self.imageCanvas.Height ~= targetSize.Y) then
-
-            print("Resize canvas", self.imageCanvas.Width,targetSize.X,self.imageCanvas.Height,targetSize.Y)
-
-        end
+    
+        self:IndexSprites()
 
     elseif(modeLabel == FlagMode) then
 
-        self.pickerLabel = "Tilemap Flags - Page %02d of %02d"
+        self.pickerLabel = "Tilemap Flags"
 
         self.currentCanvas = self.flagCanvas
 
-        self.currentCanvas:SetStroke(-1, 0)
-        self.currentCanvas:SetPattern(self.emptyPatternPixelData, 8, 8)
-
-        for i = 1, 32  do
-
-            local index = i - 1
-            local pos = CalculatePosition( index, 16 )
-
-            if(index < 16) then
-                
-                self.currentCanvas:DrawMetaSprite(FindMetaSpriteId("flag".. i .. "small"), pos.X * 8, pos.Y * 8)
-
-            else
-                self.currentCanvas:DrawRectangle(pos.X * 8, pos.Y * 8, 8, 8, true)
-            end
-            
-        end
+        self:IndexFlags()
 
     else
+
         self.currentCanvas = nil
         return
+
     end
 
-
-    -- Recalculate pages
+    -- Recalculate pages based on the canvas
     self.totalPages = ((self.currentCanvas.Height / 8) / 2) - 1 -- Account for zero based pages by subtracting 1
 
     -- Reset current page
@@ -238,28 +305,26 @@ function ImageTool:ChangeMode(value)
 
 end
 
-function ImageTool:OnPickerBack()
+function PaintTool:OnPickerBack()
 
-    self:GoToPickerPage(self.currentPage - 1)
+    local offset = (Key(Keys.LeftShift) or Key(Keys.RightShift)) and 10 or 1
+    self:GoToPickerPage(self.currentPage - offset)
 
 end
 
-function ImageTool:OnPickerNext()
+function PaintTool:OnPickerNext()
     
-    self:GoToPickerPage(self.currentPage + 1)
+    local offset = (Key(Keys.LeftShift) or Key(Keys.RightShift)) and 10 or 1
+    self:GoToPickerPage(self.currentPage + offset)
 
 end
 
-function ImageTool:GoToPickerPage(value)
+function PaintTool:GoToPickerPage(value)
 
     self.currentPage = Clamp(value, 0, self.totalPages )
 
-
     editorUI:Enable(self.backButton, self.currentPage > 0)
     editorUI:Enable(self.nextButton, self.currentPage < self.totalPages)
-
-
-    print( "Current Page", self.currentPage, self.totalPages)
 
     self.pickerSampleArea.Y = 16 * self.currentPage
 
@@ -267,12 +332,12 @@ function ImageTool:GoToPickerPage(value)
 
     -- -- TODO clear label area 
     DrawRect(100, 11, 130, 8, BackgroundColor())
-    -- DrawText("test", 100, 11, "small")
+    
     DrawText( string.format(self.pickerLabel, self.currentPage, self.totalPages):upper(), 104, 11, DrawMode.TilemapCache, "small", 6, -4 )
 
 end
 
-function ImageTool:OnNextMode()
+function PaintTool:OnNextMode()
 
     -- Loop backwards through the button sizes
     if(Key(Keys.LeftShift) or reverse == true) then
@@ -312,5 +377,23 @@ function ImageTool:OnNextMode()
     editorUI:Invalidate(self.modeButton)
 
     self:ChangeMode(self.pickerMode)
+
+end
+
+function PaintTool:InvalidatePicker()
+    
+    if(self.pickerMode == ColorMode) then
+
+        self:InvalidateColors()
+
+    elseif(self.pickerMode == SpriteMode) then
+
+        self:InvalidateSprites()
+
+    elseif(self.pickerMode == FlagMode) then
+        
+        self:InvalidateFlags()
+
+    end
 
 end

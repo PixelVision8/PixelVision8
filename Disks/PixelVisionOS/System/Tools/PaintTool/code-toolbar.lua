@@ -1,5 +1,5 @@
 
-function ImageTool:CreateToolbar()
+function PaintTool:CreateToolbar()
 
 
     self.tools = {
@@ -7,6 +7,11 @@ function ImageTool:CreateToolbar()
         {
             name = "pointer",
             key = Keys.V,
+            toolTip = "This is the pointer"
+        },
+        {
+            name = "hand",
+            key = Keys.Space,
             toolTip = "This is the pointer"
         },
         {
@@ -41,12 +46,12 @@ function ImageTool:CreateToolbar()
             toolTip = "This is the circle fill"
         },
         {
-            name = "box",
+            name = "rectangle",
             key = Keys.R,
             toolTip = "This is the rectangle"
         },
         {
-            name = "boxfill",
+            name = "rectanglefill",
             key = Keys.R,
             shift = true,
             toolTip = "This is the circle rectangle"
@@ -68,9 +73,9 @@ function ImageTool:CreateToolbar()
 
     self.toolOptions ={
 
-        {"pointer", "select"},
+        {"pointer", "hand", "select"},
         {"pen", "eraser"},
-        {"line", "circle", "circlefill", "box", "boxfill"},
+        {"line", "circle", "circlefill", "rectangle", "rectanglefill"},
         {"eyedropper", "fill"}
     }
 
@@ -82,39 +87,73 @@ function ImageTool:CreateToolbar()
 
     local offsetX = 0
 
+    self.toolButtons = {}
+
     -- Build tools
     for i = 1, #self.defaultTools do
 
-        offsetX = ((i - 1) * 16) + self.toolbarPos.X
+        offsetX = ((i - 1) * 16) + self.toolbarPos.X - 4
         local rect = {x = offsetX, y = self.toolbarPos.Y, w = 16, h = 16}
-        editorUI:ToggleGroupButton(self.toolBtnData, rect, self.defaultTools[i].name, self.defaultTools[i].toolTip .. " - shortcut: ".. tostring(self.defaultTools[i].key))
+
+        local btn = editorUI:CreateButton(rect, self.defaultTools[i].name, self.defaultTools[i].toolTip .. " - shortcut: ".. tostring(self.defaultTools[i].key))
+        
+        btn.onAction = function() self:OnPickTool(i) end
+            
+        
+        -- editorUI:ToggleGroupButton(self.toolBtnData, rect, self.defaultTools[i].name, self.defaultTools[i].toolTip .. " - shortcut: ".. tostring(self.defaultTools[i].key))
     
+        table.insert(self.toolButtons, btn)
+
     end
+
+    self.totalToolButtons = #self.toolButtons
 
     pixelVisionOS:RegisterUI({name = "OnUpdateToolbar"}, "UpdateToolbar", self, true)
 
 end
 
-function ImageTool:OnPickTool(value)
+function PaintTool:OnPickTool(value)
+
+    if(self.lastSelection ~= nil) then
+        
+        local tmpBtn = self.toolButtons[self.lastSelection]
+        
+        tmpBtn.selected = false
+
+        editorUI:Invalidate(tmpBtn, true)
+
+    end
+
+    self.lastSelection = value
+
+    local currentButton = self.toolButtons[self.lastSelection]
+
+    currentButton.selected = true
+
+    editorUI:Invalidate(currentButton, true)
+
+    
+
+    -- print(value)
 
 
-    self.lastSelection = self.toolBtnData.currentSelection
+    -- self.lastSelection = self.toolBtnData.currentSelection
 
-    -- editorUI:ClearGroupSelections(self.toolBtnData)
+    -- -- editorUI:ClearGroupSelections(self.toolBtnData)
 
-    -- local selections = editorUI:ToggleGroupSelections(self.toolBtnData)
+    -- -- local selections = editorUI:ToggleGroupSelections(self.toolBtnData)
 
-    -- editorUI:SelectToggleButton(self.toolBtnData, value, false)
-    -- print("selections", dump(selections), self.lastSelection ,value)
-    -- print("Tool Picker", value, dump(self.toolBtnData))
-    -- self.toolBtnData.buttons[self.toolBtnData.currentSelection].selected = false
+    -- -- editorUI:SelectToggleButton(self.toolBtnData, value, false)
+    -- -- print("selections", dump(selections), self.lastSelection ,value)
+    -- -- print("Tool Picker", value, dump(self.toolBtnData))
+    -- -- self.toolBtnData.buttons[self.toolBtnData.currentSelection].selected = false
 
-    -- print("Ignore", self.toolBtnData.buttons[value].spriteName)
+    -- -- print("Ignore", self.toolBtnData.buttons[value].spriteName)
 
-    local buttons = self:GetToolButton(self.toolOptions[value], self.toolBtnData.buttons[value].spriteName)
+    local buttons = self:GetToolButton(self.toolOptions[value], self.toolButtons[value].spriteName)
 
 
-    local pos = NewPoint( self.toolbarPos.X + (16 * (value-1)), self.toolbarPos.Y)
+    local pos = NewPoint( self.toolbarPos.X + (16 * (value-1)), self.toolbarPos.Y - 16)
     
     -- Look to see if the modal exists
     if(self.pickerModal == nil) then
@@ -130,29 +169,27 @@ function ImageTool:OnPickTool(value)
         self.pickerModal:Configure(pos, buttons)--showCancel, okButtonSpriteName, cancelButtonSpriteName)
     end
 
+    -- TODO need all the buttons horizontally and then the drop down so everything is selectable
+
     -- Open the modal
     pixelVisionOS:OpenModal(self.pickerModal, function(value) self:OnSelectTool(value) end) -- TODO need to get the last selection
 
 end
 
-function ImageTool:OnSelectTool()
+function PaintTool:OnSelectTool()
     print("Tool selected", self.pickerModal.selection)
-    editorUI:ClearGroupSelections(self.toolBtnData)
-    -- local selectedTool =
 
-    -- local index = self.toolBtnData.currentSelection
+    if(self.pickerModal.selection == -1) then 
+        return
+    end
+
     if(self.lastSelection == nil) then
         return
     end
 
-    local btn = self.toolBtnData.buttons[self.lastSelection]
-
-    
-
+    local btn = self.toolButtons[self.lastSelection]
     btn.selected = true
     btn.spriteName = self.pickerModal.selection
-    -- editorUI:Enable(btn, true)
-
 
     -- Find the next sprite for the button
     local spriteName = btn.spriteName
@@ -169,19 +206,27 @@ function ImageTool:OnSelectTool()
         empty = FindMetaSpriteId(spriteName .. "empty") -- used to clear the sprites
     }
 
-    for i = 1, #self.toolBtnData.buttons do
-        editorUI:Invalidate(self.toolBtnData.buttons[i])
+    for i = 1, self.totalToolButtons do
+        editorUI:Invalidate(self.toolButtons[i])
     end
+
+    self:ChangeCanvasTool(spriteName)
 
 end
 
-function ImageTool:UpdateToolbar()
+function PaintTool:UpdateToolbar()
 
     if(pixelVisionOS:IsModalActive() == true) then
         return
     end
 
-    editorUI:UpdateToggleGroup(self.toolBtnData)
+    for i = 1, self.totalToolButtons do
+        
+        editorUI:UpdateButton(self.toolButtons[i])
+
+    end
+
+    -- editorUI:UpdateToggleGroup(self.toolBtnData)
 
     if(Key(Keys.LeftControl) == false and Key(Keys.RightControl) == false) then
 
@@ -197,7 +242,7 @@ function ImageTool:UpdateToolbar()
 
 end
 
-function ImageTool:GetToolButton(ids, ignore)
+function PaintTool:GetToolButton(ids, selected)
 
     local buttons = {}
     local totalTools = #self.tools
@@ -209,7 +254,7 @@ function ImageTool:GetToolButton(ids, ignore)
 
             local tmpBtn = self.tools[j]
 
-            if(tmpBtn.name ~= ignore and tmpBtn.name == ids[i]) then
+            if(tmpBtn.name == ids[i]) then
 
                 local data = {
                     name = tmpBtn.name,
@@ -218,7 +263,12 @@ function ImageTool:GetToolButton(ids, ignore)
                     toolTip = tmpBtn.toolTip
                 }
 
-                table.insert(buttons, data)
+                -- Make the first button the current selection
+                if(tmpBtn.name == selected) then
+                    table.insert(buttons, 1, data)
+                else
+                    table.insert(buttons, data)
+                end
 
             end
 

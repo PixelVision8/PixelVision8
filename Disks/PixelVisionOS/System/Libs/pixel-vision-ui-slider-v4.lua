@@ -18,10 +18,10 @@
 function EditorUI:CreateSlider(rect, spriteName, toolTip, horizontal, offset)
 
   -- Set up button states
-  local spriteData = MetaSprite(FindMetaSpriteId(spriteName))-- _G[spriteName]
+  -- local spriteData = MetaSprite(FindMetaSpriteId(spriteName))-- _G[spriteName]
 
   -- Create a generic component data object
-  local data = self:CreateData(rect, spriteName, toolTip, forceDraw)
+  local data = self:CreateData(rect, spriteName, toolTip)
 
   -- Add the name of the component type to the default data name value
   data.name = "Slider" .. data.name

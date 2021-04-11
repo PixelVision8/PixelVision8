@@ -55,6 +55,8 @@ namespace PixelVision8.Player
 
         }
 
+        public int[] GetPixels(int x, int y, int width, int height) => Utilities.GetPixels(PixelData, x, y, width, height);
+        
         public int[] GetPixels() => Utilities.GetPixels(PixelData);
 
         public void Resize(int newWidth, int newHeight) => Utilities.Resize(PixelData, newWidth, newHeight);

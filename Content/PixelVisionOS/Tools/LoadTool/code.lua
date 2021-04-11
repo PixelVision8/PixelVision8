@@ -8,8 +8,10 @@
   distributing is allowed.
 ]]--
 
--- LoadScript("sb-sprites")
-LoadScript("attach-debugger")
+-- Debugger values
+local connectDebugger = true
+local debuggerTime = 0
+local debuggerDelay = 10
 
 local currentAnimation = {}
 

@@ -10,6 +10,7 @@ namespace PixelVision8.Player
             #region Color APIs
 
             LuaScript.Globals["BackgroundColor"] = new Func<int?, int>(BackgroundColor);
+            LuaScript.Globals["MaskColor"] = new Func<string, string>(MaskColor);
             LuaScript.Globals["Color"] = new Func<int, string, string>(Color);
             LuaScript.Globals["ColorsPerSprite"] = new Func<int>(ColorsPerSprite);
             LuaScript.Globals["TotalColors"] = new Func<bool, int>(TotalColors);
