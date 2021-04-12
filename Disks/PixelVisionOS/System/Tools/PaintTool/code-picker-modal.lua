@@ -1,35 +1,23 @@
 ToolPickerModal = {}
 ToolPickerModal.__index = ToolPickerModal
 
-function ToolPickerModal:Init(pos, buttons)
+function ToolPickerModal:Init(pos, toolButtons, optionButtons)
 
   local _toolPickerModal = {}
   setmetatable(_toolPickerModal, ToolPickerModal)
 
-  _toolPickerModal:Configure(pos, buttons)
+  _toolPickerModal:Configure(pos, toolButtons, optionButtons)
 
   return _toolPickerModal
 
 end
 
-function ToolPickerModal:Configure(pos, buttons)
+function ToolPickerModal:Configure(pos, toolButtons, optionButtons)
 
 
     self.selection = -1
 
---   if(buttons == nil) then
---     buttons = 
---     {
---       {
---         name = "pointer",
---         tooltip = "Press 'enter' to close",
---       },
---       {
---         name = "line",
---         tooltip = "Press 'enter' to close",
---       }
---     }
---   end
+    self.toolButtons = toolButtons
 
   -- Reset the modal so it redraws correctly when opened
   self.firstRun = true
@@ -38,7 +26,7 @@ function ToolPickerModal:Configure(pos, buttons)
 
   local tmpButton = nil
 
-  local total = #buttons
+  local total = #optionButtons
 
   local bX = pos.X
   local bY = pos.Y
@@ -46,7 +34,7 @@ function ToolPickerModal:Configure(pos, buttons)
   for i = 1, total do
 
     -- Get a reference to the button properties
-    tmpButton = buttons[i]
+    tmpButton = optionButtons[i]
 
     bY = bY + 16
 
@@ -83,14 +71,14 @@ end
 
 function ToolPickerModal:Update(timeDelta)
 
-  local tmpBtn = nil
-
   for i = 1, #self.buttonData do
 
-    tmpBtn = self.buttonData[i]
-    
-    editorUI:UpdateButton(tmpBtn)
+    editorUI:UpdateButton(self.buttonData[i])
 
+  end
+
+  for i = 1, #self.toolButtons do
+    editorUI:UpdateButton(self.toolButtons[i])
   end
 
   if(MouseButton( 0, InputState.Released )) then

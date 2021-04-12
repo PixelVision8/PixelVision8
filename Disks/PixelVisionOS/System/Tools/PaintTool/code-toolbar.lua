@@ -96,23 +96,30 @@ function PaintTool:CreateToolbar()
         local rect = {x = offsetX, y = self.toolbarPos.Y, w = 16, h = 16}
 
         local btn = editorUI:CreateButton(rect, self.defaultTools[i].name, self.defaultTools[i].toolTip .. " - shortcut: ".. tostring(self.defaultTools[i].key))
-        
         btn.onAction = function() self:OnPickTool(i) end
             
-        
-        -- editorUI:ToggleGroupButton(self.toolBtnData, rect, self.defaultTools[i].name, self.defaultTools[i].toolTip .. " - shortcut: ".. tostring(self.defaultTools[i].key))
-    
         table.insert(self.toolButtons, btn)
 
     end
 
     self.totalToolButtons = #self.toolButtons
 
+    -- TODO this should restore the last tool selection (also need to account for sub tool if previously selected)
+    self:OnPickTool(1, false)
+
     pixelVisionOS:RegisterUI({name = "OnUpdateToolbar"}, "UpdateToolbar", self, true)
 
 end
 
-function PaintTool:OnPickTool(value)
+function PaintTool:OnPickTool(value, displayOptions)
+
+    if(self.lastSelection == value and self.optionMenuJustClosed == true) then
+
+        displayOptions  = false
+
+        -- return
+
+    end
 
     if(self.lastSelection ~= nil) then
         
@@ -120,7 +127,13 @@ function PaintTool:OnPickTool(value)
         
         tmpBtn.selected = false
 
-        editorUI:Invalidate(tmpBtn, true)
+        editorUI:Invalidate(tmpBtn)
+
+    end
+
+    if(displayOptions ~= false) then
+        
+        self:OpenOptionMenu(value)
 
     end
 
@@ -132,64 +145,27 @@ function PaintTool:OnPickTool(value)
 
     editorUI:Invalidate(currentButton, true)
 
+    self:OnSelectTool(currentButton.spriteName)
+
     
-
-    -- print(value)
-
-
-    -- self.lastSelection = self.toolBtnData.currentSelection
-
-    -- -- editorUI:ClearGroupSelections(self.toolBtnData)
-
-    -- -- local selections = editorUI:ToggleGroupSelections(self.toolBtnData)
-
-    -- -- editorUI:SelectToggleButton(self.toolBtnData, value, false)
-    -- -- print("selections", dump(selections), self.lastSelection ,value)
-    -- -- print("Tool Picker", value, dump(self.toolBtnData))
-    -- -- self.toolBtnData.buttons[self.toolBtnData.currentSelection].selected = false
-
-    -- -- print("Ignore", self.toolBtnData.buttons[value].spriteName)
-
-    local buttons = self:GetToolButton(self.toolOptions[value], self.toolButtons[value].spriteName)
-
-
-    local pos = NewPoint( self.toolbarPos.X + (16 * (value-1)), self.toolbarPos.Y - 16)
-    
-    -- Look to see if the modal exists
-    if(self.pickerModal == nil) then
-
-        -- Create the model
-        self.pickerModal = ToolPickerModal:Init(pos, buttons)
-
-        -- Pass a reference of the editorUI to the modal
-        self.pickerModal.editorUI = self.editorUI
-    -- end
-    else
-        -- If the modal exists, configure it with the new values
-        self.pickerModal:Configure(pos, buttons)--showCancel, okButtonSpriteName, cancelButtonSpriteName)
-    end
 
     -- TODO need all the buttons horizontally and then the drop down so everything is selectable
 
-    -- Open the modal
-    pixelVisionOS:OpenModal(self.pickerModal, function(value) self:OnSelectTool(value) end) -- TODO need to get the last selection
-
+    self.displayOptions = displayOptions
+    
 end
 
-function PaintTool:OnSelectTool()
-    print("Tool selected", self.pickerModal.selection)
+function PaintTool:OnSelectTool(value)
 
-    if(self.pickerModal.selection == -1) then 
-        return
-    end
-
+    -- self:CloseOptionMenu()
+   
     if(self.lastSelection == nil) then
         return
     end
 
     local btn = self.toolButtons[self.lastSelection]
     btn.selected = true
-    btn.spriteName = self.pickerModal.selection
+    btn.spriteName = value
 
     -- Find the next sprite for the button
     local spriteName = btn.spriteName
@@ -216,8 +192,10 @@ end
 
 function PaintTool:UpdateToolbar()
 
-    if(pixelVisionOS:IsModalActive() == true) then
-        return
+    if(self.optionMenuOpen == true and editorUI.collisionManager.mouseReleased) then
+        
+        self:CloseOptionMenu()
+        
     end
 
     for i = 1, self.totalToolButtons do
@@ -240,6 +218,57 @@ function PaintTool:UpdateToolbar()
         -- end
     end
 
+    if(self.optionMenuOpen == true) then
+
+        for i = 1, #self.optionButtons do
+            editorUI:UpdateButton(self.optionButtons[i])
+        end
+
+    end
+
+    self.optionMenuJustClosed = false
+
+end
+
+function PaintTool:OpenOptionMenu(value)
+
+    self.optionMenuOpen = true
+
+
+    if(value == self.lastSelection) then
+        
+        return
+    end
+
+    -- Save option buttons
+    local optionButtonLabels = self:GetToolButton(self.toolOptions[value], self.toolButtons[value].spriteName)
+
+    local pos = NewPoint( self.toolbarPos.X + (16 * (value-1)), self.toolbarPos.Y - 16)
+
+    self.optionButtons = {}
+
+    local bX = pos.X
+    local bY = pos.Y + 16
+
+    for i = 1, #optionButtonLabels do
+
+        local tmpButton = optionButtonLabels[i]
+        bY = bY + 16
+        local tmpBtn = editorUI:CreateButton({x = bX, y = bY}, tmpButton.name, tmpButton.tooltip or "")
+        tmpBtn.drawMode = DrawMode.Sprite
+
+        tmpBtn.onPress = function() self:OnSelectTool(tmpBtn.spriteName) end
+    
+        table.insert(self.optionButtons, tmpBtn)
+
+    end
+    
+end
+
+function PaintTool:CloseOptionMenu()
+    self.optionMenuOpen = false
+    self.optionMenuJustClosed = true
+    editorUI:ClearFocus()
 end
 
 function PaintTool:GetToolButton(ids, selected)
@@ -264,9 +293,9 @@ function PaintTool:GetToolButton(ids, selected)
                 }
 
                 -- Make the first button the current selection
-                if(tmpBtn.name == selected) then
-                    table.insert(buttons, 1, data)
-                else
+                if(tmpBtn.name ~= selected) then
+                --     table.insert(buttons, 1, data)
+                -- else
                     table.insert(buttons, data)
                 end
 

@@ -54,7 +54,7 @@ function PaintTool:CreateCanvasPanel()
     self.imageCanvas.SetPixels(0, 0, self.image.Width, self.image.Height, pixelData)
     
     
-    self.tmpPaintCanvas = NewCanvas(self.viewportRect.width, self.viewportRect.height)
+    self.tmpPaintCanvas = NewCanvas(self.imageCanvas.Width, self.imageCanvas.Width)
     self.tmpPaintCanvas.Clear(-1);
     
     self.vSliderData = editorUI:CreateSlider({x = 235-3, y = 44+3 + 8, w = 10, h = 193-24 - 7 - 8}, "vsliderhandle", "Scroll text vertically.")
@@ -123,6 +123,11 @@ end
 
 function PaintTool:UpdateCanvasPanel(timeDelta)
 
+    -- Ignore the update if the option menu is open
+    -- if(self.optionMenuOpen == true) then
+    --   return
+    -- end
+
     -- If the button has data but it's not enabled exit out of the update
     if(self.canvasPanel.enabled == false) then
 
@@ -178,11 +183,13 @@ function PaintTool:UpdateCanvasPanel(timeDelta)
 
             -- TODO need to adjust for scroll and scale
             local tmpPos = NewPoint(
-                math.floor((editorUI.collisionManager.mousePos.x - self.viewportRect.x ) / self.scale) + self.scaledViewport.X,
-                math.floor((editorUI.collisionManager.mousePos.y - self.viewportRect.y)/ self.scale) + self.scaledViewport.Y
+                math.floor((editorUI.collisionManager.mousePos.x - self.viewportRect.X)/ self.scale) + self.scaledViewport.X ,
+                math.floor((editorUI.collisionManager.mousePos.y - self.viewportRect.Y)/ self.scale) + self.scaledViewport.Y
             )
 
             -- print("Mouse Pos", dump(editorUI.collisionManager.mousePos), "adjusted", tmpPos, self.scaledViewport.X)
+
+            -- print("Mouse", dump(editorUI.collisionManager.mousePos), (math.floor((editorUI.collisionManager.mousePos.x - self.viewportRect.X)/ self.scale) + self.scaledViewport.X))
 
             -- Check to see if the button is pressed and has an onAction callback
             if(editorUI.collisionManager.mouseReleased == true) then
@@ -289,36 +296,12 @@ function PaintTool:DrawCanvasPanel()
         -- Draw the pixel data in the upper left hand cornver of the tool's window
         self.imageCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.maskColor, self.colorOffset, self.scaledViewport)
 
-        self.tmpPaintCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.emptyColorID, self.colorOffset, NewRect(0, 0, self.scaledViewport.Width, self.scaledViewport.Height))
+        self.tmpPaintCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.emptyColorID, self.colorOffset, self.scaledViewport)
         
         
         self.displayInvalid = false
 
     end
-
-    -- if(self.canvasPanel.inFocus == true) then
-
-    --     -- print(editorUI.mouseCursor.pos)
-
-    --     local tmpX = self.mCol * self.gridSize
-    --     local tmpY = self.mRow * self.gridSize
-        
-    --     if(tmpX < (self.tmpPaintCanvas.width * self.scale) and tmpY < (self.tmpPaintCanvas.height * self.scale)) then
-
-    --         -- TODO If dragging, snap this to the mouse position
-
-    --         tmpX = tmpX + self.viewportRect.X - self.scaledViewport.X
-    --         tmpY = tmpY + self.viewportRect.Y- self.scaledViewport.Y
-
-    --         self.overCanvas:DrawPixels( tmpX - 3 , tmpY - 3, DrawMode.UI )
-
-    --         self.tmpPaintCanvas:DrawPixels(tmpX, tmpY, DrawMode.SpriteAbove, self.scale, -1, self.maskColor, 0, NewRect( self.mCol * 8  + self.scaledViewport.X, self.mRow * 8   + self.scaledViewport.Y, 8, 8 ))
-
-    --     else
-    --         editorUI:ClearFocus(self.canvasPanel)
-    --     end
-    -- end
-
 
 end
 
@@ -363,6 +346,8 @@ function PaintTool:OnNextZoom(reverse)
     self.scaledViewport.Width = Clamp(viewWidth, 1, math.max(imageWidth, self.imageCanvas.width)) --math.min(self.viewportRect.Width, math.min(self.tmpPaintCanvas.width * self.scale, math.ceil(self.viewportRect.Width / self.scale)))
     self.scaledViewport.Height = Clamp(viewHeight, 1, math.max(imageHeight, self.imageCanvas.height))--, self.viewportRect.Height) --math.min(self.viewportRect.Height, math.min(self.tmpPaintCanvas.height * self.scale, math.ceil(self.viewportRect.Height / self.scale)))
 
+
+    print("self.scaledViewport", dump(self.scaledViewport))
     -- Calculate the boundary for scrolling
     self.boundaryRect.Width = self.imageCanvas.width - self.scaledViewport.Width
     self.boundaryRect.Height = self.imageCanvas.height - self.scaledViewport.Height
@@ -530,6 +515,9 @@ function PaintTool:CanvasRelease(callAction)
 
     -- -- Clear the canvas
     self.tmpPaintCanvas:Clear()
+
+
+    self:InvalidateSprites()
     
     -- if(data.selectRect ~= nil and (data.selectRect.Width == 0 or data.selectRect.Height == 0)) then
     --   data.selectRect = nil
@@ -663,67 +651,69 @@ function PaintTool:DrawOnCanvas(mousePos)
 
             self:InvalidateCanvas()
 
-        -- elseif(data.tool == "select") then
+        elseif(self.tool == "select") then
 
-        -- if(data.mouseState == "pressed") then
+        if(self.mouseState == "pressed") then
 
-        --   if(data.selectRect == nil) then
+          if(self.selectRect == nil) then
 
-        --       data.selectionState = "new"
+            self.selectionState = "new"
 
-        --       data.selectRect = NewRect(data.startPos.x, data.startPos.y, 0, 0)
+            self.selectRect = NewRect(self.startPos.x, self.startPos.y, 0, 0)
 
-        --   else
+          else
             
-        --     if(data.selectRect:Contains(mousePos) == true) then
+            if(self.selectRect:Contains(mousePos) == true) then
 
-        --       data.selectionState = "newmove"
+                self.selectionState = "newmove"
 
-        --       data.moveOffset = NewPoint(data.selectRect.X - mousePos.X, data.selectRect.Y - mousePos.Y)
+                self.moveOffset = NewPoint(self.selectRect.X - mousePos.X, self.selectRect.Y - mousePos.Y)
 
-        --       if(data.selectedPixelData == nil) then
+              if(self.selectedPixelData == nil) then
                 
-        --         data.selectedPixelData = self:CutPixels(data)
-        --       end
+                self.selectedPixelData = self:CutPixels(self)
+              end
 
-        --     else
+            else
 
-        --       self:CancelCanvasSelection(data)
+              self:CancelCanvasSelection(self)
                 
-        --     end
+            end
 
-        --   end
+          end
 
         elseif(self.mouseState == "dragging")  then
 
-        --   if(data.selectRect ~= nil) then
-        --     if(data.selectionState == "new" or data.selectionState == "resize") then
+          if(self.selectRect ~= nil) then
+            if(self.selectionState == "new" or self.selectionState == "resize") then
 
-        --       data.selectionState = "resize"
+                self.selectionState = "resize"
 
-        --       -- print("resize", data.selectRect, mousePos, , )
+              -- print("resize", data.selectRect, mousePos, , )
 
-        --       data.selectRect.X = math.min(data.startPos.X, mousePos.X)
-        --       data.selectRect.Y = math.min(data.startPos.Y, mousePos.Y)
-        --       data.selectRect.Width = Clamp(math.abs(mousePos.X - data.startPos.X), 0, data.tmpPaintCanvas.width)
-        --       data.selectRect.Height = Clamp(math.abs(mousePos.Y - data.startPos.Y), 0, data.tmpPaintCanvas.height)
+              self.selectRect.X = math.min(self.startPos.X, mousePos.X)
+              self.selectRect.Y = math.min(self.startPos.Y, mousePos.Y)
+              self.selectRect.Width = Clamp(math.abs(mousePos.X - self.startPos.X), 0, self.tmpPaintCanvas.width)
+              self.selectRect.Height = Clamp(math.abs(mousePos.Y - self.startPos.Y), 0, self.tmpPaintCanvas.height)
 
-        --     else
+            else
 
 
-        --       editorUI.cursorID = 2
+              editorUI.cursorID = 2
 
-        --       data.selectRect.X = mousePos.X + data.moveOffset.X --  data.selectionSize.X
-        --       data.selectRect.Y = mousePos.Y + data.moveOffset.Y --  data.selectionSize.Y
+              self.selectRect.X = mousePos.X + self.moveOffset.X --  data.selectionSize.X
+              self.selectRect.Y = mousePos.Y + self.moveOffset.Y --  data.selectionSize.Y
             
 
-        --       data.selectionState = "move"
+              self.selectionState = "move"
 
-        --     end
-        --   end
+            end
+          end
+          
 
-        -- end
+        end
 
+        print("Selection", dump(self.selectRect))
 
 
         elseif(self.tool == "eyedropper") then
@@ -743,3 +733,59 @@ function PaintTool:DrawOnCanvas(mousePos)
 
 end
 
+function PixelVisionOS:CutPixels()
+
+  if(self.selectRect == nil) then
+    return
+  end
+
+  local selection =
+  {
+    size = NewRect(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
+  }
+
+  selection.pixelData = self.paintCanvas:GetPixels(selection.size.X, selection.size.Y, selection.size.Width, selection.size.Height)
+
+  -- Convert the mask colors to the tool's mask color
+  for i = 1, #selection.pixelData do
+      if(selection.pixelData[i] == 255) then
+        selection.pixelData[i] = -1
+      end
+  end
+
+  selection.pixelData[i] = 5
+
+  local bgColor = self.showBGColor and gameEditor:BackgroundColor() + 256 or self.emptyColorID
+
+
+  -- Change the stroke to a single pixel of white
+  self.tmpPaintCanvas:SetStroke(bgColor, self.defaultStrokeWidth)
+
+  -- Change the stroke to a single pixel of white
+  self.tmpPaintCanvas:SetPattern({ bgColor }, self.defaultStrokeWidth, self.defaultStrokeWidth)
+
+  -- Adjust right and bottom to account for 1 px border
+  self.tmpPaintCanvas:DrawRectangle(selection.size.Left, selection.size.Top, selection.size.Right - 1, selection.size.Bottom -1, true)
+
+  return selection
+    
+end
+
+function PixelVisionOS:FillCanvasSelection(self, colorID)
+
+  if(self.selectRect == nil) then
+    return
+  end
+
+  if(self.selectedPixelData == nil) then
+    self.selectedPixelData = self:CutPixels(self)
+  end
+
+  for i = 1, #self.selectedPixelData.pixelData do
+    self.selectedPixelData.pixelData[i] = colorID or (self.brushColor + self.colorOffset)
+  end
+
+  --Fire a release event
+  self:CanvasRelease(self, true)
+
+end

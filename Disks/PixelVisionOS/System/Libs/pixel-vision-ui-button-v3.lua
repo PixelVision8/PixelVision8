@@ -25,6 +25,8 @@ function EditorUI:CreateButton(rect, spriteName, toolTip, forceDraw)
   data.doubleClickDelay = .45
   data.doubleClickActive = false
 
+  data.drawMode = DrawMode.TilemapCache
+
   data.buttonCursor = 2
 
   -- By default, we don't want buttons to redraw the background
@@ -171,7 +173,9 @@ function EditorUI:UpdateButton(data, hitRect)
 
     if(spriteData ~= nil) then-- and data.spriteDrawArgs ~= nil) then
 
-      DrawMetaSprite(spriteData, data.rect.x, data.rect.y)
+      DrawMetaSprite(spriteData, data.rect.x, data.rect.y, false, false, DrawMode.UI)
+
+      
 
     end
 
@@ -252,12 +256,16 @@ function EditorUI:RedrawButton(data, stateOverride)
         data.rect.y, 
         false, 
         false, 
-        DrawMode.TilemapCache, 0
+        data.drawMode, 
+        0
       )
       
     end
 
-    self:ResetValidation(data)
+    -- If we are drawing the button into the tilemap we can reset the validation so it doesn't draw on the next frame
+    if(data.drawMode == DrawMode.TilemapCache or data.drawMode == DrawMode.Tile) then
+      self:ResetValidation(data)
+    end
 
   end
 
