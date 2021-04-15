@@ -44,7 +44,7 @@ function PaintTool:UpdateSpriteIndex()
 
         for i = 1, #self.uniqueSprites do
             
-            if(self.uniqueSprites[i] == spriteUID) then
+            if(self.uniqueSprites[i].uid == spriteUID) then
                 index = i
                 break
             end
@@ -59,11 +59,13 @@ function PaintTool:UpdateSpriteIndex()
             local pickerPos = CalculatePosition( #self.uniqueSprites, 16 )
 
             -- Save the unique sprite
-            table.insert(self.uniqueSprites, spriteUID)
+            table.insert(self.uniqueSprites, {uid = spriteUID, pixelData = pixelData})
+
+            local spriteData = {}
 
             -- Shift the pixels into the correct color space
             for i = 1, #pixelData do
-                pixelData[i] = pixelData[i] == -1 and -1 or pixelData[i] + self.colorOffset
+                spriteData[i] = pixelData[i] == -1 and -1 or pixelData[i] + self.colorOffset
             end
 
             -- Set the fill to the mask color
@@ -73,7 +75,7 @@ function PaintTool:UpdateSpriteIndex()
             self.spriteCanvas:DrawRectangle(pickerPos.X * 8, pickerPos.Y * 8, 8, 8, true)
 
             -- Set the sprite as the pattern
-            self.spriteCanvas:SetPattern(pixelData, 8, 8)
+            self.spriteCanvas:SetPattern(spriteData, 8, 8)
 
             -- Draw the sprite to the picker
             self.spriteCanvas:DrawRectangle(pickerPos.X * 8, pickerPos.Y * 8, 8, 8, true)
@@ -105,6 +107,8 @@ function PaintTool:UpdateSpriteIndex()
 
             -- Reset the validation
             self:ResetSpriteInvalidation()
+
+            self:RebuildBrushPreview()
             
             self.indexingSprites = false
 

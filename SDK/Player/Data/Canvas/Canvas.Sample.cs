@@ -22,6 +22,12 @@ namespace PixelVision8.Player
 {
     public sealed partial class Canvas
     {
+        public void SetPixelAt(int x, int y, int value)
+        {
+            var index = x + y * Width;
+            defaultLayer[index] = value;
+        }
+
         public int ReadPixelAt(int x, int y)
         {
             // Calculate the index

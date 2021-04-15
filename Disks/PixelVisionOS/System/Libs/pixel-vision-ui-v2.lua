@@ -153,15 +153,18 @@ function EditorUI:CreateData(rect, spriteName, toolTip, forceDraw)
 
 end
 
-function EditorUI:RebuildMetaSpriteCache(data, invalidate)
+function EditorUI:RebuildMetaSpriteCache(data, spriteName)
 
-    -- invalidate = invalidate or true
-    local spriteName = data.spriteName
-
-    -- TODO this should cache the meta sprite id
+    -- Look for the sprite name or use the one that is provided
+    spriteName = spriteName or data.spriteName
 
     -- If a sprite name is provided then look for the correct sprite states
     if(spriteName ~= nil) then
+
+        -- Make sure the sprite name is up to date
+        data.spriteName = spriteName
+
+        -- Find meta sprites for each of the button states
         data.cachedMetaSpriteIds = {
             up = FindMetaSpriteId(spriteName .. "up"),
             down = FindMetaSpriteId(spriteName .. "down" ~= nil and spriteName .. "down" or spriteName .. "selectedup"),
@@ -172,8 +175,10 @@ function EditorUI:RebuildMetaSpriteCache(data, invalidate)
             disabled = FindMetaSpriteId(spriteName .. "disabled"),
             empty = FindMetaSpriteId(spriteName .. "empty") -- used to clear the sprites
         }
+
     end
 
+    -- Invalidate the button so it redraws on the next frame
     self:Invalidate(data)
 
 end

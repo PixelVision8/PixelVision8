@@ -36,8 +36,6 @@ function PaintTool:CreatePickerPanel()
     
     self.currentCanvas = nil
 
-    self.pickerMode = nil
-
     self.totalPages = 0
     self.currentPage = 0
 
@@ -78,10 +76,13 @@ function PaintTool:CreatePickerPanel()
     self.nextButton.onAction = function() self:OnPickerNext() end
 
     self.pickerModes = {ColorMode, SpriteMode, FlagMode}
-    self.pickerMode = 0
+    self.totalModes = #self.pickerModes
 
+    -- We set the mode to the last value since we call OnNextMode below and it will increase the mode by 1 and wrap around
+    self.pickerMode = self.pickerModes[self.totalModes] -- TODO need to make this load the last mode
+    
     -- Create states
-    for i = 1, #self.pickerModes do
+    for i = 1, self.totalModes do
 
         self.pickerPanel[self.pickerModes[i] .. "State"] ={
             selectedPos = {id = -1},
@@ -252,25 +253,22 @@ function PaintTool:ChangeMode(value)
 
     self.pickerMode = value
 
-    local modeLabel = self.pickerModes[value]
+    self.currentState = self.pickerPanel[self.pickerMode .. "State"]
 
-
-    self.currentState = self.pickerPanel[modeLabel .. "State"]
-
-    if(modeLabel == ColorMode) then
+    if(self.pickerMode == ColorMode) then
 
         self.currentCanvas = self.colorCanvas
 
         self:IndexColors()
 
-    elseif(modeLabel == SpriteMode) then
+    elseif(self.pickerMode == SpriteMode) then
 
         -- Get all of the unique sprites from the canvas
         self.currentCanvas = self.spriteCanvas
     
         self:IndexSprites()
 
-    elseif(modeLabel == FlagMode) then
+    elseif(self.pickerMode == FlagMode) then
 
         self.currentCanvas = self.flagCanvas
 
@@ -283,12 +281,13 @@ function PaintTool:ChangeMode(value)
 
     end
 
-    -- Recalculate pages based on the canvas
+    -- Update the state button to show the correct graphic
+    editorUI:RebuildMetaSpriteCache(self.modeButton, self.pickerMode .. "mode")
+
+    -- TODO This should just be calculated by the picker
     self.totalPages = math.ceil(self.currentState.pickerTotal / 16) - 1
 
-    -- Reset current page
-    
-
+    -- Select the last picker state
     self:OnPickerSelection(self.currentState.selectedId)
 
 end
@@ -323,13 +322,37 @@ function PaintTool:OnPickerSelection(value)
 
     -- print("Test", self.pickerMode, self.pickerModes[self.pickerMode], ColorMode)
 
-    if(self.pickerModes[self.pickerMode] == ColorMode) then
+    self:RebuildBrushPreview()
+    
+    
+
+end
+
+function PaintTool:RebuildBrushPreview()
+
+    if(self.indexingSprites == true) then
+        return
+    end
+
+    if(self.pickerMode == ColorMode) then
         
-        self.brushColor  = value
+        self.brushColor  = self.currentState.selectedId
         -- self.tmpPaintCanvas:SetStroke(value + self.colorOffset, 1)
 
+        self.brushCanvas:Resize(self.defaultStrokeWidth, self.defaultStrokeWidth)
+        self.brushCanvas:Clear(self.brushColor)
+        
+    elseif(self.pickerMode == SpriteMode) then
+
+        self.brushCanvas:Resize(8, 8)
+        
+        self.brushCanvas:SetPixels(self.uniqueSprites[self.currentState.selectedId + 1].pixelData)
+
+    elseif(self.pickerMode == FlagMode) then
+
+
+
     end
-    
 
 end
 
@@ -367,44 +390,47 @@ end
 
 function PaintTool:OnNextMode()
 
+    local modeIndex = table.indexOf(self.pickerModes, self.pickerMode)
+
     -- Loop backwards through the button sizes
     if(Key(Keys.LeftShift) or reverse == true) then
-        self.pickerMode = self.pickerMode - 1
+        modeIndex = modeIndex - 1
 
-        if(self.pickerMode < 1) then
-            self.pickerMode = #self.pickerModes
+        if(modeIndex < 1) then
+            modeIndex = self.totalModes
         end
 
     else
-        self.pickerMode = self.pickerMode + 1
+        modeIndex = modeIndex + 1
 
-        if(self.pickerMode > #self.pickerModes) then
-            self.pickerMode = 1
+        if(modeIndex > self.totalModes) then
+            modeIndex = 1
         end
     end
 
-    local newMode = self.pickerModes[self.pickerMode]
+    -- local newMode = 
 
     -- Find the next sprite for the button
-    local spriteName = newMode .. "mode"
+    -- local spriteName = newMode .. "mode"
 
-    -- Change sprite button graphic
-    self.modeButton.cachedMetaSpriteIds = {
-        up = FindMetaSpriteId(spriteName .. "up"),
-        down = FindMetaSpriteId(spriteName .. "down") ~= -1 and FindMetaSpriteId(spriteName .. "down") or FindMetaSpriteId(spriteName .. "selectedup"),
-        over = FindMetaSpriteId(spriteName .. "over"),
-        selectedup = FindMetaSpriteId(spriteName .. "selectedup"),
-        selectedover = FindMetaSpriteId(spriteName .. "selectedover"),
-        selecteddown = FindMetaSpriteId(spriteName .. "selecteddown") ~= -1 and FindMetaSpriteId(spriteName .. "selecteddown") or FindMetaSpriteId(spriteName .. "selectedover"),
-        disabled = FindMetaSpriteId(spriteName .. "disabled"),
-        empty = FindMetaSpriteId(spriteName .. "empty") -- used to clear the sprites
-    }
+    
+    -- -- Change sprite button graphic
+    -- self.modeButton.cachedMetaSpriteIds = {
+    --     up = FindMetaSpriteId(spriteName .. "up"),
+    --     down = FindMetaSpriteId(spriteName .. "down") ~= -1 and FindMetaSpriteId(spriteName .. "down") or FindMetaSpriteId(spriteName .. "selectedup"),
+    --     over = FindMetaSpriteId(spriteName .. "over"),
+    --     selectedup = FindMetaSpriteId(spriteName .. "selectedup"),
+    --     selectedover = FindMetaSpriteId(spriteName .. "selectedover"),
+    --     selecteddown = FindMetaSpriteId(spriteName .. "selecteddown") ~= -1 and FindMetaSpriteId(spriteName .. "selecteddown") or FindMetaSpriteId(spriteName .. "selectedover"),
+    --     disabled = FindMetaSpriteId(spriteName .. "disabled"),
+    --     empty = FindMetaSpriteId(spriteName .. "empty") -- used to clear the sprites
+    -- }
 
-    -- self:ConfigureSpritePickerSelector(self.pickerMode)
+    -- -- self:ConfigureSpritePickerSelector(self.pickerMode)
 
-    editorUI:Invalidate(self.modeButton)
+    -- editorUI:Invalidate(self.modeButton)
 
-    self:ChangeMode(self.pickerMode)
+    self:ChangeMode(self.pickerModes[modeIndex])
 
 end
 
