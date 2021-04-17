@@ -79,6 +79,7 @@ function PaintTool:CreateToolbar()
         {"eyedropper", "fill"}
     }
 
+    self.shapeTools = 3
 
     self.toolbarPos = NewPoint(4, 23)
 
@@ -107,6 +108,7 @@ function PaintTool:CreateToolbar()
     -- TODO this should restore the last tool selection (also need to account for sub tool if previously selected)
     self:OnPickTool(1, false)
 
+
     pixelVisionOS:RegisterUI({name = "OnUpdateToolbar"}, "UpdateToolbar", self, true)
 
 end
@@ -132,10 +134,16 @@ function PaintTool:OnPickTool(value, displayOptions)
     end
 
     if(displayOptions ~= false) then
-        
-        self:OpenOptionMenu(value)
+
+        self.optionMenuOpen = true
 
     end
+        
+    self:OpenOptionMenu(value)
+
+    -- self.optionMenuOpen = displayOptions
+
+    -- end
 
     self.lastSelection = value
 
@@ -232,7 +240,7 @@ end
 
 function PaintTool:OpenOptionMenu(value)
 
-    self.optionMenuOpen = true
+    -- self.optionMenuOpen = true
 
 
     if(value == self.lastSelection) then

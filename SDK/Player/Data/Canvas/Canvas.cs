@@ -235,6 +235,8 @@ namespace PixelVision8.Player
         }
 
 
+        // TODO Make sure there is a SetPixels where you can pass in coordinates 
+        
         public void Draw()
         {
             if (Invalid == false)

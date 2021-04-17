@@ -17,8 +17,8 @@ function PaintTool:IndexSprites()
 
     self.spriteCounter = 0
     
-    self.spriteColumns = math.ceil(self.imageCanvas.Width / 8)
-    self.spriteRows = math.ceil(self.imageCanvas.Height / 8)
+    self.spriteColumns = math.ceil(self.imageLayerCanvas.Width / 8)
+    self.spriteRows = math.ceil(self.imageLayerCanvas.Height / 8)
 
     self.currentState.pickerTotal = self.spriteColumns * self.spriteRows
 
@@ -36,7 +36,7 @@ function PaintTool:UpdateSpriteIndex()
 
         local tilePos = CalculatePosition( self.spriteCounter, self.spriteColumns )
 
-        local pixelData = self.imageCanvas:GetPixels(tilePos.X * 8, tilePos.Y * 8, 8 , 8)
+        local pixelData = self.imageLayerCanvas:GetPixels(tilePos.X * 8, tilePos.Y * 8, 8 , 8)
 
         local spriteUID = table.concat(pixelData,",")
 

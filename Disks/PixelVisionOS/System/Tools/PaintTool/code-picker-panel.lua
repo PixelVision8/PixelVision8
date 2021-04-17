@@ -180,6 +180,10 @@ function PaintTool:UpdatePickerPanel(timeDelta)
         end
     end
 
+    if(self.invalidBrush == true) then
+        self:RebuildBrushPreview()
+    end
+
 end
 
 function PaintTool:ClearPickerFocus()
@@ -290,6 +294,9 @@ function PaintTool:ChangeMode(value)
     -- Select the last picker state
     self:OnPickerSelection(self.currentState.selectedId)
 
+    self:InvalidateCanvas()
+    self:RebuildBrushPreview()
+
 end
 
 function PaintTool:OnPickerSelection(value)
@@ -318,42 +325,108 @@ function PaintTool:OnPickerSelection(value)
 
     self:GoToPickerPage(self.currentState.selectedPos.page)
 
-    -- Switch mode on canvas
-
-    -- print("Test", self.pickerMode, self.pickerModes[self.pickerMode], ColorMode)
-
-    self:RebuildBrushPreview()
+    self:InvalidateBrushPreview()
     
-    
+end
+
+function PaintTool:InvalidateBrushPreview()
+
+    self.invalidBrush = true
+
+end
+
+function PaintTool:ResetBrushInvalidation()
+
+    self.invalidBrush = false
 
 end
 
 function PaintTool:RebuildBrushPreview()
 
-    if(self.indexingSprites == true) then
+    
+    -- TODO need to make this indexing more generic if other processes are going on like setting up the flags
+    if(self.invalidBrush == false or self.indexingSprites == true) then
         return
     end
 
+    self:ResetBrushInvalidation()
+
+    -- Check to see which picker mode we are in
     if(self.pickerMode == ColorMode) then
         
-        self.brushColor  = self.currentState.selectedId
-        -- self.tmpPaintCanvas:SetStroke(value + self.colorOffset, 1)
-
+        -- Set the brush color based on the current color selection or to the mask color if we are using the eraser
+        self.brushColor  = self.tool == "eraser" and self.maskColor or self.currentState.selectedId
+        
+        -- Resize the brush to the stroke and clear it with the brush color
         self.brushCanvas:Resize(self.defaultStrokeWidth, self.defaultStrokeWidth)
         self.brushCanvas:Clear(self.brushColor)
-        
-    elseif(self.pickerMode == SpriteMode) then
 
-        self.brushCanvas:Resize(8, 8)
-        
-        self.brushCanvas:SetPixels(self.uniqueSprites[self.currentState.selectedId + 1].pixelData)
+        self.brushColorOffset = self.colorOffset
 
-    elseif(self.pickerMode == FlagMode) then
-
-
+        editorUI:Enable(self.toolButtons[self.shapeTools], true)
+    
+        return
 
     end
 
+    -- Resize the brush to the sprite's default size
+    self.brushCanvas:Resize(8, 8)
+
+    -- Resize the brush to the sprite's default size
+    self.brushCanvas:Resize(8, 8)
+
+    self.brushColorOffset = self.colorOffset
+
+    if(self.tool == "eraser") then
+        
+        -- Clear the brush canvas with the mask color
+        self.brushCanvas:Clear(self.maskColor)
+
+    else
+
+        if(self.pickerMode == SpriteMode) then
+        
+            -- Copy the sprite pixel data into the brush canvas
+            self.brushCanvas:SetPixels(self.uniqueSprites[self.currentState.selectedId + 1].pixelData)
+    
+        elseif(self.pickerMode == FlagMode) then
+    
+            -- TODO calculate the flag's grid position
+            local pos = CalculatePosition( self.currentState.selectedId, 16 )
+
+            self.brushCanvas:SetPixels(self.currentCanvas:GetPixels(pos.X * 8, pos.Y * 8, 8, 8))
+    
+            self.brushColorOffset = 0
+        end
+
+    end
+
+    self:DisableShapeTools()
+    
+end
+
+function PaintTool:DisableShapeTools()
+
+    local shapeToolButton = self.toolButtons[self.shapeTools]
+
+
+    print("shapeToolButton", shapeToolButton)
+    if(shapeToolButton.selected == true) then
+
+        shapeToolButton.selected = false
+
+
+        self:OnPickTool(self.shapeTools - 1, false)
+        -- local penToolButton = self.toolButtons[self.shapeTools - 1]
+
+        -- penToolButton.selected = true
+        -- editorUI:Invalidate(penToolButton)
+
+        -- self:OnSelectTool(penToolButton.spriteName)
+
+    end
+
+    editorUI:Enable(shapeToolButton, false)
 end
 
 function PaintTool:OnPickerBack()

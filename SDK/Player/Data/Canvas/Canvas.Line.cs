@@ -41,7 +41,7 @@ namespace PixelVision8.Player
             newRequest.Bounds.X = x0;
             newRequest.Bounds.Y = y0;
 
-            // Well be using the wid as the second point
+            // Well be using the width as the second point
             newRequest.Bounds.Width = x1;
             newRequest.Bounds.Height = y1;
 

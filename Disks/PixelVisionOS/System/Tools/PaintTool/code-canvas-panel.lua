@@ -14,7 +14,7 @@ function PaintTool:CreateCanvasPanel()
       name = "canvasPanel"
   }
 
-  self.tmpPaintCanvas = nil
+  self.tmpLayerCanvas = nil
   self.viewportRect = NewRect(8, 48+8, 224, 160-8)
   self.boundaryRect = NewRect(0,0,0,0)
   self.displayInvalid = true
@@ -60,17 +60,26 @@ function PaintTool:CreateCanvasPanel()
   -- Get the image pixels
   local pixelData = self.image.GetPixels()
 
+
+  -- Used to track the pixel shift in the selection outline
+  self.selectionTime = 0
+  self.selectionDelay = .2
+  self.selectionShift = 0
+
   -- Create a new canvas
-  self.imageCanvas = NewCanvas(math.ceil(self.image.width/8) * 8, math.ceil(self.image.height/8) * 8)
-  self.imageCanvas:Clear()
+  self.imageLayerCanvas = NewCanvas(math.ceil(self.image.width/8) * 8, math.ceil(self.image.height/8) * 8)
+  self.imageLayerCanvas:Clear()
   
    -- Copy the modified image pixel data over to the new canvas
-  self.imageCanvas.SetPixels(0, 0, self.image.Width, self.image.Height, pixelData)
+  self.imageLayerCanvas.SetPixels(0, 0, self.image.Width, self.image.Height, pixelData)
   
-  
-  
-  self.tmpPaintCanvas = NewCanvas(self.imageCanvas.Width, self.imageCanvas.Height)
-  self.tmpPaintCanvas.Clear(-1);
+  self.tmpLayerCanvas = NewCanvas(self.imageLayerCanvas.Width, self.imageLayerCanvas.Height)
+  self.tmpLayerCanvas.Clear();
+
+  -- TODO need to parse any flag image or json file in the game project
+  self.flagLayerCanvas = NewCanvas( self.imageLayerCanvas.Width, self.imageLayerCanvas.Height )
+  self.flagLayerCanvas.Clear()
+
   
   self.vSliderData = editorUI:CreateSlider({x = 235-3, y = 44+3 + 8, w = 10, h = 193-24 - 7 - 8}, "vsliderhandle", "Scroll text vertically.")
   self.vSliderData.onAction = function(value) self:OnVerticalScroll(value) end
@@ -89,46 +98,65 @@ function PaintTool:CreateCanvasPanel()
   pixelVisionOS:RegisterUI({name = "OnDrawCanvasPanel"}, "DrawCanvasPanel", self)
 
   self.onClick = function()
-      print("On Click")
+      print("On Click", self.canvasPanel.inFocus)
 
+      -- Trigger the canvas release
       self:CanvasRelease(true)
+
+      -- End undo
+      pixelVisionOS:EndUndo(self)
 
   end
 
   self.triggerOnFirstPress = function()
 
     -- TODO start undo
+    print("On Press", self.canvasPanel.inFocus, editorUI.inFocusUI.name, self.canvasPanel.name, self.optionMenuOpen)
 
+    -- Check to make sure the press happens when the canvas actually has focus to avoid trigger when closing button menu over canvas
+    if(editorUI.inFocusUI.name ~= self.canvasPanel.name or self.optionMenuOpen == true) then
+      return
+    end
+    
+    print("Press registered?")
+    
+    -- Begin undo
+    pixelVisionOS:BeginUndo(self)
 
     -- Reset the canvas stroke before we start drawing
     self:ResetCanvasStroke()
 
+    -- TODO should this be on release?
     -- Trigger fill here since it only happens on the fist press
     if(self.tool == "fill") then
 
       -- Update the fill color
-      self.tmpPaintCanvas:SetPattern({self.brushColor}, 1, 1)
+      self.imageLayerCanvas:SetPattern({self.brushColor}, 1, 1)
 
-      self.tmpPaintCanvas:FloodFill(self.startPos.x, self.startPos.y)
+      self.imageLayerCanvas:FloodFill(self.startPos.x, self.startPos.y)
 
-      editorUI:Invalidate(self)
+      -- No need to merge the tmp layer since we are drawing directly into the image layer
+      self.mergerTmpLayer = false
+
+      self:InvalidateCanvas()
+
     end
     
     -- Trigger first press callback
-    if(self.onFirstPress ~= nil) then
+    -- if(self.onFirstPress ~= nil) then
 
-      self.onFirstPress()
+    --   self.onFirstPress()
 
-      editorUI:Invalidate(self)
+    --   editorUI:Invalidate(self)
       
-    end
+    -- end
 
   end
   
 
 end
 
-function PaintTool:InvalidateCanvas()
+function PaintTool:InvalidateCanvas(mergeTmpLayer)
   self.displayInvalid = true
 end
 
@@ -158,6 +186,13 @@ function PaintTool:UpdateCanvasPanel(timeDelta)
       return
 
   end
+
+  if(self.optionMenuOpen == true) then
+    return
+  end
+
+  
+  -- pri/nt("Canvas Focus", self.canvasPanel.inFocus, editorUI.inFocusUI)
 
   -- -- Make sure we don't detect a collision if the mouse is down but not over this button
   -- if(editorUI.collisionManager.mouseDown and self.canvasPanel.inFocus == false) then
@@ -190,16 +225,36 @@ function PaintTool:UpdateCanvasPanel(timeDelta)
 
   if(self.viewportRect.Contains(editorUI.mouseCursor.pos) == true or overrideFocus) then
 
-      if(self.canvasPanel.inFocus ~= true and editorUI.inFocusUI == nil) then
-          editorUI:SetFocus(self.canvasPanel, self.currentCursorID)
+
+      -- TODO need to adjust for scroll and scale
+      self.mousePos.X = math.floor((editorUI.collisionManager.mousePos.x - self.viewportRect.X)/ self.scale) + self.scaledViewport.X
+      self.mousePos.Y = math.floor((editorUI.collisionManager.mousePos.y - self.viewportRect.Y)/ self.scale) + self.scaledViewport.Y
+      
+      if(self.selectRect ~= nil) then
+        
+        -- If the mouse is inside of the select rect, change the icon
+        if(self.selectRect:Contains(self.mousePos) == true) then
+
+          -- Change the cursor to the drag hand
+          self.currentCursorID = 9
+
+        else
+
+          -- Reset the cursor when you leave the selection area
+          self.currentCursorID = self.defaultCursorID
+          
+        end
+
       end
+
+      -- Force a focus change to up date the cursor
+      editorUI:SetFocus(self.canvasPanel, self.currentCursorID)
+      
 
       if(self.canvasPanel.inFocus == true) then
 
-          -- TODO need to adjust for scroll and scale
-          self.mousePos.X = math.floor((editorUI.collisionManager.mousePos.x - self.viewportRect.X)/ self.scale) + self.scaledViewport.X
-          self.mousePos.Y = math.floor((editorUI.collisionManager.mousePos.y - self.viewportRect.Y)/ self.scale) + self.scaledViewport.Y
           
+         
 
           -- print("Mouse Pos", dump(editorUI.collisionManager.mousePos), "adjusted", tmpPos, self.scaledViewport.X)
 
@@ -379,13 +434,67 @@ function PaintTool:DrawCanvasPanel()
       self.scale,
       -1,
       -1,
-      self.colorOffset,
+      self.brushColorOffset,
       self.brushMaskRect
     )
 
   end
+
+  if(self.selectRect ~= nil) then
+
+     -- Increment selection timer
+    self.selectionTime = self.selectionTime + editorUI.timeDelta
+
+    -- print("self.selectionTime", self.selectionTime)
+    if(self.selectionTime > self.selectionDelay) then
+      self.selectionShift = self.selectionShift == 0 and 1 or 0
+      self.selectionTime = 0
+      -- print("Change Shift")
+    end
+
+
+    -- Clear the tmp layer
+    self.tmpLayerCanvas:Clear()
+
+
+    if(self.selectedPixelData ~= nil) then
+
+      -- if(Key(Keys.LeftShift) or Key(Keys.RightShift)) then
+
+      -- Check to see if the selection is ignoring transparency
+      if(self.selectionUsesMaskColor == true) then
+
+        self.tmpLayerCanvas:Clear(self.maskColor, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
+
+      end
+      
+        -- pr/int("")
+        -- self.tmpLayerCanvas:Clear(0, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
+        -- print("self.selection", self.selectRect, dump(self.selectedPixelData))
+        -- Copy over selected pixel data
+      -- end
+
+      self.tmpLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData)
+
+    end
+    -- Redraw the selection
+
+    -- Redraw the selection rect
+    self.tmpLayerCanvas:SetStroke(15, 1)
+
+    -- self.selectionShift = 0
+
+    -- self.tmpLayerCanvas:DrawRectangle(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
+
+    self:DrawSelectionRectangle(self.tmpLayerCanvas, self.selectRect, self.selectionShift)
+
+    -- self:DrawSelectionLine(self.tmpLayerCanvas, self.selectRect.Top, self.selectRect.Left, self.selectRect.Right, self.selectRect.Bottom)
+
+    self:InvalidateCanvas()
+
+  end
   
-  if(self.displayInvalid == true and pixelVisionOS:IsModalActive() == false) then
+  if(self.displayInvalid == true) then
 
       if(self.clearBG) then
           -- print("Refresh background")
@@ -395,14 +504,21 @@ function PaintTool:DrawCanvasPanel()
       end
       
       -- Draw the pixel data in the upper left hand cornver of the tool's window
-      self.imageCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.maskColor, self.colorOffset, self.scaledViewport)
+      self.imageLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.maskColor, self.colorOffset, self.scaledViewport)
 
-      self.tmpPaintCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.emptyColorID, self.colorOffset, self.scaledViewport)
+      self.tmpLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.emptyColorID, self.colorOffset, self.scaledViewport)
       
+      if(self.pickerMode == FlagMode) then
+        
+        self.flagLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.emptyColorID, 0, self.scaledViewport)
+
+      end
       
       self.displayInvalid = false
 
   end
+
+  
 
 end
 
@@ -438,20 +554,20 @@ function PaintTool:ChangeScale(value)
  
   self.scale = value--Clamp(value, 1, 8)
 
-  local imageWidth = math.floor(self.imageCanvas.width * self.scale)
-  local imageHeight = math.floor(self.imageCanvas.height * self.scale)
+  local imageWidth = math.floor(self.imageLayerCanvas.width * self.scale)
+  local imageHeight = math.floor(self.imageLayerCanvas.height * self.scale)
 
   local viewWidth = math.floor(self.viewportRect.Width / self.scale)
   local viewHeight = math.floor(self.viewportRect.Height / self.scale)
 
-  self.scaledViewport.Width = Clamp(viewWidth, 1, math.max(imageWidth, self.imageCanvas.width)) --math.min(self.viewportRect.Width, math.min(self.tmpPaintCanvas.width * self.scale, math.ceil(self.viewportRect.Width / self.scale)))
-  self.scaledViewport.Height = Clamp(viewHeight, 1, math.max(imageHeight, self.imageCanvas.height))--, self.viewportRect.Height) --math.min(self.viewportRect.Height, math.min(self.tmpPaintCanvas.height * self.scale, math.ceil(self.viewportRect.Height / self.scale)))
+  self.scaledViewport.Width = Clamp(viewWidth, 1, math.max(imageWidth, self.imageLayerCanvas.width)) --math.min(self.viewportRect.Width, math.min(self.tmpLayerCanvas.width * self.scale, math.ceil(self.viewportRect.Width / self.scale)))
+  self.scaledViewport.Height = Clamp(viewHeight, 1, math.max(imageHeight, self.imageLayerCanvas.height))--, self.viewportRect.Height) --math.min(self.viewportRect.Height, math.min(self.tmpLayerCanvas.height * self.scale, math.ceil(self.viewportRect.Height / self.scale)))
 
 
-  print("self.scaledViewport", dump(self.scaledViewport))
+  -- print("self.scaledViewport", dump(self.scaledViewport))
   -- Calculate the boundary for scrolling
-  self.boundaryRect.Width = self.imageCanvas.width - self.scaledViewport.Width
-  self.boundaryRect.Height = self.imageCanvas.height - self.scaledViewport.Height
+  self.boundaryRect.Width = self.imageLayerCanvas.width - self.scaledViewport.Width
+  self.boundaryRect.Height = self.imageLayerCanvas.height - self.scaledViewport.Height
 
   editorUI:Enable(self.hSliderData, self.boundaryRect.Width > 0)
 
@@ -533,6 +649,15 @@ end
 
 function PaintTool:ChangeCanvasTool(toolName, cursorID)
 
+  print("Change Tool", toolName)
+
+  -- Clear the selection when changing tools/
+  if(self.selectRect ~= nil) then
+    
+    print("Change clear canvas")
+    self:CancelCanvasSelection()
+  end
+  
 
   if(toolName == "circlefill") then
 
@@ -548,14 +673,11 @@ function PaintTool:ChangeCanvasTool(toolName, cursorID)
       self.fill = false
   end
 
-  print("Change Tool", toolName)
+  
 
   self.tool = toolName
 
-  -- Clear the selection when changing tools/
-  if(self.tool ~= "selection" and self.selectRect ~= nil) then
-    self:CancelCanvasSelection()
-  end
+  
 
   -- TODO need to add in support for hand, pointer, etc
 
@@ -576,22 +698,49 @@ function PaintTool:ChangeCanvasTool(toolName, cursorID)
   -- Save the new cursor for tools that need to restore
   self.defaultCursorID = self.currentCursorID
 
+  self:InvalidateBrushPreview()
+
 end
 
-function PaintTool:CancelCanvasSelection(mergeSelection, action)
+function PaintTool:CancelCanvasSelection()
 
-  -- if(mergeSelection ~= false and data.selectedPixelData ~= nil) then
-  --   data.tmpPaintCanvas:SetPixels(data.selectRect.Left, data.selectRect.Top, data.selectedPixelData.size.Width, data.selectedPixelData.size.Height, data.selectedPixelData.pixelData)
-  -- end
- 
-  -- data.selectedPixelData = nil
-  -- data.selectionState = "none"
-  -- data.selectRect = nil
-  
-  -- if(action ~= false) then
-  --   --Fire a release event
-  --   self:CanvasRelease(data, true)
-  -- end
+  -- TODO Undo is not working
+  pixelVisionOS:BeginUndo(self)
+
+  -- Look to see if there is pixel data from the current selection
+  if(self.selectedPixelData ~= nil) then
+
+    -- Check to see if the selection is ignoring transparency
+    if(self.selectionUsesMaskColor == true) then
+
+      self.imageLayerCanvas:Clear(-1, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
+
+    end
+    
+    -- Draw pixel data to the image
+    self.imageLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData)
+    
+    -- Clear the pixel data
+    self.selectedPixelData = nil
+
+  end
+
+  -- Clear the selection state
+  self.selectionState = "none"
+
+  -- Clear the selection rect
+  self.selectRect = nil
+
+  -- Reset the mask flag
+  self.selectionUsesMaskColor = false
+
+  -- Force the display to clear the tmp layer canvas
+  self.tmpLayerCanvas:Clear()
+
+  -- Invalidate the display so it redraws on the next frame
+  self:InvalidateCanvas()
+
+  pixelVisionOS:EndUndo(self)
 
 end
 
@@ -600,84 +749,93 @@ function PaintTool:CanvasRelease(callAction)
 
   print("Canvas Release")
 
-  -- TODO end undo
+  -- Check to see if a selection was just resized
+  if(self.selectRect ~= nil and self.selectionState == "resize") then
+
+    -- Clamp X and Y values
+    self.selectRect.X = math.max(self.selectRect.X, 0)
+    self.selectRect.Y = math.max(self.selectRect.Y, 0)
+
+    -- Clamp the Width
+    if(self.selectRect.X + self.selectRect.Width > self.imageLayerCanvas.Width) then
+      self.selectRect.Width = self.selectRect.Width - ((self.selectRect.X + self.selectRect.Width) - self.imageLayerCanvas.Width)
+    end
+
+    -- Clamp the Height
+    if(self.selectRect.Y + self.selectRect.Height > self.imageLayerCanvas.Height) then
+      self.selectRect.Height = self.selectRect.Height - ((self.selectRect.Y + self.selectRect.Height) - self.imageLayerCanvas.Height)
+    end
+
+    -- Test to see if the selection is valid
+    if(self.selectRect.Width == 0 or self.selectRect.Height == 0) then
+
+      -- Clear any pixel data
+      self.selectedPixelData = nil
+
+      -- Clear the selection values
+      self:CancelCanvasSelection()
+
+    else
+
+      -- Make sure we don't already have selected pixel data
+      if(self.selectedPixelData == nil) then
+
+        print("Cut pixels")
+        -- Cut the pixels
+        self.selectedPixelData = self:CutPixels()
+
+      end
+
+    end
+
+  end
+
+  -- Reset the selection state
+  self.selectionState = "none"
 
   -- Clear the start position
   self.startPos = nil
-
   self.lastPenX = nil
   self.lastPenY = nil
 
+  -- Clear the mouse state
   self.mouseState = self.mouseState == "released" and "up" or "released"
 
-  -- -- Merge the pixel data from the tmp canvas into the main canvas before it renders
-  -- data.tmpPaintCanvas:MergeCanvas(self.tmpPaintCanvas, 0, true)
+  if(self.mergerTmpLayer == true ) then
 
-  -- TODO we can optimize this by passing in a rect for the area to merge
-  self.imageCanvas:MergeCanvas(self.tmpPaintCanvas, 0, true)
+  --   -- TODO we can optimize this by passing in a rect for the area to merge
+    self.imageLayerCanvas:MergeCanvas(self.tmpLayerCanvas, 0, true)
 
-  -- -- Clear the canvas
-  self.tmpPaintCanvas:Clear()
+    self.mergerTmpLayer = false
+    
+  end
 
+  -- Clear the canvas
+  self.tmpLayerCanvas:Clear()
+
+  self:InvalidateCanvas()
 
   self:InvalidateSprites()
   
-  -- if(self.selectRect ~= nil and (self.selectRect.Width == 0 or self.selectRect.Height == 0)) then
-  --   self.selectRect = nil
-  -- end
-
-  -- if(self.selectionCanvas.invalid == true) then
-
-  --   self.selectionCanvas:ResetValidation()
-
-  -- end
-
-  -- local oldPixelData = nil
-
-  -- if(data.selectedPixelData ~= nil) then
-
-  --   oldPixelData = data.tmpPaintCanvas:GetPixels()
-
-  --  --TODO need to test for a special key down and toggle ignoring transparency
-  --  data.ignoreMaskColor = true
-    
-  --   data.tmpPaintCanvas:SetPixels(data.selectRect.Left, data.selectRect.Top, data.selectedPixelData.size.Width, data.selectedPixelData.size.Height, data.selectedPixelData.pixelData)
-    
-
-  -- end
-
-  -- -- trigger the canvas action callback
-  -- if(data.onAction ~= nil and callAction ~= false) then
-
-  -- -- Trigger the onAction call back and pass in the double click value if the button is set up to use it
-  -- data.onAction()
-
-  -- end
-
-  -- if(oldPixelData ~= nil) then
-  --     data.tmpPaintCanvas:SetPixels(oldPixelData)
-  --     --data.tmpPaintCanvas:Invalidate()
-  -- end
-
 end
 
 function PaintTool:ResetCanvasStroke()
 
-  print("ResetCanvasStroke")
+  -- print("ResetCanvasStroke")
 
   if(self.tool == "pen") then
     
-    self.imageCanvas:SetStroke(self.brushColor, self.defaultStrokeWidth)
+    self.imageLayerCanvas:SetStroke(self.brushColor, self.defaultStrokeWidth)
 
   elseif(self.tool == "eraser") then
 
-    self.imageCanvas:SetStroke(self.emptyColorID, self.defaultStrokeWidth)
+    self.imageLayerCanvas:SetStroke(self.emptyColorID, self.defaultStrokeWidth)
 
   else
 
     -- Change the stroke to a single pixel
-    self.tmpPaintCanvas:SetStroke(self.brushColor, self.defaultStrokeWidth)--realBrushColor, )
-    self.tmpPaintCanvas:SetPattern({self.brushColor}, 1, 1)
+    self.tmpLayerCanvas:SetStroke(self.brushColor, self.defaultStrokeWidth)--realBrushColor, )
+    self.tmpLayerCanvas:SetPattern({self.brushColor}, 1, 1)
 
   end
 
@@ -685,21 +843,22 @@ end
 
 function PaintTool:DrawOnCanvas(mousePos)
 
--- TODO some tools should snap to grid when holding down shift
+  -- TODO some tools should snap to grid when holding down shift
 
-if(self.pickerMode ~= ColorMode) then
+  if(self.pickerMode ~= ColorMode) then
+    
+  --   print("Snap to grid")
+  --   -- TODO need to snap values to the grid
+    self.startPos.X = self:SnapToGrid(self.startPos.X)
+    self.startPos.Y = self:SnapToGrid(self.startPos.Y)
+
+    mousePos.X = self:SnapToGrid(mousePos.X)
+    mousePos.Y = self:SnapToGrid(mousePos.Y)
+
+  end
+
   
---   print("Snap to grid")
---   -- TODO need to snap values to the grid
-  self.startPos.X = self:SnapToGrid(self.startPos.X)
-  self.startPos.Y = self:SnapToGrid(self.startPos.Y)
 
-  mousePos.X = self:SnapToGrid(mousePos.X)
-  mousePos.Y = self:SnapToGrid(mousePos.Y)
-
-end
-
- 
   -- print("self.startPos", self.startPos, "mousePos", mousePos)
 
   -- Get the start position for a new drawing
@@ -708,19 +867,17 @@ end
       -- Test for the data.tool and perform a draw action
       if(self.tool == "pen" or self.tool == "eraser") then
 
-        if(self.lastPenX ~= self.startPos.X or self.lastPenY ~= self.startPos.Y) then
+        local targetCanvas = self.pickerMode == FlagMode and self.flagLayerCanvas or self.imageLayerCanvas
 
-          -- print("Pen Draw", self.lastPenX, self.startPos.X, self.lastPenY, self.startY)
+        if(self.lastPenX ~= self.startPos.X or self.lastPenY ~= self.startPos.Y) then
 
           if(self.pickerMode == ColorMode) then
 
-            self.imageCanvas:DrawLine(self.startPos.x, self.startPos.y, mousePos.x, mousePos.y)
+            targetCanvas:DrawLine(self.startPos.x, self.startPos.y, mousePos.x, mousePos.y)
 
           else
-            
-            local pixelData = self.tool == "pen" and self.brushCanvas.GetPixels() or self.emptyPixelData
-
-            self.imageCanvas:MergePixels(self.startPos.x, self.startPos.y, 8, 8, pixelData, false, false, 0, false)
+     
+            targetCanvas:MergePixels(self.startPos.x, self.startPos.y, self.brushCanvas.Width, self.brushCanvas.Height, self.brushCanvas:GetPixels(), false, false, 0, false)
 
           end
 
@@ -733,44 +890,34 @@ end
 
         self.startPos = NewPoint(mousePos.x, mousePos.y)
 
-      elseif(self.tool == "eraser") then
-
-        if(self.lastPenX ~= self.startPos.X or self.lastPenY ~= self.startY) then
-          -- Change the stroke the empty color
-          self.imageCanvas:SetStroke(self.emptyColorID, self.defaultStrokeWidth)
-
-          self.imageCanvas:DrawLine(self.startPos.x, self.startPos.y, mousePos.x, mousePos.y)
-          self.startPos = NewPoint(mousePos.x, mousePos.y)
-
-          -- self:InvalidateCanvas()
-
-          self.lastPenX = self.startPos.X
-          self.lastPenY = self.startPos.Y
-
-        end
+        -- Don't merge tmp layer since we are not using it
+        self.mergerTmpLayer = false
 
       elseif(self.tool == "line") then
 
-          self.tmpPaintCanvas:Clear()
+          self.tmpLayerCanvas:Clear()
 
           -- self:ResetCanvasStroke()
 
-          self.tmpPaintCanvas:DrawLine(self.startPos.x, self.startPos.y, mousePos.x, mousePos.y, self.fill)
+          self.tmpLayerCanvas:DrawLine(self.startPos.x, self.startPos.y, mousePos.x, mousePos.y, self.fill)
 
           -- force the paint canvas to redraw
           --data.tmpPaintCanvas:Invalidate()
+
+          -- Need to merge tmp layer after drawing
+          self.mergerTmpLayer = true
 
           self:InvalidateCanvas()
 
       elseif(self.tool == "rectangle") then
 
 
-          self.tmpPaintCanvas:Clear()
+          self.tmpLayerCanvas:Clear()
 
           -- self:ResetCanvasStroke()
 
           -- TODO this is fixed in the canvas
-          self.tmpPaintCanvas:DrawRectangle(
+          self.tmpLayerCanvas:DrawRectangle(
               math.min(self.startPos.x, mousePos.x), 
               math.min(self.startPos.y, mousePos.y),
               math.abs(mousePos.x - self.startPos.x)+ 1,
@@ -778,16 +925,19 @@ end
               self.fill
           )
 
+          -- Need to merge tmp layer after drawing
+          self.mergerTmpLayer = true
+
           self:InvalidateCanvas()
 
       elseif(self.tool == "circle") then
 
-          self.tmpPaintCanvas:Clear()
+          self.tmpLayerCanvas:Clear()
 
           -- self:ResetCanvasStroke()
 
           -- TODO this is fixed in the canvas
-          self.tmpPaintCanvas:DrawEllipse(
+          self.tmpLayerCanvas:DrawEllipse(
               math.min(self.startPos.x, mousePos.x),
               math.min(self.startPos.y, mousePos.y),
               math.abs(mousePos.x - self.startPos.x)+ 1,
@@ -795,77 +945,83 @@ end
               self.fill
           )
 
+          -- Need to merge tmp layer after drawing
+          self.mergerTmpLayer = true
+
           self:InvalidateCanvas()
 
       elseif(self.tool == "select") then
 
-      if(self.mouseState == "pressed") then
+        if(self.mouseState == "pressed") then
 
-        if(self.selectRect == nil) then
+          if(self.selectRect == nil) then
 
-          self.selectionState = "new"
+            self.selectionState = "new"
 
-          self.selectRect = NewRect(self.startPos.x, self.startPos.y, 0, 0)
+            self.selectRect = NewRect(self.startPos.x, self.startPos.y, 0, 0)
 
-        else
-          
-          if(self.selectRect:Contains(mousePos) == true) then
+          else
+            
+            if(self.selectRect:Contains(mousePos) == true) then
 
-              self.selectionState = "newmove"
+                self.selectionState = "newmove"
 
-              self.moveOffset = NewPoint(self.selectRect.X - mousePos.X, self.selectRect.Y - mousePos.Y)
+                self.moveOffset = NewPoint(self.selectRect.X - mousePos.X, self.selectRect.Y - mousePos.Y)
 
-            if(self.selectedPixelData == nil) then
               
-              self.selectedPixelData = self:CutPixels(self)
+
+            else
+
+              -- Cancel the selection
+              self:CancelCanvasSelection(self)
+                
             end
 
-          else
-
-            self:CancelCanvasSelection(self)
-              
           end
 
-        end
+        elseif(self.mouseState == "dragging")  then
 
-      elseif(self.mouseState == "dragging")  then
+          if(self.selectRect ~= nil) then
+            
+            if(self.selectionState == "new" or self.selectionState == "resize") then
 
-        if(self.selectRect ~= nil) then
-          if(self.selectionState == "new" or self.selectionState == "resize") then
+                self.selectionState = "resize"
 
-              self.selectionState = "resize"
+              -- print("resize", data.selectRect, mousePos, , )
 
-            -- print("resize", data.selectRect, mousePos, , )
+              self.selectRect.X = math.min(self.startPos.X, mousePos.X)
+              self.selectRect.Y = math.min(self.startPos.Y, mousePos.Y)
+              self.selectRect.Width = Clamp(math.abs(mousePos.X - self.startPos.X), 0, self.imageLayerCanvas.width)
+              self.selectRect.Height = Clamp(math.abs(mousePos.Y - self.startPos.Y), 0, self.imageLayerCanvas.height)
 
-            self.selectRect.X = math.min(self.startPos.X, mousePos.X)
-            self.selectRect.Y = math.min(self.startPos.Y, mousePos.Y)
-            self.selectRect.Width = Clamp(math.abs(mousePos.X - self.startPos.X), 0, self.tmpPaintCanvas.width)
-            self.selectRect.Height = Clamp(math.abs(mousePos.Y - self.startPos.Y), 0, self.tmpPaintCanvas.height)
+            else
 
-          else
+              editorUI.cursorID = 2
 
+              self.selectRect.X = mousePos.X + self.moveOffset.X --  data.selectionSize.X
+              self.selectRect.Y = mousePos.Y + self.moveOffset.Y --  data.selectionSize.Y
 
-            editorUI.cursorID = 2
+              self.selectionState = "move"
 
-            self.selectRect.X = mousePos.X + self.moveOffset.X --  data.selectionSize.X
-            self.selectRect.Y = mousePos.Y + self.moveOffset.Y --  data.selectionSize.Y
+            end
+          end
           
 
-            self.selectionState = "move"
-
-          end
         end
-        
 
-      end
+        -- No need to merge tmp layer since the selection tool will do this manually
+        self.mergerTmpLayer = false
 
-      print("Selection", dump(self.selectRect))
+      -- print("Selection", dump(self.selectRect))
 
 
       elseif(self.tool == "eyedropper") then
 
           -- TODO this doesn't appear to do anything
-          self.overColor = self.tmpPaintCanvas:ReadPixelAt(mousePos.x, mousePos.y) - self.colorOffset
+          self.overColor = self.tmpLayerCanvas:ReadPixelAt(mousePos.x, mousePos.y) - self.colorOffset
+
+          -- Need to merge tmp layer after drawing
+          self.mergerTmpLayer = false
 
       -- if(self.overColor > pixelVisionOS.colorsPerSprite) then
       --     self.overColor = -1
@@ -879,59 +1035,72 @@ end
 
 end
 
-function PixelVisionOS:CutPixels()
+function PaintTool:CutPixels(clearArea)
 
-if(self.selectRect == nil) then
-  return
-end
+  if(self.selectRect == nil) then
+    return
+  end
 
-local selection =
-{
-  size = NewRect(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
-}
+  -- TODO calling this again just incase ?
+  pixelVisionOS:BeginUndo(self)
 
-selection.pixelData = self.paintCanvas:GetPixels(selection.size.X, selection.size.Y, selection.size.Width, selection.size.Height)
+  local pixelData = self.imageLayerCanvas:GetPixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
 
--- Convert the mask colors to the tool's mask color
-for i = 1, #selection.pixelData do
-    if(selection.pixelData[i] == 255) then
-      selection.pixelData[i] = -1
-    end
-end
-
-selection.pixelData[i] = 5
-
-local bgColor = self.showBGColor and gameEditor:BackgroundColor() + 256 or self.emptyColorID
-
-
--- Change the stroke to a single pixel of white
-self.tmpPaintCanvas:SetStroke(bgColor, self.defaultStrokeWidth)
-
--- Change the stroke to a single pixel of white
-self.tmpPaintCanvas:SetPattern({ bgColor }, self.defaultStrokeWidth, self.defaultStrokeWidth)
-
--- Adjust right and bottom to account for 1 px border
-self.tmpPaintCanvas:DrawRectangle(selection.size.Left, selection.size.Top, selection.size.Right - 1, selection.size.Bottom -1, true)
-
-return selection
+  -- We need to do some pixel clean up to swap between the transparent color and mask color to they act correctly when moving pixel data
   
+  -- Check if the shift key is down
+  if(Key(Keys.LeftShift) or Key(Keys.RightShift)) then
+    
+    self.selectionUsesMaskColor = true
+    -- -- Loop through all of the pixels
+    -- for i = 1, #pixelData do
+      
+    --   -- If the color is empty, replace it with the mask color
+    --   if(pixelData[i] == -1) then
+    --     pixelData[i] = self.maskColor
+    --   end
+
+    -- end
+
+  end
+
+  if(clearArea ~= false) then
+    
+    -- Adjust right and bottom to account for 1 px border
+    self.imageLayerCanvas:Clear(-1, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
+
+    -- Invalidate the canvas since we just cleared the selection area
+    self:InvalidateCanvas()
+
+  end
+
+  return pixelData
+
 end
 
-function PixelVisionOS:FillCanvasSelection(self, colorID)
+function PaintTool:FillCanvasSelection(colorID)
 
-if(self.selectRect == nil) then
-  return
-end
+  -- pixelVisionOS:BeginUndo(self)
+  
+  if(self.selectRect == nil) then
+    return
+  end
 
-if(self.selectedPixelData == nil) then
-  self.selectedPixelData = self:CutPixels(self)
-end
+  if(self.selectedPixelData ~= nil) then
 
-for i = 1, #self.selectedPixelData.pixelData do
-  self.selectedPixelData.pixelData[i] = colorID or (self.brushColor + self.colorOffset)
-end
+    self.selectedPixelData[i] = colorID
 
---Fire a release event
-self:CanvasRelease(self, true)
+  end
+  
+  self:InvalidateCanvas()
+
+  -- self.imageLayerCanvas:Clear(colorID or self.brushColor, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
+
+  --Fire a release event
+  -- self:CanvasRelease(self, true)
+
+  
+
+  -- pixelVisionOS:EndUndo(self)
 
 end

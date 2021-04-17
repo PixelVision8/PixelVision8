@@ -20,6 +20,7 @@ LoadScript( "code-toolbar" )
 LoadScript( "code-index-sprites" )
 LoadScript( "code-index-colors" )
 LoadScript( "code-index-flags" )
+LoadScript( "code-selection" )
 
 function CreateTool()
   return PaintTool:Init()
@@ -40,6 +41,8 @@ function PaintTool:Init()
 
     -- Create a global reference of the new workspace tool
     setmetatable(_paintTool, PaintTool)
+
+    pixelVisionOS:ResetUndoHistory(_paintTool)
 
     -- Get the target file
     
@@ -78,14 +81,14 @@ function PaintTool:LoadSuccess()
     -- Get the last color index for the offset
 
     -- TODO need to limit the number of colors the tool has to reduce the color offset
-    self.colorOffset = 16
-    self.maskColor = self.colorOffset
+    self.colorOffset = 17
+    self.maskColor = self.colorOffset - 1 
 
     Color(self.maskColor, "FF00FF")
 
     -- Add the image colors to the color chip
     for i = 1, #imageColors do
-        Color(self.colorOffset - 1 + i , imageColors[i])
+        Color(self.colorOffset + i - 1 , imageColors[i])
     end
 
     -- TODO display message if there are more colors than the tool can show
@@ -96,12 +99,12 @@ function PaintTool:LoadSuccess()
 
     -- Configure the menu
     self:CreateDropDownMenu()
+  
+    self:CreateToolbar()
 
     self:CreateCanvasPanel()
 
     self:CreatePickerPanel()
-
-    self:CreateToolbar()
 
     -- Reset Tool Validation
     self:ResetDataValidation()
