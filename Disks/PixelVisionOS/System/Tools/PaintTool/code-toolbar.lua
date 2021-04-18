@@ -243,10 +243,10 @@ function PaintTool:OpenOptionMenu(value)
     -- self.optionMenuOpen = true
 
 
-    if(value == self.lastSelection) then
+    -- if(value == self.lastSelection) then
         
-        return
-    end
+    --     return
+    -- end
 
     -- Save option buttons
     local optionButtonLabels = self:GetToolButton(self.toolOptions[value], self.toolButtons[value].spriteName)

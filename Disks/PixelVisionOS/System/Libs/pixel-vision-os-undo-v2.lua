@@ -125,8 +125,8 @@ end
 
 function PixelVisionOS:UpdateHistoryButtons(data)
 
-  self:EnableMenuItem(data.UndoShortcut, self:IsUndoable(data))
-  self:EnableMenuItem(data.RedoShortcut, self:IsRedoable(data))
+  self:EnableMenuItemByName("Undo", self:IsUndoable(data))
+  self:EnableMenuItemByName("Redo", self:IsRedoable(data))
 
 end
 

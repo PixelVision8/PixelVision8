@@ -20,6 +20,9 @@
 function PixelVisionOS:SystemCopy(data)
 
     SetClipboardText(data)
+
+    -- Enable the paste menu
+    self:EnableMenuItemByName("Paste")
     
 end
 

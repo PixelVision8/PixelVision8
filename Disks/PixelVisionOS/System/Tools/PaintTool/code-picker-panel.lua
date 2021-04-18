@@ -238,6 +238,21 @@ function PaintTool:DrawPickerPanel()
         end
     end
 
+    if(self.pickerMode == ColorMode) then
+
+        -- TODO Calculate icon position
+        DrawMetaSprite( "iconmask", self.pickerPanelRect.X, self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
+
+        local pos = CalculatePosition( self.backgroundColorId, 16 )
+
+        -- local page = pos/16
+
+        -- TODO make sure we are on the right page first and use the page for the Y position
+        DrawMetaSprite( "iconbgcolor", (pos.X * 8) + self.pickerPanelRect.X, (pos.Y * 8) + self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
+
+
+    end
+
 end
 
 function PaintTool:ClearCurrentCanvas()
@@ -255,6 +270,7 @@ end
 
 function PaintTool:ChangeMode(value)
 
+    -- TODO this is not protected from picking a bad mode
     self.pickerMode = value
 
     self.currentState = self.pickerPanel[self.pickerMode .. "State"]
@@ -301,6 +317,7 @@ end
 
 function PaintTool:OnPickerSelection(value)
 
+    print(value)
 
     value = Clamp(value, 0, self.currentState.pickerTotal)
 
@@ -349,32 +366,29 @@ function PaintTool:RebuildBrushPreview()
         return
     end
 
-    self:ResetBrushInvalidation()
-
     -- Check to see which picker mode we are in
     if(self.pickerMode == ColorMode) then
         
         -- Set the brush color based on the current color selection or to the mask color if we are using the eraser
-        self.brushColor  = self.tool == "eraser" and self.maskColor or self.currentState.selectedId
+        self.brushColor = self.tool == "eraser" and self.maskColor or self.currentState.selectedId - 1
         
-        -- Resize the brush to the stroke and clear it with the brush color
-        self.brushCanvas:Resize(self.defaultStrokeWidth, self.defaultStrokeWidth)
-        self.brushCanvas:Clear(self.brushColor)
+        -- Clear the entire brush
+        self.brushCanvas:Clear()
+
+        -- Fill the brush with the brush color based on the stroke size
+        self.brushCanvas:Clear(self.brushColor, 0, 0, self.defaultStrokeWidth, self.defaultStrokeWidth)
 
         self.brushColorOffset = self.colorOffset
 
         editorUI:Enable(self.toolButtons[self.shapeTools], true)
     
+        self:ResetBrushInvalidation()
+
         return
 
     end
 
-    -- Resize the brush to the sprite's default size
-    self.brushCanvas:Resize(8, 8)
-
-    -- Resize the brush to the sprite's default size
-    self.brushCanvas:Resize(8, 8)
-
+    -- Set the brush color to match the correct color offset
     self.brushColorOffset = self.colorOffset
 
     if(self.tool == "eraser") then
@@ -400,6 +414,8 @@ function PaintTool:RebuildBrushPreview()
         end
 
     end
+
+    self:ResetBrushInvalidation()
 
     self:DisableShapeTools()
     

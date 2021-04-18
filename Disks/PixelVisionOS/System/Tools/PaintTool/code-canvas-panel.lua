@@ -60,6 +60,7 @@ function PaintTool:CreateCanvasPanel()
   -- Get the image pixels
   local pixelData = self.image.GetPixels()
 
+  self.backgroundMode = 1
 
   -- Used to track the pixel shift in the selection outline
   self.selectionTime = 0
@@ -69,7 +70,13 @@ function PaintTool:CreateCanvasPanel()
   -- Create a new canvas
   self.imageLayerCanvas = NewCanvas(math.ceil(self.image.width/8) * 8, math.ceil(self.image.height/8) * 8)
   self.imageLayerCanvas:Clear()
+
+  self.backgroundLayerCanvas = NewCanvas( self.imageLayerCanvas.Width, self.imageLayerCanvas.Height )
+
+  self:InvalidateBackground()
   
+  
+
    -- Copy the modified image pixel data over to the new canvas
   self.imageLayerCanvas.SetPixels(0, 0, self.image.Width, self.image.Height, pixelData)
   
@@ -104,7 +111,7 @@ function PaintTool:CreateCanvasPanel()
       self:CanvasRelease(true)
 
       -- End undo
-      pixelVisionOS:EndUndo(self)
+      -- pixelVisionOS:EndUndo(self)
 
   end
 
@@ -121,7 +128,7 @@ function PaintTool:CreateCanvasPanel()
     print("Press registered?")
     
     -- Begin undo
-    pixelVisionOS:BeginUndo(self)
+    -- pixelVisionOS:BeginUndo(self)
 
     -- Reset the canvas stroke before we start drawing
     self:ResetCanvasStroke()
@@ -166,6 +173,13 @@ end
 
 function PaintTool:UpdateCanvasPanel(timeDelta)
 
+
+   -- Update the slider
+   editorUI:UpdateSlider(self.vSliderData)
+
+   -- Update the slider
+   editorUI:UpdateSlider(self.hSliderData)
+   
   -- Ignore the update if the option menu is open
   -- if(self.optionMenuOpen == true) then
   --   return
@@ -195,27 +209,58 @@ function PaintTool:UpdateCanvasPanel(timeDelta)
   -- pri/nt("Canvas Focus", self.canvasPanel.inFocus, editorUI.inFocusUI)
 
   -- -- Make sure we don't detect a collision if the mouse is down but not over this button
-  -- if(editorUI.collisionManager.mouseDown and self.canvasPanel.inFocus == false) then
+  if(editorUI.collisionManager.mouseDown and self.canvasPanel.inFocus == false) then
   --     -- See if the button needs to be redrawn.
   --     self:InvalidateCanvas()
-  --     return
-  -- end
+      return
+  end
 
   -- Change the scale
-  if(Key(Keys.OemMinus, InputState.Released) and self.scaleMode > 1) then
+  if(Key(Keys.OemMinus, InputState.Released)) then
+
+    -- Zoom out if the crtl key is down
+    if((Key(Keys.LeftControl) or Key(Keys.RightControl)) and self.scaleMode > 1) then
+
       self:OnNextZoom(true)
-  elseif(Key(Keys.OemPlus, InputState.Released) and self.scaleMode <= #self.scaleValues) then
+
+    else
+
+      -- TODO each tool should have its own specific thickness
+      self.defaultStrokeWidth = math.max(self.defaultStrokeWidth - 1, 1)
+
+      self:InvalidateBrushPreview()
+
+    end
+
+  elseif(Key(Keys.OemPlus, InputState.Released)) then
+  
+    -- Zoom in if the crtl key is down
+    if((Key(Keys.LeftControl) or Key(Keys.RightControl)) and self.scaleMode <= #self.scaleValues) then
+
       self:OnNextZoom()
+
+    else
+
+      -- TODO each tool should have its own specific thickness
+      self.defaultStrokeWidth = math.min(self.defaultStrokeWidth + 1, 4)
+
+      self:InvalidateBrushPreview()
+
+    end
+  
+  elseif(Key(Keys.Delete) or Key(Keys.Back)) then
+    
+    if(self.selectRect ~= nil) then
+
+      self:Delete()
+
+    end
   end
 
   -- -- Only update the tool's UI when the modal isn't active
   -- if(self.targetFile ~= nil and self.toolLoaded == true) then
 
-      -- Update the slider
-      editorUI:UpdateSlider(self.vSliderData)
-
-      -- Update the slider
-      editorUI:UpdateSlider(self.hSliderData)
+   
 
   -- end
 
@@ -233,7 +278,7 @@ function PaintTool:UpdateCanvasPanel(timeDelta)
       if(self.selectRect ~= nil) then
         
         -- If the mouse is inside of the select rect, change the icon
-        if(self.selectRect:Contains(self.mousePos) == true) then
+        if(self.selectRect:Contains(self.mousePos) == true and self.selectionState ~= "resize") then
 
           -- Change the cursor to the drag hand
           self.currentCursorID = 9
@@ -244,6 +289,11 @@ function PaintTool:UpdateCanvasPanel(timeDelta)
           self.currentCursorID = self.defaultCursorID
           
         end
+
+      else
+
+        -- Reset the cursor when you leave the selection area
+        self.currentCursorID = self.defaultCursorID
 
       end
 
@@ -354,18 +404,18 @@ end
 function PaintTool:DrawCanvasPanel()
 
   --  Render a preview of the brush if the mouse is inside of the canvas
-  if(self.canvasPanel.inFocus == true) then
+  if(self.canvasPanel.inFocus == true and self.showBrushPreview) then
 
     -- Adjust mouse position inside of the canvas with scale
     local tmpX = ((self.mousePos.X - self.scaledViewport.X) * self.scale)
     local tmpY = ((self.mousePos.Y - self.scaledViewport.Y) * self.scale)
-
+    
+    -- Calculate scroll offset
+    local scrollXOffset = (self.scaledViewport.X % 8)
+    local scrollYOffset = (self.scaledViewport.Y % 8)
+    
     -- We don't need to clip or snap the brush to the grid in color mode
     if(self.pickerMode ~= ColorMode) then
-
-      -- Calculate scroll offset
-      local scrollXOffset = (self.scaledViewport.X % 8)
-      local scrollYOffset = (self.scaledViewport.Y % 8)
 
       -- Adjust the tmp X and Y position to account for the scroll offset
       tmpX = tmpX + (scrollXOffset * self.scale)
@@ -375,6 +425,7 @@ function PaintTool:DrawCanvasPanel()
       tmpX = self:SnapToGrid(tmpX, self.scale * 8) - (scrollXOffset * self.scale)
       tmpY = self:SnapToGrid(tmpY, self.scale * 8) - (scrollYOffset * self.scale)
       
+    end
       -- Calculate horizontal clipping
       if(tmpX < 0) then
 
@@ -423,7 +474,7 @@ function PaintTool:DrawCanvasPanel()
       self.brushMaskRect.Width = Clamp( self.brushMaskRect.Width, 0, self.brushCanvas.Width )
       self.brushMaskRect.Height = Clamp( self.brushMaskRect.Height, 0, self.brushCanvas.Height )
 
-    end
+    -- end
 
     -- Draw the brush
     self.brushCanvas:DrawPixels(
@@ -452,14 +503,11 @@ function PaintTool:DrawCanvasPanel()
       -- print("Change Shift")
     end
 
-
     -- Clear the tmp layer
     self.tmpLayerCanvas:Clear()
 
 
     if(self.selectedPixelData ~= nil) then
-
-      -- if(Key(Keys.LeftShift) or Key(Keys.RightShift)) then
 
       -- Check to see if the selection is ignoring transparency
       if(self.selectionUsesMaskColor == true) then
@@ -468,27 +516,11 @@ function PaintTool:DrawCanvasPanel()
 
       end
       
-        -- pr/int("")
-        -- self.tmpLayerCanvas:Clear(0, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
-        -- print("self.selection", self.selectRect, dump(self.selectedPixelData))
-        -- Copy over selected pixel data
-      -- end
-
       self.tmpLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData)
 
     end
-    -- Redraw the selection
-
-    -- Redraw the selection rect
-    self.tmpLayerCanvas:SetStroke(15, 1)
-
-    -- self.selectionShift = 0
-
-    -- self.tmpLayerCanvas:DrawRectangle(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
-
+    
     self:DrawSelectionRectangle(self.tmpLayerCanvas, self.selectRect, self.selectionShift)
-
-    -- self:DrawSelectionLine(self.tmpLayerCanvas, self.selectRect.Top, self.selectRect.Left, self.selectRect.Right, self.selectRect.Bottom)
 
     self:InvalidateCanvas()
 
@@ -502,9 +534,11 @@ function PaintTool:DrawCanvasPanel()
           self.clearBG = false
       
       end
+
+      self.backgroundLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.maskColor, 0, self.scaledViewport)
       
       -- Draw the pixel data in the upper left hand cornver of the tool's window
-      self.imageLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.maskColor, self.colorOffset, self.scaledViewport)
+      self.imageLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.maskColor, -1, self.colorOffset, self.scaledViewport)
 
       self.tmpLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.emptyColorID, self.colorOffset, self.scaledViewport)
       
@@ -635,6 +669,7 @@ function PaintTool:ClearBackground()
   
   local total = cols * (self.viewportRect.Height / 8)
 
+  
   local spriteId = MetaSprite( "emptycolor" ).Sprites[1].Id
 
   for i = 1, total do
@@ -653,8 +688,6 @@ function PaintTool:ChangeCanvasTool(toolName, cursorID)
 
   -- Clear the selection when changing tools/
   if(self.selectRect ~= nil) then
-    
-    print("Change clear canvas")
     self:CancelCanvasSelection()
   end
   
@@ -673,7 +706,13 @@ function PaintTool:ChangeCanvasTool(toolName, cursorID)
       self.fill = false
   end
 
-  
+  if(toolName == "pointer" or toolName == "hand" or toolName == "select") then
+    self.showBrushPreview = false
+  else
+
+    self.showBrushPreview = true
+
+  end
 
   self.tool = toolName
 
@@ -681,11 +720,28 @@ function PaintTool:ChangeCanvasTool(toolName, cursorID)
 
   -- TODO need to add in support for hand, pointer, etc
 
-  if(self.tool == "pen") then
+  -- TODO this should use the tool button data for the pointer
+  if(self.tool == "pointer") then
+  
+    self.currentCursorID = cursorID or 1
+
+  elseif(self.tool == "hand") then
+
+    self.currentCursorID = cursorID or 9
+  
+  elseif(self.tool == "pen") then
+
+    if(self.pickerMode == ColorMode and self.brushColor < 0) then
+      self:OnPickerSelection(1)
+    end
 
     self.currentCursorID = cursorID or 6
     
   elseif(self.tool == "eraser") then
+
+    if(self.pickerMode == ColorMode and self.brushColor > -1) then
+      self:OnPickerSelection(0)
+    end
 
     self.currentCursorID = cursorID or 7
 
@@ -705,7 +761,7 @@ end
 function PaintTool:CancelCanvasSelection()
 
   -- TODO Undo is not working
-  pixelVisionOS:BeginUndo(self)
+  -- pixelVisionOS:BeginUndo(self)
 
   -- Look to see if there is pixel data from the current selection
   if(self.selectedPixelData ~= nil) then
@@ -717,6 +773,7 @@ function PaintTool:CancelCanvasSelection()
 
     end
     
+    print("COpy Pixels!!!")
     -- Draw pixel data to the image
     self.imageLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData)
     
@@ -740,7 +797,12 @@ function PaintTool:CancelCanvasSelection()
   -- Invalidate the display so it redraws on the next frame
   self:InvalidateCanvas()
 
-  pixelVisionOS:EndUndo(self)
+  -- Disable all of the selection related menu options
+  for i = 1, #self.selectionOptions do
+    pixelVisionOS:EnableMenuItemByName(self.selectionOptions[i], false)
+  end
+
+  -- pixelVisionOS:EndUndo(self)
 
 end
 
@@ -752,19 +814,7 @@ function PaintTool:CanvasRelease(callAction)
   -- Check to see if a selection was just resized
   if(self.selectRect ~= nil and self.selectionState == "resize") then
 
-    -- Clamp X and Y values
-    self.selectRect.X = math.max(self.selectRect.X, 0)
-    self.selectRect.Y = math.max(self.selectRect.Y, 0)
-
-    -- Clamp the Width
-    if(self.selectRect.X + self.selectRect.Width > self.imageLayerCanvas.Width) then
-      self.selectRect.Width = self.selectRect.Width - ((self.selectRect.X + self.selectRect.Width) - self.imageLayerCanvas.Width)
-    end
-
-    -- Clamp the Height
-    if(self.selectRect.Y + self.selectRect.Height > self.imageLayerCanvas.Height) then
-      self.selectRect.Height = self.selectRect.Height - ((self.selectRect.Y + self.selectRect.Height) - self.imageLayerCanvas.Height)
-    end
+    self:ClampSelectionToBounds()
 
     -- Test to see if the selection is valid
     if(self.selectRect.Width == 0 or self.selectRect.Height == 0) then
@@ -780,12 +830,16 @@ function PaintTool:CanvasRelease(callAction)
       -- Make sure we don't already have selected pixel data
       if(self.selectedPixelData == nil) then
 
-        print("Cut pixels")
         -- Cut the pixels
         self.selectedPixelData = self:CutPixels()
 
       end
 
+    end
+
+    -- Clear all of the selection related menu options
+    for i = 1, #self.selectionOptions do
+      pixelVisionOS:EnableMenuItemByName(self.selectionOptions[i], true)
     end
 
   end
@@ -817,6 +871,24 @@ function PaintTool:CanvasRelease(callAction)
 
   self:InvalidateSprites()
   
+end
+
+function PaintTool:ClampSelectionToBounds()
+
+  -- Clamp X and Y values
+  self.selectRect.X = math.max(self.selectRect.X, 0)
+  self.selectRect.Y = math.max(self.selectRect.Y, 0)
+
+  -- Clamp the Width
+  if(self.selectRect.X + self.selectRect.Width > self.imageLayerCanvas.Width) then
+    self.selectRect.Width = self.selectRect.Width - ((self.selectRect.X + self.selectRect.Width) - self.imageLayerCanvas.Width)
+  end
+
+  -- Clamp the Height
+  if(self.selectRect.Y + self.selectRect.Height > self.imageLayerCanvas.Height) then
+    self.selectRect.Height = self.selectRect.Height - ((self.selectRect.Y + self.selectRect.Height) - self.imageLayerCanvas.Height)
+  end
+
 end
 
 function PaintTool:ResetCanvasStroke()
@@ -968,8 +1040,6 @@ function PaintTool:DrawOnCanvas(mousePos)
 
                 self.moveOffset = NewPoint(self.selectRect.X - mousePos.X, self.selectRect.Y - mousePos.Y)
 
-              
-
             else
 
               -- Cancel the selection
@@ -1041,9 +1111,6 @@ function PaintTool:CutPixels(clearArea)
     return
   end
 
-  -- TODO calling this again just incase ?
-  pixelVisionOS:BeginUndo(self)
-
   local pixelData = self.imageLayerCanvas:GetPixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
 
   -- We need to do some pixel clean up to swap between the transparent color and mask color to they act correctly when moving pixel data
@@ -1052,21 +1119,12 @@ function PaintTool:CutPixels(clearArea)
   if(Key(Keys.LeftShift) or Key(Keys.RightShift)) then
     
     self.selectionUsesMaskColor = true
-    -- -- Loop through all of the pixels
-    -- for i = 1, #pixelData do
-      
-    --   -- If the color is empty, replace it with the mask color
-    --   if(pixelData[i] == -1) then
-    --     pixelData[i] = self.maskColor
-    --   end
-
-    -- end
-
+    
   end
 
   if(clearArea ~= false) then
     
-    -- Adjust right and bottom to account for 1 px border
+    
     self.imageLayerCanvas:Clear(-1, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
 
     -- Invalidate the canvas since we just cleared the selection area
@@ -1086,11 +1144,20 @@ function PaintTool:FillCanvasSelection(colorID)
     return
   end
 
-  if(self.selectedPixelData ~= nil) then
+  -- if(self.selectedPixelData ~= nil) then
 
-    self.selectedPixelData[i] = colorID
+  --   self.selectedPixelData[i] = 0
 
-  end
+  -- end
+
+  -- TODO this needs to look at the right canvas based on the mode (image vs flag)
+  self.imageLayerCanvas:Clear(colorID or self.brushColor, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height )
+      
+  -- Clear the select pixel data so it doesn't get saved back to the canvas
+  self.selectedPixelData = nil
+
+  self:CancelCanvasSelection()
+
   
   self:InvalidateCanvas()
 
@@ -1102,5 +1169,30 @@ function PaintTool:FillCanvasSelection(colorID)
   
 
   -- pixelVisionOS:EndUndo(self)
+
+end
+
+function PaintTool:InvalidateBackground()
+
+  if(self.backgroundMode == 1) then
+
+    self.backgroundLayerCanvas:SetStroke(-1, 0)
+    self.backgroundLayerCanvas:SetPattern(Sprite(MetaSprite("emptymaskcolor").Sprites[1].Id), 8, 8)
+    self.backgroundLayerCanvas:DrawRectangle(0, 0, self.backgroundLayerCanvas.Width, self.backgroundLayerCanvas.Height, true)
+
+  elseif(self.backgroundMode == 2) then
+
+
+    self.backgroundLayerCanvas:Clear(self.backgroundColorId + self.colorOffset)
+    -- self.backgroundLayerCanvas:SetPattern(Sprite(MetaSprite("emptymaskcolor").Sprites[1].Id), 8, 8)
+    -- self.backgroundLayerCanvas:DrawRectangle(0, 0, self.backgroundLayerCanvas.Width, self.backgroundLayerCanvas.Height, true)
+
+  else
+
+    self.backgroundLayerCanvas:Clear(-1)
+
+  end
+
+  self:InvalidateCanvas()
 
 end

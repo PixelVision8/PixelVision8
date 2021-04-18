@@ -109,8 +109,8 @@ function MouseCursor:Init()
         {
             spriteData = "cursorhandmove",
             offset = {
-                x = -8,
-                y = -8
+                x = -6,
+                y = -1
             }
         },
     }
