@@ -106,6 +106,9 @@ function PaintTool:LoadSuccess()
 
     self:CreatePickerPanel()
 
+    -- TODO this needs to read from the previous session
+    self:OnSelectTool("pointer")
+
     -- Reset Tool Validation
     self:ResetDataValidation()
     

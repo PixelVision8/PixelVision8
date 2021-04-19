@@ -317,8 +317,6 @@ end
 
 function PaintTool:OnPickerSelection(value)
 
-    print(value)
-
     value = Clamp(value, 0, self.currentState.pickerTotal)
 
     -- Test to see if the selection has changed
@@ -339,6 +337,9 @@ function PaintTool:OnPickerSelection(value)
 
     end
 
+    -- if(self.toolButtons[2].selected ~= true and self.toolButtons[3].selected ~= true) then
+    --     self:OnSelectTool("pen")
+    -- end
 
     self:GoToPickerPage(self.currentState.selectedPos.page)
 
@@ -381,6 +382,7 @@ function PaintTool:RebuildBrushPreview()
         self.brushColorOffset = self.colorOffset
 
         editorUI:Enable(self.toolButtons[self.shapeTools], true)
+        editorUI:Enable(self.toolButtons[self.fillTools], true)
     
         self:ResetBrushInvalidation()
 
@@ -423,26 +425,34 @@ end
 
 function PaintTool:DisableShapeTools()
 
-    local shapeToolButton = self.toolButtons[self.shapeTools]
 
-
-    print("shapeToolButton", shapeToolButton)
-    if(shapeToolButton.selected == true) then
-
-        shapeToolButton.selected = false
-
+    if(self.toolButtons[self.shapeTools].selected == true or self.toolButtons[self.fillTools].selected == true) then
 
         self:OnPickTool(self.shapeTools - 1, false)
-        -- local penToolButton = self.toolButtons[self.shapeTools - 1]
-
-        -- penToolButton.selected = true
-        -- editorUI:Invalidate(penToolButton)
-
-        -- self:OnSelectTool(penToolButton.spriteName)
+        
 
     end
+    -- local shapeToolButton = self.toolButtons[self.shapeTools]
 
-    editorUI:Enable(shapeToolButton, false)
+
+    -- print("shapeToolButton", shapeToolButton)
+    -- if(shapeToolButton.selected == true) then
+
+    --     shapeToolButton.selected = false
+
+
+    --     self:OnPickTool(self.shapeTools - 1, false)
+    --     -- local penToolButton = self.toolButtons[self.shapeTools - 1]
+
+    --     -- penToolButton.selected = true
+    --     -- editorUI:Invalidate(penToolButton)
+
+    --     -- self:OnSelectTool(penToolButton.spriteName)
+
+    -- end
+
+    editorUI:Enable(self.toolButtons[self.shapeTools], false)
+    editorUI:Enable(self.toolButtons[self.fillTools], false)
 end
 
 function PaintTool:OnPickerBack()

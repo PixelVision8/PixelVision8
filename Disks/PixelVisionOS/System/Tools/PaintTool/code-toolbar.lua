@@ -9,11 +9,11 @@ function PaintTool:CreateToolbar()
             key = Keys.V,
             toolTip = "This is the pointer"
         },
-        {
-            name = "hand",
-            key = Keys.Space,
-            toolTip = "This is the pointer"
-        },
+        -- {
+        --     name = "hand",
+        --     key = Keys.Space,
+        --     toolTip = "This is the pointer"
+        -- },
         {
             name = "select",
             key = Keys.M,
@@ -73,13 +73,14 @@ function PaintTool:CreateToolbar()
 
     self.toolOptions ={
 
-        {"pointer", "hand", "select"},
+        {"pointer", "select"}, --"hand", 
         {"pen", "eraser"},
         {"line", "circle", "circlefill", "rectangle", "rectanglefill"},
         {"eyedropper", "fill"}
     }
 
     self.shapeTools = 3
+    self.fillTools = 4
 
     self.toolbarPos = NewPoint(4, 23)
 
@@ -92,46 +93,31 @@ function PaintTool:CreateToolbar()
 
     -- Build tools
     for i = 1, #self.defaultTools do
-
+  
+        -- Shift the offset over to the right
         offsetX = ((i - 1) * 16) + self.toolbarPos.X
+        
+        -- Create the rect for the button
         local rect = {x = offsetX, y = self.toolbarPos.Y, w = 16, h = 16}
 
+        -- Create the new button and its action
         local btn = editorUI:CreateButton(rect, self.defaultTools[i].name, self.defaultTools[i].toolTip .. " - shortcut: ".. tostring(self.defaultTools[i].key))
         btn.onAction = function() self:OnPickTool(i) end
             
+        -- Add the button to the table
         table.insert(self.toolButtons, btn)
 
     end
 
+    -- Save the total number of buttons
     self.totalToolButtons = #self.toolButtons
 
-    -- TODO this should restore the last tool selection (also need to account for sub tool if previously selected)
-    self:OnPickTool(1, false)
-
-
+    -- Register the update loop
     pixelVisionOS:RegisterUI({name = "OnUpdateToolbar"}, "UpdateToolbar", self, true)
 
 end
 
 function PaintTool:OnPickTool(value, displayOptions)
-
-    if(self.lastSelection == value and self.optionMenuJustClosed == true) then
-
-        displayOptions  = false
-
-        -- return
-
-    end
-
-    if(self.lastSelection ~= nil) then
-        
-        local tmpBtn = self.toolButtons[self.lastSelection]
-        
-        tmpBtn.selected = false
-
-        editorUI:Invalidate(tmpBtn)
-
-    end
 
     if(displayOptions ~= false) then
 
@@ -141,23 +127,7 @@ function PaintTool:OnPickTool(value, displayOptions)
         
     self:OpenOptionMenu(value)
 
-    -- self.optionMenuOpen = displayOptions
-
-    -- end
-
-    self.lastSelection = value
-
-    local currentButton = self.toolButtons[self.lastSelection]
-
-    currentButton.selected = true
-
-    editorUI:Invalidate(currentButton, true)
-
-    self:OnSelectTool(currentButton.spriteName)
-
-    
-
-    -- TODO need all the buttons horizontally and then the drop down so everything is selectable
+    self:OnSelectTool(self.toolButtons[value].spriteName)
 
     self.displayOptions = displayOptions
     
@@ -165,69 +135,89 @@ end
 
 function PaintTool:OnSelectTool(value)
 
-    -- self:CloseOptionMenu()
-   
-    if(self.lastSelection == nil) then
+    -- Store values for buttonId and option
+    local buttonId = 0
+    local optionId = 0
+
+    -- Loop through buttons
+    for i = 1, #self.toolOptions do
+        
+        -- Loop through options
+        for j = 1, #self.toolOptions[i] do
+            
+            -- Look for name
+            if(self.toolOptions[i][j] == value) then
+
+                -- Save values since we found the button
+                buttonId = i
+                optionId = j
+
+                -- Exit the for loop
+                break
+
+            end
+
+        end
+
+    end
+
+    -- If no tool was found, exit out of the function
+    if(buttonId == 0 or optionId == 0 or self.toolButtons[buttonId].enabled == false) then
         return
     end
 
-    local btn = self.toolButtons[self.lastSelection]
-    btn.selected = true
-    btn.spriteName = value
+    -- Check to see if we need to unselect the previous button
+    if(self.lastButtonId ~= nil and self.lastButtonId ~= buttonId) then
 
-    -- Find the next sprite for the button
-    local spriteName = btn.spriteName
+        -- Unselect the previous button
+        local tmpBtn = self.toolButtons[self.lastButtonId]
+        
+        -- Set the previous button's selected value to false
+        tmpBtn.selected = false
 
-    -- Change sprite button graphic
-    btn.cachedMetaSpriteIds = {
-        up = FindMetaSpriteId(spriteName .. "up"),
-        down = FindMetaSpriteId(spriteName .. "down") ~= -1 and FindMetaSpriteId(spriteName .. "down") or FindMetaSpriteId(spriteName .. "selectedup"),
-        over = FindMetaSpriteId(spriteName .. "over"),
-        selectedup = FindMetaSpriteId(spriteName .. "selectedup"),
-        selectedover = FindMetaSpriteId(spriteName .. "selectedover"),
-        selecteddown = FindMetaSpriteId(spriteName .. "selecteddown") ~= -1 and FindMetaSpriteId(spriteName .. "selecteddown") or FindMetaSpriteId(spriteName .. "selectedover"),
-        disabled = FindMetaSpriteId(spriteName .. "disabled"),
-        empty = FindMetaSpriteId(spriteName .. "empty") -- used to clear the sprites
-    }
+        -- Invalidate the button it redraws on the next frame
+        editorUI:Invalidate(tmpBtn)
 
-    for i = 1, self.totalToolButtons do
-        editorUI:Invalidate(self.toolButtons[i])
     end
 
-    self:ChangeCanvasTool(spriteName)
+    -- Save the last buttonId
+    self.lastButtonId = buttonId
+
+    -- Select the current button
+    local currentButton = self.toolButtons[self.lastButtonId]
+
+    -- Change the current button's selected value to true
+    currentButton.selected = true
+    
+    -- Rebuild the button's sprite cache with the tool's name
+    editorUI:RebuildMetaSpriteCache(currentButton, value)
+    
+    -- Pass the new tool value over to the canvas
+    self:ChangeCanvasTool(value)
 
 end
 
 function PaintTool:UpdateToolbar()
 
+    -- Check to see if the option menu should be closed
     if(self.optionMenuOpen == true and editorUI.collisionManager.mouseReleased) then
         
+        -- Close the option window
         self:CloseOptionMenu()
         
     end
 
+    -- Update all of the buttons
     for i = 1, self.totalToolButtons do
         
         editorUI:UpdateButton(self.toolButtons[i])
 
     end
 
-    -- editorUI:UpdateToggleGroup(self.toolBtnData)
-
-    if(Key(Keys.LeftControl) == false and Key(Keys.RightControl) == false) then
-
-        -- TODO need to reconnect this based on a master list of keys?
-        -- for i = 1, #toolKeys do
-        --     if(Key(toolKeys[i], InputState.Released)) then
-        --         print("Select Tool", i)
-        --         -- editorUI:SelectToggleButton(self.toolBtnData, i)
-        --         break
-        --     end
-        -- end
-    end
-
+    -- Check if the options menu is open
     if(self.optionMenuOpen == true) then
 
+        -- Loop through all of the option buttons and update them
         for i = 1, #self.optionButtons do
             editorUI:UpdateButton(self.optionButtons[i])
         end
@@ -236,17 +226,24 @@ function PaintTool:UpdateToolbar()
 
     self.optionMenuJustClosed = false
 
+    if(Key(Keys.LeftControl) == false and Key(Keys.RightControl) == false) then
+        -- Loop through all of the tool's data
+        for i = 1, #self.tools do
+            
+            local tmpTool = self.tools[i]
+
+            local usesShift = tmpTool.shift or false
+
+            if(Key(tmpTool.key, InputState.Released) and (Key(Keys.LeftShift) == usesShift or Key(Keys.RightShift) == usesShift)) then
+                self:OnSelectTool(tmpTool.name)
+            end
+
+        end
+    end
+
 end
 
 function PaintTool:OpenOptionMenu(value)
-
-    -- self.optionMenuOpen = true
-
-
-    -- if(value == self.lastSelection) then
-        
-    --     return
-    -- end
 
     -- Save option buttons
     local optionButtonLabels = self:GetToolButton(self.toolOptions[value], self.toolButtons[value].spriteName)

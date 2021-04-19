@@ -24,7 +24,7 @@ function PaintTool:CreateDropDownMenu()
       {name = "Cut", action = function() self:Cut() end, key = Keys.X, enabled = false, toolTip = "Learn about PV8."},
       {name = "Copy", action = function() self:Copy() end, key = Keys.C, enabled = false, toolTip = "Learn about PV8."},
       {name = "Paste", action = function() self:Paste() end, key = Keys.V, enabled = false, toolTip = "Learn about PV8."},
-      {name = "Fill", action = function() self:FillCanvasSelection() end, Keys.F, enabled = false, toolTip = "Learn about PV8."},
+      {name = "Fill", action = function() self:FillCanvasSelection() end, key = Keys.F, enabled = false, toolTip = "Learn about PV8."},
       {name = "Flip H", action = function() self:FlipH() end, key = Keys.H, enabled = false, toolTip = "Learn about PV8."},
       {name = "Flip V", action = function() self:FlipV() end, key = Keys.J, enabled = false, toolTip = "Learn about PV8."},
 
@@ -290,7 +290,7 @@ function PaintTool:OnQuit()
 
 end
 
-function PaintTool:GetState()
+function PaintTool:StoreUndoSnapshot()
 
   -- Select the correct canvas based on image or flag mode
   local srcCanvas = self.pickerMode == FlagMode and self.flagLayerCanvas or self.imageLayerCanvas
@@ -309,17 +309,27 @@ function PaintTool:GetState()
   -- TODO save picker state
   local pickerMode = self.pickerMode
   
-  -- Save the selection rect
-  local selection = self.selectRect
+  local selection = nil
+  local selectionPixelData = nil
 
-  local state = {
+  if(self.selectRect ~= nil) then
+    -- Save the selection rect
+    selection = NewRect( self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height )
+    selectionPixelData = self.selectedPixelData
+
+  end
+
+  self.undoState = {
       
       Action = function()
 
         -- Restore the selection state
-        if(selection ~= nil) then
-          self.selection = NewRect( selection.X, selection.Y, selection.Width, selection.Height )
-        end
+        -- if(selection ~= nil) then
+          self.selectRect = selection
+          self.selectedPixelData = selectionPixelData
+        -- else
+        --   self
+        -- end
 
         -- Check the size of the image layer vs the last saved state
         if(srcCanvas.Width ~= width or srcCanvas.Height ~= height) then
@@ -332,6 +342,9 @@ function PaintTool:GetState()
         -- Restore picker mode
         self:ChangeMode(pickerMode)
 
+        -- Force the tmp canvas to clear
+        self.tmpLayerCanvas:Clear()
+
         -- Force the canvas to redraw
         self:InvalidateCanvas()
 
@@ -339,7 +352,33 @@ function PaintTool:GetState()
 
   }
 
-  return state
+end
+
+function PaintTool:InvalidateUndo(canvas, selection)
+
+  self.canvasInvalid = canvas or true
+  self.selectionInvalid = selection or true
+
+  self.undoValid = true
+  
+end
+
+function PaintTool:ResetUndoValidation()
+  self.undoValid = false
+end
+
+function PaintTool:GetState()
+
+  -- If the previous state is invalid, return the current state
+  if(self.undoValid == false) then
+    self:StoreUndoSnapshot()
+  end
+  
+  -- Reset the state validation
+  self:ResetUndoValidation()
+
+  -- Return the last saved state
+  return self.undoState
 
 end
 
