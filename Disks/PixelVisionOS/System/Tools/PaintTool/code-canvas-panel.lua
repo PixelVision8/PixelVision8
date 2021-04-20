@@ -293,8 +293,13 @@ function PaintTool:UpdateCanvasPanel(timeDelta)
 
     end
 
+    -- TODO the mouse calculation logic needs to be cleaned up since it's duplicated all over the place
+    -- Adjust mouse position inside of the canvas with scale
+    local tmpX = ((self.mousePos.X - self.scaledViewport.X))
+    local tmpY = ((self.mousePos.Y - self.scaledViewport.Y))
+
     -- Change the cursor to the arrow if we are out of the image bounds but still inside of the viewport
-    if(self.mousePos.X < 0 or self.mousePos.Y < 0 or self.mousePos.X > self.scaledViewport.Width or self.mousePos.Y > self.scaledViewport.Height) then
+    if(pixelVisionOS:IsModalActive() ~= true and (tmpX < 0 or tmpY < 0 or tmpX > (self.scaledViewport.Width - 1) or tmpY > self.scaledViewport.Height - 1)) then
       self.currentCursorID = 1
     end
     -- print(editorUI.mouseCursor.pos, self.mousePos.X, self.mousePos.Y, self.viewportRect, self.scaledViewport)
@@ -381,7 +386,6 @@ function PaintTool:SnapToGrid(value, scale)
   
   return self.snapToGrid == true and math.floor(value / scale) * scale or value
 end
-
 
 
 function PaintTool:DrawCanvasPanel()

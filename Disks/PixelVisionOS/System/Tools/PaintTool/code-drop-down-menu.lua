@@ -11,6 +11,10 @@
 
 function PaintTool:CreateDropDownMenu()
 
+  -- create a variable for the edit color modal
+  self.editColorModal = nil
+
+  -- Create a table with all of the menu options
   local menuOptions = 
   {
       -- About ID 1
@@ -34,11 +38,10 @@ function PaintTool:CreateDropDownMenu()
       -- {name = "Line Thinner", action = function()  end, toolTip = "Learn about PV8."},
       
       {divider = true},
-      {name = "Edit Color", action = function()  end, toolTip = "Learn about PV8."},
-      {name = "Outline Color", action = function()  end, toolTip = "Learn about PV8."},
-      {name = "Fill Color", action = function()  end, toolTip = "Learn about PV8."},
-      {name = "BG Color", action = function()  end, toolTip = "Learn about PV8."},
-      {name = "Mask Color", action = function()  end, toolTip = "Learn about PV8."},
+      {name = "Edit Color", action = function() self:OnEditColor() end, enabled = false, key = Keys.E, toolTip = "Learn about PV8."},
+      {name = "Outline Color", action = function() self:OnSetOutlineColor() end, enabled = false, toolTip = "Learn about PV8."},
+      {name = "BG Color", action = function() self:OnSetBackgroundColor() end, enabled = false, toolTip = "Learn about PV8."},
+      {name = "Mask Color", action = function() self.OnEditColor(self.maskColor) end, enabled = false, toolTip = "Learn about PV8."},
 
       {divider = true},
       {name = "Canvas Size", action = function()  end, key = Keys.I, toolTip = "Learn about PV8."},
@@ -57,11 +60,12 @@ function PaintTool:CreateDropDownMenu()
       {name = "Export Flags", action = function()  end, toolTip = "Learn about PV8."},
 
       {divider = true},
-      {name = "Run Game", action = function()  end, key = Keys.R, toolTip = "Learn about PV8."},
+      {name = "Run Game", action = function() self:OnRunGame() end, key = Keys.R, toolTip = "Learn about PV8."},
       {name = "Save", action = function()  end, key = Keys.S, toolTip = "Learn about PV8."},
-      {name = "Quit", key = Keys.Q, action = QuitCurrentTool, toolTip = "Quit the current game."}, -- Quit the current game
+      {name = "Quit", key = Keys.Q, action = function()  self:OnQuit() end, toolTip = "Quit the current game."}, -- Quit the current game
   }
 
+  -- Create a list of menu options that are enabled when the selection tool is active
   self.selectionOptions = {
     "Cut",
     "Copy",
@@ -70,6 +74,15 @@ function PaintTool:CreateDropDownMenu()
     "Flip V",
   }
 
+  self.colorOptions = {
+    "Edit Color",
+    "Outline Color",
+    "Fill Color",
+    "BG Color",
+    "Mask Color",
+  }
+
+  -- Create the menu bar
   pixelVisionOS:CreateTitleBarMenu(menuOptions, "See menu options for this tool.")
 
 end
@@ -235,59 +248,57 @@ end
 function PaintTool:OnRunGame()
 
 
-    local data = {runnerType = self.extension == ".lua" and "lua" or "csharp"}
+  local parentPath = self.targetFilePath.ParentPath
 
-    -- print("runnerType", data["runnerType"], self.extension)
+  if(self.invalid == true) then
 
-    -- if(self.codeMode == true) then
-    --    data["codeFile"] = _textTool.targetFile
-    -- end
+      pixelVisionOS:ShowSaveModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before running the game?", 160,
+        -- Accept
+        function(target)
+          self:OnSave()
+          LoadGame(parentPath.Path)
+        end,
+        -- Decline
+        function (target)
+          LoadGame(parentPath.Path)
+        end,
+        -- Cancel
+        function(target)
+          target.onParentClose()
+        end
+      )
 
-    local parentPath = self.targetFilePath.ParentPath
-
-    if(self.invalid == true) then
-
-        pixelVisionOS:ShowMessageModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before running the game?", 160, true,
-                function()
-                    if(pixelVisionOS.messageModal.selectionValue == true) then
-                        -- Save changes
-                        self:OnSave()
-
-                    end
-
-                    -- TODO should check that this is a game directory or that this file is at least a code.lua file
-                    LoadGame(parentPath.Path, data)
-                end
-        )
-
-    else
-        -- Quit the tool
-        LoadGame(parentPath.Path, data)
-    end
+  else
+      -- Quit the tool
+      LoadGame(parentPath.Path)
+  end
 
 end
 
 function PaintTool:OnQuit()
 
-      if(self.invalid == true) then
+  if(self.invalid == true) then
 
-        pixelVisionOS:ShowMessageModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before you quit?", 160, true,
-          function()
-            if(pixelVisionOS.messageModal.selectionValue == true) then
-              -- Save changes
-              self:OnSave()
-
-            end
-
-            -- Quit the tool
-            QuitCurrentTool()
-          end
-        )
-
-      else
-        -- Quit the tool
+    pixelVisionOS:ShowSaveModal("Unsaved Changes", "You have unsaved changes. Do you want to save your work before you quit?", 160,
+      -- Accept
+      function(target)
+        self:OnSave()
         QuitCurrentTool()
+      end,
+      -- Decline
+      function (target)
+        QuitCurrentTool()
+      end,
+      -- Cancel
+      function(target)
+        target.onParentClose()
       end
+    )
+
+  else
+    -- Quit the tool
+    QuitCurrentTool()
+  end
 
 end
 
@@ -362,6 +373,9 @@ function PaintTool:InvalidateUndo(canvas, selection)
   self.selectionInvalid = selection or true
 
   self.undoValid = true
+
+  -- We'll invalidate the tool's data since any time an undo action can happen, the canvas has changed
+  self:InvalidateData()
   
 end
 
@@ -404,4 +418,79 @@ function PaintTool:ToggleBackground()
 
   self:InvalidateBackground()
 
+end
+
+function PaintTool:OnEditColor(colorId)
+
+  -- Save all of the colors before opening the modal
+  local currentColors = {}
+  local colorIndex = 0
+
+  for i = 1, self.totalColors do
+    
+    -- Calculate the color index accounting for the Lua's 1 based arrays
+    colorIndex = i-1
+
+    -- Save the current color
+    currentColors[i] = Color(colorIndex)
+
+    -- Change the color to the default editor colors
+    Color(colorIndex, self.cachedToolColors[i])
+
+  end
+
+
+  local colorID = colorId or self.currentState.selectedId--self.systemColorPickerData.currentSelection + self.systemColorPickerData.altColorOffset
+
+  if(self.editColorModal == nil) then
+      self.editColorModal = EditColorModal:Init(editorUI, self.maskColor) -- TODO may need to fix this mask color reference
+  end
+
+  -- TODO need to get the currently selected color
+  -- Pass the current color id to the editor
+  self.editColorModal:SetColor(colorID)
+
+  -- Read the color HEX from memory before editing
+  local currentColor = Color(colorID)
+
+  -- Open the modal
+  pixelVisionOS:OpenModal(self.editColorModal,
+      function()
+
+        -- TODO need to read the modified color
+
+        -- Restore previous colors before the modal was opened
+        for i = 1, self.totalColors do
+          Color(i-1, currentColors[i])
+        end
+
+        self:InvalidateColors()
+
+        -- -- When the modal closes, make sure the color has changed and is valid
+        -- if(self.editColorModal.selectionValue == true and currentColor ~= "#" .. self.editColorModal.colorHexInputData.text) then
+
+        --   -- TODO need make sure this works
+
+        --   -- Update the color
+        --   Color(colorID, self.editColorModal.colorHexInputData.text)
+          
+        --   self:InvalidateColors()
+        --   -- Exit out of the modal
+        --   return
+        
+        -- end
+
+      end
+  )
+
+end
+
+function PaintTool:OnSetOutlineColor() 
+  -- TODO need to wire this up
+  print("Change outline color")
+end
+
+function PaintTool:OnSetBackgroundColor() 
+  -- TODO need to wire this up
+  print("Change BG color")
 end

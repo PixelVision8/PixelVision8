@@ -313,6 +313,13 @@ function PaintTool:ChangeMode(value)
     self:InvalidateCanvas()
     self:RebuildBrushPreview()
 
+    -- Update menu options
+
+    -- Loop through colors
+    for i = 1, #self.colorOptions do
+        pixelVisionOS:EnableMenuItemByName(self.colorOptions[i], self.pickerMode == ColorMode)
+    end
+
 end
 
 function PaintTool:OnPickerSelection(value)
@@ -336,10 +343,6 @@ function PaintTool:OnPickerSelection(value)
         self.currentState.selectedPos.Y = (self.currentState.selectedPos.pos.Y - self.currentState.selectedPos.page * 2) * 8
 
     end
-
-    -- if(self.toolButtons[2].selected ~= true and self.toolButtons[3].selected ~= true) then
-    --     self:OnSelectTool("pen")
-    -- end
 
     self:GoToPickerPage(self.currentState.selectedPos.page)
 
@@ -371,7 +374,7 @@ function PaintTool:RebuildBrushPreview()
     if(self.pickerMode == ColorMode) then
         
         -- Set the brush color based on the current color selection or to the mask color if we are using the eraser
-        self.brushColor = self.tool == "eraser" and self.maskColor or self.currentState.selectedId - 1
+        self.brushColor = self.tool == "eraser" and self.maskColor or self.currentState.selectedId
         
         -- Clear the entire brush
         self.brushCanvas:Clear()
@@ -552,8 +555,6 @@ function PaintTool:InvalidatePicker()
 end
 
 function PaintTool:SetPickerLabel(title)
-
-    print("SetPickerLabel")
 
     self.currentState.pickerLabel = title
 

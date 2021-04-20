@@ -21,6 +21,7 @@ LoadScript( "code-index-sprites" )
 LoadScript( "code-index-colors" )
 LoadScript( "code-index-flags" )
 LoadScript( "code-selection" )
+LoadScript( "code-color-editor-modal" )
 
 function CreateTool()
   return PaintTool:Init()
@@ -72,45 +73,71 @@ end
 
 function PaintTool:LoadSuccess()
 
-    -- Load the image
-    self.image = ReadImage(NewWorkspacePath(self.targetFile))
+  -- Load the image
+  self.image = ReadImage(NewWorkspacePath(self.targetFile))
 
-    -- TODO need to copy out colors from the image  
-    local imageColors = self.image.colors
+  -- Get a reference to the image's colors 
+  local imageColors = self.image.colors
 
-    -- Get the last color index for the offset
+  -- Set the color offset after the tool's default colors + 1 for the mask
+  self.colorOffset = 17
 
-    -- TODO need to limit the number of colors the tool has to reduce the color offset
-    self.colorOffset = 17
-    self.maskColor = self.colorOffset - 1 
+  -- Set the mask color to the color offset - 1
+  self.maskColor = self.colorOffset - 1
 
-    Color(self.maskColor, "FF00FF")
+  -- Save the default bg color so we don't have to keep calling it the loop below
+  local defaultMaskColor = MaskColor()
 
-    -- Add the image colors to the color chip
-    for i = 1, #imageColors do
-        Color(self.colorOffset + i - 1 , imageColors[i])
-    end
+  -- Set the mask to the tool's default mask color
+  Color(self.maskColor,defaultMaskColor)
 
-    -- TODO display message if there are more colors than the tool can show
-    
+  -- Save the total colors so we don't have to keep recalculating this later on
+  self.totalColors = 256
 
-    -- The image is loaded at this point
-    self.toolLoaded = true
-
-    -- Configure the menu
-    self:CreateDropDownMenu()
+  -- We need to save the default tool colors to use when showing the color editor modal
+  self.cachedToolColors = {}
   
-    self:CreateToolbar()
+  local tmpColorIndex, tmpRefIndex = 0, 0
 
-    self:CreateCanvasPanel()
+  -- Loop through all of the system colors
+  for i = 1, self.totalColors do
 
-    self:CreatePickerPanel()
+    -- Calculate the real color index
+    tmpColorIndex = i-1
 
-    -- TODO this needs to read from the previous session
-    self:OnSelectTool("pointer")
+    -- Get the color accounting for Lua's 1 based arrays
+    self.cachedToolColors[i] = Color(tmpColorIndex)
 
-    -- Reset Tool Validation
-    self:ResetDataValidation()
+    -- Test to see if the color is after the colorOffset
+    if(i >= self.colorOffset) then
+      
+      -- Map the index back to the image's colors
+      tmpRefIndex = i - self.colorOffset
+
+      -- Set the new color from the image or to the default mask
+      Color(tmpColorIndex, tmpRefIndex <= #imageColors and imageColors[tmpRefIndex] or defaultMaskColor)
+
+    end
+   
+  end
+
+  -- Create the drop down menu
+  self:CreateDropDownMenu()
+
+  -- Create the tool bar
+  self:CreateToolbar()
+
+  -- Create the canvas panel
+  self:CreateCanvasPanel()
+
+  -- Create the picker panel
+  self:CreatePickerPanel()
+
+  -- TODO this needs to read from the previous session
+  self:OnSelectTool("pointer")
+
+  -- Reset Tool Validation
+  self:ResetDataValidation()
     
 end
 
@@ -138,9 +165,9 @@ function PaintTool:InvalidateData()
 
   pixelVisionOS:ChangeTitle(self.toolTitle .."*", "toolbariconfile")
 
-  -- pixelVisionOS:EnableMenuItem(SaveShortcut, true)
+  pixelVisionOS:EnableMenuItemByName("Save", true)
 
-    self.invalid = true
+  self.invalid = true
 
 end
 
@@ -157,7 +184,7 @@ function PaintTool:ResetDataValidation()
   -- Reset the input field's text validation
   -- editorUI:TextEditorResetTextValidation(self.inputAreaData)
 
-  -- pixelVisionOS:EnableMenuItem(SaveShortcut, false)
+  pixelVisionOS:EnableMenuItemByName("Save", false)
 
 end
 

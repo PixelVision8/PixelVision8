@@ -45,8 +45,9 @@ end
 
 function SFXTool:OnSave()
 
-  -- This will save the system data, the colors and color-map
-  gameEditor:Save(self.rootDirectory, {SaveFlags.System, SaveFlags.Sounds})
+  -- TODO need a way to save out the image
+  -- -- This will save the system data, the colors and color-map
+  -- gameEditor:Save(self.rootDirectory, {SaveFlags.System, SaveFlags.Sounds})
 
   -- Display a message that everything was saved
   pixelVisionOS:DisplayMessage("You're changes have been saved.", 5)
@@ -70,11 +71,11 @@ function SFXTool:OnRunGame()
         -- Accept
         function(target)
           self:OnSave()
-          LoadGame(parentPath.Path, data)
+          LoadGame(parentPath.Path)
         end,
         -- Decline
         function (target)
-          LoadGame(parentPath.Path, data)
+          LoadGame(parentPath.Path)
         end,
         -- Cancel
         function(target)
@@ -84,7 +85,7 @@ function SFXTool:OnRunGame()
 
   else
       -- Quit the tool
-      LoadGame(parentPath.Path, data)
+      LoadGame(parentPath.Path)
   end
 
 end
