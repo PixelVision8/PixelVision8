@@ -27,6 +27,7 @@ function PaintTool:CreateDropDownMenu()
       {name = "Fill", action = function() self:FillCanvasSelection() end, key = Keys.F, enabled = false, toolTip = "Learn about PV8."},
       {name = "Flip H", action = function() self:FlipH() end, key = Keys.H, enabled = false, toolTip = "Learn about PV8."},
       {name = "Flip V", action = function() self:FlipV() end, key = Keys.J, enabled = false, toolTip = "Learn about PV8."},
+      {name = "Select All", action = function() self:SelectAll() end, key = Keys.A, enabled = true, toolTip = "Learn about PV8."},
 
       -- {divider = true},
       -- {name = "Line Thicker", action = function()  end, toolTip = "Learn about PV8."},
@@ -356,6 +357,7 @@ end
 
 function PaintTool:InvalidateUndo(canvas, selection)
 
+  -- TODO need to optimize this by using the canvas and selection flags
   self.canvasInvalid = canvas or true
   self.selectionInvalid = selection or true
 

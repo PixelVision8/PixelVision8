@@ -245,7 +245,13 @@ function PaintTool:UpdateCanvasPanel(timeDelta)
       self:InvalidateBrushPreview()
 
     end
-  
+
+  elseif(Key(Keys.Escape, InputState.Released)) then
+    
+    if(self.selectRect ~= nil) then
+      self:CancelCanvasSelection()
+    end
+
   elseif(Key(Keys.Delete) or Key(Keys.Back)) then
     
     if(self.selectRect ~= nil) then
@@ -474,15 +480,18 @@ function PaintTool:DrawCanvasPanel()
     -- Check if we need to fill the area below the selection
     if(self.fillRect == true) then
         
+      for i = 1, #self.selectedPixelData do
+        self.selectedPixelData[i] = self.fillRectColor
+      end
       -- We fill the are first because there is no need to clear
-      self.imageLayerCanvas:Clear(self.fillRectColor, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
+      -- self.imageLayerCanvas:Clear(self.fillRectColor, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
     
       self.fillRect = false
 
       -- Clear the selected pixels since we just filled the area
-      self.selectedPixelData = nil
+      -- self.selectedPixelData = nil
 
-      self:CancelCanvasSelection()
+      -- self:CancelCanvasSelection()
 
     end
 
@@ -491,19 +500,25 @@ function PaintTool:DrawCanvasPanel()
       -- Check to see if the state has been set to canceled
       if(self.selectionState == "canceled") then
       
-        -- Check to see if the selection is ignoring transparency
-        if(self.selectionUsesMaskColor == true) then
-    
-          self.imageLayerCanvas:Clear(-1, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
-    
+        
+        
+        if(self.selectedPixelData ~= nil) then
+          
+          -- Check to see if the selection is ignoring transparency
+          if(self.selectionUsesMaskColor == true) then
+      
+            self.imageLayerCanvas:Clear(-1, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
+      
+          end
+          
+          -- Draw pixel data to the image
+          self.imageLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData)
+        
+          -- Clear the pixel data
+          self.selectedPixelData = nil
+        
         end
         
-        print("COpy Pixels!!!")
-        -- Draw pixel data to the image
-        self.imageLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData)
-        
-        -- Clear the pixel data
-        self.selectedPixelData = nil
       
         -- Clear the selection state
         self.selectionState = "none"
@@ -516,7 +531,7 @@ function PaintTool:DrawCanvasPanel()
       
         -- Force the display to clear the tmp layer canvas
         self.tmpLayerCanvas:Clear()
-        print("Clear Tmp Layer - Cancel selection")
+        -- print("Clear Tmp Layer - Cancel selection")
   
 
         -- Invalidate the canvas and the selection
@@ -549,14 +564,14 @@ function PaintTool:DrawCanvasPanel()
 
         -- Clear the tmp layer
         self.tmpLayerCanvas:Clear()
-        print("Clear Tmp Layer - Redraw selection")
+        -- print("Clear Tmp Layer - Redraw selection")
         if(self.selectedPixelData ~= nil) then
 
           -- Check to see if the selection is ignoring transparency
           if(self.selectionUsesMaskColor == true) then
 
             self.tmpLayerCanvas:Clear(self.maskColor, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
-            print("Clear Tmp Layer - Redraw Selection mask")
+            -- print("Clear Tmp Layer - Redraw Selection mask")
           end
           
           self.tmpLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData)
@@ -617,6 +632,12 @@ function PaintTool:DrawCanvasPanel()
   if(self.mouseState == "released") then
     self.mouseState = "up"
   end
+
+end
+
+function PaintTool:ClearTmpLayer()
+
+  -- TODO need to rout all draw calls through APIs to make sure they are correctly invalidating and not being called multiple times in a single frame
 
 end
 
@@ -805,6 +826,8 @@ function PaintTool:CancelCanvasSelection()
   -- Clear the selection state
   self.selectionState = "canceled"
 
+  self:InvalidateUndo()
+  
   -- Invalidate the display so it redraws on the next frame
   self:InvalidateCanvas()
 
@@ -812,6 +835,23 @@ function PaintTool:CancelCanvasSelection()
   for i = 1, #self.selectionOptions do
     pixelVisionOS:EnableMenuItemByName(self.selectionOptions[i], false)
   end
+
+end
+
+function PaintTool:SelectAll()
+  print("Select All")
+
+  self:OnSelectTool("select")
+  
+  self:InvalidateUndo()
+  
+  self.selectionState = "resize"
+
+  self.selectRect = NewRect( 0, 0, self.imageLayerCanvas.Width, self.imageLayerCanvas.Height )
+  
+  self.selectedPixelData = nil
+  
+  self.onClick()
 
 end
 
@@ -1078,7 +1118,7 @@ function PaintTool:DrawOnCanvas(mousePos)
             
             if(self.selectionState == "new" or self.selectionState == "resize") then
 
-                self.selectionState = "resize"
+              self.selectionState = "resize"
 
               -- print("resize", data.selectRect, mousePos, , )
 
@@ -1175,7 +1215,7 @@ function PaintTool:FillCanvasSelection(colorID)
   self.fillRect = true
   self.fillRectColor = colorID or self.brushColor
 
-  self:InvalidateCanvas()
+  -- self:InvalidateCanvas()
 
 end
 
