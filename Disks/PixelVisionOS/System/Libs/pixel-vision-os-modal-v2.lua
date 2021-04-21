@@ -14,7 +14,7 @@
 -- Pedro Medeiros - @saint11
 -- Shawn Rakowski - @shwany
 --
-function PixelVisionOS:OpenModal(modal, callBack)
+function PixelVisionOS:OpenModal(modal, callBack, ...)
 
   SaveTilemapCache()
 
@@ -32,7 +32,7 @@ function PixelVisionOS:OpenModal(modal, callBack)
   self.onCloseCallback = callBack
 
   -- Activate the new modal
-  self.activeModal:Open()
+  self.activeModal:Open( ... )
 
   -- Disable the menu button in the toolbar
   editorUI:Enable(self.titleBar.iconButton, false)
@@ -52,6 +52,7 @@ function PixelVisionOS:CloseModal()
 
   editorUI:ClearFocus()
 
+  -- TODO  need to restore this on the next draw call, not immediately
   RestoreTilemapCache()
 
   self.modalCloseDelay = .15

@@ -845,6 +845,14 @@ end
 function PaintTool:SelectAll()
   print("Select All")
 
+  -- Look for any selected pixel data so we don't accidentally clear it with the new selection
+  if(self.selectRect ~= nil and self.selectedPixelData ~= nil) then
+    
+    -- Draw pixel data to the image
+    self.imageLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData)
+  
+  end
+
   self:OnSelectTool("select")
   
   self:InvalidateUndo()

@@ -12,7 +12,7 @@
 function PaintTool:CreateDropDownMenu()
 
   -- create a variable for the edit color modal
-  self.editColorModal = nil
+  self.editColorModal = EditColorModal:Init()
 
   -- Create a table with all of the menu options
   local menuOptions = 
@@ -41,7 +41,7 @@ function PaintTool:CreateDropDownMenu()
       {name = "Edit Color", action = function() self:OnEditColor() end, enabled = false, key = Keys.E, toolTip = "Learn about PV8."},
       {name = "Outline Color", action = function() self:OnSetOutlineColor() end, enabled = false, toolTip = "Learn about PV8."},
       {name = "BG Color", action = function() self:OnSetBackgroundColor() end, enabled = false, toolTip = "Learn about PV8."},
-      {name = "Mask Color", action = function() self.OnEditColor(self.maskColor) end, enabled = false, toolTip = "Learn about PV8."},
+      {name = "Mask Color", action = function() self:OnEditColor(self.maskColor) end, enabled = false, toolTip = "Learn about PV8."},
 
       {divider = true},
       {name = "Canvas Size", action = function()  end, key = Keys.I, toolTip = "Learn about PV8."},
@@ -409,7 +409,6 @@ end
 
 function PaintTool:ToggleBackground()
 
-  print("Toggle BG")
   self.backgroundMode = self.backgroundMode + 1
 
   if(self.backgroundMode > 3) then
@@ -420,9 +419,7 @@ function PaintTool:ToggleBackground()
 
 end
 
-function PaintTool:OnEditColor(colorId)
-
-  -- Save all of the colors before opening the modal
+function PaintTool:SwapToolColors()
   local currentColors = {}
   local colorIndex = 0
 
@@ -433,25 +430,36 @@ function PaintTool:OnEditColor(colorId)
 
     -- Save the current color
     currentColors[i] = Color(colorIndex)
-
+  
     -- Change the color to the default editor colors
     Color(colorIndex, self.cachedToolColors[i])
 
   end
 
+  return currentColors
 
-  local colorID = colorId or self.currentState.selectedId--self.systemColorPickerData.currentSelection + self.systemColorPickerData.altColorOffset
+end
 
-  if(self.editColorModal == nil) then
-      self.editColorModal = EditColorModal:Init(editorUI, self.maskColor) -- TODO may need to fix this mask color reference
+function PaintTool:RestoreColors(currentColors)
+
+  -- Restore previous colors before the modal was opened
+  for i = 1, self.totalColors do
+    Color(i-1, currentColors[i])
   end
 
-  -- TODO need to get the currently selected color
-  -- Pass the current color id to the editor
-  self.editColorModal:SetColor(colorID)
+end
 
-  -- Read the color HEX from memory before editing
-  local currentColor = Color(colorID)
+function PaintTool:OnEditColor(colorId)
+
+  print("colorId", colorId)
+  -- Get the color Id from what is passed in or the picker
+  colorId = colorId or self.currentState.selectedId
+
+  -- Read the color HEX from memory before editing using the color offset
+  local currentColor = Color(colorId + self.colorOffset)
+
+  -- Save all of the colors before opening the modal
+  local currentColors = self:SwapToolColors()
 
   -- Open the modal
   pixelVisionOS:OpenModal(self.editColorModal,
@@ -459,28 +467,21 @@ function PaintTool:OnEditColor(colorId)
 
         -- TODO need to read the modified color
 
-        -- Restore previous colors before the modal was opened
-        for i = 1, self.totalColors do
-          Color(i-1, currentColors[i])
-        end
+        self:RestoreColors(currentColors)
 
         self:InvalidateColors()
 
-        -- -- When the modal closes, make sure the color has changed and is valid
-        -- if(self.editColorModal.selectionValue == true and currentColor ~= "#" .. self.editColorModal.colorHexInputData.text) then
+        if(self.editColorModal.selectionValue == true and currentColor ~= "#" .. self.editColorModal.colorHexInputData.text) then
 
-        --   -- TODO need make sure this works
-
-        --   -- Update the color
-        --   Color(colorID, self.editColorModal.colorHexInputData.text)
+          Color(colorId  + self.colorOffset, "#" .. self.editColorModal.colorHexInputData.text)
           
-        --   self:InvalidateColors()
-        --   -- Exit out of the modal
-        --   return
+          return
         
-        -- end
+        end
 
-      end
+      end,
+      -- Optional arguments
+      currentColor, currentColors, self.maskColor, string.format("EDIT COLOR %03d", colorId) 
   )
 
 end

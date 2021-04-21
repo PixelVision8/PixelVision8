@@ -109,7 +109,7 @@ function PaintTool:LoadSuccess()
     self.cachedToolColors[i] = Color(tmpColorIndex)
 
     -- Test to see if the color is after the colorOffset
-    if(i >= self.colorOffset) then
+    if(i > self.colorOffset) then
       
       -- Map the index back to the image's colors
       tmpRefIndex = i - self.colorOffset

@@ -11,40 +11,27 @@
 EditColorModal = {}
 EditColorModal.__index = EditColorModal
 
-function EditColorModal:Init(editorUI, maskColor, title)
+function EditColorModal:Init()
 
     local _editColorModal = {} -- our new object
     setmetatable(_editColorModal, EditColorModal) -- make Account handle lookup
-
-    _editColorModal.title = title or "Edit Color"
-    _editColorModal.editorUI = editorUI
-    _editColorModal.maskColor = maskColor
-    _editColorModal.warningMetaSpriteId = FindMetaSpriteId("colorwarningicon")
-
+    
     _editColorModal:Configure()
-    -- _editColorModal.currentSelection = 1
-    -- _editColorModal.message = message
-
+    
     return _editColorModal
 
 end
 
-function EditColorModal:Configure(colorId)
+function EditColorModal:Configure(tmpColorId, editingColorId)
 
-    -- A list of all of the colors needed to correctly display the picker
-    self.pickerColors = {"#2D1B2E","#218A91","#3CC2FA","#9AF6FD","#4A247C","#574B67","#937AC5","#8AE25D","#8E2B45","#F04156","#F272CE","#D3C0A8","#C5754A","#F2A759","#F7DB53","#F9F4EA","#E6E2DE","#EEEEC5","#3108C5","#6A1473","#AC106A","#AC2441","#AC0831","#EEC25A","#ACDAEE","#41249C","#3159CD","#CD5931","#ACD69C","#62CACD","#7B95CD","#E69552","#738D8B","#A47DBD","#7B5D7B","#207DAC","#CDDA52","#73BE7B","#00AE94","#CD508B","#AC7152","#00696A","#94955A","#419DBD","#5A99A4","#528520","#083420","#DEA1AC","#001C52","#390031","#525900","#4AE6CD","#8BEA83","#100418","#392439","#5A485A","#7B697B","#9C899C","#BDAABD","#DECADE",}
-    
-    -- Save the total picker colors so we don't have to calculate this in loops
-    self.totalPickerColors = #self.pickerColors
-
-    -- We'll store cached colors in this array
-    self.colorCache = {}
-
-    -- Set the total color value adjusted for Lua's 1 based arrays
-    self.totalColors = 256
+    -- Save a reference to the color warning icon
+    self.warningMetaSpriteId = FindMetaSpriteId("colorwarningicon")
 
     -- This is the color we'll use when mixing colors in the editor
-    self.tmpColor = 255
+    self.tmpColor = tmpColorId or 253
+
+    -- Set the editing color Id to 254
+    self.editingColorID = editingColorId or 254
 
     -- The default mode is set to RGB
     self.rgbMode = true
@@ -56,8 +43,6 @@ function EditColorModal:Configure(colorId)
     self.canvas = NewCanvas(width, height)
 
     local displaySize = Display()
-
-    -- self.title = "Edit Color"
 
     self.rect = {
         x = math.floor(((displaySize.x - width) * .5) / 8) * 8,
@@ -80,18 +65,29 @@ function EditColorModal:Configure(colorId)
     self.canvas:SetPattern({11}, 1, 1)
     self.canvas:DrawRectangle(3, 9, self.canvas.width - 6, self.canvas.height - 12, true)
 
-    local tmpX = (self.canvas.width - (#self.title * 4)) * .5
-
-    self.canvas:DrawText(self.title:upper(), tmpX, 1, "small", 15, - 4)
-
     -- draw highlight stroke
     self.canvas:SetStroke(15, 1)
     self.canvas:DrawLine(3, 9, self.canvas.width - 5, 9)
     self.canvas:DrawLine(3, 9, 3, self.canvas.height - 5)
 
-    self.buttons = {}
+    -- Hide the stroke
+    self.canvas:SetStroke(-1, -1)
 
-    -- TODO Create button states?
+    -- Draw a rect for the color being edited
+    self.canvas:SetPattern({self.editingColorID}, 1, 1)
+    self.canvas:DrawRectangle(144, 32, 24, 24, true)
+
+    -- Draw a rect for the color being created
+    self.canvas:SetPattern({self.tmpColor}, 1, 1)
+    self.canvas:DrawRectangle(120, 32, 24, 24, true)
+
+    -- Create 
+    -- self.canvas:Clear(self.editingColorID, 144, 32, 24, 24)
+    -- DrawRect(self.rect.x + 144, self.rect.y + 32, 24, 24, self.editingColorID, DrawMode.TilemapCache)
+
+    -- DrawRect(self.rect.x + 120, self.rect.y + 32, 24, 24, self.tmpColor, DrawMode.TilemapCache)
+
+    self.buttons = {}
 
     local buttonSize = {x = 32, y = 16}
 
@@ -232,8 +228,6 @@ function EditColorModal:Configure(colorId)
 
     table.insert(self.invalidateUI, hsvButton)
 
-    
-
     -- Hex input needs to convert to RGB and update the input fields which will update the sliders.
     self.colorHexInputData.onAction = function(value)
 
@@ -303,34 +297,36 @@ function EditColorModal:Configure(colorId)
         self:Invalidate()
     end
 
-
 end
 
-function EditColorModal:Open()
+function EditColorModal:Open( ... )
 
-    local colorIndex = 0
+    -- Set the supplied arguments to a table
+    local args = {...}
+
+    local value = args[1]
+    local colorCache = args[2]
+    local maskColor = args[3]
+    local title = args[4]
+
+    self.title = title or "Edit Color"
+    self.maskColor = maskColor
+
+    self.colorCache = colorCache
     
+    self.canvas:Clear(0, 4, 1, self.canvas.width, 8)
+    
+    local tmpX = (self.canvas.width - (#self.title * 4)) * .5
 
-    -- Save all of the colors in memory
-    self.colorCache = {}
+    self.canvas:DrawText(self.title:upper(), tmpX, 1, "small", 15, - 4)
 
-    -- Loop through all of the colors
-    for i = 1, self.totalColors do
+    self.currentColor = value
 
-        -- Set the current color index which is offset by 1
-        colorIndex = i - 1
+    editorUI:ChangeInputField(self.colorHexInputData, self.currentColor, true)
 
-        -- Copy the current color into the cache
-        table.insert(self.colorCache, Color(colorIndex))
-
-        -- Copy the palette color into memory. If the color is out of range, use PV8's default mask color to clear the previous color
-        Color(colorIndex, colorIndex < self.totalPickerColors and self.pickerColors[i] or "#FF00FF")
-
-    end
+    self:Invalidate()
 
     self.canvas:DrawPixels(self.rect.x, self.rect.y, DrawMode.TilemapCache)
-
-    -- DrawSprites(coloreditorpanel.spriteIDs, self.rect.x + 8, self.rect.y + 16, coloreditorpanel.width, false, false, DrawMode.TilemapCache)
 
     DrawMetaSprite(FindMetaSpriteId("coloreditorpanel"), self.rect.x + 8, self.rect.y + 16, false, false, DrawMode.TilemapCache)
     
@@ -355,27 +351,7 @@ function EditColorModal:Open()
 
 end
 
-function EditColorModal:SetColor(colorID)
-
-    colorID = colorID or self.tmpColor
-
-    -- print("Set Color", colorID)
-    self.editingColorID = colorID
-    self.currentColor = Color(colorID)
-
-    editorUI:ChangeInputField(self.colorHexInputData, self.currentColor, true)
-
-    -- TODO convert to RGB and update the input fields
-
-
-
-    self:Invalidate()
-
-end
-
 function EditColorModal:ChangeColorMode(value)
-
-    --print("Toggle Color Mode", self.rgbMode, value)
 
     self.rgbMode = value == 1 and true or false
 
@@ -409,28 +385,7 @@ end
 
 function EditColorModal:Close()
 
-    -- TODO Copy color into cached colors
-
-    -- Reuse this variable to store the total colors in the cache so we don't have to recalculate it in the loop
-    -- self.totalPickerColors = #self.colorCache
-
-    -- -- Color(colorIndex, colorIndex < self.totalPickerColors and self.pickerColors[i] or "#FF00FF")
-    
-    -- -- Loop through all of the colors
-    -- for i = 1, self.totalColors do
-
-    --     local colorIndex = (i - 1)
-
-    --     -- Copy the palette color into memory. If the color is out of range, use PV8's default mask color to clear the previous color
-    --     Color(colorIndex, self.colorCache[i])--colorIndex < self.totalPickerColors and self.colorCache[i] or "#FF00FF")
-
-    -- end
-
-
-    -- TODO need to copy the cache colors back into memory
-
-    -- TODO need to make sure these are fixed
-    -- Color(self.tmpColor, self.maskColor)
+    -- Does nothing
 
 end
 
@@ -514,13 +469,11 @@ function EditColorModal:Update(timeDelta)
 
         self.showWarning = table.indexOf(self.colorCache, (newHex)) > - 1
 
-
         -- Set tmp color
         Color(self.tmpColor, newHex)
-
-        DrawRect(self.rect.x + 144, self.rect.y + 32, 24, 24, self.editingColorID, DrawMode.TilemapCache)
-
-        DrawRect(self.rect.x + 120, self.rect.y + 32, 24, 24, self.tmpColor, DrawMode.TilemapCache)
+        Color(self.editingColorID, self.currentColor)
+        
+        
 
         self.invalid = false
 
