@@ -208,20 +208,15 @@ function WorkspaceTool:OpenWindow(path, scrollTo, selectedPath)
     -- TODO this shouldn't be called since it's handled in the window refresh but throws an error when taken out
     self:UpdateFileList()
 
-    
-
     self:ChangeWindowTitle()
 
     -- Registere the window with the tool so it updates
     pixelVisionOS:RegisterUI({name = "Window"}, "UpdateWindow", self)
 
-
     self:UpdateContextMenu()
 
     -- Redraw the window without refreshing the list since we did it above
     self:RefreshWindow(true)
-
-    -- print("selectedPath", selectedPath)
 
     if(selectedPath ~= nil and PathExists(selectedPath)) then
 
@@ -340,7 +335,7 @@ function WorkspaceTool:UpdateWindow()
 end
 
 function WorkspaceTool:ChangeFocus(value)
-
+    
     if(editorUI.mouseCursor.pos.Y < 12) then
         return
     end
@@ -357,11 +352,8 @@ function WorkspaceTool:ChangeFocus(value)
         self:ClearSelections()
     end
 
-    -- Test if the slider should be active
-    -- editorUI:Enable(self.vSliderData, 
     self:EnableScrollBar()--)
 
-    -- if(lastValue ~= value) then 
     self:UpdateContextMenu("ChangeFocus")
 
 end
@@ -382,10 +374,10 @@ function WorkspaceTool:CurrentlySelectedFiles()
 
             -- Get the current file
             tmpFile = self.files[i]
-
+            -- print("CurrentlySelectedFiles tmpFile", tmpFile.name, tmpFile.selected)
             -- check to see if the file is selected
             if(tmpFile.selected) then
-
+                -- print("Add file", i)
                 -- Insert the selected file into the array
                 table.insert(self.selectedFiles, i)
             end
@@ -394,6 +386,8 @@ function WorkspaceTool:CurrentlySelectedFiles()
         self.totalSelections = #self.selectedFiles
 
     end
+
+    -- print("end selection", #self.selectedFiles, dump(self.selectedFiles), self.totalSelections)
 
     -- Return all of the selected files or nil if there are no selections
     return self.totalSelections > 0 and self.selectedFiles or nil
@@ -505,7 +499,7 @@ end
 
 function WorkspaceTool:OnWindowIconSelect(id)
 
-    -- print("Click", id, self.lastStartID, id + self.lastStartID)
+    -- print("Click", id, self.lastStartID, id + self.lastStartID, self.files[id].type)
 
     -- #3
     if(self.playingWav) then
@@ -521,7 +515,7 @@ function WorkspaceTool:OnWindowIconSelect(id)
     end
 
     local selectionFlag = true
-    local clearSelections = false
+    local clearSelections = self.files[id].type == "disk"
     -- TODO test for shift or ctrl
 
     -- TODO need to clear all selected files

@@ -38,6 +38,7 @@ namespace PixelVision8.Runner
         private float _offsetY;
         private float _scaleX;
         private float _scaleY;
+        public bool CropScreen { get; set; } = true;
 
         public bool Fullscreen { get; set; }
 
@@ -115,6 +116,17 @@ namespace PixelVision8.Runner
         {
             _offsetX = (_visibleWidth - _gameWidth * _scaleX) * .5f;
             _offsetY = (_visibleHeight - _gameHeight * _scaleY) * .5f;
+        }
+        
+        private void CalculateCrop()
+        {
+            if (CropScreen && !Fullscreen)
+            {
+                _visibleWidth = Math.Min(_visibleWidth, (int) (_gameWidth * _scaleX));
+                _visibleHeight = Math.Min(_visibleHeight, (int) (_gameHeight * _scaleY));
+                _offsetX = 0;
+                _offsetY = 0;
+            }
         }
 
     }

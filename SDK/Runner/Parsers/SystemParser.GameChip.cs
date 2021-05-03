@@ -45,7 +45,7 @@ namespace PixelVision8.Runner
 
 
             // TODO need to look for MetaSprite properties
-            if (data.ContainsKey("totalMetaSprites")) gameChip.TotalMetaSprites((int) (long) data["totalMetaSprites"]);
+            // if (data.ContainsKey("totalMetaSprites")) gameChip.TotalMetaSprites((int) (long) data["totalMetaSprites"]);
 
             if (data.ContainsKey("metaSprites"))
             {

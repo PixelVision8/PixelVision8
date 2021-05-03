@@ -61,8 +61,8 @@ namespace PixelVision8.Player
     {
         
         protected SpriteData _currentSpriteData;
-        protected SpriteCollection[] metaSprites = new SpriteCollection[0];
-        protected int[] tmpIDs = new int[0];
+        protected SpriteCollection[] metaSprites = new SpriteCollection[128];
+        // protected int[] tmpIDs = new int[0];
         public int maxSize = 256;
 
         // private int _totalMetaSprites => metaSprites.Length;
@@ -71,13 +71,7 @@ namespace PixelVision8.Player
         {
             if (total.HasValue)
             {
-                // Console.WriteLine("Change meta sprite total");
                 Array.Resize(ref metaSprites, Utilities.Clamp(total.Value, 0, 256));
-                for (int i = 0; i < total.Value; i++)
-                {
-                    if (metaSprites[i] == null)
-                        metaSprites[i] = new SpriteCollection("EmptyMetaSprite");
-                }
             }
 
             return metaSprites.Length;
@@ -131,17 +125,12 @@ namespace PixelVision8.Player
                 metaSprites[id] = spriteCollection;
             else if (metaSprites[id] == null)
             {
-                Console.WriteLine("New Meta Sprite");
                 metaSprites[id] =
-                    new SpriteCollection(
-                        "MetaSprite" + id.ToString().PadLeft(metaSprites.Length.ToString().Length, '0'))
+                    new SpriteCollection("EmptyMetaSprite")
                     {
-                        SpriteWidth = SpriteSize().X,
-                        SpriteHeight = SpriteSize().Y,
-                        SpriteMax = TotalSprites(),
-                        // MaxBoundary = new Rectangle(metaSpriteMaxBounds.X, metaSpriteMaxBounds.Y,
-                        //     metaSpriteMaxBounds.Width - SpriteSize().X,
-                        //     metaSpriteMaxBounds.Height - SpriteSize().Y)
+                        SpriteWidth = 0,
+                        SpriteHeight = 0,
+                        SpriteMax = 256,
                     };
             }
                 
@@ -149,14 +138,14 @@ namespace PixelVision8.Player
             return metaSprites[id];
         }
 
-        protected int FindMetaSpriteId(string name)
+        public int FindMetaSpriteId(string name)
         {
             var total = metaSprites.Length;
             
             // Loop through all of the meta sprites and find a name that matches
             for (int i = 0; i < total; i++)
             {
-                if (metaSprites[i].Name == name)
+                if (metaSprites[i] != null && metaSprites[i].Name == name)
                     return i;
             }
 
@@ -180,115 +169,68 @@ namespace PixelVision8.Player
 
         }
 
-        public void DrawMetaSprite(SpriteCollection spriteCollection, int x, int y, bool flipH = false, bool flipV = false,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
+        public void DrawMetaSprite(SpriteCollection spriteCollection, int x, int y, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0)
         {
 
             // Get the sprite data for the meta sprite
             var tmpSpritesData = spriteCollection.Sprites;
             var total = tmpSpritesData.Count;
-            var id = 0;
-
-            // // When rendering in Tile Mode, switch to grid layout
-            // if (drawMode == DrawMode.Tile)
-            // {
-            //     // TODO added this so C# code isn't corrupted, need to check performance impact
-            //     if (tmpIDs.Length != total) Array.Resize(ref tmpIDs, total);
-
-            //     var i = 0;
-
-            //     for (i = 0; i < total; i++)
-            //     {
-            //         tmpIDs[i] = tmpSpritesData[i].Id;
-            //     }
-
-            //     var width = (int)Math.Ceiling((double)spriteCollection.Bounds.Width / Constants.SpriteSize);
-
-            //     var height = (int)Math.Ceiling((double)total / width);
-
-            //     if (flipH || flipV) Utilities.FlipPixelData(ref tmpIDs, width, height, flipH, flipV);
-
-            //     // TODO need to offset the bounds based on the scroll position before testing against it
-            //     for (i = 0; i < total; i++)
-            //     {
-            //         // Set the sprite id
-            //         id = tmpIDs[i];
-
-            //         // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
-            //         // Test to see if the sprite is within range
-            //         if (id > -1)
-            //         {
-            //             var pos = CalculatePosition(i, width);
-
-            //             DrawSprite(
-            //                 id,
-            //                 pos.X + x,
-            //                 pos.Y + y,
-            //                 flipH,
-            //                 flipV,
-            //                 drawMode,
-            //                 _currentSpriteData.ColorOffset + colorOffset);
-            //         }
-            //     }
-            // }
-            // else
-            // {
+            
                 
-                int startX, startY;
-                bool tmpFlipH, tmpFlipV;
+            int startX, startY;
+            bool tmpFlipH, tmpFlipV;
 
-                var spriteSize = Constants.SpriteSize;
-                var width = spriteCollection.Bounds.Width;
-                var height = spriteCollection.Bounds.Height;
-                
-                // Loop through each of the sprites
-                for (var i = 0; i < total; i++)
+            var spriteSize = Constants.SpriteSize;
+            var width = spriteCollection.Bounds.Width;
+            var height = spriteCollection.Bounds.Height;
+            
+            // Loop through each of the sprites
+            for (var i = 0; i < total; i++)
+            {
+                _currentSpriteData = tmpSpritesData[i];
+
+                if (!SpriteChip.IsEmptyAt(_currentSpriteData.Id))
                 {
-                    _currentSpriteData = tmpSpritesData[i];
+                    // Get sprite values
+                    startX = _currentSpriteData.X;
+                    startY = _currentSpriteData.Y;
+                    tmpFlipH = _currentSpriteData.FlipH;
+                    tmpFlipV = _currentSpriteData.FlipV;
 
-                    if (!SpriteChip.IsEmptyAt(_currentSpriteData.Id))
+                    if (flipH)
                     {
-                        // Get sprite values
-                        startX = _currentSpriteData.X;
-                        startY = _currentSpriteData.Y;
-                        tmpFlipH = _currentSpriteData.FlipH;
-                        tmpFlipV = _currentSpriteData.FlipV;
-
-                        if (flipH)
-                        {
-                            startX = width - startX - spriteSize;
-                            tmpFlipH = !tmpFlipH;
-                        }
-
-                        if (flipV)
-                        {
-                            startY = height - startY - spriteSize;
-                            tmpFlipV = !tmpFlipV;
-                        }
-
-                        if (drawMode == DrawMode.Tile){
-                        
-                            // Get sprite values
-                            startX = (int)Math.Ceiling((double)startX/ spriteSize);
-                            startY = (int)Math.Ceiling((double)startY / spriteSize);
-
-                        }
-
-                        startX += x;
-                        startY += y;
-
-                        DrawSprite(
-                            _currentSpriteData.Id,
-                            startX,
-                            startY,
-                            tmpFlipH,
-                            tmpFlipV,
-                            drawMode,
-                            _currentSpriteData.ColorOffset + colorOffset
-                        );
+                        startX = width - startX - spriteSize;
+                        tmpFlipH = !tmpFlipH;
                     }
+
+                    if (flipV)
+                    {
+                        startY = height - startY - spriteSize;
+                        tmpFlipV = !tmpFlipV;
+                    }
+
+                    if (drawMode == DrawMode.Tile){
+                    
+                        // Get sprite values
+                        startX = (int)Math.Ceiling((double)startX/ spriteSize);
+                        startY = (int)Math.Ceiling((double)startY / spriteSize);
+
+                    }
+
+                    startX += x;
+                    startY += y;
+
+                    DrawSprite(
+                        _currentSpriteData.Id,
+                        startX,
+                        startY,
+                        tmpFlipH,
+                        tmpFlipV,
+                        drawMode,
+                        _currentSpriteData.ColorOffset + colorOffset
+                    );
                 }
-            // }
+            }
         }
     }
 }

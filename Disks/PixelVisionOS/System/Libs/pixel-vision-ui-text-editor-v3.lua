@@ -29,7 +29,7 @@ function EditorUI:CreateTextEditor(rect, text, toolTip, font, colorOffset, spaci
   data.viewPort = NewRect(data.rect.x, data.rect.y, data.rect.w, data.rect.h)
   data.cursorPos = {x = 0, y = 0, color = 0}
   data.inputDelay = .10
-  data.flavorBack = 0
+  -- data.flavorBack = 0
   data.theme = {
     bg = 0, --Background Color
     cursor = 0, --Cursor Color

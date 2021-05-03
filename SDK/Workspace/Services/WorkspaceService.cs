@@ -386,6 +386,21 @@ namespace PixelVision8.Runner
 
                     // Filter out only the files we can use and convert this into a dictionary with the file name as the key and the path as the value
                     files = GetGameEntities(rootPath);
+
+                    // Find any lose sprites
+                    var spriteDir = rootPath.AppendDirectory("Sprites");
+
+                    if(Exists(spriteDir))
+                    {
+                        var sprites = (from p in GetEntities(spriteDir) where p.EntityName.EndsWith(".png") select p.Path).ToArray();
+                        
+                        var total = files.Length;
+
+                        Array.Resize(ref files, total + sprites.Length);
+
+                        Array.Copy(sprites, 0, files, total, sprites.Length);
+                        
+                    }
                 }
             }
 

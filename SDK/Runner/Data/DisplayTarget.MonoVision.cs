@@ -75,9 +75,6 @@ namespace PixelVision8.Runner
             
         }
         
-        
-        public bool CropScreen { get; set; } = true;
-
         public bool UseCrt
         {
             get => _useCrt;
@@ -149,17 +146,6 @@ namespace PixelVision8.Runner
         {
             _crtShader?.Parameters["textureSize"].SetValue(new Vector2(_renderTexture.Width, _renderTexture.Height));
             _crtShader?.Parameters["videoSize"].SetValue(new Vector2(_renderTexture.Width, _renderTexture.Height));
-        }
-
-        private void CalculateCrop()
-        {
-            if (CropScreen && !Fullscreen)
-            {
-                _visibleWidth = Math.Min(_visibleWidth, (int) (_gameWidth * _scaleX));
-                _visibleHeight = Math.Min(_visibleHeight, (int) (_gameHeight * _scaleY));
-                _offsetX = 0;
-                _offsetY = 0;
-            }
         }
 
         public void ConfigureDisplay()

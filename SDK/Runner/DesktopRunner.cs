@@ -1406,6 +1406,7 @@ namespace PixelVision8.Runner
                 // Have the workspace run the game from the current path
                 var GameFiles = workspaceService.LoadGame(path);
 
+
                 // Find the right code file to load and remove other code files
 
                 // Ignore CS files by default

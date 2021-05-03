@@ -75,7 +75,6 @@ namespace PixelVision8.Runner
                 // Calculate the game's resolution
                 _renderRect.Width = _renderTexture.Width;
                 _renderRect.Height = _renderTexture.Height;
-                
             }
             
             _offset.X = _offsetX;
@@ -93,6 +92,8 @@ namespace PixelVision8.Runner
             CalculateDisplayScale();
 
             CalculateDisplayOffset();
+            
+            CalculateCrop();
 
             Apply();
 

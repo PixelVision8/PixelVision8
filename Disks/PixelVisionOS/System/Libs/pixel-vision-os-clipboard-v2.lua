@@ -48,4 +48,6 @@ function PixelVisionOS:ClearClipboard()
 
     ClearClipboardText()
 
+    self:EnableMenuItemByName("Paste", false)
+
 end

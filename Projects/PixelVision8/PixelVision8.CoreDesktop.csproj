@@ -574,6 +574,9 @@
     <Compile Include="..\..\SDK\Runner\Parsers\SpriteImageParser.cs">
       <Link>SDK\Runner\Parsers\SpriteImageParser.cs</Link>
     </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\SpriteFolderParser.cs">
+      <Link>SDK\Runner\Parsers\SpriteFolderParser.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Runner\Parsers\SystemParser.cs">
       <Link>SDK\Runner\Parsers\SystemParser.cs</Link>
     </Compile>

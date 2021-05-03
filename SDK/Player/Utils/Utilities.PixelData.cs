@@ -39,6 +39,11 @@ namespace PixelVision8.Player
             return tmpPixels;
         }
 
+        public static int[] GetPixels(PixelData pixelData, Rectangle rect)
+        {
+            return GetPixels(pixelData, rect.X, rect.Y, rect.Width, rect.Height);
+        }
+        
         public static int[] GetPixels(PixelData pixelData, int x, int y, int blockWidth, int blockHeight)
         {
             

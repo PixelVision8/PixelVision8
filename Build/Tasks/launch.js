@@ -4,7 +4,7 @@ let {run} = require('gulp-dotnet-cli');
 gulp.task('build-pv8', ()=>{
   return gulp.src(process.env.PROJECT, {read: false})
       .pipe(run({
-        additionalArgs: [process.env.DISKS + 'PixelVisionOS/', process.env.DISKS + 'APIExamples/'], // ['-d', 'Disks/PixelVisionOS/', '-disk', 'Disks/APIExamples/']
+        additionalArgs: [process.env.DISKS + 'PixelVisionOS/', process.env.DISKS + 'APIExamples/'], // APIExamples ['-d', 'Disks/PixelVisionOS/', '-disk', 'Disks/APIExamples/']
         echo: true
     }));
 });

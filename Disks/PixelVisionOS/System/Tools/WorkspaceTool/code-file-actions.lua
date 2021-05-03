@@ -12,27 +12,6 @@ extToTypeMap =
   wav = ".wav"
 }
 
--- Helper utility to delete files by moving them to the throw out
-function WorkspaceTool:DeleteFile(path)
-
-  -- Create the base throw out path for the file
-  local newPath = self.trashPath
-
-  -- See if this is a directory or a file and add the entity name
-  if(path.IsDirectory) then
-    newPath = newPath.AppendDirectory(path.EntityName)
-  else
-    newPath = newPath.AppendFile(path.EntityName)
-  end
-
-  -- Make sure the path is unique
-  newPath = UniqueFilePath(newPath)
-
-  -- Move to the new throw out path
-  MoveTo(path, newPath)
-
-end
-
 function WorkspaceTool:OnDeleteFile()
 
   -- Get the current selections
@@ -80,44 +59,58 @@ function WorkspaceTool:StartFileOperation(srcPath, destPath, action)
 
   end
 
+  -- print("action", action)
+
+  if(action ~= "throw out") then
+    -- Remove the source path
+    table.remove(self.targetFiles,1)
+  end
+
   -- Set a modal flag so we know what warning to display
   local fileActionFlag = 0
 
-  -- TODO need to loop through all of the files do pre-check
-    for i = 1, #self.targetFiles do
+  -- print(dump(self.targetFiles))
 
-      -- Get the file to test
-      local filePath = self.targetFiles[i]
+  -- local total = #self.targetFiles
 
-      -- Figure out the final path for the file
-      local finalDestPath = NewWorkspacePath(destPath.Path .. filePath.Path:sub(#srcPath.Path + 1))
+  -- The first file is the source path so if we don't have 2 files, this is not a valid action
+  -- if(total < 1) then
+  --   return
+  -- end
 
-      -- print("filePath", filePath.Path, destPath.Path, finalDestPath.Path)
+  -- TODO need to loop through all of the files do pre-check starting at file 2
+  for i = 1, #self.targetFiles do
 
-      if(filePath.isDirectory and filePath.Path == destPath.Path) then
+    -- Get the file to test
+    local filePath = self.targetFiles[i]
 
-        fileActionFlag = 1
-        break
+    -- Figure out the final path for the file
+    local finalDestPath = NewWorkspacePath(destPath.Path .. filePath.Path:sub(#srcPath.Path + 1))
 
-      elseif(filePath.IsChildOf(finalDestPath)) then
-        
-        -- Set flag to 2 for a child path error
-        fileActionFlag = 2
-        break
+    if(filePath.isDirectory and filePath.Path == destPath.Path) then
 
-      -- Test the final path only if it's not being moved to the throw out
-      elseif(PathExists(finalDestPath) and action ~= "throw out") then
+      fileActionFlag = 1
+      break
 
-        -- Set flag to 3 for a douplicate file warning
-        fileActionFlag = 3
+    elseif(filePath.IsChildOf(finalDestPath)) then
+      
+      -- Set flag to 2 for a child path error
+      fileActionFlag = 2
+      break
 
-        break
+    -- Test the final path only if it's not being moved to the throw out
+    elseif(PathExists(finalDestPath) and action ~= "throw out") then
 
-        -- TODO need to make sure you don't copy a disk into another disk
+      -- Set flag to 3 for a douplicate file warning
+      fileActionFlag = 3
 
-      end
+      break
+
+      -- TODO need to make sure you don't copy a disk into another disk
 
     end
+
+  end
 
     -- print("File Action Flag", fileActionFlag)
 
@@ -163,9 +156,6 @@ function WorkspaceTool:StartFileOperation(srcPath, destPath, action)
 
   elseif(fileActionFlag == 3) then
 
-    -- local duplicate = destPath.Path == self.targetFiles[1].Path
-
-
     local buttons = 
     {
         {
@@ -175,17 +165,18 @@ function WorkspaceTool:StartFileOperation(srcPath, destPath, action)
                 self:OnRunFileAction(srcPath, destPath, action)
             end,
             key = Keys.Enter,
-            tooltip = "Press 'enter' to reset mapping to the default value"
+            tooltip = "Press 'enter' to replace files with same names"
         },
-        -- {
-        --     name = "modalnobutton",
-        --     action = function(target)
-        --         target.onParentClose()
-        --         -- TODO remove duplicate files
-        --     end,
-        --     key = Keys.N,
-        --     tooltip = "Press 'n' to not ignore duplicates"
-        -- },
+        {
+            name = "modalnobutton",
+            action = function(target)
+                target.onParentClose()
+                self:OnRunFileAction(srcPath, destPath, action, true)
+                -- TODO remove duplicate files
+            end,
+            key = Keys.N,
+            tooltip = "Press 'n' to not ignore duplicates"
+        },
         {
           name = "modalcancelbutton",
           action = function(target)
@@ -276,17 +267,11 @@ function WorkspaceTool:OnRunFileAction(srcPath, destPath, action, duplicate)
 
   end
 
-  -- print("args", dump(args))
-
   local success = RunBackgroundScript("code-process-file-actions.lua", args)
-
-  -- print("success", success)
 
   if(success) then
 
     if(self.progressModal == nil) then
-
-      -- print("ProgressModal", ProgressModal == nil, editorUI == nil)
 
       -- Create the model
       self.progressModal = ProgressModal:Init("File Action ", 168)
@@ -298,32 +283,32 @@ function WorkspaceTool:OnRunFileAction(srcPath, destPath, action, duplicate)
     -- Open the modal
     pixelVisionOS:OpenModal(self.progressModal, function() self:CancelFileActions() end)
 
-    pixelVisionOS:RegisterUI({name = "ProgressUpdate"}, "UpdateFileActionProgress", self, true)
 
   end
 
-  self:UpdateFileActionProgress()
+  pixelVisionOS:RegisterUI({name = "ProgressUpdate"}, "UpdateFileActionProgress", self, true)
 
+  -- self:UpdateFileActionProgress()
 
 end
 
 function WorkspaceTool:UpdateFileActionProgress()
 
-  -- print("UpdateFileActionProgress running", IsExporting())
 
   -- Check to see if exporting is done
   if(IsExporting() == false) then
-
-    pixelVisionOS:CloseModal()
-
-    self.progressModal = nil
+    
+    if(self.progressModal ~= nil) then
+      pixelVisionOS:CloseModal()
+      self.progressModal = nil
+    end
 
     -- Refresh the window and get the new file list
     self:RefreshWindow(true)
 
     self.selectedFiles = nil
 
-    -- Remove the callback from the UI update loop
+    -- -- Remove the callback from the UI update loop
     pixelVisionOS:RemoveUI("ProgressUpdate")
 
     -- Check to see if we should select anything
@@ -348,17 +333,21 @@ function WorkspaceTool:UpdateFileActionProgress()
 
   end
 
-  -- Get the current percentage
-  local percent = ReadExportPercent()/100
+  if(self.progressModal ~= nil) then
 
-  local fileActionActiveTotal = tonumber(BackgroundScriptData("tmpFileCount"))
-  local fileActionCounter = math.floor(fileActionActiveTotal * percent)
-  local pad = #tostring(fileActionActiveTotal)
+    -- Get the current percentage
+    local percent = ReadExportPercent()/100
 
-  local message = string.format("%s %0" .. pad .. "d of %0" .. pad .. "d.\n\n\nDo not restart or shut down Pixel Vision 8.", self.progressModal.fileAction, fileActionCounter, fileActionActiveTotal)
+    local fileActionActiveTotal = tonumber(BackgroundScriptData("tmpFileCount"))
+    local fileActionCounter = math.floor(fileActionActiveTotal * percent)
+    local pad = #tostring(fileActionActiveTotal)
 
-  self.progressModal:UpdateMessage(message, percent)
+    local message = string.format("%s %0" .. pad .. "d of %0" .. pad .. "d.\n\n\nDo not restart or shut down Pixel Vision 8.", self.progressModal.fileAction, fileActionCounter, fileActionActiveTotal)
 
+    self.progressModal:UpdateMessage(message, percent)
+
+  end
+  
 end
 
 function WorkspaceTool:CanCopy(file)
@@ -448,13 +437,17 @@ function WorkspaceTool:OnPaste(dest)
   -- if(pixelVisionOS:ClipboardFull() == false) then
   --   return
   -- end
-
+  
   -- Get the destination directory
   dest = dest or self.currentPath
 
   if(PathExists(dest)) then
 
     local data = pixelVisionOS:SystemPaste()
+
+    pixelVisionOS:ClearClipboard()
+
+    -- print("Paste data", data)
 
     if(data ~= nil or  data ~= "" and string.starts(data, "path:")) then
 
@@ -497,9 +490,9 @@ function WorkspaceTool:OnPaste(dest)
 
   end
 
-  pixelVisionOS:ClearClipboard()
+  
 
-  pixelVisionOS:EnableMenuItemByName(srcPath, PasteShortcut, false)
+  -- pixelVisionOS:EnableMenuItemByName(srcPath, PasteShortcut, false)
   
 end
 

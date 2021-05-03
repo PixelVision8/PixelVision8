@@ -345,10 +345,11 @@ end
 
 function WorkspaceTool:UpdateContextMenu()
 
-    -- print("UpdateContextMenu", inFocus)
+    -- print("UpdateContextMenu")
 
     local selections = self:CurrentlySelectedFiles()
 
+    -- print("selections", dump(selections))
     -- Check to see if currentPath is a game
     local canRun = self.focus == true and self.isGameDir--and pixelVisionOS:ValidateGameInDir(self.currentPath, {"code.lua"})-- and selections
 
@@ -372,11 +373,14 @@ function WorkspaceTool:UpdateContextMenu()
 
     if(selections ~= nil) then
 
+        -- print("self.files", #self.files)
         currentSelection = self.files[selections[1]]
+        -- print("self.totalSingleSelectFiles", self.totalSingleSelectFiles)
+        for i = 1, #selections do
 
-        for i = 1, self.totalSingleSelectFiles do
-
-            local tmpFile = self.files[selections[1]]
+            local tmpFile = self.files[selections[i]]
+            
+            -- print("tmpFile", tmpFile.name, tmpFile.type)
 
             if(tmpFile.type == "installer" or tmpFile.type == "updirectory" or tmpFile.type == "run" or tmpFile.type == "trash" or tmpFile.type == "drive" or tmpFile.type == "disk" ) then
                 specialFile = true
@@ -388,6 +392,8 @@ function WorkspaceTool:UpdateContextMenu()
     end
 
     local trashOpen = self:TrashOpen()
+
+    -- print("currentSelection", currentSelection.type)
 
     -- Test to see if you can rename
     local canEdit = self.focus == true and selections ~= nil and #selections == 1 and specialFile == false and trashOpen == false

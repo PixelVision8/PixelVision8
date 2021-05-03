@@ -273,22 +273,26 @@ namespace PixelVision8.Runner
 
         protected AbstractParser LoadSprites(string[] files)
         {
-            // TODO need to depricate this
+            // Find the sprite file if one exists    
             var file = files.FirstOrDefault(x => x.EndsWith("sprites.png"));
 
+            // Load the sprites.png file first
             if (!string.IsNullOrEmpty(file))
             {
                 _loader.ParseSprites(file, targetEngine);
+            }
 
-                //var imageParser = new PNGFileReader(_fileLoadHelper);
+            // Loop through all the remaining PNGs and make sure they should be parsed as sprites
+            for (int i = 0; i < files.Length; i++)
+            {
+                
+                file = files[i];
 
-                // var colorChip = targetEngine.ColorChip;
-                //
-                // return new SpriteImageParser(imageParser, colorChip, targetEngine.SpriteChip)
-                // {
-                //     SourcePath = file,
-                //     MaskHex = targetEngine.ColorChip.maskColor
-                // };
+                if(file.StartsWith("/Game/Sprites/") && file.EndsWith(".png"))
+                {
+                    _loader.ParseSpritesFromFolder(file, targetEngine);
+                }
+
             }
 
             return null;

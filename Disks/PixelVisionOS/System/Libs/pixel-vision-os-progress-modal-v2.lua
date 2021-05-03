@@ -167,6 +167,6 @@ function ProgressModal:Update(timeDelta)
 end
 
 function ProgressModal:Close()
-  print("Progress Close")
+  -- print("Progress Close")
   editorUI.mouseCursor:SetCursor(1, false)
 end

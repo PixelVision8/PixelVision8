@@ -81,7 +81,7 @@ function PixelVisionOS:Update(timeDelta)
         if(ref ~= nil) then
 
             -- Only update UI when the modal is not active
-            if((pixelVisionOS:IsModalActive() == false or ref.ignoreModal == false) and ref.cycle == "update") then
+            if((ref.cycle == "update" and pixelVisionOS:IsModalActive() == false) or (ref.cycle == "update" and pixelVisionOS:IsModalActive() == true and ref.ignoreModal == true) ) then
 
                 -- Call the UI scope's update and pass back in the UI data
                 ref.uiScope[ref.uiUpdate](ref.uiScope, ref.uiData)
@@ -323,13 +323,13 @@ end
 function PixelVisionOS:RegisterUI(data, updateCall, scope, ignoreModal, cycle)
 
     scope = scope or self
-    ignoreModal = ignoreModal or true
+    ignoreModal = ignoreModal or false
     cycle = cycle or "update"
   
     -- Try to remove an existing instance of the component
     self:RemoveUI(data.name)
   
-    table.insert(self.uiComponents, {uiData = data, uiUpdate = updateCall, uiScope = scope, ignoreModal = ignoreModal or false, cycle = cycle})
+    table.insert(self.uiComponents, {uiData = data, uiUpdate = updateCall, uiScope = scope, ignoreModal = ignoreModal, cycle = cycle})
   
     self.uiTotal = #self.uiComponents
   

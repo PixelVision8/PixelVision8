@@ -1,0 +1,13 @@
+{
+    "name":"RPG8",
+    "description":"Game description goes here.",
+    "icon":"none",
+    "screenshot":"none",
+    "ext":".pv8",
+    "version":"v0.0.0",
+    "gpuChip":"Custom",
+    "cartChip":"PV8",
+    "soundChip":"PV8",
+    "paletteMode":"false",
+    
+}

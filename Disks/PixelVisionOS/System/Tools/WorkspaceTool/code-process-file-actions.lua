@@ -83,6 +83,8 @@ function CalculateSteps()
 
         end
 
+        -- print("tmpFileCount", #filesToCopy)
+
         BackgroundScriptData( "tmpFileCount", tostring(#filesToCopy) )
 
     end
@@ -174,7 +176,7 @@ function TriggerSingleFileAction(srcPath, destPath)
 end
 
 function OnFileActionComplete()
-
+    -- print("File action done")
     -- TODO perform any cleanup after moving
     local totalCleanup = #fileCleanup
     for i = 1, totalCleanup do

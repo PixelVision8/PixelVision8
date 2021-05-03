@@ -36,7 +36,7 @@ namespace PixelVision8.Player
     {
         private SpriteChip SpriteChip;
 
-        public bool autoImport;
+        public bool autoImport = true;
 
         public TileData[] tiles;
         private int _columns;

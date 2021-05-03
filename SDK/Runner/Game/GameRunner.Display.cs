@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 
 namespace PixelVision8.Runner
@@ -72,7 +73,7 @@ namespace PixelVision8.Runner
 
             // Now it's time to call the PixelVisionEngine's Draw() method. This Draw() call propagates throughout all of the Chips that have 
             // registered themselves as being able to draw such as the GameChip and the DisplayChip.
-
+            
             // Only call draw if the window has focus
             if (RunnerActive) ActiveEngine.Draw();
 

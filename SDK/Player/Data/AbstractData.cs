@@ -36,19 +36,19 @@ namespace PixelVision8.Player
         ///     before refreshing their data.
         /// </summary>
         /// <value>Boolean</value>
-        public bool Invalid;
+        public bool Invalid {get; set;}
 
         /// <summary>
         ///     This method allows a clean way to set the invalid property to true
         ///     signaling a change in the underlying data. This method could be overridden
         ///     to provide additional logic when the AbstractData is invalidated.
         /// </summary>
-        public void Invalidate()
+        public virtual void Invalidate()
         {
             Invalid = true;
         }
 
-        public void ResetValidation() //Should be faster without calling 2 extra functions per tile. Adds 1-2FPS debugging.
+        public virtual void ResetValidation() //Should be faster without calling 2 extra functions per tile. Adds 1-2FPS debugging.
         {
             Invalid = false;
         }

@@ -18,6 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
+using System;
 using System.Collections.Generic;
 
 namespace PixelVision8.Player
@@ -48,8 +49,41 @@ namespace PixelVision8.Player
         [DrawAction]
         public void FloodFillAction(CanvasDrawRequest request)
         {
-            if (request.Bounds.X < 0 || request.Bounds.Y < 0 || request.Bounds.X > Width ||
-                request.Bounds.Y > Height) return;
+            // if (request.Bounds.X < 0 || request.Bounds.Y < 0 || request.Bounds.X > Width ||
+            //     request.Bounds.Y > Height) return;
+
+            // var targetColor = GetPixel(currentTexture, request.Bounds.X, request.Bounds.Y);
+            // var replacementColor = 0;
+            
+            // var pt = new Point(request.Bounds.X, request.Bounds.Y);
+
+            // Queue<Point> q = new Queue<Point>();
+            // q.Enqueue(pt);
+            // while (q.Count > 0)
+            // {
+            //     Point n = q.Dequeue();
+            //     if (!ColorMatch(GetPixel(currentTexture, n.X, n.Y),targetColor))
+            //         continue;
+            //     Point w = n, e = new Point(n.X + 1, n.Y);
+            //     while ((w.X >= 0) && ColorMatch(GetPixel(currentTexture,w.X, w.Y),targetColor))
+            //     {
+            //         SetPatternPixel(currentTexture, w.X, w.Y, replacementColor);
+            //         if ((w.Y > 0) && ColorMatch(GetPixel(currentTexture,w.X, w.Y - 1),targetColor))
+            //             q.Enqueue(new Point(w.X, w.Y - 1));
+            //         if ((w.Y < currentTexture.Height - 1) && ColorMatch(GetPixel(currentTexture,w.X, w.Y + 1),targetColor))
+            //             q.Enqueue(new Point(w.X, w.Y + 1));
+            //         w.X--;
+            //     }
+            //     while ((e.X <= currentTexture.Width - 1) && ColorMatch(GetPixel(currentTexture,e.X, e.Y),targetColor))
+            //     {
+            //         SetPatternPixel(currentTexture, e.X, e.Y, replacementColor);
+            //         if ((e.Y > 0) && ColorMatch(GetPixel(currentTexture,e.X, e.Y - 1), targetColor))
+            //             q.Enqueue(new Point(e.X, e.Y - 1));
+            //         if ((e.Y < currentTexture.Height - 1) && ColorMatch(GetPixel(currentTexture,e.X, e.Y + 1), targetColor))
+            //             q.Enqueue(new Point(e.X, e.Y + 1));
+            //         e.X++;
+            //     }
+            // }
 
             // Get the color at the point where we are trying to fill and use that to match all the color inside the shape
             var targetColor = GetPixel(currentTexture, request.Bounds.X, request.Bounds.Y);
@@ -98,6 +132,19 @@ namespace PixelVision8.Player
                     y1++;
                 }
             }
+        }
+
+        private void SetPatternPixel(PixelData currentTexture, int x, int y, int replacementColor)
+        {
+            // Console.WriteLine("{0},{1}", x, y);
+            replacementColor = GetPixel(pattern, x % pattern.Width, y % pattern.Height);
+            
+            SetPixel(currentTexture, x, y, replacementColor);
+        }
+
+        private static bool ColorMatch(int a, int b)
+        {
+            return a == b;
         }
     }
 }

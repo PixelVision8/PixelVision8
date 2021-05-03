@@ -27,6 +27,8 @@ namespace PixelVision8.Player
         Tile,
         Sprite,
         UI,
-        SpriteAbove
+        SpriteAbove,
+
+        Mouse
     }
 }
