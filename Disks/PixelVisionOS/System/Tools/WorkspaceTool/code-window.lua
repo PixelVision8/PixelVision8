@@ -1299,7 +1299,9 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
                 local nameSplit = string.split(tmpFile.fullName, ".")
 
                 -- The file name is the first item in the array
-                tmpFile.name = nameSplit[1]
+                tmpFile.name = tmpEntity.EntityName
+
+                -- print("name", tmpEntity.EntityNameWithoutExtension)
 
                 -- Check to see if this is a directory
                 if(tmpFile.isDirectory) then
@@ -1313,17 +1315,28 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
 
                     -- Get the entity's extension
                     tmpFile.ext = tmpEntity.GetExtension()
-
+                    
                     -- make sure that the extension is valid
                     if(table.indexOf(self.validFiles, tmpFile.ext) > - 1) then
 
-                        -- Remove the first item from the name split since it's already used as the name
-                        table.remove(nameSplit, 1)
+                        if(tmpFile.ext == ".png") then
+                        
+                            -- Remove the first item from the name split since it's already used as the name
+                            table.remove(nameSplit, 1)
 
-                        -- Join the nameSplit table with . to create the type
-                        tmpFile.type = table.concat(nameSplit, ".")
+                            -- Join the nameSplit table with . to create the type
+                            tmpFile.type = table.concat(nameSplit, ".")
+                            
+                        else
 
-                        -- Add theh entity
+                            tmpFile.type = nameSplit[#nameSplit]
+                        
+                        end
+
+                        -- Remove the extension from the file name
+                        tmpFile.name = string.sub(tmpFile.name, 0, #tmpFile.name - #tmpFile.type - 1)
+
+                        -- Add the entity
                         table.insert(entities, tmpFile)
                     end
 

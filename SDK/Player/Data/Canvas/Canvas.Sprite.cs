@@ -1,4 +1,6 @@
 
+using System;
+
 namespace PixelVision8.Player
 {
     public sealed partial class Canvas
@@ -29,12 +31,6 @@ namespace PixelVision8.Player
 
             newRequest.Action = DrawPixelDataAction;
 
-            // We need at least 1 pixel to save the sprite ID
-            // if (newRequest.PixelData.Width != spriteSize.X || newRequest.PixelData.Height != spriteSize.Y)
-            // {
-            //     Utilities.Resize(newRequest.PixelData, spriteSize.X, spriteSize.X);
-            // }
-
             // Copy over the pixel
             newRequest.PixelData.SetPixels(gameChip.Sprite(id), spriteSize.X, spriteSize.X);
             newRequest.X = x;
@@ -51,39 +47,10 @@ namespace PixelVision8.Player
             requestPool[currentRequest] = newRequest;
         }
 
-        // public void DrawSprites(int[] ids, int x, int y, int width, bool flipH = false, bool flipV = false,
-        //     int colorOffset = 0)
-        // {
-        //     _total = ids.Length;
-
-        //     var startX = x;
-        //     var startY = y;
-
-        //     var paddingW = spriteSize.X;
-        //     var paddingH = spriteSize.Y;
-
-        //     // TODO need to offset the bounds based on the scroll position before testing against it
-
-        //     for (var i = 0; i < _total; i++)
-        //     {
-        //         // Set the sprite id
-        //         var id = ids[i];
-
-        //         // TODO should also test that the sprite is not greater than the total sprites (from a cached value)
-        //         // Test to see if the sprite is within range
-        //         if (id > -1)
-        //         {
-        //             x = (int)Math.Floor((double)i % width) * paddingW + startX;
-        //             y = (int)Math.Floor((double)i / width) * paddingH + startY;
-
-        //             DrawSprite(id, x, y, flipH, flipV, colorOffset);
-        //         }
-        //     }
-        // }
-
-        public void DrawMetaSprite(int id, int x, int y, bool flipH = false, bool flipV = false,
-            int colorOffset = 0)
+        public void DrawMetaSprite(int id, int x, int y, bool flipH = false, bool flipV = false, int colorOffset = 0)
         {
+            if(gameChip == null)
+                return;
 
             var metaSprite = gameChip.MetaSprite(id);
 
@@ -104,6 +71,14 @@ namespace PixelVision8.Player
                 );
 
             }
+        }
+
+        public void DrawMetaSprite(string name, int x, int y, bool flipH = false, bool flipV = false, int colorOffset = 0)
+        {
+            if(gameChip == null)
+                return;
+                
+            DrawMetaSprite(gameChip.FindMetaSpriteId(name), x, y, flipH, flipV, colorOffset);
         }
         
 

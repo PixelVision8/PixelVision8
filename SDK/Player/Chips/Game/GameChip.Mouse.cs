@@ -75,13 +75,23 @@ namespace PixelVision8.Player
         {
             var pos = MouseInputChip.ReadMousePosition();
 
+            // if(pos.X < 0)
+            //     pos.X = 0;
+            // else if(pos.X >= DisplayChip.Width)
+            //     pos.X = DisplayChip.Width-1;
+
+            // if(pos.Y < 0)
+            //     pos.Y = 0;
+            // else if(pos.Y >= DisplayChip.Height)
+            //     pos.Y = DisplayChip.Height-1;
+
             // var bounds = DisplayChip.VisibleBounds;
 
             // Make sure that the mouse x position is inside of the display width
-            if (pos.X < 0 || pos.X > DisplayChip.Width) pos.X = -1;
+            // if (pos.X < 0 || pos.X > DisplayChip.Width) pos.X = -1;
 
-            // Make sure that the mouse y position is inside of the display height
-            if (pos.Y < 0 || pos.Y > DisplayChip.Height) pos.Y = -1;
+            // // Make sure that the mouse y position is inside of the display height
+            // if (pos.Y < 0 || pos.Y > DisplayChip.Height) pos.Y = -1;
 
             return pos;
         }

@@ -34,7 +34,7 @@ namespace PixelVision8.Player
 
         public int Width => defaultLayer.Width;
         public int Height => defaultLayer.Height;
-        public int[] Pixels => defaultLayer.Pixels;
+        public int[] Pixels => GetPixels();
 
         public Canvas(int width, int height)
         {

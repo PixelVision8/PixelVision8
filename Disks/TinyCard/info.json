@@ -1,0 +1,14 @@
+{
+    "name":"TinyCard",
+    "description":"A mini version of HyperCard built with Pixel Vision 8.",
+    "version":"v0.0.0",
+    "ext":".pv8",
+    "gpuChip":"PV8",
+    "cartChip":"PV8",
+    "soundChip":"PV8",
+    "buildWin":"false",
+    "buildExtras":"",
+    "runnerType":"csharp",
+    "buildMac":"false",
+    "buildLinux":"false"
+}

@@ -32,9 +32,15 @@ namespace PixelVision8.Player
         public int Height { get; private set; } = 1;
         public int Total { get; private set; } = 1;
 
-        public PixelData(int width = 1, int height = 1)
+        public PixelData(int width = 1, int height = 1, int[] pixels = null)
         {
             Resize(width, height);
+
+            if(pixels != null && pixels.Length == _pixels.Length)
+            {
+                Array.Copy(pixels, _pixels, _pixels.Length);
+            }
+            
         }
 
         public void Resize(int width, int height)

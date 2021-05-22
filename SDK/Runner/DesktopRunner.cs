@@ -1406,7 +1406,6 @@ namespace PixelVision8.Runner
                 // Have the workspace run the game from the current path
                 var GameFiles = workspaceService.LoadGame(path);
 
-
                 // Find the right code file to load and remove other code files
 
                 // Ignore CS files by default
@@ -1607,6 +1606,7 @@ namespace PixelVision8.Runner
                 MetadataReference.CreateFromFile(Assembly.Load("System.Collections").Location), //required for Linq
                 MetadataReference.CreateFromFile(Assembly.Load("System.Linq").Location),
                 MetadataReference.CreateFromFile(Assembly.Load("System.Linq.Expressions").Location),
+                MetadataReference.CreateFromFile(Assembly.Load("System.Text.RegularExpressions").Location),
             };
 
             var compiler = CSharpCompilation.Create("LoadedGame", syntaxTrees, references, options);
