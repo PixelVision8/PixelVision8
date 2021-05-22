@@ -112,10 +112,9 @@ function WorkspaceTool:CreateDropDownMenu()
         addAt = addAt + 1
     end
 
-    if(PathExists(self.fileTemplatePath.AppendFile("sprites.png"))) then
-
-        table.insert(menuOptions, addAt, {name = "New Sprites", action = function() self:OnNewFile("sprites", "png", "sprites", false) end, enabled = false, toolTip = "Run the current game.", file = "sprites.png"})
-        table.insert(self.newFileOptions, {name = "New Sprites", file = "sprites.png"})
+    if(PathExists(self.fileTemplatePath.AppendFile("sprite.png"))) then
+        table.insert(menuOptions, addAt, {name = "New Sprite", action = function() self:OnNewFile("sprite", "png", "sprite") end, enabled = false, toolTip = "Run the current game.", file = "sprite.png"})
+        table.insert(self.newFileOptions, {name = "New Sprite", file = "sprite.png"})
         addAt = addAt + 1
     end
 
@@ -210,7 +209,7 @@ function WorkspaceTool:CreateNewCodeFile(defaultPath)
     local fileName = "code"
     local ext = ".lua"
 
-    local infoFilePath = defaultPath.AppendFile("info.json")
+    local infoFilePath = (defaultPath.EntityName == "Src" and defaultPath.ParentPath or defaultPath).AppendFile("info.json")
 
     if(PathExists(infoFilePath)) then
 
@@ -349,9 +348,12 @@ function WorkspaceTool:UpdateContextMenu()
 
     local selections = self:CurrentlySelectedFiles()
 
+    local specialDir = self.currentPath.EntityName == "Sprites" or self.currentPath.EntityName == "Src"
+
+
     -- print("selections", dump(selections))
     -- Check to see if currentPath is a game
-    local canRun = self.focus == true and self.isGameDir--and pixelVisionOS:ValidateGameInDir(self.currentPath, {"code.lua"})-- and selections
+    local canRun = self.focus == true and self.isGameDir and specialDir == false--and pixelVisionOS:ValidateGameInDir(self.currentPath, {"code.lua"})-- and selections
 
     -- if(canRun) then
 
@@ -402,11 +404,12 @@ function WorkspaceTool:UpdateContextMenu()
 
     local canCreateFile = self.focus == true and trashOpen == false
 
-    -- local canCreateFile = canCreateFile == true and self.currentPath.Path ~= self.workspacePath.Path
+    local canCreateFolder = canCreateFile == true and specialDir == false
 
-    local canCreateProject = canCreateFile == true and canRun == false
 
-    local canBuild = canRun == true and string.starts(self.currentPath.Path, "/Disks/") == false
+    local canCreateProject = canCreateFolder == true and canRun == false
+
+    local canBuild = canRun == true and string.starts(self.currentPath.Path, "/Disks/") == false and specialDir == false
 
     local canCopy = self.focus == true and selections ~= nil and #selections > 0 and specialFile == false and trashOpen == false
     local canPaste = canCreateFile == true and pixelVisionOS:ClipboardFull() == true
@@ -423,7 +426,7 @@ function WorkspaceTool:UpdateContextMenu()
 
     pixelVisionOS:EnableMenuItemByName(NewGameShortcut, canCreateProject)
 
-    pixelVisionOS:EnableMenuItemByName(NewFolderShortcut, canCreateFile)
+    pixelVisionOS:EnableMenuItemByName(NewFolderShortcut, canCreateFolder)
 
     pixelVisionOS:EnableMenuItemByName(RunShortcut, canRun)
 
@@ -437,7 +440,7 @@ function WorkspaceTool:UpdateContextMenu()
         -- Get the new file option data
         local option = self.newFileOptions[i]
 
-        local enable = canCreateFile
+        local enable = canCreateFile and specialDir == false
 
         -- Check to see if the option should be enabled
         if(enable and option.file ~= nil) then
@@ -452,6 +455,30 @@ function WorkspaceTool:UpdateContextMenu()
 
     end
 
+    -- Manually enable files base on special dir
+    if(specialDir == true) then
+        
+        if(self.currentPath.EntityName == "Src") then
+            
+            -- Enable the file in the menu
+            pixelVisionOS:EnableMenuItemByName("New Code", true)
+
+        elseif(self.currentPath.EntityName == "Sprites") then
+
+            -- Enable the file in the menu
+            pixelVisionOS:EnableMenuItemByName("New Sprite", true)
+
+        end
+        
+    else
+
+        -- Need to manually disable the new sprite option
+        if(PathExists(self.currentPath.AppendFile("sprites.png"))) then
+            pixelVisionOS:EnableMenuItemByName("New Sprite", false)
+        end
+
+    end
+
 end
 
 function WorkspaceTool:ToggleOptions(enabled)
@@ -463,15 +490,15 @@ function WorkspaceTool:ToggleOptions(enabled)
         local option = self.newFileOptions[i]
 
         -- Check to see if the option should be enabled
-        if(enable == true and option.file ~= nil) then
+        if(enabled == true and option.file ~= nil) then
 
             -- Change the enable flag based on if the file exists
-            enable = not PathExists(self.currentPath.AppendFile(option.file))
+            enabled = not PathExists(self.currentPath.AppendFile(option.file))
 
         end
 
         -- Enable the file in the menu
-        pixelVisionOS:EnableMenuItemByName(option.name, enable)
+        pixelVisionOS:EnableMenuItemByName(option.name, enabled)
 
     end
 

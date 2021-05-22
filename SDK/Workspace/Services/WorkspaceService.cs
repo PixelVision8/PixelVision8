@@ -387,11 +387,11 @@ namespace PixelVision8.Runner
                     // Filter out only the files we can use and convert this into a dictionary with the file name as the key and the path as the value
                     files = GetGameEntities(rootPath);
 
-                    // Find any additional code
+                    // Find any additional CS files
                     var srcDir = rootPath.AppendDirectory("Src");
                     if(Exists(srcDir))
                     {
-                        var code = (from p in GetEntities(srcDir) where (p.EntityName.EndsWith(".cs") || p.EntityName.EndsWith(".lua")) select p.Path).ToArray();
+                        var code = (from p in GetEntities(srcDir) where p.EntityName.EndsWith(".cs") select p.Path).ToArray();
                         
                         var total = files.Length;
 

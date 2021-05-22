@@ -1,6 +1,6 @@
 --[[
 	Pixel Vision 8 - Debug Tool
-	Copyright (C) 2016, Pixel Vision 8 (http://pixelvision8.com)
+	Copyright (C) 2021, Pixel Vision 8 (http://pixelvision8.com)
 	Created by Jesse Freeman (@jessefreeman)
 
 	Please do not copy and distribute verbatim copies

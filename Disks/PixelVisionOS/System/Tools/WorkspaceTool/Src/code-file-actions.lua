@@ -627,9 +627,19 @@ function WorkspaceTool:OnNewFile(fileName, ext, type, editable)
     type = ext
   end
 
+  editable = editable or true
+
   local newFileModal = self:GetNewFileModal()
 
-  newFileModal:SetText("New ".. type, fileName, "Name " .. type .. " file", editable == nil and true or false)
+  -- TODO hack to get sprites to be renamed in the Sprites folder
+  if(fileName == "sprite" and pixelVisionOS:ValidateGameInDir(self.currentPath)) then
+
+    fileName = "sprites"
+    editable = false
+
+  end
+
+  newFileModal:SetText("New ".. type, fileName, "Name " .. type .. " file", editable)
 
   pixelVisionOS:OpenModal(newFileModal,
     function()
@@ -640,7 +650,7 @@ function WorkspaceTool:OnNewFile(fileName, ext, type, editable)
 
       local filePath = UniqueFilePath(self.currentPath.AppendFile(newFileModal.inputField.text .. "." .. ext))
 
-      local tmpPath = self.fileTemplatePath.AppendFile(filePath.EntityName)
+      local tmpPath = self.fileTemplatePath.AppendFile(fileName .. "." .. ext)
 
       -- Check for lua files first since we always want to make them empty
       if(ext == "lua") then
@@ -681,9 +691,9 @@ function WorkspaceTool:OnNewFile(fileName, ext, type, editable)
 
         tmpPath = NewWorkspacePath("/App/Fonts/large.font.png")
         CopyTo(tmpPath, filePath)
-
+      
       else
-        -- print("File not supported")
+        print("File not supported")
         -- TODO need to display an error message that the file couldn't be created
         return
       end

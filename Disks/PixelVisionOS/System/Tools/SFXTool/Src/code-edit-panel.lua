@@ -80,7 +80,11 @@ function SFXTool:CreateEditPanel()
 
 end
 
+
+
 function SFXTool:UpdateEditPanel()
+
+    
 
     for i = 1, self.totalKnobs do
 
@@ -94,6 +98,13 @@ function SFXTool:UpdateEditPanel()
       if(editorUI.collisionManager.mouseDown == false and self.playSound == true) then
         self.playSound = false
         self:ApplySoundChanges(true)
+      end
+
+      if(self.flagMuteIsOn == true) then
+
+        pixelVisionOS:MuteWarning()
+  
+        self.flagMuteIsOn = false
       end
 
 end

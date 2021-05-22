@@ -45,6 +45,8 @@ namespace PixelVision8.Runner
             
             List<WorkspacePath> sharedLibPaths = _workspace.SharedLibDirectories();
 
+            sharedLibPaths.Insert(0, WorkspacePath.Root.AppendDirectory("Game").AppendDirectory("Src"));
+
             sharedLibPaths.Insert(0, WorkspacePath.Root.AppendDirectory("Game"));
 
             // Loop through all the different locations

@@ -44,30 +44,32 @@ function SFXTool:Init()
 
     if(_sfxTool.success == true) then
 
-        local pathSplit = string.split(_sfxTool.rootDirectory, "/")
+      local pathSplit = string.split(_sfxTool.rootDirectory, "/")
+  
+      -- Update title with file path
+      _sfxTool.toolTitle = pathSplit[#pathSplit] .. "/sounds.json"
+
+      _sfxTool:CreateDropDownMenu()
+
+      _sfxTool:CreateInstrumentPanel()
+
+      _sfxTool:CreateSoundPanel()
+
+      _sfxTool:CreateWaveformPanel()
+
+      _sfxTool:CreateEditPanel()
+
+      if(SessionID() == ReadSaveData("sessionID", "") and _sfxTool.rootDirectory == ReadSaveData("rootDirectory", "")) then
+          _sfxTool.currentID = tonumber(ReadSaveData("currentID", "0"))
+      end
     
-        -- Update title with file path
-        _sfxTool.toolTitle = pathSplit[#pathSplit] .. "/sounds.json"
+      editorUI:ChangeNumberStepperValue(_sfxTool.channelIDStepper, 0)
+  
+      _sfxTool:LoadSound(_sfxTool.currentID, true, false)
 
-        _sfxTool:CreateDropDownMenu()
+      _sfxTool:ResetDataValidation()
 
-        _sfxTool:CreateInstrumentPanel()
-
-        _sfxTool:CreateSoundPanel()
-
-        _sfxTool:CreateWaveformPanel()
-
-        _sfxTool:CreateEditPanel()
-
-        if(SessionID() == ReadSaveData("sessionID", "") and _sfxTool.rootDirectory == ReadSaveData("rootDirectory", "")) then
-            _sfxTool.currentID = tonumber(ReadSaveData("currentID", "0"))
-        end
-      
-        editorUI:ChangeNumberStepperValue(_sfxTool.channelIDStepper, 0)
-    
-        _sfxTool:LoadSound(_sfxTool.currentID, true, false)
-
-    _sfxTool:ResetDataValidation()
+      _sfxTool.flagMuteIsOn = Mute()
     
     else
 

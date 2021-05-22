@@ -205,6 +205,7 @@ function MusicTool:Configure()
 
     pixelVisionOS:RegisterUI({name = "UpdateMusicToolLoop"}, "UpdateMusicTool", self)
 
+    self.flagMuteIsOn = Mute()
 
   else
 
@@ -357,6 +358,12 @@ function MusicTool:UpdateMusicTool(timeDelta)
 
   -- end
 
+  if(self.flagMuteIsOn == true) then
+    
+    pixelVisionOS:MuteWarning()
+    self.flagMuteIsOn = false
+
+  end
   
 end
 

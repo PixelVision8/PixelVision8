@@ -110,6 +110,21 @@ end
 
 function PaintTool:UpdatePickerPanel(timeDelta)
 
+    if(self.colorsPath ~= "") then
+
+        -- self.importColorMessage = "The " .. self.toolName .. " has detected another color option:\n\n'" .. messagePath .. "/colors.png'\n\nDo you want to use these colors instead and replace the sprite colors?"
+  
+        -- self:OnImportColors(self.colorsPath)
+  
+        -- Clear color flag
+        self.colorsPath = ""
+  
+        -- print("Load color file", self.colorsPath)
+  
+        self:OnImportColors(self.colorsPath)
+  
+      end
+
     local overrideFocus = (self.pickerPanel.inFocus == true and editorUI.collisionManager.mouseDown)
 
     local inRect = self.pickerPanelRect.Contains(editorUI.mouseCursor.pos) == true

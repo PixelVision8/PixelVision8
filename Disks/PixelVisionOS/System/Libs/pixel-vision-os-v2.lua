@@ -304,6 +304,10 @@ function PixelVisionOS:ValidateGameInDir(workspacePath, requiredFiles)
         return false
     end
 
+    if(workspacePath.EntityName == "Src") then
+        return
+    end
+
     requiredFiles = requiredFiles or {"data.json", "info.json"}
 
     local flag = 0
@@ -468,4 +472,36 @@ function PixelVisionOS:LoadError(toolName, bgColor)
 
 
 end
+
+function PixelVisionOS:MuteWarning()
+    
+    local buttons =
+    {
+  
+      {
+        name = "modalyesbutton",
+        action = function(target)
+          Mute(false)
+  
+          pixelVisionOS.titleBar.muteInvalid = true
+  
+          target.onParentClose()
+        end,
+        key = Keys.Enter,
+        tooltip = "Press 'enter' to unmute"
+      },
+      {
+        name = "modalnobutton",
+        action = function(target)
+          target.onParentClose()
+        end,
+        key = Keys.N,
+        tooltip = "Press 'n' to leave as is"
+      }
+  
+    }
+  
+    pixelVisionOS:ShowMessageModal("Warning", "Looks like the system is volume is muted. You will not be able to hear any sounds. Do you want to unmute the volume?", 160, buttons)
+  
+  end
 
