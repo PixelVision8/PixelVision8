@@ -11,9 +11,8 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using Microsoft.Xna.Framework;
+using System;
 using PixelVision8.Player;
-using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Examples
 {
@@ -31,8 +30,8 @@ namespace PixelVision8.Examples
             tilePosition = MousePosition();
 
             // Convert the mouse position to the tilemap's correct column and row
-            tilePosition.X = MathUtil.FloorToInt(tilePosition.X / 8f);
-            tilePosition.Y = MathUtil.FloorToInt(tilePosition.Y / 8f);
+            tilePosition.X = (int)Math.Floor(tilePosition.X / 8f);
+            tilePosition.Y = (int)Math.Floor(tilePosition.Y / 8f);
 
             // Get the flag value of the current tile
             flagID = Flag(tilePosition.X, tilePosition.Y);

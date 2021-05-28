@@ -112,12 +112,12 @@ function PaintTool:CreateCanvasPanel()
       -- Trigger the canvas release
       self:CanvasRelease(true)
 
-      print("Release", self.tool, self.mergerTmpLayer)
+      -- print("Release", self.tool, self.mergerTmpLayer)
 
       -- If the state was invalidated save the undo
       if(self.undoValid == true) then
 
-        print("Save Undo")
+        -- print("Save Undo")
 
         -- Get the saved state
         pixelVisionOS:BeginUndo(self)
@@ -131,7 +131,7 @@ function PaintTool:CreateCanvasPanel()
 
   self.triggerOnFirstPress = function()
 
-    print("Press", self.tool, self.mergerTmpLayer)
+    -- print("Press", self.tool, self.mergerTmpLayer)
 
     -- Save the canvas state to use for undo on release
     self:StoreUndoSnapshot()
@@ -757,7 +757,7 @@ end
 
 function PaintTool:ChangeCanvasTool(toolName, cursorID)
 
-  print("Change Tool", toolName)
+  -- print("Change Tool", toolName)
 
   -- Clear the selection when changing tools/
   if(self.selectRect ~= nil) then
@@ -843,7 +843,7 @@ function PaintTool:CancelCanvasSelection()
 end
 
 function PaintTool:SelectAll()
-  print("Select All")
+  -- print("Select All")
 
   -- Look for any selected pixel data so we don't accidentally clear it with the new selection
   if(self.selectRect ~= nil and self.selectedPixelData ~= nil) then
@@ -870,7 +870,7 @@ end
 -- Use this to perform a click action on a button. It's used internally when a mouse click is detected.
 function PaintTool:CanvasRelease(callAction)
 
-  print("Canvas Release")
+  -- print("Canvas Release")
 
   -- Check to see if a selection was just resized
   if(self.selectRect ~= nil and self.selectionState == "resize") then
@@ -916,7 +916,7 @@ function PaintTool:CanvasRelease(callAction)
   -- Clear the mouse state
   self.mouseState = self.mouseState == "released" and "up" or "released"
 
-  print("Release", self.mouseState)
+  -- print("Release", self.mouseState)
   -- if(self.mergerTmpLayer == true ) then
 
   -- --   -- TODO we can optimize this by passing in a rect for the area to merge

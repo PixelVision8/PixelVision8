@@ -18,19 +18,19 @@ function PaintTool:IndexFlags()
             table.insert(colors, Color(i-1))
         end
         
-        print(dump(colors))
+        -- print(dump(colors))
         local flagImage = ReadImage(flagPath, "#FF00FF", colors)
 
         local columns = math.ceil(flagImage.Width / 8)
         local rows = math.ceil(flagImage.Height / 8)
 
-        print("size", columns, rows)
+        -- print("size", columns, rows)
 
         self.currentState.pickerTotal = columns * rows
 
         local totalFlags = math.max(32, math.min(self.currentState.pickerTotal, 255))
 
-        print("total flags", totalFlags)
+        -- print("total flags", totalFlags)
 
         local pixelData = nil
 

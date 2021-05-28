@@ -34,6 +34,12 @@ namespace PixelVision8.Player
         public int Height => PixelData.Height;
         
         public string[] Colors;
+
+        public bool Remapping;
+        private int currentPixel;
+        private int remapPixelBatch;
+        
+        private List<int> colorMap;
         
         public ImageData(int width, int height, int[] pixels = null, string[] colors = null)
         {
@@ -46,12 +52,17 @@ namespace PixelVision8.Player
             // See if there are any pixels
             if (pixels != null)
             {
-                // Copy pixels over to PixelData at default size
+                // Copy pixels over to PixelData at default si  ze
                 Utilities.SetPixels(pixels, 0, 0, width, height, PixelData);
             }
 
             // Save a color lookup table
             Colors = colors ?? Constants.DefaultColors.Split(',');
+
+            Remapping = false;
+            currentPixel = 0;
+            remapPixelBatch = 0;
+            colorMap = null;
 
         }
 
@@ -62,6 +73,71 @@ namespace PixelVision8.Player
         public void Resize(int newWidth, int newHeight) => Utilities.Resize(PixelData, newWidth, newHeight);
 
         public void Clear(int color = -1) => Utilities.Clear(PixelData, color);
+
+        
+
+
+        public void RemapColors(string[] colors, bool steps = false)
+        {
+            
+            Remapping = true;
+
+
+            colorMap = new List<int>();
+
+            // Create color map
+            for (int i = 0; i < Colors.Length; i++)
+            {
+                colorMap.Add(Array.IndexOf(colors, Colors[i]));
+            }
+
+            currentPixel = 0;
+            remapPixelBatch = Math.Min(1000, PixelData.Total);
+
+            if(steps == false)
+            {
+                while(Remapping)
+                {
+                    ContinueColorRemap();
+                }
+            }
+
+            // Replace colors
+            Array.Resize(ref Colors, colors.Length);
+            Array.Copy(colors, Colors, colors.Length);
+        }
+
+        public void ContinueColorRemap()
+        {
+            if(Remapping == false)
+                return;
+
+            // Store pixel we are working with 
+            int pixel;
+
+            for (int i = 0; i < remapPixelBatch; i++)
+            {
+
+                pixel = PixelData[currentPixel];
+
+                if(pixel > -1 && pixel < colorMap.Count)
+                {
+                    if(colorMap[pixel] > -1)
+                        PixelData[currentPixel] = colorMap[pixel];
+                }
+
+                currentPixel ++;
+
+                if(currentPixel >= PixelData.Total)
+                {
+                    Remapping = false;
+                    
+                    return;
+                }
+               
+            }
+
+        }
 
     }
 }

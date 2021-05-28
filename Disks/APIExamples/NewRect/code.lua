@@ -36,9 +36,9 @@ function Draw()
   RedrawDisplay()
 
   -- Draw rectA and change the color if there is a collision
-  DrawRect(rectA.x, rectA.y, rectA.width, rectA.height, collision and 6 or 5)
+  DrawRect(rectA.x, rectA.y, rectA.width, rectA.height, collision and 6 or 5, DrawMode.Sprite)
 
   -- Draw the mouse cursor on the screen
-  DrawRect(mousePos.x - 1, mousePos.y - 1, 2, 2, 15)
+  DrawRect(mousePos.x - 1, mousePos.y - 1, 2, 2, 15, DrawMode.Sprite)
 
 end

@@ -41,7 +41,7 @@ namespace PixelVision8.Runner
 
             // Save file helpers
             luaScript.Globals["SaveText"] = new Action<WorkspacePath, string>(SaveText);
-            luaScript.Globals["SaveImage"] = new Action<WorkspacePath, ImageData>(SaveImage);
+            luaScript.Globals["SaveImage"] = new Action<WorkspacePath, ImageData, string>(SaveImage);
             
             // Read file helpers
             luaScript.Globals["ReadJson"] = new Func<WorkspacePath, Dictionary<string, object>>(ReadJson);
@@ -52,7 +52,7 @@ namespace PixelVision8.Runner
             luaScript.Globals["NewWorkspacePath"] = new Func<string, WorkspacePath>(WorkspacePath.Parse);
             
             // File helpers
-            luaScript.Globals["NewImage"] = new Func<int, int, string[], int[], ImageData>(NewImage);
+            luaScript.Globals["NewImage"] = new Func<int, int, int[], string[], ImageData>(NewImage);
             
             luaScript.Globals["CurrentTime"] = new Func<string>(CurrentTime);
             
@@ -164,21 +164,14 @@ namespace PixelVision8.Runner
             return workspace.OpenFile(workspacePath, FileAccess.Read).ReadAllBytes().Length / 1024;
         }
         
-        public void SaveImage(WorkspacePath dest, ImageData imageData)
+        public void SaveImage(WorkspacePath dest, ImageData imageData, string maskHex = "#FF00FF")
         {
             var width = imageData.Width;
             var height = imageData.Height;
-            var hexColors = imageData.Colors;
+            
+            var cachedColors = ColorUtils.ConvertColors(imageData.Colors, maskHex, true).Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
 
-            // convert colors
-            var totalColors = hexColors.Length;
-            var colors = new ColorData[totalColors];
-            for (var i = 0; i < totalColors; i++) colors[i] = new ColorData(hexColors[i]);
-
-            var pixelData = imageData.GetPixels();
-
-            var exporter =
-                new PixelDataExporter(dest.EntityName, pixelData, width, height, colors, _pngWriter, "#FF00FF");
+            var exporter = new PixelDataExporter(dest.EntityName, imageData.GetPixels(), width, height, cachedColors, _pngWriter, "#FF00FF");
             exporter.CalculateSteps();
 
             while (exporter.Completed == false) exporter.NextStep();
@@ -191,7 +184,7 @@ namespace PixelVision8.Runner
             workspace.SaveExporterFiles(output);
         }
         
-        public ImageData NewImage(int width, int height, string[] colors, int[] pixelData = null)
+        public ImageData NewImage(int width, int height, int[] pixelData = null, string[] colors = null)
         {
             return new ImageData(width, height, pixelData, colors);
         }
@@ -223,7 +216,7 @@ namespace PixelVision8.Runner
             workspace.SaveTextToFile(dest, defaultText, true);
         }
 
-        public ImageData ReadImage(WorkspacePath src, string maskHex = "#ff00ff", string[] colorRefs = null)
+        public ImageData ReadImage(WorkspacePath src, string maskHex = "#FF00FF", string[] colorRefs = null)
         {
             PNGReader reader = null;
 

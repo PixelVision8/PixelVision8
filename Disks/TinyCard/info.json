@@ -10,5 +10,6 @@
     "buildExtras":"",
     "runnerType":"csharp",
     "buildMac":"false",
-    "buildLinux":"false"
+    "buildLinux":"false",
+    
 }

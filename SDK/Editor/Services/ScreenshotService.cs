@@ -118,16 +118,9 @@ namespace PixelVision8.Editor
                 var totalPixels = pixels.Length;
                 var newTotalPixels = newPixels.Length;
 
-                var index = 0;
-
                 for (var i = 0; i < totalPixels; i++)
                 {
-                    var col = i % width;
-                    if (col < visibleWidth && index < newTotalPixels)
-                    {
-                        newPixels[index] = cachedColors[pixels[i]];
-                        index++;
-                    }
+                    newPixels[i] = cachedColors[pixels[i]];
                 }
 
                 // We need to do this manually since the exporter could be active and we don't want to break it for a screenshot

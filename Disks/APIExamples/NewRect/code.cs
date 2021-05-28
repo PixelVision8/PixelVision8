@@ -11,7 +11,6 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/ 
 
-using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 
 namespace PixelVision8.Examples
@@ -50,10 +49,10 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw rectA and change the color if there is a collision
-            DrawRect(rectA.X, rectA.Y, rectA.Width, rectA.Height, collision ? 6 : 5);
+            DrawRect(rectA.X, rectA.Y, rectA.Width, rectA.Height, collision ? 6 : 5, DrawMode.Sprite);
 
             // Draw the mouse cursor on the screen
-            DrawRect(mousePos.X - 1, mousePos.Y - 1, 2, 2, 15);
+            DrawRect(mousePos.X - 1, mousePos.Y - 1, 2, 2, 15, DrawMode.Sprite);
 
         }
 

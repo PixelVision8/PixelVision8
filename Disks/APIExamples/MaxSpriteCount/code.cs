@@ -11,7 +11,6 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 using System;
 

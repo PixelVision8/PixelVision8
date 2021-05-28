@@ -11,7 +11,6 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 
 namespace PixelVision8.Examples
@@ -45,10 +44,10 @@ namespace PixelVision8.Examples
             Clear();
 
             // Draw the actual tilemap starting below the top border and manually adjust the scroll offset values
-            DrawTilemap(0, 16, 32, 28, pos.X, 16);
+            DrawTilemap(0, 16, 33, 28, pos.X, 16);
 
             // Draw the tilemap top border over everything else and lock the x scroll value
-            DrawTilemap(0, 0, 32, 2, 0);
+            DrawTilemap(0, 0, 33, 2, 0);
 
             // Display the scroll position
             DrawText("Scroll Position: " + ScrollPosition().X + ", " + ScrollPosition().Y, 8, 16, DrawMode.Sprite,

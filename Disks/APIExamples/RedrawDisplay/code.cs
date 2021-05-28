@@ -30,7 +30,7 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw the FPS value to the display on every frame
-            DrawText(fps.ToString(), 40, 8, DrawMode.Sprite, "large", 14);
+            DrawText(ReadFPS().ToString(), 40, 8, DrawMode.Sprite, "large", 14);
         }
     }
 }

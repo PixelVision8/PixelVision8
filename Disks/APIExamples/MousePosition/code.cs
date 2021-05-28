@@ -11,7 +11,6 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 
 namespace PixelVision8.Examples
@@ -34,6 +33,16 @@ namespace PixelVision8.Examples
             // Update the mouse position
             pos = MousePosition();
 
+            if(pos.X < 0 || pos.X > Display().X)
+            {
+                pos.X = -1;
+            }
+
+            if(pos.Y < 0 || pos.Y > Display().Y)
+            {
+                pos.Y = -1;
+            }
+
         }
 
         public override void Draw()
@@ -53,7 +62,7 @@ namespace PixelVision8.Examples
             {
 
                 // Draw a rectangle that follows the mouse on the screen
-                DrawRect(pos.X, pos.Y, 8, 8, 5);
+                DrawRect(pos.X, pos.Y, 8, 8, 5, DrawMode.Sprite);
 
                 // Display the X and Y position of the mouse
                 DrawText(pos.X + "," + pos.Y, 128, 8, DrawMode.Sprite, "large", 14);

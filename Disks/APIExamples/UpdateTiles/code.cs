@@ -12,7 +12,6 @@ https://www.pixelvision8.com/getting-started
 **/
 
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 
 namespace PixelVision8.Examples
@@ -57,7 +56,7 @@ namespace PixelVision8.Examples
                 var pos = CalculatePosition(i, mapSize.X);
 
                 // Check to see if the tile has a sprite
-                if (Tile(pos.X, pos.Y).spriteID > -1)
+                if (Tile(pos.X, pos.Y).SpriteId > -1)
                 {
                     tileList.Add(i);
 

@@ -26,6 +26,14 @@ function Update(timeDelta)
   -- Update the mouse position
   pos = MousePosition()
 
+  if(pos.X < 0 or pos.X > Display().X) then
+    pos.X = -1;
+  end
+
+  if(pos.Y < 0 or pos.Y > Display().Y) then
+    pos.Y = -1;
+  end
+
 end
 
 function Draw()

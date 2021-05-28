@@ -1,10 +1,13 @@
 
 function PaintTool:IndexColors()
 
+    -- print("IndexColors try", self.colorsInvalid)
     -- Only run if the colors have been invalidated
     if(self.colorsInvalid == false) then
         return
     end
+
+    -- print("IndexColors pass")
 
     -- Configure the canvas
     self:ClearCurrentCanvas()
@@ -64,6 +67,8 @@ function PaintTool:IndexColors()
 
     -- Reset the color validation
     self:ResetColorValidation()
+
+    self:IndexColors()
 
 end
 

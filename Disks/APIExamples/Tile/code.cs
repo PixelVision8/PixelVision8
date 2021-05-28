@@ -11,7 +11,6 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 
 namespace PixelVision8.Examples
@@ -79,11 +78,11 @@ namespace PixelVision8.Examples
                     var tmpTile = Tile(pos.X, pos.Y);
 
                     // Check to see if the tile has a sprite
-                    if (tmpTile.spriteID > -1)
+                    if (tmpTile.SpriteId > -1)
                     {
 
                         // Update the tile by reassigning the same spriteID but calculating a new color offset
-                        Tile(pos.X, pos.Y, tmpTile.spriteID, PaletteOffset(paletteID));
+                        Tile(pos.X, pos.Y, tmpTile.SpriteId, PaletteOffset(paletteID));
 
                     }
                 }

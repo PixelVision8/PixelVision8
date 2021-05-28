@@ -44,7 +44,7 @@ function PaintTool:CreateDropDownMenu()
       {name = "Mask Color", action = function() self:OnEditColor(self.maskColor) end, enabled = false, toolTip = "Learn about PV8."},
 
       {divider = true},
-      {name = "Canvas Size", action = function()  end, key = Keys.I, toolTip = "Learn about PV8."},
+      {name = "Canvas Size", action = function()  end, enabled = false, key = Keys.I, toolTip = "Learn about PV8."},
       -- {name = "Color Mode", action = function()  end, toolTip = "Learn about PV8."},
       -- {name = "Sprite Mode", action = function()  end, toolTip = "Learn about PV8."},
       -- {name = "Flag Mode", action = function()  end, toolTip = "Learn about PV8."},
@@ -55,13 +55,13 @@ function PaintTool:CreateDropDownMenu()
       -- {name = "Zoom Out", action = function()  end, toolTip = "Learn about PV8."},
       
       {divider = true},
-      {name = "Export Colors", action = function()  end, toolTip = "Learn about PV8."},
-      {name = "Export Sprites", action = function()  end, toolTip = "Learn about PV8."},
-      {name = "Export Flags", action = function()  end, toolTip = "Learn about PV8."},
+      {name = "Export Colors", action = function()  end, enabled = false, toolTip = "Learn about PV8."},
+      {name = "Export Sprites", action = function()  end, enabled = false, toolTip = "Learn about PV8."},
+      {name = "Export Flags", action = function()  end, enabled = false, toolTip = "Learn about PV8."},
 
       {divider = true},
       {name = "Run Game", action = function() self:OnRunGame() end, key = Keys.R, toolTip = "Learn about PV8."},
-      {name = "Save", action = function()  end, key = Keys.S, toolTip = "Learn about PV8."},
+      {name = "Save", action = function() self:OnSave() end, key = Keys.S, toolTip = "Learn about PV8."},
       {name = "Quit", key = Keys.Q, action = function()  self:OnQuit() end, toolTip = "Quit the current game."}, -- Quit the current game
   }
 
@@ -125,7 +125,7 @@ function PaintTool:Copy()
   local data = self.pickerMode .. "PixelData-" .. self.selectRect.X.. "," .. self.selectRect.Y .. "," .. self.selectRect.Width .. "," .. self.selectRect.Height .. ":" .. tmpPixels
 
 
-  print("Copy data", #data, "#tmpPixels", #tmpPixels, #string.split(tmpPixels, ","))
+  -- print("Copy data", #data, "#tmpPixels", #tmpPixels, #string.split(tmpPixels, ","))
 
   -- Save to clipboard
   pixelVisionOS:SystemCopy(data)
@@ -176,7 +176,7 @@ function PaintTool:Paste()
   -- Save the total pixels
   local total = #tmpPixels
   
-  print("paste data", #data, "#tmpPixels", #tmpPixels, self.selectRect.Width * self.selectRect.Height)
+  -- print("paste data", #data, "#tmpPixels", #tmpPixels, self.selectRect.Width * self.selectRect.Height)
 
   -- print("Pixels", total, self.selectRect.Width * self.selectRect.Height, split[2])
   
@@ -451,7 +451,7 @@ end
 
 function PaintTool:OnEditColor(colorId)
 
-  print("colorId", colorId)
+  -- print("colorId", colorId)
   -- Get the color Id from what is passed in or the picker
   colorId = colorId or self.currentState.selectedId
 
@@ -488,10 +488,10 @@ end
 
 function PaintTool:OnSetOutlineColor() 
   -- TODO need to wire this up
-  print("Change outline color")
+  -- print("Change outline color")
 end
 
 function PaintTool:OnSetBackgroundColor() 
   -- TODO need to wire this up
-  print("Change BG color")
+  -- print("Change BG color")
 end

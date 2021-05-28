@@ -9,7 +9,7 @@
 ]]--
 
 LoadScript("pixel-vision-os-v2")
-LoadScript("code-paint-tool")
+LoadScript("paint-tool")
 
 -- Create an global instance of the Pixel Vision OS
 _G["pixelVisionOS"] = PixelVisionOS:Init()
