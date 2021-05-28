@@ -105,6 +105,8 @@ tasks.push('release-api-examples-disk')
 tasks.push('release-art-pack-disk')
 tasks.push('release-games-disk')
 tasks.push('release-demoscene-disk')
+tasks.push('release-tinycard-disk')
+
 
 // Build unity project
 tasks.push('build-unity-project')

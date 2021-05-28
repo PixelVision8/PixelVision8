@@ -32,3 +32,11 @@ gulp.task('release-demoscene-disk', function(){
   .pipe(gulp.dest(process.env.FINAL + "Disks/"));
 
 })
+
+gulp.task('release-tinycard-disk', function(){
+
+  return gulp.src("./Disks/TinyCard/**/*")
+  .pipe(zip("TinyCard.pv8"))
+  .pipe(gulp.dest(process.env.FINAL + "Disks/"));
+
+})

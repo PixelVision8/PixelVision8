@@ -103,6 +103,7 @@
       "{0}/System.Threading.ThreadPool.dll",
       "{0}/System.Transactions.dll",
       "{0}/System.Windows.dll",
+      "{0}/System.Xml.ReaderWriter.dll",
       "{0}/System.Xml.XDocument.dll",
       "{0}/WindowsBase.dll"
     ],
@@ -202,6 +203,7 @@
       "{0}/System.Threading.ThreadPool.dll",
       "{0}/System.Transactions.dll",
       "{0}/System.Windows.dll",
+      "{0}/System.Xml.ReaderWriter.dll",
       "{0}/System.Xml.XDocument.dll",
       "{0}/WindowsBase.dll",
       "{0}/SDL2.dll",
@@ -310,6 +312,7 @@
       "{0}/System.Threading.ThreadPool.dll",
       "{0}/System.Transactions.dll",
       "{0}/System.Windows.dll",
+      "{0}/System.Xml.ReaderWriter.dll",
       "{0}/System.Xml.XDocument.dll",
       "{0}/WindowsBase.dll"
     ],
