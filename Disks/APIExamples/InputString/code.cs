@@ -25,8 +25,13 @@ namespace PixelVision8.Examples
 
         public override void Init()
         {
+
+            // Example Title
+            DrawText("InputString()", 8, 8, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
+
             // Display the instructions
-            DrawText("Start Typing", 1, 1, DrawMode.Tile, "large", 15);
+            DrawText("Start Typing", 1, 4, DrawMode.Tile, "large", 15);
 
         }
 
@@ -49,7 +54,7 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Display the text that has been entered
-            DrawText(inputText, 8, 16, DrawMode.Sprite, "large", 14);
+            DrawText(inputText, 8, 48, DrawMode.Sprite, "large", 14);
 
         }
     }

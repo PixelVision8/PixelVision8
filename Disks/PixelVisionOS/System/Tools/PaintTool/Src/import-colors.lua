@@ -134,6 +134,8 @@ function PaintTool:OnImportColors(path)
   end
   
   function PaintTool:ImportColors(colors)
+
+    
     
     if(colors == nil) then
       colors = self.defaultColors
@@ -169,9 +171,31 @@ function PaintTool:OnImportColors(path)
   
     self:InvalidateColors()
 
+  end
+
+  function PaintTool:GameColors()
     
-    -- self:IndexColors()
-  
+    local colors = {}
+
+    -- Read colors from memory
+    for i = self.colorOffset, 256 do
+      table.insert(colors, Color( i))
+    end
+    
+    -- Pad colors to 256
+    if(#colors < 256) then
+      
+      local maskHex = Color( self.maskColor )
+      local total = 256 - #colors
+
+      for i = 1, total do
+        table.insert(colors, maskHex)
+      end
+
+    end
+
+    return colors
+
   end
 
   function PaintTool:UniqueColorsIds()

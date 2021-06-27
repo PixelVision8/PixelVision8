@@ -46,7 +46,7 @@ function EditColorModal:Configure(tmpColorId, editingColorId)
 
     self.rect = {
         x = math.floor(((displaySize.x - width) * .5) / 8) * 8,
-        y = math.floor(((displaySize.y - height) * .5) / 8) * 8,
+        y = math.floor(((displaySize.y - height) * .5) / 8) * 8 + 4,
         w = width,
         h = height
     }
@@ -80,12 +80,6 @@ function EditColorModal:Configure(tmpColorId, editingColorId)
     -- Draw a rect for the color being created
     self.canvas:SetPattern({self.tmpColor}, 1, 1)
     self.canvas:DrawRectangle(120, 32, 24, 24, true)
-
-    -- Create 
-    -- self.canvas:Clear(self.editingColorID, 144, 32, 24, 24)
-    -- DrawRect(self.rect.x + 144, self.rect.y + 32, 24, 24, self.editingColorID, DrawMode.TilemapCache)
-
-    -- DrawRect(self.rect.x + 120, self.rect.y + 32, 24, 24, self.tmpColor, DrawMode.TilemapCache)
 
     self.buttons = {}
 

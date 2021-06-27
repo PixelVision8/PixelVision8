@@ -12,11 +12,15 @@ local canvas = NewCanvas(256, 240)
 
 function Init()
 
+  -- Example Title
+  DrawText("Display()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
+  
   -- Get the full size of the display
   local sizeA = Display()
 
   -- Draw the two sizes to the display
-  DrawText("Full Display Size " .. sizeA.x .. "x" ..sizeA.y, 1, 1, DrawMode.Tile, "large", 15)
+  DrawText("Full Display Size " .. sizeA.x .. "x" ..sizeA.y, 1, 4, DrawMode.Tile, "large", 15)
 
   -- Set the canvas stroke to white
   canvas:SetStroke(14, 2)

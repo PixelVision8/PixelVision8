@@ -21,8 +21,12 @@ local colors = {"#000000", "#ffffff"}
 
 function Init()
 
+  -- Example Title
+  DrawText("Color()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
+
   -- Draw a rect with the second color
-  DrawRect(8, 24, 32, 32, 1, DrawMode.TilemapCache)
+  DrawRect(8, 48, 32, 32, 1, DrawMode.TilemapCache)
 
 end
 
@@ -56,6 +60,6 @@ function Draw()
   RedrawDisplay()
 
   -- Draw a label showing the 2nd colors current HEX value
-  DrawText("Color 1 is " .. Color(1), 8, 8, DrawMode.Sprite, "large", 15)
+  DrawText("Color 1 is " .. Color(1), 8, 32, DrawMode.Sprite, "large", 15)
 
 end

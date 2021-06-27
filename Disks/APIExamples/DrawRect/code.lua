@@ -13,8 +13,12 @@
 
 function Init()
 
+  -- Example Title
+  DrawText("DrawRect()", 1, 1, DrawMode.Tile, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
+  
   -- Draw a 100 x 100 pixel rect to the display
-  DrawRect(16, 16, 100, 100, 5, DrawMode.TilemapCache)
+  DrawRect(16, 40, 100, 100, 5, DrawMode.TilemapCache)
 
 end
 
@@ -24,9 +28,9 @@ function Draw()
   RedrawDisplay()
 
   -- Draw a rect to the sprite layer
-  DrawRect(12, 12, 25, 25, 14, DrawMode.Sprite)
+  DrawRect(12, 36, 25, 25, 14, DrawMode.Sprite)
 
   -- Draw a rect to the sprite below layer
-  DrawRect(100, 100, 25, 25, 15, DrawMode.SpriteBelow)
+  DrawRect(100, 124, 25, 25, 15, DrawMode.SpriteBelow)
 
 end

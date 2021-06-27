@@ -30,6 +30,7 @@ end
 
 function PaintTool:Init()
 
+
     -- Create a new table for the instance with default properties
     local _paintTool = {
         toolName = "Paint Tool",
@@ -65,6 +66,8 @@ function PaintTool:Init()
         -- Save the total colors so we don't have to keep recalculating this later on
         totalColors = 256
     }
+
+    DumpColors()
 
     -- Set the mask color to the color offset - 1
     _paintTool.maskColor = _paintTool.colorOffset - 1
@@ -166,6 +169,8 @@ function DumpColors(start)
   end
 
   -- print("Colors", dump(tmpColors))
+
+  return tmpColors
 
 end
 

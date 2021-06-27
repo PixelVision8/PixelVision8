@@ -65,4 +65,8 @@ function Draw()
 
   end
 
+  -- Example Title
+  DrawText("Clear()", 8, 8, DrawMode.Sprite, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.Sprite, "medium", 15, -4)
+
 end

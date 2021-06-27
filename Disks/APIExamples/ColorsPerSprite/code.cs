@@ -18,23 +18,28 @@ namespace PixelVision8.Examples
     class ExampleGameChip : GameChip
     {
 
-        // Store the CPS value
-        private int cps;
-
         public override void Init()
         {
-            // Get the colors per sprite value
-            cps = ColorsPerSprite();
+
+            // Change the background color
+            BackgroundColor( 6 );
+
+            // Example Title
+            DrawText("ColorsPerSprite()", 8, 8, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
+
+            // Draw the cps value to the display
+            DrawText("Colors Per Sprite = " + ColorsPerSprite(), 8, 32, DrawMode.TilemapCache, "large", 15);
+
         }
 
         public override void Draw()
         {
             // Clear the display
-            Clear();
+            RedrawDisplay();
 
-            // Draw the cps value to the display
-            DrawText("Colors Per Sprite = " + cps, 8, 8, DrawMode.Sprite, "large", 15);
-
+            // Draw meta sprite to the display
+            DrawMetaSprite( "reaper-boy", 8, 48);
         }
     }
 }

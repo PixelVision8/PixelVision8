@@ -171,7 +171,7 @@ namespace PixelVision8.Runner
             
             var cachedColors = ColorUtils.ConvertColors(imageData.Colors, maskHex, true).Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
 
-            var exporter = new PixelDataExporter(dest.EntityName, imageData.GetPixels(), width, height, cachedColors, _pngWriter, "#FF00FF");
+            var exporter = new PixelDataExporter(dest.EntityName, imageData.GetPixels(), width, height, cachedColors, _pngWriter, maskHex);
             exporter.CalculateSteps();
 
             while (exporter.Completed == false) exporter.NextStep();
@@ -184,6 +184,7 @@ namespace PixelVision8.Runner
             workspace.SaveExporterFiles(output);
         }
         
+        // TODO need to change arguments and make colors mandatory with pixel data being optional
         public ImageData NewImage(int width, int height, int[] pixelData = null, string[] colors = null)
         {
             return new ImageData(width, height, pixelData, colors);

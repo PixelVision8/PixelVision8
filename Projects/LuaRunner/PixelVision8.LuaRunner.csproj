@@ -32,7 +32,7 @@
 
   <!-- Point this variable to the API Example you want to run. -->
   <PropertyGroup>
-    <ApiExample>BackgroundColor</ApiExample>
+    <Game>../../Disks/APIExamples/BackgroundColor</Game>
   </PropertyGroup>
 
 <!-- Load the correct project -->
@@ -61,12 +61,12 @@
     <Compile Include="../../SDK/Runner/Game/GameRunner.Engine.cs">
       <Link>SDK/Runner/Game/GameRunner.Engine.cs</Link>
     </Compile>
-    <Content Include="../../Disks/APIExamples/$(ApiExample)/**/*.*">
+    <Content Include="$(Game)/**/*.*">
       <Link>Content/%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     
-    <Content Remove="../../Disks/APIExamples/$(ApiExample)/**/*.cs" />
+    <Content Remove="$(Game)/**/*.cs" />
     <Content Remove="**/saves.json" />
   </ItemGroup>
 

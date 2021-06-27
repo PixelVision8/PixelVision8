@@ -30,12 +30,16 @@ function Draw()
   Clear()
 
   -- Draw the actual tilemap starting below the top border and manually adjust the scroll offset values
-  DrawTilemap(0, 16, 33, 28, nextPos, 16)
+  DrawTilemap(0, 42, 33, 28, nextPos, 16)
 
   -- Draw the tilemap top border over everything else and lock the x scroll value
   DrawTilemap(0, 0, 33, 2, 0)
 
   -- Display the scroll position
-  DrawText("Scroll Position: " .. ScrollPosition().x..", "..ScrollPosition().y, 8, 16, DrawMode.Sprite, "large")
+  DrawText("Scroll Position: " .. ScrollPosition().X .. ", " .. ScrollPosition().Y, 8, 32, DrawMode.Sprite, "medium", 0, -4)
+
+  -- Example Title
+  DrawText("DrawTilemap()", 8, 16, DrawMode.Sprite, "large", 15)
+  DrawText("Lua Example", 8, 24, DrawMode.Sprite, "medium", 15, -4)
 
 end

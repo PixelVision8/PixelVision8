@@ -11,13 +11,11 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using Microsoft.Xna.Framework;
 using PixelVision8.Player;
-using PixelVision8.Engine.Utils;
 
 namespace PixelVision8.Examples
 {
-    class ExampleGameChip : GameChip
+    public class DrawSpriteExample : GameChip
     {
         // Use floats to store the subpixel position
         private float speed = 5;
@@ -26,14 +24,26 @@ namespace PixelVision8.Examples
         // Use this point to position the  sprites
         private Point pos;
 
+        public override void Init()
+        {
+
+            // Example Title
+            DrawText("DrawSprite()", 1, 1, DrawMode.Tile, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
+
+        }
+
         public override void Update(int timeDelta)
         {
+
             // Calculate the next position
             nextPos = nextPos + (speed * (timeDelta / 100f));
 
             // Need to convert the nextPoint to an int, so we'll save it in a point
-            pos.X = (int)nextPos;
-            pos.Y = (int)nextPos;
+            pos.X = Repeat( (int)nextPos, Display( ).X );
+
+            pos.Y = Repeat( (int)nextPos, Display( ).Y );
+
         }
 
         public override void Draw()
@@ -41,15 +51,18 @@ namespace PixelVision8.Examples
             // Redraw the display
             RedrawDisplay();
 
-            // Draw sprite moving horizontally
-            DrawSprite(376, pos.X, 8);
+            // Draw sprite group moving horizontally and hide when it goes offscreen
+            DrawSprite(0, pos.X, 32);
 
-            // Draw sprite moving vertically
-            DrawSprite(377, 36, pos.Y);
+            // Draw flipped sprite group moving vertically but render when offscreen
+            DrawSprite(1, 36, pos.Y);
+
+            // Show the total number of sprites
+            DrawText("Sprites " + ReadTotalSprites(), 144 + 24, 224, DrawMode.Sprite, "large", 15);
 
             // Draw the x,y position of each sprite
-            DrawText("(" + MathUtil.FloorToInt(nextPos) + ",8)", pos.X + 8, 8, DrawMode.Sprite, "large", 15);
-            DrawText("(36," + MathUtil.FloorToInt(nextPos) + ")", 44, pos.Y, DrawMode.Sprite, "large", 15);
+            DrawText("(" + pos.X + ",8)", pos.X + 8, 32, DrawMode.Sprite, "large", 15);
+            DrawText("(36," + pos.Y + ")", 36 + 8, pos.Y, DrawMode.Sprite, "large", 15);
 
         }
     }

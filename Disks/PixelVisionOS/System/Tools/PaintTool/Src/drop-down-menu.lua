@@ -55,9 +55,9 @@ function PaintTool:CreateDropDownMenu()
       -- {name = "Zoom Out", action = function()  end, toolTip = "Learn about PV8."},
       
       {divider = true},
-      {name = "Export Colors", action = function()  end, enabled = false, toolTip = "Learn about PV8."},
+      {name = "Export Colors", action = function() self:OnExportColors() end, enabled = true, toolTip = "Learn about PV8."},
       {name = "Export Sprites", action = function()  end, enabled = false, toolTip = "Learn about PV8."},
-      {name = "Export Flags", action = function()  end, enabled = false, toolTip = "Learn about PV8."},
+      {name = "Export Flags", action = function() self:OnExportFlags() end, enabled = false, toolTip = "Learn about PV8."},
 
       {divider = true},
       {name = "Run Game", action = function() self:OnRunGame() end, key = Keys.R, toolTip = "Learn about PV8."},
@@ -94,6 +94,125 @@ function PaintTool:Cut()
 
   -- Delete the selection
   self:Delete()
+
+end
+
+function PaintTool:OnExportColors()
+
+  
+  
+  local dest = NewWorkspacePath(self.rootDirectory).AppendFile("colors.png")
+
+  if(PathExists(dest)) then
+
+    pixelVisionOS:ShowSaveModal("A Color File Exists", "Looks like a 'colors.png' file already exits? Do you want to replace it with the current image's colors?", 160,
+      -- Accept
+      function(target)
+        self:ExportColors(dest)
+        target.onParentClose()
+      end,
+      -- Decline
+      function (target)
+        
+        self:ExportColors(UniqueFilePath(dest))
+        target.onParentClose()
+        
+      end,
+      -- Cancel
+      function(target)
+        target.onParentClose()
+      end
+    )
+  else
+
+    self:ExportColors(dest)
+
+  end
+
+end
+
+function PaintTool:ExportColors(dest)
+  
+  local colorIndexes = {}
+
+  for i = 1, 256 do
+    table.insert(colorIndexes, i-1)
+  end
+
+  local image = NewImage(8, 32, colorIndexes, self:GameColors())
+
+  -- Save image to the workspace
+  SaveImage(dest, image, Color( self.maskColor ))
+
+  -- Display a message that the save was successful
+  pixelVisionOS:DisplayMessage("Saving a new '".. dest.EntityName .. "' file.")
+
+end
+
+function PaintTool:ExportSprites()
+
+end
+
+function PaintTool:OnExportFlags()
+
+  
+  
+  local dest = NewWorkspacePath(self.rootDirectory).AppendFile("flags.png")
+
+  if(PathExists(dest)) then
+
+    pixelVisionOS:ShowSaveModal("A Flags File Exists", "Looks like a 'flags.png' file already exits? Do you want to replace it with the current flag layer?", 160,
+      -- Accept
+      function(target)
+        self:ExportFlags(nil, dest)
+        target.onParentClose()
+      end,
+      -- Decline
+      function (target)
+        
+        self:ExportFlags(UniqueFilePath(nil, dest))
+        target.onParentClose()
+        
+      end,
+      -- Cancel
+      function(target)
+        target.onParentClose()
+      end
+    )
+  else
+
+    self:ExportFlags(nil, dest)
+
+  end
+
+end
+
+function PaintTool:ExportFlags(flagDest, flagSpriteDest)
+
+  local maskColor = Color( self.maskColor )
+
+  local systemColors = {}
+
+  for i = 1, self.colorOffset do
+    table.insert(systemColors, Color(i-1))
+  end
+
+  if(flagSpriteDest ~= nil) then
+    
+    local flagSpriteImage = NewImage(self.flagCanvas.Width, self.flagCanvas.Height, self.flagCanvas.Pixels, systemColors)
+
+    SaveImage(flagSpriteDest, flagSpriteImage, maskColor)
+
+  end
+  
+  if(flagDest ~= nil) then
+
+
+
+  end
+
+  -- Display a message that the save was successful
+  pixelVisionOS:DisplayMessage("Saving a new '".. flagDest.EntityName .. "' file.")
 
 end
 
@@ -430,7 +549,8 @@ function PaintTool:SwapToolColors()
 
     -- Save the current color
     currentColors[i] = Color(colorIndex)
-  
+    print("color", i, currentColors[i])
+
     -- Change the color to the default editor colors
     Color(colorIndex, self.cachedToolColors[i])
 
@@ -451,6 +571,8 @@ end
 
 function PaintTool:OnEditColor(colorId)
 
+  pixelVisionOS:RemoveUI("OnUpdateToolbar")
+  
   -- print("colorId", colorId)
   -- Get the color Id from what is passed in or the picker
   colorId = colorId or self.currentState.selectedId
@@ -470,6 +592,9 @@ function PaintTool:OnEditColor(colorId)
         self:RestoreColors(currentColors)
 
         self:InvalidateColors()
+
+        -- Register the update loop
+        pixelVisionOS:RegisterUI({name = "OnUpdateToolbar"}, "UpdateToolbar", self, true)
 
         if(self.editColorModal.selectionValue == true and currentColor ~= "#" .. self.editColorModal.colorHexInputData.text) then
 

@@ -16,13 +16,17 @@ local exampleGrid = {
 
 function Init()
 
+  -- Example Title
+  DrawText("CalculatePosition()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
+
   local index = 4
 
   -- Calculate the center index based on a grid with 3 columns
   local position = CalculatePosition(index, 3)
 
   -- Draw the index and value to the display
-  DrawText("Position " .. position.x .. ",".. position.y .. " at Index " .. index .. " is " .. exampleGrid[index], 1, 1, DrawMode.Tile, "large", 15)
+  DrawText("Position " .. position.x .. ",".. position.y .. " at Index " .. index .. " is " .. exampleGrid[index], 1, 4, DrawMode.Tile, "large", 15)
 
 end
 

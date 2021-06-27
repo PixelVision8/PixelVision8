@@ -11,7 +11,6 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 using System;
 
@@ -67,6 +66,7 @@ namespace PixelVision8.Examples
                 Clear();
 
                 clearFlag = false;
+
             }
             
             // Perform the next block of code 10 times
@@ -83,6 +83,10 @@ namespace PixelVision8.Examples
                 DrawText(Convert.ToChar(charID).ToString(), x, y, DrawMode.Sprite, "large", colorID);
 
             }
+
+            // Example Title
+            DrawText("Clear()", 8, 8, DrawMode.Sprite, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.Sprite, "medium", 15, -4);
         }
     }
 }

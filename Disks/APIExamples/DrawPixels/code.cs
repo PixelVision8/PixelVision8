@@ -30,15 +30,20 @@ namespace PixelVision8.Examples
 
         public override void Init()
         {
-            // Draw the sprite data to the tilemap cache
-            DrawText("Tilemap Cache", 1, 3, DrawMode.Tile, "large", 15);
-            DrawPixels(pixelData, 8, 32, 8, 8, false, false, DrawMode.TilemapCache);
-            DrawPixels(pixelData, 16, 32, 8, 8, true, false, DrawMode.TilemapCache);
-            DrawPixels(pixelData, 24, 32, 8, 8, false, true, DrawMode.TilemapCache);
-            DrawPixels(pixelData, 32, 32, 8, 8, true, true, DrawMode.TilemapCache);
+            
+            // Example Title
+            DrawText("DrawPixels()", 1, 1, DrawMode.Tile, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
 
-            // Shfit the pixel data color IDs by 1
-            DrawPixels(pixelData, 40, 32, 8, 8, false, false, DrawMode.TilemapCache, 1);
+            // Draw the sprite data to the tilemap cache
+            DrawText("Tilemap Cache", 1, 4, DrawMode.Tile, "large", 15);
+            DrawPixels(pixelData, 8, 40, 8, 8, false, false, DrawMode.TilemapCache);
+            DrawPixels(pixelData, 16, 40, 8, 8, true, false, DrawMode.TilemapCache);
+            DrawPixels(pixelData, 24, 40, 8, 8, false, true, DrawMode.TilemapCache);
+            DrawPixels(pixelData, 32, 40, 8, 8, true, true, DrawMode.TilemapCache);
+
+            // Shift the pixel data color IDs by 1
+            DrawPixels(pixelData, 40, 40, 8, 8, false, false, DrawMode.TilemapCache, 1);
 
         }
 
@@ -48,29 +53,29 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Label for the sprite layer examples
-            DrawText("Sprite", 1, 6, DrawMode.Tile, "large", 15);
+            DrawText("Sprite", 1, 7, DrawMode.Tile, "large", 15);
 
             // You can simplify the call if you are not flipping the pixel data
-            DrawPixels(pixelData, 8, 56, 8, 8);
+            DrawPixels(pixelData, 8, 64, 8, 8);
 
             // Fliping the pixel data on the sprite layer, which is used by default when not provided
-            DrawPixels(pixelData, 16, 56, 8, 8, true, false);
-            DrawPixels(pixelData, 24, 56, 8, 8, false, true);
-            DrawPixels(pixelData, 32, 56, 8, 8, true, true);
+            DrawPixels(pixelData, 16, 64, 8, 8, true, false);
+            DrawPixels(pixelData, 24, 64, 8, 8, false, true);
+            DrawPixels(pixelData, 32, 64, 8, 8, true, true);
 
             // Shift the pixel data color IDs over by 1 requires passing in the draw mode
-            DrawPixels(pixelData, 40, 56, 8, 8, false, false, DrawMode.Sprite, 1);
+            DrawPixels(pixelData, 40, 64, 8, 8, false, false, DrawMode.Sprite, 1);
 
             // Draw pixel data to the sprite below layer
-            DrawText("Sprite Below", 1, 9, DrawMode.Tile, "large", 15);
-            DrawPixels(pixelData, 8, 80, 8, 8, false, false, DrawMode.SpriteBelow);
-            DrawPixels(pixelData, 16, 80, 8, 8, true, false, DrawMode.SpriteBelow);
-            DrawPixels(pixelData, 24, 80, 8, 8, false, true, DrawMode.SpriteBelow);
-            DrawPixels(pixelData, 32, 80, 8, 8, true, true, DrawMode.SpriteBelow);
-            DrawPixels(pixelData, 40, 80, 8, 8, false, false, DrawMode.SpriteBelow, 1);
+            DrawText("Sprite Below", 1, 10, DrawMode.Tile, "large", 15);
+            DrawPixels(pixelData, 8, 88, 8, 8, false, false, DrawMode.SpriteBelow);
+            DrawPixels(pixelData, 16, 88, 8, 8, true, false, DrawMode.SpriteBelow);
+            DrawPixels(pixelData, 24, 88, 8, 8, false, true, DrawMode.SpriteBelow);
+            DrawPixels(pixelData, 32, 88, 8, 8, true, true, DrawMode.SpriteBelow);
+            DrawPixels(pixelData, 40, 88, 8, 8, false, false, DrawMode.SpriteBelow, 1);
 
             // Display the total sprites used during this frame
-            DrawText("Total Sprites " + CurrentSprites, 8, 8, DrawMode.Sprite, "large", 14);
+            DrawText("Total Sprites " + ReadTotalSprites(), 8, 104, DrawMode.Sprite, "large", 14);
 
         }
 

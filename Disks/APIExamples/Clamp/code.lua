@@ -11,6 +11,15 @@ local counter = 0
 local time = 0
 local delay = 300
 
+function Init()   
+
+  -- Example Title
+  DrawText("Clamp()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
+
+end
+
+
 function Update(timeDelta)
 
   -- Add the time delay to the time
@@ -35,6 +44,6 @@ function Draw()
   RedrawDisplay()
 
   -- Draw the counter to the display
-  DrawText("Counter " .. counter, 8, 8, DrawMode.Sprite, "large", 15)
+  DrawText("Counter " .. counter, 8, 32, DrawMode.Sprite, "large", 15)
 
 end

@@ -22,6 +22,15 @@ namespace PixelVision8.Examples
         private int time;
         private int delay = 300;
 
+        public override void Init()
+        {
+
+            // Example Title
+            DrawText("Clamp()", 8, 8, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
+
+        }
+
         public override void Update(int timeDelta)
         {
             // Add the time delay to the time
@@ -47,7 +56,7 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw the counter to the display
-            DrawText("Counter " + counter, 8, 8, DrawMode.Sprite, "large", 15);
+            DrawText("Counter " + counter, 8, 32, DrawMode.Sprite, "large", 15);
 
         }
 

@@ -11,14 +11,13 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using Microsoft.Xna.Framework;
 using PixelVision8.Player;
 
 namespace PixelVision8.Examples
 {
     class ExampleGameChip : GameChip
     {
-        private Point pointA = new Point(8, 8);
+        private Point pointA = new Point(8, 32);
         private Point pointB = new Point(248, 232);
         private Canvas canvas;
         private int distance;
@@ -26,15 +25,11 @@ namespace PixelVision8.Examples
         public override void Init()
         {
 
-            // Example Title
-            DrawText("CalculateDistance()", 1, 1, DrawMode.Tile, "large", 15);
-            DrawText("C Sharp Example - Drag the mouse to measure the distance", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
-
             // Create a new canvas and pass this GameChip into the constructor
-            canvas = new Canvas(256, 240-32, this);
+            canvas = new Canvas(256, 240, this);
 
             // Set the canvas stroke to a white 1x1 pixel brush
-            canvas.SetStroke(15, 1);
+            canvas.SetStroke(14, 1);
 
         }
 
@@ -46,8 +41,6 @@ namespace PixelVision8.Examples
 
             // Calculate the distance between pointA and pointB
             distance = CalculateDistance(pointA.X, pointA.Y, pointB.X, pointB.X);
-
-            Print(distance);
             
         }
 
@@ -58,7 +51,7 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // // Clear the canvas with the background color
-            canvas.Clear(5);
+            canvas.Clear(0);
 
             // // Draw 2 circles around each point
             canvas.DrawEllipse(pointA.X - 4, pointA.Y - 4, 10, 10);
@@ -68,10 +61,14 @@ namespace PixelVision8.Examples
             canvas.DrawLine(pointA.X, pointA.Y, pointB.X, pointB.Y);
 
             // // Draw the distance value above pointB
-            canvas.DrawText(distance.ToString(), pointB.X, pointB.Y - 12, "small", 15, -4);
+            canvas.DrawText(distance.ToString(), pointB.X, pointB.Y - 12, "small", 14, -4);
 
             // Draw the canvas to the display
-            canvas.DrawPixels(0, 32);
+            canvas.DrawPixels();
+
+            // Example Title
+            DrawText("CalculateDistance()", 8, 8, DrawMode.Sprite, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.Sprite, "medium", 15, -4);
 
         }
     }

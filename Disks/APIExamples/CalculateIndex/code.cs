@@ -28,11 +28,16 @@ namespace PixelVision8.Examples
 
         public override void Init()
         {
+
+            // Example Title
+            DrawText("CalculateIndex()", 8, 8, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
+
             // Calculate the center index based on a grid with 3 columns
             var index = CalculateIndex(1, 1, 3);
 
             // Draw the index and value to the display
-            DrawText("Position 1,1 is Index " + index + " is " + exampleGrid[index], 1, 1, DrawMode.Tile, "large",
+            DrawText("Position 1,1 is Index " + index + " is " + exampleGrid[index], 1, 4, DrawMode.Tile, "large",
                 15);
 
         }

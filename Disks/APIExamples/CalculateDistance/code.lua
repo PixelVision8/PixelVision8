@@ -16,7 +16,7 @@ local display = Display()
 function Init()
 
   -- Set the canvas stroke to a white 1x1 pixel brush
-  canvas:SetStroke(15, 1)
+  canvas:SetStroke(14, 1)
 
 end
 
@@ -50,13 +50,13 @@ function Draw()
   canvas:DrawLine(pointA.x, pointA.y, pointB.x, pointB.y)
 
   -- Draw the distance value above pointB
-  canvas:DrawText(tostring(distance), pointB.x, pointB.y - 12, "small", 15, - 4)
+  canvas:DrawText(tostring(distance), pointB.x, pointB.y - 12, "small", 14, - 4)
 
   -- Draw the canvas to the display
   canvas:DrawPixels()
 
   --
-  DrawText("CalculateDistance()", 8, 8, DrawMode.Sprite, "large", 15);
-  DrawText("Lua Example", 8, 16, DrawMode.Sprite, "medium", 15, -4);
+  DrawText("CalculateDistance()", 8, 8, DrawMode.Sprite, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.Sprite, "medium", 15, -4)
 
 end

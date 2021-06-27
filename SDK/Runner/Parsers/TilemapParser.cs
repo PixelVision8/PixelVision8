@@ -25,7 +25,7 @@ namespace PixelVision8.Runner
 {
     public class TilemapParser : SpriteImageParser
     {
-        private readonly bool autoImport;
+        private readonly bool autoImport = true;
 
         private readonly TilemapChip tilemapChip;
         private bool autoResize;
@@ -38,7 +38,7 @@ namespace PixelVision8.Runner
         {
             this.tilemapChip = tilemapChip;
 
-            autoImport = tilemapChip.autoImport;
+            // autoImport = tilemapChip.autoImport;
             this.autoResize = autoResize;
         }
 
