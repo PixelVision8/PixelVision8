@@ -56,7 +56,7 @@ function PaintTool:CreateDropDownMenu()
       
       {divider = true},
       {name = "Export Colors", action = function() self:OnExportColors() end, enabled = true, toolTip = "Learn about PV8."},
-      {name = "Export Sprites", action = function()  end, enabled = false, toolTip = "Learn about PV8."},
+      {name = "Export Sprites", action = function() self:OnExportSprites() end, enabled = false, toolTip = "Learn about PV8."},
       {name = "Export Flags", action = function() self:OnExportFlags() end, enabled = false, toolTip = "Learn about PV8."},
 
       {divider = true},
@@ -149,28 +149,22 @@ function PaintTool:ExportColors(dest)
 
 end
 
-function PaintTool:ExportSprites()
+function PaintTool:OnExportSprites()
 
-end
-
-function PaintTool:OnExportFlags()
-
-  
-  
-  local dest = NewWorkspacePath(self.rootDirectory).AppendFile("flags.png")
+  local dest = NewWorkspacePath(self.rootDirectory).AppendFile("sprites.png")
 
   if(PathExists(dest)) then
 
-    pixelVisionOS:ShowSaveModal("A Flags File Exists", "Looks like a 'flags.png' file already exits? Do you want to replace it with the current flag layer?", 160,
+    pixelVisionOS:ShowSaveModal("A Sprite File Exists", "Looks like a 'sprites.png' file already exits? Do you want to replace it with the current sprites?", 160,
       -- Accept
       function(target)
-        self:ExportFlags(nil, dest)
+        self:ExportSprites(dest)
         target.onParentClose()
       end,
       -- Decline
       function (target)
         
-        self:ExportFlags(UniqueFilePath(nil, dest))
+        self:ExportSprites(UniqueFilePath(dest))
         target.onParentClose()
         
       end,
@@ -181,38 +175,73 @@ function PaintTool:OnExportFlags()
     )
   else
 
-    self:ExportFlags(nil, dest)
+    self:ExportSprites(dest)
 
   end
 
 end
 
-function PaintTool:ExportFlags(flagDest, flagSpriteDest)
+function PaintTool:ExportSprites(dest)
 
   local maskColor = Color( self.maskColor )
 
   local systemColors = {}
 
-  for i = 1, self.colorOffset do
-    table.insert(systemColors, Color(i-1))
+  for i = 1, 256 do
+    table.insert(systemColors, i < self.colorOffset and maskColor or Color(i-1))
   end
 
-  if(flagSpriteDest ~= nil) then
-    
-    local flagSpriteImage = NewImage(self.flagCanvas.Width, self.flagCanvas.Height, self.flagCanvas.Pixels, systemColors)
+  local spritesImage = NewImage(self.spriteCanvas.Width, self.spriteCanvas.Height, self.spriteCanvas.Pixels, systemColors)
 
-    SaveImage(flagSpriteDest, flagSpriteImage, maskColor)
-
-  end
-  
-  if(flagDest ~= nil) then
-
-
-
-  end
+  SaveImage(dest, spritesImage, maskColor)
 
   -- Display a message that the save was successful
-  pixelVisionOS:DisplayMessage("Saving a new '".. flagDest.EntityName .. "' file.")
+  pixelVisionOS:DisplayMessage("Saving a new '".. dest.EntityName .. "' file.")
+
+end
+
+function PaintTool:OnExportFlags()
+
+  local dest = NewWorkspacePath(self.rootDirectory).AppendFile("flags.png")
+
+  if(PathExists(dest)) then
+
+    pixelVisionOS:ShowSaveModal("A Flags File Exists", "Looks like a 'flags.png' file already exits? Do you want to replace it with the current flag layer?", 160,
+      -- Accept
+      function(target)
+        self:ExportFlags(dest)
+        target.onParentClose()
+      end,
+      -- Decline
+      function (target)
+        
+        self:ExportFlags(UniqueFilePath(dest))
+        target.onParentClose()
+        
+      end,
+      -- Cancel
+      function(target)
+        target.onParentClose()
+      end
+    )
+  else
+
+    self:ExportFlags(dest)
+
+  end
+
+end
+
+function PaintTool:ExportFlags(dest)
+
+  local maskColor = Color( self.maskColor )
+
+  local flagSpriteImage = NewImage(self.flagCanvas.Width, self.flagCanvas.Height, self.flagCanvas.Pixels, self:SystemColors())
+
+  SaveImage(dest, flagSpriteImage, maskColor)
+
+  -- Display a message that the save was successful
+  pixelVisionOS:DisplayMessage("Saving a new '".. dest.EntityName .. "' file.")
 
 end
 

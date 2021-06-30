@@ -48,8 +48,8 @@ function PaintTool:CreatePickerPanel()
     end
 
     self.colorCanvas = NewCanvas(128, 128) -- TODO need to account for missing colors and color offset
-    self.spriteCanvas = NewCanvas(128, 1024)
-    self.flagCanvas = NewCanvas(128, 16)
+    
+    
 
 
     self.pickerOverCanvas = NewCanvas( 12, 12 )
@@ -75,7 +75,17 @@ function PaintTool:CreatePickerPanel()
 
     self.nextButton.onAction = function() self:OnPickerNext() end
 
-    self.pickerModes = {ColorMode, SpriteMode, FlagMode}
+    self.pickerModes = {ColorMode}
+
+    if(not string.ends(self.targetFile, "flags.png") and not string.ends(self.targetFile, "colors.png")) then
+        table.insert(self.pickerModes, SpriteMode)
+    end
+
+    if(string.ends(self.targetFile, "tilemap.png")) then
+        table.insert(self.pickerModes, FlagMode)
+    end
+
+
     self.totalModes = #self.pickerModes
 
     -- We set the mode to the last value since we call OnNextMode below and it will increase the mode by 1 and wrap around
@@ -94,14 +104,20 @@ function PaintTool:CreatePickerPanel()
         
     end
 
+    if(#self.pickerModes > 1) then
+
     -- Create size button
-    self.modeButton = editorUI:CreateButton({x = 80 - 7, y = 16 + 7}, "colormode", "Change mode")
+    self.modeButton = editorUI:CreateButton({x = 73, y = 23}, "colormode", "Change mode")
     self.modeButton.onAction = function() self:OnNextMode() end
 
+    -- TODO need a way to disable the mode if no mode exists
+
+    else
+        DrawRect( 73, 23-8, 24, 8, BackgroundColor(), DrawMode.TilemapCache )
+        -- DrawMetaSprite( "colormodeup", 73, 23, false, false, DrawMode.TilemapCache)
+    end
 
     self:OnNextMode()
-
-    
 
     pixelVisionOS:RegisterUI({name = "OnUpdatePickerPanel"}, "UpdatePickerPanel", self)
     pixelVisionOS:RegisterUI({name = "OnDrawPickerPanel"}, "DrawPickerPanel", self)
@@ -204,7 +220,10 @@ function PaintTool:DrawPickerPanel()
     -- Update the picker buttons
     editorUI:UpdateButton(self.backButton)
     editorUI:UpdateButton(self.nextButton)
-    editorUI:UpdateButton(self.modeButton)
+
+    if(self.modeButton ~= nil) then
+        editorUI:UpdateButton(self.modeButton)
+    end
 
     -- Look for a selection
     if(self.currentState.selectedId > -1) then
@@ -282,13 +301,21 @@ function PaintTool:ChangeMode(value)
         self:IndexColors()
 
     elseif(self.pickerMode == SpriteMode) then
-
+        
+        if(self.spriteCanvas == nil) then
+            self.spriteCanvas = NewCanvas(128, 1024)
+        end
+        
         -- Get all of the unique sprites from the canvas
         self.currentCanvas = self.spriteCanvas
     
         self:IndexSprites()
 
     elseif(self.pickerMode == FlagMode) then
+
+        if(self.flagCanvas == nil) then
+            self.flagCanvas = NewCanvas(128, 16)
+        end
 
         self.currentCanvas = self.flagCanvas
 
@@ -301,8 +328,10 @@ function PaintTool:ChangeMode(value)
 
     end
 
-    -- Update the state button to show the correct graphic
-    editorUI:RebuildMetaSpriteCache(self.modeButton, self.pickerMode .. "mode")
+    if(self.modeButton ~= nil) then
+        -- Update the state button to show the correct graphic
+        editorUI:RebuildMetaSpriteCache(self.modeButton, self.pickerMode .. "mode")
+    end
 
     -- TODO This should just be calculated by the picker
     self.totalPages = math.ceil(self.currentState.pickerTotal / 16) - 1
@@ -509,28 +538,6 @@ function PaintTool:OnNextMode()
             modeIndex = 1
         end
     end
-
-    -- local newMode = 
-
-    -- Find the next sprite for the button
-    -- local spriteName = newMode .. "mode"
-
-    
-    -- -- Change sprite button graphic
-    -- self.modeButton.cachedMetaSpriteIds = {
-    --     up = FindMetaSpriteId(spriteName .. "up"),
-    --     down = FindMetaSpriteId(spriteName .. "down") ~= -1 and FindMetaSpriteId(spriteName .. "down") or FindMetaSpriteId(spriteName .. "selectedup"),
-    --     over = FindMetaSpriteId(spriteName .. "over"),
-    --     selectedup = FindMetaSpriteId(spriteName .. "selectedup"),
-    --     selectedover = FindMetaSpriteId(spriteName .. "selectedover"),
-    --     selecteddown = FindMetaSpriteId(spriteName .. "selecteddown") ~= -1 and FindMetaSpriteId(spriteName .. "selecteddown") or FindMetaSpriteId(spriteName .. "selectedover"),
-    --     disabled = FindMetaSpriteId(spriteName .. "disabled"),
-    --     empty = FindMetaSpriteId(spriteName .. "empty") -- used to clear the sprites
-    -- }
-
-    -- -- self:ConfigureSpritePickerSelector(self.pickerMode)
-
-    -- editorUI:Invalidate(self.modeButton)
 
     self:ChangeMode(self.pickerModes[modeIndex])
 

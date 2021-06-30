@@ -91,7 +91,7 @@ namespace PixelVision8.Runner
             if (id == -1 && autoImport)
             {
                 id = spriteChip.NextEmptyId();
-                Console.WriteLine("Add new tile {0}", id);
+                // Console.WriteLine("Add new tile {0}", id);
 
                 spriteChip.UpdateSpriteAt(id, spriteData);
             }
@@ -110,7 +110,7 @@ namespace PixelVision8.Runner
         [FileParser("tilemap.png", FileFlags.Tilemap)]
         public void ParseTilemapImage(string file, PixelVision engine)
         {
-            Console.WriteLine("Add Tilemap Parser");
+            // Console.WriteLine("Add Tilemap Parser " + file);
             AddParser(new TilemapParser(file, _imageParser, engine.ColorChip, engine.SpriteChip, engine.TilemapChip,
                 true));
         }

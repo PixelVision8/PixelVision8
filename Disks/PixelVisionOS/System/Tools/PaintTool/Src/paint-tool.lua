@@ -110,8 +110,10 @@ end
 
 function PaintTool:LoadImage(defaultColors)
   
+  local targetPath = NewWorkspacePath(self.targetFile)
+
   -- Load the image
-  self.image = ReadImage(NewWorkspacePath(self.targetFile), self.defaultMaskColor, defaultColors)
+  self.image = ReadImage(targetPath, self.defaultMaskColor, defaultColors)
 
   self.useDefaultColors = false
 
@@ -131,6 +133,16 @@ function PaintTool:LoadImage(defaultColors)
   end
 
   self:ImportColors(imageColors)
+
+  local flagPath = targetPath.ChangeExtension(".flags.png")
+
+  if(PathExists(flagPath)) then
+
+    self.flagImage = ReadImage(flagPath, self.defaultMaskColor, self:SystemColors())
+
+    print("Load flag map")
+
+  end
 
 end
 
@@ -208,13 +220,29 @@ end
 
 function PaintTool:OnSave()
 
+  local filePath = NewWorkspacePath(self.targetFile)
   local image = NewImage(self.imageLayerCanvas.Width, self.imageLayerCanvas.Height, self.imageLayerCanvas.GetPixels(), self:UniqueColors())
 
   SaveImage(
-    NewWorkspacePath(self.targetFile),
+    filePath,
     image,
     MaskColor()
   )
+
+  -- Save the flag layer
+  if(self.flagCanvas ~= nil) then
+
+    local flagImage = NewImage(self.flagLayerCanvas.Width, self.flagLayerCanvas.Height, self.flagLayerCanvas.GetPixels(), self:SystemColors())
+
+    SaveImage(
+      filePath.ChangeExtension(".flags.png"),
+      flagImage,
+      MaskColor()
+    )
+
+    -- TODO should save the flags.png as well?
+
+  end
 
   self:ResetDataValidation()
 

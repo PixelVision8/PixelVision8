@@ -173,6 +173,18 @@ function PaintTool:OnImportColors(path)
 
   end
 
+  function PaintTool:SystemColors()
+    
+    local systemColors = {}
+
+    for i = 1, self.colorOffset do
+      table.insert(systemColors, Color(i-1))
+    end
+
+    return systemColors
+    
+  end
+
   function PaintTool:GameColors()
     
     local colors = {}

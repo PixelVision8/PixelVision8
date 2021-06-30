@@ -84,9 +84,8 @@ function PaintTool:CreateCanvasPanel()
   -- self.tmpLayerCanvas.Clear();
 
   -- TODO need to parse any flag image or json file in the game project
-  self.flagLayerCanvas = NewCanvas( self.imageLayerCanvas.Width, self.imageLayerCanvas.Height )
+  self.flagLayerCanvas = NewCanvas( self.imageLayerCanvas.Width, self.imageLayerCanvas.Height)
   -- self.flagLayerCanvas.Clear()
-
   
   self.vSliderData = editorUI:CreateSlider({x = 235-3, y = 44+3 + 8, w = 10, h = 193-24 - 7 - 8}, "vsliderhandle", "Scroll text vertically.")
   self.vSliderData.onAction = function(value) self:OnVerticalScroll(value) end
@@ -859,7 +858,7 @@ function PaintTool:SelectAll()
   
   self.selectionState = "resize"
 
-  self.selectRect = NewRect( 0, 0, self.imageLayerCanvas.Width, self.imageLayerCanvas.Height )
+  self.selectRect = NewRect( 0, 0, self.viewportRect.Width, self.viewportRect.Height )
   
   self.selectedPixelData = nil
   

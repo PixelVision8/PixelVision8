@@ -75,7 +75,26 @@ function PaintTool:IndexFlags()
     self:SetPickerLabel("Flags")
 
     self:ResetFlagValidation()
+
+    pixelVisionOS:EnableMenuItemByName("Export Flags", true)
+
+    if(self.flagImage ~= nil) then
+
+        local width = math.min(self.flagImage.Width, self.imageLayerCanvas.Width)
+        local height = math.min(self.flagImage.Height, self.imageLayerCanvas.Height)
+
+        local pixels = self.flagImage.GetPixels(0, 0, width, height)
+        
+        self.flagLayerCanvas.Clear()
+
+        self.flagLayerCanvas.SetPixels(pixels)
+
+        self.flagImage = nil
+
+        print("Set flag pixels")
     
+    end
+
 end
 
 function PaintTool:InvalidateFlags()
