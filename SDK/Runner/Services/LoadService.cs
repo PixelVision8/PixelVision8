@@ -94,7 +94,20 @@ namespace PixelVision8.Runner
             }
 
             // Step 6 (optional). Look for tile map to load
-            if ((fileFlags & FileFlags.Tilemap) == FileFlags.Tilemap) LoadTilemap(files);
+            if ((fileFlags & FileFlags.Tilemap) == FileFlags.Tilemap)
+            {
+
+                var flagPath = "/Game/flags.png";
+                if(files.Contains(flagPath) == false)
+                {
+                    flagPath = "/App/Sprites/flags.png";
+                }
+
+                _loader.ParseFlagImage(flagPath, targetEngine);
+
+                LoadTilemap(files);
+
+            } 
 
             // Step 7 (optional). Look for fonts to load
             if ((fileFlags & FileFlags.Fonts) == FileFlags.Fonts)
@@ -261,13 +274,13 @@ namespace PixelVision8.Runner
             if (!string.IsNullOrEmpty(file))
             {
                 _loader.ParseTilemapImage(file, targetEngine);
+            }
 
-                //var imageParser = new PNGFileReader(_fileLoadHelper);
-                // _loader.AddParser(new TilemapParser(imageParser, targetEngine.ColorChip, targetEngine.SpriteChip, targetEngine.TilemapChip)
-                // {
-                //     SourcePath = file,
-                //     MaskHex = targetEngine.ColorChip.maskColor
-                // });
+            file = files.FirstOrDefault(x => x.EndsWith("tilemap.flags.png"));
+
+            if (!string.IsNullOrEmpty(file))
+            {
+                _loader.ParseTilemapFlagImage(file, targetEngine);
             }
         }
 

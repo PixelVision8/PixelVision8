@@ -538,6 +538,9 @@
     <Compile Include="..\..\SDK\Runner\Parsers\ColorParser.cs">
       <Link>SDK\Runner\Parsers\ColorParser.cs</Link>
     </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\FlagImageParser.cs">
+      <Link>SDK\Runner\Parsers\FlagImageParser.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Runner\Parsers\FontParser.cs">
       <Link>SDK\Runner\Parsers\FontParser.cs</Link>
     </Compile>
@@ -585,6 +588,9 @@
     </Compile>
     <Compile Include="..\..\SDK\Runner\Parsers\TilemapParser.cs">
       <Link>SDK\Runner\Parsers\TilemapParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Runner\Parsers\TilemapFlagParser.cs">
+      <Link>SDK\Runner\Parsers\TilemapFlagParser.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Runner\Parsers\WavParser.cs">
       <Link>SDK\Runner\Parsers\WavParser.cs</Link>

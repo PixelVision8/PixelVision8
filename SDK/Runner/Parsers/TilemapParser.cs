@@ -25,12 +25,12 @@ namespace PixelVision8.Runner
 {
     public class TilemapParser : SpriteImageParser
     {
-        private readonly bool autoImport = true;
+        protected readonly bool autoImport = true;
 
-        private readonly TilemapChip tilemapChip;
-        private bool autoResize;
-        private int Columns;
-        private int Rows;
+        protected readonly TilemapChip tilemapChip;
+        protected bool autoResize;
+        protected int Columns;
+        protected int Rows;
 
         public TilemapParser(string sourceFile, IImageParser parser, ColorChip colorChip, SpriteChip spriteChip,
             TilemapChip tilemapChip, bool autoResize = false) :
