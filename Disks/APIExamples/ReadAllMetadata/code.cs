@@ -19,9 +19,14 @@ namespace PixelVision8.Examples
     {
         public override void Init()
         {
+
+            // Example Title
+            DrawText("ReadAllMetadata()", 8, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+
             // Set up the values we'll use to keep track of the metadata
             var nextRow = 3;
-            var maxRows = 29;
+            var maxRows = 26;
             var counter = 0;
             var metadata = ReadAllMetadata();
 
@@ -34,8 +39,8 @@ namespace PixelVision8.Examples
                 {
 
                     // Draw the key value pair from the game's metadata
-                    DrawText(data.Key + ":", 8, nextRow * 8, DrawMode.TilemapCache, "large", 6);
-                    DrawText(data.Value, (2 + data.Key.Length) * 8, nextRow * 8, DrawMode.TilemapCache, "large", 14);
+                    DrawText(data.Key + ":", 8, nextRow * 8 + 32, DrawMode.TilemapCache, "large", 6);
+                    DrawText(data.Value, (2 + data.Key.Length) * 8 , nextRow * 8 + 32, DrawMode.TilemapCache, "large", 14);
 
                     // Increment the row by 1 for the next loop
                     nextRow++;
@@ -48,7 +53,7 @@ namespace PixelVision8.Examples
             }
 
             // Display the amount displayed and the total in the game's metadata
-            DrawText("Showing " + (nextRow - 3) + " of " + counter + " Metadata Keys", 8, 8, DrawMode.TilemapCache,
+            DrawText("Showing " + (nextRow - 3) + " of " + counter + " Metadata Keys", 8, 40, DrawMode.TilemapCache,
                 "large", 15);
 
         }

@@ -124,6 +124,7 @@ namespace PixelVision8.Runner
         public WorkspaceService workspaceService;
         public WorkspaceServicePlus workspaceServicePlus;
         public LoadService loadService;
+        private TilemapLoaderService tilemapService;
         public IServiceLocator ServiceManager { get; }
         public RunnerMode mode;
         protected bool displayProgress;
@@ -262,9 +263,17 @@ namespace PixelVision8.Runner
 
         public void CreateLoadService()
         {
-            loadService = new LoadService(new WorkspaceFileLoadHelper(workspaceService));
+
+            var loadHelper = new WorkspaceFileLoadHelper(workspaceService);
+
+            loadService = new LoadService(loadHelper);
 
             Script.DefaultOptions.ScriptLoader = new ScriptLoaderUtil(workspaceService);
+
+
+            tilemapService = new TilemapLoaderService(loadHelper, new PNGFileReader(loadHelper));
+            ServiceManager.AddService(typeof(TilemapLoaderService).FullName, tilemapService);
+            
         }
 
         public override void ConfigureDisplayTarget()
@@ -1206,6 +1215,7 @@ namespace PixelVision8.Runner
             typeof(SoundChip).FullName,
             typeof(MusicChip).FullName
         };
+        
 
         public void ConfigureEngine(Dictionary<string, string> metaData = null)
         {

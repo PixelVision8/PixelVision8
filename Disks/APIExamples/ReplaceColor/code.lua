@@ -21,12 +21,16 @@ local totalColors = TotalColors(true)
 local targetColorID = totalColors + 1
 
 -- Keep track of time and delay
-local delay = 300
+local delay = 800
 local time = delay
 
 
 function Init()
 
+  -- Example Title
+  DrawText("ReplaceColor()", 8, 16, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  
   -- Set the background to the targetColorID
   BackgroundColor(targetColorID)
 
@@ -57,6 +61,6 @@ function Draw()
   RedrawDisplay()
 
   -- Draw the color value to the display
-  DrawText("New Color " .. Color(targetColorID), 8, 8, DrawMode.Sprite, "large", 15)
+  DrawText("New Color " .. Color(targetColorID), 8, 40, DrawMode.Sprite, "large", 15)
 
 end

@@ -21,9 +21,13 @@ namespace PixelVision8.Examples
         public override void Init()
         {
 
+            // Example Title
+            DrawText("ReadMetadata()", 8, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+
             // Display the name of the game from the game's metadata
-            DrawText("Game Name:", 1, 1, DrawMode.Tile, "large", 15);
-            DrawText(ReadMetadata("GameName", "Untitled"), 12, 1, DrawMode.Tile, "large", 14);
+            DrawText("Game Name:", 1, 5, DrawMode.Tile, "large", 15);
+            DrawText(ReadMetadata("GameName", "Untitled"), 12, 5, DrawMode.Tile, "large", 14);
 
         }
 

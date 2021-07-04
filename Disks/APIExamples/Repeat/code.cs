@@ -21,6 +21,13 @@ namespace PixelVision8.Examples
         private int counter;
         private int counterMax = 500;
 
+        public override void Init()
+        {
+            // Example Title
+            DrawText("Repeat()", 8, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+        }
+
         public override void Update(int timeDelta)
         {
             // Increase the counter by 1 every frame
@@ -34,7 +41,7 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw the counter value to the display
-            DrawText("Counter " + counter + "/" + counterMax, 8, 8, DrawMode.Sprite, "large", 15);
+            DrawText("Counter " + counter + "/" + counterMax, 8, 40, DrawMode.Sprite, "large", 15);
 
         }
     }

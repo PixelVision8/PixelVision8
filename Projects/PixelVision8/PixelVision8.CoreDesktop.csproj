@@ -616,6 +616,9 @@
     <Compile Include="..\..\SDK\Runner\Services\SaveFlags.cs">
       <Link>SDK\Runner\Services\SaveFlags.cs</Link>
     </Compile>
+    <Compile Include="..\..\SDK\Runner\Services\TilemapLoaderService.cs">
+      <Link>SDK\Runner\Services\TilemapLoaderService.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Runner\Utils\GifUtils\Data\GifFrame.cs">
       <Link>SDK\Runner\Utils\GifUtils\Data\GifFrame.cs</Link>
     </Compile>

@@ -38,9 +38,13 @@ function Draw()
   -- Clear the display
   Clear()
 
+  -- Example Title
+  DrawText("MouseButton()", 8, 16, DrawMode.Sprite, "large", 15)
+  DrawText("Lua Example", 8, 24, DrawMode.Sprite, "medium", 15, -4)
+
   -- Convert the pressedButtons into a string and draw to the display
   local message = table.concat(pressedButtons, ", "):upper()
-  DrawText("Mouse Buttons Down:", 8, 8, DrawMode.Sprite, "large", 15)
-  DrawText(message:sub(0, #message), 8, 16, DrawMode.Sprite, "medium", 14, - 4)
+  DrawText("Mouse Buttons Down:", 8, 40, DrawMode.Sprite, "large", 15)
+  DrawText(message:sub(0, #message), 8, 48, DrawMode.Sprite, "medium", 14, - 4)
 
 end

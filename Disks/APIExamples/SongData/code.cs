@@ -19,8 +19,14 @@ namespace PixelVision8.Examples
     {
         public override void Init()
         {
+
+            // Example Title
+            DrawText("SongData()", 8, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+
             // Play the first song with no repeat
             PlaySong(0, false); ;
+
         }
 
         public override void Draw()
@@ -33,15 +39,15 @@ namespace PixelVision8.Examples
             var nextRow = 2;
 
             // Draw the song data label
-            DrawText("Song Data:", 8, 8, DrawMode.Sprite, "large", 15);
+            DrawText("Song Data:", 8, 40, DrawMode.Sprite, "large", 15);
 
             // Display the song's meta data
             foreach (var data in SongData())
             {
 
                 // Draw the key value pair from the song data table
-                DrawText(data.Key + ":", 8, nextRow * 8, DrawMode.Sprite, "large", 6);
-                DrawText(data.Value.ToString(), 16 + (data.Key.Length * 8), nextRow * 8, DrawMode.Sprite, "large",
+                DrawText(data.Key + ":", 8, nextRow * 8 + 32, DrawMode.Sprite, "large", 6);
+                DrawText(data.Value.ToString(), 16 + (data.Key.Length * 8), nextRow * 8 + 32, DrawMode.Sprite, "large",
                     14);
 
                 // Increment the row by 1 for the next loop

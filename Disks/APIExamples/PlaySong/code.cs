@@ -19,6 +19,13 @@ namespace PixelVision8.Examples
     {
         private int isPlaying;
 
+        public override void Init()
+        {
+            // Example Title
+            DrawText("PlaySong()", 8, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+        }
+
         public override void Update(int timeDelta)
         {
             // Get the playing value
@@ -47,16 +54,15 @@ namespace PixelVision8.Examples
             {
 
                 // Draw the song data label
-                DrawText("Song Data:", 8, 8, DrawMode.Sprite, "large", 15);
+                DrawText("Song Data:", 8, 40, DrawMode.Sprite, "large", 15);
 
                 // Display the song's meta data
                 foreach (var data in SongData())
                 {
 
                     // Draw the key value pair from the song data table
-                    DrawText(data.Key + ":", 8, nextRow * 8, DrawMode.Sprite, "large", 6);
-                    DrawText(data.Value.ToString(), 16 + (data.Key.Length * 8), nextRow * 8, DrawMode.Sprite, "large",
-                        14);
+                    DrawText(data.Key + ":", 8, nextRow * 8 + 32, DrawMode.Sprite, "large", 6);
+                    DrawText(data.Value.ToString(), 16 + (data.Key.Length * 8), nextRow * 8 + 32, DrawMode.Sprite, "large", 14);
 
                     // Increment the row by 1 for the next loop
                     nextRow++;
@@ -67,7 +73,7 @@ namespace PixelVision8.Examples
             {
 
                 // Draw the instructions label
-                DrawText("Click To Play Song", 8, 8, DrawMode.Sprite, "large", 15);
+                DrawText("Click To Play Song", 8, 40, DrawMode.Sprite, "large", 15);
 
             }
         }

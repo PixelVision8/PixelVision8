@@ -32,8 +32,14 @@ namespace PixelVision8.Examples
 
         public override void Init()
         {
+
+            // Example Title
+            DrawText("PaletteOffset()", 8, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+
             // Draw the text for the palette and color ID
-            DrawText("Palette   (Color ID    )", 1, 1, DrawMode.Tile, "large", 15);
+            DrawText("Palette   (Color ID    )", 1, 5, DrawMode.Tile, "large", 15);
+  
         }
 
         public override void Update(int timeDelta)
@@ -68,11 +74,11 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw the sprite block using the current palette offset value
-            DrawSpriteBlock(104, 8, 24, 4, 4, false, false, DrawMode.Sprite, PaletteOffset(paletteID));
+            DrawMetaSprite("lock", 8, 64, false, false, DrawMode.Sprite, PaletteOffset(paletteID));
 
             // Draw the current palette number and color offset value
-            DrawText(paletteID.ToString(), 72, 8, DrawMode.Sprite, "large", 14);
-            DrawText(PaletteOffset(paletteID).ToString(), 168, 8, DrawMode.Sprite, "large", 14);
+            DrawText(paletteID.ToString(), 72, 40, DrawMode.Sprite, "large", 14);
+            DrawText(PaletteOffset(paletteID).ToString(), 168, 40, DrawMode.Sprite, "large", 14);
 
         }
     }

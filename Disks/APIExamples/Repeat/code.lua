@@ -15,6 +15,14 @@
 local counter = 0
 local counterMax = 500
 
+function Init()
+
+  -- Example Title
+  DrawText("Repeat()", 8, 16, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+
+end
+
 function Update(timeDelta)
 
   -- Increase the counter by 1 every frame
@@ -28,6 +36,6 @@ function Draw()
   RedrawDisplay()
 
   -- Draw the counter value to the display
-  DrawText("Counter " .. counter .. "/" .. counterMax, 8, 8, DrawMode.Sprite, "large", 15)
+  DrawText("Counter " .. counter .. "/" .. counterMax, 8, 40, DrawMode.Sprite, "large", 15)
 
 end

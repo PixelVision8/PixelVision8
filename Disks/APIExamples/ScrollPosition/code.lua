@@ -1,6 +1,6 @@
 --[[
   Pixel Vision 8 - ScrollPosition Example
-  Copyright (C) 2017, Pixel Vision 8 (http://pixelvision8.com)
+  Copyright (C) 2017, Pixel Vision 8 (http:--pixelvision8.com)
   Created by Jesse Freeman (@jessefreeman)
 
   This project was designed to display some basic instructions when you create
@@ -8,7 +8,7 @@
   Update() and Draw() logic.
 
   Learn more about making Pixel Vision 8 games at
-  https://www.pixelvision8.com/getting-started
+  https:--www.pixelvision8.com/getting-started
 ]]--
 
 local speed = 5
@@ -41,9 +41,13 @@ function Draw()
   RedrawDisplay()
 
   -- Draw the life bar sprite block but ignore the scroll position so it stays fixed on the screen
-  DrawSpriteBlock(300, 8, 8, 4, 2, false, false, DrawMode.Sprite, 0, false, false)
+  DrawMetaSprite("life-bar", 8, 40, false, false, DrawMode.Sprite)
 
-  -- Draw the exit offscreen and it will become visible when the maps scrolls to the end
-  DrawSpriteBlock(104, 432, 88, 4, 4, false, false, DrawMode.Sprite)
+  -- Draw the exit offscreen and it will become visible when the maps scrolls to the }
+  DrawMetaSprite("exit", 432 - nextPos, 88 + 32, false, false, DrawMode.Sprite)
+
+  -- Example Title
+  DrawText("ScrollPosition()", 8, 16, DrawMode.Sprite, "large", 15)
+  DrawText("Lua Example", 8, 24, DrawMode.Sprite, "medium", 15, -4)
 
 end

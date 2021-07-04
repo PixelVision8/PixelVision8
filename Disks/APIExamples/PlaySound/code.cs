@@ -21,6 +21,13 @@ namespace PixelVision8.Examples
         // Store the playback state of channel 0
         private bool isPlaying = false;
 
+        public override void Init()
+        {
+            // Example Title
+            DrawText("PlaySound()", 8, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+        }
+
         public override void Update(int timeDelta)
         {
             // See if the channel has audio playing back on it
@@ -47,14 +54,14 @@ namespace PixelVision8.Examples
             {
 
                 // Draw the sound playback label
-                DrawText("Playing On Channel 0", 8, 8, DrawMode.Sprite, "large", 14);
+                DrawText("Playing On Channel 0", 8, 40, DrawMode.Sprite, "large", 14);
 
             }
             else
             {
 
                 // Draw the instructions label
-                DrawText("Click To Play Sound Effect", 8, 8, DrawMode.Sprite, "large", 15);
+                DrawText("Click To Play Sound Effect", 8, 40, DrawMode.Sprite, "large", 15);
 
             }
         }

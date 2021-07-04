@@ -54,7 +54,6 @@ namespace PixelVision8.Runner
 
             var tmpColorChip = new ColorChip();
 
-            Console.WriteLine("Add Tilemap Flag Parser " + file);
             AddParser(new TilemapFlagParser(file, _imageParser, tmpColorChip, flagSpriteChip, engine.TilemapChip));
         }
     }

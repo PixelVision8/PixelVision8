@@ -28,8 +28,14 @@ namespace PixelVision8.Examples
 
         public override void Init()
         {
+
+            // Example Title
+            DrawText("NewRect()", 8, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+
             // Use the game's NewRect() to create a rectangle instance
-            rectA = NewRect(8, 8, 128, 128);
+            rectA = NewRect(8, 48, 128, 128);
+
         }
 
         public override void Update(int timeDelta)

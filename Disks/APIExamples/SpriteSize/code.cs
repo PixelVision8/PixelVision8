@@ -19,11 +19,16 @@ namespace PixelVision8.Examples
     {
         public override void Init()
         {
+
+            // Example Title
+            DrawText("SpriteSize()", 8, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+
             // Get the sprite size
             var spriteSize = SpriteSize();
 
             // Draw the sprite size to the display
-            DrawText("Sprite Size: " + spriteSize.X + "x" + spriteSize.Y, 1, 1, DrawMode.Tile, "large", 15);
+            DrawText("Sprite Size: " + spriteSize.X + "x" + spriteSize.Y, 1, 5, DrawMode.Tile, "large", 15);
 
         }
 

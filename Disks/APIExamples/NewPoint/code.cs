@@ -22,6 +22,11 @@ namespace PixelVision8.Examples
 
         public override void Init()
         {
+
+            // Example Title
+            DrawText("NewPoint()", 8, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+
             // Use the game's NewPoint() to create a point instance
             pos = NewPoint();
         }
@@ -41,7 +46,10 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw the X and Y value of the position
-            DrawText("Position " + pos.X + "," + pos.Y, 8, 8, DrawMode.Sprite, "large", 15);
+            DrawText("Position " + pos.X + "," + pos.Y, 8, 40, DrawMode.Sprite, "large", 15);
+
+            // Draw a rectangle to show the change in position
+            DrawRect( pos.X, pos.Y, 8, 8, 14, DrawMode.Sprite);
 
         }
 

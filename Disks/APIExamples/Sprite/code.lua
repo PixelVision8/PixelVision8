@@ -42,4 +42,9 @@ end
 function Draw()
   -- Redraw the display
   RedrawDisplay()
+
+  -- Example Title
+  DrawText("Sprite()", 8, 16, DrawMode.Sprite, "large", 15)
+  DrawText("Lua Example", 8, 24, DrawMode.Sprite, "medium", 15, -4)
+
 end

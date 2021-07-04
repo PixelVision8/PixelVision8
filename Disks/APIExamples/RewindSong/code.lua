@@ -13,8 +13,12 @@
 
 function Init()
 
+  -- Example Title
+  DrawText("RewindSong()", 8, 16, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+            
   -- Draw the song data label
-  DrawText("Song Data:", 1, 1, DrawMode.Tile, "large", 15)
+  DrawText("Song Data:", 1, 5, DrawMode.Tile, "large", 15)
 
   -- Start playing the song on a loop
   PlaySong(0, true)
@@ -48,8 +52,8 @@ function Draw()
   for key, value in next, SongData() do
 
     -- Draw the key value pair from the song data table
-    DrawText(key .. ":", 8, nextRow * 8, DrawMode.Sprite, "large", 6)
-    DrawText(value, 16 + (#key * 8), nextRow * 8, DrawMode.Sprite, "large", 14)
+    DrawText(key .. ":", 8, nextRow * 8 + 32, DrawMode.Sprite, "large", 6)
+    DrawText(value, 16 + (#key * 8), nextRow * 8 + 32, DrawMode.Sprite, "large", 14)
 
     -- Increment the row by 1 for the next loop
     nextRow = nextRow + 1

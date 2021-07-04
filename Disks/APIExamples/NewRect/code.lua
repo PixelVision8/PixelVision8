@@ -12,13 +12,21 @@
 ]]--
 
 -- Create a rectangle
-local rectA = NewRect(8, 8, 128, 128)
+local rectA = NewRect(8, 48, 128, 128)
 
 -- This will store the mouse position
 local mousePos = NewPoint()
 
 -- This will store the collision state
 local collision = false
+
+function Init()
+  
+  -- Example Title
+  DrawText("NewRect()", 8, 16, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+
+end
 
 function Update(timeDelta)
 

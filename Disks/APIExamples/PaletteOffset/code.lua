@@ -26,8 +26,12 @@ local paletteID = 0
 
 function Init()
 
+  -- Example Title
+  DrawText("PaletteOffset()", 8, 16, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  
   -- Draw the text for the palette and color ID
-  DrawText("Palette   (Color ID    )", 1, 1, DrawMode.Tile, "large", 15)
+  DrawText("Palette   (Color ID    )", 1, 5, DrawMode.Tile, "large", 15)
 
 end
 
@@ -59,10 +63,10 @@ function Draw()
   RedrawDisplay()
 
   -- Draw the sprite block using the current palette offset value
-  DrawSpriteBlock(104, 8, 24, 4, 4, false, false, DrawMode.Sprite, PaletteOffset(paletteID))
+  DrawMetaSprite("lock", 8, 64, false, false, DrawMode.Sprite, PaletteOffset(paletteID))
 
   -- Draw the current palette number and color offset value
-  DrawText(paletteID, 72, 8, DrawMode.Sprite, "large", 14)
-  DrawText(PaletteOffset(paletteID), 168, 8, DrawMode.Sprite, "large", 14)
+  DrawText(paletteID, 72, 40, DrawMode.Sprite, "large", 14)
+  DrawText(PaletteOffset(paletteID), 168, 40, DrawMode.Sprite, "large", 14)
 
 end

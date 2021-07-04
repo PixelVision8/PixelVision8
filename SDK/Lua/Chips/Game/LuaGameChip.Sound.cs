@@ -14,6 +14,7 @@ namespace PixelVision8.Player
             // LuaScript.Globals["Sound"] = new Func<int, string, string>(Sound);
             LuaScript.Globals["PlaySound"] = new Action<int, int>(PlaySound);
             LuaScript.Globals["StopSound"] = new Action<int>(StopSound);
+            LuaScript.Globals["Sound"] = new Func<int, string, string>(Sound);
             LuaScript.Globals["PlayRawSound"] =
                 new Action<string, int, float>(SoundChip.PlayRawSound);
 

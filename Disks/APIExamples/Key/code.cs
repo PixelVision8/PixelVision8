@@ -37,13 +37,17 @@ namespace PixelVision8.Examples
         public override void Init()
         {
 
+            // Example Title
+            DrawText("Key()", 8, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+
             // Use this counter during the foreach loop below
             var counter = 1;
 
             // Create labels for all of the keys
             foreach (var keyState in keyStates)
             {
-                DrawText("Key " + keyState.Key + " is down ", 1, counter, DrawMode.Tile, "large", 15);
+                DrawText("Key " + keyState.Key + " is down ", 1, counter+4, DrawMode.Tile, "large", 15);
                 counter++;
             }
 
@@ -73,7 +77,7 @@ namespace PixelVision8.Examples
             // Loop through all the keys and display their current down state
             foreach (var key in keyStates.Keys)
             {
-                DrawText(keyStates[key].ToString(), 128 + 36, (counter * 8), DrawMode.Sprite, "large", 14);
+                DrawText(keyStates[key].ToString(), 128 + 36, ((counter + 4) * 8), DrawMode.Sprite, "large", 14);
                 counter++;
             }
 

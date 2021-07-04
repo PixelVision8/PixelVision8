@@ -22,7 +22,7 @@ namespace PixelVision8.Examples
         private float speed = 5;
         private float nextPos;
 
-        // Use this point to position the  sprites
+        // Use this point to position the sprites
         private Point pos;
 
         // Store the width of the screen
@@ -33,7 +33,7 @@ namespace PixelVision8.Examples
 
         public override void Init()
         {
-
+            
             // Set the the width of the screen
             screenWidth = Display().X;
             // We need total columns in the tilemap and multiply that by the sprite size to get the full width
@@ -67,10 +67,14 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw the life bar sprite block but ignore the scroll position so it stays fixed on the screen
-            DrawSpriteBlock(300, 8, 8, 4, 2, false, false, DrawMode.Sprite, 0, false, false);
+            DrawMetaSprite("life-bar", 8, 40, false, false, DrawMode.Sprite);
 
             // Draw the exit offscreen and it will become visible when the maps scrolls to the }
-            DrawSpriteBlock(104, 432, 88, 4, 4, false, false, DrawMode.Sprite);
+            DrawMetaSprite("exit", 432 - pos.X, 88 + 32, false, false, DrawMode.Sprite);
+
+            // Example Title
+            DrawText("ScrollPosition()", 8, 16, DrawMode.Sprite, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.Sprite, "medium", 15, -4);
 
         }
     }

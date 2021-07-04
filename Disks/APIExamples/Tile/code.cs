@@ -36,6 +36,10 @@ namespace PixelVision8.Examples
 
         public override void Init()
         {
+            
+            // Example Title
+            DrawText("Tile()", 8, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
 
             // Set the tilemap dimensions
             mapSize = TilemapSize();

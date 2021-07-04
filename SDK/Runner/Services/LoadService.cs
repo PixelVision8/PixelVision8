@@ -250,6 +250,33 @@ namespace PixelVision8.Runner
             return null;
         }
 
+        protected AbstractParser LoadTilemaps(string[] files)
+        {
+            // Find the sprite file if one exists    
+            var file = files.FirstOrDefault(x => x.EndsWith(".tilemap.png"));
+
+            // Load the sprites.png file first
+            if (!string.IsNullOrEmpty(file))
+            {
+                _loader.ParseSprites(file, targetEngine);
+            }
+
+            // Loop through all the remaining PNGs and make sure they should be parsed as sprites
+            for (int i = 0; i < files.Length; i++)
+            {
+                
+                file = files[i];
+
+                if(file.StartsWith("/Game/Sprites/") && file.EndsWith(".png"))
+                {
+                    _loader.ParseSpritesFromFolder(file, targetEngine);
+                }
+
+            }
+
+            return null;
+        }
+
         protected void LoadTilemap(string[] files)
         {
             // If a tilemap json file exists, try to load that

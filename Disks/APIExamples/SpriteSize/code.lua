@@ -13,11 +13,15 @@
 
 function Init()
 
+  -- Example Title
+  DrawText("SpriteSize()", 8, 16, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  
   -- Get the sprite size
   local spriteSize = SpriteSize()
 
   -- Draw the sprite size to the display
-  DrawText("Sprite Size: ".. spriteSize.x .."x"..spriteSize.y, 1, 1, DrawMode.Tile, "large", 15)
+  DrawText("Sprite Size: ".. spriteSize.x .."x"..spriteSize.y, 1, 5, DrawMode.Tile, "large", 15)
 
 end
 

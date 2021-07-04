@@ -26,8 +26,10 @@ namespace PixelVision8.Examples
 
         public override void Init()
         {
+
             // Set time to delay so this is triggered on the first frame
             time = delay;
+
         }
 
         public override void Update(int timeDelta)
@@ -61,6 +63,10 @@ namespace PixelVision8.Examples
         {
             // Redraw the display
             RedrawDisplay();
+
+            // Example Title
+            DrawText("Sprite()", 8, 16, DrawMode.Sprite, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.Sprite, "medium", 15, -4);
         }
     }
 }
