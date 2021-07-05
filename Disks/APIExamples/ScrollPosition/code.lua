@@ -41,7 +41,7 @@ function Draw()
   RedrawDisplay()
 
   -- Draw the life bar sprite block but ignore the scroll position so it stays fixed on the screen
-  DrawMetaSprite("life-bar", 8, 40, false, false, DrawMode.Sprite)
+  DrawMetaSprite("life-bar", 224, 16, false, false, DrawMode.Sprite)
 
   -- Draw the exit offscreen and it will become visible when the maps scrolls to the }
   DrawMetaSprite("exit", 432 - nextPos, 88 + 32, false, false, DrawMode.Sprite)

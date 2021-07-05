@@ -11,10 +11,8 @@
 	},
 	"DisplayChip":
 	{
-		"width": 264,
-		"height": 248,
-		"overscanX": 1,
-		"overscanY": 1,
+		"width": 256,
+		"height": 240,
 		"layers": 6
 
 	},

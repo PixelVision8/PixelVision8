@@ -6,7 +6,7 @@
     "gpuChip":"PV8",
     "cartChip":"PV8",
     "soundChip":"PV8",
-    "runnerType":"csharp",
+    "runnerType":"lua",
     "buildWin":"false",
     "buildExtras":"",
     "buildMac":"false",
