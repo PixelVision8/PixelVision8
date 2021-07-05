@@ -19,10 +19,14 @@ namespace PixelVision8.Examples
     {
 
         // Message to display on the screen
-        private string message = "PIXEL VISION 8\n\n\nVisit 'pixelvision8.com' to learn more about creating games from scratch.";
+        private string message = "PIXEL VISION 8\n\nVisit 'pixelvision8.com' to learn more about creating games from scratch.";
 
         public override void Init()
         {
+
+            // Example Title
+            DrawText("WordWrap()", 8, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
 
             // To convert the message into lines of text we need to wrap it then split it
             var wrap = WordWrap(message, (Display().X / 8) - 2);
@@ -31,7 +35,7 @@ namespace PixelVision8.Examples
             // Loop through each line of text and draw it to the display
             for (int i = 0; i < lines.Length; i++)
             {
-                DrawText(lines[i], 1, i + 1, DrawMode.Tile, "large", 15);
+                DrawText(lines[i], 1, i + 1 + 5, DrawMode.Tile, "large", 15);
             }
 
         }

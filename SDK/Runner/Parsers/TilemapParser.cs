@@ -88,7 +88,7 @@ namespace PixelVision8.Runner
         {
             var id = spriteChip.FindSprite(spriteData);
             
-            if (id == -1 && autoImport)
+            if (id == -1 && autoImport && Utilities.IsEmpty(spriteData) == false)
             {
                 id = spriteChip.NextEmptyId();
                 // Console.WriteLine("Add new tile {0}", id);

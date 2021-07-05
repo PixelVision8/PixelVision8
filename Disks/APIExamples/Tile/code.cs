@@ -38,8 +38,8 @@ namespace PixelVision8.Examples
         {
             
             // Example Title
-            DrawText("Tile()", 8, 16, DrawMode.TilemapCache, "large", 15);
-            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+            DrawText("Tile()", 32, 24, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 32, 32, DrawMode.TilemapCache, "medium", 15, -4);
 
             // Set the tilemap dimensions
             mapSize = TilemapSize();
@@ -76,7 +76,7 @@ namespace PixelVision8.Examples
                 {
 
                     // Convert the loop index to a column,row position
-                    var pos = CalculatePosition((i - 1), mapSize.X);
+                    var pos = CalculatePosition((i), mapSize.X);
 
                     // Get the TileData based on the new position
                     var tmpTile = Tile(pos.X, pos.Y);
@@ -99,7 +99,7 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw the text for the palette and color ID
-            DrawText("Palette " + paletteID, 32, 16, DrawMode.Sprite, "large", 15);
+            DrawText("Palette " + paletteID, 32, 48, DrawMode.Sprite, "large", 15);
 
         }
     }

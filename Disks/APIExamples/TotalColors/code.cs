@@ -19,12 +19,17 @@ namespace PixelVision8.Examples
     {
         public override void Init()
         {
+
+            // Example Title
+            DrawText("TotalColors()", 8, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+
             // Get total colors values
             var totalColors = TotalColors();
             var usedColors = TotalColors(true);
 
             // Display the used vs total colors on the screen
-            DrawText("Total Colors " + usedColors + "/" + totalColors, 1, 1, DrawMode.Tile, "large", 15);
+            DrawText("Total Colors " + usedColors + "/" + totalColors, 1, 5, DrawMode.Tile, "large", 15);
         }
 
         public override void Draw()

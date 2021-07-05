@@ -33,6 +33,10 @@ local tileIDs = {}
 
 function Init()
 
+  -- Example Title
+  DrawText("UpdateTiles()", 32, 24, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 32, 32, DrawMode.TilemapCache, "medium", 15, -4)
+  
   -- Loop through all of the tiles in the tilemap
   for i = 1, totalTiles do
 
@@ -43,7 +47,7 @@ function Init()
     local pos = CalculatePosition(index, mapSize.x)
 
     -- Check to see if the tile has a sprite
-    if(Tile(pos.x, pos.y).spriteID > - 1) then
+    if(Tile(pos.x, pos.y).SpriteId > - 1) then
 
       -- Save the tile index value
       table.insert(tileIDs, index)
@@ -85,6 +89,6 @@ function Draw()
   RedrawDisplay()
 
   -- Draw the text for the palette and color ID
-  DrawText("Palette " .. paletteID, 32, 16, DrawMode.Sprite, "large", 15)
+  DrawText("Palette " .. paletteID, 32, 48, DrawMode.Sprite, "large", 15)
 
 end

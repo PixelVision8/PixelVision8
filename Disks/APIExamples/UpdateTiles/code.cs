@@ -41,6 +41,10 @@ namespace PixelVision8.Examples
         public override void Init()
         {
 
+            // Example Title
+            DrawText("UpdateTiles()", 32, 24, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 32, 32, DrawMode.TilemapCache, "medium", 15, -4);
+
             // Set the tilemap dimensions
             mapSize = TilemapSize();
             totalTiles = mapSize.X * mapSize.Y;
@@ -102,7 +106,7 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw the text for the palette and color ID
-            DrawText("Palette " + paletteID, 32, 16, DrawMode.Sprite, "large", 15);
+            DrawText("Palette " + paletteID, 32, 48, DrawMode.Sprite, "large", 15);
 
         }
     }

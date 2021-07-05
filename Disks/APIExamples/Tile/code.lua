@@ -28,6 +28,14 @@ local paletteID = 0
 local mapSize = TilemapSize()
 local totalTiles = mapSize.x * mapSize.y
 
+function Init()
+  
+  -- Example Title
+  DrawText("Tile()", 32, 24, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 32, 32, DrawMode.TilemapCache, "medium", 15, -4)
+
+end
+
 function Update(timeDelta)
 
   -- Increase the time on each frame and test if it is greater than the delay
@@ -57,10 +65,10 @@ function Update(timeDelta)
       local tmpTile = Tile(pos.x, pos.y)
 
       -- Check to see if the tile has a sprite
-      if(tmpTile.spriteID > - 1) then
+      if(tmpTile.SpriteId > - 1) then
 
         -- Update the tile by reassigning the same spriteID but calculating a new color offset
-        Tile(pos.x, pos.y, tmpTile.spriteID, PaletteOffset(paletteID))
+        Tile(pos.x, pos.y, tmpTile.SpriteId, PaletteOffset(paletteID))
 
       end
     end
@@ -73,6 +81,6 @@ function Draw()
   RedrawDisplay()
 
   -- Draw the text for the palette and color ID
-  DrawText("Palette " .. paletteID, 32, 16, DrawMode.Sprite, "large", 15)
+  DrawText("Palette " .. paletteID, 32, 48, DrawMode.Sprite, "large", 15)
 
 end
