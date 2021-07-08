@@ -11,9 +11,8 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Player;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class StopSoundExample : GameChip
     {
@@ -25,8 +24,8 @@ namespace PixelVision8.Examples
         {
 
             // Example Title
-            DrawText("StopSound()", 8, 16, DrawMode.TilemapCache, "large", 15);
-            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+            DrawText("StopSound()", 8, 8, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
             
         }
 
@@ -66,14 +65,14 @@ namespace PixelVision8.Examples
             {
 
                 // Draw the sound playback label
-                DrawText("Click To Stop Sound Effect", 8, 40, DrawMode.Sprite, "large", 14);
+                DrawText("Click To Stop Sound Effect", 8, 32, DrawMode.Sprite, "large", 14);
 
             }
             else
             {
 
                 // Draw the instructions label
-                DrawText("Click To Play Sound Effect", 8, 40, DrawMode.Sprite, "large", 15);
+                DrawText("Click To Play Sound Effect", 8, 32, DrawMode.Sprite, "large", 15);
 
             }
         }

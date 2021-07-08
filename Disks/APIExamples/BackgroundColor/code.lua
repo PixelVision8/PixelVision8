@@ -28,6 +28,8 @@ function Init()
 end
 
 function Draw()
+
   -- Redraw the display
   RedrawDisplay()
+  
 end

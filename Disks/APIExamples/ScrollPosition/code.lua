@@ -20,6 +20,13 @@ local screenWidth = Display().x
 -- We need total columns in the tilemap and multiply that by the sprite size to get the full width
 local mapWidth = TilemapSize().x * SpriteSize().x
 
+function Init()
+  
+  -- Change bg color
+  BackgroundColor(2)
+
+end
+
 function Update(timeDelta)
 
   -- We need to text if the next position plus the screen width is less than the map's width
@@ -41,13 +48,13 @@ function Draw()
   RedrawDisplay()
 
   -- Draw the life bar sprite block but ignore the scroll position so it stays fixed on the screen
-  DrawMetaSprite("life-bar", 224, 16, false, false, DrawMode.Sprite)
+  DrawMetaSprite("life-bar", 224, 8, false, false, DrawMode.Sprite)
 
   -- Draw the exit offscreen and it will become visible when the maps scrolls to the }
-  DrawMetaSprite("exit", 432 - nextPos, 88 + 32, false, false, DrawMode.Sprite)
+  DrawMetaSprite("exit", 432 - nextPos, 88 + 24, false, false, DrawMode.Sprite)
 
   -- Example Title
-  DrawText("ScrollPosition()", 8, 16, DrawMode.Sprite, "large", 15)
-  DrawText("Lua Example", 8, 24, DrawMode.Sprite, "medium", 15, -4)
+  DrawText("ScrollPosition()", 8, 8, DrawMode.Sprite, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.Sprite, "medium", 15, -4)
 
 end

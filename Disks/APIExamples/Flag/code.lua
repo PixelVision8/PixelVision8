@@ -19,8 +19,11 @@ local flagID = -1
 
 function Init()
     -- Example Title
-    DrawText("Flag()", 8, 16, DrawMode.TilemapCache, "large", 15)
-    DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+    DrawText("Flag()", 8, 8, DrawMode.TilemapCache, "large", 15)
+    DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
+
+    -- Change bg color
+    BackgroundColor(2)    
 end
 
 function Update(timeDelta)
@@ -56,8 +59,8 @@ function Draw()
   RedrawDisplay()
 
   -- Display the tile and flag text on the screen
-  DrawText("Tile " .. tilePosition.x .. ",".. tilePosition.y, 8, 40, DrawMode.Sprite, "large", 15)
-  DrawText("Flag " .. flagID, 8, 48, DrawMode.Sprite, "large", 15)
+  DrawText("Tile " .. tilePosition.x .. ",".. tilePosition.y, 8, 32, DrawMode.Sprite, "large", 15)
+  DrawText("Flag " .. flagID, 8, 40, DrawMode.Sprite, "large", 15)
 
   -- Draw a rect to represent which tile the mouse is over and set the color to match the flag ID plus 1
   DrawRect(tilePosition.x * 8, tilePosition.y * 8, 8, 8, flagID + 1, DrawMode.Sprite)

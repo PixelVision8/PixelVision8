@@ -11,10 +11,9 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Player;
 using System;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class SpriteExample : GameChip
     {
@@ -65,8 +64,8 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Example Title
-            DrawText("Sprite()", 8, 16, DrawMode.Sprite, "large", 15);
-            DrawText("C Sharp Example", 8, 24, DrawMode.Sprite, "medium", 15, -4);
+            DrawText("Sprite()", 8, 8, DrawMode.Sprite, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.Sprite, "medium", 15, -4);
         }
     }
 }

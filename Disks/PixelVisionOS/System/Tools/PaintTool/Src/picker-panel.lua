@@ -132,20 +132,30 @@ function PaintTool:UpdatePickerPanel(timeDelta)
     
     if(inRect or overrideFocus) then
 
+        
+
         if(self.pickerPanel.inFocus ~= true and editorUI.inFocusUI == nil) then
             editorUI:SetFocus(self.pickerPanel, self.focusCursor)
         end
 
         if(self.pickerPanel.inFocus == true) then
 
+            local col = math.floor((editorUI.mouseCursor.pos.X - self.pickerPanelRect.X)/8)
+            local row = math.floor((editorUI.mouseCursor.pos.Y - self.pickerPanelRect.Y)/8) + (2 * self.currentPage)
+
+            -- Calculate the over index id
+            local tmpId = CalculateIndex(col, row, 16)
+
+            -- local total = 1024
+            local charPadding = #tostring(self.currentState.pickerTotal)
+            -- local mode = "sprite"
+            local message = string.format("select %s id %0"..charPadding.."d at %03d,%03d", self.pickerMode, tmpId, col, row)
+            
+            pixelVisionOS:DisplayMessage(message)
+
             if(inRect and editorUI.collisionManager.mouseDown == false) then
 
-                -- Calculate the over index id
-                local tmpId = CalculateIndex( 
-                    math.floor((editorUI.mouseCursor.pos.X - self.pickerPanelRect.X)/8),
-                    math.floor((editorUI.mouseCursor.pos.Y - self.pickerPanelRect.Y)/8) + (2 * self.currentPage),
-                    16
-                )
+                
 
                 if(tmpId >= self.currentState.pickerTotal or tmpId == self.currentState.selectedId) then
 
@@ -260,7 +270,7 @@ function PaintTool:DrawPickerPanel()
     if(self.pickerMode == ColorMode) then
 
         -- TODO Calculate icon position
-        DrawMetaSprite( "iconmask", self.pickerPanelRect.X, self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
+        -- DrawMetaSprite( "iconmask", self.pickerPanelRect.X, self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
 
         local pos = CalculatePosition( self.backgroundColorId, 16 )
 
@@ -464,25 +474,7 @@ function PaintTool:DisableShapeTools()
         
 
     end
-    -- local shapeToolButton = self.toolButtons[self.shapeTools]
-
-
-    -- print("shapeToolButton", shapeToolButton)
-    -- if(shapeToolButton.selected == true) then
-
-    --     shapeToolButton.selected = false
-
-
-    --     self:OnPickTool(self.shapeTools - 1, false)
-    --     -- local penToolButton = self.toolButtons[self.shapeTools - 1]
-
-    --     -- penToolButton.selected = true
-    --     -- editorUI:Invalidate(penToolButton)
-
-    --     -- self:OnSelectTool(penToolButton.spriteName)
-
-    -- end
-
+    
     editorUI:Enable(self.toolButtons[self.shapeTools], false)
     editorUI:Enable(self.toolButtons[self.fillTools], false)
 end

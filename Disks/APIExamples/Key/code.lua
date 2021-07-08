@@ -28,12 +28,12 @@ local keyStates = {
 function Init()
 
   -- Example Title
-  DrawText("Key()", 8, 16, DrawMode.TilemapCache, "large", 15)
-  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  DrawText("Key()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
   
   -- Create labels for all of the keys
   for i = 1, #keyStates do
-    DrawText("Key " .. tostring(i - 1) .. " is down ", 1, i+4, DrawMode.Tile, "large", 15)
+    DrawText("Key " .. tostring(i - 1) .. " is down ", 1, i+3, DrawMode.Tile, "large", 15)
   end
 
 end
@@ -54,7 +54,7 @@ function Draw()
 
   -- Loop through all the keys and display their current down state
   for i = 1, #keyStates do
-    DrawText(tostring(keyStates[i].state), 128, ((i+4) * 8), DrawMode.Sprite, "large", 14)
+    DrawText(tostring(keyStates[i].state), 128, ((i+3) * 8), DrawMode.Sprite, "large", 14)
   end
 
 end

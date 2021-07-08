@@ -247,8 +247,10 @@ end
 
 function PaintTool:Delete()
 
+  local srcCanvas = self.pickerMode == FlagMode and self.flagLayerCanvas or self.imageLayerCanvas
+
   -- TODO this needs to look at the right canvas based on the mode (image vs flag)
-  self.imageLayerCanvas:Clear(-1, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height )
+  srcCanvas:Clear(-1, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height )
       
   -- Clear the select pixel data so it doesn't get saved back to the canvas
   self.selectedPixelData = nil
@@ -459,8 +461,14 @@ function PaintTool:StoreUndoSnapshot()
   local width = srcCanvas.Width
   local height = srcCanvas.Height
 
+  -- Calculate save area to sample from accounting for off screen changes
+  local tmpX = math.max(0, self.scaledViewport.X - self.scaledViewport.Width)
+  local tmpY = math.max(0, self.scaledViewport.Y - self.scaledViewport.Height)
+  local tmpW = math.min(width, self.scaledViewport.Width * 3)
+  local tmpH = math.min(height, self.scaledViewport.Height * 3)
+
   -- Get the pixels from the canvas
-  local pixels = srcCanvas:GetPixels()
+  local pixels = srcCanvas:GetPixels(tmpX, tmpY, tmpW, tmpH)
 
   
   -- TODO save brush state
@@ -497,7 +505,7 @@ function PaintTool:StoreUndoSnapshot()
         end
 
         -- Restore the pixel data
-        srcCanvas:SetPixels(pixels)
+        srcCanvas:SetPixels(tmpX, tmpY, tmpW, tmpH, pixels)
 
         -- Restore picker mode
         self:ChangeMode(pickerMode)

@@ -14,18 +14,18 @@
 function Init()
 
   -- Example Title
-  DrawText("TilemapSize()", 8, 16, DrawMode.TilemapCache, "large", 15)
-  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  DrawText("TilemapSize()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
   
   -- Get the tilemap size and sprite size
   local mapSize = TilemapSize()
   local tileSize = SpriteSize()
 
   -- Display the tilemap size in tiels and pixels to the screen
-  DrawText("Tilemap Size:", 1, 5, DrawMode.Tile, "large", 15)
-  DrawText("Tiles " .. mapSize.x .. " x " .. mapSize.y, 1, 6, DrawMode.Tile, "large", 15)
-  DrawText("Total Tiles " .. (mapSize.x * mapSize.y), 1, 7, DrawMode.Tile, "large", 15)
-  DrawText("Pixels " .. (mapSize.x * tileSize.x) .. " x " .. (mapSize.y * tileSize.y), 1, 8, DrawMode.Tile, "large", 15)
+  DrawText("Tilemap Size:", 1, 4, DrawMode.Tile, "large", 15)
+  DrawText("Tiles " .. mapSize.x .. " x " .. mapSize.y, 1, 5, DrawMode.Tile, "large", 15)
+  DrawText("Total Tiles " .. (mapSize.x * mapSize.y), 1, 6, DrawMode.Tile, "large", 15)
+  DrawText("Pixels " .. (mapSize.x * tileSize.x) .. " x " .. (mapSize.y * tileSize.y), 1, 7, DrawMode.Tile, "large", 15)
 
 end
 

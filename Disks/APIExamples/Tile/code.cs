@@ -11,9 +11,8 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Player;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class TileExample : GameChip
     {
@@ -38,8 +37,8 @@ namespace PixelVision8.Examples
         {
             
             // Example Title
-            DrawText("Tile()", 32, 24, DrawMode.TilemapCache, "large", 15);
-            DrawText("C Sharp Example", 32, 32, DrawMode.TilemapCache, "medium", 15, -4);
+            DrawText("Tile()", 32, 16, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 32, 24, DrawMode.TilemapCache, "medium", 15, -4);
 
             // Set the tilemap dimensions
             mapSize = TilemapSize();
@@ -99,7 +98,7 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw the text for the palette and color ID
-            DrawText("Palette " + paletteID, 32, 48, DrawMode.Sprite, "large", 15);
+            DrawText("Palette " + paletteID, 32, 40, DrawMode.Sprite, "large", 15);
 
         }
     }

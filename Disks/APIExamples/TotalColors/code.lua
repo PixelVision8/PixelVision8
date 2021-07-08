@@ -14,15 +14,15 @@
 function Init()
 
   -- Example Title
-  DrawText("TotalColors()", 8, 16, DrawMode.TilemapCache, "large", 15)
-  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  DrawText("TotalColors()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
   
   -- Get total colors values
   local totalColors = TotalColors()
   local usedColors = TotalColors(true)
 
   -- Display the used vs total colors on the screen
-  DrawText("Total Colors " .. usedColors .. "/" .. totalColors, 1, 5, DrawMode.Tile, "large", 15)
+  DrawText("Total Colors " .. usedColors .. "/" .. totalColors, 1, 4, DrawMode.Tile, "large", 15)
 
 end
 

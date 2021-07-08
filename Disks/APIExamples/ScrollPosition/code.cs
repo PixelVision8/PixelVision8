@@ -12,9 +12,8 @@ https://www.pixelvision8.com/getting-started
 **/
 
 //using Microsoft.Xna.Framework;
-using PixelVision8.Player;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class ScrollPositionExample : GameChip
     {
@@ -38,6 +37,9 @@ namespace PixelVision8.Examples
             screenWidth = Display().X;
             // We need total columns in the tilemap and multiply that by the sprite size to get the full width
             mapWidth = TilemapSize().X * SpriteSize().X;
+
+            // Change bg color
+            BackgroundColor(2);
 
         }
 
@@ -67,14 +69,14 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw the life bar sprite block but ignore the scroll position so it stays fixed on the screen
-            DrawMetaSprite("life-bar", 224, 16, false, false, DrawMode.Sprite);
+            DrawMetaSprite("life-bar", 224, 8, false, false, DrawMode.Sprite);
 
             // Draw the exit offscreen and it will become visible when the maps scrolls to the }
-            DrawMetaSprite("exit", 432 - pos.X, 88 + 32, false, false, DrawMode.Sprite);
+            DrawMetaSprite("exit", 432 - pos.X, 88 + 24, false, false, DrawMode.Sprite);
 
             // Example Title
-            DrawText("ScrollPosition()", 8, 16, DrawMode.Sprite, "large", 15);
-            DrawText("C Sharp Example", 8, 24, DrawMode.Sprite, "medium", 15, -4);
+            DrawText("ScrollPosition()", 8, 8, DrawMode.Sprite, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.Sprite, "medium", 15, -4);
 
         }
     }

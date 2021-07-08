@@ -11,10 +11,9 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Player;
 using System.Collections.Generic;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class SoundExample : GameChip
     {
@@ -29,12 +28,12 @@ namespace PixelVision8.Examples
         {
 
             // Example Title
-            DrawText("Sound()", 8, 16, DrawMode.TilemapCache, "large", 15);
-            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+            DrawText("Sound()", 8, 8, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
 
             // Add label text
-            DrawText("Click to Play Sound", 1, 5, DrawMode.Tile, "large", 15);
-            DrawText("WaveType", 1, 6, DrawMode.Tile, "large", 15);
+            DrawText("Click to Play Sound", 1, 4, DrawMode.Tile, "large", 15);
+            DrawText("WaveType", 1, 5, DrawMode.Tile, "large", 15);
 
             // Read first sound effect
             var soundData = Sound(0);
@@ -100,7 +99,7 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw the wavetype ID
-            DrawText(waveType.ToString(), 80, 48, DrawMode.Sprite, "large", 14);
+            DrawText(waveType.ToString(), 80, 40, DrawMode.Sprite, "large", 14);
 
         }
     }

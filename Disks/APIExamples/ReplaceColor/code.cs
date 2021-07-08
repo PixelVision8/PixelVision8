@@ -11,9 +11,8 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Player;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class ReplaceColorExample : GameChip
     {
@@ -35,8 +34,8 @@ namespace PixelVision8.Examples
         {
 
             // Example Title
-            DrawText("ReplaceColor()", 8, 16, DrawMode.TilemapCache, "large", 15);
-            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+            DrawText("ReplaceColor()", 8, 8, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
 
             // Set the time equal to the delay to run on the first frame
             time = delay;
@@ -78,7 +77,7 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw the color value to the display
-            DrawText("New Color " + Color(targetColorID), 8, 40, DrawMode.Sprite, "large", 15);
+            DrawText("New Color " + Color(targetColorID), 8, 32, DrawMode.Sprite, "large", 15);
 
         }
     }

@@ -12,9 +12,8 @@ https://www.pixelvision8.com/getting-started
 **/
 
 using System.Collections.Generic;
-using PixelVision8.Player;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class UpdateTilesExample : GameChip
     {

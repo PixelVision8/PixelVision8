@@ -14,6 +14,13 @@
 local speed = 5
 local nextPos = 0
 
+function Init()
+  
+  -- Change bg color
+  BackgroundColor(2)
+
+end
+
 function Update(timeDelta)
 
   -- Calculate the next position

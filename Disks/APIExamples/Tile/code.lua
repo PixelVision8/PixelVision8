@@ -31,8 +31,8 @@ local totalTiles = mapSize.x * mapSize.y
 function Init()
   
   -- Example Title
-  DrawText("Tile()", 32, 24, DrawMode.TilemapCache, "large", 15)
-  DrawText("Lua Example", 32, 32, DrawMode.TilemapCache, "medium", 15, -4)
+  DrawText("Tile()", 32, 16, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 32, 24, DrawMode.TilemapCache, "medium", 15, -4)
 
 end
 
@@ -81,6 +81,6 @@ function Draw()
   RedrawDisplay()
 
   -- Draw the text for the palette and color ID
-  DrawText("Palette " .. paletteID, 32, 48, DrawMode.Sprite, "large", 15)
+  DrawText("Palette " .. paletteID, 32, 40, DrawMode.Sprite, "large", 15)
 
 end

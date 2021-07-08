@@ -149,6 +149,7 @@ function PaintTool:CreateCanvasPanel()
 
       -- TODO need to defer this to the draw function
 
+      -- TODO this should only fill the visible screen so need to copy to tmp canvas fill, then copy back
       -- Update the fill color
       self.imageLayerCanvas:SetPattern({self.brushColor}, 1, 1)
 
@@ -486,36 +487,32 @@ function PaintTool:DrawCanvasPanel()
       for i = 1, #self.selectedPixelData do
         self.selectedPixelData[i] = self.fillRectColor
       end
-      -- We fill the are first because there is no need to clear
-      -- self.imageLayerCanvas:Clear(self.fillRectColor, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
-    
+      
       self.fillRect = false
-
-      -- Clear the selected pixels since we just filled the area
-      -- self.selectedPixelData = nil
-
-      -- self:CancelCanvasSelection()
 
     end
 
+    local srcCanvas = self.pickerMode == FlagMode and self.flagLayerCanvas or self.imageLayerCanvas
+
     if(self.selectRect ~= nil) then
+
+      -- local tmpW = math.min(self.selectRect.Width, srcCanvas.Width)
+      -- local tmpH = math.min(self.selectRect.Height, srcCanvas.Height)
 
       -- Check to see if the state has been set to canceled
       if(self.selectionState == "canceled") then
       
-        
-        
         if(self.selectedPixelData ~= nil) then
           
           -- Check to see if the selection is ignoring transparency
           if(self.selectionUsesMaskColor == true) then
       
-            self.imageLayerCanvas:Clear(-1, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
+            srcCanvas:Clear(-1, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
       
           end
           
           -- Draw pixel data to the image
-          self.imageLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData)
+          srcCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData)
         
           -- Clear the pixel data
           self.selectedPixelData = nil
@@ -547,7 +544,7 @@ function PaintTool:DrawCanvasPanel()
         if(self.clearArea == true) then
 
           -- If the area wasn't being filled, clear it with the mask color
-          self.imageLayerCanvas:Clear(-1, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
+          srcCanvas:Clear(-1, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
 
           -- TODO should we use the mask color here?
           
@@ -603,7 +600,7 @@ function PaintTool:DrawCanvasPanel()
 
       -- print("Start Undo")
       --   -- TODO we can optimize this by passing in a rect for the area to merge
-      self.imageLayerCanvas:MergeCanvas(self.tmpLayerCanvas, 0, true)
+      srcCanvas:MergeCanvas(self.tmpLayerCanvas, 0, true)
 
       -- print("End undo")
       -- self.tmpLayerCanvas:Clear()
@@ -915,19 +912,6 @@ function PaintTool:CanvasRelease(callAction)
   -- Clear the mouse state
   self.mouseState = self.mouseState == "released" and "up" or "released"
 
-  -- print("Release", self.mouseState)
-  -- if(self.mergerTmpLayer == true ) then
-
-  -- --   -- TODO we can optimize this by passing in a rect for the area to merge
-  --   self.imageLayerCanvas:MergeCanvas(self.tmpLayerCanvas, 0, true)
-
-  --   self.mergerTmpLayer = false
-    
-  -- end
-
-  -- Clear the canvas
-  -- self.tmpLayerCanvas:Clear()
-
   self:InvalidateCanvas()
 
   self:InvalidateSprites()
@@ -953,8 +937,6 @@ function PaintTool:ClampSelectionToBounds()
 end
 
 function PaintTool:ResetCanvasStroke()
-
-  -- print("ResetCanvasStroke")
 
   if(self.tool == "pen") then
     
@@ -989,10 +971,6 @@ function PaintTool:DrawOnCanvas(mousePos)
     mousePos.Y = self:SnapToGrid(mousePos.Y)
 
   end
-
-  
-
-  -- print("self.startPos", self.startPos, "mousePos", mousePos)
 
   -- Get the start position for a new drawing
   if(self.startPos ~= nil) then
@@ -1054,9 +1032,7 @@ function PaintTool:DrawOnCanvas(mousePos)
         self:InvalidateUndo()
 
         self.tmpLayerCanvas:Clear()
-        -- print("Clear Tmp Layer - Rectangle")
-        -- self:ResetCanvasStroke()
-
+        
         -- TODO this is fixed in the canvas
         self.tmpLayerCanvas:DrawRectangle(
             math.min(self.startPos.x, mousePos.x), 
@@ -1156,9 +1132,6 @@ function PaintTool:DrawOnCanvas(mousePos)
         -- No need to merge tmp layer since the selection tool will do this manually
         self.mergerTmpLayer = false
 
-      -- print("Selection", dump(self.selectRect))
-
-
       elseif(self.tool == "eyedropper") then
         
         -- Need to merge tmp layer after drawing
@@ -1180,9 +1153,7 @@ function PaintTool:DrawOnCanvas(mousePos)
             self:OnPickerSelection(self.overColor + 1)
 
           end
-          -- print("self.overColor", self.overColor)
-      -- if(self.overColor > pixelVisionOS.colorsPerSprite) then
-      --     self.overColor = -1
+          
         end
 
       -- TODO should we display this value or that it is out of bounds?
@@ -1210,23 +1181,21 @@ function PaintTool:CutPixels(clearArea)
   -- Set the flag to clear the area below the cut pixels
   self.clearArea = clearArea or true
 
+  local srcCanvas = self.pickerMode == FlagMode and self.flagLayerCanvas or self.imageLayerCanvas
+
   -- Return the pixel data
-  return self.imageLayerCanvas:GetPixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
+  return srcCanvas:GetPixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
 
 end
 
 function PaintTool:FillCanvasSelection(colorID)
 
-  -- pixelVisionOS:BeginUndo(self)
-  
   if(self.selectRect == nil) then
     return
   end
 
   self.fillRect = true
   self.fillRectColor = colorID or self.brushColor
-
-  -- self:InvalidateCanvas()
 
 end
 

@@ -7,12 +7,11 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Player;
 using System.Collections.Generic;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
-    class ExampleGameChip : GameChip
+    class ButtonExample : GameChip
     {
         // This array will store any buttons pressed during the current frame
         private List<string> pressedButtons = new List<string>();

@@ -11,9 +11,8 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Player;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class TotalColorsExample : GameChip
     {
@@ -21,15 +20,15 @@ namespace PixelVision8.Examples
         {
 
             // Example Title
-            DrawText("TotalColors()", 8, 16, DrawMode.TilemapCache, "large", 15);
-            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+            DrawText("TotalColors()", 8, 8, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
 
             // Get total colors values
             var totalColors = TotalColors();
             var usedColors = TotalColors(true);
 
             // Display the used vs total colors on the screen
-            DrawText("Total Colors " + usedColors + "/" + totalColors, 1, 5, DrawMode.Tile, "large", 15);
+            DrawText("Total Colors " + usedColors + "/" + totalColors, 1, 4, DrawMode.Tile, "large", 15);
         }
 
         public override void Draw()

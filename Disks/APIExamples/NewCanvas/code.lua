@@ -34,48 +34,48 @@ function Init()
   canvas.SetStroke(6, 1)
 
   -- Draw the line label to the canvas
-  canvas.DrawText("Line", 8, 48, "large", 15)
+  canvas.DrawText("Line", 8, 40, "large", 15)
 
   -- Draw a line between the two points
-  canvas.DrawLine(8, 64, 80, 64)
+  canvas.DrawLine(8, 56, 80, 56)
 
   -- Draw a line between the two points
-  canvas.DrawLine(93, 64, 165, 72)
+  canvas.DrawLine(93, 56, 165, 72)
 
   -- Draw the Ellipse label to the canvas
-  canvas.DrawText("Ellipse", 8, 80, "large", 15)
+  canvas.DrawText("Ellipse", 8, 72, "large", 15)
 
   -- Ellipse 1
-  canvas.DrawEllipse(8, 92, 64, 64)
+  canvas.DrawEllipse(8, 84, 64, 64)
 
   -- Ellipse 2
   canvas.SetPattern(solidPattern, 1, 1)
-  canvas.DrawEllipse(79, 92, 64, 64, true)
+  canvas.DrawEllipse(79, 84, 64, 64, true)
 
   -- Ellipse 3
   canvas.SetPattern(checkeredPattern, 4, 4)
-  canvas.DrawEllipse(150, 92, 64, 64, true)
+  canvas.DrawEllipse(150, 84, 64, 64, true)
 
   -- Draw the Rectangle label to the canvas
-  canvas.DrawText("Rectangle", 8, 160, "large", 15)
+  canvas.DrawText("Rectangle", 8, 152, "large", 15)
 
   -- Rectangle 1
-  canvas.DrawRectangle(8, 176, 64, 64)
+  canvas.DrawRectangle(8, 168, 64, 64)
 
   -- Rectangle 2
   canvas.SetPattern(solidPattern, 1, 1)
-  canvas.DrawRectangle(79, 176, 64, 64, true)
+  canvas.DrawRectangle(79, 168, 64, 64, true)
 
   -- Rectangle 3
   canvas.SetPattern(checkeredPattern, 4, 4)
-  canvas.DrawRectangle(150, 176, 64, 64, true)
+  canvas.DrawRectangle(150, 168, 64, 64, true)
 
   -- Draw the canvas to the display
   canvas.DrawPixels()
 
   -- Example Title
-  DrawText("NewCanvas()", 8, 16, DrawMode.TilemapCache, "large", 15)
-  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  DrawText("NewCanvas()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
 
 end
 

@@ -20,12 +20,12 @@ local soundProps = {}
 function Init()
 
   -- Example Title
-  DrawText("Sound()", 8, 16, DrawMode.TilemapCache, "large", 15)
-  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  DrawText("Sound()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
   
   -- Add label text
-  DrawText("Click to Play Sound", 1, 5, DrawMode.Tile, "large", 15)
-  DrawText("WaveType", 1, 6, DrawMode.Tile, "large", 15)
+  DrawText("Click to Play Sound", 1, 4, DrawMode.Tile, "large", 15)
+  DrawText("WaveType", 1, 5, DrawMode.Tile, "large", 15)
 
   -- Read first sound effect
   local soundData = Sound(0)
@@ -87,6 +87,6 @@ function Draw()
   RedrawDisplay()
 
   -- Draw the wavetype ID
-  DrawText(waveType, 80, 48, DrawMode.Sprite, "large", 14)
+  DrawText(waveType, 80, 40, DrawMode.Sprite, "large", 14)
 
 end

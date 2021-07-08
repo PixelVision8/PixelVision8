@@ -17,8 +17,8 @@ local isPlaying = false
 function Init()
 
   -- Example Title
-  DrawText("StopSound()", 8, 16, DrawMode.TilemapCache, "large", 15)
-  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  DrawText("StopSound()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
 
 end
 
@@ -55,12 +55,12 @@ function Draw()
   if(isPlaying) then
 
     -- Draw the sound playback label
-    DrawText("Click To Stop Sound Effect", 8, 40, DrawMode.Sprite, "large", 14)
+    DrawText("Click To Stop Sound Effect", 8, 32, DrawMode.Sprite, "large", 14)
 
   else
 
     -- Draw the instructions label
-    DrawText("Click To Play Sound Effect", 8, 40, DrawMode.Sprite, "large", 15)
+    DrawText("Click To Play Sound Effect", 8, 32, DrawMode.Sprite, "large", 15)
 
   end
 

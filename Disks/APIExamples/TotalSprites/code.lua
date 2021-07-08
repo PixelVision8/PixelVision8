@@ -14,8 +14,8 @@
 function Init()
 
   -- Example Title
-  DrawText("Total Sprites()", 8, 16, DrawMode.TilemapCache, "large", 15)
-  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  DrawText("Total Sprites()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
 
   -- Change the BG color to make the sprites easier to see
   BackgroundColor(2);
@@ -25,12 +25,13 @@ function Init()
   local usedSprites = TotalSprites(true)
 
   -- Display the used vs total colors on the screen
-  DrawText("Total Sprites " .. usedSprites .. "/" .. totalSprites, 1, 5, DrawMode.Tile, "large", 15)
+  DrawText("Total Sprites " .. usedSprites .. "/" .. totalSprites, 1, 4, DrawMode.Tile, "large", 15)
 
   -- Loop through all of the sprites in memory and draw them into the tilemap
   for i = 1, usedSprites, 1 do
-      local pos = CalculatePosition( i, 16 );
-      DrawSprite( i-1, pos.X + 4, pos.Y + 7, false, false, DrawMode.Tile);
+    local id = i-1
+    local pos = CalculatePosition( id, 16 );
+    DrawSprite( id, pos.X + 4, pos.Y + 6, false, false, DrawMode.Tile);
   end
 
 end

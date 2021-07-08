@@ -11,9 +11,8 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Player;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class RedrawDisplayExample : GameChip
     {
@@ -21,11 +20,11 @@ namespace PixelVision8.Examples
         {
 
             // Example Title
-            DrawText("RedrawDisplay()", 8, 16, DrawMode.TilemapCache, "large", 15);
-            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+            DrawText("RedrawDisplay()", 8, 8, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
 
             // Draw the FPS label to the tilemap
-            DrawText("FPS ", 1, 5, DrawMode.Tile, "large", 15);
+            DrawText("FPS ", 1, 4, DrawMode.Tile, "large", 15);
 
         }
 
@@ -35,7 +34,7 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw the FPS value to the display on every frame
-            DrawText(ReadFPS().ToString(), 40, 40, DrawMode.Sprite, "large", 14);
+            DrawText(ReadFPS().ToString(), 40, 32, DrawMode.Sprite, "large", 14);
         }
     }
 }

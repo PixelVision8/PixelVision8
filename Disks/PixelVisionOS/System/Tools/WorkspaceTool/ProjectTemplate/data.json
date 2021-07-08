@@ -10,7 +10,7 @@
   },
   "DisplayChip":
   {
-    "width": 250,
+    "width": 256,
     "height": 240,
     "overscanX": 1,
     "overscanY": 1,

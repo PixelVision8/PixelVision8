@@ -56,7 +56,6 @@ function PaintTool:UpdateSpriteIndex()
             end
 
         end
-
         
         -- Check to see if the sprite is unique
         if(index == -1) then
@@ -74,17 +73,7 @@ function PaintTool:UpdateSpriteIndex()
                 spriteData[i] = pixelData[i] == -1 and -1 or pixelData[i] + self.colorOffset
             end
 
-            -- Set the fill to the mask color
-            self.spriteCanvas:SetPattern({254}, 1, 1)
-
-            -- Draw mask color behind sprite
-            self.spriteCanvas:DrawRectangle(pickerPos.X * 8, pickerPos.Y * 8, 8, 8, true)
-
-            -- Set the sprite as the pattern
-            self.spriteCanvas:SetPattern(spriteData, 8, 8)
-
-            -- Draw the sprite to the picker
-            self.spriteCanvas:DrawRectangle(pickerPos.X * 8, pickerPos.Y * 8, 8, 8, true)
+            self.spriteCanvas.SetPixels(pickerPos.X * 8, pickerPos.Y * 8, 8, 8, spriteData)
        
         end
 

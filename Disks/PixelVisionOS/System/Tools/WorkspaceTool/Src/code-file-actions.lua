@@ -711,7 +711,7 @@ end
 function WorkspaceTool:OnRun()
 
   -- Only try to run if the directory is a game
-  if(self.currentPath == nil or pixelVisionOS:ValidateGameInDir(self.currentPath) == false) then
+  if(self.currentPath == nil or pixelVisionOS:ValidateGameInDir(self.currentPath, {"info.json"}) == false) then
     return
   end
 

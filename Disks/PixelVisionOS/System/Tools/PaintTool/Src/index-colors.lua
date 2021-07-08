@@ -60,7 +60,7 @@ function PaintTool:IndexColors()
     end
 
     -- TODO hardcoded for testing - should be read from game file?
-    self.backgroundColorId = 1
+    self.backgroundColorId = 0
 
     -- Change the picker label
     self:SetPickerLabel("Colors")

@@ -14,14 +14,14 @@
 function Init()
 
   -- Example Title
-  DrawText("WriteSaveData()", 8, 16, DrawMode.TilemapCache, "large", 15)
-  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  DrawText("WriteSaveData()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
   
   -- Draw the last opneded text
-  DrawText("Last Opened", 1, 5, DrawMode.Tile, "large", 15)
+  DrawText("Last Opened", 1, 4, DrawMode.Tile, "large", 15)
 
   -- Draw the saved data to the display
-  DrawText(ReadSaveData("LastOpened", "Never"), 1, 6, DrawMode.Tile, "large", 14)
+  DrawText(ReadSaveData("LastOpened", "Never"), 1, 5, DrawMode.Tile, "large", 14)
 
 end
 

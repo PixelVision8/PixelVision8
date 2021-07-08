@@ -11,9 +11,8 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Player;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class TilemapSizeExample : GameChip
     {
@@ -21,18 +20,18 @@ namespace PixelVision8.Examples
         {
 
             // Example Title
-            DrawText("TilemapSize()", 8, 16, DrawMode.TilemapCache, "large", 15);
-            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+            DrawText("TilemapSize()", 8, 8, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
 
             //Get the tilemap size and sprite size
             var mapSize = TilemapSize();
             var tileSize = SpriteSize();
 
             // Display the tilemap size in tiels and pixels to the screen
-            DrawText("Tilemap Size:", 1, 5, DrawMode.Tile, "large", 15);
-            DrawText("Tiles " + mapSize.X + " x " + mapSize.Y, 1, 6, DrawMode.Tile, "large", 15);
-            DrawText("Total Tiles " + (mapSize.X * mapSize.Y), 1, 7, DrawMode.Tile, "large", 15);
-            DrawText("Pixels " + (mapSize.X * tileSize.X) + " x " + (mapSize.Y * tileSize.Y), 1, 8, DrawMode.Tile, "large", 15);
+            DrawText("Tilemap Size:", 1, 4, DrawMode.Tile, "large", 15);
+            DrawText("Tiles " + mapSize.X + " x " + mapSize.Y, 1, 5, DrawMode.Tile, "large", 15);
+            DrawText("Total Tiles " + (mapSize.X * mapSize.Y), 1, 6, DrawMode.Tile, "large", 15);
+            DrawText("Pixels " + (mapSize.X * tileSize.X) + " x " + (mapSize.Y * tileSize.Y), 1, 7, DrawMode.Tile, "large", 15);
 
         }
 

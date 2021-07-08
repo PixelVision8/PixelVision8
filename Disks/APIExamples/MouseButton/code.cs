@@ -11,10 +11,9 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Player;
 using System.Collections.Generic;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class MouseButtonExample : GameChip
     {
@@ -47,13 +46,13 @@ namespace PixelVision8.Examples
             Clear();
 
             // Example Title
-            DrawText("MouseButton()", 8, 16, DrawMode.Sprite, "large", 15);
-            DrawText("C Sharp Example", 8, 24, DrawMode.Sprite, "medium", 15, -4);
+            DrawText("MouseButton()", 8, 8, DrawMode.Sprite, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.Sprite, "medium", 15, -4);
 
             // Convert the pressedButtons into a string and draw to the display
             var message = string.Join(", ", pressedButtons.ToArray()).ToUpper();
-            DrawText("Mouse Buttons Down:", 8, 40, DrawMode.Sprite, "large", 15);
-            DrawText(message.Substring(0, message.Length), 8, 48, DrawMode.Sprite, "medium", 14, -4);
+            DrawText("Mouse Buttons Down:", 8, 32, DrawMode.Sprite, "large", 15);
+            DrawText(message.Substring(0, message.Length), 8, 40, DrawMode.Sprite, "medium", 14, -4);
 
         }
 

@@ -17,11 +17,11 @@ local pos = NewPoint()
 function Init()
 
   -- Example Title
-  DrawText("MousePosition()", 8, 16, DrawMode.TilemapCache, "large", 15)
-  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  DrawText("MousePosition()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
 
   -- Draw the text for where the position will be displayed
-  DrawText("Mouse Position", 1, 5, DrawMode.Tile, "large", 15)
+  DrawText("Mouse Position", 1, 4, DrawMode.Tile, "large", 15)
 
 end
 
@@ -49,7 +49,7 @@ function Draw()
   if(pos.x == -1 or pos.y == -1) then
 
     -- Display that the mouse is offscreen
-    DrawText("Offscreen", 128, 40, DrawMode.Sprite, "large", 14)
+    DrawText("Offscreen", 128, 32, DrawMode.Sprite, "large", 14)
 
   else
 
@@ -57,7 +57,7 @@ function Draw()
     DrawRect(pos.x, pos.y, 8, 8, 5, DrawMode.Sprite)
 
     -- Display the X and Y position of the mouse
-    DrawText(pos.x .. "," ..pos.y, 128, 40, DrawMode.Sprite, "large", 14)
+    DrawText(pos.x .. "," ..pos.y, 128, 32, DrawMode.Sprite, "large", 14)
 
   end
 

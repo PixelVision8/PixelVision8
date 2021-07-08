@@ -11,9 +11,8 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Player;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class WordWrapExample : GameChip
     {
@@ -25,8 +24,8 @@ namespace PixelVision8.Examples
         {
 
             // Example Title
-            DrawText("WordWrap()", 8, 16, DrawMode.TilemapCache, "large", 15);
-            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+            DrawText("WordWrap()", 8, 8, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
 
             // To convert the message into lines of text we need to wrap it then split it
             var wrap = WordWrap(message, (Display().X / 8) - 2);
@@ -35,7 +34,7 @@ namespace PixelVision8.Examples
             // Loop through each line of text and draw it to the display
             for (int i = 0; i < lines.Length; i++)
             {
-                DrawText(lines[i], 1, i + 1 + 5, DrawMode.Tile, "large", 15);
+                DrawText(lines[i], 1, i + 1 + 4, DrawMode.Tile, "large", 15);
             }
 
         }

@@ -17,8 +17,8 @@ local pos = NewPoint()
 function Init()
   
   -- Example Title
-  DrawText("NewPoint()", 8, 16, DrawMode.TilemapCache, "large", 15)
-  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  DrawText("NewPoint()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
 
 end
 
@@ -36,7 +36,7 @@ function Draw()
   RedrawDisplay()
 
   -- Draw the X and Y value of the position
-  DrawText("Position " .. pos.x .. "," .. pos.y, 8, 40, DrawMode.Sprite, "large", 15)
+  DrawText("Position " .. pos.x .. "," .. pos.y, 8, 32, DrawMode.Sprite, "large", 15)
 
   -- Draw a rectangle to show the change in position
   DrawRect( pos.X, pos.Y, 8, 8, 14, DrawMode.Sprite)

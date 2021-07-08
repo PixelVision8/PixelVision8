@@ -12,9 +12,8 @@ https://www.pixelvision8.com/getting-started
 **/
 
 using Microsoft.Xna.Framework.Input;
-using PixelVision8.Player;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class IsChannelPlayingExample : GameChip
     {
@@ -22,13 +21,13 @@ namespace PixelVision8.Examples
         {
 
             // Example Title
-            DrawText("IsChannelPlaying()", 8, 16, DrawMode.TilemapCache, "large", 15);
-            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+            DrawText("IsChannelPlaying()", 8, 8, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
             
             // Display the instructions
-            DrawText("Press the 1 or 2 key", 1, 5, DrawMode.Tile, "large", 15);
-            DrawText("Channel 0 is playing ", 1, 6, DrawMode.Tile, "large", 15);
-            DrawText("Channel 1 is playing ", 1, 7, DrawMode.Tile, "large", 15);
+            DrawText("Press the 1 or 2 key", 1, 4, DrawMode.Tile, "large", 15);
+            DrawText("Channel 0 is playing ", 1, 5, DrawMode.Tile, "large", 15);
+            DrawText("Channel 1 is playing ", 1, 6, DrawMode.Tile, "large", 15);
 
         }
 
@@ -57,8 +56,8 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw channel 0 and 1's current playing state to the display
-            DrawText(IsChannelPlaying(0).ToString(), 176, 48, DrawMode.Sprite, "large", 14);
-            DrawText(IsChannelPlaying(1).ToString(), 176, 56, DrawMode.Sprite, "large", 14);
+            DrawText(IsChannelPlaying(0).ToString(), 176, 40, DrawMode.Sprite, "large", 14);
+            DrawText(IsChannelPlaying(1).ToString(), 176, 48, DrawMode.Sprite, "large", 14);
 
         }
     }

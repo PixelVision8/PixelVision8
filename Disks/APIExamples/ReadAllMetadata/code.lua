@@ -14,8 +14,8 @@
 function Init()
 
   -- Example Title
-  DrawText("ReadAllMetadata()", 8, 16, DrawMode.TilemapCache, "large", 15)
-  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  DrawText("ReadAllMetadata()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
   
   -- Set up the values we'll use to keep track of the metadata
   local nextRow = 3
@@ -30,8 +30,8 @@ function Init()
     if(nextRow < maxRows ) then
 
       -- Draw the key value pair from the game's metadata
-      DrawText(key .. ":", 8, nextRow * 8 + 32, DrawMode.TilemapCache, "large", 6)
-      DrawText(value, (2 + #key) * 8, nextRow * 8 + 32, DrawMode.TilemapCache, "large", 14)
+      DrawText(key .. ":", 8, nextRow * 8 + 24, DrawMode.TilemapCache, "large", 6)
+      DrawText(value, (2 + #key) * 8, nextRow * 8 + 24, DrawMode.TilemapCache, "large", 14)
 
       -- Increment the row by 1 for the next loop
       nextRow = nextRow + 1
@@ -43,7 +43,7 @@ function Init()
   end
 
   -- Display the amount displayed and the total in the game's metadata
-  DrawText("Showing " .. (nextRow - 3) .." of " .. counter .. " Metadata Keys", 8, 40, DrawMode.TilemapCache, "large", 15)
+  DrawText("Showing " .. (nextRow - 3) .." of " .. counter .. " Metadata Keys", 8, 32, DrawMode.TilemapCache, "large", 15)
 
 end
 

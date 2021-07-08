@@ -7,12 +7,9 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Player;
-
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
-
-    public class ExampleGameChip : GameChip
+    public class BackgroundExample : GameChip
     {
         public override void Init()
       {
@@ -35,11 +32,6 @@ namespace PixelVision8.Examples
 
       }
 
-      /// <summary>
-      ///     Draw() is called once per frame after the Update() has completed. This is where all visual updates to
-      ///     your game should take place such as clearing the display, drawing sprites, and pushing raw pixel data
-      ///     into the display.
-      /// </summary>
       public override void Draw()
       {
 

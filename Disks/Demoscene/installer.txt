@@ -14,3 +14,4 @@ $dir=Demos
 /Demos/Julio-Choy/Demo-05/|/Julio-Choy/Demo-05/
 /Demos/Julio-Choy/Demo-06/|/Julio-Choy/Demo-06/
 /Demos/Jose-Guerra/Spirally-Spiral/|/Jose-Guerra/Spirally-Spiral/
+/Demos/Thatsmaik/ParticleFX/|/Thatsmaik/ParticleFX/

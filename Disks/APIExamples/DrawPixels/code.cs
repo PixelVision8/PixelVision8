@@ -11,11 +11,9 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Player;
-
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
-    class ExampleGameChip : GameChip
+    class DrawPixelsExample : GameChip
     {
         int[] pixelData = {
             -1, -1, -1, 0, 0, 0, 0, -1,

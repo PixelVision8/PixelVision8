@@ -14,13 +14,13 @@
 function Init()
 
   -- Example Title
-  DrawText("IsChannelPlaying()", 8, 16, DrawMode.TilemapCache, "large", 15)
-  DrawText("Lua Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4)
+  DrawText("IsChannelPlaying()", 8, 8, DrawMode.TilemapCache, "large", 15)
+  DrawText("Lua Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4)
   
   -- Display the instructions
-  DrawText("Press the 1 or 2 key", 1, 5, DrawMode.Tile, "large", 15)
-  DrawText("Channel 0 is playing ", 1, 6, DrawMode.Tile, "large", 15)
-  DrawText("Channel 1 is playing ", 1, 7, DrawMode.Tile, "large", 15)
+  DrawText("Press the 1 or 2 key", 1, 4, DrawMode.Tile, "large", 15)
+  DrawText("Channel 0 is playing ", 1, 5, DrawMode.Tile, "large", 15)
+  DrawText("Channel 1 is playing ", 1, 6, DrawMode.Tile, "large", 15)
 
 end
 
@@ -46,7 +46,7 @@ function Draw()
   RedrawDisplay()
 
   -- Draw channel 0 and 1's current playing state to the display
-  DrawText(tostring(IsChannelPlaying(0)), 176, 48, DrawMode.Sprite, "large", 14)
-  DrawText(tostring(IsChannelPlaying(1)), 176, 56, DrawMode.Sprite, "large", 14)
+  DrawText(tostring(IsChannelPlaying(0)), 176, 40, DrawMode.Sprite, "large", 14)
+  DrawText(tostring(IsChannelPlaying(1)), 176, 48, DrawMode.Sprite, "large", 14)
 
 end

@@ -12,9 +12,8 @@ https://www.pixelvision8.com/getting-started
 **/
 
 using System;
-using PixelVision8.Player;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class FlagExampleGame : GameChip
     {
@@ -27,8 +26,11 @@ namespace PixelVision8.Examples
         public override void Init()
         {
             // Example Title
-            DrawText("Flag()", 8, 16, DrawMode.TilemapCache, "large", 15);
-            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+            DrawText("Flag()", 8, 8, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
+            
+            // Change bg color
+            BackgroundColor(2);
         }
 
         public override void Update(int timeDelta)
@@ -65,8 +67,8 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Display the tile and flag text on the screen
-            DrawText("Tile " + tilePosition.X + "," + tilePosition.Y, 8, 40, DrawMode.Sprite, "large", 15);
-            DrawText("Flag " + flagID, 8, 48, DrawMode.Sprite, "large", 15);
+            DrawText("Tile " + tilePosition.X + "," + tilePosition.Y, 8, 32, DrawMode.Sprite, "large", 15);
+            DrawText("Flag " + flagID, 8, 40, DrawMode.Sprite, "large", 15);
 
             // Draw a rect to represent which tile the mouse is over and set the color to match the flag ID plus 1
             DrawRect(tilePosition.X * 8, tilePosition.Y * 8, 8, 8, flagID + 1, DrawMode.Sprite);

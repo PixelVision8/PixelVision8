@@ -11,9 +11,8 @@ Learn more about making Pixel Vision 8 games at
 https://www.pixelvision8.com/getting-started
 **/
 
-using PixelVision8.Player;
 
-namespace PixelVision8.Examples
+namespace PixelVision8.Player
 {
     class PaletteOffsetExample : GameChip
     {
@@ -34,11 +33,11 @@ namespace PixelVision8.Examples
         {
 
             // Example Title
-            DrawText("PaletteOffset()", 8, 16, DrawMode.TilemapCache, "large", 15);
-            DrawText("C Sharp Example", 8, 24, DrawMode.TilemapCache, "medium", 15, -4);
+            DrawText("PaletteOffset()", 8, 8, DrawMode.TilemapCache, "large", 15);
+            DrawText("C Sharp Example", 8, 16, DrawMode.TilemapCache, "medium", 15, -4);
 
             // Draw the text for the palette and color ID
-            DrawText("Palette   (Color ID    )", 1, 5, DrawMode.Tile, "large", 15);
+            DrawText("Palette   (Color ID    )", 1, 4, DrawMode.Tile, "large", 15);
   
         }
 
@@ -74,11 +73,11 @@ namespace PixelVision8.Examples
             RedrawDisplay();
 
             // Draw the sprite block using the current palette offset value
-            DrawMetaSprite("lock", 8, 64, false, false, DrawMode.Sprite, PaletteOffset(paletteID));
+            DrawMetaSprite("lock", 8, 48, false, false, DrawMode.Sprite, PaletteOffset(paletteID));
 
             // Draw the current palette number and color offset value
-            DrawText(paletteID.ToString(), 72, 40, DrawMode.Sprite, "large", 14);
-            DrawText(PaletteOffset(paletteID).ToString(), 168, 40, DrawMode.Sprite, "large", 14);
+            DrawText(paletteID.ToString(), 72, 32, DrawMode.Sprite, "large", 14);
+            DrawText(PaletteOffset(paletteID).ToString(), 168, 32, DrawMode.Sprite, "large", 14);
 
         }
     }
