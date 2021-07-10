@@ -4,7 +4,6 @@ local filesToCopy = {}
 local fileActionCounter = 1
 local fileCleanup = {}
 
-
 function CalculateSteps()
 
     -- Get the destination path

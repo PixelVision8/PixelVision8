@@ -993,6 +993,7 @@ function WorkspaceTool:FileDropAction(src, dest)
     end
 
     local action = "move"
+    print(action, dump(self.targetFiles), dump(selections))
 
     local srcSeg = srcPath.GetDirectorySegments()
     local destSeg = destPath.GetDirectorySegments()
@@ -1014,7 +1015,7 @@ function WorkspaceTool:FileDropAction(src, dest)
         end
     elseif(srcSeg[1] == "Disks" and destSeg[1] == "Disks") then
         if(srcSeg[2] ~= destSeg[2]) then
-            -- print("Copy")
+            print("Copy")
             action = "copy"
         end
     elseif(srcSeg[1] ~= destSeg[1]) then
@@ -1035,18 +1036,21 @@ function WorkspaceTool:UpdateFileType(item, isGameFile)
 
     -- TODO support legacy files and test new extensions
     if(key == "png" and isGameFile == true) then
-        -- -- print("Is PNG")
+        -- print("Is PNG", dump(item))
         if(item.name == "sprites" and self.editorMapping["sprites"] ~= nil) then
             key = "sprites"
-        elseif(item.name == "tilemap" and self.editorMapping["tilemap"] ~= nil) then
+        elseif(item.name == "tilemap" and self.editorMapping["sprites"] ~= nil) then
             key = "tiles"
-        elseif(item.name == "colors" and self.editorMapping["colors"] ~= nil) then
+        elseif(item.name == "colors" and self.editorMapping["sprites"] ~= nil) then
             key = "colors"
         end
+    elseif(key == "png" and string.ends(item.parentPath.Path, "/Sprites/") and pixelVisionOS:ValidateGameInDir(self.currentPath.parentPath)) then
+        key = "sprites"
     elseif(key == "sprites.png" and self.editorMapping["sprites"] ~= nil and isGameFile == true) then
         key = "sprites"
-    elseif(key == "tiles.png" and self.editorMapping["tilemap"] ~= nil and isGameFile == true) then
-        key = "tiles"
+    elseif(key == "flags.png" and self.editorMapping["sprites"] ~= nil and isGameFile == true) then
+        key = "none"
+        item.name = "flags"
     elseif(key == "tilemap.json" and self.editorMapping["tilemap"] ~= nil and isGameFile == true) then
         key = "tilemap"
     elseif(key == "font.png") then

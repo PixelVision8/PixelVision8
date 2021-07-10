@@ -308,7 +308,7 @@ function PixelVisionOS:ValidateGameInDir(workspacePath, requiredFiles)
         return
     end
 
-    requiredFiles = requiredFiles or {"data.json", "info.json"}
+    requiredFiles = requiredFiles or {"info.json"}
 
     local flag = 0
 

@@ -322,6 +322,8 @@ namespace PixelVision8.Runner
                 _loader.ParseSprites(file, targetEngine);
             }
 
+            var total = 0;
+
             // Loop through all the remaining PNGs and make sure they should be parsed as sprites
             for (int i = 0; i < files.Length; i++)
             {
@@ -330,10 +332,16 @@ namespace PixelVision8.Runner
 
                 if(file.StartsWith("/Game/Sprites/") && file.EndsWith(".png"))
                 {
+                    total ++;
                     _loader.ParseSpritesFromFolder(file, targetEngine);
                 }
 
             }
+
+            if(targetEngine.GameChip.TotalMetaSprites() < total)
+                targetEngine.GameChip.TotalMetaSprites(total);
+
+            // Console.WriteLine("Total " + targetEngine.GameChip.TotalMetaSprites());
 
             return null;
         }

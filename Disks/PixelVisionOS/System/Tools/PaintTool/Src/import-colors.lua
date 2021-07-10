@@ -12,6 +12,8 @@ function PaintTool:ColorCheck()
             currentPath = currentPath.ParentPath;
         end
 
+        print("Dir", currentPath, self.useDefaultColors, self.colorsPath, pixelVisionOS:ValidateGameInDir(currentPath))
+
         -- Check to see if the current path is a valid game
         if(pixelVisionOS:ValidateGameInDir(currentPath)) then
         
@@ -36,7 +38,7 @@ function PaintTool:ColorCheck()
 
         end
 
-        if(self.useDefaultColors and self.colorsPath == "default") then
+        if(self.useDefaultColors and (self.colorsPath == "default" or  self.colorsPath == "none")) then
           self.colorsPath = ""
         end
     

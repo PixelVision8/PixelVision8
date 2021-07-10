@@ -61,7 +61,7 @@ namespace PixelVision8.Player
     {
         
         protected SpriteData _currentSpriteData;
-        protected SpriteCollection[] metaSprites = new SpriteCollection[128];
+        protected SpriteCollection[] metaSprites = new SpriteCollection[256];
         // protected int[] tmpIDs = new int[0];
         public int maxSize = 256;
 
@@ -71,6 +71,7 @@ namespace PixelVision8.Player
         {
             if (total.HasValue)
             {
+                Console.WriteLine("Change meta sprite total " + total);
                 Array.Resize(ref metaSprites, Utilities.Clamp(total.Value, 0, 256));
             }
 

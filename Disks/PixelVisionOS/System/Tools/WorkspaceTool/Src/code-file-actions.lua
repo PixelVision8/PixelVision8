@@ -46,7 +46,7 @@ end
 
 function WorkspaceTool:StartFileOperation(srcPath, destPath, action)
 
-  -- print("StartFileOperation", srcPath, destPath, action)
+  -- print("StartFileOperation", srcPath, destPath, action, dump(self.targetFiles))
 
   -- Test to see if the action is delete
   if(action == "delete") then
@@ -61,15 +61,16 @@ function WorkspaceTool:StartFileOperation(srcPath, destPath, action)
 
   -- print("action", action)
 
-  if(action ~= "throw out") then
+  if(action == "paste") then
     -- Remove the source path
     table.remove(self.targetFiles,1)
+    action = "copy"
   end
 
   -- Set a modal flag so we know what warning to display
   local fileActionFlag = 0
 
-  -- print(dump(self.targetFiles))
+  -- print("Final files", dump(self.targetFiles))
 
   -- local total = #self.targetFiles
 
@@ -477,7 +478,7 @@ function WorkspaceTool:OnPaste(dest)
 
       if(#self.targetFiles) then
 
-        self:StartFileOperation(srcPath, dest, "copy")
+        self:StartFileOperation(srcPath, dest, "paste")
 
         self.autoSelect = true
 
