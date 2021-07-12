@@ -42,7 +42,7 @@ namespace PixelVision8.Editor
 
         public override void CalculateSteps()
         {
-            if (_gameChip.TotalMetaSprites() < 1) return;
+            if (_gameChip.TotalMetaSprites < 1) return;
 
             base.CalculateSteps();
 
@@ -70,7 +70,7 @@ namespace PixelVision8.Editor
 
             // var savedData = gameChip.savedData;
 
-            for (var i = 0; i < _gameChip.TotalMetaSprites(); i++)
+            for (var i = 0; i < _gameChip.TotalMetaSprites; i++)
             {
                 var metaSprite = _gameChip.MetaSprite(i);
                 var childrenSprites = metaSprite.Sprites;

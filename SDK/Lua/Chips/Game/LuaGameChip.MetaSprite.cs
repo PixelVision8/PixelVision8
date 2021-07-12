@@ -10,7 +10,7 @@ namespace PixelVision8.Player
         {
             
             LuaScript.Globals["FindMetaSpriteId"] = new Func<string, int>(FindMetaSpriteId);
-            LuaScript.Globals["TotalMetaSprites"] = new Func<int?, int>(TotalMetaSprites);
+            // LuaScript.Globals["TotalMetaSprites"] = new Func<int?, int>(TotalMetaSprites);
             LuaScript.Globals["MetaSprite"] = new Func<object, SpriteCollection, SpriteCollection>(MetaSpriteRouter);
             LuaScript.Globals["DrawMetaSprite"] =
                 new Action<object, int, int, bool, bool, DrawMode, int>(DrawMetaSpriteRouter);

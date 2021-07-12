@@ -1215,7 +1215,7 @@ function PaintTool:InvalidateBackground()
 
   else
 
-    -- Use the mask color as the default background    
+    -- Use the mask color as the default background   
     self.backgroundLayerCanvas:Clear(-1)
 
   end

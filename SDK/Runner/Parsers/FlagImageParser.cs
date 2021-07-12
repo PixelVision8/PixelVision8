@@ -42,5 +42,6 @@ namespace PixelVision8.Runner
 
             AddParser(new SpriteImageParser(file, _imageParser, tmpColorChip, flagSpriteChip));
         }
+        
     }
 }

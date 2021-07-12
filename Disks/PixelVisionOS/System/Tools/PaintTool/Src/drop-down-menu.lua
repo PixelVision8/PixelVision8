@@ -654,6 +654,11 @@ function PaintTool:OnSetOutlineColor()
 end
 
 function PaintTool:OnSetBackgroundColor() 
+
+  self.backgroundColorId = self.currentState.selectedId
+
+  self:InvalidateBackground()
+  -- print(self.currentState.selectedId)
   -- TODO need to wire this up
   -- print("Change BG color")
 end

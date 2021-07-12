@@ -1,0 +1,16 @@
+{
+    "name":"Flag",
+    "description":"A PV8 Game Template.",
+    "version":"v0.0.0",
+    "ext":".pv8",
+    "gpuChip":"PV8",
+    "cartChip":"Custom",
+    "soundChip":"PV8",
+    "paletteMode":"false",
+    "buildWin":"false",
+    "buildExtras":"",
+    "runnerType":"lua",
+    "buildMac":"false",
+    "buildLinux":"false",
+    
+}

@@ -20,6 +20,7 @@
 
 using PixelVision8.Player;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -98,6 +99,7 @@ namespace PixelVision8.Runner
             {
 
                 var flagPath = "/Game/flags.png";
+
                 if(files.Contains(flagPath) == false)
                 {
                     flagPath = "/App/Sprites/flags.png";
@@ -135,13 +137,7 @@ namespace PixelVision8.Runner
                 // Loop through each of the fonts and load them up
                 foreach (var fileName in paths)
                 {
-                    //var imageParser = new PNGFileReader(_fileLoadHelper);
-
                     _loader.ParseFonts(fileName, targetEngine);
-                    // _loader.AddParser(new FontParser(imageParser, targetEngine.ColorChip, targetEngine.FontChip){
-                    //     SourcePath = fileName,
-                    //     MaskHex = targetEngine.ColorChip.maskColor
-                    // });
                 }
             }
 
@@ -250,64 +246,70 @@ namespace PixelVision8.Runner
             return null;
         }
 
-        protected AbstractParser LoadTilemaps(string[] files)
-        {
-            // Find the sprite file if one exists    
-            var file = files.FirstOrDefault(x => x.EndsWith(".tilemap.png"));
-
-            // Load the sprites.png file first
-            if (!string.IsNullOrEmpty(file))
-            {
-                _loader.ParseSprites(file, targetEngine);
-            }
-
-            // Loop through all the remaining PNGs and make sure they should be parsed as sprites
-            for (int i = 0; i < files.Length; i++)
-            {
-                
-                file = files[i];
-
-                if(file.StartsWith("/Game/Sprites/") && file.EndsWith(".png"))
-                {
-                    _loader.ParseSpritesFromFolder(file, targetEngine);
-                }
-
-            }
-
-            return null;
-        }
-
         protected void LoadTilemap(string[] files)
         {
+            // Console.WriteLine("LoadTilemap");
+
             // If a tilemap json file exists, try to load that
             var file = files.FirstOrDefault(x => x.EndsWith("tilemap.json"));
 
             if (!string.IsNullOrEmpty(file))
             {
-                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
                 _loader.ParseTilemapJson(file, targetEngine);
-
-                // var jsonParser = new TilemapJsonParser(file, _fileLoadHelper, targetEngine);
-                //
-                // _loader.AddParser(jsonParser);
 
                 return;
             }
 
-            // Try to load the tilemap png file next
-            file = files.FirstOrDefault(x => x.EndsWith("tilemap.png"));
+            // Look for default tilemap to start with
+            var tilemapFiles = new List<string>();
 
-            if (!string.IsNullOrEmpty(file))
+            // Loop through all of the files
+            for (int i = 0; i < files.Length; i++)
             {
-                _loader.ParseTilemapImage(file, targetEngine);
+                
+                file = files[i];
+
+                if(file.EndsWith(".png"))
+                {
+
+                    if(file.StartsWith("/Game/tilemap."))
+                    {
+                        tilemapFiles.Add(file);
+                    }
+                    else if(file.StartsWith("/Game/Tilemaps/"))
+                    {
+                        ParseTilemapFile(file);
+                    }
+
+                }
+
             }
 
-            file = files.FirstOrDefault(x => x.EndsWith("tilemap.flags.png"));
-
-            if (!string.IsNullOrEmpty(file))
+            if(tilemapFiles.IndexOf("/Game/tilemap.png") > -1)
             {
+                foreach (var path in tilemapFiles)
+                {
+                    ParseTilemapFile(path);
+                }
+            }
+
+        
+        }
+
+        protected void ParseTilemapFile(string file)
+        {
+
+            Console.WriteLine("TILEMAP FILE - " + file);
+
+            if(file.EndsWith(".flags.png"))
+            {
+                // TODO need to make
                 _loader.ParseTilemapFlagImage(file, targetEngine);
+            }
+            else
+            {
+                _loader.ParseTilemapImage(file, targetEngine); 
             }
         }
 
@@ -322,8 +324,6 @@ namespace PixelVision8.Runner
                 _loader.ParseSprites(file, targetEngine);
             }
 
-            var total = 0;
-
             // Loop through all the remaining PNGs and make sure they should be parsed as sprites
             for (int i = 0; i < files.Length; i++)
             {
@@ -332,16 +332,11 @@ namespace PixelVision8.Runner
 
                 if(file.StartsWith("/Game/Sprites/") && file.EndsWith(".png"))
                 {
-                    total ++;
+                    // total ++;
                     _loader.ParseSpritesFromFolder(file, targetEngine);
                 }
 
             }
-
-            if(targetEngine.GameChip.TotalMetaSprites() < total)
-                targetEngine.GameChip.TotalMetaSprites(total);
-
-            // Console.WriteLine("Total " + targetEngine.GameChip.TotalMetaSprites());
 
             return null;
         }

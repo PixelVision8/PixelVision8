@@ -52,7 +52,7 @@ namespace PixelVision8.Player
 
         private const int PageHeight = 128;
         private const int PageWidth = 128;
-        public bool Unique = false;
+        public readonly bool Unique = true;
 
         /// <summary>
         ///     Sets the total number of sprite draw calls for the display.

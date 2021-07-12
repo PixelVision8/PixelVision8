@@ -12,7 +12,7 @@ namespace PixelVision8.Runner
 
             if (data.ContainsKey("pages")) fontChip.Pages = (int) (long) data["pages"];
 
-            if (data.ContainsKey("unique")) fontChip.Unique = Convert.ToBoolean(data["unique"]);
+            // if (data.ContainsKey("unique")) fontChip.Unique = Convert.ToBoolean(data["unique"]);
 
             // fontChip.Resize(fontChip.pageWidth, fontChip.pageHeight * fontChip.pages);
         }

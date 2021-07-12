@@ -67,16 +67,16 @@ namespace PixelVision8.Player
 
         // private int _totalMetaSprites => metaSprites.Length;
 
-        public int TotalMetaSprites(int? total = null)
-        {
-            if (total.HasValue)
-            {
-                Console.WriteLine("Change meta sprite total " + total);
-                Array.Resize(ref metaSprites, Utilities.Clamp(total.Value, 0, 256));
-            }
+        public int TotalMetaSprites => metaSprites.Length;
+        // {
+        //     if (total.HasValue)
+        //     {
+        //         Console.WriteLine("Change meta sprite total " + total);
+        //         Array.Resize(ref metaSprites, Utilities.Clamp(total.Value, 0, 256));
+        //     }
 
-            return metaSprites.Length;
-        }
+        //     return metaSprites.Length;
+        // }
 
         /// <summary>
         ///     Returns the total number of sprites in the system. You can pass in an optional argument to

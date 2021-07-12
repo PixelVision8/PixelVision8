@@ -215,22 +215,22 @@ namespace PixelVision8.Runner
             if (spritesAdded < maxSprites)
             {
                 // TODO need to deprecate this since the sprite file should load up exactly how it is read
-                if (spriteChip.Unique)
+                // if (spriteChip.Unique)
+                // {
+                if (spriteChip.FindSprite(spriteData) == -1)
                 {
-                    if (spriteChip.FindSprite(spriteData) == -1)
-                    {
-                        spriteChip.UpdateSpriteAt(spritesAdded, spriteData);
-                        spritesAdded++;
-                    }
+                    spriteChip.UpdateSpriteAt(spritesAdded, spriteData);
+                    spritesAdded++;
                 }
-                else
-                {
-                    if (Utilities.IsEmpty(spriteData) == false)
-                    {
-                        spriteChip.UpdateSpriteAt(index, spriteData);
-                        spritesAdded++;
-                    }
-                }
+                // }
+                // else
+                // {
+                //     if (Utilities.IsEmpty(spriteData) == false)
+                //     {
+                //         spriteChip.UpdateSpriteAt(index, spriteData);
+                //         spritesAdded++;
+                //     }
+                // }
             }
         }
 

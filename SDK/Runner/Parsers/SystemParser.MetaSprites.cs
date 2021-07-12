@@ -36,8 +36,8 @@ namespace PixelVision8.Runner
             // Prepare to parse v1 of the MetaSprite json template/
             if (data.ContainsKey("version") && (string) data["version"] == "v1")
             {
-                if (data.ContainsKey("total"))
-                    gameChip.TotalMetaSprites(Convert.ToInt32((long) data["total"]));
+                // if (data.ContainsKey("total"))
+                //     gameChip.TotalMetaSprites(Convert.ToInt32((long) data["total"]));
 
                 var spriteWidth = data.ContainsKey("spriteWidth")
                     ? Convert.ToInt32((long) data["spriteWidth"])
@@ -51,7 +51,7 @@ namespace PixelVision8.Runner
                 {
                     // Get the list of song data
                     var collections = data["collections"] as List<object>;
-                    var total = Math.Min(collections.Count, gameChip.TotalMetaSprites());
+                    var total = Math.Min(collections.Count, gameChip.TotalMetaSprites);
 
                     // Loop through each of teh 
                     for (var i = 0; i < total; i++)

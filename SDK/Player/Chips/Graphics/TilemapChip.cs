@@ -19,10 +19,11 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PixelVision8.Player
 {
-    
     #region Tilemap Chip Class
 
     /// <summary>
@@ -34,9 +35,9 @@ namespace PixelVision8.Player
     /// </summary>
     public class TilemapChip : AbstractChip, IDisplay
     {
-        private SpriteChip SpriteChip;
+        private SpriteChip _spriteChip;
 
-        public bool autoImport = true;
+        public readonly bool autoImport = true;
 
         public TileData[] tiles;
         private int _columns;
@@ -193,7 +194,7 @@ namespace PixelVision8.Player
             Player.TilemapChip = this;
 
             // Get a reference to the Sprite Chip
-            SpriteChip = Player.SpriteChip;
+            _spriteChip = Player.SpriteChip;
 
             _tileSize = new Rectangle(0, 0, Constants.SpriteSize, Constants.SpriteSize);
 
@@ -218,7 +219,7 @@ namespace PixelVision8.Player
                     // Get the sprite id
                     _pos = Utilities.CalculatePosition(_i, Columns);
                     
-                    SpriteChip.ReadSpriteAt(_tile.SpriteId, ref pixels);
+                    _spriteChip.ReadSpriteAt(_tile.SpriteId, ref pixels);
 
                     _tmpPixelData.SetPixels(pixels, _tileSize.Width, _tileSize.Height);
                     
@@ -232,6 +233,8 @@ namespace PixelVision8.Player
             // Reset the invalidation state
             ResetValidation();
         }
+
+        
 
         // TODO don't forget to add 'typeof(TilemapChip).FullName' to the Chip list in the GameRunner.Activate.cs class
     }

@@ -45,7 +45,7 @@ namespace PixelVision8.Player
 
             Pages = 2;
             ColorsPerSprite = 2;
-            Unique = true;
+            // Unique = true;
         }
 
         /// <summary>

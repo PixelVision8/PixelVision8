@@ -64,7 +64,7 @@ namespace PixelVision8.Runner
 
             var index = -1;
 
-            for (int i = 0; i < gameChip.TotalMetaSprites(); i++)
+            for (int i = 0; i < gameChip.TotalMetaSprites; i++)
             {
                 if(gameChip.MetaSprite(i).Name == "EmptyMetaSprite")
                 {

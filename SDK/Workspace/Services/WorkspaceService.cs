@@ -401,20 +401,26 @@ namespace PixelVision8.Runner
                         
                     }
 
-                    // Find any lose sprites
-                    var spriteDir = rootPath.AppendDirectory("Sprites");
-
-                    if(Exists(spriteDir))
+                    var imageLocations = new string[]{"Fonts", "Sprites", "Tilemaps"};
+                    
+                    for (int i = 0; i < imageLocations.Length; i++)
                     {
-                        var sprites = (from p in GetEntities(spriteDir) where p.EntityName.EndsWith(".png") select p.Path).ToArray();
-                        
-                        var total = files.Length;
+                        // Find any lose sprites
+                        var dir = rootPath.AppendDirectory(imageLocations[i]);
 
-                        Array.Resize(ref files, total + sprites.Length);
+                        if(Exists(dir))
+                        {
+                            var sprites = (from p in GetEntities(dir) where p.EntityName.EndsWith(".png") select p.Path).ToArray();
+                            
+                            var total = files.Length;
 
-                        Array.Copy(sprites, 0, files, total, sprites.Length);
-                        
+                            Array.Resize(ref files, total + sprites.Length);
+
+                            Array.Copy(sprites, 0, files, total, sprites.Length);
+                            
+                        }
                     }
+                    
                 }
             }
 

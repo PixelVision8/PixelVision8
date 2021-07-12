@@ -74,9 +74,6 @@ namespace PixelVision8.Player
 
         public void Clear(int color = -1) => Utilities.Clear(PixelData, color);
 
-        
-
-
         public void RemapColors(string[] colors, bool steps = false)
         {
             

@@ -232,10 +232,10 @@ namespace PixelVision8.Editor
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
             // Mode
-            sb.Append("\"unique\":");
-            sb.Append(fontChip.Unique.ToString().ToLower());
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
+            // sb.Append("\"unique\":");
+            // sb.Append(fontChip.Unique.ToString().ToLower());
+            // sb.Append(",");
+            // JsonUtil.GetLineBreak(sb, 1);
 
             sb.Append("\"pages\":");
             sb.Append(fontChip.Pages);
@@ -258,7 +258,7 @@ namespace PixelVision8.Editor
 
             // Total Meta Sprites
             sb.Append("\"totalMetaSprites\":");
-            sb.Append(gameChip.TotalMetaSprites());
+            sb.Append(gameChip.TotalMetaSprites);
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
@@ -385,10 +385,10 @@ namespace PixelVision8.Editor
             JsonUtil.GetLineBreak(sb, 1);
 
             // Mode
-            sb.Append("\"unique\":");
-            sb.Append(spriteChip.Unique.ToString().ToLower());
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
+            // sb.Append("\"unique\":");
+            // sb.Append(spriteChip.Unique.ToString().ToLower());
+            // sb.Append(",");
+            // JsonUtil.GetLineBreak(sb, 1);
 
             // Mode
             // sb.Append("\"spriteWidth\":");

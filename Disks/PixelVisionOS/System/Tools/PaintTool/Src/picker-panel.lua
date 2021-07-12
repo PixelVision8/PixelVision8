@@ -81,7 +81,7 @@ function PaintTool:CreatePickerPanel()
         table.insert(self.pickerModes, SpriteMode)
     end
 
-    if(string.ends(self.targetFile, "tilemap.png")) then
+    if(string.ends(self.targetFile, "tilemap.png") or string.ends(self.targetFilePath.ParentPath.Path, "/Tilemaps/")) then
         table.insert(self.pickerModes, FlagMode)
     end
 

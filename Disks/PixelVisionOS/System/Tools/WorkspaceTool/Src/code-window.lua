@@ -1046,6 +1046,8 @@ function WorkspaceTool:UpdateFileType(item, isGameFile)
         end
     elseif(key == "png" and string.ends(item.parentPath.Path, "/Sprites/") and pixelVisionOS:ValidateGameInDir(self.currentPath.parentPath)) then
         key = "sprites"
+    elseif(key == "png" and string.ends(item.parentPath.Path, "/Tilemaps/") and pixelVisionOS:ValidateGameInDir(self.currentPath.parentPath)) then
+        key = "tiles"
     elseif(key == "sprites.png" and self.editorMapping["sprites"] ~= nil and isGameFile == true) then
         key = "sprites"
     elseif(key == "flags.png" and self.editorMapping["sprites"] ~= nil and isGameFile == true) then

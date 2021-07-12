@@ -140,8 +140,6 @@ function PaintTool:LoadImage(defaultColors)
 
     self.flagImage = ReadImage(flagPath, self.defaultMaskColor, self:SystemColors())
 
-    print("Load flag map")
-
   end
 
 end

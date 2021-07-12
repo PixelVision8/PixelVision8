@@ -21,6 +21,10 @@ namespace PixelVision8.Player
             LuaScript.Globals["SaveTilemapCache"] = new Action(SaveTilemapCache);
             LuaScript.Globals["RestoreTilemapCache"] = new Action(RestoreTilemapCache);
 
+            LuaScript.Globals["TilemapName"] = new Func<string, string>(TilemapName);
+            LuaScript.Globals["LoadTilemap"] = new Func<string, bool>(LoadTilemap);
+            LuaScript.Globals["SaveTilemap"] = new Action<string>(SaveTilemap);
+
             #endregion
             
             // Register PV8's TileData type

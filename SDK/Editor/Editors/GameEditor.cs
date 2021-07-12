@@ -864,12 +864,12 @@ namespace PixelVision8.Editor
         /// </summary>
         /// <param name="flag"></param>
         /// <returns></returns>
-        public bool UniqueSprites(bool? flag = null)
-        {
-            if (flag.HasValue) spriteChip.Unique = flag.Value;
+        // public bool UniqueSprites(bool? flag = null)
+        // {
+        //     if (flag.HasValue) spriteChip.Unique = flag.Value;
 
-            return spriteChip.Unique;
-        }
+        //     return spriteChip.Unique;
+        // }
 
         public string[] Colors()
         {
@@ -881,12 +881,12 @@ namespace PixelVision8.Editor
         /// </summary>
         /// <param name="flag"></param>
         /// <returns></returns>
-        public bool ImportTiles(bool? flag = null)
-        {
-            if (flag.HasValue) tilemapChip.autoImport = flag.Value;
+        // public bool ImportTiles(bool? flag = null)
+        // {
+        //     if (flag.HasValue) tilemapChip.autoImport = flag.Value;
 
-            return tilemapChip.autoImport;
-        }
+        //     return tilemapChip.autoImport;
+        // }
 
         /// <summary>
         ///     Toggle the flag for debug color allowing the mask color to be shown instead of defaulting to the background color.
@@ -1135,7 +1135,7 @@ namespace PixelVision8.Editor
                 targetGame = new PixelVision(chips, "GameEditor")
                 {
                     ServiceLocator = serviceManager,
-                    FontChip = {Unique = false, Pages = 1},
+                    FontChip = {Pages = 1},
                     Name = path
                 };
 

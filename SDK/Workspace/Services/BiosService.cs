@@ -18,7 +18,6 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Runner;
 using System.Collections.Generic;
 
 namespace PixelVision8.Runner

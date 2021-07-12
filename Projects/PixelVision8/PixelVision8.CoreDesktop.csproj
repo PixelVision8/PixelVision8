@@ -319,6 +319,9 @@
     <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Tilemap.cs">
       <Link>SDK\Player\Chips\Game\GameChip.Tilemap.cs</Link>
     </Compile>
+    <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.Tilemaps.cs">
+      <Link>SDK\Player\Chips\Game\GameChip.Tilemaps.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Player\Chips\Game\GameChip.TilemapCache.cs">
       <Link>SDK\Player\Chips\Game\GameChip.TilemapCache.cs</Link>
     </Compile>
@@ -615,9 +618,6 @@
     </Compile>
     <Compile Include="..\..\SDK\Runner\Services\SaveFlags.cs">
       <Link>SDK\Runner\Services\SaveFlags.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SDK\Runner\Services\TilemapLoaderService.cs">
-      <Link>SDK\Runner\Services\TilemapLoaderService.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Runner\Utils\GifUtils\Data\GifFrame.cs">
       <Link>SDK\Runner\Utils\GifUtils\Data\GifFrame.cs</Link>

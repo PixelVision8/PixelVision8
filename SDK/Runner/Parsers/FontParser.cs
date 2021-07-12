@@ -92,7 +92,7 @@ namespace PixelVision8.Runner
 
     public partial class Loader
     {
-        [FileParser("font.png", FileFlags.Fonts)]
+        [FileParser(".font.png", FileFlags.Fonts)]
         public void ParseFonts(string file, PixelVision engine)
         {
             AddParser(new FontParser(file, _imageParser, engine.ColorChip, engine.FontChip));

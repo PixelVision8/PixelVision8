@@ -53,7 +53,7 @@ namespace PixelVision8.Runner
 
                 var metaSprites = data["metaSprites"] as List<object>;
 
-                var total = Utilities.Clamp(metaSprites.Count, 0, gameChip.TotalMetaSprites());
+                var total = Utilities.Clamp(metaSprites.Count, 0, gameChip.TotalMetaSprites);
 
                 for (var i = 0; i < total; i++)
                 {

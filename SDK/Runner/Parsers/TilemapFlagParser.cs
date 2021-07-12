@@ -25,10 +25,10 @@ namespace PixelVision8.Runner
 {
     public class TilemapFlagParser : TilemapParser
     {
-        
+
         public TilemapFlagParser(string sourceFile, IImageParser parser, ColorChip colorChip, SpriteChip spriteChip,
-            TilemapChip tilemapChip) :
-            base(sourceFile, parser, colorChip, spriteChip, tilemapChip)
+            TilemapChip tilemapChip, GameChip gameChip) :
+            base(sourceFile, parser, colorChip, spriteChip, tilemapChip, gameChip)
         {
             
         }
@@ -51,10 +51,18 @@ namespace PixelVision8.Runner
         [FileParser(".flags.png", FileFlags.Tilemap)]
         public void ParseTilemapFlagImage(string file, PixelVision engine)
         {
+            
+            var mapName = _imageParser.FileName.Split('.')[0];
+            
+            var success = engine.GameChip.LoadTilemap(mapName);
 
-            var tmpColorChip = new ColorChip();
+            if(success)
+            {
+                var tmpColorChip = new ColorChip();
 
-            AddParser(new TilemapFlagParser(file, _imageParser, tmpColorChip, flagSpriteChip, engine.TilemapChip));
+                AddParser(new TilemapFlagParser(file, _imageParser, tmpColorChip, flagSpriteChip, engine.TilemapChip, engine.GameChip));
+            }
+            
         }
     }
 }

@@ -25,21 +25,29 @@ namespace PixelVision8.Runner
 {
     public class TilemapParser : SpriteImageParser
     {
-        protected readonly bool autoImport = true;
+        // protected readonly bool autoImport = true;
 
         protected readonly TilemapChip tilemapChip;
-        protected bool autoResize;
+        protected readonly GameChip gameChip;
+        
         protected int Columns;
         protected int Rows;
+    
+        // protected TilemapData tilemapData;
 
         public TilemapParser(string sourceFile, IImageParser parser, ColorChip colorChip, SpriteChip spriteChip,
-            TilemapChip tilemapChip, bool autoResize = false) :
+            TilemapChip tilemapChip, GameChip gameChip) :
             base(sourceFile, parser, colorChip, spriteChip)
         {
             this.tilemapChip = tilemapChip;
+            this.gameChip = gameChip;
+        }
 
-            // autoImport = tilemapChip.autoImport;
-            this.autoResize = autoResize;
+        public override void CalculateSteps()
+        {
+            base.CalculateSteps();
+
+            Steps.Add(SaveTilemap);
         }
 
         public override void CutOutSprites()
@@ -48,18 +56,11 @@ namespace PixelVision8.Runner
 
             Columns = ImageData.Width / Constants.SpriteSize;
             Rows = ImageData.Height / Constants.SpriteSize;
-            // int TotalSprites = Columns * Rows;
             
-            if (autoResize)
-                tilemapChip.Resize(Columns, Rows);
-
-            // if(autoResize)
-            // 
             var tmpColumns = Columns > tilemapChip.Columns ? tilemapChip.Columns : Columns;
             var tmpRows = Rows > tilemapChip.Rows ? tilemapChip.Rows : Rows;
 
-            // Make sure the tilemap matches the image size
-            // tilemapChip.Resize(image.Columns, image.Rows);
+            gameChip.LoadTilemap(Parser.FileName.Split('.')[0]);
 
             for (var i = 0; i < totalSprites; i++)
             {
@@ -88,11 +89,10 @@ namespace PixelVision8.Runner
         {
             var id = spriteChip.FindSprite(spriteData);
             
-            if (id == -1 && autoImport && Utilities.IsEmpty(spriteData) == false)
+            if (id == -1 && Utilities.IsEmpty(spriteData) == false)
             {
                 id = spriteChip.NextEmptyId();
-                // Console.WriteLine("Add new tile {0}", id);
-
+                
                 spriteChip.UpdateSpriteAt(id, spriteData);
             }
 
@@ -102,6 +102,15 @@ namespace PixelVision8.Runner
             var tile = tilemapChip.GetTile(x, y);
 
             tile.SpriteId = id;
+
+        }
+
+        protected void SaveTilemap()
+        {
+            
+            gameChip.SaveTilemap();
+
+            StepCompleted();
         }
     }
 
@@ -110,9 +119,7 @@ namespace PixelVision8.Runner
         [FileParser("tilemap.png", FileFlags.Tilemap)]
         public void ParseTilemapImage(string file, PixelVision engine)
         {
-            // Console.WriteLine("Add Tilemap Parser " + file);
-            AddParser(new TilemapParser(file, _imageParser, engine.ColorChip, engine.SpriteChip, engine.TilemapChip,
-                true));
+            AddParser(new TilemapParser(file, _imageParser, engine.ColorChip, engine.SpriteChip, engine.TilemapChip, engine.GameChip));
         }
     }
 }

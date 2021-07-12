@@ -111,6 +111,9 @@
     <Compile Include="../../SDK/Player/Chips/Game/GameChip.Tilemap.cs">
       <Link>SDK/Player/Chips/Game/GameChip.Tilemap.cs</Link>
     </Compile>
+    <Compile Include="../../SDK/Player/Chips/Game/GameChip.Tilemaps.cs">
+      <Link>SDK/Player/Chips/Game/GameChip.Tilemaps.cs</Link>
+    </Compile>
     <Compile Include="../../SDK/Player/Chips/Game/GameChip.TilemapCache.cs">
       <Link>SDK/Player/Chips/Game/GameChip.TilemapCache.cs</Link>
     </Compile>

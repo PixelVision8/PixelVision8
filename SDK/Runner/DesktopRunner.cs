@@ -124,7 +124,6 @@ namespace PixelVision8.Runner
         public WorkspaceService workspaceService;
         public WorkspaceServicePlus workspaceServicePlus;
         public LoadService loadService;
-        private TilemapLoaderService tilemapService;
         public IServiceLocator ServiceManager { get; }
         public RunnerMode mode;
         protected bool displayProgress;
@@ -270,10 +269,6 @@ namespace PixelVision8.Runner
 
             Script.DefaultOptions.ScriptLoader = new ScriptLoaderUtil(workspaceService);
 
-
-            tilemapService = new TilemapLoaderService(loadHelper, new PNGFileReader(loadHelper));
-            ServiceManager.AddService(typeof(TilemapLoaderService).FullName, tilemapService);
-            
         }
 
         public override void ConfigureDisplayTarget()
