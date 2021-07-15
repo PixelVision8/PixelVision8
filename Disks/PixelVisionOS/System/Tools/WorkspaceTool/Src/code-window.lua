@@ -993,7 +993,7 @@ function WorkspaceTool:FileDropAction(src, dest)
     end
 
     local action = "move"
-    print(action, dump(self.targetFiles), dump(selections))
+    -- print(action, dump(self.targetFiles), dump(selections))
 
     local srcSeg = srcPath.GetDirectorySegments()
     local destSeg = destPath.GetDirectorySegments()
@@ -1015,7 +1015,7 @@ function WorkspaceTool:FileDropAction(src, dest)
         end
     elseif(srcSeg[1] == "Disks" and destSeg[1] == "Disks") then
         if(srcSeg[2] ~= destSeg[2]) then
-            print("Copy")
+            -- print("Copy")
             action = "copy"
         end
     elseif(srcSeg[1] ~= destSeg[1]) then

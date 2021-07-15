@@ -174,27 +174,11 @@ namespace PixelVision8.Player
         /// <returns>
         ///     Returns a vector of the tile maps size in tiles where x and y are the columns and rows of the tilemap.
         /// </returns>
-        public Point TilemapSize(int? width = null, int? height = null, bool clear = false)
+        public Point TilemapSize()
         {
             // Update with the latest value
             _tilemapSize.X = TilemapChip.Columns;
             _tilemapSize.Y = TilemapChip.Rows;
-
-            var resize = false;
-
-            if (width.HasValue)
-            {
-                _tilemapSize.X = width.Value;
-                resize = true;
-            }
-
-            if (height.HasValue)
-            {
-                _tilemapSize.Y = height.Value;
-                resize = true;
-            }
-
-            if (resize) TilemapChip.Resize(_tilemapSize.X, _tilemapSize.Y, clear);
 
             return _tilemapSize;
         }

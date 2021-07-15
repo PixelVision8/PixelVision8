@@ -1,10 +1,10 @@
-ExportModal = {}
-ExportModal.__index = ExportModal
+OptionModal = {}
+OptionModal.__index = OptionModal
 
-function ExportModal:Init(title, editorUI)
+function OptionModal:Init(title, editorUI)
 
   local _exportModal = {} -- our new object
-  setmetatable(_exportModal, ExportModal) -- make Account handle lookup
+  setmetatable(_exportModal, OptionModal) -- make Account handle lookup
 
   _exportModal.editorUI = editorUI
   _exportModal:Configure(title)
@@ -13,7 +13,7 @@ function ExportModal:Init(title, editorUI)
 
 end
 
-function ExportModal:Configure(title)
+function OptionModal:Configure(title)
 
   -- self.showCancel = showCancel or false
 
@@ -45,7 +45,7 @@ function ExportModal:Configure(title)
 
 end
 
-function ExportModal:Open()
+function OptionModal:Open()
 
   if(self.firstRun == nil) then
 
@@ -82,7 +82,7 @@ function ExportModal:Open()
 
 end
 
-function ExportModal:UpdateMessage(currentItem, total)
+function OptionModal:UpdateMessage(currentItem, total)
 
   local message = "Installing item "..string.lpad(tostring(currentItem), string.len(tostring(total)), "0") .. " of " .. installingTotal .. ".\n\n\nDo not restart or shut down Pixel Vision 8."
 
@@ -127,14 +127,14 @@ function ExportModal:UpdateMessage(currentItem, total)
   -- self.editorUI:Invalidate(self.buttons[1])
 end
 
-function ExportModal:Close()
+function OptionModal:Close()
   --   -- print("Modal Close")
   --   -- if(self.onParentClose ~= nil) then
   --   --   self.onParentClose()
   --   -- end
 end
 --
-function ExportModal:Update(timeDelta)
+function OptionModal:Update(timeDelta)
   --   --
   --   -- if(self.completed == true) then
   --   --   self.editorUI:UpdateButton(self.backBtnData)
@@ -142,6 +142,6 @@ function ExportModal:Update(timeDelta)
   --
 end
 --
-function ExportModal:Draw()
+function OptionModal:Draw()
   --
 end

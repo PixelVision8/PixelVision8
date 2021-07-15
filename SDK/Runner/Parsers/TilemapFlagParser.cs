@@ -52,16 +52,9 @@ namespace PixelVision8.Runner
         public void ParseTilemapFlagImage(string file, PixelVision engine)
         {
             
-            var mapName = _imageParser.FileName.Split('.')[0];
-            
-            var success = engine.GameChip.LoadTilemap(mapName);
+            var tmpColorChip = new ColorChip();
 
-            if(success)
-            {
-                var tmpColorChip = new ColorChip();
-
-                AddParser(new TilemapFlagParser(file, _imageParser, tmpColorChip, flagSpriteChip, engine.TilemapChip, engine.GameChip));
-            }
+            AddParser(new TilemapFlagParser(file, _imageParser, tmpColorChip, flagSpriteChip, engine.TilemapChip, engine.GameChip));
             
         }
     }

@@ -720,7 +720,26 @@ namespace PixelVision8.Editor
 
         public Point TilemapSize(int? width = null, int? height = null, bool clear = false)
         {
-            return _gameChip.TilemapSize(width, height, clear);
+
+            var _tilemapSize = new Point(tilemapChip.Columns, tilemapChip.Rows);
+            
+            var resize = false;
+
+            if (width.HasValue)
+            {
+                _tilemapSize.X = width.Value;
+                resize = true;
+            }
+
+            if (height.HasValue)
+            {
+                _tilemapSize.Y = height.Value;
+                resize = true;
+            }
+
+            if (resize) tilemapChip.Resize(_tilemapSize.X, _tilemapSize.Y, clear);
+
+            return _tilemapSize;
         }
 
         public void UpdateTiles(int[] ids, int? colorOffset = null, byte? flag = null)

@@ -110,6 +110,8 @@ namespace PixelVision8.Runner
             
             gameChip.SaveTilemap();
 
+            gameChip.ClearTilemap();
+
             StepCompleted();
         }
     }

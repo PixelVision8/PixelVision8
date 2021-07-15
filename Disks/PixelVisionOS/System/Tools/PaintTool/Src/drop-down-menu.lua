@@ -49,19 +49,20 @@ function PaintTool:CreateDropDownMenu()
       -- {name = "Sprite Mode", action = function()  end, toolTip = "Learn about PV8."},
       -- {name = "Flag Mode", action = function()  end, toolTip = "Learn about PV8."},
       {name = "Toggle BG", action = function() self:ToggleBackground() end, key = Keys.B, toolTip = "Learn about PV8."},
+      {name = "Toggle Grid", action = function() self:ToggleGrid() end, key = Keys.G, toolTip = "Learn about PV8."},
+
       -- {divider = true},
       
       -- {name = "Zoom In", action = function()  end, toolTip = "Learn about PV8."},
       -- {name = "Zoom Out", action = function()  end, toolTip = "Learn about PV8."},
       
       {divider = true},
-      {name = "Export Colors", action = function() self:OnExportColors() end, enabled = true, toolTip = "Learn about PV8."},
-      {name = "Export Sprites", action = function() self:OnExportSprites() end, enabled = false, toolTip = "Learn about PV8."},
-      {name = "Export Flags", action = function() self:OnExportFlags() end, enabled = false, toolTip = "Learn about PV8."},
-
+      {name = "Export", action = function() self:OnExport() end, enabled = true, toolTip = "Learn about PV8."},
+      -- {name = "Export Sprites", action = function() self:OnExportSprites() end, enabled = false, toolTip = "Learn about PV8."},
+      -- {name = "Export Flags", action = function() self:OnExportFlags() end, enabled = false, toolTip = "Learn about PV8."},
+      {name = "Save", action = function() self:OnSave() end, key = Keys.S, toolTip = "Learn about PV8."},
       {divider = true},
       {name = "Run Game", action = function() self:OnRunGame() end, key = Keys.R, toolTip = "Learn about PV8."},
-      {name = "Save", action = function() self:OnSave() end, key = Keys.S, toolTip = "Learn about PV8."},
       {name = "Quit", key = Keys.Q, action = function()  self:OnQuit() end, toolTip = "Quit the current game."}, -- Quit the current game
   }
 
@@ -149,8 +150,56 @@ function PaintTool:ExportColors(dest)
 
 end
 
-function PaintTool:OnExportSprites()
+function PaintTool:OnExport()
 
+  -- Configure the title and message
+  local title = "Export"
+  local message = "It's important to note that performing this optimization may break any places where you have hardcoded references to sprite IDs. You will have the option to apply the optimization after the sprites are processed. \n\nDo you want to perform the following?\n\n"
+
+
+  message = message .. "#  Colors - A new colors.png file\n"
+  message = message .. "#  Sprites - An optimized sprites.png file\n"
+  message = message .. "#  Flags - A new flags.png template file\n"
+
+
+  -- Create the new warning model
+  local warningModal = OptionModal:Init(title, message .. "\n", 216, true)
+
+  pixelVisionOS:OpenModal( warningModal,
+    
+        function()
+        
+            -- -- Check to see if ok was pressed on the model
+            -- if(warningModal.selectionValue == true) then
+
+            --     local filePath = self.spriteBuilderTemplates[warningModal.selectionGroupData.currentSelection]
+
+            --     -- Save selection for future use
+            --     WriteSaveData( "lastSpriteBuilderTemplateID", tostring(warningModal.selectionGroupData.currentSelection) )
+
+            --     local templatePath = filePath.ParentPath.AppendFile(filePath.EntityNameWithoutExtension .. "-" .. string.sub(filePath.GetExtension(), 2) .. "-template.txt") 
+
+            --     if(PathExists(templatePath) == false) then
+
+            --         pixelVisionOS:ShowMessageModal("Error", "Could not find the template file that goes with '" .. filePath.Path .. "'. Please makes sure one exists at " .. templatePath.Path)
+            --         return
+            --     end
+
+            --     self.spriteFile = ReadTextFile(filePath)
+            --     self.spriteFilePath = NewWorkspacePath(self.rootDirectory .. filePath.EntityName)
+            --     self.spriteFileTemplate = ReadTextFile(templatePath)
+            --     self.spriteFileContents = ""
+
+            --     -- Kick off the process sprites logic
+            --     self:StartSpriteBuilder()
+
+            -- end
+        
+        end
+    )
+end
+
+function PaintTool:OnExportSprites()
   local dest = NewWorkspacePath(self.rootDirectory).AppendFile("sprites.png")
 
   if(PathExists(dest)) then
@@ -572,6 +621,15 @@ function PaintTool:ToggleBackground()
   end
 
   self:InvalidateBackground()
+
+end
+
+function PaintTool:ToggleGrid()
+
+  self.gridMode = not self.gridMode
+
+  self:InvalidateCanvas()
+  self:InvalidateGrid()
 
 end
 

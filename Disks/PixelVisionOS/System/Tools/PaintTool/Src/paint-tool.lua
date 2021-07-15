@@ -22,6 +22,7 @@ LoadScript("index-colors" )
 LoadScript("index-flags" )
 LoadScript("selection" )
 LoadScript("color-editor-modal" )
+LoadScript("pixel-vision-os-option-modal-v1" )
 LoadScript("import-colors" )
 
 function CreateTool()

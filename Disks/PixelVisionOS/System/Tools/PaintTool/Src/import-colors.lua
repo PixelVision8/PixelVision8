@@ -8,23 +8,27 @@ function PaintTool:ColorCheck()
         local currentPath = NewWorkspacePath(self.rootDirectory)
 
         -- If the current path is a Sprites folder, move up a directory
-        if(currentPath.EntityName == "Sprites") then
+        if(currentPath.EntityName == "Sprites" or currentPath.EntityName == "Tilemaps") then
             currentPath = currentPath.ParentPath;
         end
 
-        print("Dir", currentPath, self.useDefaultColors, self.colorsPath, pixelVisionOS:ValidateGameInDir(currentPath))
+        -- print("Dir", currentPath, self.useDefaultColors, self.colorsPath, pixelVisionOS:ValidateGameInDir(currentPath))
 
         -- Check to see if the current path is a valid game
         if(pixelVisionOS:ValidateGameInDir(currentPath)) then
+
+            local tmpPath = currentPath.AppendFile("colors.png")
         
             -- Look for a colors.png file
-            if(PathExists(currentPath.AppendFile("colors.png"))) then
+            if(PathExists(tmpPath)) then
 
                 -- Set the colors path to colors.png file
-                self.colorsPath = currentPath.ParentPath.AppendFile("colors.png").Path
+                self.colorsPath = tmpPath.Path
 
                 -- Update the message to match the colors.png path
-                messagePath = currentPath.ParentPath.EntityName
+                messagePath = currentPath.EntityName
+
+                self.useDefaultColors = false
 
             else
 
@@ -60,10 +64,10 @@ function PaintTool:DelayColorImport()
 
     if(self.colorsPath ~= "") then
 
+        self:OnImportColors(self.colorsPath)
+
         -- Clear color flag
         self.colorsPath = ""
-
-        self:OnImportColors(self.colorsPath)
 
     end
 

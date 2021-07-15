@@ -276,6 +276,7 @@ namespace PixelVision8.Runner
                     if(file.StartsWith("/Game/tilemap."))
                     {
                         tilemapFiles.Add(file);
+                        // Console.WriteLine("Add tmp map file " + file);
                     }
                     else if(file.StartsWith("/Game/Tilemaps/"))
                     {
@@ -300,7 +301,7 @@ namespace PixelVision8.Runner
         protected void ParseTilemapFile(string file)
         {
 
-            Console.WriteLine("TILEMAP FILE - " + file);
+            // Console.WriteLine("TILEMAP FILE - " + file);
 
             if(file.EndsWith(".flags.png"))
             {
@@ -373,13 +374,6 @@ namespace PixelVision8.Runner
             if (!string.IsNullOrEmpty(file))
             {
                 _loader.ParseSystem(file, targetEngine);
-                // // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
-                //
-                // var jsonParser = new SystemParser(file, _fileLoadHelper, targetEngine);
-                //
-                // jsonParser.CalculateSteps();
-                //
-                // while (jsonParser.completed == false) jsonParser.NextStep();
             }
         }
 
@@ -390,9 +384,7 @@ namespace PixelVision8.Runner
 
             if (!string.IsNullOrEmpty(file))
             {
-                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
                 _loader.ParseSounds(file, targetEngine);
-                // _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
             }
         }
 
@@ -405,9 +397,7 @@ namespace PixelVision8.Runner
 
             if (!string.IsNullOrEmpty(file))
             {
-                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
                 _loader.ParseMusic(file, targetEngine);
-                // _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
             }
         }
 
@@ -419,8 +409,6 @@ namespace PixelVision8.Runner
             if (!string.IsNullOrEmpty(file))
             {
                 _loader.ParseMetaSprites(file, targetEngine);
-
-                // _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
             }
         }
 
@@ -431,10 +419,6 @@ namespace PixelVision8.Runner
             if (!string.IsNullOrEmpty(file))
             {
                 _loader.ParseSaveData(file, targetEngine);
-
-                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
-
-                // _loader.AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
             }
         }
     }

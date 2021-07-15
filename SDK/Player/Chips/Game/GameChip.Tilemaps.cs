@@ -78,6 +78,11 @@ namespace PixelVision8.Player
 
         }
 
+        public bool TilemapExists(string name)
+        {
+            return _tilemaps.ContainsKey(name);
+        }
+
         public bool LoadTilemap(string name)
         {
             
@@ -87,7 +92,7 @@ namespace PixelVision8.Player
 
             TilemapName(name);
 
-            if(_tilemaps.ContainsKey(name))
+            if(TilemapExists(name))
             {
 
                 var tilemap = _tilemaps[name];
@@ -129,7 +134,7 @@ namespace PixelVision8.Player
                 name = _tilemapName;
             
             // Create map if one does not exist
-            if(!_tilemaps.ContainsKey(name))
+            if(!TilemapExists(name))
             {
                 _tilemaps[name] = new TilemapData(name, TilemapChip.Columns, TilemapChip.Rows);
             }

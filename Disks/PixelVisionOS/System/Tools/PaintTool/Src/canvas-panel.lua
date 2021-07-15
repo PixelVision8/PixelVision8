@@ -61,6 +61,7 @@ function PaintTool:CreateCanvasPanel()
   local pixelData = self.image.GetPixels()
 
   self.backgroundMode = 1
+  self.gridMode = false
 
   -- Used to track the pixel shift in the selection outline
   self.selectionTime = 0
@@ -75,6 +76,8 @@ function PaintTool:CreateCanvasPanel()
 
   -- Create new background canvas
   self.backgroundLayerCanvas = NewCanvas( self.imageLayerCanvas.Width, self.imageLayerCanvas.Height )
+
+  self.gridCanvas = NewCanvas(self.viewportRect.Width, self.viewportRect.Height)
 
   -- Invalidate the background so it renders
   self:InvalidateBackground()
@@ -187,10 +190,12 @@ end
 
 function PaintTool:InvalidateCanvas(mergeTmpLayer)
   self.displayInvalid = true
+  self:InvalidateGrid()
 end
 
-function PaintTool:IResetCanvasValidation()
+function PaintTool:ResetCanvasValidation()
   self.displayInvalid = false
+  self:ResetGridValidation()
 end
 
 function PaintTool:UpdateCanvasPanel(timeDelta)
@@ -463,6 +468,8 @@ function PaintTool:DrawCanvasPanel()
 
     -- end
 
+    
+
     -- Draw the brush
     self.brushCanvas:DrawPixels(
       -- Shift the tmpX and tmpY position over by the viewportRect's poisiton
@@ -475,6 +482,8 @@ function PaintTool:DrawCanvasPanel()
       self.brushColorOffset,
       self.brushMaskRect
     )
+
+    -- TODO if the grid is active, we need to draw the top and left lines so the brush looks like it's under the grid
 
   end
 
@@ -555,11 +564,9 @@ function PaintTool:DrawCanvasPanel()
         -- Increment selection timer
         self.selectionTime = self.selectionTime + editorUI.timeDelta
 
-        -- print("self.selectionTime", self.selectionTime)
         if(self.selectionTime > self.selectionDelay) then
           self.selectionShift = self.selectionShift == 0 and 1 or 0
           self.selectionTime = 0
-          -- print("Change Shift")
         end
 
         -- Clear the tmp layer
@@ -571,9 +578,9 @@ function PaintTool:DrawCanvasPanel()
           if(self.selectionUsesMaskColor == true) then
 
             self.tmpLayerCanvas:Clear(self.maskColor, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
-            -- print("Clear Tmp Layer - Redraw Selection mask")
           end
           
+          -- TODO this should be selecting only the data we want to display
           self.tmpLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData)
 
         end
@@ -623,6 +630,12 @@ function PaintTool:DrawCanvasPanel()
     if(self.drawTmpLayer == true) then
       self.tmpLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.emptyColorID, self.colorOffset, self.scaledViewport)
     end
+
+    -- if(self.showGrid == true) then
+
+    self:RedrawGrid()
+      
+    -- end
     
     self.displayInvalid = false
 
@@ -729,6 +742,70 @@ function PaintTool:ChangeScale(value)
 
   pixelVisionOS:DisplayMessage("Image scale " .. (self.scale * 100) .. "%")
 
+  -- self.gridCanvas:Resize(self.imageLayerCanvas.Width + 1, self.imageLayerCanvas.Height + 1)
+
+  self:InvalidateGrid()
+  
+
+end
+
+function PaintTool:InvalidateGrid()
+  self.gridInvalid = true
+end
+
+function PaintTool:ResetGridValidation()
+  self.gridInvalid = true
+end
+
+function PaintTool:RedrawGrid()
+  
+  -- TODO test to see if the grid is visible
+
+  if(self.gridMode == false) then
+    return
+  end
+
+  if(self.gridInvalid == true) then
+
+    -- Redraw the grid
+    self.gridCanvas:Clear()
+
+    local rightGridBounds = math.min(self.gridCanvas.Width, self.imageLayerCanvas.Width * self.scale)
+    local bottomGridBounds = math.min(self.gridCanvas.Height, self.imageLayerCanvas.Height * self.scale)
+    
+    -- TODO need to make sure it doesn't draw out of bounds
+    local columns = math.ceil(math.min(rightGridBounds) / self.gridSize) --+ 2
+    local rows = math.ceil(math.min(bottomGridBounds) / self.gridSize) --+ 2
+    
+
+    self.gridCanvas:SetStroke(16, 1)
+  
+    local offsetX = Repeat( self.scaledViewport.X * self.scale, self.gridSize )  
+    local offsetY = Repeat( self.scaledViewport.Y * self.scale, self.gridSize )  
+
+    for i = 0, rows do
+
+      local newY = i  * self.gridSize - offsetY
+      
+        self.gridCanvas:DrawLine(0, newY, columns * self.gridSize, newY)
+      
+      for j = 0, columns do
+
+        local newX = j * self.gridSize - offsetX
+        
+          self.gridCanvas:DrawLine(newX , 0, newX, rows * self.gridSize)
+        
+      end
+
+    end
+
+    self:ResetGridValidation()
+
+  end
+
+  -- Draw the grid on top of the canvas
+  self.gridCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, 1, -1, -1)
+
 end
 
 function PaintTool:ClearBackground()
@@ -802,9 +879,9 @@ function PaintTool:ChangeCanvasTool(toolName, cursorID)
     
   elseif(self.tool == "eraser") then
 
-    if(self.pickerMode == ColorMode and self.brushColor > -1) then
-      self:OnPickerSelection(0)
-    end
+    -- if(self.pickerMode == ColorMode and self.brushColor > -1) then
+    --   self:OnPickerSelection(0)
+    -- end
 
     self.currentCursorID = cursorID or 7
 
@@ -839,8 +916,7 @@ function PaintTool:CancelCanvasSelection()
 end
 
 function PaintTool:SelectAll()
-  -- print("Select All")
-
+  
   -- Look for any selected pixel data so we don't accidentally clear it with the new selection
   if(self.selectRect ~= nil and self.selectedPixelData ~= nil) then
     
@@ -855,7 +931,7 @@ function PaintTool:SelectAll()
   
   self.selectionState = "resize"
 
-  self.selectRect = NewRect( 0, 0, self.viewportRect.Width, self.viewportRect.Height )
+  self.selectRect = NewRect(  self.scaledViewport.X, self.scaledViewport.Y, self.imageLayerCanvas.Width, self.imageLayerCanvas.Height )
   
   self.selectedPixelData = nil
   
@@ -987,8 +1063,14 @@ function PaintTool:DrawOnCanvas(mousePos)
             targetCanvas:DrawLine(self.startPos.x, self.startPos.y, mousePos.x, mousePos.y)
 
           else
+
+            local colorOffset = 0
+
+            if(self.tool == "eraser") then
+              colorOffset = self.pickerMode == FlagMode and -self.colorOffset or 0
+            end
      
-            targetCanvas:MergePixels(self.startPos.x, self.startPos.y, self.brushCanvas.Width, self.brushCanvas.Height, self.brushCanvas:GetPixels(), false, false, 0, false)
+            targetCanvas:MergePixels(self.startPos.x, self.startPos.y, self.brushCanvas.Width, self.brushCanvas.Height, self.brushCanvas:GetPixels(), false, false, colorOffset, false)
 
           end
 
