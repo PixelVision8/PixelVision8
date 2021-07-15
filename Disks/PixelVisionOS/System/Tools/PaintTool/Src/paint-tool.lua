@@ -68,7 +68,12 @@ function PaintTool:Init()
         totalColors = 256
     }
 
-    DumpColors()
+    -- Save out all of the tool's colors
+    _paintTool.toolColors = {}
+
+    for i = 1, _paintTool.totalColors do
+      table.insert(_paintTool.toolColors, Color(i-1))
+    end
 
     -- Set the mask color to the color offset - 1
     _paintTool.maskColor = _paintTool.colorOffset - 1

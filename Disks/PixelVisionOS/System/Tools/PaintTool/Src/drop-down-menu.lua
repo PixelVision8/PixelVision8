@@ -644,10 +644,9 @@ function PaintTool:SwapToolColors()
 
     -- Save the current color
     currentColors[i] = Color(colorIndex)
-    print("color", i, currentColors[i])
-
+    
     -- Change the color to the default editor colors
-    Color(colorIndex, self.cachedToolColors[i])
+    Color(colorIndex, self.toolColors[i])
 
   end
 
@@ -677,6 +676,7 @@ function PaintTool:OnEditColor(colorId)
 
   -- Save all of the colors before opening the modal
   local currentColors = self:SwapToolColors()
+  
 
   -- Open the modal
   pixelVisionOS:OpenModal(self.editColorModal,

@@ -140,16 +140,10 @@ function PaintTool:OnImportColors(path)
   end
   
   function PaintTool:ImportColors(colors)
-
-    
     
     if(colors == nil) then
       colors = self.defaultColors
     end
-
-    -- TODO need a way to remap colors
-    -- We need to save the default tool colors to use when showing the color editor modal
-    self.cachedToolColors = {}
     
     local tmpColorIndex, tmpRefIndex = 0, 0
   
@@ -158,9 +152,6 @@ function PaintTool:OnImportColors(path)
   
       -- Calculate the real color index
       tmpColorIndex = i-1
-  
-      -- Get the color accounting for Lua's 1 based arrays
-      self.cachedToolColors[i] = Color(tmpColorIndex)
   
       -- Test to see if the color is after the colorOffset
       if(i > self.colorOffset) then
