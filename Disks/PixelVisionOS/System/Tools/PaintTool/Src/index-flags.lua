@@ -76,7 +76,8 @@ function PaintTool:IndexFlags()
 
     self:ResetFlagValidation()
 
-    pixelVisionOS:EnableMenuItemByName("Export Flags", true)
+    -- pixelVisionOS:EnableMenuItemByName("Export Flags", true)
+    self.canExportFlags = true
 
     if(self.flagImage ~= nil) then
 

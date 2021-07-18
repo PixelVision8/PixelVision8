@@ -31,31 +31,19 @@ function PaintTool:CreateDropDownMenu()
       {name = "Fill", action = function() self:FillCanvasSelection() end, key = Keys.F, enabled = false, toolTip = "Learn about PV8."},
       {name = "Flip H", action = function() self:FlipH() end, key = Keys.H, enabled = false, toolTip = "Learn about PV8."},
       {name = "Flip V", action = function() self:FlipV() end, key = Keys.J, enabled = false, toolTip = "Learn about PV8."},
-      {name = "Select All", action = function() self:SelectAll() end, key = Keys.A, enabled = true, toolTip = "Learn about PV8."},
+      {name = "Select All", action = function() self:OnSelectAll() end, key = Keys.A, enabled = true, toolTip = "Learn about PV8."},
 
-      -- {divider = true},
-      -- {name = "Line Thicker", action = function()  end, toolTip = "Learn about PV8."},
-      -- {name = "Line Thinner", action = function()  end, toolTip = "Learn about PV8."},
-      
       {divider = true},
       {name = "Edit Color", action = function() self:OnEditColor() end, enabled = false, key = Keys.E, toolTip = "Learn about PV8."},
-      {name = "Outline Color", action = function() self:OnSetOutlineColor() end, enabled = false, toolTip = "Learn about PV8."},
+      {name = "Fill Color", action = function() self:SetFillColor() end, enabled = false, toolTip = "Learn about PV8."},
       {name = "BG Color", action = function() self:OnSetBackgroundColor() end, enabled = false, toolTip = "Learn about PV8."},
       {name = "Mask Color", action = function() self:OnEditColor(self.maskColor) end, enabled = false, toolTip = "Learn about PV8."},
 
       {divider = true},
       {name = "Canvas Size", action = function()  end, enabled = false, key = Keys.I, toolTip = "Learn about PV8."},
-      -- {name = "Color Mode", action = function()  end, toolTip = "Learn about PV8."},
-      -- {name = "Sprite Mode", action = function()  end, toolTip = "Learn about PV8."},
-      -- {name = "Flag Mode", action = function()  end, toolTip = "Learn about PV8."},
       {name = "Toggle BG", action = function() self:ToggleBackground() end, key = Keys.B, toolTip = "Learn about PV8."},
       {name = "Toggle Grid", action = function() self:ToggleGrid() end, key = Keys.G, toolTip = "Learn about PV8."},
 
-      -- {divider = true},
-      
-      -- {name = "Zoom In", action = function()  end, toolTip = "Learn about PV8."},
-      -- {name = "Zoom Out", action = function()  end, toolTip = "Learn about PV8."},
-      
       {divider = true},
       {name = "Export", action = function() self:OnExport() end, enabled = true, toolTip = "Learn about PV8."},
       -- {name = "Export Sprites", action = function() self:OnExportSprites() end, enabled = false, toolTip = "Learn about PV8."},
@@ -88,6 +76,42 @@ function PaintTool:CreateDropDownMenu()
 
 end
 
+function PaintTool:OnSelectAll()
+  
+
+  if(self.imageLayerCanvas.Width * self.imageLayerCanvas.Height > 512 * 512) then
+    
+    local buttons =
+    {
+      {
+        name = "modalyesbutton",
+        action = function(target)
+          self:SelectAll()
+          target.onParentClose()
+          
+        end,
+        key = Keys.Enter,
+        tooltip = "Press 'enter' to continue"
+      },
+      {
+        name = "modalnobutton",
+        action = function(target)
+          target.onParentClose()
+        end,
+        key = Keys.N,
+        tooltip = "Press 'n' to cancel"
+      }
+    }
+    
+    pixelVisionOS:ShowMessageModal("Large Selection", "You are about to select a large area of pixels which may impact the performance of Pixel Vision 8. Do you still want to select all?", 160, buttons)
+  
+
+  else
+    self:SelectAll()
+  end
+  
+end
+
 function PaintTool:Cut()
 
   -- Call copy
@@ -110,23 +134,27 @@ function PaintTool:OnExportColors()
       -- Accept
       function(target)
         self:ExportColors(dest)
+        self.exporting = false
         target.onParentClose()
       end,
       -- Decline
       function (target)
         
         self:ExportColors(UniqueFilePath(dest))
+        self.exporting = false
         target.onParentClose()
         
       end,
       -- Cancel
       function(target)
+        self.exporting = false
         target.onParentClose()
       end
     )
   else
 
     self:ExportColors(dest)
+    self.exporting = false
 
   end
 
@@ -157,47 +185,74 @@ function PaintTool:OnExport()
   local message = "It's important to note that performing this optimization may break any places where you have hardcoded references to sprite IDs. You will have the option to apply the optimization after the sprites are processed. \n\nDo you want to perform the following?\n\n"
 
 
-  message = message .. "#  Colors - A new colors.png file\n"
-  message = message .. "#  Sprites - An optimized sprites.png file\n"
-  message = message .. "#  Flags - A new flags.png template file\n"
+  local callbacks = {}
 
+  message = message .. "#  Colors - A new colors.png file\n"
+  table.insert(callbacks, function () self:OnExportColors() end)
+
+  if(self.canExportSprites == true) then
+    message = message .. "#  Sprites - An optimized sprites.png file\n"
+    table.insert(callbacks, function () self:OnExportSprites() end)
+  end
+
+  if(self.canExportFlags == true) then
+    message = message .. "#  Flags - A new flags.png template file\n"
+    table.insert(callbacks, function () self:OnExportFlags() end)
+  end
 
   -- Create the new warning model
   local warningModal = OptionModal:Init(title, message .. "\n", 216, true)
 
+  self.exportQueue = {}
+  self.exporting = false
+
   pixelVisionOS:OpenModal( warningModal,
     
         function()
-        
-            -- -- Check to see if ok was pressed on the model
-            -- if(warningModal.selectionValue == true) then
 
-            --     local filePath = self.spriteBuilderTemplates[warningModal.selectionGroupData.currentSelection]
+          local selections = editorUI:ToggleGroupSelections(warningModal.optionGroupData)
 
-            --     -- Save selection for future use
-            --     WriteSaveData( "lastSpriteBuilderTemplateID", tostring(warningModal.selectionGroupData.currentSelection) )
+          for i = 1, #selections do
+            
+            table.insert(self.exportQueue, callbacks[selections[i]])
 
-            --     local templatePath = filePath.ParentPath.AppendFile(filePath.EntityNameWithoutExtension .. "-" .. string.sub(filePath.GetExtension(), 2) .. "-template.txt") 
+          end
 
-            --     if(PathExists(templatePath) == false) then
+          if(#self.exportQueue > 0) then
+            
+            self.currentExportIndex = 1
+            
+            pixelVisionOS:RegisterUI({name = "OnUpdateExport"}, "UpdateExport", self)
+--        
+          end
 
-            --         pixelVisionOS:ShowMessageModal("Error", "Could not find the template file that goes with '" .. filePath.Path .. "'. Please makes sure one exists at " .. templatePath.Path)
-            --         return
-            --     end
-
-            --     self.spriteFile = ReadTextFile(filePath)
-            --     self.spriteFilePath = NewWorkspacePath(self.rootDirectory .. filePath.EntityName)
-            --     self.spriteFileTemplate = ReadTextFile(templatePath)
-            --     self.spriteFileContents = ""
-
-            --     -- Kick off the process sprites logic
-            --     self:StartSpriteBuilder()
-
-            -- end
-        
         end
     )
 end
+
+function PaintTool:UpdateExport()
+
+  if(self.currentExportIndex >= #self.exportQueue) then
+
+    self.exporting = false
+
+    pixelVisionOS:RemoveUI("OnUpdateExport")
+
+  end
+
+  if(self.exporting == false) then
+
+    self.exporting = true
+
+    self.exportQueue[self.currentExportIndex]()
+
+    self.currentExportIndex = self.currentExportIndex + 1
+
+  end
+
+end
+
+-- TODO need to make this reusable
 
 function PaintTool:OnExportSprites()
   local dest = NewWorkspacePath(self.rootDirectory).AppendFile("sprites.png")
@@ -208,23 +263,27 @@ function PaintTool:OnExportSprites()
       -- Accept
       function(target)
         self:ExportSprites(dest)
+        self.exporting = false
         target.onParentClose()
       end,
       -- Decline
       function (target)
         
         self:ExportSprites(UniqueFilePath(dest))
+        self.exporting = false
         target.onParentClose()
         
       end,
       -- Cancel
       function(target)
+        self.exporting = false
         target.onParentClose()
       end
     )
   else
 
     self:ExportSprites(dest)
+    self.exporting = false
 
   end
 
@@ -259,23 +318,27 @@ function PaintTool:OnExportFlags()
       -- Accept
       function(target)
         self:ExportFlags(dest)
+        self.exporting = false
         target.onParentClose()
       end,
       -- Decline
       function (target)
         
         self:ExportFlags(UniqueFilePath(dest))
+        self.exporting = false
         target.onParentClose()
         
       end,
       -- Cancel
       function(target)
+        self.exporting = false
         target.onParentClose()
       end
     )
   else
 
     self:ExportFlags(dest)
+    self.exporting = false
 
   end
 
@@ -315,8 +378,8 @@ function PaintTool:Copy()
 
   local tmpPixels = ""
 
-  for i = 1, #self.selectedPixelData do
-    tmpPixels = tmpPixels .. self.selectedPixelData[i] .. ","
+  for i = 1, #self.selectedPixelData.Pixels do
+    tmpPixels = tmpPixels .. self.selectedPixelData.Pixels[i] .. ","
   end
 
   -- TODO should save mode
@@ -388,10 +451,10 @@ function PaintTool:Paste()
 
     end
 
-    self.selectedPixelData = {}
+    self.selectedPixelData = NewCanvas( self.selectRect.Width, self.selectRect.Height)
 
     for i = 1, total do
-      table.insert(self.selectedPixelData, tonumber(test[i]))
+      self.selectedPixelData.Pixels[i-1] = tonumber(test[i])
     end
   
     -- self:ClampSelectionToBounds()
@@ -437,11 +500,11 @@ function PaintTool:Paste()
 end
 
 function PaintTool:FlipH()
-
+  self.selectedPixelData:Flip(true, false)
 end
 
 function PaintTool:FlipV()
-
+  self.selectedPixelData:Flip(false, true)
 end
 
 function PaintTool:OnRunGame()
@@ -666,13 +729,12 @@ end
 function PaintTool:OnEditColor(colorId)
 
   pixelVisionOS:RemoveUI("OnUpdateToolbar")
-  
-  -- print("colorId", colorId)
+
   -- Get the color Id from what is passed in or the picker
-  colorId = colorId or self.currentState.selectedId
+  colorId = colorId or self.currentState.selectedId  + self.colorOffset
 
   -- Read the color HEX from memory before editing using the color offset
-  local currentColor = Color(colorId + self.colorOffset)
+  local currentColor = Color(colorId)
 
   -- Save all of the colors before opening the modal
   local currentColors = self:SwapToolColors()
@@ -693,7 +755,9 @@ function PaintTool:OnEditColor(colorId)
 
         if(self.editColorModal.selectionValue == true and currentColor ~= "#" .. self.editColorModal.colorHexInputData.text) then
 
-          Color(colorId  + self.colorOffset, "#" .. self.editColorModal.colorHexInputData.text)
+          Color(colorId, "#" .. self.editColorModal.colorHexInputData.text)
+
+          self:InvalidateData()
           
           return
         
@@ -706,12 +770,15 @@ function PaintTool:OnEditColor(colorId)
 
 end
 
-function PaintTool:OnSetOutlineColor() 
+function PaintTool:SetFillColor() 
   -- TODO need to wire this up
   -- print("Change outline color")
+
+  self.fillColor = self.currentState.selectedId
+
 end
 
-function PaintTool:OnSetBackgroundColor() 
+function PaintTool:OnSetBackgroundColor()
 
   self.backgroundColorId = self.currentState.selectedId
 

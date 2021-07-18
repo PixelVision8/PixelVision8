@@ -394,8 +394,14 @@
     <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.Ellipse.cs">
       <Link>SDK\Player\Data\Canvas\Canvas.Ellipse.cs</Link>
     </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.Flip.cs">
+      <Link>SDK\Player\Data\Canvas\Canvas.Flip.cs</Link>
+    </Compile>
     <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.FloodFill.cs">
       <Link>SDK\Player\Data\Canvas\Canvas.FloodFill.cs</Link>
+    </Compile>
+    <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.History.cs">
+      <Link>SDK\Player\Data\Canvas\History.cs</Link>
     </Compile>
     <Compile Include="..\..\SDK\Player\Data\Canvas\Canvas.Layers.cs">
       <Link>SDK\Player\Data\Canvas\Canvas.Layers.cs</Link>

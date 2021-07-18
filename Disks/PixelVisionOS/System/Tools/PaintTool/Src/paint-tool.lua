@@ -227,10 +227,12 @@ function PaintTool:OnSave()
   local filePath = NewWorkspacePath(self.targetFile)
   local image = NewImage(self.imageLayerCanvas.Width, self.imageLayerCanvas.Height, self.imageLayerCanvas.GetPixels(), self:UniqueColors())
 
+  print("Mask Color", Color(self.maskColor))
+
   SaveImage(
     filePath,
     image,
-    MaskColor()
+    Color(self.maskColor)
   )
 
   -- Save the flag layer
@@ -241,7 +243,7 @@ function PaintTool:OnSave()
     SaveImage(
       filePath.ChangeExtension(".flags.png"),
       flagImage,
-      MaskColor()
+      Color(self.maskColor)
     )
 
     -- TODO should save the flags.png as well?

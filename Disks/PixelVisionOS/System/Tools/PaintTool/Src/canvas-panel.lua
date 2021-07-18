@@ -49,6 +49,7 @@ function PaintTool:CreateCanvasPanel()
   -- Default color is 0
   self.brushColor = 0
   self.brushColorOffset = 0
+  self.fillColor = 0
 
   self.brushCanvas = NewCanvas( 8, 8 )
   self.brushMaskRect = NewRect( 0, 0, self.brushCanvas.Width, self.brushCanvas.Height )
@@ -67,6 +68,8 @@ function PaintTool:CreateCanvasPanel()
   self.selectionTime = 0
   self.selectionDelay = .2
   self.selectionShift = 0
+
+  
 
   -- Create a new canvas
   self.imageLayerCanvas = NewCanvas(math.ceil(self.image.width/8) * 8, math.ceil(self.image.height/8) * 8)
@@ -154,7 +157,7 @@ function PaintTool:CreateCanvasPanel()
 
       -- TODO this should only fill the visible screen so need to copy to tmp canvas fill, then copy back
       -- Update the fill color
-      self.imageLayerCanvas:SetPattern({self.brushColor}, 1, 1)
+      self.imageLayerCanvas:SetPattern({self.fillColor}, 1, 1)
 
       self.imageLayerCanvas:FloodFill(self.startPos.x, self.startPos.y)
 
@@ -493,8 +496,8 @@ function PaintTool:DrawCanvasPanel()
     -- Check if we need to fill the area below the selection
     if(self.fillRect == true) then
         
-      for i = 1, #self.selectedPixelData do
-        self.selectedPixelData[i] = self.fillRectColor
+      for i = 1, #self.selectedPixelData.Pixels do
+        self.selectedPixelData.Pixels[i] = self.fillRectColor
       end
       
       self.fillRect = false
@@ -521,7 +524,7 @@ function PaintTool:DrawCanvasPanel()
           end
           
           -- Draw pixel data to the image
-          srcCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData)
+          srcCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData.Pixels)
         
           -- Clear the pixel data
           self.selectedPixelData = nil
@@ -571,6 +574,7 @@ function PaintTool:DrawCanvasPanel()
 
         -- Clear the tmp layer
         self.tmpLayerCanvas:Clear()
+
         -- print("Clear Tmp Layer - Redraw selection")
         if(self.selectedPixelData ~= nil) then
 
@@ -581,7 +585,15 @@ function PaintTool:DrawCanvasPanel()
           end
           
           -- TODO this should be selecting only the data we want to display
-          self.tmpLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData)
+          local tmpX = self.viewportRect.X + self.selectRect.X + 1
+          local tmpY = self.viewportRect.Y + self.selectRect.Y + 1
+          local tmpW = math.min(self.viewportRect.Width, self.selectedPixelData.Width)
+          local tmpH = math.min(self.viewportRect.Height, self.selectedPixelData.Height)
+
+          local selectionMask = NewRect( 1, 1, tmpW - 2, tmpH -2  )
+
+          self.selectedPixelData:DrawPixels(tmpX, tmpY, DrawMode.Sprite, self.scale, -1, -1, self.colorOffset, selectionMask)
+          -- self.tmpLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData.Pixels)
 
         end
         
@@ -842,14 +854,27 @@ function PaintTool:ChangeCanvasTool(toolName, cursorID)
 
       toolName = "circle"
       self.fill = true
+      
+      if(self.fillColor ==  -1) then
+        self.fillColor = self.brushColor
+      end
 
   elseif(toolName == "rectanglefill") then
 
       toolName = "rectangle"
       self.fill = true
 
+      if(self.fillColor ==  -1) then
+        self.fillColor = self.brushColor
+      end
+  elseif(toolName == "fill") then
+
+      if(self.fillColor ==  -1) then
+        self.fillColor = self.brushColor
+      end
   else
       self.fill = false
+      self.fillColor = -1
   end
 
   self.showBrushPreview = (toolName == "pen" or toolName == "eraser")
@@ -921,7 +946,7 @@ function PaintTool:SelectAll()
   if(self.selectRect ~= nil and self.selectedPixelData ~= nil) then
     
     -- Draw pixel data to the image
-    self.imageLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData)
+    self.imageLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData.Pixels)
   
   end
 
@@ -964,7 +989,7 @@ function PaintTool:CanvasRelease(callAction)
       if(self.selectedPixelData == nil) then
 
         -- Cut the pixels
-        self.selectedPixelData = self:CutPixels()
+        self.selectedPixelData = NewCanvas( self.selectRect.Width, self.selectRect.Height, self:CutPixels())
 
       end
 
@@ -1026,7 +1051,7 @@ function PaintTool:ResetCanvasStroke()
 
     -- Change the stroke to a single pixel
     self.tmpLayerCanvas:SetStroke(self.brushColor, self.defaultStrokeWidth)--realBrushColor, )
-    self.tmpLayerCanvas:SetPattern({self.brushColor}, 1, 1)
+    self.tmpLayerCanvas:SetPattern({self.fillColor}, 1, 1)
 
   end
 
@@ -1298,7 +1323,7 @@ function PaintTool:InvalidateBackground()
   else
 
     -- Use the mask color as the default background   
-    self.backgroundLayerCanvas:Clear(-1)
+    self.backgroundLayerCanvas:Clear(self.maskColor + self.colorOffset)
 
   end
 

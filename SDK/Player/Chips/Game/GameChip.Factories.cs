@@ -57,9 +57,15 @@ namespace PixelVision8.Player
             return new Point(x, y);
         }
 
-        public Canvas NewCanvas(int width, int height)
+        public Canvas NewCanvas(int width, int height, int[] pixels = null)
         {
-            return new Canvas(width, height, this);
+
+            var canvas = new Canvas(width, height, this);
+
+            if(pixels != null && pixels.Length == width * height)
+                canvas.SetPixels(pixels);
+
+            return canvas;
         }
 
         public SpriteData NewSpriteData(int id, int x = 0, int y = 0, bool flipH = false, bool flipV = false,

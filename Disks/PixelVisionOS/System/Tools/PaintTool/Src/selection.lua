@@ -36,6 +36,7 @@ end
 
 function PaintTool:DrawSelectionRectangle(canvas, _tmpRect, shift)
 
+    -- TODO Only draw what is visible on the screen, clip the lines
     self:DrawSelectionLine(canvas, _tmpRect.Left, _tmpRect.Top, _tmpRect.Right -1 , _tmpRect.Top, shift)
 
     self:DrawSelectionLine(canvas, _tmpRect.Right -1 , _tmpRect.Top, _tmpRect.Right -1 , _tmpRect.Bottom - 1, shift)

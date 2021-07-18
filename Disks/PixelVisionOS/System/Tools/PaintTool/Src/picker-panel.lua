@@ -272,13 +272,24 @@ function PaintTool:DrawPickerPanel()
         -- TODO Calculate icon position
         -- DrawMetaSprite( "iconmask", self.pickerPanelRect.X, self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
 
+        -- TODO need to make sure we only show the color when we are on the right page
+
+        
+        -- TODO need to loop through all the icons
+
+
         local pos = CalculatePosition( self.backgroundColorId, 16 )
 
         -- local page = pos/16
 
         -- TODO make sure we are on the right page first and use the page for the Y position
         DrawMetaSprite( "iconbgcolor", (pos.X * 8) + self.pickerPanelRect.X, (pos.Y * 8) + self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
+        
+        if(self.fillColor > -1 and self.fill == true) then
+            pos = CalculatePosition( self.fillColor, 16 )
 
+            DrawMetaSprite( "iconmask", (pos.X * 8) + self.pickerPanelRect.X, (pos.Y * 8) + self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
+        end
 
     end
 

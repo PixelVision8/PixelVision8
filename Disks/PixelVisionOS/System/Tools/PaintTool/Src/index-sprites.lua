@@ -24,8 +24,8 @@ function PaintTool:IndexSprites()
 
     self.currentPage = 0
 
-    pixelVisionOS:EnableMenuItemByName("Export Sprites", true)
-
+    -- pixelVisionOS:EnableMenuItemByName("Export Sprites", true)
+    self.canExportSprites = true
 
     -- TODO look for sprites
 
