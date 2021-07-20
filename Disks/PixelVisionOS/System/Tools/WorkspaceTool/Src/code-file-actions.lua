@@ -588,6 +588,9 @@ function WorkspaceTool:CreateNewProject(name, path)
 
   self:CreateNewCodeFile(path)
 
+  CreateDirectory(path.AppendDirectory("Sprites"))
+  CreateDirectory(path.AppendDirectory("Tilemaps"))
+
   -- TODO need to replace the version number in the info file with the current version
 
   return path
@@ -678,7 +681,7 @@ function WorkspaceTool:OnNewFile(fileName, ext, type, editable)
       elseif(PathExists(tmpPath)) then
 
         CopyTo(tmpPath, filePath)
-        -- -- print("Copy from template", tmpPath.Path)
+        -- print("Copy from template", tmpPath.Path)
 
         -- Create an empty text file
       elseif( ext == "txt") then
@@ -692,6 +695,35 @@ function WorkspaceTool:OnNewFile(fileName, ext, type, editable)
 
         tmpPath = NewWorkspacePath("/App/Fonts/large.font.png")
         CopyTo(tmpPath, filePath)
+
+      elseif(type == "colors") then
+
+        local pixels = {}
+        local colors = {}
+        local col = 8
+        local row = 2
+
+        for i = 1, col * row do
+          table.insert(pixels, i-1)
+          table.insert(colors, Color(i-1))
+        end
+
+        local image = NewImage(col, row, pixels, colors)
+
+        SaveImage(filePath, image)
+      
+      elseif(type == "sprite") then
+        -- TODO need to see if this is a sprite sheet or a sprite
+        local image = NewImage(8, 8)
+
+        SaveImage(filePath, image)
+
+      elseif(type == "tilemap") then
+
+        -- TODO need to read the default tilemap size?
+        local image = NewImage(256, 240)
+
+        SaveImage(filePath, image)
       
       else
         print("File not supported")

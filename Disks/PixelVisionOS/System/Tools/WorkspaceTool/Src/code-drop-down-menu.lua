@@ -106,17 +106,17 @@ function WorkspaceTool:CreateDropDownMenu()
 
     -- Add draw options
 
-    if(PathExists(self.fileTemplatePath.AppendFile("colors.png"))) then
+    -- if(PathExists(self.fileTemplatePath.AppendFile("colors.png"))) then
         table.insert(menuOptions, addAt, {name = "New Colors", action = function() self:OnNewFile("colors", "png", "colors", false) end, enabled = false, toolTip = "Run the current game.", file = "colors.png"})
         table.insert(self.newFileOptions, {name = "New Colors", file = "colors.png"})
         addAt = addAt + 1
-    end
+    -- end
 
-    if(PathExists(self.fileTemplatePath.AppendFile("sprite.png"))) then
+    -- if(PathExists(self.fileTemplatePath.AppendFile("sprite.png"))) then
         table.insert(menuOptions, addAt, {name = "New Sprite", action = function() self:OnNewFile("sprite", "png", "sprite") end, enabled = false, toolTip = "Run the current game.", file = "sprite.png"})
         table.insert(self.newFileOptions, {name = "New Sprite", file = "sprite.png"})
         addAt = addAt + 1
-    end
+    -- end
 
     -- if(PathExists(self.fileTemplatePath.AppendFile("large.font.png"))) then
 
@@ -126,13 +126,13 @@ function WorkspaceTool:CreateDropDownMenu()
 
     -- end
 
-    if(PathExists(self.fileTemplatePath.AppendFile("tilemap.json"))) then
+    -- if(PathExists(self.fileTemplatePath.AppendFile("tilemap.json"))) then
 
-        table.insert(menuOptions, addAt, {name = "New Tilemap", action = function() self:OnNewFile("tilemap", "json", "tilemap", false) end, enabled = false, toolTip = "Run the current game.", file = "tilemap.json"})
-        table.insert(self.newFileOptions, {name = "New Tilemap", file = "tilemap.json"})
+        table.insert(menuOptions, addAt, {name = "New Tilemap", action = function() self:OnNewFile("tilemap", "png", "tilemap", false) end, enabled = false, toolTip = "Run the current game.", file = "tilemap.png"})
+        table.insert(self.newFileOptions, {name = "New Tilemap", file = "tilemap.png"})
         addAt = addAt + 1
 
-    end
+    -- end
 
     -- Add music options
 
@@ -348,7 +348,7 @@ function WorkspaceTool:UpdateContextMenu()
 
     local selections = self:CurrentlySelectedFiles()
 
-    local specialDir = self.currentPath.EntityName == "Sprites" or self.currentPath.EntityName == "Src"
+    local specialDir = self.currentPath.EntityName == "Sprites" or self.currentPath.EntityName == "Src" or self.currentPath.EntityName == "Tilemaps"
 
 
     -- print("selections", dump(selections))
@@ -455,6 +455,8 @@ function WorkspaceTool:UpdateContextMenu()
 
     end
 
+    -- pixelVisionOS:EnableMenuItemByName("New Sprite", false)
+
     -- Manually enable files base on special dir
     if(specialDir == true) then
         
@@ -468,14 +470,20 @@ function WorkspaceTool:UpdateContextMenu()
             -- Enable the file in the menu
             pixelVisionOS:EnableMenuItemByName("New Sprite", true)
 
+        elseif(self.currentPath.EntityName == "Tilemaps") then
+
+            -- Enable the file in the menu
+            pixelVisionOS:EnableMenuItemByName("New Tilemap", true)
+
         end
         
     else
 
         -- Need to manually disable the new sprite option
-        if(PathExists(self.currentPath.AppendFile("sprites.png"))) then
-            pixelVisionOS:EnableMenuItemByName("New Sprite", false)
-        end
+        -- if(PathExists(self.currentPath.AppendFile("sprites.png"))) then
+        pixelVisionOS:EnableMenuItemByName("New Sprite", false)
+        pixelVisionOS:EnableMenuItemByName("New Tilemap", false)
+        -- end
 
     end
 

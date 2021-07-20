@@ -95,10 +95,7 @@ function ResizeModal:Configure(title, message, width, buttons, imageWidth, image
 
     bX = bX - (tmpButton.size.x + btnPadding)
     
-    -- Fix the button to the bottom of the window
-    local bY = math.floor(((self.rect.y + self.rect.h) - tmpButton.size.y - 8) / 8) * 8
-
-    local tmpBtnData = editorUI:CreateButton({x = bX + self.rect.x, y = bY}, tmpButton.name, tmpButton.tooltip or "")
+    local tmpBtnData = editorUI:CreateButton({x = bX + self.rect.x, y = self.rect.y + self.rect.h - 24}, tmpButton.name, tmpButton.tooltip or "")
 
     if(tmpButton.key ~= nil and tmpButton.action ~= nil) then
 
@@ -157,9 +154,13 @@ function ResizeModal:Update(timeDelta)
     editorUI:UpdateButton(tmpBtn)
     editorUI:UpdateInputField(self.colInputData)
     editorUI:UpdateInputField(self.rowInputData)
+    
+    if(self.colInputData.editing == false and self.rowInputData.editing == false) then
 
-    if(tmpBtn.key ~= nil and tmpBtn.onAction ~= nil and Key(tmpBtn.key, InputState.Released) == true ) then
-        tmpBtn.onAction(self)
+      if(tmpBtn.key ~= nil and tmpBtn.onAction ~= nil and Key(tmpBtn.key, InputState.Released) == true ) then
+          tmpBtn.onAction(self)
+      end
+
     end
 
   end
