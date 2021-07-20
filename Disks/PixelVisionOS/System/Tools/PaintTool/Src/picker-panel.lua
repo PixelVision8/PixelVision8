@@ -288,7 +288,7 @@ function PaintTool:DrawPickerPanel()
         if(self.fillColor > -1 and self.fill == true) then
             pos = CalculatePosition( self.fillColor, 16 )
 
-            DrawMetaSprite( "iconmask", (pos.X * 8) + self.pickerPanelRect.X, (pos.Y * 8) + self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
+            DrawMetaSprite( "iconfill", (pos.X * 8) + self.pickerPanelRect.X, (pos.Y * 8) + self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
         end
 
     end

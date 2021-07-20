@@ -55,7 +55,32 @@ namespace PixelVision8.Player
             }
         }
 
-        public void Resize(int width, int height) => Utilities.Resize(defaultLayer, width, height);
+        // public void Resize(int width, int height) => Utilities.Resize(defaultLayer, width, height);
+
+        public void Resize(int newWidth, int newHeight, bool savePixels = false)
+        {
+            
+            if(newWidth == Width && newHeight == Height)
+                return;
+
+            int[] pixels = null;
+
+            var sampleWidth = Math.Min(Width, newWidth);
+            var sampleHeight = Math.Min(Height, newHeight);
+
+            if(savePixels)
+            {
+                pixels = GetPixels(0, 0, sampleWidth, sampleHeight);
+            }
+
+            Utilities.Resize(defaultLayer, newWidth, newHeight);
+
+            if(savePixels && pixels != null)
+            {
+                SetPixels(0, 0, sampleWidth, sampleHeight, pixels);
+            }
+
+        }
 
         private CanvasDrawRequest NextRequest()
         {

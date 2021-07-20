@@ -41,7 +41,7 @@ function MessageModal:Configure(title, message, width, buttons)
   -- Need to calculate the height ahead of time
   local wrap = WordWrap(message, (width / 4) - 4)
   self.lines = SplitLines(wrap)
-  height = #self.lines * 8 + 42
+  local height = #self.lines * 8 + 42
 
   -- Make sure width and height are on the grid
   width = math.floor(width / 8) * 8

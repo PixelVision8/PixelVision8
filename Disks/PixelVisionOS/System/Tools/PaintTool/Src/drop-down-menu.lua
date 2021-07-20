@@ -14,6 +14,8 @@ function PaintTool:CreateDropDownMenu()
   -- create a variable for the edit color modal
   self.editColorModal = EditColorModal:Init()
 
+  -- self.resizeModal = ResizeModal:Init()
+
   -- Create a table with all of the menu options
   local menuOptions = 
   {
@@ -40,7 +42,7 @@ function PaintTool:CreateDropDownMenu()
       {name = "Mask Color", action = function() self:OnEditColor(self.maskColor) end, enabled = false, toolTip = "Learn about PV8."},
 
       {divider = true},
-      {name = "Canvas Size", action = function()  end, enabled = false, key = Keys.I, toolTip = "Learn about PV8."},
+      {name = "Canvas Size", action = function() self:OnResize() end, enabled = true, key = Keys.I, toolTip = "Learn about PV8."},
       {name = "Toggle BG", action = function() self:ToggleBackground() end, key = Keys.B, toolTip = "Learn about PV8."},
       {name = "Toggle Grid", action = function() self:ToggleGrid() end, key = Keys.G, toolTip = "Learn about PV8."},
 
@@ -119,6 +121,90 @@ function PaintTool:Cut()
 
   -- Delete the selection
   self:Delete()
+
+end
+
+function PaintTool:OnResize()
+
+  pixelVisionOS:RemoveUI("OnUpdateToolbar")
+
+  local title = "Resize"
+  local message = "Do you want to resize the current canvas? This process can not be undone."
+  local width = 160
+  local buttons =
+    {
+      {
+        name = "modalyesbutton",
+        action = function(target)
+
+          target.onParentClose()
+        end,
+        key = Keys.Y,
+        tooltip = "Press 'y' to resize the canvas"
+      },
+      {
+        name = "modalnobutton",
+        action = function(target)
+          target.onParentClose()
+        end,
+        key = Keys.N,
+        tooltip = "Press 'n' to cancel making changes"
+      }
+    }
+  
+  -- Look to see if the modal exists
+  if(self.resizeModal == nil) then
+
+      -- Create the model
+      self.resizeModal = ResizeModal:Init(title, message, width, buttons, self.imageLayerCanvas.Width, self.imageLayerCanvas.Height)
+
+      -- Pass a reference of the editorUI to the modal
+      self.resizeModal.editorUI = self.editorUI
+  -- end
+  else
+      -- If the modal exists, configure it with the new values
+      self.resizeModal:Configure(title, message, width, buttons, self.imageLayerCanvas.Width, self.imageLayerCanvas.Height)--showCancel, okButtonSpriteName, cancelButtonSpriteName)
+  end
+
+  self:CancelCanvasSelection()
+
+  -- TODO need to clear undo history
+  pixelVisionOS:ResetUndoHistory(self)
+
+  pixelVisionOS:UpdateHistoryButtons(self)
+
+  -- Open the modal
+  pixelVisionOS:OpenModal(self.resizeModal, function()
+  
+    pixelVisionOS:RegisterUI({name = "OnUpdateToolbar"}, "UpdateToolbar", self, true)
+    
+    local newWidth = tonumber(self.resizeModal.colInputData.text) * 8
+    local newHeight = tonumber(self.resizeModal.rowInputData.text) * 8
+
+    if(self.imageLayerCanvas.Width == newWidth and self.imageLayerCanvas.Height == newHeight) then
+      return
+    end
+
+    self.imageLayerCanvas:Resize(newWidth, newHeight, true)
+    
+    self.backgroundLayerCanvas:Resize(newWidth, newHeight)
+    self.tmpLayerCanvas:Resize(newWidth, newHeight)
+    self.flagLayerCanvas:Resize(newWidth, newHeight)
+    self.gridCanvas:Resize(newWidth, newHeight)
+
+    self:InvalidateBackground()
+    self:InvalidateGrid()
+    self:InvalidateCanvas()
+
+    self:ChangeScale( self.scaleValues[self.scaleMode])
+
+  end
+  )
+
+end
+
+function PaintTool:UpdateResize()
+
 
 end
 
