@@ -44,6 +44,17 @@ gulp.task('content-fonts', function() {
 
 );
 
+// Copy over the Pixel Vision OS Disk System folder to the Content/PixelVisionOS/ folder
+gulp.task('content-sprites', function() {
+  
+  console.log("Copying over sprites")
+
+  return gulp.src("./Content/Sprites/**/*")
+      .pipe(gulp.dest(contentPath+'/Sprites/'));
+  }
+
+);
+
 gulp.task('content-bios', function() {
   console.log("Copying over bios")
   return gulp.src(['./Content/bios.json', process.env.SCRIPTS + 'Templates/bios-template.json'])
@@ -52,4 +63,4 @@ gulp.task('content-bios', function() {
   }
 );
 
-gulp.task("content", gulp.series('content-clean', 'content-os', 'content-effects', 'content-fonts', 'content-bios'));
+gulp.task("content", gulp.series('content-clean', 'content-os', 'content-effects', 'content-fonts', 'content-sprites', 'content-bios'));
