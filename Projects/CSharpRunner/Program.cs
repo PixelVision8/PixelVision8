@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-using PixelVision8.Examples;
+using PixelVision8.Player;
 
 namespace PixelVision8.Runner
 {
@@ -18,7 +18,7 @@ namespace PixelVision8.Runner
             var root = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content");
 
             // TODO there is a bug where this will not go to the boot error
-            using (var game = new CSharpRunner(root, typeof(ExampleGameChip).ToString()))
+            using (var game = new CSharpRunner(root, typeof(BackgroundExample).ToString()))
             {
                 game.Run();
             }
