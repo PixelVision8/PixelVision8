@@ -52,9 +52,9 @@ namespace PixelVision8.Player
         /// </summary>
         public int Total => Columns * Rows;
 
-        private readonly PixelData _tilemapCache = new PixelData();
+        private readonly PixelData<int> _tilemapCache = new PixelData<int>();
 
-        public PixelData PixelData
+        public PixelData<int> PixelData
         {
             get
             {
@@ -65,7 +65,7 @@ namespace PixelVision8.Player
         }
 
         private Rectangle _tileSize;
-        private PixelData _tmpPixelData;
+        private PixelData<int> _tmpPixelData;
 
         /// <summary>
         ///     The width of the tile map by tiles.
@@ -198,7 +198,7 @@ namespace PixelVision8.Player
 
             _tileSize = new Rectangle(0, 0, Constants.SpriteSize, Constants.SpriteSize);
 
-            _tmpPixelData = new PixelData(_tileSize.Width, _tileSize.Height);
+            _tmpPixelData = new PixelData<int>(_tileSize.Width, _tileSize.Height);
             
             pixels = new int[Constants.SpriteSize * Constants.SpriteSize];
             

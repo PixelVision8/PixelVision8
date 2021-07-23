@@ -39,7 +39,7 @@ namespace PixelVision8.Editor
             var height = 64; //spriteChip.textureHeight;
 
 
-            var textureData = new PixelData(width, height);
+            var textureData = new PixelData<int>(width, height);
 
             //            var pixelData = new int[width * height];
 

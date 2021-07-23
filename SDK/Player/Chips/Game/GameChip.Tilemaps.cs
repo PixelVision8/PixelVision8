@@ -32,9 +32,9 @@ namespace PixelVision8.Player
         private int _rows;
         private int _total;
 
-        public PixelData SpriteIds;
-        public PixelData Flags;
-        public PixelData ColorOffset;
+        public PixelData<int> SpriteIds;
+        public PixelData<int> Flags;
+        public PixelData<int> ColorOffset;
         
         public string Name;
         public int Columns => _columns;
@@ -49,9 +49,9 @@ namespace PixelVision8.Player
             _rows = rows;
             _total = _columns * _rows;
 
-            SpriteIds = new PixelData(_columns, _rows, Enumerable.Repeat(-1, _total).ToArray());
-            Flags = new PixelData(_columns, _rows, Enumerable.Repeat(-1, _total).ToArray());
-            ColorOffset = new PixelData(_columns, _rows);
+            SpriteIds = new PixelData<int>(_columns, _rows, Enumerable.Repeat(-1, _total).ToArray());
+            Flags = new PixelData<int>(_columns, _rows, Enumerable.Repeat(-1, _total).ToArray());
+            ColorOffset = new PixelData<int>(_columns, _rows);
             
         }
 

@@ -22,9 +22,9 @@ namespace PixelVision8.Player
 {
     public sealed partial class Canvas
     {
-        private readonly PixelData defaultLayer = new PixelData();
-        private readonly PixelData tmpLayer = new PixelData();
-        private PixelData currentTexture;
+        private readonly PixelData<int> defaultLayer = new PixelData<int>();
+        private readonly PixelData<int> tmpLayer = new PixelData<int>();
+        private PixelData<int> currentTexture;
 
         private void ChangeTargetCanvas(int width, int height)
         {
@@ -50,9 +50,9 @@ namespace PixelVision8.Player
             currentTexture = tmpLayer;
 
             if (drawRequest.Bounds.Width != currentTexture.Width || drawRequest.Bounds.Height != currentTexture.Height)
-                Utilities.Resize(currentTexture, drawRequest.Bounds.Width, drawRequest.Bounds.Height);
+                Utilities.Resize(currentTexture, drawRequest.Bounds.Width, drawRequest.Bounds.Height, Constants.EmptyPixel);
             else
-                Utilities.Clear(currentTexture);
+                Utilities.Clear(currentTexture, Constants.EmptyPixel);
         }
 
         private void SaveTmpLayer(int x, int y, int blockWidth, int blockHeight)

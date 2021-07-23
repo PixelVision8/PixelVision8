@@ -22,7 +22,7 @@ namespace PixelVision8.Player
 {
     public sealed partial class Canvas
     {
-        private PixelData pattern = new PixelData();
+        private PixelData<int> pattern = new PixelData<int>();
 
         public void SetPattern(int[] newPixels, int newWidth, int newHeight)
         {
@@ -37,7 +37,7 @@ namespace PixelVision8.Player
 
             if (newRequest.PixelData.Width != newWidth || newRequest.PixelData.Height != newHeight)
             {
-                Utilities.Resize(newRequest.PixelData, newWidth, newHeight);
+                Utilities.Resize(newRequest.PixelData, newWidth, newHeight, Constants.EmptyPixel);
             }
 
             newRequest.PixelData.SetPixels(newPixels, newWidth, newHeight);

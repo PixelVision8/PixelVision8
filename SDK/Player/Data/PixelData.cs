@@ -22,31 +22,48 @@ using System;
 
 namespace PixelVision8.Player
 {
-    public class PixelData
+    public interface IPixelData<T> where T : IComparable
     {
-        private int[] _pixels;
+        T this[in int i] { get; set; }
 
-        public int[] Pixels => _pixels;
+        public T[] Pixels { get; }
         
+        public int Width { get; }
+        public int Height { get; }
+
+        public void Resize(int width, int height);
+
+        int Total { get; }
+    }
+
+    public class PixelData<T> : IPixelData<T> where T : IComparable
+    {
+        private T[] _pixels = new T[1];
+
+        public PixelData(int width = 1, int height = 1, T[] pixels = null)
+        {
+
+            Resize(width, height);
+
+            if (pixels != null && pixels.Length == _pixels.Length) Array.Copy(pixels, _pixels, _pixels.Length);
+        }
+
+        public T[] Pixels => _pixels;
+
         public int Width { get; private set; } = 1;
         public int Height { get; private set; } = 1;
         public int Total { get; private set; } = 1;
 
-        public PixelData(int width = 1, int height = 1, int[] pixels = null)
+        public T this[in int i]
         {
-            Resize(width, height);
-
-            if(pixels != null && pixels.Length == _pixels.Length)
-            {
-                Array.Copy(pixels, _pixels, _pixels.Length);
-            }
-            
+            get => _pixels[i];
+            set => _pixels[i] = value;
         }
 
         public void Resize(int width, int height)
         {
             Width = Math.Max(width, 1);
-            
+
             Height = Math.Max(height, 1);
 
             Total = Width * Height;
@@ -54,34 +71,29 @@ namespace PixelVision8.Player
             Array.Resize(ref _pixels, Total);
         }
 
-        public int this[in int i]
+        public void SetPixels(T[] pixels, int? width = null, int? height = null)
         {
-            get => _pixels[i];
-            set => _pixels[i] = value;
-        }
-
-        public void SetPixels(int[] pixels, int? width = null, int? height = null)
-        {
-
             // Create a new width and height by reading the new dimensions and making sure they are greater than 0
-            var newWidth = Math.Max(width ?? Width , 1);
+            var newWidth = Math.Max(width ?? Width, 1);
             var newHeight = Math.Max(height ?? Height, 1);
-            
+
             if (newWidth * newHeight != pixels.Length)
                 return;
-            
+
             Total = pixels.Length;
-            
-            if(_pixels.Length != Total)
+
+            if (_pixels.Length != Total)
                 Array.Resize(ref _pixels, Total);
-                
+
             Array.Copy(pixels, _pixels, Total);
-             
+
             Width = newWidth;
             Height = newHeight;
-            
         }
-        
-        public override string ToString() => "{Width:" + Width + " Height:" + Height + " Total Pixels:" + Total + "}";
+
+        public override string ToString()
+        {
+            return "{Width:" + Width + " Height:" + Height + " Total Pixels:" + Total + "}";
+        }
     }
 }

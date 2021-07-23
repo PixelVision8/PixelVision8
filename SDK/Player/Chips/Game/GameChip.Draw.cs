@@ -24,7 +24,7 @@ namespace PixelVision8.Player
 {
     public partial class GameChip
     {
-        private PixelData _tmpPixelData = new PixelData();
+        private PixelData<int> _tmpPixelData = new PixelData<int>();
         public int CurrentSprites => Player.SpriteCounter;
 
         #region Display

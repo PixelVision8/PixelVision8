@@ -22,7 +22,7 @@ namespace PixelVision8.Player
 {
     public sealed partial class Canvas
     {
-        private PixelData stroke = new PixelData();
+        private PixelData<int> stroke = new PixelData<int>();
 
         public void SetStroke(int color, int size = 1)
         {
@@ -37,7 +37,7 @@ namespace PixelVision8.Player
 
             if (newRequest.PixelData.Width != size || newRequest.PixelData.Height != size)
             {
-                Utilities.Resize(newRequest.PixelData, size, size);
+                Utilities.Resize(newRequest.PixelData, size, size, Constants.EmptyPixel);
             }
 
             var newPixels = new int[size * size];

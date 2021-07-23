@@ -22,7 +22,7 @@ namespace PixelVision8.Player
 {
     public sealed partial class Canvas
     {
-        private readonly PixelData _tmpPixelData = new PixelData();
+        private readonly PixelData<int> _tmpPixelData = new PixelData<int>();
 
         /// <summary>
         ///     Allows you to merge the pixel data of another canvas into this one without compleatly overwritting it.

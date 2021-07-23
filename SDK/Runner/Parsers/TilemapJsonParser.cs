@@ -182,12 +182,12 @@ namespace PixelVision8.Runner
                             if (columns != tilemapChip.Columns || rows > tilemapChip.Rows)
                             {
                                 // Create texture data that matches the memory of the tilemap chip
-                                var tmpPixelData = new PixelData(tilemapChip.Columns, tilemapChip.Rows);
-                                Utilities.Clear(tmpPixelData);
+                                var tmpPixelData = new PixelData<int>(tilemapChip.Columns, tilemapChip.Rows);
+                                Utilities.Clear(tmpPixelData, Constants.EmptyPixel);
                                 // tmpPixelData.Clear();
 
-                                var jsonData = new PixelData(columns, rows);
-                                Utilities.Clear(jsonData);
+                                var jsonData = new PixelData<int>(columns, rows);
+                                Utilities.Clear(jsonData, Constants.EmptyPixel);
                                 // jsonData.Clear();
                                 Utilities.SetPixels(dataValues, 0, 0, columns, rows, jsonData);
                                 // jsonData.SetPixels(0, 0, columns, rows, dataValues);

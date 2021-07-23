@@ -87,7 +87,7 @@ namespace PixelVision8.Runner
             var spriteId = -1;
 
             // Look to see if the sprite is empty
-            if(Utilities.IsEmpty(spriteData) == false)
+            if(Utilities.IsEmpty(spriteData, Constants.EmptyPixel) == false)
             {
 
                 // Look for the sprite

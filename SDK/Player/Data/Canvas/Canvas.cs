@@ -73,7 +73,7 @@ namespace PixelVision8.Player
                 pixels = GetPixels(0, 0, sampleWidth, sampleHeight);
             }
 
-            Utilities.Resize(defaultLayer, newWidth, newHeight);
+            Utilities.Resize(defaultLayer, newWidth, newHeight, Constants.EmptyPixel);
 
             if(savePixels && pixels != null)
             {
@@ -106,7 +106,7 @@ namespace PixelVision8.Player
                 request.ColorOffset);
         }
 
-        private int GetPixel(PixelData pixelData, int x, int y)
+        private int GetPixel(PixelData<int> pixelData, int x, int y)
         {
             // TODO this needs to be removed
 
@@ -118,7 +118,7 @@ namespace PixelVision8.Player
             return pixelData[x + pixelData.Width * y];
         }
 
-        private void SetPixel(PixelData pixelData, int x, int y, int color)
+        private void SetPixel(PixelData<int> pixelData, int x, int y, int color)
         {
             // TODO this needs to be removed
 

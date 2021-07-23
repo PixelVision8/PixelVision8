@@ -89,7 +89,7 @@ namespace PixelVision8.Runner
         {
             var id = spriteChip.FindSprite(spriteData);
             
-            if (id == -1 && Utilities.IsEmpty(spriteData) == false)
+            if (id == -1 && Utilities.IsEmpty(spriteData, Constants.EmptyPixel) == false)
             {
                 id = spriteChip.NextEmptyId();
                 

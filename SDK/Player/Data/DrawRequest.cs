@@ -27,12 +27,12 @@ namespace PixelVision8.Player
         ///     TextureData. When requested, a clone of the <see cref="_texture" />
         ///     field is returned. This is expensive and only used for tools.
         /// </summary>
-        PixelData PixelData { get; }
+        PixelData<int> PixelData { get; }
     }
 
     public struct DrawRequest
     {
-        private PixelData _tmpPixelData;
+        private PixelData<int> _tmpPixelData;
 
         public Rectangle SampleRect;
         public bool FlipH;
@@ -43,7 +43,7 @@ namespace PixelVision8.Player
 
         public byte Priority;
 
-        public PixelData PixelData { get; private set; }
+        public PixelData<int> PixelData { get; private set; }
 
         public void SampleFrom(IDisplay source, int srcX, int srcY, int blockWidth, int blockHeight)
         {
@@ -57,7 +57,7 @@ namespace PixelVision8.Player
 
         public void SampleFrom(int[] pixels, int srcX, int srcY, int blockWidth, int blockHeight)
         {
-            _tmpPixelData ??= new PixelData(blockWidth, blockHeight);
+            _tmpPixelData ??= new PixelData<int>(blockWidth, blockHeight);
 
             _tmpPixelData.SetPixels(pixels, blockWidth, blockHeight);
 

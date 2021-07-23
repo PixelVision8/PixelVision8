@@ -29,7 +29,7 @@ namespace PixelVision8.Player
     /// </summary>
     public struct ImageData
     {
-        public PixelData PixelData { get; }
+        public PixelData<int> PixelData { get; }
         public int Width => PixelData.Width;
         public int Height => PixelData.Height;
         
@@ -44,10 +44,10 @@ namespace PixelVision8.Player
         public ImageData(int width, int height, int[] pixels = null, string[] colors = null)
         {
             // Create sprite friendly grid
-            PixelData = new PixelData(width, height);
+            PixelData = new PixelData<int>(width, height);
             
             // Clear the pixel data with the default transparent color
-            Utilities.Clear(PixelData);
+            Utilities.Clear(PixelData, Constants.EmptyPixel);
 
             // See if there are any pixels
             if (pixels != null)
@@ -70,7 +70,7 @@ namespace PixelVision8.Player
         
         public int[] GetPixels() => Utilities.GetPixels(PixelData);
 
-        public void Resize(int newWidth, int newHeight) => Utilities.Resize(PixelData, newWidth, newHeight);
+        public void Resize(int newWidth, int newHeight) => Utilities.Resize(PixelData, newWidth, newHeight, Constants.EmptyPixel);
 
         public void Clear(int color = -1) => Utilities.Clear(PixelData, color);
 

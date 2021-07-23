@@ -26,11 +26,11 @@ namespace PixelVision8.Player
     public static partial class Utilities
     {
         
-        public static int[] GetPixels(PixelData pixelData)
+        public static T[] GetPixels<T>(PixelData<T> pixelData) where T : IComparable
         {
             
             // Create a new temporary array to copy the pixel data into
-            var tmpPixels = new int[pixelData.Total];
+            var tmpPixels = new T[pixelData.Total];
             
             // Use the Array.Copy() method to quickly copy all of the pixel data into the new temporary array
             Array.Copy(pixelData.Pixels, tmpPixels, pixelData.Total);
@@ -39,16 +39,16 @@ namespace PixelVision8.Player
             return tmpPixels;
         }
 
-        public static int[] GetPixels(PixelData pixelData, Rectangle rect)
+        public static T[] GetPixels<T>(PixelData<T> pixelData, Rectangle rect) where T : IComparable
         {
             return GetPixels(pixelData, rect.X, rect.Y, rect.Width, rect.Height);
         }
         
-        public static int[] GetPixels(PixelData pixelData, int x, int y, int blockWidth, int blockHeight)
+        public static T[] GetPixels<T>(PixelData<T> pixelData, int x, int y, int blockWidth, int blockHeight) where T : IComparable
         {
             
             // Create a new temporary array to copy the pixel data into
-            var tmpPixels = new int[blockWidth * blockHeight];
+            var tmpPixels = new T[blockWidth * blockHeight];
 
             // Copy each entire line at once.
             for (var i = blockHeight - 1; i > -1; --i)
@@ -67,8 +67,8 @@ namespace PixelVision8.Player
 
         // public static void SetPixels(int[] srcPixels, PixelData destPixelData) => destPixelData.SetPixels(srcPixels, destPixelData.Width, destPixelData.Height);
 
-        public static void SetPixels(int[] srcPixels, int x, int y, int blockWidth, int blockHeight,
-            PixelData destPixelData)
+        public static void SetPixels<T>(T[] srcPixels, int x, int y, int blockWidth, int blockHeight,
+            PixelData<T> destPixelData) where T : IComparable
         {
 
             // var srcPixelData = new PixelData(blockWidth, blockHeight);
@@ -89,7 +89,9 @@ namespace PixelVision8.Player
         
             int col = 0, row = 0;
 
-            int tmpX, tmpY, tmpPixel, i;
+            int tmpX, tmpY, i;
+
+            T tmpPixel;
         
             for (i = 0; i < total; i++)
             {
@@ -113,21 +115,21 @@ namespace PixelVision8.Player
             }
         }
         
-        public static void Clear(PixelData pixelData, int colorRef = Constants.EmptyPixel)
+        public static void Clear<T>(PixelData<T> pixelData, T colorRef) where T : IComparable
         {
             for (var i = pixelData.Total - 1; i > Constants.EmptyPixel; i--) pixelData[i] = colorRef;
         }
         
-        public static void MergePixels(
+        public static void MergePixels<T>(
             // The source pixel data
-            PixelData src, 
+            PixelData<T> src, 
             // The sample area
             int srcX, 
             int srcY, 
             int srcWidth, 
             int srcHeight,
             // The destination pixel data
-            PixelData dest,
+            PixelData<T> dest,
             // Destination position
             int destX,
             int destY,
@@ -135,9 +137,9 @@ namespace PixelVision8.Player
             bool flipH = false,
             bool flipV = false,
             // Apply a color offset
-            int colorOffset = 0,
+            T colorOffset = default,
             bool ignoreTransparent = true
-        )
+        ) where T : IComparable
         {
 
             var srcPWidth = src.Width;
@@ -151,7 +153,11 @@ namespace PixelVision8.Player
         
             int col = 0, row = 0;
 
-            int tmpX, tmpY, tmpPixel, i;
+            int tmpX, tmpY, i;
+
+            dynamic tmpPixel;
+
+            dynamic offset = colorOffset;
         
             for (i = 0; i < total; i++)
             {
@@ -160,7 +166,7 @@ namespace PixelVision8.Player
         
                 tmpPixel = src.Pixels[tmpX + srcPWidth * tmpY];
                 
-                if (tmpPixel != -1 || ignoreTransparent != true)
+                if (tmpPixel > Constants.EmptyPixel || ignoreTransparent != true)
                 {
                     tmpX = (flipH ? srcWidth - 1 - col : col) + destX;
         
@@ -168,6 +174,7 @@ namespace PixelVision8.Player
                     
                     if (tmpX >= 0 && tmpX < destPWidth && tmpY >= 0 && tmpY < destPHeight)
                     {
+                        // TODO need to figure out how to fix this
                         dest.Pixels[tmpX + destPWidth * tmpY] = tmpPixel + colorOffset;
                     }
                 }
@@ -180,12 +187,12 @@ namespace PixelVision8.Player
             }
         }
 
-        public static void Resize(PixelData pixelData, int blockWidth, int blockHeight)
+        public static void Resize<T>(PixelData<T> pixelData, int blockWidth, int blockHeight, T colorRef) where T : IComparable
         {
             
             pixelData.Resize(Utilities.Clamp(blockWidth, 1, 2048), Utilities.Clamp(blockHeight, 1, 2048));
 
-            Clear(pixelData);
+            Clear(pixelData, colorRef);
         }
 
         /// <summary>
@@ -198,11 +205,14 @@ namespace PixelVision8.Player
         /// <param name="emptyPixel"></param>
         /// <returns>
         /// </returns>
-        public static bool IsEmpty(int[] data, int emptyPixel = -1)
+        public static bool IsEmpty<T>(T[] data, T emptyPixel)
         {
+            // TODO this need to be generic
             var total = data.Length;
+            
             for (var i = 0; i < total; i++)
-                if (data[i] > emptyPixel)
+                
+                if ((dynamic)data[i] > emptyPixel)
                     return false;
 
             return true;
@@ -214,7 +224,7 @@ namespace PixelVision8.Player
         /// <param name="id"></param>
         /// <param name="cps">Total number of colors supported by the sprite.</param>
         /// <returns></returns>
-        public static int[] GetSpriteData(PixelData pixelData, int id, int? cps = null)
+        public static T[] GetSpriteData<T>(PixelData<T> pixelData, int id, int? cps = null, T colorRef = default) where T : IComparable
         {
 
             var Columns = pixelData.Width / Constants.SpriteSize;
@@ -222,17 +232,17 @@ namespace PixelVision8.Player
             var _pos = CalculatePosition(id, Columns);
 
             // _pixelData = GetPixels(_pos.X * 8, _pos.Y * 8, _spriteSize.X, _spriteSize.Y);
-            var _tmpPixelData = GetPixels(pixelData, _pos.X * Constants.SpriteSize, _pos.Y * Constants.SpriteSize, Constants.SpriteSize, Constants.SpriteSize);
+            T[] _tmpPixelData = GetPixels(pixelData, _pos.X * Constants.SpriteSize, _pos.Y * Constants.SpriteSize, Constants.SpriteSize, Constants.SpriteSize);
             // If there is a CPS cap, we need to go through all the pixels and make sure they are in range.
             if (cps.HasValue)
             {
-                var _colorIDs = new List<int>();
+                List<T> _colorIDs = new List<T>();
 
                 for (int i = 0; i < _tmpPixelData.Length; i++)
                 {
-                    var _colorId = _tmpPixelData[i];
+                    T _colorId = _tmpPixelData[i];
 
-                    if (_colorId > -1 && _colorIDs.IndexOf(_colorId) == -1)
+                    if (_colorId.CompareTo(colorRef) >= 0 && _colorIDs.IndexOf(_colorId) == -1)
                     {
                         if (_colorIDs.Count < cps.Value)
                         {
@@ -240,7 +250,7 @@ namespace PixelVision8.Player
                         }
                         else
                         {
-                            _tmpPixelData[i] = -1;
+                            _tmpPixelData[i] = colorRef;
                         }
                     }
                 }
@@ -250,7 +260,7 @@ namespace PixelVision8.Player
             return _tmpPixelData;
         }
 
-        public static void WriteSpriteData(PixelData pixelData, int id, int[] pixels)
+        public static void WriteSpriteData<T>(PixelData<T> pixelData, int id, T[] pixels) where T : IComparable
         {
             var Columns = pixelData.Width / Constants.SpriteSize;
             

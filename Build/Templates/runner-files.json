@@ -105,7 +105,9 @@
       "{0}/System.Windows.dll",
       "{0}/System.Xml.ReaderWriter.dll",
       "{0}/System.Xml.XDocument.dll",
-      "{0}/WindowsBase.dll"
+      "{0}/WindowsBase.dll",
+      "{0}/System.Reflection.Emit.ILGeneration.dll",
+      "{0}/System.Reflection.Emit.Lightweight.dll"
     ],
     "win-x64" : [
       "{0}/clrcompression.dll",
@@ -207,7 +209,9 @@
       "{0}/System.Xml.XDocument.dll",
       "{0}/WindowsBase.dll",
       "{0}/SDL2.dll",
-      "{0}/soft_oal.dll"
+      "{0}/soft_oal.dll",
+      "{0}/System.Reflection.Emit.ILGeneration.dll",
+      "{0}/System.Reflection.Emit.Lightweight.dll"
     ],
     "linux-x64" : [
       "{0}/createdump",
@@ -314,7 +318,9 @@
       "{0}/System.Windows.dll",
       "{0}/System.Xml.ReaderWriter.dll",
       "{0}/System.Xml.XDocument.dll",
-      "{0}/WindowsBase.dll"
+      "{0}/WindowsBase.dll",
+      "{0}/System.Reflection.Emit.ILGeneration.dll",
+      "{0}/System.Reflection.Emit.Lightweight.dll"
     ],
     "linux-arm64" : [
       "{0}/{1}.dll",
@@ -433,6 +439,8 @@
       "./SDK/Player/Data/Rectangle.cs",
       "./SDK/Runner/Utils/ColorUtils.Unity.cs",
       "./SDK/Runner/Utils/ZipFileHelper.Unity.cs",
-      "./SDK/Runner/Data/DisplayTarget.Unity.cs"
+      "./SDK/Runner/Data/DisplayTarget.Unity.cs",
+      "./SDK/Runner/System.Reflection.Emit.ILGeneration.dll",
+      "./SDK/Runner/System.Reflection.Emit.Lightweight.dll"
     ]
 }

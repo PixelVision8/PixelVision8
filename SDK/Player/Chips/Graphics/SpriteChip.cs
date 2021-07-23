@@ -59,7 +59,7 @@ namespace PixelVision8.Player
         /// </summary>
         public int MaxSpriteCount { get; set; }
 
-        public PixelData PixelData => _spriteMemory.PixelData;
+        public PixelData<int> PixelData => _spriteMemory.PixelData;
 
         /// <summary>
         ///     Return's the <see cref="Sprite" /> Ram's internal
@@ -181,7 +181,7 @@ namespace PixelVision8.Player
             else
             {
                 // TODO need to remove the additional array copy from the Image to the Array
-                Array.Copy(Utilities.GetSpriteData(_spriteMemory.PixelData, index, ColorsPerSprite), pixelData, pixelData.Length);
+                Array.Copy(Utilities.GetSpriteData(_spriteMemory.PixelData, index), pixelData, pixelData.Length);
             }
         }
 
@@ -253,7 +253,7 @@ namespace PixelVision8.Player
         public int FindSprite(int[] pixels, bool emptyCheck = false)
         {
             if (emptyCheck)
-                if (Utilities.IsEmpty(pixels))
+                if (Utilities.IsEmpty(pixels, Constants.EmptyPixel))
                     return -1;
 
             var sprite = SpriteDataToString(pixels);

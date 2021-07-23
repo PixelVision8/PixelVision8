@@ -134,7 +134,7 @@ namespace PixelVision8.Player
             }
         }
 
-        private void SetPatternPixel(PixelData currentTexture, int x, int y, int replacementColor)
+        private void SetPatternPixel(PixelData<int> currentTexture, int x, int y, int replacementColor)
         {
             // Console.WriteLine("{0},{1}", x, y);
             replacementColor = GetPixel(pattern, x % pattern.Width, y % pattern.Height);

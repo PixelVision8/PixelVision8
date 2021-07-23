@@ -236,7 +236,7 @@ namespace PixelVision8.Runner
 
         public virtual void ConvertColorsToIndexes(int totalColors)
         {
-            spriteData = Utilities.GetSpriteData(ImageData.PixelData, index, totalColors);
+            spriteData = Utilities.GetSpriteData(ImageData.PixelData, index, totalColors, Constants.EmptyPixel);
         }
 
         public override void Dispose()

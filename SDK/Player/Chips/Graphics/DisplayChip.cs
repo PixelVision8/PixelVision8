@@ -28,7 +28,7 @@ namespace PixelVision8.Player
 
     public class DisplayChip : AbstractChip, IDraw
     {
-        private readonly PixelData _display = new PixelData();
+        private readonly PixelData<int> _display = new PixelData<int>();
         private readonly List<DrawRequest> _drawCalls = new List<DrawRequest>();
         private int _clearColor = -1;
         private bool _clearFlag = true;

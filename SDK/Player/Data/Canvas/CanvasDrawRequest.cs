@@ -30,7 +30,7 @@ namespace PixelVision8.Player
         public bool Fill;
         public bool FlipH;
         public bool FlipV;
-        public PixelData PixelData = new PixelData();
+        public PixelData<int> PixelData = new PixelData<int>();
         public int X;
         public int Y;
     }
