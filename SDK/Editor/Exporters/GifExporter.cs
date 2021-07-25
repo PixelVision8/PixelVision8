@@ -102,8 +102,10 @@ namespace PixelVision8.Editor
             // TODO there might be a better way to do this like grabbing the pixel data from somewhere else?
             var pixels = DisplayChip.Pixels;
 
-            var cachedColors = ColorUtils.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor,
-                engine.ColorChip.DebugMode, engine.ColorChip.BackgroundColor).Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
+            var cachedColors = ColorUtils.ConvertColors(engine.ColorChip.HexColors, /*engine.ColorChip.MaskColor,
+                engine.ColorChip.DebugMode, */engine.ColorChip.BackgroundColor).Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
+
+            // TODO need to replace the first color with the bg?
 
             // var cachedColors = engine.ColorChip.colors;
             var displaySize = engine.GameChip.Display();

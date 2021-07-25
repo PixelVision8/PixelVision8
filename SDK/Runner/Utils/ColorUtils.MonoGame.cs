@@ -1,4 +1,6 @@
+using System;
 using Microsoft.Xna.Framework;
+using PixelVision8.Player;
 
 namespace PixelVision8.Runner
 {
@@ -13,8 +15,9 @@ namespace PixelVision8.Runner
         /// <param name="debugMode"></param>
         /// <param name="backgroundColor"></param>
         /// <returns></returns>
-        public static Color[] ConvertColors(string[] hexColors, string maskColor = "#FF00FF", bool debugMode = false, int backgroundColor = 0)
+        public static Color[] ConvertColors(string[] hexColors)//, string maskColor = Constants.MaskColor, bool debugMode = false, int backgroundColor = 1)
         {
+            
             var t = hexColors.Length;
             var colors = new Color[t];
 
@@ -22,7 +25,10 @@ namespace PixelVision8.Runner
             {
                 var colorHex = hexColors[i];
 
-                if (colorHex == maskColor && debugMode == false) colorHex = hexColors[backgroundColor];
+                // if (colorHex == maskColor && debugMode == false) colorHex = hexColors[backgroundColor];
+
+                // Make the first color match the background color
+                // if (i == 0 && debugMode == false) colorHex = hexColors[backgroundColor];
 
                 ColorData.HexToRgb(colorHex, out var r, out var g, out var b);
 
@@ -31,6 +37,31 @@ namespace PixelVision8.Runner
             }
 
             return colors;
+        }
+
+        public static Color[] ConvertColors(string[] hexColors, int bgColorId, bool debugMode = false)
+        {
+
+            var refColors = hexColors[Constants.EmptyPixel];
+
+            if(debugMode == false)
+            {
+                // Set the default color to 1 if the bg color is out of range
+                if(hexColors[bgColorId] == refColors)
+                    bgColorId = 1;
+
+                // Console.WriteLine("BG Color " + bgColorId + " " + hexColors[bgColorId] + " vs " + hexColors[0]);
+
+                // Loop through and replace all the colors matching the mask with the bg color
+                for (int i = 0; i < hexColors.Length; i++)
+                {
+                    if(hexColors[i] == refColors)
+                        hexColors[i] = hexColors[bgColorId];
+                }
+
+            }
+            
+            return ConvertColors(hexColors);
         }
         
         public static string RgbToHex(ColorData colorData)

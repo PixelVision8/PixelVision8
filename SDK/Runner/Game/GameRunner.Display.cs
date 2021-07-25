@@ -82,9 +82,9 @@ namespace PixelVision8.Runner
                 // Make sure the color palette doesn't need to rebuild itself
                 DisplayTarget.RebuildColorPalette(
                     ActiveEngine.ColorChip.HexColors, 
-                    ActiveEngine.ColorChip.BackgroundColor,
+                    ActiveEngine.ColorChip.BackgroundColor/*,
                     ActiveEngine.ColorChip.MaskColor,
-                    ActiveEngine.ColorChip.DebugMode
+                    ActiveEngine.ColorChip.DebugMode*/
                 );
                 
                 ActiveEngine.ColorChip.ResetValidation();

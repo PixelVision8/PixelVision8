@@ -18,12 +18,14 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Player;
+
 namespace PixelVision8.Runner
 {
     public class ImageParser : AbstractParser
     {
         protected IImageParser Parser;
-        protected string MaskHex = "#FF00FF";
+        protected string MaskHex = Constants.MaskColor;
 
         public ImageParser(IImageParser parser)
         {

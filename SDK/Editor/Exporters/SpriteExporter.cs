@@ -48,7 +48,7 @@ namespace PixelVision8.Editor
 
             // var colorMapChip = engine.GetChip(ColorMapParser.chipName, false) as ColorChip;
 
-            colors = ColorUtils.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.MaskColor, true).Select(c=>new ColorData(c.R, c.G, c.B)).ToArray();
+            colors = ColorUtils.ConvertColors(engine.ColorChip.HexColors)/*, engine.ColorChip.MaskColor, true)*/.Select(c=>new ColorData(c.R, c.G, c.B)).ToArray();
 
             // TODO removing the color map chip dependency when exporting moving forward
             // colors = colorMapChip == null ? engine.ColorChip.colors : colorMapChip.colors;

@@ -13,7 +13,7 @@ namespace PixelVision8.Runner
         /// <param name="debugMode"></param>
         /// <param name="backgroundColor"></param>
         /// <returns></returns>
-        public static Color[] ConvertColors(string[] hexColors, string maskColor = "#FF00FF", bool debugMode = false, int backgroundColor = 0)
+        public static Color[] ConvertColors(string[] hexColors, string maskColor = Constants.MaskColor, bool debugMode = false, int backgroundColor = 0)
         {
             var t = hexColors.Length;
             var colors = new Color[t];

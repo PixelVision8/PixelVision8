@@ -76,7 +76,8 @@ namespace PixelVision8.Player
 
             if (_clearFlag)
             {
-                Array.Copy(_clearPixels, Pixels, _display.Total);
+                Array.Clear(Pixels, 0, _display.Total);
+                // Array.Copy(_clearPixels, Pixels, _display.Total);
 
                 // Reset the clear flag for the next frame
                 _clearFlag = false;

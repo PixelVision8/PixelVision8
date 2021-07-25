@@ -57,7 +57,7 @@ namespace PixelVision8.Runner
         //     }
         // }
         
-        public void RebuildColorPalette(string[] hexColors, int bgColorId = 0, string maskColor = "#FF00FF", bool debugMode = false)
+        public void RebuildColorPalette(string[] hexColors, int bgColorId = 0, string maskColor = Constants.MaskColor, bool debugMode = false)
         {
             
             _cachedColors = ColorUtils.ConvertColors(

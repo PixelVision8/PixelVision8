@@ -50,8 +50,7 @@ namespace PixelVision8.Runner
             var colorRefs = _uniqueFontColors.ToArray();
 
             // Convert all of the pixels into color ids
-            var pixelIDs = Parser.ColorPixels.Select(c => Array.IndexOf(colorRefs, ColorUtils.RgbToHex(c)))
-                .ToArray();
+            var pixelIDs = Parser.ColorPixels.Select(c => Array.IndexOf(colorRefs, ColorUtils.RgbToHex(c))).ToArray();
 
             // Create new image
             ImageData = new ImageData(Parser.Width, Parser.Height, pixelIDs, colorRefs);

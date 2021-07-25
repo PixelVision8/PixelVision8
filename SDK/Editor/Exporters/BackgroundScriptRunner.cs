@@ -126,7 +126,7 @@ namespace PixelVision8.Editor
             }
         }
 
-        public void SetImageAsData(ImageData imageData, string maskColor = "#FF00FF")
+        public void SetImageAsData(ImageData imageData, string maskColor = Constants.MaskColor)
         {
             try
             {

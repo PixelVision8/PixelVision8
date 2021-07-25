@@ -108,8 +108,6 @@ local runnerType = "none"
 
 function Init()
 
-    -- CreateMetaSprites()
-
     if(EnableAutoRun ~= nil) then
         EnableAutoRun(false)
     end
@@ -121,7 +119,7 @@ function Init()
     playSounds = ReadBiosData("PlaySystemSounds", "True") == "True"
 
     -- Set the background an rebuild the screen buffer
-    BackgroundColor(tonumber(ReadBiosData("DefaultBackgroundColor", "5")))
+    BackgroundColor(5)
 
     if(ReadMetadata("showEjectAnimation") == "true") then
         currentAnimation = ejectAnimation

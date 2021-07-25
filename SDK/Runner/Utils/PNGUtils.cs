@@ -24,6 +24,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PixelVision8.Player;
 
 namespace PixelVision8.Runner
 {
@@ -34,7 +35,7 @@ namespace PixelVision8.Runner
         public IList<ColorData> colors;
         //        public List<Color> uniqueColors = new List<Color>();
 
-        internal Palette(string maskHex = "#FF00FF")
+        internal Palette(string maskHex = Constants.MaskColor)
         {
             // TODO this wasn't set before, make sure it still works
             this.maskHex = maskHex;

@@ -40,13 +40,13 @@ namespace PixelVision8.Player
             return Regex.Match(inputColor, "^#(?:[0-9a-fA-F]{3}){1,2}$").Success;
         }
 
-        private int _bgColor;
+        private int _bgColor = 1;
 
         private string[] _colors = Constants.DefaultColors.Split(',');
         
         private bool _debugMode;
 
-        private string _maskColor = "#FF00FF";
+        private string _maskColor = Constants.MaskColor;
 
         /// <summary>
         ///     The background color reference to use when rendering transparent in
@@ -57,11 +57,12 @@ namespace PixelVision8.Player
             get => _bgColor;
             set
             {
-                if (_bgColor == value)
+                // We make sure that the bg color is never set to a value out of the range of the color chip
+                if (_bgColor == value || value < 1 || value >= Total)
                     return;
                 
-                // We make sure that the bg color is never set to a value out of the range of the color chip
-                _bgColor = value >= Total || value < -1 ? -1 : value;
+                // Set the bg value
+                _bgColor = value;//value >= Total || value < 1 ? 1 : value;
                 
                 Invalidate();
             }
@@ -72,7 +73,8 @@ namespace PixelVision8.Player
             get => _maskColor;
             set
             {
-                if (ValidateHexColor(value)) _maskColor = value.ToUpper();
+                // if (ValidateHexColor(value))
+                UpdateColorAt(Constants.EmptyPixel, value.ToUpper());// _maskColor = value.ToUpper();
             }
         }
 
@@ -114,10 +116,13 @@ namespace PixelVision8.Player
                 
                 var oldTotal = _colors.Length;
 
+                // TODO should the mask color be the first color?
+                // _colors[0]= MaskColor;
+
                 Array.Resize(ref _colors, value);
                 if (oldTotal < value)
                     for (var i = oldTotal; i < value; i++)
-                        _colors[i] = MaskColor;
+                        _colors[i] = _colors[Constants.EmptyPixel]; // TODO this was set to the mask color before
 
                 Invalidate();
             }
@@ -184,7 +189,7 @@ namespace PixelVision8.Player
         protected override void Configure()
         {
             Player.ColorChip = this;
-            BackgroundColor = -1;
+            BackgroundColor = 1;
         }
     }
 

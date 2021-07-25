@@ -120,23 +120,25 @@ namespace PixelVision8.Runner
             }
         }
 
-        public void RebuildColorPalette(string[] hexColors, int bgColorId = 0, string maskColor = "#FF00FF", bool debugMode = false)
+        public void RebuildColorPalette(string[] hexColors, int bgColorId = 1, string maskColor = PixelVision8.Player.Constants.MaskColor, bool debugMode = false)
         {
             _cachedColors = ColorUtils.ConvertColors(
                 hexColors, 
-                maskColor, 
-                debugMode,
+                /*maskColor, 
+                debugMode,*/
                 bgColorId
             );
+
+            // _cachedColors[0] = _cachedColors[bgColorId];
 
             _colorPalette = new Texture2D(_graphicManager.GraphicsDevice, _paletteWidth,
                 (int) Math.Ceiling(_cachedColors.Length / (double) _paletteWidth));
 
             // We need at least 256 colors for the shader to work so pad the array
-            if (_cachedColors.Length < 256)
-            {
-                Array.Resize(ref _cachedColors, 256);
-            }
+            // if (_cachedColors.Length < 256)
+            // {
+            //     Array.Resize(ref _cachedColors, 256);
+            // }
 
             _colorPalette.SetData(_cachedColors);
             

@@ -20,6 +20,7 @@
 
 // using Microsoft.Xna.Framework;
 using PixelVision8.Runner;
+using PixelVision8.Player;
 
 namespace PixelVision8.Editor
 {
@@ -56,7 +57,7 @@ namespace PixelVision8.Editor
             {
                 var refID = pixelData[i];
 
-                if (refID > -1 && refID < total)
+                if (refID != Constants.EmptyPixel && refID < total)
                     colors[i] = paletteColors[refID];
                 else
                     colors[i] = maskColor;

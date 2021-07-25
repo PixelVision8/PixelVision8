@@ -40,7 +40,7 @@ function Init()
   end
 
   -- Set the background an rebuild the screen buffer
-  BackgroundColor(tonumber(ReadBiosData("DefaultBackgroundColor", "5")))
+  BackgroundColor(5)
 
   local message = ReadMetadata("errorMessage")
 

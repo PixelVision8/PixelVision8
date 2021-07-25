@@ -6,13 +6,14 @@ namespace PixelVision8.Player
         public const int SpriteSize = 8;
         
         // The color index used to represent transparency
-        public const int EmptyPixel = -1;
+        public const int EmptyPixel = 0;
         
         // The default mask color
-        public const string MaskColor = "#FF00FF";
+        public const string MaskColor = "#00FF00";
         
         // List of default Pixel Vision 8 colors
         public const string DefaultColors = 
+            "#FF00FF," +
             "#2D1B2E," +
             "#218A91," +
             "#3CC2FA," +

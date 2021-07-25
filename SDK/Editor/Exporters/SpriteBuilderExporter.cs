@@ -162,7 +162,7 @@ namespace PixelVision8.Editor
                 {
                     // Test to make sure the sprite isn't empty
                     var total = sprite.ids.Length;
-                    var emptyIDs = -1;
+                    var emptyIDs = Constants.EmptyPixel;
                     for (var i = 0; i < total; i++)
                         if (sprite.ids[i] == -1)
                             emptyIDs++;

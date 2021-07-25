@@ -23,12 +23,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using PixelVisionRunner.Utils;
+using PixelVision8.Player;
 
 namespace PixelVision8.Runner
 {
     public class PNGReader : IImageParser
     {
-        public string MaskHex { get; private set; } = "#FF00FF";
+        public string MaskHex { get; private set; } = Constants.MaskColor;
 
         protected List<ColorData> _colorPalette;
         protected ColorData[] _colors;
@@ -308,7 +309,7 @@ namespace PixelVision8.Runner
                         var r = defilteredScanline[index2]; // / (float)byte.MaxValue;
                         var g = defilteredScanline[index2 + bytesPerSample]; // / (float)byte.MaxValue;
                         var b = defilteredScanline[index2 + 2 * bytesPerSample]; // / (float)byte.MaxValue;
-                        var alpha = defilteredScanline[index2 + 3 * bytesPerSample]; // / (float)byte.MaxValue;
+                        // var alpha = defilteredScanline[index2 + 3 * bytesPerSample]; // / (float)byte.MaxValue;
                         //                        data[y * _width + index1] = new Color(r, g, b, alpha);
                         //                        pixels[y * _width + index1] = new ColorData(r, g, b){a=alpha};
 
@@ -316,7 +317,7 @@ namespace PixelVision8.Runner
                         //                        var colorVector = tmpColor.ToVector4();
                         //                        
 
-                        var color = alpha < 1 ? new ColorData(maskHex) : new ColorData(r, g, b);
+                        var color = new ColorData(r, g, b);//alpha < 1 ? new ColorData(maskHex) : new ColorData(r, g, b);
 
                         //                        var color = new ColorData(r, g, b);
                         _colors[y * Width + index1] = color;
