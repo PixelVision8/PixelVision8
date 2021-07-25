@@ -70,7 +70,7 @@ namespace PixelVision8.Player
 
         public string MaskColor
         {
-            get => _maskColor;
+            get => _maskColor; // TODO this should return the first color
             set
             {
                 // if (ValidateHexColor(value))

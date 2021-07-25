@@ -38,10 +38,10 @@ namespace PixelVision8.Runner
         {
             
             _cachedColors = ColorUtils.ConvertColors(
-                hexColors/*, 
-                maskColor, 
-                debugMode,
-                bgColorId*/
+                hexColors, 
+                /*maskColor, 
+                debugMode,*/
+                bgColorId
             );
 
             _defaultColor = bgColorId;

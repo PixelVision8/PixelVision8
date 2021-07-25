@@ -135,10 +135,18 @@ namespace PixelVision8.Runner
                 (int) Math.Ceiling(_cachedColors.Length / (double) _paletteWidth));
 
             // We need at least 256 colors for the shader to work so pad the array
-            // if (_cachedColors.Length < 256)
-            // {
-            //     Array.Resize(ref _cachedColors, 256);
-            // }
+            if (_cachedColors.Length < 256)
+            {
+                var oldTotal = _cachedColors.Length;
+
+                Array.Resize(ref _cachedColors, 256);
+
+                // Fill in any extra colors with the mask color
+                for (int i = oldTotal; i < _cachedColors.Length; i++)
+                {
+                    _cachedColors[i] = _cachedColors[PixelVision8.Player.Constants.EmptyPixel];
+                }
+            }
 
             _colorPalette.SetData(_cachedColors);
             

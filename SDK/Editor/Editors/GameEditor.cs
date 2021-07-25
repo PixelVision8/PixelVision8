@@ -511,10 +511,10 @@ namespace PixelVision8.Editor
         //
         //     return new Point(displayChip.OverscanX, displayChip.OverscanY);
         // }
-        public void RedrawDisplay()
-        {
-            throw new NotImplementedException();
-        }
+        // public void RedrawDisplay()
+        // {
+        //     throw new NotImplementedException();
+        // }
 
         public Point ScrollPosition(int? x = null, int? y = null)
         {
@@ -531,30 +531,30 @@ namespace PixelVision8.Editor
             return _gameChip.ReadSaveData(key, defaultValue);
         }
 
-        public bool Key(Keys key, InputState state = InputState.Down)
-        {
-            throw new NotImplementedException();
-        }
+        // public bool Key(Keys key, InputState state = InputState.Down)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
-        public bool MouseButton(int button, InputState state = InputState.Down)
-        {
-            throw new NotImplementedException();
-        }
+        // public bool MouseButton(int button, InputState state = InputState.Down)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
-        public bool Button(Buttons button, InputState state = InputState.Down, int controllerID = 0)
-        {
-            throw new NotImplementedException();
-        }
+        // public bool Button(Buttons button, InputState state = InputState.Down, int controllerID = 0)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
-        public Point MousePosition()
-        {
-            throw new NotImplementedException();
-        }
+        // public Point MousePosition()
+        // {
+        //     throw new NotImplementedException();
+        // }
 
-        public string InputString()
-        {
-            throw new NotImplementedException();
-        }
+        // public string InputString()
+        // {
+        //     throw new NotImplementedException();
+        // }
 
 
         /// <summary>
@@ -757,81 +757,81 @@ namespace PixelVision8.Editor
         /// <param name="scaleX"></param>
         /// <param name="scaleY"></param>
         /// <param name="colorOffset"></param>
-        public void FloodFillTilemap(int value, int column, int row, int mode = 0, int scaleX = 1, int scaleY = 1,
-            int colorOffset = -1)
-        {
-            var canvas = NewCanvas(tilemapChip.Columns, tilemapChip.Rows);
+        // public void FloodFillTilemap(int value, int column, int row, int mode = 0, int scaleX = 1, int scaleY = 1,
+        //     int colorOffset = -1)
+        // {
+        //     var canvas = NewCanvas(tilemapChip.Columns, tilemapChip.Rows);
 
-            var tiles = tilemapChip.tiles;
+        //     var tiles = tilemapChip.tiles;
 
-            var total = canvas.Pixels.Length;
+        //     var total = canvas.Pixels.Length;
 
-            // Loop through all the tiles and build the pixels
-            for (var i = 0; i < total; i++) canvas.Pixels[i] = mode == 0 ? tiles[i].SpriteId : tiles[i].Flag;
+        //     // Loop through all the tiles and build the pixels
+        //     for (var i = 0; i < total; i++) canvas.Pixels[i] = mode == 0 ? tiles[i].SpriteId : tiles[i].Flag;
 
-            if (mode == 0)
-            {
-                // Build the pattern
-                var size = scaleX * scaleY;
-                var pattern = new int[size];
-                var spriteCols = 16;
+        //     if (mode == 0)
+        //     {
+        //         // Build the pattern
+        //         var size = scaleX * scaleY;
+        //         var pattern = new int[size];
+        //         var spriteCols = 16;
 
-                var spritePos = value == -1 ? new Point(-1, -1) : _gameChip.CalculatePosition(value, spriteCols);
+        //         var spritePos = value == -1 ? new Point(-1, -1) : _gameChip.CalculatePosition(value, spriteCols);
 
-                for (var i = 0; i < size; i++)
-                {
-                    var offset = _gameChip.CalculatePosition(i, scaleX);
+        //         for (var i = 0; i < size; i++)
+        //         {
+        //             var offset = _gameChip.CalculatePosition(i, scaleX);
 
-                    // TODO this is not right
-                    offset.X += spritePos.X;
-                    offset.Y += spritePos.Y;
-                    pattern[i] = value == -1
-                        ? value
-                        : (_gameChip.CalculateIndex(offset.X, offset.Y, spriteCols) + 1) * -100;
-                }
+        //             // TODO this is not right
+        //             offset.X += spritePos.X;
+        //             offset.Y += spritePos.Y;
+        //             pattern[i] = value == -1
+        //                 ? value
+        //                 : (_gameChip.CalculateIndex(offset.X, offset.Y, spriteCols) + 1) * -100;
+        //         }
 
-                canvas.SetPattern(pattern, scaleX, scaleY);
-            }
-            else if (mode == 1)
-            {
-                canvas.SetPattern(new[] {value}, 1, 1);
-            }
+        //         canvas.SetPattern(pattern, scaleX, scaleY);
+        //     }
+        //     else if (mode == 1)
+        //     {
+        //         canvas.SetPattern(new[] {value}, 1, 1);
+        //     }
 
-            canvas.FloodFill(column, row);
+        //     canvas.FloodFill(column, row);
 
-            // Copy the pixel data back to the tilemap
-            for (var i = 0; i < total; i++)
-                if (mode == 0)
-                {
-                    var tile = tiles[i];
+        //     // Copy the pixel data back to the tilemap
+        //     for (var i = 0; i < total; i++)
+        //         if (mode == 0)
+        //         {
+        //             var tile = tiles[i];
 
-                    if (canvas.Pixels[i] < -1)
-                    {
-                        var pixel = canvas.Pixels[i] / -100 - 1;
+        //             if (canvas.Pixels[i] < -1)
+        //             {
+        //                 var pixel = canvas.Pixels[i] / -100 - 1;
 
-                        tile.SpriteId = pixel;
+        //                 tile.SpriteId = pixel;
 
-                        if (colorOffset > -1) tile.ColorOffset = colorOffset;
-                    }
-                }
-                else if (mode == 1)
-                {
-                    tiles[i].Flag = unchecked((byte) canvas.Pixels[i]);
-                }
+        //                 if (colorOffset > -1) tile.ColorOffset = colorOffset;
+        //             }
+        //         }
+        //         else if (mode == 1)
+        //         {
+        //             tiles[i].Flag = unchecked((byte) canvas.Pixels[i]);
+        //         }
 
-            tilemapChip.Invalidate();
-        }
+        //     tilemapChip.Invalidate();
+        // }
 
 
-        public int[] ConvertTextToSprites(string text, string fontName = "default")
-        {
-            throw new NotImplementedException();
-        }
+        // public int[] ConvertTextToSprites(string text, string fontName = "default")
+        // {
+        //     throw new NotImplementedException();
+        // }
 
-        public int[] ConvertCharacterToPixelData(char character, string fontName)
-        {
-            throw new NotImplementedException();
-        }
+        // public int[] ConvertCharacterToPixelData(char character, string fontName)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
         /// <summary>
         ///     Exports a song to a wav file.
@@ -1112,73 +1112,73 @@ namespace PixelVision8.Editor
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public bool LoadFont(string path)
-        {
-            // Convert to a system path
-            var filePath = WorkspacePath.Parse(path);
+        // public bool LoadFont(string path)
+        // {
+        //     // Convert to a system path
+        //     var filePath = WorkspacePath.Parse(path);
 
-            // If the file doesn't exist, return false.
-            if (!workspace.Exists(filePath)) return false;
+        //     // If the file doesn't exist, return false.
+        //     if (!workspace.Exists(filePath)) return false;
 
-            byte[] imageBytes = null;
+        //     byte[] imageBytes = null;
 
-            try
-            {
-                // Read bytes from image file
-                using (var memoryStream = new MemoryStream())
-                {
-                    workspace.OpenFile(filePath, FileAccess.Read).CopyTo(memoryStream);
+        //     try
+        //     {
+        //         // Read bytes from image file
+        //         using (var memoryStream = new MemoryStream())
+        //         {
+        //             workspace.OpenFile(filePath, FileAccess.Read).CopyTo(memoryStream);
 
-                    imageBytes = memoryStream.ToArray();
-                }
-            }
-            catch
-            {
-                runner.DisplayWarning("Unable to read image file.");
-            }
+        //             imageBytes = memoryStream.ToArray();
+        //         }
+        //     }
+        //     catch
+        //     {
+        //         runner.DisplayWarning("Unable to read image file.");
+        //     }
 
-            try
-            {
-                // We only need a few chips to make this work
-                string[] chips =
-                {
-                    typeof(ColorChip).FullName,
-                    typeof(SpriteChip).FullName,
-                    typeof(FontChip).FullName,
-                    typeof(TilemapChip).FullName,
-                    typeof(DisplayChip).FullName,
-                    typeof(GameChip).FullName
-                };
+        //     try
+        //     {
+        //         // We only need a few chips to make this work
+        //         string[] chips =
+        //         {
+        //             typeof(ColorChip).FullName,
+        //             typeof(SpriteChip).FullName,
+        //             typeof(FontChip).FullName,
+        //             typeof(TilemapChip).FullName,
+        //             typeof(DisplayChip).FullName,
+        //             typeof(GameChip).FullName
+        //         };
 
-                targetGame = new PixelVision(chips, "GameEditor")
-                {
-                    ServiceLocator = serviceManager,
-                    FontChip = {Pages = 1},
-                    Name = path
-                };
+        //         targetGame = new PixelVision(chips, "GameEditor")
+        //         {
+        //             ServiceLocator = serviceManager,
+        //             FontChip = {Pages = 1},
+        //             Name = path
+        //         };
 
-                var pngReader = new PNGReader(imageBytes);
-                // { FileName = filePath.EntityName };
+        //         var pngReader = new PNGReader(imageBytes);
+        //         // { FileName = filePath.EntityName };
 
-                var loadService = runner.loadService;
+        //         var loadService = runner.loadService;
 
-                loadService.Reset();
+        //         loadService.Reset();
 
-                loadService.targetEngine = targetGame;
+        //         loadService.targetEngine = targetGame;
 
-                loadService.AddParser(new FontParser("", pngReader, targetGame.ColorChip, targetGame.FontChip));
+        //         loadService.AddParser(new FontParser("", pngReader, targetGame.ColorChip, targetGame.FontChip));
 
-                loadService.LoadAll();
-            }
-            catch
-            {
-                return false;
-            }
+        //         loadService.LoadAll();
+        //     }
+        //     catch
+        //     {
+        //         return false;
+        //     }
 
-            Reset();
+        //     Reset();
 
-            return true;
-        }
+        //     return true;
+        // }
 
         /// <summary>
         ///     Change a font's sprite data
@@ -1186,72 +1186,72 @@ namespace PixelVision8.Editor
         /// <param name="id"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public int[] FontSprite(int id, int[] data = null)
-        {
-            if (data != null)
-            {
-                fontChip.UpdateSpriteAt(id, data);
+        // public int[] FontSprite(int id, int[] data = null)
+        // {
+        //     if (data != null)
+        //     {
+        //         fontChip.UpdateSpriteAt(id, data);
 
-                return data;
-            }
+        //         return data;
+        //     }
 
-            var tmpSpriteData = new int[64];
+        //     var tmpSpriteData = new int[64];
 
-            fontChip.ReadSpriteAt(id, ref tmpSpriteData);
+        //     fontChip.ReadSpriteAt(id, ref tmpSpriteData);
 
-            return tmpSpriteData;
-        }
+        //     return tmpSpriteData;
+        // }
 
         /// <summary>
         ///     Save a font
         /// </summary>
         /// <param name="fontName"></param>
         /// <param name="oldName"></param>
-        public string SaveFont(string fontName)
-        {
-            var engineName = targetGame.Name;
+        // public string SaveFont(string fontName)
+        // {
+        //     var engineName = targetGame.Name;
 
-            var oldName = fontChip.Fonts.Keys.First();
+        //     var oldName = fontChip.Fonts.Keys.First();
 
-            var parentFilePath = WorkspacePath.Parse(engineName).ParentPath;
+        //     var parentFilePath = WorkspacePath.Parse(engineName).ParentPath;
 
-            var fontPath = parentFilePath.AppendFile(fontName + ".font.png");
+        //     var fontPath = parentFilePath.AppendFile(fontName + ".font.png");
 
-            if (fontName != oldName)
-            {
-                var oldPath = parentFilePath.AppendFile(oldName + ".font.png");
+        //     if (fontName != oldName)
+        //     {
+        //         var oldPath = parentFilePath.AppendFile(oldName + ".font.png");
 
-                if (workspace.Exists(oldPath)) workspace.Delete(oldPath);
+        //         if (workspace.Exists(oldPath)) workspace.Delete(oldPath);
 
-                var value = fontChip.Fonts[oldName];
-                fontChip.Fonts.Remove(oldName);
+        //         var value = fontChip.Fonts[oldName];
+        //         fontChip.Fonts.Remove(oldName);
 
-                fontPath = workspace.UniqueFilePath(fontPath);
+        //         fontPath = workspace.UniqueFilePath(fontPath);
 
-                fontName = fontPath.EntityName.Split('.')[0];
+        //         fontName = fontPath.EntityName.Split('.')[0];
 
-                fontChip.Fonts[fontName] = value;
-            }
+        //         fontChip.Fonts[fontName] = value;
+        //     }
 
-            //            var fontPath = workspace.UniqueFilePath(parentFilePath.AppendFile(fontName + ".font.png"));
+        //     //            var fontPath = workspace.UniqueFilePath(parentFilePath.AppendFile(fontName + ".font.png"));
 
-            var pngWriter = new PNGWriter();
+        //     var pngWriter = new PNGWriter();
 
-            var exporter = new FontExporter(fontPath.EntityName, targetGame, pngWriter);
-            exporter.CalculateSteps();
+        //     var exporter = new FontExporter(fontPath.EntityName, targetGame, pngWriter);
+        //     exporter.CalculateSteps();
 
-            while (exporter.Completed == false) exporter.NextStep();
+        //     while (exporter.Completed == false) exporter.NextStep();
 
-            var files = new Dictionary<string, byte[]>
-            {
-                {fontPath.Path, exporter.Bytes}
-            };
+        //     var files = new Dictionary<string, byte[]>
+        //     {
+        //         {fontPath.Path, exporter.Bytes}
+        //     };
 
-            workspace.SaveExporterFiles(files);
+        //     workspace.SaveExporterFiles(files);
 
-            // Return just the name of the font without the extension
-            return fontPath.EntityName;
-        }
+        //     // Return just the name of the font without the extension
+        //     return fontPath.EntityName;
+        // }
 
         public string ReadMetadata(string key, string defaultValue = "")
         {
@@ -1295,11 +1295,11 @@ namespace PixelVision8.Editor
 
         #region Colors
 
-        /// <summary>
-        ///     Convert sprites in memory to palette colors, clamping the total colors in each sprite to 16
-        /// </summary>
-        public void ReindexSprites()
-        {
+        // /// <summary>
+        // ///     Convert sprites in memory to palette colors, clamping the total colors in each sprite to 16
+        // /// </summary>
+        // public void ReindexSprites()
+        // {
             // TODO each sprite needs to be clamped between the max colors per sprite
 
             // var colorMap = new List<int>();
@@ -1391,17 +1391,17 @@ namespace PixelVision8.Editor
 
             // Set the pixels back into the sprite texture
             //            spriteChip.texture.SetPixels(rawSpriteData);
-        }
+        // }
 
         /// <summary>
         ///     Special method to resize a tool's memory to allow it to store colors for the tool
         ///     and the game itself. Should make the color chip memory store 512 colors
         /// </summary>
-        public void ResizeToolColorMemory()
-        {
-            runner.ActiveEngine.ColorChip.Total = 512;
-            runner.ActiveEngine.ColorChip.Invalidate();
-        }
+        // public void ResizeToolColorMemory()
+        // {
+        //     runner.ActiveEngine.ColorChip.Total = 512;
+        //     runner.ActiveEngine.ColorChip.Invalidate();
+        // }
 
         /// <summary>
         ///     Change a game's mask color
@@ -1980,10 +1980,10 @@ namespace PixelVision8.Editor
         /// <param name="flipH"></param>
         /// <param name="flipV"></param>
         /// <returns></returns>
-        public int[] ReadGameSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
-        {
-            return ReadSpriteData(spriteChip, id, scaleX, scaleY, flipH, flipV);
-        }
+        // public int[] ReadGameSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
+        // {
+        //     return ReadSpriteData(spriteChip, id, scaleX, scaleY, flipH, flipV);
+        // }
 
         /// <summary>
         ///     Read tool sprite pixel data directly from the sprite chip's memory
@@ -1994,32 +1994,32 @@ namespace PixelVision8.Editor
         /// <param name="flipH"></param>
         /// <param name="flipV"></param>
         /// <returns></returns>
-        public int[] ReadToolSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
-        {
-            return ReadSpriteData(runner.ActiveEngine.SpriteChip, id, scaleX, scaleY, flipH, flipV);
-        }
+        // public int[] ReadToolSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
+        // {
+        //     return ReadSpriteData(runner.ActiveEngine.SpriteChip, id, scaleX, scaleY, flipH, flipV);
+        // }
 
-        private int[] ReadSpriteData(SpriteChip spriteChip, int id, int scaleX = 1, int scaleY = 1, bool flipH = false,
-            bool flipV = false)
-        {
-            //            var scale = 1;
+        // private int[] ReadSpriteData(SpriteChip spriteChip, int id, int scaleX = 1, int scaleY = 1, bool flipH = false,
+        //     bool flipV = false)
+        // {
+        //     //            var scale = 1;
 
-            var blockSizeX = scaleX * Constants.SpriteSize;
-            var blockSizeY = scaleY * Constants.SpriteSize;
+        //     var blockSizeX = scaleX * Constants.SpriteSize;
+        //     var blockSizeY = scaleY * Constants.SpriteSize;
 
-            // var pixelData = new int[blockSizeX * blockSizeY];
+        //     // var pixelData = new int[blockSizeX * blockSizeY];
 
-            var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / Constants.SpriteSize);
+        //     var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / Constants.SpriteSize);
 
-            var pixelData = Utilities.GetPixels(spriteChip.PixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
-            // spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
+        //     var pixelData = Utilities.GetPixels(spriteChip.PixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
+        //     // spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
 
-            //            var pixelData = Sprite(id);
+        //     //            var pixelData = Sprite(id);
 
-            if (flipH || flipV) Utilities.FlipPixelData(ref pixelData, blockSizeX, blockSizeY, flipH, flipV);
+        //     if (flipH || flipV) Utilities.FlipPixelData(ref pixelData, blockSizeX, blockSizeY, flipH, flipV);
 
-            return pixelData;
-        }
+        //     return pixelData;
+        // }
 
         /// <summary>
         ///     Write sprite data directly into the Sprite Chip's memory
@@ -2027,47 +2027,47 @@ namespace PixelVision8.Editor
         /// <param name="id"></param>
         /// <param name="flipH"></param>
         /// <param name="flipV"></param>
-        public void WriteSpriteData(int id, int[] pixelData, int scaleX = 1, int scaleY = 1)
-        {
-            var blockSizeX = scaleX * Constants.SpriteSize;
-            var blockSizeY = scaleY * Constants.SpriteSize;
+        // public void WriteSpriteData(int id, int[] pixelData, int scaleX = 1, int scaleY = 1)
+        // {
+        //     var blockSizeX = scaleX * Constants.SpriteSize;
+        //     var blockSizeY = scaleY * Constants.SpriteSize;
 
-            var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / Constants.SpriteSize);
+        //     var pos = _gameChip.CalculatePosition(id, spriteChip.TextureWidth / Constants.SpriteSize);
 
-            //            var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
+        //     //            var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
 
-            //            Console.WriteLine("Write sprite " + pos.X +" "+pos.Y);
-            // spriteChip.texture.SetPixels(pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY, pixelData);
-            Utilities.SetPixels(pixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY, spriteChip.PixelData);
+        //     //            Console.WriteLine("Write sprite " + pos.X +" "+pos.Y);
+        //     // spriteChip.texture.SetPixels(pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY, pixelData);
+        //     Utilities.SetPixels(pixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY, spriteChip.PixelData);
 
-            // TODO need to invalidate the cached sprite data
+        //     // TODO need to invalidate the cached sprite data
 
 
-            //            spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSize, blockSize);
-            //            
-            ////            var pixelData = Sprite(id);
-            //
-            //            if (flipH || flipV)
-            //                SpriteChipUtil.FlipSpriteData(ref pixelData, blockSize, blockSize, flipH, flipV);
+        //     //            spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSize, blockSize);
+        //     //            
+        //     ////            var pixelData = Sprite(id);
+        //     //
+        //     //            if (flipH || flipV)
+        //     //                SpriteChipUtil.FlipSpriteData(ref pixelData, blockSize, blockSize, flipH, flipV);
 
-            // TODO need to invalidate all the sprites that are within the bounds of the update
+        //     // TODO need to invalidate all the sprites that are within the bounds of the update
 
-            // TODO need to make sure the sprite data is flipped correctly before being saved
-        }
+        //     // TODO need to make sure the sprite data is flipped correctly before being saved
+        // }
 
         /// <summary>
         ///     Run the sprite builder
         /// </summary>
         /// <returns></returns>
-        public int RunSpriteBuilder(string path)
-        {
-            // Make sure we are editing a game
-            if (targetGame == null) return -1;
+        // public int RunSpriteBuilder(string path)
+        // {
+        //     // Make sure we are editing a game
+        //     if (targetGame == null) return -1;
 
 
-            // Generate the sprites
-            return workspace.GenerateSprites(path, targetGame);
-        }
+        //     // Generate the sprites
+        //     return workspace.GenerateSprites(path, targetGame);
+        // }
 
         #endregion
 
@@ -2079,10 +2079,10 @@ namespace PixelVision8.Editor
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        public Canvas NewCanvas(int width, int height)
-        {
-            return new Canvas(width, height, _gameChip);
-        }
+        // public Canvas NewCanvas(int width, int height)
+        // {
+        //     return new Canvas(width, height, _gameChip);
+        // }
 
         // private Canvas tmpCanvas;
         // public bool RenderingMap { get; private set; }
@@ -2294,19 +2294,19 @@ namespace PixelVision8.Editor
         ///     Get the tool's colors from the active engine.
         /// </summary>
         /// <returns></returns>
-        public string[] ToolColors()
-        {
-            return runner.ActiveEngine.ColorChip.HexColors;
-        }
+        // public string[] ToolColors()
+        // {
+        //     return runner.ActiveEngine.ColorChip.HexColors;
+        // }
 
         /// <summary>
         ///     Resize the tool's color pages in the active engine
         /// </summary>
         /// <param name="total"></param>
-        public void ToolRebuildColorPages(int total)
-        {
-            runner.ActiveEngine.ColorChip.Total = total;
-        }
+        // public void ToolRebuildColorPages(int total)
+        // {
+        //     runner.ActiveEngine.ColorChip.Total = total;
+        // }
 
         /// <summary>
         ///     Export a SFX as a wav
@@ -2339,14 +2339,14 @@ namespace PixelVision8.Editor
 
         // TODO adding some extra APIs to work directly with the chip but maybe these should be opened up?
 
-        public int FindSprite(int[] pixels, bool emptyCheck)
-        {
-            return spriteChip.FindSprite(pixels, emptyCheck);
-        }
+        // public int FindSprite(int[] pixels, bool emptyCheck)
+        // {
+        //     return spriteChip.FindSprite(pixels, emptyCheck);
+        // }
 
-        public bool IsSpriteEmpty(int index)
-        {
-            return spriteChip.IsEmptyAt(index);
-        }
+        // public bool IsSpriteEmpty(int index)
+        // {
+        //     return spriteChip.IsEmptyAt(index);
+        // }
     }
 }
