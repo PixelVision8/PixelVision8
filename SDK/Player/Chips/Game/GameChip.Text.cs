@@ -135,12 +135,12 @@ namespace PixelVision8.Player
             var offset = Constants.SpriteSize + spacing;
 
             // Save the current sprite mode
-            var oldSpriteWidth = SpriteWidth;
-            var oldSpriteHeight = SpriteHeight;
+            // var oldSpriteWidth = SpriteWidth;
+            // var oldSpriteHeight = SpriteHeight;
 
             // Change the sprite width and height to the default value
-            SpriteWidth = Constants.SpriteSize;
-            SpriteHeight = Constants.SpriteSize;
+            // SpriteWidth = Constants.SpriteSize;
+            // SpriteHeight = Constants.SpriteSize;
 
             for (var j = 0; j < total; j++)
             {
@@ -163,8 +163,8 @@ namespace PixelVision8.Player
             }
 
             // Restore the previous sprite width and height
-            SpriteWidth = oldSpriteWidth;
-            SpriteHeight = oldSpriteHeight;
+            // SpriteWidth = oldSpriteWidth;
+            // SpriteHeight = oldSpriteHeight;
 
         }
     }

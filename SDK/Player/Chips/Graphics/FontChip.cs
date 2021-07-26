@@ -44,7 +44,7 @@ namespace PixelVision8.Player
             Player.FontChip = this;
 
             Pages = 2;
-            ColorsPerSprite = 2;
+            // ColorsPerSprite = 2;
             // Unique = true;
         }
 

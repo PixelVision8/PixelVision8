@@ -33,6 +33,11 @@ namespace PixelVision8.Player
 
             var newRequest = getRequest;
 
+            for (int i = 0; i < newPixels.Length; i++)
+            {
+                newPixels[i] = Constants.FirstColorId + newPixels[i];
+            }
+
             newRequest.Action = SetPatternAction;
 
             if (newRequest.PixelData.Width != newWidth || newRequest.PixelData.Height != newHeight)

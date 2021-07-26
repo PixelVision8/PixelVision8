@@ -134,17 +134,17 @@ namespace PixelVision8.Player
             }
         }
 
-        private void SetPatternPixel(PixelData<int> currentTexture, int x, int y, int replacementColor)
-        {
-            // Console.WriteLine("{0},{1}", x, y);
-            replacementColor = GetPixel(pattern, x % pattern.Width, y % pattern.Height);
+        // private void SetPatternPixel(PixelData<int> currentTexture, int x, int y, int replacementColor)
+        // {
+        //     // Console.WriteLine("{0},{1}", x, y);
+        //     replacementColor = GetPixel(pattern, x % pattern.Width, y % pattern.Height);
             
-            SetPixel(currentTexture, x, y, replacementColor);
-        }
+        //     SetPixel(currentTexture, x, y, replacementColor);
+        // }
 
-        private static bool ColorMatch(int a, int b)
-        {
-            return a == b;
-        }
+        // private static bool ColorMatch(int a, int b)
+        // {
+        //     return a == b;
+        // }
     }
 }

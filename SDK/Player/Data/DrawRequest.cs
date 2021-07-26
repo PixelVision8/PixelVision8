@@ -41,6 +41,8 @@ namespace PixelVision8.Player
         public int X;
         public int Y;
 
+        public bool IgnoreTransparent;
+
         public byte Priority;
 
         public PixelData<int> PixelData { get; private set; }
@@ -53,6 +55,7 @@ namespace PixelVision8.Player
             SampleRect.Y = srcY;
             SampleRect.Width = blockWidth;
             SampleRect.Height = blockHeight;
+
         }
 
         public void SampleFrom(int[] pixels, int srcX, int srcY, int blockWidth, int blockHeight)
@@ -66,6 +69,7 @@ namespace PixelVision8.Player
             SampleRect.Y = srcY;
             SampleRect.Width = blockWidth;
             SampleRect.Height = blockHeight;
+
         }
     }
 }

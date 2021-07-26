@@ -73,7 +73,7 @@ namespace PixelVision8.Player
                 pixels = GetPixels(0, 0, sampleWidth, sampleHeight);
             }
 
-            Utilities.Resize(defaultLayer, newWidth, newHeight, Constants.EmptyPixel);
+            Utilities.Resize(defaultLayer, newWidth, newHeight, Constants.FirstColorId);
 
             if(savePixels && pixels != null)
             {
@@ -131,15 +131,6 @@ namespace PixelVision8.Player
             pixelData[x + pixelData.Width * y] = color;
         }
 
-
-        // public void CopyPixels(ref int[] data, int x, int y, int blockWidth, int blockHeight)
-        // {
-        //     // Flatten the canvas
-        //     Draw();
-        //
-        //     Utilities.CopyPixels(defaultLayer, x, y, blockWidth, blockHeight, ref data);
-        // }
-
         public void SetPixels(int x, int y, int blockWidth, int blockHeight, int[] pixels)
         {
             // Flatten the canvas
@@ -159,8 +150,7 @@ namespace PixelVision8.Player
         /// <param name="maskColorID"></param>
         /// <param name="viewport"></param>
         public void DrawPixels(int x = 0, int y = 0, DrawMode drawMode = DrawMode.TilemapCache, float scale = 1f,
-            int maskColor = -1, int maskColorID = -1, int colorOffset = 0, Rectangle? viewport = null,
-            int[] isolateColors = null)
+            int maskColor = Constants.EmptyPixel, int maskColorID = Constants.EmptyPixel, int colorOffset = 0, Rectangle? viewport = null)
         {
             // This only works when the canvas has a reference to the gameChip
             if (gameChip == null) return;
@@ -184,22 +174,6 @@ namespace PixelVision8.Player
 
             var srcPixels = GetPixels(tmpX, tmpY, tmpW, tmpH);
 
-            // Loop through and replace mask colors
-            for (int i = 0; i < srcPixels.Length; i++)
-            {
-                // Check to see if colors should be isolated
-                if (isolateColors != null && Array.IndexOf(isolateColors, srcPixels[i]) == -1)
-                {
-                    srcPixels[i] = -1;
-                }
-
-                // Replace any mask color with the supplied mask color
-                if (srcPixels[i] == maskColor)
-                {
-                    srcPixels[i] = maskColorID;
-                }
-            }
-
             // Covert the width and height into ints based on scale
             var newWidth = (int) (tmpW * scale);
             var newHeight = (int) (tmpH * scale);
@@ -217,7 +191,13 @@ namespace PixelVision8.Player
             return Utilities.GetPixels(defaultLayer);
         }
 
-        public void Clear(int colorRef = -1, int x = 0, int y = 0, int? width = null, int? height = null)
+        public void Clear()
+        {
+            Utilities.Clear( defaultLayer );
+            ResetValidation();
+        }
+
+        public void Clear(int colorRef = Constants.EmptyPixel, int x = 0, int y = 0, int? width = null, int? height = null)
         {
             
             if (width.HasValue || height.HasValue)
@@ -227,9 +207,12 @@ namespace PixelVision8.Player
 
                 var tmpPixels = new int[tmpWidth * tmpHeight];
 
-                for (int i = 0; i < tmpPixels.Length; i++)
+                if(colorRef > 0)
                 {
-                    tmpPixels[i] = colorRef;
+                    for (int i = 0; i < tmpPixels.Length; i++)
+                    {
+                        tmpPixels[i] = colorRef;
+                    }
                 }
 
                 SetPixels(x, y, tmpWidth, tmpHeight, tmpPixels);

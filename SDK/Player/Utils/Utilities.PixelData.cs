@@ -114,10 +114,16 @@ namespace PixelVision8.Player
                 row++;
             }
         }
+
+        public static void Clear<T>(PixelData<T> pixelData) where T : IComparable
+        {
+            Array.Clear(pixelData.Pixels, 0, pixelData.Total);
+        }
         
+        // TODO change this to Fill
         public static void Clear<T>(PixelData<T> pixelData, T colorRef) where T : IComparable
         {
-            for (var i = pixelData.Total - 1; i > Constants.EmptyPixel; i--) pixelData[i] = colorRef;
+            for (int i = 0; i < pixelData.Total; i++) pixelData[i] = colorRef;
         }
         
         public static void MergePixels<T>(
@@ -157,7 +163,7 @@ namespace PixelVision8.Player
 
             dynamic tmpPixel;
 
-            dynamic offset = colorOffset;
+            // dynamic offset = colorOffset;
         
             for (i = 0; i < total; i++)
             {
@@ -166,7 +172,7 @@ namespace PixelVision8.Player
         
                 tmpPixel = src.Pixels[tmpX + srcPWidth * tmpY];
                 
-                if (tmpPixel > Constants.EmptyPixel || ignoreTransparent != true)
+                if (tmpPixel >= Constants.FirstColorId || ignoreTransparent != true)
                 {
                     tmpX = (flipH ? srcWidth - 1 - col : col) + destX;
         

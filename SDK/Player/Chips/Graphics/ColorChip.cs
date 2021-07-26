@@ -40,11 +40,12 @@ namespace PixelVision8.Player
             return Regex.Match(inputColor, "^#(?:[0-9a-fA-F]{3}){1,2}$").Success;
         }
 
-        private int _bgColor = 1;
+        private int _bgColor = 0;
 
         private string[] _colors = Constants.DefaultColors.Split(',');
         
         private bool _debugMode;
+
 
         private string _maskColor = Constants.MaskColor;
 
@@ -58,11 +59,11 @@ namespace PixelVision8.Player
             set
             {
                 // We make sure that the bg color is never set to a value out of the range of the color chip
-                if (_bgColor == value || value < 1 || value >= Total)
-                    return;
+                // if (_bgColor == value || value < 1 || value >= Total)
+                //     return;
                 
-                // Set the bg value
-                _bgColor = value;//value >= Total || value < 1 ? 1 : value;
+                // Set the bg value by adding the color offset to the base bg value. BG can never be 0 since color 0 is transparent
+                _bgColor = Utilities.Clamp(Constants.FirstColorId + value, Constants.FirstColorId, Total-Constants.FirstColorId);//value >= Total || value < 1 ? 1 : value;
                 
                 Invalidate();
             }

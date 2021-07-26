@@ -7,9 +7,12 @@ namespace PixelVision8.Player
         
         // The color index used to represent transparency
         public const int EmptyPixel = 0;
+
+        // Used as the base color to start color shifting at
+        public const int FirstColorId = EmptyPixel + 1;
         
         // The default mask color
-        public const string MaskColor = "#00FF00";
+        public const string MaskColor = "#00FF00"; // TODO need to remove the dependency on this so it can go back to #FF00FF
         
         // List of default Pixel Vision 8 colors
         public const string DefaultColors = 

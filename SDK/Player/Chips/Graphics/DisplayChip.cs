@@ -101,7 +101,8 @@ namespace PixelVision8.Player
                     _drawRequest.Y, 
                     _drawRequest.FlipH, 
                     _drawRequest.FlipV, 
-                    _drawRequest.ColorOffset
+                    _drawRequest.ColorOffset,
+                    _drawRequest.IgnoreTransparent
                 );
                 
             }
@@ -127,9 +128,9 @@ namespace PixelVision8.Player
 
         public void NewDrawCall(int[] pixels, int destX, int destY, int blockWidth, int blockHeight, byte layer = 0,
             bool flipH = false,
-            bool flipV = false, int colorOffset = 0, int srcX = 0, int srcY = 0)
+            bool flipV = false, int colorOffset = 0, int srcX = 0, int srcY = 0, bool ignoreTransparent = true)
         {
-            NextDrawRequest(destX, destY, layer, flipH, flipV, colorOffset);
+            NextDrawRequest(destX, destY, layer, flipH, flipV, colorOffset, ignoreTransparent);
 
             if (_nextDrawRequest)
             {
@@ -161,9 +162,9 @@ namespace PixelVision8.Player
         /// <param name="layerOrder"></param>
         public void NewDrawCall(IDisplay src, int destX, int destY, int blockWidth, int blockHeight, byte layer = 0,
             bool flipH = false,
-            bool flipV = false, int colorOffset = 0, int srcX = 0, int srcY = 0)
+            bool flipV = false, int colorOffset = 0, int srcX = 0, int srcY = 0, bool ignoreTransparent = true)
         {
-            NextDrawRequest(destX, destY, layer, flipH, flipV, colorOffset);
+            NextDrawRequest(destX, destY, layer, flipH, flipV, colorOffset, ignoreTransparent);
 
             if (_nextDrawRequest)
             {
@@ -217,7 +218,7 @@ namespace PixelVision8.Player
         }
 
         public void NextDrawRequest(int destX, int destY, byte layer = 0, bool flipH = false, bool flipV = false,
-            int colorOffset = 0)
+            int colorOffset = 0, bool ignoreTransparent = true)
         {
             _drawRequestCounter++;
 
@@ -234,6 +235,7 @@ namespace PixelVision8.Player
             _drawRequest.FlipH = flipH;
             _drawRequest.FlipV = flipV;
             _drawRequest.ColorOffset = colorOffset;
+            _drawRequest.IgnoreTransparent = ignoreTransparent;
         }
     }
     

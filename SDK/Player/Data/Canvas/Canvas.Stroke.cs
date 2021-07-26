@@ -41,9 +41,11 @@ namespace PixelVision8.Player
             }
 
             var newPixels = new int[size * size];
+            
             for (int i = 0; i < newPixels.Length; i++)
             {
-                newPixels[i] = color;
+                // Shift the first color by the color offset
+                newPixels[i] = Constants.FirstColorId + color;
             }
 
             newRequest.PixelData.SetPixels(newPixels);

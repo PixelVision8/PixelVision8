@@ -84,7 +84,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
     -- if(bgColor ~= nil) then
     --     data.bgDrawArgs[5] = bgColor
     -- end
-
+print("bgColor", bgColor)
     if(spriteName == "none") then
 
         DrawRect( 
@@ -130,7 +130,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
             end
 
             -- Get the background color
-            local bgColor = state ~= "dragging" and bgColor or - 1
+            local bgColor = state ~= "dragging" and bgColor or 0
             
             -- Create states
             if(spriteName == nil) then
