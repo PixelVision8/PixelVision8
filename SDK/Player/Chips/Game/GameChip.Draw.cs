@@ -92,14 +92,13 @@ namespace PixelVision8.Player
                     _tmpPixelData.SetPixels(pixelData, blockWidth, blockHeight);
 
                     // Copy pixel data directly into the tilemap chip's texture
-                    Utilities.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, TilemapChip.PixelData, x, y,
-                        flipH, flipV, colorOffset, ignoreTransparent);
+                    Utilities.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, TilemapChip.PixelData, x, y, flipH, flipV, colorOffset, ignoreTransparent);
 
                     break;
 
                 default:
 
-                    DisplayChip.NewDrawCall(pixelData, x, y, blockWidth, blockHeight, (byte) drawMode, flipH, flipV, colorOffset);
+                    DisplayChip.NewDrawCall(pixelData, x, y, blockWidth, blockHeight, (byte) drawMode, flipH, flipV, colorOffset, 0, 0, ignoreTransparent);
 
                     break;
             }
@@ -201,7 +200,7 @@ namespace PixelVision8.Player
         /// <param name="height"></param>
         /// <param name="color"></param>
         /// <param name="drawMode"></param>
-        public void DrawRect(int x, int y, int width, int height, int color = Constants.EmptyPixel,
+        public void DrawRect(int x, int y, int width, int height, int colorOffset = 0,
             DrawMode drawMode = DrawMode.TilemapCache)
         {
 
@@ -214,7 +213,7 @@ namespace PixelVision8.Player
             // }
 
             // TODO is there a faster way to do this?
-            DrawPixels(pixels, x, y, width, height, false, false, drawMode, Constants.FirstColorId + color, false);
+            DrawPixels(pixels, x, y, width, height, false, false, drawMode, Constants.FirstColorId + colorOffset, false);
         }
 
 

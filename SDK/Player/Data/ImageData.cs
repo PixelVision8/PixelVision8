@@ -47,7 +47,7 @@ namespace PixelVision8.Player
             PixelData = new PixelData<int>(width, height);
             
             // Clear the pixel data with the default transparent color
-            Utilities.Clear(PixelData, Constants.EmptyPixel);
+            Utilities.Fill(PixelData, Constants.EmptyPixel);
 
             // See if there are any pixels
             if (pixels != null)
@@ -72,7 +72,7 @@ namespace PixelVision8.Player
 
         public void Resize(int newWidth, int newHeight) => Utilities.Resize(PixelData, newWidth, newHeight, Constants.EmptyPixel);
 
-        public void Clear(int color = -1) => Utilities.Clear(PixelData, color);
+        public void Clear(int color = -1) => Utilities.Fill(PixelData, color);
 
         public void RemapColors(string[] colors, bool steps = false)
         {

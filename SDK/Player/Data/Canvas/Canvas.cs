@@ -197,7 +197,7 @@ namespace PixelVision8.Player
             ResetValidation();
         }
 
-        public void Clear(int colorRef = Constants.EmptyPixel, int x = 0, int y = 0, int? width = null, int? height = null)
+        public void Fill(int colorRef = Constants.EmptyPixel, int x = 0, int y = 0, int? width = null, int? height = null)
         {
             
             if (width.HasValue || height.HasValue)
@@ -211,7 +211,7 @@ namespace PixelVision8.Player
                 {
                     for (int i = 0; i < tmpPixels.Length; i++)
                     {
-                        tmpPixels[i] = colorRef;
+                        tmpPixels[i] = Constants.FirstColorId + colorRef;
                     }
                 }
 
@@ -219,7 +219,7 @@ namespace PixelVision8.Player
             }
             else
             {
-                Utilities.Clear(defaultLayer, colorRef);
+                Utilities.Fill(defaultLayer, Constants.FirstColorId + colorRef);
                 ResetValidation();
             }
         }

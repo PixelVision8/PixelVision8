@@ -73,7 +73,7 @@ namespace PixelVision8.Editor
             // TODO use the colors from the sprite parser this class extends?
 
             exporter = new PixelDataExporter(fullFileName, textureData.Pixels, width, height, colors, imageExporter,
-                engine.ColorChip.MaskColor);
+                engine.GameChip.MaskColor());
         }
     }
 }

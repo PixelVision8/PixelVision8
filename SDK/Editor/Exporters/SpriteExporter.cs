@@ -102,7 +102,7 @@ namespace PixelVision8.Editor
             // spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
 
             exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, imageExporter,
-                engine.ColorChip.MaskColor);
+                engine.GameChip.MaskColor());
         }
     }
 }

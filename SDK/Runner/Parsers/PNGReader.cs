@@ -29,7 +29,7 @@ namespace PixelVision8.Runner
 {
     public class PNGReader : IImageParser
     {
-        public string MaskHex { get; private set; } = Constants.MaskColor;
+        // public string MaskHex { get; private set; } = Constants.MaskColor;
 
         protected List<ColorData> _colorPalette;
         protected ColorData[] _colors;
@@ -40,7 +40,7 @@ namespace PixelVision8.Runner
         protected List<PngChunk> chunks;
         protected ColorType colorType;
         protected List<PngChunk> dataChunks;
-        protected string maskHex;
+        // protected string maskHex;
         protected Stream memoryStream;
         protected Palette palette;
         public int[] pixels;
@@ -80,11 +80,11 @@ namespace PixelVision8.Runner
             ReadHeader();
         }
 
-        public virtual void ReadStream(string sourcePath, string maskHex)
+        public virtual void ReadStream(string sourcePath)
         {
             if (!IsImage()) throw new Exception("File does not have PNG signature.");
 
-            this.maskHex = maskHex;
+            // this.maskHex = maskHex;
 
             UnpackDataChunks();
         }

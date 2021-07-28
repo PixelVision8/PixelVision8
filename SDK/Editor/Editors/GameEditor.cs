@@ -365,15 +365,15 @@ namespace PixelVision8.Editor
             return value;
         }
 
-        public void ClearColors(string color = null)
-        {
-            colorChip.Clear(color);
-        }
+        public void ClearColors() => colorChip.Clear(_gameChip.MaskColor());
+        // {
+        //     colorChip.Clear();
+        // }
 
-        public void ClearSprites()
-        {
-            spriteChip.Clear();
-        }
+        public void ClearSprites() => spriteChip.Clear();
+        // {
+        //     spriteChip.Clear();
+        // }
 
         /// <summary>
         ///     Get the TotalDisks colors or change the limit for how many colors the color chip can store.
@@ -381,13 +381,13 @@ namespace PixelVision8.Editor
         /// <param name="ignoreEmpty"></param>
         /// <param name="total"></param>
         /// <returns></returns>
-        public int TotalColors(bool ignoreEmpty = false)
-        {
+        public int TotalColors(bool ignoreEmpty = false) => _gameChip.TotalColors(ignoreEmpty);
+        // {
             //            if (TotalDisks.HasValue)
             //                activeColorChip.maxColors = TotalDisks.Value;
 
-            return ignoreEmpty ? colorChip.TotalUsedColors : colorChip.Total;
-        }
+            // return ignoreEmpty ? colorChip.TotalUsedColors : colorChip.Total;
+        // }
 
         // Since we want to be able to edit this value but the interface doesn't allow it, we hide it in lua and use the overload instead
         //        [MoonSharpHidden]
@@ -757,12 +757,12 @@ namespace PixelVision8.Editor
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public string MaskColor(string value = null)
-        {
-            if (value != null) colorChip.MaskColor = value;
+        public string MaskColor(string value = null) => _gameChip.MaskColor(value);
+        // {
+        //     if (value != null) _gameChip.MaskColor(value);
 
-            return colorChip.MaskColor;
-        }
+        //     return _gameChip.MaskColor();
+        // }
 
         #endregion
 

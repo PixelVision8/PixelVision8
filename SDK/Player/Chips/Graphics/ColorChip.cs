@@ -47,37 +47,23 @@ namespace PixelVision8.Player
         private bool _debugMode;
 
 
-        private string _maskColor = Constants.MaskColor;
+        // private string _maskColor => Constants.MaskColor;//ReadColorAt(Constants.EmptyPixel); // TODO need to have this return the correct mask color
 
         /// <summary>
         ///     The background color reference to use when rendering transparent in
         ///     the ScreenBufferTexture.
         /// </summary>
-        public int BackgroundColor
-        {
-            get => _bgColor;
-            set
-            {
-                // We make sure that the bg color is never set to a value out of the range of the color chip
-                // if (_bgColor == value || value < 1 || value >= Total)
-                //     return;
-                
-                // Set the bg value by adding the color offset to the base bg value. BG can never be 0 since color 0 is transparent
-                _bgColor = Utilities.Clamp(Constants.FirstColorId + value, Constants.FirstColorId, Total-Constants.FirstColorId);//value >= Total || value < 1 ? 1 : value;
-                
-                Invalidate();
-            }
-        }
+        
 
-        public string MaskColor
-        {
-            get => _maskColor; // TODO this should return the first color
-            set
-            {
-                // if (ValidateHexColor(value))
-                UpdateColorAt(Constants.EmptyPixel, value.ToUpper());// _maskColor = value.ToUpper();
-            }
-        }
+        // public string MaskColor
+        // {
+        //     get => ReadColorAt(Constants.EmptyPixel);//_maskColor; // TODO this should return the first color
+        //     set
+        //     {
+        //         // if (ValidateHexColor(value))
+        //         UpdateColorAt(Constants.EmptyPixel, value.ToUpper());// _maskColor = value.ToUpper();
+        //     }
+        // }
 
         /// <summary>
         ///     Get and Set the <see cref="supportedColors" /> number of <see cref="colors" />
@@ -86,7 +72,7 @@ namespace PixelVision8.Player
         /// </summary>
         /// <value>Int</value>
         // TODO need to change this to totalSet colors or something more descriptive
-        public int TotalUsedColors => HexColors.Length - HexColors.ToList().RemoveAll(c => c == MaskColor);
+        // public int TotalUsedColors => HexColors.Length - HexColors.ToList().RemoveAll(c => c == MaskColor);
 
         public string[] HexColors
         {
@@ -154,12 +140,13 @@ namespace PixelVision8.Player
 
         public string ReadColorAt(int index)
         {
-            return index < 0 || index >= _colors.Length ? MaskColor : _colors[index];
+            // TODO need to make sure this makes sense where it returns the bg color if it's out of range - should never be out of range
+            return index < 0 || index >= _colors.Length ? _colors[Constants.EmptyPixel] : _colors[index];
         }
 
-        public void Clear(string color = null)
+        public void Clear(string color)
         {
-            color ??= MaskColor;
+            // color ??= MaskColor;
 
             // Console.WriteLine("Clear " + color);
             var t = _colors.Length;
@@ -190,7 +177,7 @@ namespace PixelVision8.Player
         protected override void Configure()
         {
             Player.ColorChip = this;
-            BackgroundColor = 1;
+            // BackgroundColor = 1;
         }
     }
 

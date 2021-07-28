@@ -281,7 +281,7 @@ namespace PixelVision8.Editor
 
             // background color
             sb.Append("\"backgroundcolor\":");
-            sb.Append("\"" + colorChip.MaskColor + "\"");
+            sb.Append("\"" + gameChip.MaskColor() + "\"");
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 
@@ -374,7 +374,7 @@ namespace PixelVision8.Editor
 
                 // transparentcolor
                 sb.Append("\"transparentcolor\":");
-                sb.Append("\"" + targetEngine.ColorChip.MaskColor + "\"");
+                sb.Append("\"" + targetEngine.GameChip.MaskColor() + "\"");
                 JsonUtil.GetLineBreak(sb, 2);
 
                 // tilesets end

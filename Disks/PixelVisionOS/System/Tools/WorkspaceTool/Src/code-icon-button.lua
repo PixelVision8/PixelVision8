@@ -84,7 +84,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
     -- if(bgColor ~= nil) then
     --     data.bgDrawArgs[5] = bgColor
     -- end
-print("bgColor", bgColor)
+    -- print("bgColor", bgColor)
     if(spriteName == "none") then
 
         DrawRect( 

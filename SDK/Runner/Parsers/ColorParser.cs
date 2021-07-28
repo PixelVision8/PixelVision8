@@ -25,7 +25,7 @@ namespace PixelVision8.Runner
 {
     public class ColorParser : ImageParser
     {
-        private readonly List<ColorData> _colors = new List<ColorData>();
+        private readonly List<ColorData> _colors;
 
         private readonly ColorChip _colorChip;
 
@@ -33,23 +33,26 @@ namespace PixelVision8.Runner
         private ColorData _tmpColor;
         private int _totalColors;
 
-        public ColorParser(string sourceFile, IImageParser parser, ColorChip colorChip) : base(parser)
+        public ColorParser(string sourceFile, IImageParser parser, ColorChip colorChip, string maskColor) : base(parser)
         {
             SourcePath = sourceFile;
-            this._colorChip = colorChip;
+            _colorChip = colorChip;
+            _colorChip.Clear(maskColor);
+
             // unique = colorChip.unique;
-            _magenta = new ColorData(colorChip.MaskColor);
+            _magenta = new ColorData(maskColor);
+
+            _colors = new List<ColorData>(){_magenta};
+
         }
 
         public override void CalculateSteps()
         {
-            _colorChip.Clear();
 
             base.CalculateSteps();
 
-            //            steps.Add(IndexColors);
             Steps.Add(ReadColors);
-            //            steps.Add(ResetColorChip);
+
             Steps.Add(UpdateColors);
         }
 
@@ -59,6 +62,10 @@ namespace PixelVision8.Runner
 
             var srcColors = Parser.ColorPixels;
             var total = srcColors.Length;
+
+            // TODO need to look into why this isn't parsing correctly
+
+            // _colors.Add(new ColorData(_magenta));
 
             // Loop through each color and find the unique ones
             for (var i = 0; i < total; i++)
@@ -96,7 +103,7 @@ namespace PixelVision8.Runner
         [FileParser("colors.png", FileFlags.Colors)]
         public void ParseColors(string file, PixelVision engine)
         {
-            AddParser(new ColorParser(file, _imageParser, engine.ColorChip));
+            AddParser(new ColorParser(file, _imageParser, engine.ColorChip, engine.GameChip.MaskColor()));
         }
     }
 }

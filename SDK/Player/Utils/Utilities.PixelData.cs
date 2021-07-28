@@ -121,7 +121,7 @@ namespace PixelVision8.Player
         }
         
         // TODO change this to Fill
-        public static void Clear<T>(PixelData<T> pixelData, T colorRef) where T : IComparable
+        public static void Fill<T>(PixelData<T> pixelData, T colorRef) where T : IComparable
         {
             for (int i = 0; i < pixelData.Total; i++) pixelData[i] = colorRef;
         }
@@ -198,7 +198,7 @@ namespace PixelVision8.Player
             
             pixelData.Resize(Utilities.Clamp(blockWidth, 1, 2048), Utilities.Clamp(blockHeight, 1, 2048));
 
-            Clear(pixelData, colorRef);
+            Fill(pixelData, colorRef);
         }
 
         /// <summary>

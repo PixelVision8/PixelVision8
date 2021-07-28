@@ -40,13 +40,17 @@ namespace PixelVision8.Editor
         protected int total;
         protected int width;
 
-        public ColorPaletteExporter(string fileName, ColorChip colorChip, IImageExporter imageExporter)
+        protected string _maskColor;
+
+        public ColorPaletteExporter(string fileName, ColorChip colorChip, IImageExporter imageExporter, string maskColor)
         {
             fullFileName = fileName;
 
             this.colorChip = colorChip;
 
             this.imageExporter = imageExporter;
+
+            _maskColor = maskColor;
         }
 
         protected ColorChip colorChip { get; set; }
@@ -70,8 +74,7 @@ namespace PixelVision8.Editor
             BuildPixelData();
 
             // Create Pixel Data Exporter
-            exporter = new PixelDataExporter(fullFileName, pixels, width, height, colors, imageExporter,
-                colorChip.MaskColor);
+            exporter = new PixelDataExporter(fullFileName, pixels, width, height, colors, imageExporter, _maskColor);
 
             // calculate steps for exporter
             exporter.CalculateSteps();

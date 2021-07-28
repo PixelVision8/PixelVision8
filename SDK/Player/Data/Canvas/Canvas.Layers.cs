@@ -52,7 +52,7 @@ namespace PixelVision8.Player
             if (drawRequest.Bounds.Width != currentTexture.Width || drawRequest.Bounds.Height != currentTexture.Height)
                 Utilities.Resize(currentTexture, drawRequest.Bounds.Width, drawRequest.Bounds.Height, Constants.EmptyPixel);
             else
-                Utilities.Clear(currentTexture, Constants.EmptyPixel);
+                Utilities.Fill(currentTexture, Constants.EmptyPixel);
         }
 
         private void SaveTmpLayer(int x, int y, int blockWidth, int blockHeight)

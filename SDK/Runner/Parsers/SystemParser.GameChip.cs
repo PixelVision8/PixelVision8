@@ -29,6 +29,12 @@ namespace PixelVision8.Runner
             //            if (data.ContainsKey("ext"))
             //                gameChip.ext = (string) data["ext"];
 
+            // TODO should these go into the display?
+            if (data.ContainsKey("maskColor")) gameChip.MaskColor((string) data["maskColor"]);
+            if (data.ContainsKey("backgroundColor")) Target.GameChip.BackgroundColor((int) (long) data["backgroundColor"]);
+
+
+            // Default game properties 
             if (data.ContainsKey("maxSize")) gameChip.maxSize = (int) (long) data["maxSize"];
 
             if (data.ContainsKey("saveSlots")) gameChip.SaveSlots = (int) (long) data["saveSlots"];

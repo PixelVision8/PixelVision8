@@ -120,7 +120,7 @@ namespace PixelVision8.Runner
             }
         }
 
-        public void RebuildColorPalette(string[] hexColors, int bgColorId = 1, string maskColor = PixelVision8.Player.Constants.MaskColor, bool debugMode = false)
+        public void RebuildColorPalette(string[] hexColors, int bgColorId = 1, bool debugMode = false)
         {
             _cachedColors = ColorUtils.ConvertColors(
                 hexColors, 

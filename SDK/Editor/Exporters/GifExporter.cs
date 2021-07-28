@@ -103,7 +103,7 @@ namespace PixelVision8.Editor
             var pixels = DisplayChip.Pixels;
 
             var cachedColors = ColorUtils.ConvertColors(engine.ColorChip.HexColors, /*engine.ColorChip.MaskColor,
-                engine.ColorChip.DebugMode, */engine.ColorChip.BackgroundColor).Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
+                engine.ColorChip.DebugMode, */engine.GameChip.BGColorOffset).Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
 
             // TODO need to replace the first color with the bg?
 
@@ -120,7 +120,7 @@ namespace PixelVision8.Editor
             var totalPixels = pixels.Length;
             var newTotalPixels = newPixels.Length;
 
-            var index = 0;
+            // var index = 0;
 
             for (var i = 0; i < totalPixels; i++)
             {

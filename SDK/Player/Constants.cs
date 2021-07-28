@@ -12,11 +12,11 @@ namespace PixelVision8.Player
         public const int FirstColorId = EmptyPixel + 1;
         
         // The default mask color
-        public const string MaskColor = "#00FF00"; // TODO need to remove the dependency on this so it can go back to #FF00FF
+        public const string MaskColor = "#FF00FF"; // TODO need to remove the dependency on this so it can go back to #FF00FF
         
         // List of default Pixel Vision 8 colors
         public const string DefaultColors = 
-            "#FF00FF," +
+            MaskColor + "," +
             "#2D1B2E," +
             "#218A91," +
             "#3CC2FA," +

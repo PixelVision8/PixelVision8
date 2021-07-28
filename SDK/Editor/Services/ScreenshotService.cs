@@ -100,7 +100,7 @@ namespace PixelVision8.Editor
             {
                 // var cachedColors = engine.ColorChip.colors;
 
-                var cachedColors = ColorUtils.ConvertColors(engine.ColorChip.HexColors, engine.ColorChip.BackgroundColor)/*, Constants.MaskColor, true)*/.Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
+                var cachedColors = ColorUtils.ConvertColors(engine.ColorChip.HexColors, engine.GameChip.BGColorOffset)/*, Constants.MaskColor, true)*/.Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
 
                 // TODO need to convert first color to BG
 

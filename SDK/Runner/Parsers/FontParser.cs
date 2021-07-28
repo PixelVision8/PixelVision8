@@ -32,19 +32,24 @@ namespace PixelVision8.Runner
         private List<string> _uniqueFontColors;
         private int[] _fontMap;
 
-        public FontParser(string sourceFile, IImageParser parser, ColorChip colorChip, FontChip fontChip) : base(
+        public FontParser(string sourceFile, IImageParser parser, ColorChip colorChip, FontChip fontChip, string maskColor) : base(
             sourceFile, parser, colorChip, fontChip)
         {
             _fontChip = fontChip;
+
+            
+
         }
 
         public override void CreateImage()
         {
+
             // Get all the colors from the image
             _uniqueFontColors = Parser.ColorPalette.Select(c => ColorUtils.RgbToHex(c)).ToList();
 
+            // TODO may need to remove this
             // Remove the mask color
-            _uniqueFontColors.Remove(colorChip.MaskColor);
+            // _uniqueFontColors.Remove(maskColor);
 
             // Convert into an array
             var colorRefs = _uniqueFontColors.ToArray();
@@ -94,7 +99,7 @@ namespace PixelVision8.Runner
         [FileParser(".font.png", FileFlags.Fonts)]
         public void ParseFonts(string file, PixelVision engine)
         {
-            AddParser(new FontParser(file, _imageParser, engine.ColorChip, engine.FontChip));
+            AddParser(new FontParser(file, _imageParser, engine.ColorChip, engine.FontChip, engine.GameChip.MaskColor()));
         }
     }
 }

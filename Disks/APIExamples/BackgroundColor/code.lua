@@ -20,7 +20,7 @@ function Init()
   DrawText("Default Color " .. defaultColor, 1, 4, DrawMode.Tile, "large", 15)
 
   -- Here we are manually changing the background color
-  local newColor = BackgroundColor(2)
+  local newColor = BackgroundColor(1)
 
   -- Draw the new color ID to the display
   DrawText("New Color " .. newColor, 1, 6, DrawMode.Tile, "large", 15)

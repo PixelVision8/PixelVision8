@@ -31,17 +31,16 @@ namespace PixelVision8.Runner
             FileLoadHelper = fileLoadHelper;
         }
 
-        public override void ReadStream(string sourcePath, string maskHex)
+        public override void ReadStream(string sourcePath)
         {
             FilePath = sourcePath;
-            this.maskHex = maskHex;
 
             if (!string.IsNullOrEmpty(FilePath))
             {
                 ReadBytes(FileLoadHelper.ReadAllBytes(FilePath));
             }
 
-            base.ReadStream(sourcePath, maskHex);
+            base.ReadStream(sourcePath);
         }
 
         public override string FileName => FileLoadHelper.GetFileName(FilePath);

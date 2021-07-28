@@ -30,9 +30,9 @@ namespace PixelVision8.Player
     {
         private readonly PixelData<int> _display = new PixelData<int>();
         private readonly List<DrawRequest> _drawCalls = new List<DrawRequest>();
-        private int _clearColor = -1;
+        // private int _clearColor = -1;
         private bool _clearFlag = true;
-        private int[] _clearPixels = new int[0];
+        // private int[] _clearPixels = new int[0];
         private DrawRequest _drawRequest;
         private int _drawRequestCounter = -1;
         private DrawRequest[] _drawRequestPool = new DrawRequest[0];
@@ -111,17 +111,17 @@ namespace PixelVision8.Player
             ResetDrawCalls();
         }
 
-        public void Clear(int color = -1)
+        public void Clear()
         {
-            if (_clearColor != color)
-            {
-                _clearColor = color;
+            // if (_clearColor != color)
+            // {
+            //     _clearColor = color;
 
-                // Loop through all of the display pixels
-                for (var i = _display.Total - 1; i > -1; i--)
-                    // We always set the clear color to -1 since the display target will automatically convert this into the background color
-                    _clearPixels[i] = _clearColor;
-            }
+            //     // Loop through all of the display pixels
+            //     for (var i = _display.Total - 1; i > -1; i--)
+            //         // We always set the clear color to -1 since the display target will automatically convert this into the background color
+            //         _clearPixels[i] = _clearColor;
+            // }
 
             _clearFlag = true;
         }
@@ -184,7 +184,7 @@ namespace PixelVision8.Player
             _display.Resize(width, height);
 
             // Make sure the clear pixel array is the same size
-            Array.Resize(ref _clearPixels, _display.Total);
+            // Array.Resize(ref _clearPixels, _display.Total);
 
             // Force the screen to clear after a resolution reset   
             _clearFlag = true;

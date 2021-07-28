@@ -19,9 +19,7 @@
 
 */
 
-// This is a Test
-//
-// to see how much I can put in a comment
+using System.Linq;
 
 namespace PixelVision8.Player
 {
@@ -91,7 +89,7 @@ namespace PixelVision8.Player
         /// </summary>
         public void Clear()
         {
-            DisplayChip.Clear(Player.ColorChip.BackgroundColor);
+            DisplayChip.Clear();
         }
 
         /// <summary>
@@ -105,7 +103,12 @@ namespace PixelVision8.Player
         }
         
         #endregion
+
+        private int _bgColorOffset = 0;
         
+        // Returns the bg color shifted to the correct color offset
+        public int BGColorOffset => Constants.FirstColorId + _bgColorOffset;
+
         /// <summary>
         ///     The background color is used to fill the screen when clearing the display. You can use
         ///     this method to read or update the background color at any point during the GameChip's
@@ -122,21 +125,26 @@ namespace PixelVision8.Player
         ///     This method returns the current background color ID. If no color exists, it returns -1
         ///     which is magenta (#FF00FF).
         /// </returns>
-        public int BackgroundColor(int? id = null)
+        public int BackgroundColor(int? colorOffset = null)
         {
-            if (id.HasValue) ColorChip.BackgroundColor = id.Value;
+            if (colorOffset.HasValue){
 
-            return ColorChip.BackgroundColor;
+                _bgColorOffset = colorOffset.Value >= ColorChip.Total || colorOffset.Value < 0 ? 0 : colorOffset.Value;
+                
+                ColorChip.Invalidate();
+            }
+            
+            return _bgColorOffset;
         }
 
         public string MaskColor(string value = "")
         {
             if(value != "")
             {
-                ColorChip.MaskColor = value;
+                ColorChip.UpdateColorAt(Constants.EmptyPixel, value.ToUpper());
             }
 
-            return ColorChip.MaskColor;
+            return ColorChip.ReadColorAt(Constants.EmptyPixel);
         }
 
         /// <summary>
@@ -149,7 +157,7 @@ namespace PixelVision8.Player
         ///     hex value. If you just want to change a color to an existing value, use the ReplaceColor()
         ///     method.
         /// </summary>
-        /// <param name="id">
+        /// <param name="offset">
         ///     The ID of the color you want to access.
         /// </param>
         /// <param name="value">
@@ -159,11 +167,14 @@ namespace PixelVision8.Player
         ///     This method returns a hex string for the supplied color ID. If the color has not been set
         ///     or is out of range, it returns magenta (#FF00FF) which is the default transparent system color.
         /// </returns>
-        public string Color(int id, string value = null)
+        public string Color(int offset, string value = null)
         {
-            if (value == null) return ColorChip.ReadColorAt(id);
 
-            ColorChip.UpdateColorAt(id, value);
+            var index = Constants.FirstColorId + offset;
+
+            if (value == null) return ColorChip.ReadColorAt(index);
+
+            ColorChip.UpdateColorAt(index, value);
 
             return value;
         }
@@ -185,7 +196,7 @@ namespace PixelVision8.Player
         /// </returns>
         public int TotalColors(bool ignoreEmpty = false)
         {
-            return ignoreEmpty ? ColorChip.TotalUsedColors : ColorChip.Total;
+            return ignoreEmpty ? ColorChip.HexColors.Length - ColorChip.HexColors.ToList().RemoveAll(c => c == MaskColor()) : ColorChip.Total;
         }
 
         /// <summary>
@@ -196,11 +207,16 @@ namespace PixelVision8.Player
         ///     should point to. Since you are only changing the color's ID pointer, there is little to no performance
         ///     penalty during the GameChip's draw phase.
         /// </summary>
-        /// <param name="index">The ID of the color you want to change.</param>
-        /// <param name="id">The ID of the color you want to replace it with.</param>
-        public void ReplaceColor(int index, int id)
+        /// <param name="offsetA">The ID of the color you want to change.</param>
+        /// <param name="offsetB">The ID of the color you want to replace it with.</param>
+        public void ReplaceColor(int offsetA, int offsetB)
         {
-            ColorChip.UpdateColorAt(index, ColorChip.ReadColorAt(id));
+
+            // TODO should there be a swap API?
+            var srcIndex = Constants.FirstColorId + offsetA;
+            var destIndex = Constants.FirstColorId + offsetA;
+            
+            ColorChip.UpdateColorAt(srcIndex, ColorChip.ReadColorAt(destIndex));
         }
         
         /// <summary>

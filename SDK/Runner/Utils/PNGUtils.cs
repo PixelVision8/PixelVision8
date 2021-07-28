@@ -39,6 +39,9 @@ namespace PixelVision8.Runner
         {
             // TODO this wasn't set before, make sure it still works
             this.maskHex = maskHex;
+
+            Console.WriteLine("Read PNG Palette " + maskHex);
+            
             colors = new List<ColorData>();
         }
 

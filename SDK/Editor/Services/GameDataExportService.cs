@@ -46,7 +46,7 @@ namespace PixelVision8.Editor
             {
                 var colorChip = targetEngine.ColorChip;
 
-                AddExporter(new ColorPaletteExporter(path + "colors.png", colorChip, new PNGWriter()));
+                AddExporter(new ColorPaletteExporter(path + "colors.png", colorChip, new PNGWriter(), targetEngine.GameChip.MaskColor()));
             }
 
             // Step 5 (optional). Look for new sprites
@@ -74,7 +74,7 @@ namespace PixelVision8.Editor
                     var sprites = font.Value;
 
                     // Clear the texture
-                    Utilities.Clear(tmpTextureData,Constants.EmptyPixel);
+                    Utilities.Fill(tmpTextureData,Constants.EmptyPixel);
                     // tmpTextureData.Clear();
 
                     // Loop through all the characters and copy their texture data over
@@ -141,7 +141,7 @@ namespace PixelVision8.Editor
 
 
             AddExporter(new PixelDataExporter(path, pixelData, width, height, colors, imageExporter,
-                engine.ColorChip.MaskColor));
+                engine.GameChip.MaskColor()));
         }
     }
 }

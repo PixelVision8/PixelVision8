@@ -10,28 +10,19 @@ namespace PixelVision8.Runner
         {
             var colorChip = Target.ColorChip;
 
-            if (data.ContainsKey("maskColor")) colorChip.MaskColor = (string) data["maskColor"];
-
             // Force the color chip to have 256 colors
             colorChip.Total = 256;
 
-            // Make sure we have data to parse
-            if (data.ContainsKey("colors"))
-            {
-                colorChip.Clear();
-
-                // Pull out the color data
-                var colors = (List<object>) data["colors"];
-
-                // Clear the colors
-                colorChip.Clear();
-
-                // Add all the colors from the data
-                for (var i = 0; i < colors.Count; i++) colorChip.UpdateColorAt(i, (string) colors[i]);
-            }
-
-            if (data.ContainsKey("backgroundColor")) colorChip.BackgroundColor = (int) (long) data["backgroundColor"];
-
+            // TODO need to deprecate this
+            // if (data.ContainsKey("backgroundColor"))
+            // {
+                
+            //     // TODO this should use PV8's error system
+            //     Console.WriteLine("Reading the Background Color from the Color Chip Data is deprecated and will be removed in a future release.");
+                  
+            //     Target.GameChip.BackgroundColor((int) (long) data["backgroundColor"]);
+            // }
+            
             if (data.ContainsKey("debug")) colorChip.DebugMode = Convert.ToBoolean(data["debug"]);
 
         }

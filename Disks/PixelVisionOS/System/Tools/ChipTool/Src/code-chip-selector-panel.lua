@@ -388,7 +388,7 @@ function ChipEditorTool:ReplaceChip(chipData, chipID)
 
       self.invalidateColorMap = true
 
-      gameEditor:ReindexSprites()
+      -- gameEditor:ReindexSprites()
 
       for i = 1, #chipData.palette do
         -- Find the palette start index

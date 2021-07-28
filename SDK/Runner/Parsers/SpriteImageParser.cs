@@ -52,7 +52,7 @@ namespace PixelVision8.Runner
             this.colorChip = colorChip;
 
             // Read the color chip's mask color
-            MaskHex = colorChip.MaskColor;
+            // MaskHex = colorChip.MaskColor;
 
             if (spriteChip != null)
             {
@@ -105,12 +105,10 @@ namespace PixelVision8.Runner
             // Get the chip colors and replace any transparent ones with the first color so we don't parse transparency
             var colorData = ColorUtils.ConvertColors(colorChip.HexColors);//, colorChip.MaskColor);
 
-            // colorData = colorChip.colors;
-
             var colorRefs = colorData.Select(c => ColorUtils.RgbToHex(c)).ToArray();
 
             // Remove the colors that are not supported
-            Array.Resize(ref colorRefs, colorChip.TotalUsedColors);
+            // Array.Resize(ref colorRefs, colorChip.TotalUsedColors);
 
             var imageColors = Parser.ColorPalette.Select(c => ColorUtils.RgbToHex(c)).ToArray();
 
@@ -127,7 +125,7 @@ namespace PixelVision8.Runner
                 // var color = imageColors[i];
                 var color = imageColors[i];
 
-                if (color == colorChip.MaskColor) continue;
+                // if (color == colorChip.MaskColor) continue;
 
                 var id = Array.IndexOf(colorRefs, color);
 
@@ -148,37 +146,37 @@ namespace PixelVision8.Runner
             }
 
             // Sort colors
-            uniqueColorIDs.Sort();
+            // uniqueColorIDs.Sort();
 
-            var indexes = new List<int>();
+            // var indexes = new List<int>();
 
-            // find open slots
-            for (int i = 0; i < colorMap.Length; i++)
-            {
-                if (colorMap[i] == null)
-                {
-                    indexes.Add(i);
-                }
-            }
+            // // find open slots
+            // for (int i = 0; i < colorMap.Length; i++)
+            // {
+            //     if (colorMap[i] == null)
+            //     {
+            //         indexes.Add(i);
+            //     }
+            // }
 
-            var totalOrphanColors = orphanColors.Count;
+            // var totalOrphanColors = orphanColors.Count;
 
-            for (int i = 0; i < indexes.Count; i++)
-            {
-                if (i < totalOrphanColors)
-                {
-                    colorMap[indexes[i]] = orphanColors[i];
-                }
-            }
+            // for (int i = 0; i < indexes.Count; i++)
+            // {
+            //     if (i < totalOrphanColors)
+            //     {
+            //         colorMap[indexes[i]] = orphanColors[i];
+            //     }
+            // }
 
-            // clean up the color map
-            for (int i = 0; i < colorMap.Length; i++)
-            {
-                if (colorMap[i] == null)
-                {
-                    colorMap[i] = colorRefs[i];
-                }
-            }
+            // // clean up the color map
+            // for (int i = 0; i < colorMap.Length; i++)
+            // {
+            //     if (colorMap[i] == null)
+            //     {
+            //         colorMap[i] = colorRefs[i];
+            //     }
+            // }
 
             // Convert all of the pixels into color ids
             var pixelIDs = Parser.ColorPixels.Select(c => Array.IndexOf(colorMap, ColorUtils.RgbToHex(c)))

@@ -179,16 +179,12 @@ namespace PixelVision8.Editor
             // sb.Append(",");
             // JsonUtil.GetLineBreak(sb, 1);
 
-            sb.Append("\"backgroundColor\":");
-            sb.Append(colorChip.BackgroundColor);
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
+            // sb.Append("\"backgroundColor\":");
+            // sb.Append(colorChip.BackgroundColor);
+            // sb.Append(",");
+            // JsonUtil.GetLineBreak(sb, 1);
 
-            sb.Append("\"maskColor\":\"");
-            sb.Append(colorChip.MaskColor);
-            sb.Append("\"");
-            sb.Append(",");
-            JsonUtil.GetLineBreak(sb, 1);
+            
 
             // sb.Append("\"unique\":");
             // sb.Append(colorChip.unique.ToString().ToLower());
@@ -271,6 +267,19 @@ namespace PixelVision8.Editor
             // Max Size
             sb.Append("\"maxSize\":");
             sb.Append(gameChip.maxSize);
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+
+            // Mask color
+            sb.Append("\"maskColor\":\"");
+            sb.Append(gameChip.MaskColor());
+            sb.Append("\"");
+            sb.Append(",");
+            JsonUtil.GetLineBreak(sb, 1);
+
+            // Background color
+            sb.Append("\"backgroundColor\":");
+            sb.Append(gameChip.BackgroundColor());
             sb.Append(",");
             JsonUtil.GetLineBreak(sb, 1);
 

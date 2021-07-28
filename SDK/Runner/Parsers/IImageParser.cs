@@ -28,7 +28,7 @@ namespace PixelVision8.Runner
         int Height { get; }
         ColorData[] ColorPixels { get; }
         List<ColorData> ColorPalette { get; }
-        void ReadStream(string sourcePath, string maskHex);
+        void ReadStream(string sourcePath);
         string FileName { get; set; }
     }
 }

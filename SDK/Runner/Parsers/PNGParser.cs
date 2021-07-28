@@ -42,7 +42,7 @@ namespace PixelVision8.Runner
         public ColorData[] ColorPixels { get; private set; }
         public List<ColorData> ColorPalette { get; private set; }
 
-        public void ReadStream(string sourcePath, string maskHex)
+        public void ReadStream(string sourcePath)
         {
             // TODO not using mask color here
             FileName = Path.GetFileName(sourcePath);
