@@ -132,12 +132,12 @@ namespace PixelVision8.Runner
                         dataChunk.Decode(chunkBytes);
                         dataChunks.Add(dataChunk);
                     }
-                    else
-                    {
-                        var transparencyChunk = new TransparencyChunk();
-                        transparencyChunk.Decode(chunkBytes);
-                        palette.AddAlphaToColors(transparencyChunk.PaletteTransparencies);
-                    }
+                    // else
+                    // {
+                    //     var transparencyChunk = new TransparencyChunk();
+                    //     transparencyChunk.Decode(chunkBytes);
+                    //     palette.AddAlphaToColors(transparencyChunk.PaletteTransparencies);
+                    // }
                 }
                 else
                 {

@@ -448,43 +448,41 @@ function WorkspaceTool:OnPaste(dest)
 
     pixelVisionOS:ClearClipboard()
 
-    -- print("Paste data", data)
+    -- -- print("Paste data", data)
 
-    if(data ~= nil or  data ~= "" and string.starts(data, "path:")) then
+      if(data ~= nil or  data ~= "" and string.starts(data, "path:")) then
 
-    local paths = string.split(data:sub(7), ",")
-    -- print("PastPaths", dump(paths))
-    
-    local srcPath = NewWorkspacePath(paths[1])
-
-    -- if(data.type == "paths") then
-
-    --   local paths = data.value
-
-      self.targetFiles = {}
-
-      local tmpPath = nil
-
-      for i = 1, #paths do
+        local paths = string.split(data:sub(7), ",")
+        -- print("PastPaths", dump(paths))
         
-        tmpPath = NewWorkspacePath(paths[i])
+        local srcPath = NewWorkspacePath(paths[1])
 
-        if(PathExists(tmpPath)) then
-          table.insert(self.targetFiles, tmpPath)
-          -- print("paste", paths[i])
+      -- if(data.type == "paths") then
+
+      --   local paths = data.value
+
+        self.targetFiles = {}
+
+        local tmpPath = nil
+
+        for i = 1, #paths do
+          
+          tmpPath = NewWorkspacePath(paths[i])
+
+          if(PathExists(tmpPath)) then
+            table.insert(self.targetFiles, tmpPath)
+            -- print("paste", paths[i])
+          end
+
         end
 
-      end
+        if(#self.targetFiles) then
 
-      if(#self.targetFiles) then
+          self:StartFileOperation(srcPath, dest, "paste")
 
-        self:StartFileOperation(srcPath, dest, "paste")
+          self.autoSelect = true
 
-        self.autoSelect = true
-
-      end
-
-      
+        end
 
     -- end
     end

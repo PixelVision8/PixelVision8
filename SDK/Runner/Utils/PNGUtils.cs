@@ -24,23 +24,22 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PixelVision8.Player;
 
 namespace PixelVision8.Runner
 {
     public class Palette
     {
-        private readonly string maskHex;
+        // private readonly string maskHex;
 
         public IList<ColorData> colors;
         //        public List<Color> uniqueColors = new List<Color>();
 
-        internal Palette(string maskHex = Constants.MaskColor)
+        internal Palette()
         {
             // TODO this wasn't set before, make sure it still works
-            this.maskHex = maskHex;
+            // this.maskHex = maskHex;
 
-            Console.WriteLine("Read PNG Palette " + maskHex);
+            // Console.WriteLine("Read PNG Palette " + maskHex);
             
             colors = new List<ColorData>();
         }
@@ -67,18 +66,18 @@ namespace PixelVision8.Runner
             //            }
         }
 
-        internal void AddAlphaToColorAtIndex(int colorIndex, byte alpha)
-        {
-            //            var oldColor = colors[colorIndex];
+        // internal void AddAlphaToColorAtIndex(int colorIndex, byte alpha)
+        // {
+        //     //            var oldColor = colors[colorIndex];
 
-            // TODO this could be cleaner
-            colors[colorIndex] = new ColorData(maskHex);
-        }
+        //     // TODO this could be cleaner
+        //     colors[colorIndex] = new ColorData(maskHex);
+        // }
 
-        internal void AddAlphaToColors(IList<byte> alphas)
-        {
-            for (var i = 0; i < alphas.Count; i++) AddAlphaToColorAtIndex(i, alphas[i]);
-        }
+        // internal void AddAlphaToColors(IList<byte> alphas)
+        // {
+        //     for (var i = 0; i < alphas.Count; i++) AddAlphaToColorAtIndex(i, alphas[i]);
+        // }
     }
 
     #region Chunks

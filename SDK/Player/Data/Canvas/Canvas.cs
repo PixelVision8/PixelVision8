@@ -211,7 +211,7 @@ namespace PixelVision8.Player
                 {
                     for (int i = 0; i < tmpPixels.Length; i++)
                     {
-                        tmpPixels[i] = Constants.FirstColorId + colorRef;
+                        tmpPixels[i] = colorRef;
                     }
                 }
 
@@ -219,7 +219,7 @@ namespace PixelVision8.Player
             }
             else
             {
-                Utilities.Fill(defaultLayer, Constants.FirstColorId + colorRef);
+                Utilities.Fill(defaultLayer, colorRef);
                 ResetValidation();
             }
         }

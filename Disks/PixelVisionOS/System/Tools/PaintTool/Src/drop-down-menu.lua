@@ -270,49 +270,70 @@ function PaintTool:OnExport()
   local title = "Export"
   local message = "It's important to note that performing this optimization may break any places where you have hardcoded references to sprite IDs. You will have the option to apply the optimization after the sprites are processed. \n\nDo you want to perform the following?\n\n"
 
-
+  local options = {}
   local callbacks = {}
 
-  message = message .. "#  Colors - A new colors.png file\n"
+  table.insert(options, "Colors - A new colors.png file")
   table.insert(callbacks, function () self:OnExportColors() end)
 
   if(self.canExportSprites == true) then
-    message = message .. "#  Sprites - An optimized sprites.png file\n"
+    table.insert(options, "Sprites - An optimized sprites.png file")
     table.insert(callbacks, function () self:OnExportSprites() end)
   end
 
   if(self.canExportFlags == true) then
-    message = message .. "#  Flags - A new flags.png template file\n"
+    table.insert(options, "Flags - A new flags.png template file")
     table.insert(callbacks, function () self:OnExportFlags() end)
   end
 
-  -- Create the new warning model
-  local warningModal = OptionModal:Init(title, message .. "\n", 216, true)
+  local buttons = 
+  {
+    {
+      name = "modalyesbutton",
+      action = function(target)
+
+        local selections = editorUI:ToggleGroupSelections(target.optionGroupData)
+  
+        for i = 1, #selections do
+          
+          table.insert(self.exportQueue, callbacks[selections[i]])
+  
+        end
+  
+        if(#self.exportQueue > 0) then
+          
+          self.currentExportIndex = 1
+          
+          pixelVisionOS:RegisterUI({name = "OnUpdateExport"}, "UpdateExport", self)
+  --        
+        end
+
+        target.onParentClose()
+  
+      end,
+      key = Keys.Enter,
+      tooltip = "Press 'enter' to save"
+    },
+    {
+      name = "modalnobutton",
+      action = function(target)
+        target.onParentClose()
+      end,
+      key = Keys.N,
+      tooltip = "Press 'n' to not save"
+    }
+  }
 
   self.exportQueue = {}
   self.exporting = false
 
-  pixelVisionOS:OpenModal( warningModal,
-    
-        function()
-
-          local selections = editorUI:ToggleGroupSelections(warningModal.optionGroupData)
-
-          for i = 1, #selections do
-            
-            table.insert(self.exportQueue, callbacks[selections[i]])
-
-          end
-
-          if(#self.exportQueue > 0) then
-            
-            self.currentExportIndex = 1
-            
-            pixelVisionOS:RegisterUI({name = "OnUpdateExport"}, "UpdateExport", self)
---        
-          end
-
-        end
+  -- Create the new warning model
+  pixelVisionOS:ShowMessageModal(
+    title, 
+    message .. "\n", 
+    216, 
+    buttons,
+    options
     )
 end
 

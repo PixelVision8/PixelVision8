@@ -57,10 +57,10 @@ namespace PixelVision8.Editor
             {
                 var refID = pixelData[i];
 
-                if (refID != Constants.EmptyPixel && refID < total)
-                    colors[i] = paletteColors[refID];
-                else
-                    colors[i] = maskColor;
+                // if (refID != Constants.EmptyPixel && refID < total)
+                colors[i] = paletteColors[refID];
+                // else
+                //     colors[i] = maskColor;
             }
 
             CurrentStep++;

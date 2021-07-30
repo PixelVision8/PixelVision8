@@ -48,7 +48,7 @@ namespace PixelVision8.Runner
 
         public List<string> requiredFiles = new List<string>
         {
-            "data.json",
+            // "data.json",
             "info.json"
         };
 

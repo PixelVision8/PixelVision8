@@ -130,7 +130,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
             end
 
             -- Get the background color
-            local bgColor = state ~= "dragging" and bgColor or 0
+            -- local bgColor = state ~= "dragging" and bgColor or 0
             
             -- Create states
             if(spriteName == nil) then
@@ -150,7 +150,11 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
                 local canvas =  data.cachedPixelData[states[i]]
 
                 -- Clear the canvas to the default background color
-                canvas:Clear(bgColor)
+                if(state ~= "dragging") then
+                    canvas:Fill(bgColor + 1)
+                else
+                    canvas:Fill(0)
+                end
 
                 canvas:DrawMetaSprite(metaSpriteId, 12, 0)
 

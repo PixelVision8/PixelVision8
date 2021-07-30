@@ -298,9 +298,9 @@ end
 function PaintTool:ClearCurrentCanvas()
 
     -- Clear the sprite canvas
-    self.currentCanvas:Clear(-1)
+    self.currentCanvas:Clear()
 
-    self.currentCanvas:SetStroke(-1, 0)
+    self.currentCanvas:SetStroke(0, 0)
 
     self.currentCanvas:SetPattern(self.emptyPatternPixelData, 8, 8)
 

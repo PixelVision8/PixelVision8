@@ -103,7 +103,26 @@ function ChipEditorTool:OnSave()
 
     if(self.invalidateColors == true) then
 
-        table.insert(flags, SaveFlags.Colors)
+      -- Manually save the color file
+
+      local pixels = {}
+      local colors = {}
+      local col = 8
+      local row = 32
+
+      for i = 1, col * row do
+        table.insert(pixels, i-1)
+        table.insert(colors, gameEditor:Color(i-1))
+      end
+
+      local image = NewImage(col, row, pixels, colors)
+      local path = NewWorkspacePath(self.rootDirectory).AppendFile("colors.png")
+
+      -- print("Final data", dump(image.GetPixels()), dump(image.Colors))
+
+      SaveImage(path, image)
+
+        -- table.insert(flags, SaveFlags.Colors)
         self.invalidateColors = false
     end
 

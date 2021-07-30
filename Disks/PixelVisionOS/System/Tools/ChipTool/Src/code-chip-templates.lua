@@ -15,15 +15,14 @@ function ChipEditorTool:CreateChipTemplates()
           name = "displayHeightInputData",
           value = 240
         },
-        
         {
           name = "drawsInputData",
           value = 0
         },
-        {
-          name = "totalColorsInputData",
-          value = 16
-        },
+        -- {
+        --   name = "totalColorsInputData",
+        --   value = 16
+        -- },
         {
           name = "cpsInputData",
           value = 16
@@ -47,7 +46,14 @@ function ChipEditorTool:CreateChipTemplates()
         "#F7DB53",
         "#F9F4EA"
       },
-      paletteMode = false
+      paletteMode = false,
+      options = {
+        "Change resolution to 256x240",
+        "Remove sprite draw limit",
+        "Support 16 colors per sprite",
+        "Use PV8's 16 system colors",
+        "Create a default palette"
+      }
     },
     {
       name = "Fami",

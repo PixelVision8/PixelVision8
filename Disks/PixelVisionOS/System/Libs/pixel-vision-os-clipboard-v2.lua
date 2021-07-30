@@ -17,6 +17,9 @@
 
 -- print("Enable clipboard")
 
+-- Automatically clear the clipboard when a tools loads up
+-- ClearClipboardText()
+
 function PixelVisionOS:SystemCopy(data)
 
     SetClipboardText(data)

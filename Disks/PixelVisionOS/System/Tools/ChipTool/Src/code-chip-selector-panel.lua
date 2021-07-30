@@ -344,7 +344,9 @@ function ChipEditorTool:OnReplaceChip(chipData, chipID)
     }
   }
 
-  pixelVisionOS:ShowMessageModal("Replace Chip", "Do you want to use the " .. chipData["name"] .. " chip? ".. chipData.message .. " This will affect " .. #chipData["fields"] .. " values and can not be undone.", 160, buttons)
+  local message = "Do you want to use the " .. chipData["name"] .. " chip? ".. chipData.message .. " This will affect " .. #chipData["fields"] .. " values and can not be undone."
+  
+  pixelVisionOS:ShowMessageModal("Replace Chip", message, 160, buttons, chipData.options)
   
 end
 
@@ -369,7 +371,7 @@ function ChipEditorTool:ReplaceChip(chipData, chipID)
 
   if(chipData.colors ~= nil) then
 
-    gameEditor:ClearColors(chipData.colors[1])
+    gameEditor:ClearColors()
 
     local totalColors = #chipData.colors
 

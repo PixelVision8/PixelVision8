@@ -137,6 +137,8 @@ namespace PixelVision8.Player
             return _bgColorOffset;
         }
 
+        private string _maskColor = Constants.MaskColor;
+
         public string MaskColor(string value = "")
         {
             if(value != "")

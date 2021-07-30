@@ -757,7 +757,7 @@ namespace PixelVision8.Editor
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public string MaskColor(string value = null) => _gameChip.MaskColor(value);
+        public string MaskColor(string value = null) => Constants.MaskColor;// : _gameChip.MaskColor(value);
         // {
         //     if (value != null) _gameChip.MaskColor(value);
 

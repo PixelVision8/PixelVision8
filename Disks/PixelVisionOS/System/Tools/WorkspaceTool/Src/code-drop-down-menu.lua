@@ -1,5 +1,5 @@
 -- Global sortcut enums
-NewFolderShortcut, EditShortcut, RenameShortcut, CopyShortcut, PasteShortcut, DeleteShortcut, EmptyTrashShortcut, EjectDiskShortcut, NewGameShortcut, RunShortcut, BuildShortcut = "New Folder", "Edit", "Rename", "Copy", "Paste", "Delete", "Empty Trash", "Eject Disk", nil, nil, nil
+-- NewFolderShortcut, EditShortcut, RenameShortcut, CopyShortcut, PasteShortcut, DeleteShortcut, EmptyTrashShortcut, EjectDiskShortcut, NewGameShortcut, RunShortcut, BuildShortcut = "New Folder", "Edit", "Rename", "Copy", "Paste", "Delete", "Empty Trash", "Eject Disk", nil, nil, nil
 
 -- Global focus enums
 WindowFocus, DesktopIconFocus, WindowIconFocus, MultipleFiles, NoFocus = 1, 2, 3, 4, 5
@@ -69,7 +69,7 @@ function WorkspaceTool:CreateDropDownMenu()
 
         table.insert(menuOptions, addAt, {name = "New Project", key = Keys.P, action = function() self:OnNewProject() end, enabled = false, toolTip = "Create a new file."})
 
-        NewGameShortcut = "New Project"
+        -- NewGameShortcut = "New Project"
 
         addAt = addAt + 1
 
@@ -83,8 +83,8 @@ function WorkspaceTool:CreateDropDownMenu()
 
     -- if(runnerName == DrawVersion or runnerName == TuneVersion) then
 
-    table.insert(menuOptions, addAt, {name = "New Data", action = function() self:OnNewFile("data", "json", "data", false) end, enabled = false, toolTip = "Run the current game."})
-    table.insert(self.newFileOptions, {name = "New Data", file = "data.json"})
+    table.insert(menuOptions, addAt, {name = "New Text", action = function() self:OnNewFile("untitled", "txt", "data", false) end, enabled = false, toolTip = "Create an empty text file."})
+    table.insert(self.newFileOptions, {name = "New Text"})
     addAt = addAt + 1
 
     -- end
@@ -93,34 +93,36 @@ function WorkspaceTool:CreateDropDownMenu()
     -- Add text options to the menu
     -- if(runnerName ~= PlayVersion and runnerName ~= DrawVersion and runnerName ~= TuneVersion) then
     -- if(PathExists(self.fileTemplatePath.AppendFile("code.lua"))) then
-    table.insert(menuOptions, addAt, {name = "New Code", action = function() self:CreateNewCodeFile() end, enabled = false, toolTip = "Run the current game."})
-    table.insert(self.newFileOptions, {name = "New Code"})
-    addAt = addAt + 1
+    
     -- end
 
     -- if(PathExists(self.fileTemplatePath.AppendFile("json.json"))) then
-    table.insert(menuOptions, addAt, {name = "New JSON", action = function() self:OnNewFile("untitled", "json") end, enabled = false, toolTip = "Run the current game."})
+    table.insert(menuOptions, addAt, {name = "New JSON", action = function() self:OnNewFile("untitled", "json") end, enabled = false, toolTip = "Create an empty JSON file."})
     table.insert(self.newFileOptions, {name = "New JSON"})
+    addAt = addAt + 1
+
+    table.insert(menuOptions, addAt, {name = "New Code", action = function() self:CreateNewCodeFile() end, enabled = false, toolTip = "Create a new code file."})
+    table.insert(self.newFileOptions, {name = "New Code"})
     addAt = addAt + 1
     -- end
 
     -- Add draw options
 
     -- if(PathExists(self.fileTemplatePath.AppendFile("colors.png"))) then
-        table.insert(menuOptions, addAt, {name = "New Colors", action = function() self:OnNewFile("colors", "png", "colors", false) end, enabled = false, toolTip = "Run the current game.", file = "colors.png"})
+        table.insert(menuOptions, addAt, {name = "New Colors", action = function() self:OnNewFile("colors", "png", "colors", false) end, enabled = false, toolTip = "Create a new color file.", file = "colors.png"})
         table.insert(self.newFileOptions, {name = "New Colors", file = "colors.png"})
         addAt = addAt + 1
     -- end
 
     -- if(PathExists(self.fileTemplatePath.AppendFile("sprite.png"))) then
-        table.insert(menuOptions, addAt, {name = "New Sprite", action = function() self:OnNewFile("sprite", "png", "sprite") end, enabled = false, toolTip = "Run the current game.", file = "sprite.png"})
+        table.insert(menuOptions, addAt, {name = "New Sprite", action = function() self:OnNewFile("sprite", "png", "sprite") end, enabled = false, toolTip = "Create a new sprite.", file = "sprite.png"})
         table.insert(self.newFileOptions, {name = "New Sprite", file = "sprite.png"})
         addAt = addAt + 1
     -- end
 
     -- if(PathExists(self.fileTemplatePath.AppendFile("large.font.png"))) then
 
-        table.insert(menuOptions, addAt, {name = "New Font", action = function() self:OnNewFile("untitled", "font.png", "font") end, enabled = false, toolTip = "Run the current game."})
+        table.insert(menuOptions, addAt, {name = "New Font", action = function() self:OnNewFile("untitled", "font.png", "font") end, enabled = false, toolTip = "Create a new font."})
         table.insert(self.newFileOptions, {name = "New Font"})
         addAt = addAt + 1
 
@@ -128,7 +130,7 @@ function WorkspaceTool:CreateDropDownMenu()
 
     -- if(PathExists(self.fileTemplatePath.AppendFile("tilemap.json"))) then
 
-        table.insert(menuOptions, addAt, {name = "New Tilemap", action = function() self:OnNewFile("tilemap", "png", "tilemap", false) end, enabled = false, toolTip = "Run the current game.", file = "tilemap.png"})
+        table.insert(menuOptions, addAt, {name = "New Tilemap", action = function() self:OnNewFile("tilemap", "png", "tilemap", false) end, enabled = false, toolTip = "Create a new Tilemap.", file = "tilemap.png"})
         table.insert(self.newFileOptions, {name = "New Tilemap", file = "tilemap.png"})
         addAt = addAt + 1
 
@@ -138,14 +140,14 @@ function WorkspaceTool:CreateDropDownMenu()
 
     if(PathExists(self.fileTemplatePath.AppendFile("sounds.json"))) then
 
-        table.insert(menuOptions, addAt, {name = "New Sounds", action = function() self:OnNewFile("sounds", "json", "sounds", false) end, enabled = false, toolTip = "Run the current game.", file = "sounds.json"})
+        table.insert(menuOptions, addAt, {name = "New Sounds", action = function() self:OnNewFile("sounds", "json", "sounds", false) end, enabled = false, toolTip = "Create a new sound file.", file = "sounds.json"})
         table.insert(self.newFileOptions, {name = "New Sounds", file = "sounds.json"})
         addAt = addAt + 1
     end
 
     if(PathExists(self.fileTemplatePath.AppendFile("music.json"))) then
 
-        table.insert(menuOptions, addAt, {name = "New Music", action = function() self:OnNewFile("music", "json", "music", false) end, enabled = false, toolTip = "Run the current game.", file = "music.json"})
+        table.insert(menuOptions, addAt, {name = "New Music", action = function() self:OnNewFile("music", "json", "music", false) end, enabled = false, toolTip = "Create a new music file.", file = "music.json"})
         table.insert(self.newFileOptions, {name = "New Music", file = "music.json"})
         addAt = addAt + 1
 
@@ -412,27 +414,27 @@ function WorkspaceTool:UpdateContextMenu()
     local canBuild = canRun == true and string.starts(self.currentPath.Path, "/Disks/") == false and specialDir == false
 
     local canCopy = self.focus == true and selections ~= nil and #selections > 0 and specialFile == false and trashOpen == false
-    local canPaste = canCreateFile == true and pixelVisionOS:ClipboardFull() == true
+    local canPaste = canCreateFile == true and pixelVisionOS:ClipboardFull() == true and string.starts(GetClipboardText(), "paths:")
 
-    pixelVisionOS:EnableMenuItemByName(RenameShortcut, canEdit)
+    pixelVisionOS:EnableMenuItemByName("Rename", canEdit)
 
-    pixelVisionOS:EnableMenuItemByName(CopyShortcut, canCopy)
+    pixelVisionOS:EnableMenuItemByName("Copy", canCopy)
 
-    pixelVisionOS:EnableMenuItemByName(PasteShortcut, canPaste)
+    pixelVisionOS:EnableMenuItemByName("Paste", canPaste)
 
-    pixelVisionOS:EnableMenuItemByName(DeleteShortcut, canCopy)
+    pixelVisionOS:EnableMenuItemByName("Delete", canCopy)
 
-    pixelVisionOS:EnableMenuItemByName(BuildShortcut, canBuild)
+    pixelVisionOS:EnableMenuItemByName("Build", canBuild)
 
-    pixelVisionOS:EnableMenuItemByName(NewGameShortcut, canCreateProject)
+    pixelVisionOS:EnableMenuItemByName("New Project", canCreateProject)
 
-    pixelVisionOS:EnableMenuItemByName(NewFolderShortcut, canCreateFolder)
+    pixelVisionOS:EnableMenuItemByName("New Folder", canCreateFolder)
 
-    pixelVisionOS:EnableMenuItemByName(RunShortcut, canRun)
+    pixelVisionOS:EnableMenuItemByName("Run", canRun)
 
-    pixelVisionOS:EnableMenuItemByName(EmptyTrashShortcut, #GetEntities(self.trashPath) > 0)
+    pixelVisionOS:EnableMenuItemByName("Empty Trash", #GetEntities(self.trashPath) > 0)
 
-    pixelVisionOS:EnableMenuItemByName(EjectDiskShortcut, canEject)
+    pixelVisionOS:EnableMenuItemByName("Eject", canEject)
 
     -- Loop through all the file creation options
     for i = 1, #self.newFileOptions do
@@ -483,6 +485,10 @@ function WorkspaceTool:UpdateContextMenu()
         -- if(PathExists(self.currentPath.AppendFile("sprites.png"))) then
         pixelVisionOS:EnableMenuItemByName("New Sprite", false)
         pixelVisionOS:EnableMenuItemByName("New Tilemap", false)
+        pixelVisionOS:EnableMenuItemByName("New Font", self.isGameDir)
+        pixelVisionOS:EnableMenuItemByName("New Music", self.isGameDir)
+        pixelVisionOS:EnableMenuItemByName("New Sounds", self.isGameDir)
+        pixelVisionOS:EnableMenuItemByName("New Colors", self.isGameDir)
         -- end
 
     end

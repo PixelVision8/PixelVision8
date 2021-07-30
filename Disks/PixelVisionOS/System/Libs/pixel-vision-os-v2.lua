@@ -24,7 +24,7 @@ LoadScript("pixel-vision-ui-v2")
 LoadScript("pixel-vision-os-title-bar-v2")
 LoadScript("pixel-vision-os-message-bar-v2")
 LoadScript("pixel-vision-os-modal-v2")
-LoadScript("pixel-vision-os-message-modal-v5")
+LoadScript("pixel-vision-os-message-modal-v6")
 LoadScript("pixel-vision-os-color-utils-v3")
 LoadScript("pixel-vision-os-undo-v2")
 LoadScript("pixel-vision-os-clipboard-v2")
@@ -151,8 +151,6 @@ function PixelVisionOS:Draw()
 
 end
 
-
-
 function PixelVisionOS:ShowAboutModal(toolTitle, optionalText, width)
 
     width = width or 160
@@ -165,24 +163,19 @@ function PixelVisionOS:ShowAboutModal(toolTitle, optionalText, width)
 
 end
 
-function PixelVisionOS:ShowMessageModal(title, message, width, buttons) --showCancel, onCloseCallback, okButtonSpriteName, cancelButtonSpriteName)
+function PixelVisionOS:ShowMessageModal(title, message, width, buttons, options, singleSelection) --showCancel, onCloseCallback, okButtonSpriteName, cancelButtonSpriteName)
 
     -- Look to see if the modal exists
     if(self.messageModal == nil) then
-
         -- Create the model
-        self.messageModal = MessageModal:Init(title, message, width, buttons)
-
-        -- Pass a reference of the editorUI to the modal
-        self.messageModal.editorUI = self.editorUI
-    -- end
+        self.messageModal = MessageModal:Init(title, message, width, buttons, options, singleSelection)
     else
         -- If the modal exists, configure it with the new values
-        self.messageModal:Configure(title, message, width, buttons)--showCancel, okButtonSpriteName, cancelButtonSpriteName)
+        self.messageModal:Configure(title, message, width, buttons, options, singleSelection)--showCancel, okButtonSpriteName, cancelButtonSpriteName)
     end
 
     -- Open the modal
-    self:OpenModal(self.messageModal, onCloseCallback)
+    self:OpenModal(self.messageModal)
 
 end
 
@@ -231,7 +224,7 @@ function PixelVisionOS:ShowSaveModal(title, message, width, onAccept, onDecline,
     end
 
     -- Open the modal
-    self:OpenModal(self.messageModal, onCloseCallback)
+    self:OpenModal(self.messageModal)
 
 end
 

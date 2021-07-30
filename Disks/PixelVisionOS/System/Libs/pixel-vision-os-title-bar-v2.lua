@@ -43,7 +43,7 @@ function PixelVisionOS:CreateTitleBar(x, y, title)
     data.timeMask = {}
 
     for i = 1, 8 * 4 do
-        data.timeMask[i] = 0
+        data.timeMask[i] = 1
     end
 
     self.editorUI:Invalidate(data)
@@ -132,7 +132,7 @@ function PixelVisionOS:CreateTitleBarMenu(items, toolTip)
     local itemHeight = 9
     local dividerHeight = 4
 
-    local tmpW = 92
+    local tmpW = 60
     local tmpH = 0
 
     for i = 1, totalOptions do
@@ -145,10 +145,14 @@ function PixelVisionOS:CreateTitleBarMenu(items, toolTip)
 
         tmpH = tmpH + tmpOption.height
 
+        if(tmpOption.name ~= nil) then 
+            tmpW = math.max(tmpW, #tmpOption.name + 70)
+        end
+
     end
 
     -- Create menu canvas
-    local canvas = NewCanvas(tmpW, tmpH + 10+ 2)
+    local canvas = NewCanvas(tmpW, tmpH + 4)
 
     -- Set the canvas stroke to be 2 x 2 pixels wide
     canvas:SetStroke(0, 2)
@@ -157,12 +161,12 @@ function PixelVisionOS:CreateTitleBarMenu(items, toolTip)
     canvas:SetPattern({12}, 1, 1)
 
     -- Draw background and border
-    canvas:DrawRectangle(0, 0, canvas.width - 8, canvas.height - 8, true)
+    canvas:DrawRectangle(0, 0, canvas.width, canvas.height, true)
     --canvas.wrap = false
 
     --canvas:Draw()
 
-    local tmpCanvas = NewCanvas(canvas.width - 12, itemHeight)
+    local tmpCanvas = NewCanvas(canvas.width - 4, itemHeight)
     --tmpCanvas.wrap = false
 
     local pos = NewPoint(6, 9)
@@ -187,7 +191,7 @@ function PixelVisionOS:CreateTitleBarMenu(items, toolTip)
 
         if(option.divider ~= true) then
             -- Create over pixel data
-            tmpCanvas:Clear(14)
+            tmpCanvas:Fill(14+1) -- TODO manually adding 1 to color
 
             option.rect = NewRect(
                 tmpX + pos.x,
