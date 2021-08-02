@@ -147,6 +147,8 @@ function PaintTool:OnImportColors(path)
     
     local tmpColorIndex, tmpRefIndex = 0, 0
   
+    print("colors", dump(colors))
+  
     -- Loop through all of the system colors
     for i = 1, self.totalColors do
   

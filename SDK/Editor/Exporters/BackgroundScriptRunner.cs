@@ -54,7 +54,7 @@ namespace PixelVision8.Editor
             LuaScript.Globals["args"] = args.Clone();
             LuaScript.Globals["AddStep"] = new Action<string>(AddStep);
             LuaScript.Globals["SetStringAsData"] = new Action<string>(SetStringAsData);
-            LuaScript.Globals["SetImageAsData"] = new Action<ImageData, string>(SetImageAsData);
+            LuaScript.Globals["SetImageAsData"] = new Action<ImageData>(SetImageAsData);
             LuaScript.Globals["BackgroundScriptData"] =
                 new Func<string, string, string>(luaService.BackgroundScriptData);
         }
@@ -126,7 +126,7 @@ namespace PixelVision8.Editor
             }
         }
 
-        public void SetImageAsData(ImageData imageData, string maskColor = Constants.MaskColor)
+        public void SetImageAsData(ImageData imageData)
         {
             try
             {
@@ -135,8 +135,7 @@ namespace PixelVision8.Editor
                 var imageExporter = new PNGWriter();
 
                 var exporter = new PixelDataExporter(fileName, imageData.GetPixels(), imageData.Width, imageData.Height,
-                    palette, imageExporter,
-                    maskColor);
+                    palette, imageExporter);
 
                 exporter.CalculateSteps();
 

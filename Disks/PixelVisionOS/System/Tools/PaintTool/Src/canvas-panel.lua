@@ -21,7 +21,7 @@ function PaintTool:CreateCanvasPanel()
   self.gridSize = 8
   self.snapToGrid = true
   self.mousePos = NewPoint()
-  
+
   -- self.scale = 1
   self.scaledViewport = NewRect()
   self.scaleValues = {.5, 1, 2, 4, 8}--, 8}
@@ -480,8 +480,8 @@ function PaintTool:DrawCanvasPanel()
       tmpY + self.viewportRect.Y,
       DrawMode.UI, 
       self.scale,
-      -1,
-      -1,
+      0,
+      0,
       self.brushColorOffset,
       self.brushMaskRect
     )
@@ -610,7 +610,8 @@ function PaintTool:DrawCanvasPanel()
     end
 
     -- Redraw the background of the canvas
-    self.backgroundLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.maskColor, 0, self.scaledViewport)
+    -- self.backgroundLayerCanvas:Fill(15)
+    self.backgroundLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, 0, self.maskColor, 0, self.scaledViewport)
     
 
     -- print("self.mouseState", self.mouseState)
@@ -1311,9 +1312,9 @@ function PaintTool:InvalidateBackground()
   -- Mode 1 will render the transparent canvas texture for the background
   if(self.backgroundMode == 1) then
 
-    self.backgroundLayerCanvas:SetStroke(-1, 0)
-    self.backgroundLayerCanvas:SetPattern(Sprite(MetaSprite("emptymaskcolor").Sprites[1].Id), 8, 8)
-    self.backgroundLayerCanvas:DrawRectangle(0, 0, self.backgroundLayerCanvas.Width, self.backgroundLayerCanvas.Height, true)
+    -- self.backgroundLayerCanvas:SetStroke(0, 0)
+    -- self.backgroundLayerCanvas:SetPattern(Sprite(MetaSprite("emptymaskcolor").Sprites[1].Id), 8, 8)
+    -- self.backgroundLayerCanvas:DrawRectangle(0, 0, self.backgroundLayerCanvas.Width, self.backgroundLayerCanvas.Height, true)
 
   -- Mode 2 will render the background color
   elseif(self.backgroundMode == 2) then

@@ -153,7 +153,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
                 if(state ~= "dragging") then
                     canvas:Fill(bgColor + 1)
                 else
-                    canvas:Fill(0)
+                    canvas:Clear()
                 end
 
                 canvas:DrawMetaSprite(metaSpriteId, 12, 0)
@@ -217,7 +217,7 @@ function PixelVisionOS:CreateIconButtonStates(data, spriteName, text, bgColor)
                 end
 
                 -- TODO need to look into why we need to force the canvas to draw here before saving
-                canvas:Draw()
+                -- canvas:Draw()
                 
                 
 
@@ -379,6 +379,8 @@ function PixelVisionOS:RedrawIconButton(data)
 
             -- self:NewDraw("DrawPixels", data.cachedPixelData)
 
+            -- TODO this is being called on every frame
+            
             data.cachedPixelData[state]:DrawPixels(data.rect.x, data.rect.y)
             -- canvas:DrawPixels(50, 50)
 
@@ -547,7 +549,7 @@ function PixelVisionOS:IconGroupAddButton(data, buttonData, id)
     end
 
     -- Invalidate the button so it redraws
-    editorUI:Invalidate(buttonData)
+    -- editorUI:Invalidate(buttonData)
 
 end
 
@@ -640,7 +642,9 @@ function PixelVisionOS:UpdateIconGroup(data)
                         40, 
                         false, 
                         false, 
-                        DrawMode.UI
+                        DrawMode.UI,
+                        0,
+                        true
                     )
                     -- DrawPixels(btn.cachedPixelData["up"], 0,0)
                     -- editorUI:NewDraw("DrawPixels", data.drawIconArgs)

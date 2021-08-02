@@ -30,7 +30,7 @@ function PaintTool:CreatePickerPanel()
 
     -- self.currentState.pickerTotal = 0
 
-    self.pickerPanelRect = NewRect(112-2, 22+5, 128, 16)
+    self.pickerPanelRect = NewRect(110, 27, 128, 16)
     
     self.pickerSampleArea = NewRect( 0, 0, self.pickerPanelRect.Width, self.pickerPanelRect.Height )
     
@@ -39,13 +39,42 @@ function PaintTool:CreatePickerPanel()
     self.totalPages = 0
     self.currentPage = 0
 
-    self.emptyPatternPixelData = Sprite(MetaSprite( "emptycolor" ).Sprites[1].Id)
 
-    self.colorPixelData = {}
-    
-    for i = 1, 8*8 do
-        table.insert(self.colorPixelData, -1)
+    -- Build the background
+
+    local emptyMetaSprite = MetaSprite("emptycolor")
+
+    local spriteId = emptyMetaSprite.Sprites[1].Id
+
+    emptyMetaSprite.Clear()
+
+    local columns = self.pickerPanelRect.Width / 8
+    local rows  = self.pickerPanelRect.Height / 8
+
+    local total = columns * rows
+
+    for i = 1, total do
+        
+        local index = i - 1
+        
+        local pos = CalculatePosition(index, columns)
+
+        emptyMetaSprite.AddSprite(spriteId, pos.X * 8, pos.Y * 8)
+
     end
+
+
+    -- self.emptyPatternPixelData = Sprite(MetaSprite( "emptycolor" ).Sprites[1].Id)
+
+    -- for i = 1, #self.emptyPatternPixelData, 1 do
+    --     self.emptyPatternPixelData[i] = -8
+    -- end
+
+    -- self.colorPixelData = {}
+    
+    -- for i = 1, 8*8 do
+    --     table.insert(self.colorPixelData, -1)
+    -- end
 
     self.colorCanvas = NewCanvas(128, 128) -- TODO need to account for missing colors and color offset
     
@@ -53,7 +82,7 @@ function PaintTool:CreatePickerPanel()
 
 
     self.pickerOverCanvas = NewCanvas( 12, 12 )
-    self.pickerOverCanvas:Clear()
+    -- self.pickerOverCanvas:Clear()
     self.pickerOverCanvas:SetStroke(0, 1);
     self.pickerOverCanvas:DrawRectangle( 0, 0, self.pickerOverCanvas.width, self.pickerOverCanvas.height)
     self.pickerOverCanvas:DrawRectangle( 2, 2, self.pickerOverCanvas.width - 4, self.pickerOverCanvas.height -4)
@@ -106,13 +135,15 @@ function PaintTool:CreatePickerPanel()
 
     if(#self.pickerModes > 1) then
 
-    -- Create size button
-    self.modeButton = editorUI:CreateButton({x = 73, y = 23}, "colormode", "Change mode")
-    self.modeButton.onAction = function() self:OnNextMode() end
+        -- Create size button
+        self.modeButton = editorUI:CreateButton({x = 73, y = 23}, "colormode", "Change mode")
+        self.modeButton.onAction = function() self:OnNextMode() end
 
-    -- TODO need a way to disable the mode if no mode exists
+        -- TODO need a way to disable the mode if no mode exists
 
     else
+
+        -- Hide the button if we don't need it
         DrawRect( 73, 23-8, 24, 8, BackgroundColor(), DrawMode.TilemapCache )
         -- DrawMetaSprite( "colormodeup", 73, 23, false, false, DrawMode.TilemapCache)
     end
@@ -131,8 +162,6 @@ function PaintTool:UpdatePickerPanel(timeDelta)
     local inRect = self.pickerPanelRect.Contains(editorUI.mouseCursor.pos) == true
     
     if(inRect or overrideFocus) then
-
-        
 
         if(self.pickerPanel.inFocus ~= true and editorUI.inFocusUI == nil) then
             editorUI:SetFocus(self.pickerPanel, self.focusCursor)
@@ -154,8 +183,6 @@ function PaintTool:UpdatePickerPanel(timeDelta)
             pixelVisionOS:DisplayMessage(message)
 
             if(inRect and editorUI.collisionManager.mouseDown == false) then
-
-                
 
                 if(tmpId >= self.currentState.pickerTotal or tmpId == self.currentState.selectedId) then
 
@@ -256,7 +283,7 @@ function PaintTool:DrawPickerPanel()
         self.pickerSampleRect.X = self.currentState.overPos.X
         self.pickerSampleRect.Y = self.currentState.overPos.pos.Y * 8
 
-        self.currentCanvas:DrawPixels(self.currentState.overPos.X + self.pickerPanelRect.X , self.currentState.overPos.Y+ self.pickerPanelRect.Y, DrawMode.SpriteAbove, 1, -1, self.maskColor, 0, self.pickerSampleRect)
+        -- self.currentCanvas:DrawPixels(self.currentState.overPos.X + self.pickerPanelRect.X , self.currentState.overPos.Y+ self.pickerPanelRect.Y, DrawMode.SpriteAbove, 1, 0, self.maskColor, 0, self.pickerSampleRect)
 
         self.pickerOverCanvas:DrawPixels( self.currentState.overPos.X + self.pickerPanelRect.X - 2 , self.currentState.overPos.Y+ self.pickerPanelRect.Y - 2, DrawMode.SpriteAbove )
 
@@ -297,14 +324,15 @@ end
 
 function PaintTool:ClearCurrentCanvas()
 
+
     -- Clear the sprite canvas
     self.currentCanvas:Clear()
 
-    self.currentCanvas:SetStroke(0, 0)
+    -- self.currentCanvas:SetStroke(0, 0)
 
-    self.currentCanvas:SetPattern(self.emptyPatternPixelData, 8, 8)
+    -- self.currentCanvas:SetPattern(self.emptyPatternPixelData, 8, 8)
 
-    self.currentCanvas:DrawRectangle(0, 0, self.currentCanvas.Width, self.currentCanvas.Height, true)
+    -- self.currentCanvas:DrawRectangle(0, 0, self.currentCanvas.Width, self.currentCanvas.Height, true)
 
 end
 
@@ -449,7 +477,7 @@ function PaintTool:RebuildBrushPreview()
     if(self.tool == "eraser") then
         
         -- Clear the brush canvas with the mask color
-        self.brushCanvas:Clear(self.maskColor)
+        self.brushCanvas:Fill(self.maskColor)
 
     else
 
@@ -506,6 +534,9 @@ end
 
 function PaintTool:GoToPickerPage(value)
 
+    DrawMetaSprite("emptycolor", self.pickerPanelRect.X, self.pickerPanelRect.Y, false, false, DrawMode.TilemapCache)
+
+
     self.currentPage = Clamp(value, 0, self.totalPages )
 
     editorUI:Enable(self.backButton, self.currentPage > 0)
@@ -513,7 +544,7 @@ function PaintTool:GoToPickerPage(value)
 
     self.pickerSampleArea.Y = 16 * self.currentPage
 
-    self.currentCanvas:DrawPixels(self.pickerPanelRect.X, self.pickerPanelRect.Y, DrawMode.TilemapCache, 1, -1, self.maskColor, 0, self.pickerSampleArea)
+    self.currentCanvas:DrawPixels(self.pickerPanelRect.X, self.pickerPanelRect.Y, DrawMode.TilemapCache, 1, 0, 0, 0, self.pickerSampleArea)
 
     -- -- TODO clear label area 
     DrawRect(98, 15, 130, 8, BackgroundColor())

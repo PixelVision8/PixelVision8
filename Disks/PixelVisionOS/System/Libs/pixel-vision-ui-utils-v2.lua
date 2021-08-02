@@ -20,6 +20,7 @@ local absindex = function(len, i)
 end
 
 string.starts = function(String, Start)
+
   return string.sub(String, 1, string.len(Start)) == Start
 end
 

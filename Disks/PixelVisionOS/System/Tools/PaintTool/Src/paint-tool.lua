@@ -43,6 +43,7 @@ function PaintTool:Init()
         invalid = true,
         image = nil,
         defaultColors = {
+          "#FF00FF",
           "#2D1B2E",
           "#218A91",
           "#3CC2FA",

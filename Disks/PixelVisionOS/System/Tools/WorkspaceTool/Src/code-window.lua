@@ -734,6 +734,8 @@ function WorkspaceTool:OnWindowIconClick(id)
 
         if(type == "installer") then
 
+            print("Starts installer")
+
             if(PathExists(NewWorkspacePath("/Workspace/")) == false) then
 
                 pixelVisionOS:ShowMessageModal("Installer Error", "You need to create a 'Workspace' drive before you can run an install script.", 160)
@@ -1288,6 +1290,7 @@ function WorkspaceTool:GetDirectoryContents(workspacePath)
             -- Get the current entity
             tmpEntity = srcEntities[i]
 
+            print("Starts Entity name Window")
             -- print(tmpEntity.Path)
             if(string.starts(tmpEntity.EntityName, ".") == false) then
                 -- Create the new file

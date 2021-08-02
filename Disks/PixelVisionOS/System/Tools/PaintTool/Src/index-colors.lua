@@ -70,6 +70,9 @@ function PaintTool:IndexColors()
 
     self:IndexColors()
 
+    -- TODO need to look into a better way of doing this since it's hacky
+    self.colorOffset = self.colorOffset + 1
+
 end
 
 function PaintTool:InvalidateColors()

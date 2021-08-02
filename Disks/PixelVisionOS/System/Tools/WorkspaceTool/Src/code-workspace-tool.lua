@@ -32,6 +32,7 @@ function WorkspaceTool:Init()
   -- Create a global reference of the new workspace tool
   setmetatable(_workspaceTool, WorkspaceTool)
 
+  print("Starts Disk")
   -- Update title if it running from the disk
   if(string.starts(_workspaceTool.rootPath, "/Disks/")) then
     _workspaceTool.toolName = _workspaceTool.toolName .. " (DISK)"

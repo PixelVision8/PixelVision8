@@ -164,14 +164,14 @@ namespace PixelVision8.Runner
             return workspace.OpenFile(workspacePath, FileAccess.Read).ReadAllBytes().Length / 1024;
         }
         
-        public void SaveImage(WorkspacePath dest, ImageData imageData, string maskHex = Constants.MaskColor)
+        public void SaveImage(WorkspacePath dest, ImageData imageData)
         {
             var width = imageData.Width;
             var height = imageData.Height;
             
             var cachedColors = ColorUtils.ConvertColors(imageData.Colors/*, maskHex, true*/).Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
 
-            var exporter = new PixelDataExporter(dest.EntityName, imageData.GetPixels(), width, height, cachedColors, _pngWriter, maskHex);
+            var exporter = new PixelDataExporter(dest.EntityName, imageData.GetPixels(), width, height, cachedColors, _pngWriter);
             exporter.CalculateSteps();
 
             while (exporter.Completed == false) exporter.NextStep();
@@ -217,6 +217,7 @@ namespace PixelVision8.Runner
             workspace.SaveTextToFile(dest, defaultText, true);
         }
 
+        // TODO need to remove unused mask here
         public ImageData ReadImage(WorkspacePath src, string maskHex = Constants.MaskColor, string[] colorRefs = null)
         {
             PNGReader reader = null;

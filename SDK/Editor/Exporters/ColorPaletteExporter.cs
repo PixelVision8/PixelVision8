@@ -74,7 +74,7 @@ namespace PixelVision8.Editor
             BuildPixelData();
 
             // Create Pixel Data Exporter
-            exporter = new PixelDataExporter(fullFileName, pixels, width, height, colors, imageExporter, _maskColor);
+            exporter = new PixelDataExporter(fullFileName, pixels, width, height, colors, imageExporter);
 
             // calculate steps for exporter
             exporter.CalculateSteps();

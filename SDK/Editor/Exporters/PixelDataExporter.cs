@@ -21,21 +21,29 @@
 // using Microsoft.Xna.Framework;
 using PixelVision8.Runner;
 using PixelVision8.Player;
+using System;
 
 namespace PixelVision8.Editor
 {
     public class PixelDataExporter : ImageExporter
     {
-        protected ColorData maskColor = new ColorData(255, 0, 255);
+        // protected ColorData maskColor = new ColorData(255, 0, 255);
         protected ColorData[] paletteColors;
         protected int[] pixelData;
 
         public PixelDataExporter(string fileName, int[] pixelData, int width, int height, ColorData[] paletteColors,
-            IImageExporter imageExporter, string maskHex) : base(fileName, imageExporter, null, width, height)
+            IImageExporter imageExporter) : base(fileName, imageExporter, null, width, height)
         {
-            this.paletteColors = paletteColors;
+
+            this.paletteColors = paletteColors;//new ColorData[paletteColors.Length + 1];
+
+            // this.paletteColors[0] = new ColorData(maskHex);
+
+            // Array.Copy(paletteColors, 0, this.paletteColors, 1, paletteColors.Length);
+
+            // this.paletteColors = paletteColors;
             this.pixelData = pixelData;
-            maskColor = new ColorData(maskHex);
+            // maskColor = new ColorData(maskHex);
         }
 
         public override void CalculateSteps()
@@ -53,14 +61,12 @@ namespace PixelVision8.Editor
 
             colors = new ColorData[total];
 
+            var totalColors = paletteColors.Length;
+
             for (var i = 0; i < total; i++)
             {
-                var refID = pixelData[i];
-
-                // if (refID != Constants.EmptyPixel && refID < total)
+                var refID = Utilities.Clamp(pixelData[i], 0, totalColors);
                 colors[i] = paletteColors[refID];
-                // else
-                //     colors[i] = maskColor;
             }
 
             CurrentStep++;
