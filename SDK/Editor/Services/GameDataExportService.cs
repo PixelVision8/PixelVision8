@@ -140,8 +140,7 @@ namespace PixelVision8.Editor
             var colors = ColorUtils.ConvertColors(engine.ColorChip.HexColors)/*, engine.ColorChip.MaskColor, true)*/.Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
 
 
-            AddExporter(new PixelDataExporter(path, pixelData, width, height, colors, imageExporter,
-                engine.GameChip.MaskColor()));
+            AddExporter(new PixelDataExporter(path, pixelData, width, height, colors, imageExporter));
         }
     }
 }

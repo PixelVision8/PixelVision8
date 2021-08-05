@@ -47,17 +47,19 @@ namespace PixelVision8.Runner
             if(debugMode == false)
             {
                 // Set the default color to 1 if the bg color is out of range
-                if(hexColors[bgColorId] == refColors)
-                    bgColorId = 1;
+                // hexColors[bgColorId] == refColors)
+
+                hexColors[Constants.EmptyPixel] = hexColors[bgColorId];
+                //     bgColorId = 1;
 
                 // Console.WriteLine("BG Color " + bgColorId + " " + hexColors[bgColorId] + " vs " + hexColors[0]);
 
                 // Loop through and replace all the colors matching the mask with the bg color
-                for (int i = 0; i < hexColors.Length; i++)
-                {
-                    if(hexColors[i] == refColors)
-                        hexColors[i] = hexColors[bgColorId];
-                }
+                // for (int i = 0; i < hexColors.Length; i++)
+                // {
+                //     if(hexColors[i] == refColors)
+                //         hexColors[i] = hexColors[bgColorId];
+                // }
 
             }
             

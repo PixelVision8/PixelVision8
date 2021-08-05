@@ -63,7 +63,7 @@ function PaintTool:Init()
         },
         colorsPath = "",
         -- Set the color offset after the tool's default colors + 1 for the mask
-        colorOffset = 17,
+        colorOffset = 16,
         -- Save the default bg color so we don't have to keep calling it the loop below
         defaultMaskColor = MaskColor(),
         -- Save the total colors so we don't have to keep recalculating this later on
@@ -78,7 +78,7 @@ function PaintTool:Init()
     end
 
     -- Set the mask color to the color offset - 1
-    _paintTool.maskColor = _paintTool.colorOffset - 1
+    _paintTool.maskColor = _paintTool.colorOffset -- TODO modified this to be the same as the color offset
 
     -- Set the mask to the tool's default mask color
     Color(_paintTool.maskColor, _paintTool.defaultMaskColor)
@@ -128,7 +128,7 @@ function PaintTool:LoadImage(defaultColors)
   -- Get a reference to the image's colors 
   local imageColors = self.image.colors
 
-  if(#imageColors <= 1 and imageColors[1] == "#FF00FF") then
+  if(#imageColors <= 1) then
 
     imageColors = self.defaultColors
 
@@ -140,6 +140,7 @@ function PaintTool:LoadImage(defaultColors)
 
   end
 
+  print("Default colors", dump(imageColors))
   self:ImportColors(imageColors)
 
   local flagPath = targetPath.ChangeExtension(".flags.png")

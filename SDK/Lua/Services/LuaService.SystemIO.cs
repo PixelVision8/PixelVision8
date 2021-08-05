@@ -41,7 +41,7 @@ namespace PixelVision8.Runner
 
             // Save file helpers
             luaScript.Globals["SaveText"] = new Action<WorkspacePath, string>(SaveText);
-            luaScript.Globals["SaveImage"] = new Action<WorkspacePath, ImageData, string>(SaveImage);
+            luaScript.Globals["SaveImage"] = new Action<WorkspacePath, ImageData>(SaveImage);
             
             // Read file helpers
             luaScript.Globals["ReadJson"] = new Func<WorkspacePath, Dictionary<string, object>>(ReadJson);
@@ -241,19 +241,30 @@ namespace PixelVision8.Runner
             // Manually call each step
             imageParser.ParseImageData();
 
+            List<string> finalColors; 
+
             // If no colors are passed in, used the image's palette
             if (colorRefs == null)
             {
-                colorRefs = reader.ColorPalette.Select(c => c.ToString()).ToArray();
+                finalColors = reader.ColorPalette.Select(c => c.ToString()).ToList();
+            }
+            else
+            {
+                finalColors = colorRefs.ToList();
             }
 
+            if(finalColors.IndexOf(maskHex) > -1)
+                finalColors.RemoveAt(finalColors.IndexOf(maskHex));
+
+            finalColors.Insert(0, maskHex);
+
             // Resize the color chip
-            tmpColorChip.Total = colorRefs.Length;
+            tmpColorChip.Total = finalColors.Count;
 
             // Add the colors
-            for (int i = 0; i < colorRefs.Length; i++)
+            for (int i = 0; i < finalColors.Count; i++)
             {
-                tmpColorChip.UpdateColorAt(i, colorRefs[i]);
+                tmpColorChip.UpdateColorAt(i, finalColors[i]);
             }
 
             // Parse the image with the new colors

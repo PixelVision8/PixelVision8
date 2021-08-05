@@ -129,25 +129,35 @@ function PaintTool:OnImportColors(path)
 
     if(colors == nil) then
       colors = self.defaultColors
+    else
+      -- table.insert(colors, 1, "#FF00FF")
     end
 
-    self.image.RemapColors(colors)
-
-    self.imageLayerCanvas.SetPixels(0, 0, self.image.Width, self.image.Height, self.image.GetPixels())
-
     self:ImportColors(colors)
+
+    -- Add the mask
+
+    -- print("Color", dump(colors))
+
+    self.image:RemapColors(colors)
+
+    self.imageLayerCanvas:SetPixels(0, 0, self.image.Width, self.image.Height, self.image.GetPixels())
+
+    
     
   end
   
   function PaintTool:ImportColors(colors)
     
+    -- Add the mask
+
+    -- table.insert(colors, 1, "#FF00FF")
+
     if(colors == nil) then
       colors = self.defaultColors
     end
     
     local tmpColorIndex, tmpRefIndex = 0, 0
-  
-    print("colors", dump(colors))
   
     -- Loop through all of the system colors
     for i = 1, self.totalColors do

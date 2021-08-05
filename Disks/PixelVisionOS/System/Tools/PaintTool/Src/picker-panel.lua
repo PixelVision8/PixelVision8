@@ -458,7 +458,7 @@ function PaintTool:RebuildBrushPreview()
         self.brushCanvas:Clear()
 
         -- Fill the brush with the brush color based on the stroke size
-        self.brushCanvas:Clear(self.brushColor, 0, 0, self.defaultStrokeWidth, self.defaultStrokeWidth)
+        self.brushCanvas:Fill(self.brushColor + 1, 0, 0, self.defaultStrokeWidth, self.defaultStrokeWidth)
 
         self.brushColorOffset = self.colorOffset
 

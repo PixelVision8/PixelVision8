@@ -93,6 +93,8 @@ namespace PixelVision8.Player
 
             T tmpPixel;
         
+            // TODO shouldn't this use copy instead of looping thorugh all the pixels?
+
             for (i = 0; i < total; i++)
             {
                 
@@ -126,6 +128,7 @@ namespace PixelVision8.Player
             for (int i = 0; i < pixelData.Total; i++) pixelData[i] = colorRef;
         }
         
+        // TODO need to optimize this if we are not flipping the pixel data and ignoreTransparent is false
         public static void MergePixels<T>(
             // The source pixel data
             PixelData<T> src, 

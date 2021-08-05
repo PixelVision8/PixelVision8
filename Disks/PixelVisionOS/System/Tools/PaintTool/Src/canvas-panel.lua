@@ -80,6 +80,16 @@ function PaintTool:CreateCanvasPanel()
   -- Create new background canvas
   self.backgroundLayerCanvas = NewCanvas( self.imageLayerCanvas.Width, self.imageLayerCanvas.Height )
 
+  local pixels = Sprite(MetaSprite("emptymaskcolor").Sprites[1].Id)
+
+  -- TODO this is a hack, shouldn't have to subtract 1 from the pixel data
+  for i = 1, #pixels do
+    pixels[i] = pixels[i] - 1
+  end
+
+  self.backgroundLayerCanvas:SetStroke(0, 0)
+  self.backgroundLayerCanvas:SetPattern(pixels, 8, 8)
+
   self.gridCanvas = NewCanvas(self.viewportRect.Width, self.viewportRect.Height)
 
   -- Invalidate the background so it renders
@@ -172,23 +182,6 @@ function PaintTool:CreateCanvasPanel()
 
   end
   
-end
-
-function PaintTool:ChangeCanvasLayer(name)
-
-  -- name = name or "image"
-
-  -- print("Change layer", name)
-
-  -- if(name == "image") then
-
-  --   self.
-
-  -- elseif(name == "tmp") then
-
-  -- end
-
-
 end
 
 function PaintTool:InvalidateCanvas(mergeTmpLayer)
@@ -530,7 +523,6 @@ function PaintTool:DrawCanvasPanel()
           self.selectedPixelData = nil
         
         end
-        
       
         -- Clear the selection state
         self.selectionState = "none"
@@ -610,38 +602,32 @@ function PaintTool:DrawCanvasPanel()
     end
 
     -- Redraw the background of the canvas
-    -- self.backgroundLayerCanvas:Fill(15)
-    self.backgroundLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, 0, self.maskColor, 0, self.scaledViewport)
-    
+    if(self.backgroundMode ~= 1) then
+      self.backgroundLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, 0, 0, 0, self.scaledViewport, false)
+    end
 
-    -- print("self.mouseState", self.mouseState)
-    
     if(self.mergerTmpLayer == true and self.mouseState == "released") then
 
-      -- print("Start Undo")
       --   -- TODO we can optimize this by passing in a rect for the area to merge
       srcCanvas:MergeCanvas(self.tmpLayerCanvas, 0, true)
 
-      -- print("End undo")
-      -- self.tmpLayerCanvas:Clear()
       self.mergerTmpLayer = false
 
-      -- -- Invalidate the canvas and the selection
-      -- self:InvalidateUndo()
-      
     end
 
+    local tmpMaskId = 1
+
     -- Draw the pixel data in the upper left hand corner of the tool's window
-    self.imageLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.maskColor, -1, self.colorOffset, self.scaledViewport)
+    self.imageLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, tmpMaskId, 0, self.colorOffset, self.scaledViewport, self.backgroundMode ~= 1)
 
     -- Only draw the flag layer when we need to
     if(self.pickerMode == FlagMode) then
-      self.flagLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.emptyColorID, 0, self.scaledViewport)
+      self.flagLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, 0, self.emptyColorID, 0, self.scaledViewport)
     end
 
     -- Only draw the temp layer when we need to
     if(self.drawTmpLayer == true) then
-      self.tmpLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, -1, self.emptyColorID, self.colorOffset, self.scaledViewport)
+      self.tmpLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, 0, self.emptyColorID, self.colorOffset, self.scaledViewport)
     end
 
     -- if(self.showGrid == true) then
@@ -1310,21 +1296,25 @@ end
 function PaintTool:InvalidateBackground()
 
   -- Mode 1 will render the transparent canvas texture for the background
-  if(self.backgroundMode == 1) then
+  -- if(self.backgroundMode == 1) then
 
-    -- self.backgroundLayerCanvas:SetStroke(0, 0)
-    -- self.backgroundLayerCanvas:SetPattern(Sprite(MetaSprite("emptymaskcolor").Sprites[1].Id), 8, 8)
-    -- self.backgroundLayerCanvas:DrawRectangle(0, 0, self.backgroundLayerCanvas.Width, self.backgroundLayerCanvas.Height, true)
+    -- print("Sprite", dump(Sprite(MetaSprite("emptymaskcolor").Sprites[1].Id)))
+
+    
+    
 
   -- Mode 2 will render the background color
-  elseif(self.backgroundMode == 2) then
+  -- else
+    if(self.backgroundMode == 2) then
 
-    self.backgroundLayerCanvas:Clear(self.backgroundColorId + self.colorOffset)
+    self.backgroundLayerCanvas:fill(self.backgroundColorId + self.colorOffset)
 
   else
 
     -- Use the mask color as the default background   
-    self.backgroundLayerCanvas:Clear(self.maskColor + self.colorOffset)
+    -- self.backgroundLayerCanvas:fill(self.colorOffset)
+
+    self.backgroundLayerCanvas:DrawRectangle(0, 0, self.backgroundLayerCanvas.Width, self.backgroundLayerCanvas.Height, true)
 
   end
 

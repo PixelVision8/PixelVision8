@@ -146,37 +146,37 @@ namespace PixelVision8.Runner
             }
 
             // Sort colors
-            // uniqueColorIDs.Sort();
+            uniqueColorIDs.Sort();
 
-            // var indexes = new List<int>();
+            var indexes = new List<int>();
 
-            // // find open slots
-            // for (int i = 0; i < colorMap.Length; i++)
-            // {
-            //     if (colorMap[i] == null)
-            //     {
-            //         indexes.Add(i);
-            //     }
-            // }
+            // find open slots
+            for (int i = 0; i < colorMap.Length; i++)
+            {
+                if (colorMap[i] == null)
+                {
+                    indexes.Add(i);
+                }
+            }
 
-            // var totalOrphanColors = orphanColors.Count;
+            var totalOrphanColors = orphanColors.Count;
 
-            // for (int i = 0; i < indexes.Count; i++)
-            // {
-            //     if (i < totalOrphanColors)
-            //     {
-            //         colorMap[indexes[i]] = orphanColors[i];
-            //     }
-            // }
+            for (int i = 0; i < indexes.Count; i++)
+            {
+                if (i < totalOrphanColors)
+                {
+                    colorMap[indexes[i]] = orphanColors[i];
+                }
+            }
 
-            // // clean up the color map
-            // for (int i = 0; i < colorMap.Length; i++)
-            // {
-            //     if (colorMap[i] == null)
-            //     {
-            //         colorMap[i] = colorRefs[i];
-            //     }
-            // }
+            // clean up the color map
+            for (int i = 0; i < colorMap.Length; i++)
+            {
+                if (colorMap[i] == null)
+                {
+                    colorMap[i] = colorRefs[i];
+                }
+            }
 
             // Convert all of the pixels into color ids
             var pixelIDs = Parser.ColorPixels.Select(c => Array.IndexOf(colorMap, ColorUtils.RgbToHex(c)))
