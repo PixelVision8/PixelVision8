@@ -149,8 +149,7 @@ namespace PixelVision8.Player
         /// <param name="maskColor"></param>
         /// <param name="maskColorID"></param>
         /// <param name="viewport"></param>
-        public void DrawPixels(int x = 0, int y = 0, DrawMode drawMode = DrawMode.TilemapCache, float scale = 1f,
-            int maskColor = Constants.EmptyPixel, int maskColorID = Constants.EmptyPixel, int colorOffset = 0, Rectangle? viewport = null, bool ignoreTransparency = true)
+        public void DrawPixels(int x = 0, int y = 0, DrawMode drawMode = DrawMode.TilemapCache, float scale = 1f, int colorOffset = 0, int maskId = Constants.EmptyPixel, Rectangle? viewport = null)
         {
             // This only works when the canvas has a reference to the gameChip
             if (gameChip == null) return;
@@ -180,7 +179,7 @@ namespace PixelVision8.Player
 
             var destPixels = ResizePixels(srcPixels, tmpW, tmpH, newWidth, newHeight);
 
-            gameChip.DrawPixels(destPixels, x, y, newWidth, newHeight, false, false, drawMode, colorOffset, ignoreTransparency);
+            gameChip.DrawPixels(destPixels, x, y, newWidth, newHeight, false, false, drawMode, colorOffset, maskId);
         }
 
         public int[] GetPixels()

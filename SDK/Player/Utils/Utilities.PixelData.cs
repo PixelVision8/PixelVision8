@@ -147,7 +147,7 @@ namespace PixelVision8.Player
             bool flipV = false,
             // Apply a color offset
             T colorOffset = default,
-            bool ignoreTransparent = true
+            int maskId = 0
         ) where T : IComparable
         {
 
@@ -175,7 +175,7 @@ namespace PixelVision8.Player
         
                 tmpPixel = src.Pixels[tmpX + srcPWidth * tmpY];
                 
-                if (tmpPixel >= Constants.FirstColorId || ignoreTransparent != true)
+                if (tmpPixel != maskId)
                 {
                     tmpX = (flipH ? srcWidth - 1 - col : col) + destX;
         

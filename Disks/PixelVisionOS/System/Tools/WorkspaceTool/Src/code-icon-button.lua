@@ -642,9 +642,7 @@ function PixelVisionOS:UpdateIconGroup(data)
                         40, 
                         false, 
                         false, 
-                        DrawMode.UI,
-                        0,
-                        true
+                        DrawMode.UI
                     )
                     -- DrawPixels(btn.cachedPixelData["up"], 0,0)
                     -- editorUI:NewDraw("DrawPixels", data.drawIconArgs)

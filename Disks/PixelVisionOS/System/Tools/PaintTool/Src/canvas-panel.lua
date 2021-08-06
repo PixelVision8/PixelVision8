@@ -473,9 +473,8 @@ function PaintTool:DrawCanvasPanel()
       tmpY + self.viewportRect.Y,
       DrawMode.UI, 
       self.scale,
-      0,
-      0,
       self.brushColorOffset,
+      0,
       self.brushMaskRect
     )
 
@@ -584,7 +583,8 @@ function PaintTool:DrawCanvasPanel()
 
           local selectionMask = NewRect( 1, 1, tmpW - 2, tmpH -2  )
 
-          self.selectedPixelData:DrawPixels(tmpX, tmpY, DrawMode.Sprite, self.scale, -1, -1, self.colorOffset, selectionMask)
+          -- TODO this was using -1 for the mask previously?
+          self.selectedPixelData:DrawPixels(tmpX, tmpY, DrawMode.Sprite, self.scale, self.colorOffset, selectionMask)
           -- self.tmpLayerCanvas:MergePixels(self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height, self.selectedPixelData.Pixels)
 
         end
@@ -603,7 +603,7 @@ function PaintTool:DrawCanvasPanel()
 
     -- Redraw the background of the canvas
     if(self.backgroundMode ~= 1) then
-      self.backgroundLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, 0, 0, 0, self.scaledViewport, false)
+      self.backgroundLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, 0, 0, self.scaledViewport)
     end
 
     if(self.mergerTmpLayer == true and self.mouseState == "released") then
@@ -615,19 +615,20 @@ function PaintTool:DrawCanvasPanel()
 
     end
 
-    local tmpMaskId = 1
+    -- TODO need to tie this into the mask color selection (which is not implemented yet so default to 0)
+    local tmpMaskId = 0
 
     -- Draw the pixel data in the upper left hand corner of the tool's window
-    self.imageLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, tmpMaskId, 0, self.colorOffset, self.scaledViewport, self.backgroundMode ~= 1)
+    self.imageLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, tmpMaskId, self.scaledViewport)
 
     -- Only draw the flag layer when we need to
     if(self.pickerMode == FlagMode) then
-      self.flagLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, 0, self.emptyColorID, 0, self.scaledViewport)
+      self.flagLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, tmpMaskId, self.scaledViewport)
     end
 
     -- Only draw the temp layer when we need to
     if(self.drawTmpLayer == true) then
-      self.tmpLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, 0, self.emptyColorID, self.colorOffset, self.scaledViewport)
+      self.tmpLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, tmpMaskId, self.scaledViewport)
     end
 
     -- if(self.showGrid == true) then
@@ -803,7 +804,7 @@ function PaintTool:RedrawGrid()
   end
 
   -- Draw the grid on top of the canvas
-  self.gridCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, 1, -1, -1)
+  self.gridCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache)
 
 end
 

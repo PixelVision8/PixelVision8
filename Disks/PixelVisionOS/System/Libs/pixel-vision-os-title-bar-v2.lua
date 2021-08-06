@@ -187,7 +187,7 @@ function PixelVisionOS:CreateTitleBarMenu(items, toolTip)
         -- Draw the up state
         self:DrawTitleBarMenuItem(tmpCanvas, option, 14)
 
-        canvas:MergePixels(tmpX, tmpY, tmpCanvas.width, tmpCanvas.height, tmpCanvas:GetPixels(), false, false, 0, true)
+        canvas:MergePixels(tmpX, tmpY, tmpCanvas.width, tmpCanvas.height, tmpCanvas:GetPixels())
 
         if(option.divider ~= true) then
             -- Create over pixel data

@@ -41,7 +41,7 @@ namespace PixelVision8.Player
         public int X;
         public int Y;
 
-        public bool IgnoreTransparent;
+        public int MaskId;
 
         public byte Priority;
 

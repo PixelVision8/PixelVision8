@@ -544,7 +544,7 @@ function PaintTool:GoToPickerPage(value)
 
     self.pickerSampleArea.Y = 16 * self.currentPage
 
-    self.currentCanvas:DrawPixels(self.pickerPanelRect.X, self.pickerPanelRect.Y, DrawMode.TilemapCache, 1, 0, 0, 0, self.pickerSampleArea)
+    self.currentCanvas:DrawPixels(self.pickerPanelRect.X, self.pickerPanelRect.Y, DrawMode.TilemapCache, 1, 0, 0, self.pickerSampleArea)
 
     -- -- TODO clear label area 
     DrawRect(98, 15, 130, 8, BackgroundColor())

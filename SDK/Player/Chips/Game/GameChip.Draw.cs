@@ -76,7 +76,7 @@ namespace PixelVision8.Player
         ///     to each int, in the pixel data array, allowing you to simulate palette shifting.
         /// </param>
         public void DrawPixels(int[] pixelData, int x, int y, int blockWidth, int blockHeight, bool flipH = false,
-            bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool ignoreTransparent = false)
+            bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, int maskId = Constants.EmptyPixel)
         {
             switch (drawMode)
             {
@@ -86,19 +86,16 @@ namespace PixelVision8.Player
 
                 case DrawMode.TilemapCache:
 
-                    // if (_tmpPixelData.Width != blockWidth || _tmpPixelData.Height != blockHeight)
-                    //     _tmpPixelData.Resize(blockWidth, blockHeight);
-
                     _tmpPixelData.SetPixels(pixelData, blockWidth, blockHeight);
-
+                    
                     // Copy pixel data directly into the tilemap chip's texture
-                    Utilities.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, TilemapChip.PixelData, x, y, flipH, flipV, colorOffset, ignoreTransparent);
+                    Utilities.MergePixels(_tmpPixelData, 0, 0, blockWidth, blockHeight, TilemapChip.PixelData, x, y, flipH, flipV, colorOffset, maskId);
 
                     break;
 
                 default:
 
-                    DisplayChip.NewDrawCall(pixelData, x, y, blockWidth, blockHeight, (byte) drawMode, flipH, flipV, colorOffset, 0, 0, ignoreTransparent);
+                    DisplayChip.NewDrawCall(pixelData, x, y, blockWidth, blockHeight, (byte) drawMode, flipH, flipV, colorOffset, 0, 0, maskId);
 
                     break;
             }
@@ -144,9 +141,7 @@ namespace PixelVision8.Player
         ///     tilemap by default. When rendering below the tilemap, the sprite is visible in the transparent area of the tile
         ///     above the background color.
         /// </param>
-        public void DrawSprite(int id, int x, int y, bool flipH = false,
-            bool flipV = false,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, SpriteChip srcChip = null)
+        public void DrawSprite(int id, int x, int y, bool flipH = false, bool flipV = false, DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, SpriteChip srcChip = null)
         {
             // Only apply the max sprite count to sprite draw modes
 
@@ -163,8 +158,7 @@ namespace PixelVision8.Player
                 {
                     srcChip.ReadSpriteAt(id, ref _tmpSpriteData);
 
-                    DrawPixels(_tmpSpriteData, x, y, SpriteWidth, SpriteHeight, flipH, flipV, drawMode,
-                        colorOffset, true);
+                    DrawPixels(_tmpSpriteData, x, y, SpriteWidth, SpriteHeight, flipH, flipV, drawMode, colorOffset); // TODO sprites will always use 0 as the default maskId, should this be allowed to be passed in?
                 }
                 else
                 {
@@ -174,8 +168,7 @@ namespace PixelVision8.Player
                     pos.X *= SpriteWidth;
                     pos.Y *= SpriteHeight;
 
-                    DisplayChip.NewDrawCall(srcChip, x, y, SpriteWidth, SpriteHeight,
-                        (byte) drawMode, flipH, flipV, colorOffset, pos.X, pos.Y);
+                    DisplayChip.NewDrawCall(srcChip, x, y, SpriteWidth, SpriteHeight, (byte) drawMode, flipH, flipV, colorOffset, pos.X, pos.Y);
 
                     Player.SpriteCounter++;
                     // }
@@ -213,7 +206,7 @@ namespace PixelVision8.Player
             // }
 
             // TODO is there a faster way to do this?
-            DrawPixels(pixels, x, y, width, height, false, false, drawMode, Constants.FirstColorId + colorOffset, false);
+            DrawPixels(pixels, x, y, width, height, false, false, drawMode, Constants.FirstColorId + colorOffset); // This is always set to ignore transparency?
         }
 
 

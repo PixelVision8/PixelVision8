@@ -12,7 +12,7 @@ namespace PixelVision8.Player
 
             LuaScript.Globals["Clear"] = new Action(Clear);
             LuaScript.Globals["Display"] = new Func<Point>(Display);
-            LuaScript.Globals["DrawPixels"] = new Action<int[], int, int, int, int, bool, bool, DrawMode, int, bool>(DrawPixels);
+            LuaScript.Globals["DrawPixels"] = new Action<int[], int, int, int, int, bool, bool, DrawMode, int, int>(DrawPixels);
             LuaScript.Globals["DrawSprite"] = new Action<int, int, int, bool, bool, DrawMode, int>(DrawSingleSprite);
             LuaScript.Globals["DrawText"] = new Action<string, int, int, DrawMode, string, int, int>(DrawText);
             LuaScript.Globals["DrawTilemap"] = new Action<int, int, int, int, int?, int?>(DrawTilemap);

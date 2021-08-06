@@ -102,7 +102,7 @@ namespace PixelVision8.Player
                     _drawRequest.FlipH, 
                     _drawRequest.FlipV, 
                     _drawRequest.ColorOffset,
-                    _drawRequest.IgnoreTransparent
+                    _drawRequest.MaskId
                 );
                 
             }
@@ -128,9 +128,9 @@ namespace PixelVision8.Player
 
         public void NewDrawCall(int[] pixels, int destX, int destY, int blockWidth, int blockHeight, byte layer = 0,
             bool flipH = false,
-            bool flipV = false, int colorOffset = 0, int srcX = 0, int srcY = 0, bool ignoreTransparent = true)
+            bool flipV = false, int colorOffset = 0, int srcX = 0, int srcY = 0, int maskId = -1)
         {
-            NextDrawRequest(destX, destY, layer, flipH, flipV, colorOffset, ignoreTransparent);
+            NextDrawRequest(destX, destY, layer, flipH, flipV, colorOffset, maskId);
 
             if (_nextDrawRequest)
             {
@@ -162,9 +162,9 @@ namespace PixelVision8.Player
         /// <param name="layerOrder"></param>
         public void NewDrawCall(IDisplay src, int destX, int destY, int blockWidth, int blockHeight, byte layer = 0,
             bool flipH = false,
-            bool flipV = false, int colorOffset = 0, int srcX = 0, int srcY = 0, bool ignoreTransparent = true)
+            bool flipV = false, int colorOffset = 0, int srcX = 0, int srcY = 0, int maskId = 0)
         {
-            NextDrawRequest(destX, destY, layer, flipH, flipV, colorOffset, ignoreTransparent);
+            NextDrawRequest(destX, destY, layer, flipH, flipV, colorOffset, maskId);
 
             if (_nextDrawRequest)
             {
@@ -218,7 +218,7 @@ namespace PixelVision8.Player
         }
 
         public void NextDrawRequest(int destX, int destY, byte layer = 0, bool flipH = false, bool flipV = false,
-            int colorOffset = 0, bool ignoreTransparent = true)
+            int colorOffset = 0, int maskId = -1)
         {
             _drawRequestCounter++;
 
@@ -235,7 +235,7 @@ namespace PixelVision8.Player
             _drawRequest.FlipH = flipH;
             _drawRequest.FlipV = flipV;
             _drawRequest.ColorOffset = colorOffset;
-            _drawRequest.IgnoreTransparent = ignoreTransparent;
+            _drawRequest.MaskId = maskId;
         }
     }
     
