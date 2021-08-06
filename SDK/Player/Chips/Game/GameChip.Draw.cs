@@ -206,7 +206,7 @@ namespace PixelVision8.Player
             // }
 
             // TODO is there a faster way to do this?
-            DrawPixels(pixels, x, y, width, height, false, false, drawMode, Constants.FirstColorId + colorOffset); // This is always set to ignore transparency?
+            DrawPixels(pixels, x, y, width, height, false, false, drawMode, Constants.FirstColorId + colorOffset, -1); // This is always set to ignore transparency?
         }
 
 

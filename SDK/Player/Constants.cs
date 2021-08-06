@@ -2,6 +2,7 @@ namespace PixelVision8.Player
 {
     public static class Constants
     {
+
         // The default size of sprites 8x8
         public const int SpriteSize = 8;
         
@@ -12,7 +13,7 @@ namespace PixelVision8.Player
         public const int FirstColorId = EmptyPixel + 1;
         
         // The default mask color
-        public const string MaskColor = "#FF00FF"; // TODO need to remove the dependency on this so it can go back to #FF00FF
+        public const string MaskColor = "#FF00FF";
         
         // List of default Pixel Vision 8 colors
         public const string DefaultColors = 

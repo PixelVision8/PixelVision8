@@ -175,7 +175,7 @@ namespace PixelVision8.Player
         
                 tmpPixel = src.Pixels[tmpX + srcPWidth * tmpY];
                 
-                if (tmpPixel != maskId)
+                if (maskId == -1 || tmpPixel != maskId)
                 {
                     tmpX = (flipH ? srcWidth - 1 - col : col) + destX;
         
@@ -183,8 +183,9 @@ namespace PixelVision8.Player
                     
                     if (tmpX >= 0 && tmpX < destPWidth && tmpY >= 0 && tmpY < destPHeight)
                     {
+                        var tmp = tmpPixel + colorOffset;
                         // TODO need to figure out how to fix this
-                        dest.Pixels[tmpX + destPWidth * tmpY] = tmpPixel + colorOffset;
+                        dest.Pixels[tmpX + destPWidth * tmpY] = tmp;
                     }
                 }
         

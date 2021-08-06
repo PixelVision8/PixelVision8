@@ -22,6 +22,8 @@ function PaintTool:CreateCanvasPanel()
   self.snapToGrid = true
   self.mousePos = NewPoint()
 
+  self.maskId = -1
+
   -- self.scale = 1
   self.scaledViewport = NewRect()
   self.scaleValues = {.5, 1, 2, 4, 8}--, 8}
@@ -602,7 +604,7 @@ function PaintTool:DrawCanvasPanel()
     end
 
     -- Redraw the background of the canvas
-    if(self.backgroundMode ~= 1) then
+    if(self.maskId > -1) then
       self.backgroundLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, 0, 0, self.scaledViewport)
     end
 
@@ -615,20 +617,17 @@ function PaintTool:DrawCanvasPanel()
 
     end
 
-    -- TODO need to tie this into the mask color selection (which is not implemented yet so default to 0)
-    local tmpMaskId = 0
-
     -- Draw the pixel data in the upper left hand corner of the tool's window
-    self.imageLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, tmpMaskId, self.scaledViewport)
+    self.imageLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, self.maskId, self.scaledViewport)
 
     -- Only draw the flag layer when we need to
     if(self.pickerMode == FlagMode) then
-      self.flagLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, tmpMaskId, self.scaledViewport)
+      self.flagLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, self.maskId, self.scaledViewport)
     end
 
     -- Only draw the temp layer when we need to
     if(self.drawTmpLayer == true) then
-      self.tmpLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, tmpMaskId, self.scaledViewport)
+      self.tmpLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, self.maskId, self.scaledViewport)
     end
 
     -- if(self.showGrid == true) then
@@ -1296,30 +1295,30 @@ end
 
 function PaintTool:InvalidateBackground()
 
-  -- Mode 1 will render the transparent canvas texture for the background
-  -- if(self.backgroundMode == 1) then
+  -- Mode 1 shows all the colors, no masking
+  if(self.backgroundMode == 1) then
 
     -- print("Sprite", dump(Sprite(MetaSprite("emptymaskcolor").Sprites[1].Id)))
-
     
-    
+    self.maskId = -1 
 
-  -- Mode 2 will render the background color
-  -- else
-    if(self.backgroundMode == 2) then
+  -- Mode 2 uses the mask and transparent background
+  elseif(self.backgroundMode == 2) then
+
+    self.maskId = 0 -- TODO this needs to be provided by the selected mask color
+
+    self.backgroundLayerCanvas:DrawRectangle(0, 0, self.backgroundLayerCanvas.Width, self.backgroundLayerCanvas.Height, true)
+    
+  -- Mode 3 shows the background color
+  else
+
+    self.maskId = 0 -- TODO this needs to be provided by the selected mask color
 
     self.backgroundLayerCanvas:fill(self.backgroundColorId + self.colorOffset)
 
-  else
-
-    -- Use the mask color as the default background   
-    -- self.backgroundLayerCanvas:fill(self.colorOffset)
-
-    self.backgroundLayerCanvas:DrawRectangle(0, 0, self.backgroundLayerCanvas.Width, self.backgroundLayerCanvas.Height, true)
-
   end
 
-  -- Invalidate the canvas to force it to redraw
+  
   self:InvalidateCanvas()
 
 end
