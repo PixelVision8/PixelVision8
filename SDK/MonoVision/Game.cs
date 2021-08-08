@@ -422,6 +422,9 @@ namespace Microsoft.Xna.Framework
             AssertNotDisposed();
             if (Platform.BeforeUpdate(gameTime))
             {
+                // Manually updating the sound pool since the event system was taken out
+                SoundEffectInstancePool.Update();
+                
                 Update(gameTime);
             }
         }

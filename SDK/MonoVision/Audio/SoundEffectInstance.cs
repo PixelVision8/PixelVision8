@@ -157,8 +157,7 @@ namespace Microsoft.Xna.Framework.Audio
             if (State != SoundState.Paused)
             {
                 if (!SoundEffectInstancePool.SoundsAvailable)
-                    return;
-                    // throw new InstancePlayLimitException();
+                    throw new InstancePlayLimitException();
 
                 SoundEffectInstancePool.Remove(this);
             }
