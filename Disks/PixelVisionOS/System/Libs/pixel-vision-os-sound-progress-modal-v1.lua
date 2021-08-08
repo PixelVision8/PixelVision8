@@ -51,15 +51,17 @@ function ProgressModal:Open()
 
   if(self.firstRun == nil) then
 
+    -- TODO need to fix this drawing
+
     -- Draw the black background
     self.canvas:SetStroke(5, 1)
     self.canvas:SetPattern({0}, 1, 1)
-    self.canvas:DrawSquare(0, 0, self.canvas.width - 1, self.canvas.height - 1, true)
+    self.canvas:DrawRectangle(0, 0, self.canvas.width - 1, self.canvas.height - 1, true)
 
     -- Draw the brown background
     self.canvas:SetStroke(12, 1)
     self.canvas:SetPattern({11}, 1, 1)
-    self.canvas:DrawSquare(3, 9, self.canvas.width - 4, self.canvas.height - 4, true)
+    self.canvas:DrawRectangle(3, 9, self.canvas.width - 4, self.canvas.height - 4, true)
 
     local tmpX = (self.canvas.width - (#self.title * 4)) * .5
 
@@ -144,88 +146,3 @@ function ProgressModal:Draw()
   --
 end
 
-function OnExport(soundID, showWarning)
-
-  soundID = soundID or currentID
-
-  local workspacePath = NewWorkspacePath(rootDirectory).AppendDirectory("Wavs").AppendDirectory("Sounds")
-
-  if(showWarning == true) then
-
-
-
-    pixelVisionOS:ShowMessageModal("Export Sound", "Do you want to export this sound effect to '"..workspacePath.Path.."'?", 200, true,
-      function()
-        if(pixelVisionOS.messageModal.selectionValue == true) then
-          gameEditor:ExportSFX(soundID, workspacePath)
-        end
-
-      end
-    )
-  else
-    gameEditor:ExportSFX(soundID, workspacePath)
-  end
-
-end
-
-function OnExportAll()
-
-  local workspacePath = NewWorkspacePath(rootDirectory).AppendDirectory("Wavs").AppendDirectory("Sounds")
-
-  pixelVisionOS:ShowMessageModal("Export All Sounds", "Do you want to export all of the sound effects to '"..workspacePath.Path.."'?", 200, true,
-    function()
-      if(pixelVisionOS.messageModal.selectionValue == true) then
-
-        installing = true
-
-        installingTime = 0
-        installingDelay = .1
-        installingCounter = 0
-        installingTotal = totalSounds
-
-        installRoot = rootPath
-
-      end
-
-    end
-  )
-
-end
-
-function OnInstallNextStep()
-
-  -- print("Next step")
-  -- Look to see if the modal exists
-  if(installingModal == nil) then
-
-    -- Create the model
-    installingModal = ProgressModal:Init("Exporting", editorUI)
-
-    -- Open the modal
-    pixelVisionOS:OpenModal(installingModal)
-
-  end
-
-  OnExport(installingCounter, false)
-
-  installingCounter = installingCounter + 1
-
-  local message = "Exporting sound effect "..string.lpad(tostring(installingCounter), string.len(tostring(installingTotal)), "0") .. " of " .. installingTotal .. ".\n\n\nDo not restart or shut down Pixel Vision 8."
-
-  local percent = (installingCounter / installingTotal)
-
-  installingModal:UpdateMessage(message, percent)
-
-  if(installingCounter >= installingTotal) then
-    installingDelay = .5
-  end
-
-end
-
-function OnInstallComplete()
-
-  installing = false
-
-  pixelVisionOS:CloseModal()
-
-end

@@ -18,7 +18,7 @@
 function PixelVisionOS:CreateTitleBar(x, y, title)
 
     local data = {} -- our new object
-
+    print("HELLO WORLD")
     data.pos = {
         x = x or 0,
         y = y or 0
@@ -180,7 +180,7 @@ function PixelVisionOS:CreateTitleBarMenu(items, toolTip)
         end
 
         local tmpX, tmpY = 2, option.y + 2
-
+        
         -- Create up pixel data
         tmpCanvas:Clear()
 

@@ -24,11 +24,11 @@ function PaintTool:CreateToolbar()
             key = Keys.B,
             toolTip = "This is the pen"
         },
-        {
-            name = "eraser",
-            key = Keys.E,
-            toolTip = "This is the eraser"
-        },
+        -- {
+        --     name = "eraser",
+        --     key = Keys.E,
+        --     toolTip = "This is the eraser"
+        -- },
         {
             name = "line",
             key = Keys.L,
@@ -74,7 +74,7 @@ function PaintTool:CreateToolbar()
     self.toolOptions ={
 
         {"pointer", "select"}, --"hand", 
-        {"pen", "eraser"},
+        {"pen"}, -- TODO took out the eraser
         {"line", "circle", "circlefill", "rectangle", "rectanglefill"},
         {"eyedropper", "fill"}
     }
@@ -119,6 +119,9 @@ end
 
 function PaintTool:OnPickTool(value, displayOptions)
 
+
+    displayOptions = displayOptions or #self.toolOptions[value] > 1
+
     if(displayOptions ~= false) then
 
         self.optionMenuOpen = true
@@ -160,6 +163,8 @@ function PaintTool:OnSelectTool(value)
         end
 
     end
+
+    -- print("Test", dump(self.toolOptions[buttonId]))
 
     -- If no tool was found, exit out of the function
     if(buttonId == 0 or optionId == 0 or self.toolButtons[buttonId].enabled == false) then
@@ -247,6 +252,8 @@ function PaintTool:OpenOptionMenu(value)
 
     -- Save option buttons
     local optionButtonLabels = self:GetToolButton(self.toolOptions[value], self.toolButtons[value].spriteName)
+
+    print("test", #optionButtonLabels)
 
     local pos = NewPoint( self.toolbarPos.X + (16 * (value-1)), self.toolbarPos.Y - 16)
 

@@ -13,7 +13,7 @@ function SFXTool:CreateDropDownMenu()
       {divider = true},
       {name = "New", action = function() self:OnNewSound() end, key = Keys.N, toolTip = "Revert the sound to empty."}, -- Reset all the values
       {name = "Save", action = function() self:OnSave() end, key = Keys.S, toolTip = "Save changes made to the sounds file."}, -- Reset all the values
-      {name = "Export SFX", action = function() self.OnExport(self.currentID, true) end, key = Keys.E, enabled = self.canExport, toolTip = "Create a wav for the current SFX file."}, -- Reset all the values
+      {name = "Export SFX", action = function() self:OnExport(self.currentID, true) end, key = Keys.E, enabled = self.canExport, toolTip = "Create a wav for the current SFX file."}, -- Reset all the values
       {name = "Export All", action = function() self:OnExportAll() end, enabled = self.canExport, toolTip = "Export all sound effects to wavs."}, -- Reset all the values
       {name = "Revert", action = nil, key = Keys.R, enabled = false, toolTip = "Revert the sounds.json file to its previous state."}, -- Reset all the values
       {divider = true},
@@ -47,7 +47,7 @@ function SFXTool:OnSave()
 
   -- TODO need a way to save out the image
   -- -- This will save the system data, the colors and color-map
-  -- gameEditor:Save(self.rootDirectory, {SaveFlags.System, SaveFlags.Sounds})
+  gameEditor:Save(self.rootDirectory, {SaveFlags.System, SaveFlags.Sounds})
 
   -- Display a message that everything was saved
   pixelVisionOS:DisplayMessage("You're changes have been saved.", 5)
@@ -193,5 +193,127 @@ function SFXTool:OnPasteSound()
   self:OnPlaySound()
 
   pixelVisionOS:EnableMenuItem(self.PasteShortcut, false)
+
+end
+
+function SFXTool:OnExport(soundID, showWarning)
+
+  soundID = soundID or self.currentID
+
+  local workspacePath = NewWorkspacePath(self.rootDirectory).AppendDirectory("Wavs").AppendDirectory("Sounds")
+
+  if(showWarning == true) then
+
+    local buttons = 
+    {
+      {
+        name = "modalokbutton",
+        action = function(target)
+
+          gameEditor:ExportSFX(soundID, workspacePath)
+          
+          target.onParentClose()
+          -- end
+          
+        end,
+        key = Keys.Enter,
+        size = NewPoint(32, 16),
+        tooltip = "Press 'enter' to accept",
+      },
+      {
+        name = "modalcancelbutton",
+        action = function(target)
+          target.onParentClose()
+        end,
+        key = Keys.Escape,
+        tooltip = "Press 'esc' to close",
+      }
+    }
+
+    -- local options = {"overwrite existing files"}
+
+    pixelVisionOS:ShowMessageModal("Export Sound", "Do you want to export this sound effect to '"..workspacePath.Path.."'?", 200, buttons, options)
+  else
+    gameEditor:ExportSFX(soundID, workspacePath)
+  end
+
+end
+
+function SFXTool:OnExportAll()
+
+  local workspacePath = NewWorkspacePath(self.rootDirectory).AppendDirectory("Wavs").AppendDirectory("Sounds")
+
+  local buttons = 
+    {
+      {
+        name = "modalokbutton",
+        action = function(target)
+
+          self.installing = true
+
+          self.installingTime = 0
+          self.installingDelay = .1
+          self.installingCounter = 0
+          self.installingTotal = self.totalSounds
+
+          self.installRoot = self.rootPath
+          
+          target.onParentClose()
+          -- end
+          
+        end,
+        key = Keys.Enter,
+        size = NewPoint(32, 16),
+        tooltip = "Press 'enter' to accept",
+      },
+      {
+        name = "modalcancelbutton",
+        action = function(target)
+          target.onParentClose()
+        end,
+        key = Keys.Escape,
+        tooltip = "Press 'esc' to close",
+      }
+    }
+
+  pixelVisionOS:ShowMessageModal("Export All Sounds", "Do you want to export all of the sound effects to '"..workspacePath.Path.."'?", 200, buttons, options)
+
+end
+
+function SFXTool:OnInstallNextStep()
+
+  -- print("Next step")
+  -- Look to see if the modal exists
+  if(self.installingModal == nil) then
+
+    -- Create the model
+    self.installingModal = ProgressModal:Init("Exporting", editorUI)
+
+    -- Open the modal
+    pixelVisionOS:OpenModal(self.installingModal)
+
+  end
+
+  self:OnExport(self.installingCounter, false)
+
+  self.installingCounter = self.installingCounter + 1
+
+  local message = "Exporting sound effect "..string.lpad(tostring(self.installingCounter), string.len(tostring(self.installingTotal)), "0") .. " of " .. self.installingTotal .. ".\n\n\nDo not restart or shut down Pixel Vision 8."
+
+  local percent = (self.installingCounter / self.installingTotal)
+
+  self.installingModal:UpdateMessage(message, percent)
+
+  if(self.installingCounter >= self.installingTotal) then
+    self.installingDelay = .5
+  end
+
+end
+
+function SFXTool:OnInstallComplete()
+
+  self.installing = false
+
+  pixelVisionOS:CloseModal()
 
 end

@@ -410,7 +410,7 @@ function WorkspaceTool:UpdateContextMenu()
 
 
     local canCreateProject = canCreateFolder == true and canRun == false
-    print("Starts CanBuild")
+    
     local canBuild = canRun == true and string.starts(self.currentPath.Path, "/Disks/") == false and specialDir == false
 
     local canCopy = self.focus == true and selections ~= nil and #selections > 0 and specialFile == false and trashOpen == false

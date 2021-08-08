@@ -50,7 +50,7 @@ namespace PixelVision8.Editor
             // Rebuild the path by adding the active song name and wav extension
             fileName = path;
 
-            // Save references to the currentc chips
+            // Save references to the current chips
             this.musicChip = musicChip;
             this.soundChip = soundChip;
 
@@ -161,7 +161,7 @@ namespace PixelVision8.Editor
 
                         // does play need to be called for it to be generated properly?
                         instrument[tracknum].CacheSound(); // generate cachedWave data
-
+                        
                         // grab the sample data - this data is not in the same fmt as unity's internal?
                         // sounds pitch-shifted and faster - a different bitrate?
                         // WORKS GREAT IF WE RUN CACHESOUND() FIRST

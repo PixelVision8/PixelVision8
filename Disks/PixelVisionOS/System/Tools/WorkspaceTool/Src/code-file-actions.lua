@@ -449,7 +449,6 @@ function WorkspaceTool:OnPaste(dest)
     pixelVisionOS:ClearClipboard()
 
     -- -- print("Paste data", data)
-    print("Starts Path")
       if(data ~= nil or  data ~= "" and string.starts(data, "path:")) then
 
         local paths = string.split(data:sub(7), ",")
@@ -529,7 +528,6 @@ function WorkspaceTool:OnNewFolder(name)
 
         -- This is a bit of a hack to get around an issue creating folders on disks.
 
-        print("Starts Disk File action")
 
         -- Test to see if we are creating a folder on a disk
         if(string.starts(filePath.Path, "/Disks/")) then
@@ -788,9 +786,6 @@ end
 function WorkspaceTool:TrashOpen()
 
   -- print("test", self.currentPath.Path, self.trashPath.Path)
-
-  print("Starts Trash")
-
   return string.starts(self.currentPath.Path, self.trashPath.Path) 
 
 end

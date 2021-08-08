@@ -38,6 +38,8 @@ function PaintTool:CreateCanvasPanel()
   -- self.colorOffset = colorOffset
   self.emptyColorID = emptyColorID or - 1
 
+  self.backgroundColorId = 0
+
   -- Create empty pixel data we'll use when erasing tiles
   self.emptyPixelData = {}
   
@@ -63,7 +65,7 @@ function PaintTool:CreateCanvasPanel()
   -- Get the image pixels
   local pixelData = self.image.GetPixels()
 
-  self.backgroundMode = 1
+  self.backgroundMode = 0
   self.gridMode = false
 
   -- Used to track the pixel shift in the selection outline
@@ -94,8 +96,8 @@ function PaintTool:CreateCanvasPanel()
 
   self.gridCanvas = NewCanvas(self.viewportRect.Width, self.viewportRect.Height)
 
-  -- Invalidate the background so it renders
-  self:InvalidateBackground()
+  -- -- Invalidate the background so it renders
+  -- self:InvalidateBackground()
   
   -- Create the tmp layer for drawing shapes and other effects into
   self.tmpLayerCanvas = NewCanvas(self.imageLayerCanvas.Width, self.imageLayerCanvas.Height)
@@ -183,6 +185,8 @@ function PaintTool:CreateCanvasPanel()
     end
 
   end
+
+  self:ToggleBackground()
   
 end
 
@@ -574,7 +578,7 @@ function PaintTool:DrawCanvasPanel()
           -- Check to see if the selection is ignoring transparency
           if(self.selectionUsesMaskColor == true) then
 
-            self.tmpLayerCanvas:Clear(self.maskColor, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
+            self.tmpLayerCanvas:Clear()--self.maskColor, self.selectRect.X, self.selectRect.Y, self.selectRect.Width, self.selectRect.Height)
           end
           
           -- TODO this should be selecting only the data we want to display
@@ -618,7 +622,7 @@ function PaintTool:DrawCanvasPanel()
     end
 
     -- Draw the pixel data in the upper left hand corner of the tool's window
-    self.imageLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, self.maskId, self.scaledViewport)
+    self.imageLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, self.backgroundMode < 2 and -1 or self.maskId, self.scaledViewport)
 
     -- Only draw the flag layer when we need to
     if(self.pickerMode == FlagMode) then
@@ -883,9 +887,9 @@ function PaintTool:ChangeCanvasTool(toolName, cursorID)
   
   elseif(self.tool == "pen") then
 
-    if(self.pickerMode == ColorMode and self.brushColor < 0) then
-      self:OnPickerSelection(1)
-    end
+    -- if(self.pickerMode == ColorMode and self.brushColor < 0) then
+    --   self:OnPickerSelection(1)
+    -- end
 
     self.currentCursorID = cursorID or 6
     
@@ -1319,14 +1323,19 @@ function PaintTool:InvalidateBackground()
 
       self.backgroundLayerCanvas:DrawRectangle(0, 0, self.backgroundLayerCanvas.Width, self.backgroundLayerCanvas.Height, true)
       
+      pixelVisionOS:EnableMenuItemByName("BG Color", false)
+
     -- Mode 3 shows the background color
     else
 
-      self.backgroundLayerCanvas:fill(self.backgroundColorId + self.colorOffset)
+      print("test",self.backgroundColorId, self.colorOffset)
+
+      self.backgroundLayerCanvas:fill(self.backgroundColorId + self.colorOffset) -- TODO the color is off here
+
+      pixelVisionOS:EnableMenuItemByName("BG Color", true)
 
     end
-
-    pixelVisionOS:EnableMenuItemByName("BG Color", true)
+    
     pixelVisionOS:EnableMenuItemByName("Mask Color", true)
 
   end

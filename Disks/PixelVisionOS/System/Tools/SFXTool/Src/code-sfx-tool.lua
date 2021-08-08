@@ -135,6 +135,30 @@ function SFXTool:InvalidateData()
   
   end
 
+  function SFXTool:Update(timeDelta)
+    if(self.installing == true) then
+
+
+      self.installingTime = self.installingTime + timeDelta
+  
+      if(self.installingTime > self.installingDelay) then
+        self.installingTime = 0
+  
+  
+        self:OnInstallNextStep()
+  
+        if(self.installingCounter >= self.installingTotal) then
+  
+          self:OnInstallComplete()
+  
+        end
+  
+      end
+  
+  
+    end
+  end
+
 function SFXTool:Draw()
 
     -- TODO this is not working

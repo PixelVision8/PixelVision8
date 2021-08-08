@@ -34,7 +34,7 @@ function Update(timeDelta)
 
   pixelVisionOS:Update(timeDelta/ 1000)
 
---   sfxTool:Update(timeDelta)
+  sfxTool:Update(timeDelta)
 
 end
 

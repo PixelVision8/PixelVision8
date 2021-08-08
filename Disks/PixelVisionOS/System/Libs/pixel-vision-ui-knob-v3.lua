@@ -179,7 +179,7 @@ function EditorUI:DrawKnobSprite(data, mode)
     if(data.enabled) then
       data.tmpColorOffset = data.inFocus == true and data.colorOffsetOver or data.colorOffsetUp
     else
-      data.tmpColorOffset = data.colorOffsetDisabled
+      data.tmpColorOffset = data.colorOffsetUp - 4
     end
 
     DrawMetaSprite(

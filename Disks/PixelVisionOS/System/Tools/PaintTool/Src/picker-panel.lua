@@ -278,15 +278,24 @@ function PaintTool:DrawPickerPanel()
     if(self.pickerMode == ColorMode) then
 
         -- local page = pos/16
-        local pos = CalculatePosition( self.maskId, 16 )
+        local pos = nil
 
         if(self.maskId > -1) then
+
+            pos = CalculatePosition( self.maskId, 16 )
+
             DrawMetaSprite( "iconoutline", (pos.X * 8) + self.pickerPanelRect.X, (pos.Y * 8) + self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
+        
         end
 
-        pos = CalculatePosition( self.backgroundColorId, 16 )
+        -- TODO need to change the pen to an eraser in mask mode
+        if(self.backgroundMode == 3) then
+            -- self.defaultCursorID = 7
+            pos = CalculatePosition( self.backgroundColorId, 16 )
+            DrawMetaSprite( "iconbgcolor", (pos.X * 8) + self.pickerPanelRect.X, (pos.Y * 8) + self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
 
-        DrawMetaSprite( "iconbgcolor", (pos.X * 8) + self.pickerPanelRect.X, (pos.Y * 8) + self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
+        end
+
         
         if(self.fillColor > -1 and self.fill == true) then
             pos = CalculatePosition( self.fillColor, 16 )
