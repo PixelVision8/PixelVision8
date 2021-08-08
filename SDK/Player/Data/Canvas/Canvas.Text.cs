@@ -25,7 +25,7 @@ namespace PixelVision8.Player
                 // We need at least 1 pixel to save the sprite ID
                 if (newRequest.PixelData.Width != spriteSize.X || newRequest.PixelData.Height != spriteSize.Y)
                 {
-                    Utilities.Resize(newRequest.PixelData, spriteSize.X, spriteSize.X, Constants.EmptyPixel);
+                    Utilities.Resize(newRequest.PixelData, spriteSize.X, spriteSize.X);
                 }
 
                 // Copy over the pixel

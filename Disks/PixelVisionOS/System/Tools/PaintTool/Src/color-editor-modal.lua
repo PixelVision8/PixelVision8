@@ -308,7 +308,7 @@ function EditColorModal:Open( ... )
 
     self.colorCache = colorCache
     
-    self.canvas:Clear(0, 4, 1, self.canvas.width, 8)
+    self.canvas:Fill(6, 0, 4, 1, self.canvas.width)
     
     local tmpX = (self.canvas.width - (#self.title * 4)) * .5
 

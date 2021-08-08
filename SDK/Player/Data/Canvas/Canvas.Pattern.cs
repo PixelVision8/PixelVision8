@@ -42,7 +42,7 @@ namespace PixelVision8.Player
 
             if (newRequest.PixelData.Width != newWidth || newRequest.PixelData.Height != newHeight)
             {
-                Utilities.Resize(newRequest.PixelData, newWidth, newHeight, Constants.EmptyPixel);
+                Utilities.Resize(newRequest.PixelData, newWidth, newHeight);
             }
 
             newRequest.PixelData.SetPixels(newPixels, newWidth, newHeight);

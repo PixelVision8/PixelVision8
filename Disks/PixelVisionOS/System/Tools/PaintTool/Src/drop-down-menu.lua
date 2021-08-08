@@ -39,7 +39,7 @@ function PaintTool:CreateDropDownMenu()
       {name = "Edit Color", action = function() self:OnEditColor() end, enabled = false, key = Keys.E, toolTip = "Learn about PV8."},
       {name = "Fill Color", action = function() self:SetFillColor() end, enabled = false, toolTip = "Learn about PV8."},
       {name = "BG Color", action = function() self:OnSetBackgroundColor() end, enabled = false, toolTip = "Learn about PV8."},
-      {name = "Mask Color", action = function() self:OnEditColor(self.maskColor) end, enabled = false, toolTip = "Learn about PV8."},
+      {name = "Mask Color", action = function() self:SetMaskColor() end, enabled = false, toolTip = "Learn about PV8."},
 
       {divider = true},
       {name = "Canvas Size", action = function() self:OnResize() end, enabled = true, key = Keys.I, toolTip = "Learn about PV8."},
@@ -887,10 +887,24 @@ end
 
 function PaintTool:OnSetBackgroundColor()
 
+  -- TODO need to make sure the mask or the bg is not the same
+
   self.backgroundColorId = self.currentState.selectedId
 
   self:InvalidateBackground()
   -- print(self.currentState.selectedId)
   -- TODO need to wire this up
   -- print("Change BG color")
+
+end
+
+function PaintTool:SetMaskColor()
+
+  -- TODO need to make sure the mask or the bg is not the same
+
+
+  self.maskId = self.currentState.selectedId
+
+  self:InvalidateCanvas()
+
 end

@@ -7,8 +7,6 @@ function PaintTool:IndexColors()
         return
     end
 
-    -- print("IndexColors pass")
-
     -- Configure the canvas
     self:ClearCurrentCanvas()
 
@@ -21,6 +19,8 @@ function PaintTool:IndexColors()
     -- Create a table to store the unique colors
     local uniqueColors = {}
 
+    local uniqueIds = {}
+
     -- Loop through all of the colors and pull out the unique colors
     for i = self.colorOffset, 255 do
         
@@ -28,17 +28,19 @@ function PaintTool:IndexColors()
         local tmpColor = Color(i)
 
         -- Make sure it is not transparent
-        if(tmpColor ~= MaskColor()) then
+        if(table.indexOf(uniqueColors, tmpColor) == -1) then
+            
+            table.insert(uniqueColors, tmpColor)
             
             -- Add to the unique color table
-            table.insert(uniqueColors, i)
+            table.insert(uniqueIds, i)
 
         end
 
     end
 
     -- Set the total number of colors in the picker
-    self.currentState.pickerTotal = #uniqueColors
+    self.currentState.pickerTotal = #uniqueIds
 
     -- Loop through each of the colors
     for i = 1, self.currentState.pickerTotal do
@@ -48,7 +50,7 @@ function PaintTool:IndexColors()
 
         -- Loop through all of the pixels in the tmpPattern to change the value to match the color
         for j = 1, 64 do
-            tmpPattern[j] = uniqueColors[i]
+            tmpPattern[j] = uniqueIds[i]
         end
 
         -- Set the pattern on the canvas
@@ -59,8 +61,8 @@ function PaintTool:IndexColors()
 
     end
 
-    -- TODO hardcoded for testing - should be read from game file?
-    self.backgroundColorId = 0
+    self.maskId = 0
+    self.backgroundColorId = 1
 
     -- Change the picker label
     self:SetPickerLabel("Colors")

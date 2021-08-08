@@ -68,7 +68,9 @@ namespace PixelVision8.Player
 
             Total = Width * Height;
 
-            Array.Resize(ref _pixels, Total);
+            _pixels = new T[Total];
+
+            // Array.Resize(ref _pixels, Total);
         }
 
         public void SetPixels(T[] pixels, int? width = null, int? height = null)

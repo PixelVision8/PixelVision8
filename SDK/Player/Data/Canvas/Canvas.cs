@@ -73,7 +73,7 @@ namespace PixelVision8.Player
                 pixels = GetPixels(0, 0, sampleWidth, sampleHeight);
             }
 
-            Utilities.Resize(defaultLayer, newWidth, newHeight, Constants.FirstColorId);
+            Utilities.Resize(defaultLayer, newWidth, newHeight);
 
             if(savePixels && pixels != null)
             {

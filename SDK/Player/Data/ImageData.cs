@@ -70,7 +70,7 @@ namespace PixelVision8.Player
         
         public int[] GetPixels() => Utilities.GetPixels(PixelData);
 
-        public void Resize(int newWidth, int newHeight) => Utilities.Resize(PixelData, newWidth, newHeight, Constants.EmptyPixel);
+        public void Resize(int newWidth, int newHeight) => Utilities.Resize(PixelData, newWidth, newHeight);
 
         public void Clear(int color = -1) => Utilities.Fill(PixelData, color);
 

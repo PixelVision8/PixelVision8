@@ -50,7 +50,7 @@ namespace PixelVision8.Player
             currentTexture = tmpLayer;
 
             if (drawRequest.Bounds.Width != currentTexture.Width || drawRequest.Bounds.Height != currentTexture.Height)
-                Utilities.Resize(currentTexture, drawRequest.Bounds.Width, drawRequest.Bounds.Height, Constants.EmptyPixel);
+                Utilities.Resize(currentTexture, drawRequest.Bounds.Width, drawRequest.Bounds.Height);
             else
                 Utilities.Fill(currentTexture, Constants.EmptyPixel);
         }

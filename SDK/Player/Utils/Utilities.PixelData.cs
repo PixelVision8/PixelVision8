@@ -197,12 +197,11 @@ namespace PixelVision8.Player
             }
         }
 
-        public static void Resize<T>(PixelData<T> pixelData, int blockWidth, int blockHeight, T colorRef) where T : IComparable
+        public static void Resize<T>(PixelData<T> pixelData, int blockWidth, int blockHeight) where T : IComparable
         {
             
             pixelData.Resize(Utilities.Clamp(blockWidth, 1, 2048), Utilities.Clamp(blockHeight, 1, 2048));
 
-            Fill(pixelData, colorRef);
         }
 
         /// <summary>

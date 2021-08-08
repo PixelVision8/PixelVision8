@@ -18,12 +18,6 @@ function PaintTool:CreatePickerPanel()
 
     self.pickerGridPos = NewPoint()
     
-
-    -- self.currentState = {
-    --     selectedPos = {id = -1},
-    --     selectedId = -1,
-    --     overPos = {id = -1},
-    -- }
     
     -- Used to sample pixel data from the active canvas
     self.pickerSampleRect = NewRect( 0, 0, 8, 8 )
@@ -64,25 +58,11 @@ function PaintTool:CreatePickerPanel()
     end
 
 
-    -- self.emptyPatternPixelData = Sprite(MetaSprite( "emptycolor" ).Sprites[1].Id)
-
-    -- for i = 1, #self.emptyPatternPixelData, 1 do
-    --     self.emptyPatternPixelData[i] = -8
-    -- end
-
-    -- self.colorPixelData = {}
-    
-    -- for i = 1, 8*8 do
-    --     table.insert(self.colorPixelData, -1)
-    -- end
-
     self.colorCanvas = NewCanvas(128, 128) -- TODO need to account for missing colors and color offset
-    
-    
 
 
     self.pickerOverCanvas = NewCanvas( 12, 12 )
-    -- self.pickerOverCanvas:Clear()
+    self.pickerOverCanvas:Clear()
     self.pickerOverCanvas:SetStroke(0, 1);
     self.pickerOverCanvas:DrawRectangle( 0, 0, self.pickerOverCanvas.width, self.pickerOverCanvas.height)
     self.pickerOverCanvas:DrawRectangle( 2, 2, self.pickerOverCanvas.width - 4, self.pickerOverCanvas.height -4)
@@ -283,33 +263,29 @@ function PaintTool:DrawPickerPanel()
         self.pickerSampleRect.X = self.currentState.overPos.X
         self.pickerSampleRect.Y = self.currentState.overPos.pos.Y * 8
 
-        -- self.currentCanvas:DrawPixels(self.currentState.overPos.X + self.pickerPanelRect.X , self.currentState.overPos.Y+ self.pickerPanelRect.Y, DrawMode.SpriteAbove, 1, 0, self.maskColor, 0, self.pickerSampleRect)
+        self.currentCanvas:DrawPixels(self.currentState.overPos.X + self.pickerPanelRect.X, self.currentState.overPos.Y + self.pickerPanelRect.Y, DrawMode.SpriteAbove, 1, 0, -1, self.pickerSampleRect)
 
-        self.pickerOverCanvas:DrawPixels( self.currentState.overPos.X + self.pickerPanelRect.X - 2 , self.currentState.overPos.Y+ self.pickerPanelRect.Y - 2, DrawMode.SpriteAbove )
+        self.pickerOverCanvas:DrawPixels( self.currentState.overPos.X + self.pickerPanelRect.X - 2 , self.currentState.overPos.Y + self.pickerPanelRect.Y - 2, DrawMode.SpriteAbove )
 
         if(self.pickerMessage ~= nil) then
             
             pixelVisionOS:DisplayMessage(self.pickerMessage)
 
         end
+        
     end
 
     if(self.pickerMode == ColorMode) then
 
-        -- TODO Calculate icon position
-        -- DrawMetaSprite( "iconmask", self.pickerPanelRect.X, self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
-
-        -- TODO need to make sure we only show the color when we are on the right page
-
-        
-        -- TODO need to loop through all the icons
-
-
-        local pos = CalculatePosition( self.backgroundColorId, 16 )
-
         -- local page = pos/16
+        local pos = CalculatePosition( self.maskId, 16 )
 
-        -- TODO make sure we are on the right page first and use the page for the Y position
+        if(self.maskId > -1) then
+            DrawMetaSprite( "iconoutline", (pos.X * 8) + self.pickerPanelRect.X, (pos.Y * 8) + self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
+        end
+
+        pos = CalculatePosition( self.backgroundColorId, 16 )
+
         DrawMetaSprite( "iconbgcolor", (pos.X * 8) + self.pickerPanelRect.X, (pos.Y * 8) + self.pickerPanelRect.Y, false, false, DrawMode.SpriteAbove )
         
         if(self.fillColor > -1 and self.fill == true) then
@@ -451,16 +427,19 @@ function PaintTool:RebuildBrushPreview()
     -- Check to see which picker mode we are in
     if(self.pickerMode == ColorMode) then
         
+        -- We play with the color offset here to account for transparency in the brush. So the offset is -1
+
         -- Set the brush color based on the current color selection or to the mask color if we are using the eraser
-        self.brushColor = self.tool == "eraser" and self.maskColor or self.currentState.selectedId
+        self.brushColor = self.tool == "eraser" and self.maskColor or self.currentState.selectedId - 1
         
         -- Clear the entire brush
         self.brushCanvas:Clear()
 
         -- Fill the brush with the brush color based on the stroke size
-        self.brushCanvas:Fill(self.brushColor + 1, 0, 0, self.defaultStrokeWidth, self.defaultStrokeWidth)
+        self.brushCanvas:Fill(self.brushColor + 2, 0, 0, self.defaultStrokeWidth, self.defaultStrokeWidth)
 
-        self.brushColorOffset = self.colorOffset
+        
+        self.brushColorOffset = self.colorOffset - 1
 
         editorUI:Enable(self.toolButtons[self.shapeTools], true)
         editorUI:Enable(self.toolButtons[self.fillTools], true)

@@ -177,7 +177,7 @@ function PaintTool:CreateCanvasPanel()
       self.mergerTmpLayer = false
 
       self:InvalidateCanvas()
-
+      self:InvalidateBackground()
       self:InvalidateUndo()
 
     end
@@ -611,7 +611,7 @@ function PaintTool:DrawCanvasPanel()
     if(self.mergerTmpLayer == true and self.mouseState == "released") then
 
       --   -- TODO we can optimize this by passing in a rect for the area to merge
-      srcCanvas:MergeCanvas(self.tmpLayerCanvas, 0, true)
+      srcCanvas:MergeCanvas(self.tmpLayerCanvas, 0, 0)
 
       self.mergerTmpLayer = false
 
@@ -622,12 +622,12 @@ function PaintTool:DrawCanvasPanel()
 
     -- Only draw the flag layer when we need to
     if(self.pickerMode == FlagMode) then
-      self.flagLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, self.maskId, self.scaledViewport)
+      self.flagLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, 0, self.scaledViewport)
     end
 
     -- Only draw the temp layer when we need to
     if(self.drawTmpLayer == true) then
-      self.tmpLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, self.maskId, self.scaledViewport)
+      self.tmpLayerCanvas:DrawPixels(self.viewportRect.X, self.viewportRect.Y, DrawMode.TilemapCache, self.scale, self.colorOffset, 0, self.scaledViewport)
     end
 
     -- if(self.showGrid == true) then
@@ -1300,25 +1300,37 @@ function PaintTool:InvalidateBackground()
 
     -- print("Sprite", dump(Sprite(MetaSprite("emptymaskcolor").Sprites[1].Id)))
     
-    self.maskId = -1 
+    self.lastMaskId = self.maskId > -1 and self.maskId or 0
 
-  -- Mode 2 uses the mask and transparent background
-  elseif(self.backgroundMode == 2) then
+    self.maskId = -1
 
-    self.maskId = 0 -- TODO this needs to be provided by the selected mask color
+    pixelVisionOS:EnableMenuItemByName("BG Color", false)
+    pixelVisionOS:EnableMenuItemByName("Mask Color", false)
 
-    self.backgroundLayerCanvas:DrawRectangle(0, 0, self.backgroundLayerCanvas.Width, self.backgroundLayerCanvas.Height, true)
-    
-  -- Mode 3 shows the background color
+  
   else
 
-    self.maskId = 0 -- TODO this needs to be provided by the selected mask color
+    self.maskId = self.lastMaskId ~= nil and self.lastMaskId or self.maskId -- TODO this needs to be provided by the selected mask color
 
-    self.backgroundLayerCanvas:fill(self.backgroundColorId + self.colorOffset)
+    self.lastMaskId = nil
+    
+    -- Mode 2 uses the mask and transparent background
+    if(self.backgroundMode == 2) then
+
+      self.backgroundLayerCanvas:DrawRectangle(0, 0, self.backgroundLayerCanvas.Width, self.backgroundLayerCanvas.Height, true)
+      
+    -- Mode 3 shows the background color
+    else
+
+      self.backgroundLayerCanvas:fill(self.backgroundColorId + self.colorOffset)
+
+    end
+
+    pixelVisionOS:EnableMenuItemByName("BG Color", true)
+    pixelVisionOS:EnableMenuItemByName("Mask Color", true)
 
   end
 
-  
   self:InvalidateCanvas()
 
 end
