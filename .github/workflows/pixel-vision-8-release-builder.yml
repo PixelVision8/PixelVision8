@@ -1,4 +1,4 @@
-name: Pixel Vision 8
+name: Space Station 8
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.compute_tag.outputs.next_tag }}
-          release_name: Pixel Vision 8 ${{ steps.compute_tag.outputs.next_tag }} Incremental Build
+          release_name: Pixel Vision 8 ${{ steps.compute_tag.outputs.next_tag }} Incremental Release
           draft: false
           prerelease: true
 
