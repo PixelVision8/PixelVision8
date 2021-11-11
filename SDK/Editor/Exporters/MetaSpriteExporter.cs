@@ -18,43 +18,47 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Player;
+using PixelVision8.Runner;
 using System.Text;
-using PixelVision8.Engine;
-using PixelVision8.Runner.Utils;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class MetaSpriteExporter : AbstractExporter
     {
-        private readonly IEngine targetEngine;
+        private readonly PixelVision targetEngine;
         private StringBuilder sb;
+        private GameChip _gameChip;
 
-        public MetaSpriteExporter(string fileName, IEngine targetEngine) : base(fileName)
+        public MetaSpriteExporter(string fileName, PixelVision targetEngine) : base(fileName)
         {
             this.targetEngine = targetEngine;
+
+            _gameChip = this.targetEngine.GameChip;
 
             CalculateSteps();
         }
 
         public override void CalculateSteps()
         {
-            if (targetEngine.GameChip.TotalMetaSprites() < 1) return;
+            if (_gameChip.TotalMetaSprites < 1) return;
 
             base.CalculateSteps();
 
             // Create a new string builder
-            steps.Add(CreateStringBuilder);
+            Steps.Add(CreateStringBuilder);
 
 
-            steps.Add(MetaSpriteData);
+            Steps.Add(MetaSpriteData);
 
             // Save the final string builder
-            steps.Add(CloseStringBuilder);
+            Steps.Add(CloseStringBuilder);
         }
 
         private void MetaSpriteData()
         {
-            var gameChip = targetEngine.GameChip;
+            // var gameChip = targetEngine.GameChip;
 
             // Save Data
             sb.Append("\"metaSprites\":");
@@ -66,9 +70,9 @@ namespace PixelVision8.Runner.Exporters
 
             // var savedData = gameChip.savedData;
 
-            for (var i = 0; i < gameChip.TotalMetaSprites(); i++)
+            for (var i = 0; i < _gameChip.TotalMetaSprites; i++)
             {
-                var metaSprite = gameChip.MetaSprite(i);
+                var metaSprite = _gameChip.MetaSprite(i);
                 var childrenSprites = metaSprite.Sprites;
                 var totalChildrenSprites = childrenSprites.Count;
 
@@ -121,7 +125,7 @@ namespace PixelVision8.Runner.Exporters
             // Hack to remove the last comma
             sb.Length -= 1;
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void CreateStringBuilder()
@@ -140,7 +144,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void CloseStringBuilder()
@@ -156,9 +160,9 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
 
-            bytes = Encoding.UTF8.GetBytes(sb.ToString());
+            Bytes = Encoding.UTF8.GetBytes(sb.ToString());
 
-            currentStep++;
+            CurrentStep++;
         }
     }
 }

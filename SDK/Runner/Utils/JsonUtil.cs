@@ -20,7 +20,7 @@
 
 using System.Text;
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner
 {
     public class JsonUtil
     {

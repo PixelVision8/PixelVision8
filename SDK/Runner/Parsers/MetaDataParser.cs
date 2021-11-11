@@ -18,17 +18,16 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Text;
-using PixelVision8.Engine;
-using PixelVision8.Runner.Services;
+using PixelVision8.Player;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class MetaDataParser : JsonParser
     {
-        private readonly IEngine engine;
+        private readonly PixelVision engine;
 
-        public MetaDataParser(string filePath, IFileLoadHelper fileLoadHelper, IEngine target) : base(filePath, fileLoadHelper)
+        public MetaDataParser(string filePath, IFileLoader fileLoadHelper, PixelVision target) : base(filePath,
+            fileLoadHelper)
         {
             engine = target;
         }
@@ -36,7 +35,7 @@ namespace PixelVision8.Runner.Parsers
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-            steps.Add(ApplySettings);
+            Steps.Add(ApplySettings);
         }
 
         public void ApplySettings()
@@ -45,6 +44,14 @@ namespace PixelVision8.Runner.Parsers
 
             StepCompleted();
         }
-        
+    }
+
+    public partial class Loader
+    {
+        [FileParser("info.json", FileFlags.Meta)]
+        public void ParseMetaData(string file, PixelVision engine)
+        {
+            AddParser(new MetaDataParser(file, _fileLoadHelper, engine));
+        }
     }
 }

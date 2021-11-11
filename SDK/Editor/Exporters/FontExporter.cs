@@ -18,17 +18,15 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
-using PixelVision8.Runner.Parsers;
+using PixelVision8.Player;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class FontExporter : SpriteExporter
     {
-        public FontExporter(string fileName, IEngine engine, IImageExporter imageExporter) : base(fileName, engine,
-            imageExporter, engine.FontChip)
+        public FontExporter(string fileName, PixelVision engine, IImageExporter imageExporter) : base(fileName, engine,
+            imageExporter, engine.SpriteChip)
         {
         }
 
@@ -41,7 +39,7 @@ namespace PixelVision8.Runner.Exporters
             var height = 64; //spriteChip.textureHeight;
 
 
-            var textureData = new TextureData(width, height);
+            var textureData = new PixelData<int>(width, height);
 
             //            var pixelData = new int[width * height];
 
@@ -51,21 +49,20 @@ namespace PixelVision8.Runner.Exporters
 
             var total = 96;
 
-            var maxCol = width / spriteChip.width;
+            var maxCol = width / Constants.SpriteSize;
 
-            var tmpPixelData = new int[spriteChip.width * spriteChip.height];
+            var tmpPixelData = new int[Constants.SpriteSize * Constants.SpriteSize];
 
             for (var i = 0; i < total; i++)
             {
-                var pos = engine.GameChip.CalculatePosition(i, maxCol);
+                var pos = Utilities.CalculatePosition(i, maxCol);
 
                 spriteChip.ReadSpriteAt(i, ref tmpPixelData);
-
-                textureData.SetPixels(pos.X * spriteChip.width, pos.Y * spriteChip.height, spriteChip.width,
-                    spriteChip.height, tmpPixelData);
+                Utilities.SetPixels(tmpPixelData, pos.X * Constants.SpriteSize, pos.Y * Constants.SpriteSize, Constants.SpriteSize,
+                    Constants.SpriteSize, textureData);
             }
 
-            // var convertedColors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);
+            // var convertedColors = Utilities.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);
 
             // var colors = !(engine.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip)
             //     ? engine.ColorChip.colors
@@ -75,8 +72,7 @@ namespace PixelVision8.Runner.Exporters
 
             // TODO use the colors from the sprite parser this class extends?
 
-            exporter = new PixelDataExporter(fullFileName, textureData.pixels, width, height, colors, imageExporter,
-                engine.ColorChip.maskColor);
+            exporter = new PixelDataExporter(fullFileName, textureData.Pixels, width, height, colors, imageExporter);
         }
     }
 }

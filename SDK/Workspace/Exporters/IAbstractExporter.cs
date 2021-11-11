@@ -18,15 +18,15 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Runner;
 using System.Collections.Generic;
-using PixelVision8.Runner.Parsers;
 
 namespace PixelVision8.Runner.Exporters
 {
-    public interface IAbstractExporter : IAbstractParser
+    public interface IExporter : IParser
     {
         Dictionary<string, object> Response { get; }
-        byte[] bytes { get; }
+        byte[] Bytes { get; }
         string fileName { get; }
     }
 }

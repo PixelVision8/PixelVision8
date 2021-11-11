@@ -24,7 +24,7 @@
 
 using System.IO;
 
-namespace PixelVision8.Runner.Workspace
+namespace PixelVision8.Workspace
 {
     public static class StreamExtensions
     {

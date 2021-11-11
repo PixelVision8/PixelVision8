@@ -8,31 +8,31 @@
 	distributing is allowed.
 ]]--
 
-LoadScript("sb-sprites")
+-- LoadScript("sb-sprites")
 LoadScript("boot-text")
 
 -- Get references to boot animation sprite data
 local bootSprites = {
-  logoframe01,
-  logoframe02,
-  logoframe03,
-  logoframe04,
-  logoframe05,
-  logoframe06,
-  logoframe07,
-  logoframe08,
-  logoframe09,
-  logoframe10,
-  logoframe11,
-  logoframe12,
-  logoframe13,
-  logoframe14,
-  logoframe15,
-  logoframe15,
-  logoframe15,
-  logoframe15,
-  logoframe15,
-  logoframe15
+  "logoframe01",
+  "logoframe02",
+  "logoframe03",
+  "logoframe04",
+  "logoframe05",
+  "logoframe06",
+  "logoframe07",
+  "logoframe08",
+  "logoframe09",
+  "logoframe10",
+  "logoframe11",
+  "logoframe12",
+  "logoframe13",
+  "logoframe14",
+  "logoframe15",
+  "logoframe15",
+  "logoframe15",
+  "logoframe15",
+  "logoframe15",
+  "logoframe15"
 }
 
 -- Animation properties
@@ -44,7 +44,7 @@ local nextScreenDelay = .3
 local nextScreenTime = 0
 local startDelay = .5
 local ready = false
-local bottomBorder = 224 + 8
+local bottomBorder = 232
 local safeMode = false
 local showPlugin = -1
 
@@ -70,12 +70,12 @@ function Init()
   local wrap = WordWrap(message, (display.x / 8) - 3)
   local lines = SplitLines(wrap)
   local total = #lines
-  local startY = (240 + 16) / 8--((display.y * 2) + 16) / 8 --(((display.y * 2) / 8) - 7) - total -
+  local startY = (240 + 16) / 8
 
   --176 448
 
   local runnerName = SystemName()
-  local runnerVer = "/"..SystemVersion() -- TODO we don't have a V char so use / instead
+  local runnerVer = SystemVersion():upper()
 
   local labelWidth = (#runnerName * 8) + (#runnerVer * 4) + 16
 
@@ -83,17 +83,14 @@ function Init()
 
   DrawText(runnerName, startX, 225, DrawMode.TilemapCache, "large", 11)
 
-  DrawText(runnerVer, startX + (#runnerName * 8) + 8, 225, DrawMode.TilemapCache, "small", 11, - 4)
-
-  -- DrawText("Runner Version")
+  DrawText(runnerVer, startX + (#runnerName * 8) + 8, 225, DrawMode.TilemapCache, "medium", 11, - 4)
 
   -- We want to render the text from the bottom of the screen so we offset it and loop backwards.
   for i = 1, total do
     DrawText(lines[i], 1, startY + (i - 1), DrawMode.Tile, "large", 15)
   end
 
-  -- Replace the tile with a logo and rest the color offset to 0 (since the font was set to 15)
-  Tile(1, startY, logosmall.spriteIDs[1], 0)
+  DrawMetaSprite(FindMetaSpriteId("logosmall"), 1, startY, false, false, DrawMode.Tile);
 
 end
 
@@ -113,14 +110,7 @@ function Update(timeDelta)
     BootDone(safeMode)
     return
   end
-  -- if(shortcutTime > shortcutDelay) then
-  --   checkShortcuts = false
-  -- end
-  --
-  -- if(checkShortcuts == true) then
-
-  -- end
-
+  
   -- Test to see if we are ready to display the boot animation
   if(ready == false) then
 
@@ -164,8 +154,7 @@ function Update(timeDelta)
         ScrollPosition(0, newScrollY)
 
         -- Check that we are in boot mode
-      else -- if(editorBridge.mode == 2) then
-
+      else
         nextScreenTime = nextScreenTime + timeDelta
 
         if(nextScreenTime > nextScreenDelay) then
@@ -185,9 +174,8 @@ function Update(timeDelta)
 
         -- Not done with animation, go to next frame
         frame = frame + 1
-        local sprite = bootSprites[frame]
-        DrawSprites(sprite.spriteIDs, 10, 12, sprite.width, false, false, DrawMode.Tile)
-        -- UpdateTiles(, )
+
+        DrawMetaSprite(FindMetaSpriteId(bootSprites[frame]), 10, 12, false, false, DrawMode.Tile)
 
       elseif(done == false) then
 
@@ -218,13 +206,11 @@ function Draw()
   RedrawDisplay()
 
   -- Draw top border
-  DrawSprites(topborder.spriteIDs, 0, 0, topborder.width, false, false, DrawMode.Sprite, 0, false, false)
+  DrawMetaSprite(FindMetaSpriteId("topborder"), 0, 0)
 
   -- Draw bottom border
-  DrawSprites(bottomborder.spriteIDs, 0, 232, bottomborder.width, false, false, DrawMode.Sprite, 0, false, false)
+  DrawMetaSprite(FindMetaSpriteId("bottomborder"), 0, 232)
 
-  -- Mask off the bottom of the screen so you can see the scrolling
-  DrawRect(0, 240, 256, 8, 0, DrawMode.UI)
 end
 
 function KeyPressCheck()
@@ -259,7 +245,6 @@ function KeyPressCheck()
         EnableCRT(false)
         Scale(1)
 
-        --print("Safe mode")
       end
     end
   end

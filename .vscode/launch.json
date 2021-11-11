@@ -1,0 +1,48 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Desktop Runner",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "gulp-build-desktop",
+            "program": "${workspaceFolder}/Projects/PixelVision8/bin/Debug/Pixel Vision 8.dll",
+            "cwd": "${workspaceFolder}/",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "CSharp Runner",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "gulp-build-chsarp",
+            "program": "${workspaceFolder}/Projects/CSharpRunner/bin/Debug/CSharp Runner.dll",
+            "cwd": "${workspaceFolder}/",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Lua Runner",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "gulp-build-lua",
+            "program": "${workspaceFolder}/Projects/LuaRunner/bin/Debug/Lua Runner.dll",
+            "cwd": "${workspaceFolder}/",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Roslyn Runner",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "gulp-build-roslyn",
+            "program": "${workspaceFolder}/Projects/RoslynRunner/bin/Debug/Roslyn Runner.dll",
+            "cwd": "${workspaceFolder}/",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        }
+    ]
+}

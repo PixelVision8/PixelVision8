@@ -18,15 +18,15 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Workspace;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using PixelVision8.Runner.Services;
-using PixelVision8.Runner.Utils;
-using PixelVision8.Runner.Workspace;
+using PixelVision8.Runner;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class ZipDiskExporter : AbstractExporter
     {
@@ -39,11 +39,9 @@ namespace PixelVision8.Runner.Exporters
 
         public ZipDiskExporter(string fileName, WorkspaceService workspaceService) : base(fileName)
         {
-
             diskPath = WorkspacePath.Parse(fileName);
             this.workspaceService = workspaceService;
             this.FileLoadHelper = new WorkspaceFileLoadHelper(this.workspaceService);
-
         }
 
         public override void CalculateSteps()
@@ -63,7 +61,7 @@ namespace PixelVision8.Runner.Exporters
                 physicalPath = zipFileSystem.PhysicalRoot;
                 physicalBackupPath = zipFileSystem.PhysicalRoot + ".bak";
 
-                steps.Add(BackupZip);
+                Steps.Add(BackupZip);
 
                 // Get all the files
                 var srcFiles = zipFileSystem.GetEntitiesRecursive(WorkspacePath.Root).ToArray();
@@ -81,20 +79,18 @@ namespace PixelVision8.Runner.Exporters
                 // Calculate all the zip steps
                 zipExporter.CalculateSteps();
 
-                for (int i = 0; i < zipExporter.totalSteps; i++)
+                for (int i = 0; i < zipExporter.TotalSteps; i++)
                 {
-                    steps.Add(NextZipStep);
+                    Steps.Add(NextZipStep);
                 }
 
                 // Save the disk
-                steps.Add(SaveDisk);
+                Steps.Add(SaveDisk);
 
-                steps.Add(CheckForErrors);
+                Steps.Add(CheckForErrors);
 
-                steps.Add(Cleanup);
-
+                Steps.Add(Cleanup);
             }
-
         }
 
         private void NextZipStep()
@@ -106,15 +102,13 @@ namespace PixelVision8.Runner.Exporters
             Response["message"] = zipExporter.Response["message"];
 
             StepCompleted();
-
         }
 
         private void CheckForErrors()
         {
             // Need to check for an error
-            if ((bool)Response["success"] == false)
+            if ((bool) Response["success"] == false)
             {
-
                 // Restore the old zip
                 if (File.Exists(physicalBackupPath))
                 {
@@ -136,7 +130,6 @@ namespace PixelVision8.Runner.Exporters
 
         private void Cleanup()
         {
-
             // Restore the old zip
             if (File.Exists(physicalBackupPath))
             {
@@ -145,7 +138,6 @@ namespace PixelVision8.Runner.Exporters
                 {
                     File.Delete(physicalBackupPath);
                 }
-
             }
 
             StepCompleted();
@@ -155,22 +147,19 @@ namespace PixelVision8.Runner.Exporters
         {
             try
             {
-                if ((bool)zipExporter.Response["success"])
+                if ((bool) zipExporter.Response["success"])
                 {
                     using (var fs = new FileStream(physicalPath, FileMode.Create, FileAccess.Write))
                     {
-                        fs.Write(zipExporter.bytes, 0, zipExporter.bytes.Length);
+                        fs.Write(zipExporter.Bytes, 0, zipExporter.Bytes.Length);
                     }
-
                 }
-
             }
             catch (Exception e)
             {
                 // Change the success to false
                 Response["success"] = false;
                 Response["message"] = e.Message;
-
             }
 
             StepCompleted();
@@ -182,5 +171,4 @@ namespace PixelVision8.Runner.Exporters
             zipExporter.Dispose();
         }
     }
-
 }

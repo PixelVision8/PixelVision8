@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,64 +18,55 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
 using PixelVision8.Runner.Exporters;
-using PixelVision8.Runner.Parsers;
+using PixelVision8.Runner;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Editor
 {
     public class GameDataExportService : BaseExportService
     {
-        
-        private IEngine targetEngine;
-        
-        public void ExportGame(string path, IEngine engine, SaveFlags saveFlags, bool useSteps = true)
-        {
+        private PixelVision targetEngine;
 
+        public void ExportGame(string path, PixelVision engine, FileFlags fileFlags, bool useSteps = true)
+        {
             Clear();
 
             // Save the engine so we can work with it during loading
             targetEngine = engine;
 
             // Step 1. Load the system snapshot
-            if ((saveFlags & SaveFlags.System) == SaveFlags.System)
+            if ((fileFlags & FileFlags.System) == FileFlags.System)
                 AddExporter(new SystemExporter(path + "data.json", targetEngine));
 
             // Step 3 (optional). Look for new colors
-            if ((saveFlags & SaveFlags.Colors) == SaveFlags.Colors)
+            if ((fileFlags & FileFlags.Colors) == FileFlags.Colors)
             {
                 var colorChip = targetEngine.ColorChip;
 
-                AddExporter(new ColorPaletteExporter(path + "colors.png", colorChip, new PNGWriter()));
+                AddExporter(new ColorPaletteExporter(path + "colors.png", colorChip, new PNGWriter(), targetEngine.GameChip.MaskColor()));
             }
 
-            // Step 4 (optional). Look for color map for sprites and tile map
-            if ((saveFlags & SaveFlags.ColorMap) == SaveFlags.ColorMap)
-                if (targetEngine.GetChip(ColorMapParser.chipName, false) is ColorChip colorChip)
-                    AddExporter(new ColorPaletteExporter(path + "color-map.png", colorChip, new PNGWriter()));
-
             // Step 5 (optional). Look for new sprites
-            if ((saveFlags & SaveFlags.Sprites) == SaveFlags.Sprites)
+            if ((fileFlags & FileFlags.Sprites) == FileFlags.Sprites)
             {
                 //                Console.WriteLine("Export Sprite");
 
                 var imageExporter = new PNGWriter();
 
                 AddExporter(new SpriteExporter(path + "sprites.png", targetEngine, imageExporter));
-                
             }
 
             // Step 7 (optional). Look for fonts to load
-            if ((saveFlags & SaveFlags.Fonts) == SaveFlags.Fonts)
+            if ((fileFlags & FileFlags.Fonts) == FileFlags.Fonts)
             {
                 var fontChip = targetEngine.FontChip;
                 var spriteChip = targetEngine.SpriteChip;
-                var tmpTextureData = new TextureData(96, 64);
+                var tmpTextureData = new PixelData<int>(96, 64);
 
-                var fonts = fontChip.fonts;
+                var fonts = fontChip.Fonts;
 
                 foreach (var font in fonts)
                 {
@@ -83,7 +74,8 @@ namespace PixelVision8.Runner.Services
                     var sprites = font.Value;
 
                     // Clear the texture
-                    tmpTextureData.Clear();
+                    Utilities.Fill(tmpTextureData,Constants.EmptyPixel);
+                    // tmpTextureData.Clear();
 
                     // Loop through all the characters and copy their texture data over
                     var total = sprites.Length;
@@ -93,27 +85,27 @@ namespace PixelVision8.Runner.Services
                 }
             }
 
-            if ((saveFlags & SaveFlags.Tilemap) == SaveFlags.Tilemap)
+            if ((fileFlags & FileFlags.Tilemap) == FileFlags.Tilemap)
                 AddExporter(new TilemapJsonExporter(path + "tilemap.json", targetEngine));
 
             // Step 8 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.Meta) == SaveFlags.Meta)
+            if ((fileFlags & FileFlags.Meta) == FileFlags.Meta)
                 AddExporter(new MetadataExporter(path + "info.json", targetEngine));
 
             // Step 9 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.Sounds) == SaveFlags.Sounds)
-                AddExporter(new SoundExporter(path + "sounds.json", targetEngine));
+            if ((fileFlags & FileFlags.Sounds) == FileFlags.Sounds)
+                AddExporter(new SfxrSoundExporter(path + "sounds.json", targetEngine));
 
             // Step 10 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.Music) == SaveFlags.Music)
+            if ((fileFlags & FileFlags.Music) == FileFlags.Music)
                 AddExporter(new MusicExporter(path + "music.json", targetEngine));
 
             // Step 11 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.SaveData) == SaveFlags.SaveData)
+            if ((fileFlags & FileFlags.SaveData) == FileFlags.SaveData)
                 AddExporter(new SavedDataExporter(path + "saves.json", targetEngine));
 
             // Step 11 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.MetaSprites) == SaveFlags.MetaSprites)
+            if ((fileFlags & FileFlags.MetaSprites) == FileFlags.MetaSprites)
                 AddExporter(new MetaSpriteExporter(path + "meta-sprites.json", targetEngine));
 
             StartExport(useSteps);
@@ -130,14 +122,14 @@ namespace PixelVision8.Runner.Services
             AddExporter(new SongExporter(path, musicChip, soundChip, patterns));
         }
 
-        public void ExportSpriteBuilder(string path, IEngine engine, Dictionary<string, byte[]> files)
+        public void ExportSpriteBuilder(string path, PixelVision engine, Dictionary<string, byte[]> files)
         {
             Restart();
             // TODO need to create a new Sprite Builder Exporter
             AddExporter(new SpriteBuilderExporter(path, engine.ColorChip, engine.SpriteChip, files));
         }
 
-        public void ExportImage(string path, int[] pixelData, IEngine engine, int width, int height)
+        public void ExportImage(string path, int[] pixelData, PixelVision engine, int width, int height)
         {
             Restart();
 
@@ -145,12 +137,10 @@ namespace PixelVision8.Runner.Services
             var imageExporter = new PNGWriter();
 
             // TODO need to double check that we should force this into debug so transparent images have the mask color in them by default
-            var colors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);
+            var colors = ColorUtils.ConvertColors(engine.ColorChip.HexColors)/*, engine.ColorChip.MaskColor, true)*/.Select(c=> new ColorData(c.R, c.G, c.B)).ToArray();
 
 
-            AddExporter(new PixelDataExporter(path, pixelData, width, height, colors, imageExporter,
-                engine.ColorChip.maskColor));
+            AddExporter(new PixelDataExporter(path, pixelData, width, height, colors, imageExporter));
         }
-
     }
 }

@@ -23,23 +23,18 @@ using System;
 namespace PixelVision8.Runner
 {
     [Flags]
-    public enum SaveFlags
+    public enum FileFlags
     {
         None = 0,
         System = 1,
         Colors = 2,
-        ColorMap = 4,
-        Sprites = 8,
-        Tilemap = 16,
-        Fonts = 32,
-        Meta = 64,
-        Music = 128,
-        Sounds = 256,
-        SaveData = 512,
-        MetaSprites = 1024,
-        // TilemapFlags = 2048
-        // TilemapCache = 4096,
-        // TileColorOffset = 8192,
-        // FlagColors = 16384
+        Sprites = 4,
+        Tilemap = 8,
+        Fonts = 16,
+        Meta = 32,
+        Music = 64,
+        Sounds = 128,
+        SaveData = 256,
+        MetaSprites = 512
     }
 }

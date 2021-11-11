@@ -18,38 +18,31 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Runner.Services;
-
-namespace PixelVision8.Runner.Importers
+namespace PixelVision8.Runner
 {
     public class PNGFileReader : PNGReader
     {
         public string FilePath;
-        public IFileLoadHelper FileLoadHelper;
+        public IFileLoader FileLoadHelper;
 
-        public PNGFileReader(string filePath, IFileLoadHelper fileLoadHelper, string maskHex = "#FF00FF"):base(null, maskHex)
+        public PNGFileReader(IFileLoader fileLoadHelper)
         {
-            FilePath = filePath;
+            // FilePath = filePath;
             FileLoadHelper = fileLoadHelper;
         }
 
-        public override void ReadStream()
+        public override void ReadStream(string sourcePath)
         {
+            FilePath = sourcePath;
+
             if (!string.IsNullOrEmpty(FilePath))
             {
                 ReadBytes(FileLoadHelper.ReadAllBytes(FilePath));
             }
-        
-            base.ReadStream();
+
+            base.ReadStream(sourcePath);
         }
-        
-        public override string FileName
-        {
-            get => FileLoadHelper.GetFileName(FilePath);
-            set
-            {
-                // Do nothing
-            }
-        }
+
+        public override string FileName => FileLoadHelper.GetFileName(FilePath);
     }
 }

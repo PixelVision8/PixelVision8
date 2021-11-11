@@ -1,3 +1,7 @@
+# Make sure we don't copy the runner files in the OS disk while debugging
+Content/Runners/
+
+
 Thumbs.db
 Desktop.ini
 .DS_Store
@@ -215,9 +219,10 @@ project.lock.json
 .run/
 
 # Visual Studio Code
-.vscode/
+# .vscode/
 
 # Output folder used by Webpack or other FE stuff
+node_modules/**
 **/node_modules/*
 **/wwwroot/*
 **/package-lock.json
@@ -227,6 +232,8 @@ project.lock.json
 *.feature.xlsx.*
 *.Specs_*.html
 
+Properties/**
+**/saves.json
 **/*saves.json
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)

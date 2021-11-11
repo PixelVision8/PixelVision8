@@ -18,29 +18,28 @@
 // Shawn Rakowski - @shwany
 //
 
-namespace PixelVision8.Runner.Parsers
+using PixelVision8.Player;
+
+namespace PixelVision8.Runner
 {
     public class ImageParser : AbstractParser
     {
         protected IImageParser Parser;
 
         public ImageParser(IImageParser parser)
-        { 
-            this.Parser = parser;
+        {
+            Parser = parser;
         }
-
-        public int ImageWidth => Parser.width;
-        public int ImageHeight => Parser.height;
 
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-            steps.Add(ParseImageData);
+            Steps.Add(ParseImageData);
         }
 
         public void ParseImageData()
         {
-            Parser.ReadStream();
+            Parser.ReadStream(SourcePath);
 
             StepCompleted();
         }
@@ -48,7 +47,6 @@ namespace PixelVision8.Runner.Parsers
         public override void Dispose()
         {
             base.Dispose();
-            // Parser.Dispose();
             Parser = null;
         }
     }

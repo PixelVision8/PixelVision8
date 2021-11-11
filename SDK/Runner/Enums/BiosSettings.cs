@@ -29,7 +29,6 @@ namespace PixelVision8.Runner
         SystemName,
         SystemVersion,
         FullScreen,
-        StretchScreen,
         CropScreen
     }
 }

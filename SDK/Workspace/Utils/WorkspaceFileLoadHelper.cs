@@ -18,14 +18,14 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Runner;
+using PixelVision8.Workspace;
+using System;
 using System.IO;
-using PixelVision8.Runner.Services;
-using PixelVision8.Runner.Workspace;
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner
 {
-
-    public class WorkspaceFileLoadHelper : IFileLoadHelper
+    public class WorkspaceFileLoadHelper : IFileLoader
     {
         protected WorkspaceService WorkspaceService;
 
@@ -38,9 +38,9 @@ namespace PixelVision8.Runner.Utils
         {
             return WorkspacePath.Parse(path).EntityName;
         }
+
         public byte[] ReadAllBytes(string file)
         {
-
             var path = WorkspacePath.Parse(file);
 
             using (var memoryStream = new MemoryStream())
@@ -53,8 +53,11 @@ namespace PixelVision8.Runner.Utils
 
                 return memoryStream.ToArray();
             }
+        }
 
+        public bool Exists(string path)
+        {
+            return WorkspaceService.Exists(WorkspacePath.Parse(path));
         }
     }
-
 }

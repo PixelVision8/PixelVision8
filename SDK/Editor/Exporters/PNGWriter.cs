@@ -18,20 +18,20 @@
 // Shawn Rakowski - @shwany
 //
 
+// using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.Xna.Framework;
-using PixelVision8.Runner.Utils;
-using PixelVisionRunner.Utils;
+using PixelVision8.Runner;
+// using PixelVisionRunner.Utils;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class PNGWriter : IImageExporter
     {
         //          private const int bitsPerSample = 8;
         private readonly ColorType colorType;
-        private Color[] colorData;
+        private ColorData[] colorData;
 
         public PNGWriter()
         {
@@ -45,7 +45,7 @@ namespace PixelVision8.Runner.Exporters
         //        private int width;
         //        private int height;
 
-        public void Write(int width1, int height1, Stream outputStream, Color[] colors)
+        public void Write(int width1, int height1, Stream outputStream, ColorData[] colors)
         {
             width = width1;
             height = height1;

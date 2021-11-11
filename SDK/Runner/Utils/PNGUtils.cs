@@ -18,33 +18,35 @@
 // Shawn Rakowski - @shwany
 //
 
+// using Microsoft.Xna.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Utils;
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner
 {
     public class Palette
     {
-        private readonly string maskHex;
+        // private readonly string maskHex;
 
-        public IList<Color> colors;
+        public IList<ColorData> colors;
         //        public List<Color> uniqueColors = new List<Color>();
 
-        internal Palette(string maskHex = "#FF00FF")
+        internal Palette()
         {
             // TODO this wasn't set before, make sure it still works
-            this.maskHex = maskHex;
-            colors = new List<Color>();
+            // this.maskHex = maskHex;
+
+            // Console.WriteLine("Read PNG Palette " + maskHex);
+            
+            colors = new List<ColorData>();
         }
 
-        internal Color this[int index] => colors[index];
+        internal ColorData this[int index] => colors[index];
 
-        internal void AddColor(Color color)
+        internal void AddColor(ColorData color)
         {
             //            if (colors.IndexOf(color) == -1)
             //            {
@@ -64,18 +66,18 @@ namespace PixelVision8.Runner.Utils
             //            }
         }
 
-        internal void AddAlphaToColorAtIndex(int colorIndex, byte alpha)
-        {
-            //            var oldColor = colors[colorIndex];
+        // internal void AddAlphaToColorAtIndex(int colorIndex, byte alpha)
+        // {
+        //     //            var oldColor = colors[colorIndex];
 
-            // TODO this could be cleaner
-            colors[colorIndex] = ColorUtils.HexToColor(maskHex);
-        }
+        //     // TODO this could be cleaner
+        //     colors[colorIndex] = new ColorData(maskHex);
+        // }
 
-        internal void AddAlphaToColors(IList<byte> alphas)
-        {
-            for (var i = 0; i < alphas.Count; i++) AddAlphaToColorAtIndex(i, alphas[i]);
-        }
+        // internal void AddAlphaToColors(IList<byte> alphas)
+        // {
+        //     for (var i = 0; i < alphas.Count; i++) AddAlphaToColorAtIndex(i, alphas[i]);
+        // }
     }
 
     #region Chunks
@@ -255,7 +257,7 @@ namespace PixelVision8.Runner.Utils
                 var green = chunkData.Skip(3 * i + 1).Take(1).First(); ///(float)byte.MaxValue;
                 var blue = chunkData.Skip(3 * i + 2).Take(1).First(); ///(float)byte.MaxValue;
 
-                Palette.AddColor(new Color(red, green, blue));
+                Palette.AddColor(new ColorData(red, green, blue));
             }
         }
     }

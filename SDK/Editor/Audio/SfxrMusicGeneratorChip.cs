@@ -18,12 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Player;
 using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using PixelVision8.Engine;
 
-namespace PixelVision8.Runner.Chips
+namespace PixelVision8.Editor
 {
     public enum InstrumentType
     {
@@ -270,7 +269,7 @@ namespace PixelVision8.Runner.Chips
             //workspace.InvalidateSave();
         }
 
-        public void GenerateSong(IEngine chips)
+        public void GenerateSong(PixelVision chips, bool resetInstruments = false)
         {
             float noteChangeBoost; // more likely to play a note on beat one of each bar
             var restHere = true; // if true, silence
@@ -368,7 +367,7 @@ namespace PixelVision8.Runner.Chips
                 //trackData.SfxId = settings.
 
                 // Look to see if we should generate a new instrument for the track
-                if (settings.Generate)
+                if (resetInstruments == true || settings.Generate)
                 {
                     //Debug.Log("Generate " + settings.instrumentType + " for track " + trackNum);
                     soundChip.UpdateSound(trackData.sfxID, settings.InstrumentSettings);

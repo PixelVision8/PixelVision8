@@ -20,42 +20,36 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class SpriteImageParser : ImageParser
     {
         protected ColorChip colorChip;
-        // protected Color[] colorData;
         protected int cps;
         protected int index;
         protected int maxSprites;
         protected SpriteChip spriteChip;
         protected int[] spriteData;
-        protected int spriteHeight = 8;
+        // protected int spriteHeight = 8;
         protected int spritesAdded;
-        protected int spriteWidth = 8;
+        // protected int spriteWidth = 8;
         protected int totalSprites;
         protected int x, y;
-        public Image image;
+        public ImageData ImageData;
 
-        public SpriteImageParser(IImageParser parser, ColorChip colorChip, SpriteChip spriteChip = null) : base(parser)
+        public SpriteImageParser(string sourceFile, IImageParser parser, ColorChip colorChip,
+            SpriteChip spriteChip = null) : base(parser)
         {
+            SourcePath = sourceFile;
+
+            Parser = parser;
 
             // this.chips = chips;
             this.spriteChip = spriteChip;
             this.colorChip = colorChip;
-
-            if (spriteChip != null)
-            {
-                spriteWidth = this.spriteChip.width;
-                spriteHeight = this.spriteChip.height;
-            }
 
         }
 
@@ -63,49 +57,52 @@ namespace PixelVision8.Runner.Parsers
         {
             base.CalculateSteps();
 
-            steps.Add(CreateImage);
+            Steps.Add(CreateImage);
 
             if (spriteChip != null)
             {
-                steps.Add(PrepareSprites);
+                Steps.Add(PrepareSprites);
 
-                steps.Add(CutOutSprites);
+                Steps.Add(CutOutSprites);
 
-                steps.Add(PostCutOutSprites);
-
+                Steps.Add(PostCutOutSprites);
             }
         }
 
         public virtual void PrepareSprites()
         {
-            
-            cps = spriteChip.colorsPerSprite;
+            cps = spriteChip.ColorsPerSprite;
 
-            totalSprites = image.TotalSprites;
-
-            maxSprites = SpriteChipUtil.CalculateTotalSprites(spriteChip.textureWidth, spriteChip.textureHeight,
-            spriteWidth, spriteHeight);
+            // Break the image into rows and columns
+            var cols = ImageData.Width / Constants.SpriteSize;
+            var rows = ImageData.Height / Constants.SpriteSize;
             
+            totalSprites = cols * rows;
+
+            // Switch over to the sprite chip dimensions
+            cols = spriteChip.TextureWidth / Constants.SpriteSize;
+            rows = spriteChip.TextureHeight / Constants.SpriteSize;
+
+            // Calculate the total sprites the spriteChip can hold
+            maxSprites = cols * rows;
+
             // // Keep track of number of sprites added
             spritesAdded = 0;
 
             StepCompleted();
-
         }
 
         public virtual void CreateImage()
         {
             // Get the chip colors and replace any transparent ones with the first color so we don't parse transparency
-            var colorData = ColorUtils.ConvertColors(colorChip.hexColors, colorChip.maskColor);
+            var colorData = ColorUtils.ConvertColors(colorChip.HexColors);//, colorChip.MaskColor);
 
-            // colorData = colorChip.colors;
-
-            var colorRefs = colorData.Select(c => ColorUtils.RgbToHex(c.R, c.G, c.B)).ToArray();
+            var colorRefs = colorData.Select(c => ColorUtils.RgbToHex(c)).ToArray();
 
             // Remove the colors that are not supported
-            Array.Resize(ref colorRefs, colorChip.totalUsedColors);
+            // Array.Resize(ref colorRefs, colorChip.TotalUsedColors);
 
-            var imageColors = Parser.colorPalette.Select(c => ColorUtils.RgbToHex(c.R, c.G, c.B)).ToArray();
+            var imageColors = Parser.ColorPalette.Select(c => ColorUtils.RgbToHex(c)).ToArray();
 
             var colorMap = new string[colorRefs.Length];
 
@@ -117,11 +114,10 @@ namespace PixelVision8.Runner.Parsers
 
             for (int i = 0; i < totalImageColors; i++)
             {
-
                 // var color = imageColors[i];
                 var color = imageColors[i];
-                
-                if (color == Parser.MaskHex) continue;
+
+                // if (color == colorChip.MaskColor) continue;
 
                 var id = Array.IndexOf(colorRefs, color);
 
@@ -139,14 +135,13 @@ namespace PixelVision8.Runner.Parsers
                 {
                     orphanColors.Add(color);
                 }
-
             }
 
             // Sort colors
             uniqueColorIDs.Sort();
 
             var indexes = new List<int>();
-            
+
             // find open slots
             for (int i = 0; i < colorMap.Length; i++)
             {
@@ -157,7 +152,7 @@ namespace PixelVision8.Runner.Parsers
             }
 
             var totalOrphanColors = orphanColors.Count;
-            
+
             for (int i = 0; i < indexes.Count; i++)
             {
                 if (i < totalOrphanColors)
@@ -176,27 +171,32 @@ namespace PixelVision8.Runner.Parsers
             }
 
             // Convert all of the pixels into color ids
-            var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorMap, ColorUtils.RgbToHex(c.R, c.G, c.B))).ToArray();
+            var pixelIDs = Parser.ColorPixels.Select(c => Array.IndexOf(colorMap, ColorUtils.RgbToHex(c)))
+                .ToArray();
 
-            image = new Image(Parser.width, Parser.height, colorMap, pixelIDs, new Point(spriteWidth, spriteHeight));
+            ImageData = new ImageData(
+                (int)Math.Ceiling(Parser.Width/(double)Constants.SpriteSize)  * 8, 
+                (int)Math.Ceiling(Parser.Height/(double)Constants.SpriteSize)  * 8, 
+                colors: colorMap
+            );
+
+            Utilities.SetPixels<int>(pixelIDs, 0, 0, Parser.Width, Parser.Height, ImageData.PixelData);
 
             StepCompleted();
         }
 
         public virtual void CutOutSprites()
         {
-
             for (var i = 0; i < totalSprites; i++)
             {
-                
                 // Convert sprite to color index
                 ConvertColorsToIndexes(cps);
 
                 ProcessSpriteData();
-                
-                index++;
 
+                index++;
             }
+
             StepCompleted();
         }
 
@@ -211,28 +211,28 @@ namespace PixelVision8.Runner.Parsers
             if (spritesAdded < maxSprites)
             {
                 // TODO need to deprecate this since the sprite file should load up exactly how it is read
-                if (spriteChip.unique)
+                // if (spriteChip.Unique)
+                // {
+                if (spriteChip.FindSprite(spriteData) == -1)
                 {
-                    if (spriteChip.FindSprite(spriteData) == -1)
-                    {
-                        spriteChip.UpdateSpriteAt(spritesAdded, spriteData);
-                        spritesAdded++;
-                    }
+                    spriteChip.UpdateSpriteAt(spritesAdded, spriteData);
+                    spritesAdded++;
                 }
-                else
-                {
-                    if (spriteChip.IsEmpty(spriteData) == false)
-                    {
-                        spriteChip.UpdateSpriteAt(index, spriteData);
-                        spritesAdded++;
-                    }
-                }
+                // }
+                // else
+                // {
+                //     if (Utilities.IsEmpty(spriteData) == false)
+                //     {
+                //         spriteChip.UpdateSpriteAt(index, spriteData);
+                //         spritesAdded++;
+                //     }
+                // }
             }
         }
 
         public virtual void ConvertColorsToIndexes(int totalColors)
         {
-            spriteData = image.GetSpriteData(index, totalColors);
+            spriteData = Utilities.GetSpriteData(ImageData.PixelData, index, totalColors, Constants.EmptyPixel);
         }
 
         public override void Dispose()
@@ -240,6 +240,15 @@ namespace PixelVision8.Runner.Parsers
             base.Dispose();
             colorChip = null;
             spriteChip = null;
+        }
+    }
+
+    public partial class Loader
+    {
+        [FileParser("sprites.png", FileFlags.Sprites)]
+        public void ParseSprites(string file, PixelVision engine)
+        {
+            AddParser(new SpriteImageParser(file, _imageParser, engine.ColorChip, engine.SpriteChip));
         }
     }
 }

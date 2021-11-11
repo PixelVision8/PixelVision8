@@ -20,40 +20,39 @@
 
 using System;
 using System.Collections.Generic;
-using PixelVision8.Runner.Services;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
-    public abstract class AbstractParser : IAbstractParser
+    public abstract class AbstractParser : IParser
     {
-        protected List<Action> steps = new List<Action>();
+        protected readonly List<Action> Steps = new List<Action>();
 
-        public IFileLoadHelper FileLoadHelper;
+        protected IFileLoader FileLoadHelper;
 
-        public int currentStep { get; protected set; }
+        protected int CurrentStep { get; set; }
 
-        public string SourcePath;
+        protected string SourcePath;
 
-        public virtual byte[] bytes { get; set; }
+        public virtual byte[] Bytes { get; set; }
 
-        public int totalSteps => steps.Count;
+        public int TotalSteps => Steps.Count;
 
-        public bool completed => currentStep >= totalSteps;
+        public bool Completed => CurrentStep >= TotalSteps;
 
         public virtual void CalculateSteps()
         {
-            currentStep = 0;
+            CurrentStep = 0;
 
             // First step will always be to get the data needed to parse
-            if(!string.IsNullOrEmpty(SourcePath))
-                steps.Add(LoadSourceData);
+            if (!string.IsNullOrEmpty(SourcePath))
+                Steps.Add(LoadSourceData);
         }
 
         public virtual void LoadSourceData()
         {
             if (FileLoadHelper != null)
             {
-                bytes = FileLoadHelper.ReadAllBytes(SourcePath);
+                Bytes = FileLoadHelper.ReadAllBytes(SourcePath);
             }
 
             StepCompleted();
@@ -61,21 +60,21 @@ namespace PixelVision8.Runner.Parsers
 
         public virtual void NextStep()
         {
-            if (completed) return;
+            if (Completed) return;
 
-            steps[currentStep]();
+            Steps[CurrentStep]();
         }
 
         public virtual void StepCompleted()
         {
-            currentStep++;
+            CurrentStep++;
         }
 
         public virtual void Dispose()
         {
-            bytes = null;
+            Bytes = null;
             FileLoadHelper = null;
-            steps.Clear();
+            Steps.Clear();
         }
     }
 }

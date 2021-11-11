@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -21,60 +21,95 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
+using PixelVision8.Player;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class FontParser : SpriteImageParser
     {
-        private readonly FontChip fontChip;
-        private readonly string name;
-        private List<string> uniqueFontColors;
-        private int[] fontMap;
+        
+        private readonly FontChip _fontChip;
+        private List<string> _uniqueFontColors;
+        private int[] _fontMap;
+        private List<int> _tmpMap = new List<int>();
 
-        public FontParser(IImageParser parser, ColorChip colorChip, FontChip fontChip) : base(parser,
-            colorChip, fontChip)
+        public FontParser(string sourceFile, IImageParser parser, ColorChip colorChip, SpriteChip spriteChip, FontChip fontChip, string maskColor) : base(
+            sourceFile, parser, colorChip, spriteChip)
         {
-            this.fontChip = fontChip;
-            // imageParser.ReadStream();
-            name = parser.FileName.Split('.').First();
+            _fontChip = fontChip;
         }
 
-        public override void CreateImage()
-        {
+        // TODO need to look into how to have this use direct and mapped color modes when parsing
+        // public override void CreateImage()
+        // {
 
-            // Get all the colors from the image
-            uniqueFontColors = Parser.colorPalette.Select(c => ColorUtils.RgbToHex(c.R, c.G, c.B)).ToList();
+        //     // Get all the colors from the image
+        //     _uniqueFontColors = Parser.ColorPalette.Select(c => ColorUtils.RgbToHex(c)).ToList();
 
-            // Remove the mask color
-            uniqueFontColors.Remove(colorChip.maskColor);
+        //     // TODO may need to remove this
+        //     // Remove the mask color
+        //     // _uniqueFontColors.Remove(maskColor);
 
-            // Convert into an array
-            var colorRefs = uniqueFontColors.ToArray();
+        //     // Convert into an array
+        //     var colorRefs = _uniqueFontColors.ToArray();
 
-            // Convert all of the pixels into color ids
-            var pixelIDs = Parser.colorPixels.Select(c => Array.IndexOf(colorRefs, ColorUtils.RgbToHex(c.R, c.G, c.B))).ToArray();
+        //     // Convert all of the pixels into color ids
+        //     var pixelIDs = Parser.ColorPixels.Select(c => Array.IndexOf(colorRefs, ColorUtils.RgbToHex(c))).ToArray();
 
-            // Create new image
-            image = new Image(Parser.width, Parser.height, colorRefs, pixelIDs, new Point(spriteWidth, spriteHeight));
+        //     // Create new image
+        //     ImageData = new ImageData(Parser.Width, Parser.Height, pixelIDs, colorRefs);
 
-            StepCompleted();
-
-        }
+        //     StepCompleted();
+        // }
 
         public override void PrepareSprites()
         {
             base.PrepareSprites();
 
-            fontMap = new int[totalSprites];
-            //            base.PreCutOutSprites();
+            _fontMap = Enumerable.Repeat(-1, 549).ToArray();
+
+            var counter = 0;
+
+            for (int i = 0; i < _fontMap.Length; i++)
+            {
+                // Get ASCII character.
+                char c = (char)i;
+
+                // Get display string.
+                string display = string.Empty;
+                if (char.IsWhiteSpace(c))
+                {
+                    display = c == ' ' ? " " : "skip";
+                }
+                else if (char.IsControl(c))
+                {
+                    display = "skip";
+                }
+                else if (i == 173) // Skip SOFT HYPHEN
+                {
+                    display = "skip";
+                }
+                else
+                {
+                    display = c.ToString();
+                }
+                
+                if(display != "skip")
+                {
+                    
+                    _tmpMap.Add(i);
+
+                    counter ++;
+
+                }
+                
+            }
+
         }
 
         protected override void PostCutOutSprites()
         {
-            fontChip.AddFont(name, fontMap);
+            _fontChip.AddFont(Parser.FileName.Split('.').First(), _fontMap);
             base.PostCutOutSprites();
         }
 
@@ -83,17 +118,28 @@ namespace PixelVision8.Runner.Parsers
             var id = -1;
 
             // If the sprite chip has unique sprites, try to find an existing sprite first
-            if (spriteChip.unique) id = spriteChip.FindSprite(spriteData);
+            if (spriteChip.Unique) id = spriteChip.FindSprite(spriteData);
 
             // If the sprite ID is -1 look for an empty sprite
-            if (id == -1) id = spriteChip.NextEmptyID();
+            if (id == -1) id = spriteChip.NextEmptyId();
 
             // Add the font character sprite data
             spriteChip.UpdateSpriteAt(id, spriteData);
 
             // Set the id to the font map
-            fontMap[index] = id;
+            _fontMap[_tmpMap[index]] = id;
         }
 
     }
+
+    public partial class Loader
+    {
+        [FileParser(".font.png", FileFlags.Fonts)]
+        public void ParseFonts(string file, PixelVision engine)
+        {
+            AddParser(new FontParser(file, _imageParser, engine.ColorChip, engine.SpriteChip, engine.FontChip, engine.GameChip.MaskColor()));
+        }
+    }
+
+     
 }

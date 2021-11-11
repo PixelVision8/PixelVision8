@@ -19,22 +19,16 @@
 //
 
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public interface IImageParser
     {
-        string MaskHex { get; }
-        int width { get; }
-        int height { get; }
-        Color[] colorPixels { get; }
-        List<Color> colorPalette { get; }
-        bool IsImage();
-        void ReadHeader();
-        void ReadStream();
-        void ReadBytes(byte[] bytes);
-        void Dispose();
+        int Width { get; }
+        int Height { get; }
+        ColorData[] ColorPixels { get; }
+        List<ColorData> ColorPalette { get; }
+        void ReadStream(string sourcePath);
         string FileName { get; set; }
     }
 }
