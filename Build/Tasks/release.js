@@ -27,11 +27,7 @@ function zipName(platform)
     nameSplit.charAt(0).toUpperCase() + nameSplit.slice(1);
   }
 
-<<<<<<< HEAD
-  return (process.env.APP_NAME.split(' ').join('-')+"-"+nameSplit +'.zip'.toLowerCase());
-=======
-  return process.env.APP_NAME.toLowerCase().split(' ').join('-')+"-"+nameSplit +'.zip';
->>>>>>> f3ac589084992393023bc942320c0b750a2c4435
+  return (process.env.APP_NAME.split(' ').join('-')+"-"+nameSplit +'.zip').toLowerCase();
 
 }
 
