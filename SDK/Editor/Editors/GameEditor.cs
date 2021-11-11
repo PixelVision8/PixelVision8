@@ -18,26 +18,19 @@
 // Shawn Rakowski - @shwany
 //
 
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using PixelVision8.Player;
+using PixelVision8.Runner;
+using PixelVision8.Workspace;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Audio;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Services;
-using PixelVision8.Engine.Utils;
-using PixelVision8.Runner.Chips;
-using PixelVision8.Runner.Exporters;
-using PixelVision8.Runner.Importers;
-using PixelVision8.Runner.Parsers;
-using PixelVision8.Runner.Services;
-using PixelVision8.Runner.Workspace;
-using Buttons = PixelVision8.Engine.Chips.Buttons;
+using Buttons = PixelVision8.Player.Buttons;
+using Point = PixelVision8.Player.Point;
 
-namespace PixelVision8.Runner.Editors
+namespace PixelVision8.Editor
 {
     /// <summary>
     ///     This class allows you to edit the current sandbox game.
@@ -47,7 +40,7 @@ namespace PixelVision8.Runner.Editors
     {
         protected bool _invalid;
 
-        public ColorChip activeColorChip;
+        // public ColorChip activeColorChip;
 
         //        private GCControllerChip controllerChip;
         private ColorChip colorChip;
@@ -59,14 +52,14 @@ namespace PixelVision8.Runner.Editors
         //
         //        public IEngine targetGame;
         //
-        private GameChip gameChip;
+        private GameChip _gameChip;
         private MusicChip musicChip;
         protected DesktopRunner runner;
 
         protected IServiceLocator serviceManager;
         private SoundChip soundChip;
         private SpriteChip spriteChip;
-        private PixelVisionEngine targetGame;
+        private PixelVision targetGame;
         private TilemapChip tilemapChip;
 
         protected WorkspaceServicePlus workspace;
@@ -79,10 +72,10 @@ namespace PixelVision8.Runner.Editors
         /// <param name="workspace"></param>
         /// <param name="luaService"></param>
         //        [MoonSharpHidden]
-        public GameEditor(DesktopRunner runner, IServiceLocator serviceManager)
+        public GameEditor(DesktopRunner runner)
         {
             this.runner = runner;
-            this.serviceManager = serviceManager;
+            this.serviceManager = runner.ServiceManager;
             // Get a reference to the workspace from the runner instance
             workspace = runner.workspaceService as WorkspaceServicePlus;
         }
@@ -116,13 +109,13 @@ namespace PixelVision8.Runner.Editors
         /// </summary>
         /// <param name="flags"></param>
         /// <returns></returns>
-        private SaveFlags BuildSaveFlags(SaveFlags[] flags)
+        private FileFlags BuildSaveFlags(FileFlags[] flags)
         {
             // Since Lua doesn't know how to handle bit flags, we need to do the conversion on the C# side of things
-            var saveFlags = SaveFlags.System;
+            var saveFlags = FileFlags.System;
 
             for (var i = 0; i < flags.Length; i++)
-                if (flags[i] != SaveFlags.System)
+                if (flags[i] != FileFlags.System)
                     saveFlags |= flags[i];
 
             return saveFlags;
@@ -137,7 +130,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns>Returns a bool if the loading process was successful.</returns>
 
         // TODO should use workspace path as argument
-        public bool Load(string path, SaveFlags[] flags)
+        public bool Load(string path, FileFlags[] flags)
         {
             //            // If the path is not valid, return null
             //            if (path == null)
@@ -158,17 +151,20 @@ namespace PixelVision8.Runner.Editors
 
             try
             {
-                targetGame = new PixelVisionEngine(serviceManager, DefaultChips.ToArray());
+                targetGame = new PixelVision(DefaultChips.ToArray(), "GameEditor")
+                {
+                    ServiceLocator = serviceManager
+                };
+                // targetGame.Init();
 
                 runner.ParseFiles(files, targetGame, saveFlags);
             }
-            catch
+            catch (Exception e)
             {
-                //                Console.WriteLine("Game Editor Load Error:\n"+e.Message);
+                Console.WriteLine("Game Editor Load Error:\n" + e.Message);
 
                 return false;
             }
-
 
             Reset();
 
@@ -179,18 +175,23 @@ namespace PixelVision8.Runner.Editors
             return true;
         }
 
+        public void ImportFromCanvas(Canvas canvas, bool resetChips = true)
+        {
+            
+        }
+
         public void Reset()
         {
             //            targetGame = new PixelVisionEngine(null, null, runner.defaultChips.ToArray());
 
             // Configure the game editor now that all the chips have been loaded
-            gameChip = targetGame.GameChip;
+            _gameChip = targetGame.GameChip;
 
             // Since the game is not attached to a runner it will throw an error when trying to load lua serivce
             try
             {
                 // Configure the game chip
-                gameChip.Reset();
+                _gameChip.Reset();
             }
             catch
             {
@@ -218,51 +219,8 @@ namespace PixelVision8.Runner.Editors
             //            
             //            colorPaletteChip = targetGame.chipManager.GetChip(ColorPaletteParser.chipName, false) as ColorChip;
 
-            ChangeColorMode();
+            // ChangeColorMode();
         }
-
-        /// <summary>
-        ///     Returns a list of library paths
-        /// </summary>
-        /// <returns></returns>
-        // public string[] LibraryPaths()
-        // {
-        //
-        //     var sharedLibPaths = workspace.SharedLibDirectories();
-        //
-        //     var luaFiles = new List<string>();
-        //
-        //     for (int i = 0; i < sharedLibPaths.Count; i++)
-        //     {
-        //         
-        //         var files = from p in workspace.GetEntities(sharedLibPaths[i])
-        //                    where p.EntityName.EndsWith("lua") select p;
-        //
-        //         foreach (var file in files)
-        //         {
-        //             if (luaFiles.IndexOf(file.Path) == -1)
-        //             {
-        //                 var text = workspace.ReadTextFromFile(file);
-        //
-        //                 luaFiles.Add(file.Path);
-        //             }
-        //             
-        //         }
-        //
-        //     }
-        //
-        //     return luaFiles.ToArray();
-        // }
-
-        //
-        //        /// <summary>
-        //        ///     Returns true if an engine is loaded
-        //        /// </summary>
-        //        public bool gameLoaded
-        //        {
-        //            get { return targetGame != null; }
-        //        }
-        //
 
         //
         public void Invalidate()
@@ -280,13 +238,13 @@ namespace PixelVision8.Runner.Editors
         ///     Allows you to save the current game you are editing. Pass in SaveFlags to define which files should be exported.
         /// </summary>
         /// <param name="flags"></param>
-        public void Save(string path, SaveFlags[] flags, bool useSteps = false)
+        public void Save(string path, FileFlags[] flags, bool useSteps = false)
         {
             // TODO need to get the export service
 
 
             // TODO should only save flags that are supplied
-            var saveFlags = SaveFlags.None;
+            var saveFlags = FileFlags.None;
 
             for (var i = 0; i < flags.Length; i++) saveFlags |= flags[i];
 
@@ -310,11 +268,11 @@ namespace PixelVision8.Runner.Editors
         {
             if (size.HasValue)
             {
-                gameChip.maxSize = size.Value;
+                _gameChip.maxSize = size.Value;
                 Invalidate();
             }
 
-            return gameChip.maxSize;
+            return _gameChip.maxSize;
         }
 
         /// <summary>
@@ -326,11 +284,11 @@ namespace PixelVision8.Runner.Editors
         {
             if (total.HasValue)
             {
-                gameChip.SaveSlots = total.Value;
+                _gameChip.SaveSlots = total.Value;
                 Invalidate();
             }
 
-            return gameChip.SaveSlots;
+            return _gameChip.SaveSlots;
         }
 
         /// <summary>
@@ -342,11 +300,11 @@ namespace PixelVision8.Runner.Editors
         {
             if (isLocked.HasValue)
             {
-                gameChip.lockSpecs = isLocked.Value;
+                _gameChip.lockSpecs = isLocked.Value;
                 Invalidate();
             }
 
-            return gameChip.lockSpecs;
+            return _gameChip.lockSpecs;
         }
 
         /// <summary>
@@ -390,7 +348,7 @@ namespace PixelVision8.Runner.Editors
 
         public int BackgroundColor(int? id = null)
         {
-            return gameChip.BackgroundColor(id);
+            return _gameChip.BackgroundColor(id);
         }
 
         public string BackgroundColorHex()
@@ -400,22 +358,22 @@ namespace PixelVision8.Runner.Editors
 
         public string Color(int id, string value = null)
         {
-            if (value == null) return activeColorChip.ReadColorAt(id);
+            if (value == null) return colorChip.ReadColorAt(id);
 
-            activeColorChip.UpdateColorAt(id, value);
+            colorChip.UpdateColorAt(id, value);
 
             return value;
         }
 
-        public void ClearColors(string color = null)
-        {
-            colorChip.Clear(color);
-        }
+        public void ClearColors() => colorChip.Clear(_gameChip.MaskColor());
+        // {
+        //     colorChip.Clear();
+        // }
 
-        public void ClearSprites()
-        {
-            spriteChip.Clear();
-        }
+        public void ClearSprites() => spriteChip.Clear();
+        // {
+        //     spriteChip.Clear();
+        // }
 
         /// <summary>
         ///     Get the TotalDisks colors or change the limit for how many colors the color chip can store.
@@ -423,26 +381,19 @@ namespace PixelVision8.Runner.Editors
         /// <param name="ignoreEmpty"></param>
         /// <param name="total"></param>
         /// <returns></returns>
-        public int TotalColors(bool ignoreEmpty = false) {
+        public int TotalColors(bool ignoreEmpty = false) => _gameChip.TotalColors(ignoreEmpty);
+        // {
             //            if (TotalDisks.HasValue)
             //                activeColorChip.maxColors = TotalDisks.Value;
 
-            return ignoreEmpty ? activeColorChip.totalUsedColors : activeColorChip.total;
-        }
-
-        public int MaximumColors(int? value)
-        {
-            if (value.HasValue) colorChip.maxColors = value.Value;
-
-            return colorChip.maxColors;
-        }
-
+            // return ignoreEmpty ? colorChip.TotalUsedColors : colorChip.Total;
+        // }
 
         // Since we want to be able to edit this value but the interface doesn't allow it, we hide it in lua and use the overload instead
         //        [MoonSharpHidden]
         public int ColorsPerSprite()
         {
-            return gameChip.ColorsPerSprite();
+            return _gameChip.ColorsPerSprite();
         }
 
         /// <summary>
@@ -452,9 +403,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int MaxSpriteCount(int? total)
         {
-            if (total.HasValue) targetGame.SpriteChip.maxSpriteCount = total.Value;
+            if (total.HasValue) targetGame.SpriteChip.MaxSpriteCount = total.Value;
 
-            return gameChip.MaxSpriteCount();
+            return _gameChip.MaxSpriteCount();
         }
 
         /// <summary>
@@ -495,67 +446,20 @@ namespace PixelVision8.Runner.Editors
             return new Point(displayChip.Width, displayChip.Height);
         }
 
-        /// <summary>
-        ///     Get the over scan value or change it
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        public Point OverscanBorder(int? x, int? y)
-        {
-            if (x.HasValue) displayChip.OverscanX = x.Value;
-
-            if (y.HasValue) displayChip.OverscanY = y.Value;
-
-            return new Point(displayChip.OverscanX, displayChip.OverscanY);
-        }
-
-
-        public void RedrawDisplay()
-        {
-            throw new NotImplementedException();
-        }
-
         public Point ScrollPosition(int? x = null, int? y = null)
         {
-            return gameChip.ScrollPosition(x, y);
+            return _gameChip.ScrollPosition(x, y);
         }
 
         public void WriteSaveData(string key, string value)
         {
-            gameChip.WriteSaveData(key, value);
+            _gameChip.WriteSaveData(key, value);
         }
 
         public string ReadSaveData(string key, string defaultValue = "undefined")
         {
-            return gameChip.ReadSaveData(key, defaultValue);
+            return _gameChip.ReadSaveData(key, defaultValue);
         }
-
-        public bool Key(Keys key, InputState state = InputState.Down)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool MouseButton(int button, InputState state = InputState.Down)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Button(Buttons button, InputState state = InputState.Down, int controllerID = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Point MousePosition()
-        {
-            throw new NotImplementedException();
-        }
-
-        public string InputString()
-        {
-            throw new NotImplementedException();
-        }
-
 
         /// <summary>
         ///     Get the TotalDisks number of songs or change it
@@ -571,12 +475,12 @@ namespace PixelVision8.Runner.Editors
 
         public void PlaySong(int id, bool loop = true, int startAt = 0)
         {
-            gameChip.PlaySong(id, loop, startAt);
+            _gameChip.PlaySong(id, loop, startAt);
         }
 
         public void PlayPattern(int id, bool loop = true)
         {
-            gameChip.PlayPattern(id);
+            _gameChip.PlayPattern(id);
         }
 
         /// <summary>
@@ -648,27 +552,27 @@ namespace PixelVision8.Runner.Editors
 
         public void PauseSong()
         {
-            gameChip.PauseSong();
+            _gameChip.PauseSong();
         }
 
         public void StopSong()
         {
-            gameChip.StopSong();
+            _gameChip.StopSong();
         }
 
         public void RewindSong(int position = 0, int loopID = 0)
         {
-            gameChip.RewindSong();
+            _gameChip.RewindSong();
         }
 
         public Point SpriteSize()
         {
-            return gameChip.SpriteSize();
+            return _gameChip.SpriteSize();
         }
 
         public int[] Sprite(int id, int[] data = null)
         {
-            return gameChip.Sprite(id, data);
+            return _gameChip.Sprite(id, data);
         }
 
         /// <summary>
@@ -682,136 +586,58 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int[] FlipPixelData(int[] data, bool flipH = false, bool flipV = false, int width = 8, int height = 8)
         {
-            SpriteChipUtil.FlipSpriteData(ref data, width, height, flipH, flipV);
+            Utilities.FlipPixelData(ref data, width, height, flipH, flipV);
 
             return data;
         }
 
-        //        public int[] Sprites(int[] ids, int width)
-        //        {
-        //            return gameChip.Sprites(ids, width);
-        //        }
-
         public int TotalSprites(bool ignoreEmpty = false)
         {
-            return gameChip.TotalSprites(ignoreEmpty);
+            return _gameChip.TotalSprites(ignoreEmpty);
         }
 
         public int Flag(int column, int row, byte? value = null)
         {
-            return gameChip.Flag(column, row, value);
+            return _gameChip.Flag(column, row, value);
         }
 
         public TileData Tile(int column, int row, int? spriteID = null, int? colorOffset = null,
             byte? flag = null)
         {
-            var tileData = gameChip.Tile(column, row, spriteID, colorOffset, flag);
+            var tileData = _gameChip.Tile(column, row, spriteID, colorOffset, flag);
 
             // RenderTile(tileData, column, row);
 
             return tileData;
         }
 
-        public void RebuildTilemap()
-        {
-            gameChip.RebuildTilemap();
-        }
-
         public Point TilemapSize(int? width = null, int? height = null, bool clear = false)
         {
-            return gameChip.TilemapSize(width, height, clear);
+
+            var _tilemapSize = new Point(tilemapChip.Columns, tilemapChip.Rows);
+            
+            var resize = false;
+
+            if (width.HasValue)
+            {
+                _tilemapSize.X = width.Value;
+                resize = true;
+            }
+
+            if (height.HasValue)
+            {
+                _tilemapSize.Y = height.Value;
+                resize = true;
+            }
+
+            if (resize) tilemapChip.Resize(_tilemapSize.X, _tilemapSize.Y, clear);
+
+            return _tilemapSize;
         }
 
         public void UpdateTiles(int[] ids, int? colorOffset = null, byte? flag = null)
         {
-            gameChip.UpdateTiles(ids, colorOffset, flag);
-        }
-
-        /// <summary>
-        ///     This allows you to fill a tilemap with a specific tile ID. It's used in the Tilemap editor. Define the position you
-        ///     want to start at and any tile matching that ID touching will be replaced.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="column"></param>
-        /// <param name="row"></param>
-        /// <param name="mode"></param>
-        /// <param name="scaleX"></param>
-        /// <param name="scaleY"></param>
-        /// <param name="colorOffset"></param>
-        public void FloodFillTilemap(int value, int column, int row, int mode = 0, int scaleX = 1, int scaleY = 1,
-            int colorOffset = -1)
-        {
-            var canvas = NewCanvas(tilemapChip.columns, tilemapChip.rows);
-
-            var tiles = tilemapChip.tiles;
-
-            var total = canvas.pixels.Length;
-
-            // Loop through all the tiles and build the pixels
-            for (var i = 0; i < total; i++) canvas.pixels[i] = mode == 0 ? tiles[i].spriteID : tiles[i].flag;
-
-            if (mode == 0)
-            {
-                // Build the pattern
-                var size = scaleX * scaleY;
-                var pattern = new int[size];
-                var spriteCols = 16;
-
-                var spritePos = value == -1 ? new Point(-1, -1) : gameChip.CalculatePosition(value, spriteCols);
-
-                for (var i = 0; i < size; i++)
-                {
-                    var offset = gameChip.CalculatePosition(i, scaleX);
-
-                    // TODO this is not right
-                    offset.X += spritePos.X;
-                    offset.Y += spritePos.Y;
-                    pattern[i] = value == -1
-                        ? value
-                        : (gameChip.CalculateIndex(offset.X, offset.Y, spriteCols) + 1) * -100;
-                }
-
-                canvas.SetPattern(pattern, scaleX, scaleY);
-            }
-            else if (mode == 1)
-            {
-                canvas.SetPattern(new[] { value }, 1, 1);
-            }
-
-            canvas.FloodFill(column, row);
-
-            // Copy the pixel data back to the tilemap
-            for (var i = 0; i < total; i++)
-                if (mode == 0)
-                {
-                    var tile = tiles[i];
-
-                    if (canvas.pixels[i] < -1)
-                    {
-                        var pixel = canvas.pixels[i] / -100 - 1;
-
-                        tile.spriteID = pixel;
-
-                        if (colorOffset > -1) tile.colorOffset = colorOffset;
-                    }
-                }
-                else if (mode == 1)
-                {
-                    tiles[i].flag = unchecked((byte)canvas.pixels[i]);
-                }
-
-            tilemapChip.Invalidate();
-        }
-
-
-        public int[] ConvertTextToSprites(string text, string fontName = "default")
-        {
-            throw new NotImplementedException();
-        }
-
-        public int[] ConvertCharacterToPixelData(char character, string fontName)
-        {
-            throw new NotImplementedException();
+            _gameChip.UpdateTiles(ids, colorOffset, flag);
         }
 
         /// <summary>
@@ -831,62 +657,36 @@ namespace PixelVision8.Runner.Editors
 
         public bool RunBackgroundScript(string scriptName, string[] args = null)
         {
-
             try
             {
                 // filePath = UniqueFilePath(filePath.AppendFile("pattern+" + id + ".wav"));
 
                 // TODO exporting sprites doesn't work
-                if (serviceManager.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
+                if (serviceManager.GetService(typeof(GameDataExportService).FullName) is GameDataExportService
+                    exportService)
                 {
                     exportService.Restart();
 
-                    exportService.AddExporter(new BackgroundScriptRunner(scriptName, serviceManager.GetService(typeof(LuaService).FullName) as LuaServicePlus, args));
+                    exportService.AddExporter(new BackgroundScriptRunner(scriptName,
+                        serviceManager.GetService(typeof(LuaService).FullName) as LuaService, args));
                     //
                     exportService.StartExport();
 
                     return true;
                 }
-
             }
             catch (Exception e)
             {
                 // TODO this needs to go through the error system?
                 Console.WriteLine(e);
-                
             }
 
             return false;
-
-        }
-
-        /// <summary>
-        ///     Change the value if unique sprites are loaded in
-        /// </summary>
-        /// <param name="flag"></param>
-        /// <returns></returns>
-        public bool UniqueSprites(bool? flag = null)
-        {
-            if (flag.HasValue) spriteChip.unique = flag.Value;
-
-            return spriteChip.unique;
         }
 
         public string[] Colors()
         {
-            return colorChip.hexColors;
-        }
-
-        /// <summary>
-        ///     Change the flag for importing tiles if they are not found in the Sprite Chip
-        /// </summary>
-        /// <param name="flag"></param>
-        /// <returns></returns>
-        public bool ImportTiles(bool? flag = null)
-        {
-            if (flag.HasValue) tilemapChip.autoImport = flag.Value;
-
-            return tilemapChip.autoImport;
+            return colorChip.HexColors;
         }
 
         /// <summary>
@@ -896,99 +696,10 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public bool DebugColor(bool? flag = null)
         {
-            if (flag.HasValue) colorChip.debugMode = flag.Value;
+            if (flag.HasValue) colorChip.DebugMode = flag.Value;
 
-            return colorChip.debugMode;
+            return colorChip.DebugMode;
         }
-
-        /// <summary>
-        ///     Change the color mode of the game to edit specific color spaces in the Color Chip.
-        /// </summary>
-        /// <param name="mode"></param>
-        public void ChangeColorMode(int mode = 0)
-        {
-            if (mode == 1)
-            {
-                // Create a new color map chip based on the exsiting color chip 
-                if (targetGame.GetChip(ColorMapParser.chipName, false) == null)
-                {
-                    // Since we need pagincation and other values only on the color chip we'll create one here
-                    // Create new color map chip
-                    var colorMapChip = new ColorChip();
-
-                    // Add the chip to the engine
-                    targetGame.ActivateChip(ColorMapParser.chipName, colorMapChip, false);
-
-                    // Register the temporary color chip as a ColorMapChip
-                    //                    targetGame.chipManager.ActivateChip(typeof(ColorMapChip).FullName, colorMapChip, false);
-
-                    var colors = colorChip.hexColors;
-
-                    colorMapChip.total = colors.Length;
-
-                    for (var i = 0; i < colors.Length; i++) colorMapChip.UpdateColorAt(i, colors[i]);
-
-                    //                    Debug.Log("Create New Color Map Chip");
-                }
-
-                //                Debug.Log("Color Map Chip Exists " + (targetGame.colorMapChip != null));
-
-                // Since we are using a color chip we need to make sure we call the rigt chip because its not registered with the engine
-                activeColorChip = targetGame.GetChip(ColorMapParser.chipName, false) as ColorChip;
-            }
-            //            else if (mode == 2)
-            //            {
-            //                activeColorChip = targetGame.GetChip(FlagColorParser.flagColorChipName, false) as ColorChip;
-            //            }
-            else
-            {
-                activeColorChip = targetGame.ColorChip;
-            }
-        }
-
-
-        /// <summary>
-        ///     This will go through the Sprite Chip memory and remove any duplicate sprites it finds.
-        /// </summary>
-        // public void OptimizeSprites()
-        // {
-        //     //            Console.WriteLine("Optimize sprites " + spriteChip.width + " " + spriteChip.height);
-        //
-        //     var tmpSpriteChip = new SpriteChip { width = 8, height = 8 };
-        //
-        //
-        //     tmpSpriteChip.Resize(spriteChip.textureWidth, spriteChip.textureHeight);
-        //
-        //     // Loop through all the sprites and copy them to the new chip
-        //     var total = spriteChip.TotalSprites;
-        //
-        //     var tmpPixelData = new int[8 * 8];
-        //     var nextSpriteID = 0;
-        //     
-        //     // Copy the sprites to the temp chip
-        //     for (var i = 0; i < total; i++)
-        //     {
-        //         spriteChip.ReadSpriteAt(i, ref tmpPixelData);
-        //
-        //         if (tmpSpriteChip.FindSprite(tmpPixelData) == -1)
-        //         {
-        //             tmpSpriteChip.UpdateSpriteAt(nextSpriteID, tmpPixelData);
-        //
-        //             nextSpriteID++;
-        //         }
-        //     }
-        //
-        //     spriteChip.Clear();
-        //
-        //     total = tmpSpriteChip.SpritesInMemory;
-        //
-        //     for (var i = 0; i < total; i++)
-        //     {
-        //         tmpSpriteChip.ReadSpriteAt(i, ref tmpPixelData);
-        //         spriteChip.UpdateSpriteAt(i, tmpPixelData);
-        //     }
-        //
-        // }
 
         /// <summary>
         ///     Returns the TotalDisks number of sprites in memory.
@@ -997,244 +708,6 @@ namespace PixelVision8.Runner.Editors
         public int SpritesInRam()
         {
             return spriteChip.SpritesInMemory;
-        }
-
-        /// <summary>
-        ///     Loads an image from a path in the Workspace.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        // public bool LoadImage(string path)
-        // {
-        //     // Convert to a system path
-        //     var filePath = WorkspacePath.Parse(path);
-        //
-        //     // If the file doesn't exist, return false.
-        //     if (!workspace.Exists(filePath)) return false;
-        //
-        //     byte[] imageBytes = null;
-        //
-        //     try
-        //     {
-        //         // Read bytes from image file
-        //         using (var memoryStream = new MemoryStream())
-        //         {
-        //             workspace.OpenFile(filePath, FileAccess.Read).CopyTo(memoryStream);
-        //
-        //             imageBytes = memoryStream.ToArray();
-        //         }
-        //     }
-        //     catch
-        //     {
-        //         runner.DisplayWarning("Unable to read image file.");
-        //     }
-        //
-        //     try
-        //     {
-        //         // var saveFlags = BuildSaveFlags(new[] { SaveFlags.Colors, SaveFlags.Tilemap });
-        //
-        //         // var files = new Dictionary<string, byte[]>
-        //         // {
-        //         //     {"colors.png", imageBytes},
-        //         //     {"tilemap.png", imageBytes}
-        //         // };
-        //
-        //         // We only need a few chips to make this work
-        //         string[] chips =
-        //         {
-        //             typeof(ColorChip).FullName,
-        //             typeof(SpriteChip).FullName,
-        //             typeof(TilemapChip).FullName,
-        //             typeof(DisplayChip).FullName,
-        //             typeof(GameChip).FullName
-        //         };
-        //         
-        //
-        //         targetGame = new PixelVisionEngine(serviceManager, chips)
-        //         {
-        //             ColorChip = {unique = true},
-        //             SpriteChip = {unique = true, colorsPerSprite = 16, pages = 8},
-        //             TilemapChip = {autoImport = true}
-        //         };
-        //
-        //         targetGame.ColorChip.Clear();
-        //
-        //         // var tmpParser = new PNGReader(imageBytes);
-        //         var pngReader = new PNGReader(imageBytes, targetGame.ColorChip.maskColor);
-        //         
-        //         // Resize the tilemap
-        //         targetGame.TilemapChip.Resize(pngReader.width / 8, pngReader.height / 8);
-        //
-        //         var loadService = runner.loadService;
-        //
-        //         loadService.Reset();
-        //
-        //         loadService.targetEngine = targetGame;
-        //
-        //         loadService.AddParser(new ColorParser(pngReader, targetGame.ColorChip));
-        //         loadService.AddParser(new TilemapParser(pngReader, targetGame));
-        //
-        //         loadService.LoadAll();
-        //
-        //     }
-        //     catch
-        //     {
-        //         //                Console.WriteLine("Game Editor Load Error:\n"+e.Message);
-        //
-        //         return false;
-        //     }
-        //
-        //
-        //     Reset();
-        //
-        //     return true;
-        // }
-
-        /// <summary>
-        ///     Load a font from a path in the Workspace
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public bool LoadFont(string path)
-        {
-            // Convert to a system path
-            var filePath = WorkspacePath.Parse(path);
-
-            // If the file doesn't exist, return false.
-            if (!workspace.Exists(filePath)) return false;
-
-            byte[] imageBytes = null;
-
-            try
-            {
-                // Read bytes from image file
-                using (var memoryStream = new MemoryStream())
-                {
-                    workspace.OpenFile(filePath, FileAccess.Read).CopyTo(memoryStream);
-
-                    imageBytes = memoryStream.ToArray();
-                }
-            }
-            catch
-            {
-                runner.DisplayWarning("Unable to read image file.");
-            }
-
-            try
-            {
-                
-                // We only need a few chips to make this work
-                string[] chips =
-                {
-                    typeof(ColorChip).FullName,
-                    typeof(SpriteChip).FullName,
-                    typeof(FontChip).FullName,
-                    typeof(TilemapChip).FullName,
-                    typeof(DisplayChip).FullName,
-                    typeof(GameChip).FullName
-                };
-
-                targetGame = new PixelVisionEngine(serviceManager, chips)
-                {
-                    ColorChip = {unique = true}, FontChip = {unique = false, pages = 1}, Name = path
-                };
-
-                var pngReader = new PNGReader(imageBytes, targetGame.ColorChip.maskColor)
-                    {FileName = filePath.EntityName };
-
-                var loadService = runner.loadService;
-
-                loadService.Reset();
-
-                loadService.targetEngine = targetGame;
-
-                loadService.AddParser(new FontParser(pngReader, targetGame.ColorChip, targetGame.FontChip));
-
-                loadService.LoadAll();
-
-            }
-            catch
-            {
-                
-                return false;
-            }
-
-            Reset();
-
-            return true;
-        }
-
-        /// <summary>
-        ///     Change a font's sprite data
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public int[] FontSprite(int id, int[] data = null)
-        {
-            if (data != null)
-            {
-                fontChip.UpdateSpriteAt(id, data);
-
-                return data;
-            }
-
-            var tmpSpriteData = new int[64];
-
-            fontChip.ReadSpriteAt(id, ref tmpSpriteData);
-
-            return tmpSpriteData;
-        }
-
-        /// <summary>
-        ///     Save a font
-        /// </summary>
-        /// <param name="fontName"></param>
-        /// <param name="oldName"></param>
-        public string SaveFont(string fontName)
-        {
-            var engineName = targetGame.Name;
-
-            var oldName = fontChip.fonts.Keys.First();
-
-            var parentFilePath = WorkspacePath.Parse(engineName).ParentPath;
-
-            var fontPath = parentFilePath.AppendFile(fontName + ".font.png");
-
-            if (fontName != oldName)
-            {
-                var oldPath = parentFilePath.AppendFile(oldName + ".font.png");
-
-                if (workspace.Exists(oldPath)) workspace.Delete(oldPath);
-
-                var value = fontChip.fonts[oldName];
-                fontChip.fonts.Remove(oldName);
-
-                fontPath = workspace.UniqueFilePath(fontPath);
-
-                fontName = fontPath.EntityName.Split('.')[0];
-
-                fontChip.fonts[fontName] = value;
-            }
-
-            //            var fontPath = workspace.UniqueFilePath(parentFilePath.AppendFile(fontName + ".font.png"));
-
-            var pngWriter = new PNGWriter();
-
-            var exporter = new FontExporter(fontPath.EntityName, targetGame, pngWriter);
-            exporter.CalculateSteps();
-
-            while (exporter.completed == false) exporter.NextStep();
-
-            var files = new Dictionary<string, byte[]>
-            {
-                {fontPath.Path, exporter.bytes}
-            };
-
-            workspace.SaveExporterFiles(files);
-
-            // Return just the name of the font without the extension
-            return fontPath.EntityName;
         }
 
         public string ReadMetadata(string key, string defaultValue = "")
@@ -1252,7 +725,10 @@ namespace PixelVision8.Runner.Editors
 
         public string Sound(int id, string data = null)
         {
-            return gameChip.Sound(id, data);
+            if (data != null) soundChip.UpdateSound(id, data);
+            //
+            return soundChip.ReadSound(id).param;
+            // return gameChip.Sound(id, data);
         }
 
         /// <summary>
@@ -1265,11 +741,11 @@ namespace PixelVision8.Runner.Editors
         {
             WaveType? type = null;
 
-            if (typeID.HasValue) type = (WaveType)typeID.Value;
+            if (typeID.HasValue) type = (WaveType) typeID.Value;
 
             //            Console.WriteLine("Set Wave Type " + type  + (typeID.HasValue ? " - " + typeID.Value.ToString() : ""));
 
-            return (int)soundChip.ChannelType(id, type);
+            return (int) soundChip.ChannelType(id, type);
         }
 
         #endregion
@@ -1277,123 +753,15 @@ namespace PixelVision8.Runner.Editors
         #region Colors
 
         /// <summary>
-        ///     Convert sprites in memory to palette colors, clamping the total colors in each sprite to 16
-        /// </summary>
-        public void ReindexSprites()
-        {
-            // TODO each sprite needs to be clamped between the max colors per sprite
-
-            // var colorMap = new List<int>();
-            //
-            // // var total = rawSpriteData.Length;
-            //
-            // var spritePixelTotal = gameChip.SpriteSize().X * gameChip.SpriteSize().Y;
-            //
-            // var totalSprites = spriteChip.totalSprites;
-            //
-            // var tmpPixelData = new int[spritePixelTotal];
-            // int pixel,tmpIndex, i, j;
-            //
-            // // Loop through each sprite
-            // for (i = 0; i < totalSprites; i++)
-            // {
-            //     // Read the sprite data
-            //     spriteChip.ReadSpriteAt(i, ref tmpPixelData);
-            //
-            //     // Clear the color map
-            //     //                colorMap.Clear();
-            //
-            //     // Index the pixel data
-            //     for (j = 0; j < spritePixelTotal; j++)
-            //     {
-            //         pixel = tmpPixelData[j];
-            //
-            //         if (pixel > -1)
-            //         {
-            //             tmpIndex = colorMap.IndexOf(pixel);
-            //             if (tmpIndex == -1)
-            //             {
-            //                 colorMap.Add(pixel);
-            //                 tmpIndex = colorMap.Count - 1;
-            //             }
-            //
-            //             tmpPixelData[j] = tmpIndex;
-            //         }
-            //     }
-            //
-            //     spriteChip.UpdateSpriteAt(i, tmpPixelData);
-            // }
-            //
-            // // Update the CPS to reflect the indexed colors
-            // spriteChip.colorsPerSprite = colorMap.Count == 0 ? spriteChip.colorsPerSprite : colorMap.Count;
-            //
-            // // Copy the colors to the first palette
-            // for (i = 0; i < spriteChip.colorsPerSprite; i++)
-            //     colorChip.UpdateColorAt(128 + i, colorChip.ReadColorAt(colorMap.Count == 0 ? i : colorMap[i]));
-            //
-            // // Create the 16 colors the sprites will be remapped to
-            // string[] colorMapColors =
-            // {
-            //     "#000000",
-            //     "#111111",
-            //     "#222222",
-            //     "#333333",
-            //     "#444444",
-            //     "#555555",
-            //     "#666666",
-            //     "#777777",
-            //     "#888888",
-            //     "#999999",
-            //     "#AAAAAA",
-            //     "#BBBBBB",
-            //     "#CCCCCC",
-            //     "#DDDDDD",
-            //     "#EEEEEE",
-            //     "#FFFFFF"
-            // };
-            //
-            // // Set the new color TotalDisks
-            // total = colorMapColors.Length;
-            //
-            // // Create a color map chip
-            // var colorMapChip = new ColorChip { total = colorMapColors.Length };
-            //
-            // // Clear the color map chip and rebuild the pages
-            // //            colorMapChip.TotalDisks = TotalDisks;
-            // colorMapChip.Clear();
-            //
-            // // Add the colors to the color map chip
-            // for (i = 0; i < total; i++) colorMapChip.UpdateColorAt(i, colorMapColors[i]);
-            //
-            // //            colorChip.paletteMode = true;
-            //
-            // // Add the chip to the engine
-            // targetGame.ActivateChip(ColorMapParser.chipName, colorMapChip, false);
-
-            // Set the pixels back into the sprite texture
-            //            spriteChip.texture.SetPixels(rawSpriteData);
-        }
-
-        /// <summary>
-        ///     Special method to resize a tool's memory to allow it to store colors for the tool
-        ///     and the game itself. Should make the color chip memory store 512 colors
-        /// </summary>
-        public void ResizeToolColorMemory()
-        {
-            runner.ActiveEngine.ColorChip.total = 512;
-            runner.ActiveEngine.ColorChip.Invalidate();
-        }
-
-        /// <summary>
         ///     Change a game's mask color
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public string MaskColor(string value = null)
+        public string MaskColor(string value = null)// => Constants.MaskColor;// : _gameChip.MaskColor(value);
         {
-            if (value != null) colorChip.maskColor = value;
+            if (value != null) _gameChip.MaskColor(value);
 
-            return colorChip.maskColor;
+            return _gameChip.MaskColor();
         }
 
         #endregion
@@ -1414,9 +782,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int SpritePages(int? total = null)
         {
-            if (total.HasValue) spriteChip.pages = total.Value;
+            if (total.HasValue) spriteChip.Pages = total.Value;
 
-            return spriteChip.pages;
+            return spriteChip.Pages;
         }
 
         /// <summary>
@@ -1427,9 +795,9 @@ namespace PixelVision8.Runner.Editors
         public int ColorsPerSprite(int? total)
         {
             // 
-            if (total.HasValue) spriteChip.colorsPerSprite = total.Value;
+            if (total.HasValue) spriteChip.ColorsPerSprite = total.Value;
 
-            return spriteChip.colorsPerSprite;
+            return spriteChip.ColorsPerSprite;
         }
 
         /// <summary>
@@ -1438,9 +806,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int DrawCalls(int? total = null)
         {
-            if (total.HasValue) spriteChip.maxSpriteCount = total.Value;
+            if (total.HasValue) spriteChip.MaxSpriteCount = total.Value;
 
-            return spriteChip.maxSpriteCount;
+            return spriteChip.MaxSpriteCount;
         }
 
         #endregion
@@ -1449,25 +817,17 @@ namespace PixelVision8.Runner.Editors
 
         public void PlaySound(int id, int channel = 0)
         {
-            gameChip.PlaySound(id, channel);
+            _gameChip.PlaySound(id, channel);
         }
 
         public bool IsChannelPlaying(int channel = 0)
         {
-            return gameChip.IsChannelPlaying(channel);
+            return _gameChip.IsChannelPlaying(channel);
         }
 
         public void StopSound(int channel = 0)
         {
-            gameChip.StopSound(channel);
-        }
-
-        public void DrawSpriteBlock(int id, int x, int y, int width = 1, int height = 1, bool flipH = false,
-            bool flipV = false,
-            DrawMode drawMode = DrawMode.Sprite, int colorOffset = 0, bool onScreen = true, bool useScrollPos = true,
-            Rectangle? bounds = null)
-        {
-            throw new NotImplementedException();
+            _gameChip.StopSound(channel);
         }
 
         /// <summary>
@@ -1489,9 +849,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int TotalChannels(int? total = null)
         {
-            if (total.HasValue) soundChip.totalChannels = total.Value;
+            if (total.HasValue) soundChip.TotalChannels = total.Value;
 
-            return soundChip.totalChannels;
+            return soundChip.TotalChannels;
         }
 
         /// <summary>
@@ -1502,7 +862,7 @@ namespace PixelVision8.Runner.Editors
         public void GenerateSound(int index, int template)
         {
             // Create a tmp synth parameter
-            var settings = new SfxrSynth().parameters;
+            var settings = new SoundChannel().parameters;
 
             // Apply sound template
             switch (template)
@@ -1533,7 +893,7 @@ namespace PixelVision8.Runner.Editors
                     break;
             }
 
-            gameChip.Sound(index, settings.GetSettingsString());
+            soundChip.UpdateSound(index, settings.param);
         }
 
         /// <summary>
@@ -1542,10 +902,10 @@ namespace PixelVision8.Runner.Editors
         /// <param name="id"></param>
         public void Mutate(int id)
         {
-            var param = new SfxrParams();
-            param.SetSettingsString(soundChip.ReadSound(id).param);
-            param.Mutate();
-            soundChip.UpdateSound(id, param.GetSettingsString());
+            var data = new SoundData("Untitled", soundChip.ReadSound(id).param);
+            // param.SetSettingsString();
+            data.Mutate();
+            soundChip.UpdateSound(id, data.param);
             //            soundChip.ReadSound(id).Mutate();
         }
 
@@ -1557,7 +917,7 @@ namespace PixelVision8.Runner.Editors
         {
             //            var settings = new SfxrSynth().parameters;
             // TODO I don't like that this is a static value on the SoundData class
-            gameChip.Sound(id, SoundData.DEFAULT_SOUND_PARAM); //settings.GetSettingsString());
+            soundChip.UpdateSound(id, ""); //settings.GetSettingsString());
         }
 
         /// <summary>
@@ -1572,7 +932,7 @@ namespace PixelVision8.Runner.Editors
             {
                 soundChip.UpdateLabel(index, value);
 
-                soundChip.RefreshSamples();
+                // soundChip.RefreshSamples();
             }
 
             return soundChip.ReadLabel(index);
@@ -1611,13 +971,6 @@ namespace PixelVision8.Runner.Editors
             //TODO change this to load loop, all APIs should be loop based
             musicChip.LoadPattern(id);
         }
-
-        //        public string LoopName(string value = null)
-        //        {
-        //            if (value != null) musicChip.activeTrackerData.songName = value;
-        //
-        //            return musicChip.activeTrackerData.songName;
-        //        }
 
         /// <summary>
         ///     Check to see if a sound is a wav file being read form the workspace.
@@ -1703,9 +1056,9 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int ConfigTrackInstrument(int track, int? id)
         {
-            if (id.HasValue) songGenerator.trackSettings[track].InstrumentType = (InstrumentType)id.Value;
+            if (id.HasValue) songGenerator.trackSettings[track].InstrumentType = (InstrumentType) id.Value;
 
-            return (int)songGenerator.trackSettings[track].InstrumentType;
+            return (int) songGenerator.trackSettings[track].InstrumentType;
         }
 
         /// <summary>
@@ -1772,9 +1125,9 @@ namespace PixelVision8.Runner.Editors
         /// <summary>
         ///     Generate a new song
         /// </summary>
-        public void GenerateSong()
+        public void GenerateSong(bool resetInstruments = false)
         {
-            songGenerator.GenerateSong(targetGame);
+            songGenerator.GenerateSong(targetGame, resetInstruments);
         }
 
         /// <summary>
@@ -1887,7 +1240,7 @@ namespace PixelVision8.Runner.Editors
         /// <returns></returns>
         public int ReadInstrumentID(int track)
         {
-            return (int)songGenerator.trackSettings[track].InstrumentType;
+            return (int) songGenerator.trackSettings[track].InstrumentType;
         }
 
         /// <summary>
@@ -1945,348 +1298,22 @@ namespace PixelVision8.Runner.Editors
         /// <param name="sfxID"></param>
         public void SetTrack(int track, int instrument, int sfxID)
         {
-            songGenerator.trackSettings[track].InstrumentType = (InstrumentType)instrument;
+            songGenerator.trackSettings[track].InstrumentType = (InstrumentType) instrument;
             songGenerator.trackSettings[track].SfxId = sfxID;
-        }
-
-        #endregion
-
-
-        #region Sprites
-
-        /// <summary>
-        ///     Read game sprite pixel data directly from the sprite chip's memory
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="flipH"></param>
-        /// <param name="flipV"></param>
-        /// <returns></returns>
-        public int[] ReadGameSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
-        {
-            return ReadSpriteData(spriteChip, id, scaleX, scaleY, flipH, flipV);
-        }
-
-        /// <summary>
-        ///     Read tool sprite pixel data directly from the sprite chip's memory
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="scaleX"></param>
-        /// <param name="scaleY"></param>
-        /// <param name="flipH"></param>
-        /// <param name="flipV"></param>
-        /// <returns></returns>
-        public int[] ReadToolSpriteData(int id, int scaleX = 1, int scaleY = 1, bool flipH = false, bool flipV = false)
-        {
-            return ReadSpriteData(runner.ActiveEngine.SpriteChip, id, scaleX, scaleY, flipH, flipV);
-        }
-
-        private int[] ReadSpriteData(SpriteChip spriteChip, int id, int scaleX = 1, int scaleY = 1, bool flipH = false,
-            bool flipV = false)
-        {
-            //            var scale = 1;
-
-            var blockSizeX = scaleX * spriteChip.width;
-            var blockSizeY = scaleY * spriteChip.height;
-
-            var pixelData = new int[blockSizeX * blockSizeY];
-
-            var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
-
-            spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY);
-
-            //            var pixelData = Sprite(id);
-
-            if (flipH || flipV) SpriteChipUtil.FlipSpriteData(ref pixelData, blockSizeX, blockSizeY, flipH, flipV);
-
-            return pixelData;
-        }
-
-        /// <summary>
-        ///     Write sprite data directly into the Sprite Chip's memory
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="flipH"></param>
-        /// <param name="flipV"></param>
-        public void WriteSpriteData(int id, int[] pixelData, int scaleX = 1, int scaleY = 1)
-        {
-            var blockSizeX = scaleX * spriteChip.width;
-            var blockSizeY = scaleY * spriteChip.height;
-
-            var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
-
-            //            var pos = gameChip.CalculatePosition(id, spriteChip.textureWidth / spriteChip.width);
-
-            //            Console.WriteLine("Write sprite " + pos.X +" "+pos.Y);
-            spriteChip.texture.SetPixels(pos.X * 8, pos.Y * 8, blockSizeX, blockSizeY, pixelData);
-
-
-            // TODO need to invalidate the cached sprite data
-
-
-            //            spriteChip.texture.CopyPixels(ref pixelData, pos.X * 8, pos.Y * 8, blockSize, blockSize);
-            //            
-            ////            var pixelData = Sprite(id);
-            //
-            //            if (flipH || flipV)
-            //                SpriteChipUtil.FlipSpriteData(ref pixelData, blockSize, blockSize, flipH, flipV);
-
-            // TODO need to invalidate all the sprites that are within the bounds of the update
-
-            // TODO need to make sure the sprite data is flipped correctly before being saved
-        }
-
-        /// <summary>
-        ///     Run the sprite builder
-        /// </summary>
-        /// <returns></returns>
-        public int RunSpriteBuilder(string path)
-        {
-            // Make sure we are editing a game
-            if (targetGame == null) return -1;
-
-
-            // Generate the sprites
-            return workspace.GenerateSprites(path, targetGame);
         }
 
         #endregion
 
         #region Render Tilemap Layer
 
-        /// <summary>
-        ///     Create a new Canvas using the edited game as a source
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
-        public Canvas NewCanvas(int width, int height)
-        {
-            return new Canvas(width, height, gameChip);
-        }
-
-        // private Canvas tmpCanvas;
-        // public bool RenderingMap { get; private set; }
-        // private int[] tmpPixelData = new int[0];
-        // private int totalTiles;
-        // private int totalLoops;
-        // private readonly int maxPerLoop = 100;
-        // private int currentLoop;
-        //
-        // private readonly Canvas[] layerCache = new Canvas[2];
         private SfxrMusicGeneratorChip songGenerator;
-        //
-        // public int RenderPercent => MathHelper.Clamp((int)(currentLoop / (float)totalLoops * 100), 0, 100);
-        //
-        // /// <summary>
-        // ///     Draws the map to a layer
-        // /// </summary>
-        // /// <param name="mode"></param>
-        // public void RenderMapLayer(int mode)
-        // {
-        //     var realWidth = spriteChip.width * tilemapChip.columns;
-        //     var realHeight = spriteChip.height * tilemapChip.rows;
-        //
-        //
-        //     if (layerCache[mode] == null)
-        //     {
-        //         layerCache[mode] = new Canvas(realWidth, realHeight, gameChip);
-        //         RenderingMap = true;
-        //     }
-        //
-        //     // Set the tmpCanvas to the cache
-        //     tmpCanvas = layerCache[mode];
-        //
-        //     // Rebuild the map if it hasn't been rendered yet.
-        //     if (RenderingMap)
-        //     {
-        //         tmpCanvas.Clear(mode == 0 ? colorChip.backgroundColor : -2);
-        //
-        //         totalTiles = tilemapChip.total;
-        //
-        //         Array.Resize(ref tmpPixelData, spriteChip.width * spriteChip.height);
-        //
-        //         RenderingMap = true;
-        //
-        //         totalLoops = MathUtil.CeilToInt(tilemapChip.total / (float)maxPerLoop);
-        //
-        //         currentLoop = 0;
-        //     }
-        // }
-        //
-        // /// <summary>
-        // ///     Moves to the next render step
-        // /// </summary>
-        // public void NextRenderStep()
-        // {
-        //     var offset = currentLoop * maxPerLoop;
-        //
-        //     for (var i = 0; i < maxPerLoop; i++)
-        //     {
-        //         var index = i + offset;
-        //         if (index >= totalTiles)
-        //         {
-        //             RenderingMap = false;
-        //             break;
-        //         }
-        //
-        //         var pos = gameChip.CalculatePosition(index, tilemapChip.columns);
-        //
-        //         var tileData = gameChip.Tile(pos.X, pos.Y);
-        //
-        //         RenderTile(tileData, pos.X, pos.Y);
-        //     }
-        //
-        //     currentLoop++;
-        // }
-        //
-        // /// <summary>
-        // ///     Draw a specific tile
-        // /// </summary>
-        // /// <param name="tileData"></param>
-        // /// <param name="col"></param>
-        // /// <param name="row"></param>
-        // private void RenderTile(TileData tileData, int col, int row)
-        // {
-        //     int[] spriteData;
-        //     int[] flagData;
-        //
-        //     col *= spriteChip.width;
-        //     row *= spriteChip.height;
-        //
-        //     var totalPixels = spriteChip.width * spriteChip.height;
-        //
-        //     if (layerCache[0] != null)
-        //     {
-        //         // 
-        //
-        //         if (tileData.spriteID == -1)
-        //             spriteData = Enumerable.Repeat(-1, totalPixels).ToArray();
-        //         else
-        //             spriteData = gameChip.Sprite(tileData.spriteID);
-        //
-        //         // Shift the pixel data
-        //         for (var j = 0; j < spriteData.Length; j++) spriteData[j] += tileData.colorOffset;
-        //
-        //         //
-        //         layerCache[0].SetPixels(col, row, spriteChip.width, spriteChip.height, spriteData);
-        //     }
-        //
-        //     if (layerCache[1] != null)
-        //     {
-        //         flagData = Enumerable.Repeat((int)tileData.flag, spriteChip.width * spriteChip.height).ToArray();
-        //
-        //         layerCache[1].SetPixels(col, row, spriteChip.width, spriteChip.height, flagData);
-        //     }
-        // }
-
-        /// <summary>
-        ///     Fast copy of render to the display
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="colorOffset"></param>
-        /// <param name="maskColor"></param>
-        // public void CopyRenderToDisplay(int x, int y, int width, int height, int colorOffset, int maskColor = -1)
-        // {
-        //     // Only render when a canvas exists
-        //     if (tmpCanvas == null) return;
-        //
-        //     // Should have some kind of invalidation test
-        //
-        //     // Get scroll position for tmpX/Y position
-        //     var scrollPos = gameChip.ScrollPosition();
-        //     var tmpX = scrollPos.X;
-        //     var tmpY = scrollPos.Y;
-        //
-        //     // Copy the pixels from the canvas
-        //     tmpCanvas.CopyPixels(ref tmpPixelData, tmpX, tmpY, width, height);
-        //
-        //     //            if (useBGColor)
-        //     //            {
-        //     var size = tmpPixelData.Length;
-        //
-        //     // Replace empty colors with the background
-        //     for (var i = 0; i < size; i++)
-        //         if (tmpPixelData[i] < 0)
-        //             tmpPixelData[i] = maskColor; //useBGColor ? colorChip.backgroundColor : -1 - colorOffset;
-        //     //            }
-        //
-        //     // Copy to the active game's tilemap layer
-        //     runner.ActiveEngine.GameChip.DrawPixels(tmpPixelData, x, y, width, height, false, false,
-        //         DrawMode.TilemapCache, colorOffset);
-        // }
-
-        /// <summary>
-        ///     Fast canvas copy to the display
-        /// </summary>
-        /// <param name="srcCanvas"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="colorOffset"></param>
-        /// <param name="maskColor"></param>
-        /// <param name="offsetX"></param>
-        /// <param name="offsetY"></param>
-        /// <param name="useScrollPos"></param>
-        // public void CopyCanvasToDisplay(Canvas srcCanvas, int x, int y, int width, int height, int colorOffset,
-        //     int maskColor = -1, int offsetX = 0, int offsetY = 0, bool useScrollPos = true)
-        // {
-        //     // Only render when a canvas exists
-        //     //            if (tmpCanvas == null)
-        //     //                return;
-        //
-        //     // Should have some kind of invalidation test
-        //
-        //     // Get scroll position for tmpX/Y position
-        //     var scrollPos = gameChip.ScrollPosition();
-        //     var tmpX = scrollPos.X + offsetX;
-        //     var tmpY = scrollPos.Y + offsetY;
-        //
-        //     // Copy the pixels from the canvas
-        //     srcCanvas.CopyPixels(ref tmpPixelData, tmpX, tmpY, width, height);
-        //
-        //     //            if (useBGColor)
-        //     //            {
-        //     var size = tmpPixelData.Length;
-        //
-        //     // Replace empty colors with the background
-        //     for (var i = 0; i < size; i++)
-        //         if (tmpPixelData[i] < 0)
-        //             tmpPixelData[i] = maskColor; //useBGColor ? colorChip.backgroundColor : -1 - colorOffset;
-        //     //            }
-        //
-        //     // Copy to the active game's tilemap layer
-        //     runner.ActiveEngine.GameChip.DrawPixels(tmpPixelData, x, y, width, height, false, false,
-        //         DrawMode.TilemapCache, colorOffset);
-        // }
-
+        
         #endregion
 
 
         // TODO need a way to reduce the palette for sprites?
 
         #region Tool APIs
-
-        /// <summary>
-        ///     Get the tool's colors from the active engine.
-        /// </summary>
-        /// <returns></returns>
-        public string[] ToolColors()
-        {
-            return runner.ActiveEngine.ColorChip.hexColors;
-        }
-
-        /// <summary>
-        ///     Resize the tool's color pages in the active engine
-        /// </summary>
-        /// <param name="total"></param>
-        public void ToolRebuildColorPages(int total)
-        {
-            runner.ActiveEngine.ColorChip.total = total;
-        }
 
         /// <summary>
         ///     Export a SFX as a wav
@@ -2300,8 +1327,8 @@ namespace PixelVision8.Runner.Editors
             workspacePath = workspacePath.AppendFile(sfx.name + ".wav");
 
             // TODO need to wire this up
-            var synth = new SfxrSynth();
-            synth.parameters.SetSettingsString(sfx.param);
+            var synth = new SoundChannel();
+            synth.parameters.param = sfx.param;
             //            var stream = workspace.CreateFile(path);
 
             var files = new Dictionary<string, byte[]>
@@ -2315,19 +1342,6 @@ namespace PixelVision8.Runner.Editors
         }
 
         #endregion
-
-
-        // TODO adding some extra APIs to work directly with the chip but maybe these should be opened up?
-
-        public int FindSprite(int[] pixels, bool emptyCheck)
-        {
-            return spriteChip.FindSprite(pixels, emptyCheck);
-        }
-
-        public bool IsSpriteEmpty(int index)
-        {
-            return spriteChip.IsEmptyAt(index);
-        }
 
     }
 }

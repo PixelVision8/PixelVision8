@@ -19,23 +19,67 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
 using MoonSharp.Interpreter;
-using PixelVision8.Engine.Services;
+using System;
+using System.Linq;
+using PixelVision8.Runner;
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Player
 {
-    public class LuaService : AbstractService
+    public partial class LuaGameChip
     {
-        protected IRunner runner;
-
-        /// <summary>
-        ///     The LuaService exposes core Runner APIs to the Lua Game Chip
-        /// </summary>
-        /// <param name="runner"></param>
-        public LuaService(IRunner runner)
+        protected virtual void RegisterLuaServices()
         {
-            this.runner = runner;
+            try
+            {
+                // Look to see if there are any lua services registered in the game engine
+                var luaService = Player.GetService(typeof(LuaService).FullName) as LuaService;
+
+                // Run the lua service to configure the script
+                luaService.ConfigureScript(LuaScript);
+            }
+            catch
+            {
+                // Do nothing if the lua service isn't found
+            }
+            
+            var methods = GetType().GetMethods().Where(m => m.GetCustomAttributes(typeof(LuaGameChipAPI), false).Length > 0)
+                .ToArray();
+
+            for (int i = 0; i < methods.Length; i++)
+            {
+                // Call API register functions to add them to the service
+                GetType().GetMethod(methods[i].Name)?.Invoke(this, new object[] {});
+                
+            }
+            
+        }
+        
+        protected override void Configure()
+        {
+            base.Configure();
+
+            // Register any extra services
+            RegisterLuaServices();
+        }
+    }
+}
+
+namespace PixelVision8.Runner
+{
+    public class RegisterLuaService : Attribute
+    {
+    }
+
+    
+
+    public partial class LuaService : AbstractService
+    {
+
+        private GameRunner _runner;
+        
+        public LuaService(GameRunner runner)
+        {
         }
 
         /// <summary>
@@ -44,17 +88,17 @@ namespace PixelVision8.Runner.Services
         /// <param name="luaScript"></param>
         public virtual void ConfigureScript(Script luaScript)
         {
-            luaScript.Options.DebugPrint = runner.DisplayWarning;
+            var methods = GetType().GetMethods().Where(m => m.GetCustomAttributes(typeof(RegisterLuaService), false).Length > 0)
+                .ToArray();
 
-            luaScript.Globals["Volume"] = new Func<int?, int>(runner.Volume);
-            luaScript.Globals["Mute"] = new Func<bool?, bool>(runner.Mute);
+            for (int i = 0; i < methods.Length; i++)
+            {
+                // Call API register functions to add them to the service
+                GetType().GetMethod(methods[i].Name)?.Invoke(this, new object[] {luaScript});
+                
+            }
 
-            luaScript.Globals["Scale"] = new Func<int?, int>(runner.Scale);
-            luaScript.Globals["Fullscreen"] = new Func<bool?, bool>(runner.Fullscreen);
-            luaScript.Globals["CropScreen"] = new Func<bool?, bool>(runner.CropScreen);
-            luaScript.Globals["StretchScreen"] = new Func<bool?, bool>(runner.StretchScreen);
-
-            // luaScript.Globals["ResetGame"] = new Action(runner.ResetGame);
         }
+
     }
 }

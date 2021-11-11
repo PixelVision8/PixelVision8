@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,213 +18,187 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Player;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using Microsoft.Xna.Framework;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Services;
-using PixelVision8.Engine.Utils;
-using PixelVision8.Runner.Importers;
-using PixelVision8.Runner.Parsers;
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Runner
 {
-    public interface IFileLoadHelper
-    {
-        string GetFileName(string path);
-        byte[] ReadAllBytes(string file);
-    }
-    
     public class LoadService : AbstractService
     {
-        
-        protected readonly List<IAbstractParser> parsers = new List<IAbstractParser>();
+        private Loader _loader;
 
-        protected int currentParserID;
-        public int currentStep;
-        protected BackgroundWorker loadingWorker;
-        protected Color maskColor = ColorUtils.HexToColor("#ff00ff"); // TODO this shouldn't be hard coded 
-        protected AbstractParser parser;
+        private BackgroundWorker loadingWorker;
 
-        public IEngine targetEngine;
+        // private Color maskColor = Utilities.HexToColor("#ff00ff"); // TODO this shouldn't be hard coded 
+        private AbstractParser parser;
 
-        public List<string> textExtensions = new List<string>
+        public PixelVision targetEngine;
+
+        // public int TotalSteps;
+        private readonly IFileLoader _fileLoadHelper;
+
+        private IImageParser imageParser;
+
+        public LoadService(IFileLoader fileLoadHelper)
         {
-            ".txt",
-            ".json",
-            ".lua",
-            ".cs"
-        };
+            imageParser = new PNGFileReader(fileLoadHelper);
 
-        protected int TotalParsers => parsers.Count;
+            // TODO need to create a way to pass in the graphics device
+            _loader = new Loader(fileLoadHelper, imageParser);
 
-        public int TotalSteps;
-        private readonly IFileLoadHelper _fileLoadHelper;
-
-        public LoadService(IFileLoadHelper fileLoadHelper)
-        {
             _fileLoadHelper = fileLoadHelper;
         }
 
-        public bool Completed => currentParserID >= TotalParsers;
-
-        public float Percent => TotalSteps == 0 ? 1f : currentStep / (float) TotalSteps;
+        public float Percent => _loader.Percent;
 
         /// <summary>
         ///     This can be used to display a message while preloading
         /// </summary>
         public string Message { get; protected set; }
 
-        public void Reset()
-        {
-            parsers.Clear();
-            currentParserID = 0;
-            TotalSteps = 0;
-            currentStep = 0;
-        }
 
-
-        public virtual void ParseFiles(string[] files, IEngine engine, SaveFlags saveFlags)
+        public virtual void ParseFiles(string[] files, PixelVision engine, FileFlags fileFlags)
         {
-            Reset();
+            // TODO need to loop through parser mappings here
+
+            _loader.Reset();
 
             // Save the engine so we can work with it during loading
             targetEngine = engine;
 
-            // Step 1. Load the system snapshot
-            if ((saveFlags & SaveFlags.System) == SaveFlags.System) LoadSystem(files);
+            var test = (FileFlags) Enum.Parse(typeof(FileFlags), "System");
 
+            // Step 1. Load the system snapshot
+            if ((fileFlags & test) == test) LoadSystem(files);
+
+            test = (FileFlags) Enum.Parse(typeof(FileFlags), "Colors");
 
             // Step 3 (optional). Look for new colors
-            if ((saveFlags & SaveFlags.Colors) == SaveFlags.Colors)
+            if ((fileFlags & test) == test)
             {
-
                 // Add the color parser
                 parser = LoadColors(files);
-                if (parser != null) AddParser(parser);
+                if (parser != null) _loader.AddParser(parser);
             }
 
-            // Step 4 (optional). Look for color map for sprites and tile map
-            if ((saveFlags & SaveFlags.ColorMap) == SaveFlags.ColorMap)
-            {
-                // TODO this is a legacy parcer and should be depricated
-                parser = LoadColorMap(files);
-                if (parser != null) AddParser(parser);
-
-            }
+            test = (FileFlags) Enum.Parse(typeof(FileFlags), "Sprites");
 
             // Step 5 (optional). Look for new sprites
-            if ((saveFlags & SaveFlags.Sprites) == SaveFlags.Sprites)
+            if ((fileFlags & test) == test)
             {
                 parser = LoadSprites(files);
-                if (parser != null) AddParser(parser);
+                if (parser != null) _loader.AddParser(parser);
             }
 
             // Step 6 (optional). Look for tile map to load
-            if ((saveFlags & SaveFlags.Tilemap) == SaveFlags.Tilemap) LoadTilemap(files);
+            if ((fileFlags & FileFlags.Tilemap) == FileFlags.Tilemap)
+            {
+
+                var flagPath = "/Game/flags.png";
+
+                if(files.Contains(flagPath) == false)
+                {
+                    flagPath = "/App/Sprites/flags.png";
+                }
+
+                if(files.Contains(flagPath))
+                {
+                    _loader.ParseFlagImage(flagPath, targetEngine);
+                }
+
+                LoadTilemap(files);
+
+            } 
 
             // Step 7 (optional). Look for fonts to load
-            if ((saveFlags & SaveFlags.Fonts) == SaveFlags.Fonts)
+            if ((fileFlags & FileFlags.Fonts) == FileFlags.Fonts)
             {
-                
-                var paths = files.Where(s => s.EndsWith(".font.png")).ToArray();
+                // these are the defaul font names
+                var defaultFonts = new string[]
+                {
+                    "large",
+                    "medium",
+                    "small"
+                };
 
+                // Get the list of fonts in the directory
+                var paths = files.Where(s => s.EndsWith(".font.png")).ToList();
+
+                // Make sure the default fonts are either in the project or in /App/Fonts/*
+                foreach (var font in defaultFonts)
+                {
+                    if (paths.Contains("/Game/" + font + ".font.png") == false)
+                    {
+                        paths.Add("/App/Fonts/" + font + ".font.png");
+                    }
+                }
+
+                // Loop through each of the fonts and load them up
                 foreach (var fileName in paths)
                 {
-                    // var fontName = GetFileName(fileName).Split('.').First();
-
-                    var imageParser = new PNGFileReader(fileName, _fileLoadHelper, targetEngine.ColorChip.maskColor);
-
-                    AddParser(new FontParser(imageParser, targetEngine.ColorChip, targetEngine.FontChip));
-
-                    // parser = LoadFont(fontName, ReadAllBytes(fileName));
-                    // if (parser != null)
-                    //     AddParser(parser);
+                    _loader.ParseFonts(fileName, targetEngine);
                 }
             }
 
             // Step 8 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.Meta) == SaveFlags.Meta)
+            if ((fileFlags & FileFlags.Meta) == FileFlags.Meta)
             {
                 parser = LoadMetaData(files);
-                if (parser != null) AddParser(parser);
+                if (parser != null) _loader.AddParser(parser);
             }
 
             // Step 9 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.Sounds) == SaveFlags.Sounds)
+            if ((fileFlags & FileFlags.Sounds) == FileFlags.Sounds)
             {
                 LoadSounds(files);
 
                 // Get all of the wav files
                 var wavFiles = files.Where(x => x.EndsWith(".wav")).ToArray();
-                
-                if(wavFiles.Length > 0)
-                    AddParser(new WavParser(wavFiles, _fileLoadHelper, targetEngine ));
+
+                for (int i = 0; i < wavFiles.Length; i++)
+                {
+                    _loader.AddParser(new WavParser(wavFiles[i], _fileLoadHelper, targetEngine.SoundChip));
+                }
             }
 
             // Step 10 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.Music) == SaveFlags.Music) LoadMusic(files);
+            if ((fileFlags & FileFlags.Music) == FileFlags.Music) LoadMusic(files);
 
             // Step 11 (optional). Look for meta data and override the game
-            if ((saveFlags & SaveFlags.SaveData) == SaveFlags.SaveData) LoadSaveData(files);
+            if ((fileFlags & FileFlags.SaveData) == FileFlags.SaveData) LoadSaveData(files);
 
             // Step 12 (optional). Look for meta sprites
-            if ((saveFlags & SaveFlags.MetaSprites) == SaveFlags.MetaSprites) LoadMetaSprites(files);
+            if ((fileFlags & FileFlags.MetaSprites) == FileFlags.MetaSprites) LoadMetaSprites(files);
 
-            ParseExtraFileTypes(files, engine, saveFlags);
-
+            // ParseExtraFileTypes(files, engine, fileFlags);
         }
 
-        public virtual void ParseExtraFileTypes(string[] files, IEngine engine, SaveFlags saveFlags)
-        {
-            // TODO Override and add extra file parsers here.
-        }
-
-        public void AddParser(IAbstractParser parser)
-        {
-            parser.CalculateSteps();
-
-            parsers.Add(parser);
-
-            TotalSteps += parser.totalSteps;
-        }
+        // public virtual void ParseExtraFileTypes(string[] files, IPlayerChips engine, FileFlags fileFlags)
+        // {
+        //     // TODO Override and add extra file parsers here.
+        // }
 
         public void LoadAll()
         {
-            while (Completed == false) NextParser();
-
-            parsers.Clear();
+            _loader.LoadAll();
         }
 
-        public void NextParser()
+        public void Reset()
         {
-            if (Completed)
-            {
-                parsers.Clear(); 
-                return;
-            }
+            _loader.Reset();
+        }
 
-            var parser = parsers[currentParserID];
-
-            parser.NextStep();
-
-            currentStep++;
-
-            if (parser.completed)
-            {
-                parser.Dispose();
-                currentParserID++;
-            }
+        public void AddParser(AbstractParser parser)
+        {
+            _loader.AddParser(parser);
         }
 
         public void StartLoading()
         {
-
             loadingWorker = new BackgroundWorker
             {
                 // TODO need a way to of locking this.
@@ -242,12 +216,11 @@ namespace PixelVision8.Runner.Services
 
         protected void WorkerLoaderSteps(object sender, DoWorkEventArgs e)
         {
-
-            for (var i = 0; i <= TotalSteps; i++) //some number (total)
+            for (var i = 0; i <= _loader.TotalSteps; i++) //some number (total)
             {
-                NextParser();
+                _loader.NextParser();
                 Thread.Sleep(1);
-                loadingWorker.ReportProgress((int) (Percent * 100), i);
+                loadingWorker.ReportProgress((int) (_loader.Percent * 100), i);
             }
         }
 
@@ -263,14 +236,14 @@ namespace PixelVision8.Runner.Services
 
         protected AbstractParser LoadMetaData(string[] files)
         {
-            
             var file = files.FirstOrDefault(x => x.EndsWith("info.json"));
 
             if (!string.IsNullOrEmpty(file))
             {
                 // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
-                return new MetaDataParser(file, _fileLoadHelper, targetEngine);
+                _loader.ParseMetaData(file, targetEngine);
+                // return new MetaDataParser(file, _fileLoadHelper, targetEngine);
             }
 
             return null;
@@ -278,89 +251,95 @@ namespace PixelVision8.Runner.Services
 
         protected void LoadTilemap(string[] files)
         {
-            
+            // Console.WriteLine("LoadTilemap");
+
             // If a tilemap json file exists, try to load that
             var file = files.FirstOrDefault(x => x.EndsWith("tilemap.json"));
 
             if (!string.IsNullOrEmpty(file))
             {
-                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
 
-                var jsonParser = new TilemapJsonParser(file, _fileLoadHelper, targetEngine);
-
-                AddParser(jsonParser);
+                _loader.ParseTilemapJson(file, targetEngine);
 
                 return;
             }
 
-            // Try to load the tilemap png file next
-            file = files.FirstOrDefault(x => x.EndsWith("tilemap.png"));
+            // Look for default tilemap to start with
+            var tilemapFiles = new List<string>();
 
-            if (!string.IsNullOrEmpty(file))
+            // Loop through all of the files
+            for (int i = 0; i < files.Length; i++)
             {
                 
-                var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
-                AddParser(new TilemapParser(imageParser, targetEngine.ColorChip, targetEngine.SpriteChip, targetEngine.TilemapChip));
+                file = files[i];
+
+                if(file.EndsWith(".png"))
+                {
+
+                    if(file.StartsWith("/Game/tilemap."))
+                    {
+                        tilemapFiles.Add(file);
+                        // Console.WriteLine("Add tmp map file " + file);
+                    }
+                    else if(file.StartsWith("/Game/Tilemaps/"))
+                    {
+                        ParseTilemapFile(file);
+                    }
+
+                }
 
             }
 
+            if(tilemapFiles.IndexOf("/Game/tilemap.png") > -1)
+            {
+                foreach (var path in tilemapFiles)
+                {
+                    ParseTilemapFile(path);
+                }
+            }
 
+        
+        }
+
+        protected void ParseTilemapFile(string file)
+        {
+
+            // Console.WriteLine("TILEMAP FILE - " + file);
+
+            if(file.EndsWith(".flags.png"))
+            {
+                // TODO need to make
+                _loader.ParseTilemapFlagImage(file, targetEngine);
+            }
+            else
+            {
+                _loader.ParseTilemapImage(file, targetEngine); 
+            }
         }
 
         protected AbstractParser LoadSprites(string[] files)
         {
-            // // TODO need to tell if the cache should be ignore, important when in tools
-            // var srcFile = "sprites.png";
-            //
-            // // TODO this in here to support legacy games but can be removed in future releases
-            // var cacheFile = "sprites.cache.png";
-
-            // string fileName = null;
-            
-            // TODO need to depricate this
+            // Find the sprite file if one exists    
             var file = files.FirstOrDefault(x => x.EndsWith("sprites.png"));
 
-            // If there is no sprites cache file, load the png file instead
-            // if (string.IsNullOrEmpty(file))
-            // {
-            //     file = files.FirstOrDefault(x => x.EndsWith("sprites.png"));
-            // }
-
+            // Load the sprites.png file first
             if (!string.IsNullOrEmpty(file))
             {
-                var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
-
-                var colorChip = targetEngine.GetChip(ColorMapParser.chipName, false) is ColorChip colorMapChip
-                    ? colorMapChip
-                    : targetEngine.ColorChip;
-
-                return new SpriteImageParser(imageParser, colorChip, targetEngine.SpriteChip);
+                _loader.ParseSprites(file, targetEngine);
             }
 
-            return null;
-        }
-
-        protected AbstractParser LoadColorMap(string[] files)
-        {
-            // var fileName = "color-map.png";
-
-            var file = files.FirstOrDefault(x => x.EndsWith("color-map.png"));
-
-            if (!string.IsNullOrEmpty(file))
+            // Loop through all the remaining PNGs and make sure they should be parsed as sprites
+            for (int i = 0; i < files.Length; i++)
             {
+                
+                file = files[i];
 
-                // Create new color map chip
-                var colorMapChip = new ColorChip();
+                if(file.StartsWith("/Game/Sprites/") && file.EndsWith(".png"))
+                {
+                    // total ++;
+                    _loader.ParseSpritesFromFolder(file, targetEngine);
+                }
 
-                // Add the chip to the engine
-                targetEngine.ActivateChip(ColorMapParser.chipName, colorMapChip, false);
-
-                //                targetEngine.colorMapChip = colorMapChip;
-
-                var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
-
-                // Pass the chip to the new parser
-                return new ColorMapParser(imageParser, colorMapChip, maskColor);
             }
 
             return null;
@@ -375,14 +354,20 @@ namespace PixelVision8.Runner.Services
 
             if (!string.IsNullOrEmpty(file))
             {
-                //                var tex = ReadTexture(ReadAllBytes(file));
-                var imageParser = new PNGFileReader(file, _fileLoadHelper, targetEngine.ColorChip.maskColor);
+                _loader.ParseColors(file, targetEngine);
 
-                return new ColorParser(imageParser, targetEngine.ColorChip);
+                //                var tex = ReadTexture(ReadAllBytes(file));
+                // var imageParser = new PNGFileReader(_fileLoadHelper);
+
+                // return new ColorParser(file, imageParser, targetEngine.ColorChip);
+                // {
+                //     SourcePath = file
+                // };
             }
 
             return null;
         }
+
         protected void LoadSystem(string[] files)
         {
             // var fileName = ;
@@ -391,30 +376,19 @@ namespace PixelVision8.Runner.Services
 
             if (!string.IsNullOrEmpty(file))
             {
-                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
-
-                var jsonParser = new SystemParser(file, _fileLoadHelper, targetEngine);
-
-                jsonParser.CalculateSteps();
-
-                while (jsonParser.completed == false) jsonParser.NextStep();
+                _loader.ParseSystem(file, targetEngine);
             }
-
         }
 
         protected void LoadSounds(string[] files)
         {
-            
             var file = files.FirstOrDefault(x => x.EndsWith("sounds.json"));
 
 
             if (!string.IsNullOrEmpty(file))
             {
-                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
-
-                AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
+                _loader.ParseSounds(file, targetEngine);
             }
-            
         }
 
         protected void LoadMusic(string[] files)
@@ -426,9 +400,7 @@ namespace PixelVision8.Runner.Services
 
             if (!string.IsNullOrEmpty(file))
             {
-                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
-
-                AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
+                _loader.ParseMusic(file, targetEngine);
             }
         }
 
@@ -439,34 +411,46 @@ namespace PixelVision8.Runner.Services
 
             if (!string.IsNullOrEmpty(file))
             {
-                AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
+                _loader.ParseMetaSprites(file, targetEngine);
             }
         }
 
         protected void LoadSaveData(string[] files)
         {
-            
             var file = files.FirstOrDefault(x => x.EndsWith("saves.json"));
 
             if (!string.IsNullOrEmpty(file))
             {
-
-                
-                // var fileContents = Encoding.UTF8.GetString(ReadAllBytes(file));
-
-                AddParser(new SystemParser(file, _fileLoadHelper, targetEngine));
-                
+                _loader.ParseSaveData(file, targetEngine);
             }
         }
+    }
 
-        // public virtual string GetFileName(string path)
-        // {
-        //     return _fileLoadHelper.GetFileName(path);
-        // }
+    // Custom parsers
+    public partial class Loader
+    {
+        [FileParser("saves.json", FileFlags.SaveData)]
+        public void ParseSaveData(string file, PixelVision engine)
+        {
+            AddParser(new SystemParser(file, _fileLoadHelper, engine));
+        }
 
-        // public virtual byte[] ReadAllBytes(string file)
-        // {
-        //     return _fileLoadHelper.ReadAllBytes(file);
-        // }
+        [FileParser("sounds.json", FileFlags.Sounds)]
+        public void ParseSounds(string file, PixelVision engine)
+        {
+            AddParser(new SystemParser(file, _fileLoadHelper, engine));
+        }
+
+        [FileParser("music.json", FileFlags.Music)]
+        public void ParseMusic(string file, PixelVision engine)
+        {
+            AddParser(new SystemParser(file, _fileLoadHelper, engine));
+        }
+
+        [FileParser("meta-sprites.json", FileFlags.MetaSprites)]
+        public void ParseMetaSprites(string file, PixelVision engine)
+        {
+            AddParser(new SystemParser(file, _fileLoadHelper, engine));
+        }
     }
 }

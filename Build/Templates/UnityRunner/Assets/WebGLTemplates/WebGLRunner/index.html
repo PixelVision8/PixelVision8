@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Pixel Vision 8 | Unity WebGL Runner</title>
+  </head>
+  <body style="text-align: center">
+    <canvas id="unity-canvas" width=512 height=480 style="width: 512px; height: 480px; background: #231F20"></canvas>
+    <script src="Build/WebGL.loader.js"></script>
+    <script>
+
+      window.gameURL = "StreamingAssets/EmptyGame.pv8";
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+      }
+
+      createUnityInstance(document.querySelector("#unity-canvas"), {
+        dataUrl: "Build/WebGL.data.br",
+        frameworkUrl: "Build/WebGL.framework.js.br",
+        codeUrl: "Build/WebGL.wasm.br",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Pixel Vision 8",
+        productName: "Pixel Vision 8 Unity Runner",
+        productVersion: "1.0",
+        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+      });
+    </script>
+  </body>
+</html>

@@ -18,12 +18,11 @@
 // Shawn Rakowski - @shwany
 //
 
-using System;
 using Microsoft.Xna.Framework;
-using PixelVision8.Runner.Importers;
-using PixelVision8.Runner.Parsers;
+using PixelVision8.Runner;
+using System;
 
-namespace PixelVision8.Runner.Data
+namespace PixelVision8.Runner
 {
     public class SpriteExportData
     {
@@ -47,8 +46,8 @@ namespace PixelVision8.Runner.Data
             // TODO This is hard coded and should be injected in
             imageParser = new PNGReader(this.bytes);
 
-            width = (int) Math.Ceiling((float) imageParser.width / spriteSize.X);
-            height = (int) Math.Ceiling((float) imageParser.height / spriteSize.Y);
+            width = (int) Math.Ceiling((float) imageParser.Width / spriteSize.X);
+            height = (int) Math.Ceiling((float) imageParser.Height / spriteSize.Y);
 
             var totalIDs = width * height;
 

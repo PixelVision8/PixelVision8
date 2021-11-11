@@ -1,13 +1,13 @@
+using MoonSharp.Interpreter;
+using MoonSharp.Interpreter.Platforms;
+using PixelVision8.Player;
+using PixelVision8.Runner;
+using PixelVision8.Workspace;
 using System;
 using System.IO;
 using System.Text;
-using MoonSharp.Interpreter;
-using MoonSharp.Interpreter.Platforms;
-using PixelVision8.Engine.Services;
-using PixelVision8.Runner.Services;
-using PixelVision8.Runner.Workspace;
 
-namespace PixelVision8Runner.Runner.Services
+namespace PixelVision8.Editor
 {
     public class LuaPlatformAccessorService : AbstractService, IPlatformAccessor
     {

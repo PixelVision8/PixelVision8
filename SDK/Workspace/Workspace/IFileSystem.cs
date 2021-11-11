@@ -26,7 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace PixelVision8.Runner.Workspace
+namespace PixelVision8.Workspace
 {
     public interface IFileSystem : IDisposable
     {
@@ -36,6 +36,5 @@ namespace PixelVision8.Runner.Workspace
         Stream OpenFile(WorkspacePath path, FileAccess access);
         void CreateDirectory(WorkspacePath path);
         void Delete(WorkspacePath path);
-
     }
 }

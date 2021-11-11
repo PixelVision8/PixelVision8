@@ -18,13 +18,14 @@
 // Shawn Rakowski - @shwany
 //
 
+// using Microsoft.Xna.Framework;
 using System.IO;
-using Microsoft.Xna.Framework;
+using PixelVision8.Runner;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public interface IImageExporter
     {
-        void Write(int width, int height, Stream outputStream, Color[] colors);
+        void Write(int width, int height, Stream outputStream, ColorData[] colors);
     }
 }

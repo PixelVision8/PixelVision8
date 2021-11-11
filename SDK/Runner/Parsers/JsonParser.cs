@@ -20,10 +20,8 @@
 
 using System.Collections.Generic;
 using System.Text;
-using PixelVision8.Runner.Services;
-using PixelVision8.Runner.Utils;
 
-namespace PixelVision8.Runner.Parsers
+namespace PixelVision8.Runner
 {
     public class JsonParser : AbstractParser
     {
@@ -31,7 +29,7 @@ namespace PixelVision8.Runner.Parsers
 
         protected string JsonString;
 
-        public JsonParser(string filePath, IFileLoadHelper fileLoadHelper)
+        public JsonParser(string filePath, IFileLoader fileLoadHelper)
         {
             FileLoadHelper = fileLoadHelper;
             SourcePath = filePath;
@@ -40,7 +38,7 @@ namespace PixelVision8.Runner.Parsers
         public override void CalculateSteps()
         {
             base.CalculateSteps();
-            steps.Add(ParseJson);
+            Steps.Add(ParseJson);
         }
 
         public virtual void ParseJson()

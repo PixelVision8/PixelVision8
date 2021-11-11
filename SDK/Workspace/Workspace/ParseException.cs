@@ -24,7 +24,7 @@
 
 using System;
 
-namespace PixelVision8.Runner.Workspace
+namespace PixelVision8.Workspace
 {
     public class ParseException : Exception
     {

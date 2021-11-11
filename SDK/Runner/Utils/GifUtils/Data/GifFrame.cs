@@ -22,20 +22,16 @@
 //
 
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner.Gif
 {
-	/// <summary>
-	/// Texture + delay + disposal method
-	/// </summary>
-	public class GifFrame
+    /// <summary>
+    /// Texture + delay + disposal method
+    /// </summary>
+    public class GifFrame
     {
-		public Texture2D Texture;
-		public float Delay;
-		public DisposalMethod DisposalMethod = DisposalMethod.RestoreToBackgroundColor;
+        public GifTexture2D Texture;
+        public float Delay;
+        public DisposalMethod DisposalMethod = DisposalMethod.RestoreToBackgroundColor;
 
-		// public void ApplyPalette(MasterPalette palette)
-		// {
-		// 	TextureConverter.ConvertTo8Bits(ref Texture, palette);
-		// }
-	}
+    }
 }

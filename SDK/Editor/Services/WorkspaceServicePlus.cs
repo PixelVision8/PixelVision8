@@ -18,18 +18,15 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Player;
+using PixelVision8.Runner;
+using PixelVision8.Workspace;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Runner.Exporters;
-using PixelVision8.Runner.Utils;
-using PixelVision8.Runner.Workspace;
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Editor
 {
     public class WorkspaceServicePlus : WorkspaceService
     {
@@ -42,12 +39,17 @@ namespace PixelVision8.Runner.Services
 
         //        private SortedList<WorkspacePath, IFileSystem> DiskMount => Mounts as SortedList<WorkspacePath, IFileSystem>;
         public int TotalDisks => _disks.Count;
-        public int MaxDisks { get; set; } = 2;
+        public int MaxDisks { get; set; } = 1;
 
         public WorkspacePath[] Disks => _disks.ToArray();
 
+        // private string _workspaceFolderName = "Workspace";
+
         public void MountWorkspace(string name)
         {
+
+            // _workspaceFolderName = name;
+
             var filePath = WorkspacePath.Root.AppendDirectory("User");
 
             // Make sure that the user directory exits
@@ -62,9 +64,8 @@ namespace PixelVision8.Runner.Services
             var workspaceDisk = new SubFileSystem(this, filePath);
 
             Mounts.Add(
-                new KeyValuePair<WorkspacePath, IFileSystem>(WorkspacePath.Root.AppendDirectory("Workspace"),
+                new KeyValuePair<WorkspacePath, IFileSystem>(WorkspacePath.Root.AppendDirectory(name),
                     workspaceDisk));
-            
         }
 
         public void RebuildWorkspace()
@@ -89,7 +90,6 @@ namespace PixelVision8.Runner.Services
 
             // Mount the PixelVisionOS directory
             AddMount(new KeyValuePair<WorkspacePath, IFileSystem>(osPath, new MergedFileSystem(systemPaths)));
-
         }
 
         // Exports the active song in the music chip
@@ -117,7 +117,8 @@ namespace PixelVision8.Runner.Services
 
 
                     // TODO exporting sprites doesn't work
-                    if (locator.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
+                    if (locator.GetService(typeof(GameDataExportService).FullName) is GameDataExportService
+                        exportService)
                     {
                         exportService.ExportSong(filePath.Path, musicChip, soundChip, selectedPatterns);
                         //
@@ -272,7 +273,6 @@ namespace PixelVision8.Runner.Services
 
         public void SaveActiveDisk()
         {
-
             // Create a new mount point for the current game
             var rootPath = WorkspacePath.Root.AppendDirectory("Game");
 
@@ -285,7 +285,6 @@ namespace PixelVision8.Runner.Services
 
         public override void ShutdownSystem()
         {
-            
             foreach (var disk in Disks) SaveDisk(disk);
 
             base.ShutdownSystem();
@@ -312,58 +311,59 @@ namespace PixelVision8.Runner.Services
                 }
         }
 
-        public int GenerateSprites(string path, PixelVisionEngine targetGame)
-        {
-            var count = 0;
+        // public int GenerateSprites(string path, PixelVision targetGame)
+        // {
+        //     var count = 0;
 
-            var filePath = WorkspacePath.Parse(path);
+        //     var filePath = WorkspacePath.Parse(path);
 
-            var srcPath = filePath.AppendDirectory("SpriteBuilder");
+        //     var srcPath = filePath.AppendDirectory("SpriteBuilder");
 
-            var fileData = new Dictionary<string, byte[]>();
+        //     var fileData = new Dictionary<string, byte[]>();
 
-            if (Exists(srcPath))
-            {
-                // Get all the files in the folder
-                var files = from file in GetEntities(srcPath)
-                    where file.GetExtension() == ".png"
-                    select file;
+        //     if (Exists(srcPath))
+        //     {
+        //         // Get all the files in the folder
+        //         var files = from file in GetEntities(srcPath)
+        //             where file.GetExtension() == ".png"
+        //             select file;
 
-                foreach (var file in files)
-                {
-                    var name = file.EntityName.Substring(0, file.EntityName.Length - file.GetExtension().Length);
+        //         foreach (var file in files)
+        //         {
+        //             var name = file.EntityName.Substring(0, file.EntityName.Length - file.GetExtension().Length);
 
-                    var bytes = OpenFile(file, FileAccess.Read).ReadAllBytes();
+        //             var bytes = OpenFile(file, FileAccess.Read).ReadAllBytes();
 
-                    if (fileData.ContainsKey(name))
-                        fileData[name] = bytes;
-                    else
-                        fileData.Add(name, bytes);
+        //             if (fileData.ContainsKey(name))
+        //                 fileData[name] = bytes;
+        //             else
+        //                 fileData.Add(name, bytes);
 
-                    count++;
-                    //                    Console.WriteLine("Parse File " + name);
-                }
+        //             count++;
+        //             //                    Console.WriteLine("Parse File " + name);
+        //         }
 
-                try
-                {
-                    // TODO exporting sprites doesn't work
-                    if (locator.GetService(typeof(GameDataExportService).FullName) is GameDataExportService exportService)
-                    {
-                        exportService.ExportSpriteBuilder(path + "sb-sprites.lua", targetGame, fileData);
-                        //
-                        exportService.StartExport();
-                    }
-                }
-                catch (Exception e)
-                {
-                    // TODO this needs to go through the error system?
-                    Console.WriteLine(e);
-                    throw;
-                }
-            }
+        //         try
+        //         {
+        //             // TODO exporting sprites doesn't work
+        //             if (locator.GetService(typeof(GameDataExportService).FullName) is GameDataExportService
+        //                 exportService)
+        //             {
+        //                 exportService.ExportSpriteBuilder(path + "sb-sprites.lua", targetGame, fileData);
+        //                 //
+        //                 exportService.StartExport();
+        //             }
+        //         }
+        //         catch (Exception e)
+        //         {
+        //             // TODO this needs to go through the error system?
+        //             Console.WriteLine(e);
+        //             throw;
+        //         }
+        //     }
 
-            return count;
-        }
+        //     return count;
+        // }
 
         public void AddDisk(WorkspacePath path, IFileSystem disk)
         {
@@ -398,47 +398,46 @@ namespace PixelVision8.Runner.Services
 
         public void SaveDisk(WorkspacePath path)
         {
-            
             var diskExporter = new ZipDiskExporter(path.Path, this);
             diskExporter.CalculateSteps();
 
-            while (diskExporter.completed == false)
+            while (diskExporter.Completed == false)
             {
                 diskExporter.NextStep();
             }
-
         }
 
-        public Dictionary<string, object> CreateZipFile(WorkspacePath path, Dictionary<WorkspacePath, WorkspacePath> files)
-        {
-            var fileHelper = new WorkspaceFileLoadHelper(this);
-            var zipExporter = new ZipExporter(path.Path, fileHelper, files);
-            zipExporter.CalculateSteps();
+        // public Dictionary<string, object> CreateZipFile(WorkspacePath path,
+        //     Dictionary<WorkspacePath, WorkspacePath> files)
+        // {
+        //     var fileHelper = new WorkspaceFileLoadHelper(this);
+        //     var zipExporter = new ZipExporter(path.Path, fileHelper, files);
+        //     zipExporter.CalculateSteps();
 
-            while (zipExporter.completed == false)
-            {
-                zipExporter.NextStep();
-            }
+        //     while (zipExporter.Completed == false)
+        //     {
+        //         zipExporter.NextStep();
+        //     }
 
-            try
-            {
-                if ((bool)zipExporter.Response["success"])
-                {
-                    var zipPath = WorkspacePath.Parse(zipExporter.fileName);
+        //     try
+        //     {
+        //         if ((bool) zipExporter.Response["success"])
+        //         {
+        //             var zipPath = WorkspacePath.Parse(zipExporter.fileName);
 
-                    SaveExporterFiles(new Dictionary<string, byte[]>() { { zipExporter.fileName, zipExporter.bytes } });
-                }
-            }
-            catch (Exception e)
-            {
-                // Change the success to false
-                zipExporter.Response["success"] = false;
-                zipExporter.Response["message"] = e.Message;
-            }
-            
-            
-            return zipExporter.Response;
-        }
+        //             SaveExporterFiles(new Dictionary<string, byte[]>() {{zipExporter.fileName, zipExporter.Bytes}});
+        //         }
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         // Change the success to false
+        //         zipExporter.Response["success"] = false;
+        //         zipExporter.Response["message"] = e.Message;
+        //     }
+
+
+        //     return zipExporter.Response;
+        // }
 
         public void EjectAll()
         {
@@ -463,7 +462,7 @@ namespace PixelVision8.Runner.Services
             {
                 var tmpPath = Disks[i].AppendDirectory("System").AppendDirectory("Libs");
 
-                if(Exists(tmpPath))
+                if (Exists(tmpPath))
                     paths.Insert(0, tmpPath);
             }
 

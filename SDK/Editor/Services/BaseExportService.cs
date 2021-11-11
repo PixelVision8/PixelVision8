@@ -18,18 +18,19 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Player;
+using PixelVision8.Runner.Exporters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
-using PixelVision8.Engine.Services;
-using PixelVision8.Runner.Exporters;
+using PixelVision8.Runner;
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Editor
 {
     public abstract class BaseExportService : AbstractService
     {
-        protected readonly List<IAbstractExporter> exporters = new List<IAbstractExporter>();
+        protected readonly List<IExporter> exporters = new List<IExporter>();
         protected int currentParserID;
         protected int currentStep;
         protected bool exporting;
@@ -39,7 +40,7 @@ namespace PixelVision8.Runner.Services
         protected int totalParsers => exporters.Count;
         public int totalSteps;
         public bool completed => currentParserID >= totalParsers;
-        protected float percent => currentStep / (float)totalSteps;
+        protected float percent => currentStep / (float) totalSteps;
 
         public virtual bool IsExporting()
         {
@@ -49,7 +50,7 @@ namespace PixelVision8.Runner.Services
         // TODO need to make this work like loading does
         public virtual int ReadExportPercent()
         {
-            return (int)(percent * 100);
+            return (int) (percent * 100);
         }
 
         public virtual Dictionary<string, object> ReadExportMessage()
@@ -57,14 +58,14 @@ namespace PixelVision8.Runner.Services
             return message;
         }
 
-        public virtual void AddExporter(IAbstractExporter exporter)
+        public virtual void AddExporter(IExporter exporter)
         {
             // Calculate the steps for the exporter
             exporter.CalculateSteps();
 
             exporters.Add(exporter);
 
-            totalSteps += exporter.totalSteps;
+            totalSteps += exporter.TotalSteps;
         }
 
         public virtual void StartExport(bool useSteps = true)
@@ -74,8 +75,6 @@ namespace PixelVision8.Runner.Services
             if (useSteps == false)
             {
                 ExportAll();
-
-                
             }
             else
             {
@@ -100,7 +99,6 @@ namespace PixelVision8.Runner.Services
 
         protected virtual void WorkerExportSteps(object sender, DoWorkEventArgs e)
         {
-
             var total = totalSteps; //some number (this is your variable to change)!!
 
             for (var i = 0; i <= total; i++) //some number (total)
@@ -116,7 +114,7 @@ namespace PixelVision8.Runner.Services
                 }
 
                 Thread.Sleep(1);
-                exportWorker.ReportProgress((int)(percent * 100), i);
+                exportWorker.ReportProgress((int) (percent * 100), i);
             }
         }
 
@@ -124,13 +122,12 @@ namespace PixelVision8.Runner.Services
         {
             if (locator.GetService(typeof(WorkspaceService).FullName) is WorkspaceService workspaceService)
             {
-
                 // Aggregate all Get all the messages
                 foreach (var exporter in exporters)
                 {
-                    if (exporter.bytes != null)
+                    if (exporter.Bytes != null)
                     {
-                        files.Add(exporter.fileName, exporter.bytes);
+                        files.Add(exporter.fileName, exporter.Bytes);
                     }
 
                     foreach (var response in exporter.Response)
@@ -148,7 +145,6 @@ namespace PixelVision8.Runner.Services
                 workspaceService.SaveExporterFiles(files);
 
                 files.Clear();
-
             }
 
             exporting = false;
@@ -174,7 +170,7 @@ namespace PixelVision8.Runner.Services
 
             currentStep++;
 
-            if (parser.completed)
+            if (parser.Completed)
             {
                 currentParserID++;
             }

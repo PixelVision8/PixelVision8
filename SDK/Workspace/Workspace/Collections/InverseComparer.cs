@@ -24,7 +24,7 @@
 
 using System.Collections.Generic;
 
-namespace PixelVision8.Runner.Workspace
+namespace PixelVision8.Workspace
 {
     public class InverseComparer<T> : IComparer<T>
     {

@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,26 +18,26 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Engine.Utils;
-using PixelVision8.Runner.Parsers;
+using PixelVision8.Player;
+using System.Collections.Generic;
+using System.Linq;
+using PixelVision8.Runner;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
-    public class SpriteExporter : IAbstractExporter
+    public class SpriteExporter : IExporter
     {
-        protected Color[] colors;
-        protected IEngine engine;
+        protected ColorData[] colors;
+        protected PixelVision engine;
         protected PixelDataExporter exporter;
         protected string fullFileName;
         protected IImageExporter imageExporter;
         protected SpriteChip spriteChip;
 
 
-        public SpriteExporter(string fileName, IEngine engine, IImageExporter imageExporter,
+        public SpriteExporter(string fileName, PixelVision engine, IImageExporter imageExporter,
             SpriteChip spriteChip = null)
         {
             fullFileName = fileName;
@@ -48,15 +48,15 @@ namespace PixelVision8.Runner.Exporters
 
             // var colorMapChip = engine.GetChip(ColorMapParser.chipName, false) as ColorChip;
 
-            colors = ColorUtils.ConvertColors(engine.ColorChip.hexColors, engine.ColorChip.maskColor, true);
+            colors = ColorUtils.ConvertColors(engine.ColorChip.HexColors)/*, engine.ColorChip.MaskColor, true)*/.Select(c=>new ColorData(c.R, c.G, c.B)).ToArray();
 
             // TODO removing the color map chip dependency when exporting moving forward
             // colors = colorMapChip == null ? engine.ColorChip.colors : colorMapChip.colors;
         }
 
-        public int totalSteps => exporter.totalSteps;
+        public int TotalSteps => exporter.TotalSteps;
 
-        public bool completed => exporter.completed;
+        public bool Completed => exporter.Completed;
 
         public virtual void CalculateSteps()
         {
@@ -85,7 +85,7 @@ namespace PixelVision8.Runner.Exporters
         }
 
         public Dictionary<string, object> Response => exporter.Response;
-        public byte[] bytes => exporter.bytes;
+        public byte[] Bytes => exporter.Bytes;
 
         public string fileName => exporter.fileName;
 
@@ -93,14 +93,15 @@ namespace PixelVision8.Runner.Exporters
         // TODO this should be a step in the exporter
         public virtual void ConfigurePixelData()
         {
-            var width = spriteChip.textureWidth;
-            var height = spriteChip.textureHeight;
-            var pixelData = new int[width * height];
+            var width = spriteChip.TextureWidth;
+            var height = spriteChip.TextureHeight;
+            // var pixelData = new int[width * height];
 
-            spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
+            var pixelData = Utilities.GetPixels(spriteChip.PixelData, 0, 0, width, height);
 
-            exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, imageExporter,
-                engine.ColorChip.maskColor);
+            // spriteChip.texture.CopyPixels(ref pixelData, 0, 0, width, height);
+
+            exporter = new PixelDataExporter(fullFileName, pixelData, width, height, colors, imageExporter);
         }
     }
 }

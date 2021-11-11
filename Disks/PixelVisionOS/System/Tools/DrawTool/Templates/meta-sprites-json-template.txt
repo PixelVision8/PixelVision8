@@ -1,5 +1,0 @@
-            {
-                "name": "%s",
-                "spriteIDs": [%s],
-                "width": %d
-            },

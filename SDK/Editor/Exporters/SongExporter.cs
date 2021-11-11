@@ -18,11 +18,10 @@
 // Shawn Rakowski - @shwany
 //
 
-using PixelVision8.Engine;
-using PixelVision8.Engine.Audio;
-using PixelVision8.Engine.Chips;
+using PixelVision8.Player;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class SongExporter : AbstractExporter
     {
@@ -36,12 +35,13 @@ namespace PixelVision8.Runner.Exporters
         public float mixdownTrackVolume = 0.6f;
         public float note_tick_s = 15.0f / 120.0f; // (15.0f/120.0f) = 120BPM sixteenth notes
         public float note_tick_s_odd;
-        private RawAudioData result;
+        private SoundChannel result;
 
 
-        public float swing_rhythm_factor = 1.0f; //0.7f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
+        public float
+            swing_rhythm_factor = 1.0f; //0.7f;//0.66666f; // how much "shuffle" - turnaround on the offbeat triplet
 
-        private RawAudioData[] trackresult;
+        private SoundChannel[] trackresult;
 
         //        int songdataCurrentPos = 0;
 
@@ -50,7 +50,7 @@ namespace PixelVision8.Runner.Exporters
             // Rebuild the path by adding the active song name and wav extension
             fileName = path;
 
-            // Save references to the currentc chips
+            // Save references to the current chips
             this.musicChip = musicChip;
             this.soundChip = soundChip;
 
@@ -66,10 +66,10 @@ namespace PixelVision8.Runner.Exporters
         {
             base.CalculateSteps();
 
-            for (var i = 0; i < patterns.Length; i++) steps.Add(ExportSong);
+            for (var i = 0; i < patterns.Length; i++) Steps.Add(ExportSong);
 
-            steps.Add(MixdownAudioClips);
-            steps.Add(CreateSongByteData);
+            Steps.Add(MixdownAudioClips);
+            Steps.Add(CreateSongByteData);
         }
 
         public void ExportSong()
@@ -104,14 +104,14 @@ namespace PixelVision8.Runner.Exporters
             if (trackresult == null)
             {
                 // all the tracks we need - an array of audioclips that will be merged into result
-                trackresult = new RawAudioData[tcount];
+                trackresult = new SoundChannel[tcount];
 
                 for (var i = 0; i < tcount; i++)
-                    trackresult[i] = new RawAudioData(0, 1,
+                    trackresult[i] = new SoundChannel(0, 1,
                         preRenderBitrate);
             }
 
-            var instrument = new SfxrSynth[songData.totalTracks];
+            var instrument = new SoundChannel[songData.totalTracks];
 
             var newStartPos = trackresult[0].samples / 2;
             var newLength = trackresult[0].samples + songdatalength;
@@ -119,14 +119,13 @@ namespace PixelVision8.Runner.Exporters
 
             for (tracknum = 0; tracknum < tcount; tracknum++)
             {
-                if (instrument[tracknum] == null) instrument[tracknum] = new SfxrSynth();
+                if (instrument[tracknum] == null) instrument[tracknum] = new SoundChannel();
 
                 var songdataCurrentPos = newStartPos;
                 trackresult[tracknum].Resize(newLength);
 
                 // set the params to current track's instrument string
-                instrument[tracknum].parameters
-                    .SetSettingsString(soundChip.ReadSound(songData.tracks[tracknum].sfxID).param);
+                instrument[tracknum].parameters.param = soundChip.ReadSound(songData.tracks[tracknum].sfxID).param;
 
                 // Loop through all of the notes in the track
                 for (notenum = 0; notenum < ncount; notenum++)
@@ -137,14 +136,13 @@ namespace PixelVision8.Runner.Exporters
                     // generate one note worth of audio data
                     if (gotANote > 0 && instrument[tracknum] != null)
                     {
-
                         //instrument[tracknum].Reset(true); // seems to do nothing
 
                         // doing this for every note played is insane:
                         // try a fresh new instrument (RAM and GC spammy)
-                        instrument[tracknum] = new SfxrSynth(); // shouldn't be required, but for some reason it is
+                        instrument[tracknum] = new SoundChannel(); // shouldn't be required, but for some reason it is
                         // set the params to current track's instrument string
-                        instrument[tracknum].parameters.SetSettingsString(soundChip.ReadSound(songData.tracks[tracknum].sfxID).param);
+                        instrument[tracknum].parameters.param = soundChip.ReadSound(songData.tracks[tracknum].sfxID).param;
 
 
                         // pitch shift the sound to the correct musical note frequency
@@ -163,7 +161,7 @@ namespace PixelVision8.Runner.Exporters
 
                         // does play need to be called for it to be generated properly?
                         instrument[tracknum].CacheSound(); // generate cachedWave data
-
+                        
                         // grab the sample data - this data is not in the same fmt as unity's internal?
                         // sounds pitch-shifted and faster - a different bitrate?
                         // WORKS GREAT IF WE RUN CACHESOUND() FIRST
@@ -192,24 +190,24 @@ namespace PixelVision8.Runner.Exporters
 
 
             currentPattern++;
-            currentStep++;
+            CurrentStep++;
         }
 
         private void MixdownAudioClips()
         {
             result = MixdownAudioClips(trackresult);
-            currentStep++;
+            CurrentStep++;
         }
 
         private void CreateSongByteData()
         {
             //TODO need to break this process up in to steps so it doesn't block the runner
-            bytes = result.GenerateWav();
-            currentStep++;
+            Bytes = result.GenerateWav();
+            CurrentStep++;
         }
 
         // pre-rendered waveforms - OPTIMIZATION - SLOW SLOW SLOW - FIXME
-        public RawAudioData MixdownAudioClips(params RawAudioData[] clips)
+        public SoundChannel MixdownAudioClips(params SoundChannel[] clips)
         {
             if (clips == null || clips.Length == 0) return null;
 
@@ -253,7 +251,7 @@ namespace PixelVision8.Runner.Exporters
             // stereo
             //AudioClip result = AudioClip.Create("MixdownSTEREO", length / 2, 2, preRenderBitrate, false);
             // mono
-            var result = new RawAudioData(length / 2, 1, preRenderBitrate);
+            var result = new SoundChannel(length / 2, 1, preRenderBitrate);
             result.SetData(data); // TODO: we can get a warning here: data too large to fit: discarded x samples
             // the truncation can happen with a large sustain of a note that could go on after the song is over
             // one solution is to pad the end with 4sec of 0000s then maybe search and TRIM

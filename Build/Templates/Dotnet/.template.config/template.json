@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Jesse Freeman",
+  "classifications": [ "Pixel Vision 8", "Fantasy Console", "PV8", "Game" ], 
+  "name": "PV8 Game",
+  "identity": "PixelVision8.Game.Desktop",         
+  "groupIdentity":"PixelVision8.Game.Desktop",
+  "shortName": "pv8-game",
+  "tags": {
+    "language": "C#",
+    "type":"project"
+  },
+  "sourceName": "PixelVision8.CoreDesktop",
+  "preferNameDirectory": true
+}

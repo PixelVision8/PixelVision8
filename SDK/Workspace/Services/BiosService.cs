@@ -19,9 +19,8 @@
 //
 
 using System.Collections.Generic;
-using PixelVision8.Runner.Utils;
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Runner
 {
     public class BiosService
     {

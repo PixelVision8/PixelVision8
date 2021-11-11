@@ -22,20 +22,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Utils;
-using PixelVision8.Runner.Parsers;
-using PixelVision8.Runner.Utils;
-using PixelVisionRunner.Utils;
+// using PixelVisionRunner.Utils;
+// using PixelVision8.Player;
 
-namespace PixelVision8.Runner.Importers
+namespace PixelVision8.Runner
 {
     public class PNGReader : IImageParser
     {
-        public string MaskHex => maskHex;
+        // public string MaskHex { get; private set; } = Constants.MaskColor;
 
-        protected List<Color> _colorPalette;
-        protected Color[] _colors;
+        protected List<ColorData> _colorPalette;
+        protected ColorData[] _colors;
         protected int bitsPerSample;
         protected int bytesPerPixel;
         protected int bytesPerSample;
@@ -43,33 +40,35 @@ namespace PixelVision8.Runner.Importers
         protected List<PngChunk> chunks;
         protected ColorType colorType;
         protected List<PngChunk> dataChunks;
-        protected string maskHex;
+        // protected string maskHex;
         protected Stream memoryStream;
         protected Palette palette;
         public int[] pixels;
 
-        public PNGReader(byte[] bytes = null, string maskHex = "#FF00FF")
+        public PNGReader(byte[] bytes = null)
         {
-            this.maskHex = maskHex;
-
-            chunks = new List<PngChunk>();
-            dataChunks = new List<PngChunk>();
-            _colorPalette = new List<Color>();
-
             if (bytes != null) ReadBytes(bytes);
         }
 
-        public int width { get; private set; }
+        public int Width { get; private set; }
 
-        public int height { get; private set; }
+        public int Height { get; private set; }
 
-        public Color[] colorPixels => _colors;
-        public List<Color> colorPalette => _colorPalette;
+        public ColorData[] ColorPixels => _colors;
+        public List<ColorData> ColorPalette => _colorPalette;
 
         public virtual string FileName { get; set; } = "untitled.png";
 
+        private void Reset()
+        {
+            chunks = new List<PngChunk>();
+            dataChunks = new List<PngChunk>();
+            _colorPalette = new List<ColorData>();
+        }
+
         public void ReadBytes(byte[] bytes)
         {
+            Reset();
             // this.bytes = bytes;
 
             //            this.inputStream = inputStream;
@@ -81,9 +80,11 @@ namespace PixelVision8.Runner.Importers
             ReadHeader();
         }
 
-        public virtual void ReadStream()
+        public virtual void ReadStream(string sourcePath)
         {
             if (!IsImage()) throw new Exception("File does not have PNG signature.");
+
+            // this.maskHex = maskHex;
 
             UnpackDataChunks();
         }
@@ -131,12 +132,12 @@ namespace PixelVision8.Runner.Importers
                         dataChunk.Decode(chunkBytes);
                         dataChunks.Add(dataChunk);
                     }
-                    else
-                    {
-                        var transparencyChunk = new TransparencyChunk();
-                        transparencyChunk.Decode(chunkBytes);
-                        palette.AddAlphaToColors(transparencyChunk.PaletteTransparencies);
-                    }
+                    // else
+                    // {
+                    //     var transparencyChunk = new TransparencyChunk();
+                    //     transparencyChunk.Decode(chunkBytes);
+                    //     palette.AddAlphaToColors(transparencyChunk.PaletteTransparencies);
+                    // }
                 }
                 else
                 {
@@ -150,8 +151,8 @@ namespace PixelVision8.Runner.Importers
             {
                 var headerChunk = new HeaderChunk();
                 headerChunk.Decode(chunkBytes);
-                width = (int) headerChunk.Width;
-                height = (int) headerChunk.Height;
+                Width = (int) headerChunk.Width;
+                Height = (int) headerChunk.Height;
 
                 bitsPerSample = headerChunk.BitDepth;
                 colorType = headerChunk.ColorType;
@@ -189,7 +190,7 @@ namespace PixelVision8.Runner.Importers
         {
             bytesPerPixel = CalculateBytesPerPixel();
             bytesPerSample = bitsPerSample / 8;
-            bytesPerScanline = bytesPerPixel * width + 1;
+            bytesPerScanline = bytesPerPixel * Width + 1;
             var length = pixelData.Length / bytesPerScanline;
             if (pixelData.Length % bytesPerScanline != 0)
                 throw new Exception(
@@ -209,11 +210,11 @@ namespace PixelVision8.Runner.Importers
         private void DecodePixelData(byte[][] pixelData)
         {
             //            data = new Color[_width * _height];
-            _colors = new Color[width * height];
-            pixels = new int[width * height];
+            _colors = new ColorData[Width * Height];
+            pixels = new int[Width * Height];
 
             var previousScanline = new byte[bytesPerScanline];
-            for (var y = 0; y < height; ++y)
+            for (var y = 0; y < Height; ++y)
             {
                 var scanline = pixelData[y];
                 byte[] defilteredScanline;
@@ -256,7 +257,7 @@ namespace PixelVision8.Runner.Importers
                 //                    }
                 //                    break;
                 case ColorType.Rgb:
-                    for (var index1 = 0; index1 < width; ++index1)
+                    for (var index1 = 0; index1 < Width; ++index1)
                     {
                         var index2 = 1 + index1 * bytesPerPixel;
                         var r = defilteredScanline[index2]; // / (float)byte.MaxValue;
@@ -269,23 +270,23 @@ namespace PixelVision8.Runner.Importers
                         //                        var colorVector = new Vector3((float) r / (float) byte.MaxValue, (float) g / (float) byte.MaxValue, (float) b / (float) byte.MaxValue);
 
 
-                        var color = new Color(r, g, b);
-                        _colors[y * width + index1] = color;
+                        var color = new ColorData(r, g, b);
+                        _colors[y * Width + index1] = color;
 
-                        pixels[y * width + index1] = IndexColor(color);
+                        pixels[y * Width + index1] = IndexColor(color);
                     }
 
                     break;
                 case ColorType.Palette:
-                    for (var index = 0; index < width; ++index)
+                    for (var index = 0; index < Width; ++index)
                     {
                         //                        Color color = palette[defilteredScanline[index + 1]];
                         //                        data[y * _width + index] = color;
 
                         var colorData = palette[defilteredScanline[index + 1]];
-                        _colors[y * width + index] = colorData;
+                        _colors[y * Width + index] = colorData;
 
-                        pixels[y * width + index] = IndexColor(colorData);
+                        pixels[y * Width + index] = IndexColor(colorData);
 
                         //                        IndexColor(colorData);
                     }
@@ -302,13 +303,13 @@ namespace PixelVision8.Runner.Importers
                 //                    }
                 //                    break;
                 case ColorType.RgbWithAlpha:
-                    for (var index1 = 0; index1 < width; ++index1)
+                    for (var index1 = 0; index1 < Width; ++index1)
                     {
                         var index2 = 1 + index1 * bytesPerPixel;
                         var r = defilteredScanline[index2]; // / (float)byte.MaxValue;
                         var g = defilteredScanline[index2 + bytesPerSample]; // / (float)byte.MaxValue;
                         var b = defilteredScanline[index2 + 2 * bytesPerSample]; // / (float)byte.MaxValue;
-                        var alpha = defilteredScanline[index2 + 3 * bytesPerSample]; // / (float)byte.MaxValue;
+                        // var alpha = defilteredScanline[index2 + 3 * bytesPerSample]; // / (float)byte.MaxValue;
                         //                        data[y * _width + index1] = new Color(r, g, b, alpha);
                         //                        pixels[y * _width + index1] = new ColorData(r, g, b){a=alpha};
 
@@ -316,11 +317,11 @@ namespace PixelVision8.Runner.Importers
                         //                        var colorVector = tmpColor.ToVector4();
                         //                        
 
-                        var color = alpha < 1 ? ColorUtils.HexToColor(maskHex) : new Color(r, g, b);
+                        var color = new ColorData(r, g, b);//alpha < 1 ? new ColorData(maskHex) : new ColorData(r, g, b);
 
                         //                        var color = new ColorData(r, g, b);
-                        _colors[y * width + index1] = color;
-                        pixels[y * width + index1] = IndexColor(color);
+                        _colors[y * Width + index1] = color;
+                        pixels[y * Width + index1] = IndexColor(color);
                         //                        IndexColor(color);
                     }
 
@@ -328,14 +329,14 @@ namespace PixelVision8.Runner.Importers
             }
         }
 
-        private int IndexColor(Color color)
+        private int IndexColor(ColorData color)
         {
-            var id = colorPalette.IndexOf(color);
+            var id = ColorPalette.IndexOf(color);
             // Add color to unique color
             if (id == -1)
             {
-                id = colorPalette.Count;
-                colorPalette.Add(color);
+                id = ColorPalette.Count;
+                ColorPalette.Add(color);
 
                 //                Console.WriteLine("New Color " + id + " " + color.r + " " + color.g + " " + color.b + " " + color.a);
             }

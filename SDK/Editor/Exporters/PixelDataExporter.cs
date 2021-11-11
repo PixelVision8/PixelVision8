@@ -18,51 +18,58 @@
 // Shawn Rakowski - @shwany
 //
 
-using Microsoft.Xna.Framework;
-using PixelVision8.Engine.Utils;
+// using Microsoft.Xna.Framework;
+using PixelVision8.Runner;
+using PixelVision8.Player;
+using System;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class PixelDataExporter : ImageExporter
     {
-        protected Color maskColor = new Color(255, 0, 255);
-        protected Color[] paletteColors;
+        // protected ColorData maskColor = new ColorData(255, 0, 255);
+        protected ColorData[] paletteColors;
         protected int[] pixelData;
 
-        public PixelDataExporter(string fileName, int[] pixelData, int width, int height, Color[] paletteColors,
-            IImageExporter imageExporter, string maskHex) : base(fileName, imageExporter, null, width, height)
+        public PixelDataExporter(string fileName, int[] pixelData, int width, int height, ColorData[] paletteColors,
+            IImageExporter imageExporter) : base(fileName, imageExporter, null, width, height)
         {
-            this.paletteColors = paletteColors;
+
+            this.paletteColors = paletteColors;//new ColorData[paletteColors.Length + 1];
+
+            // this.paletteColors[0] = new ColorData(maskHex);
+
+            // Array.Copy(paletteColors, 0, this.paletteColors, 1, paletteColors.Length);
+
+            // this.paletteColors = paletteColors;
             this.pixelData = pixelData;
-            maskColor = ColorUtils.HexToColor(maskHex);
+            // maskColor = new ColorData(maskHex);
         }
 
         public override void CalculateSteps()
         {
-            currentStep = 0;
+            CurrentStep = 0;
 
-            steps.Add(CopyPixels);
+            Steps.Add(CopyPixels);
 
-            steps.Add(WriteBytes);
+            Steps.Add(WriteBytes);
         }
 
         protected virtual void CopyPixels()
         {
             var total = width * height;
 
-            colors = new Color[total];
+            colors = new ColorData[total];
+
+            var totalColors = paletteColors.Length;
 
             for (var i = 0; i < total; i++)
             {
-                var refID = pixelData[i];
-
-                if (refID > -1 && refID < total)
-                    colors[i] = paletteColors[refID];
-                else
-                    colors[i] = maskColor;
+                var refID = Utilities.Clamp(pixelData[i], 0, totalColors);
+                colors[i] = paletteColors[refID];
             }
 
-            currentStep++;
+            CurrentStep++;
         }
     }
 }

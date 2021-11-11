@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,15 +18,15 @@
 // Shawn Rakowski - @shwany
 //
 
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Services;
-using PixelVision8.Engine.Utils;
-using PixelVision8.Runner.Exporters;
-using PixelVision8.Runner.Workspace;
+using PixelVision8.Player;
+using PixelVision8.Workspace;
+using System.Collections.Generic;
+using System.Linq;
+using PixelVision8.Runner;
+using System;
 
-namespace PixelVision8.Runner.Services
+namespace PixelVision8.Editor
 {
     public class ScreenshotService : AbstractService
     {
@@ -35,9 +35,13 @@ namespace PixelVision8.Runner.Services
         //        private ITextureFactory textureFactory;
         private readonly WorkspaceService workspace;
         private bool active;
+        string defaultPath;
 
-        public ScreenshotService(WorkspaceService workspace)
+        public ScreenshotService(WorkspaceService workspace, string defaultPath = "/Tmp/Screenshots/")
         {
+
+            this.defaultPath = defaultPath;
+                
             // TODO this needs to get teh workspace through the service
             //            this.textureFactory = textureFactory;
             this.workspace = workspace;
@@ -52,22 +56,9 @@ namespace PixelVision8.Runner.Services
                 //                var fileSystem = workspace.fileSystem;
                 try
                 {
-                    var directoryName =
-                        "Screenshots"; //workspace.ReadBiosData("ScreenshotDir", "Screenshots") as string;
-
-                    var path = WorkspacePath.Root.AppendDirectory("Tmp").AppendDirectory(directoryName);
-
-                    try
-                    {
-                        if (workspace.Exists(WorkspacePath.Root.AppendDirectory("Workspace")))
-                            path = WorkspacePath.Root.AppendDirectory("Workspace")
-                                .AppendDirectory(directoryName);
-                    }
-                    catch
-                    {
-                        //                        Console.WriteLine("Screenshot Error: No workspace found.");
-                    }
-
+                    
+                    var path = WorkspacePath.Parse(defaultPath);
+                    
                     // Check to see if a screenshot directory exits
                     if (!workspace.Exists(path)) workspace.CreateDirectoryRecursive(path);
 
@@ -89,7 +80,7 @@ namespace PixelVision8.Runner.Services
             return workspace.UniqueFilePath(screenshotDir.AppendFile("screenshot.png"));
         }
 
-        public bool TakeScreenshot(IEngine engine)
+        public bool TakeScreenshot(PixelVision engine)
         {
             //            throw new NotImplementedException();
 
@@ -101,7 +92,11 @@ namespace PixelVision8.Runner.Services
             {
                 // var cachedColors = engine.ColorChip.colors;
 
-                var cachedColors =ColorUtils.ConvertColors(engine.ColorChip.hexColors, "#FF00FF", true);
+                var cachedColors = ColorUtils.ConvertColors(engine.ColorChip.HexColors, engine.GameChip.BGColorOffset)/*, Constants.MaskColor, true)*/.Select(c=> new ColorData(c.R, c.G, c.B)).ToList();
+
+                // cachedColors.Insert(0, cachedColors[engine.GameChip.BackgroundColor()]);
+
+                // TODO need to convert first color to BG
 
                 var pixels = engine.DisplayChip.Pixels;
 
@@ -114,21 +109,17 @@ namespace PixelVision8.Runner.Services
 
 
                 // Need to crop the image
-                var newPixels = new Color[visibleWidth * visibleHeight];
+                var newPixels = new ColorData[visibleWidth * visibleHeight];
 
                 var totalPixels = pixels.Length;
                 var newTotalPixels = newPixels.Length;
 
-                var index = 0;
+                // TODO  the display is still showing -1 for some reason. This hack will fix but this still needs to be address.
+                var bgColor = cachedColors[engine.GameChip.BackgroundColor() + 1];
 
                 for (var i = 0; i < totalPixels; i++)
                 {
-                    var col = i % width;
-                    if (col < visibleWidth && index < newTotalPixels)
-                    {
-                        newPixels[index] = cachedColors[pixels[i]];
-                        index++;
-                    }
+                        newPixels[i] = pixels[i] > -1 ? cachedColors[pixels[i]] : bgColor;
                 }
 
                 // We need to do this manually since the exporter could be active and we don't want to break it for a screenshot
@@ -136,15 +127,16 @@ namespace PixelVision8.Runner.Services
                 tmpExporter.CalculateSteps();
 
                 // Manually step through the exporter
-                while (tmpExporter.completed == false) tmpExporter.NextStep();
+                while (tmpExporter.Completed == false) tmpExporter.NextStep();
 
-                workspace.SaveExporterFiles(new Dictionary<string, byte[]> {{tmpExporter.fileName, tmpExporter.bytes}});
+                workspace.SaveExporterFiles(new Dictionary<string, byte[]> {{tmpExporter.fileName, tmpExporter.Bytes}});
 
                 return true;
             }
-            catch
+            catch( Exception e)
             {
-                //                Console.WriteLine("Take Screenshot Error:\n"+e.Message);
+                Console.WriteLine("Take Screenshot Error:\n"+e.Message);
+
                 // TODO throw some kind of error?
                 return false;
             }

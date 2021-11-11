@@ -1,0 +1,28 @@
+{
+	"SystemName": "My Game",
+	"SystemVersion": "v0.0.0",
+	"Resolution": "512x480",
+	"CRT":"False",
+
+	"CreateWorkspace" : "False",
+	"LogFilePath": "/User/Log.txt",
+	"ScreenshotPath": "/User/Screenshots/",
+	"RecordingPath": "/User/Recordings/",
+	
+	"BootTool": "/PixelVisionOS/Tools/BootTool/",
+	"LoadTool": "/PixelVisionOS/Tools/LoadTool/",
+	"ErrorTool": "/PixelVisionOS/Tools/ErrorTool/",
+	"AutoRun": "/PixelVisionOS/Tools/Game/",
+	
+	"FileDiskMounting": "False",
+	
+	"NoAutoRun":"Could not find a default game to boot.",
+	"NoDefaultTool": "Could not find a default tool to load.",
+	"Exception": "@{error}\nPress Ctrl + 4 to reload the current game.",
+	"LoadError": "There was an issue loading from '@{path}'.",
+	"Warning": "@{error}",
+
+	"ArchiveExtensions": "zip,pv8,pvt,pvs,pva,pvr",
+	"FileExtensions": "png,lua,json,txt,wav,cs",
+	"RequiredFiles": "info.json"
+}

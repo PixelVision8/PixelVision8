@@ -1,4 +1,4 @@
-﻿//   
+//   
 // Copyright (c) Jesse Freeman, Pixel Vision 8. All rights reserved.  
 //  
 // Licensed under the Microsoft Public License (MS-PL) except for a few
@@ -18,21 +18,24 @@
 // Shawn Rakowski - @shwany
 //
 
+using PixelVision8.Player;
 using System.Text;
-using PixelVision8.Engine;
-using PixelVision8.Engine.Chips;
-using PixelVision8.Runner.Utils;
+using PixelVision8.Runner;
+using PixelVision8.Runner.Exporters;
 
-namespace PixelVision8.Runner.Exporters
+namespace PixelVision8.Editor
 {
     public class MetadataExporter : AbstractExporter
     {
-        private readonly IEngine engine;
+        private readonly PixelVision engine;
         private StringBuilder sb;
+        private GameChip _gameChip;
 
-        public MetadataExporter(string fileName, IEngine engine) : base(fileName)
+        public MetadataExporter(string fileName, PixelVision engine) : base(fileName)
         {
             this.engine = engine;
+            _gameChip = this.engine.GameChip;
+
             //            
             //            CalculateSteps();
         }
@@ -42,13 +45,13 @@ namespace PixelVision8.Runner.Exporters
             base.CalculateSteps();
 
             // Create a new string builder
-            steps.Add(CreateStringBuilder);
+            Steps.Add(CreateStringBuilder);
 
             // Serialize Game
-            if (engine.GameChip != null) steps.Add(delegate { SerializeGameChip(engine.GameChip); });
+            if (engine.GameChip != null) Steps.Add(delegate { SerializeGameChip(_gameChip); });
 
             // Save the final string builder
-            steps.Add(CloseStringBuilder);
+            Steps.Add(CloseStringBuilder);
         }
 
         private void CreateStringBuilder()
@@ -59,7 +62,7 @@ namespace PixelVision8.Runner.Exporters
             sb.Append("{");
             JsonUtil.GetLineBreak(sb, 1);
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void CloseStringBuilder()
@@ -67,9 +70,9 @@ namespace PixelVision8.Runner.Exporters
             JsonUtil.GetLineBreak(sb);
             sb.Append("}");
 
-            bytes = Encoding.UTF8.GetBytes(sb.ToString());
+            Bytes = Encoding.UTF8.GetBytes(sb.ToString());
 
-            currentStep++;
+            CurrentStep++;
         }
 
         private void SerializeGameChip(GameChip gameChip)
@@ -120,7 +123,7 @@ namespace PixelVision8.Runner.Exporters
             }
 
 
-            currentStep++;
+            CurrentStep++;
         }
     }
 }

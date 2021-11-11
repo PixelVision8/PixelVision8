@@ -18,16 +18,16 @@
 // Shawn Rakowski - @shwany
 //
 
+using MoonSharp.Interpreter;
+using PixelVision8.Runner.Exporters;
+using PixelVision8.Runner;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MoonSharp.Interpreter;
-using PixelVision8.Engine.Utils;
-using PixelVision8.Runner.Exporters;
-using PixelVision8.Runner.Services;
+using PixelVision8.Player;
 
-namespace PixelVision8
+namespace PixelVision8.Editor
 {
     class BackgroundScriptRunner : AbstractExporter
     {
@@ -38,15 +38,14 @@ namespace PixelVision8
         {
             get
             {
-                if (_luaScript == null) _luaScript = new Script(CoreModules.Preset_SoftSandbox);
+                if (_luaScript == null) _luaScript = new Script(CoreModules.Preset_Default);
 
                 return _luaScript;
             }
         }
 
-        public BackgroundScriptRunner(string scriptName, LuaServicePlus luaService, string[] args = null) : base(null)
+        public BackgroundScriptRunner(string scriptName, LuaService luaService, string[] args = null) : base(null)
         {
-
             LuaScript.DoFile(scriptName);
 
             // Add all of the core File System APIs to the scrip
@@ -55,17 +54,17 @@ namespace PixelVision8
             LuaScript.Globals["args"] = args.Clone();
             LuaScript.Globals["AddStep"] = new Action<string>(AddStep);
             LuaScript.Globals["SetStringAsData"] = new Action<string>(SetStringAsData);
-            LuaScript.Globals["SetImageAsData"] = new Action<Image, string>(SetImageAsData);
-            LuaScript.Globals["BackgroundScriptData"] = new Func<string, string, string>(luaService.BackgroundScriptData);
-
+            LuaScript.Globals["SetImageAsData"] = new Action<ImageData>(SetImageAsData);
+            LuaScript.Globals["BackgroundScriptData"] =
+                new Func<string, string, string>(luaService.BackgroundScriptData);
         }
 
         public override void CalculateSteps()
         {
-            currentStep = 0;
+            CurrentStep = 0;
 
             if (LuaScript?.Globals["CalculateSteps"] == null) return;
-            
+
             try
             {
                 LuaScript.Call(LuaScript.Globals["CalculateSteps"]);
@@ -75,7 +74,6 @@ namespace PixelVision8
                 Console.WriteLine(e);
                 Exit();
             }
-            
         }
 
         public override void LoadSourceData()
@@ -97,74 +95,66 @@ namespace PixelVision8
         {
             stepQueue.Add(functionName);
 
-            steps.Add(CallStep);
+            Steps.Add(CallStep);
         }
 
         protected void CallStep()
         {
-
             try
             {
                 // Console.WriteLine("calling " + stepQueue[currentStep]);
-                LuaScript.Call(LuaScript.Globals[stepQueue[currentStep]]);
+                LuaScript.Call(LuaScript.Globals[stepQueue[CurrentStep]]);
                 StepCompleted();
             }
             catch (Exception e)
             {
-                 Console.WriteLine(e);
+                Console.WriteLine(e);
                 Exit();
             }
-            
         }
 
         public void SetStringAsData(string value)
         {
-
             // TODO need to make sure nothing is saved if bytes is empty
             try
             {
-                bytes = Encoding.UTF8.GetBytes(value);
+                Bytes = Encoding.UTF8.GetBytes(value);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                
             }
-            
         }
 
-        public void SetImageAsData(Image image, string maskColor = "#FF00FF")
+        public void SetImageAsData(ImageData imageData)
         {
-
             try
             {
-                var palette = image.colors.Select(ColorUtils.HexToColor).ToArray();
+                var palette = imageData.Colors.Select(c=> new ColorData(c)).ToArray();
 
                 var imageExporter = new PNGWriter();
 
-                var exporter = new PixelDataExporter(fileName, image.pixels, image.width, image.height, palette, imageExporter,
-                    maskColor);
+                var exporter = new PixelDataExporter(fileName, imageData.GetPixels(), imageData.Width, imageData.Height,
+                    palette, imageExporter);
 
                 exporter.CalculateSteps();
 
-                while (exporter.completed == false)
+                while (exporter.Completed == false)
                 {
                     exporter.NextStep();
                 }
 
-                bytes = exporter.bytes;
+                Bytes = exporter.Bytes;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                
             }
-
         }
 
         public void Exit()
         {
-            currentStep = totalSteps;
+            CurrentStep = TotalSteps;
         }
     }
 }

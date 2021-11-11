@@ -18,7 +18,7 @@
 // Shawn Rakowski - @shwany
 //
 
-namespace PixelVision8.Runner.Utils
+namespace PixelVision8.Runner
 {
     public class TiledUtil
     {

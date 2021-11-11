@@ -91,7 +91,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace PixelVisionRunner.Utils
+namespace PixelVision8.Runner
 {
     /// <summary>
     ///     Represents a Zlib stream for compression or decompression.

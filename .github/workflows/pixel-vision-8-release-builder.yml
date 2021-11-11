@@ -32,9 +32,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.compute_tag.outputs.next_tag }}
-          release_name: Pixel Vision 8 ${{ steps.compute_tag.outputs.next_tag }} Release
+          release_name: Space Station 8 ${{ steps.compute_tag.outputs.next_tag }} Release
           draft: false
-          prerelease: false
+          prerelease: true
 
 
   changelogger:
@@ -64,30 +64,11 @@ jobs:
           echo "CURRENT=${my_array[0]:1}.$((${my_array[1]} - 1)).$((${my_array[2]}))" >> $GITHUB_ENV
           echo "PREVIOUS=${my_array[0]:1}.$((${my_array[1]} - 2)).0" >> $GITHUB_ENV
 
-      - name: Create Changelog
-        id: changelog
-        uses: jimschubert/beast-changelog-action@v1
-        with:
-          FROM: v${{ env.PREVIOUS }}
-          TO: v${{ env.CURRENT }}
-
-      - name: View Changelog
-        run: cat .github/CHANGELOG.md
-
-      - name: save Changelog
-        id: log
-        run: |
-          REPORT="$(cat .github/CHANGELOG.md)"
-          REPORT="${REPORT//'%'/'%25'}"
-          REPORT="${REPORT//$'\n'/'%0A'}"
-          REPORT="${REPORT//$'\r'/'%0D'}"
-          echo "REPORT=$REPORT" >> $GITHUB_ENV
-
-     # Setup dotnet v3.1
+     # Setup dotnet v6.0.x
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.301
+          dotnet-version: 6.0.x
 
       - name: Use Node.js
         uses: actions/setup-node@v1
@@ -95,13 +76,12 @@ jobs:
       - name: Build
         run: |
           sed -i 's/0.0.0/${{env.CURRENT}}/g' Content/bios.json
-          sed -i 's/0.0.0/${{env.CURRENT}}/g' PixelVision8.CoreDesktop.csproj
-          cd .gulp
+          sed -i 's/0.0.0/${{env.CURRENT}}/g' Projects/PixelVision8/PixelVision8.DesktopRunner.csproj
           npm install
           npm install gulp -g
           echo $VERSION
-          gulp
-
+          gulp package
+          
       # Update the release with the change log
       - name: Update Release
         id: update_release
@@ -112,13 +92,24 @@ jobs:
           tag: v${{env.CURRENT}}
           gzip: false
           body: >
-            This is a stable build of Pixel Vision 8 based on the Github source code. While it is similar to the one you can download from [the main website](https://www.pixelvision8.com/), this build has some limitations specific to this project's dependency on the vanilla build of [MonoGame](https://www.monogame.net/). If you still would like to use it, you can download a build for Windows, Mac, and Linux (x64 & ARM 64) below. Please make sure to backup your [Workspace](https://docs.pixelvision8.com/pixelvisionos) before running this or any new build of Pixel Vision 8.
-
-            Here is a list of the most recent changes:
+            This is an incremental build of Pixel Vision 8 based on the GitHub source code. You can download an executable for Windows, Mac, and Linux below. Please make sure to backup your `Workspace` and game projects before running this or any preview version of Pixel Vision 8.
 
 
-            ${{ env.REPORT }}. In addition, you can see the current open issues [here](https://github.com/PixelVision8/PixelVision8/issues) or use one of the following links to submit a new [bug](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=bug_report.md), [feature](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=feature_request.md) or [question](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=question.md). To learn more about Pixel Vision 8, check out [the documentation](https://docs.pixelvision8.com/), explore [the examples](https://www.pixelvision8.com/examples), join [the Discord server](https://discord.gg/pixelvision8), and visit [the main website](https://www.pixelvision8.com/).
+            For more details on what has changed, see the [change log](https://github.com/PixelVision8/PixelVision8/compare/v${{ env.PREVIOUS }}...v${{ env.CURRENT }}).
+            
+
+            In addition, you can see the current open issues [here](https://github.com/PixelVision8/PixelVision8/issues) or use one of the following links to submit a new [bug](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=bug_report.md), [feature](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=feature_request.md) or [question](https://github.com/PixelVision8/PixelVision8/issues/new?assignees=jessefreeman&labels=bug&template=question.md). 
+            
+            
+            To learn more about Pixel Vision 8, check out [the documentation](https://github.com/PixelVision8/PixelVision8/wiki), explore [the examples](https://github.com/PixelVision8/Examples), join [the Discord server](https://discord.gg/pixelvision8), and visit [the main website](https://www.pixelvision8.com/).
           files: >
-            PixelVision8-v${{env.CURRENT}}-macOS.zip:Releases/PixelVision8-macOS.zip
-            PixelVision8-v${{env.CURRENT}}-win.zip:Releases/PixelVision8-win.zip
-            PixelVision8-v${{env.CURRENT}}-linux.zip:Releases/PixelVision8-linux.zip
+            pixel-vision-8-v${{env.CURRENT}}-macos.zip:Releases/Final/pixel-vision-8-macos.zip
+            pixel-vision-8-v${{env.CURRENT}}-win.zip:Releases/Final/pixel-vision-8-win.zip
+            pixel-vision-8-v${{env.CURRENT}}-linux.zip:Releases/Final/pixel-vision-8-linux.zip
+      
+      - name: Update Wiki
+        id: update_wiki
+        uses: OrlovM/Wiki-Action@v1
+        with:
+          path: 'Docs'
+          token: ${{ secrets.GITHUB_TOKEN }}

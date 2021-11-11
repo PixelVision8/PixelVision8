@@ -1,0 +1,37 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "gulp-build-desktop",
+            "type": "shell",
+            "command": "gulp",
+            "args": [
+                "build-desktop-runner-task"
+            ],
+        },
+        {
+            "label": "gulp-build-chsarp",
+            "type": "shell",
+            "command": "gulp",
+            "args": [
+                "build-csharp-runner-task"
+            ],
+        },
+        {
+            "label": "gulp-build-lua",
+            "type": "shell",
+            "command": "gulp",
+            "args": [
+                "build-lua-runner-task"
+            ],
+        },
+        {
+            "label": "gulp-build-roslyn",
+            "type": "shell",
+            "command": "gulp",
+            "args": [
+                "build-roslyn-runner-task"
+            ],
+        },
+    ]
+}
