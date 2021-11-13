@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "gulp-build-desktop",
-            "program": "${workspaceFolder}/Projects/PixelVision8/bin/Debug/Pixel Vision 8.dll",
+            "program": "${workspaceFolder}/Runners/Desktop/bin/Debug/Pixel Vision 8.dll",
             "cwd": "${workspaceFolder}/",
             "console": "internalConsole",
             "stopAtEntry": false
@@ -19,7 +19,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "gulp-build-chsarp",
-            "program": "${workspaceFolder}/Projects/CSharpRunner/bin/Debug/CSharp Runner.dll",
+            "program": "${workspaceFolder}/Runners/CSharpRunner/bin/Debug/CSharp Runner.dll",
             "cwd": "${workspaceFolder}/",
             "console": "internalConsole",
             "stopAtEntry": false
@@ -29,7 +29,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "gulp-build-lua",
-            "program": "${workspaceFolder}/Projects/LuaRunner/bin/Debug/Lua Runner.dll",
+            "program": "${workspaceFolder}/Runners/LuaRunner/bin/Debug/Lua Runner.dll",
             "cwd": "${workspaceFolder}/",
             "console": "internalConsole",
             "stopAtEntry": false
@@ -39,7 +39,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "gulp-build-roslyn",
-            "program": "${workspaceFolder}/Projects/RoslynRunner/bin/Debug/Roslyn Runner.dll",
+            "program": "${workspaceFolder}/Runners/RoslynRunner/bin/Debug/Roslyn Runner.dll",
             "cwd": "${workspaceFolder}/",
             "console": "internalConsole",
             "stopAtEntry": false

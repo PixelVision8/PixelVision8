@@ -1,0 +1,90 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<DefineConstants>OPENGL;OPENAL;XNADESIGNPROVIDED;LINUX;DESKTOPGL;SUPPORTS_EFX;NETSTANDARD;STBSHARP_INTERNAL</DefineConstants>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<UseAppHost>true</UseAppHost>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Product>Pixel Vision 8 Roslyn Runner</Product>
+		<AssemblyName>Roslyn Runner</AssemblyName>
+		<PackageId>PixelVision8.RoslynRunner</PackageId>
+		<ApplicationIcon>Icon.ico</ApplicationIcon>
+		<RootNamespace>PixelVision8</RootNamespace>
+		<Version>0.0.0</Version>
+		<PackageIcon>Icon.png</PackageIcon>
+		<Company>Pixel Vision 8</Company>
+		<Copyright>Jesse Freeman 2020</Copyright>
+		<RepositoryUrl>https://github.com/PixelVision8/PixelVision8</RepositoryUrl>
+		<PackageLicenseExpression>MS-PL</PackageLicenseExpression>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>pixelvision8;pv8;monovision;.net core;core;.net standard;standard;desktopgl</PackageTags>
+	</PropertyGroup>
+
+	<!-- Shared paths -->
+	<PropertyGroup>
+		<SDK>../../SDK/</SDK>
+		<Platforms>$(SDK)/Platforms/</Platforms>
+		<Game>../../Build/Templates/EmptyDisk</Game>
+	</PropertyGroup>
+
+	<!-- Icons -->
+	<ItemGroup>
+		<EmbeddedResource Include="Icon.ico" />
+		<EmbeddedResource Include="Icon.bmp" />
+	</ItemGroup>
+
+	<!-- Copy the game files to the content folder-->
+	<ItemGroup>
+		<Content Include="$(Game)/**/*.*">
+			<Link>Content/%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="../../Content/Fonts/**/*.*">
+			<Link>Content/%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Remove="$(Game)/**/*.lua" />
+		<Content Remove="**/saves.json" />
+	</ItemGroup>
+
+	<!-- Program and runner class-->
+	<ItemGroup>
+		<Compile Include="Program.cs" />
+		<Compile Include="$(Platforms)Runner/RoslynRunner.cs">
+			<Link>SDK/Runner/RoslynRunner.cs</Link>
+		</Compile>
+	</ItemGroup>
+
+	<!-- Mono Game Specific Classes -->
+	<ItemGroup>
+		<Compile Include="$(Platforms)**/*.MonoGame.cs">
+			<Link>SDK/Platform/%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</Compile>
+	</ItemGroup>
+
+	<!-- Core Pixel Vision 8 Classes -->
+	<ItemGroup>
+		<Compile Include="$(SDK)Player/**/*.cs" Exclude="$(SDK)Player/Chips/Audio/SoundChannel.cs">
+			<Link>SDK/Player/%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</Compile>
+		<Compile Include="$(SDK)Runner/**/*.*cs">
+			<Link>SDK/Runner/%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</Compile>
+	</ItemGroup>
+
+	<!-- References -->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.6.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.6.0" />
+		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+	</ItemGroup>
+
+</Project>

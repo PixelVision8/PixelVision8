@@ -181,8 +181,8 @@ namespace PixelVision8.Player
                 for (var i = 0; i < total; i++) trackerDataCollection[i].totalNotes = value;
             }
         }
-
-        public int totalTracks => SoundChip.TotalChannels;
+        // TODO need to double  check this because I'm seeing the music chip initiate before the sound chip and throwing an error
+        public int totalTracks => SoundChip?.TotalChannels ?? 4;
         //        {
         //            get => _totalTracks;
         //            set

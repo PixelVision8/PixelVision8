@@ -1,0 +1,95 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<DefineConstants>OPENGL;OPENAL;XNADESIGNPROVIDED;LINUX;DESKTOPGL;SUPPORTS_EFX;NETSTANDARD;STBSHARP_INTERNAL</DefineConstants>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<UseAppHost>true</UseAppHost>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Product>Pixel Vision 8 Lua Runner</Product>
+		<AssemblyName>Lua Runner</AssemblyName>
+		<ApplicationIcon>Icon.ico</ApplicationIcon>
+		<RootNamespace>PixelVision8.LuaRunner</RootNamespace>
+		<Version>0.0.0</Version>
+		<PackageIcon>Icon.png</PackageIcon>
+		<Company>Pixel Vision 8</Company>
+		<Copyright>Jesse Freeman 2020</Copyright>
+	</PropertyGroup>
+
+
+	<!-- Icons -->
+	<ItemGroup>
+		<EmbeddedResource Include="Icon.ico">
+			<LogicalName>Icon.ico</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Icon.bmp">
+			<LogicalName>Icon.bmp</LogicalName>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<!-- Shared paths -->
+	<PropertyGroup>
+		<RunnerSDK>..\..\SDK\</RunnerSDK>
+		<RunnerPlatforms>..\..\SDK\Platforms\</RunnerPlatforms>
+		<Game>..\..\Build\Templates\EmptyDisk</Game>
+	</PropertyGroup>
+
+
+	<!-- Copy the game files to the content folder-->
+	<ItemGroup>
+		<Content Include="..\..\Content\Fonts\**\*.*">
+			<Link>Content/%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="$(Game)\**\*.*">
+			<Link>Content/%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Remove="$(Game)\**\*.cs" />
+		<Content Remove="**\saves.json" />
+	</ItemGroup>
+
+	<!-- Program and runner class-->
+	<ItemGroup>
+		<Compile Include="Program.cs" />
+		<Compile Include="$(RunnerPlatforms)Runner\LuaRunner.cs">
+			<Link>SDK/Runner/LuaRunner.cs</Link>
+		</Compile>
+	</ItemGroup>
+
+	<!-- Mono Game Specific Classes -->
+	<ItemGroup>
+		<Compile Include="$(RunnerPlatforms)**\*.MonoGame.cs">
+			<Link>SDK\Platform\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</Compile>
+	</ItemGroup>
+
+	<!-- Core Pixel Vision 8 Classes -->
+	<ItemGroup>
+		<Compile Include="$(RunnerSDK)Player/**/*.cs" Exclude="$(RunnerSDK)Player\Chips\Audio\SoundChannel.cs">
+			<Link>SDK\Player\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</Compile>
+		<Compile Include="$(RunnerSDK)Runner\**\*.*cs">
+			<Link>SDK\Runner\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</Compile>
+		<Compile Include="$(RunnerSDK)Lua\Chips\Game\**\*.*cs">
+			<Link>SDK\Lua\Chips\Game\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</Compile>
+		<Compile Include="$(RunnerSDK)Lua/Services/LuaService.cs">
+			<Link>SDK/Lua/Services/LuaService.cs</Link>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+		<PackageReference Include="MoonSharp" Version="2.0.0" />
+	</ItemGroup>
+
+</Project>

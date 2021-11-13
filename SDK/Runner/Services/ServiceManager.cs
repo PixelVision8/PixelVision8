@@ -23,8 +23,6 @@ namespace PixelVision8.Player
     {
         public IServiceLocator ServiceLocator;
 
-        
-
         public void AddService(string id, IService service)
         {
             ServiceLocator.AddService(id, service);

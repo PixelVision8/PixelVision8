@@ -40,7 +40,7 @@ gulp.task('dotnet-copy-game', function() {
 );
 
 gulp.task('dotnet-copy-program', function() {
-    return gulp.src("./Projects/PixelVision8/Program.cs")
+    return gulp.src("./Runners/PixelVision8/Program.cs")
         .pipe(gulp.dest("Releases/DotnetTemplate/App"));
     }
 );
@@ -58,7 +58,7 @@ gulp.task('dotnet-build-files', function() {
 );
 
 gulp.task('dotnet-copy-dlls', function() {
-    return gulp.src(['./Projects/PixelVision8/bin/Debug/Pixel Vision 8.dll'])
+    return gulp.src(['./Runners/PixelVision8/bin/Debug/Pixel Vision 8.dll'])
         .pipe(gulp.dest("Releases/DotnetTemplate/App/libs"));
     }
 );

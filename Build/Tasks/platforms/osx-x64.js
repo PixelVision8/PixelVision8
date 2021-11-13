@@ -24,7 +24,7 @@ gulp.task('mac-bundle-finish', function(done) {
     });
 
 gulp.task('mac-icon', function() {
-    return gulp.src("./Projects/PixelVision8/Icon.icns")
+    return gulp.src("./Runners/Desktop/Icon.icns")
         .pipe(rename('App.icns'))
         .pipe(gulp.dest(process.env.BUILD_PATH + "/" + process.env.APP_NAME + ".app/Contents/Resources/"));
     }
