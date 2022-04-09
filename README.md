@@ -1,7 +1,7 @@
 # Pixel Vision 8 v2.0
 ![Pixel Vision 8](https://github.com/PixelVision8/PixelVision8/workflows/Pixel%20Vision%208/badge.svg)
 
-Pixel Vision 8's core philosophy is to teach retro game development with streamlined workflows. PV8 is also a platform that standardizes 8-bit fantasy console limitations built on top of a fork of MonoGame, called [MonoVision](https://github.com/PixelVision8/MonoVision). This engine provides a standard set of APIs to create authentic-looking 8-bit games with modern programming languages and workflows. It also allows you to define specific limitations for the resolution, colors, number of sprites on screen, and more. 
+Pixel Vision 8's core philosophy is to teach retro game development with streamlined workflows. PV8 is also a platform that standardizes 8-bit fantasy console limitations built on top of a fork of MonoGame, called [MonoVision (fork of monogame)](https://github.com/PixelVision8/MonoVision). This engine provides a standard set of APIs to create authentic-looking 8-bit games with modern programming languages and workflows. It also allows you to define specific limitations for the resolution, colors, number of sprites on screen, and more. 
 
 There are several different ways to build and run Pixel Vision 8, depending on your choice of language, skill level, and goals. You can always get the latest compiled version on [itch.io](https://pixelvision8.itch.io/pv8) or check out the incremental builds on [github]([https://githu](https://github.com/PixelVision8/PixelVision8/releases/latest)).
 
