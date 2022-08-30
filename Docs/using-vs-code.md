@@ -1,4 +1,4 @@
-While Pixel Vision OS’s built-in text editor is good for simple coding, the ideal way to make PV8 games is with an external code editor. Visual Studio Code ([https://atom.io](https://atom.io)) offers the best experience for making Pixel Vision 8 game including support for debugging Lua games. Before you open your game’s Lua files in VS Code, you will want to add a few packages. 
+While Pixel Vision OS’s built-in text editor is good for simple coding, the ideal way to make PV8 games is with an external code editor. Visual Studio Code ([https://code.visualstudio.com](https://code.visualstudio.com)) offers the best experience for making Pixel Vision 8 game including support for debugging Lua games. Before you open your game’s Lua files in VS Code, you will want to add a few packages. 
 
 The first package to install is Pixel Vision 8’s own API autocomplete. You do this by going to VS Code's package manager and type in `pixel-vision-8` on order to search for the package.
 
